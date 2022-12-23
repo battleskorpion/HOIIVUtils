@@ -15,4 +15,5 @@
 hs_err_pid*
 replay_pid*
 
-src/settings/localization_settings.txt
+#this one doesnt work even using .gitignore trick which worked for the .class files
+src/settings/localization_settings.txt 
