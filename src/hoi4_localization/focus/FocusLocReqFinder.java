@@ -1,9 +1,9 @@
-package hoi4_localization;
+package hoi4_localization.focus;
+
+import hoi4_localization.focus.Focus;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 

@@ -1,4 +1,7 @@
-package hoi4_localization;
+package hoi4_localization.idea;
+
+import hoi4_localization.CountryTags;
+import hoi4_localization.HOI4Fixes;
 
 import java.io.File;
 import java.io.IOException;

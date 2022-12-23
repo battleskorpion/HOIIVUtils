@@ -1,4 +1,4 @@
-package hoi4_localization;
+package fileIO;
 
 import java.io.File;
 import java.io.IOException;

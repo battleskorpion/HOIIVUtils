@@ -1,5 +1,7 @@
 package hoi4_localization;
 
+import fileIO.FileRead;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,7 +14,7 @@ public class FixDupProvinces {
 	public static boolean RemoveDuplicates(File dir) throws IOException {
 		for (File f : dir.listFiles()) {
 			
-			String fContents = FileRead.readFile(f); 
+			String fContents = FileRead.readFile(f);
 			
 			// select only the provinces 
 			int prov_dec_index = fContents.indexOf("provinces"); 
@@ -65,7 +67,7 @@ public class FixDupProvinces {
 			for (int i = 0; i < provinces_list.size(); i++) {
 				new_provinces += provinces_list.get(i) + " "; 
 			}
-			new_provinces.trim(); 
+			new_provinces = new_provinces.trim();
 			
 			// finally replace provinces in file with unduped list
 			fContents = fContents.replace(old_provs_dec, "provinces={" + "\n\t\t" + new_provinces + "\n\t" + "}"); 

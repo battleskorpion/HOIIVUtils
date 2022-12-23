@@ -1,4 +1,6 @@
-package hoi4_localization;
+package hoi4_localization.focus;
+
+import hoi4_localization.HOI4Fixes;
 
 import java.io.File;
 import java.io.IOException;

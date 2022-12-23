@@ -1,4 +1,8 @@
-package hoi4_localization;
+package hoi4_localization.focus;
+
+import hoi4_localization.CountryTags;
+import hoi4_localization.HOI4Fixes;
+import hoi4_localization.focus.Focus;
 
 import java.io.BufferedWriter;
 import java.io.File;

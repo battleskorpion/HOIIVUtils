@@ -1,5 +1,9 @@
 package hoi4_localization;
 
+import hoi4_localization.focus.FixFocus;
+import hoi4_localization.focus.FocusLocReqFinder;
+import hoi4_localization.idea.FixIdea;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
