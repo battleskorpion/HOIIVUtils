@@ -26,7 +26,8 @@ public class LocalizationSettings {
             Scanner settingReader = new Scanner(settings_file);
 
             /* if file is empty then write blank settings to new settings file */
-            if (settings_file.length() == 0) {
+            if (!settingReader.hasNext()) {
+                System.out.println("j");
                 writeBlankSettings();
                 return;
             }
