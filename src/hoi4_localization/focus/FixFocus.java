@@ -32,7 +32,7 @@ public class FixFocus extends HOI4Fixes {
 		
 		// make a list of every localized focus
 		boolean found_lang = false; 
-		while(found_lang == false) {
+		while(!found_lang) {
 			if (locReader.hasNextLine()) {
 				String data = locReader.nextLine().replaceAll("\\s", "");
 				if (usefulData(data)) {
@@ -79,7 +79,7 @@ public class FixFocus extends HOI4Fixes {
 				int i = 0;	//counter
 				if (CountryTags.list().contains(focus.substring(0, 3)))
 				{
-					i+=3; 
+					i += 3;
 				}
 				// make a list of each word in focus_loc
 				//focus_loc_array = new ArrayList<String>(Arrays.asList(focus_loc.split(" ")));

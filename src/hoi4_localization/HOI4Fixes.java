@@ -3,6 +3,7 @@ package hoi4_localization;
 import hoi4_localization.focus.FixFocus;
 import hoi4_localization.focus.FocusLocReqFinder;
 import hoi4_localization.idea.FixIdea;
+import settings.LocalizationSettings;
 
 import javax.swing.*;
 import java.io.File;
@@ -10,28 +11,38 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static settings.LocalizationSettings.Settings.*;
+
 public class HOI4Fixes {
 
+	public static final String applicationVersion = "2.2";
 	public static String hoi4_dir_name;
 	// "C:\\Users\\daria\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\nadivided-dev";
 
-	public static void main (String args[]) throws IOException {
+	public static void main (String[] args) throws IOException {
 		File hoi4_dir;
 		File states_dir;
 		File strat_region_dir;
-		
+
+		/* load settings */
+		LocalizationSettings settings = new LocalizationSettings(); 	// loads settings automatically
+
+		if (settings.isNull(MOD_DIRECTORY))
 		/* get directories */
 		{
 			JFileChooser j = new JFileChooser();
 			j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			j.setDialogTitle("Choose Mod Directory");
 
-			Integer opt = j.showOpenDialog(null);
+			int opt = j.showOpenDialog(null);
 			if (opt == JFileChooser.APPROVE_OPTION) {
 				hoi4_dir_name = j.getSelectedFile().getPath();
 			} else {
 				return;
 			}
+
+			/* directory acquired, now save settings */
+			settings.writeSettings();
 		}
 
 		System.out.println(hoi4_dir_name);
@@ -42,7 +53,7 @@ public class HOI4Fixes {
 		/* select focus localization */
 		String[] loc_options = {"Fix Focus Localization", "Find Focuses without Localization", "Find Idea Localization", "Placeholder :)"};
 		String selection = (String) JOptionPane.showInputDialog(null, "Localization Program Options",
-				"test", JOptionPane.QUESTION_MESSAGE, null, loc_options, loc_options[0]);
+				"Hoi4 Fixes " + applicationVersion, JOptionPane.QUESTION_MESSAGE, null, loc_options, loc_options[0]);
 
 		if(selection.equals(loc_options[0])) {
 			File focus_file;
@@ -53,7 +64,7 @@ public class HOI4Fixes {
 				JFileChooser j = new JFileChooser(hoi4_dir);
 				j.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				j.setDialogTitle("Select Focus File");
-				Integer opt = j.showOpenDialog(null);
+				int opt = j.showOpenDialog(null);
 				focus_file = j.getSelectedFile();
 			}
 
@@ -62,7 +73,7 @@ public class HOI4Fixes {
 				JFileChooser j = new JFileChooser(hoi4_dir);
 				j.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				j.setDialogTitle("Select Localization File");
-				Integer opt = j.showOpenDialog(null);
+				int opt = j.showOpenDialog(null);
 				loc_file = j.getSelectedFile();
 			}
 

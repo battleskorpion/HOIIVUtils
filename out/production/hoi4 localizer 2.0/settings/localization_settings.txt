@@ -1,0 +1,2 @@
+MOD_DIRECTORY;null
+CURRENT_MOD;null

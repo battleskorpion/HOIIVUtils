@@ -1,4 +1,4 @@
-package hoi4_localization;
+package hoi4_localization.province;
 
 import fileIO.FileRead;
 
