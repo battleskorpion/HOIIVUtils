@@ -6,28 +6,34 @@ import java.util.Scanner;
 
 public class LocalizationSettings {
 
-    public enum Settings {
-        MOD_DIRECTORY,
-        CURRENT_MOD,
+    public String get(Settings setting) {
+        return settingValues.get(setting);
     }
 
-    private File settings_file = new File("src\\settings\\localization_settings.txt");
-    private FileWriter settingsWriter = new FileWriter(settings_file, false);		// true = append
-    private BufferedWriter settingsBWriter = new BufferedWriter(settingsWriter);
+    public enum Settings {
+        MOD_DIRECTORY,
+        CURRENT_MOD,        // todo not in use
+    }
+
+    private File settings_file;
+    private FileWriter settingsWriter;
+    private BufferedWriter settingsBWriter;
     private PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); 		        // for println syntax
     private static HashMap<Settings, String> settingValues = new HashMap<>();
 
     public LocalizationSettings() throws IOException {
+        settings_file = new File("src\\settings\\localization_settings.txt");
+
         readSettings();
     }
 
     public void readSettings() {
         try {
             Scanner settingReader = new Scanner(settings_file);
+//            System.out.println(settingReader.nextLine());
 
             /* if file is empty then write blank settings to new settings file */
             if (!settingReader.hasNext()) {
-                System.out.println("j");
                 writeBlankSettings();
                 return;
             }
@@ -40,12 +46,18 @@ public class LocalizationSettings {
                 settingValues.put(setting, readSetting[1]);
             }
 
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
-    public void writeSettings() {
+    /**
+     * @deprecated
+     */
+    public void writeSettings() throws IOException {
+        settingsWriter = new FileWriter(settings_file, false);		// true = append
+        settingsBWriter = new BufferedWriter(settingsWriter);
         settingsPWriter = new PrintWriter(settingsBWriter);
 
         for (Settings setting : Settings.values()) {
@@ -55,11 +67,29 @@ public class LocalizationSettings {
         settingsPWriter.close();
     }
 
-    public void writeBlankSettings() {
+    public void writeBlankSettings() throws IOException {
+        settingsWriter = new FileWriter(settings_file, false);		// true = append
+        settingsBWriter = new BufferedWriter(settingsWriter);
         settingsPWriter = new PrintWriter(settingsBWriter);
 
         for (Settings setting : Settings.values()) {
             settingsPWriter.println(setting.name() + ";" + "null");
+
+            settingValues.put(setting, "null");
+        }
+
+        settingsPWriter.close();
+
+    }
+
+    public void saveSettings(Settings setting, String settingValue) throws IOException {
+        settingsWriter = new FileWriter(settings_file, false);		// true = append
+        settingsBWriter = new BufferedWriter(settingsWriter);
+        settingsPWriter = new PrintWriter(settingsBWriter);
+
+        settingValues.put(setting, settingValue);
+        for (Settings s : Settings.values()) {
+            settingsPWriter.println(s.name() + ";" + settingValues.get(s));
         }
 
         settingsPWriter.close();

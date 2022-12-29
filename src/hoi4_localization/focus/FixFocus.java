@@ -2,7 +2,6 @@ package hoi4_localization.focus;
 
 import hoi4_localization.CountryTags;
 import hoi4_localization.HOI4Fixes;
-import hoi4_localization.focus.Focus;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,13 +11,15 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static settings.LocalizationSettings.Settings.MOD_DIRECTORY;
+
 public class FixFocus extends HOI4Fixes {
 
 	private static String hoi4_dir_name;
 
 	public static boolean addFocusLoc(File focus_file, File loc_file) throws IOException {
 
-		hoi4_dir_name = HOI4Fixes.hoi4_dir_name;
+		hoi4_dir_name = HOI4Fixes.settings.get(MOD_DIRECTORY);
 
 		// some vars
 		ArrayList<String> focuses_localized = new ArrayList<String>();
@@ -26,6 +27,7 @@ public class FixFocus extends HOI4Fixes {
 		ArrayList<String> country_tags;
 		System.out.println(hoi4_dir_name);
 		String loc_key = ":0";
+		FocusTree focusTree = new FocusTree(focus_file);
 		
 		// more vars
 		Scanner locReader = new Scanner(loc_file);
@@ -46,14 +48,13 @@ public class FixFocus extends HOI4Fixes {
 			}
 		}
 
-		Focus.find(focus_file);
 
 		/* list of localized focuses */
 		while (locReader.hasNextLine()) {
 			String data = locReader.nextLine().replaceAll("\\s", ""); 
 			if (usefulData(data)) {
 				if (data.contains(":")) {
-					if (Focus.list().contains(data.substring(0, data.indexOf(":")))) {
+					if (focusTree.list().contains(data.substring(0, data.indexOf(":")))) {
 						focuses_localized.add(data.substring(0, data.indexOf(":")).trim()); 
 					}
 				}
@@ -69,7 +70,7 @@ public class FixFocus extends HOI4Fixes {
 		String focus_loc; 
 		//ArrayList<String> focus_loc_array; 
 		
-		for (String focus : Focus.list())
+		for (String focus : focusTree.list())
 		{
 			// if focus not in localized focuses
 			if (!focuses_localized.contains(focus)) 

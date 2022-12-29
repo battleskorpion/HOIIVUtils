@@ -1,22 +1,27 @@
 package hoi4_localization;
 
+import hoi4_localization.province.CountryTag;
+import settings.LocalizationSettings;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static settings.LocalizationSettings.Settings.MOD_DIRECTORY;
+
 public class CountryTags extends HOI4Fixes {
 
-	private static ArrayList<String> country_tags;
+	private static ArrayList<CountryTag> country_tags;
 
 	private static File country_tags_file;
 
-	private static ArrayList<String> find() throws IOException {
-		country_tags = new ArrayList<String>();
-		country_tags_file = new File(hoi4_dir_name + "\\common\\country_tags\\00_countries.txt");
+	private static ArrayList<CountryTag> find() throws IOException {
+		country_tags = new ArrayList<CountryTag>();
+		country_tags_file = new File(HOI4Fixes.settings.get(MOD_DIRECTORY) + "\\common\\country_tags\\00_countries.txt");
 
-		if(HOI4Fixes.hoi4_dir_name == null) {
+		if(HOI4Fixes.settings.get(MOD_DIRECTORY) == null) {
 			return null;
 		}
 		Scanner countryTagsReader = new Scanner(country_tags_file);
@@ -26,7 +31,7 @@ public class CountryTags extends HOI4Fixes {
 			String data = countryTagsReader.nextLine().replaceAll("\\s", "");
 			if (usefulData(data)) {
 				// takes the defined tag at the beginning of the line
-				country_tags.add(data.substring(0, data.indexOf('=')).trim());
+				country_tags.add(new CountryTag(data.substring(0, data.indexOf('=')).trim()));
 				//System.out.println(data.substring(0, data.indexOf('=')));
 			}
 		}
@@ -35,7 +40,7 @@ public class CountryTags extends HOI4Fixes {
 		return country_tags;
 	}
 
-	public static ArrayList<String> list() throws IOException {
+	public static ArrayList<CountryTag> list() throws IOException {
 		if (country_tags == null) {
 			return CountryTags.find();
 		}
@@ -44,4 +49,7 @@ public class CountryTags extends HOI4Fixes {
 		}
 	}
 
+	public static boolean exists(String substring) {
+		return country_tags.contains(new CountryTag(substring));
+	}
 }

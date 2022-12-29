@@ -7,10 +7,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static settings.LocalizationSettings.Settings.MOD_DIRECTORY;
+
 public class FixIdea extends HOI4Fixes {
 
 	public static boolean addIdeaLoc(File idea_file, File loc_file) throws IOException {
-		hoi4_dir_name = HOI4Fixes.hoi4_dir_name;
+		hoi4_dir_name = HOI4Fixes.settings.get(MOD_DIRECTORY);
 
 		// some vars
 		ArrayList<String> ideas_localized = new ArrayList<String>();
@@ -40,7 +42,9 @@ public class FixIdea extends HOI4Fixes {
 			String data = locReader.nextLine().replaceAll("\\s", "");
 			if (usefulData(data)) {
 				if (data.contains(":")) {
-					if (Idea.list(idea_file).contains(data.substring(0, data.indexOf(":")))) {
+					// fixed crash when there were no ideas localized hopefully
+					if (Idea.list(idea_file) != null && Idea.list(idea_file)
+							.contains(data.substring(0, data.indexOf(":")))) {
 						ideas_localized.add(data.substring(0, data.indexOf(":")).trim());
 					}
 				}
@@ -55,6 +59,7 @@ public class FixIdea extends HOI4Fixes {
 		PrintWriter locPWriter = new PrintWriter(locBWriter); 		        // for println syntax
 		String idea_loc;
 
+		assert Idea.list() != null;
 		for (String idea : Idea.list()) {
 			if(!ideas_localized.contains(idea)) {
 				// write to loc file
