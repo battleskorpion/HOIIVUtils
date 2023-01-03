@@ -1,10 +1,8 @@
-package hoi4_localization;
+package hoi4_localization.province;
 
-import hoi4_localization.province.CountryTag;
-import settings.LocalizationSettings;
+import hoi4_localization.HOI4Fixes;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;

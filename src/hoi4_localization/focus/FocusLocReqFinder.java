@@ -1,6 +1,6 @@
 package hoi4_localization.focus;
 
-import hoi4_localization.CountryTags;
+import hoi4_localization.province.CountryTags;
 import hoi4_localization.province.CountryTag;
 
 import java.io.File;
@@ -22,36 +22,49 @@ public class FocusLocReqFinder {
 
 		CountryTags.list(); 		// make sure country tags are generated
 
+		/* instantiate each focus tree in national focus folder */
 		for(File focus_file : Objects.requireNonNull(national_focus_dir.listFiles())) {
 			if(!focus_file.isDirectory()) {         // skip directories for now even if there is
 													// focus files in them
 
-//				Scanner focusReader = new Scanner(focus_file);
-
 				// make a list of all focus names
-				new FocusTree(focus_file);
+				FocusTree focus = new FocusTree(focus_file);
 
-//				System.out.println(focus_names);
-//				System.out.println(focus_names.size());
+//				System.out.println(focus.country());
 			}
 		}
 
+		/* loc file reader, determine if loc file localizes a tree and record focus -> loc file link */
+		// TODO: blacklist files that definitely arent for focuses, or something idk
 		for (File loc_file : Objects.requireNonNull(localization_dir.listFiles())) {
 			if (loc_file.isFile()) {
-				Scanner ideaReader = new Scanner(loc_file);
-				aa:
-				while (ideaReader.hasNext()) {
-					String ideaLine = ideaReader.nextLine();
-					if (CountryTags.exists(ideaLine.trim().substring(0, 3))) {
-						CountryTag tag = new CountryTag(ideaLine.trim().substring(0, 3));
+				Scanner locReader = new Scanner(loc_file);
 
-						if (NationalFocuses.get(tag) != null) {
-							ArrayList<String> focuses = NationalFocuses.get(tag).list();
-							if(focuses.contains(ideaLine.substring(0, ideaLine.indexOf(":")))) {
-								NationalFocuses.get(tag).setLocalization(loc_file);
+				aa:
+				while (locReader.hasNext()) {
+					String locLine = locReader.nextLine();
+					if (locLine.trim().length() >= 3) {
+						String potentialTag = locLine.trim().substring(0, 3);
+
+						if (CountryTags.exists(potentialTag)) {
+							CountryTag tag = new CountryTag(locLine.trim().substring(0, 3));
+
+							/* link loc file to focus file */
+							if (NationalFocuses.get(tag) != null) {
+								ArrayList<String> focuses = NationalFocuses.get(tag).list();
+								if (focuses.contains(locLine.substring(0, locLine.indexOf(":")))) {
+									NationalFocuses.get(tag).setLocalization(loc_file);
+								}
+								//break aa;
+								else {
+									System.err.println("Warning: Focus localized in locale but not found in linked focus tree?");
+								}
+								break aa;
+							} else {
+								// tag in localization, but no focus tree with tag?
+								System.err.println("country tag " + tag + " in localization, but no focus tree with tag?");
 								break aa;
 							}
-							//break aa;
 						}
 					}
 				}
@@ -59,10 +72,14 @@ public class FocusLocReqFinder {
 		}
 
 		/* focuses without loc file, and focuses with incomplete loc file */
+		for (FocusTree focus : NationalFocuses.list()) {
+			System.out.println(focus.locFile());
+		}
 
 		return true;
 	}
 
+	// todo is this necessary here
 	private static boolean usefulData(String data) {
 		if (!data.isEmpty()) {
 			if (data.trim().charAt(0) == '#') {

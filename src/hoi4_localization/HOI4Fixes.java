@@ -86,6 +86,9 @@ public class HOI4Fixes {
 
 		else if (selection.equals(loc_options[1])) {
 			FocusLocReqFinder.findLocReqFocuses(hoi4_dir);
+
+			// create window here displaying focus trees missing loc file,
+			// and focus trees partially localized
 		}
 
 		else if (selection.equals(loc_options[2])) {

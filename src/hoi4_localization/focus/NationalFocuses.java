@@ -6,7 +6,7 @@ import hoi4_localization.province.CountryTag;
 import java.util.HashMap;
 
 public class NationalFocuses extends HOI4Fixes {
-    private static HashMap<CountryTag, FocusTree> focuses;
+    private static final HashMap<CountryTag, FocusTree> focuses = new HashMap<>();
 
     public static HashMap<CountryTag, FocusTree> add(CountryTag tag, FocusTree focusTree) {
         focuses.put(tag, focusTree);

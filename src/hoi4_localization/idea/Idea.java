@@ -1,6 +1,6 @@
 package hoi4_localization.idea;
 
-import hoi4_localization.CountryTags;
+import hoi4_localization.province.CountryTags;
 import hoi4_localization.HOI4Fixes;
 
 import java.io.File;

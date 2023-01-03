@@ -14,7 +14,7 @@ public class FocusTree extends HOI4Fixes {
 	private ArrayList<String> focus_names;
 	private File focus_file;
 	private CountryTag country = new CountryTag("###");
-	private LocalizationFile locFile;
+	private LocalizationFile locFile = null;
 
 	public FocusTree(File focus_file) throws IOException {
 		this.focus_file = focus_file;
@@ -87,6 +87,8 @@ public class FocusTree extends HOI4Fixes {
 	public LocalizationFile locFile() {
 		return locFile;
 	}
+
+	public File focusFile() { return focus_file; }
 
 	public File setLocalization (File locFile) {
 		this.locFile = new LocalizationFile(locFile);
