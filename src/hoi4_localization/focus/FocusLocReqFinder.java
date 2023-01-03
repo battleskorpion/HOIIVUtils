@@ -43,7 +43,7 @@ public class FocusLocReqFinder {
 				while (ideaReader.hasNext()) {
 					String ideaLine = ideaReader.nextLine();
 					if (CountryTags.exists(ideaLine.trim().substring(0, 3))) {
-						CountryTag tag = new CountryTag(ideaLine.trim().substring(0, 3)));
+						CountryTag tag = new CountryTag(ideaLine.trim().substring(0, 3));
 
 						if (NationalFocuses.get(tag) != null) {
 							ArrayList<String> focuses = NationalFocuses.get(tag).list();
@@ -59,7 +59,6 @@ public class FocusLocReqFinder {
 		}
 
 		/* focuses without loc file, and focuses with incomplete loc file */
-
 
 		return true;
 	}
