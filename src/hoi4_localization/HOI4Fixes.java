@@ -89,6 +89,8 @@ public class HOI4Fixes {
 
 			// create window here displaying focus trees missing loc file,
 			// and focus trees partially localized
+			FocusLoqReqWindow window = new FocusLoqReqWindow();
+
 		}
 
 		else if (selection.equals(loc_options[2])) {

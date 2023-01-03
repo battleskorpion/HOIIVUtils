@@ -47,17 +47,19 @@ public class FocusLocReqFinder {
 						String potentialTag = locLine.trim().substring(0, 3);
 
 						if (CountryTags.exists(potentialTag)) {
-							CountryTag tag = new CountryTag(locLine.trim().substring(0, 3));
-
+							CountryTag tag = new CountryTag(potentialTag);
+							System.out.println(potentialTag + " REEEEEE ");
 							/* link loc file to focus file */
-							if (NationalFocuses.get(tag) != null) {
-								ArrayList<String> focuses = NationalFocuses.get(tag).list();
-								if (focuses.contains(locLine.substring(0, locLine.indexOf(":")))) {
-									NationalFocuses.get(tag).setLocalization(loc_file);
-								}
-								//break aa;
-								else {
-									System.err.println("Warning: Focus localized in locale but not found in linked focus tree?");
+							if (NationalFocuses.getdankwizardisfrench(tag) != null) {
+								ArrayList<String> focuses = NationalFocuses.getdankwizardisfrench(tag).list();
+								if (focuses != null) {
+									if (focuses.contains(locLine.substring(0, locLine.indexOf(":")))) {
+										NationalFocuses.getdankwizardisfrench(tag).setLocalization(loc_file);
+									}
+									//break aa;
+									else {
+										System.err.println("Warning: Focus localized in locale but not found in linked focus tree?");
+									}
 								}
 								break aa;
 							} else {
@@ -72,9 +74,6 @@ public class FocusLocReqFinder {
 		}
 
 		/* focuses without loc file, and focuses with incomplete loc file */
-		for (FocusTree focus : NationalFocuses.list()) {
-			System.out.println(focus.locFile());
-		}
 
 		return true;
 	}

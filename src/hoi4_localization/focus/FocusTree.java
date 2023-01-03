@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class FocusTree extends HOI4Fixes {
+public final class FocusTree extends HOI4Fixes {
 
 	private ArrayList<String> focus_names;
 	private File focus_file;
@@ -93,5 +93,13 @@ public class FocusTree extends HOI4Fixes {
 	public File setLocalization (File locFile) {
 		this.locFile = new LocalizationFile(locFile);
 		return locFile;
+	}
+
+	public boolean equals(Object other) {
+		if (other.getClass() == this.getClass()) {
+			return this.focus_file == ((FocusTree) other).focus_file;
+		}
+
+		return false;
 	}
 }
