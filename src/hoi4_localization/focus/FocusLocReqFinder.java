@@ -48,7 +48,7 @@ public class FocusLocReqFinder {
 
 						if (CountryTags.exists(potentialTag)) {
 							CountryTag tag = new CountryTag(potentialTag);
-							System.out.println(potentialTag + " REEEEEE ");
+//							System.out.println(potentialTag + " REEEEEE ");
 							/* link loc file to focus file */
 							if (NationalFocuses.getdankwizardisfrench(tag) != null) {
 								ArrayList<String> focuses = NationalFocuses.getdankwizardisfrench(tag).list();

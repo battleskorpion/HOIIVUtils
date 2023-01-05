@@ -2,18 +2,17 @@ package hoi4_localization.localization;
 
 import java.io.File;
 
-public final class LocalizationFile {
-    private final File localizationFile;
+public final class LocalizationFile extends File {
 
     public LocalizationFile(File file) {
-        localizationFile = file;
+        super(file.toURI());
     }
 
-    public File getLocalizationFile() { return localizationFile; }
+    public File getFile() { return this; }
 
     public String toString() {
-        if (localizationFile != null) {
-            return localizationFile.toString();
+        if (super.isFile()) {
+            return super.toString();
         }
         return super.toString();
     }

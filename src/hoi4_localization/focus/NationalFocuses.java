@@ -2,9 +2,13 @@ package hoi4_localization.focus;
 
 import hoi4_localization.HOI4Fixes;
 import hoi4_localization.province.CountryTag;
+import hoi4_localization.province.CountryTags;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class NationalFocuses extends HOI4Fixes {
     private static final HashMap<CountryTag, FocusTree> focuses = new HashMap<>();
@@ -30,15 +34,74 @@ public class NationalFocuses extends HOI4Fixes {
         return null;
     }
 
-    public static ArrayList<FocusTree> unlocalizedFocuses() {
-        ArrayList<FocusTree> unlocalizedFocuses = new ArrayList<>();
+    public static ArrayList<FocusTree> unlocalizedFocusTrees() {
+        ArrayList<FocusTree> focusTrees = new ArrayList<>();
 
         for (FocusTree tree : list()) {
             if (tree.locFile() == null) {
-                unlocalizedFocuses.add(tree);
+                focusTrees.add(tree);
             }
         }
 
-        return unlocalizedFocuses;
+        return focusTrees;
+    }
+
+    public static ArrayList<FocusTree> partiallyLocalizedFocusTrees() throws IOException {
+        ArrayList<FocusTree> focusTrees = new ArrayList<>();
+
+        // todo may be able to do something else in this function -
+        // todo all focus trees - localized focus trees - unlocalized focus trees
+        for (FocusTree tree : list()) {
+            aa:
+            if (tree.locFile() != null) {
+                Scanner locReader = new Scanner(tree.locFile().getFile());
+                ArrayList<String> focuses = tree.list();
+                if (focuses == null) {
+                    break aa;
+                }
+
+                ArrayList<Boolean> localized;
+                while (locReader.hasNext()) {
+                    String locLine = locReader.nextLine();
+                    if (locLine.trim().length() >= 3) {
+                        String potentialTag = locLine.trim().substring(0, 3);
+
+                        if (CountryTags.exists(potentialTag)) {
+
+                        }
+                    }
+                }
+            }
+        }
+        return focusTrees;
+    }
+
+    public static ArrayList<FocusTree> localizedFocusTrees() throws IOException {
+        ArrayList<FocusTree> focusTrees = new ArrayList<>();
+
+        for (FocusTree tree : list()) {
+            aa:
+            if (tree.locFile() != null) {
+                Scanner locReader = new Scanner(tree.locFile().getFile());
+                ArrayList<String> focuses = tree.list();
+                if (focuses == null) {
+                    break aa;
+
+                }
+
+                ArrayList<Boolean> localized;
+                while (locReader.hasNext()) {
+                    String locLine = locReader.nextLine();
+                    if (locLine.trim().length() >= 3) {
+                        String potentialTag = locLine.trim().substring(0, 3);
+
+                        if (CountryTags.exists(potentialTag)) {
+
+                        }
+                    }
+                }
+            }
+        }
+        return focusTrees;
     }
 }
