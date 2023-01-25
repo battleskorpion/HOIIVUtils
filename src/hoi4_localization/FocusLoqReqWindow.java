@@ -4,6 +4,7 @@ import hoi4_localization.focus.FocusTree;
 import hoi4_localization.focus.NationalFocuses;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class FocusLoqReqWindow extends JFrame {
@@ -27,8 +28,14 @@ public class FocusLoqReqWindow extends JFrame {
         setTitle("focus loq req");
 
         setSize(700, 500);
-        addLists(NationalFocuses.unlocalizedFocusTrees(), NationalFocuses.partiallyLocalizedFocusTrees(),
-                NationalFocuses.localizedFocusTrees());
+        try {
+            addLists(NationalFocuses.unlocalizedFocusTrees(), NationalFocuses.partiallyLocalizedFocusTrees(),
+                    NationalFocuses.localizedFocusTrees());
+        } catch (IOException exc) {
+            exc.printStackTrace();
+            System.exit(-1);
+        }
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
     }
 
@@ -41,7 +48,6 @@ public class FocusLoqReqWindow extends JFrame {
         int i = 0;
         for (FocusTree tree : unlocalizedFocusTrees) {
             unlocalizedTreeListModel.add(i, tree.country());
-//            System.out.println("test");
             i++;
         }
         i = 0;
