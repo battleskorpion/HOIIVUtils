@@ -1,4 +1,4 @@
-package hoi4_localization.province;
+package hoi4_localization.country;
 
 public final class CountryTag {
     private final String tag;

@@ -1,4 +1,4 @@
-package hoi4_localization.province;
+package hoi4_localization.country;
 
 import hoi4_localization.HOI4Fixes;
 

@@ -1,8 +1,8 @@
 package hoi4_localization.focus;
 
 import hoi4_localization.HOI4Fixes;
-import hoi4_localization.province.CountryTag;
-import hoi4_localization.province.CountryTags;
+import hoi4_localization.country.CountryTag;
+import hoi4_localization.country.CountryTags;
 
 import java.io.IOException;
 import java.util.ArrayList;

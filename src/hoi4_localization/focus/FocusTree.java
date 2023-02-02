@@ -2,7 +2,7 @@ package hoi4_localization.focus;
 
 import hoi4_localization.HOI4Fixes;
 import hoi4_localization.localization.LocalizationFile;
-import hoi4_localization.province.CountryTag;
+import hoi4_localization.country.CountryTag;
 
 import java.awt.*;
 import java.io.File;

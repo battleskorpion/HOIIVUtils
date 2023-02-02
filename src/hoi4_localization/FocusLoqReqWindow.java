@@ -1,5 +1,6 @@
 package hoi4_localization;
 
+import hoi4_localization.country.CountryTag;
 import hoi4_localization.focus.FocusTree;
 import hoi4_localization.focus.FocusTrees;
 
@@ -14,13 +15,13 @@ public class FocusLoqReqWindow extends JFrame {
     private JLabel partiallyLocalizedFocusTreesLabel;
     private JLabel unlocalizedFocusTreesLabel;
 
-    DefaultListModel localizedTreeListModel;
+    DefaultListModel<CountryTag> localizedTreeListModel;
     private JList localizedTreeList;
 
-    DefaultListModel partialLocalizedTreeListModel;
+    DefaultListModel<CountryTag> partialLocalizedTreeListModel;
     private JList partialLocalizedTreeList;
 
-    DefaultListModel unlocalizedTreeListModel;
+    DefaultListModel<CountryTag> unlocalizedTreeListModel;
     private JList unlocalizedTreeList;
 
     public FocusLoqReqWindow() {
@@ -66,9 +67,9 @@ public class FocusLoqReqWindow extends JFrame {
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        localizedTreeListModel = new DefaultListModel();
-        partialLocalizedTreeListModel = new DefaultListModel();
-        unlocalizedTreeListModel = new DefaultListModel();
+        localizedTreeListModel = new DefaultListModel<>();
+        partialLocalizedTreeListModel = new DefaultListModel<>();
+        unlocalizedTreeListModel = new DefaultListModel<>();
         localizedTreeList = new JList(localizedTreeListModel);
         partialLocalizedTreeList = new JList(partialLocalizedTreeListModel);
         unlocalizedTreeList = new JList(unlocalizedTreeListModel);
