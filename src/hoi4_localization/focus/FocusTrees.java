@@ -4,13 +4,12 @@ import hoi4_localization.HOI4Fixes;
 import hoi4_localization.province.CountryTag;
 import hoi4_localization.province.CountryTags;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class NationalFocuses extends HOI4Fixes {
+public class FocusTrees extends HOI4Fixes {
     private static final HashMap<CountryTag, FocusTree> focuses = new HashMap<>();
 
     public static HashMap<CountryTag, FocusTree> add(CountryTag tag, FocusTree focusTree) {

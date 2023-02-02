@@ -50,11 +50,11 @@ public class FocusLocReqFinder {
 							CountryTag tag = new CountryTag(potentialTag);
 //							System.out.println(potentialTag + " REEEEEE ");
 							/* link loc file to focus file */
-							if (NationalFocuses.getdankwizardisfrench(tag) != null) {
-								ArrayList<String> focuses = NationalFocuses.getdankwizardisfrench(tag).list();
+							if (FocusTrees.getdankwizardisfrench(tag) != null) {
+								ArrayList<String> focuses = FocusTrees.getdankwizardisfrench(tag).list();
 								if (focuses != null) {
 									if (focuses.contains(locLine.substring(0, locLine.indexOf(":")))) {
-										NationalFocuses.getdankwizardisfrench(tag).setLocalization(loc_file);
+										FocusTrees.getdankwizardisfrench(tag).setLocalization(loc_file);
 									}
 									//break aa;
 									else {

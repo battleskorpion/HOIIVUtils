@@ -4,6 +4,7 @@ import hoi4_localization.HOI4Fixes;
 import hoi4_localization.localization.LocalizationFile;
 import hoi4_localization.province.CountryTag;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,13 +14,39 @@ public final class FocusTree extends HOI4Fixes {
 
 	private ArrayList<String> focus_names;
 	private File focus_file;
-	private CountryTag country = new CountryTag("###");
+	private CountryTag country;
 	private LocalizationFile locFile = null;
 
+	private String id;		// todo all
+	private CountryModifier countryModifier;
+	private boolean default_focus;
+	private Point continuous_focus_position;
+
+	/**
+	 * Instantiate focus tree from pre-existing focus tree (file).
+	 * @param focus_file pre-existing focus tree.
+	 * @throws IOException file not found or otherwise unable to be accessed.
+	 */
 	public FocusTree(File focus_file) throws IOException {
 		this.focus_file = focus_file;
+		country = new CountryTag("###");
+
 		find(focus_file);
-		NationalFocuses.add(country(), this);
+		FocusTrees.add(country(), this);
+	}
+
+	/**
+	 * Instantiate new focus tree.
+	 * @param id Focus id (usually kept same as file/country name).
+	 */
+	public FocusTree(String id, CountryTag tag) {
+		this.id = id;
+		countryModifier = new CountryModifier();
+		default_focus = false;
+		continuous_focus_position = new Point(50, 1200);
+		country = tag;
+
+		FocusTrees.add(country(), this);
 	}
 
 	public ArrayList<String> find(File focus_file) throws IOException {
