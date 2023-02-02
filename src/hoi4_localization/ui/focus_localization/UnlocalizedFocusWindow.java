@@ -2,6 +2,7 @@ package hoi4_localization.ui.focus_localization;
 
 import hoi4_localization.focus.FocusTree;
 import hoi4_localization.focus.FocusTrees;
+import hoi4_localization.localization.LocalizationFile;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -37,7 +38,7 @@ public class UnlocalizedFocusWindow extends JFrame {
                 return false;
             }
         };
-        String[] columns = {"Unlocalized Focus Tree", "Localization File"};
+        String[] columns = {"Unlocalized Focus Tree", "Localization File", "Focus Tree File", "Status"};
         unlocalizedFocusTableModel.setColumnIdentifiers(columns);
         unlocalizedFocusTable.setModel(unlocalizedFocusTableModel);
 
@@ -67,7 +68,18 @@ public class UnlocalizedFocusWindow extends JFrame {
         unlocalizedFocusTableModel.setColumnCount(4);
 
         for (int i = 0; i < focusTrees.size(); i++) {
-            unlocalizedFocusTableModel.setValueAt(focusTrees.get(i), i, 0);
+            // focus tree name
+            FocusTree tree = focusTrees.get(i);
+            unlocalizedFocusTableModel.setValueAt(tree, i, 0);
+            // localization file
+            LocalizationFile localization = tree.locFile();
+            if (localization == null) {
+                unlocalizedFocusTableModel.setValueAt("<Not Found>", i, 1);
+            } else {
+                unlocalizedFocusTableModel.setValueAt(localization, i, 1);
+            }
+            // focus tree file
+            unlocalizedFocusTableModel.setValueAt(tree.focusFile().getParentFile().getName() + "\\" + tree.focusFile().getName(), i, 2);
         }
 
     }
