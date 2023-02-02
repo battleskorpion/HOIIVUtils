@@ -15,63 +15,62 @@ public class FocusLoqReqWindow extends JFrame {
     private JLabel partiallyLocalizedFocusTreesLabel;
     private JLabel unlocalizedFocusTreesLabel;
 
-    DefaultListModel<CountryTag> localizedTreeListModel;
-    private JList localizedTreeList;
+    private DefaultListModel<CountryTag> localizedTreeListModel;
+    private JList<CountryTag> localizedTreeList;
 
-    DefaultListModel<CountryTag> partialLocalizedTreeListModel;
-    private JList partialLocalizedTreeList;
+    private DefaultListModel<CountryTag> partialLocalizedTreeListModel;
+    private JList<CountryTag>  partialLocalizedTreeList;
 
-    DefaultListModel<CountryTag> unlocalizedTreeListModel;
-    private JList unlocalizedTreeList;
+    private DefaultListModel<CountryTag> unlocalizedTreeListModel;
+    private JList<CountryTag>  unlocalizedTreeList;
 
     public FocusLoqReqWindow() {
-        setContentPane(FocusLoqReqJPanel);
-        setTitle("focus loq req");
+        super("Focus Localization");        // JFrame
 
-        setSize(700, 500);
+        // texts etc.
+        localizedTreeListModel = new DefaultListModel<>();
+        partialLocalizedTreeListModel = new DefaultListModel<>();
+        unlocalizedTreeListModel = new DefaultListModel<>();
+        localizedTreeList.setModel(localizedTreeListModel);
+        partialLocalizedTreeList.setModel(partialLocalizedTreeListModel);
+        unlocalizedTreeList.setModel(unlocalizedTreeListModel);
         try {
-            addLists(FocusTrees.unlocalizedFocusTrees(), FocusTrees.partiallyLocalizedFocusTrees(),
+            refreshFocusTreeLists(FocusTrees.unlocalizedFocusTrees(), FocusTrees.partiallyLocalizedFocusTrees(),
                     FocusTrees.localizedFocusTrees());
         } catch (IOException exc) {
             exc.printStackTrace();
             System.exit(-1);
         }
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
+
+        setContentPane(FocusLoqReqJPanel);
+        setSize(700, 500);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        pack();
     }
 
     public static void main(String[] args) {
-        FocusLoqReqWindow window = new FocusLoqReqWindow();
+        JFrame window = new FocusLoqReqWindow();
+        window.setVisible(true);
     }
 
-    private void addLists(ArrayList<FocusTree> unlocalizedFocusTrees, ArrayList<FocusTree> partialLocalizedFocusTrees,
-                          ArrayList<FocusTree> localizedFocusTrees) {
-        int i = 0;
+    public void refreshFocusTreeLists(ArrayList<FocusTree> unlocalizedFocusTrees, ArrayList<FocusTree> partialLocalizedFocusTrees,
+                                       ArrayList<FocusTree> localizedFocusTrees) {
+        unlocalizedTreeListModel.removeAllElements();
+        partialLocalizedTreeListModel.removeAllElements();
+        localizedTreeListModel.removeAllElements();
+
         for (FocusTree tree : unlocalizedFocusTrees) {
-            unlocalizedTreeListModel.add(i, tree.country());
-            i++;
+            unlocalizedTreeListModel.addElement(tree.country());
         }
-        i = 0;
         for (FocusTree tree : partialLocalizedFocusTrees) {
-            partialLocalizedTreeListModel.add(i, tree.country());
-            i++;
+            partialLocalizedTreeListModel.addElement(tree.country());
         }
-        i = 0;
         for (FocusTree tree : localizedFocusTrees) {
-            localizedTreeListModel.add(i, tree.country());
-            i++;
+            localizedTreeListModel.addElement(tree.country());
         }
-        revalidate();
-        repaint();
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
-        localizedTreeListModel = new DefaultListModel<>();
-        partialLocalizedTreeListModel = new DefaultListModel<>();
-        unlocalizedTreeListModel = new DefaultListModel<>();
-        localizedTreeList = new JList(localizedTreeListModel);
-        partialLocalizedTreeList = new JList(partialLocalizedTreeListModel);
-        unlocalizedTreeList = new JList(unlocalizedTreeListModel);
+        // NOTE: place custom component creation code here
     }
 }

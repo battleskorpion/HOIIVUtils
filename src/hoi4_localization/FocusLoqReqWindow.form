@@ -40,7 +40,7 @@
           <text value="Partially Localized Focus Trees"/>
         </properties>
       </component>
-      <component id="f8df8" class="javax.swing.JList" binding="partialLocalizedTreeList" custom-create="true">
+      <component id="f8df8" class="javax.swing.JList" binding="partialLocalizedTreeList">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="50"/>
@@ -50,17 +50,18 @@
           <model/>
         </properties>
       </component>
-      <component id="d2b4c" class="javax.swing.JList" binding="unlocalizedTreeList" custom-create="true">
+      <component id="d2b4c" class="javax.swing.JList" binding="unlocalizedTreeList">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
         <properties>
+          <foreground color="-4473925"/>
           <model/>
         </properties>
       </component>
-      <component id="b790e" class="javax.swing.JList" binding="localizedTreeList" custom-create="true">
+      <component id="b790e" class="javax.swing.JList" binding="localizedTreeList">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="50"/>
