@@ -1,6 +1,8 @@
 package hoi4_localization;
 
 import hoi4_localization.focus.*;
+import hoi4_localization.focus.localization.FocusLocReqFinder;
+import hoi4_localization.ui.focus_localization.FocusLoqReqWindow;
 import hoi4_localization.idea.*;
 import settings.LocalizationSettings;
 

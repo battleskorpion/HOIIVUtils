@@ -1,10 +1,12 @@
-package hoi4_localization;
+package hoi4_localization.ui.focus_localization;
 
 import hoi4_localization.country.CountryTag;
 import hoi4_localization.focus.FocusTree;
 import hoi4_localization.focus.FocusTrees;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -23,6 +25,8 @@ public class FocusLoqReqWindow extends JFrame {
 
     private DefaultListModel<CountryTag> unlocalizedTreeListModel;
     private JList<CountryTag>  unlocalizedTreeList;
+    private ArrayList<JList<CountryTag>> treeLists;
+    private JButton localizeButton;
 
     public FocusLoqReqWindow() {
         super("Focus Localization");        // JFrame
@@ -42,6 +46,19 @@ public class FocusLoqReqWindow extends JFrame {
             System.exit(-1);
         }
 
+        treeLists = new ArrayList<>();
+        treeLists.add(localizedTreeList);
+        treeLists.add(partialLocalizedTreeList);
+        treeLists.add(unlocalizedTreeList);
+
+        // action listeners
+        localizeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                localizeSelectedFocuses();
+            }
+        });
+
         setContentPane(FocusLoqReqJPanel);
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,8 +70,12 @@ public class FocusLoqReqWindow extends JFrame {
         window.setVisible(true);
     }
 
+    private void createUIComponents() {
+        // NOTE: place custom component creation code here
+    }
+
     public void refreshFocusTreeLists(ArrayList<FocusTree> unlocalizedFocusTrees, ArrayList<FocusTree> partialLocalizedFocusTrees,
-                                       ArrayList<FocusTree> localizedFocusTrees) {
+                                      ArrayList<FocusTree> localizedFocusTrees) {
         unlocalizedTreeListModel.removeAllElements();
         partialLocalizedTreeListModel.removeAllElements();
         localizedTreeListModel.removeAllElements();
@@ -70,7 +91,21 @@ public class FocusLoqReqWindow extends JFrame {
         }
     }
 
-    private void createUIComponents() {
-        // NOTE: place custom component creation code here
+    private void localizeSelectedFocuses() {
+//        JList<CountryTag> selectedList = null;
+        if (localizedTreeList.getSelectedIndex() >= 0) {
+            JOptionPane.showMessageDialog(this, "Tree already localized.");
+        }
+        if (partialLocalizedTreeList.getSelectedIndex() >= 0) {
+
+        }
+        if (unlocalizedTreeList.getSelectedIndex() >= 0) {
+            ArrayList<FocusTree> focusTrees = new ArrayList<>();
+            unlocalizedTreeList.getSelectedValuesList().forEach(tag -> {
+                focusTrees.add(FocusTrees.get(tag));
+            });
+            UnlocalizedFocusWindow unlocalizedFocusWindow = new UnlocalizedFocusWindow(focusTrees);
+            unlocalizedFocusWindow.setVisible(true);
+        }
     }
 }

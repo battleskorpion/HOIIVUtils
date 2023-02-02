@@ -1,4 +1,4 @@
-package hoi4_localization.focus.tree_builder;
+package hoi4_localization.ui.tree_builder;
 
 import javax.swing.*;
 

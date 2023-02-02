@@ -111,6 +111,10 @@ public final class FocusTree extends HOI4Fixes {
 		}
 	}
 
+	/**
+	 *
+	 * @return Localization file for this focus tree, or null.
+	 */
 	public LocalizationFile locFile() {
 		return locFile;
 	}
@@ -122,11 +126,20 @@ public final class FocusTree extends HOI4Fixes {
 		return locFile;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (other.getClass() == this.getClass()) {
 			return this.focus_file == ((FocusTree) other).focus_file;
 		}
 
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		if (id != null && !id.equals("")) {
+			return id;
+		}
+		return country.toString();
 	}
 }
