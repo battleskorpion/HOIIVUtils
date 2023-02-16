@@ -38,9 +38,13 @@ public class CountryTags extends HOI4Fixes {
 		return country_tags;
 	}
 
-	public static ArrayList<CountryTag> list() throws IOException {
+	public static ArrayList<CountryTag> list() {
 		if (country_tags == null) {
-			return CountryTags.find();
+			try {
+				return CountryTags.find();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		else {
 			return country_tags;

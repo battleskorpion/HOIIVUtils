@@ -63,9 +63,9 @@ public class UnlocalizedFocusWindow extends JFrame {
     public void refreshFocusTreeTable(List<FocusTree> focusTrees) {
         // remove previous data
         unlocalizedFocusTableModel.getDataVector().removeAllElements();
-        unlocalizedFocusTableModel.fireTableDataChanged();
         unlocalizedFocusTableModel.setRowCount(focusTrees.size());
         unlocalizedFocusTableModel.setColumnCount(4);
+        unlocalizedFocusTableModel.fireTableDataChanged();
 
         for (int i = 0; i < focusTrees.size(); i++) {
             // focus tree name

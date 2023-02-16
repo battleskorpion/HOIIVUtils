@@ -2,6 +2,8 @@ package hoi4_coding;
 
 import hoi4_coding.focus.*;
 import hoi4_coding.focus.localization.FocusLocReqFinder;
+import hoi4_coding.history.State;
+import hoi4_coding.ui.buildings.BuildingsByCountryWindow;
 import hoi4_coding.ui.focus_localization.FocusLoqReqWindow;
 import hoi4_coding.idea.*;
 import settings.LocalizationSettings;
@@ -21,12 +23,14 @@ public class HOI4Fixes {
 	// "C:\\Users\\daria\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\nadivided-dev";
 	public static LocalizationSettings settings;
 
+	public static File hoi4_dir;
+	public static File states_dir;
+	public static File strat_region_dir;
+	public static File localization_eng_dir;
+	public static File focus_dir;
+
 	public static void main (String[] args) throws IOException {
-		File hoi4_dir;
-		File states_dir;
-		File strat_region_dir;
-		File localization_eng_dir;
-		File focus_dir;
+
 
 		/* load settings */
 		settings = new LocalizationSettings(); 	// loads settings automatically
@@ -57,7 +61,7 @@ public class HOI4Fixes {
 		focus_dir = new File(settings.get(MOD_DIRECTORY) + "\\common\\national_focus");
 
 		/* select focus localization */
-		String[] loc_options = {"Fix Focus Localization", "Find Focuses without Localization", "Find Idea Localization", "Placeholder :)"};
+		String[] loc_options = {"Fix Focus Localization", "Find Focuses without Localization", "Find Idea Localization", "View Buildings"};
 		String selection = (String) JOptionPane.showInputDialog(null, "Localization Program Options",
 				"Hoi4 Fixes " + applicationVersion, JOptionPane.QUESTION_MESSAGE, null, loc_options, loc_options[0]);
 
@@ -118,6 +122,13 @@ public class HOI4Fixes {
 			}
 
 			FixIdea.addIdeaLoc(idea_file, loc_file);
+		}
+
+		else if (selection.equals(loc_options[3])) {
+			State.readStates();
+
+			BuildingsByCountryWindow window = new BuildingsByCountryWindow();
+			window.setVisible(true);
 		}
 
 	}
