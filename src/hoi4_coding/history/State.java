@@ -22,39 +22,40 @@ public class State {
         this.stateFile = stateFile;
         this.name = stateFile.getName();
 
-        //todo fix constructor time not working issues 
-        Scanner stateReader;
-        try {
-            stateReader = new Scanner(stateFile);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        String line = "";
-        while (stateReader.hasNext()) {
-            if (!line.contains("buildings") && !usefulData(line)) {
-                line = stateReader.nextLine();
-            }
-        }
-        if(!usefulData(line)) {
-            return;     // should be exception? or something
-        }
-
-        // parse buildings
-        String data = stateReader.next();
         int infrastructure = 0;
         int population = 0;
         int civilianFactories = 0;
         int militaryFactories = 0;
         int dockyards = 0;
-        int navalPorts = 0;
-        int airfields = 0;
+//        int navalPorts = 0;       has a province location
+//        int airfields = 0;        has a province location
 
-        if (data.contains("infrastructure")) {
-            int index = data.indexOf("infrastructure");
-            index = data.indexOf("=", index);
-            infrastructure = Integer.parseInt(data.substring(index, data.indexOf(" ")).trim());
-        }
+        //todo fix constructor time not working issues
+//        Scanner stateReader;
+//        try {
+//            stateReader = new Scanner(stateFile);
+//        } catch (FileNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        String[] data = stateReader.next().replaceAll("\s", "").split("=\\{|}|\n");
+//
+//        // parse buildings
+
+
+//        String dataJoined = String.join(" ", data).;
+//
+//        int infrastructureIndex = dataJoined.indexOf("infrastructure");
+//        int populationIndex = dataJoined.indexOf("manpower");
+//        int civFactoriesIndex = dataJoined.indexOf("industrial_complex");
+//        int milFactoriesIndex = dataJoined.indexOf("arms_factory");
+//        int dockyardsIndex = dataJoined.indexOf("dockyard");
+//
+//        if(infrastructureIndex >= 0) {
+//
+//        }
+
+
 
         // data record
         stateData = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories,
