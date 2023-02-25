@@ -2,6 +2,7 @@ package hoi4Parser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Parser {
@@ -15,16 +16,26 @@ public class Parser {
             throw new RuntimeException(e);
         }
 
-        String[] data = scanner.next().split("\n");
-        fileExpressions = new Expression(data);
-//        while(scanner.hasNext()) {
-//            String data = scanner.nextLine();
-//            if(!usefulData(data)) {
-//               continue;
-//            }
-//
-//            if(data.contains("={"))
+        ArrayList<String> data = new ArrayList<>();
+        while(scanner.hasNextLine()) {
+             data.add(scanner.nextLine());
+        }
+        System.out.println("Lines parsed: " + data.size() + ", file: " + file.getName());
+        fileExpressions = new Expression(data.toArray(new String[]{}));
+
+        // testing, print expressions, tests for state 1-cape cod
+//        for(int i = 0; i < fileExpressions.subexpressions.size(); i++) {
+//            System.out.println(fileExpressions.subexpressions.get(i).expression);
 //        }
+        // history
+//        for(int i = 0; i < fileExpressions.subexpressions.get(3).subexpressions.size(); i++) {
+//            System.out.println(fileExpressions.subexpressions.get(3).subexpressions.get(i).expression);
+//        }
+        // buildings
+//        for(int i = 0; i < fileExpressions.subexpressions.get(3).subexpressions.get(1).subexpressions.size(); i++) {
+//            System.out.println(fileExpressions.subexpressions.get(3).subexpressions.get(1).subexpressions.get(i).expression);
+//        }
+
 
     }
 

@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static settings.LocalizationSettings.Settings.MOD_DIRECTORY;
+import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
 
 public class FixIdea extends HOI4Fixes {
 

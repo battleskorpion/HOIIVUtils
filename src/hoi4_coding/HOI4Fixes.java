@@ -6,7 +6,7 @@ import hoi4_coding.history.State;
 import hoi4_coding.ui.buildings.BuildingsByCountryWindow;
 import hoi4_coding.ui.focus_localization.FocusLoqReqWindow;
 import hoi4_coding.idea.*;
-import settings.LocalizationSettings;
+import settings.LocalizerSettings;
 
 import javax.swing.*;
 import java.io.File;
@@ -14,14 +14,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static settings.LocalizationSettings.Settings.*;
+import static settings.LocalizerSettings.Settings.*;
 
 public class HOI4Fixes {
 
 	public static final String applicationVersion = "2.2";
 	public static String hoi4_dir_name;
 	// "C:\\Users\\daria\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\nadivided-dev";
-	public static LocalizationSettings settings;
+	public static LocalizerSettings settings;
 
 	public static File hoi4_dir;
 	public static File states_dir;
@@ -33,7 +33,7 @@ public class HOI4Fixes {
 
 
 		/* load settings */
-		settings = new LocalizationSettings(); 	// loads settings automatically
+		settings = new LocalizerSettings(); 	// loads settings automatically
 
 		if (settings.isNull(MOD_DIRECTORY))
 		/* get directories */

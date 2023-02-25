@@ -8,13 +8,14 @@ import java.util.List;
 import static hoi4Parser.Parser.usefulData;
 
 public class Expression {
+    private static Iterator<String> it;
     String expression;
     List<Expression> subexpressions;
 
     public Expression(String[] expressions) {
         subexpressions = new ArrayList<Expression>();
 
-        for (Iterator<String> it = Arrays.stream(expressions).iterator(); it.hasNext(); ) {
+        for (it = Arrays.stream(expressions).iterator(); it.hasNext(); ) {
             String exp = it.next();
             if (!usefulData(exp)) {
                 continue;
@@ -27,8 +28,8 @@ public class Expression {
                 expression = exp;
             }
             else {
-                if (exp.contains("={")) {
-                    subexpressions.add(new Expression(exp, it));
+                if (exp.contains("=") && exp.contains("{")){
+                    subexpressions.add(new Expression(exp, true));
                 }
                 else {
                     subexpressions.add(new Expression(exp));
@@ -39,21 +40,24 @@ public class Expression {
     }
 
     // for adding subexpressions with subexpressions
-    private Expression(String exp, Iterator<String> it) {
+    private Expression(String exp, boolean iterator) {
+//        exp = exp.replaceAll(" ", "");
         expression = exp;
         subexpressions = new ArrayList<>();
 
         while(it.hasNext()) {
             exp = it.next();
+//            System.out.println(exp);
+
             if (!usefulData(exp)) {
                 continue;
             }
             if(exp.trim().equals("}")) {
-                continue;
+                break;
             }
 
-            if (exp.contains("={")) {
-                subexpressions.add(new Expression(exp, it));
+            if (exp.contains("=") && exp.contains("{")) {
+                subexpressions.add(new Expression(exp, true));
             }
             else {
                 subexpressions.add(new Expression(exp));
@@ -62,8 +66,24 @@ public class Expression {
     }
 
     public Expression(String expression) {
+        expression = expression.replaceAll("= ", "=");
+        expression = expression.replaceAll(" =", "=");
         this.expression = expression;
         this.subexpressions = null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof String) {
+            return expression.trim().equals(((String) obj).trim());
+        }
+        if(obj instanceof Expression) {
+            return expression.trim().equals(((Expression) obj).expression.trim());
+            // shouldnt check subexpression equality - enables easy search by string -> expression stuff
+//                    && subexpressions.equals(((Expression) obj).subexpressions);
+        }
+
+        return false;
     }
 
     // fuck HOI4
@@ -71,14 +91,14 @@ public class Expression {
     // hi gamerz
     public Expression get(String s) {
         Expression exp = new Expression(s);
-        if(expression != null && expression.equals(s)) {
-            return exp;
+        if(expression != null && expression.trim().contains(s)) {
+            return new Expression(expression);
         }
         else {
-            if (subexpressions != null && subexpressions.contains(exp)) {
-                return subexpressions.get(subexpressions.indexOf(exp));
-            }
-            else {
+//            if (subexpressions != null && subexpressions.contains(exp)) {
+//                return subexpressions.get(subexpressions.indexOf(exp));
+//            }
+//            else {
                 if (subexpressions != null) {
                     for (Expression subexp : subexpressions) {
                         if (subexp.get(s) != null) {
@@ -86,13 +106,44 @@ public class Expression {
                         }
                     }
                 }
-            }
+//            }
         }
 
         return null;
     }
 
     public int getValue() {
-        return 0;       // TODO RETURN VALUE IN EXPRESSION LINE
+        if (subexpressions != null) {
+            return Integer.MIN_VALUE;
+        }
+
+        String exp = expression;
+        if (expression.contains("#")) {
+            exp = expression.substring(0, expression.indexOf("#"));
+        }
+
+        return Integer.parseInt(exp.substring(exp.indexOf("=") + 1).trim().replace(",", ""));
+    }
+
+    public double getDoubleValue() {
+        if (subexpressions != null) {
+            return Double.NaN;
+        }
+
+        String exp = expression;
+        if (expression.contains("#")) {
+            exp = expression.substring(0, expression.indexOf("#"));
+        }
+
+        return Double.parseDouble(exp.substring(exp.indexOf("=") + 1).trim().replace(",", ""));
+    }
+
+
+    public String getName() {
+        if (subexpressions != null) {
+            return null;
+        }
+
+        return expression.substring(expression.indexOf("=") + 1).trim();
     }
 }

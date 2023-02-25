@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class LocalizationSettings {
+public class LocalizerSettings {
 
     public String get(Settings setting) {
         return settingValues.get(setting);
@@ -13,6 +13,7 @@ public class LocalizationSettings {
     public enum Settings {
         MOD_DIRECTORY,
         CURRENT_MOD,        // todo not in use
+        CIVILIAN_MILITARY_FACTORY_MAX_RATIO,            // ratio for civ/mil factories highlight in buildings view
     }
 
     private File settings_file;
@@ -21,7 +22,7 @@ public class LocalizationSettings {
     private PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); 		        // for println syntax
     private static HashMap<Settings, String> settingValues = new HashMap<>();
 
-    public LocalizationSettings() throws IOException {
+    public LocalizerSettings() throws IOException {
         String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
         String hoi4localizer_path = user_docs_path + File.separator + "hoi4localizer";
         new File(hoi4localizer_path).mkdir();
