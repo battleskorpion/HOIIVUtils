@@ -1,5 +1,7 @@
 package hoi4_coding.history;
 
+import hoi4Parser.Expression;
+import hoi4Parser.Parser;
 import hoi4_coding.HOI4Fixes;
 import hoi4_coding.buildings.Infrastructure;
 
@@ -30,36 +32,17 @@ public class State {
 //        int navalPorts = 0;       has a province location
 //        int airfields = 0;        has a province location
 
-        //todo fix constructor time not working issues
-//        Scanner stateReader;
-//        try {
-//            stateReader = new Scanner(stateFile);
-//        } catch (FileNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        String[] data = stateReader.next().replaceAll("\s", "").split("=\\{|}|\n");
-//
-//        // parse buildings
+        // parse state data
+        Parser stateParser = new Parser(stateFile);
+        Expression exp = stateParser.expressions();
 
+        Expression buildingsExp = exp.get("buildings={");
 
-//        String dataJoined = String.join(" ", data).;
-//
-//        int infrastructureIndex = dataJoined.indexOf("infrastructure");
-//        int populationIndex = dataJoined.indexOf("manpower");
-//        int civFactoriesIndex = dataJoined.indexOf("industrial_complex");
-//        int milFactoriesIndex = dataJoined.indexOf("arms_factory");
-//        int dockyardsIndex = dataJoined.indexOf("dockyard");
-//
-//        if(infrastructureIndex >= 0) {
-//
-//        }
-
-
+        buildingsExp.get(infrastructure);
 
         // data record
         stateData = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories,
-                dockyards, navalPorts, airfields);
+                dockyards, 0, 0);
 
         // add to states list
         states.add(this);

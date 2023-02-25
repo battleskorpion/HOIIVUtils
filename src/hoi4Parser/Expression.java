@@ -57,8 +57,33 @@ public class Expression {
     }
 
     public Expression(String expression) {
-
+        this.expression = expression;
+        this.subexpressions = null;
     }
 
+    // fuck HOI4
+    // schizophrenics
+    // hi gamerz
+    public Expression get(String s) {
+        Expression exp = new Expression(s);
+        if(expression.equals(s)) {
+            return exp;
+        }
+        else {
+            if (subexpressions.contains(exp)) {
+                return subexpressions.get(subexpressions.indexOf(exp));
+            }
+            else {
+                for (Expression subexp : subexpressions) {
+                    if (subexp.get(s) != null) {
+                        return subexp.get(s);
+                    }
+                }
+            }
+        }
 
+        return null;
+    }
+
+    public int getValue()
 }

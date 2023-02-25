@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Parser {
-    Expression fileExpressions;
+    private final Expression fileExpressions;
 
     public Parser(File file) {
         Scanner scanner;
@@ -25,10 +25,15 @@ public class Parser {
 //
 //            if(data.contains("={"))
 //        }
+
     }
 
     public Parser(String filename) {
         this(new File(filename));
+    }
+
+    public Expression expressions() {
+        return fileExpressions;
     }
 
     protected static boolean usefulData(String data) {
