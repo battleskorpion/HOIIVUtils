@@ -22,7 +22,11 @@ public class LocalizationSettings {
     private static HashMap<Settings, String> settingValues = new HashMap<>();
 
     public LocalizationSettings() throws IOException {
-        settings_file = new File("src\\settings\\localization_settings.txt");
+        String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
+        String hoi4localizer_path = user_docs_path + File.separator + "hoi4localizer";
+        new File(hoi4localizer_path).mkdir();
+        settings_file = new File(hoi4localizer_path + File.separator + "localization_settings.txt");
+        settings_file.createNewFile();
 
         readSettings();
     }

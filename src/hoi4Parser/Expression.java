@@ -1,5 +1,6 @@
 package hoi4Parser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,8 @@ public class Expression {
     List<Expression> subexpressions;
 
     public Expression(String[] expressions) {
+        subexpressions = new ArrayList<Expression>();
+
         for (Iterator<String> it = Arrays.stream(expressions).iterator(); it.hasNext(); ) {
             String exp = it.next();
             if (!usefulData(exp)) {
@@ -38,6 +41,8 @@ public class Expression {
     // for adding subexpressions with subexpressions
     private Expression(String exp, Iterator<String> it) {
         expression = exp;
+        subexpressions = new ArrayList<>();
+
         while(it.hasNext()) {
             exp = it.next();
             if (!usefulData(exp)) {
@@ -66,17 +71,19 @@ public class Expression {
     // hi gamerz
     public Expression get(String s) {
         Expression exp = new Expression(s);
-        if(expression.equals(s)) {
+        if(expression != null && expression.equals(s)) {
             return exp;
         }
         else {
-            if (subexpressions.contains(exp)) {
+            if (subexpressions != null && subexpressions.contains(exp)) {
                 return subexpressions.get(subexpressions.indexOf(exp));
             }
             else {
-                for (Expression subexp : subexpressions) {
-                    if (subexp.get(s) != null) {
-                        return subexp.get(s);
+                if (subexpressions != null) {
+                    for (Expression subexp : subexpressions) {
+                        if (subexp.get(s) != null) {
+                            return subexp.get(s);
+                        }
                     }
                 }
             }
@@ -85,5 +92,7 @@ public class Expression {
         return null;
     }
 
-    public int getValue()
+    public int getValue() {
+        return 0;       // TODO RETURN VALUE IN EXPRESSION LINE
+    }
 }

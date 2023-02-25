@@ -38,7 +38,7 @@ public class State {
 
         Expression buildingsExp = exp.get("buildings={");
 
-        buildingsExp.get(infrastructure);
+//        buildingsExp.get("infrastructure"); // TODO after here etc.
 
         // data record
         stateData = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories,
