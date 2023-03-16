@@ -83,7 +83,7 @@ public class FixFocus extends HOI4Fixes {
 		for (Focus focus : focusTree.focuses())
 		{
 			// if focus not in localized focuses
-			if (!focuses_localized.contains(focus)) 
+			if (!focuses_localized.contains(focus.id()))
 			{ 
 				// write to loc file 
 				// separate words in focus name

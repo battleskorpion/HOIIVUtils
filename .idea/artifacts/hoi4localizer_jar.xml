@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="hoi4localizer:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/hoi4localizer_jar</output-path>
+    <root id="archive" name="hoi4localizer.jar">
+      <element id="module-output" name="hoi4localizer" />
+    </root>
+  </artifact>
+</component>
