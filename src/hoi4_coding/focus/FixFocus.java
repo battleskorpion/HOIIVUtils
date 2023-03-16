@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -76,8 +77,10 @@ public class FixFocus extends HOI4Fixes {
 		//ArrayList<String> focus_loc_array; 
 		focusLocProgress.incrementProgressBar();
 
+		int numFocusesUnloc = 0;
+		ArrayList<Focus> focusesUnloc = new ArrayList<>();
 		assert focusTree.list() != null;
-		for (String focus : focusTree.list())
+		for (Focus focus : focusTree.focuses())
 		{
 			// if focus not in localized focuses
 			if (!focuses_localized.contains(focus)) 
@@ -85,26 +88,31 @@ public class FixFocus extends HOI4Fixes {
 				// write to loc file 
 				// separate words in focus name
 				int i = 0;	//counter
-				if (CountryTags.exists(focus.substring(0, 3)))
+				if (CountryTags.exists(focus.id().substring(0, 3)))
 				{
 					i += 3;
 				}
-				// make a list of each word in focus_loc
-				//focus_loc_array = new ArrayList<String>(Arrays.asList(focus_loc.split(" ")));
-				
-				focus_loc = focus + loc_key + " ";
-				focus_loc += "\""; 
-				focus_loc += titleCapitalize(focus.substring(i, focus.length()).replaceAll("_+", " ").trim()); // regex
-				focus_loc += "\""; 
+
+				// localize focus name
+				focus_loc = titleCapitalize(focus.id().substring(i, focus.id().length()).replaceAll("_+", " ").trim()); // regex
 				locPWriter.println("");
-				locPWriter.println("    " + focus_loc); 									// NO TAB, YML PREFERS SPACES 
+				locPWriter.print("    " + focus + loc_key + " "); 									// NO TAB, YML PREFERS SPACES
+				locPWriter.print("\"" + focus_loc + "\"" + "\n");
+				// set focus loc
+				focus.setFocusLoc(focus_loc);
+
 				// add blank desc line: 
-				locPWriter.println("    " + focus + "_desc" + loc_key + " " + "\"" + "\""); // NO TAB, YML PREFERS SPACES 
-				System.out.println("added focus to loc, focus " + focus_loc); 
+				locPWriter.println("    " + focus + "_desc" + loc_key + " " + "\"" + "\""); // NO TAB, YML PREFERS SPACES
+				System.out.println("added focus to loc, focus " + focus_loc);
+				numFocusesUnloc++;
+				focusesUnloc.add(focus);
 			}
 		}
 		locPWriter.close();
+		/* ui */
 		focusLocProgress.incrementProgressBar();
+		focusLocProgress.setNumFocusesUnloc(numFocusesUnloc);
+		focusLocProgress.refreshUnlocFocusesTable(focusesUnloc);
 
 		return true; 
 	}

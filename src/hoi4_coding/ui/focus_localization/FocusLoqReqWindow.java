@@ -61,7 +61,7 @@ public class FocusLoqReqWindow extends JFrame {
 
         setContentPane(FocusLoqReqJPanel);
         setSize(700, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
     }
 

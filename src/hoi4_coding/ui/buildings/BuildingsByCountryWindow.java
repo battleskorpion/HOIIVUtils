@@ -179,7 +179,7 @@ public class BuildingsByCountryWindow extends JFrame {
 
         setContentPane(BuildingsByCountryWindowJPanel);
         setSize(700, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
     }
 
@@ -217,38 +217,32 @@ public class BuildingsByCountryWindow extends JFrame {
             // resources
             if (aluminumDisplayAsPercentOption.isSelected()) {
                 buildingsTableModel.setValueAt((double) resources.aluminum() / resourcesAll.aluminum(), i, 12);
-            }
-            else {
+            } else {
                 buildingsTableModel.setValueAt((double) resources.aluminum(), i, 12);
             }
             if (chromiumDisplayAsPercentOption.isSelected()) {
                 buildingsTableModel.setValueAt((double) resources.chromium() / resourcesAll.chromium(), i, 13);
-            }
-            else {
+            } else {
                 buildingsTableModel.setValueAt((double) resources.chromium(), i, 13);
             }
             if (oilDisplayAsPercentOption.isSelected()) {
                 buildingsTableModel.setValueAt((double) resources.oil() / resourcesAll.oil(), i, 14);
-            }
-            else {
+            } else {
                 buildingsTableModel.setValueAt((double) resources.oil(), i, 14);
             }
             if (rubberDisplayAsPercentOption.isSelected()) {
                 buildingsTableModel.setValueAt((double) resources.rubber() / resourcesAll.rubber(), i, 15);
-            }
-            else {
+            } else {
                 buildingsTableModel.setValueAt((double) resources.rubber(), i, 15);
             }
             if (steelDisplayAsPercentOption.isSelected()) {
                 buildingsTableModel.setValueAt((double) resources.steel() / resourcesAll.steel(), i, 16);
-            }
-            else {
+            } else {
                 buildingsTableModel.setValueAt((double) resources.steel(), i, 16);
             }
             if (tungstenDisplayAsPercentOption.isSelected()) {
                 buildingsTableModel.setValueAt((double) resources.tungsten() / resourcesAll.tungsten(), i, 17);
-            }
-            else {
+            } else {
                 buildingsTableModel.setValueAt((double) resources.tungsten(), i, 17);
             }
         }

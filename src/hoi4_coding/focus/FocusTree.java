@@ -12,12 +12,12 @@ import java.util.Scanner;
 
 public final class FocusTree extends HOI4Fixes {
 
+	private ArrayList<Focus> focuses;
 	private ArrayList<String> focus_names;
 	private File focus_file;
 	private CountryTag country;
 	private LocalizationFile locFile = null;
-
-	private String id;		// todo all
+	private String id;
 	private CountryModifier countryModifier;
 	private boolean default_focus;
 	private Point continuous_focus_position;
@@ -30,6 +30,7 @@ public final class FocusTree extends HOI4Fixes {
 	public FocusTree(File focus_file) throws IOException {
 		this.focus_file = focus_file;
 		country = new CountryTag("###");
+		focuses = new ArrayList<>();
 
 		find(focus_file);
 		FocusTrees.add(country(), this);
@@ -37,7 +38,7 @@ public final class FocusTree extends HOI4Fixes {
 
 	/**
 	 * Instantiate new focus tree.
-	 * @param id Focus id (usually kept same as file/country name).
+	 * @param id Focus tree id (usually kept same as file/country name).
 	 */
 	public FocusTree(String id, CountryTag tag) {
 		this.id = id;
@@ -45,6 +46,7 @@ public final class FocusTree extends HOI4Fixes {
 		default_focus = false;
 		continuous_focus_position = new Point(50, 1200);
 		country = tag;
+		focuses = new ArrayList<>();
 
 		FocusTrees.add(country(), this);
 	}
@@ -66,7 +68,9 @@ public final class FocusTree extends HOI4Fixes {
 				} else {
 					if (data.trim().length() >= 3 && data.trim().substring(0, 3).equals(("id="))) {
 						focus_name_index = data.indexOf("id=") + 3;
-						focus_names.add(data.substring(focus_name_index, data.length()).trim());
+						String focus_id = data.substring(focus_name_index, data.length()).trim();
+						focus_names.add(focus_id);
+						focuses.add(new Focus(focus_id));
 
 						/* get country */
 						country = new CountryTag(data.trim().substring(focus_name_index, focus_name_index + 3));
@@ -142,4 +146,8 @@ public final class FocusTree extends HOI4Fixes {
 		}
 		return country.toString();
 	}
+
+    public ArrayList<Focus> focuses() {
+		return focuses;
+    }
 }

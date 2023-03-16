@@ -10,18 +10,18 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class FocusTrees extends HOI4Fixes {
-    private static final HashMap<CountryTag, FocusTree> focuses = new HashMap<>();
+    private static final HashMap<CountryTag, FocusTree> focusTrees = new HashMap<>();
 
     public static HashMap<CountryTag, FocusTree> add(CountryTag tag, FocusTree focusTree) {
-        focuses.put(tag, focusTree);
-        return focuses;
+        focusTrees.put(tag, focusTree);
+        return focusTrees;
     }
 
     public static FocusTree[] list() {
-        return focuses.values().toArray(new FocusTree[0]);
+        return focusTrees.values().toArray(new FocusTree[0]);
     }
 
-    public static FocusTree get(CountryTag tag) { return focuses.get(tag); }
+    public static FocusTree get(CountryTag tag) { return focusTrees.get(tag); }
     public static FocusTree getdankwizardisfrench(CountryTag tag) {
         for (FocusTree tree : list()) {
             assert tree.country() != null;

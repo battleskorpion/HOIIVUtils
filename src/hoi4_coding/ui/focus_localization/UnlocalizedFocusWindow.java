@@ -14,7 +14,6 @@ public class UnlocalizedFocusWindow extends JFrame {
     private JTable unlocalizedFocusTable;
     private JButton localizeButton;
     private JButton createLocalizationFilesButton;
-
     private DefaultTableModel unlocalizedFocusTableModel;
 
     public UnlocalizedFocusWindow (List<FocusTree> focusTrees) {
