@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static hoi4_coding.HOI4Fixes.states_dir;
+import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
 
 public class State {
     private static final ArrayList<State> states = new ArrayList<>();
@@ -118,6 +118,7 @@ public class State {
     }
 
     public static void readStates() {
+        File states_dir = new File(HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.states_folder);
         for (File stateFile : Objects.requireNonNull(states_dir.listFiles())) {
             new State(stateFile);
         }

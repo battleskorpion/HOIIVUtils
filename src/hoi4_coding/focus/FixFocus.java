@@ -2,6 +2,7 @@ package hoi4_coding.focus;
 
 import hoi4_coding.country.CountryTags;
 import hoi4_coding.HOI4Fixes;
+import hoi4_coding.ui.focus.FocusTreeLocProgress;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,12 +24,15 @@ public class FixFocus extends HOI4Fixes {
 
 		// some vars
 		ArrayList<String> focuses_localized = new ArrayList<String>();
-		//ArrayList<String> focuses_nonlocalized = new ArrayList<String>(); 
-		ArrayList<String> country_tags;
+		//ArrayList<String> focuses_nonlocalized = new ArrayList<String>();
 		System.out.println(hoi4_dir_name);
 		String loc_key = ":0";
 		FocusTree focusTree = new FocusTree(focus_file);
-		
+
+		/* open the ui */
+		FocusTreeLocProgress focusLocProgress = new FocusTreeLocProgress(focusTree);
+		focusLocProgress.setVisible(true);
+
 		// more vars
 		Scanner locReader = new Scanner(loc_file);
 		
@@ -47,7 +51,7 @@ public class FixFocus extends HOI4Fixes {
 				break; 
 			}
 		}
-
+		focusLocProgress.incrementProgressBar();
 
 		/* list of localized focuses */
 		while (locReader.hasNextLine()) {
@@ -60,7 +64,8 @@ public class FixFocus extends HOI4Fixes {
 				}
 			}
 		}
-		locReader.close(); 
+		locReader.close();
+		focusLocProgress.incrementProgressBar();
 		
 		// do stuff with nonlocalized focuses
 		// some vars
@@ -69,7 +74,9 @@ public class FixFocus extends HOI4Fixes {
 		PrintWriter locPWriter = new PrintWriter(locBWriter); 		        // for println syntax
 		String focus_loc; 
 		//ArrayList<String> focus_loc_array; 
-		
+		focusLocProgress.incrementProgressBar();
+
+		assert focusTree.list() != null;
 		for (String focus : focusTree.list())
 		{
 			// if focus not in localized focuses
@@ -78,7 +85,7 @@ public class FixFocus extends HOI4Fixes {
 				// write to loc file 
 				// separate words in focus name
 				int i = 0;	//counter
-				if (CountryTags.list().contains(focus.substring(0, 3)))
+				if (CountryTags.exists(focus.substring(0, 3)))
 				{
 					i += 3;
 				}
@@ -96,8 +103,9 @@ public class FixFocus extends HOI4Fixes {
 				System.out.println("added focus to loc, focus " + focus_loc); 
 			}
 		}
-		locPWriter.close(); 
-		
+		locPWriter.close();
+		focusLocProgress.incrementProgressBar();
+
 		return true; 
 	}
 

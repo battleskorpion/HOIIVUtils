@@ -2,29 +2,35 @@ package settings;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
-public class LocalizerSettings {
+public class MapgenSettings {
 
     public String get(Settings setting) { return settingValues.get(setting); }
 
     public enum Settings {
-        MOD_DIRECTORY,
-        CURRENT_MOD,        // todo not in use
-        CIVILIAN_MILITARY_FACTORY_MAX_RATIO,            // ratio for civ/mil factories highlight in buildings view
+        HEIGHTMAP_NAME,         // "heightmap.bmp";
+        STATE_BORDERS_NAME,     // "state_borders.bmp";
+        GENERATION_TYPE,
+        HEIGHTMAP_SEA_LEVEL,    // 95
+        IMAGE_WIDTH,            // 4608, 5632 default
+        IMAGE_HEIGHT,           // 2816, 2048 - default
+        NUM_SEEDS_Y,            // 64
+        NUM_SEEDS_X,            // 64
     }
 
     private File settings_file;
     private FileWriter settingsWriter;
     private BufferedWriter settingsBWriter;
     private PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); 		        // for println syntax
-    private static HashMap<Settings, String> settingValues = new HashMap<>();
+    private static HashMap<MapgenSettings.Settings, String> settingValues = new HashMap<>();
 
-    public LocalizerSettings() throws IOException {
+    public MapgenSettings() throws IOException {
         String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
         String hoi4localizer_path = user_docs_path + File.separator + "hoi4localizer";
         new File(hoi4localizer_path).mkdir();
-        settings_file = new File(hoi4localizer_path + File.separator + "localization_settings.txt");
+        settings_file = new File(hoi4localizer_path + File.separator + "mapgen_settings.txt");
         settings_file.createNewFile();
 
         readSettings();
@@ -44,7 +50,7 @@ public class LocalizerSettings {
             /* read settings */
             while(settingReader.hasNextLine()) {
                 String[] readSetting = settingReader.nextLine().split(";");
-                Settings setting = Settings.valueOf(readSetting[0]);
+                MapgenSettings.Settings setting = MapgenSettings.Settings.valueOf(readSetting[0]);
 
                 settingValues.put(setting, readSetting[1]);
             }
@@ -55,27 +61,12 @@ public class LocalizerSettings {
 
     }
 
-    /**
-     * @deprecated
-     */
-    public void writeSettings() throws IOException {
-        settingsWriter = new FileWriter(settings_file, false);		// true = append
-        settingsBWriter = new BufferedWriter(settingsWriter);
-        settingsPWriter = new PrintWriter(settingsBWriter);
-
-        for (Settings setting : Settings.values()) {
-            settingsPWriter.println(setting.name() + ";" + settingValues.get(setting));
-        }
-
-        settingsPWriter.close();
-    }
-
     public void writeBlankSettings() throws IOException {
         settingsWriter = new FileWriter(settings_file, false);		// true = append
         settingsBWriter = new BufferedWriter(settingsWriter);
         settingsPWriter = new PrintWriter(settingsBWriter);
 
-        for (Settings setting : Settings.values()) {
+        for (MapgenSettings.Settings setting : MapgenSettings.Settings.values()) {
             settingsPWriter.println(setting.name() + ";" + "null");
 
             settingValues.put(setting, "null");
@@ -85,20 +76,21 @@ public class LocalizerSettings {
 
     }
 
-    public void saveSettings(Settings setting, String settingValue) throws IOException {
+    public void saveSettings(MapgenSettings.Settings setting, String settingValue) throws IOException {
         settingsWriter = new FileWriter(settings_file, false);		// true = append
         settingsBWriter = new BufferedWriter(settingsWriter);
         settingsPWriter = new PrintWriter(settingsBWriter);
 
         settingValues.put(setting, settingValue);
-        for (Settings s : Settings.values()) {
+        for (LocalizerSettings.Settings s : LocalizerSettings.Settings.values()) {
             settingsPWriter.println(s.name() + ";" + settingValues.get(s));
         }
 
         settingsPWriter.close();
     }
 
-    public boolean isNull(Settings modDirectory) {
+    public boolean isNull(LocalizerSettings.Settings modDirectory) {
         return settingValues.get(modDirectory).equals("null");
     }
+
 }

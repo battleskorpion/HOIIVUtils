@@ -52,6 +52,10 @@ public class CountryTags extends HOI4Fixes {
 	}
 
 	public static boolean exists(String substring) {
+		if (country_tags == null) {
+			list();
+		}
+
 		return country_tags.contains(new CountryTag(substring));
 	}
 }
