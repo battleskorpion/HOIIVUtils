@@ -1,12 +1,12 @@
-package hoi4_coding.ui.focus;
+package ui.menu;
 
 import hoi4_coding.HOI4Fixes;
 import hoi4_coding.focus.FixFocus;
 import hoi4_coding.focus.localization.FocusLocReqFinder;
 import hoi4_coding.history.State;
 import hoi4_coding.idea.FixIdea;
-import hoi4_coding.ui.buildings.BuildingsByCountryWindow;
-import hoi4_coding.ui.focus_localization.FocusLoqReqWindow;
+import ui.buildings.BuildingsByCountryWindow;
+import ui.focus_localization.FocusLoqReqWindow;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

@@ -1,4 +1,4 @@
-package hoi4_coding.ui.buildings;
+package ui.buildings;
 
 import hoi4_coding.buildings.Infrastructure;
 import hoi4_coding.buildings.Resources;
@@ -7,20 +7,15 @@ import hoi4_coding.country.CountryTags;
 import hoi4_coding.history.State;
 
 import javax.swing.*;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 public class BuildingsByCountryWindow extends JFrame {
     private JPanel BuildingsByCountryWindowJPanel;

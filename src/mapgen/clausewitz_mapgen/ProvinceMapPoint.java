@@ -1,4 +1,4 @@
-package clausewitz_mapgen;
+package mapgen.clausewitz_mapgen;
 
 public class ProvinceMapPoint {
 	int x;

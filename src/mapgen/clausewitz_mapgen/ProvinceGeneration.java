@@ -1,16 +1,10 @@
-package clausewitz_mapgen;
-
-import opensimplex2.OpenSimplex2;
+package mapgen.clausewitz_mapgen;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
-import java.util.concurrent.RejectedExecutionException;
 
 //import static mapgen.values.stateBorderMap;
 

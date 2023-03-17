@@ -1,4 +1,4 @@
-package hoi4_coding.ui.tree_builder;
+package ui.tree_builder;
 
 import javax.swing.*;
 

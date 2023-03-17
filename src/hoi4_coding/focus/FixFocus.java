@@ -2,14 +2,13 @@ package hoi4_coding.focus;
 
 import hoi4_coding.country.CountryTags;
 import hoi4_coding.HOI4Fixes;
-import hoi4_coding.ui.focus.FocusTreeLocProgress;
+import ui.focus.FocusTreeLocProgress;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 

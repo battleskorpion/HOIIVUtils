@@ -12,8 +12,8 @@ public class Parser {
         Scanner scanner;
         try {
             scanner = new Scanner(file);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (FileNotFoundException exc) {
+            throw new RuntimeException(exc);
         }
 
         ArrayList<String> data = new ArrayList<>();

@@ -1,4 +1,4 @@
-package hoi4_coding.ui.focus_localization;
+package ui.focus_localization;
 
 import hoi4_coding.country.CountryTag;
 import hoi4_coding.focus.FocusTree;

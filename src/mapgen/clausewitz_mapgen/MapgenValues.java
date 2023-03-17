@@ -1,4 +1,4 @@
-package clausewitz_mapgen;
+package mapgen.clausewitz_mapgen;
 
 public abstract class MapgenValues {
     public static String heightmapName = "heightmap.bmp";

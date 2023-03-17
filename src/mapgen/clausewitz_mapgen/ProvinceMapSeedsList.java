@@ -1,4 +1,4 @@
-package clausewitz_mapgen;
+package mapgen.clausewitz_mapgen;
 
 import java.awt.*;
 import java.util.ArrayList;

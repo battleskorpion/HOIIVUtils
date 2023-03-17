@@ -1,16 +1,9 @@
 package hoi4_coding;
 
-import hoi4_coding.focus.*;
-import hoi4_coding.focus.localization.FocusLocReqFinder;
-import hoi4_coding.history.State;
-import hoi4_coding.ui.buildings.BuildingsByCountryWindow;
-import hoi4_coding.ui.focus.Mainmenu;
-import hoi4_coding.ui.focus_localization.FocusLoqReqWindow;
-import hoi4_coding.idea.*;
+import ui.menu.Mainmenu;
 import settings.LocalizerSettings;
 
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
