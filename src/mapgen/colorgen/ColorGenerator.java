@@ -20,15 +20,9 @@ public class ColorGenerator {
     private static ArrayList<ArrayList<Color>> colors;
 
     public static void main(String[] args) throws IOException {
+        ColorGenerator colorGenerator = new ColorGenerator();
         HOI4Fixes.settings = new LocalizerSettings();
-        findExistingColors();
-        colorGenerator(100);
-
-        try {
-            ImageIO.write(colorMap, "bmp", new File("colors.bmp"));
-        } catch (IOException exc) {
-            throw new RuntimeException(exc);
-        }
+        colorGenerator.generateColors(100);
     }
 
     private static void findExistingColors() {
@@ -37,7 +31,7 @@ public class ColorGenerator {
 
     }
 
-    public static void colorGenerator(int numColors) {
+    public void generateColors(int numColors) {
         /* create colors bmp */
         int imageWidth;
         int imageHeight;
@@ -46,6 +40,9 @@ public class ColorGenerator {
         imageHeight = (int) Math.ceil(Math.sqrt(numColors));
         numPixels = imageWidth * imageHeight;
         colorMap = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+
+        /* find existing colors */
+        findExistingColors();
 
         /* colors array list */
         colors = new ArrayList<>(imageHeight);
@@ -66,6 +63,12 @@ public class ColorGenerator {
 
             colorMap.setRGB(i / imageWidth, i % imageWidth, color.getRGB());
             colors.get(i % imageWidth).add(color);
+        }
+
+        try {
+            ImageIO.write(colorMap, "bmp", new File("colors.bmp"));
+        } catch (IOException exc) {
+            throw new RuntimeException(exc);
         }
     }
 }

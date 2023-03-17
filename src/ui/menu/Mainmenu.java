@@ -6,6 +6,7 @@ import hoi4_coding.focus.localization.FocusLocReqFinder;
 import hoi4_coding.history.State;
 import hoi4_coding.idea.FixIdea;
 import ui.buildings.BuildingsByCountryWindow;
+import ui.colorgen.ColorGeneratorMenu;
 import ui.focus_localization.FocusLoqReqWindow;
 
 import javax.swing.*;
@@ -23,6 +24,8 @@ public class Mainmenu extends JFrame {
     private JButton viewBuildingsButton;
     private JPanel mainmenuJPanel;
     private JButton settingsButton;
+    private JButton generateProvinceColorsButton;
+
     public Mainmenu() {
         setContentPane(mainmenuJPanel);
         setSize(700, 500);
@@ -153,5 +156,17 @@ public class Mainmenu extends JFrame {
             }
         });
 
+        generateProvinceColorsButton.addActionListener(new ActionListener() {
+            /**
+             * Invoked when an action occurs.
+             *
+             * @param e the event to be processed
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ColorGeneratorMenu colorGenMenu = new ColorGeneratorMenu();
+                colorGenMenu.setVisible(true);
+            }
+        });
     }
 }
