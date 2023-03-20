@@ -1,7 +1,7 @@
 package ui.focus;
 
-import hoi4_coding.focus.Focus;
-import hoi4_coding.focus.FocusTree;
+import clausewitz_coding.focus.Focus;
+import clausewitz_coding.focus.FocusTree;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

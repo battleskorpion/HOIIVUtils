@@ -87,4 +87,5 @@ public class ColorGeneratorMenu extends JFrame {
         }
         return numColors;
     }
+
 }

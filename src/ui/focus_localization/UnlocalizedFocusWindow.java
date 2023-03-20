@@ -1,8 +1,8 @@
 package ui.focus_localization;
 
-import hoi4_coding.focus.FocusTree;
-import hoi4_coding.focus.FocusTrees;
-import hoi4_coding.localization.LocalizationFile;
+import clausewitz_coding.focus.FocusTree;
+import clausewitz_coding.focus.FocusTrees;
+import clausewitz_coding.localization.LocalizationFile;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

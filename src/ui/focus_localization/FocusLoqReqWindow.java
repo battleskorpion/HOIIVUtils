@@ -1,8 +1,8 @@
 package ui.focus_localization;
 
-import hoi4_coding.country.CountryTag;
-import hoi4_coding.focus.FocusTree;
-import hoi4_coding.focus.FocusTrees;
+import clausewitz_coding.country.CountryTag;
+import clausewitz_coding.focus.FocusTree;
+import clausewitz_coding.focus.FocusTrees;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

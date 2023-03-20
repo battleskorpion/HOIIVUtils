@@ -1,6 +1,6 @@
 package ui.menu;
 
-import hoi4_coding.HOI4Fixes;
+import clausewitz_coding.HOI4Fixes;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;

@@ -1,10 +1,10 @@
 package ui.buildings;
 
-import hoi4_coding.buildings.Infrastructure;
-import hoi4_coding.buildings.Resources;
-import hoi4_coding.country.CountryTag;
-import hoi4_coding.country.CountryTags;
-import hoi4_coding.history.State;
+import clausewitz_coding.history.buildings.Infrastructure;
+import clausewitz_coding.history.buildings.Resources;
+import clausewitz_coding.country.CountryTag;
+import clausewitz_coding.country.CountryTags;
+import clausewitz_coding.history.state.State;
 
 import javax.swing.*;
 import javax.swing.table.*;

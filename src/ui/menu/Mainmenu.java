@@ -1,10 +1,10 @@
 package ui.menu;
 
-import hoi4_coding.HOI4Fixes;
-import hoi4_coding.focus.FixFocus;
-import hoi4_coding.focus.localization.FocusLocReqFinder;
-import hoi4_coding.history.State;
-import hoi4_coding.idea.FixIdea;
+import clausewitz_coding.HOI4Fixes;
+import clausewitz_coding.focus.FixFocus;
+import clausewitz_coding.focus.localization.FocusLocReqFinder;
+import clausewitz_coding.history.state.State;
+import clausewitz_coding.idea.FixIdea;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.colorgen.ColorGeneratorMenu;
 import ui.focus_localization.FocusLoqReqWindow;

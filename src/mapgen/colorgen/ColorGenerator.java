@@ -1,7 +1,7 @@
 package mapgen.colorgen;
 
 import hoi4Parser.Parser;
-import hoi4_coding.HOI4Fixes;
+import clausewitz_coding.HOI4Fixes;
 import settings.LocalizerSettings;
 
 import javax.imageio.ImageIO;
