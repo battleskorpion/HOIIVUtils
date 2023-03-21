@@ -39,6 +39,10 @@ public abstract class Idea {
 	}
 	
 	public static ArrayList<Idea> getIdeas(File file) {
+		if (!file.exists() || file.isDirectory()) {
+			return null;
+		}
+
 		ArrayList<Idea> ideas = new ArrayList<>();
 		
 		for (Idea idea : idea_list) {
@@ -46,7 +50,10 @@ public abstract class Idea {
 				ideas.add(idea); 
 			}
 		}
-		
+
+		if(ideas.size() == 0) {
+			return null;
+		}
 		return ideas;
 	}
 	
@@ -58,6 +65,7 @@ public abstract class Idea {
 		return null; 		//TODO 
 	}
 
+	// todo this had a purpose likely, what was it :(
 //	public static ArrayList<String> find(File idea_file) throws IOException {
 //		Scanner ideaReader = new Scanner(idea_file);
 //		idea_list = new ArrayList<String>();

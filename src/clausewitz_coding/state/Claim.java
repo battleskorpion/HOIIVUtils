@@ -1,4 +1,4 @@
-package clausewitz_coding.history.state;
+package clausewitz_coding.state;
 
 import clausewitz_coding.code.ClausewitzDate;
 import clausewitz_coding.country.CountryTag;

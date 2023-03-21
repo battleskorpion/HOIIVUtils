@@ -1,5 +1,6 @@
 package clausewitz_coding;
 
+import clausewitz_coding.state.StateCategory;
 import ui.menu.Mainmenu;
 import settings.LocalizerSettings;
 
@@ -13,19 +14,14 @@ import static settings.LocalizerSettings.Settings.*;
 public class HOI4Fixes {
 
 	public static final String applicationVersion = "2.2";
+	public static LocalizerSettings settings;
 	public static String hoi4_dir_name;
 	// "C:\\Users\\daria\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\nadivided-dev";
-	public static LocalizerSettings settings;
-
-	//public static File hoi4_dir;
-	//public static File states_dir;
-	//public static File strat_region_dir;
-	//public static File localization_eng_dir;
-	//public static File focus_dir;
 	public static String focus_folder;
 	public static String states_folder;
 	public static String strat_region_dir;
 	public static String localization_eng_folder;
+	public static boolean DEV_MODE = false;
 
 	public static void main (String[] args) throws IOException {
 		/* ui preliminary */
@@ -39,7 +35,7 @@ public class HOI4Fixes {
 		settings = new LocalizerSettings(); 	// loads settings automatically
 
 		if (settings.isNull(MOD_DIRECTORY))
-		/* get directories */
+		/* get directory */
 		{
 			JFileChooser j = new JFileChooser();
 			j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -57,13 +53,15 @@ public class HOI4Fixes {
 		}
 
 		System.out.println(settings.get(MOD_DIRECTORY));
-		//hoi4_dir = new File(settings.get(MOD_DIRECTORY));
 		states_folder = "\\history\\states";
 		strat_region_dir = "\\map\\strategicregions";
 		localization_eng_folder = "\\localisation\\english";
 		focus_folder = "\\common\\national_focus";
 
-		/* select focus localization */
+		/* init */
+		StateCategory.loadStateCategories();
+
+		/* main menu */
 		//String[] loc_options = {"Fix Focus Localization", "Find Focuses without Localization", "Find Idea Localization", "View Buildings"};
 		Mainmenu mainmenuWindow = new Mainmenu();
 		mainmenuWindow.setVisible(true);

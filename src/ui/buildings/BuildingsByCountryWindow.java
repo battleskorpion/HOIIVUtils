@@ -1,10 +1,10 @@
 package ui.buildings;
 
-import clausewitz_coding.history.buildings.Infrastructure;
-import clausewitz_coding.history.buildings.Resources;
+import clausewitz_coding.state.buildings.Infrastructure;
+import clausewitz_coding.state.buildings.Resources;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.country.CountryTags;
-import clausewitz_coding.history.state.State;
+import clausewitz_coding.state.State;
 
 import javax.swing.*;
 import javax.swing.table.*;

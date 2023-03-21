@@ -1,11 +1,11 @@
-package clausewitz_coding.history.state;
+package clausewitz_coding.state;
 
 import clausewitz_coding.code.ClausewitzDate;
 import hoi4Parser.Expression;
 import hoi4Parser.Parser;
 import clausewitz_coding.HOI4Fixes;
-import clausewitz_coding.history.buildings.Infrastructure;
-import clausewitz_coding.history.buildings.Resources;
+import clausewitz_coding.state.buildings.Infrastructure;
+import clausewitz_coding.state.buildings.Resources;
 import clausewitz_coding.country.CountryTag;
 
 import java.io.File;
@@ -17,13 +17,17 @@ import java.util.Objects;
 import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
 
 public class State {
+    /* static */
     private static final ArrayList<State> states = new ArrayList<>();
 
     private File stateFile;
+    private int stateID;
     private String name;
-    private Infrastructure stateData;
-    private Resources resourcesData;
     private Map<ClausewitzDate, Owner> owner;
+    private StateCategory stateCategory;
+    private Infrastructure stateInfrastructure;
+    private Resources resourcesData;
+
 
     public State(File stateFile) {
         /* init */
@@ -46,49 +50,59 @@ public class State {
         int steel = 0;
         int tungsten = 0;
 
-        // parse state data
+        /* parse state data */
         Parser stateParser = new Parser(stateFile);
         Expression exp = stateParser.expressions();
 
-        Expression buildingsExp = exp.get("buildings = {");
-
-        if(buildingsExp == null) {
-            System.err.println("State error: buildings does not exist, " + stateFile.getName());
-            stateData = null;
-            return;
+        // id
+        if (exp.get("id") != null) {
+            stateID = exp.get("id").getValue();
         }
-
         // owner
-        if(exp.get("owner") != null) {
+        if (exp.get("owner") != null) {
             // empty date constructor for default date
             owner.put(new ClausewitzDate(), new Owner(new CountryTag(exp.get("owner").getName())));
         }
-
-        // infrastructure
-        if (buildingsExp.get("infrastructure") != null) {
-            infrastructure = buildingsExp.get("infrastructure").getValue(); // TODO after here etc.
-        }
-
         // population (manpower)
         if (exp.get("manpower") != null) {
             population = exp.get("manpower").getValue(); // TODO after here etc.
         }
-        // civilian factories
-        if (exp.get("industrial_complex") != null) {
-            civilianFactories = exp.get("industrial_complex").getValue(); // TODO after here etc.
+        // state category
+        if (exp.get("state_category") != null) {
+
         }
-        // military factories
-        if (exp.get("arms_factory") != null) {
-            militaryFactories = exp.get("arms_factory").getValue(); // TODO after here etc.
+
+        /* buildings */
+        Expression buildingsExp = exp.get("buildings = {");
+
+        if (buildingsExp == null) {
+            System.err.println("State error: buildings does not exist, " + stateFile.getName());
+            stateInfrastructure = null;
         }
-        // dockyards
-        if (exp.get("dockyard") != null) {
-            dockyards = exp.get("dockyard").getValue(); // TODO after here etc.
+        else {
+            // infrastructure
+            if (buildingsExp.get("infrastructure") != null) {
+                infrastructure = buildingsExp.get("infrastructure").getValue(); // TODO after here etc.
+            }
+            // civilian factories
+            if (exp.get("industrial_complex") != null) {
+                civilianFactories = exp.get("industrial_complex").getValue(); // TODO after here etc.
+            }
+            // military factories
+            if (exp.get("arms_factory") != null) {
+                militaryFactories = exp.get("arms_factory").getValue(); // TODO after here etc.
+            }
+            // dockyards
+            if (exp.get("dockyard") != null) {
+                dockyards = exp.get("dockyard").getValue(); // TODO after here etc.
+            }
+            // airfields
+            if (exp.get("air_base") != null) {
+                airfields = exp.get("air_base").getValue(); // TODO after here etc.
+            }
         }
-        // airfields
-        if (exp.get("air_base") != null) {
-            airfields = exp.get("air_base").getValue(); // TODO after here etc.
-        }
+
+        /* resources */
         // aluminum (aluminium bri'ish spelling)
         if (exp.get("aluminium") != null) {
             aluminum = (int) exp.get("aluminium").getDoubleValue();
@@ -115,7 +129,7 @@ public class State {
         }
 
         // data record
-        stateData = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories,
+        stateInfrastructure = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories,
                 dockyards, 0, airfields);
         resourcesData = new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
         // add to states list
@@ -154,7 +168,7 @@ public class State {
         int airfields = 0;
 
         for (State state : states) {
-            Infrastructure stateData = state.getStateData();
+            Infrastructure stateData = state.getStateInfrastructure();
             infrastructure += stateData.infrastructure();
             population += stateData.population();
             civilianFactories += stateData.civilianFactories();
@@ -195,8 +209,8 @@ public class State {
         return listFromCountry(country).size();
     }
 
-    public Infrastructure getStateData() {
-        return stateData;
+    public Infrastructure getStateInfrastructure() {
+        return stateInfrastructure;
     }
 
     public Resources getResources() {

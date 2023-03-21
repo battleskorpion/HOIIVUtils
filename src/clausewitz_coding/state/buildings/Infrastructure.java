@@ -1,4 +1,4 @@
-package clausewitz_coding.history.buildings;
+package clausewitz_coding.state.buildings;
 
 // can be used for either states or countries
 public record Infrastructure(int population, int infrastructure, int civilianFactories, int militaryFactories, int navalDockyards,

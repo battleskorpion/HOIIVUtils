@@ -44,9 +44,9 @@ public class FixIdea extends HOI4Fixes {
 			if (usefulData(data)) {
 				if (data.contains(":")) {
 					// fixed crash when there were no ideas localized hopefully
-					if (Idea.getIdeas(idea_file) != null && Idea.list(idea_file)
+					if (Idea.getIdeas(idea_file) != null && Idea.getIdeas(idea_file)
 							.contains(data.substring(0, data.indexOf(":")))) {
-						ideas_localized.add(data.substring(0, data.indexOf(":")).trim());
+						ideas_localized.add(data.substring(0, data.indexOf(":")).trim());	// idea id
 					}
 				}
 			}
@@ -62,7 +62,7 @@ public class FixIdea extends HOI4Fixes {
 
 		assert Idea.getIdeas() != null;
 		for (Idea idea : Idea.getIdeas()) {
-			if(!ideas_localized.contains(idea)) {
+			if(!ideas_localized.contains(idea.ideaID)) {
 				// write to loc file
 				// separate words in idea name
 				int i = 0;

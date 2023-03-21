@@ -3,7 +3,7 @@ package ui.menu;
 import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.focus.FixFocus;
 import clausewitz_coding.focus.localization.FocusLocReqFinder;
-import clausewitz_coding.history.state.State;
+import clausewitz_coding.state.State;
 import clausewitz_coding.idea.FixIdea;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.colorgen.ColorGeneratorMenu;
@@ -18,6 +18,7 @@ import java.io.IOException;
 import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
 
 public class Mainmenu extends JFrame {
+    private Mainmenu menu;
     private JButton fixFocusLocalizationButton;
     private JButton findFocusesWithoutLocalizationButton;
     private JButton findIdeaLocalizationButton;
@@ -25,8 +26,14 @@ public class Mainmenu extends JFrame {
     private JPanel mainmenuJPanel;
     private JButton settingsButton;
     private JButton generateProvinceColorsButton;
+    private JButton statisticsButton;
 
     public Mainmenu() {
+        menu = this;
+
+        /* statistics button */
+        toggleStatisticsButton();
+
         setContentPane(mainmenuJPanel);
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -150,7 +157,7 @@ public class Mainmenu extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                MenuSettings menuSettings = new MenuSettings();
+                MenuSettings menuSettings = new MenuSettings(menu);
 
                 menuSettings.setVisible(true);
             }
@@ -168,5 +175,25 @@ public class Mainmenu extends JFrame {
                 colorGenMenu.setVisible(true);
             }
         });
+        statisticsButton.addActionListener(new ActionListener() {
+            /**
+             * Invoked when an action occurs.
+             *
+             * @param e the event to be processed
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DevStatistics devStatistics = new DevStatistics();
+                devStatistics.setVisible(true);
+            }
+        });
+    }
+
+    void toggleStatisticsButton() {
+        if (!HOI4Fixes.DEV_MODE) {
+            statisticsButton.setVisible(false);
+        } else {
+            statisticsButton.setVisible(true);
+        }
     }
 }

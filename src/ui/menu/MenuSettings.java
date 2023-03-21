@@ -3,17 +3,24 @@ package ui.menu;
 import clausewitz_coding.HOI4Fixes;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 
+import static clausewitz_coding.HOI4Fixes.DEV_MODE;
 import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
 
 public class MenuSettings extends JFrame {
+    private Mainmenu parent_menu;
     private JPanel menuSettingsJPanel;
     private JTextField modDirectoryTextField;
+    private JCheckBox devModeCheckBox;
 
-    public MenuSettings() {
+    public MenuSettings(Mainmenu menu) {
+        parent_menu = menu;
+
         if (HOI4Fixes.settings.get(MOD_DIRECTORY) != null) {
             modDirectoryTextField.setText(HOI4Fixes.settings.get(MOD_DIRECTORY));
         }
@@ -53,6 +60,23 @@ public class MenuSettings extends JFrame {
                 }
 
                 modDirectoryTextField.setText(HOI4Fixes.settings.get(MOD_DIRECTORY));
+            }
+        });
+        devModeCheckBox.addActionListener(new ActionListener() {
+            /**
+             * Invoked when an action occurs.
+             *
+             * @param e the event to be processed
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (devModeCheckBox.isSelected()) {
+                    DEV_MODE = true;
+                } else {
+                    DEV_MODE = false;
+                }
+
+                parent_menu.toggleStatisticsButton();
             }
         });
     }
