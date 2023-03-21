@@ -137,7 +137,17 @@ public class State {
     }
 
     public static void readStates() {
-        File states_dir = new File(HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.states_folder);
+        File states_dir = new File(HOI4Fixes.hoi4_dir_name + HOI4Fixes.states_folder);
+
+        if (states_dir.listFiles() == null) {
+            System.err.println("In State.java - " + HOI4Fixes.states_folder + " is not a directory, or etc.");
+            return;
+        }
+        if (states_dir.listFiles().length == 0) {
+            System.out.println("No states found in " + HOI4Fixes.states_folder);
+            return;
+        }
+
         for (File stateFile : Objects.requireNonNull(states_dir.listFiles())) {
             new State(stateFile);
         }
