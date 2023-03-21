@@ -50,6 +50,8 @@ public class HOI4Fixes {
 
 			/* directory acquired, now save settings */
 			settings.saveSettings(MOD_DIRECTORY, hoi4_dir_name);
+		} else {
+			hoi4_dir_name = settings.get(MOD_DIRECTORY);
 		}
 
 		System.out.println(settings.get(MOD_DIRECTORY));
