@@ -54,7 +54,7 @@ public class CountryTags extends HOI4Fixes {
 				throw new IOException("Missing " + country_tags_folder);
 			}
 			for (File file: country_tags_folder.listFiles()) {
-				countryTagsReader = new Scanner(countries_main_file);
+				countryTagsReader = new Scanner(file);
 
 				// make a list of country tags
 				while (countryTagsReader.hasNextLine()) {
@@ -74,7 +74,7 @@ public class CountryTags extends HOI4Fixes {
 		/* read other country tags */
 		if (country_tags_folder.listFiles() != null) {
 			for (File file : country_tags_folder.listFiles()) {
-				if (file.equals(countries_main_file)) {
+				if (countries_main_file.exists() && file.equals(countries_main_file)) {
 					continue;
 				}
 				// don't include dynamic country tags (used for civil wars)
@@ -82,7 +82,7 @@ public class CountryTags extends HOI4Fixes {
 					continue;
 				}
 
-				countryTagsReader = new Scanner(countries_main_file);
+				countryTagsReader = new Scanner(file);
 
 				// make a list of country tags
 				while (countryTagsReader.hasNextLine()) {
