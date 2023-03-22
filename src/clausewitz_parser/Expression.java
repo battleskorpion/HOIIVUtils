@@ -1,11 +1,11 @@
-package hoi4Parser;
+package clausewitz_parser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import static hoi4Parser.Parser.usefulData;
+import static clausewitz_parser.Parser.usefulData;
 
 public class Expression {
     private static Iterator<String> it;

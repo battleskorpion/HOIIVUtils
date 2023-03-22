@@ -1,4 +1,4 @@
-package ui.focus;
+package ui.focus_localization;
 
 import clausewitz_coding.focus.Focus;
 import clausewitz_coding.focus.FocusTree;

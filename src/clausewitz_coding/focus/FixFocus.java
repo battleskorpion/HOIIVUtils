@@ -2,7 +2,7 @@ package clausewitz_coding.focus;
 
 import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.HOI4Fixes;
-import ui.focus.FocusTreeLocProgress;
+import ui.focus_localization.FocusTreeLocProgress;
 
 import java.io.BufferedWriter;
 import java.io.File;

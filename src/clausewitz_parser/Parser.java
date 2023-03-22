@@ -1,4 +1,4 @@
-package hoi4Parser;
+package clausewitz_parser;
 
 import java.io.File;
 import java.io.FileNotFoundException;

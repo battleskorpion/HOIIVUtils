@@ -1,8 +1,8 @@
 package clausewitz_coding.state;
 
 import clausewitz_coding.code.ClausewitzDate;
-import hoi4Parser.Expression;
-import hoi4Parser.Parser;
+import clausewitz_parser.Expression;
+import clausewitz_parser.Parser;
 import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.state.buildings.Infrastructure;
 import clausewitz_coding.state.buildings.Resources;
@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
-
 public class State {
     /* static */
     private static final ArrayList<State> states = new ArrayList<>();
@@ -23,7 +21,7 @@ public class State {
     private File stateFile;
     private int stateID;
     private String name;
-    private Map<ClausewitzDate, Owner> owner;
+    private final Map<ClausewitzDate, Owner> owner;
     private StateCategory stateCategory;
     private Infrastructure stateInfrastructure;
     private Resources resourcesData;
@@ -34,7 +32,7 @@ public class State {
         owner = new HashMap<>();
 
         this.stateFile = stateFile;
-        this.name = stateFile.getName();
+        this.name = stateFile.getName().replace(".txt", "");
 
         int infrastructure = 0;
         int population = 0;
@@ -139,16 +137,16 @@ public class State {
     public static void readStates() {
         File states_dir = new File(HOI4Fixes.hoi4_dir_name + HOI4Fixes.states_folder);
 
-        if (states_dir.listFiles() == null) {
+        if (!states_dir.exists() || !states_dir.isDirectory()) {
             System.err.println("In State.java - " + HOI4Fixes.states_folder + " is not a directory, or etc.");
             return;
         }
-        if (states_dir.listFiles().length == 0) {
+        if (states_dir.listFiles() == null || states_dir.listFiles().length == 0) {
             System.out.println("No states found in " + HOI4Fixes.states_folder);
             return;
         }
 
-        for (File stateFile : Objects.requireNonNull(states_dir.listFiles())) {
+        for (File stateFile : states_dir.listFiles()) {
             new State(stateFile);
         }
     }
@@ -161,8 +159,13 @@ public class State {
         ArrayList<State> countryStates = new ArrayList<>();
 
         for(State state : states) {
-            if(state.owner.equals(tag)) {
-                countryStates.add(state);
+            Owner owner = state.owner.get(ClausewitzDate.current());
+            if (owner != null) {
+                if (owner.isCountry(tag)) {
+                    countryStates.add(state);
+                }
+            } else {
+                System.out.println("No owner for state: " + state);
             }
         }
 
@@ -225,6 +228,10 @@ public class State {
 
     public Resources getResources() {
         return resourcesData;
+    }
+
+    public String toString() {
+        return name;
     }
 
     protected static boolean usefulData(String data) {

@@ -51,7 +51,7 @@ public final class FocusTree extends HOI4Fixes {
 		FocusTrees.add(country(), this);
 	}
 
-	public ArrayList<String> find(File focus_file) throws IOException {
+    public ArrayList<String> find(File focus_file) throws IOException {
 		Scanner focusReader = new Scanner(focus_file);
 		focus_names = new ArrayList<String>();
 

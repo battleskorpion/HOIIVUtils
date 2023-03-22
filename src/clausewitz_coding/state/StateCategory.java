@@ -1,8 +1,8 @@
 package clausewitz_coding.state;
 
 import clausewitz_coding.HOI4Fixes;
-import hoi4Parser.Expression;
-import hoi4Parser.Parser;
+import clausewitz_parser.Expression;
+import clausewitz_parser.Parser;
 
 import java.io.File;
 import java.util.ArrayList;

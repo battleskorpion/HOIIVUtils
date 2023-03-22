@@ -1,6 +1,6 @@
 package mapgen.colorgen;
 
-import hoi4Parser.Parser;
+import clausewitz_parser.Parser;
 import clausewitz_coding.HOI4Fixes;
 import settings.LocalizerSettings;
 
