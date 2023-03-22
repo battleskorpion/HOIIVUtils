@@ -48,13 +48,37 @@ public class CountryTags extends HOI4Fixes {
 				}
 			}
 		} else {
+			System.out.println("loading default country tags because country_tags\\00_countries does not exist");
+			country_tags_folder = new File("hoi4files\\country_tags"); 	// with program
+			if (!country_tags_folder.exists()) {
+				throw new IOException("Missing " + country_tags_folder);
+			}
+			for (File file: country_tags_folder.listFiles()) {
+				countryTagsReader = new Scanner(countries_main_file);
 
+				// make a list of country tags
+				while (countryTagsReader.hasNextLine()) {
+					String data = countryTagsReader.nextLine().replaceAll("\\s", "");
+					if (usefulData(data)) {
+						// takes the defined tag at the beginning of the line
+						CountryTag tag = new CountryTag(data.substring(0, data.indexOf('=')).trim());
+						if (tag.equals(CountryTag.NULL_TAG)) {
+							continue;
+						}
+						country_tags.add(tag);
+					}
+				}
+			}
 		}
 
 		/* read other country tags */
 		if (country_tags_folder.listFiles() != null) {
 			for (File file : country_tags_folder.listFiles()) {
 				if (file.equals(countries_main_file)) {
+					continue;
+				}
+				// don't include dynamic country tags (used for civil wars)
+				if (file.getName().contains("dynamic_countries")) {
 					continue;
 				}
 
@@ -70,7 +94,6 @@ public class CountryTags extends HOI4Fixes {
 							continue; 
 						}
 						country_tags.add(tag);
-						//System.out.println(data.substring(0, data.indexOf('=')));
 					}
 				}
 			}
