@@ -49,11 +49,11 @@ public class CountryTags extends HOI4Fixes {
 			}
 		} else {
 			System.out.println("loading default country tags because country_tags\\00_countries does not exist");
-			country_tags_folder = new File("hoi4files\\country_tags"); 	// with program
-			if (!country_tags_folder.exists()) {
-				throw new IOException("Missing " + country_tags_folder);
+			File country_tags_default_folder = new File("hoi4files\\country_tags"); 	// with program
+			if (!country_tags_default_folder.exists()) {
+				throw new IOException("Missing " + country_tags_default_folder);
 			}
-			for (File file: country_tags_folder.listFiles()) {
+			for (File file: country_tags_default_folder.listFiles()) {
 				countryTagsReader = new Scanner(file);
 
 				// make a list of country tags
