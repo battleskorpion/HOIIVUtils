@@ -261,7 +261,7 @@ public class BuildingsByCountryWindow extends JFrame {
         TableColumn tableColumn2 = buildingsTable.getColumnModel().getColumn(12);
         tableColumn2.setCellRenderer(new DefaultTableCellRenderer() {
             private NumberFormat numberFormat = DecimalFormat.getInstance();
-            private NumberFormat nfPercent = NumberFormat.getPercentInstance();
+            private NumberFormat nfPercent = new DecimalFormat(" #,##0.#%");
 
             @Override
             protected void setValue(Object aValue) {
@@ -278,7 +278,7 @@ public class BuildingsByCountryWindow extends JFrame {
         TableColumn tableColumn3 = buildingsTable.getColumnModel().getColumn(13);
         tableColumn3.setCellRenderer(new DefaultTableCellRenderer() {
             private NumberFormat numberFormat = DecimalFormat.getInstance();
-            private NumberFormat nfPercent = NumberFormat.getPercentInstance();
+            private NumberFormat nfPercent = new DecimalFormat(" #,##0.#%");
 
 
             @Override
@@ -296,7 +296,7 @@ public class BuildingsByCountryWindow extends JFrame {
         TableColumn tableColumn4 = buildingsTable.getColumnModel().getColumn(14);
         tableColumn4.setCellRenderer(new DefaultTableCellRenderer() {
             private NumberFormat numberFormat = DecimalFormat.getInstance();
-            private NumberFormat nfPercent = NumberFormat.getPercentInstance();
+            private NumberFormat nfPercent = new DecimalFormat(" #,##0.#%");
 
             @Override
             protected void setValue(Object aValue) {
@@ -313,7 +313,7 @@ public class BuildingsByCountryWindow extends JFrame {
         TableColumn tableColumn5 = buildingsTable.getColumnModel().getColumn(15);
         tableColumn5.setCellRenderer(new DefaultTableCellRenderer() {
             private NumberFormat numberFormat = DecimalFormat.getInstance();
-            private NumberFormat nfPercent = NumberFormat.getPercentInstance();
+            private NumberFormat nfPercent = new DecimalFormat(" #,##0.#%");
 
             @Override
             protected void setValue(Object aValue) {
@@ -330,7 +330,7 @@ public class BuildingsByCountryWindow extends JFrame {
         TableColumn tableColumn6 = buildingsTable.getColumnModel().getColumn(16);
         tableColumn6.setCellRenderer(new DefaultTableCellRenderer() {
             private NumberFormat numberFormat = DecimalFormat.getInstance();
-            private NumberFormat nfPercent = NumberFormat.getPercentInstance();
+            private NumberFormat nfPercent = new DecimalFormat(" #,##0.#%");
 
             @Override
             protected void setValue(Object aValue) {
@@ -347,7 +347,7 @@ public class BuildingsByCountryWindow extends JFrame {
         TableColumn tableColumn7 = buildingsTable.getColumnModel().getColumn(17);
         tableColumn7.setCellRenderer(new DefaultTableCellRenderer() {
             private NumberFormat numberFormat = DecimalFormat.getInstance();
-            private NumberFormat nfPercent = NumberFormat.getPercentInstance();
+            private NumberFormat nfPercent = new DecimalFormat(" #,##0.#%");
 
             @Override
             protected void setValue(Object aValue) {
