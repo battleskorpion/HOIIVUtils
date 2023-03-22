@@ -18,7 +18,21 @@ public class Parser {
 
         ArrayList<String> data = new ArrayList<>();
         while(scanner.hasNextLine()) {
-             data.add(scanner.nextLine());
+            String line = scanner.nextLine();
+            if (line.contains("j")) {
+                /*
+                if text [a-z] after '{', replace with "{\n\t + text"
+                 */
+                line.replaceAll("\\{\\s*([a-z]+)", "{\n\t$1");        // maybe change [a-z] to [a-z|0-9]
+                line.replaceAll("([a-z|0-9]+\\s)+(})", "$1\n$2");
+                String[] lines = line.split("\n");
+                for (String s : lines) {
+                    s += "\n";
+                    data.add(s);
+                }
+            } else {
+                data.add(line);
+            }
         }
         System.out.println("Lines parsed: " + data.size() + ", file: " + file.getName());
         fileExpressions = new Expression(data.toArray(new String[]{}));

@@ -194,14 +194,14 @@ public class BuildingsByCountryWindow extends JFrame {
             Resources resources = State.resourcesOfStates(State.listFromCountry(country));
             Resources resourcesAll = State.resourcesOfStates();
 
+            // stats
             buildingsTableModel.setValueAt(country.toString(), i, 0);
             buildingsTableModel.setValueAt(infrastructure.population(), i, 1);
             buildingsTableModel.setValueAt(infrastructure.civilianFactories(), i, 2);
             buildingsTableModel.setValueAt(infrastructure.militaryFactories(), i, 3);
             buildingsTableModel.setValueAt(infrastructure.navalDockyards(), i, 4);
             buildingsTableModel.setValueAt(infrastructure.airfields(), i, 5);
-//            buildingsTableModel.setValueAt(State.list().get(i).getStateData().population(), i, 1);
-//            System.out.println(State.list().get(i).getStateData().infrastructure());
+
             // percentages
             buildingsTableModel.setValueAt((double)infrastructure.civilianFactories() / infrastructure.militaryFactories(), i, 6);
             buildingsTableModel.setValueAt((double)infrastructure.population() / (infrastructure.civilianFactories() + infrastructure.militaryFactories()), i, 7);
@@ -209,6 +209,7 @@ public class BuildingsByCountryWindow extends JFrame {
             buildingsTableModel.setValueAt((double)infrastructure.population() / infrastructure.militaryFactories(), i, 9);
             buildingsTableModel.setValueAt((double)infrastructure.population() / (infrastructure.airfields() * 200), i, 10);
             buildingsTableModel.setValueAt((double)infrastructure.population() / State.numStates(country), i, 11);
+
             // resources
             if (aluminumDisplayAsPercentOption.isSelected()) {
                 buildingsTableModel.setValueAt((double) resources.aluminum() / resourcesAll.aluminum(), i, 12);

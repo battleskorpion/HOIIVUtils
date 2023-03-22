@@ -12,9 +12,11 @@ public abstract class Idea {
 
 	/* idea */
 	protected String ideaID;
-//	private ArrayList<String> loc_name;
-	protected ArrayList<Modifier> modifiers;
+	//	private ArrayList<String> loc_name;
 	protected File file; 			// file idea is defined in
+	protected ArrayList<Modifier> modifiers;
+	protected int removal_cost = -1;		// -1 default
+
 
 	protected Idea(String ideaID) {
 		this.ideaID = ideaID;
