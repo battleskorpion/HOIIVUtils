@@ -31,7 +31,7 @@ public class CountryTags extends HOI4Fixes {
 		/* read 00_countries if applicable */
 		/* else load vanilla tags */
 		Scanner countryTagsReader = null;
-		if (countries_main_file != null) {
+		if (countries_main_file.exists()) {
 			countryTagsReader = new Scanner(countries_main_file);
 
 			// make a list of country tags
