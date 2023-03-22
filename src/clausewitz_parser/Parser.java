@@ -19,7 +19,7 @@ public class Parser {
         ArrayList<String> data = new ArrayList<>();
         while(scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            if (line.contains("j")) {
+            if (line.contains("{")) {
                 /*
                 if text [a-z] after '{', replace with "{\n\t + text"
                  */
