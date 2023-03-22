@@ -23,8 +23,8 @@ public class Parser {
                 /*
                 if text [a-z] after '{', replace with "{\n\t + text"
                  */
-                line.replaceAll("\\{\\s*([a-z]+)", "{\n\t$1");        // maybe change [a-z] to [a-z|0-9]
-                line.replaceAll("([a-z|0-9]+\\s)+(})", "$1\n$2");
+                line = line.replaceAll("\\{\\s*([a-z]+)", "{\n\t$1");        // maybe change [a-z] to [a-z|0-9]
+                line = line.replaceAll("([a-z|0-9]+\\s)+(})", "$1\n$2");
                 String[] lines = line.split("\n");
                 for (String s : lines) {
                     s += "\n";
