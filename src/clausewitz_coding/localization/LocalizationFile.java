@@ -73,9 +73,11 @@ public final class LocalizationFile extends File {
             if (HOI4Fixes.usefulData(data)) {
                 if (data.contains(loc_key)) {
                     String id = data.substring(0, data.indexOf(loc_key)).trim();
-                    String text = data.substring(data.indexOf(loc_key) + loc_key.length()).trim();
+                    String text = data.substring(data.indexOf("\"") + 1, data.lastIndexOf("\"")).trim();
+                    if (text.charAt(text.length() - 1) == '\n') {
+                        text = text.substring(0, text.length() - 1);
+                    }
                     text = text.replaceAll("(Â§)", "§");
-                    text = text.substring(1, text.length() - 1);    // remove beginning and end ""
                     Localization localization = new Localization(id, text);
                     localizationList.add(localization);
                     // print to statistics?
@@ -89,13 +91,21 @@ public final class LocalizationFile extends File {
         BufferedWriter BWriter = new BufferedWriter(writer);
         PrintWriter PWriter = new PrintWriter(BWriter); 		        // for println syntax
 
+        /* bom */
+        PWriter.write(0xef); // emits 0xef
+        PWriter.write(0xbb); // emits 0xbb
+        PWriter.write(0xbf); // emits 0xbf
+
         String localization_line;
 
         PWriter.println(language);
 
         for (Localization localization : localizationList) {
+            String loc = localization.toString();
+            loc = loc.replaceAll("§", "Â§");        // necessary with UTF-8 BOM
+            System.out.println(loc);
             PWriter.println("");
-            PWriter.print("    " + localization + "\n");
+            PWriter.print("    " + loc + "\n");
         }
 
         PWriter.close();
@@ -146,7 +156,7 @@ public final class LocalizationFile extends File {
                 listTemp.remove(loc);      // record is final
                 listTemp.add(new Localization(key, text));
                 localizationList = listTemp;
-                return; 
+                return;
             }
         }
 

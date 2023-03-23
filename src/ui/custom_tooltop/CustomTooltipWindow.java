@@ -60,7 +60,7 @@ public class CustomTooltipWindow extends JFrame {
 
         setContentPane(CustomTooltipWindowJPanel);
         setSize(700, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
 
         /* action listeners */
@@ -159,7 +159,7 @@ public class CustomTooltipWindow extends JFrame {
                     String text;
                     text = (String) customTooltipTableModel.getValueAt(i, 1);
 
-                    if (text != null && (!text.equals("[null]"))) {
+                    if (text != null && (!text.equals("[none]"))) {
                         String key = (String) customTooltipTableModel.getValueAt(i, 0);
                         try {
                             localizationFile.setLocalization(key, text);
