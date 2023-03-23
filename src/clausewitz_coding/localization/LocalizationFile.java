@@ -73,14 +73,33 @@ public final class LocalizationFile extends File {
             if (HOI4Fixes.usefulData(data)) {
                 if (data.contains(loc_key)) {
                     String id = data.substring(0, data.indexOf(loc_key)).trim();
-                    String text = data.substring(data.indexOf("\"") + 1, data.lastIndexOf("\"")).trim();
+                    String text = data.substring(data.indexOf("\""), data.lastIndexOf("\"") + 1).trim();
                     if (text.charAt(text.length() - 1) == '\n') {
                         text = text.substring(0, text.length() - 1);
+                    }
+                    if(text.length() == 0) {
+                        continue;
+                    }
+                    if (text.charAt(0) == '\"') {
+                        text = text.substring(1, text.length());
+                    }
+                    if(text.length() == 0) {
+                        continue;
+                    }
+                    if (text.charAt(text.length() - 1) == '\"') {
+                        text = text.substring(0, text.length() - 1);
+                    }
+                    if(text.length() == 0) {
+                        continue;
                     }
                     text = text.replaceAll("(Â§)", "§");
                     Localization localization = new Localization(id, text);
                     localizationList.add(localization);
                     // print to statistics?
+                    System.out.println("localization: " + text);
+                } else if (data.contains(":")) {
+                    System.err.println("Fix incorrect loc key: " + data);
+                    System.exit(-1);
                 }
             }
         }
