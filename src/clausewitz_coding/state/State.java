@@ -12,7 +12,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class State {
     /* static */
@@ -59,7 +58,7 @@ public class State {
         // owner
         if (exp.get("owner") != null) {
             // empty date constructor for default date
-            owner.put(new ClausewitzDate(), new Owner(new CountryTag(exp.get("owner").getName())));
+            owner.put(new ClausewitzDate(), new Owner(new CountryTag(exp.get("owner").getText())));
         }
         // population (manpower)
         if (exp.get("manpower") != null) {

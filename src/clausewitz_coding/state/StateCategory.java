@@ -50,7 +50,7 @@ public class StateCategory {
 
                 if (exp.get(file.getName()) != null ) {
                     Expression categoryExp = exp.get(file.getName());
-                    String name = categoryExp.getName();
+                    String name = categoryExp.getText();
                     if (categoryExp.get("local_building_slots") != null) {
                         int numBuildingSlots = categoryExp.get("local_building_slots").getValue();
                     } else {

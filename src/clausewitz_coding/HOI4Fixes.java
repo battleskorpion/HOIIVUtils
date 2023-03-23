@@ -70,7 +70,7 @@ public class HOI4Fixes {
 
 	}
 
-	protected static boolean usefulData(String data) {
+	public static boolean usefulData(String data) {
 		if (!data.isEmpty()) {
 			if (data.trim().charAt(0) == '#') {
 				return false;
@@ -85,7 +85,7 @@ public class HOI4Fixes {
 	}
 
 	// for capitalizing
-	protected static String titleCapitalize(String str) {
+	public static String titleCapitalize(String str) {
 		// some vars
 		ArrayList<String> words = new ArrayList<String>(Arrays.asList(str.split(" ")));
 		ArrayList<String> whitelist = new ArrayList<String>();

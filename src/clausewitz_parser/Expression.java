@@ -72,6 +72,11 @@ public class Expression {
         this.subexpressions = null;
     }
 
+    public Expression(Expression exp) {
+        this.expression = exp.expression;
+        this.subexpressions = exp.subexpressions;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof String) {
@@ -89,9 +94,15 @@ public class Expression {
     // fuck HOI4
     // schizophrenics
     // hi gamerz
+
+    /**
+     * Gets the first instance of an expression in parsed file
+     * @param s - expression to find
+     * @return
+     */
     public Expression get(String s) {
         Expression exp = new Expression(s);
-        if(expression != null && expression.trim().contains(s)) {
+        if (expression != null && expression.trim().contains(s)) {
             return new Expression(expression);
         }
         else {
@@ -107,6 +118,19 @@ public class Expression {
                     }
                 }
 //            }
+        }
+
+        return null;
+    }
+    public Expression getSubexpression(String s) {
+        Expression exp = new Expression(s);
+
+        if (subexpressions != null) {
+            for (Expression subexp : subexpressions) {
+                if (subexp.get(s) != null) {
+                    return subexp.get(s);
+                }
+            }
         }
 
         return null;
@@ -139,11 +163,52 @@ public class Expression {
     }
 
 
-    public String getName() {
+    public String getText() {
         if (subexpressions != null) {
             return null;
         }
 
         return expression.substring(expression.indexOf("=") + 1).trim();
+    }
+
+    /**
+     * Gets all instances of an expression in parsed file
+     * @param s expression to find
+     * @return all instances of expression s
+     */
+    public Expression[] getAll(String s) {
+        ArrayList<Expression> expressions = new ArrayList<>();
+
+        Expression exp = new Expression(s);
+        if(expression != null && expression.trim().contains(s)) {
+            expressions.add(new Expression(this));
+        } else if (subexpressions != null) {
+            for (Expression subexp : subexpressions) {
+                Expression[] subexpexps = subexp.getAll(s);
+                if (subexpexps != null) {
+                    expressions.addAll(Arrays.asList(subexpexps));
+                }
+            }
+        }
+
+        // if none found return null
+        if (expressions.size() == 0) {
+            return null;
+        }
+
+        return expressions.toArray(new Expression[]{});
+    }
+
+    public String toString() {
+        String s = "";
+        s += expression;
+        //s += "\n";
+        if (subexpressions != null) {
+            for (Expression exp : subexpressions) {
+                s += exp.toString();
+                s += "\n";
+            }
+        }
+        return s;
     }
 }

@@ -188,7 +188,7 @@ public class BuildingsByCountryWindow extends JFrame {
         buildingsTableModel.setColumnCount(18);
         buildingsTableModel.fireTableDataChanged();
 
-        for(int i = 0; i < countryList.size(); i++) {
+        for (int i = 0; i < countryList.size(); i++) {
             CountryTag country = countryList.get(i);
             Infrastructure infrastructure = State.infrastructureOfStates(State.listFromCountry(country));
             Resources resources = State.resourcesOfStates(State.listFromCountry(country));

@@ -7,6 +7,7 @@ import clausewitz_coding.state.State;
 import clausewitz_coding.idea.FixIdea;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.colorgen.ColorGeneratorMenu;
+import ui.custom_tooltop.CustomTooltipWindow;
 import ui.focus.FocusTreeBuilderWindow;
 import ui.focus_localization.FocusLoqReqWindow;
 
@@ -22,13 +23,14 @@ public class Mainmenu extends JFrame {
     private Mainmenu menu;
     private JButton fixFocusLocalizationButton;
     private JButton findFocusesWithoutLocalizationButton;
-    private JButton findIdeaLocalizationButton;
+    private JButton IdeaLocalizationButton;
     private JButton viewBuildingsButton;
     private JPanel mainmenuJPanel;
     private JButton settingsButton;
     private JButton generateProvinceColorsButton;
     private JButton statisticsButton;
     private JButton focusTreeBuilderButton;
+    private JButton customTooltipLocalizationButton;
 
     public Mainmenu() {
         menu = this;
@@ -100,7 +102,7 @@ public class Mainmenu extends JFrame {
                 window.setVisible(true);
             }
         });
-        findIdeaLocalizationButton.addActionListener(new ActionListener() {
+        IdeaLocalizationButton.addActionListener(new ActionListener() {
             /**
              * Invoked when an action occurs.
              *
@@ -199,6 +201,18 @@ public class Mainmenu extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 FocusTreeBuilderWindow focusTreeBuilderWindow = new FocusTreeBuilderWindow();
                 focusTreeBuilderWindow.setVisible(true);
+            }
+        });
+        customTooltipLocalizationButton.addActionListener(new ActionListener() {
+            /**
+             * Invoked when an action occurs.
+             *
+             * @param e the event to be processed
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CustomTooltipWindow customTooltipWindow = new CustomTooltipWindow();
+                customTooltipWindow.setVisible(true);
             }
         });
     }
