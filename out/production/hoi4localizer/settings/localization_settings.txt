@@ -1,3 +1,0 @@
-MOD_DIRECTORY;C:\Users\daria\Documents\Paradox Interactive\Hearts of Iron IV\mod\nadivided-dev
-CURRENT_MOD;null
-

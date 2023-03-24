@@ -9,6 +9,7 @@ import ui.buildings.BuildingsByCountryWindow;
 import ui.colorgen.ColorGeneratorMenu;
 import ui.custom_tooltop.CustomTooltipWindow;
 import ui.focus.FocusTreeBuilderWindow;
+import ui.focus.FocusTreeStrength;
 import ui.focus_localization.FocusLoqReqWindow;
 
 import javax.swing.*;
@@ -31,6 +32,7 @@ public class Mainmenu extends JFrame {
     private JButton statisticsButton;
     private JButton focusTreeBuilderButton;
     private JButton customTooltipLocalizationButton;
+    private JButton focusTreeStrengthButton;
 
     public Mainmenu() {
         menu = this;
@@ -213,6 +215,13 @@ public class Mainmenu extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 CustomTooltipWindow customTooltipWindow = new CustomTooltipWindow();
                 customTooltipWindow.setVisible(true);
+            }
+        });
+        focusTreeStrengthButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FocusTreeStrength focusTreeStrength = new FocusTreeStrength();
+                focusTreeStrength.setVisible(true);
             }
         });
     }
