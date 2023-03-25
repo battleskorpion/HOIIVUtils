@@ -46,7 +46,7 @@ public class StateCategory {
             /* custom state categories */
             for (File file : state_category_folder.listFiles()) {
                 Parser parser = new Parser(file);
-                Expression exp = parser.expressions();
+                Expression exp = parser.expression();
 
                 if (exp.get(file.getName()) != null ) {
                     Expression categoryExp = exp.get(file.getName());

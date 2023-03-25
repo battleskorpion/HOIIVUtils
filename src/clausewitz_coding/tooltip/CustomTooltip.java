@@ -33,7 +33,7 @@ public class CustomTooltip {
         }
 
         Parser parser = new Parser(file);
-        Expression[] tooltipExpressions = parser.expressions().getAll("custom_trigger_tooltip");
+        Expression[] tooltipExpressions = parser.expression().getAll("custom_trigger_tooltip");
         for (Expression exp : tooltipExpressions) {
             System.out.println("expression: " + exp);
             Expression tooltipExp = exp.getSubexpression("tooltip");

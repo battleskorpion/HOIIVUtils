@@ -37,28 +37,35 @@ public class Parser {
         System.out.println("Lines parsed: " + data.size() + ", file: " + file.getName());
         fileExpressions = new Expression(data.toArray(new String[]{}));
 
-        // testing, print expressions, tests for state 1-cape cod
-//        for(int i = 0; i < fileExpressions.subexpressions.size(); i++) {
-//            System.out.println(fileExpressions.subexpressions.get(i).expression);
-//        }
-        // history
-//        for(int i = 0; i < fileExpressions.subexpressions.get(3).subexpressions.size(); i++) {
-//            System.out.println(fileExpressions.subexpressions.get(3).subexpressions.get(i).expression);
-//        }
-        // buildings
-//        for(int i = 0; i < fileExpressions.subexpressions.get(3).subexpressions.get(1).subexpressions.size(); i++) {
-//            System.out.println(fileExpressions.subexpressions.get(3).subexpressions.get(1).subexpressions.get(i).expression);
-//        }
-
-
+        scanner.close();
     }
 
     public Parser(String filename) {
         this(new File(filename));
     }
 
-    public Expression expressions() {
+    /**
+     * Returns expressions found by parser in file
+     * @return expressions in file parsed
+     */
+    public Expression expression() {
         return fileExpressions;
+    }
+
+    public Expression find(String s) {
+        if (fileExpressions == null) {
+            return null;
+        }
+
+        return fileExpressions.get(s);
+    }
+
+    public Expression[] findAll(String s) {
+        if (fileExpressions == null) {
+            return null;
+        }
+
+        return fileExpressions.getAll(s);
     }
 
     protected static boolean usefulData(String data) {

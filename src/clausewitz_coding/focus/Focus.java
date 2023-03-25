@@ -1,6 +1,7 @@
 package clausewitz_coding.focus;
 
 import clausewitz_coding.code.trigger.Trigger;
+import clausewitz_parser.Expression;
 
 import java.awt.*;
 import java.util.Set;
@@ -53,5 +54,59 @@ public class Focus {
     }
     public String toString() {
         return id(); 
+    }
+
+    /**
+     * Adds focus attributes (prerequisite, mutually exclusive, etc...) to focus
+     * by parsing expressions for each potential attribute
+     * @param focusExp Expression representing focus - must include "focus"
+     */
+    public void loadAttributes(Expression focusExp) {
+        if(focusExp.get("focus") == null) {
+            System.err.println(this + " - Not valid focus expression/definition.");
+            return;
+        }
+
+
+    }
+
+    public void setIcon(Expression exp) {
+
+    }
+
+    public void setIcon(String icon) {
+
+    }
+
+    public void setPrerequisite(Expression exp) {
+
+    }
+
+    public void setPrerequisite(Set<Focus> prerequisite) {
+        this.prerequisite = prerequisite;
+    }
+
+    public void setMutuallyExclusive(Expression exp) {
+
+    }
+
+    /**
+     * 
+     * @param mutually_exclusive
+     */
+    public void setMutuallyExclusive(Set<Focus> mutually_exclusive) {
+        this.mutually_exclusive = mutually_exclusive;
+    }
+
+    public void setAvailable(Expression exp) {
+
+    }
+
+    /**
+     * Sets available trigger of focus
+     * @param trigger
+     */
+    public void setAvailable(Trigger trigger) {
+
     }
 }

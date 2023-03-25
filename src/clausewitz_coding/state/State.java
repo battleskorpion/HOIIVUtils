@@ -49,28 +49,28 @@ public class State {
 
         /* parse state data */
         Parser stateParser = new Parser(stateFile);
-        Expression exp = stateParser.expressions();
+        //Expression exp = stateParser.expressions();
 
         // id
-        if (exp.get("id") != null) {
-            stateID = exp.get("id").getValue();
+        if (stateParser.find("id") != null) {
+            stateID = stateParser.find("id").getValue();
         }
         // owner
-        if (exp.get("owner") != null) {
+        if (stateParser.find("owner") != null) {
             // empty date constructor for default date
-            owner.put(new ClausewitzDate(), new Owner(new CountryTag(exp.get("owner").getText())));
+            owner.put(new ClausewitzDate(), new Owner(new CountryTag(stateParser.find("owner").getText())));
         }
         // population (manpower)
-        if (exp.get("manpower") != null) {
-            population = exp.get("manpower").getValue(); // TODO after here etc.
+        if (stateParser.find("manpower") != null) {
+            population = stateParser.find("manpower").getValue(); // TODO after here etc.
         }
         // state category
-        if (exp.get("state_category") != null) {
+        if (stateParser.find("state_category") != null) {
 
         }
 
         /* buildings */
-        Expression buildingsExp = exp.get("buildings = {");
+        Expression buildingsExp = stateParser.find("buildings = {");
 
         if (buildingsExp == null) {
             System.err.println("State error: buildings does not exist, " + stateFile.getName());
@@ -78,51 +78,51 @@ public class State {
         }
         else {
             // infrastructure
-            if (buildingsExp.get("infrastructure") != null) {
-                infrastructure = buildingsExp.get("infrastructure").getValue(); // TODO after here etc.
+            if (stateParser.find("infrastructure") != null) {
+                infrastructure = stateParser.find("infrastructure").getValue(); // TODO after here etc.
             }
             // civilian factories
-            if (exp.get("industrial_complex") != null) {
-                civilianFactories = exp.get("industrial_complex").getValue(); // TODO after here etc.
+            if (stateParser.find("industrial_complex") != null) {
+                civilianFactories = stateParser.find("industrial_complex").getValue(); // TODO after here etc.
             }
             // military factories
-            if (exp.get("arms_factory") != null) {
-                militaryFactories = exp.get("arms_factory").getValue(); // TODO after here etc.
+            if (stateParser.find("arms_factory") != null) {
+                militaryFactories = stateParser.find("arms_factory").getValue(); // TODO after here etc.
             }
             // dockyards
-            if (exp.get("dockyard") != null) {
-                dockyards = exp.get("dockyard").getValue(); // TODO after here etc.
+            if (stateParser.find("dockyard") != null) {
+                dockyards = stateParser.find("dockyard").getValue(); // TODO after here etc.
             }
             // airfields
-            if (exp.get("air_base") != null) {
-                airfields = exp.get("air_base").getValue(); // TODO after here etc.
+            if (stateParser.find("air_base") != null) {
+                airfields = stateParser.find("air_base").getValue(); // TODO after here etc.
             }
         }
 
         /* resources */
         // aluminum (aluminium bri'ish spelling)
-        if (exp.get("aluminium") != null) {
-            aluminum = (int) exp.get("aluminium").getDoubleValue();
+        if (stateParser.find("aluminium") != null) {
+            aluminum = (int) stateParser.find("aluminium").getDoubleValue();
         }
         // chromium
-        if (exp.get("chromium") != null) {
-            chromium = (int) exp.get("chromium").getDoubleValue();
+        if (stateParser.find("chromium") != null) {
+            chromium = (int) stateParser.find("chromium").getDoubleValue();
         }
         // rubber
-        if (exp.get("rubber") != null) {
-            rubber = (int) exp.get("rubber").getDoubleValue();
+        if (stateParser.find("rubber") != null) {
+            rubber = (int) stateParser.find("rubber").getDoubleValue();
         }
         // oil
-        if (exp.get("oil") != null) {
-            oil = (int) exp.get("oil").getDoubleValue();
+        if (stateParser.find("oil") != null) {
+            oil = (int) stateParser.find("oil").getDoubleValue();
         }
         // steel
-        if (exp.get("steel") != null) {
-            steel = (int) exp.get("steel").getDoubleValue();
+        if (stateParser.find("steel") != null) {
+            steel = (int) stateParser.find("steel").getDoubleValue();
         }
         // tungsten
-        if (exp.get("tungsten") != null) {
-            tungsten = (int) exp.get("tungsten").getDoubleValue();
+        if (stateParser.find("tungsten") != null) {
+            tungsten = (int) stateParser.find("tungsten").getDoubleValue();
         }
 
         // data record

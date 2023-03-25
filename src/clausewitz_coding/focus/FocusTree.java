@@ -3,12 +3,13 @@ package clausewitz_coding.focus;
 import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.localization.LocalizationFile;
 import clausewitz_coding.country.CountryTag;
+import clausewitz_parser.Expression;
+import clausewitz_parser.Parser;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public final class FocusTree extends HOI4Fixes {
 
@@ -18,7 +19,7 @@ public final class FocusTree extends HOI4Fixes {
 	private CountryTag country;
 	private LocalizationFile locFile = null;
 	private String id;
-	private CountryModifier countryModifier;
+//	private CountryModifier countryModifier;
 	private boolean default_focus;
 	private Point continuous_focus_position;
 
@@ -51,37 +52,82 @@ public final class FocusTree extends HOI4Fixes {
 		FocusTrees.add(country(), this);
 	}
 
-    public ArrayList<String> find(File focus_file) throws IOException {
-		Scanner focusReader = new Scanner(focus_file);
+//    public ArrayList<String> find(File focus_file) throws IOException {
+//		Scanner focusReader = new Scanner(focus_file);
+	public ArrayList<String> find() throws IOException {
+		if (this.focus_file == null) {
+			System.err.println(this + "File of focus tree not set.");
+			return null;
+		}
+		if (!this.focus_file.exists()) {
+			System.err.println(this + "Focus tree file does not exist.");
+			return null;
+		}
+
+		/* parser */
+		Parser focusParser = new Parser(this.focus_file);
+		Expression focusTreeExp = focusParser.expression();
+		Expression[] focusesExps = focusTreeExp.getAll("focus = {");
+		if (focuses == null) {
+			return null;
+		}
+
+		/* focuses */
 		focus_names = new ArrayList<String>();
 
-		// make a list of all focus names
-		boolean findFocusName = false;
-		int focus_name_index;  // index of focus name in string
-		while (focusReader.hasNextLine()) {
-			String data = focusReader.nextLine().replaceAll("\\s", "");
-			if (usefulData(data)) {
-				if (!findFocusName) {
-					if ((data.trim().length() >= 6) && (data.trim().substring(0, 6).equals("focus="))) {
-						findFocusName = true;
-					}
-				} else {
-					if (data.trim().length() >= 3 && data.trim().substring(0, 3).equals(("id="))) {
-						focus_name_index = data.indexOf("id=") + 3;
-						String focus_id = data.substring(focus_name_index, data.length()).trim();
-						focus_names.add(focus_id);
-						focuses.add(new Focus(focus_id));
+		for (Expression focusExp : focusesExps) {
+			Focus focus;
 
-						/* get country */
-						country = new CountryTag(data.trim().substring(focus_name_index, focus_name_index + 3));
-
-						findFocusName = false;
-					}
+			/* focus id */
+			find_id:
+			{
+				Expression focusIDExp = focusExp.get("id=");
+				if (focusIDExp == null) {
+					continue; 		// id important
 				}
+				String focus_id = focusIDExp.getText();        // gets the ##### from "id = #####"
+				if (focus_id == null) {
+					continue; 		// id important
+				}
+				focus = new Focus(focus_id);
+				focus_names.add(focus_id);
+				focuses.add(focus);
+
+				focus.loadAttributes(focusExp);
 			}
 		}
-		focusReader.close();
 
+		/* country */
+		Expression countryModifierExp = focusTreeExp.get("country").get("modifier");
+		if (countryModifierExp != null && countryModifierExp.get("tag") != null) {
+			country = new CountryTag(countryModifierExp.get("tag").getText());
+		}
+
+//		// make a list of all focus names
+//		boolean findFocusName = false;
+//		int focus_name_index;  // index of focus name in string
+//		while (focusReader.hasNextLine()) {
+//			String data = focusReader.nextLine().replaceAll("\\s", "");
+//			if (usefulData(data)) {
+//				if (!findFocusName) {
+//					if ((data.trim().length() >= 6) && (data.trim().substring(0, 6).equals("focus="))) {
+//						findFocusName = true;
+//					}
+//				} else {
+//					if (data.trim().length() >= 3 && data.trim().substring(0, 3).equals(("id="))) {
+//						focus_name_index = data.indexOf("id=") + 3;
+//						String focus_id = data.substring(focus_name_index, data.length()).trim();
+//						focus_names.add(focus_id);
+//						focuses.add(new Focus(focus_id));
+//
+//						/* get country */
+//						country = new CountryTag(data.trim().substring(focus_name_index, focus_name_index + 3));
+//
+//						findFocusName = false;
+//					}
+//				}
+//			}
+//		}
 		return focus_names;
 	}
 
