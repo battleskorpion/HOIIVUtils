@@ -74,6 +74,10 @@ public class Focus {
 
     }
 
+    /**
+     * Sets focus icon id
+     * @param icon
+     */
     public void setIcon(String icon) {
 
     }
@@ -82,6 +86,10 @@ public class Focus {
 
     }
 
+    /**
+     * sets focus prerequisite focuses
+     * @param prerequisite
+     */
     public void setPrerequisite(Set<Focus> prerequisite) {
         this.prerequisite = prerequisite;
     }
@@ -91,7 +99,7 @@ public class Focus {
     }
 
     /**
-     * 
+     * Sets mutually exclusive focuses
      * @param mutually_exclusive
      */
     public void setMutuallyExclusive(Set<Focus> mutually_exclusive) {
