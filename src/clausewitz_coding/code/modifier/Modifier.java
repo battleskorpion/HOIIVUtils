@@ -31,4 +31,6 @@ public abstract class Modifier {
         this.scope = new ArrayList<>();
         this.scope.add(scope);
     }
+
+    public abstract Modifier getModifier();
 }
