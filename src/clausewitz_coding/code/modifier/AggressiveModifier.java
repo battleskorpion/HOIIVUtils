@@ -1,6 +1,11 @@
 package clausewitz_coding.code.modifier;
 
-public class AggressiveModifier {
+public class AggressiveModifier extends Modifier {
+
+    public AggressiveModifier() {
+        super(Scope.aggressive);
+    }
+
     public enum modifiers {
         annex_cost_factor,
         army_armor_attack_factor,

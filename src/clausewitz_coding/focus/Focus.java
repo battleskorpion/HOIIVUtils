@@ -4,7 +4,7 @@ import clausewitz_coding.code.trigger.Trigger;
 import clausewitz_parser.Expression;
 
 import java.awt.*;
-import java.util.Set;
+import java.util.*;
 
 public class Focus {
     private String id;
@@ -79,7 +79,11 @@ public class Focus {
      * @param icon
      */
     public void setIcon(String icon) {
-
+        // null string -> set no (null) icon
+        if (icon.equals("")) {
+            this.icon = null;
+        }
+        this.icon = icon;
     }
 
     public void setPrerequisite(Expression exp) {
@@ -88,9 +92,14 @@ public class Focus {
 
     /**
      * sets focus prerequisite focuses
-     * @param prerequisite
+     * @param prerequisite Set of prerequisite focuses. Can not include this focus.
      */
-    public void setPrerequisite(Set<Focus> prerequisite) {
+    public void setPrerequisite(Set<Focus> prerequisite) {      // TODO can have prerequisites where 1 necessary, all necessary, etc.
+        // focus can not be its own prerequisite
+        if (prerequisite.contains(this)) {
+            throw new IllegalArgumentException("Focus can not be its own prerequisite");
+        }
+
         this.prerequisite = prerequisite;
     }
 
@@ -100,10 +109,32 @@ public class Focus {
 
     /**
      * Sets mutually exclusive focuses
-     * @param mutually_exclusive
+     * @param mutually_exclusive Set of mutually exclusive focus(es) with this focus. Should not include this focus.
      */
     public void setMutuallyExclusive(Set<Focus> mutually_exclusive) {
+        // focus can not be mutually exclusive with itself
+        if (mutually_exclusive.contains(this)) {
+            throw new IllegalArgumentException("Focus can not be mutually exclusive with itself");
+        }
+
         this.mutually_exclusive = mutually_exclusive;
+    }
+
+    /**
+     * Sets mutually exclusive focus
+     * @param mutually_exclusive mutually exclusive focus
+     */
+    public void setMutuallyExclusive(Focus mutually_exclusive) {
+        HashSet<Focus> set = new HashSet<>();
+        set.add(mutually_exclusive);
+        setMutuallyExclusive(set);
+    }
+
+    public void addMutuallyExclusive(Focus mutually_exclusive) {
+        if (this.mutually_exclusive == null) {
+            this.mutually_exclusive = new HashSet<>();
+            this.mutually_exclusive.add(mutually_exclusive);
+        }
     }
 
     public void setAvailable(Expression exp) {
@@ -112,9 +143,9 @@ public class Focus {
 
     /**
      * Sets available trigger of focus
-     * @param trigger
+     * @param availableTrigger trigger which controls focus availability
      */
-    public void setAvailable(Trigger trigger) {
-
+    public void setAvailable(Trigger availableTrigger) {
+        this.available = availableTrigger;
     }
 }

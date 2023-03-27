@@ -1,6 +1,10 @@
 package clausewitz_coding.code.modifier;
 
-public class AIModifier {
+public class AIModifier extends Modifier {
+    public AIModifier() {
+        super(Scope.ai);
+    }
+
     public enum modifiers {
         ai_badass_factor,
         ai_call_ally_desire_factor,
