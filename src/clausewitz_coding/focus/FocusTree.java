@@ -19,7 +19,7 @@ public final class FocusTree extends HOI4Fixes {
 	private CountryTag country;
 	private LocalizationFile locFile = null;
 	private String id;
-//	private CountryModifier countryModifier;
+	//private Modifier  countryModifier;
 	private boolean default_focus;
 	private Point continuous_focus_position;
 
@@ -33,7 +33,7 @@ public final class FocusTree extends HOI4Fixes {
 		country = new CountryTag("###");
 		focuses = new ArrayList<>();
 
-		find(focus_file);
+		find();
 		FocusTrees.add(country(), this);
 	}
 
@@ -43,7 +43,7 @@ public final class FocusTree extends HOI4Fixes {
 	 */
 	public FocusTree(String id, CountryTag tag) {
 		this.id = id;
-		countryModifier = new CountryModifier();
+		//countryModifier = new CountryModifier();
 		default_focus = false;
 		continuous_focus_position = new Point(50, 1200);
 		country = tag;
