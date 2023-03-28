@@ -4,8 +4,8 @@ import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Modifier {
-    public enum Scope {
+public interface Modifier {
+    enum Scope {
         aggressive,
         ai,
         air,
@@ -24,13 +24,19 @@ public abstract class Modifier {
         war_production,
     }
 
-    private String modifierID;
-    private List<Scope> scope;      // can have multiple categories?
+    //private String modifierID;
+    List<Scope> scope = null;      // can have multiple categories?
 
-    public Modifier(Scope scope) {
-        this.scope = new ArrayList<>();
-        this.scope.add(scope);
-    }
+//    public Modifier(Scope scope) {
+//        this.scope = new ArrayList<>();
+//        this.scope.add(scope);
+//    }
 
-    public abstract Modifier getModifier();
+//    public abstract Modifier getModifier();
+
+    /**
+     * Returns the main scope of the modifier
+     * @return modifier's main scope
+     */
+    Scope getScope();
 }

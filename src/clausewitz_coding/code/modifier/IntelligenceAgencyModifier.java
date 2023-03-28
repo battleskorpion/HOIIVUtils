@@ -1,8 +1,15 @@
 package clausewitz_coding.code.modifier;
 
-public class IntelligenceAgencyModifier extends Modifier {
-    public IntelligenceAgencyModifier() { super(Scope.intelligence_agency); }
-    
+public class IntelligenceAgencyModifier implements Modifier {
+    public IntelligenceAgencyModifier() {
+//        super(Scope.intelligence_agency);
+    }
+
+    @Override
+    public Scope getScope() {
+        return Scope.intelligence_agency;
+    }
+
     public enum modifiers {
         airforce_intel_decryption_bonus,
         airforce_intel_factor,

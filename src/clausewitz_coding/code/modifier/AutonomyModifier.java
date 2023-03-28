@@ -1,8 +1,15 @@
 package clausewitz_coding.code.modifier;
 
-public class AutonomyModifier extends Modifier {
-    public AutonomyModifier() { super(Scope.autonomy); } 
-    
+public class AutonomyModifier implements Modifier {
+    public AutonomyModifier() {
+//        super(Scope.autonomy);
+    }
+
+    @Override
+    public Scope getScope() {
+        return Scope.autonomy;
+    }
+
     public enum modifiers {
         autonomy_gain,
         autonomy_gain_global_factor,

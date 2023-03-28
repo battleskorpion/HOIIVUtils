@@ -1,8 +1,13 @@
 package clausewitz_coding.code.modifier;
 
-public class AIModifier extends Modifier {
+public class AIModifier implements Modifier {
     public AIModifier() {
-        super(Scope.ai);
+//        super(Scope.ai);
+    }
+
+    @Override
+    public Scope getScope() {
+        return Scope.ai;
     }
 
     public enum modifiers {

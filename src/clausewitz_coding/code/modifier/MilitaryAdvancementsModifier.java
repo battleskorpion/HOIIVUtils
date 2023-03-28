@@ -1,8 +1,15 @@
 package clausewitz_coding.code.modifier;
 
-public class MilitaryAdvancementsModifier extends Modifier { 
-    public MilitaryAdvancementsModifier() { super(Scope.military_advancements); }
-    
+public class MilitaryAdvancementsModifier implements Modifier {
+    public MilitaryAdvancementsModifier() {
+//        super(Scope.military_advancements);
+    }
+
+    @Override
+    public Scope getScope() {
+        return Scope.military_advancements;
+    }
+
     public enum modifiers {
         experience_gain_army,
         experience_gain_army_factor,

@@ -1,9 +1,14 @@
 package clausewitz_coding.code.modifier;
 
-public class AggressiveModifier extends Modifier {
+public class AggressiveModifier implements Modifier {
 
     public AggressiveModifier() {
-        super(Scope.aggressive);
+//        super(Scope.aggressive);
+    }
+
+    @Override
+    public Scope getScope() {
+        return Scope.aggressive;
     }
 
     public enum modifiers {

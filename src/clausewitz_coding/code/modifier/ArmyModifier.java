@@ -1,8 +1,15 @@
 package clausewitz_coding.code.modifier;
 
-public class ArmyModifier extends Modifier {
-    public ArmyModifier() { super(Scope.army); }
-    
+public class ArmyModifier implements Modifier {
+    public ArmyModifier() {
+//        super(Scope.army);
+    }
+
+    @Override
+    public Scope getScope() {
+        return Scope.army;
+    }
+
     public enum modifiers {
         acclimatization_cold_climate_gain_factor,
         acclimatization_hot_climate_gain_factor,

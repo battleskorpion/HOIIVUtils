@@ -1,7 +1,14 @@
 package clausewitz_coding.code.modifier;
 
-public class AirModifier extends Modifier {
-    public AirModifier() { super(Scope.air); }
+public class AirModifier implements Modifier {
+    public AirModifier() {
+//        super(Scope.air);
+    }
+
+    @Override
+    public Scope getScope() {
+        return Scope.air;
+    }
 
     public enum modifiers {
         air_accidents,

@@ -1,8 +1,15 @@
 package clausewitz_coding.code.modifier;
 
-public class DefensiveModifier extends Modifier {
-    public DefensiveModifier() { super(Scope.defensive); }
-    
+public class DefensiveModifier implements Modifier {
+    public DefensiveModifier() {
+//        super(Scope.defensive);
+    }
+
+    @Override
+    public Scope getScope() {
+        return Scope.defensive;
+    }
+
     public enum modifiers {
         armor_factor,
         army_armor_defence_factor,

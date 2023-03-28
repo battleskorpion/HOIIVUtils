@@ -1,8 +1,13 @@
 package clausewitz_coding.code.modifier;
 
-public class CountryModifier extends Modifier { 
+public class CountryModifier implements Modifier {
     public CountryModifier() {
-        super(Scope.country); 
+//        super(Scope.country);
+    }
+
+    @Override
+    public Scope getScope() {
+        return Scope.country;
     }
     
     public enum modifiers {
