@@ -1,8 +1,9 @@
 package ui.menu;
 
 import clausewitz_coding.HOI4Fixes;
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.*;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.Locale;
 
 import static clausewitz_coding.HOI4Fixes.DEV_MODE;
 import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
@@ -99,10 +101,16 @@ public class MenuSettings extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (DARK_MODE.getMode() != darkModeCheckBox.isSelected()) {
                     DARK_MODE.setMode(darkModeCheckBox.isSelected());
+                    String OS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).trim();
+                    System.out.println(System.getProperty("Operating system: " + "os.name"));
                     if (DARK_MODE.getMode()) {
                         EventQueue.invokeLater(() -> {
                             try {
-                                UIManager.setLookAndFeel(new FlatDarkLaf());
+                                if (OS.startsWith("mac")) {
+                                    UIManager.setLookAndFeel(new FlatMacDarkLaf());
+                                } else {
+                                    UIManager.setLookAndFeel(new FlatDarkLaf());
+                                }
                             } catch (UnsupportedLookAndFeelException ex) {
                                 System.err.println("Failed to initialize look and feel");
                                 throw new RuntimeException(ex);
@@ -113,7 +121,11 @@ public class MenuSettings extends JFrame {
                     } else {
                         EventQueue.invokeLater(() -> {
                             try {
-                                UIManager.setLookAndFeel(new FlatLightLaf());
+                                if (OS.startsWith("mac")) {
+                                    UIManager.setLookAndFeel(new FlatMacLightLaf());
+                                } else {
+                                    UIManager.setLookAndFeel(new FlatLightLaf());
+                                }
                             } catch (UnsupportedLookAndFeelException ex) {
                                 System.err.println("Failed to initialize look and feel");
                                 throw new RuntimeException(ex);

@@ -3,6 +3,8 @@ package clausewitz_coding;
 import clausewitz_coding.state.StateCategory;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import ui.menu.Mainmenu;
 import settings.LocalizerSettings;
 
@@ -10,6 +12,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 import static settings.LocalizerSettings.Settings.*;
 
@@ -31,11 +34,21 @@ public class HOI4Fixes {
 
 		/* ui preliminary */
 		try {
+			String OS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).trim();
+			System.out.println(System.getProperty("Operating system: " + "os.name"));
 			//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			if (DARK_MODE.getMode()) {
-				UIManager.setLookAndFeel(new FlatDarkLaf());
+				if (OS.startsWith("mac")) {
+					UIManager.setLookAndFeel(new FlatMacDarkLaf());
+				} else {
+					UIManager.setLookAndFeel(new FlatDarkLaf());
+				}
 			} else {
-				UIManager.setLookAndFeel(new FlatLightLaf());
+				if (OS.startsWith("mac")) {
+					UIManager.setLookAndFeel(new FlatMacLightLaf());
+				} else {
+					UIManager.setLookAndFeel(new FlatLightLaf());
+				}
 			}
 		} catch (Exception exc) {
 			exc.printStackTrace();
