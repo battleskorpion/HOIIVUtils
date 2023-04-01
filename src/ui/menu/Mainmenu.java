@@ -150,7 +150,9 @@ public class Mainmenu extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                State.readStates();
+                if (State.list().size() == 0) {
+                    State.readStates();
+                }
 
                 BuildingsByCountryWindow window = new BuildingsByCountryWindow();
                 window.setVisible(true);

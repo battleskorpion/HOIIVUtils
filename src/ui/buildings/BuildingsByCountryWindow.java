@@ -196,7 +196,6 @@ public class BuildingsByCountryWindow extends JFrame {
     }
 
     public void refreshBuildingsTable() {
-
         // table data update
         ArrayList<CountryTag> countryList = CountryTags.list();
 
@@ -204,7 +203,6 @@ public class BuildingsByCountryWindow extends JFrame {
         buildingsTableModel.setRowCount(countryList.size());
         buildingsTableModel.setColumnCount(18);
         buildingsTableModel.fireTableDataChanged();
-
         for (int i = 0; i < countryList.size(); i++) {
             CountryTag country = countryList.get(i);
             Infrastructure infrastructure = State.infrastructureOfStates(State.listFromCountry(country));
