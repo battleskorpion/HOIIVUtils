@@ -172,6 +172,8 @@ public class BuildingsByCountryWindow extends JFrame {
                 //super.mouseClicked(e);
                 if (e.getClickCount() == 2 && !e.isConsumed()) {
                     e.consume();
+                } else {
+                    return;
                 }
 
                 // get country
