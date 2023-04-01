@@ -213,5 +213,7 @@ public class Expression {
     }
 
     public Expression[] getSubexpressions() {
+        // todo implement!!! subexpressions, not subexpression subexpressions necessarily
+        return null;
     }
 }

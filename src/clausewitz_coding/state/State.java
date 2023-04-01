@@ -217,7 +217,7 @@ public class State {
         return resourcesOfStates(states);
     }
 
-    public static double numStates(CountryTag country) {
+    public static int numStates(CountryTag country) {
         return listFromCountry(country).size();
     }
 
