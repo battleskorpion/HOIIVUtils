@@ -22,6 +22,7 @@ import java.util.ArrayList;
 public class CountryBuildingsByStateWindow extends JFrame {
     private JPanel CountryBuildingsByStateWindowJPanel;
     private JTable statesBuildingsTable;
+    private JLabel countryLabel;
     private DefaultTableModel stateBuildingsTableModel;
     private CountryTag countryTag;
 
@@ -202,6 +203,7 @@ public class CountryBuildingsByStateWindow extends JFrame {
 
         // data
         refreshStateBuildingsTable();
+        countryLabel.setText(countryTag.toString());
 
         setContentPane(CountryBuildingsByStateWindowJPanel);
         setSize(700, 500);

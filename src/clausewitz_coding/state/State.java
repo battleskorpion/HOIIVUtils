@@ -70,31 +70,38 @@ public class State {
         }
 
         /* buildings */
-        Expression buildingsExp = stateParser.find("buildings = {");
-
+        Expression historyExp = stateParser.find("history");
+        System.out.println(historyExp.getSubexpressions());
+        Expression buildingsExp = null;
+        if (historyExp != null) {
+            buildingsExp = historyExp.getImmediate("buildings");        // default buildings
+        }
+        else {
+            System.err.println("State error: history does not exist, " + stateFile.getName());
+        }
         if (buildingsExp == null) {
             System.err.println("State error: buildings does not exist, " + stateFile.getName());
             stateInfrastructure = null;
         }
         else {
             // infrastructure
-            if (stateParser.find("infrastructure") != null) {
+            if (buildingsExp.get("infrastructure") != null) {
                 infrastructure = stateParser.find("infrastructure").getValue(); // TODO after here etc.
             }
             // civilian factories
-            if (stateParser.find("industrial_complex") != null) {
+            if (buildingsExp.get("industrial_complex") != null) {
                 civilianFactories = stateParser.find("industrial_complex").getValue(); // TODO after here etc.
             }
             // military factories
-            if (stateParser.find("arms_factory") != null) {
+            if (buildingsExp.get("arms_factory") != null) {
                 militaryFactories = stateParser.find("arms_factory").getValue(); // TODO after here etc.
             }
             // dockyards
-            if (stateParser.find("dockyard") != null) {
+            if (buildingsExp.get("dockyard") != null) {
                 dockyards = stateParser.find("dockyard").getValue(); // TODO after here etc.
             }
             // airfields
-            if (stateParser.find("air_base") != null) {
+            if (buildingsExp.get("air_base") != null) {
                 airfields = stateParser.find("air_base").getValue(); // TODO after here etc.
             }
         }

@@ -103,7 +103,7 @@ public class Expression {
     public Expression get(String s) {
         Expression exp = new Expression(s);
         if (expression != null && expression.trim().contains(s)) {
-            return new Expression(expression);
+            return new Expression(this);        // copy
         }
         else {
 //            if (subexpressions != null && subexpressions.contains(exp)) {
@@ -113,7 +113,7 @@ public class Expression {
                 if (subexpressions != null) {
                     for (Expression subexp : subexpressions) {
                         if (subexp.get(s) != null) {
-                            return subexp.get(s);
+                            return new Expression(subexp.get(s));
                         }
                     }
                 }
@@ -122,13 +122,31 @@ public class Expression {
 
         return null;
     }
+
+    public Expression getImmediate(String s) {
+        Expression exp = new Expression(s);
+        if (expression != null && expression.trim().contains(s)) {
+            return new Expression(this);
+        }
+
+        if (subexpressions != null) {
+            for (Expression subexp : subexpressions) {
+                if (subexp.expression != null && subexp.expression.trim().contains(s)) {
+                    return new Expression(subexp);
+                }
+            }
+        }
+
+        return null;
+    }
+
     public Expression getSubexpression(String s) {
         Expression exp = new Expression(s);
 
         if (subexpressions != null) {
             for (Expression subexp : subexpressions) {
                 if (subexp.get(s) != null) {
-                    return subexp.get(s);
+                    return new Expression(subexp.get(s));
                 }
             }
         }
@@ -214,6 +232,11 @@ public class Expression {
 
     public Expression[] getSubexpressions() {
         // todo implement!!! subexpressions, not subexpression subexpressions necessarily
-        return null;
+        if (subexpressions == null) {
+            return null;
+        }
+
+        return this.subexpressions.toArray(new Expression[]{});
     }
+
 }

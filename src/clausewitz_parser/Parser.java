@@ -68,6 +68,14 @@ public class Parser {
         return fileExpressions.getAll(s);
     }
 
+    public Expression findImmediate(String s) {
+        if (fileExpressions == null) {
+            return null;
+        }
+
+        return fileExpressions.getImmediate(s);
+    }
+
     protected static boolean usefulData(String data) {
         if (!data.isBlank()) {
             if (data.trim().charAt(0) == '#') {
