@@ -1,6 +1,8 @@
 package clausewitz_coding;
 
 import clausewitz_coding.state.StateCategory;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import ui.menu.Mainmenu;
 import settings.LocalizerSettings;
 
@@ -24,15 +26,21 @@ public class HOI4Fixes {
 	public static boolean DEV_MODE = false;
 
 	public static void main (String[] args) throws IOException {
-		/* ui preliminary */
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch(Exception exc) {
-			exc.printStackTrace();
-		}
-
 		/* load settings */
 		settings = new LocalizerSettings(); 	// loads settings automatically
+
+		/* ui preliminary */
+		try {
+			//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			if (DARK_MODE.getMode()) {
+				UIManager.setLookAndFeel(new FlatDarkLaf());
+			} else {
+				UIManager.setLookAndFeel(new FlatLightLaf());
+			}
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			System.err.println( "Failed to initialize look and feel" );
+		}
 
 		if (LocalizerSettings.isNull(MOD_DIRECTORY))
 		/* get directory */

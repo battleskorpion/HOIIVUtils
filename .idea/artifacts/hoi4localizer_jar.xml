@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/hoi4localizer_jar</output-path>
     <root id="archive" name="hoi4localizer.jar">
       <element id="module-output" name="hoi4localizer" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/flatlaf-3.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
