@@ -37,6 +37,8 @@ public class Mainmenu extends JFrame {
     public Mainmenu() {
         menu = this;
 
+        
+
         /* statistics button */
         toggleStatisticsButton();
 

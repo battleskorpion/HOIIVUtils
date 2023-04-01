@@ -6,18 +6,41 @@ import java.util.Scanner;
 
 public class LocalizerSettings {
 
-    public String get(Settings setting) { return settingValues.get(setting); }
+    public static String get(Settings setting) { return settingValues.get(setting); }
 
     public enum Settings {
         MOD_DIRECTORY,
         CURRENT_MOD,        // todo not in use
         CIVILIAN_MILITARY_FACTORY_MAX_RATIO,            // ratio for civ/mil factories highlight in buildings view
+        DARK_MODE {
+            public boolean getMode() {
+                return settingValues.get(DARK_MODE).equals("true");
+            }
+            public void setMode(boolean set) {
+                settingValues.put(DARK_MODE, String.valueOf(set));
+                try {
+                    writeSettings();
+                    System.out.println("Dark mode: " + settingValues.get(DARK_MODE));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        },
+        ;
+
+        public void setMode(boolean b) {
+            return;
+        }
+
+        public boolean getMode() {
+            return false;
+        }
     }
 
-    private File settings_file;
-    private FileWriter settingsWriter;
-    private BufferedWriter settingsBWriter;
-    private PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); 		        // for println syntax
+    private static File settings_file;
+    private static FileWriter settingsWriter;
+    private static BufferedWriter settingsBWriter;
+    private static PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); 		        // for println syntax
     private static HashMap<Settings, String> settingValues = new HashMap<>();
 
     public LocalizerSettings() throws IOException {
@@ -30,7 +53,7 @@ public class LocalizerSettings {
         readSettings();
     }
 
-    public void readSettings() {
+    public static void readSettings() {
         try {
             Scanner settingReader = new Scanner(settings_file);
 //            System.out.println(settingReader.nextLine());
@@ -42,11 +65,17 @@ public class LocalizerSettings {
             }
 
             /* read settings */
-            while(settingReader.hasNextLine()) {
+            while (settingReader.hasNextLine()) {
                 String[] readSetting = settingReader.nextLine().split(";");
                 Settings setting = Settings.valueOf(readSetting[0]);
 
                 settingValues.put(setting, readSetting[1]);
+            }
+
+            for (Settings setting : Settings.values()) {
+                if (!settingValues.containsKey(setting)) {
+                    writeBlankSetting(setting);
+                }
             }
 
         } catch (IOException e) {
@@ -58,7 +87,7 @@ public class LocalizerSettings {
     /**
      * @deprecated
      */
-    public void writeSettings() throws IOException {
+    public static void writeSettings() throws IOException {
         settingsWriter = new FileWriter(settings_file, false);		// true = append
         settingsBWriter = new BufferedWriter(settingsWriter);
         settingsPWriter = new PrintWriter(settingsBWriter);
@@ -70,7 +99,17 @@ public class LocalizerSettings {
         settingsPWriter.close();
     }
 
-    public void writeBlankSettings() throws IOException {
+    private static void writeBlankSetting(Settings setting) throws IOException {
+        settingsWriter = new FileWriter(settings_file, true);		// true = append
+        settingsBWriter = new BufferedWriter(settingsWriter);
+        settingsPWriter = new PrintWriter(settingsBWriter);
+
+        settingsPWriter.println(setting.name() + ";" + "null");
+
+        settingsPWriter.close();
+    }
+
+    public static void writeBlankSettings() throws IOException {
         settingsWriter = new FileWriter(settings_file, false);		// true = append
         settingsBWriter = new BufferedWriter(settingsWriter);
         settingsPWriter = new PrintWriter(settingsBWriter);
@@ -85,7 +124,7 @@ public class LocalizerSettings {
 
     }
 
-    public void saveSettings(Settings setting, String settingValue) throws IOException {
+    public static void saveSettings(Settings setting, String settingValue) throws IOException {
         settingsWriter = new FileWriter(settings_file, false);		// true = append
         settingsBWriter = new BufferedWriter(settingsWriter);
         settingsPWriter = new PrintWriter(settingsBWriter);
@@ -98,7 +137,7 @@ public class LocalizerSettings {
         settingsPWriter.close();
     }
 
-    public boolean isNull(Settings modDirectory) {
+    public static boolean isNull(Settings modDirectory) {
         return settingValues.get(modDirectory).equals("null");
     }
 }

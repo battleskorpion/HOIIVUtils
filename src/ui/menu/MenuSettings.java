@@ -11,12 +11,14 @@ import java.io.IOException;
 
 import static clausewitz_coding.HOI4Fixes.DEV_MODE;
 import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
+import static settings.LocalizerSettings.Settings.DARK_MODE;
 
 public class MenuSettings extends JFrame {
     private Mainmenu parent_menu;
     private JPanel menuSettingsJPanel;
     private JTextField modDirectoryTextField;
     private JCheckBox devModeCheckBox;
+    private JCheckBox darkModeCheckBox;
 
     public MenuSettings(Mainmenu menu) {
         parent_menu = menu;
@@ -24,6 +26,9 @@ public class MenuSettings extends JFrame {
         if (HOI4Fixes.settings.get(MOD_DIRECTORY) != null) {
             modDirectoryTextField.setText(HOI4Fixes.settings.get(MOD_DIRECTORY));
         }
+
+        // settings default/current
+        darkModeCheckBox.setSelected(DARK_MODE.getMode());
 
         setContentPane(menuSettingsJPanel);
         setSize(700, 500);
@@ -77,6 +82,19 @@ public class MenuSettings extends JFrame {
                 }
 
                 parent_menu.toggleStatisticsButton();
+            }
+        });
+        darkModeCheckBox.addActionListener(new ActionListener() {
+            /**
+             * Invoked when an action occurs.
+             *
+             * @param e the event to be processed
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (DARK_MODE.getMode() != darkModeCheckBox.isSelected()) {
+                    DARK_MODE.setMode(darkModeCheckBox.isSelected());
+                }
             }
         });
     }

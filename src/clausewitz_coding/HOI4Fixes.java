@@ -34,7 +34,7 @@ public class HOI4Fixes {
 		/* load settings */
 		settings = new LocalizerSettings(); 	// loads settings automatically
 
-		if (settings.isNull(MOD_DIRECTORY))
+		if (LocalizerSettings.isNull(MOD_DIRECTORY))
 		/* get directory */
 		{
 			JFileChooser j = new JFileChooser();
@@ -49,12 +49,12 @@ public class HOI4Fixes {
 			}
 
 			/* directory acquired, now save settings */
-			settings.saveSettings(MOD_DIRECTORY, hoi4_dir_name);
+			LocalizerSettings.saveSettings(MOD_DIRECTORY, hoi4_dir_name);
 		} else {
-			hoi4_dir_name = settings.get(MOD_DIRECTORY);
+			hoi4_dir_name = LocalizerSettings.get(MOD_DIRECTORY);
 		}
 
-		System.out.println(settings.get(MOD_DIRECTORY));
+		System.out.println(LocalizerSettings.get(MOD_DIRECTORY));
 		states_folder = "\\history\\states";
 		strat_region_dir = "\\map\\strategicregions";
 		localization_eng_folder = "\\localisation\\english";
