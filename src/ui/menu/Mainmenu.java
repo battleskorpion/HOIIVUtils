@@ -13,8 +13,7 @@ import ui.focus.FocusTreeStrength;
 import ui.focus_localization.FocusLoqReqWindow;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -155,6 +154,14 @@ public class Mainmenu extends JFrame {
 
                 BuildingsByCountryWindow window = new BuildingsByCountryWindow();
                 window.setVisible(true);
+                viewBuildingsButton.setFocusable(false);
+                viewBuildingsButton.setEnabled(false);
+                window.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        viewBuildingsButton.setEnabled(true);
+                    }
+                });
             }
         });
         settingsButton.addActionListener(new ActionListener() {
