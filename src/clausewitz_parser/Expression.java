@@ -211,4 +211,7 @@ public class Expression {
         }
         return s;
     }
+
+    public Expression[] getSubexpressions() {
+    }
 }
