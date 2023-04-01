@@ -132,7 +132,7 @@ public final class FocusTree extends HOI4Fixes {
 	}
 
 	/**
-	 * Lists last set of focuses 
+	 * Lists last set of focuses
 	 * @return
 	 */
 	public ArrayList<String> list() throws IOException {
