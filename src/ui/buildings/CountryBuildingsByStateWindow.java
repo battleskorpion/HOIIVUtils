@@ -6,6 +6,8 @@ import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.state.State;
 import clausewitz_coding.state.buildings.Infrastructure;
 import clausewitz_coding.state.buildings.Resources;
+import fileIO.FileListener.FileAdapter;
+import fileIO.FileListener.FileEvent;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -20,6 +22,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+
+import static clausewitz_coding.HOI4Fixes.stateDirWatcher;
 
 public class CountryBuildingsByStateWindow extends JFrame {
     private JPanel CountryBuildingsByStateWindowJPanel;
@@ -211,6 +215,65 @@ public class CountryBuildingsByStateWindow extends JFrame {
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
+
+        /* file listener */
+        stateDirWatcher.addListener(new FileAdapter() {
+            @Override
+            public void onCreated(FileEvent event) {
+                EventQueue.invokeLater(() -> {
+                    while (stateDirWatcher.listenerPerformAction > 0) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    if (stateDirWatcher.listenerPerformAction == 0) {
+                        refreshStateBuildingsTable();
+                    } else {
+                        System.out.println("Warning: refresh table not performed");
+                    }
+                });
+            }
+
+            @Override
+            public void onModified(FileEvent event) {
+                EventQueue.invokeLater(() -> {
+                    while (stateDirWatcher.listenerPerformAction > 0) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    if (stateDirWatcher.listenerPerformAction == 0) {
+                        refreshStateBuildingsTable();
+                    } else {
+                        System.out.println("Warning: refresh table not performed");
+                    }
+                });
+            }
+
+            @Override
+            public void onDeleted(FileEvent event) {
+                EventQueue.invokeLater(() -> {
+                    while (stateDirWatcher.listenerPerformAction > 0) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    if (stateDirWatcher.listenerPerformAction == 0) {
+                        refreshStateBuildingsTable();
+                    } else {
+                        System.out.println("Warning: refresh table not performed");
+                    }
+                });
+            }
+        }).watch();
+
+        /* action listeners */
         statesBuildingsTable.addMouseListener(new MouseAdapter() {
             /**
              * {@inheritDoc}

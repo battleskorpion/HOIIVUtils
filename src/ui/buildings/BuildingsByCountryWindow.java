@@ -217,9 +217,7 @@ public class BuildingsByCountryWindow extends JFrame {
                         }
                     }
                     if (stateDirWatcher.listenerPerformAction == 0) {
-                        stateDirWatcher.listenerPerformAction++;
                         refreshBuildingsTable();
-                        stateDirWatcher.listenerPerformAction--;
                     } else {
                         System.out.println("Warning: refresh table not performed");
                     }
@@ -237,9 +235,7 @@ public class BuildingsByCountryWindow extends JFrame {
                         }
                     }
                     if (stateDirWatcher.listenerPerformAction == 0) {
-                        stateDirWatcher.listenerPerformAction++;
                         refreshBuildingsTable();
-                        stateDirWatcher.listenerPerformAction--;
                     } else {
                         System.out.println("Warning: refresh table not performed");
                     }
@@ -257,9 +253,7 @@ public class BuildingsByCountryWindow extends JFrame {
                         }
                     }
                     if (stateDirWatcher.listenerPerformAction == 0) {
-                        stateDirWatcher.listenerPerformAction++;
                         refreshBuildingsTable();
-                        stateDirWatcher.listenerPerformAction--;
                     } else {
                         System.out.println("Warning: refresh table not performed");
                     }
