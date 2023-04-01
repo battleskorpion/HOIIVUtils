@@ -80,7 +80,7 @@ public class State {
             System.err.println("State error: history does not exist, " + stateFile.getName());
         }
         if (buildingsExp == null) {
-            System.err.println("State error: buildings does not exist, " + stateFile.getName());
+            System.err.println("Warning: buildings does not exist, " + stateFile.getName());
             stateInfrastructure = null;
         }
         else {
