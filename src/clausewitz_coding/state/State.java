@@ -25,8 +25,11 @@ public class State {
     private Infrastructure stateInfrastructure;
     private Resources resourcesData;
 
-
     public State(File stateFile) {
+        this(stateFile, true);
+    }
+
+    public State(File stateFile, boolean addToStatesList) {
         /* init */
         owner = new HashMap<>();
 
@@ -55,11 +58,6 @@ public class State {
         if (stateParser.find("id") != null) {
             stateID = stateParser.find("id").getValue();
         }
-        // owner
-        if (stateParser.find("owner") != null) {
-            // empty date constructor for default date
-            owner.put(new ClausewitzDate(), new Owner(new CountryTag(stateParser.find("owner").getText())));
-        }
         // population (manpower)
         if (stateParser.find("manpower") != null) {
             population = stateParser.find("manpower").getValue(); // TODO after here etc.
@@ -75,34 +73,37 @@ public class State {
         Expression buildingsExp = null;
         if (historyExp != null) {
             buildingsExp = historyExp.getImmediate("buildings");        // default buildings
-        }
-        else {
+            // owner
+            if (historyExp.getImmediate("owner") != null) {
+                // empty date constructor for default date
+                owner.put(new ClausewitzDate(), new Owner(new CountryTag(historyExp.getImmediate("owner").getText())));
+            }
+        } else {
             System.err.println("State error: history does not exist, " + stateFile.getName());
         }
         if (buildingsExp == null) {
             System.err.println("Warning: buildings does not exist, " + stateFile.getName());
             stateInfrastructure = null;
-        }
-        else {
+        } else {
             // infrastructure
             if (buildingsExp.get("infrastructure") != null) {
-                infrastructure = stateParser.find("infrastructure").getValue(); // TODO after here etc.
+                infrastructure = buildingsExp.get("infrastructure").getValue(); // TODO after here etc.
             }
             // civilian factories
             if (buildingsExp.get("industrial_complex") != null) {
-                civilianFactories = stateParser.find("industrial_complex").getValue(); // TODO after here etc.
+                civilianFactories = buildingsExp.get("industrial_complex").getValue(); // TODO after here etc.
             }
             // military factories
             if (buildingsExp.get("arms_factory") != null) {
-                militaryFactories = stateParser.find("arms_factory").getValue(); // TODO after here etc.
+                militaryFactories = buildingsExp.get("arms_factory").getValue(); // TODO after here etc.
             }
             // dockyards
             if (buildingsExp.get("dockyard") != null) {
-                dockyards = stateParser.find("dockyard").getValue(); // TODO after here etc.
+                dockyards = buildingsExp.get("dockyard").getValue(); // TODO after here etc.
             }
             // airfields
             if (buildingsExp.get("air_base") != null) {
-                airfields = stateParser.find("air_base").getValue(); // TODO after here etc.
+                airfields = buildingsExp.get("air_base").getValue(); // TODO after here etc.
             }
         }
 
@@ -136,8 +137,11 @@ public class State {
         stateInfrastructure = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories,
                 dockyards, 0, airfields);
         resourcesData = new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
+
         // add to states list
-        states.add(this);
+        if (addToStatesList) {
+            states.add(this);
+        }
     }
 
     public static void readStates() {
@@ -228,6 +232,63 @@ public class State {
         return listFromCountry(country).size();
     }
 
+    public static State get(String state_name) {
+        state_name = state_name.trim();
+        for (State state: states) {
+            if (state.name.equals(state_name)) {
+                return state;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * If the state represented by file is not in the list of states, creates the new state.
+     * If the state already exists, overwrites the state.
+     * @param file state file
+     */
+    public static void readState(File file) {
+        State tempState = new State(file, false);
+        if (tempState.stateID < 1) {
+            System.err.println("Error: Invalid state id for state " + tempState);
+            return;
+        }
+
+        for (State state : states) {
+            if (state.stateID == tempState.stateID) {
+                states.remove(state);
+                states.add(tempState);
+                System.out.println("Modified state " + tempState);
+                return;
+            }
+        }
+
+        // if state did not exist already in states
+        states.add(tempState);
+        System.out.println("Added state " + tempState);
+    }
+
+    /**
+     * If the state represented by the file exists in states list, removes the state from the states list
+     * @param file state file
+     */
+    public static void deleteState(File file) {
+        State tempState = new State(file, false);
+        if (tempState.stateID < 1) {
+            System.err.println("Error: Invalid state id for state " + tempState);
+            return;
+        }
+        for (State state : states) {
+            if (state.stateID == tempState.stateID) {
+                states.remove(state);
+                System.out.println("Removed state " + tempState);
+                return;
+            }
+        }
+
+        System.out.println("Tried to delete state represented by file: " + "\n\t" + file + "\n\t" + "but state not found in states list");
+    }
+
     public Infrastructure getStateInfrastructure() {
         return stateInfrastructure;
     }
@@ -252,5 +313,9 @@ public class State {
         else {
             return false;
         }
+    }
+
+    public File getFile() {
+        return stateFile;
     }
 }

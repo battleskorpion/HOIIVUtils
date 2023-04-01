@@ -1,5 +1,6 @@
 package ui.buildings;
 
+import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.state.State;
@@ -15,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -209,6 +211,39 @@ public class CountryBuildingsByStateWindow extends JFrame {
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
+        statesBuildingsTable.addMouseListener(new MouseAdapter() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param e
+             */
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //super.mouseClicked(e);
+                if (e.getClickCount() == 2 && !e.isConsumed()) {
+                    e.consume();
+                } else {
+                    return;
+                }
+
+                // get state
+                int row = statesBuildingsTable.rowAtPoint( e.getPoint() );
+                int modelRow = HOI4Fixes.rowToModelIndex(statesBuildingsTable, row);
+                String state_name = (String) stateBuildingsTableModel.getValueAt(modelRow, 0);     // column 0 - country name
+
+                State state = State.get(state_name);
+                if (state == null) {
+                    throw new NullPointerException();
+                }
+
+                try {
+                    Desktop.getDesktop().edit(state.getFile());
+                } catch (IOException ex) {
+                    System.err.println("Unable to open state file: " + state);
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
     }
 
     private void refreshStateBuildingsTable() {

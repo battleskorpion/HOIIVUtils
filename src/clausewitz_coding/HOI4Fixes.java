@@ -1,19 +1,30 @@
 package clausewitz_coding;
 
+import clausewitz_coding.state.State;
 import clausewitz_coding.state.StateCategory;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import fileIO.FileListener.FileAdapter;
+import fileIO.FileListener.FileEvent;
+import fileIO.FileListener.FileWatcher;
 import ui.menu.Mainmenu;
 import settings.LocalizerSettings;
 
 import javax.swing.*;
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
+import static java.nio.file.StandardWatchEventKinds.*;
 import static settings.LocalizerSettings.Settings.*;
 
 public class HOI4Fixes {
@@ -83,6 +94,14 @@ public class HOI4Fixes {
 
 		/* init */
 		StateCategory.loadStateCategories();
+
+		/* main listeners */
+		try {
+			watchStateFiles(new File(hoi4_dir_name + states_folder));
+		} catch (NullPointerException exc) {
+			exc.printStackTrace();
+			return;
+		}
 
 		/* main menu */
 		//String[] loc_options = {"Fix Focus Localization", "Find Focuses without Localization", "Find Idea Localization", "View Buildings"};
@@ -191,6 +210,66 @@ public class HOI4Fixes {
 
 		System.out.println("capitalized: " + String.join(" ", words));
 		return String.join(" ", words);
+	}
+
+	/**
+	 * @param table
+	 * @param row
+	 * @return
+	 */
+	public static int rowToModelIndex(JTable table, int row) {
+		if (row >= 0) {
+			RowSorter<?> rowSorter = table.getRowSorter();
+			return rowSorter != null ? rowSorter
+					.convertRowIndexToModel(row) : row;
+		}
+		return -1;
+	}
+
+	private static void watchStateFiles(File stateDir) throws IOException {
+		if (stateDir == null || !stateDir.exists() || !stateDir.isDirectory() ) {
+			System.err.println("State dir does not exist or is not a directory: " + stateDir);
+			return;
+		}
+
+//		WatchService watchService;
+//		watchService = FileSystems.getDefault().newWatchService();
+//
+//		Path path = Paths.get(stateDir.getPath());
+//		path.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
+
+		FileWatcher stateDirWatcher = new FileWatcher(stateDir);
+		stateDirWatcher.addListener(new FileAdapter() {
+			@Override
+			public void onCreated(FileEvent event) {
+				EventQueue.invokeLater(() -> {
+					listenerPerformAction = true;
+					File file = event.getFile();
+					State.readState(file);
+					listenerPerformAction = false;
+				});
+			}
+
+			@Override
+			public void onModified(FileEvent event) {
+				EventQueue.invokeLater(() -> {
+					listenerPerformAction = true;
+					File file = event.getFile();
+					State.readState(file);
+					listenerPerformAction = false;
+				});
+			}
+
+			@Override
+			public void onDeleted(FileEvent event) {
+				EventQueue.invokeLater(() -> {
+					listenerPerformAction = true;
+					File file = event.getFile();
+					State.deleteState(file);
+					listenerPerformAction = false;
+				});
+			}
+		}).watch();
 	}
 
 }

@@ -1,10 +1,15 @@
 package ui.buildings;
 
+import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.state.buildings.Infrastructure;
 import clausewitz_coding.state.buildings.Resources;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.state.State;
+import fileIO.FileListener.FileAdapter;
+import fileIO.FileListener.FileEvent;
+import fileIO.FileListener.FileWatcher;
+import jdk.jfr.Event;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -13,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -178,7 +184,9 @@ public class BuildingsByCountryWindow extends JFrame {
 
                 // get country
                 int row = buildingsTable.rowAtPoint( e.getPoint() );
-                String country_name = (String) buildingsTableModel.getValueAt(row, 0);     // column 0 - country name
+                int modelRow = HOI4Fixes.rowToModelIndex(buildingsTable, row);
+                String country_name = (String) buildingsTableModel.getValueAt(modelRow, 0);     // column 0 - country name
+
                 CountryTag country = new CountryTag(country_name);
 
                 CountryBuildingsByStateWindow countryBuildingsByStateWindow = new CountryBuildingsByStateWindow(country);
@@ -193,6 +201,58 @@ public class BuildingsByCountryWindow extends JFrame {
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
+
+        /* file listener */
+        FileWatcher stateDirWatcher = new FileWatcher(new File(HOI4Fixes.hoi4_dir_name + HOI4Fixes.states_folder));
+        stateDirWatcher.addListener(new FileAdapter() {
+            @Override
+            public void onCreated(FileEvent event) {
+                EventQueue.invokeLater(() -> {
+                    while (listenerPerformAction) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    listenerPerformAction = true;
+                    refreshBuildingsTable();
+                    listenerPerformAction = false;
+                });
+            }
+
+            @Override
+            public void onModified(FileEvent event) {
+                EventQueue.invokeLater(() -> {
+                    while (listenerPerformAction) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    listenerPerformAction = true;
+                    refreshBuildingsTable();
+                    listenerPerformAction = false;
+                });
+            }
+
+            @Override
+            public void onDeleted(FileEvent event) {
+                EventQueue.invokeLater(() -> {
+                    while (listenerPerformAction) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    listenerPerformAction = true;
+                    refreshBuildingsTable();
+                    listenerPerformAction = false;
+                });
+            }
+        }).watch();
     }
 
     public void refreshBuildingsTable() {
@@ -203,6 +263,7 @@ public class BuildingsByCountryWindow extends JFrame {
         buildingsTableModel.setRowCount(countryList.size());
         buildingsTableModel.setColumnCount(18);
         buildingsTableModel.fireTableDataChanged();
+
         for (int i = 0; i < countryList.size(); i++) {
             CountryTag country = countryList.get(i);
             Infrastructure infrastructure = State.infrastructureOfStates(State.listFromCountry(country));

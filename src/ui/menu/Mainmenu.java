@@ -83,7 +83,6 @@ public class Mainmenu extends JFrame {
                 }
             }
         });
-
         findFocusesWithoutLocalizationButton.addActionListener(new ActionListener() {
             /**
              * Invoked when an action occurs.
@@ -179,7 +178,6 @@ public class Mainmenu extends JFrame {
                 menuSettings.setVisible(true);
             }
         });
-
         generateProvinceColorsButton.addActionListener(new ActionListener() {
             /**
              * Invoked when an action occurs.
