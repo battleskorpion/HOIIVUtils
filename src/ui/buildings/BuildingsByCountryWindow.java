@@ -23,6 +23,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import static clausewitz_coding.HOI4Fixes.stateDirWatcher;
+
 public class BuildingsByCountryWindow extends JFrame {
     private JPanel BuildingsByCountryWindowJPanel;
     private JTable buildingsTable;
@@ -203,53 +205,64 @@ public class BuildingsByCountryWindow extends JFrame {
         pack();
 
         /* file listener */
-        FileWatcher stateDirWatcher = new FileWatcher(new File(HOI4Fixes.hoi4_dir_name + HOI4Fixes.states_folder));
         stateDirWatcher.addListener(new FileAdapter() {
             @Override
             public void onCreated(FileEvent event) {
                 EventQueue.invokeLater(() -> {
-                    while (listenerPerformAction) {
+                    while (stateDirWatcher.listenerPerformAction > 0) {
                         try {
                             wait();
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    listenerPerformAction = true;
-                    refreshBuildingsTable();
-                    listenerPerformAction = false;
+                    if (stateDirWatcher.listenerPerformAction == 0) {
+                        stateDirWatcher.listenerPerformAction++;
+                        refreshBuildingsTable();
+                        stateDirWatcher.listenerPerformAction--;
+                    } else {
+                        System.out.println("Warning: refresh table not performed");
+                    }
                 });
             }
 
             @Override
             public void onModified(FileEvent event) {
                 EventQueue.invokeLater(() -> {
-                    while (listenerPerformAction) {
+                    while (stateDirWatcher.listenerPerformAction > 0) {
                         try {
                             wait();
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    listenerPerformAction = true;
-                    refreshBuildingsTable();
-                    listenerPerformAction = false;
+                    if (stateDirWatcher.listenerPerformAction == 0) {
+                        stateDirWatcher.listenerPerformAction++;
+                        refreshBuildingsTable();
+                        stateDirWatcher.listenerPerformAction--;
+                    } else {
+                        System.out.println("Warning: refresh table not performed");
+                    }
                 });
             }
 
             @Override
             public void onDeleted(FileEvent event) {
                 EventQueue.invokeLater(() -> {
-                    while (listenerPerformAction) {
+                    while (stateDirWatcher.listenerPerformAction > 0) {
                         try {
                             wait();
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    listenerPerformAction = true;
-                    refreshBuildingsTable();
-                    listenerPerformAction = false;
+                    if (stateDirWatcher.listenerPerformAction == 0) {
+                        stateDirWatcher.listenerPerformAction++;
+                        refreshBuildingsTable();
+                        stateDirWatcher.listenerPerformAction--;
+                    } else {
+                        System.out.println("Warning: refresh table not performed");
+                    }
                 });
             }
         }).watch();

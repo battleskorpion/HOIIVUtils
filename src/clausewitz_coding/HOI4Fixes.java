@@ -1,5 +1,6 @@
 package clausewitz_coding;
 
+import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.state.State;
 import clausewitz_coding.state.StateCategory;
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -38,6 +39,7 @@ public class HOI4Fixes {
 	public static String strat_region_dir;
 	public static String localization_eng_folder;
 	public static boolean DEV_MODE = false;
+	public static FileWatcher stateDirWatcher;
 
 	public static void main (String[] args) throws IOException {
 		/* load settings */
@@ -238,35 +240,40 @@ public class HOI4Fixes {
 //		Path path = Paths.get(stateDir.getPath());
 //		path.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
 
-		FileWatcher stateDirWatcher = new FileWatcher(stateDir);
+		stateDirWatcher = new FileWatcher(stateDir);
 		stateDirWatcher.addListener(new FileAdapter() {
 			@Override
 			public void onCreated(FileEvent event) {
+				System.out.println("State created in states dir");
 				EventQueue.invokeLater(() -> {
-					listenerPerformAction = true;
+					stateDirWatcher.listenerPerformAction++;
 					File file = event.getFile();
 					State.readState(file);
-					listenerPerformAction = false;
+					stateDirWatcher.listenerPerformAction--;
 				});
 			}
 
 			@Override
 			public void onModified(FileEvent event) {
+				System.out.println("State modified in states dir");
 				EventQueue.invokeLater(() -> {
-					listenerPerformAction = true;
+					stateDirWatcher.listenerPerformAction++;
 					File file = event.getFile();
 					State.readState(file);
-					listenerPerformAction = false;
+					System.out.println(State.get(file).getStateInfrastructure().population());
+					System.out.println(State.infrastructureOfStates(State.listFromCountry(new CountryTag("SMA"))));
+					stateDirWatcher.listenerPerformAction--;
 				});
 			}
 
 			@Override
 			public void onDeleted(FileEvent event) {
+				System.out.println("State deleted in states dir");
 				EventQueue.invokeLater(() -> {
-					listenerPerformAction = true;
+					stateDirWatcher.listenerPerformAction++;
 					File file = event.getFile();
 					State.deleteState(file);
-					listenerPerformAction = false;
+					stateDirWatcher.listenerPerformAction--;
 				});
 			}
 		}).watch();

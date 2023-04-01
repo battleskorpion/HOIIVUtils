@@ -241,6 +241,15 @@ public class State {
         }
         return null;
     }
+    public static State get(File file) {
+        for (State state : states) {
+            if (state.stateFile.equals(file)) {
+                return state;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * If the state represented by file is not in the list of states, creates the new state.
@@ -318,4 +327,5 @@ public class State {
     public File getFile() {
         return stateFile;
     }
+
 }

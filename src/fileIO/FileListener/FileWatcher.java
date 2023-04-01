@@ -25,6 +25,7 @@ public class FileWatcher implements Runnable {
     public FileWatcher(File folder) {
         this.folder = folder;
     }
+    public int listenerPerformAction;
 
     public static List<WatchService> getWatchServices() {
         return Collections.unmodifiableList(watchServices);
