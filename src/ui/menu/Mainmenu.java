@@ -23,7 +23,7 @@ public class Mainmenu extends JFrame {
     private Mainmenu menu;
     private JButton fixFocusLocalizationButton;
     private JButton findFocusesWithoutLocalizationButton;
-    private JButton IdeaLocalizationButton;
+    private JButton ideaLocalizationButton;
     private JButton viewBuildingsButton;
     private JPanel mainmenuJPanel;
     private JButton settingsButton;
@@ -36,11 +36,14 @@ public class Mainmenu extends JFrame {
     public Mainmenu() {
         menu = this;
 
-        
-
         /* statistics button */
         toggleStatisticsButton();
 
+        if (!HOI4Fixes.DEV_MODE) {
+            focusTreeBuilderButton.setEnabled(false);
+            focusTreeStrengthButton.setEnabled(false);
+            ideaLocalizationButton.setEnabled(false);
+        }
         setContentPane(mainmenuJPanel);
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -104,7 +107,7 @@ public class Mainmenu extends JFrame {
                 window.setVisible(true);
             }
         });
-        IdeaLocalizationButton.addActionListener(new ActionListener() {
+        ideaLocalizationButton.addActionListener(new ActionListener() {
             /**
              * Invoked when an action occurs.
              *

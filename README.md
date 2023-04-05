@@ -6,4 +6,11 @@ by battleskorpion
 <br> You need Java Runtime Environment (JRE) 17 or greater. Java SDK/JDK also should work.
 
 To report bugs mention me in the North America Divided server, or my discord id: BattleSkorpion#0679
-<br> Some features are WIP. 
+
+<b>I  strongly recommend</b>  using git/Github to back up your mod. I assume no responsibility if
+this application corrupts/breaks or inadvertently or incorrectly alters any personal files or other, or 
+causes any other issues. It <i>should</i> not, but of course, the program is complicated, and by using this 
+application, you acknowledge that you understand the risks of use, <i> especially if your mod files are not
+backed up in some form.</i>
+
+Some features are WIP, and may not work as intended. 
