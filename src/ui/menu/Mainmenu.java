@@ -43,6 +43,7 @@ public class Mainmenu extends JFrame {
             focusTreeBuilderButton.setEnabled(false);
             focusTreeStrengthButton.setEnabled(false);
             ideaLocalizationButton.setEnabled(false);
+            findFocusesWithoutLocalizationButton.setEnabled(false);
         }
         setContentPane(mainmenuJPanel);
         setSize(700, 500);
