@@ -102,6 +102,64 @@ public class ColorGenerator {
         }
     }
 
+    public static void setRedMin(int value) {
+        if (value < 0) {
+            value = 0;
+        } else if (value > 255) {
+            value = 255;
+        }
+        rMin = value;
+    }
+
+    public static void setRedMax(int value) {
+        if (value < 0) {
+            value = 0;
+        } else if (value > 255) {
+            value = 255;
+        }
+        rMax = value;
+    }
+
+    public static void setGreenMin(int value) {
+        if (value < 0) {
+            value = 0;
+        } else if (value > 255) {
+            value = 255;
+        }
+
+        gMin = value;
+    }
+
+    public static void setGreenMax(int value) {
+        if (value < 0) {
+            value = 0;
+        } else if (value > 255) {
+            value = 255;
+        }
+
+        gMax = value;
+    }
+
+    public static void setBlueMin(int value) {
+        if (value < 0) {
+            value = 0;
+        } else if (value > 255) {
+            value = 255;
+        }
+
+        bMin = value;
+    }
+
+    public static void setBlueMax(int value) {
+        if (value < 0) {
+            value = 0;
+        } else if (value > 255) {
+            value = 255;
+        }
+
+        bMax = value;
+    }
+
     public void generateColors(int numColors) {
         /* create colors bmp */
         int imageWidth;

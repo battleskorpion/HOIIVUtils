@@ -59,9 +59,36 @@ public class ColorGeneratorMenu extends JFrame {
                 @Override
                 public void stateChanged(ChangeEvent e) {
                     int value = sliders[finalI].getValue();
-                    sliderAmtLabels[finalI].setText(Integer.toString(value));
+                    updateValuesFromSlider(value, sliderAmtLabels[finalI], finalI);
                 }
             });
+        }
+    }
+
+    private void updateValuesFromSlider(int value, JLabel label, int index) {
+        label.setText(Integer.toString(value));
+
+        switch (index) {
+            case 0:
+                ColorGenerator.setRedMin(value);
+                break;
+            case 1:
+                ColorGenerator.setRedMax(value);
+                break;
+            case 2:
+                ColorGenerator.setGreenMin(value);
+                break;
+            case 3:
+                ColorGenerator.setGreenMax(value);
+                break;
+            case 4:
+                ColorGenerator.setBlueMin(value);
+                break;
+            case 5:
+                ColorGenerator.setBlueMax(value);
+                break;
+            default:
+                break;
         }
     }
 
@@ -75,7 +102,16 @@ public class ColorGeneratorMenu extends JFrame {
             System.err.println(exc.getMessage());
             System.err.println("\t" + "in " + this);
         }
+
+        if (numColors > (1 << 24) - 1) {
+            numColors = (1 << 24) - 1;
+            String err = "Error: Attempting to generate more unique colors than is possible. Will generate max possible "
+                    + "[" + numColors + "]" + " instead.";
+            JOptionPane.showMessageDialog(this, err, this.getTitle(), JOptionPane.WARNING_MESSAGE);
+            System.err.println(err);
+        }
         return numColors;
     }
+
 
 }
