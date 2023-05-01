@@ -182,4 +182,8 @@ public final class LocalizationFile extends File {
         localizationList.add(new Localization(key, text));
     }
 
+    public boolean isLocalized(String ID) {
+        return getLocalization(ID) != null;
+    }
+
 }

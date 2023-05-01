@@ -18,63 +18,24 @@ public class FixIdea extends HOI4Fixes {
 
 		// some vars
 		ArrayList<String> ideas_localized = new ArrayList<String>();
-//		String loc_key = ":0";
-
-		// more var
-//		Scanner locReader = new Scanner(loc_file);
 		LocalizationFile localization = new LocalizationFile(loc_file);
-
-		/* make a list of every localized idea */
-//		boolean found_lang = false;
-//		while(found_lang == false) {
-//			if (locReader.hasNextLine()) {
-//				String data = locReader.nextLine().replaceAll("\\s", "");
-//				if (usefulData(data)) {
-//					if (data.trim().contains("l_")) {
-//						found_lang = true;
-//					}
-//				}
-//			}
-//			else {
-//				break;
-//			}
-//		}
 		localization.readLocalization();
 
-//		/* list of localized ideas */
-//		while (locReader.hasNextLine()) {
-//			String data = locReader.nextLine().replaceAll("\\s", "");
-//			if (usefulData(data)) {
-//				if (data.contains(":")) {
-//					// fixed crash when there were no ideas localized hopefully
-//					if (Idea.getIdeas(idea_file) != null && Idea.getIdeas(idea_file)
-//							.contains(data.substring(0, data.indexOf(":")))) {
-//						ideas_localized.add(data.substring(0, data.indexOf(":")).trim());	// idea id
-//					}
-//				}
-//			}
-//		}
-//		locReader.close();
-
-		// do stuff with nonlocalized ideasw
-//		// some vars
-//		FileWriter locWriter = new FileWriter(loc_file, true);		// true = append
-//		BufferedWriter locBWriter = new BufferedWriter(locWriter);
-//		PrintWriter locPWriter = new PrintWriter(locBWriter); 		        // for println syntax
 		String idea_loc;
-
-		// todo add way to read in ideas from file
 
 		assert Idea.getIdeas() != null;
 		for (Idea idea : Idea.getIdeas()) {
-//			if(!ideas_localized.contains(idea.ideaID)) {
-//				// write to loc file
-//				// separate words in idea name
-//				int i = 0;
-//				if(CountryTags.list().contains(new CountryTag(idea.ideaID.substring(0, 3)))) {
-//					i+=3;
-//				}
-//
+			if (!localization.isLocalized(idea.ideaID)) {
+				// write to loc file
+				// separate words in idea name
+				int i = 0;
+				if(CountryTags.list().contains(new CountryTag(idea.ideaID.substring(0, 3)))) {
+					i+=3;
+				}
+
+				idea_loc = titleCapitalize(idea.ideaID.substring(i).replaceAll("_+", " ").trim()); // regex
+				localization.setLocalization(idea.ideaID, idea_loc);
+
 //				idea_loc = idea + loc_key + " ";
 //				idea_loc += "\"";
 //				idea_loc += titleCapitalize(idea.ideaID.substring(i, idea.ideaID.length()).replaceAll("_+", " ").trim()); // regex
@@ -84,7 +45,7 @@ public class FixIdea extends HOI4Fixes {
 //				// add blank desc line:
 //				locPWriter.println("    " + idea + "_desc" + loc_key + " " + "\"" + "\""); // NO TAB, YML PREFERS SPACES
 //				System.out.println("added idea to loc, idea " + idea_loc);
-//			}
+			}
 		}
 
 		return true;

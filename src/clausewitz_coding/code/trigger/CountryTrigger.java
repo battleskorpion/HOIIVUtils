@@ -1,6 +1,6 @@
 package clausewitz_coding.code.trigger;
 
-import clausewitz_coding.code.ScopeTargetType;
+import clausewitz_coding.code.scope.ScopeTargetType;
 
 import java.util.EnumSet;
 

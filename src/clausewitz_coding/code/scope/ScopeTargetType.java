@@ -1,4 +1,4 @@
-package clausewitz_coding.code;
+package clausewitz_coding.code.scope;
 
 /**
  * Scopes can be divided into types by the targets of the scope for which effects are executed
