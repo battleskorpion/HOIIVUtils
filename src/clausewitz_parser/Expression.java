@@ -217,6 +217,10 @@ public class Expression {
         return expressions.toArray(new Expression[]{});
     }
 
+    public Expression[] getAll() {
+        return getAll("");
+    }
+
     public String toString() {
         String s = "";
         s += expression;
@@ -238,5 +242,4 @@ public class Expression {
 
         return this.subexpressions.toArray(new Expression[]{});
     }
-
 }

@@ -1,5 +1,7 @@
 package clausewitz_coding.country;
 
+import java.util.Objects;
+
 public final class CountryTag {
     public static final CountryTag NULL_TAG = new CountryTag("###");
     private final String tag;
@@ -20,7 +22,15 @@ public final class CountryTag {
         if (other.getClass() == this.getClass()) {
             return this.tag.equals(((CountryTag) other).tag);
         }
+        else if (other.getClass() == String.class) {
+            return this.tag.equals(other);
+        }
 
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tag);
     }
 }

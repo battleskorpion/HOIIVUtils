@@ -1,22 +1,26 @@
 package clausewitz_coding.idea;
 
 import clausewitz_coding.code.modifier.Modifier;
+import clausewitz_coding.country.CountryTags;
+import clausewitz_parser.Expression;
+import clausewitz_parser.Parser;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import static clausewitz_coding.HOI4Fixes.usefulData;
+
 public abstract class Idea {
 
 	/* static */
-	protected static ArrayList<Idea> idea_list;
+	protected static ArrayList<Idea> idea_list;		// TODO change to hash etc.
 
 	/* idea */
 	protected String ideaID;
 	//	private ArrayList<String> loc_name;
 	protected File file; 			// file idea is defined in
 	protected ArrayList<Modifier> modifiers;
-	protected int removal_cost = -1;		// -1 default
-
+	protected int removalCost = -1;		// -1 default
 
 	protected Idea(String ideaID) {
 		this.ideaID = ideaID;
@@ -34,6 +38,18 @@ public abstract class Idea {
 		}
 
 		return null;
+	}
+
+	public int getRemovalCost() {
+		return removalCost;
+	}
+
+	public void setRemovalCost(int removalCost) {
+		if (removalCost < -1) {
+			this.removalCost = -1;
+		} else {
+			this.removalCost = removalCost;
+		}
 	}
 
 	public static ArrayList<Idea> getIdeas() {
@@ -68,42 +84,49 @@ public abstract class Idea {
 	}
 
 	// todo this had a purpose likely, what was it :(
-//	public static ArrayList<String> find(File idea_file) throws IOException {
+	public static ArrayList<String> load(File idea_file) {
 //		Scanner ideaReader = new Scanner(idea_file);
-//		idea_list = new ArrayList<String>();
-//
-//		// make a list of all idea names
-//		//boolean findIdeaName = false;
-//		//int idea_list_index;  // index of focus name in string
-//		while (ideaReader.hasNextLine()) {
-//			String data = ideaReader.nextLine().replaceAll("\\s", "");
-////
-//			if(usefulData(data)) {
-//				// need enough data length before checks are made to prevent error
-//				if(data.length() >= 5) {
-//					// if theoretical TAG at beginning of idea name is in the list of tags
-//					// (this means the text we have is likely an idea since the tag exists)
-//					if (CountryTags.list().contains(data.trim().substring(0, 3))) {
-//						// if this is likely an idea, then check if there is " = {"
-//						// at the end to confirm likelihood
-//						// also, a tag is TAG, all caps. check for this after.
-//						if (data.trim().substring(data.length() - 2, data.length()).equals("={")) {
-//							if(data.trim().substring(0, 3).equals(data.trim().substring(0, 3).toUpperCase())) {
-//								// if here, ***should*** be good! data is an idea name,
-//								// once we clean it up
-//
-//								// return idea var name, remove "={"
-//								idea_list.add(data.trim().substring(0, data.length() - 2));
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		ideaReader.close();
-//
+		idea_list = new ArrayList<>();
+
+		// make a list of all idea names
+		int idea_list_index;  // index of idea name in string
+		Parser ideaParser = new Parser(idea_file);
+		Expression[] data = ideaParser.findAll();
+
+		for (Expression exp : data) {
+			String s = exp.getText();
+			s = s.trim();
+
+			// need enough data length before checks are made to prevent error
+			if(usefulData(s) && s.length() >= 5) {
+				// if theoretical TAG at beginning of idea name is in the list of tags
+				// (this means the text we have is likely an idea since the tag exists)
+				// array list of country tags but country tags can be equivalent to strings (tag)
+				if (CountryTags.list().contains(s.substring(0, 3))) {
+					// if this is likely an idea, then check if there is " = {"
+					// at the end to confirm likelihood
+					// also, a tag is TAG, all caps. check for this after.
+					if (s.startsWith("={", s.length() - 2)) {
+						// if here, ***should*** be good! data is an idea name,
+						// once we clean it up
+
+						// return idea var name, remove "={"
+						String ideaName = s.substring(0, s.length() - 2);
+						Idea idea;
+						/* find idea type and instantiate idea */
+						if (true) {		//todo
+							idea = new CountryIdea(ideaName);
+						} else {
+							idea = new ManpowerIdea(ideaName);
+						}
+						idea_list.add(idea);
+					}
+				}
+			}
+		}
 //		return idea_list;
-//	}
+		return null;
+	}
 
 }
 

@@ -68,6 +68,10 @@ public class Parser {
         return fileExpressions.getAll(s);
     }
 
+    public Expression[] findAll() {
+         return findAll("");
+    }
+
     public Expression findImmediate(String s) {
         if (fileExpressions == null) {
             return null;
@@ -89,5 +93,4 @@ public class Parser {
             return false;
         }
     }
-
 }
