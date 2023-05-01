@@ -3,13 +3,10 @@ package ui.colorgen;
 import mapgen.colorgen.ColorGenerator;
 
 import javax.swing.*;
-import java.awt.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 public class ColorGeneratorMenu extends JFrame {
     private JPanel colorGeneratorJPanel;
@@ -55,24 +52,17 @@ public class ColorGeneratorMenu extends JFrame {
                 colorGenerator.generateColors(getNumColorsGenerate());
             }
         });
+
         for (int i = 0; i < sliders.length; i++) {
             int finalI = i;
-            sliders[i].addFocusListener(new FocusAdapter() {
-                /**
-                 * Invoked when a component loses the keyboard focus.
-                 *
-                 * @param e
-                 */
+            sliders[i].addChangeListener(new ChangeListener() {
                 @Override
-                public void focusLost(FocusEvent e) {
-                    super.focusLost(e);
-
+                public void stateChanged(ChangeEvent e) {
                     int value = sliders[finalI].getValue();
                     sliderAmtLabels[finalI].setText(Integer.toString(value));
                 }
             });
         }
-
     }
 
     private int getNumColorsGenerate() {
