@@ -121,7 +121,7 @@ public class ColorGeneratorMenu extends JFrame {
 
     /**
      * @throws IllegalArgumentException from <code>Integer.parseInt()</code> if <code>numColorsTextField</code> cannot be read.
-     * @return
+     * @return number of colors selected to generate
      */
     private int getNumColorsGenerate() {
         int numColors;
