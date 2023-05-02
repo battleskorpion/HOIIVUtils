@@ -42,7 +42,7 @@ public class Mainmenu extends JFrame {
         if (!HOI4Fixes.DEV_MODE) {
             focusTreeBuilderButton.setEnabled(false);
             focusTreeStrengthButton.setEnabled(false);
-            ideaLocalizationButton.setEnabled(false);
+            //ideaLocalizationButton.setEnabled(false);
             findFocusesWithoutLocalizationButton.setEnabled(false);
         }
         setContentPane(mainmenuJPanel);

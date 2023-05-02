@@ -95,6 +95,9 @@ public abstract class Idea {
 
 		for (Expression exp : data) {
 			String s = exp.getText();
+			if (s == null) {
+				continue;
+			}
 			s = s.trim();
 
 			// need enough data length before checks are made to prevent error

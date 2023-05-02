@@ -23,6 +23,7 @@ public class FixIdea extends HOI4Fixes {
 
 		String idea_loc;
 
+		Idea.load(idea_file);
 		assert Idea.getIdeas() != null;
 		for (Idea idea : Idea.getIdeas()) {
 			if (!localization.isLocalized(idea.ideaID)) {
