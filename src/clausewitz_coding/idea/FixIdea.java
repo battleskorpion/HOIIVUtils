@@ -49,6 +49,7 @@ public class FixIdea extends HOI4Fixes {
 			}
 		}
 
+		localization.writeLocalization();
 		return true;
 	}
 }
