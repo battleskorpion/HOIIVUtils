@@ -10,7 +10,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,6 +28,8 @@ public class ColorGenerator {
     private static int gMax = 255;
     private static int bMin = 0;
     private static int bMax = 255;
+    private ColorGenType COLOR_GEN_TYPE = ColorGenType.TEMP_1;
+    private ColorGenOrder COLOR_GEN_ORDER = ColorGenOrder.CHROMANUMERICALLY;
 
     // rules:
     // ! max < min
@@ -200,21 +204,64 @@ public class ColorGenerator {
         colors = new HashSet<>(numPixels);
 
         Random random = new Random();
-
+        int rDiff = rMax - rMin;
+        int gDiff = gMax - gMin;
+        int bDiff = bMax - bMin;
         for (int i = 0; i < numColors; i++) {
             /* gen new color */
             Color color;
             do {
-                color = new Color(random.nextInt(rMin, rMax), random.nextInt(gMin, gMax),
-                        random.nextInt(bMin, bMax)); // 0-255
+                if (COLOR_GEN_TYPE == ColorGenType.EQUAL_DISTRIBUTION) {
+                    color = new Color(random.nextInt(rMin, rMax), random.nextInt(gMin, gMax),
+                            random.nextInt(bMin, bMax)); // 0-255
+                } else if (COLOR_GEN_TYPE == ColorGenType.UNIFORM_DISTRIBUTION) {
+                    //TODO very difficult math
+                    int max = (rDiff + 1) * (gDiff + 1) * (bDiff + 1) - 1;  // starts from 0, so max of 7 -> 8 possible values.
+                    int colorInt = random.nextInt(max);
+                    int r = (colorInt>>16)&0xFF + rMin; // number at least rMin ( >> 16 -> at most 255 - rMax)
+                    int g = (colorInt>>8)&0xFF;
+                    int b = (colorInt)&0xFF;
+                    color = new Color(r, g, b);
+                } else if (COLOR_GEN_TYPE == ColorGenType.TEMP_1) {
+                    int r = random.nextInt(0, rDiff);
+                    if (rDiff < 255 && random.nextInt(255) > rDiff) {
+                        r = Math.floorDiv(r, random.nextInt(255 - rDiff) + 1);
+                    }
+                    int g = random.nextInt(0, gDiff);
+                    if (gDiff < 255 && random.nextInt(255) > gDiff) {
+                        g = Math.floorDiv(g, random.nextInt(255 - gDiff) + 1);
+                    }
+                    int b = random.nextInt(0, bDiff);
+                    if (bDiff < 255 && random.nextInt(255) > bDiff) {
+                        b = Math.floorDiv(b, random.nextInt(255 - bDiff) + 1);
+                    }
+                    color = new Color(r, g, b);
+                } else {
+                    return false;
+                }
             } while (existingColors.contains(color) || colors.contains(color));
 
-            colorMap.setRGB(i / imageWidth, i % imageWidth, color.getRGB());
             colors.add(color);
-            if (progressUpdates) {
-                SwingUtilities.invokeLater(() -> {
-                    progressBar.setValue(progressBar.getValue() + 1);
-                });
+            if (COLOR_GEN_ORDER == ColorGenOrder.DEFAULT) {
+                colorMap.setRGB(i / imageWidth, i % imageWidth, color.getRGB());
+                if (progressUpdates) {
+                    SwingUtilities.invokeLater(() -> {
+                        progressBar.setValue(progressBar.getValue() + 1);
+                    });
+                }
+            }
+        }
+
+        if (COLOR_GEN_ORDER == ColorGenOrder.CHROMANUMERICALLY) {
+            int i = 0;
+            for (Iterator<Color> it = colors.stream().sorted(new colorIntComparator()).iterator(); it.hasNext(); i++) {
+                Color color = it.next();
+                colorMap.setRGB(i / imageWidth, i % imageWidth, color.getRGB());
+                if (progressUpdates) {
+                    SwingUtilities.invokeLater(() -> {
+                        progressBar.setValue(progressBar.getValue() + 1);
+                    });
+                }
             }
         }
 
@@ -225,5 +272,12 @@ public class ColorGenerator {
         }
 
         return true;
+    }
+
+    private static class colorIntComparator implements Comparator<Color> {
+        @Override
+        public int compare(Color o1, Color o2) {
+            return Integer.compare(o1.getRGB(), o2.getRGB());
+        }
     }
 }
