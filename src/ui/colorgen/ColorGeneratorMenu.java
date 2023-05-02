@@ -24,6 +24,8 @@ public class ColorGeneratorMenu extends JFrame {
     private JLabel maxRedAmtLabel;
     private JLabel minBlueAmtLabel;
     private JLabel maxBlueAmtLabel;
+    private JPanel generateJPanel;
+    private JProgressBar generateProgressBar;
 
     public ColorGeneratorMenu() {
         super("Color Generator");
@@ -34,6 +36,9 @@ public class ColorGeneratorMenu extends JFrame {
 
         /* color generator */
         ColorGenerator colorGenerator = new ColorGenerator();
+
+        /* component visibility */
+        generateProgressBar.setVisible(false);
 
         setContentPane(colorGeneratorJPanel);
         setSize(700, 500);
@@ -49,7 +54,29 @@ public class ColorGeneratorMenu extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                colorGenerator.generateColors(getNumColorsGenerate());
+                int numColors;
+
+                /* get num colors to generate */
+                generateButton.setVisible(false);
+                try {
+                    numColors = getNumColorsGenerate();
+                } catch (Exception exc) {
+                    System.err.println(exc.getMessage());
+                    System.err.println("\t" + "in " + this);
+                    generateButton.setVisible(true);
+                    return;
+                }
+
+                /* display progress bar */
+                generateProgressBar.setMaximum(numColors);
+                generateProgressBar.setVisible(true);
+
+                /* generate colors */
+                colorGenerator.generateColors(numColors);
+
+                /* reset visibility */
+                generateProgressBar.setVisible(false);
+                generateButton.setVisible(true);
             }
         });
 
@@ -92,16 +119,13 @@ public class ColorGeneratorMenu extends JFrame {
         }
     }
 
+    /**
+     * @throws IllegalArgumentException from <code>Integer.parseInt()</code> if <code>numColorsTextField</code> cannot be read.
+     * @return
+     */
     private int getNumColorsGenerate() {
         int numColors;
-        try {
-            numColors = Integer.parseInt(numColorsTextField.getText());
-        }
-        catch (Exception exc) {
-            numColors = 0;
-            System.err.println(exc.getMessage());
-            System.err.println("\t" + "in " + this);
-        }
+        numColors = Integer.parseInt(numColorsTextField.getText());
 
         if (numColors > (1 << 24) - 1) {
             numColors = (1 << 24) - 1;
@@ -112,6 +136,5 @@ public class ColorGeneratorMenu extends JFrame {
         }
         return numColors;
     }
-
 
 }
