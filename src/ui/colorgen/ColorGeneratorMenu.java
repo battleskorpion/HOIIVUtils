@@ -7,6 +7,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ColorGeneratorMenu extends JFrame {
     private JPanel colorGeneratorJPanel;
@@ -54,29 +57,73 @@ public class ColorGeneratorMenu extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                int numColors;
+                Thread generateThread = new Thread() {
+                    public void run() {
+                        int numColors;
 
-                /* get num colors to generate */
-                generateButton.setVisible(false);
-                try {
-                    numColors = getNumColorsGenerate();
-                } catch (Exception exc) {
-                    System.err.println(exc.getMessage());
-                    System.err.println("\t" + "in " + this);
-                    generateButton.setVisible(true);
-                    return;
-                }
+                        /* get num colors to generate */
+                        try {
+                            SwingUtilities.invokeAndWait(() -> {
+                                generateButton.setEnabled(false);
+                                generateButton.setVisible(false);
+                            });
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                /* display progress bar */
-                generateProgressBar.setMaximum(numColors);
-                generateProgressBar.setVisible(true);
+                        try {
+                            numColors = getNumColorsGenerate();
+                        } catch (Exception exc) {
+                            System.err.println(exc.getMessage());
+                            System.err.println("\t" + "in " + this);
+                            try {
+                                SwingUtilities.invokeAndWait(() -> {
+                                    generateButton.setEnabled(true);
+                                    generateButton.setVisible(true);
+                                });
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            return;
+                        }
 
-                /* generate colors */
-                colorGenerator.generateColors(numColors);
+                        /* display progress bar */
+                        try {
+                            SwingUtilities.invokeAndWait(() -> {
+                                generateProgressBar.setMaximum(numColors);
+                                generateProgressBar.setVisible(true);
+                            });
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                /* reset visibility */
-                generateProgressBar.setVisible(false);
-                generateButton.setVisible(true);
+                        /* generate colors */
+                        colorGenerator.generateColors(numColors);
+
+                        /* reset visibility */
+                        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+                        // delay at least half a second
+                        executorService.schedule(() -> {
+                            try {
+                                SwingUtilities.invokeAndWait(() -> {
+                                    generateProgressBar.setVisible(false);
+                                    generateButton.setEnabled(true);
+                                    generateButton.setVisible(true);
+                                });
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }, 500, TimeUnit.MILLISECONDS);
+
+                        System.out.println("Finished on " + Thread.currentThread());
+                    }
+
+                };
+                generateThread.start();
             }
         });
 

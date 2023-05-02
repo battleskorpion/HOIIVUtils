@@ -5,12 +5,14 @@ import clausewitz_parser.Parser;
 import settings.LocalizerSettings;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
 
@@ -161,11 +163,18 @@ public class ColorGenerator {
     }
 
     public void generateColors(int numColors) {
+        generateColors(numColors, null);
+    }
+
+    public boolean generateColors(int numColors, JProgressBar progressBar) {
         /* create colors bmp */
         int imageWidth;
         int imageHeight;
         int numPixels;
         int maxColors;
+        boolean progressUpdates;
+
+        progressUpdates = progressBar != null;
 
         /* find existing colors */
         findExistingColors();
@@ -202,6 +211,11 @@ public class ColorGenerator {
 
             colorMap.setRGB(i / imageWidth, i % imageWidth, color.getRGB());
             colors.add(color);
+            if (progressUpdates) {
+                SwingUtilities.invokeLater(() -> {
+                    progressBar.setValue(progressBar.getValue() + 1);
+                });
+            }
         }
 
         try {
@@ -209,5 +223,7 @@ public class ColorGenerator {
         } catch (IOException exc) {
             throw new RuntimeException(exc);
         }
+
+        return true;
     }
 }
