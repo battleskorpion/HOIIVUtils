@@ -16,7 +16,7 @@ public class Focus {
     private int x;
     private int y;
     protected String relative_position_id;
-    private int cost;       // cost of focus (typically in weeks unless changed in defines)
+    private int cost;                           // cost of focus (typically in weeks unless changed in defines)
     protected Set<FocusSearchFilter> focus_search_filters;
     private boolean available_if_capitulated;
     private boolean cancel_if_invalid;
@@ -49,29 +49,73 @@ public class Focus {
         return locName;
     }
 
-    public void setFocusLoc(String focus_loc) {
-        this.locName = focus_loc;
-    }
     public String toString() {
         return id(); 
     }
 
     /**
      * Adds focus attributes (prerequisite, mutually exclusive, etc...) to focus
-     * by parsing expressions for each potential attribute
-     * @param focusExp Expression representing focus - must include "focus"
+     * by parsing expressions for each potential attribute.
+     * @param exp Expression representing focus - must include "focus".
      */
-    public void loadAttributes(Expression focusExp) {
-        if(focusExp.get("focus") == null) {
+    public void loadAttributes(Expression exp) {
+        if(exp.get("focus") == null) {
             System.err.println(this + " - Not valid focus expression/definition.");
             return;
         }
 
+        Expression focusExp = exp.get("focus");
 
+        setID(exp.getSubexpression(id));
+        set
+        //setFocusLoc();
+        setIcon(focusExp.getSubexpression("icon"));
+        setPrerequisite(focusExp.getSubexpression("prerequisite"));
+        setMutuallyExclusive(focusExp.getSubexpression("mutually_exclusive"));
+        setAvailable(focusExp.getSubexpression("available"));
+    }
+
+    /**
+     * Sets new xy-coordinates, returns previous xy-coordinates.
+     * @param x focus new x-coordinate
+     * @param y focus new y-coordinate
+     * @return previous x and y
+     */
+    public Point setXY(int x, int y) {
+        Point prev = new Point(this.x, this.y);
+        this.x = x;
+        this.y = y;
+        return prev;
+    }
+
+    public Point setXY(Point xy) {
+        return setXY(xy.x, xy.y);
+    }
+
+    public void setID(String id) {
+        this.id = id;
+    }
+
+    private void setID(Expression exp) {
+        if (exp == null) {
+            id = null;
+        }
+        id = exp.getText();
+    }
+
+    public void setFocusLoc() {
+        setFocusLoc(id);
+    }
+
+    public void setFocusLoc(String focus_loc) {
+        this.locName = focus_loc;
+        // todo?
     }
 
     public void setIcon(Expression exp) {
-
+        if (exp == null) {
+            icon = null;
+        }
     }
 
     /**
@@ -80,14 +124,17 @@ public class Focus {
      */
     public void setIcon(String icon) {
         // null string -> set no (null) icon
-        if (icon.equals("")) {
+        // icon == null check required to not throw access exception
+        if (icon == null || icon.equals("")) {
             this.icon = null;
         }
         this.icon = icon;
     }
 
     public void setPrerequisite(Expression exp) {
-
+        if (exp == null) {
+            prerequisite = null;
+        }
     }
 
     /**
@@ -104,7 +151,9 @@ public class Focus {
     }
 
     public void setMutuallyExclusive(Expression exp) {
-
+        if (exp == null) {
+            mutually_exclusive = null;
+        }
     }
 
     /**
@@ -138,7 +187,9 @@ public class Focus {
     }
 
     public void setAvailable(Expression exp) {
-
+        if (exp == null) {
+            available = null;
+        }
     }
 
     /**
