@@ -28,8 +28,9 @@ public class ColorGenerator {
     private static int gMax = 255;
     private static int bMin = 0;
     private static int bMax = 255;
-    private ColorGenType COLOR_GEN_TYPE = ColorGenType.TEMP_1;
-    private ColorGenOrder COLOR_GEN_ORDER = ColorGenOrder.CHROMANUMERICALLY;
+    private ColorGenType COLOR_GEN_TYPE = ColorGenType.UNIFORM_DISTRIBUTION; //ColorGenType.TEMP_1;
+    //private ColorGenOrder COLOR_GEN_ORDER = ColorGenOrder.DEFAULT; //ColorGenOrder.CHROMANUMERICALLY;
+    private ColorGenOrder COLOR_GEN_ORDER = ColorGenOrder.HUE;
 
     // rules:
     // ! max < min
@@ -263,6 +264,17 @@ public class ColorGenerator {
                     });
                 }
             }
+        } else if (COLOR_GEN_ORDER == ColorGenOrder.HUE) {
+            int i = 0;
+            for (Iterator<Color> it = colors.stream().sorted(new colorHueComparator()).iterator(); it.hasNext(); i++) {
+                Color color = it.next();
+                colorMap.setRGB(i / imageWidth, i % imageWidth, color.getRGB());
+                if (progressUpdates) {
+                    SwingUtilities.invokeLater(() -> {
+                        progressBar.setValue(progressBar.getValue() + 1);
+                    });
+                }
+            }
         }
 
         try {
@@ -280,4 +292,15 @@ public class ColorGenerator {
             return Integer.compare(o1.getRGB(), o2.getRGB());
         }
     }
+
+    private static class colorHueComparator implements Comparator<Color> {
+        @Override
+        public int compare(Color o1, Color o2) {
+            float[] hsb1 = Color.RGBtoHSB(o1.getRed(), o1.getGreen(), o1.getBlue(), null);
+            float[] hsb2 = Color.RGBtoHSB(o2.getRed(), o2.getGreen(), o2.getBlue(), null);
+
+            return Float.compare(hsb1[0], hsb2[0]);
+        }
+    }
+
 }
