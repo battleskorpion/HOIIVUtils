@@ -7,6 +7,8 @@ import java.awt.*;
 import java.util.*;
 
 public class Focus {
+    private final int DEFAULT_FOCUS_COST = 10;  // default cost (weeks) when making new focus or etc.
+
     private String id;
     private String locName;
     protected String icon;
@@ -67,12 +69,23 @@ public class Focus {
         Expression focusExp = exp.get("focus");
 
         setID(exp.getSubexpression(id));
-        set
+        setXY(focusExp.getImmediate("x"), focusExp.getImmediate("y"));
         //setFocusLoc();
         setIcon(focusExp.getSubexpression("icon"));
         setPrerequisite(focusExp.getSubexpression("prerequisite"));
         setMutuallyExclusive(focusExp.getSubexpression("mutually_exclusive"));
         setAvailable(focusExp.getSubexpression("available"));
+    }
+
+    public void setID(String id) {
+        this.id = id;
+    }
+
+    private void setID(Expression exp) {
+        if (exp == null) {
+            id = null;
+        }
+        id = exp.getText();
     }
 
     /**
@@ -92,15 +105,33 @@ public class Focus {
         return setXY(xy.x, xy.y);
     }
 
-    public void setID(String id) {
-        this.id = id;
+    private Point setXY(Expression x, Expression y) {
+        if (x == null && y == null) {
+            return setXY(0, 0);
+        }
+        if (x == null) {
+            return setXY(0, y.getValue());
+        }
+        if (y == null) {
+            return setXY(x.getValue(), 0);
+        }
+        return setXY(x.getValue(), y.getValue());
     }
 
-    private void setID(Expression exp) {
+    public void setCost() {
+        setCost(DEFAULT_FOCUS_COST);
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    public void setCost(Expression exp) {
         if (exp == null) {
-            id = null;
+            cost = 0;
+        } else {
+            this.cost = exp.getValue();
         }
-        id = exp.getText();
     }
 
     public void setFocusLoc() {
