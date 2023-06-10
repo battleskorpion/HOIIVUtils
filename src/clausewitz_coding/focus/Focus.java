@@ -9,20 +9,20 @@ import java.util.*;
 public class Focus {
     private final int DEFAULT_FOCUS_COST = 10;  // default cost (weeks) when making new focus or etc.
 
-    private String id;
-    private String locName;
+    protected String id;
+    protected String locName;
     protected String icon;
     protected Set<Focus> prerequisite;          // can be multiple, but hoi4 code is simply "prerequisite"
     protected Set<Focus> mutually_exclusive;
-    private Trigger available;
-    private int x;
-    private int y;
+    protected Trigger available;
+    protected int x;
+    protected int y;
     protected String relative_position_id;
-    private int cost;                           // cost of focus (typically in weeks unless changed in defines)
+    protected int cost;                           // cost of focus (typically in weeks unless changed in defines)
     protected Set<FocusSearchFilter> focus_search_filters;
-    private boolean available_if_capitulated;
-    private boolean cancel_if_invalid;
-    private boolean continue_if_invalid;
+    protected boolean available_if_capitulated;
+    protected boolean cancel_if_invalid;
+    protected boolean continue_if_invalid;
 
     public Focus(String focus_id) {
         this.id = focus_id;

@@ -14,7 +14,8 @@ import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
 public class FixIdea extends HOI4Fixes {
 
 	public static boolean addIdeaLoc(File idea_file, File loc_file) throws IOException {
-		hoi4_dir_name = HOI4Fixes.settings.get(MOD_DIRECTORY);
+
+		final String hoi4_dir_name = HOI4Fixes.settings.get(MOD_DIRECTORY);
 
 		// some vars
 		ArrayList<String> ideas_localized = new ArrayList<String>();
@@ -26,11 +27,13 @@ public class FixIdea extends HOI4Fixes {
 		Idea.load(idea_file);
 		assert Idea.getIdeas() != null;
 		for (Idea idea : Idea.getIdeas()) {
+			// if idea id not localized
 			if (!localization.isLocalized(idea.ideaID)) {
 				// write to loc file
 				// separate words in idea name
 				int i = 0;
-				if(CountryTags.list().contains(new CountryTag(idea.ideaID.substring(0, 3)))) {
+//				if(CountryTags.list().contains(new CountryTag(idea.ideaID.substring(0, 3)))) {
+				if (CountryTags.exists(idea.ideaID.substring(0, 3))) {
 					i+=3;
 				}
 
