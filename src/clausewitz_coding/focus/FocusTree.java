@@ -33,7 +33,7 @@ public final class FocusTree extends HOI4Fixes {
 		country = new CountryTag("###");
 		focuses = new ArrayList<>();
 
-		find();
+		parse();
 		FocusTrees.add(country(), this);
 	}
 
@@ -54,7 +54,7 @@ public final class FocusTree extends HOI4Fixes {
 
 //    public ArrayList<String> find(File focus_file) throws IOException {
 //		Scanner focusReader = new Scanner(focus_file);
-	public ArrayList<String> find() throws IOException {
+	private ArrayList<String> parse() {
 		if (this.focus_file == null) {
 			System.err.println(this + "File of focus tree not set.");
 			return null;
@@ -68,7 +68,10 @@ public final class FocusTree extends HOI4Fixes {
 		Parser focusParser = new Parser(this.focus_file);
 		Expression focusTreeExp = focusParser.expression();
 		Expression[] focusesExps = focusTreeExp.getAll("focus = {");
-		if (focuses == null) {
+//		if (focuses == null) {
+//			return null;
+//		}
+		if (focusesExps == null) {
 			return null;
 		}
 

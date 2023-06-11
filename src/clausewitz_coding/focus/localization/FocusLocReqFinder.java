@@ -27,10 +27,11 @@ public class FocusLocReqFinder {
 		/* instantiate each focus tree in national focus folder */
 		for(File focus_file : Objects.requireNonNull(national_focus_dir.listFiles())) {
 			if(!focus_file.isDirectory()) {         // skip directories for now even if there is
-													// focus files in them
+													// focus files in them todo
 
 				// make a list of all focus names
 				FocusTree focus = new FocusTree(focus_file);
+				// todo how long does it take to init these focus trees????
 
 //				System.out.println(focus.country());
 			}
