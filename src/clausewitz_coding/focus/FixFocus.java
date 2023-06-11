@@ -116,6 +116,7 @@ public class FixFocus extends HOI4Fixes {
 		focusLocProgress.setNumFocusesUnloc(numFocusesUnloc);
 		focusLocProgress.refreshUnlocFocusesTable(focusesUnloc);
 
+		localization.writeLocalization();
 		return true; 
 	}
 

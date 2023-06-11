@@ -66,15 +66,15 @@ public class Focus {
             return;
         }
 
-        Expression focusExp = exp.get("focus");
+        Expression focusExp = exp.get("focus =");
 
         setID(exp.getSubexpression(id));
-        setXY(focusExp.getImmediate("x"), focusExp.getImmediate("y"));
+        setXY(focusExp.getImmediate("x ="), focusExp.getImmediate("y ="));
         //setFocusLoc();
-        setIcon(focusExp.getSubexpression("icon"));
-        setPrerequisite(focusExp.getSubexpression("prerequisite"));
-        setMutuallyExclusive(focusExp.getSubexpression("mutually_exclusive"));
-        setAvailable(focusExp.getSubexpression("available"));
+        setIcon(focusExp.getSubexpression("icon ="));
+        setPrerequisite(focusExp.getSubexpression("prerequisite ="));
+        setMutuallyExclusive(focusExp.getSubexpression("mutually_exclusive ="));
+        setAvailable(focusExp.getSubexpression("available ="));
     }
 
     public void setID(String id) {
