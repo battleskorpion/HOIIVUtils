@@ -96,8 +96,9 @@ public final class FocusTree extends HOI4Fixes {
 				focus_names.add(focus_id);
 				focuses.add(focus);
 
+				// TODO THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
 				focus.loadAttributes(focusExp);
-			}
+
 		}
 
 		/* country */
