@@ -79,6 +79,10 @@ public class RiverGenWindow extends JFrame {
         repaint();      // repaint after toggling source text panel
     }
 
+    public void createUIComponents() {
+        riverGenWindow$RiverMapViewport1 = new RiverMapViewport();
+    }
+
     public class RiverMapViewport extends JPanel {
         //JPanel riverMapJPanel;
 
