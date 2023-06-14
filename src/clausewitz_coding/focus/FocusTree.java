@@ -86,11 +86,11 @@ public final class FocusTree extends HOI4Fixes {
 			{
 				Expression focusIDExp = focusExp.get("id=");
 				if (focusIDExp == null) {
-					continue; 		// id important
+					continue;        // id important
 				}
 				String focus_id = focusIDExp.getText();        // gets the ##### from "id = #####"
 				if (focus_id == null) {
-					continue; 		// id important
+					continue;        // id important
 				}
 				focus = new Focus(focus_id);
 				focus_names.add(focus_id);
@@ -98,7 +98,7 @@ public final class FocusTree extends HOI4Fixes {
 
 				// TODO THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
 				focus.loadAttributes(focusExp);
-
+			}
 		}
 
 		/* country */
