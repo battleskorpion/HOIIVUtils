@@ -1,4 +1,4 @@
-package ui.map_viewer;
+package ui.map;
 
 import javax.swing.*;
 

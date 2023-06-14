@@ -11,6 +11,7 @@ import ui.custom_tooltop.CustomTooltipWindow;
 import ui.focus.FocusTreeBuilderWindow;
 import ui.focus.FocusTreeStrength;
 import ui.focus_localization.FocusLoqReqWindow;
+import ui.map.RiverGenWindow;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -32,6 +33,7 @@ public class Mainmenu extends JFrame {
     private JButton focusTreeBuilderButton;
     private JButton customTooltipLocalizationButton;
     private JButton focusTreeStrengthButton;
+    private JButton riverGenerationButton;
 
     public Mainmenu() {
         menu = this;
@@ -231,10 +233,27 @@ public class Mainmenu extends JFrame {
             }
         });
         focusTreeStrengthButton.addActionListener(new ActionListener() {
+            /**
+             * Invoked when an action occurs.
+             *
+             * @param e the event to be processed
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 FocusTreeStrength focusTreeStrength = new FocusTreeStrength();
                 focusTreeStrength.setVisible(true);
+            }
+        });
+        riverGenerationButton.addActionListener(new ActionListener() {
+            /**
+             * Invoked when an action occurs.
+             *
+             * @param e the event to be processed
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RiverGenWindow riverGenWindow = new RiverGenWindow();
+                riverGenWindow.setVisible(true);
             }
         });
     }
