@@ -1,10 +1,14 @@
 package ui.map;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class RiverGenWindow extends JFrame {
     private JPanel riverGenJPanel;
@@ -87,8 +91,10 @@ public class RiverGenWindow extends JFrame {
         //JPanel riverMapJPanel;
 
         public RiverMapViewport() {
-            JLabel label = new JLabel("label");
+            ImageIcon rivermap = new ImageIcon("C:\\Users\\daria\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\california-divided\\map\\provinces.bmp");
+            JLabel label = new JLabel(rivermap);
             label.setPreferredSize(new Dimension(1000, 1000));
+
             JScrollPane scrollPane = new JScrollPane(label);
             //
             scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -97,7 +103,7 @@ public class RiverGenWindow extends JFrame {
             scrollPane.setViewportBorder(new LineBorder(Color.RED));
 //            scrollPane.getViewport().add(//, null);
             add(scrollPane, BorderLayout.CENTER);
-            setSize(400, 300);
+            //setSize(400, 300);
 //            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
     }
