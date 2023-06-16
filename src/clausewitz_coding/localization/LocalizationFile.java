@@ -127,10 +127,10 @@ public final class LocalizationFile extends File {
         BufferedWriter BWriter = new BufferedWriter(writer);
         PrintWriter PWriter = new PrintWriter(BWriter);                // for println syntax
 
-        /* bom */
-        PWriter.write(0xef); // emits 0xef
-        PWriter.write(0xbb); // emits 0xbb
-        PWriter.write(0xbf); // emits 0xbf
+        /* bom */   // may not be necessary now, remove?
+//        PWriter.write(0xef); // emits 0xef
+//        PWriter.write(0xbb); // emits 0xbb
+//        PWriter.write(0xbf); // emits 0xbf
 
         String localization_line;
 
