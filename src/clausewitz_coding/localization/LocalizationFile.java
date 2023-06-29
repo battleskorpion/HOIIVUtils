@@ -6,10 +6,10 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 
-public final class LocalizationFile extends File {
+public class LocalizationFile extends File {
     private static String loc_key = ":0";
     private static String language = "l_english:";
-    private List<Localization> localizationList;
+    protected List<Localization> localizationList;
 //    private HashMap<Integer, String> comments;
 
     public LocalizationFile(File file) {

@@ -2,6 +2,7 @@ package clausewitz_coding.focus;
 
 import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.HOI4Fixes;
+import clausewitz_coding.localization.FocusLocalizationFile;
 import clausewitz_coding.localization.LocalizationFile;
 import ui.focus_localization.FocusTreeLocProgress;
 
@@ -10,6 +11,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -27,7 +31,7 @@ public class FixFocus extends HOI4Fixes {
 		ArrayList<String> focuses_localized = new ArrayList<String>();
 		//ArrayList<String> focuses_nonlocalized = new ArrayList<String>();
 		FocusTree focusTree = new FocusTree(focus_file);
-		LocalizationFile localization = new LocalizationFile(loc_file);
+		FocusLocalizationFile localization = new FocusLocalizationFile(loc_file);
 		localization.readLocalization();
 
 		/* open the ui */
@@ -61,6 +65,7 @@ public class FixFocus extends HOI4Fixes {
 				focusesUnloc.add(focus);
 
 				localization.setLocalization(focus.id, focus_loc);
+				localization.setLocalizationDesc(focus.id + "_desc", "added focus on " + LocalDateTime.now() + " by hoi4localizer.");
 			}
 		}
 
