@@ -108,6 +108,9 @@ public class Focus {
     public String locName() {
         return locName;
     }
+    public String icon() {
+        return icon;
+    }
 
     public String toString() {
         return id(); 
@@ -217,6 +220,7 @@ public class Focus {
         // todo?
     }
 
+    //todo implement icon lookup
     public void setIcon(Expression exp) {
         if (exp == null) {
             icon = null;
