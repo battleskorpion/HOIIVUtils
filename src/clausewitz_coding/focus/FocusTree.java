@@ -71,7 +71,8 @@ public final class FocusTree extends HOI4Fixes {
 		Parser focusParser = new Parser(this.focus_file);
 		Expression focusTreeExp = focusParser.expression();
 		Expression[] focusesExps = focusTreeExp.getAll("focus={");
-		System.out.println(focusesExps[focusesExps.length-1]);
+//		System.out.println(focusesExps[focusesExps.length-1]);
+		System.out.println(Arrays.toString(focusesExps));
 		System.out.println("Num focuses detected: " + focusesExps.length);
 //		if (focuses == null) {
 //			return null;

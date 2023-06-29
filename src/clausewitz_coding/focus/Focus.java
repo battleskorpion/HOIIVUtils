@@ -11,6 +11,7 @@ public class Focus {
     private static final HashSet<String> focusIDs = new HashSet<>();
 
     protected FocusTree focusTree;
+    Expression focusExp;
     protected String id;
     protected String locName;
     protected String icon;
@@ -123,7 +124,7 @@ public class Focus {
             return;
         }
 
-        Expression focusExp = exp.get("focus=");
+        focusExp = exp.get("focus=");
 
         setID(exp.getSubexpression(id));
         setXY(focusExp.getImmediate("x="), focusExp.getImmediate("y="));
@@ -133,6 +134,10 @@ public class Focus {
         setPrerequisite(focusExp.getSubexpression("prerequisite="));
         setMutuallyExclusive(focusExp.getSubexpression("mutually_exclusive="));
         setAvailable(focusExp.getSubexpression("available="));
+    }
+
+    public Expression getFocusExpression() {
+        return focusExp;
     }
 
     public void setID(String id) {
@@ -183,7 +188,6 @@ public class Focus {
             relative_position_id = null;       // perfectly acceptable
             return;
         }
-        System.out.println("test");
         relative_position_id = exp.getText();   // todo new focus instance eeehhhh??
     }
 

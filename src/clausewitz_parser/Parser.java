@@ -26,8 +26,8 @@ public class Parser {
                 int tabAmt = numMatches(line, "\t");
 
                 /* if text [a-z] after '{', replace with "{\n\t + text" */
-                if (line.matches("\\{[^\\S\\t\\r\\n]*([\\t]*)([a-z]+)")) {
-                    line = line.replaceAll("\\{[^\\S\\t\\r\\n]*([\\t]*)([a-z]+)", "{\n\t$1");        // old: \{\s*([a-z]+)
+                if (line.matches("(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)")) {
+                    line = line.replaceAll("(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)", "\\{" + System.lineSeparator() + "\t$1$2");        // old: \{\s*([a-z]+)
 
                     /* add tabs to new lines */
                     String replacement = "$1\t";
@@ -36,8 +36,8 @@ public class Parser {
                     }
                     line = line.replaceAll("(\n+)", replacement);
                 }
-                line = line.replaceAll("([a-z|0-9]+\\s)+(})", "$1\n$2");
-                String[] lines = line.split("\n");
+                line = line.replaceAll("(?i)(([a-z0-9]+|\\{)[^\\S\\n\\r]*)+(})", "$1" + System.lineSeparator() + "$3");
+                String[] lines = line.split(System.lineSeparator());
                 for (String s : lines) {
                     s += "\n";
                     data.add(s);

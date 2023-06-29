@@ -1,12 +1,21 @@
 package ui.menu;
 
 import clausewitz_coding.HOI4Fixes;
+import clausewitz_coding.focus.Focus;
+import clausewitz_coding.focus.FocusTree;
+import clausewitz_coding.focus.FocusTrees;
+import clausewitz_parser.Expression;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
 
 public class DevStatistics extends JFrame {
     private JPanel StatisticsJPanel;
     private JTextArea textArea1;
+    private JTabbedPane tabbedPane1;
+    private JTree focusTreesJTree;
 
     public DevStatistics() {
 
@@ -18,5 +27,36 @@ public class DevStatistics extends JFrame {
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
+    }
+
+    public void repaint() {
+        buildJTree();
+    }
+
+    private DefaultMutableTreeNode buildJTree() {
+        ArrayList<DefaultMutableTreeNode> focusTreesArray = new ArrayList<>();
+        DefaultMutableTreeNode focusTreesNode = new DefaultMutableTreeNode("Focus Trees");
+
+        for (FocusTree tree : FocusTrees.list()) {
+            ArrayList<DefaultMutableTreeNode> focusesArray = new ArrayList<>();
+            DefaultMutableTreeNode focusTreeNode = new DefaultMutableTreeNode(tree.country());
+
+            for (Focus focus : tree.focuses()) {
+                ArrayList<DefaultMutableTreeNode> focusExpArray = new ArrayList<>();
+                DefaultMutableTreeNode focusNode = new DefaultMutableTreeNode(focus.id());
+
+                for (Expression exp : focus.getFocusExpression().getAll()) {
+                    DefaultMutableTreeNode focusExpNode = new DefaultMutableTreeNode(exp.getText());
+                    focusExpArray.add(focusExpNode);
+                }
+                focusesArray.add(focusNode);
+            }
+            focusTreesArray.add(focusTreeNode);
+        }
+        return focusTreesNode;
+    }
+
+    private void createUIComponents() {
+        focusTreesJTree = new JTree(buildJTree());
     }
 }

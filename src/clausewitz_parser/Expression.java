@@ -31,7 +31,7 @@ public class Expression {
                 expression = exp;
             }
             else {
-                if (exp.contains("=") && exp.contains("{")){
+                if (exp.contains("=") && exp.contains("{")) {
                     subexpressions.add(new Expression(exp, it));
                 }
                 else {
@@ -57,7 +57,7 @@ public class Expression {
             if (!usefulData(exp)) {
                 continue;
             }
-            if(exp.trim().equals("}")) {
+            if(exp.trim().matches("}+")) {      // was exp.trim().equals("{");
                 break;
             }
 
@@ -228,12 +228,16 @@ public class Expression {
     }
 
     public String toString() {
+        return toString(0);
+    }
+
+    public String toString(int l) {
         StringBuilder s = new StringBuilder("");
-        s.append(expression);
+        s.append(l + ":" + expression);
         //s += "\n";
         if (subexpressions != null) {
             for (Expression exp : subexpressions) {
-                s.append(exp.toString());
+                s.append(exp.toString(l + 1));
                 s.append("\n");
             }
         }
