@@ -3,6 +3,7 @@ package ui.focus;
 import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.focus.Focus;
 import clausewitz_coding.focus.FocusTree;
+import ddsreader.DDSReader;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,6 +11,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public class FocusTreeBuilderWindow extends JFrame {
@@ -155,13 +157,9 @@ public class FocusTreeBuilderWindow extends JFrame {
                         int y1 = Y_SCALE * focus.absoluteY();
 
                         g.drawRect(x1, y1, X_SCALE, Y_SCALE);
-                        try {
 //                            BufferedImage image = ImageIO.read(new File(focus.icon()));
-                            BufferedImage image = ImageIO.read(new File(HOI4Fixes.hoi4_dir_name + ""))
-                            g.drawImage(image, x1, y1, null);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        g.drawImage(focus.getDDSImage(), x1, y1, null);
+
                         String name;
                         if (focus.locName() == null) {
                             name = focus.id();

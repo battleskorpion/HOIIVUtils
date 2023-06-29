@@ -1,9 +1,14 @@
 package clausewitz_coding.focus;
 
+import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.code.trigger.Trigger;
 import clausewitz_parser.Expression;
+import ddsreader.DDSReader;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 
 public class Focus {
@@ -15,6 +20,7 @@ public class Focus {
     protected String id;
     protected String locName;
     protected String icon;
+    protected BufferedImage ddsImage;
     protected Set<Focus> prerequisite;              // can be multiple, but hoi4 code is simply "prerequisite"
     protected Set<Focus> mutually_exclusive;
     protected Trigger available;
@@ -223,11 +229,11 @@ public class Focus {
     //todo implement icon lookup
     public void setIcon(Expression exp) {
         if (exp == null) {
-            icon = null;
-            return;
+//            icon = null;
+//            return;
         }
 
-        icon = exp.getText();
+        setIcon(exp.getText());
     }
 
     /**
@@ -238,11 +244,27 @@ public class Focus {
         // null string -> set no (null) icon
         // icon == null check required to not throw access exception
         if (icon == null || icon.equals("")) {
-            this.icon = null;
-            return;
+            //this.icon = null;
+//            return;
         }
 
         this.icon = icon;
+
+        /* dds binary data buffer */
+        /* https://github.com/npedotnet/DDSReader */
+        try {
+            FileInputStream fis = new FileInputStream(HOI4Fixes.hoi4_dir_name + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+            fis.close();
+            int[] ddspixels = DDSReader.read(buffer, DDSReader.ARGB, 0);
+            int ddswidth = DDSReader.getWidth(buffer);
+            int ddsheight = DDSReader.getHeight(buffer);
+            ddsImage = new BufferedImage(ddswidth, ddsheight, BufferedImage.TYPE_INT_ARGB);
+            ddsImage.setRGB(0, 0, ddswidth, ddsheight, ddspixels, 0, ddswidth);
+        } catch (IOException exc) {
+            exc.printStackTrace();
+        }
     }
 
     public void setPrerequisite(Expression exp) {
@@ -316,5 +338,9 @@ public class Focus {
      */
     public void setAvailable(Trigger availableTrigger) {
         this.available = availableTrigger;
+    }
+
+    public Image getDDSImage() {
+        return ddsImage;
     }
 }
