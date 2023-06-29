@@ -222,6 +222,8 @@ public class Focus {
             icon = null;
             return;
         }
+
+        icon = exp.getText();
     }
 
     /**
