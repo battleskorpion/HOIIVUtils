@@ -47,66 +47,31 @@ public class FocusTreeBuilderWindow extends JFrame {
         private static final int X_SCALE = 120;
         private static final int Y_SCALE = 120;
         private FocusTree focusTree;
-        private JScrollPane scrollPane;
 
         public FocusTreeViewport(FocusTree focusTree) {
             /* init */
             this.focusTree = focusTree;
 
-//            JLabel label = new JLabel("text");
-//            label.setPreferredSize(new Dimension(2000, 2000));
-//            /* scrollPane */
-//            scrollPane = new JScrollPane(label);
-//            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-//            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-//            scrollPane.setViewportBorder(new LineBorder(Color.RED));
-//            scrollPane.setPreferredSize(new Dimension(800, 800));
-//            FocusPanel focusPanel = new FocusPanel();
-//            scrollPane.getViewport().add(focusPanel, null);
-//
-//            add(scrollPane, BorderLayout.CENTER);
-
             FocusPanel focusPanel = new FocusPanel();
-            focusPanel.setPreferredSize(new Dimension(2000, 2000));
-
-            /* scrollPane */
-            scrollPane = new JScrollPane(focusPanel);
-            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-            scrollPane.setViewportBorder(new LineBorder(Color.RED));
-            scrollPane.setPreferredSize(new Dimension(800, 800));
-
-            add(scrollPane, BorderLayout.CENTER);
-
-            drawFocuses();
-        }
-
-        public void drawFocuses() {
-            if (focusTree == null) {
-                System.err.println("Error in " + this.getClass() + ":" + " focus tree null.");
-                return;
-            }
-
-//            repaint();        //todo unnecessary~~
+            this.setLayout(new BorderLayout());
+            this.add(focusPanel.scrollPane, BorderLayout.CENTER);
+            this.setPreferredSize(new Dimension((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 200, (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 200));
+            this.setVisible(true);
         }
 
         public class FocusPanel extends JPanel implements Scrollable {
+            JScrollPane scrollPane;
 
             public FocusPanel() {
-//                this.setSize(new Dimension(1000, 1000));
-                this.setVisible(true);
-            }
+                super();
 
-//            public void paint(Graphics g) {
-//                Graphics2D g2D = (Graphics2D) g;
-//
-//                g2D.setColor(Color.WHITE);
-//                System.out.println("test");
-//                for (Focus focus : focusTree.focuses()) {
-//                    drawFocus(g, focus);
-////                    System.out.println(focus);
-//                }
-//            }
+                /* scrollPane */
+                scrollPane = new JScrollPane(this);
+                scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+                scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+                scrollPane.setPreferredSize(new Dimension(1000, 1000));
+                scrollPane.setViewportBorder(new LineBorder(Color.RED));
+            }
 
             public void drawFocus(Graphics g, Focus focus) {
                 int x1 = X_SCALE * focus.absoluteX();
@@ -189,7 +154,7 @@ public class FocusTreeBuilderWindow extends JFrame {
              */
             @Override
             public Dimension getPreferredScrollableViewportSize() {
-                return new Dimension(800, 800);
+                return new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
             }
 
             /**
