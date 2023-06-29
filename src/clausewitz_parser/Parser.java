@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Parser {
     private final Expression fileExpressions;
@@ -19,11 +21,21 @@ public class Parser {
         ArrayList<String> data = new ArrayList<>();
         while(scanner.hasNextLine()) {
             String line = scanner.nextLine();
+            //int tabAmt = numMatches(line, "\t");
             if (line.contains("{")) {
-                /*
-                if text [a-z] after '{', replace with "{\n\t + text"
-                 */
-                line = line.replaceAll("\\{\\s*([a-z]+)", "{\n\t$1");        // maybe change [a-z] to [a-z|0-9]
+                int tabAmt = numMatches(line, "\t");
+
+                /* if text [a-z] after '{', replace with "{\n\t + text" */
+                if (line.matches("\\{[^\\S\\t\\r\\n]*([\\t]*)([a-z]+)")) {
+                    line = line.replaceAll("\\{[^\\S\\t\\r\\n]*([\\t]*)([a-z]+)", "{\n\t$1");        // old: \{\s*([a-z]+)
+
+                    /* add tabs to new lines */
+                    String replacement = "$1\t";
+                    for (int i = tabAmt; tabAmt > 0; tabAmt--) {
+                        replacement = "\t" + replacement;
+                    }
+                    line = line.replaceAll("(\n+)", replacement);
+                }
                 line = line.replaceAll("([a-z|0-9]+\\s)+(})", "$1\n$2");
                 String[] lines = line.split("\n");
                 for (String s : lines) {
@@ -92,5 +104,16 @@ public class Parser {
         else {
             return false;
         }
+    }
+
+    private int numMatches(String str, String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+
+        return count;
     }
 }

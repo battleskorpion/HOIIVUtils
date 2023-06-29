@@ -5,15 +5,18 @@ import clausewitz_coding.localization.LocalizationFile;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
+import settings.LocalizerSettings;
+import ui.menu.MenuSettings;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 
 public final class FocusTree extends HOI4Fixes {
 
-	private ArrayList<Focus> focuses;
+//	private HashSet<Focus> focuses;
+	private final HashMap<String, Focus> focuses;
 	private ArrayList<String> focus_names;
 	private File focus_file;
 	private CountryTag country;
@@ -31,7 +34,7 @@ public final class FocusTree extends HOI4Fixes {
 	public FocusTree(File focus_file) throws IOException {
 		this.focus_file = focus_file;
 		country = new CountryTag("###");
-		focuses = new ArrayList<>();
+		focuses = new HashMap<>();
 
 		parse();
 		FocusTrees.add(country(), this);
@@ -47,7 +50,7 @@ public final class FocusTree extends HOI4Fixes {
 		default_focus = false;
 		continuous_focus_position = new Point(50, 1200);
 		country = tag;
-		focuses = new ArrayList<>();
+		focuses = new HashMap<>();
 
 		FocusTrees.add(country(), this);
 	}
@@ -67,22 +70,24 @@ public final class FocusTree extends HOI4Fixes {
 		/* parser */
 		Parser focusParser = new Parser(this.focus_file);
 		Expression focusTreeExp = focusParser.expression();
-		Expression[] focusesExps = focusTreeExp.getAll("focus = {");
+		Expression[] focusesExps = focusTreeExp.getAll("focus={");
+		System.out.println(focusesExps[focusesExps.length-1]);
+		System.out.println("Num focuses detected: " + focusesExps.length);
 //		if (focuses == null) {
 //			return null;
 //		}
 		if (focusesExps == null) {
+			System.err.println("focusesExps null in " + this.getClass());
 			return null;
 		}
 
 		/* focuses */
-		focus_names = new ArrayList<String>();
+		focus_names = new ArrayList<String>();		// todo needed?
 
 		for (Expression focusExp : focusesExps) {
 			Focus focus;
 
 			/* focus id */
-			find_id:
 			{
 				Expression focusIDExp = focusExp.get("id=");
 				if (focusIDExp == null) {
@@ -92,9 +97,9 @@ public final class FocusTree extends HOI4Fixes {
 				if (focus_id == null) {
 					continue;        // id important
 				}
-				focus = new Focus(focus_id);
+				focus = new Focus(focus_id, this);
 				focus_names.add(focus_id);
-				focuses.add(focus);
+				focuses.put(focus_id, focus);
 
 				// TODO THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
 				focus.loadAttributes(focusExp);
@@ -197,7 +202,15 @@ public final class FocusTree extends HOI4Fixes {
 		return country.toString();
 	}
 
-    public ArrayList<Focus> focuses() {
-		return focuses;
+    public HashSet<Focus> focuses() {
+		return new HashSet<>(focuses.values());
     }
+
+	public Focus getFocus(String focus_id) {
+		if (focuses.get(focus_id) == null) {
+			System.err.println(focuses.keySet());
+		}
+
+		return focuses.get(focus_id);
+	}
 }

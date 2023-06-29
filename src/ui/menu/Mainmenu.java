@@ -42,7 +42,7 @@ public class Mainmenu extends JFrame {
         toggleStatisticsButton();
 
         if (!HOI4Fixes.DEV_MODE) {
-            focusTreeBuilderButton.setEnabled(false);
+//            focusTreeBuilderButton.setEnabled(false);
             focusTreeStrengthButton.setEnabled(false);
             //ideaLocalizationButton.setEnabled(false);
             //findFocusesWithoutLocalizationButton.setEnabled(false); //todo

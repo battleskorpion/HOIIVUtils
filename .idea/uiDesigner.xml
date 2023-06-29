@@ -122,13 +122,10 @@
     </group>
     <group name="JMenu" />
     <group name="FocusTree">
-      <item class="ui.focus.FocusTreeViewport" icon="/com/intellij/uiDesigner/icons/panel.svg" removable="true" auto-create-binding="false" can-attach-label="false" is-container="true">
-        <default-constraints vsize-policy="7" hsize-policy="7" anchor="0" fill="3" />
-      </item>
-      <item class="ui.focus.FocusTreeView" icon="/com/intellij/uiDesigner/icons/panel.svg" removable="true" auto-create-binding="false" can-attach-label="false">
+      <item class="ui.map.RiverGenWindow$RiverMapViewport" icon="" removable="true" auto-create-binding="false" can-attach-label="false" is-container="true">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>
-      <item class="ui.map.RiverGenWindow$RiverMapViewport" icon="" removable="true" auto-create-binding="false" can-attach-label="false" is-container="true">
+      <item class="ui.focus.FocusTreeBuilderWindow$FocusTreeViewport" icon="/com/intellij/uiDesigner/icons/panel.svg" removable="true" auto-create-binding="false" can-attach-label="false" is-container="true">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>
     </group>

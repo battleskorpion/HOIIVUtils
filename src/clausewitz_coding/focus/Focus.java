@@ -8,43 +8,100 @@ import java.util.*;
 
 public class Focus {
     private final int DEFAULT_FOCUS_COST = 10;  // default cost (weeks) when making new focus or etc.
+    private static final HashSet<String> focusIDs = new HashSet<>();
 
+    protected FocusTree focusTree;
     protected String id;
     protected String locName;
     protected String icon;
-    protected Set<Focus> prerequisite;          // can be multiple, but hoi4 code is simply "prerequisite"
+    protected Set<Focus> prerequisite;              // can be multiple, but hoi4 code is simply "prerequisite"
     protected Set<Focus> mutually_exclusive;
     protected Trigger available;
-    protected int x;
-    protected int y;
-    protected String relative_position_id;
-    protected int cost;                           // cost of focus (typically in weeks unless changed in defines)
+    protected int x;                                // if relative, relative x
+    protected int y;                                // if relative, relative y
+    protected String relative_position_id;          // if null, position is not relative
+    protected int cost;                             // cost of focus (typically in weeks unless changed in defines)
     protected Set<FocusSearchFilter> focus_search_filters;
     protected boolean available_if_capitulated;
     protected boolean cancel_if_invalid;
     protected boolean continue_if_invalid;
-
-    public Focus(String focus_id) {
-        this.id = focus_id;
-    }
-//    private AIWillDo ai_will_do; // todo
+    //    private AIWillDo ai_will_do; // todo
     //select effect
     //completion award
+
+    public Focus(String focus_id, FocusTree focusTree) {
+        if (focusIDs.contains(focus_id)) {
+            System.err.println("Error: focus id " + focus_id + " already exists.");     // todo throw exception instead
+            return;
+        }
+        this.id = focus_id;
+        this.focusTree = focusTree;
+        focusIDs.add(focus_id);
+    }
 
     public String id() {
         return id; 
     }
 
+    /**
+     * if relative, relative x
+     * @return
+     */
     public int x() {
         return x;
     }
 
+    /**
+     * if relative, relative y
+     * @return
+     */
     public int y() {
         return y;
     }
 
+    public int absoluteX() {
+        if (relative_position_id == null) {
+            return x;
+        } else {
+            return absolutePosition().x;
+        }
+    }
+
+    public int absoluteY() {
+        if (relative_position_id == null) {
+            return y;
+        } else {
+            return absolutePosition().y;
+        }
+    }
+
+    /**
+     * if relative, relative position
+     * @return point representing xy location, or relative xy if relative.
+     */
     public Point position() {
         return new Point(x, y);
+    }
+
+    /**
+     * Absolute focus xy-position.
+     * @return Point representing absolute position of focus.
+     * @implNote Should only be called after all focuses in focus tree are instantiated.
+     */
+    public Point absolutePosition() {
+        if (relative_position_id == null) {
+            return position();
+        }
+
+        Focus relative_position_focus = focusTree.getFocus(relative_position_id);
+        if (relative_position_focus == null) {
+            System.err.println("focus id " + relative_position_id + " not a focus");
+        }
+        Point adjPoint = relative_position_focus.absolutePosition();
+        adjPoint = new Point(adjPoint.x + x, adjPoint.y + y);
+        System.out.println(adjPoint + ", " + id + ", " + relative_position_focus.id + ", " + relative_position_focus.position());
+
+        return adjPoint;
     }
 
     public String locName() {
@@ -66,15 +123,16 @@ public class Focus {
             return;
         }
 
-        Expression focusExp = exp.get("focus =");
+        Expression focusExp = exp.get("focus=");
 
         setID(exp.getSubexpression(id));
-        setXY(focusExp.getImmediate("x ="), focusExp.getImmediate("y ="));
+        setXY(focusExp.getImmediate("x="), focusExp.getImmediate("y="));
+        setRelativePositionID(focusExp.getSubexpression("relative_position_id="));
         //setFocusLoc();
-        setIcon(focusExp.getSubexpression("icon ="));
-        setPrerequisite(focusExp.getSubexpression("prerequisite ="));
-        setMutuallyExclusive(focusExp.getSubexpression("mutually_exclusive ="));
-        setAvailable(focusExp.getSubexpression("available ="));
+        setIcon(focusExp.getSubexpression("icon="));
+        setPrerequisite(focusExp.getSubexpression("prerequisite="));
+        setMutuallyExclusive(focusExp.getSubexpression("mutually_exclusive="));
+        setAvailable(focusExp.getSubexpression("available="));
     }
 
     public void setID(String id) {
@@ -84,7 +142,9 @@ public class Focus {
     private void setID(Expression exp) {
         if (exp == null) {
             id = null;
+            return;
         }
+
         id = exp.getText();
     }
 
@@ -118,6 +178,15 @@ public class Focus {
         return setXY(x.getValue(), y.getValue());
     }
 
+    private void setRelativePositionID(Expression exp) {
+        if (exp == null) {
+            relative_position_id = null;       // perfectly acceptable
+            return;
+        }
+        System.out.println("test");
+        relative_position_id = exp.getText();   // todo new focus instance eeehhhh??
+    }
+
     public void setCost() {
         setCost(DEFAULT_FOCUS_COST);
     }
@@ -129,9 +198,10 @@ public class Focus {
     public void setCost(Expression exp) {
         if (exp == null) {
             cost = 0;
-        } else {
-            this.cost = exp.getValue();
+            return;
         }
+
+        this.cost = exp.getValue();
     }
 
     public void setFocusLoc() {
@@ -146,6 +216,7 @@ public class Focus {
     public void setIcon(Expression exp) {
         if (exp == null) {
             icon = null;
+            return;
         }
     }
 
@@ -158,14 +229,18 @@ public class Focus {
         // icon == null check required to not throw access exception
         if (icon == null || icon.equals("")) {
             this.icon = null;
+            return;
         }
+
         this.icon = icon;
     }
 
     public void setPrerequisite(Expression exp) {
         if (exp == null) {
             prerequisite = null;
+            return;
         }
+
     }
 
     /**
@@ -184,6 +259,7 @@ public class Focus {
     public void setMutuallyExclusive(Expression exp) {
         if (exp == null) {
             mutually_exclusive = null;
+            return;
         }
     }
 
@@ -220,6 +296,7 @@ public class Focus {
     public void setAvailable(Expression exp) {
         if (exp == null) {
             available = null;
+            return;
         }
     }
 

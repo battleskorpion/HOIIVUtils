@@ -95,13 +95,13 @@ public class RiverGenWindow extends JFrame {
             JLabel label = new JLabel(rivermap);
             label.setPreferredSize(new Dimension(1000, 1000));
 
+            /* scrollPane */
             JScrollPane scrollPane = new JScrollPane(label);
-            //
             scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
             scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
             scrollPane.setViewportBorder(new LineBorder(Color.RED));
-//            scrollPane.getViewport().add(//, null);
+            scrollPane.getViewport().add(new JLabel("text"));
+
             add(scrollPane, BorderLayout.CENTER);
             //setSize(400, 300);
 //            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

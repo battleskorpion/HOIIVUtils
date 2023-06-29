@@ -8,7 +8,7 @@ import java.util.List;
 import static clausewitz_parser.Parser.usefulData;
 
 public class Expression {
-    private static Iterator<String> it;
+    private Iterator<String> it;
     String expression;
     List<Expression> subexpressions;
 
@@ -20,16 +20,19 @@ public class Expression {
             if (!usefulData(exp)) {
                 continue;
             }
-            if(exp.trim().equals("}")) {
+            if(exp.trim().matches("}+")) {
                 continue;
             }
+
+            exp = exp.replaceAll("= ", "=");
+            exp = exp.replaceAll(" =", "=");
 
             if (expression == null && exp.contains("={")) {
                 expression = exp;
             }
             else {
                 if (exp.contains("=") && exp.contains("{")){
-                    subexpressions.add(new Expression(exp, true));
+                    subexpressions.add(new Expression(exp, it));
                 }
                 else {
                     subexpressions.add(new Expression(exp));
@@ -40,9 +43,11 @@ public class Expression {
     }
 
     // for adding subexpressions with subexpressions
-    private Expression(String exp, boolean iterator) {
+    private Expression(String exp, Iterator<String> it) {
 //        exp = exp.replaceAll(" ", "");
         expression = exp;
+        expression = expression.replaceAll("= ", "=");
+        expression = expression.replaceAll(" =", "=");
         subexpressions = new ArrayList<>();
 
         while(it.hasNext()) {
@@ -57,7 +62,7 @@ public class Expression {
             }
 
             if (exp.contains("=") && exp.contains("{")) {
-                subexpressions.add(new Expression(exp, true));
+                subexpressions.add(new Expression(exp, it));
             }
             else {
                 subexpressions.add(new Expression(exp));
@@ -98,7 +103,8 @@ public class Expression {
     /**
      * Gets the first instance of an expression in parsed file
      * @param s - expression to find
-     * @return
+     * @return First expression found matching s
+     * @implNote Whitespace is removed surrounding "=" when expressions are instantiated.
      */
     public Expression get(String s) {
         Expression exp = new Expression(s);
@@ -222,16 +228,16 @@ public class Expression {
     }
 
     public String toString() {
-        String s = "";
-        s += expression;
+        StringBuilder s = new StringBuilder("");
+        s.append(expression);
         //s += "\n";
         if (subexpressions != null) {
             for (Expression exp : subexpressions) {
-                s += exp.toString();
-                s += "\n";
+                s.append(exp.toString());
+                s.append("\n");
             }
         }
-        return s;
+        return s.toString();
     }
 
     public Expression[] getSubexpressions() {
