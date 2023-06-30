@@ -25,6 +25,7 @@ public class Parser {
             if (line.contains("{")) {
                 int tabAmt = numMatches(line, "\t");
 
+                //todo prereq etc being not split??
                 /* if text [a-z] after '{', replace with "{\n\t + text" */
                 if (line.matches("(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)")) {
                     line = line.replaceAll("(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)", "\\{" + System.lineSeparator() + "\t$1$2");        // old: \{\s*([a-z]+)
@@ -34,7 +35,7 @@ public class Parser {
                     for (int i = tabAmt; tabAmt > 0; tabAmt--) {
                         replacement = "\t" + replacement;
                     }
-                    line = line.replaceAll("(\n+)", replacement);
+                    line = line.replaceAll("(" + System.lineSeparator() + ")", replacement);
                 }
                 /* do not split #-commented lines by }, but ignore # when escaped by \ */
                 if (!line.matches(("(?i)([^\\\\]#.*)?"))) {
