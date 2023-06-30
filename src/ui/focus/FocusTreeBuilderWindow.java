@@ -108,9 +108,9 @@ public class FocusTreeBuilderWindow extends JFrame {
                         int x1 = X_SCALE * focus.absoluteX();
                         int y1 = Y_SCALE * focus.absoluteY();
 
-                        g.drawRect(x1, y1, 100, 100);
+                        g2d.drawRect(x1, y1, 100, 100);
 //                            BufferedImage image = ImageIO.read(new File(focus.icon()));   // todo
-                        g.drawImage(focus.getDDSImage(), x1, y1, null);
+                        g2d.drawImage(focus.getDDSImage(), x1, y1, null);
 
                         String name;
                         if (focus.locName() == null) {
@@ -118,12 +118,20 @@ public class FocusTreeBuilderWindow extends JFrame {
                         } else {
                             name = focus.locName();
                         }
-                        g.drawString(name, x1, y1 + (Y_SCALE / 2) + 20);
+                        g2d.drawString(name, x1, y1 + (Y_SCALE / 2) + 20);
 
                         xPos += X_SCALE;
 
                         if (focus.hasPrerequisites()) {
-                            // todo
+                            g2d.setColor(Color.WHITE);
+
+                            for (Focus prereqfocus : focus.getPrerequisites()) {
+                                int linex1 = x1 + (X_SCALE / 2);
+                                int liney1 = y1;
+                                int linex2 = prereqfocus.absolutePosition().x + (X_SCALE / 2);
+                                int liney2 = prereqfocus.y() + 100;
+                                g2d.drawLine(linex1, linex2 ,liney1, liney2);
+                            }
                         }
                     }
                     g2d.dispose();

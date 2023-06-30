@@ -273,6 +273,18 @@ public class Focus {
             return;
         }
 
+        Set<Focus> prerequisites = new HashSet<>();
+        for (String s : exp.getText().split("\\s+(focus=)")) {
+            s = s.trim();
+            if (!s.matches("[a-z]+")) {
+                System.err.println("Focus prerequisite is invalid, " + this.id + ", " + s);
+                prerequisite = null;
+                return;
+            }
+
+            prerequisites.add(focusTree.getFocus(s));           // todo error check someday
+        }
+        setPrerequisite(prerequisites);
     }
 
     /**
@@ -345,6 +357,10 @@ public class Focus {
     }
 
     public boolean hasPrerequisites() {
-        return prerequisite == null || prerequisite.size() == 0;
+        return !(prerequisite == null || prerequisite.size() == 0);
+    }
+
+    public Set<Focus> getPrerequisites() {
+        return prerequisite;
     }
 }
