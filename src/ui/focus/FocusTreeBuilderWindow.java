@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Set;
 
 public class FocusTreeBuilderWindow extends JFrame {
     private JPanel TreeBuilderJPanel;
@@ -125,12 +126,14 @@ public class FocusTreeBuilderWindow extends JFrame {
                         if (focus.hasPrerequisites()) {
                             g2d.setColor(Color.WHITE);
 
-                            for (Focus prereqfocus : focus.getPrerequisites()) {
-                                int linex1 = x1 + (X_SCALE / 2);
-                                int liney1 = y1;
-                                int linex2 = prereqfocus.absolutePosition().x + (X_SCALE / 2);
-                                int liney2 = prereqfocus.y() + 100;
-                                g2d.drawLine(linex1, linex2 ,liney1, liney2);
+                            for (Set<Focus> prereqFocusSet : focus.getPrerequisites()) {
+                                for (Focus prereqFocus : prereqFocusSet) {
+                                    int linex1 = x1 + (X_SCALE / 2);
+                                    int liney1 = y1;
+                                    int linex2 = prereqFocus.absolutePosition().x + (X_SCALE / 2);
+                                    int liney2 = prereqFocus.y() + 100;
+                                    g2d.drawLine(linex1, linex2, liney1, liney2);
+                                }
                             }
                         }
                     }

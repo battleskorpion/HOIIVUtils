@@ -21,7 +21,7 @@ public class Focus {
     protected String locName;
     protected String icon;
     protected BufferedImage ddsImage;
-    protected Set<Focus> prerequisite;              // can be multiple, but hoi4 code is simply "prerequisite"
+    protected Set<Set<Focus>> prerequisite;              // can be multiple, but hoi4 code is simply "prerequisite"
     protected Set<Focus> mutually_exclusive;
     protected Trigger available;
     protected int x;                                // if relative, relative x
@@ -106,7 +106,7 @@ public class Focus {
         }
         Point adjPoint = relative_position_focus.absolutePosition();
         adjPoint = new Point(adjPoint.x + x, adjPoint.y + y);
-        System.out.println(adjPoint + ", " + id + ", " + relative_position_focus.id + ", " + relative_position_focus.position());
+//        System.out.println(adjPoint + ", " + id + ", " + relative_position_focus.id + ", " + relative_position_focus.position());
 
         return adjPoint;
     }
@@ -140,7 +140,7 @@ public class Focus {
         setRelativePositionID(focusExp.getSubexpression("relative_position_id="));
         //setFocusLoc();
         setIcon(focusExp.getSubexpression("icon="));
-        setPrerequisite(focusExp.getSubexpression("prerequisite="));
+        setPrerequisite(focusExp.getAllSubexpressions("prerequisite="));
         setMutuallyExclusive(focusExp.getSubexpression("mutually_exclusive="));
         setAvailable(focusExp.getSubexpression("available="));
     }
@@ -268,39 +268,62 @@ public class Focus {
     }
 
     public void setPrerequisite(Expression exp) {
-        if (exp == null) {
+        setPrerequisite(new Expression[]{exp});
+    }
+
+    /**
+     * accepts groups of prerequisites
+     * @param exps
+     */
+    public void setPrerequisite(Expression[] exps) {
+        if (exps == null) {
             prerequisite = null;
             return;
         }
-        if (exp.getText() == null) {
-            prerequisite = null;
-            System.err.println("Focus prerequisite invalid, " + this.id + ", " + exp);
-            return;
+        for (Expression exp : exps) {
+            for (Expression subexp : exp.getSubexpressions()) {
+                if (subexp.getText() == null) {
+                    prerequisite = null;
+                    System.err.println("Focus prerequisite invalid, " + this.id + ", " + exp);
+                    return;
+                }
+            }
         }
 
-//        Set<Focus> prerequisites = new HashSet<>();
-//        for (String s : exp.getText().split("\\s+(focus=)")) {
-//            s = s.trim();
-//            if (!s.matches("[a-z]+")) {
-//                System.err.println("Focus prerequisite is invalid, " + this.id + ", " + s);
-//                prerequisite = null;
-//                return;
-//            }
-//
-//            prerequisites.add(focusTree.getFocus(s));           // todo error check someday
-//        }
-//        setPrerequisite(prerequisites);
+        Set<Set<Focus>> prerequisites = new HashSet<>();
+
+        for (Expression exp : exps) {
+            HashSet<Focus> subset = new HashSet<>();
+            prerequisites.add(subset);
+
+            if (exp.getText() == null) {
+                continue;
+            }
+            for (String s : exp.getText().split("\\s+(focus=)")) {
+                s = s.trim();
+                if (!s.matches("[a-z]+")) {
+                    System.err.println("Focus prerequisite is invalid, " + this.id + ", " + s);
+                    prerequisite = null;
+                    return;
+                }
+
+                subset.add(focusTree.getFocus(s));           // todo error check someday
+            }
+        }
+
+        setPrerequisite(prerequisites);
     }
 
     /**
      * sets focus prerequisite focuses
      * @param prerequisite Set of prerequisite focuses. Can not include this focus.
      */
-    public void setPrerequisite(Set<Focus> prerequisite) {      // TODO can have prerequisites where 1 necessary, all necessary, etc.
+    public void setPrerequisite(Set<Set<Focus>> prerequisite) {      // TODO can have prerequisites where 1 necessary, all necessary, etc.
         // focus can not be its own prerequisite
-        if (prerequisite.contains(this)) {
-            throw new IllegalArgumentException("Focus can not be its own prerequisite");
-        }
+        // todo
+//        if (prerequisite.contains(this)) {
+//            throw new IllegalArgumentException("Focus can not be its own prerequisite");
+//        }
 
         this.prerequisite = prerequisite;
     }
@@ -365,7 +388,7 @@ public class Focus {
         return !(prerequisite == null || prerequisite.size() == 0);
     }
 
-    public Set<Focus> getPrerequisites() {
+    public Set<Set<Focus>> getPrerequisites() {
         return prerequisite;
     }
 }

@@ -228,6 +228,24 @@ public class Expression {
         return getAll("");
     }
 
+    public Expression[] getAllSubexpressions(String s) {
+        ArrayList<Expression> expressions = new ArrayList<>();
+
+        for (Expression subexp : subexpressions) {
+            Expression[] subexpexps = subexp.getAll(s);
+            if (subexpexps != null) {
+                expressions.addAll(Arrays.asList(subexpexps));
+            }
+        }
+
+        // if none found return null
+        if (expressions.size() == 0) {
+            return null;
+        }
+
+        return expressions.toArray(new Expression[]{});
+    }
+
     public String toString() {
         return toString(0);
     }

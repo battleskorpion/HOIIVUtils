@@ -25,22 +25,26 @@ public class Parser {
             if (line.contains("{")) {
                 int tabAmt = numMatches(line, "\t");
 
-                //todo prereq etc being not split??
-                /* if text [a-z] after '{', replace with "{\n\t + text" */
-                if (line.matches("(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)")) {
-                    line = line.replaceAll("(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)", "\\{" + System.lineSeparator() + "\t$1$2");        // old: \{\s*([a-z]+)
+                /* do nothing to lines with # */
+                if (!line.matches(("(?i)(\\s*[^\\\\]?#.*)?"))) {
+                    /*
+                    if text [a-z] after '{', replace with "{\n\t + text"
+                    line.matches(regex) -> regex is inclusive of entire line if line matches "(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)"
+                    so that the line will match -> done by leading and following "([^\r\n]*)"
+                     */
+                    if (line.matches("(?i)(([^\\r\\n]*)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)([^\\r\\n]*))")) {
+                        line = line.replaceAll("(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)", "\\{" + System.lineSeparator() + "\t$1$2");        // old: \{\s*([a-z]+)
 
-                    /* add tabs to new lines */
-                    String replacement = "$1\t";
-                    for (int i = tabAmt; tabAmt > 0; tabAmt--) {
-                        replacement = "\t" + replacement;
+                        /* add tabs to new lines */
+                        String replacement = "$1" + "\t".repeat(tabAmt);
+                        line = line.replaceAll("(" + System.lineSeparator() + ")", replacement);
+
                     }
-                    line = line.replaceAll("(" + System.lineSeparator() + ")", replacement);
-                }
-                /* do not split #-commented lines by }, but ignore # when escaped by \ */
-                if (!line.matches(("(?i)([^\\\\]#.*)?"))) {
+
                     line = line.replaceAll("(?i)(([a-z0-9]+|\\{)[^\\S\\n\\r]*)+(})", "$1" + System.lineSeparator() + "$3");
+                    line = line.replaceAll("\\}\\s*\\}", System.lineSeparator() + "}" + System.lineSeparator() + "}");
                 }
+
                 String[] lines = line.split(System.lineSeparator());
                 for (String s : lines) {
                     s += "\n";
