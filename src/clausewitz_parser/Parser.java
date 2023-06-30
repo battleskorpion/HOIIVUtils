@@ -36,7 +36,10 @@ public class Parser {
                     }
                     line = line.replaceAll("(\n+)", replacement);
                 }
-                line = line.replaceAll("(?i)(([a-z0-9]+|\\{)[^\\S\\n\\r]*)+(})", "$1" + System.lineSeparator() + "$3");
+                /* do not split #-commented lines by }, but ignore # when escaped by \ */
+                if (!line.matches(("(?i)([^\\\\]#.*)?"))) {
+                    line = line.replaceAll("(?i)(([a-z0-9]+|\\{)[^\\S\\n\\r]*)+(})", "$1" + System.lineSeparator() + "$3");
+                }
                 String[] lines = line.split(System.lineSeparator());
                 for (String s : lines) {
                     s += "\n";

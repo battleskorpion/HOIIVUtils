@@ -18,6 +18,7 @@ public class Expression {
         for (it = Arrays.stream(expressions).iterator(); it.hasNext(); ) {
             String exp = it.next();
             if (!usefulData(exp)) {
+//                System.out.println(exp);
                 continue;
             }
             if(exp.trim().matches("}+")) {
