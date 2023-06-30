@@ -343,4 +343,8 @@ public class Focus {
     public Image getDDSImage() {
         return ddsImage;
     }
+
+    public boolean hasPrerequisites() {
+        return prerequisite == null || prerequisite.size() == 0;
+    }
 }

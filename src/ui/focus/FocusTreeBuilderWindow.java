@@ -44,8 +44,8 @@ public class FocusTreeBuilderWindow extends JFrame {
     public class FocusTreeViewport extends JPanel {
         //JPanel riverMapJPanel;
 
-        private static final int X_SCALE = 120;
-        private static final int Y_SCALE = 120;
+        private static final int X_SCALE = 90;      // ~2x per 1 y
+        private static final int Y_SCALE = 140;
         private FocusTree focusTree;
 
         public FocusTreeViewport(FocusTree focusTree) {
@@ -74,20 +74,7 @@ public class FocusTreeBuilderWindow extends JFrame {
             }
 
             public void drawFocus(Graphics g, Focus focus) {
-                int x1 = X_SCALE * focus.absoluteX();
-                int x2 = X_SCALE * focus.absoluteX() + X_SCALE;
-                int y1 = Y_SCALE * focus.absoluteY();
-                int y2 = Y_SCALE * focus.absoluteY() + Y_SCALE;
 
-//                System.out.println("x1: " + x1 + ", " + "y1: " + y1);
-                g.drawRect(x1, y1, X_SCALE, Y_SCALE);
-                String name;
-                if (focus.locName() == null) {
-                    name = focus.id();
-                } else {
-                    name = focus.locName();
-                }
-                g.drawString(name, x1, y1);
             }
 
             public void removeFocus(Focus focus) {
@@ -121,8 +108,8 @@ public class FocusTreeBuilderWindow extends JFrame {
                         int x1 = X_SCALE * focus.absoluteX();
                         int y1 = Y_SCALE * focus.absoluteY();
 
-                        g.drawRect(x1, y1, X_SCALE, Y_SCALE);
-//                            BufferedImage image = ImageIO.read(new File(focus.icon()));
+                        g.drawRect(x1, y1, 100, 100);
+//                            BufferedImage image = ImageIO.read(new File(focus.icon()));   // todo
                         g.drawImage(focus.getDDSImage(), x1, y1, null);
 
                         String name;
@@ -131,9 +118,13 @@ public class FocusTreeBuilderWindow extends JFrame {
                         } else {
                             name = focus.locName();
                         }
-                        g.drawString(name, x1, y1);
+                        g.drawString(name, x1, y1 + (Y_SCALE / 2) + 20);
 
                         xPos += X_SCALE;
+
+                        if (focus.hasPrerequisites()) {
+                            // todo
+                        }
                     }
                     g2d.dispose();
                 }
