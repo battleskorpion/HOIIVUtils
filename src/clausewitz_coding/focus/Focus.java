@@ -292,22 +292,32 @@ public class Focus {
 
         Set<Set<Focus>> prerequisites = new HashSet<>();
 
+        /* sort through prerequisite={ expressions */
         for (Expression exp : exps) {
             HashSet<Focus> subset = new HashSet<>();
-            prerequisites.add(subset);
 
-            if (exp.getText() == null) {
-                continue;
-            }
-            for (String s : exp.getText().split("\\s+(focus=)")) {
-                s = s.trim();
-                if (!s.matches("[a-z]+")) {
-                    System.err.println("Focus prerequisite is invalid, " + this.id + ", " + s);
+            for (String prereqStr : exp.subexpressionSplit("focus=", false)) {
+                if (prereqStr == null) {
+                    continue;
+                }
+                System.out.println(prereqStr);
+                prereqStr = prereqStr.trim();
+                if (!prereqStr.matches("[\\S]+")) {
+                    System.err.println("Focus prerequsite is invalid, " + this.id + ", " + prereqStr);
                     prerequisite = null;
                     return;
                 }
 
-                subset.add(focusTree.getFocus(s));           // todo error check someday
+                if (focusTree.getFocus(prereqStr) != null) {
+                    subset.add(focusTree.getFocus(prereqStr));           // todo error check someday
+                } else {
+                    System.err.println("Focus prerequsite is invalid (not focus), " + this.id + ", " + prereqStr);
+                }
+                System.out.println(prereqStr);
+            }
+
+            if (subset.size() > 0) {
+                prerequisites.add(subset);
             }
         }
 

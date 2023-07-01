@@ -103,6 +103,25 @@ public final class FocusTree extends HOI4Fixes {
 				focuses.put(focus_id, focus);
 
 				// TODO THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
+			}
+		}
+
+		for (Expression focusExp : focusesExps) {
+			Focus focus;
+
+			/* focus id */
+			{
+				Expression focusIDExp = focusExp.get("id=");
+				if (focusIDExp == null) {
+					continue;        // id important
+				}
+				String focus_id = focusIDExp.getText();        // gets the ##### from "id = #####"
+				if (focus_id == null) {
+					continue;        // id important
+				}
+				focus = getFocus(focus_id);
+
+				// TODO THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
 				focus.loadAttributes(focusExp);
 			}
 		}

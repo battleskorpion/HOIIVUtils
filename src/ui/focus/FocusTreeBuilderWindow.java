@@ -124,6 +124,7 @@ public class FocusTreeBuilderWindow extends JFrame {
                         xPos += X_SCALE;
 
                         if (focus.hasPrerequisites()) {
+//                            System.out.println(focus.getPrerequisites());
                             g2d.setColor(Color.WHITE);
 
                             for (Set<Focus> prereqFocusSet : focus.getPrerequisites()) {

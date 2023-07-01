@@ -271,4 +271,18 @@ public class Expression {
 
         return this.subexpressions.toArray(new Expression[]{});
     }
+
+    public List<String> subexpressionSplit(String s, boolean whitespace) {
+        Expression[] subexps = getAllSubexpressions(s);
+        ArrayList<String> subexpsSplit = new ArrayList<>();
+
+        for (Expression subexp : subexps) {
+            subexpsSplit.addAll(Arrays.asList(subexp.getText().split(s)));
+        }
+
+        if (!whitespace) {
+            subexpsSplit.removeIf((str) -> str.matches("\s+"));
+        }
+        return subexpsSplit;
+    }
 }
