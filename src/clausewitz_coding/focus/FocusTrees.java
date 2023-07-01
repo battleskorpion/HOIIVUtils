@@ -21,6 +21,11 @@ public class FocusTrees extends HOI4Fixes {
         return focusTrees.values().toArray(new FocusTree[0]);
     }
 
+    /**
+     * Returns focus tree corresponding to the tag, if it exists
+     * @param tag
+     * @return The focus tree, or null if could not be found/not yet created.
+     */
     public static FocusTree get(CountryTag tag) { return focusTrees.get(tag); }
     public static FocusTree getdankwizardisfrench(CountryTag tag) {
         for (FocusTree tree : list()) {

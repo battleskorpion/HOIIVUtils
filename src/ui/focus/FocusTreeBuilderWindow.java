@@ -1,13 +1,16 @@
 package ui.focus;
 
 import clausewitz_coding.HOI4Fixes;
+import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.focus.Focus;
 import clausewitz_coding.focus.FocusTree;
+import clausewitz_coding.focus.FocusTrees;
 import ddsreader.DDSReader;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.text.html.HTML;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -36,7 +39,11 @@ public class FocusTreeBuilderWindow extends JFrame {
 
     public void createUIComponents() {
         try {
-            focusTreeBuilderWindow$FocusTreeViewport1 = new FocusTreeViewport(new FocusTree(new File(HOI4Fixes.hoi4_dir_name + HOI4Fixes.focus_folder + "//massachusetts.txt")));
+            FocusTree focusTree = FocusTrees.get(new CountryTag("SMA"));
+            if (focusTree == null) {
+                focusTree = new FocusTree(new File(HOI4Fixes.hoi4_dir_name + HOI4Fixes.focus_folder + "//massachusetts.txt"));
+            }
+            focusTreeBuilderWindow$FocusTreeViewport1 = new FocusTreeViewport(focusTree);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -107,16 +114,17 @@ public class FocusTreeBuilderWindow extends JFrame {
                     int xPos = 0;
 
                     /* dds stuff */
+                    BufferedImage GFX_focus_unavailable = null;
                     try {
-                        FileInputStream fis = new FileInputStream(HOI4Fixes.hoi4_dir_name + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+                        FileInputStream fis = new FileInputStream("hoi4files\\gfx\\focus_unavailable_bg.dds");
                         byte[] buffer = new byte[fis.available()];
                         fis.read(buffer);
                         fis.close();
                         int[] ddspixels = DDSReader.read(buffer, DDSReader.ARGB, 0);
                         int ddswidth = DDSReader.getWidth(buffer);
                         int ddsheight = DDSReader.getHeight(buffer);
-                        ddsImage = new BufferedImage(ddswidth, ddsheight, BufferedImage.TYPE_INT_ARGB);
-                        ddsImage.setRGB(0, 0, ddswidth, ddsheight, ddspixels, 0, ddswidth);
+                        GFX_focus_unavailable = new BufferedImage(ddswidth, ddsheight, BufferedImage.TYPE_INT_ARGB);
+                        GFX_focus_unavailable.setRGB(0, 0, ddswidth, ddsheight, ddspixels, 0, ddswidth);
                     } catch (IOException exc) {
                         exc.printStackTrace();
                     }
@@ -125,9 +133,12 @@ public class FocusTreeBuilderWindow extends JFrame {
                         g2d.setColor(Color.WHITE);
                         int x1 = X_SCALE * (focus.absoluteX() + minX);
                         int y1 = Y_SCALE * focus.absoluteY();
+                        int yAdj1 = (int)(Y_SCALE / 2.2);
+                        int yAdj2 = (Y_SCALE / 2) + 20;
 
                         g2d.drawRect(x1, y1, 100, 100);
 //                            BufferedImage image = ImageIO.read(new File(focus.icon()));   // todo
+                        g2d.drawImage(GFX_focus_unavailable, x1 - 32, y1 + yAdj1, null);
                         g2d.drawImage(focus.getDDSImage(), x1, y1, null);
 
                         String name;
@@ -136,7 +147,7 @@ public class FocusTreeBuilderWindow extends JFrame {
                         } else {
                             name = focus.locName();
                         }
-                        g2d.drawString(name, x1, y1 + (Y_SCALE / 2) + 20);
+                        g2d.drawString(name, x1, y1 + yAdj2);
 
                         xPos += X_SCALE;
 
