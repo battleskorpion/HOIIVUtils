@@ -106,6 +106,21 @@ public class FocusTreeBuilderWindow extends JFrame {
                     g2d.drawRect(0, 0, width, height);
                     int xPos = 0;
 
+                    /* dds stuff */
+                    try {
+                        FileInputStream fis = new FileInputStream(HOI4Fixes.hoi4_dir_name + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+                        byte[] buffer = new byte[fis.available()];
+                        fis.read(buffer);
+                        fis.close();
+                        int[] ddspixels = DDSReader.read(buffer, DDSReader.ARGB, 0);
+                        int ddswidth = DDSReader.getWidth(buffer);
+                        int ddsheight = DDSReader.getHeight(buffer);
+                        ddsImage = new BufferedImage(ddswidth, ddsheight, BufferedImage.TYPE_INT_ARGB);
+                        ddsImage.setRGB(0, 0, ddswidth, ddsheight, ddspixels, 0, ddswidth);
+                    } catch (IOException exc) {
+                        exc.printStackTrace();
+                    }
+
                     for (Focus focus : focusTree.focuses()) {
                         g2d.setColor(Color.WHITE);
                         int x1 = X_SCALE * (focus.absoluteX() + minX);
