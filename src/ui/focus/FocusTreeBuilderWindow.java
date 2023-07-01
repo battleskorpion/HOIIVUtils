@@ -98,15 +98,17 @@ public class FocusTreeBuilderWindow extends JFrame {
                 super.paintComponent(g);
 
                 if (focusTree != null) {
+                    int minX = -focusTree.minX();
                     int width = getWidth();
                     int height = getHeight();
                     Graphics2D g2d = (Graphics2D) g.create();
                     g2d.setColor(Color.DARK_GRAY);
                     g2d.drawRect(0, 0, width, height);
                     int xPos = 0;
+
                     for (Focus focus : focusTree.focuses()) {
                         g2d.setColor(Color.WHITE);
-                        int x1 = X_SCALE * focus.absoluteX();
+                        int x1 = X_SCALE * (focus.absoluteX() + minX);
                         int y1 = Y_SCALE * focus.absoluteY();
 
                         g2d.drawRect(x1, y1, 100, 100);
@@ -124,16 +126,16 @@ public class FocusTreeBuilderWindow extends JFrame {
                         xPos += X_SCALE;
 
                         if (focus.hasPrerequisites()) {
-//                            System.out.println(focus.getPrerequisites());
+//                            System.out.println(focus.id() + ", " + focus.getPrerequisites());
                             g2d.setColor(Color.WHITE);
 
                             for (Set<Focus> prereqFocusSet : focus.getPrerequisites()) {
                                 for (Focus prereqFocus : prereqFocusSet) {
                                     int linex1 = x1 + (X_SCALE / 2);
                                     int liney1 = y1;
-                                    int linex2 = prereqFocus.absolutePosition().x + (X_SCALE / 2);
-                                    int liney2 = prereqFocus.y() + 100;
-                                    g2d.drawLine(linex1, linex2, liney1, liney2);
+                                    int linex2 = (X_SCALE * (prereqFocus.absoluteX() + minX)) + (X_SCALE / 2);
+                                    int liney2 = (Y_SCALE * prereqFocus.absoluteY()) + 100;
+                                    g2d.drawLine(linex1, liney1, linex2, liney2);
                                 }
                             }
                         }

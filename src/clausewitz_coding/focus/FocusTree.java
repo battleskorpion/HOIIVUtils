@@ -25,6 +25,7 @@ public final class FocusTree extends HOI4Fixes {
 	//private Modifier  countryModifier;
 	private boolean default_focus;
 	private Point continuous_focus_position;
+	private int minX;			// min x of all focuses
 
 	/**
 	 * Instantiate focus tree from pre-existing focus tree (file).
@@ -35,6 +36,7 @@ public final class FocusTree extends HOI4Fixes {
 		this.focus_file = focus_file;
 		country = new CountryTag("###");
 		focuses = new HashMap<>();
+		minX = 0;
 
 		parse();
 		FocusTrees.add(country(), this);
@@ -84,6 +86,7 @@ public final class FocusTree extends HOI4Fixes {
 
 		/* focuses */
 		focus_names = new ArrayList<String>();		// todo needed?
+		minX = 0; 		// min x is 0 or less
 
 		for (Expression focusExp : focusesExps) {
 			Focus focus;
@@ -123,6 +126,9 @@ public final class FocusTree extends HOI4Fixes {
 
 				// TODO THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
 				focus.loadAttributes(focusExp);
+				if (focus.absoluteX() < minX) {
+					minX = focus.x();
+				}
 			}
 		}
 
@@ -232,5 +238,9 @@ public final class FocusTree extends HOI4Fixes {
 		}
 
 		return focuses.get(focus_id);
+	}
+
+	public int minX() {
+		return minX;
 	}
 }
