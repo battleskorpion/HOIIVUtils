@@ -276,6 +276,9 @@ public class Expression {
         Expression[] subexps = getAllSubexpressions(s);
         ArrayList<String> subexpsSplit = new ArrayList<>();
 
+        if (subexps == null) {
+            return null;
+        }
         for (Expression subexp : subexps) {
             subexpsSplit.addAll(Arrays.asList(subexp.getText().split(s)));
         }
