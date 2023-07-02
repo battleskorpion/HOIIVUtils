@@ -12,6 +12,9 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.text.html.HTML;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,6 +82,65 @@ public class FocusTreeBuilderWindow extends JFrame {
                 scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
                 scrollPane.setPreferredSize(new Dimension(1000, 1000));
                 scrollPane.setViewportBorder(new LineBorder(Color.RED));
+
+                MouseAdapter adapter = new MouseAdapter() {
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @param e
+                     * @since 1.6
+                     */
+                    @Override
+                    public void mouseWheelMoved(MouseWheelEvent e) {
+                        super.mouseWheelMoved(e);
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @param e
+                     * @since 1.6
+                     */
+                    @Override
+                    public void mouseDragged(MouseEvent e) {
+                        super.mouseDragged(e);
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @param e
+                     * @since 1.6
+                     */
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        super.mouseMoved(e);
+
+                        Point p = e.getPoint();
+//                        System.out.println(p);
+                        Focus focus = getFocusHover(p);
+                        if (focus == null) {
+                            return;
+                        }
+
+                        System.out.println(focus);
+                    }
+                };
+                addMouseListener(adapter);
+                addMouseMotionListener(adapter);
+            }
+
+            private Focus getFocusHover(Point p) {
+                int x = (int) (p.getX() / X_SCALE) + focusTree.minX();
+                int y = (int) (p.getY() / Y_SCALE);
+
+                for (Focus f : focusTree.focuses()) {
+                    if (f.absolutePosition().equals(new Point(x, y))) {
+                        return f;
+                    }
+                }
+
+                return null;
             }
 
             public void drawFocus(Graphics g, Focus focus) {
@@ -268,6 +330,7 @@ public class FocusTreeBuilderWindow extends JFrame {
                 return getPreferredSize().height
                         <= getParent().getSize().height;
             }
+
         }
 
     }
