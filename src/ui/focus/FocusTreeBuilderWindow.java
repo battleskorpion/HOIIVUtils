@@ -84,6 +84,9 @@ public class FocusTreeBuilderWindow extends JFrame {
                 scrollPane.setViewportBorder(new LineBorder(Color.RED));
 
                 MouseAdapter adapter = new MouseAdapter() {
+                    FocusTreeDetailsWindow focusTreeDetailsWindow;
+                    Focus focus;
+
                     /**
                      * {@inheritDoc}
                      *
@@ -116,14 +119,32 @@ public class FocusTreeBuilderWindow extends JFrame {
                     public void mouseMoved(MouseEvent e) {
                         super.mouseMoved(e);
 
+                        /* get focus being hovered over */
                         Point p = e.getPoint();
-//                        System.out.println(p);
-                        Focus focus = getFocusHover(p);
-                        if (focus == null) {
+                        Focus focusTemp = getFocusHover(p);
+                        if (focusTemp == null) {
+                            /*
+                            if no focus being hovered over -> if there was a focus detail view open,
+                            get rid of it and reset
+                             */
+                            if (focusTreeDetailsWindow != null) {
+                                focusTreeDetailsWindow.dispose();
+                                focusTreeDetailsWindow = null;
+                                focus = null;
+                            }
                             return;
                         }
+                        if (focusTemp == focus) {
+                            return;
+                        }
+                        focus = focusTemp;
 
-                        System.out.println(focus);
+                        /* focus details view */
+                        if (focusTreeDetailsWindow != null) {
+                            focusTreeDetailsWindow.dispose();
+                        }
+                        focusTreeDetailsWindow = new FocusTreeDetailsWindow(focus, p);
+                        focusTreeDetailsWindow.setVisible(true);
                     }
                 };
                 addMouseListener(adapter);

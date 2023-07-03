@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class Focus {
+    private static final int FOCUS_COST_FACTOR = 7;
     private final int DEFAULT_FOCUS_COST = 10;  // default cost (weeks) when making new focus or etc.
     private static final HashSet<String> focusIDs = new HashSet<>();
 
@@ -404,5 +405,13 @@ public class Focus {
 
     public Set<Set<Focus>> getPrerequisites() {
         return prerequisite;
+    }
+
+    public int cost() {
+        return cost;
+    }
+
+    public int completionTime() {
+        return cost * FOCUS_COST_FACTOR;
     }
 }
