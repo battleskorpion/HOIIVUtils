@@ -26,7 +26,8 @@ public class FocusTreeDetailsWindow extends JFrame {
         setLocation(p);
         setContentPane(focusTreeDetailsJPanel);
         setSize(700, 500);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setUndecorated(true);
+        getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
         pack();
 
         focusNameJLabel.setText(focus.locName());
