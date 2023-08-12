@@ -1,6 +1,7 @@
 package clausewitz_coding;
 
 import clausewitz_coding.country.CountryTag;
+import clausewitz_coding.gfx.Interface;
 import clausewitz_coding.state.State;
 import clausewitz_coding.state.StateCategory;
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -96,6 +97,7 @@ public class HOI4Fixes {
 
 		/* init */
 		StateCategory.loadStateCategories();
+		Interface.loadGFX();
 
 		/* main listeners */
 		try {

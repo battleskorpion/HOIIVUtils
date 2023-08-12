@@ -224,6 +224,40 @@ public class Expression {
         return expressions.toArray(new Expression[]{});
     }
 
+    /**
+     * getAll with match case option
+     * @param s
+     * @param matchCase
+     * @return
+     */
+    public Expression[] getAll(String s, boolean matchCase) {
+        if (matchCase) {
+            return getAll(s);
+        } else {
+            s = s.toLowerCase();
+            ArrayList<Expression> expressions = new ArrayList<>();
+
+            Expression exp = new Expression(s);
+            if(expression != null && expression.trim().toLowerCase().contains(s)) {
+                expressions.add(new Expression(this));
+            } else if (subexpressions != null) {
+                for (Expression subexp : subexpressions) {
+                    Expression[] subexpexps = subexp.getAll(s, false);
+                    if (subexpexps != null) {
+                        expressions.addAll(Arrays.asList(subexpexps));
+                    }
+                }
+            }
+
+            // if none found return null
+            if (expressions.size() == 0) {
+                return null;
+            }
+
+            return expressions.toArray(new Expression[]{});
+        }
+    }
+
     public Expression[] getAll() {
         return getAll("");
     }
@@ -288,4 +322,6 @@ public class Expression {
         }
         return subexpsSplit;
     }
+
+
 }

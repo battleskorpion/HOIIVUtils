@@ -2,6 +2,7 @@ package clausewitz_coding.focus;
 
 import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.code.trigger.Trigger;
+import clausewitz_coding.gfx.Interface;
 import clausewitz_parser.Expression;
 import ddsreader.DDSReader;
 
@@ -254,13 +255,22 @@ public class Focus {
         /* dds binary data buffer */
         /* https://github.com/npedotnet/DDSReader */
         try {
-            FileInputStream fis = new FileInputStream(HOI4Fixes.hoi4_dir_name + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+            String gfx = Interface.getGFX(icon);
+
+            FileInputStream fis;
+            if (gfx == null) {
+                System.err.println("GFX was not found for " + icon);
+                fis = new FileInputStream(HOI4Fixes.hoi4_dir_name + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+            } else {
+                fis = new FileInputStream(Interface.getGFX(icon));
+            }
             byte[] buffer = new byte[fis.available()];
             fis.read(buffer);
             fis.close();
             int[] ddspixels = DDSReader.read(buffer, DDSReader.ARGB, 0);
             int ddswidth = DDSReader.getWidth(buffer);
             int ddsheight = DDSReader.getHeight(buffer);
+
             ddsImage = new BufferedImage(ddswidth, ddsheight, BufferedImage.TYPE_INT_ARGB);
             ddsImage.setRGB(0, 0, ddswidth, ddsheight, ddspixels, 0, ddswidth);
         } catch (IOException exc) {

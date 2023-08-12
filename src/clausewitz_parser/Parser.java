@@ -88,6 +88,24 @@ public class Parser {
         return fileExpressions.getAll(s);
     }
 
+    /**
+     * Find all instances of the expression s in expressions of parsed file, ignore capitalization option
+     * @param s
+     * @param b
+     * @return
+     */
+    public Expression[] findAll(String s, boolean matchCase) {
+        if (matchCase) {
+            return findAll(s);
+        } else {
+            if (fileExpressions == null) {
+                return null;
+            }
+
+            return fileExpressions.getAll(s, false);
+        }
+    }
+
     public Expression[] findAll() {
          return findAll("");
     }
@@ -124,4 +142,5 @@ public class Parser {
 
         return count;
     }
+
 }

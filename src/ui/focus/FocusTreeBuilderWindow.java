@@ -183,6 +183,10 @@ public class FocusTreeBuilderWindow extends JFrame {
                 return new Dimension(10 * X_SCALE, 10 * Y_SCALE);
             }
 
+            /**
+             * draws each focus as well as related graphics
+             * @param g the <code>Graphics</code> object to protect
+             */
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
