@@ -101,10 +101,15 @@ public class Focus {
         if (relative_position_id == null) {
             return position();
         }
+        if (relative_position_id.equals(this.id)) {
+            System.err.println("Relative position id same as focus id for " + this);
+            return position();
+        }
 
         Focus relative_position_focus = focusTree.getFocus(relative_position_id);
         if (relative_position_focus == null) {
             System.err.println("focus id " + relative_position_id + " not a focus");
+            return position();
         }
         Point adjPoint = relative_position_focus.absolutePosition();
         adjPoint = new Point(adjPoint.x + x, adjPoint.y + y);

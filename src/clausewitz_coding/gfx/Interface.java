@@ -5,6 +5,7 @@ import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
@@ -55,6 +56,27 @@ public class Interface {
 
     public static SpriteType getSpriteType(String icon) {
         return gfxHashMap.get(icon);
+    }
+
+    public static int numGFX() {
+        return gfxHashMap.size();
+    }
+
+    /**
+     * lists all SpriteType objects found in interface files
+     * @return
+     */
+    public static SpriteType[] listGFX() {
+        return gfxHashMap.values().toArray(new SpriteType[]{});
+    }
+
+    /**
+     * lists .gfx files which Interface class represents and which
+     * have been read in.
+     * @return
+     */
+    public static Interface[] list() {
+        return interfaceFiles.values().toArray(new Interface[]{});
     }
 
     private void readGFXFile(File file) {

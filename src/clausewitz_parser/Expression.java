@@ -72,6 +72,9 @@ public class Expression {
     }
 
     public Expression(String expression) {
+        if (expression == null) {
+            return;
+        }
         expression = expression.replaceAll("= ", "=");
         expression = expression.replaceAll(" =", "=");
         this.expression = expression;

@@ -6,9 +6,10 @@ import clausewitz_coding.focus.localization.FocusLocReqFinder;
 import clausewitz_coding.state.State;
 import clausewitz_coding.idea.FixIdea;
 import ui.buildings.BuildingsByCountryWindow;
+import ui.clausewitz_gfx.GFXWindow;
 import ui.colorgen.ColorGeneratorMenu;
 import ui.custom_tooltop.CustomTooltipWindow;
-import ui.focus.FocusTreeBuilderWindow;
+import ui.focus.FocusTreeWindow;
 import ui.focus.FocusTreeStrength;
 import ui.focus_localization.FocusLoqReqWindow;
 import ui.map.RiverGenWindow;
@@ -34,6 +35,7 @@ public class Mainmenu extends JFrame {
     private JButton customTooltipLocalizationButton;
     private JButton focusTreeStrengthButton;
     private JButton riverGenerationButton;
+    private JButton GFXButton;
 
     public Mainmenu() {
         menu = this;
@@ -216,7 +218,7 @@ public class Mainmenu extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                FocusTreeBuilderWindow focusTreeBuilderWindow = new FocusTreeBuilderWindow();
+                FocusTreeWindow focusTreeBuilderWindow = new FocusTreeWindow();
                 focusTreeBuilderWindow.setVisible(true);
             }
         });
@@ -254,6 +256,18 @@ public class Mainmenu extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 RiverGenWindow riverGenWindow = new RiverGenWindow();
                 riverGenWindow.setVisible(true);
+            }
+        });
+        GFXButton.addActionListener(new ActionListener() {
+            /**
+             * Invoked when an action occurs.
+             *
+             * @param e the event to be processed
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GFXWindow gfxWindow = new GFXWindow();
+                gfxWindow.setVisible(true);
             }
         });
     }

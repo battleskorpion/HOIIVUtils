@@ -7,10 +7,8 @@ import clausewitz_coding.focus.FocusTree;
 import clausewitz_coding.focus.FocusTrees;
 import ddsreader.DDSReader;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.text.html.HTML;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -21,11 +19,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Set;
 
-public class FocusTreeBuilderWindow extends JFrame {
+public class FocusTreeWindow extends JFrame {
     private JPanel TreeBuilderJPanel;
     private FocusTreeViewport focusTreeBuilderWindow$FocusTreeViewport1;
 
-    public FocusTreeBuilderWindow() {
+    public FocusTreeWindow() {
         super ("Focus Tree");
 
         /* window */
