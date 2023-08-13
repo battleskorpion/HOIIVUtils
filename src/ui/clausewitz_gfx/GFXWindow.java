@@ -84,7 +84,7 @@ public class GFXWindow extends JFrame {
         // data
         refreshGFXTable();
 
-        /* window init */
+        /* window */
         setContentPane(GFXWindowJPanel);
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
