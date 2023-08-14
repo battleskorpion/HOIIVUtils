@@ -79,6 +79,22 @@ public class Interface {
         return interfaceFiles.values().toArray(new Interface[]{});
     }
 
+    /**
+     * Returns the number of .gfx interface files read
+     * @return number of interface files read
+     */
+    public static int numFiles() {
+        return interfaceFiles.size();
+    }
+
+    /**
+     * returns all .gfx files parsed
+     * @return list of all .gfx files of type Interface
+     */
+    public static Interface[] listGFXFiles() {
+        return interfaceFiles.values().toArray(new Interface[]{});
+    }
+
     private void readGFXFile(File file) {
         spriteTypes = new HashSet<>();
 
@@ -133,5 +149,20 @@ public class Interface {
         }
     }
 
+    /**
+     * Returns the name of the file represented by an instance of the Interface class
+     * @return name of this Interface file
+     */
+    public String getName() {
+        return file.getName();
+    }
+
+    /**
+     * Returns the path for the file represented by an instance of the Interface class
+     * @return filepath for this Interface file
+     */
+    public String getPath() {
+        return file.getPath();
+    }
 
 }

@@ -9,7 +9,6 @@ import clausewitz_coding.gfx.SpriteType;
 import ddsreader.DDSReader;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -25,6 +24,7 @@ public class GFXWindow extends JFrame {
     private JTable GFXTable;
     private JPanel GFXWindowJPanel;
     private JButton countUsesButton;
+    private JButton toggleInterfaceFilesButton;
     private DefaultTableModel GFXTableModel;
 
     private HashMap<SpriteType, Integer> instancesHashMap;
@@ -79,8 +79,6 @@ public class GFXWindow extends JFrame {
         // row sorter
         GFXTable.setAutoCreateRowSorter(true);
 
-        /* action listeners */
-
         // data
         refreshGFXTable();
 
@@ -90,6 +88,7 @@ public class GFXWindow extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
 
+        /* action listeners */
         countUsesButton.addActionListener(new ActionListener() {
             /**
              * Invoked when an action occurs.
@@ -115,6 +114,18 @@ public class GFXWindow extends JFrame {
                 }
 
                 refreshGFXTable();
+            }
+        });
+        toggleInterfaceFilesButton.addActionListener(new ActionListener() {
+            /**
+             * Invoked when an action occurs.
+             *
+             * @param e the event to be processed
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                InterfaceFileListWindow interfaceFileListWindow = new InterfaceFileListWindow();
+                interfaceFileListWindow.setVisible(true);
             }
         });
     }
@@ -351,7 +362,7 @@ public class GFXWindow extends JFrame {
     /**
      * from <a href="https://stackoverflow.com/questions/14793396/rendering-bufferedimage-in-jtable-cell">...</a>
      */
-    public class BufferedImageTableCellRenderer extends DefaultTableCellRenderer {
+    private class BufferedImageTableCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
