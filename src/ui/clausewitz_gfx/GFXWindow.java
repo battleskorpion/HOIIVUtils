@@ -79,7 +79,7 @@ public class GFXWindow extends JFrame {
 
         // cell rendering
         GFXTable.setRowHeight(100);
-//        GFXTable.setDefaultRenderer(BufferedImage.class, new BufferedImageTableCellRenderer());
+        GFXTable.setDefaultRenderer(BufferedImage.class, new BufferedImageTableCellRenderer());
         TableCellRenderer buttonRenderer = new JTableButtonRenderer();
         GFXTable.getColumn("Open").setCellRenderer(buttonRenderer);
 
