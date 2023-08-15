@@ -14,6 +14,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,7 +50,7 @@ public class GFXWindow extends JFrame {
 
             @Override
             public int getColumnCount() {
-                return 5;
+                return 6;
             }
 
             @Override
@@ -62,13 +64,15 @@ public class GFXWindow extends JFrame {
                     case 0:
                         return BufferedImage.class;
                     case 3:
+                        return JButton.class;
+                    case 4:
                         return Integer.class;
                     default:
                         return String.class;
                 }
             }
         };
-        String[] columns = {"GFX", "Name", "Texturefile", "Instances", "Details"};
+        String[] columns = {"GFX", "Name", "Texturefile", "", "Instances", "Details"};
         GFXTableModel.setColumnIdentifiers(columns);
         GFXTable.setModel(GFXTableModel);
 
@@ -136,12 +140,13 @@ public class GFXWindow extends JFrame {
 
         GFXTableModel.getDataVector().removeAllElements();
         GFXTableModel.setRowCount(GFXList.length);
-        GFXTableModel.setColumnCount(5);
+        GFXTableModel.setColumnCount(6);
         GFXTableModel.fireTableDataChanged();
 
         for (int i = 0; i < GFXList.length; i++) {
             BufferedImage ddsImage = getDDSImage(GFXList[i].getGFX());
             //SpriteTypeGFXPanel gfxPanel = new SpriteTypeGFXPanel(ddsImage);
+            JButton openExplorerTexturefile = new JButton("[]");
 
             SpriteType GFX = GFXList[i];
             int instances;
@@ -156,8 +161,9 @@ public class GFXWindow extends JFrame {
             GFXTableModel.setValueAt(ddsImage, i, 0);
             GFXTableModel.setValueAt(GFX.getName(), i, 1);
             GFXTableModel.setValueAt(GFX.getTexturefile(), i,2);
-            GFXTableModel.setValueAt(instances, i,3);
-            GFXTableModel.setValueAt(details, i, 4);
+            GFXTableModel.setValueAt(openExplorerTexturefile, i, 3);
+            GFXTableModel.setValueAt(instances, i,4);
+            GFXTableModel.setValueAt(details, i, 5);
         }
     }
 
