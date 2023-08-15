@@ -127,7 +127,6 @@ public class Interface {
             SpriteType gfx = new SpriteType(name, filename);
             spriteTypes.add(gfx);
             gfxHashMap.put(name, gfx);
-            System.err.println(name);
         }
     }
 
