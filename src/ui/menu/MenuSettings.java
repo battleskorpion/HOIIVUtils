@@ -53,6 +53,7 @@ public class MenuSettings extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
+                // TODO THIS IS THE FILE CHOOSER @THICC_BOI
                 JFileChooser j = new JFileChooser();
                 j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 j.setDialogTitle("Choose Mod Directory");
