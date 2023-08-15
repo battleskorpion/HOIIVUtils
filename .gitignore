@@ -17,3 +17,6 @@ replay_pid*
 
 #works finally
 src/settings/localization_settings.txt 
+
+# Visual Studio Code
+.vscode

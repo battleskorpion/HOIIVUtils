@@ -54,16 +54,15 @@ public class MenuSettings extends JFrame {
                 super.mouseClicked(e);
 
                 // TODO THIS IS THE FILE CHOOSER @THICC_BOI
-                JFileChooser j = new JFileChooser();
-                j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                j.setDialogTitle("Choose Mod Directory");
+                JFileChooser filePicker = new JFileChooser();
+                filePicker.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                filePicker.setDialogTitle("Choose Mod Directory");
 
-                int opt = j.showOpenDialog(null);
-                if (opt == JFileChooser.APPROVE_OPTION) {
-                    HOI4Fixes.hoi4_dir_name = j.getSelectedFile().getPath();
-                } else {
+                int opt = filePicker.showOpenDialog(null);
+                if (opt != JFileChooser.APPROVE_OPTION) {
                     return;
                 }
+                HOI4Fixes.hoi4_dir_name = filePicker.getSelectedFile().getPath();
 
                 /* directory acquired, now save settings */
                 try {
