@@ -11,6 +11,7 @@ import ddsreader.DDSReader;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -72,13 +73,15 @@ public class GFXWindow extends JFrame {
                 }
             }
         };
-        String[] columns = {"GFX", "Name", "Texturefile", "", "Instances", "Details"};
+        String[] columns = {"GFX", "Name", "Texturefile", "Open", "Instances", "Details"};
         GFXTableModel.setColumnIdentifiers(columns);
         GFXTable.setModel(GFXTableModel);
 
         // cell rendering
         GFXTable.setRowHeight(100);
-        GFXTable.setDefaultRenderer(BufferedImage.class, new BufferedImageTableCellRenderer());
+//        GFXTable.setDefaultRenderer(BufferedImage.class, new BufferedImageTableCellRenderer());
+        TableCellRenderer buttonRenderer = new JTableButtonRenderer();
+        GFXTable.getColumn("Open").setCellRenderer(buttonRenderer);
 
         // row sorter
         GFXTable.setAutoCreateRowSorter(true);
@@ -230,4 +233,14 @@ public class GFXWindow extends JFrame {
             return this;
         }
     }
+
+    /**
+     * from https://stackoverflow.com/questions/13833688/adding-jbutton-to-jtable
+     */
+    private static class JTableButtonRenderer implements TableCellRenderer {
+        @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            return (JButton)value;
+        }
+    }
+
 }
