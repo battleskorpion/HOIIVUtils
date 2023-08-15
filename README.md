@@ -14,5 +14,3 @@ application, you acknowledge that you understand the risks of use, <i> especiall
 backed up in some form.</i>
 
 Some features are WIP, and may not work as intended. 
-
-and im stinky
