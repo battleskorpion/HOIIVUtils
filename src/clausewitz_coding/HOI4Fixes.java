@@ -46,7 +46,7 @@ public class HOI4Fixes {
 		try {
 			String OS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).trim();
 			System.out.println(System.getProperty("Operating system: " + "os.name"));
-			// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//			 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			if (DARK_MODE.getMode()) {
 				if (OS.startsWith("mac")) {
 					UIManager.setLookAndFeel(new FlatMacDarkLaf());
