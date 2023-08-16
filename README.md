@@ -1,5 +1,7 @@
-# <b> hoi4-localizer-2.0 </b>
+# <h1> HOIIVUtils </h1>
+
 by battleskorpion
+
 <br> hoi4 mod: North America Divided - <hyperlink> https://discord.gg/AyJY59BcbM </hyperlink> 
 
 <b>IMPORTANT:</b> Use the batch file to run the hoi4localizer.jar, as the jar file tends to immediately close.

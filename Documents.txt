@@ -6,3 +6,13 @@ todo:
  • Make a drop down for themes (white mode, dark mode, and system default)
  • Add grey text version number on main window and intro window
  • Change the fucking file explorer to whatever discord uses
+ • HOIIVUtils
+ • 
+ • 
+ • 
+ • 
+ • 
+ • 
+ • 
+ • 
+ • 
