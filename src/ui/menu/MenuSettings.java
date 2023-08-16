@@ -1,6 +1,9 @@
 package ui.menu;
 
 import clausewitz_coding.HOI4Fixes;
+import com.formdev.flatlaf.*;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,6 +52,7 @@ public class MenuSettings extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
+                // TODO THIS IS THE FILE CHOOSER @THICC_BOI
                 JFileChooser filePicker = new JFileChooser();
                 filePicker.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 filePicker.setDialogTitle("Choose Mod Directory");
