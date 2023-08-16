@@ -1,7 +1,7 @@
 package clausewitz_coding.code.modifier;
 
-import java.sql.Array;
-import java.util.ArrayList;
+//import java.sql.Array;
+//import java.util.ArrayList;
 import java.util.List;
 
 public interface Modifier {
@@ -24,18 +24,19 @@ public interface Modifier {
         war_production,
     }
 
-    //private String modifierID;
-    List<Scope> scope = null;      // can have multiple categories?
+    // private String modifierID;
+    List<Scope> scope = null; // can have multiple categories?
 
-//    public Modifier(Scope scope) {
-//        this.scope = new ArrayList<>();
-//        this.scope.add(scope);
-//    }
+    // public Modifier(Scope scope) {
+    // this.scope = new ArrayList<>();
+    // this.scope.add(scope);
+    // }
 
-//    public abstract Modifier getModifier();
+    // public abstract Modifier getModifier();
 
     /**
      * Returns the main scope of the modifier
+     * 
      * @return modifier's main scope
      */
     Scope getScope();

@@ -5,8 +5,8 @@ import clausewitz_coding.localization.LocalizationFile;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
-import settings.LocalizerSettings;
-import ui.menu.MenuSettings;
+//import settings.LocalizerSettings;
+//import ui.menu.MenuSettings;
 
 import java.awt.*;
 import java.io.File;
