@@ -3,6 +3,7 @@ package clausewitz_coding.focus;
 import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.localization.FocusLocalizationFile;
+import settings.LocalizerSettings;
 //import clausewitz_coding.localization.LocalizationFile;
 import ui.focus_localization.FocusTreeLocProgress;
 
@@ -21,15 +22,15 @@ import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
 
 public class FixFocus extends HOI4Fixes {
 
-//	private static String hoi4_dir_name;
+	// private static String hoi4_dir_name;
 
 	public static boolean addFocusLoc(File focus_file, File loc_file) throws IOException {
 
-		final String hoi4_dir_name = HOI4Fixes.settings.get(MOD_DIRECTORY);
+		final String hoi4_dir_name = LocalizerSettings.get(MOD_DIRECTORY);
 
 		// some vars
 		ArrayList<String> focuses_localized = new ArrayList<String>();
-		//ArrayList<String> focuses_nonlocalized = new ArrayList<String>();
+		// ArrayList<String> focuses_nonlocalized = new ArrayList<String>();
 		FocusTree focusTree = new FocusTree(focus_file);
 		FocusLocalizationFile localization = new FocusLocalizationFile(loc_file);
 		localization.readLocalization();
@@ -43,14 +44,12 @@ public class FixFocus extends HOI4Fixes {
 		int numFocusesUnloc = 0;
 		ArrayList<Focus> focusesUnloc = new ArrayList<>();
 		assert focusTree.list() != null;
-		for (Focus focus : focusTree.focuses())
-		{
+		for (Focus focus : focusTree.focuses()) {
 			// if focus id not localized
-			if (!localization.isLocalized(focus.id))
-			{ 
-				// write to loc file 
+			if (!localization.isLocalized(focus.id)) {
+				// write to loc file
 				// separate words in focus name
-				int i = 0;	//counter
+				int i = 0; // counter
 				if (CountryTags.exists(focus.id().substring(0, 3))) {
 					i += 3;
 				}
@@ -65,7 +64,8 @@ public class FixFocus extends HOI4Fixes {
 				focusesUnloc.add(focus);
 
 				localization.setLocalization(focus.id, focus_loc);
-				localization.setLocalizationDesc(focus.id + "_desc", "added focus on " + LocalDateTime.now() + " by hoi4localizer.");
+				localization.setLocalizationDesc(focus.id + "_desc",
+						"added focus on " + LocalDateTime.now() + " by hoi4localizer.");
 			}
 		}
 
@@ -75,7 +75,7 @@ public class FixFocus extends HOI4Fixes {
 		focusLocProgress.refreshUnlocFocusesTable(focusesUnloc);
 
 		localization.writeLocalization();
-		return true; 
+		return true;
 	}
 
 	// useful lines function

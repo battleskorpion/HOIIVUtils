@@ -4,6 +4,7 @@ import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.localization.LocalizationFile;
+import settings.LocalizerSettings;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class FixIdea extends HOI4Fixes {
 
 	public static boolean addIdeaLoc(File idea_file, File loc_file) throws IOException {
 
-		final String hoi4_dir_name = HOI4Fixes.settings.get(MOD_DIRECTORY);
+		final String hoi4_dir_name = LocalizerSettings.get(MOD_DIRECTORY);
 
 		// some vars
 		ArrayList<String> ideas_localized = new ArrayList<String>();
@@ -32,23 +33,26 @@ public class FixIdea extends HOI4Fixes {
 				// write to loc file
 				// separate words in idea name
 				int i = 0;
-//				if(CountryTags.list().contains(new CountryTag(idea.ideaID.substring(0, 3)))) {
+				// if(CountryTags.list().contains(new CountryTag(idea.ideaID.substring(0, 3))))
+				// {
 				if (CountryTags.exists(idea.ideaID.substring(0, 3))) {
-					i+=3;
+					i += 3;
 				}
 
 				idea_loc = titleCapitalize(idea.ideaID.substring(i).replaceAll("_+", " ").trim()); // regex
 				localization.setLocalization(idea.ideaID, idea_loc);
 
-//				idea_loc = idea + loc_key + " ";
-//				idea_loc += "\"";
-//				idea_loc += titleCapitalize(idea.ideaID.substring(i, idea.ideaID.length()).replaceAll("_+", " ").trim()); // regex
-//				idea_loc += "\"";
-//				locPWriter.println("");
-//				locPWriter.println("    " + idea_loc); 									// NO TAB, YML PREFERS SPACES
-//				// add blank desc line:
-//				locPWriter.println("    " + idea + "_desc" + loc_key + " " + "\"" + "\""); // NO TAB, YML PREFERS SPACES
-//				System.out.println("added idea to loc, idea " + idea_loc);
+				// idea_loc = idea + loc_key + " ";
+				// idea_loc += "\"";
+				// idea_loc += titleCapitalize(idea.ideaID.substring(i,
+				// idea.ideaID.length()).replaceAll("_+", " ").trim()); // regex
+				// idea_loc += "\"";
+				// locPWriter.println("");
+				// locPWriter.println(" " + idea_loc); // NO TAB, YML PREFERS SPACES
+				// // add blank desc line:
+				// locPWriter.println(" " + idea + "_desc" + loc_key + " " + "\"" + "\""); // NO
+				// TAB, YML PREFERS SPACES
+				// System.out.println("added idea to loc, idea " + idea_loc);
 			}
 		}
 

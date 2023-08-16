@@ -18,15 +18,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
-import static java.nio.file.StandardWatchEventKinds.*;
 import static settings.LocalizerSettings.Settings.*;
 
 public class HOI4Fixes {

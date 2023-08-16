@@ -1,6 +1,7 @@
 package clausewitz_coding.country;
 
 import clausewitz_coding.HOI4Fixes;
+import settings.LocalizerSettings;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,10 +19,10 @@ public class CountryTags extends HOI4Fixes {
 
 	private static ArrayList<CountryTag> find() throws IOException {
 		country_tags = new ArrayList<CountryTag>();
-		country_tags_folder = new File(HOI4Fixes.settings.get(MOD_DIRECTORY) + "\\common\\country_tags");
+		country_tags_folder = new File(LocalizerSettings.get(MOD_DIRECTORY) + "\\common\\country_tags");
 		countries_main_file = new File(country_tags_folder.getPath() + "\\00_countries.txt");
 
-		if(HOI4Fixes.settings.get(MOD_DIRECTORY) == null) {
+		if (LocalizerSettings.get(MOD_DIRECTORY) == null) {
 			return null;
 		}
 		if (!country_tags_folder.isDirectory()) {
@@ -44,16 +45,16 @@ public class CountryTags extends HOI4Fixes {
 						continue;
 					}
 					country_tags.add(tag);
-					//System.out.println(data.substring(0, data.indexOf('=')));
+					// System.out.println(data.substring(0, data.indexOf('=')));
 				}
 			}
 		} else {
 			System.out.println("loading default country tags because country_tags\\00_countries does not exist");
-			File country_tags_default_folder = new File("hoi4files\\country_tags"); 	// with program
+			File country_tags_default_folder = new File("hoi4files\\country_tags"); // with program
 			if (!country_tags_default_folder.exists()) {
 				throw new IOException("Missing " + country_tags_default_folder);
 			}
-			for (File file: country_tags_default_folder.listFiles()) {
+			for (File file : country_tags_default_folder.listFiles()) {
 				countryTagsReader = new Scanner(file);
 
 				// make a list of country tags
@@ -91,7 +92,7 @@ public class CountryTags extends HOI4Fixes {
 						// takes the defined tag at the beginning of the line
 						CountryTag tag = new CountryTag(data.substring(0, data.indexOf('=')).trim());
 						if (tag.equals(CountryTag.NULL_TAG)) {
-							continue; 
+							continue;
 						}
 						country_tags.add(tag);
 					}
@@ -101,7 +102,7 @@ public class CountryTags extends HOI4Fixes {
 
 		if (countryTagsReader != null) {
 			countryTagsReader.close();
-		} 
+		}
 
 		return country_tags;
 	}
@@ -113,8 +114,7 @@ public class CountryTags extends HOI4Fixes {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-		}
-		else {
+		} else {
 			return country_tags;
 		}
 	}
