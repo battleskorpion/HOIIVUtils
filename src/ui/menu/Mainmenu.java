@@ -43,12 +43,15 @@ public class Mainmenu extends JFrame {
 
         /* statistics button */
         toggleStatisticsButton();
-
+        if (focusTreeStrengthButton == null) {
+            return;
+        }
         if (!HOI4Fixes.DEV_MODE) {
+            // todo
             // focusTreeBuilderButton.setEnabled(false);
             focusTreeStrengthButton.setEnabled(false);
             // ideaLocalizationButton.setEnabled(false);
-            // findFocusesWithoutLocalizationButton.setEnabled(false); //todo
+            // findFocusesWithoutLocalizationButton.setEnabled(false);
         }
         setContentPane(mainmenuJPanel);
         setSize(700, 500);
@@ -277,7 +280,7 @@ public class Mainmenu extends JFrame {
     }
 
     void toggleStatisticsButton() {
-        if (this.statisticsButton != null) {
+        if (this.statisticsButton == null) {
             return;
         }
         if (!HOI4Fixes.DEV_MODE) {
