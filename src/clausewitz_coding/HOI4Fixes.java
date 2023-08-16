@@ -34,7 +34,8 @@ public class HOI4Fixes {
 	public static final String applicationVersion = "2.2";
 	public static LocalizerSettings settings;
 	public static String hoi4_dir_name;
-	// "C:\\Users\\daria\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\nadivided-dev";
+	// "C:\\Users\\daria\\Documents\\Paradox Interactive\\Hearts of Iron
+	// IV\\mod\\nadivided-dev";
 	public static String focus_folder;
 	public static String states_folder;
 	public static String strat_region_dir;
@@ -42,15 +43,15 @@ public class HOI4Fixes {
 	public static boolean DEV_MODE = false;
 	public static FileWatcher stateDirWatcher;
 
-	public static void main (String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {
 		/* load settings */
-		settings = new LocalizerSettings(); 	// loads settings automatically
+		settings = new LocalizerSettings(); // loads settings automatically
 
 		/* ui preliminary */
 		try {
 			String OS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).trim();
 			System.out.println(System.getProperty("Operating system: " + "os.name"));
-			//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			if (DARK_MODE.getMode()) {
 				if (OS.startsWith("mac")) {
 					UIManager.setLookAndFeel(new FlatMacDarkLaf());
@@ -66,7 +67,7 @@ public class HOI4Fixes {
 			}
 		} catch (Exception exc) {
 			exc.printStackTrace();
-			System.err.println( "Failed to initialize look and feel" );
+			System.err.println("Failed to initialize look and feel");
 		}
 
 		if (LocalizerSettings.isNull(MOD_DIRECTORY))
@@ -108,7 +109,8 @@ public class HOI4Fixes {
 		}
 
 		/* main menu */
-		//String[] loc_options = {"Fix Focus Localization", "Find Focuses without Localization", "Find Idea Localization", "View Buildings"};
+		// String[] loc_options = {"Fix Focus Localization", "Find Focuses without
+		// Localization", "Find Idea Localization", "View Buildings"};
 		Mainmenu mainmenuWindow = new Mainmenu();
 		mainmenuWindow.setVisible(true);
 
@@ -118,12 +120,10 @@ public class HOI4Fixes {
 		if (!data.isEmpty()) {
 			if (data.trim().charAt(0) == '#') {
 				return false;
-			}
-			else {
+			} else {
 				return true;
 			}
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -175,12 +175,10 @@ public class HOI4Fixes {
 		// first word always capitalized
 		if (words.get(0).length() == 1) {
 			words.set(0, "" + Character.toUpperCase(words.get(0).charAt(0)));
-		}
-		else if (words.get(0).length() > 1) {
+		} else if (words.get(0).length() > 1) {
 			words.set(0, "" + Character.toUpperCase(words.get(0).charAt(0))
 					+ words.get(0).substring(1));
-		}
-		else {
+		} else {
 			System.out.println("first word length < 1");
 		}
 
@@ -202,9 +200,8 @@ public class HOI4Fixes {
 			if (!(num_cap_letters == words.get(i).length()) && !(whitelist.contains(words.get(i)))) {
 				if (words.get(i).length() == 1) {
 					words.set(i, "" + Character.toUpperCase(words.get(i).charAt(0)));
-				}
-				else if (words.get(i).length() > 1) {
-					//System.out.println("working cap");
+				} else if (words.get(i).length() > 1) {
+					// System.out.println("working cap");
 					words.set(i, "" + Character.toUpperCase(words.get(i).charAt(0))
 							+ words.get(i).substring(1));
 				}
@@ -231,16 +228,16 @@ public class HOI4Fixes {
 	}
 
 	private static void watchStateFiles(File stateDir) throws IOException {
-		if (stateDir == null || !stateDir.exists() || !stateDir.isDirectory() ) {
+		if (stateDir == null || !stateDir.exists() || !stateDir.isDirectory()) {
 			System.err.println("State dir does not exist or is not a directory: " + stateDir);
 			return;
 		}
 
-//		WatchService watchService;
-//		watchService = FileSystems.getDefault().newWatchService();
-//
-//		Path path = Paths.get(stateDir.getPath());
-//		path.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
+		// WatchService watchService;
+		// watchService = FileSystems.getDefault().newWatchService();
+		//
+		// Path path = Paths.get(stateDir.getPath());
+		// path.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
 
 		stateDirWatcher = new FileWatcher(stateDir);
 		stateDirWatcher.addListener(new FileAdapter() {
@@ -282,4 +279,3 @@ public class HOI4Fixes {
 	}
 
 }
-
