@@ -276,6 +276,9 @@ public class Mainmenu extends JFrame {
     }
 
     void toggleStatisticsButton() {
+        if (this.statisticsButton != null) {
+            return;
+        }
         if (!HOI4Fixes.DEV_MODE) {
             statisticsButton.setVisible(false);
         } else {
