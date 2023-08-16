@@ -44,10 +44,10 @@ public class Mainmenu extends JFrame {
         toggleStatisticsButton();
 
         if (!HOI4Fixes.DEV_MODE) {
-//            focusTreeBuilderButton.setEnabled(false);
+            // focusTreeBuilderButton.setEnabled(false);
             focusTreeStrengthButton.setEnabled(false);
-            //ideaLocalizationButton.setEnabled(false);
-            //findFocusesWithoutLocalizationButton.setEnabled(false); //todo
+            // ideaLocalizationButton.setEnabled(false);
+            // findFocusesWithoutLocalizationButton.setEnabled(false); //todo
         }
         setContentPane(mainmenuJPanel);
         setSize(700, 500);
@@ -77,7 +77,8 @@ public class Mainmenu extends JFrame {
 
                 /* loc file */
                 {
-                    JFileChooser j = new JFileChooser(HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.localization_eng_folder);
+                    JFileChooser j = new JFileChooser(
+                            HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.localization_eng_folder);
                     j.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     j.setDialogTitle("Select Localization File");
                     int opt = j.showOpenDialog(null);
@@ -125,7 +126,8 @@ public class Mainmenu extends JFrame {
 
                 /* focus file */
                 {
-                    JFileChooser j = new JFileChooser(new File(HOI4Fixes.settings.get(MOD_DIRECTORY)));
+                    String modDirectory = HOI4Fixes.settings.get(MOD_DIRECTORY);
+                    JFileChooser j = new JFileChooser(new File(modDirectory));
                     j.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     j.setDialogTitle("Select Idea File");
                     Integer opt = j.showOpenDialog(null);
@@ -134,7 +136,8 @@ public class Mainmenu extends JFrame {
 
                 /* loc file */
                 {
-                    JFileChooser j = new JFileChooser(HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.localization_eng_folder);
+                    JFileChooser j = new JFileChooser(
+                            HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.localization_eng_folder);
                     j.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     j.setDialogTitle("Select Localization File");
                     Integer opt = j.showOpenDialog(null);
