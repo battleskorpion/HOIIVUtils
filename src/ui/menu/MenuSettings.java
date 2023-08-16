@@ -1,8 +1,6 @@
 package ui.menu;
 
 import clausewitz_coding.HOI4Fixes;
-import settings.LocalizerSettings;
-
 import com.formdev.flatlaf.*;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
@@ -32,8 +30,8 @@ public class MenuSettings extends JFrame {
         window = this;
         parent_menu = menu;
 
-        if (LocalizerSettings.get(MOD_DIRECTORY) != null) {
-            modDirectoryTextField.setText(LocalizerSettings.get(MOD_DIRECTORY));
+        if (HOI4Fixes.settings.get(MOD_DIRECTORY) != null) {
+            modDirectoryTextField.setText(HOI4Fixes.settings.get(MOD_DIRECTORY));
         }
 
         // settings default/current
@@ -47,8 +45,7 @@ public class MenuSettings extends JFrame {
         /* action listeners */
         modDirectoryTextField.addMouseListener(new MouseAdapter() {
             /**
-             * {@inheritDoc}
-             * 
+             *  {@inheritDoc}
              * @param e
              */
             @Override
@@ -73,7 +70,7 @@ public class MenuSettings extends JFrame {
                     throw new RuntimeException(exc);
                 }
 
-                modDirectoryTextField.setText(LocalizerSettings.get(MOD_DIRECTORY));
+                modDirectoryTextField.setText(HOI4Fixes.settings.get(MOD_DIRECTORY));
             }
         });
         devModeCheckBox.addActionListener(new ActionListener() {

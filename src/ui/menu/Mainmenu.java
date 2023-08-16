@@ -4,7 +4,6 @@ import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.focus.FixFocus;
 import clausewitz_coding.focus.localization.FocusLocReqFinder;
 import clausewitz_coding.state.State;
-import settings.LocalizerSettings;
 import clausewitz_coding.idea.FixIdea;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.clausewitz_gfx.GFXWindow;
@@ -72,7 +71,7 @@ public class Mainmenu extends JFrame {
 
                 /* focus file */
                 {
-                    JFileChooser j = new JFileChooser(LocalizerSettings.get(MOD_DIRECTORY) + HOI4Fixes.focus_folder);
+                    JFileChooser j = new JFileChooser(HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.focus_folder);
                     j.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     j.setDialogTitle("Select Focus File");
                     int opt = j.showOpenDialog(null);
@@ -82,7 +81,7 @@ public class Mainmenu extends JFrame {
                 /* loc file */
                 {
                     JFileChooser j = new JFileChooser(
-                            LocalizerSettings.get(MOD_DIRECTORY) + HOI4Fixes.localization_eng_folder);
+                            HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.localization_eng_folder);
                     j.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     j.setDialogTitle("Select Localization File");
                     int opt = j.showOpenDialog(null);
@@ -105,7 +104,7 @@ public class Mainmenu extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    FocusLocReqFinder.findLocReqFocuses(new File(LocalizerSettings.get(MOD_DIRECTORY)));
+                    FocusLocReqFinder.findLocReqFocuses(new File(HOI4Fixes.settings.get(MOD_DIRECTORY)));
                 } catch (IOException exc) {
                     exc.printStackTrace();
                     throw new RuntimeException(exc);
@@ -130,7 +129,7 @@ public class Mainmenu extends JFrame {
 
                 /* focus file */
                 {
-                    String modDirectory = LocalizerSettings.get(MOD_DIRECTORY);
+                    String modDirectory = HOI4Fixes.settings.get(MOD_DIRECTORY);
                     JFileChooser j = new JFileChooser(new File(modDirectory));
                     j.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     j.setDialogTitle("Select Idea File");
@@ -141,7 +140,7 @@ public class Mainmenu extends JFrame {
                 /* loc file */
                 {
                     JFileChooser j = new JFileChooser(
-                            LocalizerSettings.get(MOD_DIRECTORY) + HOI4Fixes.localization_eng_folder);
+                            HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.localization_eng_folder);
                     j.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     j.setDialogTitle("Select Localization File");
                     Integer opt = j.showOpenDialog(null);
