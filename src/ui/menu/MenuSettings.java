@@ -42,8 +42,7 @@ public class MenuSettings extends JFrame {
         /* action listeners */
         modDirectoryTextField.addMouseListener(new MouseAdapter() {
             /**
-             * {@inheritDoc}
-             *
+             *  {@inheritDoc}
              * @param e
              */
             @Override
