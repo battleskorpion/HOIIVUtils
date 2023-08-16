@@ -14,7 +14,7 @@ import java.util.*;
 
 public class Focus {
     private static final int FOCUS_COST_FACTOR = 7;
-    private final int DEFAULT_FOCUS_COST = 10;  // default cost (weeks) when making new focus or etc.
+    private final int DEFAULT_FOCUS_COST = 10; // default cost (weeks) when making new focus or etc.
     private static final HashSet<String> focusIDs = new HashSet<>();
 
     protected FocusTree focusTree;
@@ -23,24 +23,24 @@ public class Focus {
     protected String locName;
     protected String icon;
     protected BufferedImage ddsImage;
-    protected Set<Set<Focus>> prerequisite;              // can be multiple, but hoi4 code is simply "prerequisite"
+    protected Set<Set<Focus>> prerequisite; // can be multiple, but hoi4 code is simply "prerequisite"
     protected Set<Focus> mutually_exclusive;
     protected Trigger available;
-    protected int x;                                // if relative, relative x
-    protected int y;                                // if relative, relative y
-    protected String relative_position_id;          // if null, position is not relative
-    protected int cost;                             // cost of focus (typically in weeks unless changed in defines)
+    protected int x; // if relative, relative x
+    protected int y; // if relative, relative y
+    protected String relative_position_id; // if null, position is not relative
+    protected int cost; // cost of focus (typically in weeks unless changed in defines)
     protected Set<FocusSearchFilter> focus_search_filters;
     protected boolean available_if_capitulated;
     protected boolean cancel_if_invalid;
     protected boolean continue_if_invalid;
-    //    private AIWillDo ai_will_do; // todo
-    //select effect
-    //completion award
+    // private AIWillDo ai_will_do; // todo
+    // select effect
+    // completion award
 
     public Focus(String focus_id, FocusTree focusTree) {
         if (focusIDs.contains(focus_id)) {
-            System.err.println("Error: focus id " + focus_id + " already exists.");     // todo throw exception instead
+            System.err.println("Error: focus id " + focus_id + " already exists."); // todo throw exception instead
             return;
         }
         this.id = focus_id;
@@ -49,11 +49,12 @@ public class Focus {
     }
 
     public String id() {
-        return id; 
+        return id;
     }
 
     /**
      * if relative, relative x
+     * 
      * @return
      */
     public int x() {
@@ -62,6 +63,7 @@ public class Focus {
 
     /**
      * if relative, relative y
+     * 
      * @return
      */
     public int y() {
@@ -86,6 +88,7 @@ public class Focus {
 
     /**
      * if relative, relative position
+     * 
      * @return point representing xy location, or relative xy if relative.
      */
     public Point position() {
@@ -94,8 +97,10 @@ public class Focus {
 
     /**
      * Absolute focus xy-position.
+     * 
      * @return Point representing absolute position of focus.
-     * @implNote Should only be called after all focuses in focus tree are instantiated.
+     * @implNote Should only be called after all focuses in focus tree are
+     *           instantiated.
      */
     public Point absolutePosition() {
         if (relative_position_id == null) {
@@ -113,7 +118,8 @@ public class Focus {
         }
         Point adjPoint = relative_position_focus.absolutePosition();
         adjPoint = new Point(adjPoint.x + x, adjPoint.y + y);
-//        System.out.println(adjPoint + ", " + id + ", " + relative_position_focus.id + ", " + relative_position_focus.position());
+        // System.out.println(adjPoint + ", " + id + ", " + relative_position_focus.id +
+        // ", " + relative_position_focus.position());
 
         return adjPoint;
     }
@@ -121,21 +127,23 @@ public class Focus {
     public String locName() {
         return locName;
     }
+
     public String icon() {
         return icon;
     }
 
     public String toString() {
-        return id(); 
+        return id();
     }
 
     /**
      * Adds focus attributes (prerequisite, mutually exclusive, etc...) to focus
      * by parsing expressions for each potential attribute.
+     * 
      * @param exp Expression representing focus - must include "focus".
      */
     public void loadAttributes(Expression exp) {
-        if(exp.get("focus") == null) {
+        if (exp.get("focus") == null) {
             System.err.println(this + " - Not valid focus expression/definition.");
             return;
         }
@@ -145,7 +153,7 @@ public class Focus {
         setID(exp.getSubexpression(id));
         setXY(focusExp.getImmediate("x="), focusExp.getImmediate("y="));
         setRelativePositionID(focusExp.getSubexpression("relative_position_id="));
-        //setFocusLoc();
+        // setFocusLoc();
         setIcon(focusExp.getSubexpression("icon="));
         setPrerequisite(focusExp.getAllSubexpressions("prerequisite="));
         setMutuallyExclusive(focusExp.getSubexpression("mutually_exclusive="));
@@ -171,6 +179,7 @@ public class Focus {
 
     /**
      * Sets new xy-coordinates, returns previous xy-coordinates.
+     * 
      * @param x focus new x-coordinate
      * @param y focus new y-coordinate
      * @return previous x and y
@@ -201,10 +210,10 @@ public class Focus {
 
     private void setRelativePositionID(Expression exp) {
         if (exp == null) {
-            relative_position_id = null;       // perfectly acceptable
+            relative_position_id = null; // perfectly acceptable
             return;
         }
-        relative_position_id = exp.getText();   // todo new focus instance eeehhhh??
+        relative_position_id = exp.getText(); // todo new focus instance eeehhhh??
     }
 
     public void setCost() {
@@ -233,11 +242,11 @@ public class Focus {
         // todo?
     }
 
-    //todo implement icon lookup
+    // todo implement icon lookup
     public void setIcon(Expression exp) {
         if (exp == null) {
-//            icon = null;
-//            return;
+            // icon = null;
+            // return;
         }
 
         setIcon(exp.getText());
@@ -245,14 +254,15 @@ public class Focus {
 
     /**
      * Sets focus icon id
+     * 
      * @param icon
      */
     public void setIcon(String icon) {
         // null string -> set no (null) icon
         // icon == null check required to not throw access exception
         if (icon == null || icon.equals("")) {
-            //this.icon = null;
-//            return;
+            // this.icon = null;
+            // return;
         }
 
         this.icon = icon;
@@ -284,11 +294,12 @@ public class Focus {
     }
 
     public void setPrerequisite(Expression exp) {
-        setPrerequisite(new Expression[]{exp});
+        setPrerequisite(new Expression[] { exp });
     }
 
     /**
      * accepts groups of prerequisites
+     * 
      * @param exps
      */
     public void setPrerequisite(Expression[] exps) {
@@ -329,7 +340,7 @@ public class Focus {
                 }
 
                 if (focusTree.getFocus(prereqStr) != null) {
-                    subset.add(focusTree.getFocus(prereqStr));           // todo error check someday
+                    subset.add(focusTree.getFocus(prereqStr)); // todo error check someday
                 } else {
                     System.err.println("Focus prerequisite is invalid (not focus), " + this.id + ", " + prereqStr);
                 }
@@ -346,14 +357,16 @@ public class Focus {
 
     /**
      * sets focus prerequisite focuses
+     * 
      * @param prerequisite Set of prerequisite focuses. Can not include this focus.
      */
-    public void setPrerequisite(Set<Set<Focus>> prerequisite) {      // TODO can have prerequisites where 1 necessary, all necessary, etc.
+    public void setPrerequisite(Set<Set<Focus>> prerequisite) { // todo can have prerequisites where 1 necessary, all
+                                                                // necessary, etc.
         // focus can not be its own prerequisite
         // todo
-//        if (prerequisite.contains(this)) {
-//            throw new IllegalArgumentException("Focus can not be its own prerequisite");
-//        }
+        // if (prerequisite.contains(this)) {
+        // throw new IllegalArgumentException("Focus can not be its own prerequisite");
+        // }
 
         this.prerequisite = prerequisite;
     }
@@ -367,7 +380,9 @@ public class Focus {
 
     /**
      * Sets mutually exclusive focuses
-     * @param mutually_exclusive Set of mutually exclusive focus(es) with this focus. Should not include this focus.
+     * 
+     * @param mutually_exclusive Set of mutually exclusive focus(es) with this
+     *                           focus. Should not include this focus.
      */
     public void setMutuallyExclusive(Set<Focus> mutually_exclusive) {
         // focus can not be mutually exclusive with itself
@@ -380,6 +395,7 @@ public class Focus {
 
     /**
      * Sets mutually exclusive focus
+     * 
      * @param mutually_exclusive mutually exclusive focus
      */
     public void setMutuallyExclusive(Focus mutually_exclusive) {
@@ -404,6 +420,7 @@ public class Focus {
 
     /**
      * Sets available trigger of focus
+     * 
      * @param availableTrigger trigger which controls focus availability
      */
     public void setAvailable(Trigger availableTrigger) {

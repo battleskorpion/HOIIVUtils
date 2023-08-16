@@ -8,7 +8,8 @@ import java.util.EnumSet;
  *
  */
 public enum CountryTrigger implements Trigger {
-    // _criteria means is to specify the version of a trigger with multiple parameters
+    // _criteria means is to specify the version of a trigger with multiple
+    // parameters
 
     // general
     exists {
@@ -183,7 +184,8 @@ public enum CountryTrigger implements Trigger {
         }
     },
     has_government_ideology {
-        // identical code name to has_government_country but accepts different parameters
+        // identical code name to has_government_country but accepts different
+        // parameters
         @Override
         public EnumSet<TriggerParameter> parameters() {
             return EnumSet.of(TriggerParameter.IDEOLOGY);
@@ -257,7 +259,7 @@ public enum CountryTrigger implements Trigger {
     },
 
     // Balance of power
-    // TODO
+    // todo
     has_any_power_balance,
     has_power_balance,
     has_power_balance_modifier,
@@ -460,7 +462,7 @@ public enum CountryTrigger implements Trigger {
     num_divisions,
     num_of_nukes,
     casualties,
-    casualties_k,       // (in thousands)
+    casualties_k, // (in thousands)
     casualties_inflicted_by,
     amount_manpower_in_deployment_queue,
     has_attache_from,
@@ -544,7 +546,7 @@ public enum CountryTrigger implements Trigger {
     Trigger trigger;
 
     CountryTrigger() {
-//        trigger = new Trigger()
+        // trigger = new Trigger()
     }
 
     @Override
@@ -554,6 +556,6 @@ public enum CountryTrigger implements Trigger {
 
     @Override
     public EnumSet<TriggerParameter> parameters() {
-        return null;    // no parameters by default?
+        return null; // no parameters by default?
     }
 }

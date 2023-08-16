@@ -41,7 +41,7 @@ public class State {
         int civilianFactories = 0;
         int militaryFactories = 0;
         int dockyards = 0;
-//        int navalPorts = 0;       has a province location
+        // int navalPorts = 0; has a province location
         int airfields = 0;
         int aluminum = 0;
         int chromium = 0;
@@ -52,7 +52,7 @@ public class State {
 
         /* parse state data */
         Parser stateParser = new Parser(stateFile);
-        //Expression exp = stateParser.expressions();
+        // Expression exp = stateParser.expressions();
 
         // id
         if (stateParser.find("id") != null) {
@@ -60,7 +60,7 @@ public class State {
         }
         // population (manpower)
         if (stateParser.find("manpower") != null) {
-            population = stateParser.find("manpower").getValue(); // TODO after here etc.
+            population = stateParser.find("manpower").getValue(); // todo after here etc.
         }
         // state category
         if (stateParser.find("state_category") != null) {
@@ -71,39 +71,43 @@ public class State {
         Expression historyExp = stateParser.find("history");
         System.out.println(historyExp.getSubexpressions());
         Expression buildingsExp = null;
+        // todo fix purposless code if statemnt nevered mattered
         if (historyExp != null) {
-            buildingsExp = historyExp.getImmediate("buildings");        // default buildings
+            buildingsExp = historyExp.getImmediate("buildings"); // default buildings
             // owner
             if (historyExp.getImmediate("owner") != null) {
                 // empty date constructor for default date
                 owner.put(new ClausewitzDate(), new Owner(new CountryTag(historyExp.getImmediate("owner").getText())));
             }
-        } else {
-            System.err.println("State error: history does not exist, " + stateFile.getName());
-        }
+        } /*
+           * else {
+           * System.err.println("State error: history does not exist, " +
+           * stateFile.getName());
+           * }
+           */
         if (buildingsExp == null) {
             System.err.println("Warning: buildings does not exist, " + stateFile.getName());
             stateInfrastructure = null;
         } else {
             // infrastructure
             if (buildingsExp.get("infrastructure") != null) {
-                infrastructure = buildingsExp.get("infrastructure").getValue(); // TODO after here etc.
+                infrastructure = buildingsExp.get("infrastructure").getValue(); // todo after here etc.
             }
             // civilian factories
             if (buildingsExp.get("industrial_complex") != null) {
-                civilianFactories = buildingsExp.get("industrial_complex").getValue(); // TODO after here etc.
+                civilianFactories = buildingsExp.get("industrial_complex").getValue(); // todo after here etc.
             }
             // military factories
             if (buildingsExp.get("arms_factory") != null) {
-                militaryFactories = buildingsExp.get("arms_factory").getValue(); // TODO after here etc.
+                militaryFactories = buildingsExp.get("arms_factory").getValue(); // todo after here etc.
             }
             // dockyards
             if (buildingsExp.get("dockyard") != null) {
-                dockyards = buildingsExp.get("dockyard").getValue(); // TODO after here etc.
+                dockyards = buildingsExp.get("dockyard").getValue(); // todo after here etc.
             }
             // airfields
             if (buildingsExp.get("air_base") != null) {
-                airfields = buildingsExp.get("air_base").getValue(); // TODO after here etc.
+                airfields = buildingsExp.get("air_base").getValue(); // todo after here etc.
             }
         }
 
@@ -168,7 +172,7 @@ public class State {
     public static ArrayList<State> listFromCountry(CountryTag tag) {
         ArrayList<State> countryStates = new ArrayList<>();
 
-        for(State state : states) {
+        for (State state : states) {
             Owner owner = state.owner.get(ClausewitzDate.current());
             if (owner != null) {
                 if (owner.isCountry(tag)) {
@@ -200,7 +204,8 @@ public class State {
             airfields += stateData.airfields();
         }
 
-        return new Infrastructure(population, infrastructure, civilianFactories, militaryFactories, dockyards, 0, airfields);
+        return new Infrastructure(population, infrastructure, civilianFactories, militaryFactories, dockyards, 0,
+                airfields);
     }
 
     public static Resources resourcesOfStates(ArrayList<State> states) {
@@ -234,13 +239,14 @@ public class State {
 
     public static State get(String state_name) {
         state_name = state_name.trim();
-        for (State state: states) {
+        for (State state : states) {
             if (state.name.equals(state_name)) {
                 return state;
             }
         }
         return null;
     }
+
     public static State get(File file) {
         for (State state : states) {
             if (state.stateFile.equals(file)) {
@@ -252,8 +258,10 @@ public class State {
     }
 
     /**
-     * If the state represented by file is not in the list of states, creates the new state.
+     * If the state represented by file is not in the list of states, creates the
+     * new state.
      * If the state already exists, overwrites the state.
+     * 
      * @param file state file
      */
     public static void readState(File file) {
@@ -278,7 +286,9 @@ public class State {
     }
 
     /**
-     * If the state represented by the file exists in states list, removes the state from the states list
+     * If the state represented by the file exists in states list, removes the state
+     * from the states list
+     * 
      * @param file state file
      */
     public static void deleteState(File file) {
@@ -295,7 +305,8 @@ public class State {
             }
         }
 
-        System.out.println("Tried to delete state represented by file: " + "\n\t" + file + "\n\t" + "but state not found in states list");
+        System.out.println("Tried to delete state represented by file: " + "\n\t" + file + "\n\t"
+                + "but state not found in states list");
     }
 
     public Infrastructure getStateInfrastructure() {
@@ -314,12 +325,10 @@ public class State {
         if (!data.isEmpty()) {
             if (data.trim().charAt(0) == '#') {
                 return false;
-            }
-            else {
+            } else {
                 return true;
             }
-        }
-        else {
+        } else {
             return false;
         }
     }

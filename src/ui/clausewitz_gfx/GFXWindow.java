@@ -38,11 +38,11 @@ public class GFXWindow extends JFrame {
         // table model
         GFXTableModel = new DefaultTableModel() {
             /*
-            gfx image
-            name
-            texturefile
-            instances (num uses)
-            uses details
+             * gfx image
+             * name
+             * texturefile
+             * instances (num uses)
+             * uses details
              */
             @Override
             public int getRowCount() {
@@ -73,14 +73,14 @@ public class GFXWindow extends JFrame {
                 }
             }
         };
-        String[] columns = {"GFX", "Name", "Texturefile", "Open", "Instances", "Details"};
+        String[] columns = { "GFX", "Name", "Texturefile", "Open", "Instances", "Details" };
         GFXTableModel.setColumnIdentifiers(columns);
         GFXTable.setModel(GFXTableModel);
 
         // cell rendering
         GFXTable.setRowHeight(100);
         GFXTable.setDefaultRenderer(BufferedImage.class, new BufferedImageTableCellRenderer());
-        // TODO THIS AINT RENDERIGN THE BUTTON
+        // todo THIS AINT RENDERIGN THE BUTTON
         TableCellRenderer buttonRenderer = new JTableButtonRenderer();
         GFXTable.getColumn("Open").setCellRenderer(buttonRenderer);
 
@@ -116,7 +116,7 @@ public class GFXWindow extends JFrame {
 
                             // add or increment instances of gfx
                             instancesHashMap.compute(gfx, (k, v) -> (v == null) ? 1 : v + 1);
-                            //instancesHashMap.put(gfx, 100);
+                            // instancesHashMap.put(gfx, 100);
                         }
                     }
                 }
@@ -149,7 +149,7 @@ public class GFXWindow extends JFrame {
 
         for (int i = 0; i < GFXList.length; i++) {
             BufferedImage ddsImage = getDDSImage(GFXList[i].getGFX());
-            //SpriteTypeGFXPanel gfxPanel = new SpriteTypeGFXPanel(ddsImage);
+            // SpriteTypeGFXPanel gfxPanel = new SpriteTypeGFXPanel(ddsImage);
             JButton openExplorerTexturefile = new JButton("[]");
 
             SpriteType GFX = GFXList[i];
@@ -164,9 +164,9 @@ public class GFXWindow extends JFrame {
             // data
             GFXTableModel.setValueAt(ddsImage, i, 0);
             GFXTableModel.setValueAt(GFX.getName(), i, 1);
-            GFXTableModel.setValueAt(GFX.getTexturefile(), i,2);
+            GFXTableModel.setValueAt(GFX.getTexturefile(), i, 2);
             GFXTableModel.setValueAt(openExplorerTexturefile, i, 3);
-            GFXTableModel.setValueAt(instances, i,4);
+            GFXTableModel.setValueAt(instances, i, 4);
             GFXTableModel.setValueAt(details, i, 5);
         }
     }
@@ -219,14 +219,16 @@ public class GFXWindow extends JFrame {
     }
 
     /**
-     * from <a href="https://stackoverflow.com/questions/14793396/rendering-bufferedimage-in-jtable-cell">...</a>
+     * from <a href=
+     * "https://stackoverflow.com/questions/14793396/rendering-bufferedimage-in-jtable-cell">...</a>
      */
     private class BufferedImageTableCellRenderer extends DefaultTableCellRenderer {
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             if (value instanceof BufferedImage) {
-                setIcon(new ImageIcon((BufferedImage)value));
+                setIcon(new ImageIcon((BufferedImage) value));
                 setText(null);
             } else {
                 setText("Bad image");
@@ -239,8 +241,10 @@ public class GFXWindow extends JFrame {
      * from https://stackoverflow.com/questions/13833688/adding-jbutton-to-jtable
      */
     private static class JTableButtonRenderer implements TableCellRenderer {
-        @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            return (JButton)value;
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
+            return (JButton) value;
         }
     }
 }

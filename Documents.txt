@@ -1,4 +1,4 @@
-TODO:
+todo:
  • Make settings window a intro popup
  • Add browse button to right of file path selection box
  • Enable/disable intro popup (make sure to save file path)

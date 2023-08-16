@@ -28,8 +28,9 @@ public class ColorGenerator {
     private static int gMax = 255;
     private static int bMin = 0;
     private static int bMax = 255;
-    private ColorGenType COLOR_GEN_TYPE = ColorGenType.UNIFORM_DISTRIBUTION; //ColorGenType.TEMP_1;
-    //private ColorGenOrder COLOR_GEN_ORDER = ColorGenOrder.DEFAULT; //ColorGenOrder.CHROMANUMERICALLY;
+    private ColorGenType COLOR_GEN_TYPE = ColorGenType.UNIFORM_DISTRIBUTION; // ColorGenType.TEMP_1;
+    // private ColorGenOrder COLOR_GEN_ORDER = ColorGenOrder.DEFAULT;
+    // //ColorGenOrder.CHROMANUMERICALLY;
     private ColorGenOrder COLOR_GEN_ORDER = ColorGenOrder.HUE;
 
     // rules:
@@ -74,12 +75,12 @@ public class ColorGenerator {
             bMax = bMin;
             bMin = temp;
         }
-        existingColors = new HashSet<>(4096);   // most going to have at least 4k colors
+        existingColors = new HashSet<>(4096); // most going to have at least 4k colors
     }
 
     public static void main(String[] args) throws IOException {
         ColorGenerator colorGenerator = new ColorGenerator();
-        //HOI4Fixes.settings = new LocalizerSettings();
+        // HOI4Fixes.settings = new LocalizerSettings();
         colorGenerator.generateColors(100);
     }
 
@@ -191,8 +192,9 @@ public class ColorGenerator {
         maxColors -= existingColors.size();
         if (numColors > maxColors) {
             numColors = maxColors;
-            System.err.println("Error: color generation attempting to generate more unique colors than is possible. Generating max possible "
-                    + "[" + numColors + "]" + " instead.");
+            System.err.println(
+                    "Error: color generation attempting to generate more unique colors than is possible. Generating max possible "
+                            + "[" + numColors + "]" + " instead.");
         }
 
         /* image */
@@ -216,12 +218,13 @@ public class ColorGenerator {
                     color = new Color(random.nextInt(rMin, rMax), random.nextInt(gMin, gMax),
                             random.nextInt(bMin, bMax)); // 0-255
                 } else if (COLOR_GEN_TYPE == ColorGenType.UNIFORM_DISTRIBUTION) {
-                    //TODO very difficult math
-                    int max = (rDiff + 1) * (gDiff + 1) * (bDiff + 1) - 1;  // starts from 0, so max of 7 -> 8 possible values.
+                    // todo very difficult math
+                    int max = (rDiff + 1) * (gDiff + 1) * (bDiff + 1) - 1; // starts from 0, so max of 7 -> 8 possible
+                                                                           // values.
                     int colorInt = random.nextInt(max);
-                    int r = (colorInt>>16)&0xFF + rMin; // number at least rMin ( >> 16 -> at most 255 - rMax)
-                    int g = (colorInt>>8)&0xFF;
-                    int b = (colorInt)&0xFF;
+                    int r = (colorInt >> 16) & 0xFF + rMin; // number at least rMin ( >> 16 -> at most 255 - rMax)
+                    int g = (colorInt >> 8) & 0xFF;
+                    int b = (colorInt) & 0xFF;
                     color = new Color(r, g, b);
                 } else if (COLOR_GEN_TYPE == ColorGenType.TEMP_1) {
                     int r = random.nextInt(0, rDiff);
