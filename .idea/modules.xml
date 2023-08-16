@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/hoi4localizer.iml" filepath="$PROJECT_DIR$/hoi4localizer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HOIIVUtils.iml" filepath="$PROJECT_DIR$/HOIIVUtils.iml" />
     </modules>
   </component>
 </project>
