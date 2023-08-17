@@ -1,33 +1,20 @@
 package clausewitz_coding;
 
 import clausewitz_coding.country.CountryTag;
-import clausewitz_coding.gfx.Interface;
 import clausewitz_coding.state.State;
-import clausewitz_coding.state.StateCategory;
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
-import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import fileIO.FileListener.FileAdapter;
 import fileIO.FileListener.FileEvent;
 import fileIO.FileListener.FileWatcher;
 import ui.menu.InitializationWindow;
-import ui.menu.Mainmenu;
 import settings.LocalizerSettings;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 
-import static java.nio.file.StandardWatchEventKinds.*;
 import static settings.LocalizerSettings.Settings.*;
 
 public class HOI4Fixes {
