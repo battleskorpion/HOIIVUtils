@@ -4,11 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "java",
             "name": "Current File",
             "request": "launch",
-            "mainClass": "${file}"
+            "mainClass": "${file}",
+            "vmArgs": "--module-path lib --add-modules javafx.controls,javafx.fxml"
         },
         {
             "type": "java",
@@ -16,7 +18,14 @@
             "request": "launch",
             "mainClass": "clausewitz_coding.HOI4Fixes",
             "projectName": "HOIIVUtils_cb7b5c9a",
-            "vmArgs": "--module-path  --add-modules ./libraries/JAVAFX/javafx-sdk-20.0.2/lib javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path lib --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "hellofx.Main",
+            "vmArgs": "--module-path lib --add-modules javafx.controls,javafx.fxml"
         },
     ]
 }
