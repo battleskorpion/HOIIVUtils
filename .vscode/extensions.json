@@ -7,6 +7,7 @@
         "visualstudioexptteam.intellicode-api-usage-examples",
         "gruntfuggly.todo-tree",
         "vscode-icons-team.vscode-icons",
-        "sonarsource.sonarlint-vscode"
+        "sonarsource.sonarlint-vscode",
+        "bilalekrem.scenebuilderextension"
     ]
 }
