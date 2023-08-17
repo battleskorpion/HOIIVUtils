@@ -10,7 +10,7 @@
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "vmArgs": "--module-path C:/Users/Lenovo/Documents/GitHub/HOIIVUtils/lib --add-modules javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path C:/Users/Lenovo/Documents/GitHub/HOIIVUtils/lib/JAVAFX/javafx-sdk-20.0.2/lib --add-modules javafx.controls,javafx.fxml"
         },
         {
             "type": "java",
@@ -18,14 +18,14 @@
             "request": "launch",
             "mainClass": "clausewitz_coding.HOI4Fixes",
             "projectName": "HOIIVUtils_cb7b5c9a",
-            "vmArgs": "--module-path C:/Users/Lenovo/Documents/GitHub/HOIIVUtils/lib --add-modules javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path C:/Users/Lenovo/Documents/GitHub/HOIIVUtils/lib/JAVAFX/javafx-sdk-20.0.2/lib --add-modules javafx.controls,javafx.fxml"
         },
         {
             "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "hellofx.Main",
-            "vmArgs": "--module-path C:/Users/Lenovo/Documents/GitHub/HOIIVUtils/lib --add-modules javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path C:/Users/Lenovo/Documents/GitHub/HOIIVUtils/lib/JAVAFX/javafx-sdk-20.0.2/lib --add-modules javafx.controls,javafx.fxml"
         },
     ]
 }
