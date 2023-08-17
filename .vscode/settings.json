@@ -1,16 +1,21 @@
 {
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "libraries/flatlaf-3.2.jar",
-        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.base.jar",
-        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.controls.jar",
-        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.fxml.jar",
-        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.graphics.jar",
-        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.media.jar",
-        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.swing.jar",
-        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.web.jar",
-        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx-swt.jar"
-    ],
+    "java.project.referencedlib": {
+        "include": [
+            "lib/**/*.jar",
+            "lib/flatlaf-3.2.jar",
+            "lib/JAVAFX/javafx-sdk-20.0.2/lib/javafx.base.jar",
+            "lib/JAVAFX/javafx-sdk-20.0.2/lib/javafx.controls.jar",
+            "lib/JAVAFX/javafx-sdk-20.0.2/lib/javafx.fxml.jar",
+            "lib/JAVAFX/javafx-sdk-20.0.2/lib/javafx.graphics.jar",
+            "lib/JAVAFX/javafx-sdk-20.0.2/lib/javafx.media.jar",
+            "lib/JAVAFX/javafx-sdk-20.0.2/lib/javafx.swing.jar",
+            "lib/JAVAFX/javafx-sdk-20.0.2/lib/javafx.web.jar",
+            "lib/JAVAFX/javafx-sdk-20.0.2/lib/javafx-swt.jar"
+        ],
+        "exclude": [
+            
+        ]
+    },
     "java.completion.filteredTypes": [
         "com.sun.*",
         "sun.*",
