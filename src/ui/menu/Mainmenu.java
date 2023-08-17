@@ -5,6 +5,11 @@ import clausewitz_coding.focus.FixFocus;
 import clausewitz_coding.focus.localization.FocusLocReqFinder;
 import clausewitz_coding.state.State;
 import clausewitz_coding.idea.FixIdea;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.clausewitz_gfx.GFXWindow;
 import ui.colorgen.ColorGeneratorMenu;
@@ -21,271 +26,31 @@ import java.io.IOException;
 
 import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
 
-public class Mainmenu extends JFrame {
+public class Mainmenu extends Application {
     private Mainmenu menu;
-    private JButton fixFocusLocalizationButton;
-    private JButton findFocusesWithoutLocalizationButton;
-    private JButton ideaLocalizationButton;
-    private JButton viewBuildingsButton;
-    private JPanel mainmenuJPanel;
-    private JButton settingsButton;
-    private JButton generateProvinceColorsButton;
-    private JButton statisticsButton;
-    private JButton focusTreeBuilderButton;
-    private JButton customTooltipLocalizationButton;
-    private JButton focusTreeStrengthButton;
-    private JButton riverGenerationButton;
-    private JButton GFXButton;
+//    private JButton fixFocusLocalizationButton;
+//    private JButton findFocusesWithoutLocalizationButton;
+//    private JButton ideaLocalizationButton;
+//    private JButton viewBuildingsButton;
+//    private JPanel mainmenuJPanel;
+//    private JButton settingsButton;
+//    private JButton generateProvinceColorsButton;
+//    private JButton statisticsButton;
+//    private JButton focusTreeBuilderButton;
+//    private JButton customTooltipLocalizationButton;
+//    private JButton focusTreeStrengthButton;
+//    private JButton riverGenerationButton;
+//    private JButton GFXButton;
 
     public Mainmenu() {
         menu = this;
-
-        /* statistics button */
-        toggleStatisticsButton();
-        if (focusTreeStrengthButton == null) {
-            return;
-        }
-        if (!HOI4Fixes.DEV_MODE) {
-            // todo
-            // focusTreeBuilderButton.setEnabled(false);
-            focusTreeStrengthButton.setEnabled(false);
-            // ideaLocalizationButton.setEnabled(false);
-            // findFocusesWithoutLocalizationButton.setEnabled(false);
-        }
-        setContentPane(mainmenuJPanel);
-        setSize(700, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
-
-        /* action listeners */
-        fixFocusLocalizationButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                File focus_file;
-                File loc_file;
-
-                /* focus file */
-                {
-                    JFileChooser j = new JFileChooser(HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.focus_folder);
-                    j.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    j.setDialogTitle("Select Focus File");
-                    int opt = j.showOpenDialog(null);
-                    focus_file = j.getSelectedFile();
-                }
-
-                /* loc file */
-                {
-                    JFileChooser j = new JFileChooser(
-                            HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.localization_eng_folder);
-                    j.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    j.setDialogTitle("Select Localization File");
-                    int opt = j.showOpenDialog(null);
-                    loc_file = j.getSelectedFile();
-                }
-
-                try {
-                    FixFocus.addFocusLoc(focus_file, loc_file);
-                } catch (IOException exc) {
-                    throw new RuntimeException(exc);
-                }
-            }
-        });
-        findFocusesWithoutLocalizationButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    FocusLocReqFinder.findLocReqFocuses(new File(HOI4Fixes.settings.get(MOD_DIRECTORY)));
-                } catch (IOException exc) {
-                    exc.printStackTrace();
-                    throw new RuntimeException(exc);
-                }
-
-                // create window here displaying focus trees missing loc file,
-                // and focus trees partially localized
-                FocusLoqReqWindow window = new FocusLoqReqWindow();
-                window.setVisible(true);
-            }
-        });
-        ideaLocalizationButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                File idea_file;
-                File loc_file;
-
-                /* focus file */
-                {
-                    String modDirectory = HOI4Fixes.settings.get(MOD_DIRECTORY);
-                    JFileChooser j = new JFileChooser(new File(modDirectory));
-                    j.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    j.setDialogTitle("Select Idea File");
-                    Integer opt = j.showOpenDialog(null);
-                    idea_file = j.getSelectedFile();
-                }
-
-                /* loc file */
-                {
-                    JFileChooser j = new JFileChooser(
-                            HOI4Fixes.settings.get(MOD_DIRECTORY) + HOI4Fixes.localization_eng_folder);
-                    j.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    j.setDialogTitle("Select Localization File");
-                    Integer opt = j.showOpenDialog(null);
-                    loc_file = j.getSelectedFile();
-                }
-
-                try {
-                    FixIdea.addIdeaLoc(idea_file, loc_file);
-                } catch (IOException exc) {
-                    exc.printStackTrace();
-                    throw new RuntimeException(exc);
-                }
-            }
-        });
-        viewBuildingsButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (State.list().size() == 0) {
-                    State.readStates();
-                }
-
-                BuildingsByCountryWindow window = new BuildingsByCountryWindow();
-                window.setVisible(true);
-                viewBuildingsButton.setFocusable(false);
-                viewBuildingsButton.setEnabled(false);
-                window.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        viewBuildingsButton.setEnabled(true);
-                    }
-                });
-            }
-        });
-        settingsButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                InitializationWindow menuSettings = new InitializationWindow(menu);
-
-                menuSettings.setVisible(true);
-            }
-        });
-        generateProvinceColorsButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ColorGeneratorMenu colorGenMenu = new ColorGeneratorMenu();
-                colorGenMenu.setVisible(true);
-            }
-        });
-        statisticsButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                DevStatistics devStatistics = new DevStatistics();
-                devStatistics.setVisible(true);
-            }
-        });
-        focusTreeBuilderButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FocusTreeWindow focusTreeBuilderWindow = new FocusTreeWindow();
-                focusTreeBuilderWindow.setVisible(true);
-            }
-        });
-        customTooltipLocalizationButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                CustomTooltipWindow customTooltipWindow = new CustomTooltipWindow();
-                customTooltipWindow.setVisible(true);
-            }
-        });
-        focusTreeStrengthButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FocusTreeStrength focusTreeStrength = new FocusTreeStrength();
-                focusTreeStrength.setVisible(true);
-            }
-        });
-        riverGenerationButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                RiverGenWindow riverGenWindow = new RiverGenWindow();
-                riverGenWindow.setVisible(true);
-            }
-        });
-        GFXButton.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             *
-             * @param e the event to be processed
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GFXWindow gfxWindow = new GFXWindow();
-                gfxWindow.setVisible(true);
-            }
-        });
     }
 
-    void toggleStatisticsButton() {
-        if (this.statisticsButton == null) {
-            return;
-        }
-        if (!HOI4Fixes.DEV_MODE) {
-            statisticsButton.setVisible(false);
-        } else {
-            statisticsButton.setVisible(true);
-        }
+    @Override
+    public void start(Stage stage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("Mainmenu.fxml"));
+        stage.setTitle("Hello World");
+        stage.setScene((new Scene(root, 600, 400)));
+        stage.show();
     }
 }
