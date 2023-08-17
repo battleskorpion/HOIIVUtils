@@ -33,4 +33,5 @@
     "git.enableSmartCommit": true,
     "java.configuration.runtimes": [],
     "java.project.exportJar.targetPath": "${workspaceFolder}/out/artifacts/${workspaceFolderBasename}.jar",
+    "workbench.editor.enablePreview": false
 }
