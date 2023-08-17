@@ -1,0 +1,22 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="HOIIVUtils">
+    <output-path>$PROJECT_DIR$/out/artifacts/HOIIVUtils</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="" />
+        <option name="description" value="" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="title" value="" />
+        <option name="vendor" value="" />
+        <option name="version" value="" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="HOIIVUtils.jar">
+        <element id="module-output" name="HOIIVUtils" />
+        <element id="library" level="project" name="flatlaf-3.2" />
+        <element id="library" level="project" name="javafx-lib" />
+      </element>
+    </root>
+  </artifact>
+</component>
