@@ -16,7 +16,13 @@ hs_err_pid*
 replay_pid*
 
 #works finally
-src/settings/localization_settings.txt 
+src/settings/localization_settings.txt
 
 # Visual Studio Code
-.vscode
+#.vscode
+
+# JAVAFX Download
+#libraries/JAVAFX/javafx-sdk-20.0.2/bin
+#libraries/JAVAFX/javafx-sdk-20.0.2/src.zip
+#libraries/JAVAFX/javafx-sdk-20.0.2/legal
+#libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.properties

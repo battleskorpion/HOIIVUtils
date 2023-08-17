@@ -1,0 +1,31 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "libraries/flatlaf-3.2.jar",
+        "c:\\Users\\Lenovo\\Documents\\JAVAFX\\javafx-sdk-20.0.2\\lib\\javafx.base.jar",
+        "c:\\Users\\Lenovo\\Documents\\JAVAFX\\javafx-sdk-20.0.2\\lib\\javafx.controls.jar",
+        "c:\\Users\\Lenovo\\Documents\\JAVAFX\\javafx-sdk-20.0.2\\lib\\javafx.fxml.jar",
+        "c:\\Users\\Lenovo\\Documents\\JAVAFX\\javafx-sdk-20.0.2\\lib\\javafx.graphics.jar",
+        "c:\\Users\\Lenovo\\Documents\\JAVAFX\\javafx-sdk-20.0.2\\lib\\javafx.media.jar",
+        "c:\\Users\\Lenovo\\Documents\\JAVAFX\\javafx-sdk-20.0.2\\lib\\javafx.swing.jar",
+        "c:\\Users\\Lenovo\\Documents\\JAVAFX\\javafx-sdk-20.0.2\\lib\\javafx.web.jar",
+        "c:\\Users\\Lenovo\\Documents\\JAVAFX\\javafx-sdk-20.0.2\\lib\\javafx-swt.jar",
+        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.base.jar",
+        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.controls.jar",
+        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.fxml.jar",
+        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.graphics.jar",
+        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.media.jar",
+        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.swing.jar",
+        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx.web.jar",
+        "libraries/JAVAFX/javafx-sdk-20.0.2/lib/javafx-swt.jar"
+    ],
+    "java.completion.filteredTypes": [
+        "com.sun.*",
+        "sun.*",
+        "jdk.*",
+        "org.graalvm.*",
+        "io.micrometer.shaded.*"
+    ],
+    "java.project.explorer.showNonJavaResources": true,
+    "maven.view": "flat"
+}
