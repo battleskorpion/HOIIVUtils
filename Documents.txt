@@ -34,3 +34,6 @@ https://gluonhq.com/products/scene-builder/#download
 
     Vscode path variables:
 https://code.visualstudio.com/docs/editor/variables-reference
+
+    IntelliJ path variables:
+https://www.jetbrains.com/help/idea/absolute-path-variables.html
