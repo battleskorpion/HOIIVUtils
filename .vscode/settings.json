@@ -33,5 +33,10 @@
     "git.enableSmartCommit": true,
     "java.configuration.runtimes": [],
     "java.project.exportJar.targetPath": "${workspaceFolder}/out/artifacts/${workspaceFolderBasename}.jar",
-    "workbench.editor.enablePreview": false
+    "workbench.editor.enablePreview": false,
+    "ShortcutMenuBar.beautify": false,
+    "ShortcutMenuBar.openFilesList": false,
+    "ShortcutMenuBar.redo": true,
+    "ShortcutMenuBar.toggleActivityBar": true,
+    "ShortcutMenuBar.userButton01Command": "extension.scenebuilder.open-in"
 }
