@@ -18,7 +18,7 @@ import static clausewitz_coding.HOI4Fixes.DEV_MODE;
 import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
 import static settings.LocalizerSettings.Settings.DARK_MODE;
 
-public class MenuSettings extends JFrame {
+public class InitializationWindow extends JFrame {
     private Mainmenu parent_menu;
     private JFrame window;
     private JPanel menuSettingsJPanel;
@@ -26,7 +26,7 @@ public class MenuSettings extends JFrame {
     private JCheckBox devModeCheckBox;
     private JCheckBox darkModeCheckBox;
 
-    public MenuSettings(Mainmenu menu) {
+    public InitializationWindow(Mainmenu menu) {
         window = this;
         parent_menu = menu;
 
