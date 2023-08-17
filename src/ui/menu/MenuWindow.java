@@ -28,7 +28,7 @@ public class MenuWindow extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("Mainmenu.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("MenuWindow.fxml"));
         stage.setTitle("Hello World");
         stage.setScene((new Scene(root, 600, 400)));
         stage.show();
