@@ -16,7 +16,7 @@
             "request": "launch",
             "mainClass": "clausewitz_coding.HOI4Fixes",
             "projectName": "HOIIVUtils_cb7b5c9a",
-            "vmArgs": "--module-path \".\\libraries\\JAVAFX\\javafx-sdk-20.0.2\\lib\" --add-modules javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path  --add-modules ./libraries/JAVAFX/javafx-sdk-20.0.2/lib javafx.controls,javafx.fxml"
         },
     ]
 }

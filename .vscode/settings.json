@@ -19,5 +19,4 @@
         "io.micrometer.shaded.*"
     ],
     "java.project.explorer.showNonJavaResources": true,
-    "maven.view": "flat"
 }
