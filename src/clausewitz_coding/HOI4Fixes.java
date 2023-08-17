@@ -11,6 +11,7 @@ import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import fileIO.FileListener.FileAdapter;
 import fileIO.FileListener.FileEvent;
 import fileIO.FileListener.FileWatcher;
+import ui.menu.InitializationWindow;
 import ui.menu.Mainmenu;
 import settings.LocalizerSettings;
 
@@ -47,29 +48,6 @@ public class HOI4Fixes {
 		/* load settings */
 		settings = new LocalizerSettings(); // loads settings automatically
 
-		/* ui preliminary */
-		try {
-			String OS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).trim();
-			System.out.println(System.getProperty("Operating system: " + "os.name"));
-//			 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			if (DARK_MODE.getMode()) {
-				if (OS.startsWith("mac")) {
-					UIManager.setLookAndFeel(new FlatMacDarkLaf());
-				} else {
-					UIManager.setLookAndFeel(new FlatDarkLaf());
-				}
-			} else {
-				if (OS.startsWith("mac")) {
-					UIManager.setLookAndFeel(new FlatMacLightLaf());
-				} else {
-					UIManager.setLookAndFeel(new FlatLightLaf());
-				}
-			}
-		} catch (Exception exc) {
-			exc.printStackTrace();
-			System.err.println("Failed to initialize look and feel");
-		}
-
 		if (LocalizerSettings.isNull(MOD_DIRECTORY))
 		/* get directory */
 		{
@@ -96,20 +74,30 @@ public class HOI4Fixes {
 		localization_eng_folder = "\\localisation\\english";
 		focus_folder = "\\common\\national_focus";
 
-		/* init */
+		/* init 
 		StateCategory.loadStateCategories();
-		Interface.loadGFX();
+		Interface.loadGFX();*/
 
 		/* main listeners */
 		try {
+
 			watchStateFiles(new File(hoi4_dir_name + states_folder));
-		} catch (NullPointerException exc) {
+		} 
+		catch (NullPointerException exc) {
+
 			exc.printStackTrace();
 			return;
 		}
-		
+
+		// start Init
+		launchInit(args);
 	}
 
+	public static void launchInit(String... args) {
+		InitializationWindow initializationWindow = new InitializationWindow();
+		initializationWindow.launchInitialationWindow(args);
+	}
+	
 	public static boolean usefulData(String data) {
 		if (!data.isEmpty()) {
 			if (data.trim().charAt(0) == '#') {
