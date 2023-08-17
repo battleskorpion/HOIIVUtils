@@ -35,7 +35,7 @@ Mesa Component Licenses
 
 Component         Location               License
 ------------------------------------------------------------------
-Main Mesa code    src/mesa/              MIT
+Launcher Mesa code    src/mesa/              MIT
 Device drivers    src/mesa/drivers/*     MIT, generally
 
 Gallium code      src/gallium/           MIT
