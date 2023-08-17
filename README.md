@@ -15,3 +15,45 @@ application, you acknowledge that you understand the risks of use, <i> especiall
 backed up in some form.</i>
 
 Some features are WIP, and may not work as intended. 
+
+<b>DEV NOTES</b>
+
+todo:
+    Make settings window a intro popup
+
+    Add browse button to right of file path selection box
+    
+    Enable/disable intro popup (make sure to save file path)
+    
+    maybe add multiple file paths with a plus and minus button
+    
+    Make a drop down for themes (white mode, dark mode, and system default)
+    
+    Add grey text version number on main window and intro window
+    
+    Change the fucking file explorer to whatever discord uses
+
+Useful links:
+    Idea Download:
+https://www.jetbrains.com/idea/download/
+
+    Vscode Download:
+https://code.visualstudio.com/download
+
+    Java LTS jdk-17:
+https://adoptium.net/
+
+    JavaFX Introduction and Setup:
+https://openjfx.io/openjfx-docs/#introduction
+
+    JavaFX download:
+https://gluonhq.com/products/javafx/
+
+    JavaFX .fxml file GUI Scene Builder:
+https://gluonhq.com/products/scene-builder/#download
+
+    Vscode path variables:
+https://code.visualstudio.com/docs/editor/variables-reference
+
+    IntelliJ path variables:
+https://www.jetbrains.com/help/idea/absolute-path-variables.html
