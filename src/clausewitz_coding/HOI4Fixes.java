@@ -5,7 +5,8 @@ import clausewitz_coding.state.State;
 import fileIO.FileListener.FileAdapter;
 import fileIO.FileListener.FileEvent;
 import fileIO.FileListener.FileWatcher;
-import ui.menu.InitializationWindow;
+import ui.menu.SettingsWindow;
+import ui.menu.MenuWindow;
 import settings.LocalizerSettings;
 
 import javax.swing.*;
@@ -18,7 +19,9 @@ import java.util.Arrays;
 import static settings.LocalizerSettings.Settings.*;
 
 public class HOI4Fixes {
-
+	
+	private static SettingsWindow settingsWindow;
+	
 	public static final String applicationVersion = "2.2";
 	public static LocalizerSettings settings;
 	public static String hoi4_dir_name;
@@ -77,17 +80,17 @@ public class HOI4Fixes {
 		}
 
 		// start Init
-		launchInit(args);
+		launchSettings(args);
 	}
 
-	public static void launchInit(String... args) {
-		InitializationWindow initializationWindow = new InitializationWindow();
-		initializationWindow.launchInitialationWindow(args);
+	public static void launchSettings(String... args) {
+		settingsWindow = new SettingsWindow();
+		settingsWindow.launchSettingsWindow(args);
 	}
 
-	public static void launchMenu(String... args) {
+	public static void launchMenu(String... args) throws Exception {
 		MenuWindow menuWindow = new MenuWindow();
-		menuWindow.menuWindow(args);
+		menuWindow.start(settingsWindow.getStage());
 	}
 	
 	public static boolean usefulData(String data) {

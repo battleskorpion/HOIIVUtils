@@ -3,7 +3,7 @@ package ui.menu;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 
-public class InitializationWindowController {
+public class SettingsWindowController {
     
     @FXML
     private CheckBox devModeCheckBox;
