@@ -187,7 +187,7 @@ public class Mainmenu extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                MenuSettings menuSettings = new MenuSettings(menu);
+                InitializationWindow menuSettings = new InitializationWindow(menu);
 
                 menuSettings.setVisible(true);
             }
