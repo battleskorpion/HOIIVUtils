@@ -15,4 +15,8 @@ public class InitializationWindow extends Application {
         primaryStage.setScene((new Scene(root, 600, 400)));
         primaryStage.show();
     }
+
+    public void launchInitialationWindow(String... var0) {
+        super.launch(var0);
+    }
 }
