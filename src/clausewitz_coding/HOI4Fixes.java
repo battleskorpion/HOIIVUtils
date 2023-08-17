@@ -107,13 +107,7 @@ public class HOI4Fixes {
 			exc.printStackTrace();
 			return;
 		}
-
-		/* main menu */
-		// String[] loc_options = {"Fix Focus Localization", "Find Focuses without
-		// Localization", "Find Idea Localization", "View Buildings"};
-		Mainmenu mainmenuWindow = new Mainmenu();
-		mainmenuWindow.setVisible(true);
-
+		
 	}
 
 	public static boolean usefulData(String data) {
