@@ -97,6 +97,11 @@ public class HOI4Fixes {
 		InitializationWindow initializationWindow = new InitializationWindow();
 		initializationWindow.launchInitialationWindow(args);
 	}
+
+	public static void launchMenu(String... args) {
+		MenuWindow menuWindow = new MenuWindow();
+		menuWindow.menuWindow(args);
+	}
 	
 	public static boolean usefulData(String data) {
 		if (!data.isEmpty()) {
