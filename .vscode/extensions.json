@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "aaron-bond.better-comments",
+        "vscjava.vscode-java-pack",
+        "mhutchie.git-graph",
+        "eamodio.gitlens",
+        "visualstudioexptteam.intellicode-api-usage-examples",
+        "gruntfuggly.todo-tree",
+        "vscode-icons-team.vscode-icons",
+        "sonarsource.sonarlint-vscode"
+    ]
+}
