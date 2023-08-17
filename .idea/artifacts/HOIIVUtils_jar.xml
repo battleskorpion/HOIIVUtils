@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/HOIIVUtils_jar</output-path>
     <root id="archive" name="HOIIVUtils.jar">
       <element id="module-output" name="HOIIVUtils" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/flatlaf-3.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/flatlaf-3.2.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
