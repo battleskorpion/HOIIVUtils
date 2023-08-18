@@ -22,6 +22,7 @@ public class SettingsWindowController {
     public Button browseButton;
     public TextField hoi4ModPathTextField;
     public Button okButton;
+    public File selectedDirectory;
 
     HashMap<HOIIVUtilsProperties.Settings, String> settings;
 
@@ -33,8 +34,8 @@ public class SettingsWindowController {
         try{
         DirectoryChooser directoryChooser = new DirectoryChooser();
         Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
-        File selectedDirectory = directoryChooser.showDialog(primaryStage);
-        
+        selectedDirectory = directoryChooser.showDialog(primaryStage);
+
         if (selectedDirectory == null) {
             return;
         }
@@ -44,14 +45,16 @@ public class SettingsWindowController {
         System.out.println(selectedDirectory.getCanonicalPath());
         System.out.println(selectedDirectory.getAbsolutePath());
         System.out.println(selectedDirectory.getTotalSpace());
+        updateModPath(selectedDirectory);
         }
         catch(Exception exception) {
             HOI4Fixes.openError(exception);
         }
     }
 
-    public void hoi4ModFolder() {
-
+    private void updateModPath(File selectedDirectory) {
+        hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
+        settings.put(HOIIVUtilsProperties.Settings.MOD_DIRECTORY, selectedDirectory.getAbsolutePath());
     }
 
     public void loadFolder() {
