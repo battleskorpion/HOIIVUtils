@@ -20,7 +20,7 @@ public class SettingsWindowController {
     public CheckBox devModeCheckBox;
     public Label hoi4ModFolderLabel;
     public Button browseButton;
-    public TextField hoi4ModFolderTextField;
+    public TextField hoi4ModPathTextField;
     public Button okButton;
 
     HashMap<HOIIVUtilsProperties.Settings, String> settings;
@@ -29,12 +29,29 @@ public class SettingsWindowController {
 
     }
 
-    @FXML
-    private void handleBrowseAction() {
+    public void handleBrowseAction() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
         File selectedDirectory = directoryChooser.showDialog(primaryStage);
-        System.out.print(selectedDirectory);
+        System.out.println(selectedDirectory.getParentFile());
+        System.out.println(selectedDirectory.getName());
+        System.out.println(selectedDirectory.getPath());
+        try{
+        System.out.println(selectedDirectory.getCanonicalPath());
+        }
+        catch(Exception exception) {
+            HOI4Fixes.openError(exception);
+        }
+        System.out.println(selectedDirectory.getAbsolutePath());
+        System.out.println(selectedDirectory.getTotalSpace());
+    }
+
+    public void hoi4ModFolder() {
+
+    }
+
+    public void loadFolder() {
+
     }
 
     public void openMenu() {
