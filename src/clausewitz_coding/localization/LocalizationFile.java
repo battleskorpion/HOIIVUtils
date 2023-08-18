@@ -35,11 +35,14 @@ public class LocalizationFile extends File {
         }
 
         /* file reader */
-        Scanner reader;
+        Scanner reader = null;
         try {
             reader = new Scanner(this);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (Exception exception) {
+            HOIIVUtils.openError(exception);
+        }
+        if (reader == null) {
+            return;
         }
 
         /* language declaration */
@@ -109,6 +112,7 @@ public class LocalizationFile extends File {
 //                // comments, etc.
 //                comments.put(line, data);
 //            }
+        reader.close();
         }
     }
 
@@ -116,55 +120,61 @@ public class LocalizationFile extends File {
         /* load file data, before writer init so data not disappeared */
         Scanner scanner = new Scanner(this);
         StringBuilder fileBuffer = new StringBuilder();
-        while (scanner.hasNextLine()) {
-            fileBuffer.append(scanner.nextLine()).append(System.lineSeparator());
-        }
-//        System.out.println(fileBuffer);
-
-//        FileWriter writer = new FileWriter(this, false);		// true = append
-        FileWriter writer = new FileWriter(this, false);
-        BufferedWriter BWriter = new BufferedWriter(writer);
-        PrintWriter PWriter = new PrintWriter(BWriter);                // for println syntax
-
-        String localization_line;
-
-//        PWriter.println(language);
-
-        for (Localization localization : localizationList) {
-            if (localization.status() == Localization.Status.UPDATED) {
-                /* replace loc */
-                int start = fileBuffer.indexOf(localization.ID());
-                if (start < 0) {
-                    System.err.println("Start of localization id is negative!");
-                }
-                int temp = fileBuffer.indexOf("\"", start);
-                int end = 1;
-                // end char must be literally " and not \"
-                do {
-                    end = fileBuffer.indexOf("\"", temp + 1);
-                } while (fileBuffer.charAt(end - 1) == '\\');
-                if (end < 0) {
-                    System.err.println("end of localization id is negative!");
-                }
-
-                String loc = localization.toString();
-                loc = loc.replaceAll("§", "Â§");        // necessary with UTF-8 BOM
-                fileBuffer.replace(start, end + 1, loc);
-                System.out.println("replaced " + localization.ID());
-            } else if (localization.status() == Localization.Status.NEW) {
-                /* append loc */
-                String loc = localization.toString();
-                loc = loc.replaceAll("§", "Â§");        // necessary with UTF-8 BOM
-                fileBuffer.append("\t").append(loc).append(System.lineSeparator());
-                System.out.println("append " + localization.ID());
-            } else {
-
+        try {
+            while (scanner.hasNextLine()) {
+                fileBuffer.append(scanner.nextLine()).append(System.lineSeparator());
             }
+    //        System.out.println(fileBuffer);
+    
+    //        FileWriter writer = new FileWriter(this, false);		// true = append
+            FileWriter writer = new FileWriter(this, false);
+            BufferedWriter BWriter = new BufferedWriter(writer);
+            PrintWriter PWriter = new PrintWriter(BWriter);                // for println syntax
+    
+    //        String localization_line;
+    
+    //        PWriter.println(language);
+    
+            for (Localization localization : localizationList) {
+                if (localization.status() == Localization.Status.UPDATED) {
+                    /* replace loc */
+                    int start = fileBuffer.indexOf(localization.ID());
+                    if (start < 0) {
+                        System.err.println("Start of localization id is negative!");
+                    }
+                    int temp = fileBuffer.indexOf("\"", start);
+                    int end = 1;
+                    // end char must be literally " and not \"
+                    do {
+                        end = fileBuffer.indexOf("\"", temp + 1);
+                    } while (fileBuffer.charAt(end - 1) == '\\');
+                    if (end < 0) {
+                        System.err.println("end of localization id is negative!");
+                    }
+    
+                    String loc = localization.toString();
+                    loc = loc.replaceAll("§", "Â§");        // necessary with UTF-8 BOM
+                    fileBuffer.replace(start, end + 1, loc);
+                    System.out.println("replaced " + localization.ID());
+                } else if (localization.status() == Localization.Status.NEW) {
+                    /* append loc */
+                    String loc = localization.toString();
+                    loc = loc.replaceAll("§", "Â§");        // necessary with UTF-8 BOM
+                    fileBuffer.append("\t").append(loc).append(System.lineSeparator());
+                    System.out.println("append " + localization.ID());
+                } else {
+    
+                }
+            }
+    
+            /* print */
+            PWriter.print(fileBuffer);
+            PWriter.close();
+            scanner.close();
         }
-
-        /* print */
-        PWriter.print(fileBuffer);
-        PWriter.close();
+        catch (Exception exception) {
+            HOIIVUtils.openError(exception);
+        }
     }
 
     public void addLocalization(Localization newLocalization) {

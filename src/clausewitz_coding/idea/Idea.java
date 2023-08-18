@@ -120,9 +120,9 @@ public abstract class Idea {
 						/* find idea type and instantiate idea */
 						if (true) { // todo
 							idea = new CountryIdea(ideaName);
-						} else {
+						} /* else {
 							idea = new ManpowerIdea(ideaName);
-						}
+						}*/
 						idea_list.add(idea);
 					}
 				}

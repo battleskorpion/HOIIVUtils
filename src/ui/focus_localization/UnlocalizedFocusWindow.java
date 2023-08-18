@@ -55,10 +55,6 @@ public class UnlocalizedFocusWindow extends JFrame {
         window.setVisible(true);
     }
 
-    private void createUIComponents() {
-
-    }
-
     public void refreshFocusTreeTable(List<FocusTree> focusTrees) {
         // remove previous data
         unlocalizedFocusTableModel.getDataVector().removeAllElements();
