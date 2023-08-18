@@ -59,6 +59,12 @@ public class HOIIVUtilsProperties {
         readSettings();
     }
 
+    public HOIIVUtilsProperties(Boolean firsttimeuser) throws IOException {
+        if (firsttimeuser) {
+
+        }
+    }
+
     public static void readSettings() {
         try {
             Scanner settingReader = new Scanner(settings_file);
