@@ -1,5 +1,7 @@
 package settings;
 
+import com.sun.glass.ui.Screen;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -29,10 +31,10 @@ public class HOIIVUtilsProperties {
                 try {
                     return Integer.parseInt(settingValues.get(this));
                 } catch (NumberFormatException exc) {
-                    return 1;
+                    return 0;
                 }
             }
-            public String defaultProperty() { return "1"; }
+            public String defaultProperty() { return "0"; }
         },
         ;
 

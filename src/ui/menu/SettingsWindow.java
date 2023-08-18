@@ -32,32 +32,11 @@ public class SettingsWindow extends Application {
             HOI4Fixes.firstTimeSetup = false;
             HOI4Fixes.settings = new HOIIVUtilsProperties();
 
-            decideScreen(primaryStage);
+            HOI4Fixes.decideScreen(primaryStage);
         } else {
             /* first-time setup */
             HOI4Fixes.firstTimeSetup = true;
         }
-    }
-
-    private void decideScreen(Stage primaryStage) {
-        Integer preferredScreen = (Integer) Settings.PREFERRED_SCREEN.getSetting();
-        ObservableList<Screen> screens = Screen.getScreens();
-        if (preferredScreen > screens.size()) {
-            if (Settings.enabled(Settings.DEV_MODE)) {
-                System.err.println( "Preferred screen does not exist, resorting to defaults.");
-            }
-            return;
-        }
-        Screen screen = screens.get(preferredScreen);
-        if (screen == null) {
-            if (Settings.enabled(Settings.DEV_MODE)) {
-                System.err.println( "Preferred screen is null error, resorting to defaults.");
-            }
-            return;
-        }
-        Rectangle2D bounds = screen.getVisualBounds();
-        primaryStage.setX(bounds.getMinX() + 200);
-        primaryStage.setY(bounds.getMinY() + 200);
     }
 
     public void launchSettingsWindow(String... var0) {

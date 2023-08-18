@@ -3,7 +3,10 @@ package clausewitz_coding;
 import fileIO.FileListener.FileAdapter;
 import fileIO.FileListener.FileEvent;
 import fileIO.FileListener.FileWatcher;
+import javafx.collections.ObservableList;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import ui.menu.SettingsWindow;
 import ui.menu.MenuWindow;
@@ -113,6 +116,27 @@ public class HOI4Fixes {
 		catch(Exception exception) {
 			openError(exception);
 		}
+	}
+
+	public static void decideScreen(Stage primaryStage) {
+		Integer preferredScreen = (Integer) HOIIVUtilsProperties.Settings.PREFERRED_SCREEN.getSetting();
+		ObservableList<Screen> screens = Screen.getScreens();
+		if (preferredScreen > screens.size()) {
+			if (HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE)) {
+				System.err.println( "Preferred screen does not exist, resorting to defaults.");
+			}
+			return;
+		}
+		Screen screen = screens.get(preferredScreen);
+		if (screen == null) {
+			if (HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE)) {
+				System.err.println( "Preferred screen is null error, resorting to defaults.");
+			}
+			return;
+		}
+		Rectangle2D bounds = screen.getVisualBounds();
+		primaryStage.setX(bounds.getMinX() + 200);
+		primaryStage.setY(bounds.getMinY() + 200);
 	}
 
 /*		public static void closeSettings() {
