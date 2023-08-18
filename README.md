@@ -18,6 +18,10 @@ Some features are WIP, and may not work as intended.
 
 <b>DEV NOTES</b>
 
+command to run the jar>
+java --module-path "lib\javafx-sdk-20.0.2\lib" --add-modules javafx.controls,javafx.fxml -jar out\artifacts\HOIIVUtils.jar
+or use the bat
+
 Lowercase = hoi4
 Capitlize = HOIIV
 

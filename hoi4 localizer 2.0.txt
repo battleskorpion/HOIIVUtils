@@ -1,1 +1,0 @@
-java -jar hoi4localizer.jar :: USE .bat to run the localizer !!!!!!!!

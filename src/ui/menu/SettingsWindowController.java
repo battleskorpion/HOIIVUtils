@@ -1,17 +1,18 @@
 package ui.menu;
 
-import java.awt.TextField;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+
+import hoi4utils.HOIIVUtils;
 import settings.HOIIVUtilsProperties;
 
 public class SettingsWindowController {
@@ -32,20 +33,16 @@ public class SettingsWindowController {
 
     public void handleBrowseAction() {
         try{
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
-        selectedDirectory = directoryChooser.showDialog(primaryStage);
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
 
-        if (selectedDirectory == null) {
-            return;
-        }
-        System.out.println(selectedDirectory.getParentFile());
-        System.out.println(selectedDirectory.getName());
-        System.out.println(selectedDirectory.getPath());
-        System.out.println(selectedDirectory.getCanonicalPath());
-        System.out.println(selectedDirectory.getAbsolutePath());
-        System.out.println(selectedDirectory.getTotalSpace());
-        updateModPath(selectedDirectory);
+            selectedDirectory = directoryChooser.showDialog(primaryStage);
+
+            if (selectedDirectory == null) {
+                return;
+            }
+
+            updateModPath(selectedDirectory);
         }
         catch(Exception exception) {
             HOIIVUtils.openError(exception);
@@ -55,10 +52,6 @@ public class SettingsWindowController {
     private void updateModPath(File selectedDirectory) {
         hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
         settings.put(HOIIVUtilsProperties.Settings.MOD_PATH, selectedDirectory.getAbsolutePath());
-    }
-
-    public void loadFolder() {
-
     }
 
     public void openMenu() {
