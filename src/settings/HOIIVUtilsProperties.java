@@ -61,7 +61,21 @@ public class HOIIVUtilsProperties {
 
     public HOIIVUtilsProperties(Boolean firsttimeuser) throws IOException {
         if (firsttimeuser) {
+            String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
+            String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
+            new File(hoi4UtilsPropertiesPath).mkdir();
+            settings_file = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
+            settings_file.createNewFile();
 
+            readSettings();
+        } else {
+            String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
+            String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
+            new File(hoi4UtilsPropertiesPath).mkdir();
+            settings_file = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
+            settings_file.createNewFile();
+
+            readSettings();
         }
     }
 
