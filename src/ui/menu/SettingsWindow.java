@@ -17,7 +17,6 @@ public class SettingsWindow extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("SettingsWindow.fxml"));
         primaryStage.setTitle("Settings");
         primaryStage.setScene((new Scene(root, 600, 400)));
-        primaryStage.show();
         this.primaryStage = primaryStage;
 
         /* settings */
@@ -33,6 +32,8 @@ public class SettingsWindow extends Application {
             /* first-time setup */
             HOIIVUtils.firstTimeSetup = true;
         }
+
+        primaryStage.show();
     }
 
     public void launchSettingsWindow(String... var0) {
