@@ -5,7 +5,6 @@ import fileIO.FileListener.FileEvent;
 import fileIO.FileListener.FileWatcher;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
-import ui.menu.HOI4FixesWindow;
 import ui.menu.SettingsWindow;
 import ui.menu.MenuWindow;
 import settings.LocalizerSettings;

@@ -11,7 +11,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 
-public class StatisticsWindow extends JFrame implements HOI4FixesWindow {
+public class StatisticsWindow extends JFrame {
     private JPanel StatisticsJPanel;
     private JTextArea textArea1;
     private JTabbedPane tabbedPane1;

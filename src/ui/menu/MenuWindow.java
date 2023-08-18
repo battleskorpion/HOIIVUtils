@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class MenuWindow implements HOI4FixesWindow {
+public class MenuWindow {
 
     private MenuWindow menuWindow;
 
@@ -13,7 +13,6 @@ public class MenuWindow implements HOI4FixesWindow {
         menuWindow = this;
     }
 
-    @Override
     public void open() throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("MenuWindow.fxml"));
         Stage stage = new Stage();
