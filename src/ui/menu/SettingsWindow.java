@@ -15,7 +15,7 @@ public class SettingsWindow extends Application {
         primaryStage.setTitle("Settings");
         primaryStage.setScene((new Scene(root, 600, 400)));
         primaryStage.show();
-      this.primaryStage = primaryStage;
+        this.primaryStage = primaryStage;
     }
 
     public void launchSettingsWindow(String... var0) {

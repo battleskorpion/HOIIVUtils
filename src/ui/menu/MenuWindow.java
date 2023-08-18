@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class MenuWindow extends Application {
+public class MenuWindow {
     private MenuWindow menuWindow;
 //    private JButton fixFocusLocalizationButton;
 //    private JButton findFocusesWithoutLocalizationButton;
@@ -26,15 +26,11 @@ public class MenuWindow extends Application {
         menuWindow = this;
     }
 
-    @Override
-    public void start(Stage stage) throws Exception {
+    public void open() throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("MenuWindow.fxml"));
+        Stage stage = new Stage();
         stage.setTitle("Hello World");
         stage.setScene((new Scene(root, 600, 400)));
         stage.show();
-    }
-
-    public void launchMenuWindow(String[] var0) {
-        super.launch(var0);
     }
 }

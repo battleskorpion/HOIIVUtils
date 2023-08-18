@@ -19,10 +19,10 @@ import java.util.Arrays;
 import static settings.LocalizerSettings.Settings.*;
 
 public class HOI4Fixes {
-	
+
 	public static String[] args;
 	private static SettingsWindow settingsWindow;
-	
+
 	public static final String applicationVersion = "2.2";
 	public static LocalizerSettings settings;
 	public static String hoi4_dir_name;
@@ -43,8 +43,7 @@ public class HOI4Fixes {
 		settings = new LocalizerSettings(); // loads settings automatically
 
 		if (LocalizerSettings.isNull(MOD_DIRECTORY))
-		/* get directory */
-		{
+			/* get directory */ {
 			JFileChooser j = new JFileChooser();
 			j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			j.setDialogTitle("Choose Mod Directory");
@@ -76,8 +75,7 @@ public class HOI4Fixes {
 		try {
 
 			watchStateFiles(new File(hoi4_dir_name + states_folder));
-		} 
-		catch (NullPointerException exc) {
+		} catch (NullPointerException exc) {
 
 			exc.printStackTrace();
 			return;
@@ -88,33 +86,18 @@ public class HOI4Fixes {
 		settingsWindow.launchSettingsWindow(args);
 	}
 
-	public static void openMenu(String... args) {
+	public static void openMenu() {
 		MenuWindow menuWindow = new MenuWindow();
 		try {
-			menuWindow.start(settingsWindow.getStage());
-		} 
-		catch (Exception e) {
+			menuWindow.open();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
 
+	public static void openSettings(String... args) {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	}
 
 	public static boolean usefulData(String data) {
 		if (!data.isEmpty()) {
