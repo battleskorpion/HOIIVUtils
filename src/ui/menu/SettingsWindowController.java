@@ -31,7 +31,7 @@ public class SettingsWindowController {
         settings = new HashMap<>();
     }
     
-    public void saveSettings() {
+    private void saveSettings() {
         try {
             if (HOIIVUtils.firstTimeSetup) {
                 HOIIVUtils.settings = new HOIIVUtilsProperties(settings);
