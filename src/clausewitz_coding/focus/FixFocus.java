@@ -26,7 +26,7 @@ public class FixFocus extends HOI4Fixes {
 
 	public static boolean addFocusLoc(File focus_file, File loc_file) throws IOException {
 
-		final String hoi4_dir_name = HOIIVUtilsProperties.get(MOD_DIRECTORY);
+		final String hoi4_dir_name = HOIIVUtilsProperties.get(MOD_PATH);
 
 		// some vars
 		ArrayList<String> focuses_localized = new ArrayList<String>();
