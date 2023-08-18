@@ -43,11 +43,12 @@ public class SettingsWindow extends Application {
     }
 
     public void open() {
-        if (primaryStage != null) {
-            primaryStage.show();
-        }
         try {
-            start(new Stage());
+            if (primaryStage != null) {
+                primaryStage.show();
+            } else {
+                start(new Stage());
+            }
         } catch (Exception exc) {
             HOIIVUtils.openError(exc);
         }
