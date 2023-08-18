@@ -12,7 +12,7 @@ public class MenuWindow {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("MenuWindow.fxml"));
             Stage stage = new Stage();
-            stage.setTitle("Hello World");
+            stage.setTitle("Menu");
             stage.setScene((new Scene(root, 600, 400)));
             HOIIVUtils.decideScreen(stage);
             stage.show();
