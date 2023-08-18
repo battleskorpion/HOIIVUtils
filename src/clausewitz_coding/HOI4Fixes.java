@@ -105,7 +105,12 @@ public class HOI4Fixes {
 	}
 
 	public static void closeWindow(Button button) {
-		((Stage) (button.getScene().getWindow())).close();
+		try {
+			((Stage) (button.getScene().getWindow())).close();
+		}
+		catch(Exception exception) {
+			openError(exception);
+		}
 	}
 
 /*		public static void closeSettings() {
