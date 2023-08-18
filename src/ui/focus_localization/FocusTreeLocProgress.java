@@ -12,8 +12,6 @@ public class FocusTreeLocProgress extends JFrame {
     private JPanel FocusTreeLocProgressJPanel;
     private JProgressBar progressBarLoc;
     private JLabel focusTreeName;
-    private JLabel focusTreeLabel;
-    private JLabel unlocalizedFocusesLabel;
     private JLabel unlocFocusesAmtLabel;
     private JTable unlocFocusesTable;
     private DefaultTableModel unlocFocusesTableModel;

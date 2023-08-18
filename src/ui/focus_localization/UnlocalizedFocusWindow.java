@@ -10,10 +10,7 @@ import java.util.List;
 
 public class UnlocalizedFocusWindow extends JFrame {
     private JPanel UnlocalizedFocusJPanel;
-    private JLabel focusloqreqlabel;
     private JTable unlocalizedFocusTable;
-    private JButton localizeButton;
-    private JButton createLocalizationFilesButton;
     private DefaultTableModel unlocalizedFocusTableModel;
 
     public UnlocalizedFocusWindow (List<FocusTree> focusTrees) {

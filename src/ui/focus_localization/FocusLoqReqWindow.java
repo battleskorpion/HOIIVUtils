@@ -12,10 +12,6 @@ import java.util.ArrayList;
 
 public class FocusLoqReqWindow extends JFrame {
     private JPanel FocusLoqReqJPanel;
-    private JLabel focusloqreqlabel;
-    private JLabel localizedFocusTreesLabel;
-    private JLabel partiallyLocalizedFocusTreesLabel;
-    private JLabel unlocalizedFocusTreesLabel;
 
     private DefaultListModel<CountryTag> localizedTreeListModel;
     private JList<CountryTag> localizedTreeList;
@@ -70,9 +66,10 @@ public class FocusLoqReqWindow extends JFrame {
         window.setVisible(true);
     }
 
-    private void createUIComponents() {
-        // NOTE: place custom component creation code here
-    }
+    // todo place custom component creation code here
+    //private void createUIComponents() {
+    //    
+    //}
 
     public void refreshFocusTreeLists(ArrayList<FocusTree> unlocalizedFocusTrees, ArrayList<FocusTree> partialLocalizedFocusTrees,
                                       ArrayList<FocusTree> localizedFocusTrees) {
