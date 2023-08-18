@@ -71,7 +71,7 @@ public class SettingsWindowController {
         HOIIVUtils.openMenu();
     }
 
-    public void saveSettings() {
+    private void saveSettings() {
         try {
             if (HOIIVUtils.firstTimeSetup) {
                 HOIIVUtils.settings = new HOIIVUtilsProperties(settings);
