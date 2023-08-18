@@ -1,6 +1,7 @@
 package ui.menu;
 
 import java.awt.TextField;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -9,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import settings.HOIIVUtilsProperties;
 
 public class SettingsWindowController {
@@ -27,7 +30,9 @@ public class SettingsWindowController {
     }
 
     private void handleBrowseAction() {
-        
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
+        File selectedDirectory = directoryChooser.showDialog(primaryStage);
     }
 
     public void openMenu() {
