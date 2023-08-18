@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import javafx.scene.control.Button;
 
 public class SettingsWindowController {
@@ -23,11 +24,6 @@ public class SettingsWindowController {
 
     }
 
-    private void handleBrowseAction() {
-        File selectedDirectory = directoryChooser.showDialog(primaryStage);
-
-        System.out.println(selectedDirectory.getAbsolutePath());
-    }
 
     public void openMenu() {
         HOI4Fixes.closeWindow(okButton);

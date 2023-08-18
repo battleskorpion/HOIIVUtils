@@ -6,12 +6,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import settings.HOIIVUtilsProperties;
 import clausewitz_coding.HOI4Fixes;
-
-import java.io.File;
 
 public class SettingsWindow extends Application {
     Stage primaryStage;
@@ -34,13 +31,6 @@ public class SettingsWindow extends Application {
             /* first-time setup */
             HOI4Fixes.firstTimeSetup = true;
         }
-    }
-
-    public void open(Stage primaryStage) {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        File selectedDirectory = directoryChooser.showDialog(primaryStage);
-
-        
     }
 
     public void launchSettingsWindow(String... var0) {
