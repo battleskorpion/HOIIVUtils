@@ -18,6 +18,9 @@ Some features are WIP, and may not work as intended.
 
 <b>DEV NOTES</b>
 
+Lowercase = hoi4
+Capitlize = HOIIV
+
 todo:
     Make settings window a intro popup
 
