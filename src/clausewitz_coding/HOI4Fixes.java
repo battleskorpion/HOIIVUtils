@@ -18,10 +18,10 @@ import java.util.Arrays;
 import static settings.HOIIVUtilsProperties.Settings.*;
 
 public class HOI4Fixes {
-
+	
 	public static String[] args;
 	private static SettingsWindow settingsWindow;
-
+	
 	public static final String applicationVersion = "2.2";
 	public static HOIIVUtilsProperties settings;
 	public static String hoi4_dir_name;
@@ -33,13 +33,20 @@ public class HOI4Fixes {
 	public static String localization_eng_folder;
 	public static boolean DEV_MODE = false;
 	public static FileWatcher stateDirWatcher;
-
+	
 	public static void main(String[] args) throws IOException {
-
+		
 		HOI4Fixes.args = args;
-
-		/* load settings */
-		settings = new HOIIVUtilsProperties(); // loads settings automatically
+		if () {
+			settings = new HOIIVUtilsProperties();
+			settingsWindow = new SettingsWindow();
+			settingsWindow.launchSettingsWindow(args);
+		}
+		else {
+			settingsWindow = new SettingsWindow();
+			settingsWindow.launchSettingsWindow(args);
+			settings = new HOIIVUtilsProperties();
+		}
 
 		if (HOIIVUtilsProperties.isNull(MOD_DIRECTORY))
 			/* get directory */ {
@@ -80,9 +87,6 @@ public class HOI4Fixes {
 			return;
 		}
 
-		// Lauches Settings
-		settingsWindow = new SettingsWindow();
-		settingsWindow.launchSettingsWindow(args);
 	}
 
 	public static void openError(Exception exception) {
