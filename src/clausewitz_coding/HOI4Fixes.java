@@ -37,35 +37,41 @@ public class HOI4Fixes {
 	public static void main(String[] args) throws IOException {
 		
 		HOI4Fixes.args = args;
-		if () {
+
+		/* settings */
+		String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
+		String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
+		if (new File(hoi4UtilsPropertiesPath).exists()) {
+			/* normal setup */
 			settings = new HOIIVUtilsProperties();
 			settingsWindow = new SettingsWindow();
 			settingsWindow.launchSettingsWindow(args);
 		}
 		else {
+			/* first-time setup */
 			settingsWindow = new SettingsWindow();
 			settingsWindow.launchSettingsWindow(args);
-			settings = new HOIIVUtilsProperties();
+			settings = new HOIIVUtilsProperties(settingsWindow.getSettings());
 		}
 
-		if (HOIIVUtilsProperties.isNull(MOD_DIRECTORY))
-			/* get directory */ {
-			JFileChooser j = new JFileChooser();
-			j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			j.setDialogTitle("Choose Mod Directory");
-
-			int opt = j.showOpenDialog(null);
-			if (opt == JFileChooser.APPROVE_OPTION) {
-				hoi4_dir_name = j.getSelectedFile().getPath();
-			} else {
-				return;
-			}
-
-			/* directory acquired, now save settings */
-			HOIIVUtilsProperties.saveSettings(MOD_DIRECTORY, hoi4_dir_name);
-		} else {
-			hoi4_dir_name = HOIIVUtilsProperties.get(MOD_DIRECTORY);
-		}
+//		if (HOIIVUtilsProperties.isNull(MOD_DIRECTORY))
+//			/* get directory */ {
+//			JFileChooser j = new JFileChooser();
+//			j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//			j.setDialogTitle("Choose Mod Directory");
+//
+//			int opt = j.showOpenDialog(null);
+//			if (opt == JFileChooser.APPROVE_OPTION) {
+//				hoi4_dir_name = j.getSelectedFile().getPath();
+//			} else {
+//				return;
+//			}
+//
+//			/* directory acquired, now save settings */
+//			HOIIVUtilsProperties.saveSetting(MOD_DIRECTORY, hoi4_dir_name);
+//		} else {
+//			hoi4_dir_name = HOIIVUtilsProperties.get(MOD_DIRECTORY);
+//		}
 
 		System.out.println(HOIIVUtilsProperties.get(MOD_DIRECTORY));
 		states_folder = "\\history\\states";

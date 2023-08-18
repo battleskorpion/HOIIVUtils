@@ -28,7 +28,7 @@ public class HOIIVUtilsProperties {
         public void setSetting(String set) {
             settingValues.put(this, String.valueOf(set));
             try {
-                writeSettings();
+                saveSettings();
                 if ((boolean)DEV_MODE.getSetting()) {
                     System.out.println("Updated setting " + this.name() + ": " + settingValues.get(this));
                 }
@@ -57,6 +57,24 @@ public class HOIIVUtilsProperties {
         settings_file.createNewFile();
 
         readSettings();
+    }
+
+    public HOIIVUtilsProperties(HashMap<Settings, String> settings) throws IOException {
+        String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
+        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
+        new File(hoi4UtilsPropertiesPath).mkdir();
+        settings_file = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
+        boolean newSettingsFileCreated = settings_file.createNewFile();
+
+        if (settings == null) {
+            writeBlankSettings();
+        } else if (newSettingsFileCreated) {
+            writeBlankSettings();
+            saveSettings(settings);
+        } else {
+            readSettings();
+            saveSettings(settings);
+        }
     }
 
     public static void readSettings() {
@@ -90,21 +108,6 @@ public class HOIIVUtilsProperties {
 
     }
 
-    /**
-     * @deprecated
-     */
-    public static void writeSettings() throws IOException {
-        settingsWriter = new FileWriter(settings_file, false);		// true = append
-        settingsBWriter = new BufferedWriter(settingsWriter);
-        settingsPWriter = new PrintWriter(settingsBWriter);
-
-        for (Settings setting : Settings.values()) {
-            settingsPWriter.println(setting.name() + ";" + settingValues.get(setting));
-        }
-
-        settingsPWriter.close();
-    }
-
     private static void writeBlankSetting(Settings setting) throws IOException {
         settingsWriter = new FileWriter(settings_file, true);		// true = append
         settingsBWriter = new BufferedWriter(settingsWriter);
@@ -130,7 +133,7 @@ public class HOIIVUtilsProperties {
 
     }
 
-    public static void saveSettings(Settings setting, String settingValue) throws IOException {
+    public static void saveSetting(Settings setting, String settingValue) throws IOException {
         settingsWriter = new FileWriter(settings_file, false);		// true = append
         settingsBWriter = new BufferedWriter(settingsWriter);
         settingsPWriter = new PrintWriter(settingsBWriter);
@@ -142,6 +145,41 @@ public class HOIIVUtilsProperties {
 
         settingsPWriter.close();
     }
+
+    /**
+     * Saves a list of settings, all other settings remain the same.
+     * @param newSettings list of updated settings to save
+     * @throws IOException
+     */
+    public static void saveSettings(HashMap<Settings, String> newSettings) throws IOException {
+        settingsWriter = new FileWriter(settings_file, false);		// true = append
+        settingsBWriter = new BufferedWriter(settingsWriter);
+        settingsPWriter = new PrintWriter(settingsBWriter);
+
+        settingValues.putAll(newSettings);
+        for (Settings s : Settings.values()) {
+            settingsPWriter.println(s.name() + ";" + settingValues.get(s));
+        }
+
+        settingsPWriter.close();
+    }
+
+    /**
+     * Saves all settigns.
+     * @throws IOException
+     */
+    public static void saveSettings() throws IOException {
+        settingsWriter = new FileWriter(settings_file, false);		// true = append
+        settingsBWriter = new BufferedWriter(settingsWriter);
+        settingsPWriter = new PrintWriter(settingsBWriter);
+
+        for (Settings s : Settings.values()) {
+            settingsPWriter.println(s.name() + ";" + settingValues.get(s));
+        }
+
+        settingsPWriter.close();
+    }
+
 
     public static boolean isNull(Settings modDirectory) {
         return settingValues.get(modDirectory).equals("null");
