@@ -16,8 +16,6 @@ import settings.HOIIVUtilsProperties;
 
 public class SettingsWindowController {
 
-    HashMap<HOIIVUtilsProperties.Settings, String> settings;
-
     @FXML
     public CheckBox devModeCheckBox;
     public Label hoi4ModFolderLabel;
@@ -25,6 +23,8 @@ public class SettingsWindowController {
     public TextField hoi4ModFolderTextField;
     public Button okButton;
     
+    HashMap<HOIIVUtilsProperties.Settings, String> settings;
+
     public void devMode() {
 
     }
