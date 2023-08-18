@@ -37,6 +37,6 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#settings" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.menu.MenuWindowController">
    <children>
-      <Button fx:id="settingsButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#openSettings" text="Settings" />
+      <Button fx:id="settingsButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#openSettings" text="Settings" />
    </children>
 </Pane>
