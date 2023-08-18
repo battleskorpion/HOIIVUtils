@@ -46,6 +46,7 @@ public class HOI4Fixes {
 			settings = new HOIIVUtilsProperties();
 			settingsWindow = new SettingsWindow();
 			settingsWindow.launchSettingsWindow(args);
+			HOIIVUtilsProperties.saveSettings(settingsWindow.getSettings());
 		}
 		else {
 			/* first-time setup */
