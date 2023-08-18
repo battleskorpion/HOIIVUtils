@@ -13,28 +13,33 @@ public class LocalizerSettings {
         CURRENT_MOD,        // todo not in use
         CIVILIAN_MILITARY_FACTORY_MAX_RATIO,            // ratio for civ/mil factories highlight in buildings view
         DARK_MODE {
-            public boolean getMode() {
-                return settingValues.get(DARK_MODE).equals("true");
-            }
-            public void setMode(boolean set) {
-                settingValues.put(DARK_MODE, String.valueOf(set));
-                try {
-                    writeSettings();
-                    System.out.println("Dark mode: " + settingValues.get(DARK_MODE));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            public Object getSetting() {
+                return settingValues.get(this).equals("true");
             }
         },
-        DEV_MODE
+        DEV_MODE {
+            public Object getSetting() {
+                return settingValues.get(this).equals("true");
+            }
+        },
+        PREFERRED_SCREEN,
         ;
 
-        public void setMode(boolean b) {
+        public void setSetting(String set) {
+            settingValues.put(this, String.valueOf(set));
+            try {
+                writeSettings();
+                if ((boolean)DEV_MODE.getSetting()) {
+                    System.out.println("Updated setting " + this.name() + ": " + settingValues.get(this));
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return;
         }
 
-        public boolean getMode() {
-            return false;
+        public Object getSetting() {
+            return settingValues.get(this);
         }
     }
 

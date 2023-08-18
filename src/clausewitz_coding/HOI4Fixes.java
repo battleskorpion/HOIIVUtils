@@ -56,7 +56,7 @@ public class HOI4Fixes {
 
 			/* directory acquired, now save settings */
 			LocalizerSettings.saveSettings(MOD_DIRECTORY, hoi4_dir_name);
-		} else {
+		} else { 
 			hoi4_dir_name = LocalizerSettings.get(MOD_DIRECTORY);
 		}
 
