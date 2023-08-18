@@ -3,10 +3,7 @@ package ui.clausewitz_gfx;
 import clausewitz_coding.gfx.Interface;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 // todo add actual effect (enable/disable) from check boxes

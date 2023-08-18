@@ -1,27 +1,17 @@
 package ui.map;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class RiverGenWindow extends JFrame {
     private JPanel riverGenJPanel;
-    private JPanel RivermapGenButtonsJPanel;
-    private JPanel RivermapGenMapJPanel;
     private JRadioButton randomGenerationRadioButton;
     private JRadioButton useSourceRadioButton;
-    private JCheckBox keepExistingRiversCheckBox;
-    private JPanel RivermapGenTypeOptionButtonsJPanel;
-    private JTextField genSourceTextPanel;
-    private JPanel genRiverColorDisplayJPanel;
     private JPanel genUseSourceOptionsJPanel;
-    private RiverMapViewport riverGenWindow$RiverMapViewport1;
+//    private RiverMapViewport riverGenWindow$RiverMapViewport1;
 
     public RiverGenWindow() {
         super("River Generation");
@@ -84,7 +74,7 @@ public class RiverGenWindow extends JFrame {
     }
 
     public void createUIComponents() {
-        riverGenWindow$RiverMapViewport1 = new RiverMapViewport();
+//        riverGenWindow$RiverMapViewport1 = new RiverMapViewport();
     }
 
     public class RiverMapViewport extends JPanel {

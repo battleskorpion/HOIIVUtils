@@ -38,8 +38,8 @@ public class LocalizationFile extends File {
         Scanner reader;
         try {
             reader = new Scanner(this);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
         }
 
         /* language declaration */
@@ -109,6 +109,7 @@ public class LocalizationFile extends File {
 //                // comments, etc.
 //                comments.put(line, data);
 //            }
+        reader.close();
         }
     }
 
