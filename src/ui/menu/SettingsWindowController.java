@@ -29,6 +29,7 @@ public class SettingsWindowController {
 
     }
 
+    @FXML
     private void handleBrowseAction() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
