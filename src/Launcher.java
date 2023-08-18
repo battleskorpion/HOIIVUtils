@@ -11,7 +11,6 @@ public class Launcher {
         Scanner scanner = new Scanner(System.in);
         whatToRun = scanner.nextLine();
         scanner.close();
-        System.out.print("What you chose:\n " + whatToRun + "\n");
         if (whatToRun == "1") {
             Main.main(args);
         }
