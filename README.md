@@ -26,10 +26,6 @@ Lowercase = hoi4
 Capitlize = HOIIV
 
 todo:
-    Make settings window a intro popup
-
-    Add browse button to right of file path selection box
-    
     Enable/disable intro popup (make sure to save file path)
     
     maybe add multiple file paths with a plus and minus button
@@ -37,8 +33,6 @@ todo:
     Make a drop down for themes (white mode, dark mode, and system default)
     
     Add grey text version number on main window and intro window
-    
-    Change the fucking file explorer to whatever discord uses
 
 Useful links:
     Idea Download:
