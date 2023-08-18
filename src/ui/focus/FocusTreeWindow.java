@@ -196,7 +196,7 @@ public class FocusTreeWindow extends JFrame {
                     Graphics2D g2d = (Graphics2D) g.create();
                     g2d.setColor(Color.DARK_GRAY);
                     g2d.drawRect(0, 0, width, height);
-                    int xPos = 0;
+//                    int xPos = 0;
 
                     /* dds stuff */
                     BufferedImage GFX_focus_unavailable = null;
@@ -234,7 +234,7 @@ public class FocusTreeWindow extends JFrame {
                         }
                         g2d.drawString(name, x1, y1 + yAdj2);
 
-                        xPos += X_SCALE;
+//                        xPos += X_SCALE;
 
                         if (focus.hasPrerequisites()) {
 //                            System.out.println(focus.id() + ", " + focus.getPrerequisites());

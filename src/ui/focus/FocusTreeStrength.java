@@ -23,7 +23,7 @@ public class FocusTreeStrength extends JFrame {
                     JFileChooser j = new JFileChooser(HOIIVUtils.settings.get(MOD_PATH) + HOIIVUtils.focus_folder);
                     j.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     j.setDialogTitle("Select Focus File");
-                    int opt = j.showOpenDialog(null);
+//                    int opt = j.showOpenDialog(null);
                     focus_file = j.getSelectedFile();
                 }
                 focustreestrength.setText(focus_file.getPath());

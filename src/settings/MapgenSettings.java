@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import hoi4utils.HOIIVUtils;
+
 public class MapgenSettings {
 
     public String get(Settings setting) { return settingValues.get(setting); }
@@ -36,13 +38,15 @@ public class MapgenSettings {
     }
 
     public void readSettings() {
+        Scanner settingReader = null;
         try {
-            Scanner settingReader = new Scanner(settings_file);
+            settingReader = new Scanner(settings_file);
 //            System.out.println(settingReader.nextLine());
 
             /* if file is empty then write blank settings to new settings file */
             if (!settingReader.hasNext()) {
                 writeBlankSettings();
+                settingReader.close();
                 return;
             }
 
@@ -54,9 +58,11 @@ public class MapgenSettings {
                 settingValues.put(setting, readSetting[1]);
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception exception) {
+            HOIIVUtils.openError(exception);
+            return;
         }
+        settingReader.close();
 
     }
 

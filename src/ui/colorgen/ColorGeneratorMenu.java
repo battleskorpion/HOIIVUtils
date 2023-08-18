@@ -27,7 +27,6 @@ public class ColorGeneratorMenu extends JFrame {
     private JLabel maxRedAmtLabel;
     private JLabel minBlueAmtLabel;
     private JLabel maxBlueAmtLabel;
-    private JPanel generateJPanel;
     private JProgressBar generateProgressBar;
 
     public ColorGeneratorMenu() {
