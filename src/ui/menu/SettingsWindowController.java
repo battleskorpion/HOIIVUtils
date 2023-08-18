@@ -24,8 +24,6 @@ public class SettingsWindowController {
     public Button okButton;
 
     HashMap<HOIIVUtilsProperties.Settings, String> settings;
-    
-    HashMap<HOIIVUtilsProperties.Settings, String> settings;
 
     public void devMode() {
 
