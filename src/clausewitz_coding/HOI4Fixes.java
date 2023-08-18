@@ -20,6 +20,7 @@ import static settings.HOIIVUtilsProperties.Settings.*;
 public class HOI4Fixes {
 	
 	public static String[] args;
+	public static boolean firstTimeSetup;
 	private static SettingsWindow settingsWindow;
 	
 	public static final String applicationVersion = "2.2";
@@ -39,21 +40,8 @@ public class HOI4Fixes {
 		HOI4Fixes.args = args;
 
 		/* settings */
-		String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
-		String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
-		if (new File(hoi4UtilsPropertiesPath).exists()) {
-			/* normal setup */
-			settings = new HOIIVUtilsProperties();
-			settingsWindow = new SettingsWindow();
-			settingsWindow.launchSettingsWindow(args);
-			HOIIVUtilsProperties.saveSettings(settingsWindow.getSettings());
-		}
-		else {
-			/* first-time setup */
-			settingsWindow = new SettingsWindow();
-			settingsWindow.launchSettingsWindow(args);
-			settings = new HOIIVUtilsProperties(settingsWindow.getSettings());
-		}
+		settingsWindow = new SettingsWindow();
+		settingsWindow.launchSettingsWindow(args);
 
 //		if (HOIIVUtilsProperties.isNull(MOD_DIRECTORY))
 //			/* get directory */ {

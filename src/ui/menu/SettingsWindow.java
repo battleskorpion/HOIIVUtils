@@ -8,6 +8,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import settings.HOIIVUtilsProperties;
+import clausewitz_coding.HOI4Fixes;
+
+import java.io.File;
 
 public class SettingsWindow extends Application {
     Stage primaryStage;
@@ -18,6 +22,18 @@ public class SettingsWindow extends Application {
         primaryStage.setScene((new Scene(root, 600, 400)));
         primaryStage.show();
         this.primaryStage = primaryStage;
+
+        /* settings */
+        String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
+        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
+        if (new File(hoi4UtilsPropertiesPath).exists()) {
+            /* standard setup */
+            HOI4Fixes.firstTimeSetup = false;
+            HOI4Fixes.settings = new HOIIVUtilsProperties();
+        } else {
+            /* first-time setup */
+            HOI4Fixes.firstTimeSetup = true;
+        }
     }
 
     public void open(Stage primaryStage) {
