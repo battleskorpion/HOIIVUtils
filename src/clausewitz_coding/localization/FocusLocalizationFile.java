@@ -30,14 +30,13 @@ public class FocusLocalizationFile extends LocalizationFile {
         while (scanner.hasNextLine()) {
             fileBuffer.append(scanner.nextLine()).append(System.lineSeparator());
         }
+        scanner.close();
 //        System.out.println(fileBuffer);
 
 //        FileWriter writer = new FileWriter(this, false);		// true = append
         FileWriter writer = new FileWriter(this, false);
         BufferedWriter BWriter = new BufferedWriter(writer);
         PrintWriter PWriter = new PrintWriter(BWriter);                // for println syntax
-
-        String localization_line;
 
 //        PWriter.println(language);
 
