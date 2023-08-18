@@ -1,7 +1,5 @@
 package clausewitz_coding;
 
-import clausewitz_coding.country.CountryTag;
-import clausewitz_coding.state.State;
 import fileIO.FileListener.FileAdapter;
 import fileIO.FileListener.FileEvent;
 import fileIO.FileListener.FileWatcher;
@@ -105,7 +103,12 @@ public class HOI4Fixes {
 	}
 
 	public static void closeWindow(Button button) {
-		((Stage) (button.getScene().getWindow())).close();
+		try {
+			((Stage) (button.getScene().getWindow())).close();
+		}
+		catch(Exception exception) {
+			openError(exception);
+		}
 	}
 
 /*		public static void closeSettings() {
