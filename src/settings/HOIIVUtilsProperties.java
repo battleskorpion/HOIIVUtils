@@ -25,10 +25,20 @@ public class HOIIVUtilsProperties {
             public String defaultProperty() { return "false"; }
         },
         PREFERRED_SCREEN {
-            public Object getSetting() { return Integer.parseInt(settingValues.get(this)); }
+            public Object getSetting() {
+                try {
+                    return Integer.parseInt(settingValues.get(this));
+                } catch (NumberFormatException exc) {
+                    return 1;
+                }
+            }
             public String defaultProperty() { return "1"; }
         },
         ;
+
+        public static boolean enabled(Settings setting) {
+            return (boolean) setting.getSetting();
+        }
 
         public void setSetting(String set) {
             settingValues.put(this, String.valueOf(set));

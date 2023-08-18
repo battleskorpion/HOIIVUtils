@@ -4,6 +4,7 @@ import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.localization.FocusLocalizationFile;
 //import clausewitz_coding.localization.LocalizationFile;
+import settings.HOIIVUtilsProperties;
 import ui.focus_localization.FocusTreeLocProgress;
 
 //import java.io.BufferedWriter;
@@ -25,7 +26,7 @@ public class FixFocus extends HOI4Fixes {
 
 	public static boolean addFocusLoc(File focus_file, File loc_file) throws IOException {
 
-		final String hoi4_dir_name = HOI4Fixes.settings.get(MOD_DIRECTORY);
+		final String hoi4_dir_name = HOIIVUtilsProperties.get(MOD_DIRECTORY);
 
 		// some vars
 		ArrayList<String> focuses_localized = new ArrayList<String>();
