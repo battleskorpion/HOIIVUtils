@@ -16,13 +16,18 @@ public class HOIIVUtilsProperties {
             public Object getSetting() {
                 return settingValues.get(this).equals("true");
             }
+            public String defaultProperty() { return "false"; }
         },
         DEV_MODE {
             public Object getSetting() {
                 return settingValues.get(this).equals("true");
             }
+            public String defaultProperty() { return "false"; }
         },
-        PREFERRED_SCREEN,
+        PREFERRED_SCREEN {
+            public Object getSetting() { return Integer.parseInt(settingValues.get(this)); }
+            public String defaultProperty() { return "1"; }
+        },
         ;
 
         public void setSetting(String set) {
@@ -36,6 +41,10 @@ public class HOIIVUtilsProperties {
                 throw new RuntimeException(e);
             }
             return;
+        }
+
+        public String defaultProperty() {
+            return "null";
         }
 
         public Object getSetting() {
@@ -113,7 +122,7 @@ public class HOIIVUtilsProperties {
         settingsBWriter = new BufferedWriter(settingsWriter);
         settingsPWriter = new PrintWriter(settingsBWriter);
 
-        settingsPWriter.println(setting.name() + ";" + "null");
+        settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
 
         settingsPWriter.close();
     }
@@ -124,9 +133,9 @@ public class HOIIVUtilsProperties {
         settingsPWriter = new PrintWriter(settingsBWriter);
 
         for (Settings setting : Settings.values()) {
-            settingsPWriter.println(setting.name() + ";" + "null");
+            settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
 
-            settingValues.put(setting, "null");
+            settingValues.put(setting, setting.defaultProperty());
         }
 
         settingsPWriter.close();
