@@ -1,19 +1,19 @@
 package ui.menu;
 
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class MenuWindow {
+public class MenuWindow implements HOI4FixesWindow {
 
     private MenuWindow menuWindow;
 
-     public MenuWindow() {
+    public MenuWindow() {
         menuWindow = this;
     }
 
+    @Override
     public void open() throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("MenuWindow.fxml"));
         Stage stage = new Stage();

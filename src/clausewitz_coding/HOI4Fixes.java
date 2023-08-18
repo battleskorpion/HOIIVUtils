@@ -5,6 +5,7 @@ import fileIO.FileListener.FileEvent;
 import fileIO.FileListener.FileWatcher;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import ui.menu.HOI4FixesWindow;
 import ui.menu.SettingsWindow;
 import ui.menu.MenuWindow;
 import settings.LocalizerSettings;
@@ -104,6 +105,7 @@ public class HOI4Fixes {
 		} catch (Exception exception) {
 			openError(exception);
 		}
+
 	}
 
 	public static void closeWindow(Button button) {

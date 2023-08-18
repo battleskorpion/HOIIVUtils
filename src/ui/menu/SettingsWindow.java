@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class SettingsWindow extends Application {
+public class SettingsWindow extends Application implements HOI4FixesWindow {
     Stage primaryStage;
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -21,7 +21,5 @@ public class SettingsWindow extends Application {
         super.launch(var0);
     }
 
-    public void open() {
-        primaryStage.show();
-    }
+    public void open() {primaryStage.show(); }
 }
