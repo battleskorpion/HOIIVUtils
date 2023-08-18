@@ -33,6 +33,7 @@ public class SettingsWindowController {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
         File selectedDirectory = directoryChooser.showDialog(primaryStage);
+        System.out.print(selectedDirectory);
     }
 
     public void openMenu() {
