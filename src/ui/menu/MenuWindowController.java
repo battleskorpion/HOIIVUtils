@@ -1,9 +1,9 @@
 package ui.menu;
 
-import static clausewitz_coding.HOI4Fixes.openSettings;
+import clausewitz_coding.HOI4Fixes;
 
 public class MenuWindowController {
     public void openSettings() {
-        openSettings();
+        HOI4Fixes.openSettings();
     }
 }
