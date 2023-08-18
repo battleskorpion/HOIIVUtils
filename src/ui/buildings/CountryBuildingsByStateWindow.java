@@ -1,8 +1,7 @@
 package ui.buildings;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_coding.country.CountryTag;
-import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.state.State;
 import clausewitz_coding.state.buildings.Infrastructure;
 import clausewitz_coding.state.buildings.Resources;
@@ -23,7 +22,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import static clausewitz_coding.HOI4Fixes.stateDirWatcher;
+import static hoi4utils.HOIIVUtils.stateDirWatcher;
 
 public class CountryBuildingsByStateWindow extends JFrame {
     private JPanel CountryBuildingsByStateWindowJPanel;
@@ -291,7 +290,7 @@ public class CountryBuildingsByStateWindow extends JFrame {
 
                 // get state
                 int row = statesBuildingsTable.rowAtPoint( e.getPoint() );
-                int modelRow = HOI4Fixes.rowToModelIndex(statesBuildingsTable, row);
+                int modelRow = HOIIVUtils.rowToModelIndex(statesBuildingsTable, row);
                 String state_name = (String) stateBuildingsTableModel.getValueAt(modelRow, 0);     // column 0 - country name
 
                 State state = State.get(state_name);

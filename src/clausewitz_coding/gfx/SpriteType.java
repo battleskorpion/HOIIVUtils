@@ -4,7 +4,7 @@ import settings.HOIIVUtilsProperties;
 
 import java.io.File;
 
-import static settings.HOIIVUtilsProperties.Settings.ModPath;
+import static settings.HOIIVUtilsProperties.Settings.MOD_PATH;
 
 public class SpriteType {
     String name;            // ex: "GFX_focus_SVA_virginia_officers"
@@ -37,7 +37,7 @@ public class SpriteType {
      * @return absolute path texturefile for the gfx
      */
     public File getTexturefileAbsolute() {
-        return new File(HOIIVUtilsProperties.get(ModPath) + "\\" + texturefile.getPath());
+        return new File(HOIIVUtilsProperties.get(MOD_PATH) + "\\" + texturefile.getPath());
     }
 
     /**
@@ -46,7 +46,7 @@ public class SpriteType {
      * @return absolute filepath of texturefile for this gfx
      */
     public String getGFX() {
-        return HOIIVUtilsProperties.get(ModPath) + "\\" + texturefile.getPath();
+        return HOIIVUtilsProperties.get(MOD_PATH) + "\\" + texturefile.getPath();
     }
 
     public String getName() {

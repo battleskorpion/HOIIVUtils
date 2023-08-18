@@ -1,6 +1,6 @@
 package ui.buildings;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_coding.state.buildings.Infrastructure;
 import clausewitz_coding.state.buildings.Resources;
 import clausewitz_coding.country.CountryTag;
@@ -8,8 +8,6 @@ import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.state.State;
 import fileIO.FileListener.FileAdapter;
 import fileIO.FileListener.FileEvent;
-import fileIO.FileListener.FileWatcher;
-import jdk.jfr.Event;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -18,12 +16,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import static clausewitz_coding.HOI4Fixes.stateDirWatcher;
+import static hoi4utils.HOIIVUtils.stateDirWatcher;
 
 public class BuildingsByCountryWindow extends JFrame {
     private JPanel BuildingsByCountryWindowJPanel;
@@ -186,7 +183,7 @@ public class BuildingsByCountryWindow extends JFrame {
 
                 // get country
                 int row = buildingsTable.rowAtPoint( e.getPoint() );
-                int modelRow = HOI4Fixes.rowToModelIndex(buildingsTable, row);
+                int modelRow = HOIIVUtils.rowToModelIndex(buildingsTable, row);
                 String country_name = (String) buildingsTableModel.getValueAt(modelRow, 0);     // column 0 - country name
 
                 CountryTag country = new CountryTag(country_name);

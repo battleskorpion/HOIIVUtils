@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -48,7 +48,7 @@ public class SettingsWindowController {
         updateModPath(selectedDirectory);
         }
         catch(Exception exception) {
-            HOI4Fixes.openError(exception);
+            HOIIVUtils.openError(exception);
         }
     }
 
@@ -62,19 +62,19 @@ public class SettingsWindowController {
     }
 
     public void openMenu() {
-        HOI4Fixes.closeWindow(okButton);
-        HOI4Fixes.openMenu();
+        HOIIVUtils.closeWindow(okButton);
+        HOIIVUtils.openMenu();
     }
 
     public void saveSettings() {
         try {
-            if (HOI4Fixes.firstTimeSetup) {
-                HOI4Fixes.settings = new HOIIVUtilsProperties(settings);
+            if (HOIIVUtils.firstTimeSetup) {
+                HOIIVUtils.settings = new HOIIVUtilsProperties(settings);
             } else {
                 HOIIVUtilsProperties.saveSettings(settings);
             }
         } catch (IOException e) {
-            HOI4Fixes.openError(e);
+            HOIIVUtils.openError(e);
         }
     }
 

@@ -1,7 +1,5 @@
 package clausewitz_coding.localization;
 
-import clausewitz_coding.HOI4Fixes;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

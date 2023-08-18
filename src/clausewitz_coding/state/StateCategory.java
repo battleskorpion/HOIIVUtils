@@ -1,6 +1,6 @@
 package clausewitz_coding.state;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
 
@@ -38,7 +38,7 @@ public class StateCategory {
     }
 
     public static void loadStateCategories() {
-        File dir = new File(HOI4Fixes.hoi4_dir_name + "\\common\\state_category");
+        File dir = new File(HOIIVUtils.hoi4_dir_name + "\\common\\state_category");
 
         if (dir.exists() && dir.isDirectory() && dir.listFiles().length > 0) {
             state_category_folder = dir;

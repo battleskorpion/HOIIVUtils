@@ -1,6 +1,6 @@
 package ui.menu;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,7 +12,7 @@ public class StatisticsWindowController {
     
     
     public void openMenu() {
-        HOI4Fixes.closeWindow(okButton);
-        HOI4Fixes.openMenu();
+        HOIIVUtils.closeWindow(okButton);
+        HOIIVUtils.openMenu();
     }
 }

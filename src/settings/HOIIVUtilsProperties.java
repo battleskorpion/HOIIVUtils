@@ -1,7 +1,5 @@
 package settings;
 
-import com.sun.glass.ui.Screen;
-
 import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -11,7 +9,7 @@ public class HOIIVUtilsProperties {
     public static String get(Settings setting) { return settingValues.get(setting); }
 
     public enum Settings {
-        ModPath,
+        MOD_PATH,
         CURRENT_MOD,        // todo not in use
         CIVILIAN_MILITARY_FACTORY_MAX_RATIO,            // ratio for civ/mil factories highlight in buildings view
         DARK_MODE {
@@ -72,7 +70,7 @@ public class HOIIVUtilsProperties {
 
     public HOIIVUtilsProperties() throws IOException {
         String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
-        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
+        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "hoi4utils.HOIIVUtils";
         new File(hoi4UtilsPropertiesPath).mkdir();
         settings_file = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
         settings_file.createNewFile();
@@ -82,7 +80,7 @@ public class HOIIVUtilsProperties {
 
     public HOIIVUtilsProperties(HashMap<Settings, String> settings) throws IOException {
         String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
-        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
+        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "hoi4utils.HOIIVUtils";
         new File(hoi4UtilsPropertiesPath).mkdir();
         settings_file = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
         boolean newSettingsFileCreated = settings_file.createNewFile();

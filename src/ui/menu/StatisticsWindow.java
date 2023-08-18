@@ -1,6 +1,6 @@
 package ui.menu;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_coding.focus.Focus;
 import clausewitz_coding.focus.FocusTree;
 import clausewitz_coding.focus.FocusTrees;
@@ -8,7 +8,6 @@ import clausewitz_parser.Expression;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 
 public class StatisticsWindow extends JFrame {
@@ -19,8 +18,8 @@ public class StatisticsWindow extends JFrame {
 
     public StatisticsWindow() {
 
-        textArea1.append("mod dir: " + HOI4Fixes.hoi4_dir_name + "\n");
-        textArea1.append("state folder: " + HOI4Fixes.hoi4_dir_name + HOI4Fixes.states_folder + "\n");
+        textArea1.append("mod dir: " + HOIIVUtils.hoi4_dir_name + "\n");
+        textArea1.append("state folder: " + HOIIVUtils.hoi4_dir_name + HOIIVUtils.states_folder + "\n");
 
         /* window */
         setContentPane(StatisticsJPanel);
