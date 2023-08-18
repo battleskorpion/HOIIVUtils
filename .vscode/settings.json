@@ -35,7 +35,9 @@
     "ShortcutMenuBar.openFilesList": false,
     "ShortcutMenuBar.redo": true,
     "ShortcutMenuBar.toggleActivityBar": true,
-    "ShortcutMenuBar.userButton01Command": "extension.scenebuilder.open-in",
+    "ShortcutMenuBar.userButton01Command": "",
     "git.autofetch": true,
-    "git.autofetchPeriod": 45
+    "git.autofetchPeriod": 45,
+    "ShortcutMenuBar.userButton06Command": "extension.scenebuilder.open-in",
+    "ShortcutMenuBar.userButton09Command": "commitMsg.autofill, git.commitAll, git.sync"
 }
