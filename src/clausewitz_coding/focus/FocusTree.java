@@ -1,6 +1,6 @@
 package clausewitz_coding.focus;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_coding.localization.LocalizationFile;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_parser.Expression;
@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public final class FocusTree extends HOI4Fixes {
+public final class FocusTree extends HOIIVUtils {
 
 	// private HashSet<Focus> focuses;
 	private final HashMap<String, Focus> focuses;

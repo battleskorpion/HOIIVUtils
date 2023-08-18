@@ -1,11 +1,10 @@
 package clausewitz_coding.gfx;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
@@ -131,7 +130,7 @@ public class Interface {
     }
 
     public static void loadGFX() {
-        File dir = new File(HOI4Fixes.hoi4_dir_name + "\\interface");
+        File dir = new File(HOIIVUtils.hoi4_dir_name + "\\interface");
         if (!dir.exists() || !dir.isDirectory()) {
             System.err.println("interface directory does not exist");
         }

@@ -3,7 +3,7 @@ package clausewitz_coding.state;
 import clausewitz_coding.code.ClausewitzDate;
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_coding.state.buildings.Infrastructure;
 import clausewitz_coding.state.buildings.Resources;
 import clausewitz_coding.country.CountryTag;
@@ -149,14 +149,14 @@ public class State {
     }
 
     public static void readStates() {
-        File states_dir = new File(HOI4Fixes.hoi4_dir_name + HOI4Fixes.states_folder);
+        File states_dir = new File(HOIIVUtils.hoi4_dir_name + HOIIVUtils.states_folder);
 
         if (!states_dir.exists() || !states_dir.isDirectory()) {
-            System.err.println("In State.java - " + HOI4Fixes.states_folder + " is not a directory, or etc.");
+            System.err.println("In State.java - " + HOIIVUtils.states_folder + " is not a directory, or etc.");
             return;
         }
         if (states_dir.listFiles() == null || states_dir.listFiles().length == 0) {
-            System.out.println("No states found in " + HOI4Fixes.states_folder);
+            System.out.println("No states found in " + HOIIVUtils.states_folder);
             return;
         }
 

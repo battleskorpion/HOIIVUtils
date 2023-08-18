@@ -1,9 +1,8 @@
 package clausewitz_coding.localization;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.util.*;
 
 public class LocalizationFile extends File {
@@ -49,7 +48,7 @@ public class LocalizationFile extends File {
             if (reader.hasNextLine()) {
                 String data = reader.nextLine().replaceAll("\\s", "");
 //                line++;
-                if (HOI4Fixes.usefulData(data)) {
+                if (HOIIVUtils.usefulData(data)) {
                     if (data.trim().contains("l_")) {
                         if(!data.contains(language)) {
                             // todo
@@ -74,7 +73,7 @@ public class LocalizationFile extends File {
             String data = reader.nextLine().trim();
 //            line++;
 
-            if (HOI4Fixes.usefulData(data)) {
+            if (HOIIVUtils.usefulData(data)) {
                 if (data.contains(loc_key)) {
                     String id = data.substring(0, data.indexOf(loc_key)).trim();
                     String text = data.substring(data.indexOf("\""), data.lastIndexOf("\"") + 1).trim();

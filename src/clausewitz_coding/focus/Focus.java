@@ -1,6 +1,6 @@
 package clausewitz_coding.focus;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_coding.code.trigger.Trigger;
 import clausewitz_coding.gfx.Interface;
 import clausewitz_parser.Expression;
@@ -275,7 +275,7 @@ public class Focus {
             FileInputStream fis;
             if (gfx == null) {
                 System.err.println("GFX was not found for " + icon);
-                fis = new FileInputStream(HOI4Fixes.hoi4_dir_name + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+                fis = new FileInputStream(HOIIVUtils.hoi4_dir_name + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
             } else {
                 fis = new FileInputStream(Interface.getGFX(icon));
             }

@@ -1,19 +1,19 @@
 package clausewitz_coding.idea;
 
 import clausewitz_coding.country.CountryTags;
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_coding.localization.LocalizationFile;
 
 import java.io.*;
 import java.util.ArrayList;
 
-import static settings.HOIIVUtilsProperties.Settings.MOD_DIRECTORY;
+import static settings.HOIIVUtilsProperties.Settings.MOD_PATH;
 
-public class FixIdea extends HOI4Fixes {
+public class FixIdea extends HOIIVUtils {
 
 	public static boolean addIdeaLoc(File idea_file, File loc_file) throws IOException {
 
-		final String hoi4_dir_name = HOI4Fixes.settings.get(MOD_DIRECTORY);
+		final String hoi4_dir_name = HOIIVUtils.settings.get(MOD_PATH);
 
 		// some vars
 		ArrayList<String> ideas_localized = new ArrayList<String>();

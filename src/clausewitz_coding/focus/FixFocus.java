@@ -1,7 +1,7 @@
 package clausewitz_coding.focus;
 
 import clausewitz_coding.country.CountryTags;
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_coding.localization.FocusLocalizationFile;
 //import clausewitz_coding.localization.LocalizationFile;
 import settings.HOIIVUtilsProperties;
@@ -18,15 +18,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 //import java.util.Scanner;
 
-import static settings.HOIIVUtilsProperties.Settings.MOD_DIRECTORY;
+import static settings.HOIIVUtilsProperties.Settings.MOD_PATH;
 
-public class FixFocus extends HOI4Fixes {
+public class FixFocus extends HOIIVUtils {
 
 //	private static String hoi4_dir_name;
 
 	public static boolean addFocusLoc(File focus_file, File loc_file) throws IOException {
 
-		final String hoi4_dir_name = HOIIVUtilsProperties.get(MOD_DIRECTORY);
+		final String hoi4_dir_name = HOIIVUtilsProperties.get(MOD_PATH);
 
 		// some vars
 		ArrayList<String> focuses_localized = new ArrayList<String>();

@@ -1,4 +1,4 @@
-package clausewitz_coding;
+package hoi4utils;
 
 import fileIO.FileListener.FileAdapter;
 import fileIO.FileListener.FileEvent;
@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import static settings.HOIIVUtilsProperties.Settings.*;
 
-public class HOI4Fixes {
+public class HOIIVUtils {
 	
 	public static String[] args;
 	public static boolean firstTimeSetup;
@@ -40,7 +40,7 @@ public class HOI4Fixes {
 	
 	public static void main(String[] args) throws IOException {
 		
-		HOI4Fixes.args = args;
+		HOIIVUtils.args = args;
 
 		/* settings */
 		settingsWindow = new SettingsWindow();
@@ -65,7 +65,7 @@ public class HOI4Fixes {
 //			hoi4_dir_name = HOIIVUtilsProperties.get(MOD_DIRECTORY);
 //		}
 
-		System.out.println(HOIIVUtilsProperties.get(MOD_DIRECTORY));
+		System.out.println(HOIIVUtilsProperties.get(MOD_PATH));
 		states_folder = "\\history\\states";
 		strat_region_dir = "\\map\\strategicregions";
 		localization_eng_folder = "\\localisation\\english";

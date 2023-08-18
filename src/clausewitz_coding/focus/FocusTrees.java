@@ -1,6 +1,6 @@
 package clausewitz_coding.focus;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.country.CountryTags;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class FocusTrees extends HOI4Fixes {
+public class FocusTrees extends HOIIVUtils {
     private static final HashMap<CountryTag, FocusTree> focusTrees = new HashMap<>();
 
     public static HashMap<CountryTag, FocusTree> add(CountryTag tag, FocusTree focusTree) {

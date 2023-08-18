@@ -8,7 +8,7 @@ import clausewitz_parser.Parser;
 import java.io.File;
 import java.util.ArrayList;
 
-import static clausewitz_coding.HOI4Fixes.usefulData;
+import static hoi4utils.HOIIVUtils.usefulData;
 
 public abstract class Idea {
 

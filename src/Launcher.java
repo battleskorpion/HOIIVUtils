@@ -1,8 +1,7 @@
-import clausewitz_coding.HOI4Fixes;
 import hellofx.Main;
+import hoi4utils.HOIIVUtils;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Launcher {
     public static void main(String[] args) throws RuntimeException,IOException {
@@ -16,7 +15,7 @@ public class Launcher {
             Main.main(args);
         }
         else {
-            HOI4Fixes.main(args);
+            HOIIVUtils.main(args);
         }
     }
 }

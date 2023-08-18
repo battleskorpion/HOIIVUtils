@@ -1,6 +1,6 @@
 package ui.clausewitz_gfx;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import clausewitz_coding.focus.Focus;
 import clausewitz_coding.focus.FocusTree;
 import clausewitz_coding.focus.FocusTrees;
@@ -15,8 +15,6 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -186,7 +184,7 @@ public class GFXWindow extends JFrame {
             File file = new File(filename);
             if (!file.exists()) {
                 System.err.println("GFX file " + file + " does not exist");
-                fis = new FileInputStream(HOI4Fixes.hoi4_dir_name + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+                fis = new FileInputStream(HOIIVUtils.hoi4_dir_name + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
             } else {
                 fis = new FileInputStream(file.getPath());
             }

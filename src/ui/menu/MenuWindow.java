@@ -1,6 +1,6 @@
 package ui.menu;
 
-import clausewitz_coding.HOI4Fixes;
+import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,7 +20,7 @@ public class MenuWindow {
         stage.setTitle("Hello World");
         stage.setScene((new Scene(root, 600, 400)));
 
-        HOI4Fixes.decideScreen(stage);
+        HOIIVUtils.decideScreen(stage);
         stage.show();
     }
 }
