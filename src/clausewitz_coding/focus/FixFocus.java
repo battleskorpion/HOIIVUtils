@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 //import java.util.Scanner;
 
-import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
+import static settings.HOIIVUtilsProperties.Settings.MOD_DIRECTORY;
 
 public class FixFocus extends HOI4Fixes {
 

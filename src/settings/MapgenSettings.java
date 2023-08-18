@@ -2,7 +2,6 @@ package settings;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 public class MapgenSettings {
@@ -82,14 +81,14 @@ public class MapgenSettings {
         settingsPWriter = new PrintWriter(settingsBWriter);
 
         settingValues.put(setting, settingValue);
-        for (LocalizerSettings.Settings s : LocalizerSettings.Settings.values()) {
+        for (HOIIVUtilsProperties.Settings s : HOIIVUtilsProperties.Settings.values()) {
             settingsPWriter.println(s.name() + ";" + settingValues.get(s));
         }
 
         settingsPWriter.close();
     }
 
-    public boolean isNull(LocalizerSettings.Settings modDirectory) {
+    public boolean isNull(HOIIVUtilsProperties.Settings modDirectory) {
         return settingValues.get(modDirectory).equals("null");
     }
 

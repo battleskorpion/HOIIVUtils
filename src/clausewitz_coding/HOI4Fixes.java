@@ -7,7 +7,7 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import ui.menu.SettingsWindow;
 import ui.menu.MenuWindow;
-import settings.LocalizerSettings;
+import settings.HOIIVUtilsProperties;
 
 import javax.swing.*;
 import java.io.File;
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static settings.LocalizerSettings.Settings.*;
+import static settings.HOIIVUtilsProperties.Settings.*;
 
 public class HOI4Fixes {
 
@@ -23,7 +23,7 @@ public class HOI4Fixes {
 	private static SettingsWindow settingsWindow;
 
 	public static final String applicationVersion = "2.2";
-	public static LocalizerSettings settings;
+	public static HOIIVUtilsProperties settings;
 	public static String hoi4_dir_name;
 	// "C:\\Users\\daria\\Documents\\Paradox Interactive\\Hearts of Iron
 	// IV\\mod\\nadivided-dev";
@@ -39,9 +39,9 @@ public class HOI4Fixes {
 		HOI4Fixes.args = args;
 
 		/* load settings */
-		settings = new LocalizerSettings(); // loads settings automatically
+		settings = new HOIIVUtilsProperties(); // loads settings automatically
 
-		if (LocalizerSettings.isNull(MOD_DIRECTORY))
+		if (HOIIVUtilsProperties.isNull(MOD_DIRECTORY))
 			/* get directory */ {
 			JFileChooser j = new JFileChooser();
 			j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -55,12 +55,12 @@ public class HOI4Fixes {
 			}
 
 			/* directory acquired, now save settings */
-			LocalizerSettings.saveSettings(MOD_DIRECTORY, hoi4_dir_name);
+			HOIIVUtilsProperties.saveSettings(MOD_DIRECTORY, hoi4_dir_name);
 		} else {
-			hoi4_dir_name = LocalizerSettings.get(MOD_DIRECTORY);
+			hoi4_dir_name = HOIIVUtilsProperties.get(MOD_DIRECTORY);
 		}
 
-		System.out.println(LocalizerSettings.get(MOD_DIRECTORY));
+		System.out.println(HOIIVUtilsProperties.get(MOD_DIRECTORY));
 		states_folder = "\\history\\states";
 		strat_region_dir = "\\map\\strategicregions";
 		localization_eng_folder = "\\localisation\\english";

@@ -2,7 +2,7 @@ package mapgen.colorgen;
 
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
-import settings.LocalizerSettings;
+import settings.HOIIVUtilsProperties;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -14,9 +14,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
+import static settings.HOIIVUtilsProperties.Settings.MOD_DIRECTORY;
 
 public class ColorGenerator {
     private static BufferedImage colorMap;
@@ -85,7 +84,7 @@ public class ColorGenerator {
     }
 
     private static void findExistingColors() {
-        Parser definitionParser = new Parser(LocalizerSettings.get(MOD_DIRECTORY)
+        Parser definitionParser = new Parser(HOIIVUtilsProperties.get(MOD_DIRECTORY)
                 + "//map//definition.csv");
         Expression[] exps = definitionParser.expression().getAll();
 

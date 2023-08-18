@@ -1,15 +1,13 @@
 package clausewitz_coding.idea;
 
-import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.HOI4Fixes;
 import clausewitz_coding.localization.LocalizationFile;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Scanner;
 
-import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
+import static settings.HOIIVUtilsProperties.Settings.MOD_DIRECTORY;
 
 public class FixIdea extends HOI4Fixes {
 

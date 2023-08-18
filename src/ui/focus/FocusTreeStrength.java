@@ -7,7 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
-import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
+import static settings.HOIIVUtilsProperties.Settings.MOD_DIRECTORY;
 
 public class FocusTreeStrength extends JFrame {
     File focus_file;

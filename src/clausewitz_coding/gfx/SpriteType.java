@@ -1,11 +1,10 @@
 package clausewitz_coding.gfx;
 
-import clausewitz_coding.HOI4Fixes;
-import settings.LocalizerSettings;
+import settings.HOIIVUtilsProperties;
 
 import java.io.File;
 
-import static settings.LocalizerSettings.Settings.MOD_DIRECTORY;
+import static settings.HOIIVUtilsProperties.Settings.MOD_DIRECTORY;
 
 public class SpriteType {
     String name;            // ex: "GFX_focus_SVA_virginia_officers"
@@ -38,7 +37,7 @@ public class SpriteType {
      * @return absolute path texturefile for the gfx
      */
     public File getTexturefileAbsolute() {
-        return new File(LocalizerSettings.get(MOD_DIRECTORY) + "\\" + texturefile.getPath());
+        return new File(HOIIVUtilsProperties.get(MOD_DIRECTORY) + "\\" + texturefile.getPath());
     }
 
     /**
@@ -47,7 +46,7 @@ public class SpriteType {
      * @return absolute filepath of texturefile for this gfx
      */
     public String getGFX() {
-        return LocalizerSettings.get(MOD_DIRECTORY) + "\\" + texturefile.getPath();
+        return HOIIVUtilsProperties.get(MOD_DIRECTORY) + "\\" + texturefile.getPath();
     }
 
     public String getName() {

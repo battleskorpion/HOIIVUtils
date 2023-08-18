@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class LocalizerSettings {
+public class HOIIVUtilsProperties {
 
     public static String get(Settings setting) { return settingValues.get(setting); }
 
@@ -49,11 +49,11 @@ public class LocalizerSettings {
     private static PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); 		        // for println syntax
     private static HashMap<Settings, String> settingValues = new HashMap<>();
 
-    public LocalizerSettings() throws IOException {
+    public HOIIVUtilsProperties() throws IOException {
         String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
-        String hoi4localizer_path = user_docs_path + File.separator + "hoi4localizer";
-        new File(hoi4localizer_path).mkdir();
-        settings_file = new File(hoi4localizer_path + File.separator + "localization_settings.txt");
+        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
+        new File(hoi4UtilsPropertiesPath).mkdir();
+        settings_file = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
         settings_file.createNewFile();
 
         readSettings();
