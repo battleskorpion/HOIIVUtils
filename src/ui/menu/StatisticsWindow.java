@@ -11,13 +11,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 
-public class DevStatistics extends JFrame {
+public class StatisticsWindow extends JFrame {
     private JPanel StatisticsJPanel;
     private JTextArea textArea1;
     private JTabbedPane tabbedPane1;
     private JTree focusTreesJTree;
 
-    public DevStatistics() {
+    public StatisticsWindow() {
 
         textArea1.append("mod dir: " + HOI4Fixes.hoi4_dir_name + "\n");
         textArea1.append("state folder: " + HOI4Fixes.hoi4_dir_name + HOI4Fixes.states_folder + "\n");
