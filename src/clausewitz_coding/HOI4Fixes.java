@@ -95,8 +95,17 @@ public class HOI4Fixes {
 		}
 	}
 
-	public static void openSettings(String... args) {
+	public static void openSettings() {
 
+	}
+
+	public static void closeSettings() {
+		try {
+			settingsWindow.closeSettingsWindow();
+		}
+		catch(NullPointerException exception) {
+			JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(), JOptionPane.WARNING_MESSAGE);
+		}
 	}
 
 	public static boolean usefulData(String data) {

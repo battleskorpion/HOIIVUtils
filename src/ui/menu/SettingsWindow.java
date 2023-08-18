@@ -22,7 +22,13 @@ public class SettingsWindow extends Application {
         super.launch(var0);
     }
 
-     public Stage getStage() {
-        return primaryStage;
+    public Stage getStage() {
+        return this.primaryStage;
     }
+
+    public void closeSettingsWindow() {
+        this.primaryStage.close();
+    }
+
+
 }

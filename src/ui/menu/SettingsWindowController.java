@@ -14,6 +14,7 @@ public class SettingsWindowController {
     }
 
     public void openMenu() {
+        
         HOI4Fixes.openMenu();
     }
 }
