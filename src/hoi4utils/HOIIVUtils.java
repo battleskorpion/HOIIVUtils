@@ -119,7 +119,7 @@ public class HOIIVUtils {
 	}
 
 	public static void decideScreen(Stage primaryStage) {
-		Integer preferredScreen = (Integer) HOIIVUtilsProperties.Settings.PREFERRED_SCREEN.getSetting();
+		Integer preferredScreen = (Integer) PREFERRED_SCREEN.getSetting();
 		ObservableList<Screen> screens = Screen.getScreens();
 		if (preferredScreen > screens.size()) {
 			if (HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE)) {

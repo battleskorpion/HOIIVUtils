@@ -64,6 +64,7 @@ public class SettingsWindowController {
     public void openMenu() {
         HOIIVUtils.closeWindow(okButton);
         HOIIVUtils.openMenu();
+        saveSettings();
     }
 
     public void saveSettings() {

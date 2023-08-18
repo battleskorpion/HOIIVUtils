@@ -29,6 +29,9 @@ public class HOIIVUtilsProperties {
                 try {
                     return Integer.parseInt(settingValues.get(this));
                 } catch (NumberFormatException exc) {
+                    if (enabled(DEV_MODE)) {
+                        System.err.print(exc);
+                    }
                     return 0;
                 }
             }
@@ -37,7 +40,7 @@ public class HOIIVUtilsProperties {
         ;
 
         public static boolean enabled(Settings setting) {
-            return (boolean) setting.getSetting();
+            return settingValues.get(setting).equals("true");
         }
 
         public void setSetting(String set) {
