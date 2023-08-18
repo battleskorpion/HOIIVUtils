@@ -22,6 +22,8 @@ public class SettingsWindowController {
     public Button browseButton;
     public TextField hoi4ModFolderTextField;
     public Button okButton;
+
+    HashMap<HOIIVUtilsProperties.Settings, String> settings;
     
     HashMap<HOIIVUtilsProperties.Settings, String> settings;
 
