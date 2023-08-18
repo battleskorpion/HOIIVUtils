@@ -1,5 +1,7 @@
 package settings;
 
+import com.sun.glass.ui.Screen;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -25,10 +27,20 @@ public class HOIIVUtilsProperties {
             public String defaultProperty() { return "false"; }
         },
         PREFERRED_SCREEN {
-            public Object getSetting() { return Integer.parseInt(settingValues.get(this)); }
-            public String defaultProperty() { return "1"; }
+            public Object getSetting() {
+                try {
+                    return Integer.parseInt(settingValues.get(this));
+                } catch (NumberFormatException exc) {
+                    return 0;
+                }
+            }
+            public String defaultProperty() { return "0"; }
         },
         ;
+
+        public static boolean enabled(Settings setting) {
+            return (boolean) setting.getSetting();
+        }
 
         public void setSetting(String set) {
             settingValues.put(this, String.valueOf(set));
