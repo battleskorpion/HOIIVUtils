@@ -16,7 +16,7 @@ import hoi4utils.HOIIVUtils;
 import settings.HOIIVUtilsProperties;
 
 public class SettingsWindowController {
-
+    
     @FXML
     public CheckBox devModeCheckBox;
     public Label hoi4ModFolderLabel;
@@ -24,9 +24,25 @@ public class SettingsWindowController {
     public TextField hoi4ModPathTextField;
     public Button okButton;
     public File selectedDirectory;
-
+    
     HashMap<HOIIVUtilsProperties.Settings, String> settings;
-
+    
+    public SettingsWindowController() {
+        settings = new HashMap<>();
+    }
+    
+    private void saveSettings() {
+        try {
+            if (HOIIVUtils.firstTimeSetup) {
+                HOIIVUtils.settings = new HOIIVUtilsProperties(settings);
+            } else {
+                HOIIVUtilsProperties.saveSettings(settings);
+            }
+        } catch (IOException exception) {
+            HOIIVUtils.openError(exception);
+        }
+    }
+    
     public void devMode() {
         try {
             if (devModeCheckBox.isSelected()) {
@@ -39,7 +55,6 @@ public class SettingsWindowController {
         catch (Exception exception) {
             HOIIVUtils.openError(exception);
         }
-
     }
 
     public void handleBrowseAction() {
@@ -71,17 +86,6 @@ public class SettingsWindowController {
         HOIIVUtils.openMenu();
     }
 
-    private void saveSettings() {
-        try {
-            if (HOIIVUtils.firstTimeSetup) {
-                HOIIVUtils.settings = new HOIIVUtilsProperties(settings);
-            } else {
-                HOIIVUtilsProperties.saveSettings(settings);
-            }
-        } catch (IOException exception) {
-            HOIIVUtils.openError(exception);
-        }
-    }
 
     public void tempUpdateSetting(HOIIVUtilsProperties.Settings setting, String property) {
         settings.put(setting, property);
