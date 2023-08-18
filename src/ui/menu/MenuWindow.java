@@ -8,19 +8,17 @@ import javafx.stage.Stage;
 
 public class MenuWindow {
 
-    private MenuWindow menuWindow;
-
-    public MenuWindow() {
-        menuWindow = this;
-    }
-
-    public void open() throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("MenuWindow.fxml"));
-        Stage stage = new Stage();
-        stage.setTitle("Hello World");
-        stage.setScene((new Scene(root, 600, 400)));
-
-        HOIIVUtils.decideScreen(stage);
-        stage.show();
+    public void open(){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("MenuWindow.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Hello World");
+            stage.setScene((new Scene(root, 600, 400)));
+            HOIIVUtils.decideScreen(stage);
+            stage.show();
+        }
+        catch (Exception exception) {
+            HOIIVUtils.openError(exception);
+        }
     }
 }
