@@ -28,6 +28,17 @@ public class SettingsWindowController {
     HashMap<HOIIVUtilsProperties.Settings, String> settings;
 
     public void devMode() {
+        try {
+            if (devModeCheckBox.isSelected()) {
+                settings.put(HOIIVUtilsProperties.Settings.DEV_MODE, "true");
+            }
+            else {
+                settings.put(HOIIVUtilsProperties.Settings.DEV_MODE, "false");
+            }
+        }
+        catch (Exception exception) {
+            HOIIVUtils.openError(exception);
+        }
 
     }
 
@@ -66,8 +77,8 @@ public class SettingsWindowController {
             } else {
                 HOIIVUtilsProperties.saveSettings(settings);
             }
-        } catch (IOException e) {
-            HOIIVUtils.openError(e);
+        } catch (IOException exception) {
+            HOIIVUtils.openError(exception);
         }
     }
 
