@@ -34,6 +34,5 @@ public class MenuWindow {
         stage.setTitle("Hello World");
         stage.setScene((new Scene(root, 600, 400)));
         stage.show();
-        JOptionPane.showMessageDialog(null, "error", "error", JOptionPane.WARNING_MESSAGE);
     }
 }

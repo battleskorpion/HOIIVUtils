@@ -7,6 +7,6 @@
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.menu.SettingsWindowController">
    <children>
       <CheckBox fx:id="devModeCheckBox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#devMode" text="Developer Mode" />
-      <Button fx:id="openMenu" layoutX="274.0" layoutY="361.0" mnemonicParsing="false" onAction="#openMenu" text="Ok" />
+      <Button fx:id="okButton" layoutX="274.0" layoutY="361.0" mnemonicParsing="false" onAction="#openMenu" text="Ok" />
    </children>
 </Pane>
