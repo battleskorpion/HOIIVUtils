@@ -92,7 +92,7 @@ public class HOI4Fixes {
 		settingsWindow.launchSettingsWindow(args);
 	}
 
-	public static void launchMenu(String... args) {
+	public static void openMenu(String... args) {
 		MenuWindow menuWindow = new MenuWindow();
 		try {
 			menuWindow.start(settingsWindow.getStage());
