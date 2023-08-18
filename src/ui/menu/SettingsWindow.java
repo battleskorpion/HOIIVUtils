@@ -15,11 +15,6 @@ public class SettingsWindow extends Application {
     Stage primaryStage;
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("SettingsWindow.fxml"));
-        primaryStage.setTitle("Settings");
-        primaryStage.setScene((new Scene(root, 600, 400)));
-        this.primaryStage = primaryStage;
-
         /* settings */
         String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
         String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "hoi4utils.HOIIVUtils";
@@ -33,6 +28,11 @@ public class SettingsWindow extends Application {
             /* first-time setup */
             HOIIVUtils.firstTimeSetup = true;
         }
+
+        Parent root = FXMLLoader.load(getClass().getResource("SettingsWindow.fxml"));
+        primaryStage.setTitle("Settings");
+        primaryStage.setScene((new Scene(root, 600, 400)));
+        this.primaryStage = primaryStage;
 
 //        Platform.setImplicitExit(false);
         primaryStage.show();

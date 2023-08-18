@@ -40,6 +40,9 @@ public class HOIIVUtilsProperties {
         ;
 
         public static boolean enabled(Settings setting) {
+            if (settingValues.get(setting) == null) {
+                return setting.defaultProperty().equals("true");
+            }
             return settingValues.get(setting).equals("true");
         }
 
@@ -73,7 +76,7 @@ public class HOIIVUtilsProperties {
 
     public HOIIVUtilsProperties() throws IOException {
         String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
-        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "hoi4utils.HOIIVUtils";
+        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
         new File(hoi4UtilsPropertiesPath).mkdir();
         settings_file = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
         settings_file.createNewFile();

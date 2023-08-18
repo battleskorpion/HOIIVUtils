@@ -9,6 +9,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -23,12 +24,19 @@ public class SettingsWindowController {
     public Button browseButton;
     public TextField hoi4ModPathTextField;
     public Button okButton;
+    public Pane pane;
+
     public File selectedDirectory;
-    
+
     HashMap<HOIIVUtilsProperties.Settings, String> settings;
     
     public SettingsWindowController() {
         settings = new HashMap<>();
+    }
+
+    @FXML
+    void initialize() {
+        devModeCheckBox.setSelected(HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE));
     }
     
     private void saveSettings() {
