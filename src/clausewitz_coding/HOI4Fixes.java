@@ -20,6 +20,7 @@ import static settings.HOIIVUtilsProperties.Settings.*;
 public class HOI4Fixes {
 	
 	public static String[] args;
+	public static boolean firstTimeSetup;
 	private static SettingsWindow settingsWindow;
 	
 	public static final String applicationVersion = "2.2";

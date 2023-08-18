@@ -12,7 +12,6 @@ import java.io.File;
 
 public class SettingsWindow extends Application {
     Stage primaryStage;
-    boolean firstTimeSetup;
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("SettingsWindow.fxml"));
@@ -26,11 +25,11 @@ public class SettingsWindow extends Application {
         String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
         if (new File(hoi4UtilsPropertiesPath).exists()) {
             /* standard setup */
-            firstTimeSetup = false;
+            HOI4Fixes.firstTimeSetup = false;
             HOI4Fixes.settings = new HOIIVUtilsProperties();
         } else {
             /* first-time setup */
-            firstTimeSetup = true;
+            HOI4Fixes.firstTimeSetup = true;
         }
     }
 
