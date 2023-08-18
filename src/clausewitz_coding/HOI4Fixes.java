@@ -83,11 +83,7 @@ public class HOI4Fixes {
 			return;
 		}
 
-		// start Init
-		launchSettings();
-	}
-
-	public static void launchSettings() {
+		// Lauches Settings
 		settingsWindow = new SettingsWindow();
 		settingsWindow.launchSettingsWindow(args);
 	}
