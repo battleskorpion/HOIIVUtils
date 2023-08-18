@@ -25,10 +25,4 @@ public class SettingsWindow extends Application {
     public Stage getStage() {
         return this.primaryStage;
     }
-
-    public void closeSettingsWindow() {
-        this.primaryStage.close();
-    }
-
-
 }

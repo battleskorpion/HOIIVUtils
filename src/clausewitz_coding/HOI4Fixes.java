@@ -86,12 +86,16 @@ public class HOI4Fixes {
 		settingsWindow.launchSettingsWindow(args);
 	}
 
+	public static void openError(Exception exception) {
+		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(), JOptionPane.WARNING_MESSAGE);
+	}
+
 	public static void openMenu() {
 		MenuWindow menuWindow = new MenuWindow();
 		try {
 			menuWindow.open();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception exception) {
+			exception.printStackTrace();
 		}
 	}
 
@@ -99,14 +103,14 @@ public class HOI4Fixes {
 
 	}
 
-	public static void closeSettings() {
+/*		public static void closeSettings() {
 		try {
 			settingsWindow.closeSettingsWindow();
 		}
 		catch(NullPointerException exception) {
-			JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(), JOptionPane.WARNING_MESSAGE);
+			openError();
 		}
-	}
+	}*/
 
 	public static boolean usefulData(String data) {
 		if (!data.isEmpty()) {
