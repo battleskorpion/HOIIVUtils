@@ -107,6 +107,7 @@ public class HOIIVUtilsProperties {
             /* if file is empty then write blank settings to new settings file */
             if (!settingReader.hasNext()) {
                 writeBlankSettings();
+                settingReader.close();
                 return;
             }
 
@@ -123,6 +124,7 @@ public class HOIIVUtilsProperties {
                     writeBlankSetting(setting);
                 }
             }
+            settingReader.close();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
