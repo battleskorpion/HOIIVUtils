@@ -30,20 +30,24 @@ public class SettingsWindowController {
     }
 
     public void handleBrowseAction() {
+        try{
         DirectoryChooser directoryChooser = new DirectoryChooser();
         Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
         File selectedDirectory = directoryChooser.showDialog(primaryStage);
+        
+        if (selectedDirectory == null) {
+            return;
+        }
         System.out.println(selectedDirectory.getParentFile());
         System.out.println(selectedDirectory.getName());
         System.out.println(selectedDirectory.getPath());
-        try{
         System.out.println(selectedDirectory.getCanonicalPath());
+        System.out.println(selectedDirectory.getAbsolutePath());
+        System.out.println(selectedDirectory.getTotalSpace());
         }
         catch(Exception exception) {
             HOI4Fixes.openError(exception);
         }
-        System.out.println(selectedDirectory.getAbsolutePath());
-        System.out.println(selectedDirectory.getTotalSpace());
     }
 
     public void hoi4ModFolder() {
