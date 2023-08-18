@@ -26,6 +26,7 @@ public class LocalizerSettings {
                 }
             }
         },
+        DEV_MODE
         ;
 
         public void setMode(boolean b) {
