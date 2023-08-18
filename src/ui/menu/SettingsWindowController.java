@@ -17,8 +17,7 @@ public class SettingsWindowController {
     }
 
     public void openMenu() {
-        Stage primaryStage = (Stage) okButton.getScene().getWindow();
-        primaryStage.close();
+        ((Stage) okButton.getScene().getWindow()).close();
         HOI4Fixes.openMenu();
     }
 }
