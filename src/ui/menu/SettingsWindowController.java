@@ -24,7 +24,9 @@ public class SettingsWindowController {
     }
 
     private void handleBrowseAction() {
-        
+        File selectedDirectory = directoryChooser.showDialog(primaryStage);
+
+        System.out.println(selectedDirectory.getAbsolutePath());
     }
 
     public void openMenu() {
