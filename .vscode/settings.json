@@ -24,19 +24,18 @@
         "io.micrometer.shaded.*"
     ],
     "java.project.explorer.showNonJavaResources": true,
-    "files.autoSave": "onFocusChange",
     "redhat.telemetry.enabled": true,
     "workbench.iconTheme": "vscode-icons",
     "git.decorations.enabled": false,
     "git.confirmSync": false,
-    "git.autofetch": true,
     "git.enableSmartCommit": true,
     "java.configuration.runtimes": [],
     "java.project.exportJar.targetPath": "${workspaceFolder}/out/artifacts/${workspaceFolderBasename}.jar",
-    "workbench.editor.enablePreview": false,
     "ShortcutMenuBar.beautify": false,
     "ShortcutMenuBar.openFilesList": false,
     "ShortcutMenuBar.redo": true,
     "ShortcutMenuBar.toggleActivityBar": true,
-    "ShortcutMenuBar.userButton01Command": "extension.scenebuilder.open-in"
+    "ShortcutMenuBar.userButton01Command": "extension.scenebuilder.open-in",
+    "git.autofetch": true,
+    "git.autofetchPeriod": 45
 }
