@@ -5,12 +5,13 @@ import clausewitz_coding.state.State;
 import fileIO.FileListener.FileAdapter;
 import fileIO.FileListener.FileEvent;
 import fileIO.FileListener.FileWatcher;
+import javafx.scene.control.Button;
+import javafx.stage.Stage;
 import ui.menu.SettingsWindow;
 import ui.menu.MenuWindow;
 import settings.LocalizerSettings;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -101,6 +102,10 @@ public class HOI4Fixes {
 
 	public static void openSettings() {
 
+	}
+
+	public static void closeWindow(Button button) {
+		((Stage) (button.getScene().getWindow())).close();
 	}
 
 /*		public static void closeSettings() {
@@ -239,37 +244,40 @@ public class HOI4Fixes {
 		stateDirWatcher.addListener(new FileAdapter() {
 			@Override
 			public void onCreated(FileEvent event) {
-				System.out.println("State created in states dir");
-				EventQueue.invokeLater(() -> {
-					stateDirWatcher.listenerPerformAction++;
-					File file = event.getFile();
-					State.readState(file);
-					stateDirWatcher.listenerPerformAction--;
-				});
+//				System.out.println("State created in states dir");
+				// todo building view thing
+//				EventQueue.invokeLater(() -> {
+//					stateDirWatcher.listenerPerformAction++;
+//					File file = event.getFile();
+//					State.readState(file);
+//					stateDirWatcher.listenerPerformAction--;
+//				});
 			}
 
 			@Override
 			public void onModified(FileEvent event) {
-				System.out.println("State modified in states dir");
-				EventQueue.invokeLater(() -> {
-					stateDirWatcher.listenerPerformAction++;
-					File file = event.getFile();
-					State.readState(file);
-					System.out.println(State.get(file).getStateInfrastructure().population());
-					System.out.println(State.infrastructureOfStates(State.listFromCountry(new CountryTag("SMA"))));
-					stateDirWatcher.listenerPerformAction--;
-				});
+//				System.out.println("State modified in states dir");
+				// todo building view thing
+//				EventQueue.invokeLater(() -> {
+//					stateDirWatcher.listenerPerformAction++;
+//					File file = event.getFile();
+//					State.readState(file);
+//					System.out.println(State.get(file).getStateInfrastructure().population());
+//					System.out.println(State.infrastructureOfStates(State.listFromCountry(new CountryTag("SMA"))));
+//					stateDirWatcher.listenerPerformAction--;
+//				});
 			}
 
 			@Override
 			public void onDeleted(FileEvent event) {
-				System.out.println("State deleted in states dir");
-				EventQueue.invokeLater(() -> {
-					stateDirWatcher.listenerPerformAction++;
-					File file = event.getFile();
-					State.deleteState(file);
-					stateDirWatcher.listenerPerformAction--;
-				});
+//				System.out.println("State deleted in states dir");
+				// todo building view thing
+//				EventQueue.invokeLater(() -> {
+//					stateDirWatcher.listenerPerformAction++;
+//					File file = event.getFile();
+//					State.deleteState(file);
+//					stateDirWatcher.listenerPerformAction--;
+//				});
 			}
 		}).watch();
 	}
