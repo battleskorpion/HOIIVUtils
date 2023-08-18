@@ -174,6 +174,10 @@ public class HOIIVUtilsProperties {
      * @throws IOException
      */
     public static void saveSettings(HashMap<Settings, String> newSettings) throws IOException {
+        if (newSettings == null) {
+            return;
+        }
+
         settingsWriter = new FileWriter(settings_file, false);		// true = append
         settingsBWriter = new BufferedWriter(settingsWriter);
         settingsPWriter = new PrintWriter(settingsBWriter);
