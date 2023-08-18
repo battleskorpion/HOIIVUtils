@@ -1,17 +1,18 @@
 package ui.menu;
 
-import java.awt.TextField;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+
+import hoi4utils.HOIIVUtils;
 import settings.HOIIVUtilsProperties;
 
 public class SettingsWindowController {
