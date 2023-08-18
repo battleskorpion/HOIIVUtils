@@ -9,8 +9,8 @@ import javafx.stage.Stage;
 public class SettingsWindowController {
     
     @FXML
-    private CheckBox devModeCheckBox;
-    private Button okButton;
+    public CheckBox devModeCheckBox;
+    public Button okButton;
 
     public void devMode() {
 
