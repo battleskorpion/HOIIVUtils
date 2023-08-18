@@ -82,7 +82,7 @@ public class SettingsWindowController {
 
     public void openMenu() {
         saveSettings();
-        HOIIVUtils.closeWindow(okButton);
+        HOIIVUtils.hideWindow(okButton);
         HOIIVUtils.openMenu();
     }
 

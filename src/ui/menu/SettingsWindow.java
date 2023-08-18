@@ -3,6 +3,7 @@ package ui.menu;
 import java.io.File;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -33,6 +34,7 @@ public class SettingsWindow extends Application {
             HOIIVUtils.firstTimeSetup = true;
         }
 
+//        Platform.setImplicitExit(false);
         primaryStage.show();
     }
 
@@ -40,5 +42,14 @@ public class SettingsWindow extends Application {
         super.launch(var0);
     }
 
-    public void open() {primaryStage.show(); }
+    public void open() {
+        if (primaryStage != null) {
+            primaryStage.show();
+        }
+        try {
+            start(new Stage());
+        } catch (Exception exc) {
+            HOIIVUtils.openError(exc);
+        }
+    }
 }

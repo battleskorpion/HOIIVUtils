@@ -106,12 +106,20 @@ public class HOIIVUtils {
 		} catch (Exception exception) {
 			openError(exception);
 		}
-
 	}
 
 	public static void closeWindow(Button button) {
 		try {
 			((Stage) (button.getScene().getWindow())).close();
+		}
+		catch(Exception exception) {
+			openError(exception);
+		}
+	}
+
+	public static void hideWindow(Button button) {
+		try {
+			((Stage) (button.getScene().getWindow())).hide();
 		}
 		catch(Exception exception) {
 			openError(exception);
