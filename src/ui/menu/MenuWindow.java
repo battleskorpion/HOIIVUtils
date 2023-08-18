@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MenuWindow extends Application {
-    private MenuWindow menu;
+    private MenuWindow menuWindow;
 //    private JButton fixFocusLocalizationButton;
 //    private JButton findFocusesWithoutLocalizationButton;
 //    private JButton ideaLocalizationButton;
@@ -23,7 +23,7 @@ public class MenuWindow extends Application {
 //    private JButton GFXButton;
 
     public MenuWindow() {
-        menu = this;
+        menuWindow = this;
     }
 
     @Override
@@ -32,5 +32,9 @@ public class MenuWindow extends Application {
         stage.setTitle("Hello World");
         stage.setScene((new Scene(root, 600, 400)));
         stage.show();
+    }
+
+    public void launchMenuWindow(String[] var0) {
+        super.launch(var0);
     }
 }

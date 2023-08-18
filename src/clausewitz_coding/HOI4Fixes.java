@@ -20,7 +20,9 @@ import static settings.LocalizerSettings.Settings.*;
 
 public class HOI4Fixes {
 	
+	public static String[] args;
 	private static SettingsWindow settingsWindow;
+	private static MenuWindow menuWindow;
 	
 	public static final String applicationVersion = "2.2";
 	public static LocalizerSettings settings;
@@ -35,6 +37,9 @@ public class HOI4Fixes {
 	public static FileWatcher stateDirWatcher;
 
 	public static void main(String[] args) throws IOException {
+
+		HOI4Fixes.args = args;
+
 		/* load settings */
 		settings = new LocalizerSettings(); // loads settings automatically
 
@@ -80,19 +85,47 @@ public class HOI4Fixes {
 		}
 
 		// start Init
-		launchSettings(args);
+		launchSettings();
 	}
 
-	public static void launchSettings(String... args) {
+	public static void launchSettings() {
 		settingsWindow = new SettingsWindow();
 		settingsWindow.launchSettingsWindow(args);
 	}
 
-	public static void launchMenu(String... args) throws Exception {
-		MenuWindow menuWindow = new MenuWindow();
-		menuWindow.start(settingsWindow.getStage());
+	public static void launchMenu() {
+		menuWindow = new MenuWindow();
+		menuWindow.launchMenuWindow(args);
 	}
+
+/*	public static void launchMenu(String... args) {
+		MenuWindow menuWindow = new MenuWindow();
+		try {
+			menuWindow.start(settingsWindow.getStage());
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}*/
 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	public static boolean usefulData(String data) {
 		if (!data.isEmpty()) {
 			if (data.trim().charAt(0) == '#') {
