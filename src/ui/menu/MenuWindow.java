@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import javax.swing.*;
+
 public class MenuWindow {
     private MenuWindow menuWindow;
 //    private JButton fixFocusLocalizationButton;
@@ -32,5 +34,6 @@ public class MenuWindow {
         stage.setTitle("Hello World");
         stage.setScene((new Scene(root, 600, 400)));
         stage.show();
+        JOptionPane.showMessageDialog(null, "error", "error", JOptionPane.WARNING_MESSAGE);
     }
 }
