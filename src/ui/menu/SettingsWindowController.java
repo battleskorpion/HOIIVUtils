@@ -37,6 +37,11 @@ public class SettingsWindowController {
     @FXML
     void initialize() {
         devModeCheckBox.setSelected(HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE));
+
+        String setting = (String) HOIIVUtilsProperties.Settings.MOD_PATH.getSetting();
+        if (!(setting.equals("null"))) {
+            hoi4ModPathTextField.setText(setting);
+        }
     }
     
     private void saveSettings() {

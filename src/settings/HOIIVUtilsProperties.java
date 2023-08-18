@@ -212,7 +212,7 @@ public class HOIIVUtilsProperties {
     }
 
 
-    public static boolean isNull(Settings modDirectory) {
-        return settingValues.get(modDirectory).equals("null");
+    public static boolean isNull(Settings setting) {
+        return settingValues.get(setting).equals("null");
     }
 }
