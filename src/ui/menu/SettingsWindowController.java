@@ -54,7 +54,7 @@ public class SettingsWindowController {
 
     private void updateModPath(File selectedDirectory) {
         hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
-        settings.put(HOIIVUtilsProperties.Settings.ModPath, selectedDirectory.getAbsolutePath());
+        settings.put(HOIIVUtilsProperties.Settings.MOD_PATH, selectedDirectory.getAbsolutePath());
     }
 
     public void loadFolder() {
