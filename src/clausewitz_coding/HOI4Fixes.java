@@ -22,7 +22,6 @@ public class HOI4Fixes {
 	
 	public static String[] args;
 	private static SettingsWindow settingsWindow;
-	private static MenuWindow menuWindow;
 	
 	public static final String applicationVersion = "2.2";
 	public static LocalizerSettings settings;
@@ -93,12 +92,7 @@ public class HOI4Fixes {
 		settingsWindow.launchSettingsWindow(args);
 	}
 
-	public static void launchMenu() {
-		menuWindow = new MenuWindow();
-		menuWindow.launchMenuWindow(args);
-	}
-
-/*	public static void launchMenu(String... args) {
+	public static void launchMenu(String... args) {
 		MenuWindow menuWindow = new MenuWindow();
 		try {
 			menuWindow.start(settingsWindow.getStage());
@@ -106,7 +100,7 @@ public class HOI4Fixes {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-	}*/
+	}
 	
 
 
