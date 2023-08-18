@@ -30,7 +30,7 @@
     "git.confirmSync": false,
     "git.enableSmartCommit": true,
     "java.configuration.runtimes": [],
-    "java.project.exportJar.targetPath": "${workspaceFolder}/out/artifacts/${workspaceFolderBasename}.jar",
+    "java.project.exportJar.targetPath": "${workspaceFolder}/out/artifacts/${workspaceFolderBasename}_jar/${workspaceFolderBasename}.jar",
     "ShortcutMenuBar.beautify": false,
     "ShortcutMenuBar.openFilesList": false,
     "ShortcutMenuBar.redo": true,
