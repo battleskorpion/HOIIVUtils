@@ -62,7 +62,7 @@ public class HOI4Fixes {
 //			hoi4_dir_name = HOIIVUtilsProperties.get(MOD_DIRECTORY);
 //		}
 
-		System.out.println(HOIIVUtilsProperties.get(MOD_DIRECTORY));
+		System.out.println(HOIIVUtilsProperties.get(ModPath));
 		states_folder = "\\history\\states";
 		strat_region_dir = "\\map\\strategicregions";
 		localization_eng_folder = "\\localisation\\english";

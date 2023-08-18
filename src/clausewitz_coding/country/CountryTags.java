@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static settings.HOIIVUtilsProperties.Settings.MOD_DIRECTORY;
+import static settings.HOIIVUtilsProperties.Settings.ModPath;
 
 public class CountryTags extends HOI4Fixes {
 
@@ -18,10 +18,10 @@ public class CountryTags extends HOI4Fixes {
 
 	private static ArrayList<CountryTag> find() throws IOException {
 		country_tags = new ArrayList<CountryTag>();
-		country_tags_folder = new File(HOI4Fixes.settings.get(MOD_DIRECTORY) + "\\common\\country_tags");
+		country_tags_folder = new File(HOI4Fixes.settings.get(ModPath) + "\\common\\country_tags");
 		countries_main_file = new File(country_tags_folder.getPath() + "\\00_countries.txt");
 
-		if(HOI4Fixes.settings.get(MOD_DIRECTORY) == null) {
+		if(HOI4Fixes.settings.get(ModPath) == null) {
 			return null;
 		}
 		if (!country_tags_folder.isDirectory()) {

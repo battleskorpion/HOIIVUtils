@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 //import java.util.Scanner;
 
-import static settings.HOIIVUtilsProperties.Settings.MOD_DIRECTORY;
+import static settings.HOIIVUtilsProperties.Settings.ModPath;
 
 public class FixFocus extends HOI4Fixes {
 
@@ -25,7 +25,7 @@ public class FixFocus extends HOI4Fixes {
 
 	public static boolean addFocusLoc(File focus_file, File loc_file) throws IOException {
 
-		final String hoi4_dir_name = HOI4Fixes.settings.get(MOD_DIRECTORY);
+		final String hoi4_dir_name = HOI4Fixes.settings.get(ModPath);
 
 		// some vars
 		ArrayList<String> focuses_localized = new ArrayList<String>();

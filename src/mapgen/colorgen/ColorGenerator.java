@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 
-import static settings.HOIIVUtilsProperties.Settings.MOD_DIRECTORY;
+import static settings.HOIIVUtilsProperties.Settings.ModPath;
 
 public class ColorGenerator {
     private static BufferedImage colorMap;
@@ -84,7 +84,7 @@ public class ColorGenerator {
     }
 
     private static void findExistingColors() {
-        Parser definitionParser = new Parser(HOIIVUtilsProperties.get(MOD_DIRECTORY)
+        Parser definitionParser = new Parser(HOIIVUtilsProperties.get(ModPath)
                 + "//map//definition.csv");
         Expression[] exps = definitionParser.expression().getAll();
 

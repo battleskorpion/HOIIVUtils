@@ -7,13 +7,13 @@ import clausewitz_coding.localization.LocalizationFile;
 import java.io.*;
 import java.util.ArrayList;
 
-import static settings.HOIIVUtilsProperties.Settings.MOD_DIRECTORY;
+import static settings.HOIIVUtilsProperties.Settings.ModPath;
 
 public class FixIdea extends HOI4Fixes {
 
 	public static boolean addIdeaLoc(File idea_file, File loc_file) throws IOException {
 
-		final String hoi4_dir_name = HOI4Fixes.settings.get(MOD_DIRECTORY);
+		final String hoi4_dir_name = HOI4Fixes.settings.get(ModPath);
 
 		// some vars
 		ArrayList<String> ideas_localized = new ArrayList<String>();
