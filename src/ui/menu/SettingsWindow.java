@@ -1,9 +1,12 @@
 package ui.menu;
 
+import java.io.File;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 public class SettingsWindow extends Application {
@@ -15,6 +18,13 @@ public class SettingsWindow extends Application {
         primaryStage.setScene((new Scene(root, 600, 400)));
         primaryStage.show();
         this.primaryStage = primaryStage;
+    }
+
+    public void open(Stage primaryStage) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File selectedDirectory = directoryChooser.showDialog(primaryStage);
+
+        
     }
 
     public void launchSettingsWindow(String... var0) {

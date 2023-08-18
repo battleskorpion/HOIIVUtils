@@ -10,7 +10,7 @@
    <children>
       <CheckBox fx:id="devModeCheckBox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#devMode" text="Developer Mode" />
       <Button fx:id="okButton" layoutX="274.0" layoutY="361.0" mnemonicParsing="false" onAction="#openMenu" text="Ok" />
-      <Button layoutX="531.0" layoutY="47.0" mnemonicParsing="false" text="Browse" />
+      <Button fx:id="browseButton" layoutX="531.0" layoutY="47.0" mnemonicParsing="false" onAction="#handleBrowseAction" text="Browse" />
       <TextField fx:id="hoi4ModFolderTextFeild" layoutX="117.0" layoutY="47.0" prefHeight="25.0" prefWidth="414.0" />
       <Label fx:id="hoi4ModFolderLabel" layoutX="14.0" layoutY="51.0" text="HOIIV Mod Folder:" />
    </children>

@@ -1,11 +1,13 @@
 package ui.menu;
 
 import java.awt.TextField;
+import java.io.File;
 
 import clausewitz_coding.HOI4Fixes;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.stage.DirectoryChooser;
 import javafx.scene.control.Button;
 
 public class SettingsWindowController {
@@ -19,6 +21,10 @@ public class SettingsWindowController {
     
     public void devMode() {
 
+    }
+
+    private void handleBrowseAction() {
+        
     }
 
     public void openMenu() {
