@@ -1,7 +1,6 @@
 package ui.focus_localization;
 
 import clausewitz_coding.focus.FocusTree;
-import clausewitz_coding.focus.FocusTrees;
 import clausewitz_coding.localization.LocalizationFile;
 
 import javax.swing.*;
@@ -48,7 +47,7 @@ public class UnlocalizedFocusWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        JFrame window = new UnlocalizedFocusWindow(FocusTrees.unlocalizedFocusTrees());
+        JFrame window = new UnlocalizedFocusWindow(FocusTree.unlocalizedFocusTrees());
         window.setVisible(true);
     }
 

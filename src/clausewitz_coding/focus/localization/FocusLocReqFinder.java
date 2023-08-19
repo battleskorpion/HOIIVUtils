@@ -3,7 +3,7 @@ package clausewitz_coding.focus.localization;
 import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.focus.FocusTree;
-import clausewitz_coding.focus.FocusTrees;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -55,11 +55,11 @@ public class FocusLocReqFinder {
 							CountryTag tag = new CountryTag(potentialTag);
 							// System.out.println(potentialTag + " REEEEEE ");
 							/* link loc file to focus file */
-							if (FocusTrees.getdankwizardisfrench(tag) != null) {
-								ArrayList<String> focuses = FocusTrees.getdankwizardisfrench(tag).list();
+							if (FocusTree.getdankwizardisfrench(tag) != null) {
+								ArrayList<String> focuses = FocusTree.getdankwizardisfrench(tag).listFocusNames();
 								if (focuses != null) {
 									if (focuses.contains(locLine.substring(0, locLine.indexOf(":")))) {
-										FocusTrees.getdankwizardisfrench(tag).setLocalization(loc_file);
+										FocusTree.getdankwizardisfrench(tag).setLocalization(loc_file);
 									}
 									// break aa;
 									else {

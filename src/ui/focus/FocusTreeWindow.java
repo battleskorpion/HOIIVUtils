@@ -4,7 +4,6 @@ import hoi4utils.HOIIVUtils;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.focus.Focus;
 import clausewitz_coding.focus.FocusTree;
-import clausewitz_coding.focus.FocusTrees;
 import ddsreader.DDSReader;
 
 import javax.swing.*;
@@ -40,7 +39,7 @@ public class FocusTreeWindow extends JFrame {
 
     public void createUIComponents() {
         try {
-            FocusTree focusTree = FocusTrees.get(new CountryTag("SMA"));
+            FocusTree focusTree = FocusTree.get(new CountryTag("SMA"));
             if (focusTree == null) {
                 focusTree = new FocusTree(new File(HOIIVUtils.hoi4_dir_name + HOIIVUtils.focus_folder + "//massachusetts.txt"));
             }

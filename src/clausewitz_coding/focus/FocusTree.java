@@ -3,6 +3,7 @@ package clausewitz_coding.focus;
 import hoi4utils.HOIIVUtils;
 import clausewitz_coding.localization.LocalizationFile;
 import clausewitz_coding.country.CountryTag;
+import clausewitz_coding.country.CountryTags;
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
 //import settings.LocalizerSettings;
@@ -40,7 +41,7 @@ public final class FocusTree extends HOIIVUtils {
 		minX = 0;
 
 		parse();
-		FocusTrees.add(country(), this);
+		FocusTree.add(country(), this);
 	}
 
 	/**
@@ -56,7 +57,7 @@ public final class FocusTree extends HOIIVUtils {
 		country = tag;
 		focuses = new HashMap<>();
 
-		FocusTrees.add(country(), this);
+		FocusTree.add(country(), this);
 	}
 
 	// public ArrayList<String> find(File focus_file) throws IOException {
@@ -176,7 +177,7 @@ public final class FocusTree extends HOIIVUtils {
 	 * 
 	 * @return
 	 */
-	public ArrayList<String> list() throws IOException {
+	public ArrayList<String> listFocusNames() throws IOException {
 		if (focus_names == null) {
 			return null; // bad :(
 		}
@@ -250,4 +251,103 @@ public final class FocusTree extends HOIIVUtils {
 	public int minX() {
 		return minX;
 	}
+
+    private static final HashMap<CountryTag, FocusTree> focusTrees = new HashMap<>();
+
+    public static HashMap<CountryTag, FocusTree> add(CountryTag tag, FocusTree focusTree) {
+        focusTrees.put(tag, focusTree);
+        return focusTrees;
+    }
+
+    public static FocusTree[] list() {
+        return focusTrees.values().toArray(new FocusTree[0]);
+    }
+
+    /**
+     * Returns focus tree corresponding to the tag, if it exists
+     * @param tag
+     * @return The focus tree, or null if could not be found/not yet created.
+     */
+    public static FocusTree get(CountryTag tag) { return focusTrees.get(tag); }
+    public static FocusTree getdankwizardisfrench(CountryTag tag) {
+        for (FocusTree tree : list()) {
+            assert tree.country() != null;
+            if (tree.country().equals(tag)) {
+                return tree;
+            }
+        }
+
+        return null;
+    }
+
+    public static ArrayList<FocusTree> unlocalizedFocusTrees() {
+        ArrayList<FocusTree> focusTrees = new ArrayList<>();
+
+        for (FocusTree tree : list()) {
+            if (tree.locFile() == null) {
+                focusTrees.add(tree);
+            }
+        }
+
+        return focusTrees;
+    }
+
+    public static ArrayList<FocusTree> partiallyLocalizedFocusTrees() throws IOException {
+        ArrayList<FocusTree> focusTrees = new ArrayList<>();
+
+        // todo may be able to do something else in this function -
+        // todo all focus trees - localized focus trees - unlocalized focus trees
+        for (FocusTree tree : list()) {
+            aa:
+            if (tree.locFile() != null) {
+                Scanner locReader = new Scanner(tree.locFile().getFile());
+                ArrayList<String> focuses = tree.listFocusNames();
+                if (focuses == null) {
+                    break aa;
+                }
+
+                ArrayList<Boolean> localized;
+                while (locReader.hasNext()) {
+                    String locLine = locReader.nextLine();
+                    if (locLine.trim().length() >= 3) {
+                        String potentialTag = locLine.trim().substring(0, 3);
+
+                        if (CountryTags.exists(potentialTag)) {
+
+                        }
+                    }
+                }
+            }
+        }
+        return focusTrees;
+    }
+
+    public static ArrayList<FocusTree> localizedFocusTrees() throws IOException {
+        ArrayList<FocusTree> focusTrees = new ArrayList<>();
+
+        for (FocusTree tree : list()) {
+            aa:
+            if (tree.locFile() != null) {
+                Scanner locReader = new Scanner(tree.locFile().getFile());
+                ArrayList<String> focuses = tree.listFocusNames();
+                if (focuses == null) {
+                    break aa;
+
+                }
+
+                ArrayList<Boolean> localized;
+                while (locReader.hasNext()) {
+                    String locLine = locReader.nextLine();
+                    if (locLine.trim().length() >= 3) {
+                        String potentialTag = locLine.trim().substring(0, 3);
+
+                        if (CountryTags.exists(potentialTag)) {
+
+                        }
+                    }
+                }
+            }
+        }
+        return focusTrees;
+    }
 }

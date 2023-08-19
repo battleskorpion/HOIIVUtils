@@ -2,7 +2,6 @@ package ui.focus_localization;
 
 import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.focus.FocusTree;
-import clausewitz_coding.focus.FocusTrees;
 import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -55,8 +54,8 @@ public class FocusLocalizationWindow extends JFrame {
         partialLocalizedTreeList.setModel(partialLocalizedTreeListModel);
         unlocalizedTreeList.setModel(unlocalizedTreeListModel);
         try {
-            refreshFocusTreeLists(FocusTrees.unlocalizedFocusTrees(), FocusTrees.partiallyLocalizedFocusTrees(),
-                    FocusTrees.localizedFocusTrees());
+            refreshFocusTreeLists(FocusTree.unlocalizedFocusTrees(), FocusTree.partiallyLocalizedFocusTrees(),
+                    FocusTree.localizedFocusTrees());
         } catch (IOException exc) {
             exc.printStackTrace();
             System.exit(-1);
@@ -119,7 +118,7 @@ public class FocusLocalizationWindow extends JFrame {
         if (unlocalizedTreeList.getSelectedIndex() >= 0) {
             ArrayList<FocusTree> focusTrees = new ArrayList<>();
             unlocalizedTreeList.getSelectedValuesList().forEach(tag -> {
-                focusTrees.add(FocusTrees.get(tag));
+                focusTrees.add(FocusTree.get(tag));
             });
             UnlocalizedFocusWindow unlocalizedFocusWindow = new UnlocalizedFocusWindow(focusTrees);
             unlocalizedFocusWindow.setVisible(true);
