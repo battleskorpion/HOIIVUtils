@@ -14,6 +14,8 @@ import javafx.stage.Stage;
 import hoi4utils.HOIIVUtils;
 import settings.HOIIVUtilsProperties;
 
+import static settings.HOIIVUtilsProperties.Settings.MOD_PATH;
+
 public class SettingsWindowController {
     
     HashMap<HOIIVUtilsProperties.Settings, String> settings;
@@ -69,7 +71,7 @@ public class SettingsWindowController {
         }
     }
     
-    private void saveSettings() {
+    private boolean saveSettings() {
         try {
             if (HOIIVUtils.firstTimeSetup) {
                 HOIIVUtils.settings = new HOIIVUtilsProperties(settings);
@@ -77,8 +79,18 @@ public class SettingsWindowController {
                 HOIIVUtilsProperties.saveSettings(settings);
             }
         } catch (IOException exception) {
-            HOIIVUtils.openError(exception);
+            HOIIVUtils.openError("Settings failed to save.");
+            return false;
         }
+
+        String modPath = HOIIVUtilsProperties.get(MOD_PATH);
+        System.out.println(modPath);
+        HOIIVUtils.states_folder = new File(modPath + "\\history\\states");
+        HOIIVUtils.strat_region_dir =  new File(modPath + "\\map\\strategicregions");
+        HOIIVUtils.localization_eng_folder =  new File(modPath + "\\localisation\\english");
+        HOIIVUtils.focus_folder = new File(modPath + "\\common\\national_focus");
+
+        return true;
     }
     
     public void handleBrowseAction() {
@@ -133,7 +145,10 @@ public class SettingsWindowController {
     }
 
     public void openMenu() {
-        saveSettings();
+        boolean settingsSaved = saveSettings();
+        if (!settingsSaved) {
+            return;     // already printed error message
+        }
 
         HOIIVUtils.hideWindow(okButton);
 

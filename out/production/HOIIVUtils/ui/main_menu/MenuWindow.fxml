@@ -27,7 +27,7 @@
    </rowConstraints>
    <children>
       <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#openSettings" text="Settings" GridPane.columnIndex="1" />
-      <Button fx:id="focusLocalizButton" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Focus Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+      <Button fx:id="focusLocalizButton" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openLocalizeFocusTree" prefWidth="400.0" text="Focus Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
       <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Find Focuses without Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
       <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Idea Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
       <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Custom Tooltip Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
