@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-
+/**
+ * This is the FocusTrees files. This file works for multiple FocusTrees instead of one Tree
+ */
 public class FocusTrees extends HOIIVUtils {
     private static final HashMap<CountryTag, FocusTree> focusTrees = new HashMap<>();
 
