@@ -44,6 +44,11 @@ public class HOIIVUtilsProperties {
 		},
 		;
 
+		/**
+		 * Returns if setting is enabled (setting is true).
+		 * @param setting
+		 * @return
+		 */
 		public static boolean enabled(Settings setting) {
 			if (settingValues.get(setting) == null) {
 				return setting.defaultProperty().equals("true");
@@ -51,8 +56,12 @@ public class HOIIVUtilsProperties {
 			return settingValues.get(setting).equals("true");
 		}
 
-		public void setSetting(String set) {
-			settingValues.put(this, String.valueOf(set));
+		/**
+		 * Sets the value of the setting
+		 * @param value
+		 */
+		public void setSetting(String value) {
+			settingValues.put(this, String.valueOf(value));
 			try {
 				saveSettings();
 				if ((boolean)DEV_MODE.getSetting()) {
@@ -107,6 +116,9 @@ public class HOIIVUtilsProperties {
 		}
 	}
 
+	/**
+	 * Reads settings from settings file
+	 */
 	public static void readSettings() {
 		try {
 			Scanner settingReader = new Scanner(settings_file);
@@ -140,6 +152,9 @@ public class HOIIVUtilsProperties {
 
 	}
 
+	/**
+	 * Writes a blank setting to the settings file
+	 */
 	private static void writeBlankSetting(Settings setting) throws IOException {
 		settingsWriter = new FileWriter(settings_file, true);		// true = append
 		settingsBWriter = new BufferedWriter(settingsWriter);
@@ -150,6 +165,9 @@ public class HOIIVUtilsProperties {
 		settingsPWriter.close();
 	}
 
+	/**
+	 * Writes default settings to the settings file
+	 */
 	public static void writeBlankSettings() throws IOException {
 		settingsWriter = new FileWriter(settings_file, false);		// true = append
 		settingsBWriter = new BufferedWriter(settingsWriter);
@@ -165,6 +183,9 @@ public class HOIIVUtilsProperties {
 
 	}
 
+	/**
+	 * Saves setting with specified value
+	 */
 	public static void saveSetting(Settings setting, String settingValue) throws IOException {
 		settingsWriter = new FileWriter(settings_file, false);		// true = append
 		settingsBWriter = new BufferedWriter(settingsWriter);
@@ -179,7 +200,7 @@ public class HOIIVUtilsProperties {
 	}
 
 	/**
-	 * Saves a list of settings, all other settings remain the same.
+	 * Saves a list of settings to settings file, all other settings remain the same.
 	 * @param newSettings list of updated settings to save
 	 * @throws IOException
 	 */
@@ -201,7 +222,7 @@ public class HOIIVUtilsProperties {
 	}
 
 	/**
-	 * Saves all settigns.
+	 * Saves all settings to settings file.
 	 * @throws IOException
 	 */
 	public static void saveSettings() throws IOException {

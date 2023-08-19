@@ -37,12 +37,15 @@ public class SettingsWindow extends Application {
 	private void savedSettings(Stage primaryStage) throws IOException {
 		String hoi4UtilsPropertiesPath = HOIIVUtilsProperties.HOI4UTILS_PROPERTIES_PATH;
 
-		if (new File(hoi4UtilsPropertiesPath + "\\HOIIVUtils_properties").exists()) {
+		if (new File(hoi4UtilsPropertiesPath + "\\HOIIVUtils_properties.txt").exists()) {
 			HOIIVUtils.firstTimeSetup = false;
 
 			HOIIVUtils.settings = new HOIIVUtilsProperties();
 
 			HOIIVUtils.decideScreen(primaryStage);
+			if (HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE)) {
+				System.out.println("Performing standard startup.");
+			}
 		}
 		else {
 			HOIIVUtils.firstTimeSetup = true;
