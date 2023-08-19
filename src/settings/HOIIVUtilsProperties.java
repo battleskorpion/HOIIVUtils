@@ -92,7 +92,7 @@ public class HOIIVUtilsProperties {
 
     public HOIIVUtilsProperties(HashMap<Settings, String> settings) throws IOException {
         String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
-        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "hoi4utils.HOIIVUtils";
+        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
         new File(hoi4UtilsPropertiesPath).mkdir();
         settings_file = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
         boolean newSettingsFileCreated = settings_file.createNewFile();
