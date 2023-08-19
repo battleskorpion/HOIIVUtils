@@ -57,7 +57,7 @@ public class BuildingsByCountryWindow extends JFrame {
             }
 
             @Override
-            public Class getColumnClass(int column) {
+            public Class<?> getColumnClass(int column) {
                 switch (column) {
                     case 0:
                         return String.class;
