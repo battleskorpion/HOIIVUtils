@@ -33,7 +33,7 @@ public class FixFocus extends HOIIVUtils {
 		for (Focus focus : focusTree.focuses())
 		{
 			// if focus id not localized
-			if (!localization.isLocalized(focus.id))
+			if (!localization.isLocalized(focus.id.toString()))
 			{ 
 				// write to loc file 
 				// separate words in focus name
@@ -51,7 +51,7 @@ public class FixFocus extends HOIIVUtils {
 			
 				focusesUnloc.add(focus);
 
-				localization.setLocalization(focus.id, focus_loc);
+				localization.setLocalization(focus.id(), focus_loc);
 				localization.setLocalizationDesc(focus.id + "_desc", "added focus on " + LocalDateTime.now() + " by hoi4localizer.");
 			}
 		}
@@ -63,6 +63,53 @@ public class FixFocus extends HOIIVUtils {
 
 		localization.writeLocalization();
 		return true; 
+	}
+
+	public static boolean addFocusLoc(FocusTree focusTree, FocusLocalizationFile localization) throws IOException {
+		localization.readLocalization();
+
+		/* open the ui */
+//		FocusTreeLocProgress focusLocProgress = new FocusTreeLocProgress(focusTree);
+//		focusLocProgress.setVisible(true);
+		// todo
+
+		String focus_loc;
+
+		ArrayList<Focus> focusesUnloc = new ArrayList<>();
+		assert focusTree.listFocusNames() != null;
+		for (Focus focus : focusTree.focuses())
+		{
+			// if focus id not localized
+			if (!localization.isLocalized(focus.id()))
+			{
+				// write to loc file
+				// separate words in focus name
+				int i = 0;	//counter
+				if (CountryTags.exists(focus.id().substring(0, 3))) {
+					i += 3;
+				}
+
+				// localize focus name
+				focus_loc = titleCapitalize(focus.id().substring(i).replaceAll("_+", " ").trim()); // regex
+
+				// set focus loc
+				focus.setFocusLoc(focus_loc);
+
+
+				focusesUnloc.add(focus);
+
+				localization.setLocalization(focus.id(), focus_loc);
+				localization.setLocalizationDesc(focus.id + "_desc", "added focus on " + LocalDateTime.now() + " by hoi4localizer.");
+			}
+		}
+
+		/* ui */
+//		focusLocProgress.incrementProgressBar();
+//		focusLocProgress.setNumFocusesUnloc(numFocusesUnloc);
+//		focusLocProgress.refreshUnlocFocusesTable(focusesUnloc);
+
+		localization.writeLocalization();
+		return true;
 	}
 
 	// useful lines function

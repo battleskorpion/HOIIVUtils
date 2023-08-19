@@ -11,7 +11,9 @@ public class HOIIVUtilsProperties {
     public static String get(Settings setting) { return settingValues.get(setting); }
 
     public enum Settings {
-        MOD_PATH,
+        MOD_PATH {
+            public String toString() { return (String) getSetting(); }
+        },
         CURRENT_MOD,        // todo not in use
         CIVILIAN_MILITARY_FACTORY_MAX_RATIO,            // ratio for civ/mil factories highlight in buildings view
         DARK_MODE {
@@ -68,6 +70,8 @@ public class HOIIVUtilsProperties {
         public Object getSetting() {
             return settingValues.get(this);
         }
+
+        public String toString() { return null; };
     }
 
     private static File settings_file;

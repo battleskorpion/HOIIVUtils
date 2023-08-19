@@ -118,8 +118,8 @@ public class LocalizationFile extends File {
 //                // comments, etc.
 //                comments.put(line, data);
 //            }
-        reader.close();
         }
+        reader.close();
     }
 
     public void writeLocalization() throws IOException {

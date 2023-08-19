@@ -5,6 +5,8 @@ import clausewitz_coding.code.trigger.Trigger;
 import clausewitz_coding.gfx.Interface;
 import clausewitz_parser.Expression;
 import ddsreader.DDSReader;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import settings.HOIIVUtilsProperties;
 
 import java.awt.*;
@@ -22,9 +24,9 @@ public class Focus {
 
     protected FocusTree focusTree;
     Expression focusExp;
-    protected String id;
-    protected String locName;
-    protected String icon;
+    protected SimpleStringProperty id;
+    protected SimpleStringProperty locName;
+    protected SimpleStringProperty icon;
     protected BufferedImage ddsImage;
     protected Set<Set<Focus>> prerequisite; // can be multiple, but hoi4 code is simply "prerequisite"
     protected Set<Focus> mutually_exclusive;
@@ -46,14 +48,22 @@ public class Focus {
             System.err.println("Error: focus id " + focus_id + " already exists."); // todo throw exception instead
             return;
         }
-        this.id = focus_id;
+        this.id = new SimpleStringProperty(focus_id);
+        this.locName = new SimpleStringProperty();
+
         this.focusTree = focusTree;
         focusIDs.add(focus_id);
     }
 
     public String id() {
-        return id;
+        if (id == null) {
+            return null;
+        }
+        return id.get();
     }
+
+    public SimpleStringProperty idProperty() { return id; }
+    public SimpleStringProperty locNameProperty() { return locName;}
 
     /**
      * if relative, relative x
@@ -128,10 +138,13 @@ public class Focus {
     }
 
     public String locName() {
-        return locName;
+        if (locName == null) {
+            return null;
+        }
+        return locName.get();
     }
 
-    public String icon() {
+    public SimpleStringProperty icon() {
         return icon;
     }
 
@@ -153,7 +166,7 @@ public class Focus {
 
         focusExp = exp.get("focus=");
 
-        setID(exp.getSubexpression(id));
+        setID(exp.getSubexpression(id.get()));
         setXY(focusExp.getImmediate("x="), focusExp.getImmediate("y="));
         setRelativePositionID(focusExp.getSubexpression("relative_position_id="));
         // setFocusLoc();
@@ -168,16 +181,17 @@ public class Focus {
     }
 
     public void setID(String id) {
-        this.id = id;
+        this.id.set(id);
     }
 
     private void setID(Expression exp) {
         if (exp == null) {
             id = null;
+            HOIIVUtils.openError("Expression was null for setting focus ID.");
             return;
         }
 
-        id = exp.getText();
+        id = new SimpleStringProperty(exp.getText());
     }
 
     /**
@@ -237,11 +251,11 @@ public class Focus {
     }
 
     public void setFocusLoc() {
-        setFocusLoc(id);
+        setFocusLoc(id.toString());
     }
 
     public void setFocusLoc(String focus_loc) {
-        this.locName = focus_loc;
+        locName.set(focus_loc);
         // todo?
     }
 
@@ -268,7 +282,7 @@ public class Focus {
             // return;
         }
 
-        this.icon = icon;
+        this.icon = new SimpleStringProperty(icon);
 
         /* dds binary data buffer */
         /* https://github.com/npedotnet/DDSReader */
