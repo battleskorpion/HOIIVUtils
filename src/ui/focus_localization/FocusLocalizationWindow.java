@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class FocusLocalizationWindow extends JFrame {
+public class FocusLocalizationWindow {
 
     public void open(){
         try {
@@ -54,8 +54,8 @@ public class FocusLocalizationWindow extends JFrame {
         partialLocalizedTreeList.setModel(partialLocalizedTreeListModel);
         unlocalizedTreeList.setModel(unlocalizedTreeListModel);
         try {
-            refreshFocusTreeLists(FocusTree.unlocalizedFocusTrees(), FocusTree.partiallyLocalizedFocusTrees(),
-                    FocusTree.localizedFocusTrees());
+            refreshFocusTreeLists(FocusTrees.unlocalizedFocusTrees(), FocusTrees.partiallyLocalizedFocusTrees(),
+                    FocusTrees.localizedFocusTrees());
         } catch (IOException exc) {
             exc.printStackTrace();
             System.exit(-1);
@@ -118,7 +118,7 @@ public class FocusLocalizationWindow extends JFrame {
         if (unlocalizedTreeList.getSelectedIndex() >= 0) {
             ArrayList<FocusTree> focusTrees = new ArrayList<>();
             unlocalizedTreeList.getSelectedValuesList().forEach(tag -> {
-                focusTrees.add(FocusTree.get(tag));
+                focusTrees.add(FocusTrees.get(tag));
             });
             UnlocalizedFocusWindow unlocalizedFocusWindow = new UnlocalizedFocusWindow(focusTrees);
             unlocalizedFocusWindow.setVisible(true);

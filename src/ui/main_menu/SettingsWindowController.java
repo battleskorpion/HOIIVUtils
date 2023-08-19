@@ -35,8 +35,9 @@ public class SettingsWindowController {
     public void tempUpdateSetting(HOIIVUtilsProperties.Settings setting, String property) {
         settings.put(setting, property);
     }
-    
-    public void initialize() {
+
+    @FXML
+    void initialize() {
         devModeCheckBox.setSelected(HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE));
 
         if (!HOIIVUtils.firstTimeSetup) {
@@ -45,6 +46,9 @@ public class SettingsWindowController {
             if (!(setting.equals("null"))) {
                 hoi4ModPathTextField.setText(setting);
             }
+        }
+        else {
+            okButton.setDisable(true);
         }
     }
     
@@ -94,7 +98,7 @@ public class SettingsWindowController {
     }
 
     private void updateModPath(File selectedDirectory) {
-    hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
+        hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
     
         settings.put(HOIIVUtilsProperties.Settings.MOD_PATH, selectedDirectory.getAbsolutePath());
     }
