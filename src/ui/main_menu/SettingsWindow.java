@@ -1,14 +1,15 @@
 package ui.main_menu;
 
-import java.io.File;
-import java.io.IOException;
+import hoi4utils.HOIIVUtils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import settings.HOIIVUtilsProperties;
-import hoi4utils.HOIIVUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -20,11 +21,7 @@ public class SettingsWindow extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
-
-		String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "hoi4utils.HOIIVUtils";
-
-		savedSettings(primaryStage, hoi4UtilsPropertiesPath);
+		savedSettings(primaryStage);
 
 		Parent root = FXMLLoader.load(getClass().getResource("SettingsWindow.fxml"));
 
@@ -37,8 +34,10 @@ public class SettingsWindow extends Application {
 		primaryStage.show();
 	}
 	// ! todo fix
-	private void savedSettings(Stage primaryStage, String hoi4UtilsPropertiesPath) throws IOException {
-		if (new File(hoi4UtilsPropertiesPath).exists()) {
+	private void savedSettings(Stage primaryStage) throws IOException {
+		String hoi4UtilsPropertiesPath = HOIIVUtilsProperties.HOI4UTILS_PROPERTIES_PATH;
+
+		if (new File(hoi4UtilsPropertiesPath + "\\HOIIVUtils_properties").exists()) {
 			HOIIVUtils.firstTimeSetup = false;
 
 			HOIIVUtils.settings = new HOIIVUtilsProperties();

@@ -13,8 +13,6 @@ import java.util.ArrayList;
  */
 public class FixFocus extends HOIIVUtils {
 
-
-
 	public static boolean addFocusLoc(File focus_file, File loc_file) throws IOException {
 
 		//ArrayList<String> focuses_nonlocalized = new ArrayList<String>();
@@ -35,8 +33,8 @@ public class FixFocus extends HOIIVUtils {
 		{
 			// if focus id not localized
 			if (!localization.isLocalized(focus.id.toString()))
-			{ 
-				// write to loc file 
+			{
+				// write to loc file
 				// separate words in focus name
 				int i = 0;	//counter
 				if (CountryTags.exists(focus.id().substring(0, 3))) {
@@ -49,7 +47,7 @@ public class FixFocus extends HOIIVUtils {
 				// set focus loc
 				focus.setNameLocalization(focus_loc);
 
-			
+
 				focusesUnloc.add(focus);
 
 				localization.setLocalization(focus.id(), focus_loc);
@@ -63,7 +61,7 @@ public class FixFocus extends HOIIVUtils {
 //		focusLocProgress.refreshUnlocFocusesTable(focusesUnloc);
 
 		localization.writeLocalization();
-		return true; 
+		return true;
 	}
 
 	/**
