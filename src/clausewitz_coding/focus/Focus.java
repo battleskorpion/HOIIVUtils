@@ -119,7 +119,7 @@ public class Focus {
         if (relative_position_id == null) {
             return position();
         }
-        if (relative_position_id.equals(this.id)) {
+        if (relative_position_id.equals(this.id())) {
             System.err.println("Relative position id same as focus id for " + this);
             return position();
         }
