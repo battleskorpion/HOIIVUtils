@@ -7,7 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-
+/*
+ * FixDupProvinces File
+ */
 public class FixDupProvinces {
 	
 	// removes all duplicate provinces in each file in the directory

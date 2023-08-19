@@ -15,7 +15,9 @@
  */
 
 package ddsreader;
-
+/*
+ * ddsreader File
+ */
 public final class DDSReader {
 	
 	public static final Order ARGB = new Order(16, 8, 0, 24);

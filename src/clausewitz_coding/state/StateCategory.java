@@ -3,10 +3,11 @@ package clausewitz_coding.state;
 import hoi4utils.HOIIVUtils;
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
-
 import java.io.File;
 import java.util.ArrayList;
-
+/*
+ * StateCategory File
+ */
 public class StateCategory {
     private static File state_category_folder = null;         // set by
 

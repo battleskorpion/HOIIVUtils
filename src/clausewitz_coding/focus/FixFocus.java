@@ -3,32 +3,19 @@ package clausewitz_coding.focus;
 import clausewitz_coding.country.CountryTags;
 import hoi4utils.HOIIVUtils;
 import clausewitz_coding.localization.FocusLocalizationFile;
-//import clausewitz_coding.localization.LocalizationFile;
-import settings.HOIIVUtilsProperties;
-
-//import java.io.BufferedWriter;
 import java.io.File;
-//import java.io.FileWriter;
 import java.io.IOException;
-//import java.io.PrintWriter;
-//import java.time.LocalDate;
 import java.time.LocalDateTime;
-//import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-//import java.util.Scanner;
-
-import static settings.HOIIVUtilsProperties.Settings.MOD_PATH;
-
+/*
+ * FixFoucus Documentation
+ */
 public class FixFocus extends HOIIVUtils {
 
-	private static String hoi4_dir_name;
+
 
 	public static boolean addFocusLoc(File focus_file, File loc_file) throws IOException {
 
-		final String hoi4_dir_name = HOIIVUtilsProperties.get(MOD_PATH);
-
-		// some vars
-		ArrayList<String> focuses_localized = new ArrayList<String>();
 		//ArrayList<String> focuses_nonlocalized = new ArrayList<String>();
 		FocusTree focusTree = new FocusTree(focus_file);
 		FocusLocalizationFile localization = new FocusLocalizationFile(loc_file);
@@ -41,9 +28,8 @@ public class FixFocus extends HOIIVUtils {
 
 		String focus_loc;
 
-		int numFocusesUnloc = 0;
 		ArrayList<Focus> focusesUnloc = new ArrayList<>();
-		assert focusTree.list() != null;
+		assert focusTree.listFocusNames() != null;
 		for (Focus focus : focusTree.focuses())
 		{
 			// if focus id not localized
@@ -62,7 +48,7 @@ public class FixFocus extends HOIIVUtils {
 				// set focus loc
 				focus.setFocusLoc(focus_loc);
 
-				numFocusesUnloc++;
+			
 				focusesUnloc.add(focus);
 
 				localization.setLocalization(focus.id, focus_loc);

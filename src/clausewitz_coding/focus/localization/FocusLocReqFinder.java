@@ -3,8 +3,6 @@ package clausewitz_coding.focus.localization;
 import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.focus.FocusTree;
-
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

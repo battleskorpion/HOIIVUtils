@@ -10,15 +10,15 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import ui.main_menu.SettingsWindow;
 import settings.HOIIVUtilsProperties;
-
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import static settings.HOIIVUtilsProperties.Settings.*;
-
+/*
+ * HOIIVUtils File
+ */
 public class HOIIVUtils {
 	
 	public static String[] args;
@@ -88,6 +88,10 @@ public class HOIIVUtils {
 
 	public static void openError(Exception exception) {
 		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(), JOptionPane.WARNING_MESSAGE);
+	}
+
+	public static void openError(String s) {
+		JOptionPane.showMessageDialog(null, s, "HOIIVUtils Error Message", JOptionPane.WARNING_MESSAGE);
 	}
 
 	public static void closeWindow(Button button) {

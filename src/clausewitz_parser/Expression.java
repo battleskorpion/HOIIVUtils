@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import static clausewitz_parser.Parser.usefulData;
-
+/*
+ * Expression File
+ */
 public class Expression {
     private Iterator<String> it;
     String expression;

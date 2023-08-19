@@ -23,6 +23,7 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
       <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#openSettings" text="Settings" GridPane.columnIndex="1" />
@@ -31,10 +32,11 @@
       <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Idea Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
       <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Custom Tooltip Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
       <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="View Buildings" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-      <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Focus Tree View" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
-      <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Generate Province Colors" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
-      <Button disable="true" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Map generation [*]" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+      <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Focus Tree View" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+      <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Generate Province Colors" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+      <Button disable="true" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Map generation [*]" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
       <Button fx:id="statisticsButton" mnemonicParsing="false" onAction="#openStatistics" text="Statistics" GridPane.columnIndex="2" />
+      <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="View GFX" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
    </children>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
