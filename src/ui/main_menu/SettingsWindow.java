@@ -11,6 +11,9 @@ import javafx.stage.Stage;
 import settings.HOIIVUtilsProperties;
 import hoi4utils.HOIIVUtils;
 
+/**
+ * SettingsWindow is the window for the program settings
+ */
 public class SettingsWindow extends Application {
 
     Stage primaryStage;
