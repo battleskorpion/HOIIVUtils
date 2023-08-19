@@ -5,7 +5,6 @@ import hoi4utils.HOIIVUtils;
 import clausewitz_coding.localization.FocusLocalizationFile;
 //import clausewitz_coding.localization.LocalizationFile;
 import settings.HOIIVUtilsProperties;
-import ui.focus_localization.FocusTreeLocProgress;
 
 //import java.io.BufferedWriter;
 import java.io.File;
@@ -36,8 +35,9 @@ public class FixFocus extends HOIIVUtils {
 		localization.readLocalization();
 
 		/* open the ui */
-		FocusTreeLocProgress focusLocProgress = new FocusTreeLocProgress(focusTree);
-		focusLocProgress.setVisible(true);
+//		FocusTreeLocProgress focusLocProgress = new FocusTreeLocProgress(focusTree);
+//		focusLocProgress.setVisible(true);
+		// todo
 
 		String focus_loc;
 
@@ -71,9 +71,9 @@ public class FixFocus extends HOIIVUtils {
 		}
 
 		/* ui */
-		focusLocProgress.incrementProgressBar();
-		focusLocProgress.setNumFocusesUnloc(numFocusesUnloc);
-		focusLocProgress.refreshUnlocFocusesTable(focusesUnloc);
+//		focusLocProgress.incrementProgressBar();
+//		focusLocProgress.setNumFocusesUnloc(numFocusesUnloc);
+//		focusLocProgress.refreshUnlocFocusesTable(focusesUnloc);
 
 		localization.writeLocalization();
 		return true; 
