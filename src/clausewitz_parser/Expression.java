@@ -112,7 +112,7 @@ public class Expression {
      * @implNote Whitespace is removed surrounding "=" when expressions are instantiated.
      */
     public Expression get(String s) {
-        Expression exp = new Expression(s);
+
         if (expression != null && expression.trim().contains(s)) {
             return new Expression(this);        // copy
         }
@@ -135,7 +135,7 @@ public class Expression {
     }
 
     public Expression getImmediate(String s) {
-        Expression exp = new Expression(s);
+
         if (expression != null && expression.trim().contains(s)) {
             return new Expression(this);
         }
@@ -152,7 +152,6 @@ public class Expression {
     }
 
     public Expression getSubexpression(String s) {
-        Expression exp = new Expression(s);
 
         if (subexpressions != null) {
             for (Expression subexp : subexpressions) {
@@ -208,7 +207,6 @@ public class Expression {
     public Expression[] getAll(String s) {
         ArrayList<Expression> expressions = new ArrayList<>();
 
-        Expression exp = new Expression(s);
         if(expression != null && expression.trim().contains(s)) {
             expressions.add(new Expression(this));
         } else if (subexpressions != null) {
@@ -241,7 +239,6 @@ public class Expression {
             s = s.toLowerCase();
             ArrayList<Expression> expressions = new ArrayList<>();
 
-            Expression exp = new Expression(s);
             if(expression != null && expression.trim().toLowerCase().contains(s)) {
                 expressions.add(new Expression(this));
             } else if (subexpressions != null) {

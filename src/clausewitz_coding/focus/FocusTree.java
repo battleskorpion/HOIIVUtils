@@ -26,8 +26,8 @@ public final class FocusTree extends HOIIVUtils {
 	private LocalizationFile locFile = null;
 	private String id;
 	// private Modifier countryModifier;
-	private boolean default_focus;
-	private Point continuous_focus_position;
+	private boolean default_focus; // ! todo Do This
+	private Point continuous_focus_position; // ! todo DO THIS
 	private int minX; // min x of all focuses
 
 	/**

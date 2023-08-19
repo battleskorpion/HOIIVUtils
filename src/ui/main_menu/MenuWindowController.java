@@ -1,6 +1,5 @@
 package ui.main_menu;
 
-import clausewitz_coding.focus.Focus;
 import clausewitz_coding.focus.FocusTree;
 import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
@@ -48,7 +47,7 @@ public class MenuWindowController {
         }
 
         try {
-            FocusTree focusTree = new FocusTree(selectedDirectory);
+            FocusTree focustree = new FocusTree(selectedDirectory);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
