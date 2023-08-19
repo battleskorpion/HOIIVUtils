@@ -308,7 +308,7 @@ public final class FocusTree extends HOIIVUtils {
                     break aa;
                 }
 
-                ArrayList<Boolean> localized;
+                //ArrayList<Boolean> localized; Commited out till Skorp fixes this
                 while (locReader.hasNext()) {
                     String locLine = locReader.nextLine();
                     if (locLine.trim().length() >= 3) {
@@ -337,7 +337,7 @@ public final class FocusTree extends HOIIVUtils {
 
                 }
 
-                ArrayList<Boolean> localized;
+                //ArrayList<Boolean> localized; Commited out till Skorp fixies this
                 while (locReader.hasNext()) {
                     String locLine = locReader.nextLine();
                     if (locLine.trim().length() >= 3) {
