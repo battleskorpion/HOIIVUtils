@@ -1,6 +1,7 @@
 package ui.focus;
 
 import hoi4utils.HOIIVUtils;
+import settings.HOIIVUtilsProperties;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -20,7 +21,7 @@ public class FocusTreeStrength extends JFrame {
                 super.mouseClicked(e);
                 /* focus file */
                 {
-                    JFileChooser j = new JFileChooser(HOIIVUtils.settings.get(MOD_PATH) + HOIIVUtils.focus_folder);
+                    JFileChooser j = new JFileChooser(HOIIVUtilsProperties.get(MOD_PATH) + HOIIVUtils.focus_folder);
                     j.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     j.setDialogTitle("Select Focus File");
 //                    int opt = j.showOpenDialog(null);
