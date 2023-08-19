@@ -253,7 +253,7 @@ public class Expression {
             }
 
             // if none found return null
-            if (expressions.size() == 0) {
+            if (expressions.isEmpty()) {
                 return null;
             }
 
@@ -276,7 +276,7 @@ public class Expression {
         }
 
         // if none found return null
-        if (expressions.size() == 0) {
+        if (expressions.isEmpty()) {
             return null;
         }
 

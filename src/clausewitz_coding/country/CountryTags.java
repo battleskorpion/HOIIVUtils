@@ -1,6 +1,7 @@
 package clausewitz_coding.country;
 
 import hoi4utils.HOIIVUtils;
+import settings.HOIIVUtilsProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,10 +19,10 @@ public class CountryTags extends HOIIVUtils {
 
 	private static ArrayList<CountryTag> find() throws IOException {
 		country_tags = new ArrayList<CountryTag>();
-		country_tags_folder = new File(HOIIVUtils.settings.get(MOD_PATH) + "\\common\\country_tags");
+		country_tags_folder = new File(HOIIVUtilsProperties.get(MOD_PATH) + "\\common\\country_tags");
 		countries_main_file = new File(country_tags_folder.getPath() + "\\00_countries.txt");
 
-		if(HOIIVUtils.settings.get(MOD_PATH) == null) {
+		if(HOIIVUtilsProperties.get(MOD_PATH) == null) {
 			return null;
 		}
 		if (!country_tags_folder.isDirectory()) {

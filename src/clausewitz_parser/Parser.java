@@ -91,7 +91,7 @@ public class Parser {
     /**
      * Find all instances of the expression s in expressions of parsed file, ignore capitalization option
      * @param s
-     * @param b
+     * @param matchCase
      * @return
      */
     public Expression[] findAll(String s, boolean matchCase) {

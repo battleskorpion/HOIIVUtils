@@ -7,6 +7,7 @@ import clausewitz_parser.Parser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import static hoi4utils.HOIIVUtils.usefulData;
 
@@ -69,7 +70,7 @@ public abstract class Idea {
 			}
 		}
 
-		if (ideas.size() == 0) {
+		if (ideas.isEmpty()) {
 			return null;
 		}
 		return ideas;
@@ -92,7 +93,6 @@ public abstract class Idea {
 		int idea_list_index; // index of idea name in string
 		Parser ideaParser = new Parser(idea_file);
 		Expression[] data = ideaParser.findAll();
-
 		for (Expression exp : data) {
 			String s = exp.getText();
 			if (s == null) {

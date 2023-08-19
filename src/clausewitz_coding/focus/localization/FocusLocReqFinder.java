@@ -84,17 +84,4 @@ public class FocusLocReqFinder {
 
 		return true;
 	}
-
-	// todo is this necessary here
-	private static boolean usefulData(String data) {
-		if (!data.isEmpty()) {
-			if (data.trim().charAt(0) == '#') {
-				return false;
-			} else {
-				return true;
-			}
-		} else {
-			return false;
-		}
-	}
 }
