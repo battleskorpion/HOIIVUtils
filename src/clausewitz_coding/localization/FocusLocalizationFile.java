@@ -1,9 +1,11 @@
 package clausewitz_coding.localization;
 
 import java.io.*;
+import java.nio.file.FileSystemException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.io.IOException;
 
 import hoi4utils.HOIIVUtils;
 /**
@@ -13,7 +15,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 
     protected List<Localization[]> focusLocalizationList;
 
-    public FocusLocalizationFile(File file) {
+    public FocusLocalizationFile(File file) throws IOException {
         super(file);
 
         focusLocalizationList = new ArrayList<>();

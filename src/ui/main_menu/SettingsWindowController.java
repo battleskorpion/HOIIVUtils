@@ -3,7 +3,6 @@ package ui.main_menu;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -12,7 +11,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-
 import hoi4utils.HOIIVUtils;
 import settings.HOIIVUtilsProperties;
 

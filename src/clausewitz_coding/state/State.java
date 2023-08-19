@@ -42,7 +42,7 @@ public class State {
         int civilianFactories = 0;
         int militaryFactories = 0;
         int dockyards = 0;
-        // int navalPorts = 0; has a province location
+        int navalPorts = 0; //has a province location
         int airfields = 0;
         int aluminum = 0;
         int chromium = 0;
