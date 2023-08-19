@@ -33,6 +33,7 @@
       </TableView>
       <Label fx:id="focusTreeNameLabel" prefWidth="63.0" GridPane.columnIndex="1" />
       <Label GridPane.rowIndex="2" />
+      <Label text="Added localization to x focuses" GridPane.rowIndex="2" />
    </children>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
