@@ -119,7 +119,7 @@ https://adoptium.net/
     JavaFX Introduction and Setup:
 https://openjfx.io/openjfx-docs/#introduction
 
-    JavaFX download:
+    JavaFX Library Files download:
 https://gluonhq.com/products/javafx/
 
     JavaFX .fxml file GUI Scene Builder:
