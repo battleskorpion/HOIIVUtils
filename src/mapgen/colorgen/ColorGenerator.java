@@ -2,7 +2,6 @@ package mapgen.colorgen;
 
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
-import mapgen.Province;
 import settings.HOIIVUtilsProperties;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -110,7 +109,7 @@ public class ColorGenerator {
 
 			/* data -> colors (parse csv line) */
 			String[] data = s.split(";");
-			Province province = new Province(Integer.parseInt(data[0]));
+//			Province province = new Province(Integer.parseInt(data[0]));
 			int r = Integer.parseInt(data[1]);
 			int g = Integer.parseInt(data[2]);
 			int b = Integer.parseInt(data[3]);

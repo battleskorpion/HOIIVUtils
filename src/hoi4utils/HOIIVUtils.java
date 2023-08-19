@@ -20,7 +20,7 @@ import static settings.HOIIVUtilsProperties.Settings.*;
 * HOIIVUtils File
 */
 public class HOIIVUtils {
-	public static final String hoi4utilsVersion = "version 0.2.19";
+	public static final String hoi4utilsVersion = "version 0.2.16";
 	
 	public static String hoi4_dir_name;
 	public static File focus_folder;
