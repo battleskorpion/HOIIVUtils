@@ -23,10 +23,10 @@ public class HOIIVUtils {
 	public static final String hoi4utilsVersion = "version" + " " + "0.2.32";
 	
 	public static String hoi4_dir_name;
-	public static String focus_folder;
-	public static String states_folder;
-	public static String strat_region_dir;
-	public static String localization_eng_folder;
+	public static File focus_folder;
+	public static File states_folder;
+	public static File strat_region_dir;
+	public static File localization_eng_folder;
 
 	public static String[] args;
 
@@ -72,12 +72,6 @@ public class HOIIVUtils {
 //		} else {
 //			hoi4_dir_name = HOIIVUtilsProperties.get(MOD_DIRECTORY);
 //		}
-
-		System.out.println(HOIIVUtilsProperties.get(MOD_PATH));
-		states_folder = "\\history\\states";
-		strat_region_dir = "\\map\\strategicregions";
-		localization_eng_folder = "\\localisation\\english";
-		focus_folder = "\\common\\national_focus";
 
 		/* init 
 		StateCategory.loadStateCategories();

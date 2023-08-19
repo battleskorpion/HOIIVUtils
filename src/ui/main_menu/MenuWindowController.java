@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import settings.HOIIVUtilsProperties;
 import ui.focus_localization.FocusLocalizationWindow;
 
 import java.io.File;
@@ -44,6 +45,7 @@ public class MenuWindowController {
         FocusTree focusTree;
         try{
             FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(HOIIVUtils.focus_folder);
             Stage stage = (Stage) (focusLocalizButton.getScene().getWindow());
             selectedFile = fileChooser.showOpenDialog(stage);
 
@@ -68,6 +70,7 @@ public class MenuWindowController {
         FocusLocalizationFile focusLocFile;
         try{
             FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(HOIIVUtils.localization_eng_folder);
             Stage stage = (Stage) (focusLocalizButton.getScene().getWindow());
             selectedFile = fileChooser.showOpenDialog(stage);
 

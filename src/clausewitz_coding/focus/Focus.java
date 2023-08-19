@@ -5,6 +5,8 @@ import clausewitz_coding.code.trigger.Trigger;
 import clausewitz_coding.gfx.Interface;
 import clausewitz_parser.Expression;
 import ddsreader.DDSReader;
+import settings.HOIIVUtilsProperties;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
@@ -276,7 +278,7 @@ public class Focus {
             FileInputStream fis;
             if (gfx == null) {
                 System.err.println("GFX was not found for " + icon);
-                fis = new FileInputStream(HOIIVUtils.hoi4_dir_name + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+                fis = new FileInputStream(HOIIVUtilsProperties.Settings.MOD_PATH + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
             } else {
                 fis = new FileInputStream(Interface.getGFX(icon));
             }
