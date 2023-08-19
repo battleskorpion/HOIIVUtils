@@ -30,7 +30,7 @@ public class FocusTreeDetailsWindow extends JFrame {
         getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
         pack();
 
-        focusNameJLabel.setText(focus.locName());
+        focusNameJLabel.setText(focus.nameLocalization());
         focusIDJLabel.setText(focus.id());
         StringBuilder details = new StringBuilder();
         details.append("\n");
@@ -43,7 +43,7 @@ public class FocusTreeDetailsWindow extends JFrame {
                 details.append("Requires one of the following: \n");
                 details.append("- ");
                 for (Focus f : prereqSet) {
-                    details.append(f.locName());
+                    details.append(f.nameLocalization());
                     details.append("\n");
                 }
             } else {

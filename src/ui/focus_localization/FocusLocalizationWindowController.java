@@ -95,7 +95,7 @@ public class FocusLocalizationWindowController {
         numLocAddedLabel.setText("Added localization to " + numLocalizedFocuses + " focuses");
 
         focusIDColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty());
-        focusNameColumn.setCellValueFactory(cellData -> cellData.getValue().locNameProperty());
+        focusNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameLocalizationProperty());
         focusDescColumn.setCellValueFactory(cellData -> cellData.getValue().descLocalizationProperty());
 
         focusListTable.setItems(focusTree.listFocuses());

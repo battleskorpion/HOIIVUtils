@@ -27,8 +27,9 @@
       <Label GridPane.rowIndex="1" />
       <TableView fx:id="focusListTable" maxWidth="1.7976931348623157E308" minHeight="100.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
         <columns>
-          <TableColumn fx:id="focusIDColumn" prefWidth="206.0" text="C1" />
-          <TableColumn fx:id="focusNameColumn" prefWidth="221.0" text="C2" />
+          <TableColumn fx:id="focusIDColumn" prefWidth="200.0" text="C1" />
+          <TableColumn fx:id="focusNameColumn" prefWidth="200.0" text="C2" />
+            <TableColumn fx:id="focusDescColumn" prefWidth="200.0" text="Column X" />
         </columns>
       </TableView>
       <Label fx:id="focusTreeNameLabel" prefWidth="63.0" GridPane.columnIndex="1" />

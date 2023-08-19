@@ -226,10 +226,10 @@ public class FocusTreeWindow extends JFrame {
                         g2d.drawImage(focus.getDDSImage(), x1, y1, null);
 
                         String name;
-                        if (focus.locName() == null) {
+                        if (focus.nameLocalization() == null) {
                             name = focus.id();
                         } else {
-                            name = focus.locName();
+                            name = focus.nameLocalization();
                         }
                         g2d.drawString(name, x1, y1 + yAdj2);
 

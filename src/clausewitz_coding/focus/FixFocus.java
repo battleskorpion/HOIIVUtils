@@ -77,6 +77,7 @@ public class FixFocus extends HOIIVUtils {
 		localization.readLocalization();
 
 		String focus_loc;
+		String focus_loc_desc;
 
 		ArrayList<Focus> focusesUnloc = new ArrayList<>();
 		assert focusTree.listFocusNames() != null;
@@ -94,16 +95,16 @@ public class FixFocus extends HOIIVUtils {
 
 				// localize focus name
 				focus_loc = titleCapitalize(focus.id().substring(i).replaceAll("_+", " ").trim()); // regex
-				focus_loc_desc = focus.id + "_desc", "added focus on " + LocalDateTime.now() + " by hoi4localizer.";
+				focus_loc_desc = "added focus on " + LocalDateTime.now() + " by hoi4localizer.";
 
 				// set focus loc
 				focus.setNameLocalization(focus_loc);
-				focus.setLocDesc(focus_loc_desc);
+				focus.setDescLocalization(focus_loc_desc);
 
 				focusesUnloc.add(focus);
 
 				localization.setLocalization(focus.id(), focus_loc);
-				localization.setLocalizationDesc();
+				localization.setLocalizationDesc(focus.id() + "_desc", focus_loc_desc);
 			}
 		}
 

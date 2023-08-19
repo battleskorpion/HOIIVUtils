@@ -264,6 +264,11 @@ public class Focus {
      * @param focus_loc
      */
     public void setNameLocalization(String focus_loc) {
+        if (nameLocalization == null) {
+            nameLocalization = new Localization(id(), focus_loc, Localization.Status.DEFAULT);
+            return;
+        }
+
         String id = nameLocalization.ID();
         Localization.Status status;
 
@@ -282,13 +287,59 @@ public class Focus {
 
     /**
      * Sets name localization with a specific status. Only use if specifying status is necessary.
-     * @param focus_loc
+     * @param text
      * @param status
      */
-    public void setNameLocalization(String focus_loc, Localization.Status status) {
+    public void setNameLocalization(String text, Localization.Status status) {
+        if (nameLocalization == null) {
+            nameLocalization = new Localization(id(), text, status);
+            return;
+        }
+
         String id = nameLocalization.ID();
 
-        nameLocalization = new Localization(id, focus_loc, status);
+        nameLocalization = new Localization(id, text, status);
+    }
+    public ObservableValue<String> nameLocalizationProperty() {
+        return new SimpleStringProperty(nameLocalization());
+    }
+
+    public ObservableValue<String> descLocalizationProperty() {
+        return new SimpleStringProperty(descLocalization());
+    }
+
+    public void setDescLocalization(Localization localization) {
+        descLocalization = localization;
+    }
+
+    public void setDescLocalization(String text) {
+        if (descLocalization == null) {
+            descLocalization = new Localization(id() + "_desc", text, Localization.Status.DEFAULT);
+            return;
+        }
+
+        String id = descLocalization.ID();
+        Localization.Status status;
+
+        if (descLocalization.status() == Localization.Status.NEW)
+        {
+            status = Localization.Status.NEW;
+        }
+        else {
+            // including if nameLocalization.status() == Localization.Status.DEFAULT, itll now be updated
+            status = Localization.Status.UPDATED;
+        }
+
+        descLocalization = new Localization(id, text, status);
+        // todo?
+    }
+
+    public String descLocalization() {
+        return descLocalization.text();
+    }
+
+    public Localization getDescLocalization() {
+        return descLocalization;
     }
 
     // todo implement icon lookup
@@ -496,19 +547,5 @@ public class Focus {
         return cost * FOCUS_COST_FACTOR;
     }
 
-    public ObservableValue<String> descLocalizationProperty() {
-        return new SimpleStringProperty(descLocalization());
-    }
 
-    public void setLocDesc(Localization localization) {
-        descLocalization = localization;
-    }
-
-    public String descLocalization() {
-        return descLocalization.text();
-    }
-
-    public Localization getDescLocalization() {
-        return descLocalization;
-    }
 }
