@@ -26,8 +26,8 @@ public final class FocusTree extends HOIIVUtils {
 	private LocalizationFile locFile = null;
 	private String id;
 	// private Modifier countryModifier;
-	private boolean default_focus;
-	private Point continuous_focus_position;
+	private boolean default_focus; // ! todo Do This
+	private Point continuous_focus_position; // ! todo DO THIS
 	private int minX; // min x of all focuses
 
 	/**
@@ -313,7 +313,7 @@ public final class FocusTree extends HOIIVUtils {
                     break aa;
                 }
 
-                ArrayList<Boolean> localized;
+                //ArrayList<Boolean> localized; Commited out till Skorp fixes this
                 while (locReader.hasNext()) {
                     String locLine = locReader.nextLine();
                     if (locLine.trim().length() >= 3) {
@@ -342,7 +342,7 @@ public final class FocusTree extends HOIIVUtils {
 
                 }
 
-                ArrayList<Boolean> localized;
+                //ArrayList<Boolean> localized; Commited out till Skorp fixies this
                 while (locReader.hasNext()) {
                     String locLine = locReader.nextLine();
                     if (locLine.trim().length() >= 3) {

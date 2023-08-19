@@ -3,8 +3,6 @@ package clausewitz_coding.focus.localization;
 import clausewitz_coding.country.CountryTags;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.focus.FocusTree;
-
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +18,7 @@ public class FocusLocReqFinder {
 		File localization_dir = new File(hoi4_dir + "\\localisation\\english");
 
 		String focus_loc_pathname = hoi4_dir + "\\localisation\\english\\focus_";
-		ArrayList<File> focus_loc_files = new ArrayList<>();
+		ArrayList<File> focus_loc_files = new ArrayList<>(); //! todo why is this even here???
 
 		CountryTags.list(); // make sure country tags are generated
 

@@ -1,6 +1,5 @@
 package ui.main_menu;
 
-import clausewitz_coding.focus.Focus;
 import clausewitz_coding.focus.FocusTree;
 import clausewitz_coding.localization.FocusLocalizationFile;
 import hoi4utils.HOIIVUtils;
