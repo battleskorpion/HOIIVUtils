@@ -3,7 +3,9 @@ package clausewitz_coding.localization;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-
+/**
+ * This is the reader localization file.
+ */
 public class reader {
 
     public static void main(String[] args) throws FileNotFoundException {
