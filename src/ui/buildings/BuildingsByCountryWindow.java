@@ -1,6 +1,10 @@
 package ui.buildings;
 
 import hoi4utils.HOIIVUtils;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import clausewitz_coding.state.buildings.Infrastructure;
 import clausewitz_coding.state.buildings.Resources;
 import clausewitz_coding.country.CountryTag;
@@ -23,6 +27,26 @@ import java.util.ArrayList;
 import static hoi4utils.HOIIVUtils.stateDirWatcher;
 
 public class BuildingsByCountryWindow extends JFrame {
+
+    public void open() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("BuildingsByCountryWindow.fxml"));
+
+            Stage stage = new Stage();
+
+            stage.setTitle("HOIIVUtils Buildings by Country");
+
+            stage.setScene((new Scene(root)));
+
+            HOIIVUtils.decideScreen(stage);
+            
+            stage.show();
+        }
+        catch (Exception exception) {
+            HOIIVUtils.openError(exception);
+        }
+    }
+    
     private JPanel BuildingsByCountryWindowJPanel;
     private JTable buildingsTable;
     private DefaultTableModel buildingsTableModel;

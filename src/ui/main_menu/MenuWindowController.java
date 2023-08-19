@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import settings.HOIIVUtilsProperties;
 import ui.focus_localization.FocusLocalizationWindow;
 
 import java.io.File;
