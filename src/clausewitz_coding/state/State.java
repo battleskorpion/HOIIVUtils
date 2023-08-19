@@ -7,12 +7,13 @@ import hoi4utils.HOIIVUtils;
 import clausewitz_coding.state.buildings.Infrastructure;
 import clausewitz_coding.state.buildings.Resources;
 import clausewitz_coding.country.CountryTag;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+/*
+ * Loads HOI 4 State File
+ */
 public class State {
     /* static */
     private static final ArrayList<State> states = new ArrayList<>();

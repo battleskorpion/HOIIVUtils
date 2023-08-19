@@ -1,7 +1,9 @@
 package clausewitz_coding.state;
 
 import clausewitz_coding.country.CountryTag;
-
+/*
+ * Owner File
+ */
 public record Owner (CountryTag tag) {
 
     /**

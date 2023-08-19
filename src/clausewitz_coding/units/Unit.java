@@ -2,10 +2,11 @@ package clausewitz_coding.units;
 
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
-
 import java.io.File;
 import java.util.ArrayList;
-
+/*
+ * Unit File
+ */
 public class Unit {
     public static ArrayList<Unit> units;
     int maxOrganization;

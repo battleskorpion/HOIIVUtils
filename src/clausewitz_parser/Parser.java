@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/*
+ * Parser File
+ */
 public class Parser {
     private final Expression fileExpressions;
 
