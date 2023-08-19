@@ -82,6 +82,8 @@ public class FocusLocalizationWindowController {
         }
         this.focusLocFile = focusLocFile;
 
+        /* add focus loc */
+        focusLocFile.readLocalization();
         try {
             numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
         } catch (IOException e) {
