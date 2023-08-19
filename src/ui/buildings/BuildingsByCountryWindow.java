@@ -1,28 +1,33 @@
 package ui.buildings;
 
 import hoi4utils.HOIIVUtils;
-import clausewitz_coding.state.buildings.Infrastructure;
-import clausewitz_coding.state.buildings.Resources;
-import clausewitz_coding.country.CountryTag;
-import clausewitz_coding.country.CountryTags;
-import clausewitz_coding.state.State;
-import fileIO.FileListener.FileAdapter;
-import fileIO.FileListener.FileEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-import javax.swing.*;
-import javax.swing.table.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
+public class BuildingsByCountryWindow {
 
-import static hoi4utils.HOIIVUtils.stateDirWatcher;
+    public void open() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("BuildingsByCountryWindow.fxml"));
 
-public class BuildingsByCountryWindow extends JFrame {
+            Stage stage = new Stage();
+
+            stage.setTitle("HOIIVUtils Buildings by Country");
+
+            stage.setScene((new Scene(root)));
+
+            HOIIVUtils.decideScreen(stage);
+            
+            stage.show();
+        }
+        catch (Exception exception) {
+            HOIIVUtils.openError(exception);
+        }
+    }
+}
+/*     
     private JPanel BuildingsByCountryWindowJPanel;
     private JTable buildingsTable;
     private DefaultTableModel buildingsTableModel;
@@ -201,7 +206,7 @@ public class BuildingsByCountryWindow extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
 
-        /* file listener */
+        /* file listener *//*
         stateDirWatcher.addListener(new FileAdapter() {
             @Override
             public void onCreated(FileEvent event) {
@@ -469,4 +474,4 @@ public class BuildingsByCountryWindow extends JFrame {
             return cellComponent;
         }
     }
-}
+}*/
