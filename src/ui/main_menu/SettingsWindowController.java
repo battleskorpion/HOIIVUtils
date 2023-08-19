@@ -46,6 +46,9 @@ public class SettingsWindowController {
                 hoi4ModPathTextField.setText(setting);
             }
         }
+        else {
+            okButton.setDisable(true);
+        }
     }
     
     public void devMode() {
@@ -94,7 +97,7 @@ public class SettingsWindowController {
     }
 
     private void updateModPath(File selectedDirectory) {
-    hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
+        hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
     
         settings.put(HOIIVUtilsProperties.Settings.MOD_PATH, selectedDirectory.getAbsolutePath());
     }
