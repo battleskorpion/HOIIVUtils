@@ -1,4 +1,4 @@
-package ui.menu;
+package ui.main_menu;
 
 import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXMLLoader;
