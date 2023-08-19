@@ -28,9 +28,9 @@ public class SettingsWindow extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("SettingsWindow.fxml"));
 
-        primaryStage.setTitle("Settings");
+        primaryStage.setTitle("HOIIVUtils Settings");
 
-        primaryStage.setScene((new Scene(root, 600, 400)));
+        primaryStage.setScene((new Scene(root)));
 
         this.primaryStage = primaryStage;
 

@@ -38,6 +38,7 @@
     "ShortcutMenuBar.userButton01Command": "",
     "git.autofetch": true,
     "git.autofetchPeriod": 45,
+    "ShortcutMenuBar.userButton04Command": "workbench.action.reopenClosedEditor",
     "ShortcutMenuBar.userButton06Command": "extension.scenebuilder.open-in",
     "ShortcutMenuBar.userButton09Command": "commitMsg.autofill, git.commitAll, git.sync",
     "gitlens.graph.minimap.dataType": "lines",
