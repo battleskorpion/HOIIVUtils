@@ -2,10 +2,11 @@ package clausewitz_coding.tooltip;
 
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
-
 import java.io.File;
 import java.util.ArrayList;
-
+/*
+ * CustomTooltip File
+ */
 public class CustomTooltip {
     String tooltipID;
     public static ArrayList<CustomTooltip> tooltips;

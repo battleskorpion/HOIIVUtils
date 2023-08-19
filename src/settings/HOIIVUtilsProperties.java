@@ -3,7 +3,9 @@ package settings;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
-
+/*
+ * HOI 4 Util Properties File
+ */
 public class HOIIVUtilsProperties {
 
     public static String get(Settings setting) { return settingValues.get(setting); }

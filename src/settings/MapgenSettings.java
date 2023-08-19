@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import hoi4utils.HOIIVUtils;
-
+/*
+ * MapgenSettings File
+ */
 public class MapgenSettings {
 
     public String get(Settings setting) { return settingValues.get(setting); }

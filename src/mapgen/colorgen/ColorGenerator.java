@@ -3,7 +3,6 @@ package mapgen.colorgen;
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
 import settings.HOIIVUtilsProperties;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -14,10 +13,21 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
-
 import static settings.HOIIVUtilsProperties.Settings.MOD_PATH;
-
+/*
+ * ColorGenerator/Type/Order
+ */
 public class ColorGenerator {
+    public enum ColorGenOrder {
+        DEFAULT,                    // as generated
+        CHROMANUMERICALLY,          // order of int representing color
+        REVERSE_CHROMANUMERICALLY, HUE,  // reverse order of int representing color
+    }
+    public enum ColorGenType {
+        EQUAL_DISTRIBUTION,     // r, g, b generated separately
+        UNIFORM_DISTRIBUTION,   // r, g, b generated from one value
+        TEMP_1
+    }
     private static BufferedImage colorMap;
     private static HashSet<Color> existingColors;
     private static HashSet<Color> colors;
