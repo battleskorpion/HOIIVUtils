@@ -8,7 +8,8 @@ import java.util.Scanner;
  */
 public class HOIIVUtilsProperties {
 
-	public static String get(Settings setting) { return settingValues.get(setting); }
+	public static final String USER_DOCS_PATH = System.getProperty("user.home") + File.separator + "Documents";
+	public static final String HOI4UTILS_PROPERTIES_PATH = USER_DOCS_PATH + File.separator + "HOIIVUtils";
 
 	public enum Settings {
 		MOD_PATH {
@@ -81,10 +82,8 @@ public class HOIIVUtilsProperties {
 	private static HashMap<Settings, String> settingValues = new HashMap<>();
 
 	public HOIIVUtilsProperties() throws IOException {
-		String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
-		String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
-		new File(hoi4UtilsPropertiesPath).mkdir();
-		settings_file = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
+		new File(HOI4UTILS_PROPERTIES_PATH).mkdir();
+		settings_file = new File(HOI4UTILS_PROPERTIES_PATH + File.separator + "HOIIVUtils_properties.txt");
 		settings_file.createNewFile();
 
 		readSettings();
@@ -217,6 +216,7 @@ public class HOIIVUtilsProperties {
 		settingsPWriter.close();
 	}
 
+	public static String get(Settings setting) { return settingValues.get(setting); }
 
 	public static boolean isNull(Settings setting) {
 		return settingValues.get(setting).equals("null");

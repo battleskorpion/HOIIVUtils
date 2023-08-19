@@ -91,7 +91,7 @@ public class FocusLocalizationWindowController {
 			return;
 		}
 	}
-	
+
 	@FXML
 	void initialize() {
 		numLocAddedLabel.setText("Added localization to " + numLocalizedFocuses + " focuses");
