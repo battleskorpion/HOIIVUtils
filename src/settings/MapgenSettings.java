@@ -94,8 +94,4 @@ public class MapgenSettings {
         settingsPWriter.close();
     }
 
-    public boolean isNull(HOIIVUtilsProperties.Settings modDirectory) {
-        return settingValues.get(modDirectory).equals("null");
-    }
-
 }
