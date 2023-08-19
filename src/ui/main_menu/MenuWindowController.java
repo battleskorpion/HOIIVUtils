@@ -5,7 +5,6 @@ import clausewitz_coding.localization.FocusLocalizationFile;
 import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import settings.HOIIVUtilsProperties;
