@@ -1,5 +1,7 @@
 package ui.focus_localization;
 
+import clausewitz_coding.focus.FocusTree;
+import clausewitz_coding.localization.FocusLocalizationFile;
 import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,6 +9,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class FocusLocalizationWindow {
+    private final FocusTree focusTree;
+    private final FocusLocalizationFile focusLocFile;
+
+    public FocusLocalizationWindow(FocusTree focusTree, FocusLocalizationFile focusLocFile) {
+        this.focusTree = focusTree;
+        this.focusLocFile = focusLocFile;
+    }
 
     public void open(){
         try {

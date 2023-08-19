@@ -1,10 +1,12 @@
 package ui.main_menu;
 
 import clausewitz_coding.focus.FocusTree;
+import clausewitz_coding.localization.FocusLocalizationFile;
 import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ui.focus_localization.FocusLocalizationWindow;
 
@@ -29,13 +31,16 @@ public class MenuWindowController {
     }
 
     public void openLocalizeFocusTree() {
-        File selectedDirectory;
-        try{
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            Stage stage = (Stage) (focusLocalizButton.getScene().getWindow());
-            selectedDirectory = directoryChooser.showDialog(stage);
+        File selectedFile;
 
-            if (selectedDirectory == null) {
+        /* choose focus tree */
+        FocusTree focusTree;
+        try{
+            FileChooser fileChooser = new FileChooser();
+            Stage stage = (Stage) (focusLocalizButton.getScene().getWindow());
+            selectedFile = fileChooser.showOpenDialog(stage);
+
+            if (selectedFile == null) {
                 HOIIVUtils.openError("Selected directory was null.");
                 return;
             }
@@ -43,16 +48,41 @@ public class MenuWindowController {
         }
         catch(Exception exception) {
             HOIIVUtils.openError(exception);
-            return; 
+            return;
         }
-
         try {
-            FocusTree focustree = new FocusTree(selectedDirectory);
+            focusTree = new FocusTree(selectedFile);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            HOIIVUtils.openError(e);
+            return;
         }
 
-        FocusLocalizationWindow localizationWindow = new FocusLocalizationWindow();
+        /* choose localization file */
+        FocusLocalizationFile focusLocFile;
+        try{
+            FileChooser fileChooser = new FileChooser();
+            Stage stage = (Stage) (focusLocalizButton.getScene().getWindow());
+            selectedFile = fileChooser.showOpenDialog(stage);
+
+            if (selectedFile == null) {
+                HOIIVUtils.openError("Selected directory was null.");
+                return;
+            }
+
+        }
+        catch(Exception exception) {
+            HOIIVUtils.openError(exception);
+            return;
+        }
+        try {
+            focusLocFile = new FocusLocalizationFile(selectedFile);
+        } catch (IOException e) {
+            HOIIVUtils.openError(e);
+            return;
+        }
+
+        /* open focus loc window */
+        FocusLocalizationWindow localizationWindow = new FocusLocalizationWindow(focusTree, focusLocFile);
         localizationWindow.open();
     }
 }
