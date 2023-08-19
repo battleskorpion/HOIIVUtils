@@ -31,8 +31,6 @@ public class FocusLocalizationWindow extends JFrame {
         }
     }
 
-
-
     private JPanel FocusLoqReqJPanel;
 
     private DefaultListModel<CountryTag> localizedTreeListModel;
