@@ -9,7 +9,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
-import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -18,41 +17,32 @@ import settings.HOIIVUtilsProperties;
 
 public class SettingsWindowController {
     
+    HashMap<HOIIVUtilsProperties.Settings, String> settings;
+
     @FXML
     public CheckBox devModeCheckBox;
     public Label hoi4ModFolderLabel;
     public Button browseButton;
     public TextField hoi4ModPathTextField;
     public Button okButton;
-    public Pane pane;
 
     public File selectedDirectory;
-
-    HashMap<HOIIVUtilsProperties.Settings, String> settings;
     
     public SettingsWindowController() {
         settings = new HashMap<>();
     }
-
-    @FXML
-    void initialize() {
+    
+    public void tempUpdateSetting(HOIIVUtilsProperties.Settings setting, String property) {
+        settings.put(setting, property);
+    }
+    
+    public void initialize() {
         devModeCheckBox.setSelected(HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE));
 
         String setting = (String) HOIIVUtilsProperties.Settings.MOD_PATH.getSetting();
+
         if (!(setting.equals("null"))) {
             hoi4ModPathTextField.setText(setting);
-        }
-    }
-    
-    private void saveSettings() {
-        try {
-            if (HOIIVUtils.firstTimeSetup) {
-                HOIIVUtils.settings = new HOIIVUtilsProperties(settings);
-            } else {
-                HOIIVUtilsProperties.saveSettings(settings);
-            }
-        } catch (IOException exception) {
-            HOIIVUtils.openError(exception);
         }
     }
     
@@ -69,10 +59,23 @@ public class SettingsWindowController {
             HOIIVUtils.openError(exception);
         }
     }
-
+    
+    private void saveSettings() {
+        try {
+            if (HOIIVUtils.firstTimeSetup) {
+                HOIIVUtils.settings = new HOIIVUtilsProperties(settings);
+            } else {
+                HOIIVUtilsProperties.saveSettings(settings);
+            }
+        } catch (IOException exception) {
+            HOIIVUtils.openError(exception);
+        }
+    }
+    
     public void handleBrowseAction() {
         try{
             DirectoryChooser directoryChooser = new DirectoryChooser();
+
             Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
 
             selectedDirectory = directoryChooser.showDialog(primaryStage);
@@ -89,18 +92,16 @@ public class SettingsWindowController {
     }
 
     private void updateModPath(File selectedDirectory) {
-        hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
+    hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
+    
         settings.put(HOIIVUtilsProperties.Settings.MOD_PATH, selectedDirectory.getAbsolutePath());
     }
 
     public void openMenu() {
-        MenuWindow menuWindow = new MenuWindow();
         saveSettings();
+
+        MenuWindow menuWindow = new MenuWindow();
+
         menuWindow.open();
-    }
-
-
-    public void tempUpdateSetting(HOIIVUtilsProperties.Settings setting, String property) {
-        settings.put(setting, property);
     }
 }
