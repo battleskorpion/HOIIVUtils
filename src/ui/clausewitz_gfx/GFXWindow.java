@@ -58,7 +58,7 @@ public class GFXWindow extends JFrame {
             }
 
             @Override
-            public Class getColumnClass(int column) {
+            public Class<?> getColumnClass(int column) {
                 switch (column) {
                     case 0:
                         return BufferedImage.class;
