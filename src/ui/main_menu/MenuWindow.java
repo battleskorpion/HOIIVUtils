@@ -7,29 +7,29 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MenuWindow {
-    Stage primaryStage;
+	Stage primaryStage;
 
-    public void open(){
-        try {
-            if (primaryStage != null) {
-                primaryStage.show();
-            }
-            else {
-                Parent root = FXMLLoader.load(getClass().getResource("MenuWindow.fxml"));
-                
-                Stage primaryStage = new Stage();
+	public void open(){
+		try {
+			if (primaryStage != null) {
+				primaryStage.show();
+			}
+			else {
+				Parent root = FXMLLoader.load(getClass().getResource("MenuWindow.fxml"));
+				
+				Stage primaryStage = new Stage();
 
-                primaryStage.setTitle("HOIIVUtils Menu");
+				primaryStage.setTitle("HOIIVUtils Menu");
 
-                primaryStage.setScene((new Scene(root)));
+				primaryStage.setScene((new Scene(root)));
 
-                HOIIVUtils.decideScreen(primaryStage);
-                
-                primaryStage.show();
-            }
-        }
-        catch (Exception exception) {
-            HOIIVUtils.openError(exception);
-        }
-    }
+				HOIIVUtils.decideScreen(primaryStage);
+				
+				primaryStage.show();
+			}
+		}
+		catch (Exception exception) {
+			HOIIVUtils.openError(exception);
+		}
+	}
 }

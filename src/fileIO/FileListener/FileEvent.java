@@ -6,11 +6,11 @@ import java.util.EventObject;
  * FileEvent File
  */
 public class FileEvent extends EventObject {
-    public FileEvent(File file) {
-        super(file);
-    }
+	public FileEvent(File file) {
+		super(file);
+	}
 
-    public File getFile() {
-        return (File) getSource();
-    }
+	public File getFile() {
+		return (File) getSource();
+	}
 }

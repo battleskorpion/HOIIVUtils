@@ -38,9 +38,9 @@ public class FixIdea extends HOIIVUtils {
 //				idea_loc += titleCapitalize(idea.ideaID.substring(i, idea.ideaID.length()).replaceAll("_+", " ").trim()); // regex
 //				idea_loc += "\"";
 //				locPWriter.println("");
-//				locPWriter.println("    " + idea_loc); 									// NO TAB, YML PREFERS SPACES
+//				locPWriter.println("	" + idea_loc); 									// NO TAB, YML PREFERS SPACES
 //				// add blank desc line:
-//				locPWriter.println("    " + idea + "_desc" + loc_key + " " + "\"" + "\""); // NO TAB, YML PREFERS SPACES
+//				locPWriter.println("	" + idea + "_desc" + loc_key + " " + "\"" + "\""); // NO TAB, YML PREFERS SPACES
 //				System.out.println("added idea to loc, idea " + idea_loc);
 			}
 		}

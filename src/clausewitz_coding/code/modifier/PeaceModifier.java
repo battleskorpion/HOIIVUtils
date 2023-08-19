@@ -1,18 +1,18 @@
 package clausewitz_coding.code.modifier;
 
 public class PeaceModifier implements Modifier {
-    public PeaceModifier() {
+	public PeaceModifier() {
 
-//        super(Scope.peace);
-    }
+//		super(Scope.peace);
+	}
 
-    @Override
-    public Scope getScope() {
-        return Scope.peace;
-    }
+	@Override
+	public Scope getScope() {
+		return Scope.peace;
+	}
 
-    public enum modifiers {
-        annex_cost_factor,
-        puppet_cost_factor,
-    }
+	public enum modifiers {
+		annex_cost_factor,
+		puppet_cost_factor,
+	}
 }

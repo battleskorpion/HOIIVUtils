@@ -11,9 +11,9 @@ package clausewitz_coding.code.scope;
  * <a href="https://hoi4.paradoxwikis.com/Scopes">Hoi4 Wiki</a>
  */
 public enum ScopeTargetType {
-    COUNTRY,
-    STATE,
-    CHARACTER,
-    DIVISION,
-    ANY
+	COUNTRY,
+	STATE,
+	CHARACTER,
+	DIVISION,
+	ANY
 }

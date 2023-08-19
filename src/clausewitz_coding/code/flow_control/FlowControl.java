@@ -7,15 +7,15 @@ package clausewitz_coding.code.flow_control;
  * <a href="https://hoi4.paradoxwikis.com/Triggers">Hoi4 Wiki</a>
  */
 public class FlowControl {
-    public FlowControl() {
+	public FlowControl() {
 
-    }
+	}
 
-//    public enum FlowControlType {
-//        AND,
-//        OR,
-//        NOT,
-//        count_triggers,
-//        if
-//    }
+//	public enum FlowControlType {
+//		AND,
+//		OR,
+//		NOT,
+//		count_triggers,
+//		if
+//	}
 }

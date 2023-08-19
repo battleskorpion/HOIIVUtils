@@ -33,17 +33,17 @@ Mesa Component Licenses
 
 
 
-Component         Location               License
+Component		 Location			   License
 ------------------------------------------------------------------
-Launcher Mesa code    src/mesa/              MIT
-Device drivers    src/mesa/drivers/*     MIT, generally
+Launcher Mesa code	src/mesa/			  MIT
+Device drivers	src/mesa/drivers/*	 MIT, generally
 
-Gallium code      src/gallium/           MIT
+Gallium code	  src/gallium/		   MIT
 
-Ext headers       GL/glext.h             Khronos
-                  GL/glxext.h            Khronos
-                  GL/wglext.h            Khronos
-                  KHR/khrplatform.h      Khronos
+Ext headers	   GL/glext.h			 Khronos
+				  GL/glxext.h			Khronos
+				  GL/wglext.h			Khronos
+				  KHR/khrplatform.h	  Khronos
 
 *****************************************************************************
 

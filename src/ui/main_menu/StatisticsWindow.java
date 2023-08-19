@@ -8,22 +8,22 @@ import javafx.stage.Stage;
 
 public class StatisticsWindow {
 
-    public void open() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("StatisticsWindow.fxml"));
+	public void open() {
+		try {
+			Parent root = FXMLLoader.load(getClass().getResource("StatisticsWindow.fxml"));
 
-            Stage stage = new Stage();
+			Stage stage = new Stage();
 
-            stage.setTitle("HOIIVUtils Statistics");
+			stage.setTitle("HOIIVUtils Statistics");
 
-            stage.setScene((new Scene(root)));
+			stage.setScene((new Scene(root)));
 
-            HOIIVUtils.decideScreen(stage);
-            
-            stage.show();
-        }
-        catch (Exception exception) {
-            HOIIVUtils.openError(exception);
-        }
-    }
+			HOIIVUtils.decideScreen(stage);
+			
+			stage.show();
+		}
+		catch (Exception exception) {
+			HOIIVUtils.openError(exception);
+		}
+	}
 }

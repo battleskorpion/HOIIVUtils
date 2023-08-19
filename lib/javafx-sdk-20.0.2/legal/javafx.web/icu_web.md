@@ -85,7 +85,7 @@ property of their respective owners.
 
 Chinese/Japanese Word Break Dictionary Data (cjdict.txt)
 
- #     The Google Chrome software developed by Google is licensed under
+ #	 The Google Chrome software developed by Google is licensed under
  # the BSD license. Other software included in this distribution is
  # provided under other licenses, as set forth below.
  #
@@ -129,12 +129,12 @@ Chinese/Japanese Word Break Dictionary Data (cjdict.txt)
  # corpora.
  #
  #  * Libtabe (Chinese)
- #    - https://sourceforge.net/project/?group_id=1519
- #    - Its license terms and conditions are shown below.
+ #	- https://sourceforge.net/project/?group_id=1519
+ #	- Its license terms and conditions are shown below.
  #
  #  * IPADIC (Japanese)
- #    - http://chasen.aist-nara.ac.jp/chasen/distribution.html
- #    - Its license terms and conditions are shown below.
+ #	- http://chasen.aist-nara.ac.jp/chasen/distribution.html
+ #	- Its license terms and conditions are shown below.
  #
  #  ---------COPYING.libtabe ---- BEGIN--------------------
  #
@@ -173,8 +173,8 @@ Chinese/Japanese Word Break Dictionary Data (cjdict.txt)
  #
  #  /*
  #   * Copyright (c) 1999 Computer Systems and Communication Lab,
- #   *                    Institute of Information Science, Academia
- #       *                    Sinica. All rights reserved.
+ #   *					Institute of Information Science, Academia
+ #	   *					Sinica. All rights reserved.
  #   *
  #   * Redistribution and use in source and binary forms, with or without
  #   * modification, are permitted provided that the following conditions
@@ -206,7 +206,7 @@ Chinese/Japanese Word Break Dictionary Data (cjdict.txt)
  #   */
  #
  #  Copyright 1996 Chih-Hao Tsai @ Beckman Institute,
- #      University of Illinois
+ #	  University of Illinois
  #  c-tsai4@uiuc.edu  http://casper.beckman.uiuc.edu/~c-tsai4
  #
  #  ---------------COPYING.libtabe-----END--------------------------------
@@ -299,7 +299,7 @@ Lao Word Break Dictionary Data (laodict.txt)
  # Project: https://github.com/rober42539/lao-dictionary
  # Dictionary: https://github.com/rober42539/lao-dictionary/laodict.txt
  # License: https://github.com/rober42539/lao-dictionary/LICENSE.txt
- #          (copied below)
+ #		  (copied below)
  #
  #	This file is derived from the above dictionary version of Nov 22, 2020
  #  ----------------------------------------------------------------------
@@ -337,7 +337,7 @@ Burmese Word Break Dictionary Data (burmesedict.txt)
  #  and others. All Rights Reserved.
  #
  #  This list is part of a project hosted at:
- #    github.com/kanyawtech/myanmar-karen-word-lists
+ #	github.com/kanyawtech/myanmar-karen-word-lists
  #
  #  --------------------------------------------------------------------------
  #  Copyright (c) 2013, LeRoy Benjamin Sharon
@@ -352,9 +352,9 @@ Burmese Word Break Dictionary Data (burmesedict.txt)
  #  disclaimer in the documentation and/or other materials provided
  #  with the distribution.
  #
- #    Neither the name Myanmar Karen Word Lists, nor the names of its
- #    contributors may be used to endorse or promote products derived
- #    from this software without specific prior written permission.
+ #	Neither the name Myanmar Karen Word Lists, nor the names of its
+ #	contributors may be used to endorse or promote products derived
+ #	from this software without specific prior written permission.
  #
  #  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
  #  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -382,19 +382,19 @@ Database section 7.
 
  # 7.  Database Ownership
  #
- #    The TZ database itself is not an IETF Contribution or an IETF
- #    document.  Rather it is a pre-existing and regularly updated work
- #    that is in the public domain, and is intended to remain in the
- #    public domain.  Therefore, BCPs 78 [RFC5378] and 79 [RFC3979] do
- #    not apply to the TZ Database or contributions that individuals make
- #    to it.  Should any claims be made and substantiated against the TZ
- #    Database, the organization that is providing the IANA
- #    Considerations defined in this RFC, under the memorandum of
- #    understanding with the IETF, currently ICANN, may act in accordance
- #    with all competent court orders.  No ownership claims will be made
- #    by ICANN or the IETF Trust on the database or the code.  Any person
- #    making a contribution to the database or code waives all rights to
- #    future claims in that contribution or in the TZ Database.
+ #	The TZ database itself is not an IETF Contribution or an IETF
+ #	document.  Rather it is a pre-existing and regularly updated work
+ #	that is in the public domain, and is intended to remain in the
+ #	public domain.  Therefore, BCPs 78 [RFC5378] and 79 [RFC3979] do
+ #	not apply to the TZ Database or contributions that individuals make
+ #	to it.  Should any claims be made and substantiated against the TZ
+ #	Database, the organization that is providing the IANA
+ #	Considerations defined in this RFC, under the memorandum of
+ #	understanding with the IETF, currently ICANN, may act in accordance
+ #	with all competent court orders.  No ownership claims will be made
+ #	by ICANN or the IETF Trust on the database or the code.  Any person
+ #	making a contribution to the database or code waives all rights to
+ #	future claims in that contribution or in the TZ Database.
 
 ----------------------------------------------------------------------
 
@@ -405,15 +405,15 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-      copyright notice, this list of conditions and the following
-      disclaimer in the documentation and/or other materials provided
-      with the distribution.
-    * Neither the name of Google Inc. nor the names of its
-      contributors may be used to endorse or promote products derived
-      from this software without specific prior written permission.
+	* Redistributions of source code must retain the above copyright
+	  notice, this list of conditions and the following disclaimer.
+	* Redistributions in binary form must reproduce the above
+	  copyright notice, this list of conditions and the following
+	  disclaimer in the documentation and/or other materials provided
+	  with the distribution.
+	* Neither the name of Google Inc. nor the names of its
+	  contributors may be used to endorse or promote products derived
+	  from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT

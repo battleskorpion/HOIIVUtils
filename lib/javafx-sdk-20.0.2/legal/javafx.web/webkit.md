@@ -172,8 +172,8 @@ Copyright (C) 2007-2008 Julien Chaffraix <jchaffraix@webkit.org>
 Copyright (C) 2012 Intel Corporation
 Copyright (C) 1984-2006
 
-                  GNU LESSER GENERAL PUBLIC LICENSE
-                       Version 2.1, February 1999
+				  GNU LESSER GENERAL PUBLIC LICENSE
+					   Version 2.1, February 1999
 
  Copyright (C) 1991, 1999 Free Software Foundation, Inc.
  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -184,7 +184,7 @@ Copyright (C) 1984-2006
  as the successor of the GNU Library Public License, version 2, hence
  the version number 2.1.]
 
-                            Preamble
+							Preamble
 
   The licenses for most software are designed to take away your
 freedom to share and change it.  By contrast, the GNU General Public
@@ -286,7 +286,7 @@ modification follow.  Pay close attention to the difference between a
 former contains code derived from the library, whereas the latter must
 be combined with the library in order to run.
 
-                  GNU LESSER GENERAL PUBLIC LICENSE
+				  GNU LESSER GENERAL PUBLIC LICENSE
    TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
   0. This License Agreement applies to any software library or other
@@ -338,28 +338,28 @@ of it, thus forming a work based on the Library, and copy and
 distribute such modifications or work under the terms of Section 1
 above, provided that you also meet all of these conditions:
 
-    a) The modified work must itself be a software library.
+	a) The modified work must itself be a software library.
 
-    b) You must cause the files modified to carry prominent notices
-    stating that you changed the files and the date of any change.
+	b) You must cause the files modified to carry prominent notices
+	stating that you changed the files and the date of any change.
 
-    c) You must cause the whole of the work to be licensed at no
-    charge to all third parties under the terms of this License.
+	c) You must cause the whole of the work to be licensed at no
+	charge to all third parties under the terms of this License.
 
-    d) If a facility in the modified Library refers to a function or a
-    table of data to be supplied by an application program that uses
-    the facility, other than as an argument passed when the facility
-    is invoked, then you must make a good faith effort to ensure that,
-    in the event an application does not supply such function or
-    table, the facility still operates, and performs whatever part of
-    its purpose remains meaningful.
+	d) If a facility in the modified Library refers to a function or a
+	table of data to be supplied by an application program that uses
+	the facility, other than as an argument passed when the facility
+	is invoked, then you must make a good faith effort to ensure that,
+	in the event an application does not supply such function or
+	table, the facility still operates, and performs whatever part of
+	its purpose remains meaningful.
 
-    (For example, a function in a library to compute square roots has
-    a purpose that is entirely well-defined independent of the
-    application.  Therefore, Subsection 2d requires that any
-    application-supplied function or table used by this function must
-    be optional: if the application does not supply it, the square
-    root function must still compute square roots.)
+	(For example, a function in a library to compute square roots has
+	a purpose that is entirely well-defined independent of the
+	application.  Therefore, Subsection 2d requires that any
+	application-supplied function or table used by this function must
+	be optional: if the application does not supply it, the square
+	root function must still compute square roots.)
 
 These requirements apply to the modified work as a whole.  If
 identifiable sections of that work are not derived from the Library,
@@ -457,37 +457,37 @@ copyright notice for the Library among them, as well as a reference
 directing the user to the copy of this License.  Also, you must do one
 of these things:
 
-    a) Accompany the work with the complete corresponding
-    machine-readable source code for the Library including whatever
-    changes were used in the work (which must be distributed under
-    Sections 1 and 2 above); and, if the work is an executable linked
-    with the Library, with the complete machine-readable "work that
-    uses the Library", as object code and/or source code, so that the
-    user can modify the Library and then relink to produce a modified
-    executable containing the modified Library.  (It is understood
-    that the user who changes the contents of definitions files in the
-    Library will not necessarily be able to recompile the application
-    to use the modified definitions.)
+	a) Accompany the work with the complete corresponding
+	machine-readable source code for the Library including whatever
+	changes were used in the work (which must be distributed under
+	Sections 1 and 2 above); and, if the work is an executable linked
+	with the Library, with the complete machine-readable "work that
+	uses the Library", as object code and/or source code, so that the
+	user can modify the Library and then relink to produce a modified
+	executable containing the modified Library.  (It is understood
+	that the user who changes the contents of definitions files in the
+	Library will not necessarily be able to recompile the application
+	to use the modified definitions.)
 
-    b) Use a suitable shared library mechanism for linking with the
-    Library.  A suitable mechanism is one that (1) uses at run time a
-    copy of the library already present on the user's computer system,
-    rather than copying library functions into the executable, and (2)
-    will operate properly with a modified version of the library, if
-    the user installs one, as long as the modified version is
-    interface-compatible with the version that the work was made with.
+	b) Use a suitable shared library mechanism for linking with the
+	Library.  A suitable mechanism is one that (1) uses at run time a
+	copy of the library already present on the user's computer system,
+	rather than copying library functions into the executable, and (2)
+	will operate properly with a modified version of the library, if
+	the user installs one, as long as the modified version is
+	interface-compatible with the version that the work was made with.
 
-    c) Accompany the work with a written offer, valid for at
-    least three years, to give the same user the materials
-    specified in Subsection 6a, above, for a charge no more
-    than the cost of performing this distribution.
+	c) Accompany the work with a written offer, valid for at
+	least three years, to give the same user the materials
+	specified in Subsection 6a, above, for a charge no more
+	than the cost of performing this distribution.
 
-    d) If distribution of the work is made by offering access to copy
-    from a designated place, offer equivalent access to copy the above
-    specified materials from the same place.
+	d) If distribution of the work is made by offering access to copy
+	from a designated place, offer equivalent access to copy the above
+	specified materials from the same place.
 
-    e) Verify that the user has already received a copy of these
-    materials or that you have already sent this user a copy.
+	e) Verify that the user has already received a copy of these
+	materials or that you have already sent this user a copy.
 
   For an executable, the required form of the "work that uses the
 Library" must include any data and utility programs needed for
@@ -511,14 +511,14 @@ library, provided that the separate distribution of the work based on
 the Library and of the other library facilities is otherwise
 permitted, and provided that you do these two things:
 
-    a) Accompany the combined library with a copy of the same work
-    based on the Library, uncombined with any other library
-    facilities.  This must be distributed under the terms of the
-    Sections above.
+	a) Accompany the combined library with a copy of the same work
+	based on the Library, uncombined with any other library
+	facilities.  This must be distributed under the terms of the
+	Sections above.
 
-    b) Give prominent notice with the combined library of the fact
-    that part of it is a work based on the Library, and explaining
-    where to find the accompanying uncombined form of the same work.
+	b) Give prominent notice with the combined library of the fact
+	that part of it is a work based on the Library, and explaining
+	where to find the accompanying uncombined form of the same work.
 
   8. You may not copy, modify, sublicense, link with, or distribute
 the Library except as expressly provided under this License.  Any
@@ -606,7 +606,7 @@ decision will be guided by the two goals of preserving the free status
 of all derivatives of our free software and of promoting the sharing
 and reuse of software generally.
 
-                            NO WARRANTY
+							NO WARRANTY
 
   15. BECAUSE THE LIBRARY IS LICENSED FREE OF CHARGE, THERE IS NO
 WARRANTY FOR THE LIBRARY, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
@@ -629,9 +629,9 @@ FAILURE OF THE LIBRARY TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
 SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGES.
 
-                     END OF TERMS AND CONDITIONS
+					 END OF TERMS AND CONDITIONS
 
-           How to Apply These Terms to Your New Libraries
+		   How to Apply These Terms to Your New Libraries
 
   If you develop a new library, and you want it to be of the greatest
 possible use to the public, we recommend making it free software that
@@ -644,22 +644,22 @@ safest to attach them to the start of each source file to most effectively
 convey the exclusion of warranty; and each file should have at least the
 "copyright" line and a pointer to where the full notice is found.
 
-    <one line to give the library's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
+	<one line to give the library's name and a brief idea of what it does.>
+	Copyright (C) <year>  <name of author>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+	You should have received a copy of the GNU Lesser General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 Also add information on how to contact you by electronic and paper mail.
 
@@ -697,83 +697,83 @@ Mozilla Public License Version 2.0
 --------------
 
 1.1. "Contributor"
-    means each individual or legal entity that creates, contributes to
-    the creation of, or owns Covered Software.
+	means each individual or legal entity that creates, contributes to
+	the creation of, or owns Covered Software.
 
 1.2. "Contributor Version"
-    means the combination of the Contributions of others (if any) used
-    by a Contributor and that particular Contributor's Contribution.
+	means the combination of the Contributions of others (if any) used
+	by a Contributor and that particular Contributor's Contribution.
 
 1.3. "Contribution"
-    means Covered Software of a particular Contributor.
+	means Covered Software of a particular Contributor.
 
 1.4. "Covered Software"
-    means Source Code Form to which the initial Contributor has attached
-    the notice in Exhibit A, the Executable Form of such Source Code
-    Form, and Modifications of such Source Code Form, in each case
-    including portions thereof.
+	means Source Code Form to which the initial Contributor has attached
+	the notice in Exhibit A, the Executable Form of such Source Code
+	Form, and Modifications of such Source Code Form, in each case
+	including portions thereof.
 
 1.5. "Incompatible With Secondary Licenses"
-    means
+	means
 
-    (a) that the initial Contributor has attached the notice described
-        in Exhibit B to the Covered Software; or
+	(a) that the initial Contributor has attached the notice described
+		in Exhibit B to the Covered Software; or
 
-    (b) that the Covered Software was made available under the terms of
-        version 1.1 or earlier of the License, but not also under the
-        terms of a Secondary License.
+	(b) that the Covered Software was made available under the terms of
+		version 1.1 or earlier of the License, but not also under the
+		terms of a Secondary License.
 
 1.6. "Executable Form"
-    means any form of the work other than Source Code Form.
+	means any form of the work other than Source Code Form.
 
 1.7. "Larger Work"
-    means a work that combines Covered Software with other material, in
-    a separate file or files, that is not Covered Software.
+	means a work that combines Covered Software with other material, in
+	a separate file or files, that is not Covered Software.
 
 1.8. "License"
-    means this document.
+	means this document.
 
 1.9. "Licensable"
-    means having the right to grant, to the maximum extent possible,
-    whether at the time of the initial grant or subsequently, any and
-    all of the rights conveyed by this License.
+	means having the right to grant, to the maximum extent possible,
+	whether at the time of the initial grant or subsequently, any and
+	all of the rights conveyed by this License.
 
 1.10. "Modifications"
-    means any of the following:
+	means any of the following:
 
-    (a) any file in Source Code Form that results from an addition to,
-        deletion from, or modification of the contents of Covered
-        Software; or
+	(a) any file in Source Code Form that results from an addition to,
+		deletion from, or modification of the contents of Covered
+		Software; or
 
-    (b) any new file in Source Code Form that contains any Covered
-        Software.
+	(b) any new file in Source Code Form that contains any Covered
+		Software.
 
 1.11. "Patent Claims" of a Contributor
-    means any patent claim(s), including without limitation, method,
-    process, and apparatus claims, in any patent Licensable by such
-    Contributor that would be infringed, but for the grant of the
-    License, by the making, using, selling, offering for sale, having
-    made, import, or transfer of either its Contributions or its
-    Contributor Version.
+	means any patent claim(s), including without limitation, method,
+	process, and apparatus claims, in any patent Licensable by such
+	Contributor that would be infringed, but for the grant of the
+	License, by the making, using, selling, offering for sale, having
+	made, import, or transfer of either its Contributions or its
+	Contributor Version.
 
 1.12. "Secondary License"
-    means either the GNU General Public License, Version 2.0, the GNU
-    Lesser General Public License, Version 2.1, the GNU Affero General
-    Public License, Version 3.0, or any later versions of those
-    licenses.
+	means either the GNU General Public License, Version 2.0, the GNU
+	Lesser General Public License, Version 2.1, the GNU Affero General
+	Public License, Version 3.0, or any later versions of those
+	licenses.
 
 1.13. "Source Code Form"
-    means the form of the work preferred for making modifications.
+	means the form of the work preferred for making modifications.
 
 1.14. "You" (or "Your")
-    means an individual or a legal entity exercising rights under this
-    License. For legal entities, "You" includes any entity that
-    controls, is controlled by, or is under common control with You. For
-    purposes of this definition, "control" means (a) the power, direct
-    or indirect, to cause the direction or management of such entity,
-    whether by contract or otherwise, or (b) ownership of more than
-    fifty percent (50%) of the outstanding shares or beneficial
-    ownership of such entity.
+	means an individual or a legal entity exercising rights under this
+	License. For legal entities, "You" includes any entity that
+	controls, is controlled by, or is under common control with You. For
+	purposes of this definition, "control" means (a) the power, direct
+	or indirect, to cause the direction or management of such entity,
+	whether by contract or otherwise, or (b) ownership of more than
+	fifty percent (50%) of the outstanding shares or beneficial
+	ownership of such entity.
 
 2. License Grants and Conditions
 --------------------------------
@@ -784,14 +784,14 @@ Each Contributor hereby grants You a world-wide, royalty-free,
 non-exclusive license:
 
 (a) under intellectual property rights (other than patent or trademark)
-    Licensable by such Contributor to use, reproduce, make available,
-    modify, display, perform, distribute, and otherwise exploit its
-    Contributions, either on an unmodified basis, with Modifications, or
-    as part of a Larger Work; and
+	Licensable by such Contributor to use, reproduce, make available,
+	modify, display, perform, distribute, and otherwise exploit its
+	Contributions, either on an unmodified basis, with Modifications, or
+	as part of a Larger Work; and
 
 (b) under Patent Claims of such Contributor to make, use, sell, offer
-    for sale, have made, import, and otherwise transfer either its
-    Contributions or its Contributor Version.
+	for sale, have made, import, and otherwise transfer either its
+	Contributions or its Contributor Version.
 
 2.2. Effective Date
 
@@ -808,15 +808,15 @@ Notwithstanding Section 2.1(b) above, no patent license is granted by a
 Contributor:
 
 (a) for any code that a Contributor has removed from Covered Software;
-    or
+	or
 
 (b) for infringements caused by: (i) Your and any other third party's
-    modifications of Covered Software, or (ii) the combination of its
-    Contributions with other software (except as part of its Contributor
-    Version); or
+	modifications of Covered Software, or (ii) the combination of its
+	Contributions with other software (except as part of its Contributor
+	Version); or
 
 (c) under Patent Claims infringed by Covered Software in the absence of
-    its Contributions.
+	its Contributions.
 
 This License does not grant any rights in the trademarks, service marks,
 or logos of any Contributor (except as may be necessary to comply with
@@ -864,15 +864,15 @@ Form.
 If You distribute Covered Software in Executable Form then:
 
 (a) such Covered Software must also be made available in Source Code
-    Form, as described in Section 3.1, and You must inform recipients of
-    the Executable Form how they can obtain a copy of such Source Code
-    Form by reasonable means in a timely manner, at a charge no more
-    than the cost of distribution to the recipient; and
+	Form, as described in Section 3.1, and You must inform recipients of
+	the Executable Form how they can obtain a copy of such Source Code
+	Form by reasonable means in a timely manner, at a charge no more
+	than the cost of distribution to the recipient; and
 
 (b) You may distribute such Executable Form under the terms of this
-    License, or sublicense it under different terms, provided that the
-    license for the Executable Form does not attempt to limit or alter
-    the recipients' rights in the Source Code Form under this License.
+	License, or sublicense it under different terms, provided that the
+	license for the Executable Form does not attempt to limit or alter
+	the recipients' rights in the Source Code Form under this License.
 
 3.3. Distribution of a Larger Work
 
@@ -951,45 +951,45 @@ have been validly granted by You or Your distributors under this License
 prior to termination shall survive termination.
 
 ************************************************************************
-*                                                                      *
-*  6. Disclaimer of Warranty                                           *
-*  -------------------------                                           *
-*                                                                      *
-*  Covered Software is provided under this License on an "as is"       *
+*																	  *
+*  6. Disclaimer of Warranty										   *
+*  -------------------------										   *
+*																	  *
+*  Covered Software is provided under this License on an "as is"	   *
 *  basis, without warranty of any kind, either expressed, implied, or  *
-*  statutory, including, without limitation, warranties that the       *
-*  Covered Software is free of defects, merchantable, fit for a        *
-*  particular purpose or non-infringing. The entire risk as to the     *
-*  quality and performance of the Covered Software is with You.        *
-*  Should any Covered Software prove defective in any respect, You     *
+*  statutory, including, without limitation, warranties that the	   *
+*  Covered Software is free of defects, merchantable, fit for a		*
+*  particular purpose or non-infringing. The entire risk as to the	 *
+*  quality and performance of the Covered Software is with You.		*
+*  Should any Covered Software prove defective in any respect, You	 *
 *  (not any Contributor) assume the cost of any necessary servicing,   *
 *  repair, or correction. This disclaimer of warranty constitutes an   *
 *  essential part of this License. No use of any Covered Software is   *
-*  authorized under this License except under this disclaimer.         *
-*                                                                      *
+*  authorized under this License except under this disclaimer.		 *
+*																	  *
 ************************************************************************
 
 ************************************************************************
-*                                                                      *
-*  7. Limitation of Liability                                          *
-*  --------------------------                                          *
-*                                                                      *
-*  Under no circumstances and under no legal theory, whether tort      *
-*  (including negligence), contract, or otherwise, shall any           *
-*  Contributor, or anyone who distributes Covered Software as          *
-*  permitted above, be liable to You for any direct, indirect,         *
-*  special, incidental, or consequential damages of any character      *
-*  including, without limitation, damages for lost profits, loss of    *
-*  goodwill, work stoppage, computer failure or malfunction, or any    *
-*  and all other commercial damages or losses, even if such party      *
+*																	  *
+*  7. Limitation of Liability										  *
+*  --------------------------										  *
+*																	  *
+*  Under no circumstances and under no legal theory, whether tort	  *
+*  (including negligence), contract, or otherwise, shall any		   *
+*  Contributor, or anyone who distributes Covered Software as		  *
+*  permitted above, be liable to You for any direct, indirect,		 *
+*  special, incidental, or consequential damages of any character	  *
+*  including, without limitation, damages for lost profits, loss of	*
+*  goodwill, work stoppage, computer failure or malfunction, or any	*
+*  and all other commercial damages or losses, even if such party	  *
 *  shall have been informed of the possibility of such damages. This   *
 *  limitation of liability shall not apply to liability for death or   *
-*  personal injury resulting from such party's negligence to the       *
-*  extent applicable law prohibits such limitation. Some               *
-*  jurisdictions do not allow the exclusion or limitation of           *
-*  incidental or consequential damages, so this exclusion and          *
-*  limitation may not apply to You.                                    *
-*                                                                      *
+*  personal injury resulting from such party's negligence to the	   *
+*  extent applicable law prohibits such limitation. Some			   *
+*  jurisdictions do not allow the exclusion or limitation of		   *
+*  incidental or consequential damages, so this exclusion and		  *
+*  limitation may not apply to You.									*
+*																	  *
 ************************************************************************
 
 8. Litigation
@@ -1163,9 +1163,9 @@ Source/WTF/wtf/Int128.h
 
 Copyright 2017 The Abseil Authors.
 
-                              Apache License
-                        Version 2.0, January 2004
-                     http://www.apache.org/licenses/
+							  Apache License
+						Version 2.0, January 2004
+					 http://www.apache.org/licenses/
 
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
@@ -1257,33 +1257,33 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
    meet the following conditions:
 
    (a) You must give any other recipients of the Work or
-       Derivative Works a copy of this License; and
+	   Derivative Works a copy of this License; and
 
    (b) You must cause any modified files to carry prominent notices
-       stating that You changed the files; and
+	   stating that You changed the files; and
 
    (c) You must retain, in the Source form of any Derivative Works
-       that You distribute, all copyright, patent, trademark, and
-       attribution notices from the Source form of the Work,
-       excluding those notices that do not pertain to any part of
-       the Derivative Works; and
+	   that You distribute, all copyright, patent, trademark, and
+	   attribution notices from the Source form of the Work,
+	   excluding those notices that do not pertain to any part of
+	   the Derivative Works; and
 
    (d) If the Work includes a "NOTICE" text file as part of its
-       distribution, then any Derivative Works that You distribute must
-       include a readable copy of the attribution notices contained
-       within such NOTICE file, excluding those notices that do not
-       pertain to any part of the Derivative Works, in at least one
-       of the following places: within a NOTICE text file distributed
-       as part of the Derivative Works; within the Source form or
-       documentation, if provided along with the Derivative Works; or,
-       within a display generated by the Derivative Works, if and
-       wherever such third-party notices normally appear. The contents
-       of the NOTICE file are for informational purposes only and
-       do not modify the License. You may add Your own attribution
-       notices within Derivative Works that You distribute, alongside
-       or as an addendum to the NOTICE text from the Work, provided
-       that such additional attribution notices cannot be construed
-       as modifying the License.
+	   distribution, then any Derivative Works that You distribute must
+	   include a readable copy of the attribution notices contained
+	   within such NOTICE file, excluding those notices that do not
+	   pertain to any part of the Derivative Works, in at least one
+	   of the following places: within a NOTICE text file distributed
+	   as part of the Derivative Works; within the Source form or
+	   documentation, if provided along with the Derivative Works; or,
+	   within a display generated by the Derivative Works, if and
+	   wherever such third-party notices normally appear. The contents
+	   of the NOTICE file are for informational purposes only and
+	   do not modify the License. You may add Your own attribution
+	   notices within Derivative Works that You distribute, alongside
+	   or as an addendum to the NOTICE text from the Work, provided
+	   that such additional attribution notices cannot be construed
+	   as modifying the License.
 
    You may add Your own copyright statement to Your modifications and
    may provide additional or different license terms and conditions
@@ -1357,7 +1357,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -2269,10 +2269,10 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -2448,11 +2448,11 @@ All rights reserved.
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    * Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation
-      and/or other materials provided with the distribution.
+	* Redistributions of source code must retain the above copyright notice,
+	  this list of conditions and the following disclaimer.
+	* Redistributions in binary form must reproduce the above copyright notice,
+	  this list of conditions and the following disclaimer in the documentation
+	  and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -2581,10 +2581,10 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -2827,10 +2827,10 @@ modification, are permitted provided that the following conditions
 are met:n
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -2960,7 +2960,7 @@ Source/WTF/wtf
 Copyright (C) 2006-2008 Apple Inc. All rights reserved.
 Copyright (C) 2013 Andrew Bortz. All rights reserved.
 
-          (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+		  (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -3238,10 +3238,10 @@ modification, are permitted, provided that the following conditions
 are required to be met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY CANON INC. AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -3361,10 +3361,10 @@ modification, are permitted, provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY CANON INC. AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -3478,10 +3478,10 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -3509,10 +3509,10 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -3567,9 +3567,9 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+	* Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+	* Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
@@ -3718,7 +3718,7 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 1. Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright
    notice, this list of conditions and the following disclaimer in the
    documentation and/or other materials provided with the distribution.
@@ -3849,7 +3849,7 @@ Source/WebCore/css
 
 Copyright (C) 2007-2021 Apple Inc. All rights reserved.
 
-          (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+		  (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -4044,16 +4044,16 @@ Copyright (C) 2021 Metrological Group B.V.
 Copyright (C) 2021 Igalia S.L.
 Copyright (C) 2007-2013 Apple Inc. All rights reserved.
 
-          (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+		  (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -4076,9 +4076,9 @@ Copyright (C) 2004-2021 Apple Inc. All rights reserved.
 Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
 Copyright (C) 2011 Andreas Kling (kling@webkit.org)
 
-          (C) 1999 Antti Koivisto (koivisto@kde.org)
-          (C) 2001 Dirk Mueller (mueller@kde.org)
-          (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+		  (C) 1999 Antti Koivisto (koivisto@kde.org)
+		  (C) 2001 Dirk Mueller (mueller@kde.org)
+		  (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -4289,10 +4289,10 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -4325,10 +4325,10 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -4354,9 +4354,9 @@ Copyright (C) 2016-2017 Apple Inc. All rights reserved.
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
-    * Redistributions of source code must retain the above copyright
+	* Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+	* Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
@@ -4439,7 +4439,7 @@ Source/WebCore/page
 
 Copyright (C) 2003-2021 Apple Inc. All rights reserved.
 
-          (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+		  (C) 2006 Graham Dennis (graham.dennis@gmail.com)
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -4479,10 +4479,10 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
@@ -4507,13 +4507,13 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+	* Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+	* Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Google Inc. nor the names of its
+	* Neither the name of Google Inc. nor the names of its
 contributors may be used to endorse or promo te products derived from
 this software without specific prior written permission.
 
@@ -4624,7 +4624,7 @@ Source/WebCore/platform/graphics
 Copyright (C) 2003-2016 Apple Inc. All rights reserved.
 Copyright (C) 2005 Nokia. All rights reserved.
 
-              2008 Eric Seidel <eric@webkit.org>
+			  2008 Eric Seidel <eric@webkit.org>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -4655,7 +4655,7 @@ Source/WebCore/platform/graphics
 Copyright (C) 2003-2006 Apple Inc. All rights reserved.
 Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 
-                    2006 Rob Buis <buis@kde.org>
+					2006 Rob Buis <buis@kde.org>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -4748,7 +4748,7 @@ Source/WebCore/platform/graphics
 Copyright (C) 2003-2009 Apple Inc. All rights reserved.
 Copyright (C) 2007-2008 Torch Mobile, Inc.
 
-              2006 Rob Buis <buis@kde.org>
+			  2006 Rob Buis <buis@kde.org>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -4783,10 +4783,10 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY IGALIA AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -4806,7 +4806,7 @@ Source/WebCore/platform/graphics/transforms
 
 Copyright (C) 2005-2016 Apple Inc. All rights reserved.
 
-              2010 Dirk Schulze <krit@webkit.org>
+			  2010 Dirk Schulze <krit@webkit.org>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -4899,10 +4899,10 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -5007,8 +5007,8 @@ Source/WebCore/rendering/svg
 Copyright (C) 2004-2009 Apple Inc. All rights reserved.
 Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
-          (C) 2005 Rob Buis <buis@kde.org>
-          (C) 2006 Alexander Kellett <lypanov@kde.org>
+		  (C) 2005 Rob Buis <buis@kde.org>
+		  (C) 2006 Alexander Kellett <lypanov@kde.org>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -5163,10 +5163,10 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS ``AS IS'' AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -5194,10 +5194,10 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND ITS CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
@@ -5222,10 +5222,10 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND ITS CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
@@ -5252,10 +5252,10 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -5384,13 +5384,13 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -5415,13 +5415,13 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple, Inc. ("Apple") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -5510,11 +5510,11 @@ All rights reserved.
 
 Developed by:
 
-    LLVM Team
+	LLVM Team
 
-    University of Illinois at Urbana-Champaign
+	University of Illinois at Urbana-Champaign
 
-    http://llvm.org
+	http://llvm.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal with
@@ -5523,17 +5523,17 @@ use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
 of the Software, and to permit persons to whom the Software is furnished to do
 so, subject to the following conditions:
 
-    * Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimers.
+	* Redistributions of source code must retain the above copyright notice,
+	  this list of conditions and the following disclaimers.
 
-    * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimers in the
-      documentation and/or other materials provided with the distribution.
+	* Redistributions in binary form must reproduce the above copyright notice,
+	  this list of conditions and the following disclaimers in the
+	  documentation and/or other materials provided with the distribution.
 
-    * Neither the names of the LLVM Team, University of Illinois at
-      Urbana-Champaign, nor the names of its contributors may be used to
-      endorse or promote products derived from this Software without specific
-      prior written permission.
+	* Neither the names of the LLVM Team, University of Illinois at
+	  Urbana-Champaign, nor the names of its contributors may be used to
+	  endorse or promote products derived from this Software without specific
+	  prior written permission.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
@@ -5624,13 +5624,13 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+	* Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+	* Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Google Inc. nor the names of its
+	* Neither the name of Google Inc. nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -5657,13 +5657,13 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+	* Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+	* Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Microsoft Corporation nor the names of its
+	* Neither the name of Microsoft Corporation nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -5692,15 +5692,15 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-      copyright notice, this list of conditions and the following
-      disclaimer in the documentation and/or other materials provided
-      with the distribution.
-    * Neither the name of Google Inc. nor the names of its
-      contributors may be used to endorse or promote products derived
-      from this software without specific prior written permission.
+	* Redistributions of source code must retain the above copyright
+	  notice, this list of conditions and the following disclaimer.
+	* Redistributions in binary form must reproduce the above
+	  copyright notice, this list of conditions and the following
+	  disclaimer in the documentation and/or other materials provided
+	  with the distribution.
+	* Neither the name of Google Inc. nor the names of its
+	  contributors may be used to endorse or promote products derived
+	  from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -5726,13 +5726,13 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple Inc. ("Apple") nor the names of its
-    contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -5763,13 +5763,13 @@ modification, are permitted, provided that the following conditions
 are required to be met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Canon Inc. nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY CANON INC. AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -5796,13 +5796,13 @@ modification, are permitted, provided that the following conditions
 are required to be met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple Inc. nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -5947,13 +5947,13 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -5978,13 +5978,13 @@ modification, are permitted provided that the following conditions
 are met:
 Transaction
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -6041,13 +6041,13 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Canon Inc. nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 THIS SOFTWARE IS PROVIDED BY CANON INC. AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -6104,13 +6104,13 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY GOOGLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -6135,9 +6135,9 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+	* Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Neither the name of Google Inc. nor the names of its
+	* Neither the name of Google Inc. nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -6163,15 +6163,15 @@ Copyright (C) 2011 Code Aurora Forum. All rights reserved.
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-      copyright notice, this list of conditions and the following
-      disclaimer in the documentation and/or other materials provided
-      with the distribution.
-    * Neither the name of Code Aurora Forum, Inc. nor the names of its
-      contributors may be used to endorse or promote products derived
-      from this software without specific prior written permission.
+	* Redistributions of source code must retain the above copyright
+	  notice, this list of conditions and the following disclaimer.
+	* Redistributions in binary form must reproduce the above
+	  copyright notice, this list of conditions and the following
+	  disclaimer in the documentation and/or other materials provided
+	  with the distribution.
+	* Neither the name of Code Aurora Forum, Inc. nor the names of its
+	  contributors may be used to endorse or promote products derived
+	  from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -6229,13 +6229,13 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+	* Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+	* Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Canon Inc. nor the names of its
+	* Neither the name of Canon Inc. nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -6263,13 +6263,13 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Adam Barth. ("Adam Barth") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -6294,13 +6294,13 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Google, Inc. nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -6320,20 +6320,20 @@ Source/WebCore/loader
 
 Copyright (C) 2006-2021 Apple Inc. All rights reserved.
 
-          (C) 2007 Graham Dennis (graham.dennis@gmail.com)
+		  (C) 2007 Graham Dennis (graham.dennis@gmail.com)
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -6359,13 +6359,13 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Google, Inc. ("Google") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY GOOGLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -6391,13 +6391,13 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Googl, Inc. ("Google") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY GOOGLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -6427,13 +6427,13 @@ modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -6458,13 +6458,13 @@ modification, are permitted provided that the following condition
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -6494,8 +6494,8 @@ are met:
    notice, this list of conditions and the following disclaimer in the
    documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -6516,20 +6516,20 @@ Source/WebCore/rendering
 
 Copyright (C) 2006-2018 Apple Inc. All rights reserved.
 
-              2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+			  2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 
 1.  Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+	notice, this list of conditions and the following disclaimer.
 2.  Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-    its contributors may be used to endorse or promote products derived
-    from this software without specific prior written permission.
+	its contributors may be used to endorse or promote products derived
+	from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -6635,15 +6635,15 @@ Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
   * Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
+	this list of conditions and the following disclaimer.
 
   * Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
+	this list of conditions and the following disclaimer in the documentation
+	and/or other materials provided with the distribution.
 
   * Neither the name of the copyright holders nor the names of its contributors
-    may be used to endorse or promote products derived from this software without
-    specific prior written permission.
+	may be used to endorse or promote products derived from this software without
+	specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES

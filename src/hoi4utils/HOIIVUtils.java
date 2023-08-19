@@ -50,9 +50,9 @@ public class HOIIVUtils {
 
 			settingsWindow.launchSettingsWindow(args);
 		}
-        catch (Exception exception) {
-            HOIIVUtils.openError(exception);
-        }
+		catch (Exception exception) {
+			HOIIVUtils.openError(exception);
+		}
 
 //		if (HOIIVUtilsProperties.isNull(MOD_DIRECTORY))
 //			/* get directory */ {

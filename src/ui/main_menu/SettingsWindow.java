@@ -16,54 +16,54 @@ import hoi4utils.HOIIVUtils;
  */
 public class SettingsWindow extends Application {
 
-    Stage primaryStage;
+	Stage primaryStage;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
 
-        String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "hoi4utils.HOIIVUtils";
+		String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "hoi4utils.HOIIVUtils";
 
-        savedSettings(primaryStage, hoi4UtilsPropertiesPath);
+		savedSettings(primaryStage, hoi4UtilsPropertiesPath);
 
-        Parent root = FXMLLoader.load(getClass().getResource("SettingsWindow.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("SettingsWindow.fxml"));
 
-        primaryStage.setTitle("HOIIVUtils Settings");
+		primaryStage.setTitle("HOIIVUtils Settings");
 
-        primaryStage.setScene((new Scene(root)));
+		primaryStage.setScene((new Scene(root)));
 
-        this.primaryStage = primaryStage;
+		this.primaryStage = primaryStage;
 
-        primaryStage.show();
-    }
-    // ! todo fix
-    private void savedSettings(Stage primaryStage, String hoi4UtilsPropertiesPath) throws IOException {
-        if (new File(hoi4UtilsPropertiesPath).exists()) {
-            HOIIVUtils.firstTimeSetup = false;
+		primaryStage.show();
+	}
+	// ! todo fix
+	private void savedSettings(Stage primaryStage, String hoi4UtilsPropertiesPath) throws IOException {
+		if (new File(hoi4UtilsPropertiesPath).exists()) {
+			HOIIVUtils.firstTimeSetup = false;
 
-            HOIIVUtils.settings = new HOIIVUtilsProperties();
+			HOIIVUtils.settings = new HOIIVUtilsProperties();
 
-            HOIIVUtils.decideScreen(primaryStage);
-        }
-        else {
-            HOIIVUtils.firstTimeSetup = true;
-        }
-    }
+			HOIIVUtils.decideScreen(primaryStage);
+		}
+		else {
+			HOIIVUtils.firstTimeSetup = true;
+		}
+	}
 
-    public void launchSettingsWindow(String... var0) {
-        super.launch(var0);
-    }
+	public void launchSettingsWindow(String... var0) {
+		super.launch(var0);
+	}
 
-    public void open() {
-        try {
-            if (primaryStage != null) {
-                primaryStage.show();
-            } else {
-                start(new Stage());
-            }
-        } 
-        catch (Exception exc) {
-            HOIIVUtils.openError(exc);
-        }
-    }
+	public void open() {
+		try {
+			if (primaryStage != null) {
+				primaryStage.show();
+			} else {
+				start(new Stage());
+			}
+		} 
+		catch (Exception exc) {
+			HOIIVUtils.openError(exc);
+		}
+	}
 }

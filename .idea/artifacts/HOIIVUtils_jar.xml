@@ -1,12 +1,12 @@
 <component name="ArtifactManager">
   <artifact name="HOIIVUtils:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/HOIIVUtils_jar</output-path>
-    <root id="root">
-      <element id="archive" name="HOIIVUtils.jar">
-        <element id="module-output" name="HOIIVUtils" />
-      </element>
-      <element id="library" level="project" name="flatlaf-3.2" />
-      <element id="library" level="project" name="javafx-lib" />
-    </root>
+	<output-path>$PROJECT_DIR$/out/artifacts/HOIIVUtils_jar</output-path>
+	<root id="root">
+	  <element id="archive" name="HOIIVUtils.jar">
+		<element id="module-output" name="HOIIVUtils" />
+	  </element>
+	  <element id="library" level="project" name="flatlaf-3.2" />
+	  <element id="library" level="project" name="javafx-lib" />
+	</root>
   </artifact>
 </component>

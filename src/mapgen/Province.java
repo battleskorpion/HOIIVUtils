@@ -1,10 +1,10 @@
 package mapgen;
 
 public class Province {
-    int provinceid;
+	int provinceid;
 
-    public Province(int provinceid) {
-        this.provinceid = provinceid;
-    }
-    
+	public Province(int provinceid) {
+		this.provinceid = provinceid;
+	}
+	
 }

@@ -5,6 +5,6 @@ import javafx.scene.control.Label;
 
 public class StatisticsWindowController {
 
-    @FXML
-    public Label tempLabel;
+	@FXML
+	public Label tempLabel;
 }

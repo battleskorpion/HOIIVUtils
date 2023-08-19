@@ -103,21 +103,21 @@ public abstract class Idea {
 
 			// need enough data length before checks are made to prevent error
 			if (usefulData(s) && s.length() >= 5) {
-                if (CountryTags.list().contains(s.substring(0, 3)) && s.startsWith("={", s.length() - 2)) {
-                    // if here, ***should*** be good! data is an idea name,
-                    // once we clean it up
+				if (CountryTags.list().contains(s.substring(0, 3)) && s.startsWith("={", s.length() - 2)) {
+					// if here, ***should*** be good! data is an idea name,
+					// once we clean it up
 
-                    // return idea var name, remove "={"
-                    String ideaName = s.substring(0, s.length() - 2);
-                    Idea idea;
-                    /* find idea type and instantiate idea */
-                    if (true) { // todo
-                        idea = new CountryIdea(ideaName);
-                    } /* else {
+					// return idea var name, remove "={"
+					String ideaName = s.substring(0, s.length() - 2);
+					Idea idea;
+					/* find idea type and instantiate idea */
+					if (true) { // todo
+						idea = new CountryIdea(ideaName);
+					} /* else {
 							idea = new ManpowerIdea(ideaName);
 						}*/
-                    idea_list.add(idea);
-                }
+					idea_list.add(idea);
+				}
 			}
 		}
 		// return idea_list;

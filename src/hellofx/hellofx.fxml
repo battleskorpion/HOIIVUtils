@@ -14,30 +14,30 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button layoutX="176.0" layoutY="88.0" mnemonicParsing="false" text="Button" />
-      <CheckBox layoutX="165.0" layoutY="151.0" mnemonicParsing="false" text="CheckBox" />
-      <ChoiceBox layoutX="139.0" layoutY="200.0" prefWidth="150.0" />
-      <ToggleButton layoutX="120.0" layoutY="281.0" mnemonicParsing="false" text="ToggleButton" />
-      <ComboBox layoutX="330.0" layoutY="119.0" prefWidth="150.0" promptText="Hello" />
-      <ProgressBar layoutX="259.0" layoutY="238.0" prefWidth="200.0" progress="0.0" />
-      <MenuBar>
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
+	  <Button layoutX="176.0" layoutY="88.0" mnemonicParsing="false" text="Button" />
+	  <CheckBox layoutX="165.0" layoutY="151.0" mnemonicParsing="false" text="CheckBox" />
+	  <ChoiceBox layoutX="139.0" layoutY="200.0" prefWidth="150.0" />
+	  <ToggleButton layoutX="120.0" layoutY="281.0" mnemonicParsing="false" text="ToggleButton" />
+	  <ComboBox layoutX="330.0" layoutY="119.0" prefWidth="150.0" promptText="Hello" />
+	  <ProgressBar layoutX="259.0" layoutY="238.0" prefWidth="200.0" progress="0.0" />
+	  <MenuBar>
+		<menus>
+		  <Menu mnemonicParsing="false" text="File">
+			<items>
+			  <MenuItem mnemonicParsing="false" text="Close" />
+			</items>
+		  </Menu>
+		  <Menu mnemonicParsing="false" text="Edit">
+			<items>
+			  <MenuItem mnemonicParsing="false" text="Delete" />
+			</items>
+		  </Menu>
+		  <Menu mnemonicParsing="false" text="Help">
+			<items>
+			  <MenuItem mnemonicParsing="false" text="About" />
+			</items>
+		  </Menu>
+		</menus>
+	  </MenuBar>
    </children>
 </Pane>

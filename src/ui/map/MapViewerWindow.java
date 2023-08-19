@@ -3,16 +3,16 @@ package ui.map;
 import javax.swing.*;
 
 public class MapViewerWindow extends JFrame {
-    private JPanel mapViewerJPanel;
+	private JPanel mapViewerJPanel;
 
-    public MapViewerWindow() {
+	public MapViewerWindow() {
 
 
 
-        /* window */
-        setContentPane(mapViewerJPanel);
-        setSize(700, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
-    }
+		/* window */
+		setContentPane(mapViewerJPanel);
+		setSize(700, 500);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		pack();
+	}
 }
