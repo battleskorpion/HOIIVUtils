@@ -3,22 +3,15 @@ package clausewitz_coding.focus;
 import clausewitz_coding.country.CountryTags;
 import hoi4utils.HOIIVUtils;
 import clausewitz_coding.localization.FocusLocalizationFile;
-//import clausewitz_coding.localization.LocalizationFile;
 import settings.HOIIVUtilsProperties;
-
-//import java.io.BufferedWriter;
 import java.io.File;
-//import java.io.FileWriter;
 import java.io.IOException;
-//import java.io.PrintWriter;
-//import java.time.LocalDate;
 import java.time.LocalDateTime;
-//import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-//import java.util.Scanner;
-
 import static settings.HOIIVUtilsProperties.Settings.MOD_PATH;
-
+/*
+ * FixFoucus Documentation
+ */
 public class FixFocus extends HOIIVUtils {
 
 	private static String hoi4_dir_name;

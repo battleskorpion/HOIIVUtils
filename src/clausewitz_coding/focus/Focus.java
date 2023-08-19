@@ -5,13 +5,14 @@ import clausewitz_coding.code.trigger.Trigger;
 import clausewitz_coding.gfx.Interface;
 import clausewitz_parser.Expression;
 import ddsreader.DDSReader;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
-
+/*
+ * Focus just Focus
+ */
 public class Focus {
     private static final int FOCUS_COST_FACTOR = 7;
     private final int DEFAULT_FOCUS_COST = 10; // default cost (weeks) when making new focus or etc.

@@ -13,7 +13,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-
+/**
+ * ALL of the FocusTree/FocusTrees
+ */
 public final class FocusTree extends HOIIVUtils {
 
 	// private HashSet<Focus> focuses;
