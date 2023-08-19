@@ -39,10 +39,12 @@ public class SettingsWindowController {
     public void initialize() {
         devModeCheckBox.setSelected(HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE));
 
-        String setting = (String) HOIIVUtilsProperties.Settings.MOD_PATH.getSetting();
+        if (!HOIIVUtils.firstTimeSetup) {
+            String setting = (String) HOIIVUtilsProperties.Settings.MOD_PATH.getSetting();
 
-        if (!(setting.equals("null"))) {
-            hoi4ModPathTextField.setText(setting);
+            if (!(setting.equals("null"))) {
+                hoi4ModPathTextField.setText(setting);
+            }
         }
     }
     
