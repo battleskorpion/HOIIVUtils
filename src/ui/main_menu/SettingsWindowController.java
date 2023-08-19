@@ -153,11 +153,8 @@ public class SettingsWindowController {
 		if (!settingsSaved) {
 			return;
 		}
-
 		HOIIVUtils.hideWindow(okButton);
-
 		MenuWindow menuWindow = new MenuWindow();
-
 		menuWindow.open();
 	}
 }
