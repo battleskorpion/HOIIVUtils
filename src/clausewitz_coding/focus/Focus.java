@@ -1,12 +1,13 @@
 package clausewitz_coding.focus;
 
+import clausewitz_coding.localization.Localization;
 import hoi4utils.HOIIVUtils;
 import clausewitz_coding.code.trigger.Trigger;
 import clausewitz_coding.gfx.Interface;
 import clausewitz_parser.Expression;
 import ddsreader.DDSReader;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import settings.HOIIVUtilsProperties;
 
 import java.awt.*;
@@ -25,7 +26,8 @@ public class Focus {
     protected FocusTree focusTree;
     Expression focusExp;
     protected SimpleStringProperty id;
-    protected SimpleStringProperty locName;
+    protected Localization nameLocalization;
+    protected Localization descLocalization;
     protected SimpleStringProperty icon;
     protected BufferedImage ddsImage;
     protected Set<Set<Focus>> prerequisite; // can be multiple, but hoi4 code is simply "prerequisite"
@@ -49,7 +51,7 @@ public class Focus {
             return;
         }
         this.id = new SimpleStringProperty(focus_id);
-        this.locName = new SimpleStringProperty();
+        this.setNameLocalization();
 
         this.focusTree = focusTree;
         focusIDs.add(focus_id);
@@ -63,7 +65,6 @@ public class Focus {
     }
 
     public SimpleStringProperty idProperty() { return id; }
-    public SimpleStringProperty locNameProperty() { return locName;}
 
     /**
      * if relative, relative x
@@ -137,11 +138,11 @@ public class Focus {
         return adjPoint;
     }
 
-    public String locName() {
-        if (locName == null) {
+    public String nameLocalization() {
+        if (nameLocalization == null) {
             return null;
         }
-        return locName.get();
+        return nameLocalization.text();
     }
 
     public SimpleStringProperty icon() {
@@ -250,13 +251,44 @@ public class Focus {
         this.cost = exp.getValue();
     }
 
-    public void setFocusLoc() {
-        setFocusLoc(id.toString());
+    /**
+     * Default method for setting localization name of focus. Sets the localization name
+     * to the focus id.
+     */
+    public void setNameLocalization() {
+        setNameLocalization(id.toString(), Localization.Status.DEFAULT);
     }
 
-    public void setFocusLoc(String focus_loc) {
-        locName.set(focus_loc);
+    /**
+     * Sets name localization and decides the status.
+     * @param focus_loc
+     */
+    public void setNameLocalization(String focus_loc) {
+        String id = nameLocalization.ID();
+        Localization.Status status;
+
+        if (nameLocalization.status() == Localization.Status.NEW)
+        {
+            status = Localization.Status.NEW;
+        }
+        else {
+            // including if nameLocalization.status() == Localization.Status.DEFAULT, itll now be updated
+            status = Localization.Status.UPDATED;
+        }
+
+        nameLocalization = new Localization(id, focus_loc, status);
         // todo?
+    }
+
+    /**
+     * Sets name localization with a specific status. Only use if specifying status is necessary.
+     * @param focus_loc
+     * @param status
+     */
+    public void setNameLocalization(String focus_loc, Localization.Status status) {
+        String id = nameLocalization.ID();
+
+        nameLocalization = new Localization(id, focus_loc, status);
     }
 
     // todo implement icon lookup
@@ -462,5 +494,21 @@ public class Focus {
 
     public int completionTime() {
         return cost * FOCUS_COST_FACTOR;
+    }
+
+    public ObservableValue<String> descLocalizationProperty() {
+        return new SimpleStringProperty(descLocalization());
+    }
+
+    public void setLocDesc(Localization localization) {
+        descLocalization = localization;
+    }
+
+    public String descLocalization() {
+        return descLocalization.text();
+    }
+
+    public Localization getDescLocalization() {
+        return descLocalization;
     }
 }

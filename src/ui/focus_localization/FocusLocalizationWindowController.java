@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -24,6 +23,7 @@ public class FocusLocalizationWindowController {
     @FXML TableView<Focus> focusListTable;
     @FXML TableColumn<Focus, String> focusIDColumn;
     @FXML TableColumn<Focus, String> focusNameColumn;
+    @FXML TableColumn<Focus, String> focusDescColumn;
 
     private int numLocalizedFocuses;
 
@@ -83,7 +83,7 @@ public class FocusLocalizationWindowController {
         this.focusLocFile = focusLocFile;
 
         try {
-            FixFocus.addFocusLoc(focusTree, focusLocFile);
+            numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
         } catch (IOException e) {
             HOIIVUtils.openError(e);
             return;
@@ -92,10 +92,11 @@ public class FocusLocalizationWindowController {
 
     @FXML
     void initialize() {
-        numLocAddedLabel.setText("Added localization to " + numLocalizedFocuses + "focuses");
+        numLocAddedLabel.setText("Added localization to " + numLocalizedFocuses + " focuses");
 
         focusIDColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty());
         focusNameColumn.setCellValueFactory(cellData -> cellData.getValue().locNameProperty());
+        focusDescColumn.setCellValueFactory(cellData -> cellData.getValue().descLocalizationProperty());
 
         focusListTable.setItems(focusTree.listFocuses());
     }

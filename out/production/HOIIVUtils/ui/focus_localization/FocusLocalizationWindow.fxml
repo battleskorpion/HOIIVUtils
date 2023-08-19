@@ -15,9 +15,9 @@
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="168.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints maxHeight="129.0" minHeight="0.0" prefHeight="19.0" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="300.0" minHeight="10.0" prefHeight="300.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="129.0" minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
+    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="30.0" prefHeight="300.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
   </rowConstraints>
    <opaqueInsets>
       <Insets />
@@ -25,10 +25,10 @@
    <children>
       <Label text="Focus Tree:" />
       <Label GridPane.rowIndex="1" />
-      <TableView fx:id="focusListTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+      <TableView fx:id="focusListTable" maxWidth="1.7976931348623157E308" minHeight="100.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
         <columns>
-          <TableColumn fx:id="focusIDColumn" prefWidth="75.0" text="C1" />
-          <TableColumn fx:id="focusNameColumn" prefWidth="75.0" text="C2" />
+          <TableColumn fx:id="focusIDColumn" prefWidth="206.0" text="C1" />
+          <TableColumn fx:id="focusNameColumn" prefWidth="221.0" text="C2" />
         </columns>
       </TableView>
       <Label fx:id="focusTreeNameLabel" prefWidth="63.0" GridPane.columnIndex="1" />

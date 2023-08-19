@@ -46,7 +46,7 @@ public class FixFocus extends HOIIVUtils {
 				focus_loc = titleCapitalize(focus.id().substring(i).replaceAll("_+", " ").trim()); // regex
 
 				// set focus loc
-				focus.setFocusLoc(focus_loc);
+				focus.setNameLocalization(focus_loc);
 
 			
 				focusesUnloc.add(focus);
@@ -65,13 +65,16 @@ public class FixFocus extends HOIIVUtils {
 		return true; 
 	}
 
-	public static boolean addFocusLoc(FocusTree focusTree, FocusLocalizationFile localization) throws IOException {
+	/**
+	 * Adds focus localization for unlocalized focuses in the focus tree, which are focuses with an id
+	 * but without a given name in the selected localization file of a particular language.
+	 * @param focusTree
+	 * @param localization
+	 * @return
+	 * @throws IOException
+	 */
+	public static int addFocusLoc(FocusTree focusTree, FocusLocalizationFile localization) throws IOException {
 		localization.readLocalization();
-
-		/* open the ui */
-//		FocusTreeLocProgress focusLocProgress = new FocusTreeLocProgress(focusTree);
-//		focusLocProgress.setVisible(true);
-		// todo
 
 		String focus_loc;
 
@@ -91,27 +94,21 @@ public class FixFocus extends HOIIVUtils {
 
 				// localize focus name
 				focus_loc = titleCapitalize(focus.id().substring(i).replaceAll("_+", " ").trim()); // regex
+				focus_loc_desc = focus.id + "_desc", "added focus on " + LocalDateTime.now() + " by hoi4localizer.";
 
 				// set focus loc
-				focus.setFocusLoc(focus_loc);
-
+				focus.setNameLocalization(focus_loc);
+				focus.setLocDesc(focus_loc_desc);
 
 				focusesUnloc.add(focus);
 
 				localization.setLocalization(focus.id(), focus_loc);
-				localization.setLocalizationDesc(focus.id + "_desc", "added focus on " + LocalDateTime.now() + " by hoi4localizer.");
+				localization.setLocalizationDesc();
 			}
 		}
 
-		/* ui */
-//		focusLocProgress.incrementProgressBar();
-//		focusLocProgress.setNumFocusesUnloc(numFocusesUnloc);
-//		focusLocProgress.refreshUnlocFocusesTable(focusesUnloc);
-
 		localization.writeLocalization();
-		return true;
+		return focusesUnloc.size();
 	}
-
-	// useful lines function
 
 }
