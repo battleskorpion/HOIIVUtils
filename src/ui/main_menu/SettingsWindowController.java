@@ -33,19 +33,48 @@ public class SettingsWindowController {
 	
 	@FXML
 	void initialize() {
+		includeVersion();
+
+		disableOkButton();
+		
+		setupFirstTimeSetup();
+	}
+
+
+	private void includeVersion() {
 		versionLabel.setText(HOIIVUtils.hoi4utilsVersion);
+	}
 
-		devModeCheckBox.setSelected(HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE));
+	
+	private void setupFirstTimeSetup() {
+		boolean isFirstTime = HOIIVUtils.firstTimeSetup;
+		if (!isFirstTime) {
+			setModPathTextFeildFromSettings();
+			enableOkButton();
+			setDevModeCheckBoxOnOrOff();
+		}
+		else {
+			disableOkButton();
+		}
+	}
 
+	private void setDevModeCheckBoxOnOrOff() {
+		boolean getDevModeSetting = HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE);
+		devModeCheckBox.setSelected(getDevModeSetting);
+	}
+
+	private void enableOkButton() {
+		okButton.setDisable(false);
+	}
+	
+	private void disableOkButton() {
 		okButton.setDisable(true);
+	}
 
-		if (!HOIIVUtils.firstTimeSetup) {
-			String setting = (String) HOIIVUtilsProperties.Settings.MOD_PATH.getSetting();
-
-			if (!(setting.equals("null"))) {
-				hoi4ModPathTextField.setText(setting);
-				okButton.setDisable(false);
-			}
+	private void setModPathTextFeildFromSettings() {
+		String inlcudeSetting = (String) HOIIVUtilsProperties.Settings.MOD_PATH.getSetting();
+		if (inlcudeSetting != "null") {
+			hoi4ModPathTextField.setText(inlcudeSetting);
 		}
 	}
 
@@ -138,9 +167,9 @@ public class SettingsWindowController {
 		boolean isDirectory = fileModPath.isDirectory();
 				
 		if (okButton.isDisabled() && exists && isDirectory) {
-			okButton.setDisable(false);
+			disableOkButton();
 		} else {
-			okButton.setDisable(true);
+			enableOkButton();
 		}
 	}
 
