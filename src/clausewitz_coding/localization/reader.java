@@ -11,10 +11,11 @@ public class reader {
 
         Scanner scanner = new Scanner(file);
 
-        while (scanner.hasNextLine()) {
+        for (int lineI = 0; scanner.hasNextLine() && lineI < 1000000; lineI++) {
             String line = scanner.nextLine();
 
             System.out.println(line.contains("\t"));
         }
+        scanner.close();
     }
 }

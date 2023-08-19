@@ -22,7 +22,7 @@ import static settings.HOIIVUtilsProperties.Settings.MOD_PATH;
 
 public class FixFocus extends HOIIVUtils {
 
-//	private static String hoi4_dir_name;
+	private static String hoi4_dir_name;
 
 	public static boolean addFocusLoc(File focus_file, File loc_file) throws IOException {
 

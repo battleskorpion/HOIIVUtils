@@ -2,6 +2,7 @@ package clausewitz_coding.idea;
 
 import clausewitz_coding.country.CountryTags;
 import hoi4utils.HOIIVUtils;
+import settings.HOIIVUtilsProperties;
 import clausewitz_coding.localization.LocalizationFile;
 
 import java.io.*;
@@ -13,7 +14,7 @@ public class FixIdea extends HOIIVUtils {
 
 	public static boolean addIdeaLoc(File idea_file, File loc_file) throws IOException {
 
-		final String hoi4_dir_name = HOIIVUtils.settings.get(MOD_PATH);
+		final String hoi4_dir_name = HOIIVUtilsProperties.get(MOD_PATH);
 
 		// some vars
 		ArrayList<String> ideas_localized = new ArrayList<String>();

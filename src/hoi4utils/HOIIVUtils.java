@@ -9,7 +9,6 @@ import javafx.scene.control.Button;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import ui.menu.SettingsWindow;
-import ui.menu.MenuWindow;
 import settings.HOIIVUtilsProperties;
 
 import javax.swing.*;
