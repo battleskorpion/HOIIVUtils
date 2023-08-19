@@ -38,23 +38,6 @@ todo:
 
 first day of new internship: 
 
-Change title of mainmenu window from "Hello world". 
-Done: 420ms
-
-medium: implement "Focus Localization" button 
-    step 1: 
-    - get FocusTree file (file chooser) -> in code as file
-    - get localization / .yml file -> in code not as type File but as 
-    a FocusLocalizationFile, a class I made myself which has the features of File class + more. 
-    - once all good call addFocusLoc(focus_file, loc_file); 
-    
-    step 2: 
-    make FocusTreeLocProgress window (you can rename this to like focusTreeLocalizationInfo for example.)
-    - this does NOT need a progress bar, localizing one focus is very very fast making it a lil pointness. but sure adding one is extra credit :D
-    - needs a Table. 
-        -> list of focus names (focus ID's) next to list of localized focus names. 
-        HINT: look at public void refreshUnlocFocusesTable and see what data it was feeding into the old table. 
-
 very difficult: 
     *fully* implement ui.buildings.BuildingsByCountryWindow
 
