@@ -36,7 +36,10 @@ todo:
 
 <b> assigned todo </b>
 
-first day of new internship: Change title of mainmenu window from "Hello world". 
+first day of new internship: 
+
+Change title of mainmenu window from "Hello world". 
+Done: 420ms
 
 medium: implement "Focus Localization" button 
     step 1: 

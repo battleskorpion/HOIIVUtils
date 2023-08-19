@@ -91,23 +91,6 @@ public class HOIIVUtils {
 		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(), JOptionPane.WARNING_MESSAGE);
 	}
 
-	public static void openMenu() {
-		MenuWindow menuWindow = new MenuWindow();
-		try {
-			menuWindow.open();
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-	}
-
-	public static void openSettings() {
-		try {
-			settingsWindow.open();
-		} catch (Exception exception) {
-			openError(exception);
-		}
-	}
-
 	public static void closeWindow(Button button) {
 		try {
 			((Stage) (button.getScene().getWindow())).close();

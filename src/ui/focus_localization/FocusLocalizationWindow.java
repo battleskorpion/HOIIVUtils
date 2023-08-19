@@ -3,6 +3,11 @@ package ui.focus_localization;
 import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.focus.FocusTree;
 import clausewitz_coding.focus.FocusTrees;
+import hoi4utils.HOIIVUtils;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -10,7 +15,24 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class FocusLoqReqWindow extends JFrame {
+public class FocusLocalizationWindow extends JFrame {
+
+    public void open(){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("FocusLocalizationWindow.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Focus Localization");
+            stage.setScene((new Scene(root, 600, 400)));
+            HOIIVUtils.decideScreen(stage);
+            stage.show();
+        }
+        catch (Exception exception) {
+            HOIIVUtils.openError(exception);
+        }
+    }
+
+
+
     private JPanel FocusLoqReqJPanel;
 
     private DefaultListModel<CountryTag> localizedTreeListModel;
@@ -24,7 +46,7 @@ public class FocusLoqReqWindow extends JFrame {
     private ArrayList<JList<CountryTag>> treeLists;
     private JButton localizeButton;
 
-    public FocusLoqReqWindow() {
+    public FocusLocalizationWindow() {
         super("Focus Localization");        // JFrame
 
         // texts etc.
@@ -62,7 +84,7 @@ public class FocusLoqReqWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        JFrame window = new FocusLoqReqWindow();
+        JFrame window = new FocusLocalizationWindow();
         window.setVisible(true);
     }
 

@@ -21,4 +21,5 @@ public class MenuWindow {
             HOIIVUtils.openError(exception);
         }
     }
+    
 }
