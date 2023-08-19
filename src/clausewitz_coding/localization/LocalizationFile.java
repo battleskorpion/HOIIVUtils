@@ -220,19 +220,25 @@ public class LocalizationFile extends File {
         return null;
     }
 
-    public void setLocalization(String key, String text) {
+    public Localization setLocalization(String key, String text) {
         ArrayList<Localization> listTemp = new ArrayList<>(localizationList);
 
         for (Localization loc : localizationList) {
             if (loc.ID().equals(key)) {
+                Localization newLocalization = new Localization(key, text, Localization.Status.UPDATED);
+
                 listTemp.remove(loc);      // record is final
-                listTemp.add(new Localization(key, text, Localization.Status.UPDATED));
+                listTemp.add(newLocalization);
                 localizationList = listTemp;
-                return;
+
+                return newLocalization;
             }
         }
 
-        localizationList.add(new Localization(key, text, Localization.Status.NEW));
+        Localization newLocalization = new Localization(key, text, Localization.Status.NEW);
+        localizationList.add(newLocalization);
+
+        return newLocalization;
     }
 
     public boolean isLocalized(String ID) {

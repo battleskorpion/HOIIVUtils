@@ -138,13 +138,6 @@ public class Focus {
         return adjPoint;
     }
 
-    public String nameLocalization() {
-        if (nameLocalization == null) {
-            return null;
-        }
-        return nameLocalization.text();
-    }
-
     public SimpleStringProperty icon() {
         return icon;
     }
@@ -251,12 +244,23 @@ public class Focus {
         this.cost = exp.getValue();
     }
 
+    public String nameLocalization() {
+        if (nameLocalization == null) {
+            return "[null]";
+        }
+        return nameLocalization.text();
+    }
+
+
     /**
      * Default method for setting localization name of focus. Sets the localization name
      * to the focus id.
      */
     public void setNameLocalization() {
-        setNameLocalization(id.toString(), Localization.Status.DEFAULT);
+        setNameLocalization(id.get(), Localization.Status.DEFAULT);
+    }
+    public void setNameLocalization(Localization localization) {
+        nameLocalization = localization;
     }
 
     /**
@@ -282,6 +286,7 @@ public class Focus {
         }
 
         nameLocalization = new Localization(id, focus_loc, status);
+
         // todo?
     }
 
@@ -300,11 +305,11 @@ public class Focus {
 
         nameLocalization = new Localization(id, text, status);
     }
-    public ObservableValue<String> nameLocalizationProperty() {
+    public SimpleStringProperty nameLocalizationProperty() {
         return new SimpleStringProperty(nameLocalization());
     }
 
-    public ObservableValue<String> descLocalizationProperty() {
+    public SimpleStringProperty descLocalizationProperty() {
         return new SimpleStringProperty(descLocalization());
     }
 
@@ -335,6 +340,9 @@ public class Focus {
     }
 
     public String descLocalization() {
+        if (descLocalization == null) {
+            return "[null]";
+        }
         return descLocalization.text();
     }
 
@@ -546,6 +554,4 @@ public class Focus {
     public int completionTime() {
         return cost * FOCUS_COST_FACTOR;
     }
-
-
 }

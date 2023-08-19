@@ -1,6 +1,7 @@
 package clausewitz_coding.focus;
 
 import clausewitz_coding.country.CountryTags;
+import clausewitz_coding.localization.Localization;
 import hoi4utils.HOIIVUtils;
 import clausewitz_coding.localization.FocusLocalizationFile;
 import java.io.File;
@@ -98,13 +99,14 @@ public class FixFocus extends HOIIVUtils {
 				focus_loc_desc = "added focus on " + LocalDateTime.now() + " by hoi4localizer.";
 
 				// set focus loc
-				focus.setNameLocalization(focus_loc);
-				focus.setDescLocalization(focus_loc_desc);
+//				focus.setNameLocalization(focus_loc);
+//				focus.setDescLocalization(focus_loc_desc);
+				Localization nameLoc = localization.setLocalization(focus.id(), focus_loc);
+				Localization descLoc = localization.setLocalizationDesc(focus.id() + "_desc", focus_loc_desc);
+				focus.setNameLocalization(nameLoc);
+				focus.setDescLocalization(descLoc);
 
 				focusesUnloc.add(focus);
-
-				localization.setLocalization(focus.id(), focus_loc);
-				localization.setLocalizationDesc(focus.id() + "_desc", focus_loc_desc);
 			}
 		}
 

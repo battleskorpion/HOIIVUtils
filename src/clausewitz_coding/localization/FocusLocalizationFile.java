@@ -1,7 +1,6 @@
 package clausewitz_coding.localization;
 
 import java.io.*;
-import java.nio.file.FileSystemException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -149,36 +148,47 @@ public class FocusLocalizationFile extends LocalizationFile {
     }
 
     @Override
-    public void setLocalization(String key, String text) {
+    public Localization setLocalization(String key, String text) {
         ArrayList<Localization> listTemp = new ArrayList<>(localizationList);
 
         for (Localization[] loc : focusLocalizationList) {
             if (loc[0].ID().equals(key)) {
-                focusLocalizationList.remove(loc);
+                Localization newLoc = new Localization(key, text, Localization.Status.UPDATED);
+                Localization[] newLocList = new Localization[]{newLoc, loc[1]};
+
 
                 listTemp.remove(loc[0]);      // record is final
-                Localization localization = new Localization(key, text, Localization.Status.UPDATED);
-                listTemp.add(localization);
+                listTemp.add(newLoc);
                 localizationList = listTemp;
 
-                focusLocalizationList.add(new Localization[]{localization, loc[1]});
-                return;
+                focusLocalizationList.remove(loc);
+                focusLocalizationList.add(newLocList);
+                return newLoc;
             }
         }
 
-        localizationList.add(new Localization(key, text, Localization.Status.NEW));
+        Localization newLoc = new Localization(key, text, Localization.Status.NEW);
+        Localization newLocDesc = new Localization(key + "_desc", "[null]", Localization.Status.NEW);
+        Localization[] newLocList = new Localization[]{newLoc, newLocDesc};
 
+        listTemp.add(newLoc);
+        localizationList = listTemp;
+
+        focusLocalizationList.add(newLocList);
+
+        return newLoc;
     }
 
-    public void setLocalizationDesc(String key, String text) {
+    public Localization setLocalizationDesc(String key, String text) {
         for (Localization[] loc : focusLocalizationList) {
             if (loc[1].ID().equals(key)) {
                 focusLocalizationList.remove(loc);
                 Localization localization = new Localization(key, text, Localization.Status.UPDATED);
                 focusLocalizationList.add(new Localization[]{loc[0], localization});
-                return;
+                return localization;
             }
         }
+        return null;
     }
 
 }
