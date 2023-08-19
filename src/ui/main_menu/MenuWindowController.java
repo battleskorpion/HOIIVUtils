@@ -1,5 +1,6 @@
 package ui.main_menu;
 
+import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import ui.buildings.BuildingsByCountryWindow;
@@ -19,6 +20,8 @@ public class MenuWindowController {
     }
     // todo close menu
     public void openSettings() {
+        HOIIVUtils.closeWindow(settingsButton);
+
         SettingsWindow settingsWindow = new SettingsWindow();
 
         settingsWindow.open();
