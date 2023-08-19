@@ -7,7 +7,6 @@ import clausewitz_parser.Parser;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import static hoi4utils.HOIIVUtils.usefulData;
 
