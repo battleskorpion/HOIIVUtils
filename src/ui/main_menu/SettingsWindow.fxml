@@ -27,7 +27,7 @@
       <CheckBox fx:id="devModeCheckBox" mnemonicParsing="false" onAction="#devMode" text="Developer Mode" GridPane.rowIndex="3" />
       <Button fx:id="okButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openMenu" text="Ok" GridPane.columnSpan="3" GridPane.rowIndex="5" />
       <Button fx:id="browseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBrowseAction" prefHeight="25.0" prefWidth="70.0" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <TextField fx:id="hoi4ModPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="test" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+      <TextField fx:id="hoi4ModPathTextField" onAction="#handleModPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/mod/directory" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
       <Label fx:id="hoi4ModFolderLabel" text="HOIIV Mod Folder:" GridPane.rowIndex="2" />
    </children>
    <padding>

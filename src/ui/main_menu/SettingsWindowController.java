@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -40,15 +42,14 @@ public class SettingsWindowController {
     void initialize() {
         devModeCheckBox.setSelected(HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE));
 
+        okButton.setDisable(true);
+
         if (!HOIIVUtils.firstTimeSetup) {
             String setting = (String) HOIIVUtilsProperties.Settings.MOD_PATH.getSetting();
 
             if (!(setting.equals("null"))) {
                 hoi4ModPathTextField.setText(setting);
             }
-        }
-        else {
-            okButton.setDisable(true);
         }
     }
     
@@ -90,6 +91,8 @@ public class SettingsWindowController {
                 return;
             }
 
+            hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
+
             updateModPath(selectedDirectory);
         }
         catch(Exception exception) {
@@ -97,10 +100,31 @@ public class SettingsWindowController {
         }
     }
 
+    public void handleModPathTextField() {
+        getIsDirectory();
+
+        settings.put(HOIIVUtilsProperties.Settings.MOD_PATH, hoi4ModPathTextField.getText());
+    }
+
     private void updateModPath(File selectedDirectory) {
-        hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
-    
+        getIsDirectory();
+
         settings.put(HOIIVUtilsProperties.Settings.MOD_PATH, selectedDirectory.getAbsolutePath());
+    }
+
+    private void getIsDirectory() {
+        File fileModPath = new File(hoi4ModPathTextField.getText());
+
+        boolean exists = fileModPath.exists();
+
+        boolean isDirectory = fileModPath.isDirectory();
+                
+        if (okButton.isDisabled() && exists && isDirectory) {
+            okButton.setDisable(false);
+        }
+        else {
+            okButton.setDisable(true);
+        }
     }
 
     public void openMenu() {
