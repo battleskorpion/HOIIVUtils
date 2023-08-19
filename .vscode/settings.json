@@ -49,5 +49,7 @@
 	],
 	"window.commandCenter": true,
 	"ShortcutMenuBar.navigateBack": false,
-	"ShortcutMenuBar.navigateForward": false
+	"ShortcutMenuBar.navigateForward": false,
+	"editor.insertSpaces": false,
+	"editor.indentSize": "tabSize"
 }
