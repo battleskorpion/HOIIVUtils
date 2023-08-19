@@ -2,7 +2,6 @@ package ui.main_menu;
 
 import java.io.File;
 import java.io.IOException;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,7 +10,6 @@ import javafx.stage.Stage;
 import settings.HOIIVUtilsProperties;
 import hoi4utils.HOIIVUtils;
 
-import static settings.HOIIVUtilsProperties.Settings.enabled;
 
 /**
  * SettingsWindow is the window for the program settings
