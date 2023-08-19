@@ -38,60 +38,8 @@ public class MenuWindowController {
     }
 
     public void openLocalizeFocusTree() {
-        File selectedFile;
-
-        /* choose focus tree */
-        FocusTree focusTree;
-        try{
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialDirectory(HOIIVUtils.focus_folder);
-            Stage stage = (Stage) (focusLocalizButton.getScene().getWindow());
-            selectedFile = fileChooser.showOpenDialog(stage);
-
-            if (selectedFile == null) {
-                HOIIVUtils.openError("Selected directory was null.");
-                return;
-            }
-
-        }
-        catch(Exception exception) {
-            HOIIVUtils.openError(exception);
-            return;
-        }
-        try {
-            focusTree = new FocusTree(selectedFile);
-        } catch (IOException e) {
-            HOIIVUtils.openError(e);
-            return;
-        }
-
-        /* choose localization file */
-        FocusLocalizationFile focusLocFile;
-        try{
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialDirectory(HOIIVUtils.localization_eng_folder);
-            Stage stage = (Stage) (focusLocalizButton.getScene().getWindow());
-            selectedFile = fileChooser.showOpenDialog(stage);
-
-            if (selectedFile == null) {
-                HOIIVUtils.openError("Selected directory was null.");
-                return;
-            }
-
-        }
-        catch(Exception exception) {
-            HOIIVUtils.openError(exception);
-            return;
-        }
-        try {
-            focusLocFile = new FocusLocalizationFile(selectedFile);
-        } catch (IOException e) {
-            HOIIVUtils.openError(e);
-            return;
-        }
-
         /* open focus loc window */
-        FocusLocalizationWindow localizationWindow = new FocusLocalizationWindow(focusTree, focusLocFile);
+        FocusLocalizationWindow localizationWindow = new FocusLocalizationWindow();
         localizationWindow.open();
     }
 }

@@ -6,6 +6,8 @@ import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.country.CountryTags;
 import clausewitz_parser.Expression;
 import clausewitz_parser.Parser;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 //import settings.LocalizerSettings;
 //import ui.menu.MenuSettings;
 
@@ -357,4 +359,10 @@ public final class FocusTree extends HOIIVUtils {
         }
         return focusTrees;
     }
+
+	public ObservableList<Focus> listFocuses() {
+		ObservableList<Focus> focusList = FXCollections.observableArrayList();
+		focusList.addAll(focuses());
+		return focusList;
+	}
 }
