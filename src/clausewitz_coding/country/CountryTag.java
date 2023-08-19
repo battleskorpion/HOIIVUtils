@@ -1,7 +1,6 @@
 package clausewitz_coding.country;
 
 import java.util.Objects;
-
 public final class CountryTag {
     public static final CountryTag NULL_TAG = new CountryTag("###");
     private final String tag;

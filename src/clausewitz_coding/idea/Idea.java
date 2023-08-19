@@ -84,7 +84,7 @@ public abstract class Idea {
 		return null; // todo
 	}
 
-	// todo this had a purpose likely, what was it :(
+	@SuppressWarnings("SuspiciousMethodCalls")
 	public static ArrayList<String> load(File idea_file) {
 		// Scanner ideaReader = new Scanner(idea_file);
 		idea_list = new ArrayList<>();
@@ -102,30 +102,21 @@ public abstract class Idea {
 
 			// need enough data length before checks are made to prevent error
 			if (usefulData(s) && s.length() >= 5) {
-				// if theoretical TAG at beginning of idea name is in the list of tags
-				// (this means the text we have is likely an idea since the tag exists)
-				// array list of country tags but country tags can be equivalent to strings
-				// (tag)
-				if (CountryTags.list().contains(s.substring(0, 3))) {
-					// if this is likely an idea, then check if there is " = {"
-					// at the end to confirm likelihood
-					// also, a tag is TAG, all caps. check for this after.
-					if (s.startsWith("={", s.length() - 2)) {
-						// if here, ***should*** be good! data is an idea name,
-						// once we clean it up
+                if (CountryTags.list().contains(s.substring(0, 3)) && s.startsWith("={", s.length() - 2)) {
+                    // if here, ***should*** be good! data is an idea name,
+                    // once we clean it up
 
-						// return idea var name, remove "={"
-						String ideaName = s.substring(0, s.length() - 2);
-						Idea idea;
-						/* find idea type and instantiate idea */
-						if (true) { // todo
-							idea = new CountryIdea(ideaName);
-						} /* else {
+                    // return idea var name, remove "={"
+                    String ideaName = s.substring(0, s.length() - 2);
+                    Idea idea;
+                    /* find idea type and instantiate idea */
+                    if (true) { // todo
+                        idea = new CountryIdea(ideaName);
+                    } /* else {
 							idea = new ManpowerIdea(ideaName);
 						}*/
-						idea_list.add(idea);
-					}
-				}
+                    idea_list.add(idea);
+                }
 			}
 		}
 		// return idea_list;
