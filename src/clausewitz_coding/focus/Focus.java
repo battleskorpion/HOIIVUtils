@@ -7,7 +7,6 @@ import clausewitz_coding.gfx.Interface;
 import clausewitz_parser.Expression;
 import ddsreader.DDSReader;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import settings.HOIIVUtilsProperties;
 
 import java.awt.*;

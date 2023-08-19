@@ -35,7 +35,6 @@
     "ShortcutMenuBar.openFilesList": false,
     "ShortcutMenuBar.redo": true,
     "ShortcutMenuBar.toggleActivityBar": true,
-    "ShortcutMenuBar.userButton01Command": "",
     "git.autofetch": true,
     "git.autofetchPeriod": 45,
     "ShortcutMenuBar.userButton04Command": "workbench.action.reopenClosedEditor",
