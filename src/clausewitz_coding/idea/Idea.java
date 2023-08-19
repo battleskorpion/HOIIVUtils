@@ -9,7 +9,9 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static hoi4utils.HOIIVUtils.usefulData;
-
+/**
+ * This is the Idea file.
+ */
 public abstract class Idea {
 
 	/* static */

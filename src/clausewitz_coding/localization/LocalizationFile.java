@@ -4,7 +4,9 @@ import hoi4utils.HOIIVUtils;
 
 import java.io.*;
 import java.util.*;
-
+/**
+ * This is the LocalizationFile file.
+ */
 public class LocalizationFile extends File {
     private static String loc_key = ":0";
     private static String language = "l_english:";

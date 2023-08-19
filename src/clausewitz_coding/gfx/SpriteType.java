@@ -5,7 +5,9 @@ import settings.HOIIVUtilsProperties;
 import java.io.File;
 
 import static settings.HOIIVUtilsProperties.Settings.MOD_PATH;
-
+/**
+ * This is the SpriteType file.
+ */
 public class SpriteType {
     String name;            // ex: "GFX_focus_SVA_virginia_officers"
     File texturefile;       // ex: "gfx/interface/goals/focus_SVA_virginia_officers.dds"
