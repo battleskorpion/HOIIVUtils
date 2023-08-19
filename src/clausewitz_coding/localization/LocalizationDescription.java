@@ -1,5 +1,7 @@
 package clausewitz_coding.localization;
-
+/**
+ * This is the LocalizationDescription file.
+ */
 public record LocalizationDescription(String ID, String text, Status status, Localization parent) {
 
     public enum Status {

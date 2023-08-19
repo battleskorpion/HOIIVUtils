@@ -9,7 +9,9 @@ import java.io.*;
 import java.util.ArrayList;
 
 import static settings.HOIIVUtilsProperties.Settings.MOD_PATH;
-
+/**
+ * This is the FixIdea file.
+ */
 public class FixIdea extends HOIIVUtils {
 
 	public static boolean addIdeaLoc(File idea_file, File loc_file) throws IOException {

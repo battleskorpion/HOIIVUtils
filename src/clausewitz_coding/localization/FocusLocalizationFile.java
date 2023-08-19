@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Scanner;
 
 import hoi4utils.HOIIVUtils;
-
+/**
+ * This is the FocusLocalization file.
+ */
 public class FocusLocalizationFile extends LocalizationFile {
 
     protected List<Localization[]> focusLocalizationList;
