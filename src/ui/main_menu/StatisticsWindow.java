@@ -11,10 +11,15 @@ public class StatisticsWindow {
     public void open() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("StatisticsWindow.fxml"));
+
             Stage stage = new Stage();
-            stage.setTitle("Statistics");
-            stage.setScene((new Scene(root, 600, 400)));
+
+            stage.setTitle("HOIIVUtils Statistics");
+
+            stage.setScene((new Scene(root)));
+
             HOIIVUtils.decideScreen(stage);
+            
             stage.show();
         }
         catch (Exception exception) {

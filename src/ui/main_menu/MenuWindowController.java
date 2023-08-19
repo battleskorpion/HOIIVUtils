@@ -21,11 +21,13 @@ public class MenuWindowController {
 
     public void openSettings() {
         SettingsWindow settingsWindow = new SettingsWindow();
+
         settingsWindow.open();
     }
 
     public void openStatistics() {
         StatisticsWindow statisticsWindow = new StatisticsWindow();
+
         statisticsWindow.open();
     }
 
@@ -33,7 +35,9 @@ public class MenuWindowController {
         File selectedDirectory;
         try{
             DirectoryChooser directoryChooser = new DirectoryChooser();
+
             Stage stage = (Stage) (focusLocalizButton.getScene().getWindow());
+
             selectedDirectory = directoryChooser.showDialog(stage);
 
             if (selectedDirectory == null) {
@@ -44,16 +48,19 @@ public class MenuWindowController {
         }
         catch(Exception exception) {
             HOIIVUtils.openError(exception);
+
             return; 
         }
 
         try {
             FocusTree focusTree = new FocusTree(selectedDirectory);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         FocusLocalizationWindow localizationWindow = new FocusLocalizationWindow();
+        
         localizationWindow.open();
     }
 }
