@@ -1,17 +1,10 @@
 package ui.main_menu;
 
-import clausewitz_coding.focus.FocusTree;
-import clausewitz_coding.localization.FocusLocalizationFile;
 import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.focus_localization.FocusLocalizationWindow;
-
-import java.io.File;
-import java.io.IOException;
 
 public class MenuWindowController {
 
@@ -27,6 +20,8 @@ public class MenuWindowController {
     }
     // todo close menu
     public void openSettings() {
+        HOIIVUtils.closeWindow(settingsButton);
+
         SettingsWindow settingsWindow = new SettingsWindow();
 
         settingsWindow.open();

@@ -47,5 +47,7 @@
         "remoteBranches",
         "tags"
     ],
-    "window.commandCenter": true
+    "window.commandCenter": true,
+    "ShortcutMenuBar.navigateBack": false,
+    "ShortcutMenuBar.navigateForward": false
 }
