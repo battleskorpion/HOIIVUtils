@@ -34,54 +34,40 @@ public class SettingsWindowController {
 	@FXML
 	void initialize() {
 		includeVersion();
-
-		disableOkButton();
-		
-		setupFirstTimeSetup();
+		setupFirstTime();
 	}
-
 
 	private void includeVersion() {
 		versionLabel.setText(HOIIVUtils.hoi4utilsVersion);
 	}
-
-	
-	private void setupFirstTimeSetup() {
+	private void setupFirstTime() {
 		boolean isFirstTime = HOIIVUtils.firstTimeSetup;
 		if (!isFirstTime) {
 			setModPathTextFeildFromSettings();
-			enableOkButton();
 			setDevModeCheckBoxOnOrOff();
-		}
-		else {
-			disableOkButton();
+			enableOkButton();
 		}
 	}
-
-	private void setDevModeCheckBoxOnOrOff() {
-		boolean getDevModeSetting = HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE);
-		devModeCheckBox.setSelected(getDevModeSetting);
-	}
-
-	private void enableOkButton() {
-		okButton.setDisable(false);
-	}
-	
-	private void disableOkButton() {
-		okButton.setDisable(true);
-	}
-
 	private void setModPathTextFeildFromSettings() {
 		String inlcudeSetting = (String) HOIIVUtilsProperties.Settings.MOD_PATH.getSetting();
 		if (inlcudeSetting != "null") {
 			hoi4ModPathTextField.setText(inlcudeSetting);
 		}
 	}
+	private void setDevModeCheckBoxOnOrOff() {
+		boolean getDevModeSetting = HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE);
+		devModeCheckBox.setSelected(getDevModeSetting);
+	}
+	private void enableOkButton() {
+		okButton.setDisable(false);
+	}
+	private void disableOkButton() {
+		okButton.setDisable(true);
+	}
 
 	public SettingsWindowController() {
 		settings = new HashMap<>();
 	}
-	
 	public void tempUpdateSetting(HOIIVUtilsProperties.Settings setting, String property) {
 		settings.put(setting, property);
 	}
