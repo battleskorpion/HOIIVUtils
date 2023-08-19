@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -18,6 +19,8 @@ public class SettingsWindowController {
     HashMap<HOIIVUtilsProperties.Settings, String> settings;
 
     @FXML
+    public GridPane settingsGridPain;
+    public Label versionLabel;
     public CheckBox devModeCheckBox;
     public Label hoi4ModFolderLabel;
     public Button browseButton;
@@ -26,16 +29,10 @@ public class SettingsWindowController {
 
     public File selectedDirectory;
     
-    public SettingsWindowController() {
-        settings = new HashMap<>();
-    }
-    
-    public void tempUpdateSetting(HOIIVUtilsProperties.Settings setting, String property) {
-        settings.put(setting, property);
-    }
-
     @FXML
     void initialize() {
+        versionLabel.setText(HOIIVUtils.hoi4utilsVersion);
+
         devModeCheckBox.setSelected(HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE));
 
         okButton.setDisable(true);
@@ -47,6 +44,14 @@ public class SettingsWindowController {
                 hoi4ModPathTextField.setText(setting);
             }
         }
+    }
+
+    public SettingsWindowController() {
+        settings = new HashMap<>();
+    }
+    
+    public void tempUpdateSetting(HOIIVUtilsProperties.Settings setting, String property) {
+        settings.put(setting, property);
     }
     
     public void devMode() {

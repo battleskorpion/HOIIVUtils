@@ -17,24 +17,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import static settings.HOIIVUtilsProperties.Settings.*;
 /*
- * HOIIVUtils File
- */
+* HOIIVUtils File
+*/
 public class HOIIVUtils {
+	public static final String hoi4utilsVersion = "version" + " " + "0.2.32";
 	
-	public static String[] args;
-	public static boolean firstTimeSetup;
-	private static SettingsWindow settingsWindow;
-	
-	public static final String applicationVersion = "2.2";
-	public static HOIIVUtilsProperties settings;
 	public static String hoi4_dir_name;
-	// "C:\\Users\\daria\\Documents\\Paradox Interactive\\Hearts of Iron
-	// IV\\mod\\nadivided-dev";
 	public static String focus_folder;
 	public static String states_folder;
 	public static String strat_region_dir;
 	public static String localization_eng_folder;
+
+	public static String[] args;
+
+	public static boolean firstTimeSetup;
+
+	private static SettingsWindow settingsWindow;
+	
+	public static HOIIVUtilsProperties settings;
+
 	public static boolean DEV_MODE = false;
+
 	public static FileWatcher stateDirWatcher;
 	
 	public static void main(String[] args) throws IOException {
@@ -42,8 +45,14 @@ public class HOIIVUtils {
 		HOIIVUtils.args = args;
 
 		/* settings */
-		settingsWindow = new SettingsWindow();
-		settingsWindow.launchSettingsWindow(args);
+		try {
+			settingsWindow = new SettingsWindow();
+
+			settingsWindow.launchSettingsWindow(args);
+		}
+        catch (Exception exception) {
+            HOIIVUtils.openError(exception);
+        }
 
 //		if (HOIIVUtilsProperties.isNull(MOD_DIRECTORY))
 //			/* get directory */ {

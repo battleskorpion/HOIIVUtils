@@ -8,14 +8,16 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Rectangle?>
 
-<GridPane minWidth="300.0" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.main_menu.SettingsWindowController">
+<GridPane fx:id="settingsGridPain" minWidth="300.0" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.main_menu.SettingsWindowController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="10.0" prefWidth="146.0" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="10.0" prefWidth="472.0" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0" minWidth="10.0" prefWidth="72.0" />
    </columnConstraints>
    <rowConstraints>
+      <RowConstraints />
       <RowConstraints minHeight="10.0" prefHeight="30.0" />
       <RowConstraints />
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -24,11 +26,13 @@
       <RowConstraints maxHeight="190.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <CheckBox fx:id="devModeCheckBox" mnemonicParsing="false" onAction="#devMode" text="Developer Mode" GridPane.rowIndex="3" />
-      <Button fx:id="okButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openMenu" text="Ok" GridPane.columnSpan="3" GridPane.rowIndex="5" />
-      <Button fx:id="browseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBrowseAction" prefHeight="25.0" prefWidth="70.0" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <TextField fx:id="hoi4ModPathTextField" onAction="#handleModPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/mod/directory" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-      <Label fx:id="hoi4ModFolderLabel" text="HOIIV Mod Folder:" GridPane.rowIndex="2" />
+      <CheckBox fx:id="devModeCheckBox" mnemonicParsing="false" onAction="#devMode" text="Developer Mode" GridPane.rowIndex="4" />
+      <Button fx:id="okButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openMenu" text="Ok" GridPane.columnSpan="3" GridPane.rowIndex="6" />
+      <Button fx:id="browseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBrowseAction" prefHeight="25.0" prefWidth="70.0" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+      <TextField fx:id="hoi4ModPathTextField" onAction="#handleModPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/mod/directory" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+      <Label fx:id="hoi4ModFolderLabel" text="HOIIV Mod Folder:" GridPane.rowIndex="3" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="26.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="693.0" GridPane.rowIndex="6" />
+      <Label text="Label" />
    </children>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

@@ -22,11 +22,13 @@ public class MenuWindowController {
 
     public void openSettings() {
         SettingsWindow settingsWindow = new SettingsWindow();
+
         settingsWindow.open();
     }
 
     public void openStatistics() {
         StatisticsWindow statisticsWindow = new StatisticsWindow();
+
         statisticsWindow.open();
     }
 
