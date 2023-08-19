@@ -148,10 +148,10 @@ public class SettingsWindowController {
 		}
 	}
 
-	public void openMenu() {
+	public void handleOkButtonAction() {
 		boolean settingsSaved = saveSettings();
 		if (!settingsSaved) {
-			return;	 // already printed error message
+			return;
 		}
 
 		HOIIVUtils.hideWindow(okButton);
