@@ -36,7 +36,7 @@ public class SettingsWindow extends Application {
 
         primaryStage.show();
     }
-
+    // ! todo fix
     private void savedSettings(Stage primaryStage, String hoi4UtilsPropertiesPath) throws IOException {
         if (new File(hoi4UtilsPropertiesPath).exists()) {
             HOIIVUtils.firstTimeSetup = false;

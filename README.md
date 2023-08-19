@@ -26,24 +26,24 @@ Lowercase = hoi4
 Capitlize = HOIIV
 
 todo:
-    Enable/disable intro popup (make sure to save file path)
-    
-    maybe add multiple file paths with a plus and minus button
-    
+    Close menu window when opening settings window
+
     Make a drop down for themes (white mode, dark mode, and system default)
+
+    Fix issue with setting window not properly saving when hitting okButton
+
+    Enable/disable intro popup (make sure to save file path)
+
+    create and implement Buildings table in Buildings By Country Window
+
+    fix crash/error when opening Buidings by Country Window
     
-    Add grey text version number on main window and intro window
+    Add multiple file paths with a plus and minus button
 
 <b> assigned todo </b>
 
-first day of new internship: 
-
 very difficult: 
     *fully* implement ui.buildings.BuildingsByCountryWindow
-
-    - table columns are {"Country", "Population", "Civilian Factories", "Military Factories", "Dockyards", "Airfields",
-    "Civ/Mil Ratio", "Pop / Factory", "Pop / Civ Ratio", "Pop Mil Ratio", "Pop / Air Capacity", "Pop / State",
-    "Aluminum", "Chromium", "Oil", "Rubber", "Steel", "Tungsten"}
 
     - validate that each row sorter works when done(alphabetical/numerically)
         - i saw row sorter, its where u click the up or down arrow on the column to sort the rows of that column, javafX should have this functionality like thats pretty normal. 

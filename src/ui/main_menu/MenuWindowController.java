@@ -25,7 +25,7 @@ public class MenuWindowController {
     void initialize() {
 
     }
-
+    // todo close menu
     public void openSettings() {
         SettingsWindow settingsWindow = new SettingsWindow();
 

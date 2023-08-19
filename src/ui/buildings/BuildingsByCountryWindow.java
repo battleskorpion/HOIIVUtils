@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 
 public class BuildingsByCountryWindow {
 
+    // ! todo fix
     public void open() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("BuildingsByCountryWindow.fxml"));
