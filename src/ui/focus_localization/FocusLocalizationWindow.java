@@ -1,20 +1,21 @@
 package ui.focus_localization;
 
-import clausewitz_coding.country.CountryTag;
 import clausewitz_coding.focus.FocusTree;
+import clausewitz_coding.localization.FocusLocalizationFile;
 import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.ArrayList;
-
 public class FocusLocalizationWindow {
+    private final FocusTree focusTree;
+    private final FocusLocalizationFile focusLocFile;
+
+    public FocusLocalizationWindow(FocusTree focusTree, FocusLocalizationFile focusLocFile) {
+        this.focusTree = focusTree;
+        this.focusLocFile = focusLocFile;
+    }
 
     public void open(){
         try {

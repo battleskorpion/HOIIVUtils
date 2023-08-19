@@ -107,7 +107,12 @@ public class CustomTooltipWindow extends JFrame {
 
                 int opt = j.showOpenDialog(null);
                 if (opt == JFileChooser.APPROVE_OPTION) {
-                    localizationFile = new LocalizationFile(j.getSelectedFile());
+                    try {
+                        localizationFile = new LocalizationFile(j.getSelectedFile());
+                    } catch (IOException ex) {
+                        HOIIVUtils.openError(ex);
+                        return;
+                    }
                 } else {
                     return;
                 }
