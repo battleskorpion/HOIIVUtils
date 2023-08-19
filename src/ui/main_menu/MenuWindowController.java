@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import ui.buildings.BuildingsByCountryWindow;
 import ui.focus_localization.FocusLocalizationWindow;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class MenuWindowController {
     public Button settingsButton;
     public Button statisticsButton;
     public Button focusLocalizButton;
+    public Button viewBuilding;
 
     @FXML
     void initialize() {
@@ -92,5 +94,11 @@ public class MenuWindowController {
         /* open focus loc window */
         FocusLocalizationWindow localizationWindow = new FocusLocalizationWindow(focusTree, focusLocFile);
         localizationWindow.open();
+    }
+
+    public void openBuildingsByCountry() {
+        BuildingsByCountryWindow buildingsByCountryWindow = new BuildingsByCountryWindow();
+
+        buildingsByCountryWindow.open();
     }
 }
