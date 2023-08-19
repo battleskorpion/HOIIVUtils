@@ -35,8 +35,9 @@ public class SettingsWindowController {
     public void tempUpdateSetting(HOIIVUtilsProperties.Settings setting, String property) {
         settings.put(setting, property);
     }
-    
-    public void initialize() {
+
+    @FXML
+    void initialize() {
         devModeCheckBox.setSelected(HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE));
 
         if (!HOIIVUtils.firstTimeSetup) {
