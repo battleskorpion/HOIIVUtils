@@ -42,6 +42,7 @@ public class SettingsWindowController {
 
             if (!(setting.equals("null"))) {
                 hoi4ModPathTextField.setText(setting);
+                okButton.setDisable(false);
             }
         }
     }
@@ -104,7 +105,11 @@ public class SettingsWindowController {
     public void handleModPathTextField() {
         getIsDirectory();
 
-        settings.put(HOIIVUtilsProperties.Settings.MOD_PATH, hoi4ModPathTextField.getText());
+        String pathText = hoi4ModPathTextField.getText();
+        if (pathText == null || pathText.isEmpty()) {
+            pathText = null;
+        }
+        settings.put(HOIIVUtilsProperties.Settings.MOD_PATH, pathText);
     }
 
     private void updateModPath(File selectedDirectory) {
@@ -122,8 +127,7 @@ public class SettingsWindowController {
                 
         if (okButton.isDisabled() && exists && isDirectory) {
             okButton.setDisable(false);
-        }
-        else {
+        } else {
             okButton.setDisable(true);
         }
     }

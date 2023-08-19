@@ -96,10 +96,16 @@ public class HOIIVUtils {
 	}
 
 	public static void openError(Exception exception) {
+		if (enabled(HOIIVUtilsProperties.Settings.DEV_MODE)) {
+			exception.printStackTrace();
+		}
 		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(), JOptionPane.WARNING_MESSAGE);
 	}
 
 	public static void openError(String s) {
+		if (enabled(HOIIVUtilsProperties.Settings.DEV_MODE)) {
+			System.err.println("open error window for error message: " + s);
+		}
 		JOptionPane.showMessageDialog(null, s, "HOIIVUtils Error Message", JOptionPane.WARNING_MESSAGE);
 	}
 
