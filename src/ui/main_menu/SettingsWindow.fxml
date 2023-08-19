@@ -26,7 +26,7 @@
 	  <RowConstraints maxHeight="190.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-	  <CheckBox fx:id="devModeCheckBox" mnemonicParsing="false" onAction="#devMode" text="Developer Mode" GridPane.rowIndex="4" />
+	  <CheckBox fx:id="devModeCheckBox" mnemonicParsing="false" onAction="#handleDevModeCheckBoxAction" text="Developer Mode" GridPane.rowIndex="4" />
 	  <Button fx:id="okButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openMenu" text="Ok" GridPane.columnSpan="3" GridPane.rowIndex="6" />
 	  <Button fx:id="browseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBrowseAction" prefHeight="25.0" prefWidth="70.0" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="3" />
 	  <TextField fx:id="hoi4ModPathTextField" onAction="#handleModPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/mod/directory" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
