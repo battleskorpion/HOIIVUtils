@@ -36,7 +36,7 @@ public class FixFocus extends HOIIVUtils {
 
 		int numFocusesUnloc = 0;
 		ArrayList<Focus> focusesUnloc = new ArrayList<>();
-		assert focusTree.list() != null;
+		assert focusTree.listFocusNames() != null;
 		for (Focus focus : focusTree.focuses())
 		{
 			// if focus id not localized
