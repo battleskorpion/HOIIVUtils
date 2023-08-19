@@ -51,5 +51,7 @@
 	"ShortcutMenuBar.navigateBack": false,
 	"ShortcutMenuBar.navigateForward": false,
 	"editor.insertSpaces": false,
-	"editor.indentSize": "tabSize"
+	"editor.indentSize": "tabSize",
+	"java.dependency.packagePresentation": "hierarchical",
+	"java.dependency.showMembers": true
 }
