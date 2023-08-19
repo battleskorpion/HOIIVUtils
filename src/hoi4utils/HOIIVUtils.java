@@ -54,25 +54,6 @@ public class HOIIVUtils {
 			HOIIVUtils.openError(exception);
 		}
 
-//		if (HOIIVUtilsProperties.isNull(MOD_DIRECTORY))
-//			/* get directory */ {
-//			JFileChooser j = new JFileChooser();
-//			j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//			j.setDialogTitle("Choose Mod Directory");
-//
-//			int opt = j.showOpenDialog(null);
-//			if (opt == JFileChooser.APPROVE_OPTION) {
-//				hoi4_dir_name = j.getSelectedFile().getPath();
-//			} else {
-//				return;
-//			}
-//
-//			/* directory acquired, now save settings */
-//			HOIIVUtilsProperties.saveSetting(MOD_DIRECTORY, hoi4_dir_name);
-//		} else {
-//			hoi4_dir_name = HOIIVUtilsProperties.get(MOD_DIRECTORY);
-//		}
-
 		/* init 
 		StateCategory.loadStateCategories();
 		Interface.loadGFX();*/
