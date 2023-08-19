@@ -90,6 +90,10 @@ public class HOIIVUtils {
 		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(), JOptionPane.WARNING_MESSAGE);
 	}
 
+	public static void openError(String s) {
+		JOptionPane.showMessageDialog(null, s, "HOIIVUtils Error Message", JOptionPane.WARNING_MESSAGE);
+	}
+
 	public static void closeWindow(Button button) {
 		try {
 			((Stage) (button.getScene().getWindow())).close();
