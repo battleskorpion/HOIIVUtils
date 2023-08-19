@@ -20,6 +20,11 @@ public class MenuWindowController {
     public Button statisticsButton;
     public Button focusLocalizButton;
 
+    @FXML
+    void initialize() {
+
+    }
+
     public void openSettings() {
         SettingsWindow settingsWindow = new SettingsWindow();
         settingsWindow.open();

@@ -10,8 +10,8 @@
 
 <GridPane fx:id="focusLocalizationPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.focus_localization.FocusLocalizationWindowController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="536.0" minWidth="10.0" prefWidth="281.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="536.0" minWidth="10.0" prefWidth="201.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="536.0" minWidth="10.0" prefWidth="72.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="536.0" minWidth="10.0" prefWidth="370.0" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="168.0" />
   </columnConstraints>
   <rowConstraints>
@@ -33,7 +33,7 @@
       </TableView>
       <Label fx:id="focusTreeNameLabel" prefWidth="63.0" GridPane.columnIndex="1" />
       <Label GridPane.rowIndex="2" />
-      <Label text="Added localization to x focuses" GridPane.rowIndex="2" />
+      <Label text="Added localization to x focuses" GridPane.columnSpan="2" GridPane.rowIndex="2" />
    </children>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
