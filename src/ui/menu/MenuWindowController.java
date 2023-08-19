@@ -16,7 +16,7 @@ public class MenuWindowController {
     }
 
     public void openStatistics() {
-        StatisticsWindow statisticsWindow = new StatisticWindow();
+        StatisticsWindow statisticsWindow = new StatisticsWindow();
         statisticsWindow.open();
     }
 }

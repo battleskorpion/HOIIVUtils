@@ -100,6 +100,8 @@ public class SettingsWindowController {
     public void openMenu() {
         saveSettings();
 
+        HOIIVUtils.hideWindow(okButton);
+
         MenuWindow menuWindow = new MenuWindow();
 
         menuWindow.open();
