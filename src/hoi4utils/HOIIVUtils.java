@@ -23,7 +23,7 @@ import static hoi4utils.Settings.PREFERRED_SCREEN;
 * HOIIVUtils File
 */
 public class HOIIVUtils {
-	public static final String hoi4utilsVersion = "Version 0.2.18";
+	public static final String hoi4utilsVersion = "Version 0.2.12";
 	
 	public static String hoi4_dir_name;
 	public static File focus_folder;
