@@ -11,6 +11,9 @@ public abstract class HOIUtilsWindow {
 	public String title;
 	Stage primaryStage;
 
+	/**
+	 * Opens window
+	 */
 	public void open() {
 		try {
 			if (primaryStage != null) {
@@ -31,6 +34,11 @@ public abstract class HOIUtilsWindow {
 		}
 	}
 
+	/**
+	 * Opens window and updates fxmlResource and title
+	 * @param fxmlResource
+	 * @param title
+	 */
 	public void open(String fxmlResource, String title) {
 		this.fxmlResource = fxmlResource;
 		this.title = title;
