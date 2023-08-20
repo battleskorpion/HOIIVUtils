@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.focus_localization.FocusLocalizationWindow;
-
+/*
+ * MenueWindowController file.
+ */
 public class MenuWindowController {
 
 	@FXML
