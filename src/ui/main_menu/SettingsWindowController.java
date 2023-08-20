@@ -28,7 +28,7 @@ public class SettingsWindowController {
 	public CheckBox idDevModeCheckBox;
 	public Label hoi4ModFolderLabel;
 	public Button browseButton;
-	public TextField hoi4ModPathTextField;
+	public TextField idModPathTextField;
 	public Button idOkButton;
 
 	public File selectedDirectory;
@@ -53,7 +53,7 @@ public class SettingsWindowController {
 	private void setModPathTextFeildFromSettings() {
 		String inlcudeSetting = (String) MOD_PATH.getSetting();
 		if (inlcudeSetting != "null") {
-			hoi4ModPathTextField.setText(inlcudeSetting);
+			idModPathTextField.setText(inlcudeSetting);
 		}
 	}
 	private void setDevModeCheckBoxOnOrOff() {
@@ -67,6 +67,9 @@ public class SettingsWindowController {
 		idOkButton.setDisable(true);
 	}
 
+	public SettingsWindowController() {
+		settings = new HashMap<>();
+	}
 	public void handleDevModeCheckBoxAction() {
 		if (idDevModeCheckBox.isSelected()) {
 			settings.put(Settings.DEV_MODE, "true");
@@ -75,9 +78,6 @@ public class SettingsWindowController {
 		}
 	}
 	
-	public SettingsWindowController() {
-		settings = new HashMap<>();
-	}
 	public void tempUpdateSetting(Settings setting, String property) {
 		settings.put(setting, property);
 	}
@@ -106,7 +106,7 @@ public class SettingsWindowController {
 	
 	public void handleBrowseAction() {
 			getDirectoryChooser();
-			hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
+			idModPathTextField.setText(selectedDirectory.getAbsolutePath());
 			updateModPath(selectedDirectory);
 	}
 
@@ -123,7 +123,7 @@ public class SettingsWindowController {
 	public void handleModPathTextField() {
 		getIsDirectory();
 
-		String pathText = hoi4ModPathTextField.getText();
+		String pathText = idModPathTextField.getText();
 		if (pathText == null || pathText.isEmpty()) {
 			pathText = null;
 		}
@@ -137,7 +137,7 @@ public class SettingsWindowController {
 	}
 
 	private void getIsDirectory() {
-		File fileModPath = new File(hoi4ModPathTextField.getText());
+		File fileModPath = new File(idModPathTextField.getText());
 
 		boolean exists = fileModPath.exists();
 
