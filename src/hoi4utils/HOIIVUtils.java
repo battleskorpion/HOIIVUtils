@@ -159,45 +159,7 @@ public class HOIIVUtils {
 	public static String titleCapitalize(String str) {
 		// some vars
 		ArrayList<String> words = new ArrayList<String>(Arrays.asList(str.split(" ")));
-		ArrayList<String> whitelist = new ArrayList<String>();
-
-		// create the whitelist
-		whitelist.add("a");
-		whitelist.add("above");
-		whitelist.add("after");
-		whitelist.add("among");
-		whitelist.add("an");
-		whitelist.add("and");
-		whitelist.add("around");
-		whitelist.add("as");
-		whitelist.add("at");
-		whitelist.add("below");
-		whitelist.add("beneath");
-		whitelist.add("beside");
-		whitelist.add("between");
-		whitelist.add("but");
-		whitelist.add("by");
-		whitelist.add("for");
-		whitelist.add("from");
-		whitelist.add("if");
-		whitelist.add("in");
-		whitelist.add("into");
-		whitelist.add("nor");
-		whitelist.add("of");
-		whitelist.add("off");
-		whitelist.add("on");
-		whitelist.add("onto");
-		whitelist.add("or");
-		whitelist.add("over");
-		whitelist.add("since");
-		whitelist.add("the");
-		whitelist.add("through");
-		whitelist.add("throughout");
-		whitelist.add("to");
-		whitelist.add("under");
-		whitelist.add("until");
-		whitelist.add("up");
-		whitelist.add("with");
+		ArrayList<String> whitelist = createCapitalizationWhitelist();
 
 		// first word always capitalized
 		if (words.get(0).length() == 1) {
@@ -238,6 +200,49 @@ public class HOIIVUtils {
 
 		System.out.println("capitalized: " + String.join(" ", words));
 		return String.join(" ", words);
+	}
+
+	private static ArrayList<String> createCapitalizationWhitelist() {
+		ArrayList<String> whitelist = new ArrayList<String>();
+
+		// create the whitelist
+		whitelist.add("a");
+		whitelist.add("above");
+		whitelist.add("after");
+		whitelist.add("among");
+		whitelist.add("an");
+		whitelist.add("and");
+		whitelist.add("around");
+		whitelist.add("as");
+		whitelist.add("at");
+		whitelist.add("below");
+		whitelist.add("beneath");
+		whitelist.add("beside");
+		whitelist.add("between");
+		whitelist.add("but");
+		whitelist.add("by");
+		whitelist.add("for");
+		whitelist.add("from");
+		whitelist.add("if");
+		whitelist.add("in");
+		whitelist.add("into");
+		whitelist.add("nor");
+		whitelist.add("of");
+		whitelist.add("off");
+		whitelist.add("on");
+		whitelist.add("onto");
+		whitelist.add("or");
+		whitelist.add("over");
+		whitelist.add("since");
+		whitelist.add("the");
+		whitelist.add("through");
+		whitelist.add("throughout");
+		whitelist.add("to");
+		whitelist.add("under");
+		whitelist.add("until");
+		whitelist.add("up");
+		whitelist.add("with");
+		return whitelist;
 	}
 
 	/**
