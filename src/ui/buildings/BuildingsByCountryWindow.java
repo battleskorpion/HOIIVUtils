@@ -1,29 +1,37 @@
 package ui.buildings;
 
 import hoi4utils.HOIIVUtils;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
+import ui.HOIUtilsWindow;
 
-public class BuildingsByCountryWindow {
+public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
-	// ! todo fix
-	public void open() {
-		try {
-			Parent root = FXMLLoader.load(getClass().getResource("BuildingsByCountryWindow.fxml"));
-			Stage stage = new Stage();
-			stage.setTitle("HOIIVUtils Buildings by Country");
-			stage.setScene((new Scene(root)));
-			HOIIVUtils.decideScreen(stage);
-			stage.show();
-		}
-		catch (Exception exception) {
-			HOIIVUtils.openError(exception);
-		}
+	public BuildingsByCountryWindow() {
+		fxmlResource = "BuildingsByCountryWindow.fxml";
+		title = "HOIIVUtils Buildins By Country Window";
 	}
 
+	public void open() {
+		super.open();
+	}
+
+
+
 	// * Buildings By Country Window Settings
+
+	@FXML
+	public CheckMenuItem idPercentageCheckMenuItem;
+
+	public void handlePercentageCheckMenuItemAction() {
+		String tempText;
+		if (idPercentageCheckMenuItem.isSelected() && HOIIVUtils.DEV_MODE) {
+			tempText = "Percentage values are on";
+		} else {
+			tempText = "Percentage values are off";
+		}
+		System.out.println(tempText);
+	}
 }
 /*	 
 	private JPanel BuildingsByCountryWindowJPanel;

@@ -24,9 +24,9 @@ public abstract class HOIUtilsWindow {
 			} else if (fxmlResource == null) {
 				HOIIVUtils.openError(".fxml resource null.");
 			} else {
-				Parent root = FXMLLoader.load(getClass().getResource(fxmlResource));
-
 				Stage primaryStage = new Stage();
+				
+				Parent root = FXMLLoader.load(getClass().getResource(fxmlResource));
 
 				primaryStage.setTitle(title);
 				Scene scene = new Scene(root);

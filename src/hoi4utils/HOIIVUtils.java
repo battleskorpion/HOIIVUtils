@@ -50,7 +50,6 @@ public class HOIIVUtils {
 		/* hoi4utils.settings */
 		try {
 			settingsWindow = new SettingsWindow();
-
 			settingsWindow.launchSettingsWindow(args);
 		}
 		catch (Exception exception) {
