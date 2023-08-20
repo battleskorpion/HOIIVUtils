@@ -5,24 +5,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ui.main_menu.HOIUtilsWindow;
 
-public class FocusLocalizationWindow {
+public class FocusLocalizationWindow extends HOIUtilsWindow {
 
 	public FocusLocalizationWindow() {
 
 	}
 
 	public void open(){
-		try {
-			Parent root = FXMLLoader.load(getClass().getResource("FocusLocalizationWindow.fxml"));
-			Stage stage = new Stage();
-			stage.setTitle("Focus Localization");
-			stage.setScene((new Scene(root, 600, 400)));
-			HOIIVUtils.decideScreen(stage);
-			stage.show();
-		}
-		catch (Exception exception) {
-			HOIIVUtils.openError(exception);
-		}
+		super.open("FocusLocalizationWindow.fxml");
 	}
 }

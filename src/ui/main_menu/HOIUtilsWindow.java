@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public abstract class hoiUtilsWindow {
+public abstract class HOIUtilsWindow {
 	Stage primaryStage;
 
 	public void open(String fxmlResource) {
