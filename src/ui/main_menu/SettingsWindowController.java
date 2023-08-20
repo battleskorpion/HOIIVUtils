@@ -94,7 +94,7 @@ public class SettingsWindowController {
 		File HOIIVModFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
 		if (HOIIVModFolder.exists() && HOIIVModFolder.isDirectory()) {
 			directoryChooser.setInitialDirectory(HOIIVModFolder);
-		} else if (Settings.DEV_MODE.enabled()){
+		} else if (Settings.DEV_MODE.enabled()) {
 			HOIIVUtils.openError("Could not find hoi4 mod folder/does not exist.");
 		}
 		selectedDirectory = directoryChooser.showDialog(primaryStage);
