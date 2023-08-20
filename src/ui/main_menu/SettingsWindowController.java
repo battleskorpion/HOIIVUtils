@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -23,8 +22,7 @@ public class SettingsWindowController {
 	HashMap<Settings, String> tempSettings;
 
 	@FXML
-	public GridPane settingsGridPain;
-	public Label versionLabel;
+	public Label idVersionLabel;
 	public TextField idModPathTextField;
 	public Label idHOIIVModFolderLabel;
 	public Button idBrowseButton;
@@ -45,7 +43,7 @@ public class SettingsWindowController {
 	}
 
 	private void includeVersion() {
-		versionLabel.setText(HOIIVUtils.hoi4utilsVersion);
+		idVersionLabel.setText(HOIIVUtils.hoi4utilsVersion);
 	}
 	private void setupFirstTime() {
 		boolean isFirstTime = HOIIVUtils.firstTimeSetup;

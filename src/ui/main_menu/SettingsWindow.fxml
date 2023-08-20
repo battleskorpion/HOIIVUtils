@@ -32,7 +32,7 @@
 	  <TextField fx:id="idModPathTextField" onAction="#handleModPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/mod/directory" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
 	  <Label fx:id="idHOIIVModFolderLabel" text="HOIIV Mod Folder:" GridPane.rowIndex="3" />
 	  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="26.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="693.0" GridPane.rowIndex="6" />
-	  <Label fx:id="versionLabel" text="Label" />
+	  <Label fx:id="idVersionLabel" text="Label" />
    </children>
    <padding>
 	  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
