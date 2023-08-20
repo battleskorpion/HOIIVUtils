@@ -53,4 +53,17 @@
 	"java.dependency.packagePresentation": "hierarchical",
 	"java.dependency.showMembers": true,
 	"explorer.compactFolders": false,
+	"todo-tree.regex.regex": "(//|#|<!--|/\\*|^\\s*\\*)\\s*($TAGS)",
+	"todo-tree.filtering.excludeGlobs": [
+        "**/vendor/**",
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/bower_components/**",
+        "**/build/**",
+        "**/.vscode/**",
+        "**/.github/**",
+        "**/_output/**",
+        "**/*.min.*",
+        "**/*.map"
+	],
 }
