@@ -26,7 +26,7 @@ Lowercase = hoi4
 Capitlize = HOIIV
 
 todo:
-	Close menu window when opening settings window
+	Close menu window when opening hoi4utils.hoi4_settings window
 
 	Make a drop down for themes (white mode, dark mode, and system default)
 

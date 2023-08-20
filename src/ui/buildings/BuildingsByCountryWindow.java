@@ -85,7 +85,7 @@ public class BuildingsByCountryWindow {
 		// row sorter
 		buildingsTable.setAutoCreateRowSorter(true);
 
-		// add popup settings
+		// add popup hoi4utils.settings
 		popupSettings.add(aluminumDisplayAsPercentOption);
 		popupSettings.add(chromiumDisplayAsPercentOption);
 		popupSettings.add(oilDisplayAsPercentOption);

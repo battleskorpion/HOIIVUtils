@@ -1,9 +1,9 @@
 package ui.custom_tooltop;
 
 import hoi4utils.HOIIVUtils;
-import clausewitz_coding.localization.Localization;
-import clausewitz_coding.localization.LocalizationFile;
-import clausewitz_coding.tooltip.CustomTooltip;
+import hoi4utils.clausewitz_coding.localization.Localization;
+import hoi4utils.clausewitz_coding.localization.LocalizationFile;
+import hoi4utils.clausewitz_coding.tooltip.CustomTooltip;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

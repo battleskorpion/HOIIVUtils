@@ -1,4 +1,4 @@
-import hellofx.Main;
+import hoi4utils.hellofx.Main;
 import hoi4utils.HOIIVUtils;
 
 import java.io.IOException;

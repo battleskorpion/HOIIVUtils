@@ -1,6 +1,6 @@
 package ui.colorgen;
 
-import mapgen.colorgen.ColorGenerator;
+import hoi4utils.mapgen.colorgen.ColorGenerator;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;

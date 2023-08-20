@@ -1,10 +1,10 @@
 package ui.focus;
 
 import hoi4utils.HOIIVUtils;
-import clausewitz_coding.country.CountryTag;
-import clausewitz_coding.focus.Focus;
-import clausewitz_coding.focus.FocusTree;
-import ddsreader.DDSReader;
+import hoi4utils.clausewitz_coding.country.CountryTag;
+import hoi4utils.clausewitz_coding.focus.Focus;
+import hoi4utils.clausewitz_coding.focus.FocusTree;
+import hoi4utils.ddsreader.DDSReader;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

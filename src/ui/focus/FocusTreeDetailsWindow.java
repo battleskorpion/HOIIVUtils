@@ -1,6 +1,6 @@
 package ui.focus;
 
-import clausewitz_coding.focus.Focus;
+import hoi4utils.clausewitz_coding.focus.Focus;
 
 import javax.swing.*;
 import java.awt.*;

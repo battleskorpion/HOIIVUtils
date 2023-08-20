@@ -1,9 +1,9 @@
 package ui.focus_localization;
 
-import clausewitz_coding.focus.FixFocus;
-import clausewitz_coding.focus.Focus;
-import clausewitz_coding.focus.FocusTree;
-import clausewitz_coding.localization.FocusLocalizationFile;
+import hoi4utils.clausewitz_coding.focus.FixFocus;
+import hoi4utils.clausewitz_coding.focus.Focus;
+import hoi4utils.clausewitz_coding.focus.FocusTree;
+import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
 import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

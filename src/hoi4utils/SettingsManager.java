@@ -1,0 +1,172 @@
+package hoi4utils;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.Scanner;
+/*
+ * HOI 4 Util Properties File
+ */
+public class SettingsManager {
+
+	public static final String USER_DOCS_PATH = System.getProperty("user.home") + File.separator + "Documents";
+	public static final String HOI4UTILS_PROPERTIES_PATH = USER_DOCS_PATH + File.separator + "HOIIVUtils";
+
+	private static File settings_file;
+	private static FileWriter settingsWriter;
+	private static BufferedWriter settingsBWriter;
+	private static PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); 				// for println syntax
+	static HashMap<HOIIVSettings.Settings, String> settingValues = new HashMap<>();
+
+	public SettingsManager() throws IOException {
+		new File(HOI4UTILS_PROPERTIES_PATH).mkdir();
+		settings_file = new File(HOI4UTILS_PROPERTIES_PATH + File.separator + "HOIIVUtils_properties.txt");
+		settings_file.createNewFile();
+
+		readSettings();
+	}
+
+	public SettingsManager(HashMap<HOIIVSettings.Settings, String> settings) throws IOException _{
+		String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
+		String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
+		new File(hoi4UtilsPropertiesPath).mkdir();
+		settings_file = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
+		boolean newSettingsFileCreated = settings_file.createNewFile();
+
+		if (settings == null) {
+			writeBlankSettings();
+		} else if (newSettingsFileCreated) {
+			writeBlankSettings();
+			saveSettings(settings);
+		} else {
+			readSettings();
+			saveSettings(settings);
+		}
+	}
+
+	/**
+	 * Reads hoi4utils.settings from hoi4utils.settings file
+	 */
+	public static void readSettings() {
+		try {
+			Scanner settingReader = new Scanner(settings_file);
+//			System.out.println(settingReader.nextLine());
+
+			/* if file is empty then write blank hoi4utils.settings to new hoi4utils.settings file */
+			if (!settingReader.hasNext()) {
+				writeBlankSettings();
+				settingReader.close();
+				return;
+			}
+
+			/* read hoi4utils.settings */
+			while (settingReader.hasNextLine()) {
+				String[] readSetting = settingReader.nextLine().split(";");
+				HOIIVSettings.Settings setting = HOIIVSettings.Settings.valueOf(readSetting[0]);
+
+				settingValues.put(setting, readSetting[1]);
+			}
+
+			for (HOIIVSettings.Settings setting : HOIIVSettings.Settings.values()) {
+				if (!settingValues.containsKey(setting)) {
+					writeBlankSetting(setting);
+				}
+			}
+			settingReader.close();
+
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	/**
+	 * Writes a blank setting to the hoi4utils.settings file
+	 */
+	private static void writeBlankSetting(HOIIVSettings.Settings setting) throws IOException {
+		settingsWriter = new FileWriter(settings_file, true);		// true = append
+		settingsBWriter = new BufferedWriter(settingsWriter);
+		settingsPWriter = new PrintWriter(settingsBWriter);
+
+		settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
+
+		settingsPWriter.close();
+	}
+
+	/**
+	 * Writes default hoi4utils.settings to the hoi4utils.settings file
+	 */
+	public static void writeBlankSettings() throws IOException {
+		settingsWriter = new FileWriter(settings_file, false);		// true = append
+		settingsBWriter = new BufferedWriter(settingsWriter);
+		settingsPWriter = new PrintWriter(settingsBWriter);
+
+		for (HOIIVSettings.Settings setting : HOIIVSettings.Settings.values()) {
+			settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
+
+			settingValues.put(setting, setting.defaultProperty());
+		}
+
+		settingsPWriter.close();
+
+	}
+
+	/**
+	 * Saves setting with specified value
+	 */
+	public static void saveSetting(HOIIVSettings.Settings setting, String settingValue) throws IOException {
+		settingsWriter = new FileWriter(settings_file, false);		// true = append
+		settingsBWriter = new BufferedWriter(settingsWriter);
+		settingsPWriter = new PrintWriter(settingsBWriter);
+
+		settingValues.put(setting, settingValue);
+		for (HOIIVSettings.Settings s : HOIIVSettings.Settings.values()) {
+			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
+		}
+
+		settingsPWriter.close();
+	}
+
+	/**
+	 * Saves a list of hoi4utils.settings to hoi4utils.settings file, all other hoi4utils.settings remain the same.
+	 * @param newSettings list of updated hoi4utils.settings to save
+	 * @throws IOException
+	 */
+	public static void saveSettings(HashMap<HOIIVSettings.Settings, String> newSettings) throws IOException {
+		if (newSettings == null) {
+			return;
+		}
+
+		settingsWriter = new FileWriter(settings_file, false);		// true = append
+		settingsBWriter = new BufferedWriter(settingsWriter);
+		settingsPWriter = new PrintWriter(settingsBWriter);
+
+		settingValues.putAll(newSettings);
+		for (HOIIVSettings.Settings s : HOIIVSettings.Settings.values()) {
+			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
+		}
+
+		settingsPWriter.close();
+	}
+
+	/**
+	 * Saves all hoi4utils.settings to hoi4utils.settings file.
+	 * @throws IOException
+	 */
+	public static void saveSettings() throws IOException {
+		settingsWriter = new FileWriter(settings_file, false);		// true = append
+		settingsBWriter = new BufferedWriter(settingsWriter);
+		settingsPWriter = new PrintWriter(settingsBWriter);
+
+		for (HOIIVSettings.Settings s : HOIIVSettings.Settings.values()) {
+			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
+		}
+
+		settingsPWriter.close();
+	}
+
+	public static String get(HOIIVSettings.Settings setting) { return settingValues.get(setting); }
+
+	public static boolean isNull(HOIIVSettings.Settings setting) {
+		return settingValues.get(setting).equals("null");
+	}
+}

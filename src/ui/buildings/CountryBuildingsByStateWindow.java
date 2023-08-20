@@ -1,12 +1,12 @@
 package ui.buildings;
 
 import hoi4utils.HOIIVUtils;
-import clausewitz_coding.country.CountryTag;
-import clausewitz_coding.state.State;
-import clausewitz_coding.state.buildings.Infrastructure;
-import clausewitz_coding.state.buildings.Resources;
-import fileIO.FileListener.FileAdapter;
-import fileIO.FileListener.FileEvent;
+import hoi4utils.clausewitz_coding.country.CountryTag;
+import hoi4utils.clausewitz_coding.state.State;
+import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
+import hoi4utils.clausewitz_coding.state.buildings.Resources;
+import hoi4utils.fileIO.FileListener.FileAdapter;
+import hoi4utils.fileIO.FileListener.FileEvent;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -91,7 +91,7 @@ public class CountryBuildingsByStateWindow extends JFrame {
 		// row sorter
 		statesBuildingsTable.setAutoCreateRowSorter(true);
 
-		// add popup settings
+		// add popup hoi4utils.settings
 		popupSettings.add(aluminumDisplayAsPercentOption);
 		popupSettings.add(chromiumDisplayAsPercentOption);
 		popupSettings.add(oilDisplayAsPercentOption);

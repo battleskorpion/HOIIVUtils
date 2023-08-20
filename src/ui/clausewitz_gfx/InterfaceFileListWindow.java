@@ -1,6 +1,6 @@
 package ui.clausewitz_gfx;
 
-import clausewitz_coding.gfx.Interface;
+import hoi4utils.clausewitz_coding.gfx.Interface;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

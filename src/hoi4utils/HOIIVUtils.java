@@ -1,21 +1,23 @@
 package hoi4utils;
 
-import fileIO.FileListener.FileAdapter;
-import fileIO.FileListener.FileEvent;
-import fileIO.FileListener.FileWatcher;
+import hoi4utils.fileIO.FileListener.FileAdapter;
+import hoi4utils.fileIO.FileListener.FileEvent;
+import hoi4utils.fileIO.FileListener.FileWatcher;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import ui.main_menu.SettingsWindow;
-import settings.HOIIVUtilsProperties;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import static settings.HOIIVUtilsProperties.Settings.*;
+
+import static hoi4utils.HOIIVSettings.Settings.PREFERRED_SCREEN;
+
 /*
 * HOIIVUtils File
 */
@@ -34,7 +36,7 @@ public class HOIIVUtils {
 
 	private static SettingsWindow settingsWindow;
 	
-	public static HOIIVUtilsProperties settings;
+	public static SettingsManager settings;
 
 	public static boolean DEV_MODE = false;
 
@@ -44,7 +46,7 @@ public class HOIIVUtils {
 		
 		HOIIVUtils.args = args;
 
-		/* settings */
+		/* hoi4utils.settings */
 		try {
 			settingsWindow = new SettingsWindow();
 
@@ -71,14 +73,14 @@ public class HOIIVUtils {
 	}
 
 	public static void openError(Exception exception) {
-		if (enabled(HOIIVUtilsProperties.Settings.DEV_MODE)) {
+		if (HOIIVSettings.Settings.DEV_MODE.enabled()) {
 			exception.printStackTrace();
 		}
 		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(), JOptionPane.WARNING_MESSAGE);
 	}
 
 	public static void openError(String s) {
-		if (enabled(HOIIVUtilsProperties.Settings.DEV_MODE)) {
+		if (HOIIVSettings.Settings.DEV_MODE.enabled()) {
 			System.err.println("open error window for error message: " + s);
 		}
 		JOptionPane.showMessageDialog(null, s, "HOIIVUtils Error Message", JOptionPane.WARNING_MESSAGE);
@@ -106,14 +108,14 @@ public class HOIIVUtils {
 		Integer preferredScreen = (Integer) PREFERRED_SCREEN.getSetting();
 		ObservableList<Screen> screens = Screen.getScreens();
 		if (preferredScreen > screens.size()) {
-			if (HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE)) {
+			if (HOIIVSettings.Settings.DEV_MODE.enabled()) {
 				System.err.println( "Preferred screen does not exist, resorting to defaults.");
 			}
 			return;
 		}
 		Screen screen = screens.get(preferredScreen);
 		if (screen == null) {
-			if (HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE)) {
+			if (HOIIVSettings.Settings.DEV_MODE.enabled()) {
 				System.err.println( "Preferred screen is null error, resorting to defaults.");
 			}
 			return;

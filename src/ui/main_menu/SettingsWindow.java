@@ -1,19 +1,19 @@
 package ui.main_menu;
 
+import hoi4utils.HOIIVSettings;
 import hoi4utils.HOIIVUtils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import settings.HOIIVUtilsProperties;
+import hoi4utils.SettingsManager;
 
 import java.io.File;
 import java.io.IOException;
 
-
 /**
- * SettingsWindow is the window for the program settings
+ * SettingsWindow is the window for the program hoi4utils.settings
  */
 public class SettingsWindow extends Application {
 
@@ -35,15 +35,15 @@ public class SettingsWindow extends Application {
 	}
 	// ! todo fix
 	private void savedSettings(Stage primaryStage) throws IOException {
-		String hoi4UtilsPropertiesPath = HOIIVUtilsProperties.HOI4UTILS_PROPERTIES_PATH;
+		String hoi4UtilsPropertiesPath = SettingsManager.HOI4UTILS_PROPERTIES_PATH;
 
 		if (new File(hoi4UtilsPropertiesPath + "\\HOIIVUtils_properties.txt").exists()) {
 			HOIIVUtils.firstTimeSetup = false;
 
-			HOIIVUtils.settings = new HOIIVUtilsProperties();
+			HOIIVUtils.settings = new SettingsManager();
 
 			HOIIVUtils.decideScreen(primaryStage);
-			if (HOIIVUtilsProperties.Settings.enabled(HOIIVUtilsProperties.Settings.DEV_MODE)) {
+			if (HOIIVSettings.Settings.DEV_MODE.enabled()) {
 				System.out.println("Performing standard startup.");
 			}
 		}
