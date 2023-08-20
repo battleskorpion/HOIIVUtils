@@ -73,6 +73,7 @@ public class SettingsWindowController {
 	public void handleDevModeCheckBoxAction() {
 		if (idDevModeCheckBox.isSelected()) {
 			settings.put(Settings.DEV_MODE, "true");
+			Settings.DEV_MODE.setValue("true");
 		} else {
 			settings.put(Settings.DEV_MODE, "false");
 		}
