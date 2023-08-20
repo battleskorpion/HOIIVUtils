@@ -66,4 +66,5 @@
         "**/*.min.*",
         "**/*.map"
 	],
+	"git.autofetch": true,
 }
