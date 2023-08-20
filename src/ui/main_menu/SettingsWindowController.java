@@ -29,7 +29,7 @@ public class SettingsWindowController {
 	public Label hoi4ModFolderLabel;
 	public Button browseButton;
 	public TextField hoi4ModPathTextField;
-	public Button okButton;
+	public Button idOkButton;
 
 	public File selectedDirectory;
 	
@@ -61,10 +61,10 @@ public class SettingsWindowController {
 		idDevModeCheckBox.setSelected(getDevModeSetting);
 	}
 	private void enableOkButton() {
-		okButton.setDisable(false);
+		idOkButton.setDisable(false);
 	}
 	private void disableOkButton() {
-		okButton.setDisable(true);
+		idOkButton.setDisable(true);
 	}
 
 	public void handleDevModeCheckBoxAction() {
@@ -143,7 +143,7 @@ public class SettingsWindowController {
 
 		boolean isDirectory = fileModPath.isDirectory();
 				
-		if (okButton.isDisabled() && exists && isDirectory) {
+		if (idOkButton.isDisabled() && exists && isDirectory) {
 			disableOkButton();
 		} else {
 			enableOkButton();
@@ -155,7 +155,7 @@ public class SettingsWindowController {
 		if (!settingsSaved) {
 			return;
 		}
-		HOIIVUtils.hideWindow(okButton);
+		HOIIVUtils.hideWindow(idOkButton);
 		MenuWindow menuWindow = new MenuWindow();
 		menuWindow.open();
 	}
