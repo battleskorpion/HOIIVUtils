@@ -39,12 +39,12 @@ public class SettingsWindowController {
 		tempSettings = new HashMap<>();
 	}
 
+/* Start */
 	@FXML
 	void initialize() {
 		includeVersion();
 		setupFirstTime();
 	}
-
 	private void includeVersion() {
 		idVersionLabel.setText(HOIIVUtils.hoi4utilsVersion);
 	}
@@ -72,15 +72,37 @@ public class SettingsWindowController {
 	private void disableOkButton() {
 		idOkButton.setDisable(true);
 	}
-
-	public void updateTempSetting(Settings setting, Object property) {
-		tempSettings.put(setting, String.valueOf(property));
-	}
-	public void handleDevModeCheckBoxAction() {
-		updateTempSetting(Settings.DEV_MODE, idDevModeCheckBox.isSelected());
+	
+/** User Interactive Text Feild in Settings Window
+ * Allows the user to type in the text feild.
+ * It detects whever the user entered a valid directory.
+ * Saves the directory path to hoi4utils settings: MOD_PATH
+*/
+	public void handleModPathTextField() {
+			getIsDirectory();
+			String pathText = idModPathTextField.getText();
+			if (pathText == null || pathText.isEmpty()) {
+				pathText = null;
+			}
+			tempSettings.put(MOD_PATH, pathText);
+		}
+	private void getIsDirectory() {
+		File fileModPath = new File(idModPathTextField.getText());
+		boolean exists = fileModPath.exists();
+		boolean isDirectory = fileModPath.isDirectory();
+		if (idOkButton.isDisabled() && exists && isDirectory) {
+			disableOkButton();
+		} else {
+			enableOkButton();
+		}
 	}
 	
-	
+/** User Interactive Button in Settings Window
+ * Opens up windows 10 Directory Chooser
+ * Will do nothing if the user exits or cancels window
+ * Updates Text Field when directory is selected
+ * Saves the directory path to MOD_PATH 
+ */
 	public void handleBrowseAction() {
 		getDirectoryChooser();
 		if (selectedDirectory == null) {
@@ -101,36 +123,25 @@ public class SettingsWindowController {
 		}
 		selectedDirectory = directoryChooser.showDialog(primaryStage);
 	}
-
-	public void handleModPathTextField() {
-		getIsDirectory();
-
-		String pathText = idModPathTextField.getText();
-		if (pathText == null || pathText.isEmpty()) {
-			pathText = null;
-		}
-		tempSettings.put(MOD_PATH, pathText);
-	}
-
 	private void updateModPath(File selectedDirectory) {
 		getIsDirectory();
 		tempSettings.put(MOD_PATH, selectedDirectory.getAbsolutePath());
 	}
 
-	private void getIsDirectory() {
-		File fileModPath = new File(idModPathTextField.getText());
-
-		boolean exists = fileModPath.exists();
-
-		boolean isDirectory = fileModPath.isDirectory();
-				
-		if (idOkButton.isDisabled() && exists && isDirectory) {
-			disableOkButton();
-		} else {
-			enableOkButton();
-		}
+/** User Interactive CheckBox in Settings Window
+ * Saves the check to DEV_MODE
+ */
+	public void handleDevModeCheckBoxAction() {
+		updateTempSetting(Settings.DEV_MODE, idDevModeCheckBox.isSelected());
+	}
+	public void updateTempSetting(Settings setting, Object property) {
+		tempSettings.put(setting, String.valueOf(property));
 	}
 
+/** User Interactive Button in Settings Window
+ * Closes Settings Window
+ * Opens Menu Window
+ */
 	public void handleOkButtonAction() {
 		boolean settingsSaved = updateSettings();
 		if (!settingsSaved) {
@@ -153,13 +164,6 @@ public class SettingsWindowController {
 		createHOIIVFilePaths();
 		return true;
 	}
-	private void hideCurrentWindow() {
-		HOIIVUtils.hideWindow(idPane);
-	}
-	private void openMenuWindow() {
-		MenuWindow menuWindow = new MenuWindow();
-		menuWindow.open();
-	}
 	private void createHOIIVFilePaths() {
 		String modPath = SettingsManager.get(MOD_PATH);
 		System.out.println(modPath);
@@ -167,5 +171,12 @@ public class SettingsWindowController {
 		HOIIVUtils.strat_region_dir =  new File(modPath + "\\map\\strategicregions");
 		HOIIVUtils.localization_eng_folder =  new File(modPath + "\\localisation\\english");
 		HOIIVUtils.focus_folder = new File(modPath + "\\common\\national_focus");
+	}
+	private void hideCurrentWindow() {
+		HOIIVUtils.hideWindow(idPane);
+	}
+	private void openMenuWindow() {
+		MenuWindow menuWindow = new MenuWindow();
+		menuWindow.open();
 	}
 }
