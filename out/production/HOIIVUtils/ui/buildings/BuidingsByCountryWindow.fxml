@@ -1,60 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollBar?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.buildings.BuildingsByCountryWindowController">
+
+<Pane fx:id="idPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-	  <MenuBar>
-		<menus>
-		  <Menu mnemonicParsing="false" text="File">
-			<items>
-			  <MenuItem fx:id="exportAsMenuItem" mnemonicParsing="false" onAction="#handleExport" text="Export As" />
-			</items>
-		  </Menu>
-		  <Menu mnemonicParsing="false" text="Edit">
-			<items>
-			  <MenuItem fx:id="percentageToggle" mnemonicParsing="false" text="Delete">
-					 <graphic>
-						<CheckBox mnemonicParsing="false" text="CheckBox" />
-					 </graphic></MenuItem>
-			</items>
-		  </Menu>
-		  <Menu mnemonicParsing="false" text="Help">
-			<items>
-			  <MenuItem mnemonicParsing="false" />
-			</items>
-		  </Menu>
-		</menus>
-	  </MenuBar>
-	  <TableView layoutY="26.0" prefHeight="1054.0" prefWidth="1900.0">
-		<columns>
-		  <TableColumn editable="false" prefWidth="75.0" text="Country" />
-		  <TableColumn editable="false" prefWidth="75.0" text="Population" />
-			<TableColumn editable="false" prefWidth="75.0" text="Civilian Factories" />
-			<TableColumn editable="false" prefWidth="75.0" text="Military Factories" />
-			<TableColumn editable="false" prefWidth="75.0" text="Dockyards" />
-			<TableColumn editable="false" prefWidth="75.0" text="Airfields" />
-			<TableColumn editable="false" prefWidth="75.0" text="Civ/Mil Ratio" />
-			<TableColumn editable="false" prefWidth="75.0" text="Pop / Factory" />
-			<TableColumn editable="false" prefWidth="75.0" text="Pop / Civ Ratio" />
-			<TableColumn editable="false" prefWidth="75.0" text="Pop / Mil Ratio" />
-			<TableColumn editable="false" prefWidth="75.0" text="Pop / Air Capacity" />
-			<TableColumn editable="false" prefWidth="75.0" text="Pop / State" />
-			<TableColumn editable="false" prefWidth="75.0" text="Aluminum" />
-			<TableColumn editable="false" prefWidth="75.0" text="Chromium" />
-			<TableColumn editable="false" prefWidth="75.0" text="Oil" />
-			<TableColumn editable="false" prefWidth="75.0" text="Rubber" />
-			<TableColumn editable="false" prefWidth="75.0" text="Steel" />
-			<TableColumn editable="false" prefWidth="75.0" text="Tungsten" />
-		</columns>
-	  </TableView>
-	  <ScrollBar layoutX="1900.0" layoutY="45.0" orientation="VERTICAL" prefHeight="2160.0" prefWidth="20.0" />
+      <MenuBar>
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <TableView layoutY="26.0" prefHeight="200.0" prefWidth="200.0">
+        <columns>
+          <TableColumn prefWidth="75.0" text="C1" />
+          <TableColumn prefWidth="75.0" text="C2" />
+        </columns>
+      </TableView>
    </children>
 </Pane>
