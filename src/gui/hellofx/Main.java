@@ -1,4 +1,4 @@
-package hoi4utils.hellofx;
+package gui.hellofx;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

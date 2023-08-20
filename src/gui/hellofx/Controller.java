@@ -1,4 +1,4 @@
-package hoi4utils.hellofx;
+package gui.hellofx;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
