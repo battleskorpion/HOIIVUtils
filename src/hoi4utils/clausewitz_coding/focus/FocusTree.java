@@ -28,8 +28,8 @@ public final class FocusTree extends HOIIVUtils {
 	private LocalizationFile locFile = null;
 	private String id;
 	// private Modifier countryModifier;
-	private boolean default_focus; // ! todo Do This
-	private Point continuous_focus_position; // ! todo DO THIS
+	private boolean defaultFocus; // ! todo Do This
+	private Point continuousFocusPosition; // ! todo DO THIS
 	private int minX; // min x of all focuses
 
 	/**
@@ -56,8 +56,8 @@ public final class FocusTree extends HOIIVUtils {
 	public FocusTree(String id, CountryTag tag) {
 		this.id = id;
 		// countryModifier = new CountryModifier();
-		default_focus = false;
-		continuous_focus_position = new Point(50, 1200);
+		defaultFocus = false;
+		continuousFocusPosition = new Point(50, 1200);
 		country = tag;
 		focuses = new HashMap<>();
 
