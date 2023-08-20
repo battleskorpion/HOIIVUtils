@@ -1,6 +1,6 @@
 package ui.focus_localization;
 
-import ui.main_menu.HOIUtilsWindow;
+import ui.HOIUtilsWindow;
 
 public class FocusLocalizationWindow extends HOIUtilsWindow {
 
