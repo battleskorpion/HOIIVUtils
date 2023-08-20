@@ -12,9 +12,9 @@ import java.util.Scanner;
 public class FocusLocReqFinder {
 
 	public static boolean findLocReqFocuses(File hoi4_dir) throws IOException {
-		File common_dir = new File(hoi4_dir.getPath() + "\\common");
+		//File common_dir = new File(hoi4_dir.getPath() + "\\common"); //! todo fix the strings
 		File national_focus_dir = new File(hoi4_dir.getPath() + "\\common" + "\\national_focus");
-		File country_tags_file = new File(hoi4_dir + "\\common\\country_tags\\00_countries.txt");
+		//File country_tags_file = new File(hoi4_dir + "\\common\\country_tags\\00_countries.txt"); //! todo fix the strings
 		File localization_dir = new File(hoi4_dir + "\\localisation\\english");
 
 		String focus_loc_pathname = hoi4_dir + "\\localisation\\english\\focus_";
@@ -28,7 +28,7 @@ public class FocusLocReqFinder {
 												// focus files in them todo
 
 				// make a list of all focus names
-				FocusTree focus = new FocusTree(focus_file);
+				FocusTree focus = new FocusTree(focus_file); //! todo fix the focus
 				// todo how long does it take to init these focus trees????
 
 				// System.out.println(focus.country());

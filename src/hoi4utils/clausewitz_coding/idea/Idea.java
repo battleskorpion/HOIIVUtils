@@ -91,7 +91,7 @@ public abstract class Idea {
 		idea_list = new ArrayList<>();
 
 		// make a list of all idea names
-		int idea_list_index; // index of idea name in string
+		int ideaListIndex; // index of idea name in string //! todo Int not being used
 		Parser ideaParser = new Parser(idea_file);
 		Expression[] data = ideaParser.findAll();
 		for (Expression exp : data) {
