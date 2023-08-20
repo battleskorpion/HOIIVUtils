@@ -5,7 +5,7 @@ import ui.HOIUtilsWindow;
 public class StatisticsWindow extends HOIUtilsWindow {
 
 	public StatisticsWindow() {
-		fxmlResource = "Statistics.fxml";
+		fxmlResource = "StatisticsWindow.fxml";
 		title = "Statistics";
 	}
 

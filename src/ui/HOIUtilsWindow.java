@@ -11,7 +11,7 @@ import java.io.File;
 public abstract class HOIUtilsWindow {
 	public String fxmlResource;
 	public String title = "HOIIVUtils Window";
-	String styleSheetURL = "javafx_dark.css";
+	String styleSheetURL = "resources/javafx_dark.css";
 	Stage primaryStage;
 
 	/**
