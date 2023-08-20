@@ -33,8 +33,8 @@ public abstract class HOIUtilsWindow {
 				primaryStage.setScene(scene);
 
 				/* style */
-				System.out.println(new File(styleSheetURL).getAbsolutePath());
-				scene.getStylesheets().add(styleSheetURL);
+//				System.out.println(new File(styleSheetURL).getAbsolutePath());
+//				scene.getStylesheets().add(styleSheetURL);
 
 				HOIIVUtils.decideScreen(primaryStage);
 				primaryStage.show();
