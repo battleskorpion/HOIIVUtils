@@ -26,7 +26,7 @@ public class SettingsWindowController {
 	@FXML
 	public GridPane settingsGridPain;
 	public Label versionLabel;
-	public CheckBox devModeCheckBox;
+	public CheckBox idDevModeCheckBox;
 	public Label hoi4ModFolderLabel;
 	public Button browseButton;
 	public TextField hoi4ModPathTextField;
@@ -68,25 +68,19 @@ public class SettingsWindowController {
 		okButton.setDisable(true);
 	}
 
+	public void handleDevModeCheckBoxAction() {
+		if (idDevModeCheckBox.isSelected()) {
+			settings.put(HOIIVUtilsProperties.Settings.DEV_MODE, "true");
+		} else {
+			settings.put(HOIIVUtilsProperties.Settings.DEV_MODE, "false");
+		}
+	}
+	
 	public SettingsWindowController() {
 		settings = new HashMap<>();
 	}
 	public void tempUpdateSetting(HOIIVSettings.Settings setting, String property) {
 		settings.put(setting, property);
-	}
-	
-	public void devMode() {
-		try {
-			if (devModeCheckBox.isSelected()) {
-				settings.put(HOIIVSettings.Settings.DEV_MODE, "true");
-			}
-			else {
-				settings.put(HOIIVSettings.Settings.DEV_MODE, "false");
-			}
-		}
-		catch (Exception exception) {
-			HOIIVUtils.openError(exception);
-		}
 	}
 	
 	private boolean saveSettings() {
@@ -112,23 +106,18 @@ public class SettingsWindowController {
 	}
 	
 	public void handleBrowseAction() {
-		try{
-			DirectoryChooser directoryChooser = new DirectoryChooser();
-
-			Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
-
-			selectedDirectory = directoryChooser.showDialog(primaryStage);
-
-			if (selectedDirectory == null) {
-				return;
-			}
-
+			getDirectoryChooser();
 			hoi4ModPathTextField.setText(selectedDirectory.getAbsolutePath());
-
 			updateModPath(selectedDirectory);
-		}
-		catch(Exception exception) {
-			HOIIVUtils.openError(exception);
+	}
+
+	private void getDirectoryChooser() {
+		// Opens Windows Default Directory Chooser
+		Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
+		DirectoryChooser directoryChooser = new DirectoryChooser();
+		selectedDirectory = directoryChooser.showDialog(primaryStage);
+		if (selectedDirectory == null) {
+			return;
 		}
 	}
 
@@ -162,16 +151,13 @@ public class SettingsWindowController {
 		}
 	}
 
-	public void openMenu() {
+	public void handleOkButtonAction() {
 		boolean settingsSaved = saveSettings();
 		if (!settingsSaved) {
-			return;	 // already printed error message
+			return;
 		}
-
 		HOIIVUtils.hideWindow(okButton);
-
 		MenuWindow menuWindow = new MenuWindow();
-
 		menuWindow.open();
 	}
 }
