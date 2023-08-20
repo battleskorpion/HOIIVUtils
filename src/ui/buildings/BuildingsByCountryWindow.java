@@ -12,15 +12,10 @@ public class BuildingsByCountryWindow {
 	public void open() {
 		try {
 			Parent root = FXMLLoader.load(getClass().getResource("BuildingsByCountryWindow.fxml"));
-
 			Stage stage = new Stage();
-
 			stage.setTitle("HOIIVUtils Buildings by Country");
-
 			stage.setScene((new Scene(root)));
-
 			HOIIVUtils.decideScreen(stage);
-			
 			stage.show();
 		}
 		catch (Exception exception) {

@@ -82,11 +82,13 @@ public class SettingsWindowController {
 	
 	
 	public void handleBrowseAction() {
-			getDirectoryChooser();
-			idModPathTextField.setText(selectedDirectory.getAbsolutePath());
-			updateModPath(selectedDirectory);
+		getDirectoryChooser();
+		if (selectedDirectory == null) {
+			return;
+		}
+		idModPathTextField.setText(selectedDirectory.getAbsolutePath());
+		updateModPath(selectedDirectory);
 	}
-
 	private void getDirectoryChooser() {
 		// Opens Windows Default Directory Chooser
 		Stage primaryStage = (Stage) (idBrowseButton.getScene().getWindow());
@@ -98,9 +100,6 @@ public class SettingsWindowController {
 			HOIIVUtils.openError("Could not find hoi4 mod folder/does not exist.");
 		}
 		selectedDirectory = directoryChooser.showDialog(primaryStage);
-		if (selectedDirectory == null) {
-			return;
-		}
 	}
 
 	public void handleModPathTextField() {
