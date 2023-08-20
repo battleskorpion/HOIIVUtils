@@ -17,8 +17,8 @@ public class FocusLocReqFinder {
 		//File country_tags_file = new File(hoi4_dir + "\\common\\country_tags\\00_countries.txt"); //! todo fix the strings
 		File localization_dir = new File(hoi4_dir + "\\localisation\\english");
 
-		String focus_loc_pathname = hoi4_dir + "\\localisation\\english\\focus_";
-		ArrayList<File> focus_loc_files = new ArrayList<>(); //! todo why is this even here???
+		String focusLocPathname = hoi4_dir + "\\localisation\\english\\focus_";
+		ArrayList<File> focusLocFiles = new ArrayList<>(); //! todo why is this even here???
 
 		CountryTags.list(); // make sure country tags are generated
 

@@ -1,6 +1,5 @@
 package ui.main_menu;
 
-
 public class StatisticsWindow extends HOIUtilsWindow {
 
 	public StatisticsWindow() {
