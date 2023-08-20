@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static HOIIVSettings.Settings.MOD_PATH;
+import static hoi4utils.Settings.MOD_PATH;
 
 public class CountryTags extends HOIIVUtils {
 

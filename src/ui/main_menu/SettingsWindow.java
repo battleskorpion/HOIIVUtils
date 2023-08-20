@@ -2,6 +2,7 @@ package ui.main_menu;
 
 import hoi4utils.HOIIVSettings;
 import hoi4utils.HOIIVUtils;
+import hoi4utils.Settings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * SettingsWindow is the window for the program hoi4utils.settings
+ * SettingsWindow is the window for the program settings
  */
 public class SettingsWindow extends Application {
 
@@ -43,7 +44,7 @@ public class SettingsWindow extends Application {
 			HOIIVUtils.settings = new SettingsManager();
 
 			HOIIVUtils.decideScreen(primaryStage);
-			if (HOIIVSettings.Settings.DEV_MODE.enabled()) {
+			if (Settings.DEV_MODE.enabled()) {
 				System.out.println("Performing standard startup.");
 			}
 		}

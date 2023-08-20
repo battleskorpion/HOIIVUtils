@@ -15,7 +15,7 @@ public class SettingsManager {
 	private static FileWriter settingsWriter;
 	private static BufferedWriter settingsBWriter;
 	private static PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); 				// for println syntax
-	static HashMap<HOIIVSettings.Settings, String> settingValues = new HashMap<>();
+	static HashMap<Settings, String> settingValues = new HashMap<>();
 
 	public SettingsManager() throws IOException {
 		new File(HOI4UTILS_PROPERTIES_PATH).mkdir();
@@ -25,7 +25,7 @@ public class SettingsManager {
 		readSettings();
 	}
 
-	public SettingsManager(HashMap<HOIIVSettings.Settings, String> settings) throws IOException _{
+	public SettingsManager(HashMap<Settings, String> settings) throws IOException {
 		String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
 		String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
 		new File(hoi4UtilsPropertiesPath).mkdir();
@@ -61,12 +61,12 @@ public class SettingsManager {
 			/* read hoi4utils.settings */
 			while (settingReader.hasNextLine()) {
 				String[] readSetting = settingReader.nextLine().split(";");
-				HOIIVSettings.Settings setting = HOIIVSettings.Settings.valueOf(readSetting[0]);
+				Settings setting = Settings.valueOf(readSetting[0]);
 
 				settingValues.put(setting, readSetting[1]);
 			}
 
-			for (HOIIVSettings.Settings setting : HOIIVSettings.Settings.values()) {
+			for (Settings setting : Settings.values()) {
 				if (!settingValues.containsKey(setting)) {
 					writeBlankSetting(setting);
 				}
@@ -82,7 +82,7 @@ public class SettingsManager {
 	/**
 	 * Writes a blank setting to the hoi4utils.settings file
 	 */
-	private static void writeBlankSetting(HOIIVSettings.Settings setting) throws IOException {
+	private static void writeBlankSetting(Settings setting) throws IOException {
 		settingsWriter = new FileWriter(settings_file, true);		// true = append
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
@@ -100,7 +100,7 @@ public class SettingsManager {
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
-		for (HOIIVSettings.Settings setting : HOIIVSettings.Settings.values()) {
+		for (Settings setting : Settings.values()) {
 			settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
 
 			settingValues.put(setting, setting.defaultProperty());
@@ -113,13 +113,13 @@ public class SettingsManager {
 	/**
 	 * Saves setting with specified value
 	 */
-	public static void saveSetting(HOIIVSettings.Settings setting, String settingValue) throws IOException {
+	public static void saveSetting(Settings setting, String settingValue) throws IOException {
 		settingsWriter = new FileWriter(settings_file, false);		// true = append
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
 		settingValues.put(setting, settingValue);
-		for (HOIIVSettings.Settings s : HOIIVSettings.Settings.values()) {
+		for (Settings s : Settings.values()) {
 			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
 		}
 
@@ -131,7 +131,7 @@ public class SettingsManager {
 	 * @param newSettings list of updated hoi4utils.settings to save
 	 * @throws IOException
 	 */
-	public static void saveSettings(HashMap<HOIIVSettings.Settings, String> newSettings) throws IOException {
+	public static void saveSettings(HashMap<Settings, String> newSettings) throws IOException {
 		if (newSettings == null) {
 			return;
 		}
@@ -141,7 +141,7 @@ public class SettingsManager {
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
 		settingValues.putAll(newSettings);
-		for (HOIIVSettings.Settings s : HOIIVSettings.Settings.values()) {
+		for (Settings s : Settings.values()) {
 			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
 		}
 
@@ -157,16 +157,16 @@ public class SettingsManager {
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
-		for (HOIIVSettings.Settings s : HOIIVSettings.Settings.values()) {
+		for (Settings s : Settings.values()) {
 			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
 		}
 
 		settingsPWriter.close();
 	}
 
-	public static String get(HOIIVSettings.Settings setting) { return settingValues.get(setting); }
+	public static String get(Settings setting) { return settingValues.get(setting); }
 
-	public static boolean isNull(HOIIVSettings.Settings setting) {
+	public static boolean isNull(Settings setting) {
 		return settingValues.get(setting).equals("null");
 	}
 }

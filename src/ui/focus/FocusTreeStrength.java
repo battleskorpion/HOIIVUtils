@@ -8,7 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
-import static HOIIVSettings.Settings.MOD_PATH;
+import static hoi4utils.Settings.MOD_PATH;
 
 public class FocusTreeStrength extends JFrame {
 	File focus_file;

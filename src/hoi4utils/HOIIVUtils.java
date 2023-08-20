@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static hoi4utils.HOIIVSettings.Settings.PREFERRED_SCREEN;
+import static hoi4utils.Settings.PREFERRED_SCREEN;
 
 /*
 * HOIIVUtils File
@@ -73,14 +73,14 @@ public class HOIIVUtils {
 	}
 
 	public static void openError(Exception exception) {
-		if (HOIIVSettings.Settings.DEV_MODE.enabled()) {
+		if (Settings.DEV_MODE.enabled()) {
 			exception.printStackTrace();
 		}
 		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(), JOptionPane.WARNING_MESSAGE);
 	}
 
 	public static void openError(String s) {
-		if (HOIIVSettings.Settings.DEV_MODE.enabled()) {
+		if (Settings.DEV_MODE.enabled()) {
 			System.err.println("open error window for error message: " + s);
 		}
 		JOptionPane.showMessageDialog(null, s, "HOIIVUtils Error Message", JOptionPane.WARNING_MESSAGE);
@@ -108,14 +108,14 @@ public class HOIIVUtils {
 		Integer preferredScreen = (Integer) PREFERRED_SCREEN.getSetting();
 		ObservableList<Screen> screens = Screen.getScreens();
 		if (preferredScreen > screens.size()) {
-			if (HOIIVSettings.Settings.DEV_MODE.enabled()) {
+			if (Settings.DEV_MODE.enabled()) {
 				System.err.println( "Preferred screen does not exist, resorting to defaults.");
 			}
 			return;
 		}
 		Screen screen = screens.get(preferredScreen);
 		if (screen == null) {
-			if (HOIIVSettings.Settings.DEV_MODE.enabled()) {
+			if (Settings.DEV_MODE.enabled()) {
 				System.err.println( "Preferred screen is null error, resorting to defaults.");
 			}
 			return;

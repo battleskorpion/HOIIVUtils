@@ -13,7 +13,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
-import static HOIIVSettings.Settings.MOD_PATH;
+
+import static hoi4utils.Settings.MOD_PATH;
+
 /*
  * ColorGenerator/Type/Order
  */

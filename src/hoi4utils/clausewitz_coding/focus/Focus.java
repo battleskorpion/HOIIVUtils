@@ -1,5 +1,6 @@
 package hoi4utils.clausewitz_coding.focus;
 
+import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.clausewitz_coding.code.trigger.Trigger;
@@ -381,7 +382,7 @@ public class Focus {
 			FileInputStream fis;
 			if (gfx == null) {
 				System.err.println("GFX was not found for " + icon);
-				fis = new FileInputStream(HOIIVSettings.Settings.MOD_PATH + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+				fis = new FileInputStream(Settings.MOD_PATH + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
 			} else {
 				fis = new FileInputStream(Interface.getGFX(icon));
 			}

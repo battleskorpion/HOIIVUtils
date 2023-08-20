@@ -4,7 +4,8 @@ import hoi4utils.SettingsManager;
 
 import java.io.File;
 
-import static HOIIVSettings.Settings.MOD_PATH;
+import static hoi4utils.Settings.MOD_PATH;
+
 /**
  * This is the SpriteType file.
  */

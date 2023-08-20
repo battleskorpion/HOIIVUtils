@@ -4,8 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-
-import hoi4utils.HOIIVSettings;
+import hoi4utils.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -17,11 +16,11 @@ import javafx.stage.Stage;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.SettingsManager;
 
-import static hoi4utils.HOIIVSettings.Settings.MOD_PATH;
+import static hoi4utils.Settings.MOD_PATH;
 
 public class SettingsWindowController {
 	
-	HashMap<HOIIVSettings.Settings, String> settings;
+	HashMap<Settings, String> settings;
 
 	@FXML
 	public GridPane settingsGridPain;
@@ -58,8 +57,8 @@ public class SettingsWindowController {
 		}
 	}
 	private void setDevModeCheckBoxOnOrOff() {
-		boolean getDevModeSetting = HOIIVSettings.Settings.DEV_MODE.enabled();
-		devModeCheckBox.setSelected(getDevModeSetting);
+		boolean getDevModeSetting = Settings.DEV_MODE.enabled();
+		idDevModeCheckBox.setSelected(getDevModeSetting);
 	}
 	private void enableOkButton() {
 		okButton.setDisable(false);
@@ -70,16 +69,16 @@ public class SettingsWindowController {
 
 	public void handleDevModeCheckBoxAction() {
 		if (idDevModeCheckBox.isSelected()) {
-			settings.put(HOIIVUtilsProperties.Settings.DEV_MODE, "true");
+			settings.put(Settings.DEV_MODE, "true");
 		} else {
-			settings.put(HOIIVUtilsProperties.Settings.DEV_MODE, "false");
+			settings.put(Settings.DEV_MODE, "false");
 		}
 	}
 	
 	public SettingsWindowController() {
 		settings = new HashMap<>();
 	}
-	public void tempUpdateSetting(HOIIVSettings.Settings setting, String property) {
+	public void tempUpdateSetting(Settings setting, String property) {
 		settings.put(setting, property);
 	}
 	
