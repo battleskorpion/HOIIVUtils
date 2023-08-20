@@ -20,7 +20,7 @@ import static hoi4utils.Settings.MOD_PATH;
 
 public class SettingsWindowController {
 	
-	HashMap<Settings, String> settings;
+	HashMap<Settings, String> tempSettings;
 
 	@FXML
 	public GridPane settingsGridPain;
@@ -33,6 +33,11 @@ public class SettingsWindowController {
 
 	public File selectedDirectory;
 	
+	/* Constructor */
+	public SettingsWindowController() {
+		tempSettings = new HashMap<>();
+	}
+
 	@FXML
 	void initialize() {
 		includeVersion();
@@ -45,12 +50,12 @@ public class SettingsWindowController {
 	private void setupFirstTime() {
 		boolean isFirstTime = HOIIVUtils.firstTimeSetup;
 		if (!isFirstTime) {
-			setModPathTextFeildFromSettings();
+			setModPathTextFieldFromSettings();
 			setDevModeCheckBoxOnOrOff();
 			enableOkButton();
 		}
 	}
-	private void setModPathTextFeildFromSettings() {
+	private void setModPathTextFieldFromSettings() {
 		String inlcudeSetting = (String) MOD_PATH.getSetting();
 		if (inlcudeSetting != "null") {
 			idModPathTextField.setText(inlcudeSetting);
@@ -67,28 +72,19 @@ public class SettingsWindowController {
 		idOkButton.setDisable(true);
 	}
 
-	public SettingsWindowController() {
-		settings = new HashMap<>();
+	public void updateTempSetting(Settings setting, Object property) {
+		tempSettings.put(setting, String.valueOf(property));
 	}
 	public void handleDevModeCheckBoxAction() {
-		if (idDevModeCheckBox.isSelected()) {
-			settings.put(Settings.DEV_MODE, "true");
-			Settings.DEV_MODE.setValue("true");
-		} else {
-			settings.put(Settings.DEV_MODE, "false");
-		}
-	}
-	
-	public void tempUpdateSetting(Settings setting, String property) {
-		settings.put(setting, property);
+		updateTempSetting(Settings.DEV_MODE, idDevModeCheckBox.isSelected());
 	}
 	
 	private boolean saveSettings() {
 		try {
 			if (HOIIVUtils.firstTimeSetup) {
-				HOIIVUtils.settings = new SettingsManager(settings);
+				HOIIVUtils.settings = new SettingsManager(tempSettings);
 			} else {
-				SettingsManager.saveSettings(settings);
+				SettingsManager.saveSettings(tempSettings);
 			}
 		} catch (IOException exception) {
 			HOIIVUtils.openError("Settings failed to save.");
@@ -128,13 +124,13 @@ public class SettingsWindowController {
 		if (pathText == null || pathText.isEmpty()) {
 			pathText = null;
 		}
-		settings.put(MOD_PATH, pathText);
+		tempSettings.put(MOD_PATH, pathText);
 	}
 
 	private void updateModPath(File selectedDirectory) {
 		getIsDirectory();
 
-		settings.put(MOD_PATH, selectedDirectory.getAbsolutePath());
+		tempSettings.put(MOD_PATH, selectedDirectory.getAbsolutePath());
 	}
 
 	private void getIsDirectory() {
