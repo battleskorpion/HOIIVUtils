@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 public abstract class HOIUtilsWindow {
 	Stage primaryStage;
 
-	public void open(String fxmlResource) {
+	public void open(String fxmlResource, String title) {
 		try {
 			if (primaryStage != null) {
 				primaryStage.show();
@@ -18,7 +18,7 @@ public abstract class HOIUtilsWindow {
 
 				Stage primaryStage = new Stage();
 
-				primaryStage.setTitle("HOIIVUtils Menu");
+				primaryStage.setTitle(title);
 				primaryStage.setScene((new Scene(root)));
 
 				HOIIVUtils.decideScreen(primaryStage);
