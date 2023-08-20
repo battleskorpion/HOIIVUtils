@@ -22,6 +22,8 @@ public class BuildingsByCountryWindow {
 			HOIIVUtils.openError(exception);
 		}
 	}
+
+	// * Buildings By Country Window Settings
 }
 /*	 
 	private JPanel BuildingsByCountryWindowJPanel;
