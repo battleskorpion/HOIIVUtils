@@ -2,9 +2,7 @@ package ui.main_menu;
 
 import javafx.stage.Stage;
 
-public class MenuWindow extends hoiUtilsWindow {
-	Stage primaryStage;
-
+public class MenuWindow extends HOIUtilsWindow {
 	public void open(){
 		super.open("MenuWindow.fxml");
 	}
