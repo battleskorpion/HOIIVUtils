@@ -1,9 +1,8 @@
 package ui.main_menu;
 
-import javafx.stage.Stage;
 
 public class MenuWindow extends HOIUtilsWindow {
-	public MenuWindow {
+	public MenuWindow() {
 		fxmlResource = "MenuWindow.fxml";
 		title = "HOIIVUtils Menu";
 	}

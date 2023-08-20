@@ -22,7 +22,7 @@ public class State {
 	private int stateID;
 	private String name;
 	private final Map<ClausewitzDate, Owner> owner;
-	private StateCategory stateCategory;
+	private StateCategory stateCategory; //! todo Finish state Category
 	private Infrastructure stateInfrastructure;
 	private Resources resourcesData;
 
