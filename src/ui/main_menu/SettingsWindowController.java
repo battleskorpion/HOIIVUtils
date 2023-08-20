@@ -25,10 +25,10 @@ public class SettingsWindowController {
 	@FXML
 	public GridPane settingsGridPain;
 	public Label versionLabel;
-	public CheckBox idDevModeCheckBox;
-	public Label hoi4ModFolderLabel;
-	public Button browseButton;
 	public TextField idModPathTextField;
+	public Label idHOIIVModFolderLabel;
+	public Button idBrowseButton;
+	public CheckBox idDevModeCheckBox;
 	public Button idOkButton;
 
 	public File selectedDirectory;
@@ -109,7 +109,7 @@ public class SettingsWindowController {
 
 	private void getDirectoryChooser() {
 		// Opens Windows Default Directory Chooser
-		Stage primaryStage = (Stage) (browseButton.getScene().getWindow());
+		Stage primaryStage = (Stage) (idBrowseButton.getScene().getWindow());
 		DirectoryChooser directoryChooser = new DirectoryChooser();
 		selectedDirectory = directoryChooser.showDialog(primaryStage);
 		if (selectedDirectory == null) {
