@@ -91,6 +91,7 @@ public class SettingsWindowController {
 		// Opens Windows Default Directory Chooser
 		Stage primaryStage = (Stage) (idBrowseButton.getScene().getWindow());
 		DirectoryChooser directoryChooser = new DirectoryChooser();
+		directoryChooser.setInitialDirectory(new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod"));
 		selectedDirectory = directoryChooser.showDialog(primaryStage);
 		if (selectedDirectory == null) {
 			return;
