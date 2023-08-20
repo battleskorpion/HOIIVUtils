@@ -1,6 +1,5 @@
 package ui.main_menu;
 
-import hoi4utils.HOIIVSettings;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import javafx.application.Application;
