@@ -45,10 +45,11 @@ public class SettingsWindowController {
 		setupFirstTime();
 	}
 
+
 	private void includeVersion() {
 		idVersionLabel.setText(HOIIVUtils.hoi4utilsVersion);
 	}
-	private void setupFirstTime() {
+		private void setupFirstTime() {
 		boolean isFirstTime = HOIIVUtils.firstTimeSetup;
 		if (!isFirstTime) {
 			setModPathTextFieldFromSettings();
@@ -56,29 +57,46 @@ public class SettingsWindowController {
 			enableOkButton();
 		}
 	}
-	private void setModPathTextFieldFromSettings() {
+		private void setModPathTextFieldFromSettings() {
 		String inlcudeSetting = (String) MOD_PATH.getSetting();
 		if (inlcudeSetting != "null") {
 			idModPathTextField.setText(inlcudeSetting);
 		}
 	}
-	private void setDevModeCheckBoxOnOrOff() {
+		private void setDevModeCheckBoxOnOrOff() {
 		boolean getDevModeSetting = Settings.DEV_MODE.enabled();
 		idDevModeCheckBox.setSelected(getDevModeSetting);
 	}
-	private void enableOkButton() {
+		private void enableOkButton() {
 		idOkButton.setDisable(false);
 	}
-	private void disableOkButton() {
+		private void disableOkButton() {
 		idOkButton.setDisable(true);
 	}
+	
 
-	public void updateTempSetting(Settings setting, Object property) {
-		tempSettings.put(setting, String.valueOf(property));
-	}
-	public void handleDevModeCheckBoxAction() {
-		updateTempSetting(Settings.DEV_MODE, idDevModeCheckBox.isSelected());
-	}
+	public void handleModPathTextField() {
+			getIsDirectory();
+	
+			String pathText = idModPathTextField.getText();
+			if (pathText == null || pathText.isEmpty()) {
+				pathText = null;
+			}
+			tempSettings.put(MOD_PATH, pathText);
+		}
+		private void getIsDirectory() {
+			File fileModPath = new File(idModPathTextField.getText());
+	
+			boolean exists = fileModPath.exists();
+	
+			boolean isDirectory = fileModPath.isDirectory();
+					
+			if (idOkButton.isDisabled() && exists && isDirectory) {
+				disableOkButton();
+			} else {
+				enableOkButton();
+			}
+		}
 	
 	
 	public void handleBrowseAction() {
@@ -89,7 +107,7 @@ public class SettingsWindowController {
 		idModPathTextField.setText(selectedDirectory.getAbsolutePath());
 		updateModPath(selectedDirectory);
 	}
-	private void getDirectoryChooser() {
+		private void getDirectoryChooser() {
 		// Opens Windows Default Directory Chooser
 		Stage primaryStage = (Stage) (idBrowseButton.getScene().getWindow());
 		DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -101,36 +119,20 @@ public class SettingsWindowController {
 		}
 		selectedDirectory = directoryChooser.showDialog(primaryStage);
 	}
-
-	public void handleModPathTextField() {
-		getIsDirectory();
-
-		String pathText = idModPathTextField.getText();
-		if (pathText == null || pathText.isEmpty()) {
-			pathText = null;
-		}
-		tempSettings.put(MOD_PATH, pathText);
-	}
-
-	private void updateModPath(File selectedDirectory) {
+		private void updateModPath(File selectedDirectory) {
 		getIsDirectory();
 		tempSettings.put(MOD_PATH, selectedDirectory.getAbsolutePath());
 	}
 
-	private void getIsDirectory() {
-		File fileModPath = new File(idModPathTextField.getText());
 
-		boolean exists = fileModPath.exists();
-
-		boolean isDirectory = fileModPath.isDirectory();
-				
-		if (idOkButton.isDisabled() && exists && isDirectory) {
-			disableOkButton();
-		} else {
-			enableOkButton();
-		}
+	public void handleDevModeCheckBoxAction() {
+		updateTempSetting(Settings.DEV_MODE, idDevModeCheckBox.isSelected());
+	}
+		public void updateTempSetting(Settings setting, Object property) {
+		tempSettings.put(setting, String.valueOf(property));
 	}
 
+	
 	public void handleOkButtonAction() {
 		boolean settingsSaved = updateSettings();
 		if (!settingsSaved) {
@@ -139,7 +141,7 @@ public class SettingsWindowController {
 		hideCurrentWindow();
 		openMenuWindow();
 	}
-	private boolean updateSettings() {
+		private boolean updateSettings() {
 		try {
 			if (HOIIVUtils.firstTimeSetup) {
 				HOIIVUtils.settings = new SettingsManager(tempSettings);
@@ -153,14 +155,14 @@ public class SettingsWindowController {
 		createHOIIVFilePaths();
 		return true;
 	}
-	private void hideCurrentWindow() {
+		private void hideCurrentWindow() {
 		HOIIVUtils.hideWindow(idPane);
 	}
-	private void openMenuWindow() {
+		private void openMenuWindow() {
 		MenuWindow menuWindow = new MenuWindow();
 		menuWindow.open();
 	}
-	private void createHOIIVFilePaths() {
+		private void createHOIIVFilePaths() {
 		String modPath = SettingsManager.get(MOD_PATH);
 		System.out.println(modPath);
 		HOIIVUtils.states_folder = new File(modPath + "\\history\\states");
