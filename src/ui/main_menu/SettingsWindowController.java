@@ -9,9 +9,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+
 import hoi4utils.HOIIVUtils;
 import hoi4utils.SettingsManager;
 
@@ -22,6 +24,7 @@ public class SettingsWindowController {
 	HashMap<Settings, String> tempSettings;
 
 	@FXML
+	public Pane idPane;
 	public Label idVersionLabel;
 	public TextField idModPathTextField;
 	public Label idHOIIVModFolderLabel;
@@ -77,27 +80,6 @@ public class SettingsWindowController {
 		updateTempSetting(Settings.DEV_MODE, idDevModeCheckBox.isSelected());
 	}
 	
-	private boolean saveSettings() {
-		try {
-			if (HOIIVUtils.firstTimeSetup) {
-				HOIIVUtils.settings = new SettingsManager(tempSettings);
-			} else {
-				SettingsManager.saveSettings(tempSettings);
-			}
-		} catch (IOException exception) {
-			HOIIVUtils.openError("Settings failed to save.");
-			return false;
-		}
-
-		String modPath = SettingsManager.get(MOD_PATH);
-		System.out.println(modPath);
-		HOIIVUtils.states_folder = new File(modPath + "\\history\\states");
-		HOIIVUtils.strat_region_dir =  new File(modPath + "\\map\\strategicregions");
-		HOIIVUtils.localization_eng_folder =  new File(modPath + "\\localisation\\english");
-		HOIIVUtils.focus_folder = new File(modPath + "\\common\\national_focus");
-
-		return true;
-	}
 	
 	public void handleBrowseAction() {
 			getDirectoryChooser();
@@ -127,7 +109,6 @@ public class SettingsWindowController {
 
 	private void updateModPath(File selectedDirectory) {
 		getIsDirectory();
-
 		tempSettings.put(MOD_PATH, selectedDirectory.getAbsolutePath());
 	}
 
@@ -146,12 +127,40 @@ public class SettingsWindowController {
 	}
 
 	public void handleOkButtonAction() {
-		boolean settingsSaved = saveSettings();
+		boolean settingsSaved = updateSettings();
 		if (!settingsSaved) {
 			return;
 		}
-		HOIIVUtils.hideWindow(idOkButton);
+		hideCurrentWindow();
+		openMenuWindow();
+	}
+	private boolean updateSettings() {
+		try {
+			if (HOIIVUtils.firstTimeSetup) {
+				HOIIVUtils.settings = new SettingsManager(tempSettings);
+			} else {
+				SettingsManager.saveSettings(tempSettings);
+			}
+		} catch (IOException exception) {
+			HOIIVUtils.openError("Settings failed to save.");
+			return false;
+		}
+		createHOIIVFilePaths();
+		return true;
+	}
+	private void hideCurrentWindow() {
+		HOIIVUtils.hideWindow(idPane);
+	}
+	private void openMenuWindow() {
 		MenuWindow menuWindow = new MenuWindow();
 		menuWindow.open();
+	}
+	private void createHOIIVFilePaths() {
+		String modPath = SettingsManager.get(MOD_PATH);
+		System.out.println(modPath);
+		HOIIVUtils.states_folder = new File(modPath + "\\history\\states");
+		HOIIVUtils.strat_region_dir =  new File(modPath + "\\map\\strategicregions");
+		HOIIVUtils.localization_eng_folder =  new File(modPath + "\\localisation\\english");
+		HOIIVUtils.focus_folder = new File(modPath + "\\common\\national_focus");
 	}
 }

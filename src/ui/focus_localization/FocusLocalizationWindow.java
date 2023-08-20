@@ -14,6 +14,6 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 	}
 
 	public void open(){
-		super.open("FocusLocalizationWindow.fxml");
+		super.open("FocusLocalizationWindow.fxml", "Focus Localization");
 	}
 }

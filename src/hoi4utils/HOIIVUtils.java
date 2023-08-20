@@ -6,6 +6,7 @@ import hoi4utils.fileIO.FileListener.FileWatcher;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import ui.main_menu.SettingsWindow;
@@ -98,6 +99,14 @@ public class HOIIVUtils {
 	public static void hideWindow(Button button) {
 		try {
 			((Stage) (button.getScene().getWindow())).hide();
+		}
+		catch(Exception exception) {
+			openError(exception);
+		}
+	}
+	public static void hideWindow(Pane pane) {
+		try {
+			((Stage) (pane.getScene().getWindow())).hide();
 		}
 		catch(Exception exception) {
 			openError(exception);

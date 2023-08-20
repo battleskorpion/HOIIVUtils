@@ -9,6 +9,6 @@ import javafx.stage.Stage;
 public class StatisticsWindow extends HOIUtilsWindow {
 
 	public void open() {
-		super.open("Statistics.fxml");
+		super.open("Statistics.fxml", "Statistics");
 	}
 }
