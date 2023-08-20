@@ -151,12 +151,12 @@ public class SettingsWindow extends Application {
 		}
 	}
 	
-/** User Interactive Button in Settings Window
- * Opens up windows 10 Directory Chooser
- * Will do nothing if the user exits or cancels window
- * Updates Text Field when directory is selected
- * Saves the directory path to MOD_PATH 
- */
+	/** User Interactive Button in Settings Window
+	 * Opens up windows Directory Chooser
+	 * Will do nothing if the user exits or cancels window
+	 * Updates Text Field when directory is selected
+	 * Saves the directory path to MOD_PATH
+	 */
 	public void handleBrowseAction() {
 		getDirectoryChooser();
 		if (selectedDirectory == null) {
