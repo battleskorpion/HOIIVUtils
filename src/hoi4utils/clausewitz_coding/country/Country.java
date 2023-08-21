@@ -28,10 +28,24 @@ public class Country {
 		countryList = new ArrayList<>();
 	}
 
-	public static List<Country> getList() {
+	public <T> Country(T item) {
+		if (item instanceof CountryTag) {
+			this.countryTag = (CountryTag) item;
+			this.infrastructure = new Infrastructure();
+			this.resources = new Resources();
 
+		} else if (item instanceof Country country) {
+			this.countryTag = country.countryTag;
+			this.infrastructure = country.infrastructure;
+			this.resources = country.resources;
+		}
+
+		countryList = new ArrayList<>();
 	}
 
+	public static List<Country> getList() {
+		return countryList;
+	}
 
 	public CountryTag countryTag() {
 		return countryTag;
@@ -134,5 +148,11 @@ public class Country {
 
 	public void updateAirfields(int value) {
 		this.infrastructure = new Infrastructure(population(), infrastructure(), civilianFactories(), militaryFactories(), navalDockyards(), navalPorts(), value);
+	}
+
+	public <T> void loadCountries(List<T> list) {
+		for (T item: list) {
+			countryList.add(new Country(item));
+		}
 	}
 }
