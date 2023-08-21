@@ -57,10 +57,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 		/* choose focus tree */
 		FocusTree focusTree;
 		try{
-			FileChooser fileChooser = new FileChooser();
-			fileChooser.setInitialDirectory(HOIIVUtils.focus_folder);
-			Stage stage = new Stage();
-			selectedFile = fileChooser.showOpenDialog(stage);
+			selectedFile = openFileChooserDialog(HOIIVUtils.focus_folder);
 
 			if (selectedFile == null) {
 				HOIIVUtils.openError("Selected directory was null.");
@@ -82,11 +79,8 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 
 		/* choose localization file */
 		FocusLocalizationFile focusLocFile;
-		try{
-			FileChooser fileChooser = new FileChooser();
-			fileChooser.setInitialDirectory(HOIIVUtils.localization_eng_folder);
-			Stage stage = new Stage();
-			selectedFile = fileChooser.showOpenDialog(stage);
+		try {
+			selectedFile = openFileChooserDialog(HOIIVUtils.localization_eng_folder);
 
 			if (selectedFile == null) {
 				HOIIVUtils.openError("Selected directory was null.");
@@ -114,5 +108,14 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 			HOIIVUtils.openError(e);
 			return;
 		}
+	}
+
+	private File openFileChooserDialog(File focus_folder) {
+		File selectedFile;
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(focus_folder);
+		Stage stage = new Stage();
+		selectedFile = fileChooser.showOpenDialog(stage);
+		return selectedFile;
 	}
 }
