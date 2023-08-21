@@ -228,7 +228,9 @@ public class SettingsWindow extends Application {
 	}
 	private void createHOIIVFilePaths() {
 		String modPath = SettingsManager.get(MOD_PATH);
-		System.out.println(modPath);
+		if (Settings.DEV_MODE.enabled()) {
+			System.out.println(modPath);
+		}
 		HOIIVUtils.states_folder = new File(modPath + "\\history\\states");
 		HOIIVUtils.strat_region_dir =  new File(modPath + "\\map\\strategicregions");
 		HOIIVUtils.localization_eng_folder =  new File(modPath + "\\localisation\\english");
