@@ -33,7 +33,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		includeVersion();
 	}
 	private void includeVersion() {
-		idVersionMenuItem.setLabel(HOIIVUtils.hoi4utilsVersion);
+		idVersionMenuItem.setName(HOIIVUtils.hoi4utilsVersion);
 	}
 
 	public void handlePercentageCheckMenuItemAction() {

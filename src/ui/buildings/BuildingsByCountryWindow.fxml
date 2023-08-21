@@ -22,7 +22,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="About">
             <items>
-              <MenuItem mnemonicParsing="false" />
+              <MenuItem mnemonicParsing="false" text="version number"/>
             </items>
           </Menu>
         </menus>
