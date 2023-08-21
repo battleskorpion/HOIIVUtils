@@ -1,5 +1,8 @@
 package ui.buildings;
 
+import java.awt.MenuItem;
+
+import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
@@ -22,6 +25,16 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
 	@FXML
 	public CheckMenuItem idPercentageCheckMenuItem;
+	public MenuItem idVersionMenuItem;
+	
+/* Start */
+	@FXML
+	void initialize() {
+		includeVersion();
+	}
+	private void includeVersion() {
+		idVersionMenuItem.setLabel(HOIIVUtils.hoi4utilsVersion);
+	}
 
 	public void handlePercentageCheckMenuItemAction() {
 		String tempText;
