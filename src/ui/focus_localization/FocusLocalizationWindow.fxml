@@ -38,7 +38,7 @@
 			<TableColumn fx:id="focusDescColumn" prefWidth="229.0" text="Column X" />
 		</columns>
 	  </TableView>
-	  <Label fx:id="focusTreeNameLabel" prefWidth="63.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+	  <Label fx:id="focusTreeNameLabel" prefHeight="17.0" prefWidth="170.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
 	  <Label GridPane.rowIndex="4" />
 	  <Label fx:id="numLocAddedLabel" text="Added localization to x focuses" GridPane.columnSpan="2" GridPane.rowIndex="4" />
       <Label text="Focus tree file: " />
