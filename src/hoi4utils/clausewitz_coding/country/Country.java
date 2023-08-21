@@ -3,7 +3,11 @@ package hoi4utils.clausewitz_coding.country;
 import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
 import hoi4utils.clausewitz_coding.state.buildings.Resources;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Country {
+	private static List<Country> countryList;
 	CountryTag countryTag;
 	Infrastructure infrastructure;          // infrastructure of all owned states
 	Resources resources;                    // resources of all owned states
@@ -20,7 +24,14 @@ public class Country {
 		this.countryTag = countrytag;
 		this.infrastructure = infrastructure;
 		this.resources = resources;
+
+		countryList = new ArrayList<>();
 	}
+
+	public static List<Country> getList() {
+
+	}
+
 
 	public CountryTag countryTag() {
 		return countryTag;
