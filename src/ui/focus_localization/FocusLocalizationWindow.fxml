@@ -47,7 +47,7 @@
       <TextField GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
       <Button maxWidth="100.0" mnemonicParsing="false" text="Browse" GridPane.columnIndex="3" />
       <Button maxWidth="100.0" mnemonicParsing="false" text="Browse" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-      <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="86.0" text="Apply" GridPane.rowIndex="2" />
+      <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="86.0" text="Load" GridPane.rowIndex="2" />
    </children>
    <padding>
 	  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
