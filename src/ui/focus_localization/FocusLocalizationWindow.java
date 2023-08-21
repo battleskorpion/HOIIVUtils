@@ -22,9 +22,6 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 		super.open();
 	}
 
-		
-
-
 	// * Focus Localization Window Controller
 	@FXML Label numLocAddedLabel;
 	@FXML Label focusTreeNameLabel;
@@ -52,8 +49,6 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 		// Windows properties
 		fxmlResource = "FocusLocalizationWindow.fxml";
 		title = "Focus Localization";
-
-
 		
 		// Windows Two File Chooser
 
