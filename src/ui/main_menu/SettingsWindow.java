@@ -73,6 +73,7 @@ public class SettingsWindow extends Application {
 	}
 
 
+
 	// * Settings Window Controller
 
 	HashMap<Settings, String> tempSettings;
