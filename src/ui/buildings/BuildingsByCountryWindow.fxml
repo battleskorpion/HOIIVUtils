@@ -29,7 +29,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <TableView layoutY="26.0" prefHeight="874.0" prefWidth="1600.0">
+      <TableView fx:id="stateDataTable" layoutY="26.0" prefHeight="874.0" prefWidth="1600.0">
         <columns>
           <TableColumn fx:id="stateDataTableCountryColumn" prefWidth="88.0" text="Country" />
           <TableColumn fx:id="stateDataTablePopulationColumn" prefWidth="88.0" text="Population" />

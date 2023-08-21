@@ -1,15 +1,18 @@
 package ui.buildings;
 
 import java.util.List;
+import java.util.Set;
 
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.country.Country;
 import hoi4utils.clausewitz_coding.focus.Focus;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import ui.HOIUtilsWindow;
 
 public class BuildingsByCountryWindow extends HOIUtilsWindow {
@@ -19,6 +22,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	public MenuItem idExportToExcel;
 	public CheckMenuItem idPercentageCheckMenuItem;
 	public MenuItem idVersionMenuItem;
+	@FXML TableView<Country> stateDataTable;
 	@FXML TableColumn<Country, String> stateDataTableCountryColumn;
 	@FXML TableColumn<Country, String> stateDataTablePopulationColumn;
 	@FXML TableColumn<Country, String> stateDataTableCivFactoryColumn;
@@ -38,7 +42,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	@FXML TableColumn<Country, String> stateDataTableSteelColumn;
 	@FXML TableColumn<Country, String> stateDataTableTungstenColumn;
 
-	List<Country> countryList;
+	private final ObservableList<Country> countryList;
 
 	public BuildingsByCountryWindow() {
 		fxmlResource = "BuildingsByCountryWindow.fxml";
@@ -64,6 +68,13 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
 	private void loadBuildingsByCountryTable() {
 		stateDataTableCountryColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+
+		stateDataTable.setItems(countryList);
+
+		if (Settings.DEV_MODE.enabled())
+		{
+			System.out.println("Loaded data of countries into state data table.");
+		}
 	}
 
 	public void handleExportToExcelAction() {

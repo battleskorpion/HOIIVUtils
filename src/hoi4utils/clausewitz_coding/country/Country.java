@@ -5,13 +5,15 @@ import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
 import hoi4utils.clausewitz_coding.state.buildings.Resources;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class Country {
-	private static final List<Country> countryList = new ArrayList<>();
+	private static final ObservableList<Country> countryList = FXCollections.observableArrayList();
 	CountryTag countryTag;
 	Infrastructure infrastructure;          // infrastructure of all owned states
 	Resources resources;                    // resources of all owned states
@@ -170,7 +172,7 @@ public class Country {
 		return countryList;
 	}
 
-	public static List<Country> loadCountries(List<CountryTag> countryTags, List<Infrastructure> infrastructureList, List<Resources> resourcesList) {
+	public static ObservableList<Country> loadCountries(List<CountryTag> countryTags, List<Infrastructure> infrastructureList, List<Resources> resourcesList) {
 		Iterator<CountryTag> countryTagsIterator = countryTags.iterator();
 		Iterator<Infrastructure> infrastructureListIterator = infrastructureList.iterator();
 		Iterator<Resources> resourcesListIterator = resourcesList.iterator();
@@ -182,11 +184,11 @@ public class Country {
 		return countryList;
 	}
 
-	public static List<Country> loadCountries(List<Infrastructure> infrastructureList, List<Resources> resourcesList) {
+	public static ObservableList<Country> loadCountries(List<Infrastructure> infrastructureList, List<Resources> resourcesList) {
 		return loadCountries(CountryTags.getCountryTags(), infrastructureList, resourcesList);
 	}
 
-	public static List<Country> loadCountries() {
+	public static ObservableList<Country> loadCountries() {
 		return loadCountries(State.infrastructureOfCountries(), State.resourcesOfCountries());
 	}
 
