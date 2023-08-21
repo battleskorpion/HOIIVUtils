@@ -1,18 +1,17 @@
 package ui.buildings;
 
-import java.awt.MenuItem;
-
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
 import ui.HOIUtilsWindow;
 
 public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
 	public BuildingsByCountryWindow() {
 		fxmlResource = "BuildingsByCountryWindow.fxml";
-		title = "HOIIVUtils Buildins By Country Window";
+		title = "HOIIVUtils Buildings By Country Window";
 	}
 
 	public void open() {
@@ -24,6 +23,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	// * Buildings By Country Window Settings
 
 	@FXML
+	public MenuItem idExportToExcel;
 	public CheckMenuItem idPercentageCheckMenuItem;
 	public MenuItem idVersionMenuItem;
 	
@@ -33,7 +33,10 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		includeVersion();
 	}
 	private void includeVersion() {
-		idVersionMenuItem.setName(HOIIVUtils.hoi4utilsVersion);
+		idVersionMenuItem.setText(HOIIVUtils.hoi4utilsVersion);
+	}
+
+	public void handleExportToExcelAction() {
 	}
 
 	public void handlePercentageCheckMenuItemAction() {
