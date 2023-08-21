@@ -44,6 +44,16 @@ public enum Settings {
 			return "0";
 		}
 	},
+	LOAD_TO_MENU {
+		// to skip settings (if not first time user) and load direct to main menu
+		public Object getSetting() {
+			return SettingsManager.settingValues.get(this).equals("true");
+		}
+
+		public String defaultProperty() {
+			return "true";
+		}
+	}
 	;
 
 	/**

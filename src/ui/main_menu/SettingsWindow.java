@@ -37,12 +37,14 @@ public class SettingsWindow extends Application {
 		primaryStage.setScene((new Scene(root)));
 		this.primaryStage = primaryStage;
 		primaryStage.show();
+		lockWindowHorizontalAxis();
 	}
 
 	public void open() {
 		try {
 			if (primaryStage != null) {
 				primaryStage.show();
+				lockWindowHorizontalAxis();
 			} else {
 				start(new Stage());
 			}
@@ -50,6 +52,11 @@ public class SettingsWindow extends Application {
 		catch (Exception exc) {
 			HOIIVUtils.openError(exc);
 		}
+	}
+
+	private void lockWindowHorizontalAxis() {
+		primaryStage.maxWidthProperty().bind(primaryStage.widthProperty());
+		primaryStage.minWidthProperty().bind(primaryStage.widthProperty());
 	}
 
 	public void launchSettingsWindow(String... var0) {
