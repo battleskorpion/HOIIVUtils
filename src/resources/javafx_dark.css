@@ -11,7 +11,16 @@
 .root{
     -fx-background-color: #2D2D30;
     background-color: #2D2D30;
+    -fx-base: black; 
 }
+/*.root {
+    -fx-accent: #1e74c6;
+    -fx-focus-color: -fx-accent;
+    -fx-base: #373e43;
+    -fx-control-inner-background: derive(-fx-base, 35%);
+    -fx-control-inner-background-alt: -fx-control-inner-background ;
+}*/
+
 
 
 /* Label */
@@ -26,6 +35,23 @@
     background-color: #2D2D30;
 }
 
+/* ScrollPane */
+/*.scroll-pane {
+    -fx-background-color: black;
+}
+
+.scroll-bar:horizontal, .scroll-bar:vertical{
+    -fx-background-color:transparent;
+}
+
+.increment-button, .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: black;
+}*/
 
 /* GridPane */
 .tab-pane-grid{
@@ -38,6 +64,8 @@
     background-color: #2D2D30;
     -fx-background-insets: 3 0 0 0;
 }
+
+
 
 
 /* TextField */
