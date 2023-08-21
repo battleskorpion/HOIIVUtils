@@ -35,7 +35,7 @@ public abstract class HOIUtilsWindow {
 
 				/* style */
 				if (Settings.DEV_MODE.enabled()) {
-					System.out.println(new File(styleSheetURL).getAbsolutePath());
+					System.out.println("use stylesheet: " + new File(styleSheetURL).getAbsolutePath());
 				}
 				scene.getStylesheets().add(styleSheetURL);
 

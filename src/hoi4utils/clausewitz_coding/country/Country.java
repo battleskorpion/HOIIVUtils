@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Country {
-	private static List<Country> countryList;
+	private static final List<Country> countryList = new ArrayList<>();
 	CountryTag countryTag;
 	Infrastructure infrastructure;          // infrastructure of all owned states
 	Resources resources;                    // resources of all owned states
@@ -26,8 +26,6 @@ public class Country {
 		this.countryTag = countrytag;
 		this.infrastructure = infrastructure;
 		this.resources = resources;
-
-		countryList = new ArrayList<>();
 	}
 
 	public <T> Country(T item) {
@@ -45,8 +43,6 @@ public class Country {
 			this.infrastructure = new Infrastructure();
 			this.resources = new Resources();
 		}
-
-		countryList = new ArrayList<>();
 	}
 
 	/**
