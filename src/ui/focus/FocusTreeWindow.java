@@ -1,7 +1,6 @@
 package ui.focus;
 
 import hoi4utils.HOIIVUtils;
-import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.country.CountryTag;
 import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.focus.FocusTree;

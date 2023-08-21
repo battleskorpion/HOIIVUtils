@@ -1,6 +1,5 @@
 package hoi4utils;
 
-import java.io.File;
 import java.io.IOException;
 
 public enum Settings {

@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static hoi4utils.clausewitz_coding.state.State.resourcesOfCountry;
-
 /*
  * Loads HOI 4 State File
  */

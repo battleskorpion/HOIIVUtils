@@ -1,8 +1,6 @@
 package hoi4utils;
 
-import hoi4utils.clausewitz_coding.gfx.Interface;
 import hoi4utils.clausewitz_coding.state.State;
-import hoi4utils.clausewitz_coding.state.StateCategory;
 import hoi4utils.fileIO.FileListener.FileAdapter;
 import hoi4utils.fileIO.FileListener.FileEvent;
 import hoi4utils.fileIO.FileListener.FileWatcher;
@@ -27,7 +25,7 @@ import static hoi4utils.Settings.PREFERRED_SCREEN;
 * HOIIVUtils File
 */
 public class HOIIVUtils {
-	public static final String hoi4utilsVersion = "Version 0.2.12";
+	public static final String hoi4utilsVersion = "Version 0.2.13";
 
 	//	public static String hoi4_dir_name;
 	public static File focus_folder;

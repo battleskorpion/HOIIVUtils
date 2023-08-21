@@ -67,4 +67,6 @@
         "**/*.map"
 	],
 	"git.autofetch": true,
+	"workbench.startupEditor": "none"
+	
 }

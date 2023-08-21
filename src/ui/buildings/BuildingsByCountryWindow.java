@@ -1,12 +1,8 @@
 package ui.buildings;
 
-import java.util.List;
-import java.util.Set;
-
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.country.Country;
-import hoi4utils.clausewitz_coding.focus.Focus;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
