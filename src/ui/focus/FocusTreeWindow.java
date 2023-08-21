@@ -1,6 +1,7 @@
 package ui.focus;
 
 import hoi4utils.HOIIVUtils;
+import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.country.CountryTag;
 import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.focus.FocusTree;
@@ -41,7 +42,7 @@ public class FocusTreeWindow extends JFrame {
 		try {
 			FocusTree focusTree = FocusTree.get(new CountryTag("SMA"));
 			if (focusTree == null) {
-				focusTree = new FocusTree(new File(HOIIVUtils.hoi4_dir_name + HOIIVUtils.focus_folder + "//massachusetts.txt"));
+				focusTree = new FocusTree(new File(HOIIVUtils.focus_folder + "//massachusetts.txt"));
 			}
 			focusTreeBuilderWindow$FocusTreeViewport1 = new FocusTreeViewport(focusTree);
 		} catch (IOException e) {

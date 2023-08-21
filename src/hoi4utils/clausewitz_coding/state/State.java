@@ -155,18 +155,16 @@ public class State {
 	}
 
 	public static void readStates() {
-		File states_dir = new File(HOIIVUtils.hoi4_dir_name + HOIIVUtils.states_folder);
-
-		if (!states_dir.exists() || !states_dir.isDirectory()) {
+		if (!HOIIVUtils.states_folder.exists() || !HOIIVUtils.states_folder.isDirectory()) {
 			System.err.println("In State.java - " + HOIIVUtils.states_folder + " is not a directory, or etc.");
 			return;
 		}
-		if (states_dir.listFiles() == null || states_dir.listFiles().length == 0) {
+		if (HOIIVUtils.states_folder.listFiles() == null || HOIIVUtils.states_folder.listFiles().length == 0) {
 			System.out.println("No states found in " + HOIIVUtils.states_folder);
 			return;
 		}
 
-		for (File stateFile : states_dir.listFiles()) {
+		for (File stateFile : HOIIVUtils.states_folder.listFiles()) {
 			new State(stateFile);
 		}
 	}

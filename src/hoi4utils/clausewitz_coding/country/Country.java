@@ -3,6 +3,8 @@ package hoi4utils.clausewitz_coding.country;
 import hoi4utils.clausewitz_coding.state.State;
 import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
 import hoi4utils.clausewitz_coding.state.buildings.Resources;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -186,5 +188,14 @@ public class Country {
 
 	public static List<Country> loadCountries() {
 		return loadCountries(State.infrastructureOfCountries(), State.resourcesOfCountries());
+	}
+
+	public ObservableValue<String> nameProperty() {
+		// country name will never really change.
+		return new SimpleStringProperty(name());
+	}
+
+	private String name() {
+		return countryTag.toString();
 	}
 }

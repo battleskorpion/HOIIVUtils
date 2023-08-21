@@ -19,25 +19,24 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	public MenuItem idExportToExcel;
 	public CheckMenuItem idPercentageCheckMenuItem;
 	public MenuItem idVersionMenuItem;
-	@FXML TableColumn<Focus, String> stateDataTableCountryColumn;
-	@FXML TableColumn<Focus, String> stateDataTablePopulationColumn;
-	@FXML TableColumn<Focus, String> stateDataTableCivFactoryColumn;
-	@FXML TableColumn<Focus, String> stateDataTableMilFactoryColumn;
-	@FXML TableColumn<Focus, String> stateDataTableDockyardsColumn;
-	@FXML TableColumn<Focus, String> stateDataTableAirfieldsColumn;
-	@FXML TableColumn<Focus, String> stateDataTableCivMilRatioColumn;
-	@FXML TableColumn<Focus, String> stateDataTablePopFactoryRatioColumn;
-	@FXML TableColumn<Focus, String> stateDataTablePopCivRatioColumn;
-	@FXML TableColumn<Focus, String> stateDataTablePopMilRatioColumn;
-	@FXML TableColumn<Focus, String> stateDataTablePopAirCapacityRatioColumn;
-	@FXML TableColumn<Focus, String> stateDataTablePopNumStatesRatioColumn;
-	@FXML TableColumn<Focus, String> stateDataTableAluminiumColumn;
-	@FXML TableColumn<Focus, String> stateDataTableChromiumColumn;
-	@FXML TableColumn<Focus, String> stateDataTableOilColumn;
-	@FXML TableColumn<Focus, String> stateDataTableRubberColumn;
-	@FXML TableColumn<Focus, String> stateDataTableSteelColumn;
-	@FXML TableColumn<Focus, String> stateDataTableTungstenColumn;
-
+	@FXML TableColumn<Country, String> stateDataTableCountryColumn;
+	@FXML TableColumn<Country, String> stateDataTablePopulationColumn;
+	@FXML TableColumn<Country, String> stateDataTableCivFactoryColumn;
+	@FXML TableColumn<Country, String> stateDataTableMilFactoryColumn;
+	@FXML TableColumn<Country, String> stateDataTableDockyardsColumn;
+	@FXML TableColumn<Country, String> stateDataTableAirfieldsColumn;
+	@FXML TableColumn<Country, String> stateDataTableCivMilRatioColumn;
+	@FXML TableColumn<Country, String> stateDataTablePopFactoryRatioColumn;
+	@FXML TableColumn<Country, String> stateDataTablePopCivRatioColumn;
+	@FXML TableColumn<Country, String> stateDataTablePopMilRatioColumn;
+	@FXML TableColumn<Country, String> stateDataTablePopAirCapacityRatioColumn;
+	@FXML TableColumn<Country, String> stateDataTablePopNumStatesRatioColumn;
+	@FXML TableColumn<Country, String> stateDataTableAluminiumColumn;
+	@FXML TableColumn<Country, String> stateDataTableChromiumColumn;
+	@FXML TableColumn<Country, String> stateDataTableOilColumn;
+	@FXML TableColumn<Country, String> stateDataTableRubberColumn;
+	@FXML TableColumn<Country, String> stateDataTableSteelColumn;
+	@FXML TableColumn<Country, String> stateDataTableTungstenColumn;
 
 	List<Country> countryList;
 
@@ -64,7 +63,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	}
 
 	private void loadBuildingsByCountryTable() {
-
+		stateDataTableCountryColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
 	}
 
 	public void handleExportToExcelAction() {

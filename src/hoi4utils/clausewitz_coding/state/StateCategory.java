@@ -39,7 +39,7 @@ public class StateCategory {
 	}
 
 	public static void loadStateCategories() {
-		File dir = new File(HOIIVUtils.hoi4_dir_name + "\\common\\state_category");
+		File dir = new File(HOIIVUtils.common_folder + "\\state_category");
 
 		if (dir.exists() && dir.isDirectory() && dir.listFiles().length > 0) {
 			state_category_folder = dir;

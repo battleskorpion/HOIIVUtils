@@ -1,6 +1,7 @@
 package hoi4utils.clausewitz_coding.gfx;
 
 import hoi4utils.HOIIVUtils;
+import hoi4utils.Settings;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 
@@ -130,7 +131,7 @@ public class Interface {
 	}
 
 	public static void loadGFX() {
-		File dir = new File(HOIIVUtils.hoi4_dir_name + "\\interface");
+		File dir = new File(Settings.MOD_PATH + "\\interface");
 		if (!dir.exists() || !dir.isDirectory()) {
 			System.err.println("interface directory does not exist");
 		}

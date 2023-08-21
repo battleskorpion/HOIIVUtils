@@ -1,6 +1,7 @@
 package ui.custom_tooltop;
 
 import hoi4utils.HOIIVUtils;
+import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.clausewitz_coding.localization.LocalizationFile;
 import hoi4utils.clausewitz_coding.tooltip.CustomTooltip;
@@ -74,7 +75,7 @@ public class CustomTooltipWindow extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				super.mouseClicked(e);
 
-				JFileChooser j = new JFileChooser(HOIIVUtils.hoi4_dir_name);
+				JFileChooser j = new JFileChooser(String.valueOf(Settings.MOD_PATH));
 				j.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				j.setDialogTitle("Choose file w/ tooltip: ");
 
@@ -101,7 +102,7 @@ public class CustomTooltipWindow extends JFrame {
 				super.mouseClicked(e);
 
 				// use british spelling of "localization"
-				JFileChooser j = new JFileChooser(HOIIVUtils.hoi4_dir_name + "\\localisation");
+				JFileChooser j = new JFileChooser(Settings.MOD_PATH+ "\\localisation");
 				j.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				j.setDialogTitle("Choose Mod Directory");
 

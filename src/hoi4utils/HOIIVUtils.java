@@ -24,12 +24,14 @@ import static hoi4utils.Settings.PREFERRED_SCREEN;
 */
 public class HOIIVUtils {
 	public static final String hoi4utilsVersion = "Version 0.2.12";
-	
-	public static String hoi4_dir_name;
+
+	//	public static String hoi4_dir_name;
 	public static File focus_folder;
 	public static File states_folder;
 	public static File strat_region_dir;
 	public static File localization_eng_folder;
+	public static File common_folder;
+
 
 	public static String[] args;
 
@@ -63,7 +65,7 @@ public class HOIIVUtils {
 		/* main listeners */
 		try {
 
-			watchStateFiles(new File(hoi4_dir_name + states_folder));
+			watchStateFiles(states_folder);
 		} catch (NullPointerException exc) {
 
 			exc.printStackTrace();
@@ -258,6 +260,7 @@ public class HOIIVUtils {
 		return -1;
 	}
 
+	// ! todo
 	private static void watchStateFiles(File stateDir) throws IOException {
 		if (stateDir == null || !stateDir.exists() || !stateDir.isDirectory()) {
 			System.err.println("State dir does not exist or is not a directory: " + stateDir);
