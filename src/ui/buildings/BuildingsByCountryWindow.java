@@ -5,15 +5,42 @@ import java.util.List;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.country.Country;
+import hoi4utils.clausewitz_coding.focus.Focus;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
 import ui.HOIUtilsWindow;
 
 public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
+	// * Buildings By Country Window Controller
+	@FXML
+	public MenuItem idExportToExcel;
+	public CheckMenuItem idPercentageCheckMenuItem;
+	public MenuItem idVersionMenuItem;
+	@FXML TableColumn<Focus, String> stateDataTableCountryColumn;
+	@FXML TableColumn<Focus, String> stateDataTablePopulationColumn;
+	@FXML TableColumn<Focus, String> stateDataTableCivFactoryColumn;
+	@FXML TableColumn<Focus, String> stateDataTableMilFactoryColumn;
+	@FXML TableColumn<Focus, String> stateDataTableDockyardsColumn;
+	@FXML TableColumn<Focus, String> stateDataTableAirfieldsColumn;
+	@FXML TableColumn<Focus, String> stateDataTableCivMilRatioColumn;
+	@FXML TableColumn<Focus, String> stateDataTablePopFactoryRatioColumn;
+	@FXML TableColumn<Focus, String> stateDataTablePopCivRatioColumn;
+	@FXML TableColumn<Focus, String> stateDataTablePopMilRatioColumn;
+	@FXML TableColumn<Focus, String> stateDataTablePopAirCapacityRatioColumn;
+	@FXML TableColumn<Focus, String> stateDataTablePopNumStatesRatioColumn;
+	@FXML TableColumn<Focus, String> stateDataTableAluminiumColumn;
+	@FXML TableColumn<Focus, String> stateDataTableChromiumColumn;
+	@FXML TableColumn<Focus, String> stateDataTableOilColumn;
+	@FXML TableColumn<Focus, String> stateDataTableRubberColumn;
+	@FXML TableColumn<Focus, String> stateDataTableSteelColumn;
+	@FXML TableColumn<Focus, String> stateDataTableTungstenColumn;
+
+
 	List<Country> countryList;
-	
+
 	public BuildingsByCountryWindow() {
 		fxmlResource = "BuildingsByCountryWindow.fxml";
 		title = "HOIIVUtils Buildings By Country Window";
@@ -24,21 +51,20 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	public void open() {
 		super.open();
 	}
-
-	// * Buildings By Country Window Controller
-
-	@FXML
-	public MenuItem idExportToExcel;
-	public CheckMenuItem idPercentageCheckMenuItem;
-	public MenuItem idVersionMenuItem;
 	
 /* Start */
 	@FXML
 	void initialize() {
 		includeVersion();
+		loadBuildingsByCountryTable();
 	}
+
 	private void includeVersion() {
 		idVersionMenuItem.setText(HOIIVUtils.hoi4utilsVersion);
+	}
+
+	private void loadBuildingsByCountryTable() {
+
 	}
 
 	public void handleExportToExcelAction() {
