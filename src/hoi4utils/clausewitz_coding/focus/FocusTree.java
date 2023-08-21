@@ -8,10 +8,7 @@ import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-//import hoi4utils.settings.LocalizerSettings;
-//import ui.menu.MenuSettings;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -28,8 +25,8 @@ public final class FocusTree extends HOIIVUtils {
 	private LocalizationFile locFile = null;
 	private String id;
 	// private Modifier countryModifier;
-	private boolean defaultFocus; // ! todo Do This
-	private Point continuousFocusPosition; // ! todo DO THIS
+	// private boolean defaultFocus; // ! todo Do This
+	// private Point continuousFocusPosition; // ! todo DO THIS
 	private int minX; // min x of all focuses
 
 	/**
@@ -56,8 +53,8 @@ public final class FocusTree extends HOIIVUtils {
 	public FocusTree(String id, CountryTag tag) {
 		this.id = id;
 		// countryModifier = new CountryModifier();
-		defaultFocus = false;
-		continuousFocusPosition = new Point(50, 1200);
+		//! defaultFocus = false;
+		//! continuousFocusPosition = new Point(50, 1200);
 		country = tag;
 		focuses = new HashMap<>();
 

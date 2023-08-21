@@ -1,7 +1,6 @@
 package hoi4utils.clausewitz_coding.idea;
 
 import hoi4utils.clausewitz_coding.code.modifier.Modifier;
-import hoi4utils.clausewitz_coding.country.CountryTags;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 
@@ -91,7 +90,8 @@ public abstract class Idea {
 		idea_list = new ArrayList<>();
 
 		// make a list of all idea names
-		int ideaListIndex; // index of idea name in string //! todo Int not being used
+		// ! todo Int not being used / index of idea name in string
+		// int ideaListIndex;
 		Parser ideaParser = new Parser(idea_file);
 		Expression[] data = ideaParser.findAll();
 		for (Expression exp : data) {
@@ -103,7 +103,7 @@ public abstract class Idea {
 
 			// need enough data length before checks are made to prevent error
 			if (usefulData(s) && s.length() >= 5) {
-				if (CountryTags.getCountryTags().contains(s.substring(0, 3)) && s.startsWith("={", s.length() - 2)) {
+				//! if (CountryTags.getCountryTags().contains(s.substring(0, 3)) && s.startsWith("={", s.length() - 2)) {
 					// if here, ***should*** be good! data is an idea name,
 					// once we clean it up
 
@@ -119,7 +119,7 @@ public abstract class Idea {
 					idea_list.add(idea);
 				}
 			}
-		}
+	//!	} // !
 		// return idea_list;
 		return null;
 	}

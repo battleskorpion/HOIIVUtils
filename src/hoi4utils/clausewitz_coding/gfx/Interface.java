@@ -1,6 +1,5 @@
 package hoi4utils.clausewitz_coding.gfx;
 
-import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;

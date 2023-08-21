@@ -51,11 +51,12 @@ public class StateCategory {
 
 				if (exp.get(file.getName()) != null ) {
 					Expression categoryExp = exp.get(file.getName());
-					String category_name = categoryExp.getText(); // ! todo Implement the string
+					// ! todo Implement the string
+					//String category_name = categoryExp.getText();
 					if (categoryExp.get("local_building_slots") != null) {
-						int numBuildingSlots = categoryExp.get("local_building_slots").getValue();
+					//	int numBuildingSlots = categoryExp.get("local_building_slots").getValue();
 					} else {
-						int numBuildingSlots = 0;
+					//	int numBuildingSlots = 0;
 						System.err.println("Error - StateCategory.java: number of building slots was not found, " +
 								"defaulted to 0");
 					}

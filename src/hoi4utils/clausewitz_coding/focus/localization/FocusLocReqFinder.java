@@ -17,8 +17,8 @@ public class FocusLocReqFinder {
 		//File country_tags_file = new File(hoi4_dir + "\\common\\country_tags\\00_countries.txt"); //! todo fix the strings
 		File localization_dir = new File(hoi4_dir + "\\localisation\\english");
 
-		String focusLocPathname = hoi4_dir + "\\localisation\\english\\focus_";
-		ArrayList<File> focusLocFiles = new ArrayList<>(); //! todo why is this even here???
+//!		String focusLocPathname = hoi4_dir + "\\localisation\\english\\focus_";
+//!		ArrayList<File> focusLocFiles = new ArrayList<>(); //! todo why is this even here???
 
 		CountryTags.getCountryTags(); // make sure country tags are generated
 
@@ -28,7 +28,7 @@ public class FocusLocReqFinder {
 												// focus files in them todo
 
 				// make a list of all focus names
-				FocusTree focus = new FocusTree(focus_file); //! todo fix the focus
+//!				FocusTree focus = new FocusTree(focus_file); //! todo fix the focus
 				// todo how long does it take to init these focus trees????
 
 				// System.out.println(focus.country());

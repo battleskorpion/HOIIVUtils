@@ -25,7 +25,8 @@ public class State {
 	private int stateID;
 	private String name;
 	private final Map<ClausewitzDate, Owner> owner;
-	private StateCategory stateCategory; //! todo Finish state Category
+	//! todo Finish state Category
+	// private StateCategory stateCategory; 
 	private Infrastructure stateInfrastructure;
 	private Resources resourcesData;
 
@@ -45,7 +46,8 @@ public class State {
 		int civilianFactories = 0;
 		int militaryFactories = 0;
 		int dockyards = 0;
-		int navalPorts = 0; //has a province location
+		// ! todo something important
+		// int navalPorts = 0; //has a province location
 		int airfields = 0;
 		int aluminum = 0;
 		int chromium = 0;
