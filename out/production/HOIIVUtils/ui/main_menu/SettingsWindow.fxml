@@ -22,7 +22,7 @@
       <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
    </rowConstraints>
    <children>
-      <ScrollPane minWidth="300.0">
+      <ScrollPane hbarPolicy="NEVER" minWidth="300.0">
          <content>
             <GridPane fx:id="idPane" minWidth="290.0" prefHeight="370.0" prefWidth="690.0">
                <columnConstraints>

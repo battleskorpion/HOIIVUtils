@@ -26,16 +26,23 @@ import static hoi4utils.Settings.MOD_PATH;
  * SettingsWindow is the window and controller for the program settings
  */
 public class SettingsWindow extends Application {
-
+	public final String fxmlResource = "SettingsWindow.fxml";
+	final String title = "HOIIVUtils Settings";
+	final String styleSheetURL = "resources/javafx_dark.css";
 	Stage primaryStage;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		savedSettings(primaryStage);
-		Parent root = FXMLLoader.load(getClass().getResource("SettingsWindow.fxml"));
-		primaryStage.setTitle("HOIIVUtils Settings");
-		primaryStage.setScene((new Scene(root)));
+		Parent root = FXMLLoader.load(getClass().getResource(fxmlResource));
+		primaryStage.setTitle(title);
+		Scene scene = (new Scene(root));
+		primaryStage.setScene(scene);
 		this.primaryStage = primaryStage;
+
+		/* style */
+		scene.getStylesheets().add(styleSheetURL);
+
 		primaryStage.show();
 		lockWindowHorizontalAxis();
 	}
