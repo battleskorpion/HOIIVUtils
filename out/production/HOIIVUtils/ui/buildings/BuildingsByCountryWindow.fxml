@@ -12,7 +12,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+              <MenuItem mnemonicParsing="false" text="Export to .excel WIP" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -20,9 +20,9 @@
                   <CheckMenuItem fx:id="idPercentageCheckMenuItem" mnemonicParsing="false" onAction="#handlePercentageCheckMenuItemAction" text="Percentage Values" />
                </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Help">
+          <Menu mnemonicParsing="false" text="About">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" text="version number"/>
             </items>
           </Menu>
         </menus>

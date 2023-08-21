@@ -31,6 +31,27 @@ public class SettingsWindow extends Application {
 	final String styleSheetURL = "resources/javafx_dark.css";
 	Stage primaryStage;
 
+	@FXML
+	public Pane idPane;
+	public Label idVersionLabel;
+	public TextField idModPathTextField;
+	public Label idHOIIVModFolderLabel;
+	public Button idBrowseButton;
+	public CheckBox idDevModeCheckBox;
+	public Button idOkButton;
+	public File selectedDirectory;
+
+	/* Constructor */
+	public SettingsWindow() {
+		tempSettings = new HashMap<>();
+	}
+
+	@FXML
+	void initialize() {
+		includeVersion();
+		setupFirstTime();
+	}
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		savedSettings(primaryStage);
@@ -92,28 +113,8 @@ public class SettingsWindow extends Application {
 
 	HashMap<Settings, String> tempSettings;
 
-	@FXML
-	public Pane idPane;
-	public Label idVersionLabel;
-	public TextField idModPathTextField;
-	public Label idHOIIVModFolderLabel;
-	public Button idBrowseButton;
-	public CheckBox idDevModeCheckBox;
-	public Button idOkButton;
-
-	public File selectedDirectory;
-	
-	/* Constructor */
-	public SettingsWindow() {
-		tempSettings = new HashMap<>();
-	}
-
 /* Start */
-	@FXML
-	void initialize() {
-		includeVersion();
-		setupFirstTime();
-	}
+
 	private void includeVersion() {
 		idVersionLabel.setText(HOIIVUtils.hoi4utilsVersion);
 	}
