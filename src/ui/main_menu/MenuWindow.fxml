@@ -31,7 +31,7 @@
 	  <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Find Focuses without Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
 	  <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Idea Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
 	  <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Custom Tooltip Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-	  <Button fx:id="viewBuilding" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openBuildingsByCountry" prefWidth="400.0" text="View Buildings" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+	  <Button fx:id="viewBuilding" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openBuildingsByCountry" prefWidth="400.0" text="View Country Data" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
 	  <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Focus Tree View" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
 	  <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Province Colors" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
 	  <Button disable="true" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Map generation [*]" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" />

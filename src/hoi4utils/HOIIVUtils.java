@@ -1,6 +1,8 @@
 package hoi4utils;
 
+import hoi4utils.clausewitz_coding.gfx.Interface;
 import hoi4utils.clausewitz_coding.state.State;
+import hoi4utils.clausewitz_coding.state.StateCategory;
 import hoi4utils.fileIO.FileListener.FileAdapter;
 import hoi4utils.fileIO.FileListener.FileEvent;
 import hoi4utils.fileIO.FileListener.FileWatcher;
@@ -60,19 +62,8 @@ public class HOIIVUtils {
 			HOIIVUtils.openError(exception);
 		}
 
-		/* init 
-		StateCategory.loadStateCategories();
-		Interface.loadGFX();*/
 
-		/* main listeners */
-		try {
 
-			watchStateFiles(states_folder);
-		} catch (NullPointerException exc) {
-
-			exc.printStackTrace();
-			return;
-		}
 
 	}
 
@@ -263,7 +254,7 @@ public class HOIIVUtils {
 	}
 
 	// ! todo
-	private static void watchStateFiles(File stateDir) throws IOException {
+	public static void watchStateFiles(File stateDir) throws IOException {
 		if (stateDir == null || !stateDir.exists() || !stateDir.isDirectory()) {
 			System.err.println("State dir does not exist or is not a directory: " + stateDir);
 			return;
