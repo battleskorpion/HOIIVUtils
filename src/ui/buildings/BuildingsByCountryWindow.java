@@ -1,6 +1,6 @@
 package ui.buildings;
 
-import hoi4utils.HOIIVUtils;
+import hoi4utils.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import ui.HOIUtilsWindow;
@@ -25,12 +25,18 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
 	public void handlePercentageCheckMenuItemAction() {
 		String tempText;
-		if (idPercentageCheckMenuItem.isSelected() && HOIIVUtils.DEV_MODE) {
+		
+		if (idPercentageCheckMenuItem.isSelected()) {
+			idPercentageCheckMenuItem.setSelected(true);
 			tempText = "Percentage values are on";
 		} else {
+			idPercentageCheckMenuItem.setSelected(false);
 			tempText = "Percentage values are off";
 		}
-		System.out.println(tempText);
+		if (Settings.DEV_MODE.enabled()) {
+			System.out.println(idPercentageCheckMenuItem.isSelected());
+			System.out.println(tempText);
+		}
 	}
 }
 /*	 
