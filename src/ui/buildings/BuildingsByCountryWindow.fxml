@@ -4,11 +4,13 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.buildings.BuildingsByCountryWindow">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.buildings.BuildingsByCountryWindow">
    <children>
-      <MenuBar prefHeight="26.0" prefWidth="1280.0">
+      <MenuBar prefHeight="26.0" prefWidth="1600.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
                <items>
@@ -27,5 +29,27 @@
           </Menu>
         </menus>
       </MenuBar>
+      <TableView layoutY="26.0" prefHeight="874.0" prefWidth="1600.0">
+        <columns>
+          <TableColumn prefWidth="88.0" text="Country" />
+          <TableColumn prefWidth="88.0" text="Population" />
+            <TableColumn prefWidth="88.0" text="Civilian Factories" />
+            <TableColumn prefWidth="88.0" text="Military Factories" />
+            <TableColumn prefWidth="88.0" text="Dockyards" />
+            <TableColumn prefWidth="88.0" text="Airfields" />
+            <TableColumn prefWidth="88.0" text="Civ/Mil Ratio" />
+            <TableColumn prefWidth="88.0" text="Pop / Factory" />
+            <TableColumn prefWidth="88.0" text="Pop / Civ Ratio" />
+            <TableColumn prefWidth="88.0" text="Pop / Mil Ratio" />
+            <TableColumn prefWidth="88.0" text="Pop / Air Capacity" />
+            <TableColumn prefWidth="88.0" text="Pop / State" />
+            <TableColumn prefWidth="88.0" text="Aluminum" />
+            <TableColumn prefWidth="88.0" text="Chromium" />
+            <TableColumn prefWidth="88.0" text="Oil" />
+            <TableColumn prefWidth="88.0" text="Rubber" />
+            <TableColumn prefWidth="88.0" text="Steel" />
+            <TableColumn prefWidth="88.0" text="Tungsten" />
+        </columns>
+      </TableView>
    </children>
 </Pane>

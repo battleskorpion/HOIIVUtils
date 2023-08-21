@@ -103,7 +103,7 @@ public abstract class Idea {
 
 			// need enough data length before checks are made to prevent error
 			if (usefulData(s) && s.length() >= 5) {
-				if (CountryTags.list().contains(s.substring(0, 3)) && s.startsWith("={", s.length() - 2)) {
+				if (CountryTags.getCountryTags().contains(s.substring(0, 3)) && s.startsWith("={", s.length() - 2)) {
 					// if here, ***should*** be good! data is an idea name,
 					// once we clean it up
 

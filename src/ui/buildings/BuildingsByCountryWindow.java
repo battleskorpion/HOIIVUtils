@@ -1,7 +1,11 @@
 package ui.buildings;
 
+import java.util.ArrayList;
+
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
+import hoi4utils.clausewitz_coding.country.CountryTag;
+import hoi4utils.clausewitz_coding.country.CountryTags;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
@@ -9,18 +13,20 @@ import ui.HOIUtilsWindow;
 
 public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
+	ArrayList<CountryTag> countryList;
+	
 	public BuildingsByCountryWindow() {
 		fxmlResource = "BuildingsByCountryWindow.fxml";
 		title = "HOIIVUtils Buildings By Country Window";
+		
+		countryList = CountryTags.getCountryTags();
 	}
 
 	public void open() {
 		super.open();
 	}
 
-
-
-	// * Buildings By Country Window Settings
+	// * Buildings By Country Window Controller
 
 	@FXML
 	public MenuItem idExportToExcel;

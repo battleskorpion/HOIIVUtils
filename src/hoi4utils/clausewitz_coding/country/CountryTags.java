@@ -107,7 +107,7 @@ public class CountryTags extends HOIIVUtils {
 		return country_tags;
 	}
 
-	public static ArrayList<CountryTag> list() {
+	public static ArrayList<CountryTag> getCountryTags() {
 		if (country_tags == null) {
 			try {
 				return CountryTags.find();
@@ -122,7 +122,7 @@ public class CountryTags extends HOIIVUtils {
 
 	public static boolean exists(String substring) {
 		if (country_tags == null) {
-			list();
+			getCountryTags();
 		}
 
 		return country_tags.contains(new CountryTag(substring));
