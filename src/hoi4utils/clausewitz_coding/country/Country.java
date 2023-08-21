@@ -1,9 +1,11 @@
 package hoi4utils.clausewitz_coding.country;
 
+import hoi4utils.clausewitz_coding.state.State;
 import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
 import hoi4utils.clausewitz_coding.state.buildings.Resources;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Country {
@@ -38,12 +40,24 @@ public class Country {
 			this.countryTag = country.countryTag;
 			this.infrastructure = country.infrastructure;
 			this.resources = country.resources;
+		} else {
+			this.countryTag = CountryTag.NULL_TAG;
+			this.infrastructure = new Infrastructure();
+			this.resources = new Resources();
 		}
 
 		countryList = new ArrayList<>();
 	}
 
+	/**
+	 *
+	 * @deprecated
+	 * @return
+	 */
 	public static List<Country> getList() {
+		if (countryList == null || countryList.isEmpty()) {
+			loadCountries();
+		}
 		return countryList;
 	}
 
@@ -150,9 +164,31 @@ public class Country {
 		this.infrastructure = new Infrastructure(population(), infrastructure(), civilianFactories(), militaryFactories(), navalDockyards(), navalPorts(), value);
 	}
 
-	public <T> void loadCountries(List<T> list) {
+	public static <T> List<Country> loadCountries(List<T> list) {
 		for (T item: list) {
 			countryList.add(new Country(item));
 		}
+
+		return countryList;
+	}
+
+	public static List<Country> loadCountries(List<CountryTag> countryTags, List<Infrastructure> infrastructureList, List<Resources> resourcesList) {
+		Iterator<CountryTag> countryTagsIterator = countryTags.iterator();
+		Iterator<Infrastructure> infrastructureListIterator = infrastructureList.iterator();
+		Iterator<Resources> resourcesListIterator = resourcesList.iterator();
+		
+		while(countryTagsIterator.hasNext()) {
+			countryList.add(new Country(countryTagsIterator.next(), infrastructureListIterator.next(), resourcesListIterator.next()));
+		}
+
+		return countryList;
+	}
+
+	public static List<Country> loadCountries(List<Infrastructure> infrastructureList, List<Resources> resourcesList) {
+		return loadCountries(CountryTags.getCountryTags(), infrastructureList, resourcesList);
+	}
+
+	public static List<Country> loadCountries() {
+		return loadCountries(State.infrastructureOfCountries(), State.resourcesOfCountries());
 	}
 }

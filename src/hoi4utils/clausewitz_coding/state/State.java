@@ -1,6 +1,7 @@
 package hoi4utils.clausewitz_coding.state;
 
 import hoi4utils.clausewitz_coding.code.ClausewitzDate;
+import hoi4utils.clausewitz_coding.country.CountryTags;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import hoi4utils.HOIIVUtils;
@@ -10,7 +11,11 @@ import hoi4utils.clausewitz_coding.country.CountryTag;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static hoi4utils.clausewitz_coding.state.State.resourcesOfCountry;
+
 /*
  * Loads HOI 4 State File
  */
@@ -170,7 +175,7 @@ public class State {
 		return states;
 	}
 
-	public static ArrayList<State> listFromCountry(CountryTag tag) {
+	public static ArrayList<State> ownedStatesOfCountry(CountryTag tag) {
 		ArrayList<State> countryStates = new ArrayList<>();
 
 		for (State state : states) {
@@ -235,7 +240,7 @@ public class State {
 	}
 
 	public static int numStates(CountryTag country) {
-		return listFromCountry(country).size();
+		return ownedStatesOfCountry(country).size();
 	}
 
 	public static State get(String state_name) {
@@ -308,6 +313,36 @@ public class State {
 
 		System.out.println("Tried to delete state represented by file: " + "\n\t" + file + "\n\t"
 				+ "but state not found in states list");
+	}
+
+	public static List<Infrastructure> infrastructureOfCountries() {
+		List<CountryTag> countryList = CountryTags.getCountryTags();
+		List<Infrastructure> countriesInfrastructureList = new ArrayList<>();
+
+		for (CountryTag tag : countryList) {
+			countriesInfrastructureList.add(infrastructureOfCountry(tag));
+		}
+
+		return countriesInfrastructureList;
+	}
+
+	private static Infrastructure infrastructureOfCountry(CountryTag tag) {
+		return infrastructureOfStates(ownedStatesOfCountry(tag));
+	}
+
+	public static List<Resources> resourcesOfCountries() {
+		List<CountryTag> countryList = CountryTags.getCountryTags();
+		List<Resources> resourcesInfrastructureList = new ArrayList<>();
+
+		for (CountryTag tag : countryList) {
+			resourcesInfrastructureList.add(resourcesOfCountry(tag));
+		}
+
+		return resourcesInfrastructureList;
+	}
+
+	public static Resources resourcesOfCountry(CountryTag tag) {
+		return resourcesOfStates(ownedStatesOfCountry(tag));
 	}
 
 	public Infrastructure getStateInfrastructure() {

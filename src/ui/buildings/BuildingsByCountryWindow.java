@@ -18,7 +18,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		fxmlResource = "BuildingsByCountryWindow.fxml";
 		title = "HOIIVUtils Buildings By Country Window";
 
-		countryList = Country.getList();
+		countryList = Country.loadCountries();
 	}
 
 	public void open() {

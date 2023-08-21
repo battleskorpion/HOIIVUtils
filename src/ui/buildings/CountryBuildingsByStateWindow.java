@@ -309,7 +309,7 @@ public class CountryBuildingsByStateWindow extends JFrame {
 	}
 
 	private void refreshStateBuildingsTable() {
-		ArrayList<State> stateList = State.listFromCountry(countryTag);
+		ArrayList<State> stateList = State.ownedStatesOfCountry(countryTag);
 		System.out.println("Number of states in " + countryTag + ": " + stateList.size());
 
 		stateBuildingsTableModel.getDataVector().removeAllElements();
