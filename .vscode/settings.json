@@ -67,6 +67,9 @@
         "**/*.map"
 	],
 	"git.autofetch": true,
-	"workbench.startupEditor": "none"
+	"workbench.startupEditor": "none",
+	"java.project.referencedLibraries": [
+		"lib/**/*.jar"
+	]
 	
 }
