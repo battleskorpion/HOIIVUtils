@@ -26,9 +26,9 @@ import static hoi4utils.Settings.MOD_PATH;
  * SettingsWindow is the window and controller for the program settings
  */
 public class SettingsWindow extends Application {
-	public final String fxmlResource = "SettingsWindow.fxml";
-	final String title = "HOIIVUtils Settings";
-	final String styleSheetURL = "resources/javafx_dark.css";
+	public String fxmlResource = "SettingsWindow.fxml";
+	String title = "HOIIVUtils Settings";
+	String styleSheetURL = "resources/javafx_dark.css";
 	Stage primaryStage;
 
 	@FXML
@@ -40,10 +40,15 @@ public class SettingsWindow extends Application {
 	public CheckBox idDevModeCheckBox;
 	public Button idOkButton;
 	public File selectedDirectory;
+	
+	HashMap<Settings, String> tempSettings;
 
 	/* Constructor */
 	public SettingsWindow() {
 		tempSettings = new HashMap<>();
+
+		fxmlResource = "SettingsWindow.fxml";
+		title = "HOIIVUtils Settings";
 	}
 
 	@FXML
@@ -91,15 +96,14 @@ public class SettingsWindow extends Application {
 		super.launch(var0);
 	}
 
-	// ! todo fix
-	private void savedSettings(Stage primaryStage) throws IOException {
+	public void savedSettings(Stage primaryStage) throws IOException {
 		String hoi4UtilsPropertiesPath = SettingsManager.HOI4UTILS_PROPERTIES_PATH;
 		if (new File(hoi4UtilsPropertiesPath + "\\HOIIVUtils_properties.txt").exists()) {
 			HOIIVUtils.firstTimeSetup = false;
 			HOIIVUtils.settings = new SettingsManager();
 			HOIIVUtils.decideScreen(primaryStage);
 			if (Settings.DEV_MODE.enabled()) {
-				System.out.println("Performing standard startup.");
+				System.out.println("Performing standard settings startup.");
 			}
 		}
 		else {
@@ -110,8 +114,6 @@ public class SettingsWindow extends Application {
 
 
 	// * Settings Window Controller
-
-	HashMap<Settings, String> tempSettings;
 
 /* Start */
 

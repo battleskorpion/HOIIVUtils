@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import ui.main_menu.SettingsWindow;
+import ui.main_menu.MenuWindow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,28 +42,39 @@ public class HOIIVUtils {
 
 	private static SettingsWindow settingsWindow;
 	
+	private static MenuWindow menuWindow;
+	
 	public static SettingsManager settings;
 
 	public static boolean DEV_MODE = false;
 
 	public static FileWatcher stateDirWatcher;
 	
-	public static void main(String[] args) throws IOException {
-		
+	public static void main(String[] args) {
 		HOIIVUtils.args = args;
+		launchHOIIVUtils(args);
+	}
 
-		/* hoi4utils.settings */
-		try {
-			settingsWindow = new SettingsWindow();
-			settingsWindow.launchSettingsWindow(args);
+	private static void launchHOIIVUtils(String[] args) {
+		try{
+			Boolean isSettingsSkipped = Settings.SKIP_SETTINGS.enabled();
+			if (isSettingsSkipped) {
+				launchMenuWindow(args);
+			} else {
+				launchSettingsWindow(args);
+			}
+		} catch(Exception exception) {
+			openError(exception);
 		}
-		catch (Exception exception) {
-			HOIIVUtils.openError(exception);
-		}
+	}
 
-
-
-
+	private static void launchMenuWindow(String[] args) {
+		menuWindow = new MenuWindow();
+		menuWindow.launchMenuWindow(args);
+	}
+	private static void launchSettingsWindow(String[] args) {
+		settingsWindow = new SettingsWindow();
+		settingsWindow.launchSettingsWindow(args);
 	}
 
 	public static void openError(Exception exception) {

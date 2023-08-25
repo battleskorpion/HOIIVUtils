@@ -10,6 +10,15 @@ public enum Settings {
 	},
 	CURRENT_MOD,        // todo not in use
 	CIVILIAN_MILITARY_FACTORY_MAX_RATIO,            // ratio for civ/mil factories highlight in buildings view
+	SKIP_SETTINGS {
+		public Object getSetting() {
+			return SettingsManager.settingValues.get(this).equals("true");
+		}
+
+		public String defaultProperty() {
+			return "false";
+		}
+	},
 	DARK_MODE {
 		public Object getSetting() {
 			return SettingsManager.settingValues.get(this).equals("true");
