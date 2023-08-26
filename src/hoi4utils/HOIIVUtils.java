@@ -48,31 +48,33 @@ public class HOIIVUtils {
 
 	public static boolean DEV_MODE = false;
 
+	public static boolean SKIP_SETTINGS = false;
+
 	public static FileWatcher stateDirWatcher;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException{
 		HOIIVUtils.args = args;
 		launchHOIIVUtils(args);
 	}
 
-	private static void launchHOIIVUtils(String[] args) {
-		try{
+	public static void launchHOIIVUtils(String[] args) {
+		if (firstTimeSetup) {
+			launchSettingsWindow(args);
+		} else {
 			Boolean isSettingsSkipped = Settings.SKIP_SETTINGS.enabled();
 			if (isSettingsSkipped) {
 				launchMenuWindow(args);
 			} else {
 				launchSettingsWindow(args);
 			}
-		} catch(Exception exception) {
-			openError(exception);
 		}
 	}
 
-	private static void launchMenuWindow(String[] args) {
+	public static void launchMenuWindow(String[] args) {
 		menuWindow = new MenuWindow();
 		menuWindow.launchMenuWindow(args);
 	}
-	private static void launchSettingsWindow(String[] args) {
+	public static void launchSettingsWindow(String[] args) {
 		settingsWindow = new SettingsWindow();
 		settingsWindow.launchSettingsWindow(args);
 	}
