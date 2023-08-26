@@ -14,7 +14,6 @@ import ui.buildings.BuildingsByCountryWindow;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 public class MenuWindow extends Application{
 	public String fxmlResource = "MenuWindow.fxml";
@@ -28,13 +27,9 @@ public class MenuWindow extends Application{
 	public Button focusLocalizButton;
 	public Button viewBuilding;
 	
-	HashMap<Settings, String> tempSettings;
-	
 
 	/* Constructor */
 	public MenuWindow() {
-		tempSettings = new HashMap<>();
-
 		fxmlResource = "MenuWindow.fxml";
 		title = "HOIIVUtils Menu";
 	}
@@ -70,7 +65,7 @@ public class MenuWindow extends Application{
 			HOIIVUtils.settings = new SettingsManager();
 			HOIIVUtils.decideScreen(primaryStage);
 			if (Settings.DEV_MODE.enabled()) {
-				System.out.println("Performing standard settings startup.");
+				System.out.println("Performing standard Menu startup.");
 			}
 		}
 		else {

@@ -26,9 +26,9 @@ import static hoi4utils.Settings.MOD_PATH;
  * SettingsWindow is the window and controller for the program settings
  */
 public class SettingsWindow extends Application {
-	public String fxmlResource = "SettingsWindow.fxml";
-	String title = "HOIIVUtils Settings";
-	String styleSheetURL = "resources/javafx_dark.css";
+	public final String fxmlResource = "SettingsWindow.fxml";
+	final String title = "HOIIVUtils Settings";
+	final String styleSheetURL = "resources/javafx_dark.css";
 	Stage primaryStage;
 
 	@FXML
@@ -38,17 +38,13 @@ public class SettingsWindow extends Application {
 	public Label idHOIIVModFolderLabel;
 	public Button idBrowseButton;
 	public CheckBox idDevModeCheckBox;
+	public CheckBox idSkipSettingsCheckBox;
 	public Button idOkButton;
 	public File selectedDirectory;
-	
-	HashMap<Settings, String> tempSettings;
 
 	/* Constructor */
 	public SettingsWindow() {
 		tempSettings = new HashMap<>();
-
-		fxmlResource = "SettingsWindow.fxml";
-		title = "HOIIVUtils Settings";
 	}
 
 	@FXML
@@ -87,7 +83,7 @@ public class SettingsWindow extends Application {
 		}
 	}
 
-	private void lockWindowHorizontalAxis() {
+	public void lockWindowHorizontalAxis() {
 		primaryStage.maxWidthProperty().bind(primaryStage.widthProperty());
 		primaryStage.minWidthProperty().bind(primaryStage.widthProperty());
 	}
@@ -115,12 +111,14 @@ public class SettingsWindow extends Application {
 
 	// * Settings Window Controller
 
+	HashMap<Settings, String> tempSettings;
+
 /* Start */
 
-	private void includeVersion() {
+	public void includeVersion() {
 		idVersionLabel.setText(HOIIVUtils.hoi4utilsVersion);
 	}
-	private void setupFirstTime() {
+	public void setupFirstTime() {
 		boolean isFirstTime = HOIIVUtils.firstTimeSetup;
 		if (!isFirstTime) {
 			setModPathTextFieldFromSettings();
@@ -128,20 +126,20 @@ public class SettingsWindow extends Application {
 			enableOkButton();
 		}
 	}
-	private void setModPathTextFieldFromSettings() {
+	public void setModPathTextFieldFromSettings() {
 		String inlcudeSetting = (String) MOD_PATH.getSetting();
 		if (inlcudeSetting != "null") {
 			idModPathTextField.setText(inlcudeSetting);
 		}
 	}
-	private void setDevModeCheckBoxOnOrOff() {
+	public void setDevModeCheckBoxOnOrOff() {
 		boolean getDevModeSetting = Settings.DEV_MODE.enabled();
 		idDevModeCheckBox.setSelected(getDevModeSetting);
 	}
-	private void enableOkButton() {
+	public void enableOkButton() {
 		idOkButton.setDisable(false);
 	}
-	private void disableOkButton() {
+	public void disableOkButton() {
 		idOkButton.setDisable(true);
 	}
 	
@@ -158,7 +156,7 @@ public class SettingsWindow extends Application {
 			}
 			tempSettings.put(MOD_PATH, pathText);
 		}
-	private void getIsDirectory() {
+	public void getIsDirectory() {
 		File fileModPath = new File(idModPathTextField.getText());
 		boolean exists = fileModPath.exists();
 		boolean isDirectory = fileModPath.isDirectory();
@@ -183,7 +181,7 @@ public class SettingsWindow extends Application {
 		idModPathTextField.setText(selectedDirectory.getAbsolutePath());
 		updateModPath(selectedDirectory);
 	}
-	private void getDirectoryChooser() {
+	public void getDirectoryChooser() {
 		// Opens Windows Default Directory Chooser
 		Stage primaryStage = (Stage) (idBrowseButton.getScene().getWindow());
 		DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -195,7 +193,7 @@ public class SettingsWindow extends Application {
 		}
 		selectedDirectory = directoryChooser.showDialog(primaryStage);
 	}
-	private void updateModPath(File selectedDirectory) {
+	public void updateModPath(File selectedDirectory) {
 		getIsDirectory();
 		tempSettings.put(MOD_PATH, selectedDirectory.getAbsolutePath());
 	}
@@ -210,6 +208,10 @@ public class SettingsWindow extends Application {
 		tempSettings.put(setting, String.valueOf(property));
 	}
 
+	public void handleSkipSettingsCheckBoxAction() {
+		updateTempSetting(Settings.SKIP_SETTINGS, idSkipSettingsCheckBox.isSelected());
+	}
+
 /** User Interactive Button in Settings Window
  * Closes Settings Window
  * Opens Menu Window
@@ -222,7 +224,7 @@ public class SettingsWindow extends Application {
 		hideCurrentWindow();
 		openMenuWindow();
 	}
-	private boolean updateSettings() {
+	public boolean updateSettings() {
 		try {
 			if (HOIIVUtils.firstTimeSetup) {
 				HOIIVUtils.settings = new SettingsManager(tempSettings);
@@ -236,7 +238,7 @@ public class SettingsWindow extends Application {
 		createHOIIVFilePaths();
 		return true;
 	}
-	private void createHOIIVFilePaths() {
+	public void createHOIIVFilePaths() {
 		String modPath = SettingsManager.get(MOD_PATH);
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(modPath);
@@ -247,10 +249,10 @@ public class SettingsWindow extends Application {
 		HOIIVUtils.localization_eng_folder =  new File(modPath + "\\localisation\\english");
 		HOIIVUtils.focus_folder = new File(modPath + "\\common\\national_focus");
 	}
-	private void hideCurrentWindow() {
+	public void hideCurrentWindow() {
 		HOIIVUtils.hideWindow(idPane);
 	}
-	private void openMenuWindow() {
+	public void openMenuWindow() {
 		MenuWindow menuWindow = new MenuWindow();
 		menuWindow.open();
 	}
