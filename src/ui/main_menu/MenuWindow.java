@@ -41,7 +41,10 @@ public class MenuWindow extends Application{
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		savedSettings(primaryStage);
+		if (HOIIVUtils.settings == null) {
+			savedSettings(primaryStage);
+		}
+
 		Parent root = FXMLLoader.load(getClass().getResource(fxmlResource));
 		primaryStage.setTitle(title);
 		Scene scene = (new Scene(root));
@@ -54,10 +57,6 @@ public class MenuWindow extends Application{
 		primaryStage.show();
 	}
 
-	public void launchMenuWindow(String... var0) {
-		super.launch(var0);
-	}
-
 	public void savedSettings(Stage primaryStage) throws IOException {
 		String hoi4UtilsPropertiesPath = SettingsManager.HOI4UTILS_PROPERTIES_PATH;
 		if (new File(hoi4UtilsPropertiesPath + "\\HOIIVUtils_properties.txt").exists()) {
@@ -65,12 +64,16 @@ public class MenuWindow extends Application{
 			HOIIVUtils.settings = new SettingsManager();
 			HOIIVUtils.decideScreen(primaryStage);
 			if (Settings.DEV_MODE.enabled()) {
-				System.out.println("Performing standard Menu startup.");
+				System.out.println("Performing standard settings startup.");
 			}
 		}
 		else {
 			HOIIVUtils.firstTimeSetup = true;
 		}
+	}
+
+	public void launchMenuWindow(String... var0) {
+		super.launch(var0);
 	}
 
 	// * Menu Window Controller
