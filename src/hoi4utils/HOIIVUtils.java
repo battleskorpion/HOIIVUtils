@@ -58,6 +58,12 @@ public class HOIIVUtils {
 	}
 
 	public static void launchHOIIVUtils(String[] args) {
+		try {
+			savedSettings();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 		if (firstTimeSetup) {
 			launchSettingsWindow(args);
 		} else {
@@ -67,6 +73,21 @@ public class HOIIVUtils {
 			} else {
 				launchSettingsWindow(args);
 			}
+		}
+	}
+
+	public static void savedSettings() throws IOException {
+		String hoi4UtilsPropertiesPath = SettingsManager.HOI4UTILS_PROPERTIES_PATH;
+		if (new File(hoi4UtilsPropertiesPath + "\\HOIIVUtils_properties.txt").exists()) {
+			HOIIVUtils.firstTimeSetup = false;
+			HOIIVUtils.settings = new SettingsManager();
+			//HOIIVUtils.decideScreen(primaryStage);
+			if (Settings.DEV_MODE.enabled()) {
+				System.out.println("Performing standard settings startup.");
+			}
+		}
+		else {
+			HOIIVUtils.firstTimeSetup = true;
 		}
 	}
 

@@ -55,7 +55,6 @@ public class SettingsWindow extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		savedSettings(primaryStage);
 		Parent root = FXMLLoader.load(getClass().getResource(fxmlResource));
 		primaryStage.setTitle(title);
 		Scene scene = (new Scene(root));
@@ -91,23 +90,6 @@ public class SettingsWindow extends Application {
 	public void launchSettingsWindow(String... var0) {
 		super.launch(var0);
 	}
-
-	public void savedSettings(Stage primaryStage) throws IOException {
-		String hoi4UtilsPropertiesPath = SettingsManager.HOI4UTILS_PROPERTIES_PATH;
-		if (new File(hoi4UtilsPropertiesPath + "\\HOIIVUtils_properties.txt").exists()) {
-			HOIIVUtils.firstTimeSetup = false;
-			HOIIVUtils.settings = new SettingsManager();
-			HOIIVUtils.decideScreen(primaryStage);
-			if (Settings.DEV_MODE.enabled()) {
-				System.out.println("Performing standard settings startup.");
-			}
-		}
-		else {
-			HOIIVUtils.firstTimeSetup = true;
-		}
-	}
-
-
 
 	// * Settings Window Controller
 
