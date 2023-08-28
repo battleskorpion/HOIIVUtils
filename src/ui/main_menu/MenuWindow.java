@@ -62,7 +62,7 @@ public class MenuWindow extends Application{
 		if (new File(hoi4UtilsPropertiesPath + "\\HOIIVUtils_properties.txt").exists()) {
 			HOIIVUtils.firstTimeSetup = false;
 			HOIIVUtils.settings = new SettingsManager();
-			HOIIVUtils.decideScreen(primaryStage);
+//			HOIIVUtils.decideScreen(primaryStage);      // todo reenable
 			if (Settings.DEV_MODE.enabled()) {
 				System.out.println("Performing standard settings startup.");
 			}
