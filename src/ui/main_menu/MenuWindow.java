@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import ui.buildings.BuildingsByCountryWindow;
+import ui.clausewitz_gfx.InterfaceFileListWindow;
 
 public class MenuWindow extends Application{
 	public String fxmlResource = "MenuWindow.fxml";
@@ -21,6 +22,7 @@ public class MenuWindow extends Application{
 	public Button statisticsButton;
 	public Button focusLocalizButton;
 	public Button viewBuilding;
+	public Button viewGFX;
 	
 
 	/* Constructor */
@@ -69,27 +71,29 @@ public class MenuWindow extends Application{
 
 	// todo close menu
 	public void openSettings() {
-		HOIIVUtils.closeWindow(settingsButton);
+		HOIIVUtils.closeWindow(settingsButton); //closes the menu window
 
-		SettingsWindow settingsWindow = new SettingsWindow();
-
-		settingsWindow.open();
+		SettingsWindow window = new SettingsWindow();
+		window.open();
 	}
 
 	public void openStatistics() {
-		StatisticsWindow statisticsWindow = new StatisticsWindow();
-
-		statisticsWindow.open();
+		StatisticsWindow window = new StatisticsWindow();
+		window.open();
 	}
 
 	public void openLocalizeFocusTree() {
-		//FocusLocalizationWindow localizationWindow = new FocusLocalizationWindow();
-		//localizationWindow.open();
+//		FocusLocalizationWindow window = new FocusLocalizationWindow();
+//		window.open();
 	}
 
 	public void openBuildingsByCountry() {
-		BuildingsByCountryWindow buildingsByCountryWindow = new BuildingsByCountryWindow();
+		BuildingsByCountryWindow window = new BuildingsByCountryWindow();
+		window.open();
+	}
 
-		buildingsByCountryWindow.open();
+	public void openInterfaceFileList() {
+		InterfaceFileListWindow window = new InterfaceFileListWindow();
+		window.open();
 	}
 }

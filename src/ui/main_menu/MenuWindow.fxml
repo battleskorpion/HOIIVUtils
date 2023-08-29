@@ -36,7 +36,7 @@
 	  <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Province Colors" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
 	  <Button disable="true" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Map generation [*]" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
 	  <Button fx:id="statisticsButton" mnemonicParsing="false" onAction="#openStatistics" text="Statistics" GridPane.columnIndex="2" />
-	  <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="View GFX" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+	  <Button fx:id="viewGFX" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openInterfaceFileList" prefWidth="400.0" text="View GFX" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
    </children>
    <padding>
 	  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
