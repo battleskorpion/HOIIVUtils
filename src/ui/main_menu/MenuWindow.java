@@ -1,8 +1,6 @@
 package ui.main_menu;
 
 import hoi4utils.HOIIVUtils;
-import hoi4utils.Settings;
-import hoi4utils.SettingsManager;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,9 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import ui.buildings.BuildingsByCountryWindow;
-
-import java.io.File;
-import java.io.IOException;
 
 public class MenuWindow extends Application{
 	public String fxmlResource = "MenuWindow.fxml";

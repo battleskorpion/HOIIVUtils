@@ -6,10 +6,17 @@
 	"configurations": [
 		{
 			"type": "java",
+			"name": "HOIIVUtils",
+			"request": "launch",
+			"mainClass": "hoi4utils.HOIIVUtils",
+			"projectName": "HOIIVUtils_cb7b5c9a"
+		},
+		{
+			"type": "java",
 			"name": "Launcher",
 			"request": "launch",
 			"mainClass": "Launcher",
 			"vmArgs": "--module-path ${workspaceFolder}/lib/javafx-sdk-20.0.2/lib --add-modules javafx.controls,javafx.fxml"
-		},
+		}
 	]
 }
