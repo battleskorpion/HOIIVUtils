@@ -10,17 +10,16 @@ public class StatisticsWindow extends HOIUtilsWindow{
 	@FXML
 	public Label idVersion;
 	public Label idWindowName;
-	public String className = this.getClass().getName();
 
 	public StatisticsWindow() {
-		fxmlResource = className + ".fxml";
+		fxmlResource = "StatisticsWindow.fxml";
 		title = "HOIIVUtils Statistics Window";
 	}
 
 	@FXML
 	void initialize() {
 		includeVersion();
-		idWindowName.setText(className + "WIP");
+		idWindowName.setText("StatisticsWindow" + " WIP");
 	}
 
 	private void includeVersion() {
