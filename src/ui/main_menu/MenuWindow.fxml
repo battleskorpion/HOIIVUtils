@@ -9,7 +9,7 @@
 <GridPane minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.main_menu.MenuWindow">
    <columnConstraints>
 	  <ColumnConstraints />
-	  <ColumnConstraints hgrow="SOMETIMES" maxWidth="355.0" minWidth="10.0" prefWidth="69.0" />
+	  <ColumnConstraints hgrow="SOMETIMES" maxWidth="355.0" minWidth="40.0" prefWidth="69.0" />
 	  <ColumnConstraints hgrow="SOMETIMES" maxWidth="536.0" minWidth="10.0" prefWidth="531.0" />
 	  <ColumnConstraints hgrow="SOMETIMES" />
    </columnConstraints>
@@ -26,7 +26,7 @@
 	  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-	  <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#openSettings" text="Settings" GridPane.columnIndex="1" />
+	  <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#openSettings" text="Settings" GridPane.columnIndex="1" GridPane.hgrow="NEVER" />
 	  <Button fx:id="focusLocalizButton" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openLocalizeFocusTree" prefWidth="400.0" text="Focus Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
 	  <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Find Focuses without Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
 	  <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="Idea Localization" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
