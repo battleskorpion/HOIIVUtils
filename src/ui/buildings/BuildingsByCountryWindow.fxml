@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.buildings.BuildingsByCountryWindow">
+<AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.buildings.BuildingsByCountryWindow">
    <children>
-      <TableView fx:id="stateDataTable" maxHeight="1.7976931348623157E308" prefHeight="874.0" prefWidth="1600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+      <TableView fx:id="stateDataTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
         <columns>
           <TableColumn fx:id="stateDataTableCountryColumn" prefWidth="88.0" text="Country" />
           <TableColumn fx:id="stateDataTablePopulationColumn" prefWidth="88.0" text="Population" />
@@ -33,7 +33,7 @@
             <TableColumn fx:id="stateDataTableTungstenColumn" prefWidth="88.0" text="Tungsten" />
         </columns>
       </TableView>
-      <MenuBar prefHeight="26.0" prefWidth="1600.0">
+      <MenuBar>
         <menus>
           <Menu mnemonicParsing="false" text="File">
                <items>
