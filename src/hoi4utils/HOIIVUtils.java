@@ -143,7 +143,7 @@ public class HOIIVUtils {
 	public static void decideScreen(Stage primaryStage) {
 		Integer preferredScreen = (Integer) PREFERRED_SCREEN.getSetting();
 		ObservableList<Screen> screens = Screen.getScreens();
-		if (preferredScreen > screens.size()) {
+		if (preferredScreen > screens.size() - 1) {
 			if (Settings.DEV_MODE.enabled()) {
 				System.err.println( "Preferred screen does not exist, resorting to defaults.");
 			}
