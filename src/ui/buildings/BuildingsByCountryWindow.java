@@ -46,10 +46,6 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
 		countryList = Country.loadCountries();
 	}
-
-	public void open() {
-		super.open();
-	}
 	
 /* Start */
 	@FXML

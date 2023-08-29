@@ -1,30 +1,34 @@
 package ui.buildings;
 
 import hoi4utils.HOIIVUtils;
-import hoi4utils.clausewitz_coding.country.CountryTag;
-import hoi4utils.clausewitz_coding.state.State;
-import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
-import hoi4utils.clausewitz_coding.state.buildings.Resources;
-import hoi4utils.fileIO.FileListener.FileAdapter;
-import hoi4utils.fileIO.FileListener.FileEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import ui.HOIUtilsWindow;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
+public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 
-import static hoi4utils.HOIIVUtils.stateDirWatcher;
+	@FXML
+	public Label idVersion;
+	public Label idWindowName;
+	public String className = this.getClass().getName();
 
-public class CountryBuildingsByStateWindow extends JFrame {
+	public CountryBuildingsByStateWindow() {
+		fxmlResource = className + ".fxml";
+		title = "HOIIVUtils Buildings By Country Window";
+	}
+
+	@FXML
+	void initialize() {
+		includeVersion();
+		idWindowName.setText(className + "WIP");
+	}
+
+	private void includeVersion() {
+		idVersion.setText(HOIIVUtils.hoi4utilsVersion);
+	}
+}
+
+	/*
 	private JPanel CountryBuildingsByStateWindowJPanel;
 	private JTable statesBuildingsTable;
 	private JLabel countryLabel;
@@ -215,7 +219,7 @@ public class CountryBuildingsByStateWindow extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();
 
-		/* file listener */
+		/* file listener 
 		stateDirWatcher.addListener(new FileAdapter() {
 			@Override
 			public void onCreated(FileEvent event) {
@@ -272,13 +276,13 @@ public class CountryBuildingsByStateWindow extends JFrame {
 			}
 		}).watch();
 
-		/* action listeners */
+		/* action listeners 
 		statesBuildingsTable.addMouseListener(new MouseAdapter() {
 			/**
 			 * {@inheritDoc}
 			 *
 			 * @param e
-			 */
+			 *//*
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				//super.mouseClicked(e);
@@ -554,3 +558,4 @@ public class CountryBuildingsByStateWindow extends JFrame {
 	}
 
 }
+*/

@@ -8,11 +8,5 @@ public class StatisticsWindow extends HOIUtilsWindow {
 		fxmlResource = "StatisticsWindow.fxml";
 		title = "Statistics";
 	}
-
-	public void open() {
-		super.open();
-	}
-
-
 	// * Statistics Window Controller
 }
