@@ -50,7 +50,7 @@ public class SettingsWindow extends Application {
 	@FXML
 	void initialize() {
 		includeVersion();
-		setupFirstTime();
+		includeSettingValues();
 	}
 
 	@Override
@@ -100,27 +100,23 @@ public class SettingsWindow extends Application {
 	public void includeVersion() {
 		idVersionLabel.setText(HOIIVUtils.hoi4utilsVersion);
 	}
-	public void setupFirstTime() {
+
+	public void includeSettingValues() {
 		boolean isFirstTime = HOIIVUtils.firstTimeSetup;
 		if (!isFirstTime) {
-			setModPathTextFieldFromSettings();
-			setDevModeCheckBoxOnOrOff();
+			if ((String) MOD_PATH.getSetting() != "null") {
+				idModPathTextField.setText((String) MOD_PATH.getSetting());
+			}
+			idDevModeCheckBox.setSelected(Settings.DEV_MODE.enabled());
+			idSkipSettingsCheckBox.setSelected(Settings.SKIP_SETTINGS.enabled());
 			enableOkButton();
 		}
 	}
-	public void setModPathTextFieldFromSettings() {
-		String inlcudeSetting = (String) MOD_PATH.getSetting();
-		if (inlcudeSetting != "null") {
-			idModPathTextField.setText(inlcudeSetting);
-		}
-	}
-	public void setDevModeCheckBoxOnOrOff() {
-		boolean getDevModeSetting = Settings.DEV_MODE.enabled();
-		idDevModeCheckBox.setSelected(getDevModeSetting);
-	}
+
 	public void enableOkButton() {
 		idOkButton.setDisable(false);
 	}
+
 	public void disableOkButton() {
 		idOkButton.setDisable(true);
 	}
@@ -139,7 +135,7 @@ public class SettingsWindow extends Application {
 			disableOkButton();
 		}
 		String pathText = idModPathTextField.getText();
-		if (pathText == null || pathText.isEmpty()) {
+		if (pathText.isEmpty()) {
 			pathText = null;
 		}
 		tempSettings.put(MOD_PATH, pathText);
