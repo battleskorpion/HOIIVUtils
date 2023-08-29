@@ -125,28 +125,37 @@ public class SettingsWindow extends Application {
 		idOkButton.setDisable(true);
 	}
 	
-/** User Interactive Text Feild in Settings Window
- * Allows the user to type in the text feild.
- * It detects whever the user entered a valid directory.
- * Saves the directory path to hoi4utils settings: MOD_PATH
-*/
+	/** User Interactive Text Feild in Settings Window
+	 * Allows the user to type in the text field.
+	 * It detects whever the user entered a valid directory.
+	 * Saves the directory path to hoi4utils settings: MOD_PATH
+	*/
 	public void handleModPathTextField() {
-			getIsDirectory();
-			String pathText = idModPathTextField.getText();
-			if (pathText == null || pathText.isEmpty()) {
-				pathText = null;
+		if (modPathIsDirectory()) {
+			if (idOkButton.isDisabled()) {
+				enableOkButton();
 			}
-			tempSettings.put(MOD_PATH, pathText);
+		} else {
+			disableOkButton();
 		}
-	public void getIsDirectory() {
+		String pathText = idModPathTextField.getText();
+		if (pathText == null || pathText.isEmpty()) {
+			pathText = null;
+		}
+		tempSettings.put(MOD_PATH, pathText);
+	}
+
+	/**
+	 * returns true if the mod path in mod path text field is a directory path that exists.
+	 * @return
+	 */
+	public boolean modPathIsDirectory() {
 		File fileModPath = new File(idModPathTextField.getText());
 		boolean exists = fileModPath.exists();
-		boolean isDirectory = fileModPath.isDirectory();
-		if (idOkButton.isDisabled() && exists && isDirectory) {
-			disableOkButton();
-		} else {
-			enableOkButton();
+		if (!exists) {
+			return false;
 		}
+		return fileModPath.isDirectory();
 	}
 	
 	/** User Interactive Button in Settings Window
@@ -176,13 +185,13 @@ public class SettingsWindow extends Application {
 		selectedDirectory = directoryChooser.showDialog(primaryStage);
 	}
 	public void updateModPath(File selectedDirectory) {
-		getIsDirectory();
+		modPathIsDirectory();
 		tempSettings.put(MOD_PATH, selectedDirectory.getAbsolutePath());
 	}
 
-/** User Interactive CheckBox in Settings Window
- * Saves the check to DEV_MODE
- */
+	/** User Interactive CheckBox in Settings Window
+	 * Saves the check to DEV_MODE
+	 */
 	public void handleDevModeCheckBoxAction() {
 		updateTempSetting(Settings.DEV_MODE, idDevModeCheckBox.isSelected());
 	}
@@ -194,10 +203,10 @@ public class SettingsWindow extends Application {
 		updateTempSetting(Settings.SKIP_SETTINGS, idSkipSettingsCheckBox.isSelected());
 	}
 
-/** User Interactive Button in Settings Window
- * Closes Settings Window
- * Opens Menu Window
- */
+	/** User Interactive Button in Settings Window
+	 * Closes Settings Window
+	 * Opens Menu Window
+	 */
 	public void handleOkButtonAction() {
 		boolean settingsSaved = updateSettings();
 		if (!settingsSaved) {
@@ -206,6 +215,7 @@ public class SettingsWindow extends Application {
 		hideCurrentWindow();
 		openMenuWindow();
 	}
+
 	public boolean updateSettings() {
 		try {
 			if (HOIIVUtils.firstTimeSetup) {
@@ -220,6 +230,7 @@ public class SettingsWindow extends Application {
 		createHOIIVFilePaths();
 		return true;
 	}
+
 	public void createHOIIVFilePaths() {
 		String modPath = SettingsManager.get(MOD_PATH);
 		if (Settings.DEV_MODE.enabled()) {
