@@ -185,7 +185,13 @@ public class SettingsWindow extends Application {
 		selectedDirectory = directoryChooser.showDialog(primaryStage);
 	}
 	public void updateModPath(File selectedDirectory) {
-		modPathIsDirectory();
+		if (modPathIsDirectory()) {
+			if (idOkButton.isDisabled()) {
+				enableOkButton();
+			}
+		} else {
+			disableOkButton();
+		}
 		tempSettings.put(MOD_PATH, selectedDirectory.getAbsolutePath());
 	}
 
