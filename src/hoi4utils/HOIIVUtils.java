@@ -77,10 +77,10 @@ public class HOIIVUtils {
 	}
 
 	public static void savedSettings() throws IOException {
-		HOIIVUtils.settings = new SettingsManager();
 		String hoi4UtilsPropertiesPath = SettingsManager.HOI4UTILS_PROPERTIES_PATH;
 		if (new File(hoi4UtilsPropertiesPath + "\\HOIIVUtils_properties.txt").exists()) {
 			HOIIVUtils.firstTimeSetup = false;
+			HOIIVUtils.settings = new SettingsManager();
 			//HOIIVUtils.decideScreen(primaryStage);
 			if (Settings.DEV_MODE.enabled()) {
 				System.out.println("Performing standard settings startup.");
