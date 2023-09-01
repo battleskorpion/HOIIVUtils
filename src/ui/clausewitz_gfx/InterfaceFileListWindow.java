@@ -13,7 +13,7 @@ public class InterfaceFileListWindow extends HOIUtilsWindow {
 
 	public InterfaceFileListWindow() {
 		fxmlResource = "InterfaceFileListWindow.fxml";
-		title = "HOIIVUtils Interface File List Window Window";
+		title = "HOIIVUtils Interface File List Window";
 	}
 
 	@FXML

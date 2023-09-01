@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.clausewitz_gfx.InterfaceFileListWindow;
+import ui.focus_localization.UnlocalizedFocusWindow;
 
 public class MenuWindow extends Application{
 	public String fxmlResource = "MenuWindow.fxml";
@@ -21,6 +22,7 @@ public class MenuWindow extends Application{
 	public Button settingsButton;
 	public Button statisticsButton;
 	public Button focusLocalizButton;
+	public Button findFocusesWithoutLocalization;
 	public Button viewBuilding;
 	public Button viewGFX;
 	
@@ -85,6 +87,11 @@ public class MenuWindow extends Application{
 	public void openLocalizeFocusTree() {
 //		FocusLocalizationWindow window = new FocusLocalizationWindow();
 //		window.open();
+	}
+
+	public void openUnlocalizedFocus() {
+		UnlocalizedFocusWindow window = new UnlocalizedFocusWindow();
+		window.open();
 	}
 
 	public void openBuildingsByCountry() {
