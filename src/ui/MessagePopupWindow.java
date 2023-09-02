@@ -9,14 +9,14 @@ public class MessagePopupWindow extends HOIUtilsWindow{
 	Label idMessage;
 	Button closeButton;
 
-	public MessagePopupWindow() {
+	public MessagePopupWindow(String message) {
 		fxmlResource = "MessagePopupWindow.fxml";
 		title = "HOIIVUtils Statistics Window";
+		idMessage.setText(message);
 	}
 
 	@FXML
-	void initialize(String message) {
-		idMessage.setText(message);
+	void initialize() {
 	}
 
 	public void handleCloseButtonAction() {

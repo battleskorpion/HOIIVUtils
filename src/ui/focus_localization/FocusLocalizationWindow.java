@@ -125,7 +125,9 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 	}
 	
 	public void handleLoadButtonAction() {
-		MessagePopupWindow window = new MessagePopupWindow();
-		window.open();
+		if (focusLocFile == null || focusTree == null) {
+			MessagePopupWindow window = new MessagePopupWindow("Can't load table because one of the two files has no been chosen, please pick both files");
+			window.open();
+		}
 	}
 }
