@@ -6,8 +6,6 @@ import hoi4utils.fileIO.FileListener.FileEvent;
 import hoi4utils.fileIO.FileListener.FileWatcher;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Button;
-import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import ui.main_menu.SettingsWindow;
@@ -98,46 +96,6 @@ public class HOIIVUtils {
 	public static void launchSettingsWindow(String[] args) {
 		settingsWindow = new SettingsWindow();
 		settingsWindow.launchSettingsWindow(args);
-	}
-
-	public static void openError(Exception exception) {
-		if (Settings.DEV_MODE.enabled()) {
-			exception.printStackTrace();
-		}
-		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(), JOptionPane.WARNING_MESSAGE);
-	}
-
-	public static void openError(String s) {
-		if (Settings.DEV_MODE.enabled()) {
-			System.err.println("open error window for error message: " + s);
-		}
-		JOptionPane.showMessageDialog(null, s, "HOIIVUtils Error Message", JOptionPane.WARNING_MESSAGE);
-	}
-
-	public static void closeWindow(Button button) {
-		try {
-			((Stage) (button.getScene().getWindow())).close();
-		}
-		catch(Exception exception) {
-			openError(exception);
-		}
-	}
-
-	public static void hideWindow(Button button) {
-		try {
-			((Stage) (button.getScene().getWindow())).hide();
-		}
-		catch(Exception exception) {
-			openError(exception);
-		}
-	}
-	public static void hideWindow(Pane pane) {
-		try {
-			((Stage) (pane.getScene().getWindow())).hide();
-		}
-		catch(Exception exception) {
-			openError(exception);
-		}
 	}
 
 	public static void decideScreen(Stage primaryStage) {

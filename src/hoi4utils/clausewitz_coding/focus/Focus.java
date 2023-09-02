@@ -2,12 +2,12 @@ package hoi4utils.clausewitz_coding.focus;
 
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.localization.Localization;
-import hoi4utils.HOIIVUtils;
 import hoi4utils.clausewitz_coding.code.trigger.Trigger;
 import hoi4utils.clausewitz_coding.gfx.Interface;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.ddsreader.DDSReader;
 import javafx.beans.property.SimpleStringProperty;
+import ui.HOIUtilsWindow;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -180,7 +180,7 @@ public class Focus {
 	private void setID(Expression exp) {
 		if (exp == null) {
 			id = null;
-			HOIIVUtils.openError("Expression was null for setting focus ID.");
+			HOIUtilsWindow.openError("Expression was null for setting focus ID.");
 			return;
 		}
 

@@ -1,6 +1,7 @@
 package hoi4utils.clausewitz_coding.localization;
 
 import hoi4utils.HOIIVUtils;
+import ui.HOIUtilsWindow;
 
 import java.io.*;
 import java.util.*;
@@ -45,7 +46,7 @@ public class LocalizationFile extends File {
 		try {
 			reader = new Scanner(this);
 		} catch (Exception exception) {
-			HOIIVUtils.openError(exception);
+			HOIUtilsWindow.openError(exception);
 		}
 		if (reader == null) {
 			return;
@@ -179,7 +180,7 @@ public class LocalizationFile extends File {
 			scanner.close();
 		}
 		catch (Exception exception) {
-			HOIIVUtils.openError(exception);
+			HOIUtilsWindow.openError(exception);
 		}
 	}
 

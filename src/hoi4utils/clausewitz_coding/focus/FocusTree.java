@@ -8,6 +8,7 @@ import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import ui.HOIUtilsWindow;
 
 import java.io.File;
 import java.io.IOException;
@@ -219,7 +220,7 @@ public final class FocusTree extends HOIIVUtils {
 		try {
 			this.locFile = new LocalizationFile(locFile);
 		} catch (IOException e) {
-			HOIIVUtils.openError(e);
+			HOIUtilsWindow.openError(e);
 			return null;
 		}
 		return locFile;

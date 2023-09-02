@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.io.IOException;
-import hoi4utils.HOIIVUtils;
+import ui.HOIUtilsWindow;
 /**
  * This is the FocusLocalization file.
  */
@@ -114,7 +114,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 			PWriter.close();
 		}
 		catch (Exception exception) {
-			HOIIVUtils.openError(exception);
+			HOIUtilsWindow.openError(exception);
 		}
 	}
 

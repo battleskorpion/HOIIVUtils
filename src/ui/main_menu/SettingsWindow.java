@@ -1,5 +1,6 @@
 package ui.main_menu;
 
+import ui.HOIUtilsWindow;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import javafx.application.Application;
@@ -12,10 +13,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import hoi4utils.SettingsManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -78,7 +77,7 @@ public class SettingsWindow extends Application {
 			}
 		} 
 		catch (Exception exc) {
-			HOIIVUtils.openError(exc);
+			HOIUtilsWindow.openError(exc);
 		}
 	}
 
@@ -161,25 +160,14 @@ public class SettingsWindow extends Application {
 	 * Saves the directory path to MOD_PATH
 	 */
 	public void handleBrowseAction() {
-		getDirectoryChooser();
+		File selectedDirectory = HOIUtilsWindow.openChooser(idBrowseButton, true); // ? I don't know how to make this pass any Class, Class<?> didn't work for me
 		if (selectedDirectory == null) {
 			return;
 		}
 		idModPathTextField.setText(selectedDirectory.getAbsolutePath());
 		updateModPath(selectedDirectory);
 	}
-	public void getDirectoryChooser() {
-		// Opens Windows Default Directory Chooser
-		Stage primaryStage = (Stage) (idBrowseButton.getScene().getWindow());
-		DirectoryChooser directoryChooser = new DirectoryChooser();
-		File HOIIVModFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
-		if (HOIIVModFolder.exists() && HOIIVModFolder.isDirectory()) {
-			directoryChooser.setInitialDirectory(HOIIVModFolder);
-		} else if (Settings.DEV_MODE.enabled()) {
-			HOIIVUtils.openError("Could not find hoi4 mod folder/does not exist.");
-		}
-		selectedDirectory = directoryChooser.showDialog(primaryStage);
-	}
+
 	public void updateModPath(File selectedDirectory) {
 		if (modPathIsDirectory()) {
 			if (idOkButton.isDisabled()) {
@@ -191,19 +179,18 @@ public class SettingsWindow extends Application {
 		tempSettings.put(MOD_PATH, selectedDirectory.getAbsolutePath());
 	}
 
-	/** User Interactive CheckBox in Settings Window
-	 * Saves the check to DEV_MODE
-	 */
 	public void handleDevModeCheckBoxAction() {
 		updateTempSetting(Settings.DEV_MODE, idDevModeCheckBox.isSelected());
-	}
-	public void updateTempSetting(Settings setting, Object property) {
-		tempSettings.put(setting, String.valueOf(property));
 	}
 
 	public void handleSkipSettingsCheckBoxAction() {
 		updateTempSetting(Settings.SKIP_SETTINGS, idSkipSettingsCheckBox.isSelected());
 	}
+
+	public void updateTempSetting(Settings setting, Object property) {
+		tempSettings.put(setting, String.valueOf(property));
+	}
+
 
 	/** User Interactive Button in Settings Window
 	 * Closes Settings Window
@@ -226,7 +213,7 @@ public class SettingsWindow extends Application {
 				SettingsManager.saveSettings(tempSettings);
 			}
 		} catch (IOException exception) {
-			HOIIVUtils.openError("Settings failed to save.");
+			HOIUtilsWindow.openError("Settings failed to save.");
 			return false;
 		}
 		createHOIIVFilePaths();
@@ -245,7 +232,7 @@ public class SettingsWindow extends Application {
 		HOIIVUtils.focus_folder = new File(modPath + "\\common\\national_focus");
 	}
 	public void hideCurrentWindow() {
-		HOIIVUtils.hideWindow(idPane);
+		HOIUtilsWindow.hideWindow(idPane);
 	}
 	public void openMenuWindow() {
 		MenuWindow menuWindow = new MenuWindow();

@@ -1,20 +1,16 @@
 package ui.focus_localization;
 
 import java.io.File;
-import java.io.IOException;
-
-import hoi4utils.HOIIVUtils;
-import hoi4utils.clausewitz_coding.focus.FixFocus;
 import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.focus.FocusTree;
 import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import ui.HOIUtilsWindow;
+import ui.MessagePopupWindow;
 
 public class FocusLocalizationWindow extends HOIUtilsWindow {
 
@@ -23,14 +19,18 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 	}
 
 	// * Focus Localization Window Controller
-	@FXML Label numLocAddedLabel;
-	@FXML Label focusTreeNameLabel;
-	@FXML FocusTree focusTree;
-	@FXML FocusLocalizationFile focusLocFile;
-	@FXML TableView<Focus> focusListTable;
-	@FXML TableColumn<Focus, String> focusIDColumn;
-	@FXML TableColumn<Focus, String> focusNameColumn;
-	@FXML TableColumn<Focus, String> focusDescColumn;
+	@FXML
+	Label numLocAddedLabel;
+	Label focusTreeNameLabel;
+	Button focusTreeFileBrowseButton;
+	Button focusLocFileBrowseButton;
+	Button loadButton;
+	FocusTree focusTree;
+	FocusLocalizationFile focusLocFile;
+	TableView<Focus> focusListTable;
+	TableColumn<Focus, String> focusIDColumn;
+	TableColumn<Focus, String> focusNameColumn;
+	TableColumn<Focus, String> focusDescColumn;
 
 	private int numLocalizedFocuses;
 
@@ -50,72 +50,82 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 		fxmlResource = "FocusLocalizationWindow.fxml";
 		title = "Focus Localization";
 		
-		// Windows Two File Chooser
+		// // Windows Two File Chooser
 
-		File selectedFile;
+		// File selectedFile;
 
-		/* choose focus tree */
-		FocusTree focusTree;
-		try{
-			selectedFile = openFileChooserDialog(HOIIVUtils.focus_folder);
+		// /* choose focus tree */
+		// FocusTree focusTree;
+		// try{
+		// 	selectedFile = openFileChooserDialog(HOIIVUtils.focus_folder);
 
-			if (selectedFile == null) {
-				HOIIVUtils.openError("Selected directory was null.");
-				return;
-			}
+		// 	if (selectedFile == null) {
+		// 		HOIUtilsWindow.openError("Selected directory was null.");
+		// 		return;
+		// 	}
 
-		}
-		catch(Exception exception) {
-			HOIIVUtils.openError(exception);
-			return;
-		}
-		try {
-			focusTree = new FocusTree(selectedFile);
-		} catch (IOException e) {
-			HOIIVUtils.openError(e);
-			return;
-		}
-		this.focusTree = focusTree;
+		// }
+		// catch(Exception exception) {
+		// 	HOIUtilsWindow.openError(exception);
+		// 	return;
+		// }
+		// try {
+		// 	focusTree = new FocusTree(selectedFile);
+		// } catch (IOException e) {
+		// 	HOIUtilsWindow.openError(e);
+		// 	return;
+		// }
+		// this.focusTree = focusTree;
 
-		/* choose localization file */
-		FocusLocalizationFile focusLocFile;
-		try {
-			selectedFile = openFileChooserDialog(HOIIVUtils.localization_eng_folder);
+		// /* choose localization file */
+		// FocusLocalizationFile focusLocFile;
+		// try {
+		// 	selectedFile = openFileChooserDialog(HOIIVUtils.localization_eng_folder);
 
-			if (selectedFile == null) {
-				HOIIVUtils.openError("Selected directory was null.");
-				return;
-			}
+		// 	if (selectedFile == null) {
+		// 		HOIUtilsWindow.openError("Selected directory was null.");
+		// 		return;
+		// 	}
 
-		}
-		catch(Exception exception) {
-			HOIIVUtils.openError(exception);
-			return;
-		}
-		try {
-			focusLocFile = new FocusLocalizationFile(selectedFile);
-		} catch (IOException e) {
-			HOIIVUtils.openError(e);
-			return;
-		}
-		this.focusLocFile = focusLocFile;
+		// }
+		// catch(Exception exception) {
+		// 	HOIUtilsWindow.openError(exception);
+		// 	return;
+		// }
+		// try {
+		// 	focusLocFile = new FocusLocalizationFile(selectedFile);
+		// } catch (IOException e) {
+		// 	HOIUtilsWindow.openError(e);
+		// 	return;
+		// }
+		// this.focusLocFile = focusLocFile;
 
 		/* add focus loc */
-		focusLocFile.readLocalization();
-		try {
-			numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
-		} catch (IOException e) {
-			HOIIVUtils.openError(e);
+		// focusLocFile.readLocalization();
+		// try {
+		// 	numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
+		// } catch (IOException e) {
+		// 	HOIUtilsWindow.openError(e);
+		// 	return;
+		// }
+	}
+
+	public void handlefocusTreeFileBrowseButtonAction() {
+		File focusTree = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false); // ? I don't know how to make this pass any Class, Class<?> didn't work for me
+		if (focusTree == null) {
 			return;
 		}
 	}
 
-	private File openFileChooserDialog(File focus_folder) {
-		File selectedFile;
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setInitialDirectory(focus_folder);
-		Stage stage = new Stage();
-		selectedFile = fileChooser.showOpenDialog(stage);
-		return selectedFile;
+	public void handlefocusLocFileBrowseButtonAction() {
+		File focusLocFiles = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false); // ? I don't know how to make this pass any Class, Class<?> didn't work for me
+		if (focusLocFiles == null) {
+			return;
+		}
+	}
+	
+	public void handleLoadButtonAction() {
+		MessagePopupWindow window = new MessagePopupWindow();
+		window.open();
 	}
 }

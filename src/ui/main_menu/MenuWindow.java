@@ -1,6 +1,5 @@
 package ui.main_menu;
 
-import hoi4utils.HOIIVUtils;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import ui.HOIUtilsWindow;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.clausewitz_gfx.InterfaceFileListWindow;
 import ui.custom_tooltip.CustomTooltipWindow;
@@ -68,12 +68,12 @@ public class MenuWindow extends Application{
 			}
 		} 
 		catch (Exception exc) {
-			HOIIVUtils.openError(exc);
+			HOIUtilsWindow.openError(exc);
 		}
 	}
 
 	public void openSettings() {
-		HOIIVUtils.closeWindow(settingsButton); //closes the menu window
+		HOIUtilsWindow.closeWindow(settingsButton); //closes the menu window
 		SettingsWindow window = new SettingsWindow();
 		window.open();
 	}

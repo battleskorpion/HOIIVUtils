@@ -122,7 +122,7 @@ public class CustomTooltipWindow extends HOIUtilsWindow {
 // 					try {
 // 						localizationFile = new LocalizationFile(j.getSelectedFile());
 // 					} catch (IOException ex) {
-// 						HOIIVUtils.openError(ex);
+// 						HOIUtilsWindow.openError(ex);
 // 						return;
 // 					}
 // 				} else {
