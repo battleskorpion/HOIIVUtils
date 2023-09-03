@@ -1,6 +1,8 @@
 package ui.focus_localization;
 
 import java.io.File;
+
+import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.focus.FocusTree;
 import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
@@ -107,6 +109,9 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 
 	public void handlefocusTreeFileBrowseButtonAction() {
 		File focusTree = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false); // ? I don't know how to make this pass any Class, Class<?> didn't work for me
+		if (Settings.DEV_MODE.enabled()) {
+			System.out.println(focusTree);
+		}
 		if (focusTree == null) {
 			return;
 		}
@@ -114,6 +119,9 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 
 	public void handlefocusLocFileBrowseButtonAction() {
 		File focusLocFiles = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false); // ? I don't know how to make this pass any Class, Class<?> didn't work for me
+		if (Settings.DEV_MODE.enabled()) {
+			System.out.println(focusLocFiles);
+		}
 		if (focusLocFiles == null) {
 			return;
 		}

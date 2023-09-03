@@ -125,12 +125,15 @@ public abstract class HOIUtilsWindow {
 		} else {
 			FileChooser fileChooser = new FileChooser();
 			File HOIIVFocusFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
-			if (HOIIVFocusFolder.exists() && HOIIVFocusFolder.isFile()) {
+			if (HOIIVFocusFolder.exists() && HOIIVFocusFolder.isDirectory()) {
 				fileChooser.setInitialDirectory(HOIIVFocusFolder);
 			} else if (Settings.DEV_MODE.enabled()) {
 				openError("Couldn't find directory/folder because it does not exist.");
 			}
-			theChosenOne = fileChooser.showOpenDialog(primaryStage);;
+			theChosenOne = fileChooser.showOpenDialog(primaryStage);
+		}
+		if (Settings.DEV_MODE.enabled()) {
+			System.out.println(theChosenOne);
 		}
 		return theChosenOne;
 	}
