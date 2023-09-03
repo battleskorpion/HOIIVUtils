@@ -112,8 +112,8 @@ public abstract class HOIUtilsWindow {
 	 */
 	public static File openChooser(Button button, Boolean ford) {
 		File theChosenOne;
+		Stage primaryStage = (Stage) (button.getScene().getWindow());
 		if (ford) {
-			Stage primaryStage = (Stage) (button.getScene().getWindow());
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 			File HOIIVModFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
 			if (HOIIVModFolder.exists() && HOIIVModFolder.isDirectory()) {
@@ -123,7 +123,6 @@ public abstract class HOIUtilsWindow {
 			}
 			theChosenOne = directoryChooser.showDialog(primaryStage);
 		} else {
-			Stage primaryStage = (Stage) (button.getScene().getWindow());
 			FileChooser fileChooser = new FileChooser();
 			File HOIIVFocusFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
 			if (HOIIVFocusFolder.exists() && HOIIVFocusFolder.isFile()) {

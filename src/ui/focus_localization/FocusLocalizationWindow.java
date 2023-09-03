@@ -14,10 +14,6 @@ import ui.MessagePopupWindow;
 
 public class FocusLocalizationWindow extends HOIUtilsWindow {
 
-	public void open(){
-		super.open();
-	}
-
 	// * Focus Localization Window Controller
 	@FXML
 	Label numLocAddedLabel;
@@ -32,23 +28,23 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 	TableColumn<Focus, String> focusNameColumn;
 	TableColumn<Focus, String> focusDescColumn;
 
-	private int numLocalizedFocuses;
+	// private int numLocalizedFocuses;
 
 	@FXML
 	void initialize() {
-		numLocAddedLabel.setText("Added localization to " + numLocalizedFocuses + " focuses");
+		// numLocAddedLabel.setText("Added localization to " + numLocalizedFocuses + " focuses");
 
-		focusIDColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty());
-		focusNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameLocalizationProperty());
-		focusDescColumn.setCellValueFactory(cellData -> cellData.getValue().descLocalizationProperty());
+		// focusIDColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty());
+		// focusNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameLocalizationProperty());
+		// focusDescColumn.setCellValueFactory(cellData -> cellData.getValue().descLocalizationProperty());
 
-		focusListTable.setItems(focusTree.listFocuses());
+		// focusListTable.setItems(focusTree.listFocuses());
 	}
 	
 	public FocusLocalizationWindow() {
 		// Windows properties
 		fxmlResource = "FocusLocalizationWindow.fxml";
-		title = "Focus Localization";
+		title = "HOIIVUtils Focus Localization";
 		
 		// // Windows Two File Chooser
 
@@ -118,7 +114,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 	}
 
 	public void handlefocusLocFileBrowseButtonAction() {
-		File focusLocFiles = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false); // ? I don't know how to make this pass any Class, Class<?> didn't work for me
+		File focusLocFiles = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false); // ? I don't know how to make this pass any Class, Class<?> didn't work for me
 		if (focusLocFiles == null) {
 			return;
 		}

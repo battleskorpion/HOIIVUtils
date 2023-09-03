@@ -6,20 +6,27 @@ import javafx.scene.control.Label;
 
 public class MessagePopupWindow extends HOIUtilsWindow{
 	@FXML
-	Label idMessage;
+	Label messageLabel;
 	Button closeButton;
 
-	public MessagePopupWindow(String message) {
+	String message;
+
+	public MessagePopupWindow(String incomingMessage) {
 		fxmlResource = "MessagePopupWindow.fxml";
 		title = "HOIIVUtils Statistics Window";
-		idMessage.setText(message);
+		message = incomingMessage;
 	}
 
 	@FXML
 	void initialize() {
+		setMessage(message);
 	}
 
 	public void handleCloseButtonAction() {
 		HOIUtilsWindow.closeWindow(closeButton);
+	}
+
+	public void setMessage(String message) {
+		messageLabel.setText(message);
 	}
 }
