@@ -40,6 +40,8 @@ public class SettingsWindow extends Application {
 	@FXML public File selectedDirectory;
 	@FXML public Button idDelSettingsButton;
 
+	public boolean isFirstTime = HOIIVUtils.firstTimeSetup;
+
 	HashMap<Settings, String> tempSettings;
 
 	public SettingsWindow() {
@@ -68,6 +70,9 @@ public class SettingsWindow extends Application {
 
 		/* style */
 		scene.getStylesheets().add(styleSheetURL);
+
+		SettingsWindow controller = loader.getController();
+		controller.initData();
 
 		stage.show();
 		stage.maxWidthProperty().bind(stage.widthProperty());
@@ -98,7 +103,6 @@ public class SettingsWindow extends Application {
 	}
 
 	public void includeSettingValues() {
-		boolean isFirstTime = HOIIVUtils.firstTimeSetup;
 		if (!isFirstTime) {
 			if ((String) MOD_PATH.getSetting() != "null") {
 				idModPathTextField.setText((String) MOD_PATH.getSetting());
@@ -116,6 +120,13 @@ public class SettingsWindow extends Application {
 
 	public void disableOkButton() {
 		idOkButton.setDisable(true);
+	}
+
+	@FXML
+	void initData() {
+		includeVersion();
+		setDefault();
+		includeSettingValues();
 	}
 	
 	/** User Interactive Text Feild in Settings Window
@@ -158,6 +169,7 @@ public class SettingsWindow extends Application {
 			e.printStackTrace();
 		}
 		setDefault();
+		isFirstTime = true;
 	}
 
 	private void setDefault() {
@@ -216,13 +228,15 @@ public class SettingsWindow extends Application {
 		if (!settingsSaved) {
 			return;
 		}
-		hideCurrentWindow();
-		openMenuWindow();
+		isFirstTime = false;
+		HOIUtilsWindow.hideWindow(idOkButton);
+		MenuWindow menuWindow = new MenuWindow();
+		menuWindow.open();
 	}
 
 	public boolean updateSettings() {
 		try {
-			if (HOIIVUtils.firstTimeSetup) {
+			if (isFirstTime) {
 				HOIIVUtils.settings = new SettingsManager(tempSettings);
 			} else {
 				SettingsManager.saveSettings(tempSettings);
@@ -245,12 +259,5 @@ public class SettingsWindow extends Application {
 		HOIIVUtils.strat_region_dir =  new File(modPath + "\\map\\strategicregions");
 		HOIIVUtils.localization_eng_folder =  new File(modPath + "\\localisation\\english");
 		HOIIVUtils.focus_folder = new File(modPath + "\\common\\national_focus");
-	}
-	public void hideCurrentWindow() {
-		HOIUtilsWindow.hideWindow(idPane);
-	}
-	public void openMenuWindow() {
-		MenuWindow menuWindow = new MenuWindow();
-		menuWindow.open();
 	}
 }

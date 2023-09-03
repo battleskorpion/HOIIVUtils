@@ -1,7 +1,6 @@
 package ui;
 
 import hoi4utils.Settings;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,9 +20,7 @@ public class MessagePopupWindow extends HOIUtilsWindow {
 
 	@FXML
 	void initialize() {
-		Platform.runLater(() -> {
 
-    	});
 	}
 
 	void initData(String message) {
