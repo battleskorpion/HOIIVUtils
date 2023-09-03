@@ -69,6 +69,7 @@
                   <ComboBox maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <Label alignment="CENTER_RIGHT" layoutX="275.0" layoutY="107.0" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" GridPane.rowIndex="1" />
                   <CheckBox fx:id="idSkipSettingsCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSkipSettingsCheckBoxAction" opacity="0.66" prefHeight="18.0" prefWidth="228.0" text="Don't show this window again." GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                  <Button fx:id="idDelSettingsButton" mnemonicParsing="false" onAction="#handleDelSettingsButtonAction" text="Delete Saved Settings" GridPane.columnIndex="4" GridPane.rowIndex="9" />
                </children>
                <padding>
             	  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

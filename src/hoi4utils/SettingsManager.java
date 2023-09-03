@@ -1,6 +1,10 @@
 package hoi4utils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Scanner;
 /*
@@ -168,5 +172,22 @@ public class SettingsManager {
 
 	public static boolean isNull(Settings setting) {
 		return settingValues.get(setting).equals("null");
+	}
+
+	public static void deleteAllSettings() throws IOException {
+        Path dir = Paths.get(HOI4UTILS_PROPERTIES_PATH); //path to the directory  
+        Files
+            .walk(dir) // Traverse the file tree in depth-first order
+            .sorted(Comparator.reverseOrder())
+            .forEach(path -> {
+                try {
+					if (Settings.DEV_MODE.enabled()) {
+						System.out.println("Deleting: " + path);
+					}
+                    Files.delete(path);  //delete each file or directory
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
 	}
 }

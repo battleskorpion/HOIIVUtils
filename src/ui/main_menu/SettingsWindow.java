@@ -6,7 +6,6 @@ import hoi4utils.Settings;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -28,7 +27,7 @@ public class SettingsWindow extends Application {
 	public final String fxmlResource = "SettingsWindow.fxml";
 	final String title = "HOIIVUtils Settings";
 	final String styleSheetURL = "resources/javafx_dark.css";
-	Stage primaryStage;
+	Stage stage;
 
 	@FXML public Pane idPane;
 	@FXML public Label idVersionLabel;
@@ -39,8 +38,10 @@ public class SettingsWindow extends Application {
 	@FXML public CheckBox idSkipSettingsCheckBox;
 	@FXML public Button idOkButton;
 	@FXML public File selectedDirectory;
+	@FXML public Button idDelSettingsButton;
 
-	/* Constructor */
+	HashMap<Settings, String> tempSettings;
+
 	public SettingsWindow() {
 		tempSettings = new HashMap<>();
 	}
@@ -48,29 +49,37 @@ public class SettingsWindow extends Application {
 	@FXML
 	void initialize() {
 		includeVersion();
+		setDefault();
 		includeSettingValues();
 	}
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
-		Parent root = FXMLLoader.load(getClass().getResource(fxmlResource));
-		primaryStage.setTitle(title);
-		Scene scene = (new Scene(root));
-		primaryStage.setScene(scene);
-		this.primaryStage = primaryStage;
+	public void start(Stage stage) throws Exception {
+		FXMLLoader loader = new FXMLLoader(
+			getClass().getResource(
+				fxmlResource
+			)
+		);
+
+		this.stage = stage;
+		Scene scene = new Scene(loader.load());
+		stage.setScene(scene);
+		stage.setTitle(title);
 
 		/* style */
 		scene.getStylesheets().add(styleSheetURL);
 
-		primaryStage.show();
-		lockWindowHorizontalAxis();
+		stage.show();
+		stage.maxWidthProperty().bind(stage.widthProperty());
+		stage.minWidthProperty().bind(stage.widthProperty());
 	}
 
 	public void open() {
 		try {
-			if (primaryStage != null) {
-				primaryStage.show();
-				lockWindowHorizontalAxis();
+			if (stage != null) {
+				stage.show();
+				stage.maxWidthProperty().bind(stage.widthProperty());
+				stage.minWidthProperty().bind(stage.widthProperty());
 			} else {
 				start(new Stage());
 			}
@@ -80,20 +89,9 @@ public class SettingsWindow extends Application {
 		}
 	}
 
-	public void lockWindowHorizontalAxis() {
-		primaryStage.maxWidthProperty().bind(primaryStage.widthProperty());
-		primaryStage.minWidthProperty().bind(primaryStage.widthProperty());
-	}
-
 	public void launchSettingsWindow(String... var0) {
 		super.launch(var0);
 	}
-
-	// * Settings Window Controller
-
-	HashMap<Settings, String> tempSettings;
-
-/* Start */
 
 	public void includeVersion() {
 		idVersionLabel.setText(HOIIVUtils.hoi4utilsVersion);
@@ -107,6 +105,7 @@ public class SettingsWindow extends Application {
 			}
 			idDevModeCheckBox.setSelected(Settings.DEV_MODE.enabled());
 			idSkipSettingsCheckBox.setSelected(Settings.SKIP_SETTINGS.enabled());
+			idDelSettingsButton.setDisable(false);
 			enableOkButton();
 		}
 	}
@@ -150,6 +149,23 @@ public class SettingsWindow extends Application {
 			return false;
 		}
 		return fileModPath.isDirectory();
+	}
+
+	public void handleDelSettingsButtonAction() {
+		try {
+			SettingsManager.deleteAllSettings();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		setDefault();
+	}
+
+	private void setDefault() {
+		idModPathTextField.clear();
+		idDevModeCheckBox.setSelected(false);
+		idSkipSettingsCheckBox.setSelected(false);
+		idDelSettingsButton.setDisable(true);
+		disableOkButton();
 	}
 	
 	/** User Interactive Button in Settings Window

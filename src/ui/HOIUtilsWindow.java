@@ -150,7 +150,7 @@ public abstract class HOIUtilsWindow {
 	 */
 	public static File openChooser(Button button, Boolean ford) {
 		File theChosenOne;
-		Stage primaryStage = (Stage) (button.getScene().getWindow());
+		Stage stage = (Stage) (button.getScene().getWindow());
 		if (ford) {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 			File HOIIVModFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
@@ -159,7 +159,7 @@ public abstract class HOIUtilsWindow {
 			} else if (Settings.DEV_MODE.enabled()) {
 				openError("Couldn't find directory/folder because it does not exist.");
 			}
-			theChosenOne = directoryChooser.showDialog(primaryStage);
+			theChosenOne = directoryChooser.showDialog(stage);
 		} else {
 			FileChooser fileChooser = new FileChooser();
 			File HOIIVFocusFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
@@ -168,10 +168,7 @@ public abstract class HOIUtilsWindow {
 			} else if (Settings.DEV_MODE.enabled()) {
 				openError("Couldn't find directory/folder because it does not exist.");
 			}
-			theChosenOne = fileChooser.showOpenDialog(primaryStage);
-		}
-		if (Settings.DEV_MODE.enabled()) {
-			System.out.println(theChosenOne);
+			theChosenOne = fileChooser.showOpenDialog(stage);
 		}
 		return theChosenOne;
 	}
