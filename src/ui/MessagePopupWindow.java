@@ -1,14 +1,18 @@
 package ui;
 
+import hoi4utils.Settings;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 public class MessagePopupWindow extends HOIUtilsWindow {
 	
-	@FXML Button closeButton;
-	@FXML Label messageLabel;
-	@FXML String message = "null";
+	@FXML public Label messageLabel;
+	@FXML public Button closeButton;
+
+	public String message;
+	
 
 	public MessagePopupWindow() {
 		fxmlResource = "MessagePopupWindow.fxml";
@@ -17,17 +21,22 @@ public class MessagePopupWindow extends HOIUtilsWindow {
 
 	@FXML
 	void initialize() {
-		setMessage();
+		Platform.runLater(() -> {
+
+    	});
+	}
+
+	void initData(String message) {
+		if (message == null) {
+			message = "null";
+		}
+		if (Settings.DEV_MODE.enabled()) {
+			System.out.println(message);
+		}	
+     	messageLabel.setText(message);
 	}
 
 	public void handleCloseButtonAction() {
 		HOIUtilsWindow.closeWindow(closeButton);
-	}
-
-	public void setMessage() {
-		if (message == null) {
-			message = "null";
-		}
-		messageLabel.setText(message);
 	}
 }

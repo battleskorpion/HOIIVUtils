@@ -3,7 +3,6 @@ package ui;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -19,38 +18,68 @@ public abstract class HOIUtilsWindow {
 	public String fxmlResource;
 	public String title = "HOIIVUtils Window";
 	protected String styleSheetURL = "resources/javafx_dark.css";
-	protected Stage primaryStage;
+	protected Stage stage;
 
 	/**
 	 * Opens window
 	 */
-	public void open() {
+	public void open(String string, Boolean widthLock, Boolean heightLock) {
 		try {
-			if (primaryStage != null) {
-				primaryStage.show();
+			if (stage != null) {
+				stage.show();
 			} else if (fxmlResource == null) {
 				openError(".fxml resource null.");
 			} else {
-				Stage primaryStage = new Stage();
-				
-				Parent root = FXMLLoader.load(getClass().getResource(fxmlResource));
+				FXMLLoader loader = new FXMLLoader(
+					getClass().getResource(
+						fxmlResource
+					)
+				);
 
-				primaryStage.setTitle(title);
-				Scene scene = new Scene(root);
-				primaryStage.setScene(scene);
+				Stage stage = new Stage();
+				Scene scene = new Scene(loader.load());
+				stage.setScene(scene);
+				stage.setTitle(title);
+
+				// passes the message from any widow to the message pop up window
+				if (string != null) {
+					MessagePopupWindow controller = loader.getController();
+					controller.initData(string);
+				}
+
+				if (widthLock) {
+					lockWidth(stage);
+				}
+
+				if (heightLock) {
+					lockHeight(stage);
+				}
 
 				/* style */
 				if (Settings.DEV_MODE.enabled()) {
 					System.out.println("use stylesheet: " + new File(styleSheetURL).getAbsolutePath());
 				}
 				scene.getStylesheets().add(styleSheetURL);
-
-				HOIIVUtils.decideScreen(primaryStage);
-				primaryStage.show();
+				
+				HOIIVUtils.decideScreen(stage);
+				stage.show();
 			}
 		} catch (Exception exception) {
 			openError(exception);
 		}
+	}
+	public void open() {
+		open(null, false, false);
+	} // don't look here chatgpt told me to do this
+
+	public void lockWidth(Stage stage) {
+		stage.maxWidthProperty().bind(stage.widthProperty());
+		stage.minWidthProperty().bind(stage.widthProperty());
+	}
+	
+	public void lockHeight(Stage stage) {
+		stage.maxWidthProperty().bind(stage.heightProperty());
+		stage.minWidthProperty().bind(stage.heightProperty());
 	}
 
 	/**
