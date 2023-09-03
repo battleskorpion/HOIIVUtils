@@ -7,10 +7,9 @@ import ui.HOIUtilsWindow;
 
 public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 
-	@FXML
-	public Label idVersion;
-	public Label idWindowName;
-	public String className = this.getClass().getName();
+	@FXML public Label idVersion;
+	@FXML public Label idWindowName;
+	@FXML public String className = this.getClass().getName();
 
 	public CountryBuildingsByStateWindow() {
 		fxmlResource = className + ".fxml";

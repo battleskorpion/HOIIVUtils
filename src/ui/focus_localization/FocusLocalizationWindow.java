@@ -15,18 +15,17 @@ import ui.MessagePopupWindow;
 public class FocusLocalizationWindow extends HOIUtilsWindow {
 
 	// * Focus Localization Window Controller
-	@FXML
-	Label numLocAddedLabel;
-	Label focusTreeNameLabel;
-	Button focusTreeFileBrowseButton;
-	Button focusLocFileBrowseButton;
-	Button loadButton;
-	FocusTree focusTree;
-	FocusLocalizationFile focusLocFile;
-	TableView<Focus> focusListTable;
-	TableColumn<Focus, String> focusIDColumn;
-	TableColumn<Focus, String> focusNameColumn;
-	TableColumn<Focus, String> focusDescColumn;
+	@FXML Label numLocAddedLabel;
+	@FXML Label focusTreeNameLabel;
+	@FXML Button focusTreeFileBrowseButton;
+	@FXML Button focusLocFileBrowseButton;
+	@FXML Button loadButton;
+	@FXML FocusTree focusTree;
+	@FXML FocusLocalizationFile focusLocFile;
+	@FXML TableView<Focus> focusListTable;
+	@FXML TableColumn<Focus, String> focusIDColumn;
+	@FXML TableColumn<Focus, String> focusNameColumn;
+	@FXML TableColumn<Focus, String> focusDescColumn;
 
 	// private int numLocalizedFocuses;
 
@@ -122,7 +121,8 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 	
 	public void handleLoadButtonAction() {
 		if (focusLocFile == null || focusTree == null) {
-			MessagePopupWindow window = new MessagePopupWindow("Can't load table because one of the two files has no been chosen, please pick both files");
+
+			MessagePopupWindow window = new MessagePopupWindow();
 			window.open();
 		}
 	}

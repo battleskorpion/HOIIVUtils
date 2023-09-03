@@ -30,16 +30,15 @@ public class SettingsWindow extends Application {
 	final String styleSheetURL = "resources/javafx_dark.css";
 	Stage primaryStage;
 
-	@FXML
-	public Pane idPane;
-	public Label idVersionLabel;
-	public TextField idModPathTextField;
-	public Label idHOIIVModFolderLabel;
-	public Button idBrowseButton;
-	public CheckBox idDevModeCheckBox;
-	public CheckBox idSkipSettingsCheckBox;
-	public Button idOkButton;
-	public File selectedDirectory;
+	@FXML public Pane idPane;
+	@FXML public Label idVersionLabel;
+	@FXML public TextField idModPathTextField;
+	@FXML public Label idHOIIVModFolderLabel;
+	@FXML public Button idBrowseButton;
+	@FXML public CheckBox idDevModeCheckBox;
+	@FXML public CheckBox idSkipSettingsCheckBox;
+	@FXML public Button idOkButton;
+	@FXML public File selectedDirectory;
 
 	/* Constructor */
 	public SettingsWindow() {

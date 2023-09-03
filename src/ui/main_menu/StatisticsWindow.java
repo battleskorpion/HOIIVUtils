@@ -7,9 +7,8 @@ import ui.HOIUtilsWindow;
 
 public class StatisticsWindow extends HOIUtilsWindow{
 
-	@FXML
-	public Label idVersion;
-	public Label idWindowName;
+	@FXML public Label idVersion;
+	@FXML public Label idWindowName;
 
 	public StatisticsWindow() {
 		fxmlResource = "StatisticsWindow.fxml";

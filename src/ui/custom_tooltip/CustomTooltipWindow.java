@@ -6,9 +6,9 @@ import javafx.scene.control.Label;
 import ui.HOIUtilsWindow;
 
 public class CustomTooltipWindow extends HOIUtilsWindow {
-	@FXML
-	public Label idVersion;
-	public Label idWindowName;
+	
+	@FXML public Label idVersion;
+	@FXML public Label idWindowName;
 
 	public CustomTooltipWindow() {
 		fxmlResource = "CustomTooltipWindow.fxml";

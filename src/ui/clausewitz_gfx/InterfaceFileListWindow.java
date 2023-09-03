@@ -7,9 +7,9 @@ import ui.HOIUtilsWindow;
 
 // todo add actual effect (enable/disable) from check boxes
 public class InterfaceFileListWindow extends HOIUtilsWindow {
-	@FXML
-	public Label idVersion;
-	public Label idWindowName;
+	
+	@FXML public Label idVersion;
+	@FXML public Label idWindowName;
 
 	public InterfaceFileListWindow() {
 		fxmlResource = "InterfaceFileListWindow.fxml";

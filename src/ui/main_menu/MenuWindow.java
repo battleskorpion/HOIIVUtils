@@ -20,14 +20,13 @@ public class MenuWindow extends Application{
 	String styleSheetURL = "resources/javafx_dark.css";
 	Stage primaryStage;
 
-	@FXML
-	public Button settingsButton;
-	public Button statisticsButton;
-	public Button focusLocalizButton;
-	public Button findFocusesWithoutLocalization;
-	public Button customTooltipLocalizationButton;
-	public Button viewBuilding;
-	public Button viewGFX;
+	@FXML public Button settingsButton;
+	@FXML public Button statisticsButton;
+	@FXML public Button focusLocalizButton;
+	@FXML public Button findFocusesWithoutLocalization;
+	@FXML public Button customTooltipLocalizationButton;
+	@FXML public Button viewBuilding;
+	@FXML public Button viewGFX;
 	
 
 	/* Constructor */

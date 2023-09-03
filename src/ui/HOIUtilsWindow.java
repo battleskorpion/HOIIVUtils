@@ -108,7 +108,7 @@ public abstract class HOIUtilsWindow {
 	 * Opens windows file and directory chooser
 	 * @param button The button that was pressed to open the chooser
 	 * @param ford A quircky boolan that specifies whether you want to return a directory or file: true = return directory, false = return file 
-	 * @return It is up to the the page to handle what you do if the user returns a null
+	 * @return theChosenOne, It is up to the the page to handle what you do if the user returns a null
 	 */
 	public static File openChooser(Button button, Boolean ford) {
 		File theChosenOne;

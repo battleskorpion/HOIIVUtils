@@ -10,13 +10,6 @@ public class ColorGeneratorWindow extends HOIUtilsWindow {
 		title = "Color Generator";
 	}
 
-	@Override
-	public void open() {
-		super.open();
-	}
-
-
-
 	// * Color Generator Window Controller
 	@FXML private Slider redMinSlider;
 	@FXML private Slider redMaxSlider;

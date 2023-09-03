@@ -6,9 +6,9 @@ import javafx.scene.control.Label;
 import ui.HOIUtilsWindow;
 
 public class UnlocalizedFocusWindow extends HOIUtilsWindow {
-		@FXML
-	public Label idVersion;
-	public Label idWindowName;
+
+	@FXML public Label idVersion;
+	@FXML public Label idWindowName;
 
 	public UnlocalizedFocusWindow() {
 		fxmlResource = "UnlocalizedFocusWindow.fxml";
