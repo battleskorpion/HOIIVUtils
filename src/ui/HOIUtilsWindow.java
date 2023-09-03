@@ -21,7 +21,19 @@ public abstract class HOIUtilsWindow {
 	protected Stage stage;
 
 	/**
-	 * Opens window
+	 * Opens the window
+	 * don't look here chatgpt told me to do this
+	 * it said you can't make default paramators like python can 
+	 * I don't want to have to write null, false, false every time i call the open() function
+	 */
+	public void open() {
+		open(null, false, false);
+	}
+	/**
+	 * Opens the window
+	 * @param string A string to sent to message pop up 
+	 * @param widthLock locks the windows width from being resized
+	 * @param heightLock locks the windows height from being resized
 	 */
 	public void open(String string, Boolean widthLock, Boolean heightLock) {
 		try {
@@ -68,9 +80,6 @@ public abstract class HOIUtilsWindow {
 			openError(exception);
 		}
 	}
-	public void open() {
-		open(null, false, false);
-	} // don't look here chatgpt told me to do this
 
 	public void lockWidth(Stage stage) {
 		stage.maxWidthProperty().bind(stage.widthProperty());
