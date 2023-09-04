@@ -168,10 +168,18 @@ public class SettingsManager {
 		settingsPWriter.close();
 	}
 
-	public static String get(Settings setting) { return settingValues.get(setting); }
-
-	public static boolean isNull(Settings setting) {
-		return settingValues.get(setting).equals("null");
+	public static void getSavedSettings() throws IOException {
+		if (new File(HOI4UTILS_PROPERTIES_PATH + "\\HOIIVUtils_properties.txt").exists()) {
+			HOIIVUtils.firstTimeSetup = false;
+			HOIIVUtils.settings = new SettingsManager();
+			//HOIIVUtils.decideScreen(primaryStage);
+			if (Settings.DEV_MODE.enabled()) {
+				System.out.println("Performing standard settings startup.");
+			}
+		}
+		else {
+			HOIIVUtils.firstTimeSetup = true;
+		}
 	}
 
 	public static void deleteAllSettings() throws IOException {
@@ -189,5 +197,13 @@ public class SettingsManager {
                     e.printStackTrace();
                 }
             });
+	}
+	
+	public static String get(Settings setting) { 
+		return settingValues.get(setting); 
+	}
+
+	public static boolean isNull(Settings setting) {
+		return settingValues.get(setting).equals("null");
 	}
 }

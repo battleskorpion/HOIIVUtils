@@ -57,48 +57,31 @@ public class HOIIVUtils {
 
 	public static void launchHOIIVUtils(String[] args) {
 		try {
-			savedSettings();
+			SettingsManager.getSavedSettings();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
 		if (firstTimeSetup) {
-			launchSettingsWindow(args);
+			settingsWindow = new SettingsWindow();
+			settingsWindow.launchSettingsWindow(args);
 		} else {
 			Boolean isSettingsSkipped = Settings.SKIP_SETTINGS.enabled();
 			if (isSettingsSkipped) {
-				launchMenuWindow(args);
+				menuWindow = new MenuWindow();
+				menuWindow.launchMenuWindow(args);
 			} else {
-				launchSettingsWindow(args);
+				settingsWindow = new SettingsWindow();
+				settingsWindow.launchSettingsWindow(args);
 			}
 		}
 	}
 
-	public static void savedSettings() throws IOException {
-		String hoi4UtilsPropertiesPath = SettingsManager.HOI4UTILS_PROPERTIES_PATH;
-		if (new File(hoi4UtilsPropertiesPath + "\\HOIIVUtils_properties.txt").exists()) {
-			HOIIVUtils.firstTimeSetup = false;
-			HOIIVUtils.settings = new SettingsManager();
-			//HOIIVUtils.decideScreen(primaryStage);
-			if (Settings.DEV_MODE.enabled()) {
-				System.out.println("Performing standard settings startup.");
-			}
-		}
-		else {
-			HOIIVUtils.firstTimeSetup = true;
-		}
-	}
-
-	public static void launchMenuWindow(String[] args) {
-		menuWindow = new MenuWindow();
-		menuWindow.launchMenuWindow(args);
-	}
-	public static void launchSettingsWindow(String[] args) {
-		settingsWindow = new SettingsWindow();
-		settingsWindow.launchSettingsWindow(args);
-	}
-
-	public static void decideScreen(Stage primaryStage) {
+	/**
+	 * 
+	 * @param stage
+	 */
+	public static void decideScreen(Stage stage) {
 		Integer preferredScreen = (Integer) PREFERRED_SCREEN.getSetting();
 		ObservableList<Screen> screens = Screen.getScreens();
 		if (preferredScreen > screens.size() - 1) {
@@ -115,19 +98,17 @@ public class HOIIVUtils {
 			return;
 		}
 		Rectangle2D bounds = screen.getVisualBounds();
-		primaryStage.setX(bounds.getMinX() + 200);
-		primaryStage.setY(bounds.getMinY() + 200);
+		stage.setX(bounds.getMinX() + 200);
+		stage.setY(bounds.getMinY() + 200);
 	}
 
-/*		public static void closeSettings() {
-		try {
-			settingsWindow.closeSettingsWindow();
-		}
-		catch(NullPointerException exception) {
-			openError();
-		}
-	}*/
+	// OlD COdE PASt hERE
 
+	/**
+	 * 
+	 * @param data
+	 * @return
+	 */
 	public static boolean usefulData(String data) {
 		if (!data.isEmpty()) {
 			if (data.trim().charAt(0) == '#') {
