@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import ui.HOIUtilsWindow;
 import ui.MessagePopupWindow;
 
@@ -18,8 +19,10 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 
 	// * Focus Localization Window Controller
 	@FXML Label numLocAddedLabel;
-	@FXML Label focusTreeNameLabel;
+	@FXML TextField focusTreeFileTextField;
 	@FXML Button focusTreeFileBrowseButton;
+	@FXML Label focusTreeNameLabel;
+	@FXML TextField focusLocFileTextField;
 	@FXML Button focusLocFileBrowseButton;
 	@FXML Button loadButton;
 	@FXML FocusTree focusTree;
@@ -115,6 +118,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 		if (focusTree == null) {
 			return;
 		}
+		focusTreeFileTextField.setText(focusTree.getAbsolutePath());
 	}
 
 	public void handlefocusLocFileBrowseButtonAction() {
@@ -125,6 +129,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 		if (focusLocFiles == null) {
 			return;
 		}
+		focusLocFileTextField.setText(focusLocFiles.getAbsolutePath());
 	}
 	
 	public void handleLoadButtonAction() {
