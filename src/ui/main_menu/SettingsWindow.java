@@ -175,7 +175,7 @@ public class SettingsWindow extends Application {
 	 * Saves the directory path to MOD_PATH
 	 */
 	public void handleBrowseAction() {
-		File selectedDirectory = HOIUtilsWindow.openChooser(idBrowseButton, true); // ? I don't know how to make this pass any Class, Class<?> didn't work for me
+		File selectedDirectory = HOIUtilsWindow.openChooser(idBrowseButton, true); // ! im making this pass any class (that is a "Node" at least, bc that makes sense, something that can go on a fxwindow I think), much welcome :D
 		if (selectedDirectory == null) {
 			return;
 		}

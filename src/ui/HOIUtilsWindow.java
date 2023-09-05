@@ -3,8 +3,10 @@ package ui;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -144,13 +146,13 @@ public abstract class HOIUtilsWindow {
 
 	/**
 	 * Opens windows file and directory chooser
-	 * @param button The button that was pressed to open the chooser
+	 * @param fxcomponent The node (javafx component) that was pressed to open the chooser, must belong to a scene
 	 * @param ford A quircky boolan that specifies whether you want to return a directory or file: true = return directory, false = return file 
 	 * @return theChosenOne, It is up to the the page to handle what you do if the user returns a null
 	 */
-	public static File openChooser(Button button, Boolean ford) {
+	public static File openChooser(Node fxcomponent, Boolean ford) {
 		File theChosenOne;
-		Stage stage = (Stage) (button.getScene().getWindow());
+		Stage stage = (Stage) (fxcomponent.getScene().getWindow());      // .getScene() works on a Node object, which is why this function is okay to accept any Node object/descendants.
 		if (ford) {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 			File HOIIVModFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
