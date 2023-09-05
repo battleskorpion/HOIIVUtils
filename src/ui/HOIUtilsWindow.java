@@ -27,6 +27,8 @@ public abstract class HOIUtilsWindow {
 	 * don't look here chatgpt told me to do this
 	 * it said you can't make default paramators like python can 
 	 * I don't want to have to write null, false, false every time i call the open() function
+	 *
+	 * ! this is actually great, totally correct and okay!!!! :D
 	 */
 	public void open() {
 		open(null, false, false);
