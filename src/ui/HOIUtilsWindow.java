@@ -145,7 +145,7 @@ public abstract class HOIUtilsWindow {
 	/**
 	 * Opens windows file and directory chooser
 	 * @param fxcomponent The node (javafx component) that was pressed to open the chooser, must belong to a scene
-	 * @param ford A quircky boolan that specifies whether you want to return a directory or file: true = return directory, false = return file 
+	 * @param ford A quirky boolean that specifies whether you want to return a directory or file: true = return directory, false = return file
 	 * @return theChosenOne, It is up to the the page to handle what you do if the user returns a null
 	 * @see File
 	 * @see Node
