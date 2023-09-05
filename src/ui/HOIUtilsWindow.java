@@ -126,18 +126,16 @@ public abstract class HOIUtilsWindow {
 		}
 	}
 
-	public static void hideWindow(Button button) {
+	/**
+	 *
+	 *
+	 * @param fxcomponent The node (javafx component), must belong to a scene. The stage the scene belongs to will be hidden.
+	 * @see Node
+	 * @see javafx.stage.Window
+	 */
+	public static void hideWindow(Node fxcomponent) {
 		try {
-			((Stage) (button.getScene().getWindow())).hide();
-		}
-		catch(Exception exception) {
-			openError(exception);
-		}
-	}
-	
-	public static void hideWindow(Pane pane) {
-		try {
-			((Stage) (pane.getScene().getWindow())).hide();
+			((Stage) (fxcomponent.getScene().getWindow())).hide();
 		}
 		catch(Exception exception) {
 			openError(exception);
@@ -149,6 +147,8 @@ public abstract class HOIUtilsWindow {
 	 * @param fxcomponent The node (javafx component) that was pressed to open the chooser, must belong to a scene
 	 * @param ford A quircky boolan that specifies whether you want to return a directory or file: true = return directory, false = return file 
 	 * @return theChosenOne, It is up to the the page to handle what you do if the user returns a null
+	 * @see File
+	 * @see Node
 	 */
 	public static File openChooser(Node fxcomponent, Boolean ford) {
 		File theChosenOne;
