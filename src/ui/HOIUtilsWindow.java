@@ -91,7 +91,7 @@ public abstract class HOIUtilsWindow {
 
 	public void lockWidth(Stage stage) {
 		if (stage == null) {
-			System.err.println("Failed to perform lockWidth: stage was null.");
+			openError("Failed to perform lockWidth: stage was null.");
 			return;
 		}
 
@@ -104,7 +104,10 @@ public abstract class HOIUtilsWindow {
 	}
 
 	public void lockHeight(Stage stage) {
-		System.err.println("Failed to perform lockHeight: stage was null.");
+		if (stage == null) {
+			openError("Failed to perform lockHeight: stage was null.");
+			return;
+		}
 
 		stage.maxWidthProperty().bind(stage.heightProperty());
 		stage.minWidthProperty().bind(stage.heightProperty());
