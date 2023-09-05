@@ -85,12 +85,27 @@ public abstract class HOIUtilsWindow {
 		}
 	}
 
+	public void lockWidth() {
+		lockWidth(stage);
+	}
+
 	public void lockWidth(Stage stage) {
+		if (stage == null) {
+			System.err.println("Failed to perform lockWidth: stage was null.");
+			return;
+		}
+
 		stage.maxWidthProperty().bind(stage.widthProperty());
 		stage.minWidthProperty().bind(stage.widthProperty());
 	}
-	
+
+	public void lockHeight() {
+		lockHeight(stage);
+	}
+
 	public void lockHeight(Stage stage) {
+		System.err.println("Failed to perform lockHeight: stage was null.");
+
 		stage.maxWidthProperty().bind(stage.heightProperty());
 		stage.minWidthProperty().bind(stage.heightProperty());
 	}
