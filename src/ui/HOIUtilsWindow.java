@@ -33,6 +33,12 @@ public abstract class HOIUtilsWindow {
 	public void open() {
 		open(null, false, false);
 	}
+
+	public void open(String string) { open(string, false, false); }
+	public void open(Boolean widthLock, Boolean heightLock) { open(null, widthLock, heightLock); }
+
+	public void open(Boolean dimensionsLock) { open(null, dimensionsLock, dimensionsLock); }
+
 	/**
 	 * Opens the window
 	 * @param string A string to sent to message pop up 
