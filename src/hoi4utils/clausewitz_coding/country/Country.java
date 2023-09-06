@@ -3,9 +3,6 @@ package hoi4utils.clausewitz_coding.country;
 import hoi4utils.clausewitz_coding.state.State;
 import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
 import hoi4utils.clausewitz_coding.state.buildings.Resources;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
