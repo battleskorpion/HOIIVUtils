@@ -71,20 +71,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		List<Function<Country, ?>> countryDataFunctions = getCountryDataFunctions();
 		ObservableList<TableColumn<Country, ?>> tableColumns = stateDataTable.getColumns();
 
-		// table cell factories
-		stateDataTableCivMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopFactoryRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopCivRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopNumStatesRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTableAluminiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableChromiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableOilColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableRubberColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableSteelColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-
+		setStateDataTableCellFactories();
 
 		for (int i = 0; i < countryDataFunctions.size(); i++) {
 			TableColumn<Country, ?> tableColumn = tableColumns.get(i);
@@ -100,6 +87,22 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println("Loaded data of countries into state data table.");
 		}
+	}
+
+	private void setStateDataTableCellFactories() {
+		// table cell factories
+		stateDataTableCivMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopFactoryRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopCivRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopNumStatesRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTableAluminiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableChromiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableOilColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableRubberColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableSteelColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
 	}
 
 	private <T> Callback<TableColumn.CellDataFeatures<Country, T>, ObservableValue<T>> countryPropertyCallback(Function<Country, ?> propertyGetter) {
