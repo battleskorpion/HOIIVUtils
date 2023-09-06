@@ -111,7 +111,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 	}
 
 	public void handlefocusTreeFileBrowseButtonAction() {
-		File focusTree = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false); 
+		File focusTree = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false);
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(focusTree);
 		}

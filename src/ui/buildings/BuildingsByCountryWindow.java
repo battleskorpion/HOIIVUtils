@@ -3,13 +3,20 @@ package ui.buildings;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.country.Country;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 import ui.HOIUtilsWindow;
+
+import java.util.function.Function;
 
 public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
@@ -20,18 +27,18 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	public MenuItem idVersionMenuItem;
 	@FXML TableView<Country> stateDataTable;
 	@FXML TableColumn<Country, String> stateDataTableCountryColumn;
-	@FXML TableColumn<Country, String> stateDataTablePopulationColumn;
-	@FXML TableColumn<Country, String> stateDataTableCivFactoryColumn;
-	@FXML TableColumn<Country, String> stateDataTableMilFactoryColumn;
-	@FXML TableColumn<Country, String> stateDataTableDockyardsColumn;
-	@FXML TableColumn<Country, String> stateDataTableAirfieldsColumn;
-	@FXML TableColumn<Country, String> stateDataTableCivMilRatioColumn;
-	@FXML TableColumn<Country, String> stateDataTablePopFactoryRatioColumn;
-	@FXML TableColumn<Country, String> stateDataTablePopCivRatioColumn;
-	@FXML TableColumn<Country, String> stateDataTablePopMilRatioColumn;
-	@FXML TableColumn<Country, String> stateDataTablePopAirCapacityRatioColumn;
-	@FXML TableColumn<Country, String> stateDataTablePopNumStatesRatioColumn;
-	@FXML TableColumn<Country, String> stateDataTableAluminiumColumn;
+	@FXML TableColumn<Country, Integer> stateDataTablePopulationColumn;
+	@FXML TableColumn<Country, Integer> stateDataTableCivFactoryColumn;
+	@FXML TableColumn<Country, Integer> stateDataTableMilFactoryColumn;
+	@FXML TableColumn<Country, Integer> stateDataTableDockyardsColumn;
+	@FXML TableColumn<Country, Integer> stateDataTableAirfieldsColumn;
+	@FXML TableColumn<Country, Double> stateDataTableCivMilRatioColumn;
+	@FXML TableColumn<Country, Double> stateDataTablePopFactoryRatioColumn;
+	@FXML TableColumn<Country, Double> stateDataTablePopCivRatioColumn;
+	@FXML TableColumn<Country, Double> stateDataTablePopMilRatioColumn;
+	@FXML TableColumn<Country, Double> stateDataTablePopAirCapacityRatioColumn;
+	@FXML TableColumn<Country, Double> stateDataTablePopNumStatesRatioColumn;
+	@FXML TableColumn<Country, String> stateDataTableAluminiumColumn;       // todo dont do these yet
 	@FXML TableColumn<Country, String> stateDataTableChromiumColumn;
 	@FXML TableColumn<Country, String> stateDataTableOilColumn;
 	@FXML TableColumn<Country, String> stateDataTableRubberColumn;
@@ -59,14 +66,27 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	}
 
 	private void loadBuildingsByCountryTable() {
-		stateDataTableCountryColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+		stateDataTableCountryColumn.setCellValueFactory(countryPropertyCallback(Country::name));
+		stateDataTablePopulationColumn.setCellValueFactory(countryPropertyCallback(Country::population));
+		stateDataTableCivFactoryColumn.setCellValueFactory(countryPropertyCallback(Country::civilianFactories));
 
-		stateDataTable.setItems(countryList);
+		stateDataTable.setItems(countryList);       // country objects, cool! and necessary for the cell value factory,
+													// this is giving the factories the list of objects to collect
+													// their data from.
 
 		if (Settings.DEV_MODE.enabled())
 		{
 			System.out.println("Loaded data of countries into state data table.");
 		}
+	}
+
+	private <T> Callback<TableColumn.CellDataFeatures<Country, T>, ObservableValue<T>> countryPropertyCallback(Function<Country, T> propertyGetter) {
+		return cellData -> {
+			if (Settings.DEV_MODE.enabled()) {
+				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
+			}
+			return new SimpleObjectProperty<T>(propertyGetter.apply(cellData.getValue()));
+		};
 	}
 
 	public void handleExportToExcelAction() {
