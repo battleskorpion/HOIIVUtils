@@ -12,6 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
+import ui.DoubleTableCell;
 import ui.HOIUtilsWindow;
 
 import java.util.ArrayList;
@@ -68,6 +69,14 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	private void loadBuildingsByCountryTable() {
 		List<Function<Country, ?>> countryDataFunctions = getCountryDataFunctions();
 		ObservableList<TableColumn<Country, ?>> tableColumns = stateDataTable.getColumns();
+
+		// table cell factories
+		stateDataTableCivMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopFactoryRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopCivRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopNumStatesRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 
 		for (int i = 0; i < countryDataFunctions.size(); i++) {
 			TableColumn<Country, ?> tableColumn = tableColumns.get(i);
