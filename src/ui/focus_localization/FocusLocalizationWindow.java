@@ -111,7 +111,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 	}
 
 	public void handlefocusTreeFileBrowseButtonAction() {
-		File focusTree = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false); // ? I don't know how to make this pass any Class, Class<?> didn't work for me
+		File focusTree = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false); 
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(focusTree);
 		}
@@ -122,7 +122,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 	}
 
 	public void handlefocusLocFileBrowseButtonAction() {
-		File focusLocFiles = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false); // ? I don't know how to make this pass any Class, Class<?> didn't work for me
+		File focusLocFiles = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false);
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(focusLocFiles);
 		}
