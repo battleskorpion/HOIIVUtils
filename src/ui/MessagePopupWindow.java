@@ -47,10 +47,8 @@ public class MessagePopupWindow extends HOIUtilsWindow {
 		super.open();
 
 		// passes the message from any widow to the message pop up window
-		if (string != null) {
-			MessagePopupWindow controller = loader.getController();
-			controller.initData(string);
-		}
+		MessagePopupWindow controller = loader.getController();
+		controller.initData(string);
 	}
 
 	public void handleCloseButtonAction() {

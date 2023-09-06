@@ -37,7 +37,7 @@ public class SettingsWindow extends Application {
 	@FXML public CheckBox idDevModeCheckBox;
 	@FXML public CheckBox idSkipSettingsCheckBox;
 	@FXML public Button idOkButton;
-	@FXML public File selectedDirectory;
+	@FXML public File selectedDirectory;        //todo?
 	@FXML public Button idDelSettingsButton;
 
 	HashMap<Settings, String> tempSettings;
