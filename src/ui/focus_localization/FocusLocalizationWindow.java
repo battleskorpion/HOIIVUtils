@@ -135,7 +135,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
 	public void handleLoadButtonAction() {
 		if (focusLocFile == null || focusTree == null) {
 			MessagePopupWindow window = new MessagePopupWindow();
-			window.open("IT WORKED, SEEING THIS MESSAGE TOOK 6 HOURS OF WORK REWRITING", false, false);
+			window.open("IT WORKED, SEEING THIS MESSAGE TOOK 6 HOURS OF WORK REWRITING");
 		}
 	}
 }

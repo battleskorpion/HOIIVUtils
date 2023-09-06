@@ -21,41 +21,22 @@ public abstract class HOIUtilsWindow {
 	public String title = "HOIIVUtils Window";
 	protected String styleSheetURL = "resources/javafx_dark.css";
 	protected Stage stage;
+	protected FXMLLoader loader;
 
 	/**
 	 * Opens the window
-	 * don't look here chatgpt told me to do this
-	 * it said you can't make default paramators like python can 
-	 * I don't want to have to write null, false, false every time i call the open() function
-	 *
-	 * ! this is actually great, totally correct and okay!!!! :D
 	 */
 	public void open() {
-		open(null, false, false);
-	}
-
-	public void open(String string) { open(string, false, false); }
-	public void open(Boolean widthLock, Boolean heightLock) { open(null, widthLock, heightLock); }
-
-	public void open(Boolean dimensionsLock) { open(null, dimensionsLock, dimensionsLock); }
-
-	/**
-	 * Opens the window
-	 * @param string A string to sent to message pop up 
-	 * @param widthLock locks the windows width from being resized
-	 * @param heightLock locks the windows height from being resized
-	 */
-	public void open(String string, Boolean widthLock, Boolean heightLock) {
 		try {
 			if (stage != null) {
 				stage.show();
 			} else if (fxmlResource == null) {
 				openError(".fxml resource null.");
 			} else {
-				FXMLLoader loader = new FXMLLoader(
-					getClass().getResource(
-						fxmlResource
-					)
+				loader = new FXMLLoader(
+						getClass().getResource(
+								fxmlResource
+						)
 				);
 
 				Stage stage = new Stage();
@@ -63,60 +44,18 @@ public abstract class HOIUtilsWindow {
 				stage.setScene(scene);
 				stage.setTitle(title);
 
-				// passes the message from any widow to the message pop up window
-				if (string != null) {
-					MessagePopupWindow controller = loader.getController();
-					controller.initData(string);
-				}
-
-				if (widthLock) {
-					lockWidth(stage);
-				}
-
-				if (heightLock) {
-					lockHeight(stage);
-				}
-
 				/* style */
 				if (Settings.DEV_MODE.enabled()) {
 					System.out.println("use stylesheet: " + new File(styleSheetURL).getAbsolutePath());
 				}
 				scene.getStylesheets().add(styleSheetURL);
-				
+
 				HOIIVUtils.decideScreen(stage);
 				stage.show();
 			}
 		} catch (Exception exception) {
 			openError(exception);
 		}
-	}
-
-	public void lockWidth() {
-		lockWidth(stage);
-	}
-
-	public void lockWidth(Stage stage) {
-		if (stage == null) {
-			openError("Failed to perform lockWidth: stage was null.");
-			return;
-		}
-
-		stage.maxWidthProperty().bind(stage.widthProperty());
-		stage.minWidthProperty().bind(stage.widthProperty());
-	}
-
-	public void lockHeight() {
-		lockHeight(stage);
-	}
-
-	public void lockHeight(Stage stage) {
-		if (stage == null) {
-			openError("Failed to perform lockHeight: stage was null.");
-			return;
-		}
-
-		stage.maxWidthProperty().bind(stage.heightProperty());
-		stage.minWidthProperty().bind(stage.heightProperty());
 	}
 
 	/**

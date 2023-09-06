@@ -1,9 +1,15 @@
 package ui;
 
+import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+import java.io.File;
 
 public class MessagePopupWindow extends HOIUtilsWindow {
 	
@@ -31,6 +37,20 @@ public class MessagePopupWindow extends HOIUtilsWindow {
 			System.out.println(message);
 		}	
      	messageLabel.setText(message);
+	}
+
+	/**
+	 * Opens the window
+	 * @param string A string to sent to message pop up
+	 */
+	public void open(String string) {
+		super.open();
+
+		// passes the message from any widow to the message pop up window
+		if (string != null) {
+			MessagePopupWindow controller = loader.getController();
+			controller.initData(string);
+		}
 	}
 
 	public void handleCloseButtonAction() {
