@@ -1,15 +1,9 @@
 package ui;
 
-import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
-
-import java.io.File;
 
 public class MessagePopupWindow extends HOIUtilsWindow {
 	
@@ -21,7 +15,7 @@ public class MessagePopupWindow extends HOIUtilsWindow {
 
 	public MessagePopupWindow() {
 		fxmlResource = "MessagePopupWindow.fxml";
-		title = "HOIIVUtils Statistics Window";         // todo
+		title = "HOIIVUtils Message";
 	}
 
 	@FXML
@@ -30,9 +24,6 @@ public class MessagePopupWindow extends HOIUtilsWindow {
 	}
 
 	void initData(String message) {
-		if (message == null) {
-			message = "null";
-		}
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(message);
 		}	
