@@ -3,7 +3,6 @@ package ui.buildings;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.country.Country;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -12,10 +11,11 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import ui.HOIUtilsWindow;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 public class BuildingsByCountryWindow extends HOIUtilsWindow {
@@ -66,9 +66,15 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	}
 
 	private void loadBuildingsByCountryTable() {
-		stateDataTableCountryColumn.setCellValueFactory(countryPropertyCallback(Country::name));
-		stateDataTablePopulationColumn.setCellValueFactory(countryPropertyCallback(Country::population));
-		stateDataTableCivFactoryColumn.setCellValueFactory(countryPropertyCallback(Country::civilianFactories));
+		List<Function<Country, ?>> countryDataFunctions = getCountryDataFunctions();
+		ObservableList<TableColumn<Country, ?>> tableColumns = stateDataTable.getColumns();
+
+		for (int i = 0; i < countryDataFunctions.size(); i++) {
+			TableColumn<Country, ?> tableColumn = tableColumns.get(i);
+			Function<Country, ?> dataFunction = countryDataFunctions.get(i);
+
+			tableColumn.setCellValueFactory(countryPropertyCallback(dataFunction));
+		}
 
 		stateDataTable.setItems(countryList);       // country objects, cool! and necessary for the cell value factory,
 													// this is giving the factories the list of objects to collect
@@ -80,13 +86,37 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		}
 	}
 
-	private <T> Callback<TableColumn.CellDataFeatures<Country, T>, ObservableValue<T>> countryPropertyCallback(Function<Country, T> propertyGetter) {
+	private <T> Callback<TableColumn.CellDataFeatures<Country, T>, ObservableValue<T>> countryPropertyCallback(Function<Country, ?> propertyGetter) {
 		return cellData -> {
 			if (Settings.DEV_MODE.enabled()) {
 				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
 			}
-			return new SimpleObjectProperty<T>(propertyGetter.apply(cellData.getValue()));
+			return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue()));
 		};
+	}
+
+	private List<Function<Country,?>> getCountryDataFunctions() {
+		List<Function<Country, ?>> dataFunctions = new ArrayList<>(18);         // 18 for optimization, limited number of data functions.
+		dataFunctions.add(Country::name);
+		dataFunctions.add(Country::population);
+		dataFunctions.add(Country::civilianFactories);
+		dataFunctions.add(Country::militaryFactories);
+		dataFunctions.add(Country::navalDockyards);
+		dataFunctions.add(Country::airfields);
+		dataFunctions.add(Country::civMilRatio);
+		dataFunctions.add(Country::popPerFactoryRatio);
+		dataFunctions.add(Country::popPerCivRatio);
+		dataFunctions.add(Country::popPerMilRatio);
+		dataFunctions.add(Country::popAirportCapacityRatio);
+		dataFunctions.add(Country::popPerStateRatio);
+		dataFunctions.add(Country::aluminum);
+		dataFunctions.add(Country::chromium);
+		dataFunctions.add(Country::oil);
+		dataFunctions.add(Country::rubber);
+		dataFunctions.add(Country::steel);
+		dataFunctions.add(Country::tungsten);
+
+		return dataFunctions;
 	}
 
 	public void handleExportToExcelAction() {
@@ -259,6 +289,8 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 				}
 			}
 
+
+            // todo similar to this for new ui for popup menu thing idk do like this.
 			public void mouseClicked(MouseEvent e) {
 				//super.mouseClicked(e);
 				if (e.getClickCount() == 2 && !e.isConsumed()) {

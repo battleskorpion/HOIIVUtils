@@ -14,6 +14,7 @@ import java.util.List;
 
 public class Country {
 	private static final ObservableList<Country> countryList = FXCollections.observableArrayList();
+	private static final int AIRFIELD_CAPACITY_PER_LEVEL = 200;
 	CountryTag countryTag;
 	Infrastructure infrastructure;          // infrastructure of all owned states
 	Resources resources;                    // resources of all owned states
@@ -197,4 +198,39 @@ public class Country {
 	}
 
 
+	public double civMilRatio() {
+		return (double) civilianFactories() / militaryFactories();
+	}
+
+	public double popPerFactoryRatio() {
+		return (double) population() / factories();
+	}
+
+	public double popPerCivRatio() {
+		return (double) population() / civilianFactories();
+	}
+
+	public double popPerMilRatio() {
+		return (double) population() / militaryFactories();
+	}
+
+	public double popAirportCapacityRatio() {
+		return (double) population() / airfieldsCapacity();
+	}
+
+	public double popPerStateRatio() {
+		return (double) population() / numOwnedStates();
+	}
+
+	private double factories() {
+		return militaryFactories() + civilianFactories();
+	}
+
+	private double airfieldsCapacity() {
+		return airfields() * AIRFIELD_CAPACITY_PER_LEVEL;
+	}
+
+	private double numOwnedStates() {
+		return 1;   // todo;
+	}
 }
