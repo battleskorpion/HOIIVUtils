@@ -15,7 +15,7 @@ public class MessagePopupWindow extends HOIUtilsWindow {
 
 	public MessagePopupWindow() {
 		fxmlResource = "MessagePopupWindow.fxml";
-		title = "HOIIVUtils Statistics Window";
+		title = "HOIIVUtils Statistics Window";         // todo
 	}
 
 	@FXML
