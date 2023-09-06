@@ -2,6 +2,7 @@ package ui;
 
 import javafx.scene.control.TableCell;
 import javafx.util.StringConverter;
+import java.text.DecimalFormat;
 
 public class DoubleTableCell<S> extends TableCell<S, Double> {
 
@@ -14,10 +15,10 @@ public class DoubleTableCell<S> extends TableCell<S, Double> {
 				if (object == null) {
 					return "";
 				} else {
-					// Format the double value with up to 2 decimal places and a maximum of 1 trailing zero
-					String formattedValue = String.format("%.2f", object);
-					formattedValue = formattedValue.replaceAll("0*$", "");
-					formattedValue = formattedValue.replaceAll("\\.$", "");
+					// Format the double value with commas in the thousands places,
+					// exactly 1 decimal place, and allow for an optional zero in the decimal part
+					DecimalFormat decimalFormat = new DecimalFormat("#,##0.0#");
+					String formattedValue = decimalFormat.format(object);
 					return formattedValue;
 				}
 			}

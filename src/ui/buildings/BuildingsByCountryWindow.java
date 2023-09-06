@@ -14,6 +14,7 @@ import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import ui.DoubleTableCell;
 import ui.HOIUtilsWindow;
+import ui.IntegerOrPercentTableCell;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,12 +40,12 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	@FXML TableColumn<Country, Double> stateDataTablePopMilRatioColumn;
 	@FXML TableColumn<Country, Double> stateDataTablePopAirCapacityRatioColumn;
 	@FXML TableColumn<Country, Double> stateDataTablePopNumStatesRatioColumn;
-	@FXML TableColumn<Country, String> stateDataTableAluminiumColumn;       // todo dont do these yet
-	@FXML TableColumn<Country, String> stateDataTableChromiumColumn;
-	@FXML TableColumn<Country, String> stateDataTableOilColumn;
-	@FXML TableColumn<Country, String> stateDataTableRubberColumn;
-	@FXML TableColumn<Country, String> stateDataTableSteelColumn;
-	@FXML TableColumn<Country, String> stateDataTableTungstenColumn;
+	@FXML TableColumn<Country, Double> stateDataTableAluminiumColumn;       // todo dont do these yet
+	@FXML TableColumn<Country, Double> stateDataTableChromiumColumn;
+	@FXML TableColumn<Country, Double> stateDataTableOilColumn;
+	@FXML TableColumn<Country, Double> stateDataTableRubberColumn;
+	@FXML TableColumn<Country, Double> stateDataTableSteelColumn;
+	@FXML TableColumn<Country, Double> stateDataTableTungstenColumn;
 
 	private final ObservableList<Country> countryList;
 
@@ -77,6 +78,13 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		stateDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		stateDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		stateDataTablePopNumStatesRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTableAluminiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableChromiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableOilColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableRubberColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableSteelColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+
 
 		for (int i = 0; i < countryDataFunctions.size(); i++) {
 			TableColumn<Country, ?> tableColumn = tableColumns.get(i);
