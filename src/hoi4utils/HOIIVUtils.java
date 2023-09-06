@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static hoi4utils.Settings.MOD_PATH;
 import static hoi4utils.Settings.PREFERRED_SCREEN;
 
 /*
@@ -66,6 +67,8 @@ public class HOIIVUtils {
 			settingsWindow = new SettingsWindow();
 			settingsWindow.launchSettingsWindow(args);
 		} else {
+			HOIIVUtils.createHOIIVFilePaths();
+
 			Boolean isSettingsSkipped = Settings.SKIP_SETTINGS.enabled();
 			if (isSettingsSkipped) {
 				menuWindow = new MenuWindow();
@@ -282,6 +285,18 @@ public class HOIIVUtils {
 				});
 			}
 		}).watch();
+	}
+
+	public static void createHOIIVFilePaths() {
+		String modPath = SettingsManager.get(MOD_PATH);
+		if (Settings.DEV_MODE.enabled()) {
+			System.out.println(modPath);
+		}
+		HOIIVUtils.common_folder = new File(modPath + "\\common");
+		HOIIVUtils.states_folder = new File(modPath + "\\history\\states");
+		HOIIVUtils.strat_region_dir =  new File(modPath + "\\map\\strategicregions");
+		HOIIVUtils.localization_eng_folder =  new File(modPath + "\\localisation\\english");
+		HOIIVUtils.focus_folder = new File(modPath + "\\common\\national_focus");
 	}
 
 }

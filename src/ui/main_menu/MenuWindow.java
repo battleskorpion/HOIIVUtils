@@ -1,5 +1,6 @@
 package ui.main_menu;
 
+import hoi4utils.clausewitz_coding.state.State;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -98,6 +99,7 @@ public class MenuWindow extends Application{
 	}
 
 	public void openBuildingsByCountry() {
+		State.readStates();
 		BuildingsByCountryWindow window = new BuildingsByCountryWindow();
 		window.open();
 	}

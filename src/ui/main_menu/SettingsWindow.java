@@ -232,19 +232,7 @@ public class SettingsWindow extends Application {
 			HOIUtilsWindow.openError("Settings failed to save.");
 			return false;
 		}
-		createHOIIVFilePaths();
+		HOIIVUtils.createHOIIVFilePaths();
 		return true;
-	}
-
-	public void createHOIIVFilePaths() {
-		String modPath = SettingsManager.get(MOD_PATH);
-		if (Settings.DEV_MODE.enabled()) {
-			System.out.println(modPath);
-		}
-		HOIIVUtils.common_folder = new File(modPath + "\\common");
-		HOIIVUtils.states_folder = new File(modPath + "\\history\\states");
-		HOIIVUtils.strat_region_dir =  new File(modPath + "\\map\\strategicregions");
-		HOIIVUtils.localization_eng_folder =  new File(modPath + "\\localisation\\english");
-		HOIIVUtils.focus_folder = new File(modPath + "\\common\\national_focus");
 	}
 }

@@ -80,8 +80,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 													// this is giving the factories the list of objects to collect
 													// their data from.
 
-		if (Settings.DEV_MODE.enabled())
-		{
+		if (Settings.DEV_MODE.enabled()) {
 			System.out.println("Loaded data of countries into state data table.");
 		}
 	}
