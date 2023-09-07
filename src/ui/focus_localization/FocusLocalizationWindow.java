@@ -17,125 +17,51 @@ import ui.MessagePopupWindow;
 
 public class FocusLocalizationWindow extends HOIUtilsWindow {
 
-	// * Focus Localization Window Controller
-	@FXML Label numLocAddedLabel;
-	@FXML TextField focusTreeFileTextField;
-	@FXML Button focusTreeFileBrowseButton;
-	@FXML Label focusTreeNameLabel;
-	@FXML TextField focusLocFileTextField;
-	@FXML Button focusLocFileBrowseButton;
-	@FXML Button loadButton;
-	@FXML FocusTree focusTree;
-	@FXML FocusLocalizationFile focusLocFile;
-	@FXML TableView<Focus> focusListTable;
-	@FXML TableColumn<Focus, String> focusIDColumn;
-	@FXML TableColumn<Focus, String> focusNameColumn;
-	@FXML TableColumn<Focus, String> focusDescColumn;
+    @FXML private Label numLocAddedLabel;
+    @FXML private TextField focusTreeFileTextField;
+    @FXML private Button focusTreeFileBrowseButton;
+    @FXML private Label focusTreeNameLabel;
+    @FXML private TextField focusLocFileTextField;
+    @FXML private Button focusLocFileBrowseButton;
+    @FXML private Button loadButton;
+    @FXML private FocusTree focusTree;
+    @FXML private FocusLocalizationFile focusLocFile;
+    @FXML private TableView<Focus> focusListTable;
+    @FXML private TableColumn<Focus, String> focusIDColumn;
+    @FXML private TableColumn<Focus, String> focusNameColumn;
+    @FXML private TableColumn<Focus, String> focusDescColumn;
 
-	// private int numLocalizedFocuses;
+    public FocusLocalizationWindow() {
+        fxmlResource = "FocusLocalizationWindow.fxml";
+        title = "HOIIVUtils Focus Localization";
+    }
 
-	@FXML
-	void initialize() {
-		// numLocAddedLabel.setText("Added localization to " + numLocalizedFocuses + " focuses");
+    public void handleFocusTreeFileBrowseButtonAction() {
+        File selectedFile = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false);
+        if (Settings.DEV_MODE.enabled()) {
+            System.out.println(selectedFile);
+        }
+        if (selectedFile != null) {
+            focusTreeFileTextField.setText(selectedFile.getAbsolutePath());
+        }
+    }
 
-		// focusIDColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty());
-		// focusNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameLocalizationProperty());
-		// focusDescColumn.setCellValueFactory(cellData -> cellData.getValue().descLocalizationProperty());
+    public void handleFocusLocFileBrowseButtonAction() {
+        File selectedFile = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false);
+        if (Settings.DEV_MODE.enabled()) {
+            System.out.println(selectedFile);
+        }
+        if (selectedFile != null) {
+            focusLocFileTextField.setText(selectedFile.getAbsolutePath());
+        }
+    }
 
-		// focusListTable.setItems(focusTree.listFocuses());
-	}
-	
-	public FocusLocalizationWindow() {
-		// Windows properties
-		fxmlResource = "FocusLocalizationWindow.fxml";
-		title = "HOIIVUtils Focus Localization";
-		
-		// // Windows Two File Chooser
-
-		// File selectedFile;
-
-		// /* choose focus tree */
-		// FocusTree focusTree;
-		// try{
-		// 	selectedFile = openFileChooserDialog(HOIIVUtils.focus_folder);
-
-		// 	if (selectedFile == null) {
-		// 		HOIUtilsWindow.openError("Selected directory was null.");
-		// 		return;
-		// 	}
-
-		// }
-		// catch(Exception exception) {
-		// 	HOIUtilsWindow.openError(exception);
-		// 	return;
-		// }
-		// try {
-		// 	focusTree = new FocusTree(selectedFile);
-		// } catch (IOException e) {
-		// 	HOIUtilsWindow.openError(e);
-		// 	return;
-		// }
-		// this.focusTree = focusTree;
-
-		// /* choose localization file */
-		// FocusLocalizationFile focusLocFile;
-		// try {
-		// 	selectedFile = openFileChooserDialog(HOIIVUtils.localization_eng_folder);
-
-		// 	if (selectedFile == null) {
-		// 		HOIUtilsWindow.openError("Selected directory was null.");
-		// 		return;
-		// 	}
-
-		// }
-		// catch(Exception exception) {
-		// 	HOIUtilsWindow.openError(exception);
-		// 	return;
-		// }
-		// try {
-		// 	focusLocFile = new FocusLocalizationFile(selectedFile);
-		// } catch (IOException e) {
-		// 	HOIUtilsWindow.openError(e);
-		// 	return;
-		// }
-		// this.focusLocFile = focusLocFile;
-
-		/* add focus loc */
-		// focusLocFile.readLocalization();
-		// try {
-		// 	numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
-		// } catch (IOException e) {
-		// 	HOIUtilsWindow.openError(e);
-		// 	return;
-		// }
-	}
-
-	public void handlefocusTreeFileBrowseButtonAction() {
-		File focusTree = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false);
-		if (Settings.DEV_MODE.enabled()) {
-			System.out.println(focusTree);
-		}
-		if (focusTree == null) {
-			return;
-		}
-		focusTreeFileTextField.setText(focusTree.getAbsolutePath());
-	}
-
-	public void handlefocusLocFileBrowseButtonAction() {
-		File focusLocFiles = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false);
-		if (Settings.DEV_MODE.enabled()) {
-			System.out.println(focusLocFiles);
-		}
-		if (focusLocFiles == null) {
-			return;
-		}
-		focusLocFileTextField.setText(focusLocFiles.getAbsolutePath());
-	}
-	
-	public void handleLoadButtonAction() {
-		if (focusLocFile == null || focusTree == null) {
-			MessagePopupWindow window = new MessagePopupWindow();
-			window.open("IT WORKED, SEEING THIS MESSAGE TOOK 6 HOURS OF WORK REWRITING");
-		}
-	}
+    public void handleLoadButtonAction() {
+        if (focusLocFile == null || focusTree == null) {
+            // Handle the case where focusLocFile or focusTree is not properly initialized
+            MessagePopupWindow window = new MessagePopupWindow();
+            window.open("Error: Focus localization or focus tree not properly initialized.");
+        }
+		// Add further handling logic here
+    }
 }

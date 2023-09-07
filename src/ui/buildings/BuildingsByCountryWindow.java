@@ -22,11 +22,9 @@ import java.util.function.Function;
 
 public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
-	// * Buildings By Country Window Controller
-	@FXML
-	public MenuItem idExportToExcel;
-	public CheckMenuItem idPercentageCheckMenuItem;
-	public MenuItem idVersionMenuItem;
+	@FXML private MenuItem idExportToExcel;
+	@FXML private CheckMenuItem idPercentageCheckMenuItem;
+	@FXML private MenuItem idVersionMenuItem;
 	@FXML TableView<Country> stateDataTable;
 	@FXML TableColumn<Country, String> stateDataTableCountryColumn;
 	@FXML TableColumn<Country, Integer> stateDataTablePopulationColumn;
@@ -110,12 +108,13 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 			if (Settings.DEV_MODE.enabled()) {
 				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
 			}
-			return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue()));
+			return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue())); // ? Type safety: Unchecked cast from capture#6-of ? to TJava(16777761)
 		};
 	}
 
 	private List<Function<Country,?>> getCountryDataFunctions() {
 		List<Function<Country, ?>> dataFunctions = new ArrayList<>(18);         // 18 for optimization, limited number of data functions.
+		
 		dataFunctions.add(Country::name);
 		dataFunctions.add(Country::population);
 		dataFunctions.add(Country::civilianFactories);
@@ -138,23 +137,17 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		return dataFunctions;
 	}
 
+	@FXML
 	public void handleExportToExcelAction() {
+		    // Handle exporting to Excel
 	}
 
 	public void handlePercentageCheckMenuItemAction() {
-		String tempText;
-		
-		if (idPercentageCheckMenuItem.isSelected()) {
-			idPercentageCheckMenuItem.setSelected(true);
-			tempText = "Percentage values are on";
-		} else {
-			idPercentageCheckMenuItem.setSelected(false);
-			tempText = "Percentage values are off";
-		}
-		if (Settings.DEV_MODE.enabled()) {
-			System.out.println(idPercentageCheckMenuItem.isSelected());
-			System.out.println(tempText);
-		}
+        if (idPercentageCheckMenuItem.isSelected()) {
+            System.out.println("Percentage values are on");
+        } else {
+            System.out.println("Percentage values are off");
+        }
 	}
 }
 /*	 
