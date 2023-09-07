@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import static hoi4utils.Settings.MOD_PATH;
 import static hoi4utils.Settings.PREFERRED_SCREEN;
@@ -114,22 +115,25 @@ public class HOIIVUtils {
 	 * @return
 	 */
 	public static boolean usefulData(String data) {
-		if (!data.isEmpty()) {
-			if (data.trim().charAt(0) == '#') {
-				return false;
-			} else {
-				return true;
-			}
-		} else {
+		if (data.isEmpty()) {
 			return false;
 		}
+
+		return data.trim().charAt(0) != '#';
 	}
 
 	// for capitalizing
 	public static String titleCapitalize(String str) {
+		if (str == null) {
+			return null;
+		}
+		if (str.trim().isEmpty()) {
+			return str;
+		}
+
 		// some vars
 		ArrayList<String> words = new ArrayList<String>(Arrays.asList(str.split(" ")));
-		ArrayList<String> whitelist = createCapitalizationWhitelist();
+		HashSet<String> whitelist = createCapitalizationWhitelist();
 
 		// first word always capitalized
 		if (words.get(0).length() == 1) {
@@ -138,25 +142,17 @@ public class HOIIVUtils {
 			words.set(0, "" + Character.toUpperCase(words.get(0).charAt(0))
 					+ words.get(0).substring(1));
 		} else {
+			// todo this should never happen now right?
 			System.out.println("first word length < 1");
 		}
 
 		// rest of words (if applicable)
-		int num_cap_letters;
 		System.out.println("num words: " + words.size());
 		for (int i = 1; i < words.size(); i++) {
-			// check for acronym (all caps already)
-			num_cap_letters = 0;
-			for (int j = 0; j < words.get(i).length(); j++) {
-				if (Character.isUpperCase(words.get(i).charAt(j))) {
-					System.out.println("uppercase: " + words.get(i).charAt(j));
-					num_cap_letters++;
-				}
-			}
 
 			// if not acronym (acronym = all caps already)
 			// && not on whitelist
-			if (!(num_cap_letters == words.get(i).length()) && !(whitelist.contains(words.get(i)))) {
+			if (!isAcronym(words.get(i)) && !(whitelist.contains(words.get(i)))) {
 				if (words.get(i).length() == 1) {
 					words.set(i, "" + Character.toUpperCase(words.get(i).charAt(0)));
 				} else if (words.get(i).length() > 1) {
@@ -172,8 +168,30 @@ public class HOIIVUtils {
 		return String.join(" ", words);
 	}
 
-	private static ArrayList<String> createCapitalizationWhitelist() {
-		ArrayList<String> whitelist = new ArrayList<String>();
+	private static boolean isAcronym(String word) {
+		// check for acronym (all caps already)
+		int num_cap_letters = numCapLetters(word);
+
+		return num_cap_letters == word.length();
+	}
+
+	private static int numCapLetters(String word) {
+		if (word == null) {
+			return 0; 
+		}
+
+		int num_cap_letters;
+		num_cap_letters = 0;
+		for (int j = 0; j < word.length(); j++) {
+			if (Character.isUpperCase(word.charAt(j))) {
+				num_cap_letters++;
+			}
+		}
+		return num_cap_letters;
+	}
+
+	private static HashSet<String> createCapitalizationWhitelist() {
+		HashSet<String> whitelist = new HashSet<String>();
 
 		// create the whitelist
 		whitelist.add("a");
@@ -218,6 +236,7 @@ public class HOIIVUtils {
 	/**
 	 * @param table
 	 * @param row
+	 * //todo may be outdated as is for JTable stuff
 	 * @return
 	 */
 	public static int rowToModelIndex(JTable table, int row) {
