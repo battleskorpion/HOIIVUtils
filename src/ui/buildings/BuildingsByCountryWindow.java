@@ -16,7 +16,6 @@ import ui.DoubleTableCell;
 import ui.HOIUtilsWindow;
 import ui.IntegerOrPercentTableCell;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -68,7 +67,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	}
 
 	private void loadBuildingsByCountryTable() {
-		List<Function<Country, ?>> countryDataFunctions = getCountryDataFunctions();
+		List<Function<Country, ?>> countryDataFunctions = Country.getCountryDataFunctions();
 		ObservableList<TableColumn<Country, ?>> tableColumns = stateDataTable.getColumns();
 
 		setStateDataTableCellFactories();
@@ -135,31 +134,6 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		updateColumnPercentBehavior(stateDataTableRubberColumn);
 		updateColumnPercentBehavior(stateDataTableSteelColumn);
 		updateColumnPercentBehavior(stateDataTableTungstenColumn);
-	}
-
-	private List<Function<Country,?>> getCountryDataFunctions() {
-		List<Function<Country, ?>> dataFunctions = new ArrayList<>(18);         // 18 for optimization, limited number of data functions.
-		
-		dataFunctions.add(Country::name);
-		dataFunctions.add(Country::population);
-		dataFunctions.add(Country::civilianFactories);
-		dataFunctions.add(Country::militaryFactories);
-		dataFunctions.add(Country::navalDockyards);
-		dataFunctions.add(Country::airfields);
-		dataFunctions.add(Country::civMilRatio);
-		dataFunctions.add(Country::popPerFactoryRatio);
-		dataFunctions.add(Country::popPerCivRatio);
-		dataFunctions.add(Country::popPerMilRatio);
-		dataFunctions.add(Country::popAirportCapacityRatio);
-		dataFunctions.add(Country::popPerStateRatio);
-		dataFunctions.add(Country::aluminum);
-		dataFunctions.add(Country::chromium);
-		dataFunctions.add(Country::oil);
-		dataFunctions.add(Country::rubber);
-		dataFunctions.add(Country::steel);
-		dataFunctions.add(Country::tungsten);
-
-		return dataFunctions;
 	}
 
 	@FXML

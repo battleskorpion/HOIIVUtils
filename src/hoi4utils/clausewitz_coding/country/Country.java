@@ -6,8 +6,10 @@ import hoi4utils.clausewitz_coding.state.buildings.Resources;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 public class Country {
 	private static final ObservableList<Country> countryList = FXCollections.observableArrayList();
@@ -57,6 +59,31 @@ public class Country {
 			loadCountries();
 		}
 		return countryList;
+	}
+
+	public static List<Function<Country,?>> getCountryDataFunctions() {
+		List<Function<Country, ?>> dataFunctions = new ArrayList<>(18);         // 18 for optimization, limited number of data functions.
+
+		dataFunctions.add(Country::name);
+		dataFunctions.add(Country::population);
+		dataFunctions.add(Country::civilianFactories);
+		dataFunctions.add(Country::militaryFactories);
+		dataFunctions.add(Country::navalDockyards);
+		dataFunctions.add(Country::airfields);
+		dataFunctions.add(Country::civMilRatio);
+		dataFunctions.add(Country::popPerFactoryRatio);
+		dataFunctions.add(Country::popPerCivRatio);
+		dataFunctions.add(Country::popPerMilRatio);
+		dataFunctions.add(Country::popAirportCapacityRatio);
+		dataFunctions.add(Country::popPerStateRatio);
+		dataFunctions.add(Country::aluminum);
+		dataFunctions.add(Country::chromium);
+		dataFunctions.add(Country::oil);
+		dataFunctions.add(Country::rubber);
+		dataFunctions.add(Country::steel);
+		dataFunctions.add(Country::tungsten);
+
+		return dataFunctions;
 	}
 
 	public CountryTag countryTag() {
