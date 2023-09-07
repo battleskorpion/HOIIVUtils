@@ -19,6 +19,14 @@ public class IntegerOrPercentTableCell<S> extends TableCell<S, Double> {
 			public String toString(Double object) {
 				if (object == null) {
 					return "";
+				} else if (integer) {
+					DecimalFormat decimalFormat = new DecimalFormat("#,##0");
+					String formattedValue = decimalFormat.format(object);
+					return formattedValue;
+				} else if (percent) {
+					DecimalFormat decimalFormat = new DecimalFormat("#,##0.0#%");
+					String formattedValue = decimalFormat.format(object);
+					return formattedValue;
 				} else {
 					// Format the double value with commas in the thousands places,
 					// exactly 1 decimal place, and allow for an optional zero in the decimal part

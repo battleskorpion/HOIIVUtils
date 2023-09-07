@@ -45,6 +45,8 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	@FXML TableColumn<Country, Double> stateDataTableSteelColumn;
 	@FXML TableColumn<Country, Double> stateDataTableTungstenColumn;
 
+	private Boolean resourcesPercent;
+
 	private final ObservableList<Country> countryList;
 
 	public BuildingsByCountryWindow() {
@@ -109,7 +111,30 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
 			}
 			return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue())); // ? Type safety: Unchecked cast from capture#6-of ? to TJava(16777761)
+			// mehhhh
 		};
+	}
+
+	// Helper method to update cell behavior within a column
+	private <S> void updateColumnPercentBehavior(TableColumn<S, Double> column) {
+		column.setCellFactory(col -> {
+			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();
+			if (resourcesPercent) {
+				cell.setPercent(resourcesPercent);
+			} else {
+				cell.setInteger(!resourcesPercent);
+			}
+			return cell;
+		});
+	}
+
+	private void updateResourcesColumnsPercentBehavior() {
+		updateColumnPercentBehavior(stateDataTableAluminiumColumn);
+		updateColumnPercentBehavior(stateDataTableChromiumColumn);
+		updateColumnPercentBehavior(stateDataTableOilColumn);
+		updateColumnPercentBehavior(stateDataTableRubberColumn);
+		updateColumnPercentBehavior(stateDataTableSteelColumn);
+		updateColumnPercentBehavior(stateDataTableTungstenColumn);
 	}
 
 	private List<Function<Country,?>> getCountryDataFunctions() {
@@ -144,10 +169,26 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
 	public void handlePercentageCheckMenuItemAction() {
         if (idPercentageCheckMenuItem.isSelected()) {
+	        setResourcesPercent(true);
             System.out.println("Percentage values are on");
         } else {
+	        setResourcesPercent(false);
             System.out.println("Percentage values are off");
         }
+	}
+
+	public Boolean resourcesPercent() {
+		return resourcesPercent;
+	}
+
+	public void setResourcesPercent(Boolean resourcesPercent) {
+		this.resourcesPercent = resourcesPercent;
+		updateResourcesColumnsPercentBehavior();
+	}
+
+	public void toggleResourcesPercent() {
+		resourcesPercent = !resourcesPercent;
+		updateResourcesColumnsPercentBehavior();
 	}
 }
 /*	 
