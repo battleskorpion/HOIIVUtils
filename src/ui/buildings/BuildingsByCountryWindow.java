@@ -16,6 +16,7 @@ import ui.DoubleTableCell;
 import ui.HOIUtilsWindow;
 import ui.IntegerOrPercentTableCell;
 
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.function.Function;
 
@@ -110,12 +111,21 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	}
 
 	// todo put this in hoi4window parent class or whatever
+
+	/**
+	 *
+	 * @param propertyGetter
+	 * @return
+	 * @param <S>
+	 * @param <T>
+	 */
 	private static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(Function<S, ?> propertyGetter) {
 		return cellData -> {
 			if (Settings.DEV_MODE.enabled()) {
 				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
 			}
 			// return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue())); // ? Type safety: Unchecked cast from capture#6-of ? to TJava(16777761)
+			@SuppressWarnings("unchecked")
 			T result = (T) propertyGetter.apply(cellData.getValue());   // yap
 			return new SimpleObjectProperty<>(result);
 			// mehhhh
