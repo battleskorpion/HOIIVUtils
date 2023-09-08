@@ -83,6 +83,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		}
 	}
 
+	// todo put this in hoi4window parent class or whatever
 	private <S> void setTableCellValueFactories(List<Function<S, ?>> dataFunctions, ObservableList<TableColumn<S, ?>> tableColumns) {
 		for (int i = 0; i < Math.min(dataFunctions.size(), tableColumns.size()); i++) {
 			TableColumn<S, ?> tableColumn = tableColumns.get(i);
@@ -108,6 +109,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		stateDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
 	}
 
+	// todo put this in hoi4window parent class or whatever
 	private static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(Function<S, ?> propertyGetter) {
 		return cellData -> {
 			if (Settings.DEV_MODE.enabled()) {
