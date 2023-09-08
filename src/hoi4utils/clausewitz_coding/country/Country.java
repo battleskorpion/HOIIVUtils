@@ -50,9 +50,8 @@ public class Country {
 	}
 
 	/**
-	 *
-	 * @deprecated
 	 * @return
+	 * @deprecated
 	 */
 	public static List<Country> getList() {
 		if (countryList == null || countryList.isEmpty()) {
@@ -61,7 +60,7 @@ public class Country {
 		return countryList;
 	}
 
-	public static List<Function<Country,?>> getCountryDataFunctions() {
+	public static List<Function<Country, ?>> getCountryDataFunctions(boolean resourcePercentages) {
 		List<Function<Country, ?>> dataFunctions = new ArrayList<>(18);         // 18 for optimization, limited number of data functions.
 
 		dataFunctions.add(Country::name);
@@ -76,12 +75,21 @@ public class Country {
 		dataFunctions.add(Country::popPerMilRatio);
 		dataFunctions.add(Country::popAirportCapacityRatio);
 		dataFunctions.add(Country::popPerStateRatio);
-		dataFunctions.add(Country::aluminum);
-		dataFunctions.add(Country::chromium);
-		dataFunctions.add(Country::oil);
-		dataFunctions.add(Country::rubber);
-		dataFunctions.add(Country::steel);
-		dataFunctions.add(Country::tungsten);
+		if (resourcePercentages) {
+			dataFunctions.add(Country::aluminum);
+			dataFunctions.add(Country::chromium);
+			dataFunctions.add(Country::oil);
+			dataFunctions.add(Country::rubber);
+			dataFunctions.add(Country::steel);
+			dataFunctions.add(Country::tungsten);
+		} else {
+			dataFunctions.add(Country::aluminumPercentOfGlobal);
+			dataFunctions.add(Country::chromiumPercentOfGlobal);
+			dataFunctions.add(Country::oilPercentOfGlobal);
+			dataFunctions.add(Country::rubberPercentOfGlobal);
+			dataFunctions.add(Country::steelPercentOfGlobal);
+			dataFunctions.add(Country::tungstenPercentOfGlobal);
+		}
 
 		return dataFunctions;
 	}
@@ -162,6 +170,30 @@ public class Country {
 		return resources.tungsten();
 	}
 
+	private Object tungstenPercentOfGlobal() {
+		return tungsten() / State.resourcesOfStates().tungsten();       // todo this should really be optimized and some other things later on.
+	}
+
+	private Object steelPercentOfGlobal() {
+		return steel() / State.resourcesOfStates().steel();
+	}
+
+	private Object rubberPercentOfGlobal() {
+		return rubber() / State.resourcesOfStates().rubber();
+	}
+
+	private Object oilPercentOfGlobal() {
+		return oil() / State.resourcesOfStates().oil();
+	}
+
+	private Object chromiumPercentOfGlobal() {
+		return chromium() / State.resourcesOfStates().chromium();
+	}
+
+	private Object aluminumPercentOfGlobal() {
+		return aluminum() / State.resourcesOfStates().aluminum();
+	}
+
 
 	public void updateInfrastructure(int value) {
 		this.infrastructure = new Infrastructure(population(), value, civilianFactories(), militaryFactories(), navalDockyards(), navalPorts(), airfields());
@@ -170,9 +202,11 @@ public class Country {
 	public void updatePopulation(int value) {
 		this.infrastructure = new Infrastructure(value, infrastructure(), civilianFactories(), militaryFactories(), navalDockyards(), navalPorts(), airfields());
 	}
+
 	public void updateCivilianFactories(int value) {
 		this.infrastructure = new Infrastructure(population(), infrastructure(), value, militaryFactories(), navalDockyards(), navalPorts(), airfields());
 	}
+
 	public void updateMilitaryFactories(int value) {
 		this.infrastructure = new Infrastructure(population(), infrastructure(), civilianFactories(), value, navalDockyards(), navalPorts(), airfields());
 	}
@@ -190,7 +224,7 @@ public class Country {
 	}
 
 	public static <T> List<Country> loadCountries(List<T> list) {
-		for (T item: list) {
+		for (T item : list) {
 			countryList.add(new Country(item));
 		}
 
@@ -201,8 +235,8 @@ public class Country {
 		Iterator<CountryTag> countryTagsIterator = countryTags.iterator();
 		Iterator<Infrastructure> infrastructureListIterator = infrastructureList.iterator();
 		Iterator<Resources> resourcesListIterator = resourcesList.iterator();
-		
-		while(countryTagsIterator.hasNext()) {
+
+		while (countryTagsIterator.hasNext()) {
 			countryList.add(new Country(countryTagsIterator.next(), infrastructureListIterator.next(), resourcesListIterator.next()));
 		}
 

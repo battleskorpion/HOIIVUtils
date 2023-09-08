@@ -67,17 +67,12 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	}
 
 	private void loadBuildingsByCountryTable() {
-		List<Function<Country, ?>> countryDataFunctions = Country.getCountryDataFunctions();
+		List<Function<Country, ?>> countryDataFunctions = Country.getCountryDataFunctions(false);
 		ObservableList<TableColumn<Country, ?>> tableColumns = stateDataTable.getColumns();
 
 		setStateDataTableCellFactories();
 
-		for (int i = 0; i < countryDataFunctions.size(); i++) {
-			TableColumn<Country, ?> tableColumn = tableColumns.get(i);
-			Function<Country, ?> dataFunction = countryDataFunctions.get(i);
-
-			tableColumn.setCellValueFactory(countryPropertyCallback(dataFunction));
-		}
+		setTableCellValueFactories(countryDataFunctions, tableColumns);
 
 		stateDataTable.setItems(countryList);       // country objects, cool! and necessary for the cell value factory,
 													// this is giving the factories the list of objects to collect
@@ -85,6 +80,15 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println("Loaded data of countries into state data table.");
+		}
+	}
+
+	private <S> void setTableCellValueFactories(List<Function<S, ?>> dataFunctions, ObservableList<TableColumn<S, ?>> tableColumns) {
+		for (int i = 0; i < Math.min(dataFunctions.size(), tableColumns.size()); i++) {
+			TableColumn<S, ?> tableColumn = tableColumns.get(i);
+			Function<S, ?> dataFunction = dataFunctions.get(i);
+
+			tableColumn.setCellValueFactory(cellDataCallback(dataFunction));
 		}
 	}
 
@@ -104,12 +108,14 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		stateDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
 	}
 
-	private <T> Callback<TableColumn.CellDataFeatures<Country, T>, ObservableValue<T>> countryPropertyCallback(Function<Country, ?> propertyGetter) {
+	private static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(Function<S, ?> propertyGetter) {
 		return cellData -> {
 			if (Settings.DEV_MODE.enabled()) {
 				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
 			}
-			return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue())); // ? Type safety: Unchecked cast from capture#6-of ? to TJava(16777761)
+			// return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue())); // ? Type safety: Unchecked cast from capture#6-of ? to TJava(16777761)
+			T result = (T) propertyGetter.apply(cellData.getValue());   // yap
+			return new SimpleObjectProperty<>(result);
 			// mehhhh
 		};
 	}
@@ -119,9 +125,9 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		column.setCellFactory(col -> {
 			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();
 			if (resourcesPercent) {
-				cell.setPercent(resourcesPercent);
+				cell.setPercent(true);
 			} else {
-				cell.setInteger(!resourcesPercent);
+				cell.setInteger(true);
 			}
 			return cell;
 		});
