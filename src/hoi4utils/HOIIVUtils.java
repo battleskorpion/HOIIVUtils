@@ -4,10 +4,6 @@ import hoi4utils.clausewitz_coding.state.State;
 import hoi4utils.fileIO.FileListener.FileAdapter;
 import hoi4utils.fileIO.FileListener.FileEvent;
 import hoi4utils.fileIO.FileListener.FileWatcher;
-import javafx.collections.ObservableList;
-import javafx.geometry.Rectangle2D;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
 import ui.main_menu.SettingsWindow;
 import ui.main_menu.MenuWindow;
 
@@ -20,37 +16,29 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import static hoi4utils.Settings.MOD_PATH;
-import static hoi4utils.Settings.PREFERRED_SCREEN;
 
 /*
 * HOIIVUtils File
 */
 public class HOIIVUtils {
-	public static final String hoi4utilsVersion = "Version 0.4.1";
 
+	public static String[] args;
+	public static final String hoi4utilsVersion = "Version 0.4.1";
+	public static boolean firstTimeSetup;
+	private static SettingsWindow settingsWindow;
+	private static MenuWindow menuWindow;
+	public static SettingsManager settings;
+	
+	public static boolean DEV_MODE = false;
+	public static boolean SKIP_SETTINGS = false;
+	
+	public static FileWatcher stateDirWatcher;
 	//	public static String hoi4_dir_name;
 	public static File focus_folder;
 	public static File states_folder;
 	public static File strat_region_dir;
 	public static File localization_eng_folder;
 	public static File common_folder;
-
-
-	public static String[] args;
-
-	public static boolean firstTimeSetup;
-
-	private static SettingsWindow settingsWindow;
-	
-	private static MenuWindow menuWindow;
-	
-	public static SettingsManager settings;
-
-	public static boolean DEV_MODE = false;
-
-	public static boolean SKIP_SETTINGS = false;
-
-	public static FileWatcher stateDirWatcher;
 	
 	public static void main(String[] args) throws IOException{
 		HOIIVUtils.args = args;
@@ -80,34 +68,6 @@ public class HOIIVUtils {
 			}
 		}
 	}
-
-	/**
-	 * 
-	 * @param stage
-	 */
-	public static void decideScreen(Stage stage) {
-		Integer preferredScreen = (Integer) PREFERRED_SCREEN.getSetting();
-		ObservableList<Screen> screens = Screen.getScreens();
-		if (preferredScreen > screens.size() - 1) {
-			if (Settings.DEV_MODE.enabled()) {
-				System.err.println( "Preferred screen does not exist, resorting to defaults.");
-			}
-			return;
-		}
-		Screen screen = screens.get(preferredScreen);
-		if (screen == null) {
-			if (Settings.DEV_MODE.enabled()) {
-				System.err.println( "Preferred screen is null error, resorting to defaults.");
-			}
-			return;
-		}
-		Rectangle2D bounds = screen.getVisualBounds();
-		stage.setX(bounds.getMinX() + 200);
-		stage.setY(bounds.getMinY() + 200);
-	}
-
-	// OlD COdE PASt hERE
-	// ? how is it oLd cOdE if it has 7 usages :(
 
 	/**
 	 * 
@@ -166,71 +126,6 @@ public class HOIIVUtils {
 
 		System.out.println("capitalized: " + String.join(" ", words));
 		return String.join(" ", words);
-	}
-
-	private static boolean isAcronym(String word) {
-		// check for acronym (all caps already)
-		int num_cap_letters = numCapLetters(word);
-
-		return num_cap_letters == word.length();
-	}
-
-	private static int numCapLetters(String word) {
-		if (word == null) {
-			return 0; 
-		}
-
-		int num_cap_letters;
-		num_cap_letters = 0;
-		for (int j = 0; j < word.length(); j++) {
-			if (Character.isUpperCase(word.charAt(j))) {
-				num_cap_letters++;
-			}
-		}
-		return num_cap_letters;
-	}
-
-	private static HashSet<String> createCapitalizationWhitelist() {
-		HashSet<String> whitelist = new HashSet<String>();
-
-		// create the whitelist
-		whitelist.add("a");
-		whitelist.add("above");
-		whitelist.add("after");
-		whitelist.add("among");
-		whitelist.add("an");
-		whitelist.add("and");
-		whitelist.add("around");
-		whitelist.add("as");
-		whitelist.add("at");
-		whitelist.add("below");
-		whitelist.add("beneath");
-		whitelist.add("beside");
-		whitelist.add("between");
-		whitelist.add("but");
-		whitelist.add("by");
-		whitelist.add("for");
-		whitelist.add("from");
-		whitelist.add("if");
-		whitelist.add("in");
-		whitelist.add("into");
-		whitelist.add("nor");
-		whitelist.add("of");
-		whitelist.add("off");
-		whitelist.add("on");
-		whitelist.add("onto");
-		whitelist.add("or");
-		whitelist.add("over");
-		whitelist.add("since");
-		whitelist.add("the");
-		whitelist.add("through");
-		whitelist.add("throughout");
-		whitelist.add("to");
-		whitelist.add("under");
-		whitelist.add("until");
-		whitelist.add("up");
-		whitelist.add("with");
-		return whitelist;
 	}
 
 	/**
@@ -317,6 +212,71 @@ public class HOIIVUtils {
 		HOIIVUtils.strat_region_dir =  new File(modPath + "\\map\\strategicregions");
 		HOIIVUtils.localization_eng_folder =  new File(modPath + "\\localisation\\english");
 		HOIIVUtils.focus_folder = new File(modPath + "\\common\\national_focus");
+	}
+
+	private static boolean isAcronym(String word) {
+		// check for acronym (all caps already)
+		int num_cap_letters = numCapLetters(word);
+
+		return num_cap_letters == word.length();
+	}
+
+	private static int numCapLetters(String word) {
+		if (word == null) {
+			return 0; 
+		}
+
+		int num_cap_letters;
+		num_cap_letters = 0;
+		for (int j = 0; j < word.length(); j++) {
+			if (Character.isUpperCase(word.charAt(j))) {
+				num_cap_letters++;
+			}
+		}
+		return num_cap_letters;
+	}
+
+	private static HashSet<String> createCapitalizationWhitelist() {
+		HashSet<String> whitelist = new HashSet<String>();
+
+		// create the whitelist
+		whitelist.add("a");
+		whitelist.add("above");
+		whitelist.add("after");
+		whitelist.add("among");
+		whitelist.add("an");
+		whitelist.add("and");
+		whitelist.add("around");
+		whitelist.add("as");
+		whitelist.add("at");
+		whitelist.add("below");
+		whitelist.add("beneath");
+		whitelist.add("beside");
+		whitelist.add("between");
+		whitelist.add("but");
+		whitelist.add("by");
+		whitelist.add("for");
+		whitelist.add("from");
+		whitelist.add("if");
+		whitelist.add("in");
+		whitelist.add("into");
+		whitelist.add("nor");
+		whitelist.add("of");
+		whitelist.add("off");
+		whitelist.add("on");
+		whitelist.add("onto");
+		whitelist.add("or");
+		whitelist.add("over");
+		whitelist.add("since");
+		whitelist.add("the");
+		whitelist.add("through");
+		whitelist.add("throughout");
+		whitelist.add("to");
+		whitelist.add("under");
+		whitelist.add("until");
+		whitelist.add("up");
+		whitelist.add("with");
+		return whitelist;
 	}
 
 }

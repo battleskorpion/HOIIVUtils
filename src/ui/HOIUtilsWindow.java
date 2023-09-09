@@ -1,14 +1,18 @@
 package ui;
 
-import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import static hoi4utils.Settings.PREFERRED_SCREEN;
 
 import java.io.File;
 
@@ -48,7 +52,7 @@ public abstract class HOIUtilsWindow {
 				}
 				scene.getStylesheets().add(styleSheetURL);
 
-				HOIIVUtils.decideScreen(stage);
+				HOIUtilsWindow.decideScreen(stage);
 				stage.show();
 			}
 		} catch (Exception exception) {
@@ -64,6 +68,31 @@ public abstract class HOIUtilsWindow {
 	public void open(String fxmlResource, String title) {
 		this.fxmlResource = fxmlResource;
 		this.title = title;
+	}
+
+	/**
+	 * 
+	 * @param stage
+	 */
+	public static void decideScreen(Stage stage) {
+		Integer preferredScreen = (Integer) PREFERRED_SCREEN.getSetting();
+		ObservableList<Screen> screens = Screen.getScreens();
+		if (preferredScreen > screens.size() - 1) {
+			if (Settings.DEV_MODE.enabled()) {
+				System.err.println( "Preferred screen does not exist, resorting to defaults.");
+			}
+			return;
+		}
+		Screen screen = screens.get(preferredScreen);
+		if (screen == null) {
+			if (Settings.DEV_MODE.enabled()) {
+				System.err.println( "Preferred screen is null error, resorting to defaults.");
+			}
+			return;
+		}
+		Rectangle2D bounds = screen.getVisualBounds();
+		stage.setX(bounds.getMinX() + 200);
+		stage.setY(bounds.getMinY() + 200);
 	}
 
 	public static void openError(Exception exception) {
