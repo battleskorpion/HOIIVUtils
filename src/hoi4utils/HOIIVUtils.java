@@ -45,17 +45,17 @@ public class HOIIVUtils {
 			throw new RuntimeException(e);
 		}
 	
-		if (HOIIVUtils.firstTimeSetup) {
-			HOIIVUtils.settingsWindow = new SettingsWindow();
-			HOIIVUtils.settingsWindow.launchSettingsWindow(args);
+		if (firstTimeSetup) {
+			settingsWindow = new SettingsWindow();
+			settingsWindow.launchSettingsWindow(args);
 		} else {
 			HOIIVFilePaths.createHOIIVFilePaths();
 			if (Settings.SKIP_SETTINGS.enabled()) {
-				HOIIVUtils.menuWindow = new MenuWindow();
-				HOIIVUtils.menuWindow.launchMenuWindow(args);
+				menuWindow = new MenuWindow();
+				menuWindow.launchMenuWindow(args);
 			} else {
-				HOIIVUtils.settingsWindow = new SettingsWindow();
-				HOIIVUtils.settingsWindow.launchSettingsWindow(args);
+				settingsWindow = new SettingsWindow();
+				settingsWindow.launchSettingsWindow(args);
 			}
 		}
 	}
