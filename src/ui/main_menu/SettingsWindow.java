@@ -1,7 +1,7 @@
 package ui.main_menu;
 
 import ui.HOIUtilsWindow;
-import hoi4utils.HOIIVFilePaths;
+import hoi4utils.HOIIVFile;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import javafx.application.Application;
@@ -233,7 +233,7 @@ public class SettingsWindow extends Application {
 			HOIUtilsWindow.openError("Settings failed to save.");
 			return false;
 		}
-		HOIIVFilePaths.createHOIIVFilePaths();
+		HOIIVFile.createHOIIVFilePaths();
 		return true;
 	}
 }

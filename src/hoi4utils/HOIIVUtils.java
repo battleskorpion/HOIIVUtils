@@ -1,15 +1,8 @@
 package hoi4utils;
 
-import hoi4utils.clausewitz_coding.state.State;
-import hoi4utils.fileIO.FileListener.FileAdapter;
-import hoi4utils.fileIO.FileListener.FileEvent;
-import hoi4utils.fileIO.FileListener.FileWatcher;
 import ui.main_menu.SettingsWindow;
 import ui.main_menu.MenuWindow;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,17 +20,6 @@ public class HOIIVUtils {
 	public static MenuWindow menuWindow;
 	public static SettingsManager settings;
 	
-	public static boolean DEV_MODE = false;
-	public static boolean SKIP_SETTINGS = false;
-	
-	public static FileWatcher stateDirWatcher;
-	//	public static String hoi4_dir_name;
-	public static File focus_folder;
-	public static File states_folder;
-	public static File strat_region_dir;
-	public static File localization_eng_folder;
-	public static File common_folder;
-
 	public static void main(String[] args) throws RuntimeException,IOException {
 		try {
 			SettingsManager.getSavedSettings();
@@ -49,7 +31,7 @@ public class HOIIVUtils {
 			settingsWindow = new SettingsWindow();
 			settingsWindow.launchSettingsWindow(args);
 		} else {
-			HOIIVFilePaths.createHOIIVFilePaths();
+			HOIIVFile.createHOIIVFilePaths();
 			if (Settings.SKIP_SETTINGS.enabled()) {
 				menuWindow = new MenuWindow();
 				menuWindow.launchMenuWindow(args);
@@ -116,80 +98,6 @@ public class HOIIVUtils {
 
 		System.out.println("capitalized: " + String.join(" ", words));
 		return String.join(" ", words);
-	}
-
-	/**
-	 * @param table
-	 * @param row
-	 * //todo may be outdated as is for JTable stuff
-	 * @return
-	 */
-	public static int rowToModelIndex(JTable table, int row) {
-		if (row >= 0) {
-			RowSorter<?> rowSorter = table.getRowSorter();
-			return rowSorter != null ? rowSorter
-					.convertRowIndexToModel(row) : row;
-		}
-		return -1;
-	}
-
-	// ! todo
-	public static void watchStateFiles(File stateDir) throws IOException {
-		if (stateDir == null || !stateDir.exists() || !stateDir.isDirectory()) {
-			System.err.println("State dir does not exist or is not a directory: " + stateDir);
-			return;
-		}
-
-		stateDirWatcher = new FileWatcher(stateDir);
-		stateDirWatcher.addListener(new FileAdapter() {
-			@Override
-			public void onCreated(FileEvent event) {
-//				System.out.println("State created in states dir");
-				// todo building view thing
-				EventQueue.invokeLater(() -> {
-					stateDirWatcher.listenerPerformAction++;
-					File file = event.getFile();
-					State.readState(file);
-					stateDirWatcher.listenerPerformAction--;
-					if (Settings.DEV_MODE.enabled()) {
-						State state = State.get(file);
-						System.out.println("State was created/loaded: " + state);
-					}
-				});
-			}
-
-			@Override
-			public void onModified(FileEvent event) {
-//				System.out.println("State modified in states dir");
-				// todo building view thing
-				EventQueue.invokeLater(() -> {
-					stateDirWatcher.listenerPerformAction++;
-					File file = event.getFile();
-					State.readState(file);
-					if (Settings.DEV_MODE.enabled()) {
-						State state = State.get(file);
-						System.out.println("State was modified: " + state);
-					}
-					stateDirWatcher.listenerPerformAction--;
-				});
-			}
-
-			@Override
-			public void onDeleted(FileEvent event) {
-//				System.out.println("State deleted in states dir");
-				// todo building view thing
-				EventQueue.invokeLater(() -> {
-					stateDirWatcher.listenerPerformAction++;
-					File file = event.getFile();
-					State.deleteState(file);
-					stateDirWatcher.listenerPerformAction--;
-					if (Settings.DEV_MODE.enabled()) {
-						State state = State.get(file);
-						System.out.println("State was deleted: " + state);
-					}
-				});
-			}
-		}).watch();
 	}
 
 	private static boolean isAcronym(String word) {

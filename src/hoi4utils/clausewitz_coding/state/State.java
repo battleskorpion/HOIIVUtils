@@ -1,10 +1,10 @@
 package hoi4utils.clausewitz_coding.state;
 
+import hoi4utils.HOIIVFile;
 import hoi4utils.clausewitz_coding.code.ClausewitzDate;
 import hoi4utils.clausewitz_coding.country.CountryTags;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
-import hoi4utils.HOIIVUtils;
 import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
 import hoi4utils.clausewitz_coding.state.buildings.Resources;
 import hoi4utils.clausewitz_coding.country.CountryTag;
@@ -155,16 +155,16 @@ public class State {
 	}
 
 	public static void readStates() {
-		if (!HOIIVUtils.states_folder.exists() || !HOIIVUtils.states_folder.isDirectory()) {
-			System.err.println("In State.java - " + HOIIVUtils.states_folder + " is not a directory, or etc.");
+		if (!HOIIVFile.states_folder.exists() || !HOIIVFile.states_folder.isDirectory()) {
+			System.err.println("In State.java - " + HOIIVFile.states_folder + " is not a directory, or etc.");
 			return;
 		}
-		if (HOIIVUtils.states_folder.listFiles() == null || HOIIVUtils.states_folder.listFiles().length == 0) {
-			System.out.println("No states found in " + HOIIVUtils.states_folder);
+		if (HOIIVFile.states_folder.listFiles() == null || HOIIVFile.states_folder.listFiles().length == 0) {
+			System.out.println("No states found in " + HOIIVFile.states_folder);
 			return;
 		}
 
-		for (File stateFile : HOIIVUtils.states_folder.listFiles()) {
+		for (File stateFile : HOIIVFile.states_folder.listFiles()) {
 			new State(stateFile);
 		}
 	}
