@@ -1,13 +1,12 @@
 package hoi4utils.clausewitz_coding.idea;
 
+import hoi4utils.HOIIVFile;
 import hoi4utils.clausewitz_coding.code.modifier.Modifier;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import static hoi4utils.HOIIVUtils.usefulData;
 /**
  * This is the Idea file.
  */
@@ -102,7 +101,7 @@ public abstract class Idea {
 			s = s.trim();
 
 			// need enough data length before checks are made to prevent error
-			if (usefulData(s) && s.length() >= 5) {
+			if (HOIIVFile.usefulData(s) && s.length() >= 5) {
 				//! if (CountryTags.getCountryTags().contains(s.substring(0, 3)) && s.startsWith("={", s.length() - 2)) {
 					// if here, ***should*** be good! data is an idea name,
 					// once we clean it up

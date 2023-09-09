@@ -52,62 +52,75 @@ public class HOIIVFile {
 	* @param stateFiles The directory containing state files.
 	* @throws IOException If an I/O error occurs.
 	*/
-		public static void watchStateFiles(File stateFiles) throws IOException {
-			if (stateFiles == null || !stateFiles.exists() || !stateFiles.isDirectory()) {
-				System.err.println("State dir does not exist or is not a directory: " + stateFiles);
-				return;
-			}
-	
-			stateFilesWatcher = new FileWatcher(stateFiles);
-			
-			stateFilesWatcher.addListener(new FileAdapter() {
-				@Override
-				public void onCreated(FileEvent event) {
-	//				System.out.println("State created in states dir");
-					// todo building view thing
-					EventQueue.invokeLater(() -> {
-						stateFilesWatcher.listenerPerformAction++;
-						File file = event.getFile();
-						State.readState(file);
-						stateFilesWatcher.listenerPerformAction--;
-						if (Settings.DEV_MODE.enabled()) {
-							State state = State.get(file);
-							System.out.println("State was created/loaded: " + state);
-						}
-					});
-				}
-	
-				@Override
-				public void onModified(FileEvent event) {
-	//				System.out.println("State modified in states dir");
-					// todo building view thing
-					EventQueue.invokeLater(() -> {
-						stateFilesWatcher.listenerPerformAction++;
-						File file = event.getFile();
-						State.readState(file);
-						if (Settings.DEV_MODE.enabled()) {
-							State state = State.get(file);
-							System.out.println("State was modified: " + state);
-						}
-						stateFilesWatcher.listenerPerformAction--;
-					});
-				}
-	
-				@Override
-				public void onDeleted(FileEvent event) {
-	//				System.out.println("State deleted in states dir");
-					// todo building view thing
-					EventQueue.invokeLater(() -> {
-						stateFilesWatcher.listenerPerformAction++;
-						File file = event.getFile();
-						State.deleteState(file);
-						stateFilesWatcher.listenerPerformAction--;
-						if (Settings.DEV_MODE.enabled()) {
-							State state = State.get(file);
-							System.out.println("State was deleted: " + state);
-						}
-					});
-				}
-			}).watch();
+	public static void watchStateFiles(File stateFiles) throws IOException {
+		if (stateFiles == null || !stateFiles.exists() || !stateFiles.isDirectory()) {
+			System.err.println("State dir does not exist or is not a directory: " + stateFiles);
+			return;
 		}
+
+		stateFilesWatcher = new FileWatcher(stateFiles);
+		
+		stateFilesWatcher.addListener(new FileAdapter() {
+			@Override
+			public void onCreated(FileEvent event) {
+//				System.out.println("State created in states dir");
+				// todo building view thing
+				EventQueue.invokeLater(() -> {
+					stateFilesWatcher.listenerPerformAction++;
+					File file = event.getFile();
+					State.readState(file);
+					stateFilesWatcher.listenerPerformAction--;
+					if (Settings.DEV_MODE.enabled()) {
+						State state = State.get(file);
+						System.out.println("State was created/loaded: " + state);
+					}
+				});
+			}
+
+			@Override
+			public void onModified(FileEvent event) {
+//				System.out.println("State modified in states dir");
+				// todo building view thing
+				EventQueue.invokeLater(() -> {
+					stateFilesWatcher.listenerPerformAction++;
+					File file = event.getFile();
+					State.readState(file);
+					if (Settings.DEV_MODE.enabled()) {
+						State state = State.get(file);
+						System.out.println("State was modified: " + state);
+					}
+					stateFilesWatcher.listenerPerformAction--;
+				});
+			}
+
+			@Override
+			public void onDeleted(FileEvent event) {
+//				System.out.println("State deleted in states dir");
+				// todo building view thing
+				EventQueue.invokeLater(() -> {
+					stateFilesWatcher.listenerPerformAction++;
+					File file = event.getFile();
+					State.deleteState(file);
+					stateFilesWatcher.listenerPerformAction--;
+					if (Settings.DEV_MODE.enabled()) {
+						State state = State.get(file);
+						System.out.println("State was deleted: " + state);
+					}
+				});
+			}
+		}).watch();
+	}
+
+	/**
+	 * 
+	 * @param data
+	 * @return
+	 */
+	public static boolean usefulData(String data) {
+		if (data.isEmpty()) {
+			return false;
+		}
+	
+		return data.trim().charAt(0) != '#';
+	}
 }

@@ -42,19 +42,10 @@ public class HOIIVUtils {
 		}
 	}
 	/**
-	 * 
-	 * @param data
+	 * Captilizes 
+	 * @param str
 	 * @return
 	 */
-	public static boolean usefulData(String data) {
-		if (data.isEmpty()) {
-			return false;
-		}
-
-		return data.trim().charAt(0) != '#';
-	}
-
-	// for capitalizing
 	public static String titleCapitalize(String str) {
 		if (str == null) {
 			return null;
@@ -129,7 +120,7 @@ public class HOIIVUtils {
 		whitelist.add("a");
 		whitelist.add("above");
 		whitelist.add("after");
-		whitelist.add("among");
+		whitelist.add("among"); // among us
 		whitelist.add("an");
 		whitelist.add("and");
 		whitelist.add("around");
