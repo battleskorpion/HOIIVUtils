@@ -16,7 +16,6 @@ import ui.DoubleTableCell;
 import ui.HOIUtilsWindow;
 import ui.IntegerOrPercentTableCell;
 
-import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.function.Function;
 

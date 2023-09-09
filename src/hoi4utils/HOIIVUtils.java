@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import static hoi4utils.Settings.MOD_PATH;
-
 /*
 * HOIIVUtils File
 */
@@ -25,8 +23,8 @@ public class HOIIVUtils {
 	public static String[] args;
 	public static final String hoi4utilsVersion = "Version 0.4.1";
 	public static boolean firstTimeSetup;
-	private static SettingsWindow settingsWindow;
-	private static MenuWindow menuWindow;
+	public static SettingsWindow settingsWindow;
+	public static MenuWindow menuWindow;
 	public static SettingsManager settings;
 	
 	public static boolean DEV_MODE = false;
@@ -39,36 +37,28 @@ public class HOIIVUtils {
 	public static File strat_region_dir;
 	public static File localization_eng_folder;
 	public static File common_folder;
-	
-	public static void main(String[] args) throws IOException{
-		HOIIVUtils.args = args;
-		launchHOIIVUtils(args);
-	}
 
-	public static void launchHOIIVUtils(String[] args) {
+	public static void main(String[] args) throws RuntimeException,IOException {
 		try {
 			SettingsManager.getSavedSettings();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-
-		if (firstTimeSetup) {
-			settingsWindow = new SettingsWindow();
-			settingsWindow.launchSettingsWindow(args);
+	
+		if (HOIIVUtils.firstTimeSetup) {
+			HOIIVUtils.settingsWindow = new SettingsWindow();
+			HOIIVUtils.settingsWindow.launchSettingsWindow(args);
 		} else {
-			HOIIVUtils.createHOIIVFilePaths();
-
-			Boolean isSettingsSkipped = Settings.SKIP_SETTINGS.enabled();
-			if (isSettingsSkipped) {
-				menuWindow = new MenuWindow();
-				menuWindow.launchMenuWindow(args);
+			HOIIVFilePaths.createHOIIVFilePaths();
+			if (Settings.SKIP_SETTINGS.enabled()) {
+				HOIIVUtils.menuWindow = new MenuWindow();
+				HOIIVUtils.menuWindow.launchMenuWindow(args);
 			} else {
-				settingsWindow = new SettingsWindow();
-				settingsWindow.launchSettingsWindow(args);
+				HOIIVUtils.settingsWindow = new SettingsWindow();
+				HOIIVUtils.settingsWindow.launchSettingsWindow(args);
 			}
 		}
 	}
-
 	/**
 	 * 
 	 * @param data
@@ -200,18 +190,6 @@ public class HOIIVUtils {
 				});
 			}
 		}).watch();
-	}
-
-	public static void createHOIIVFilePaths() {
-		String modPath = SettingsManager.get(MOD_PATH);
-		if (Settings.DEV_MODE.enabled()) {
-			System.out.println(modPath);
-		}
-		HOIIVUtils.common_folder = new File(modPath + "\\common");
-		HOIIVUtils.states_folder = new File(modPath + "\\history\\states");
-		HOIIVUtils.strat_region_dir =  new File(modPath + "\\map\\strategicregions");
-		HOIIVUtils.localization_eng_folder =  new File(modPath + "\\localisation\\english");
-		HOIIVUtils.focus_folder = new File(modPath + "\\common\\national_focus");
 	}
 
 	private static boolean isAcronym(String word) {
