@@ -1,10 +1,15 @@
-package ui;
+package ui.message_popup;
 
 import hoi4utils.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import ui.HOIUtilsWindow;
 
+/**
+ * Generates A Message Popup Window
+ * 
+ */
 public class MessagePopupWindow extends HOIUtilsWindow {
 	
 	@FXML public Label messageLabel;

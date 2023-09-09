@@ -1,4 +1,4 @@
-package ui;
+package ui.table_data;
 
 import javafx.scene.control.TableCell;
 import javafx.util.StringConverter;

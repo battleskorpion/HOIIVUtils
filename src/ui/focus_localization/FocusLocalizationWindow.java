@@ -13,7 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import ui.HOIUtilsWindow;
-import ui.MessagePopupWindow;
+import ui.message_popup.MessagePopupWindow;
 
 public class FocusLocalizationWindow extends HOIUtilsWindow {
 

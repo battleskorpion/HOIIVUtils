@@ -15,7 +15,6 @@ import hoi4utils.fileIO.FileListener.FileWatcher;
  * HOIIV File
  * A Everything to do with the files that are found in a HOI 4 mod
  * - Paths
- * - Clausewitz Syntax
  * - Creating Files and Directories
  * ? <insert about whatever the file watchers do> chris learning what is a file watcher
  * - Future things
