@@ -37,7 +37,7 @@ public abstract class HOIUtilsWindow {
 			if (stage != null) {
 				stage.show();
 			} else if (fxmlResource == null) {
-				openError("This Stage's FXML Resource Doesn't exsist");
+				openError("This Stage's FXML Resource Doesn't exsist, Window Title: " + title);
 			} else {
 				loader = new FXMLLoader(
 						getClass().getResource(
