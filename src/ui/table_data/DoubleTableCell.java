@@ -8,7 +8,7 @@ public class DoubleTableCell<S> extends TableCell<S, Double> {
 
 	private final StringConverter<Double> converter;
 
-	protected String decimalStringFormat;
+	private String decimalStringFormat;
 
 	public DoubleTableCell() {
 		this.converter = new StringConverter<Double>() {

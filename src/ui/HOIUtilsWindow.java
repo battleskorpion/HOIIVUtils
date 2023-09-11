@@ -19,10 +19,14 @@ import java.io.File;
 import javax.swing.JOptionPane;
 
 public abstract class HOIUtilsWindow {
-	protected String fxmlResource;
+	private String fxmlResource;
 	private String title = "HOIIVUtils (default title)";
-	protected String styleSheetURL = "resources/javafx_dark.css";
+	private String styleSheetURL = "resources/javafx_dark.css";
+	/**
+	 * Allows windows to get the controller
+	 */
 	protected FXMLLoader loader;
+	
 	Stage stage;
 	
 	/**
@@ -41,10 +45,10 @@ public abstract class HOIUtilsWindow {
 						)
 				);
 
-				Stage stage = new Stage();
+				Stage test = new Stage();
 				Scene scene = new Scene(loader.load());
-				stage.setScene(scene);
-				stage.setTitle(title);
+				test.setScene(scene);
+				test.setTitle(title);
 
 				/* style */
 				if (Settings.DEV_MODE.enabled()) {
@@ -52,11 +56,11 @@ public abstract class HOIUtilsWindow {
 				}
 				scene.getStylesheets().add(styleSheetURL);
 
-				HOIUtilsWindow.decideScreen(stage);
-				stage.show();
+				HOIUtilsWindow.decideScreen(test);
+				test.show();
 			}
 		} catch (Exception exception) {
-			openError(exception);
+			exception.printStackTrace();
 		}
 	}
 
