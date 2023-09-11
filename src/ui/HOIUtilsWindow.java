@@ -45,10 +45,10 @@ public abstract class HOIUtilsWindow {
 						)
 				);
 
-				Stage test = new Stage();
+				Stage launchStage = new Stage();
 				Scene scene = new Scene(loader.load());
-				test.setScene(scene);
-				test.setTitle(title);
+				launchStage.setScene(scene);
+				launchStage.setTitle(title);
 
 				/* style */
 				if (Settings.DEV_MODE.enabled()) {
@@ -56,8 +56,8 @@ public abstract class HOIUtilsWindow {
 				}
 				scene.getStylesheets().add(styleSheetURL);
 
-				HOIUtilsWindow.decideScreen(test);
-				test.show();
+				HOIUtilsWindow.decideScreen(launchStage);
+				launchStage.show();
 			}
 		} catch (Exception exception) {
 			exception.printStackTrace();
