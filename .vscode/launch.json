@@ -6,17 +6,10 @@
 	"configurations": [
 		{
 			"type": "java",
-			"name": "Test",
+			"name": "HOIIVUtils",
 			"request": "launch",
-			"mainClass": "cleveland.Cleveland",
+			"mainClass": "hoi4utils.HOIIVUtils",
 			"vmArgs": "--module-path ${workspaceFolder}/lib/javafx-sdk-20.0.2/lib --add-modules javafx.controls,javafx.fxml"
 		},
-		{
-			"type": "java",
-			"name": "Launcher",
-			"request": "launch",
-			"mainClass": "Launcher",
-			"vmArgs": "--module-path ${workspaceFolder}/lib/javafx-sdk-20.0.2/lib --add-modules javafx.controls,javafx.fxml"
-		}
 	]
 }

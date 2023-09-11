@@ -4,7 +4,6 @@ import hoi4utils.clausewitz_coding.state.State;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -16,10 +15,10 @@ import ui.focus_localization.FocusLocalizationWindow;
 import ui.focus_localization.UnlocalizedFocusWindow;
 
 public class MenuWindow extends Application{
-	public String fxmlResource = "MenuWindow.fxml";
+	String fxmlResource = "MenuWindow.fxml";
 	String title = "HOIIVUtils Menu";
 	String styleSheetURL = "resources/javafx_dark.css";
-	Stage primaryStage;
+	Stage stage;
 
 	@FXML public Button settingsButton;
 	@FXML public Button statisticsButton;
@@ -36,33 +35,35 @@ public class MenuWindow extends Application{
 		title = "HOIIVUtils Menu";
 	}
 
-	@FXML
-	void initialize() {
-
-	}
-
 	@Override
-	public void start(Stage primaryStage) throws Exception {
-		Parent root = FXMLLoader.load(getClass().getResource(fxmlResource));
-		primaryStage.setTitle(title);
-		Scene scene = (new Scene(root));
-		primaryStage.setScene(scene);
-		this.primaryStage = primaryStage;
+	public void start(Stage stage) throws Exception {
+		FXMLLoader loader = new FXMLLoader(
+			getClass().getResource(
+				fxmlResource
+			)
+		);
+
+		this.stage = stage;
+		Scene scene = new Scene(loader.load());
+		stage.setScene(scene);
+		stage.setTitle(title);
 
 		/* style */
 		scene.getStylesheets().add(styleSheetURL);
 
-		primaryStage.show();
+		stage.show();
+
+		stage.show();
 	}
 
 	public void launchMenuWindow(String... var0) {
-		super.launch(var0);
+		Application.launch(var0);
 	}
 
 	public void open(){
 		try {
-			if (primaryStage != null) {
-				primaryStage.show();
+			if (stage != null) {
+				stage.show();
 			} else {
 				start(new Stage());
 			}

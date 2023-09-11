@@ -24,7 +24,7 @@ public abstract class HOIUtilsWindow {
 	protected String styleSheetURL = "resources/javafx_dark.css";
 	protected Stage stage;
 	protected FXMLLoader loader;
-
+	
 	/**
 	 * Opens the window
 	 */
@@ -33,7 +33,7 @@ public abstract class HOIUtilsWindow {
 			if (stage != null) {
 				stage.show();
 			} else if (fxmlResource == null) {
-				openError(".fxml resource null.");
+				openError("This Stage's FXML Resource Doesn't exsist");
 			} else {
 				loader = new FXMLLoader(
 						getClass().getResource(
