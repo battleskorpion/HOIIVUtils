@@ -6,73 +6,85 @@ import java.text.DecimalFormat;
 
 public class IntegerOrPercentTableCell<S> extends TableCell<S, Double> {
 
-	private final StringConverter<Double> converter;
-
-	private boolean integer;        // if integer is true, percent is false, both can be false.
-
-	private boolean percent;        // if percent is true, integer is false, both can be false
-									// for a regular double with no % symbol.
+	private boolean integer;
+	private boolean percent;
+	private String decimalStringFormat;
 
 	public IntegerOrPercentTableCell() {
-		this.converter = new StringConverter<Double>() {
+		new StringConverter<Double>() {
 			@Override
 			public String toString(Double object) {
 				if (object == null) {
-					return "";
+					decimalStringFormat = "";
+					return decimalStringFormat;
 				} else if (integer) {
-					DecimalFormat decimalFormat = new DecimalFormat("#,##0");
-					String formattedValue = decimalFormat.format(object);
-					return formattedValue;
+					decimalStringFormat = "#,##0";
+					DecimalFormat decimalFormat = new DecimalFormat(decimalStringFormat);
+					return decimalFormat.format(object);
 				} else if (percent) {
-					DecimalFormat decimalFormat = new DecimalFormat("#,##0.0#%");
-					String formattedValue = decimalFormat.format(object);
-					return formattedValue;
+					decimalStringFormat = "#,##0.0#%";
+					DecimalFormat decimalFormat = new DecimalFormat(decimalStringFormat);
+					return decimalFormat.format(object);
 				} else {
-					// Format the double value with commas in the thousands places,
-					// exactly 1 decimal place, and allow for an optional zero in the decimal part
-					DecimalFormat decimalFormat = new DecimalFormat("#,##0.0#");
-					String formattedValue = decimalFormat.format(object);
-					return formattedValue;
+					/**
+					 * Format the double value with commas in the thousands places,
+					 * exactly 1 decimal place, and allow for an optional zero in the decimal part
+					 */
+					decimalStringFormat = "#,##0.0#";
+					DecimalFormat decimalFormat = new DecimalFormat(decimalStringFormat);
+					return decimalFormat.format(object);
 				}
 			}
 
 			@Override
 			public Double fromString(String string) {
-				// You can implement this method if needed
 				return null;
 			}
 		};
 	}
-
-	public boolean toggleInteger() {
-		return setInteger(!integer);
-	}
-
-	public boolean togglePercent() {
-		return setPercent(!percent);
-	}
-
-	public boolean isIntegerEnabled() {
+	
+	public boolean getInteger() {
 		return integer;
 	}
+	
+	public boolean getPercent() {
+		return percent;
+	}
 
+	/** 
+	 * if integer is true, percent is false, 
+	 * both can be false
+	 * both can NOT be true
+	 * for a regular double with no % symbol.
+	 */
 	public boolean setInteger(boolean integer) {
 		this.integer = integer;
 		if (integer) {
 			this.percent = false;
 		}
 		return integer;
+
 	}
 
-	public boolean isPercentEnabled() {
-		return percent;
-	}
-
+	/** 
+	 * if percent is true, integer is false, 
+	 * both can be false
+	 * both can NOT be true
+	 * 
+	 */
 	public boolean setPercent(boolean percent) {
 		this.percent = percent;
 		if (percent) {
 			this.integer = false;
 		}
 		return percent;
+	}
+	
+	public boolean toggleInteger() {
+		return setInteger(!integer);
+	}
+
+	public boolean togglePercent() {
+		return setPercent(!percent);
 	}
 }

@@ -8,6 +8,8 @@ public class DoubleTableCell<S> extends TableCell<S, Double> {
 
 	private final StringConverter<Double> converter;
 
+	protected String decimalStringFormat;
+
 	public DoubleTableCell() {
 		this.converter = new StringConverter<Double>() {
 			@Override
@@ -15,17 +17,18 @@ public class DoubleTableCell<S> extends TableCell<S, Double> {
 				if (object == null) {
 					return "";
 				} else {
-					// Format the double value with commas in the thousands places,
-					// exactly 1 decimal place, and allow for an optional zero in the decimal part
-					DecimalFormat decimalFormat = new DecimalFormat("#,##0.0#");
-					String formattedValue = decimalFormat.format(object);
-					return formattedValue;
+					/**
+					 * exactly 1 decimal place, and allow for an optional zero in the decimal part
+					 * Format the double value with commas in the thousands places,
+					 */
+					decimalStringFormat = "#,##0.0#";
+					DecimalFormat decimalFormat = new DecimalFormat(decimalStringFormat);
+					return decimalFormat.format(object);
 				}
 			}
 
 			@Override
 			public Double fromString(String string) {
-				// You can implement this method if needed
 				return null;
 			}
 		};
