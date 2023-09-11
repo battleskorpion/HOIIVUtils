@@ -15,17 +15,12 @@ public class MessagePopupWindow extends HOIUtilsWindow {
 	@FXML public Label messageLabel;
 	@FXML public Button closeButton;
 
-	public String message;
+	String message;
 	
 
 	public MessagePopupWindow() {
-		fxmlResource = "MessagePopupWindow.fxml";
-		title = "HOIIVUtils Message";
-	}
-
-	@FXML
-	void initialize() {
-
+		setFxmlResource("MessagePopupWindow.fxml");
+		setTitle("HOIIVUtils Message");
 	}
 
 	void initData(String message) {

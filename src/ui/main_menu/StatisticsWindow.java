@@ -11,8 +11,8 @@ public class StatisticsWindow extends HOIUtilsWindow{
 	@FXML public Label idWindowName;
 
 	public StatisticsWindow() {
-		fxmlResource = "StatisticsWindow.fxml";
-		title = "HOIIVUtils Statistics Window";
+		setFxmlResource("StatisticsWindow.fxml");
+		setTitle("HOIIVUtils Statistics Window");
 	}
 
 	@FXML

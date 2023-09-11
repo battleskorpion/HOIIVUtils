@@ -49,8 +49,8 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	private final ObservableList<Country> countryList;
 
 	public BuildingsByCountryWindow() {
-		fxmlResource = "BuildingsByCountryWindow.fxml";
-		title = "HOIIVUtils Buildings By Country Window";
+		setFxmlResource("BuildingsByCountryWindow.fxml");
+		setTitle("HOIIVUtils Buildings By Country Window");
 
 		countryList = Country.loadCountries();
 	}

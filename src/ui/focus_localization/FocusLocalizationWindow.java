@@ -32,8 +32,8 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
     @FXML private TableColumn<Focus, String> focusDescColumn;
 
     public FocusLocalizationWindow() {
-        fxmlResource = "FocusLocalizationWindow.fxml";
-        title = "HOIIVUtils Focus Localization";
+        setFxmlResource("FocusLocalizationWindow.fxml");
+        setTitle("HOIIVUtils Focus Localization");
     }
 
     public void handleFocusTreeFileBrowseButtonAction() {

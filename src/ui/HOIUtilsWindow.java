@@ -19,11 +19,11 @@ import java.io.File;
 import javax.swing.JOptionPane;
 
 public abstract class HOIUtilsWindow {
-	public String fxmlResource;
-	public String title = "HOIIVUtils Window";
+	protected String fxmlResource;
+	private String title = "HOIIVUtils (default title)";
 	protected String styleSheetURL = "resources/javafx_dark.css";
-	protected Stage stage;
 	protected FXMLLoader loader;
+	Stage stage;
 	
 	/**
 	 * Opens the window
@@ -145,25 +145,49 @@ public abstract class HOIUtilsWindow {
 	public static File openChooser(Node fxcomponent, Boolean ford) {
 		File theChosenOne;
 		Stage stage = (Stage) (fxcomponent.getScene().getWindow());      // .getScene() works on a Node object, which is why this function is okay to accept any Node object/descendants.
-		if (ford) {
+		if (Boolean.TRUE.equals(ford)) {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
-			File HOIIVModFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
-			if (HOIIVModFolder.exists() && HOIIVModFolder.isDirectory()) {
-				directoryChooser.setInitialDirectory(HOIIVModFolder);
+			File hoi4ModFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
+			if (hoi4ModFolder.exists() && hoi4ModFolder.isDirectory()) {
+				directoryChooser.setInitialDirectory(hoi4ModFolder);
 			} else if (Settings.DEV_MODE.enabled()) {
 				openError("Couldn't find directory/folder because it does not exist.");
 			}
 			theChosenOne = directoryChooser.showDialog(stage);
 		} else {
 			FileChooser fileChooser = new FileChooser();
-			File HOIIVFocusFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
-			if (HOIIVFocusFolder.exists() && HOIIVFocusFolder.isDirectory()) {
-				fileChooser.setInitialDirectory(HOIIVFocusFolder);
+			File hoi4FocusFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
+			if (hoi4FocusFolder.exists() && hoi4FocusFolder.isDirectory()) {
+				fileChooser.setInitialDirectory(hoi4FocusFolder);
 			} else if (Settings.DEV_MODE.enabled()) {
 				openError("Couldn't find directory/folder because it does not exist.");
 			}
 			theChosenOne = fileChooser.showOpenDialog(stage);
 		}
 		return theChosenOne;
+	}
+
+	public String getFxmlResource() {
+		return fxmlResource;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getStyleSheetURL() {
+		return styleSheetURL;
+	}
+
+	public void setFxmlResource(String fxmlResource) {
+		this.fxmlResource = fxmlResource;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setStyleSheetURL(String styleSheetURL) {
+		this.styleSheetURL = styleSheetURL;
 	}
 }
