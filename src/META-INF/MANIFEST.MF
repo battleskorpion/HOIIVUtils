@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Main-Class: Launcher
+Main-Class: hoi4utils.HOIIVUtils
 Class-Path: flatlaf-3.2.jar javafx-swt.jar javafx.web.jar javafx.base.ja
  r javafx.fxml.jar javafx.media.jar javafx.swing.jar javafx.controls.jar
   javafx.graphics.jar javafx-swt.jar javafx.web.jar javafx.base.jar java
