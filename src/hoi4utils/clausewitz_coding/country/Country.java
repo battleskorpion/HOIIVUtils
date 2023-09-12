@@ -2,7 +2,8 @@ package hoi4utils.clausewitz_coding.country;
 
 import hoi4utils.clausewitz_coding.state.State;
 import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
-import hoi4utils.clausewitz_coding.state.buildings.Resources;
+import hoi4utils.clausewitz_coding.state.resources.Resource;
+import hoi4utils.clausewitz_coding.state.resources.Resources;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -147,51 +148,52 @@ public class Country {
 	}
 
 	public int aluminum() {
-		return resources.aluminum();
+		return resources.get("aluminum").amt();
 	}
 
 	public int chromium() {
-		return resources.chromium();
+		return resources.get("chromium").amt();
 	}
 
 	public int oil() {
-		return resources.oil();
+		return resources.get("oil").amt();
 	}
 
 	public int rubber() {
-		return resources.rubber();
+		return resources.get("rubber").amt();
 	}
 
 	public int steel() {
-		return resources.steel();
+		return resources.get("steel").amt();
 	}
 
 	public int tungsten() {
-		return resources.tungsten();
+		return resources.get("tungsten").amt();
 	}
 
-	private Object tungstenPercentOfGlobal() {
-		return tungsten() / State.resourcesOfStates().tungsten();       // todo this should really be optimized and some other things later on.
+	private double tungstenPercentOfGlobal() {
+		return (double) tungsten() / State.resourcesOfStates().get("tungsten").amt();       // todo this should really be optimized and some other things later on.
+		// todo this all (getting the resources) should be done a lil differently (more generically still.)
 	}
 
-	private Object steelPercentOfGlobal() {
-		return steel() / State.resourcesOfStates().steel();
+	private double steelPercentOfGlobal() {
+		return (double) steel() / State.resourcesOfStates().get("steel").amt();
 	}
 
-	private Object rubberPercentOfGlobal() {
-		return rubber() / State.resourcesOfStates().rubber();
+	private double rubberPercentOfGlobal() {
+		return (double) rubber() / State.resourcesOfStates().get("rubber").amt();
 	}
 
-	private Object oilPercentOfGlobal() {
-		return oil() / State.resourcesOfStates().oil();
+	private double oilPercentOfGlobal() {
+		return (double) oil() / State.resourcesOfStates().get("oil").amt();
 	}
 
-	private Object chromiumPercentOfGlobal() {
-		return chromium() / State.resourcesOfStates().chromium();
+	private double chromiumPercentOfGlobal() {
+		return (double) chromium() / State.resourcesOfStates().get("chromium").amt();
 	}
 
-	private Object aluminumPercentOfGlobal() {
-		return aluminum() / State.resourcesOfStates().aluminum();
+	private double aluminumPercentOfGlobal() {
+		return (double) aluminum() / State.resourcesOfStates().get("aluminum").amt();
 	}
 
 

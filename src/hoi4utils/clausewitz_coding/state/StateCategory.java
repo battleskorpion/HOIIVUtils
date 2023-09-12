@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 /*
  * StateCategory File
+ * //todo refactor stuff here
  */
 public class StateCategory {
 	private static File state_category_folder = null;		 // set by

@@ -6,7 +6,7 @@ import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
-import hoi4utils.clausewitz_coding.state.buildings.Resources;
+import hoi4utils.clausewitz_coding.state.resources.Resources;
 import hoi4utils.clausewitz_coding.country.CountryTag;
 import java.io.File;
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
- * Loads HOI 4 State File
+/**
+ * Loads HOI4 State files, each instance represents a state as defined in "history/states"
  */
 public class State {
 	/* static */
@@ -49,12 +49,6 @@ public class State {
 		// ! todo something important
 		// int navalPorts = 0; //has a province location
 		int airfields = 0;
-		int aluminum = 0;
-		int chromium = 0;
-		int oil = 0;
-		int rubber = 0;
-		int steel = 0;
-		int tungsten = 0;
 
 		/* parse state data */
 		Parser stateParser = new Parser(stateFile);
@@ -117,36 +111,11 @@ public class State {
 			}
 		}
 
-		/* resources */
-		// aluminum (aluminium bri'ish spelling)
-		if (stateParser.find("aluminium") != null) {
-			aluminum = (int) stateParser.find("aluminium").getDoubleValue();
-		}
-		// chromium
-		if (stateParser.find("chromium") != null) {
-			chromium = (int) stateParser.find("chromium").getDoubleValue();
-		}
-		// rubber
-		if (stateParser.find("rubber") != null) {
-			rubber = (int) stateParser.find("rubber").getDoubleValue();
-		}
-		// oil
-		if (stateParser.find("oil") != null) {
-			oil = (int) stateParser.find("oil").getDoubleValue();
-		}
-		// steel
-		if (stateParser.find("steel") != null) {
-			steel = (int) stateParser.find("steel").getDoubleValue();
-		}
-		// tungsten
-		if (stateParser.find("tungsten") != null) {
-			tungsten = (int) stateParser.find("tungsten").getDoubleValue();
-		}
+		resourcesData = findStateResources(stateParser);
 
 		// data record
 		stateInfrastructure = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories,
 				dockyards, 0, airfields);
-		resourcesData = new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
 
 		// add to states list
 		if (addToStatesList) {
@@ -213,24 +182,21 @@ public class State {
 	}
 
 	public static Resources resourcesOfStates(ArrayList<State> states) {
-		int aluminum = 0;
-		int chromium = 0;
-		int oil = 0;
-		int rubber = 0;
-		int steel = 0;
-		int tungsten = 0;
+		Resources resourcesOfStates = new Resources();
+//		int aluminum = 0;
+//		int chromium = 0;
+//		int oil = 0;
+//		int rubber = 0;
+//		int steel = 0;
+//		int tungsten = 0;
 
 		for (State state : states) {
 			Resources resources = state.getResources();
-			aluminum += resources.aluminum();
-			chromium += resources.chromium();
-			oil += resources.oil();
-			rubber += resources.rubber();
-			steel += resources.steel();
-			tungsten += resources.tungsten();
+			resourcesOfStates.add(resources);
 		}
 
-		return new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
+		//return new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
+		return resourcesOfStates;
 	}
 
 	public static Resources resourcesOfStates() {
@@ -311,6 +277,43 @@ public class State {
 
 		System.out.println("Tried to delete state represented by file: " + "\n\t" + file + "\n\t"
 				+ "but state not found in states list");
+	}
+
+	public Resources findStateResources(Parser stateParser) {
+		int aluminum = 0;
+		int chromium = 0;
+		int oil = 0;
+		int rubber = 0;
+		int steel = 0;
+		int tungsten = 0;
+
+		/* resources */
+		// aluminum (aluminium bri'ish spelling)
+		if (stateParser.find("aluminium") != null) {
+			aluminum = (int) stateParser.find("aluminium").getDoubleValue();
+		}
+		// chromium
+		if (stateParser.find("chromium") != null) {
+			chromium = (int) stateParser.find("chromium").getDoubleValue();
+		}
+		// rubber
+		if (stateParser.find("rubber") != null) {
+			rubber = (int) stateParser.find("rubber").getDoubleValue();
+		}
+		// oil
+		if (stateParser.find("oil") != null) {
+			oil = (int) stateParser.find("oil").getDoubleValue();
+		}
+		// steel
+		if (stateParser.find("steel") != null) {
+			steel = (int) stateParser.find("steel").getDoubleValue();
+		}
+		// tungsten
+		if (stateParser.find("tungsten") != null) {
+			tungsten = (int) stateParser.find("tungsten").getDoubleValue();
+		}
+
+		return new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
 	}
 
 	public static List<Infrastructure> infrastructureOfCountries() {
