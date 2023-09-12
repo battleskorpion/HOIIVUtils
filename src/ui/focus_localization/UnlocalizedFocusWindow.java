@@ -11,8 +11,8 @@ public class UnlocalizedFocusWindow extends HOIUtilsWindow {
 	@FXML public Label idWindowName;
 
 	public UnlocalizedFocusWindow() {
-		fxmlResource = "UnlocalizedFocusWindow.fxml";
-		title = "HOIIVUtils Unlocalized Focus Window";
+		setFxmlResource("UnlocalizedFocusWindow.fxml");
+		setTitle("HOIIVUtils Unlocalized Focus Window");
 	}
 
 	@FXML

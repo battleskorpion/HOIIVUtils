@@ -12,8 +12,8 @@ public class InterfaceFileListWindow extends HOIUtilsWindow {
 	@FXML public Label idWindowName;
 
 	public InterfaceFileListWindow() {
-		fxmlResource = "InterfaceFileListWindow.fxml";
-		title = "HOIIVUtils Interface File List Window";
+		setFxmlResource("InterfaceFileListWindow.fxml");
+		setTitle("HOIIVUtils Interface File List Window");
 	}
 
 	@FXML

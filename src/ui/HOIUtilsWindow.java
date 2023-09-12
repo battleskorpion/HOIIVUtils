@@ -1,26 +1,34 @@
 package ui;
 
-import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import static hoi4utils.Settings.PREFERRED_SCREEN;
 
 import java.io.File;
 
 import javax.swing.JOptionPane;
 
 public abstract class HOIUtilsWindow {
-	public String fxmlResource;
-	public String title = "HOIIVUtils Window";
-	protected String styleSheetURL = "resources/javafx_dark.css";
-	protected Stage stage;
+	private String fxmlResource;
+	private String title = "HOIIVUtils (default title)";
+	private String styleSheetURL = "resources/javafx_dark.css";
+	/**
+	 * Allows windows to get the controller
+	 */
 	protected FXMLLoader loader;
-
+	
+	Stage stage;
+	
 	/**
 	 * Opens the window
 	 */
@@ -29,7 +37,7 @@ public abstract class HOIUtilsWindow {
 			if (stage != null) {
 				stage.show();
 			} else if (fxmlResource == null) {
-				openError(".fxml resource null.");
+				openError("This Stage's FXML Resource Doesn't exsist, Window Title: " + title);
 			} else {
 				loader = new FXMLLoader(
 						getClass().getResource(
@@ -37,10 +45,10 @@ public abstract class HOIUtilsWindow {
 						)
 				);
 
-				Stage stage = new Stage();
+				Stage launchStage = new Stage();
 				Scene scene = new Scene(loader.load());
-				stage.setScene(scene);
-				stage.setTitle(title);
+				launchStage.setScene(scene);
+				launchStage.setTitle(title);
 
 				/* style */
 				if (Settings.DEV_MODE.enabled()) {
@@ -48,11 +56,11 @@ public abstract class HOIUtilsWindow {
 				}
 				scene.getStylesheets().add(styleSheetURL);
 
-				HOIIVUtils.decideScreen(stage);
-				stage.show();
+				HOIUtilsWindow.decideScreen(launchStage);
+				launchStage.show();
 			}
 		} catch (Exception exception) {
-			openError(exception);
+			exception.printStackTrace();
 		}
 	}
 
@@ -64,6 +72,31 @@ public abstract class HOIUtilsWindow {
 	public void open(String fxmlResource, String title) {
 		this.fxmlResource = fxmlResource;
 		this.title = title;
+	}
+
+	/**
+	 * 
+	 * @param stage
+	 */
+	public static void decideScreen(Stage stage) {
+		Integer preferredScreen = (Integer) PREFERRED_SCREEN.getSetting();
+		ObservableList<Screen> screens = Screen.getScreens();
+		if (preferredScreen > screens.size() - 1) {
+			if (Settings.DEV_MODE.enabled()) {
+				System.err.println( "Preferred screen does not exist, resorting to defaults.");
+			}
+			return;
+		}
+		Screen screen = screens.get(preferredScreen);
+		if (screen == null) {
+			if (Settings.DEV_MODE.enabled()) {
+				System.err.println( "Preferred screen is null error, resorting to defaults.");
+			}
+			return;
+		}
+		Rectangle2D bounds = screen.getVisualBounds();
+		stage.setX(bounds.getMinX() + 200);
+		stage.setY(bounds.getMinY() + 200);
 	}
 
 	public static void openError(Exception exception) {
@@ -116,25 +149,49 @@ public abstract class HOIUtilsWindow {
 	public static File openChooser(Node fxcomponent, Boolean ford) {
 		File theChosenOne;
 		Stage stage = (Stage) (fxcomponent.getScene().getWindow());      // .getScene() works on a Node object, which is why this function is okay to accept any Node object/descendants.
-		if (ford) {
+		if (Boolean.TRUE.equals(ford)) {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
-			File HOIIVModFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
-			if (HOIIVModFolder.exists() && HOIIVModFolder.isDirectory()) {
-				directoryChooser.setInitialDirectory(HOIIVModFolder);
+			File hoi4ModFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
+			if (hoi4ModFolder.exists() && hoi4ModFolder.isDirectory()) {
+				directoryChooser.setInitialDirectory(hoi4ModFolder);
 			} else if (Settings.DEV_MODE.enabled()) {
 				openError("Couldn't find directory/folder because it does not exist.");
 			}
 			theChosenOne = directoryChooser.showDialog(stage);
 		} else {
 			FileChooser fileChooser = new FileChooser();
-			File HOIIVFocusFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
-			if (HOIIVFocusFolder.exists() && HOIIVFocusFolder.isDirectory()) {
-				fileChooser.setInitialDirectory(HOIIVFocusFolder);
+			File hoi4FocusFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
+			if (hoi4FocusFolder.exists() && hoi4FocusFolder.isDirectory()) {
+				fileChooser.setInitialDirectory(hoi4FocusFolder);
 			} else if (Settings.DEV_MODE.enabled()) {
 				openError("Couldn't find directory/folder because it does not exist.");
 			}
 			theChosenOne = fileChooser.showOpenDialog(stage);
 		}
 		return theChosenOne;
+	}
+
+	public String getFxmlResource() {
+		return fxmlResource;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getStyleSheetURL() {
+		return styleSheetURL;
+	}
+
+	public void setFxmlResource(String fxmlResource) {
+		this.fxmlResource = fxmlResource;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setStyleSheetURL(String styleSheetURL) {
+		this.styleSheetURL = styleSheetURL;
 	}
 }

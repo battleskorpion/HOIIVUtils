@@ -12,11 +12,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
-import ui.DoubleTableCell;
 import ui.HOIUtilsWindow;
-import ui.IntegerOrPercentTableCell;
+import ui.table_data.DoubleTableCell;
+import ui.table_data.IntegerOrPercentTableCell;
 
-import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.function.Function;
 
@@ -50,8 +49,8 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	private final ObservableList<Country> countryList;
 
 	public BuildingsByCountryWindow() {
-		fxmlResource = "BuildingsByCountryWindow.fxml";
-		title = "HOIIVUtils Buildings By Country Window";
+		setFxmlResource("BuildingsByCountryWindow.fxml");
+		setTitle("HOIIVUtils Buildings By Country Window");
 
 		countryList = Country.loadCountries();
 	}

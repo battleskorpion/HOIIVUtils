@@ -7,8 +7,10 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Scanner;
-/*
- * HOI 4 Util Properties File
+
+/**
+ * HOIIVUtil Properties File
+ * 
  */
 public class SettingsManager {
 
@@ -29,7 +31,7 @@ public class SettingsManager {
 		readSettings();
 	}
 
-	public SettingsManager(HashMap<Settings, String> settings) throws IOException {
+	public SettingsManager(HashMap<Settings, String> settings) throws IOException { 
 		String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
 		String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
 		new File(hoi4UtilsPropertiesPath).mkdir();

@@ -1,6 +1,7 @@
 package hoi4utils.clausewitz_coding.idea;
 
 import hoi4utils.clausewitz_coding.country.CountryTags;
+import hoi4utils.englishSuperDictionary;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.clausewitz_coding.localization.LocalizationFile;
 import java.io.*;
@@ -30,7 +31,7 @@ public class FixIdea extends HOIIVUtils {
 					i+=3;
 				}
 
-				idea_loc = titleCapitalize(idea.ideaID.substring(i).replaceAll("_+", " ").trim()); // regex
+				idea_loc = englishSuperDictionary.titleCapitalize(idea.ideaID.substring(i).replaceAll("_+", " ").trim()); // regex
 				localization.setLocalization(idea.ideaID, idea_loc);
 
 //				idea_loc = idea + loc_key + " ";

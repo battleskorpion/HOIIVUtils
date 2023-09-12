@@ -1,6 +1,7 @@
 package ui.main_menu;
 
 import ui.HOIUtilsWindow;
+import hoi4utils.HOIIVFile;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import javafx.application.Application;
@@ -24,9 +25,9 @@ import static hoi4utils.Settings.MOD_PATH;
  * SettingsWindow is the window and controller for the program settings
  */
 public class SettingsWindow extends Application {
-	public final String fxmlResource = "SettingsWindow.fxml";
-	final String title = "HOIIVUtils Settings";
-	final String styleSheetURL = "resources/javafx_dark.css";
+	String fxmlResource = "SettingsWindow.fxml";
+	String title = "HOIIVUtils Settings";
+	String styleSheetURL = "resources/javafx_dark.css";
 	Stage stage;
 
 	@FXML public Pane idPane;
@@ -42,7 +43,7 @@ public class SettingsWindow extends Application {
 	HashMap<Settings, String> tempSettings;
 
 	public SettingsWindow() {
-		tempSettings = new HashMap<>();
+		tempSettings = new HashMap<>();// we should convert this to an EnumMap with default values
 	}
 
 	@FXML
@@ -89,7 +90,7 @@ public class SettingsWindow extends Application {
 	}
 
 	public void launchSettingsWindow(String... var0) {
-		super.launch(var0);
+		Application.launch(var0);
 	}
 
 	public void includeVersion() {
@@ -98,7 +99,7 @@ public class SettingsWindow extends Application {
 
 	public void includeSettingValues() {
 		if (!HOIIVUtils.firstTimeSetup) {
-			if ((String) MOD_PATH.getSetting() != "null") {
+			if (!"null".equals(MOD_PATH.getSetting())) {
 				idModPathTextField.setText((String) MOD_PATH.getSetting());
 			}
 			idDevModeCheckBox.setSelected(Settings.DEV_MODE.enabled());
@@ -232,7 +233,7 @@ public class SettingsWindow extends Application {
 			HOIUtilsWindow.openError("Settings failed to save.");
 			return false;
 		}
-		HOIIVUtils.createHOIIVFilePaths();
+		HOIIVFile.createHOIIVFilePaths();
 		return true;
 	}
 }

@@ -1,6 +1,6 @@
 package hoi4utils.clausewitz_coding.state;
 
-import hoi4utils.HOIIVUtils;
+import hoi4utils.HOIIVFile;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import java.io.File;
@@ -40,7 +40,7 @@ public class StateCategory {
 	}
 
 	public static void loadStateCategories() {
-		File dir = new File(HOIIVUtils.common_folder + "\\state_category");
+		File dir = new File(HOIIVFile.common_folder + "\\state_category");
 
 		if (dir.exists() && dir.isDirectory() && dir.listFiles().length > 0) {
 			state_category_folder = dir;

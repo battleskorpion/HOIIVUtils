@@ -13,7 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import ui.HOIUtilsWindow;
-import ui.MessagePopupWindow;
+import ui.message_popup.MessagePopupWindow;
 
 public class FocusLocalizationWindow extends HOIUtilsWindow {
 
@@ -32,8 +32,8 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
     @FXML private TableColumn<Focus, String> focusDescColumn;
 
     public FocusLocalizationWindow() {
-        fxmlResource = "FocusLocalizationWindow.fxml";
-        title = "HOIIVUtils Focus Localization";
+        setFxmlResource("FocusLocalizationWindow.fxml");
+        setTitle("HOIIVUtils Focus Localization");
     }
 
     public void handleFocusTreeFileBrowseButtonAction() {

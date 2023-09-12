@@ -12,8 +12,8 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 	@FXML public String className = this.getClass().getName();
 
 	public CountryBuildingsByStateWindow() {
-		fxmlResource = className + ".fxml";
-		title = "HOIIVUtils Buildings By Country Window";
+		setFxmlResource(className + ".fxml");
+		setTitle("HOIIVUtils Buildings By Country Window");
 	}
 
 	@FXML
@@ -197,7 +197,7 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 		{
 			public void mousePressed(MouseEvent e)
 			{
-//				System.out.println("pressed");
+//				logger.log("pressed");
 			}
 
 			public void mouseReleased(MouseEvent e)
@@ -233,7 +233,7 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 					if (stateDirWatcher.listenerPerformAction == 0) {
 						refreshStateBuildingsTable();
 					} else {
-						System.out.println("Warning: refresh table not performed");
+						logger.log("Warning: refresh table not performed");
 					}
 				});
 			}
@@ -251,7 +251,7 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 					if (stateDirWatcher.listenerPerformAction == 0) {
 						refreshStateBuildingsTable();
 					} else {
-						System.out.println("Warning: refresh table not performed");
+						logger.log("Warning: refresh table not performed");
 					}
 				});
 			}
@@ -269,7 +269,7 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 					if (stateDirWatcher.listenerPerformAction == 0) {
 						refreshStateBuildingsTable();
 					} else {
-						System.out.println("Warning: refresh table not performed");
+						logger.log("Warning: refresh table not performed");
 					}
 				});
 			}
@@ -313,7 +313,7 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 
 	private void refreshStateBuildingsTable() {
 		ArrayList<State> stateList = State.ownedStatesOfCountry(countryTag);
-		System.out.println("Number of states in " + countryTag + ": " + stateList.size());
+		logger.log("Number of states in " + countryTag + ": " + stateList.size());
 
 		stateBuildingsTableModel.getDataVector().removeAllElements();
 		stateBuildingsTableModel.setRowCount(stateList.size());

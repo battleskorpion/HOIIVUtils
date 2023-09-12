@@ -11,8 +11,8 @@ public class CustomTooltipWindow extends HOIUtilsWindow {
 	@FXML public Label idWindowName;
 
 	public CustomTooltipWindow() {
-		fxmlResource = "CustomTooltipWindow.fxml";
-		title = "HOIIVUtils Custom ToolTip Localization Window";
+		setFxmlResource("CustomTooltipWindow.fxml");
+		setTitle("HOIIVUtils Custom ToolTip Localization Window");
 	}
 
 	@FXML
