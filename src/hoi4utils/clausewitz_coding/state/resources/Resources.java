@@ -45,10 +45,17 @@ public class Resources {        //todo extens collection or smthing maybe for it
 	}
 
 	public void add(Resources addtl) {
-		for (int i = 0; i < addtl.numUniqueResources(); i++) {
-			//add()
+		// Iterate addtl and update the current resources
+		for (Resource r : addtl.resources) {
+			if (containsResource(r)) {
+				// Resource with the same identifier exists, update amt
+				Resource existingResource = get(r.identifier());
+				existingResource.setAmt(existingResource.amt() + r.amt());
+			} else {
+				// Resource doesn't exist, add it
+				resources.add(new Resource(r));
+			}
 		}
-
 	}
 
 	private boolean containsResource(Resource resource) {

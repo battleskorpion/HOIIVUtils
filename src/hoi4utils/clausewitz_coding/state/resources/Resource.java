@@ -27,6 +27,10 @@ public class Resource {
 		identifierCounter %= numResourceIdentifiers();
 	}
 
+	public Resource(Resource r) {
+		this(r.identifier, r.amt);
+	}
+
 	private static void setResourceIdentifiers(String[] identifiers) {
 		Resource.resourceIdentifiers = identifiers;
 	}

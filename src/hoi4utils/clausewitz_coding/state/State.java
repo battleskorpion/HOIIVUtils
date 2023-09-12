@@ -289,7 +289,7 @@ public class State {
 
 		/* resources */
 		// aluminum (aluminium bri'ish spelling)
-		if (stateParser.find("aluminium") != null) {
+		if (stateParser.find("aluminium") != null) {        // ! todo always null
 			aluminum = (int) stateParser.find("aluminium").getDoubleValue();
 		}
 		// chromium
@@ -333,13 +333,13 @@ public class State {
 
 	public static List<Resources> resourcesOfCountries() {
 		List<CountryTag> countryList = CountryTags.getCountryTags();
-		List<Resources> resourcesInfrastructureList = new ArrayList<>();
+		List<Resources> countriesResourcesList = new ArrayList<>();
 
 		for (CountryTag tag : countryList) {
-			resourcesInfrastructureList.add(resourcesOfCountry(tag));
+			countriesResourcesList.add(resourcesOfCountry(tag));
 		}
 
-		return resourcesInfrastructureList;
+		return countriesResourcesList;
 	}
 
 	public static Resources resourcesOfCountry(CountryTag tag) {
