@@ -13,8 +13,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import ui.HOIUtilsWindow;
-import ui.table_data.DoubleTableCell;
-import ui.table_data.IntegerOrPercentTableCell;
+import ui.javafx.table.DoubleTableCell;
+import ui.javafx.table.IntegerOrPercentTableCell;
 
 import java.util.List;
 import java.util.function.Function;
