@@ -54,7 +54,7 @@ public class HOIIVFile {
 	* @param stateFiles The directory containing state files.
 	* @throws IOException If an I/O error occurs.
 	*/
-	public static void watchStateFiles(File stateFiles) throws IOException {
+	public static void watchStateFiles(File stateFiles) {
 		if (stateFiles == null || !stateFiles.exists() || !stateFiles.isDirectory()) {
 			System.err.println("State dir does not exist or is not a directory: " + stateFiles);
 			return;
