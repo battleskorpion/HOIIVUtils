@@ -1,15 +1,21 @@
 {
 	"recommendations": [
+		"michaelcurrin.auto-commit-msg",
 		"aaron-bond.better-comments",
+		"shengchen.vscode-checkstyle",
+		"usernamehw.errorlens",
 		"vscjava.vscode-java-pack",
 		"mhutchie.git-graph",
 		"eamodio.gitlens",
 		"visualstudioexptteam.intellicode-api-usage-examples",
+		"madhavd1.javadoc-tools",
+		"shrey150.javafx-support",
+		"uyiosa-enabulele.reopenclosedtab",
+		"bilalekrem.scenebuilderextension",
+		"jerrygoyal.shortcut-menu-bar",
+		"sonarsource.sonarlint-vscode",
 		"gruntfuggly.todo-tree",
 		"vscode-icons-team.vscode-icons",
-		"bilalekrem.scenebuilderextension",
-		"michaelcurrin.auto-commit-msg",
-		"jerrygoyal.shortcut-menu-bar",
-		"uyiosa-enabulele.reopenclosedtab"
+		"ms-vscode-remote.remote-wsl"
 	]
 }
