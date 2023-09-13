@@ -21,7 +21,11 @@ import hoi4utils.fileIO.FileListener.FileWatcher;
  */
 public class HOIIVFile {
 
-	public static String modPath = SettingsManager.get(MOD_PATH);
+	public static final File usersHome = new File(System.getProperty("user.home"));
+	public static final File usersDocuments = new File(usersHome + File.separator + "Documents");
+	public static final File usersParadoxHOIIVModFolder = new File(File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
+
+	public static final String modPath = SettingsManager.get(MOD_PATH);
 
 	public static FileWatcher stateFilesWatcher;
 
@@ -30,7 +34,6 @@ public class HOIIVFile {
 	public static File strat_region_dir;
 	public static File localization_eng_folder;
 	public static File common_folder;
-	
 
 	public static void createHOIIVFilePaths() {
 

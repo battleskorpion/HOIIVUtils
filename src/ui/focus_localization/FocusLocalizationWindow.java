@@ -2,6 +2,7 @@ package ui.focus_localization;
 
 import java.io.File;
 
+import hoi4utils.HOIIVFile;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.focus.FocusTree;
@@ -37,7 +38,9 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
     }
 
     public void handleFocusTreeFileBrowseButtonAction() {
-        File selectedFile = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false);
+        // todo replace initial with actual focus directory
+        File initialFocusDirectory = new File(HOIIVFile.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
+        File selectedFile = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false, initialFocusDirectory);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }
@@ -47,7 +50,9 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
     }
 
     public void handleFocusLocFileBrowseButtonAction() {
-        File selectedFile = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false);
+         // todo replace initial with actual focus loc directory
+        File initialFocusLocDirectory = new File(HOIIVFile.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
+        File selectedFile = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false, initialFocusLocDirectory);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }

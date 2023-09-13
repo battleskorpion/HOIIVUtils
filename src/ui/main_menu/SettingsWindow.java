@@ -175,7 +175,9 @@ public class SettingsWindow extends Application {
 	 * Saves the directory path to MOD_PATH
 	 */
 	public void handleBrowseAction() {
-		File selectedDirectory = HOIUtilsWindow.openChooser(idBrowseButton, true); // ! im making this pass any class (that is a "Node" at least, bc that makes sense, something that can go on a fxwindow I think), much welcome :D
+		File initialModPath = new File(HOIIVFile.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
+
+		File selectedDirectory = HOIUtilsWindow.openChooser(idBrowseButton, true, initialModPath); // ! im making this pass any class (that is a "Node" at least, bc that makes sense, something that can go on a fxwindow I think), much welcome :D
 		if (selectedDirectory == null) {
 			return;
 		}
