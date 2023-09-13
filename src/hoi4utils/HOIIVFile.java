@@ -30,19 +30,22 @@ public class HOIIVFile {
 	public static File strat_region_dir;
 	public static File localization_eng_folder;
 	public static File common_folder;
-	
+	public static File hoi4mods_folder;
+
 
 	public static void createHOIIVFilePaths() {
-
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(modPath);
 		}
-		
+
+		File modPathFile = new File(modPath);
+
 		common_folder = new File(modPath + "\\common");
 		states_folder = new File(modPath + "\\history\\states");
 		strat_region_dir =  new File(modPath + "\\map\\strategicregions");
 		localization_eng_folder =  new File(modPath + "\\localisation\\english");
 		focus_folder = new File(modPath + "\\common\\national_focus");
+		hoi4mods_folder = modPathFile.getParentFile();
 	}
 
 	/**

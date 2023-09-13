@@ -26,67 +26,11 @@ Lowercase = hoi4
 Capitlize = HOIIV
 
 todo:
-	Close menu window when opening hoi4utils.hoi4_settings window
-
 	Make a drop down for themes (white mode, dark mode, and system default)
-
-	Fix issue with setting window not properly saving when hitting okButton
-
-	Enable/disable intro popup (make sure to save file path)
-
-	create and implement Buildings table in Buildings By Country Window
-
-	fix crash/error when opening Buidings by Country Window
 	
 	Add multiple file paths with a plus and minus button
 
-<b> assigned todo </b>
-
-very difficult: 
-	*fully* implement ui.buildings.BuildingsByCountryWindow
-
-	- validate that each row sorter works when done(alphabetical/numerically)
-		- i saw row sorter, its where u click the up or down arrow on the column to sort the rows of that column, javafX should have this functionality like thats pretty normal. 
-	- Double.NaN should display as "N/A", not infinity symbol. 
-
-	- should be able to right click on the table, small popup window displays (not proper window, just popup)
-		example: ContextMenu class, then add menu items to it. 
-		https://stackoverflow.com/questions/20635192/how-to-create-popup-menu
-		- action listeners on the 6 different options in this popup menu
-		- each option (menu item) is a CheckMenuItem (checkbox but for the lil menu) 
-		- each option toggles between displaying as percent and normal of: 
-			aluminium, chromium, rubber, oil, steel, and tungsten. 
-		- called "Display [resource] as percent" 
-
-	- double clicking on the table, so if e is a MouseEvent then 
-	((e.getClickCount == 2) && !e.isConsumed()) 
-	should let u see the very similar CountryBuildingsByStateWindow for the 
-	country clicked on
-	adapt this code for JavaFX: 
-		// get country
-		int row = buildingsTable.rowAtPoint( e.getPoint() );
-		int modelRow = HOIIVUtils.rowToModelIndex(buildingsTable,row);
-		String country_name = (String) buildingsTableModel.getValueA(modelRow,  0);	 // column 0 - country name
-
-		CountryTag country = new CountryTag(country_name);
-
-		CountryBuildingsByStateWindow countryBuildingsByStateWindow= new	CountryBuildingsByStateWindow(country);
-		countryBuildingsByStateWindow.setVisible(true);
-
-	- reload table data ability (not button no es necessary for cool reasons, i just need a refresh function in code)
-	- keep my stateDirWatcher file listener if you can :D, or comment it out for now. 
-
-	- dont worry about the CellColorRenderer, wanna make a way better looking version of what that was doing, but with JavaFX so ya. 
-
-	BTW for data: 
-	CountryTag country = countryList.get(i);
-	Infrastructure infrastructure = State.infrastructureOfState(State.listFromCountry(country));
-	Resources resources = State.resourcesOfStates(StatelistFromCountry(country));
-	Resources resourcesAll = State.resourcesOfStates();
-	and also
-	ArrayList<CountryTag> countryList = CountryTags.list(); for countries list. 
-
-
+	check theres a parent dir called mod for the mod dir selected.
 		
 
 Useful links:

@@ -2,7 +2,10 @@ package ui.focus_localization;
 
 import java.io.File;
 
+import hoi4utils.HOIIVFile;
+import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
+import hoi4utils.SettingsManager;
 import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.focus.FocusTree;
 import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
@@ -24,12 +27,12 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
     @FXML private TextField focusLocFileTextField;
     @FXML private Button focusLocFileBrowseButton;
     @FXML private Button loadButton;
-    @FXML private FocusTree focusTree;
-    @FXML private FocusLocalizationFile focusLocFile;
     @FXML private TableView<Focus> focusListTable;
     @FXML private TableColumn<Focus, String> focusIDColumn;
     @FXML private TableColumn<Focus, String> focusNameColumn;
     @FXML private TableColumn<Focus, String> focusDescColumn;
+    private FocusTree focusTree;
+    private FocusLocalizationFile focusLocFile;
 
     public FocusLocalizationWindow() {
         setFxmlResource("FocusLocalizationWindow.fxml");
@@ -37,7 +40,8 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
     }
 
     public void handleFocusTreeFileBrowseButtonAction() {
-        File selectedFile = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false);
+        File initDir = HOIIVFile.focus_folder;
+        File selectedFile = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, initDir, false);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }
@@ -47,7 +51,8 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
     }
 
     public void handleFocusLocFileBrowseButtonAction() {
-        File selectedFile = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false);
+        File initDir = HOIIVFile.localization_eng_folder;
+        File selectedFile = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, initDir, false);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }

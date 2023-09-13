@@ -177,6 +177,7 @@ public class Country {
 	}
 
 	private double steelPercentOfGlobal() {
+		// ! states resources and everything are correct, steel() etc must probably be returning 0.
 		return (double) steel() / State.resourcesOfStates().get("steel").amt();
 	}
 
@@ -246,6 +247,7 @@ public class Country {
 	}
 
 	public static ObservableList<Country> loadCountries(List<Infrastructure> infrastructureList, List<Resources> resourcesList) {
+		// ! todo resourcesList.get(0).get([resource]).amt() is 0.
 		return loadCountries(CountryTags.getCountryTags(), infrastructureList, resourcesList);
 	}
 

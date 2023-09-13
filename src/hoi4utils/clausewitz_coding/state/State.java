@@ -181,6 +181,7 @@ public class State {
 				airfields);
 	}
 
+	// todo this is called and ran lots of times, optimize?
 	public static Resources resourcesOfStates(ArrayList<State> states) {
 		Resources resourcesOfStates = new Resources();
 //		int aluminum = 0;
@@ -196,6 +197,7 @@ public class State {
 		}
 
 		//return new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
+		System.out.println(resourcesOfStates.get("aluminum").amt());
 		return resourcesOfStates;
 	}
 

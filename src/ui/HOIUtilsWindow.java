@@ -141,28 +141,27 @@ public abstract class HOIUtilsWindow {
 	/**
 	 * Opens windows file and directory chooser
 	 * @param fxcomponent The node (javafx component) that was pressed to open the chooser, must belong to a scene
+	 * @param initialDirectory The initial directory of the file chooser, instead of the default user directory.
 	 * @param ford A quirky boolean that specifies whether you want to return a directory or file: true = return directory, false = return file
 	 * @return theChosenOne, It is up to the the page to handle what you do if the user returns a null
 	 * @see File
 	 * @see Node
 	 */
-	public static File openChooser(Node fxcomponent, Boolean ford) {
+	public static File openChooser(Node fxcomponent, File initialDirectory, Boolean ford) {
 		File theChosenOne;
 		Stage stage = (Stage) (fxcomponent.getScene().getWindow());      // .getScene() works on a Node object, which is why this function is okay to accept any Node object/descendants.
 		if (Boolean.TRUE.equals(ford)) {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
-			File hoi4ModFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
-			if (hoi4ModFolder.exists() && hoi4ModFolder.isDirectory()) {
-				directoryChooser.setInitialDirectory(hoi4ModFolder);
+			if (initialDirectory.exists() && initialDirectory.isDirectory()) {
+				directoryChooser.setInitialDirectory(initialDirectory);
 			} else if (Settings.DEV_MODE.enabled()) {
 				openError("Couldn't find directory/folder because it does not exist.");
 			}
 			theChosenOne = directoryChooser.showDialog(stage);
 		} else {
 			FileChooser fileChooser = new FileChooser();
-			File hoi4FocusFolder = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
-			if (hoi4FocusFolder.exists() && hoi4FocusFolder.isDirectory()) {
-				fileChooser.setInitialDirectory(hoi4FocusFolder);
+			if (initialDirectory.exists() && initialDirectory.isDirectory()) {
+				fileChooser.setInitialDirectory(initialDirectory);
 			} else if (Settings.DEV_MODE.enabled()) {
 				openError("Couldn't find directory/folder because it does not exist.");
 			}
