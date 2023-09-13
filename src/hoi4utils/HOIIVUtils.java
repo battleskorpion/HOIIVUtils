@@ -2,7 +2,6 @@ package hoi4utils;
 
 import ui.main_menu.SettingsWindow;
 import ui.main_menu.MenuWindow;
-import hoi4utils.FirstTime;
 
 import java.io.IOException;
 
@@ -17,6 +16,7 @@ public class HOIIVUtils {
 	public static SettingsWindow settingsWindow;
 	public static MenuWindow menuWindow;
 	public static SettingsManager settings;
+
 	public static void main(String[] args) throws RuntimeException,IOException {
 		try {
 			SettingsManager.getSavedSettings();
@@ -24,7 +24,7 @@ public class HOIIVUtils {
 			throw new RuntimeException(e);
 		}
 		
-		if (Boolean.TRUE.equals(FirstTime.getIsFirstTime()) || firstTimeSetup) {
+		if (firstTimeSetup) {
 			settingsWindow = new SettingsWindow();
 			settingsWindow.launchSettingsWindow(args);
 		} else {
