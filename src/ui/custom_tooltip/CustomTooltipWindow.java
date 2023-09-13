@@ -4,18 +4,24 @@ import hoi4utils.HOIIVUtils;
 import hoi4utils.clausewitz_coding.localization.LocalizationFile;
 import hoi4utils.clausewitz_coding.tooltip.CustomTooltip;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import ui.HOIUtilsWindow;
 
+import java.awt.*;
 import java.io.File;
 
 public class CustomTooltipWindow extends HOIUtilsWindow {
 	
 	@FXML public Label idVersion;
-	@FXML public Label idWindowName;
 	@FXML public TableColumn<CustomTooltip, String> TooltipIDTableColumn;
 	@FXML public TableColumn<CustomTooltip, String> tooltipTextTableColumn;
+	@FXML public ChoiceBox<File> tooltipFileChoiceBox;
+	@FXML public ChoiceBox<File> tooltipLocalizationFileCheckBox;
+	@FXML public Button tooltipFileBrowseButton;
+	@FXML public Button tooltipLocalizationFileBrowseButton;
 	private File tooltipFile;
  	private LocalizationFile localizationFile;
  	private CustomTooltip[] customTooltips;
@@ -28,7 +34,6 @@ public class CustomTooltipWindow extends HOIUtilsWindow {
 	@FXML
 	void initialize() {
 		includeVersion();
-		idWindowName.setText("CustomTooltipWindow" + " WIP");
 	}
 
 	private void includeVersion() {
