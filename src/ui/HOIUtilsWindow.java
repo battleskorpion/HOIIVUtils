@@ -49,6 +49,7 @@ public abstract class HOIUtilsWindow {
 				Scene scene = new Scene(loader.load());
 				launchStage.setScene(scene);
 				launchStage.setTitle(title);
+				
 
 				/* style */
 				if (Settings.DEV_MODE.enabled()) {
