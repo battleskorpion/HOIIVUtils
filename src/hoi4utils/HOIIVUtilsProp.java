@@ -12,19 +12,24 @@ import java.util.Properties;
  * ! ALL HAIL DOCUMENTATION -> https://www.codejava.net/coding/reading-and-writing-configuration-for-java-application-using-properties-class
  */
 public class HOIIVUtilsProp {
-	public static final File configFile = new File(HOIIVFile.usersDocuments + File.separator + "HOIIVUtils" + File.separator + "config.properties");
-	public static final File configFolder = new File(HOIIVFile.usersDocuments + File.separator + "HOIIVUtils");
-
+	private File configFile;
+	
+	public static final String configFilePath = HOIIVFile.usersDocuments + File.separator + "HOIIVUtils" + File.separator + "config.properties";
+	public static final String configFolderPath = HOIIVFile.usersDocuments + File.separator + "HOIIVUtils";
+	
 	/**
 	 * creates the folder HOIIVUtils in Documents
-	 * todo create the config file for the Properties Class to use?
 	 *  
 	 */
-	void createHOIIVUtilsConfig() {
-		if (!configFolder.exists() || !configFolder.isDirectory()) {
-			configFolder.mkdir();
-		}
-
+	public HOIIVUtilsProp() {
+		new File(configFolderPath).mkdir();
+		File configFile = new File(configFilePath);
+		this.configFile = configFile;
+		initializeHOIIVUtilsConfig();
+	}
+	
+	public File getConfigFile() {
+		return configFile;
 	}
 
 	/**
@@ -37,12 +42,13 @@ public class HOIIVUtilsProp {
 		try {
 			Properties props = new Properties(); 
 			// todo these will setup default keys and values so add them in a list here
+			props.setProperty("MOD_PATH", null);
 			props.setProperty("DEV_MODE", "false");
 			props.setProperty("SKIP_SETTINGS", "false");
 
 			FileWriter writer = new FileWriter(configFile);
 			
-			props.store(writer, "Dev Mode, Displays dev stuff");
+			props.store(writer, "TEST123 \n TEST#@!");
 			
 			writer.close();
 		} catch (FileNotFoundException ex) {

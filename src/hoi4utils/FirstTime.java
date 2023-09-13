@@ -1,21 +1,23 @@
 package hoi4utils;
 
-public class FirstTime {
-	Boolean isFirstTime = true;
+import java.io.File;
 
+public class FirstTime {
+	private static Boolean isFirstTime = true;
+	static Boolean configExist = new File(HOIIVUtilsProp.configFilePath).exists();
+
+	private FirstTime() {
+		
+	}
 	/**
 	 * this is to make sure that when the user deletes his settings it is not perma stuck on false
 	 */
-	public Boolean getIsFirstTime() {
-		if (HOIIVUtilsProp.configFile.exists()) {
+	public static Boolean getIsFirstTime() {
+		if (Boolean.TRUE.equals(configExist)) {
 			isFirstTime = false;
 		} else {
 			isFirstTime = true;
 		}
 		return isFirstTime;
-	}
-
-	public void setIsFirstTime(Boolean isFirstTime) {
-		this.isFirstTime = isFirstTime;
 	}
 }
