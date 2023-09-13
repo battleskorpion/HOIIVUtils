@@ -4,20 +4,32 @@ import hoi4utils.clausewitz_coding.state.State;
 import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
 import hoi4utils.clausewitz_coding.state.resources.Resource;
 import hoi4utils.clausewitz_coding.state.resources.Resources;
+import hoi4utils.clausewitz_coding.technology.Technology;
+import hoi4utils.clausewitz_coding.units.OrdersOfBattle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import jdk.jfr.Percentage;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 public class Country {
 	private static final ObservableList<Country> countryList = FXCollections.observableArrayList();
 	private static final int AIRFIELD_CAPACITY_PER_LEVEL = 200;
-	CountryTag countryTag;
-	Infrastructure infrastructure;          // infrastructure of all owned states
-	Resources resources;                    // resources of all owned states
+	private CountryTag countryTag;
+	private Infrastructure infrastructure;          // infrastructure of all owned states
+	private Resources resources;                    // resources of all owned states
+	private Set<OrdersOfBattle> oob;                // set of potential orders of battles defined in history/countries file (oob)
+	private int defaultResearchSlots;               // default research slots as defined in history/countries file or similar
+
+	//private Set<CountryFlag> countryFlags;
+	private double stability;                       // stability percentage defined from 0.0-1.0
+	private double warSupport;                      // war support percentage defined from 0.0-1.0
+	private Set<Technology> startingTech;      // starting technology defined in history/countries file
+
 
 	public Country() {
 		this(CountryTag.NULL_TAG);
