@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class englishSuperDictionary {
+public class EnglishSuperDictionary {
 
 	/**
 	 * Captilizes 
@@ -21,7 +21,7 @@ public class englishSuperDictionary {
 	
 		// some vars
 		ArrayList<String> words = new ArrayList<String>(Arrays.asList(str.split(" ")));
-		HashSet<String> whitelist = englishSuperDictionary.createCapitalizationWhitelist();
+		HashSet<String> whitelist = EnglishSuperDictionary.createCapitalizationWhitelist();
 	
 		// first word always capitalized
 		if (words.get(0).length() == 1) {
@@ -40,7 +40,7 @@ public class englishSuperDictionary {
 	
 			// if not acronym (acronym = all caps already)
 			// && not on whitelist
-			if (!englishSuperDictionary.isAcronym(words.get(i)) && !(whitelist.contains(words.get(i)))) {
+			if (!EnglishSuperDictionary.isAcronym(words.get(i)) && !(whitelist.contains(words.get(i)))) {
 				if (words.get(i).length() == 1) {
 					words.set(i, "" + Character.toUpperCase(words.get(i).charAt(0)));
 				} else if (words.get(i).length() > 1) {
@@ -58,7 +58,7 @@ public class englishSuperDictionary {
 
 	static boolean isAcronym(String word) {
 		// check for acronym (all caps already)
-		int num_cap_letters = englishSuperDictionary.numCapLetters(word);
+		int num_cap_letters = EnglishSuperDictionary.numCapLetters(word);
 	
 		return num_cap_letters == word.length();
 	}
