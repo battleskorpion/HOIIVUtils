@@ -2,14 +2,18 @@ package ui.message_popup;
 
 import hoi4utils.Settings;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import ui.HOIUtilsWindow;
 
 /**
  * Generates A Message Popup Window
- * 
+ * It has a open method with a string paramater the gets the message from any HOIIVUtils sub class
+ * To send a messgae, create a Message window and pass your string through the open method
+ * * example:
+ * * // Handle the case where focusLocFile or focusTree is not properly initialized
+ * * MessagePopupWindow window = new MessagePopupWindow();
+ * * window.open("Error: Focus localization or focus tree not properly initialized.");
  */
 public class MessagePopupWindow extends HOIUtilsWindow {
 	

@@ -1,5 +1,6 @@
 package ui;
 
+import hoi4utils.HOIIVFile;
 import hoi4utils.Settings;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -49,6 +50,7 @@ public abstract class HOIUtilsWindow {
 				Scene scene = new Scene(loader.load());
 				launchStage.setScene(scene);
 				launchStage.setTitle(title);
+				
 
 				/* style */
 				if (Settings.DEV_MODE.enabled()) {
@@ -147,27 +149,40 @@ public abstract class HOIUtilsWindow {
 	 * @see File
 	 * @see Node
 	 */
-	public static File openChooser(Node fxcomponent, File initialDirectory, Boolean ford) {
+	public static File openChooser(Node fxcomponent, Boolean ford, File initialDirectory) {
 		File theChosenOne;
 		Stage stage = (Stage) (fxcomponent.getScene().getWindow());      // .getScene() works on a Node object, which is why this function is okay to accept any Node object/descendants.
 		if (Boolean.TRUE.equals(ford)) {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 			if (initialDirectory.exists() && initialDirectory.isDirectory()) {
 				directoryChooser.setInitialDirectory(initialDirectory);
-			} else if (Settings.DEV_MODE.enabled()) {
-				openError("Couldn't find directory/folder because it does not exist.");
+			} else {
+				directoryChooser.setInitialDirectory(HOIIVFile.usersDocuments);
 			}
 			theChosenOne = directoryChooser.showDialog(stage);
 		} else {
 			FileChooser fileChooser = new FileChooser();
 			if (initialDirectory.exists() && initialDirectory.isDirectory()) {
 				fileChooser.setInitialDirectory(initialDirectory);
-			} else if (Settings.DEV_MODE.enabled()) {
-				openError("Couldn't find directory/folder because it does not exist.");
+			} else {
+				fileChooser.setInitialDirectory(HOIIVFile.usersDocuments);
 			}
 			theChosenOne = fileChooser.showOpenDialog(stage);
 		}
 		return theChosenOne;
+	}
+
+	/**
+	 * Opens windows file and directory chooser
+	 * @param fxcomponent The node (javafx component) that was pressed to open the chooser, must belong to a scene
+	 * @param ford A quirky boolean that specifies whether you want to return a directory or file: true = return directory, false = return file
+	 * @return theChosenOne, It is up to the the page to handle what you do if the user returns a null
+	 * @see Node
+	 * 
+	 * For if you don't want to set a initial directory
+	 */
+	public static File openChooser(Node fxcomponent, Boolean ford) {
+		return openChooser(fxcomponent, ford, HOIIVFile.usersDocuments);
 	}
 
 	public String getFxmlResource() {

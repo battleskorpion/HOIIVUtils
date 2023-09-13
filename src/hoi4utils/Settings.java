@@ -79,7 +79,7 @@ public enum Settings {
 	 *
 	 * @param value
 	 */
-	public void setValue(Object value) {
+	void setValue(Object value) {
 		SettingsManager.settingValues.put(this, String.valueOf(value));
 		try {
 			SettingsManager.saveSettings();
@@ -103,6 +103,4 @@ public enum Settings {
 	public String toString() {
 		return null;
 	}
-
-	;
 }
