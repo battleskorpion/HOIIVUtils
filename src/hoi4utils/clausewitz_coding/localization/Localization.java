@@ -10,9 +10,10 @@ public record Localization(String ID, String text, Status status) {
 	}
 
 	public enum Status {
-		EXISTS,		 // localization already exists in a localization file (was only read into the program
+		EXISTS,		    // localization already exists in a localization file (was only read into the program
 		NEW,			// localization is new.
-		UPDATED, DEFAULT,		// localization already exists in a loc file, but this is an updated version.
+		UPDATED,        // localization already exists in a loc file, but this is an updated version.
+		DEFAULT,
 	};
 
 	public String toString() {

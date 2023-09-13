@@ -41,9 +41,9 @@ public class FocusLocalizationFile extends LocalizationFile {
 //	  System.out.println(fileBuffer);
 
 //	  FileWriter writer = new FileWriter(this, false);		// true = append
-		FileWriter writer = new FileWriter(this, false);
-		BufferedWriter BWriter = new BufferedWriter(writer);
-		PrintWriter PWriter = new PrintWriter(BWriter);				// for println syntax
+			FileWriter writer = new FileWriter(this, false);
+			BufferedWriter BWriter = new BufferedWriter(writer);
+			PrintWriter PWriter = new PrintWriter(BWriter);				// for println syntax
 
 //	  PWriter.println(language);
 
