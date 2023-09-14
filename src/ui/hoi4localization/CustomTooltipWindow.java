@@ -35,7 +35,6 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
 	public CustomTooltipWindow() {
 		setFxmlResource("CustomTooltipWindow.fxml");
 		setTitle("HOIIVUtils Custom ToolTip Localization Window");
-
 		customTooltipList = FXCollections.observableArrayList();
 	}
 

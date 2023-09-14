@@ -123,6 +123,7 @@ public abstract class HOIUtilsWindow {
 			}
 			return;
 		}
+
 		Rectangle2D bounds = screen.getVisualBounds();
 		stage.setX(bounds.getMinX() + 200);
 		stage.setY(bounds.getMinY() + 200);
