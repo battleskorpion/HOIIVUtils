@@ -3,6 +3,7 @@ package ui.hoi4localization;
 import hoi4utils.HOIIVFile;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
+import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.clausewitz_coding.localization.LocalizationFile;
 import hoi4utils.clausewitz_coding.tooltip.CustomTooltip;
 import javafx.collections.FXCollections;
@@ -13,17 +14,16 @@ import ui.HOIUtilsWindow;
 import ui.javafx.table.TableViewWindow;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
 
 public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWindow {
 	
 	@FXML public Label idVersion;
 	@FXML TableColumn<CustomTooltip, String> TooltipIDTableColumn;
 	@FXML TableColumn<CustomTooltip, String> tooltipTextTableColumn;
-	@FXML ChoiceBox<File> tooltipFileChoiceBox;
-	@FXML ChoiceBox<File> tooltipLocalizationFileCheckBox;
+	@FXML ComboBox<File> tooltipFileComboBox;
+	@FXML ComboBox<File> tooltipLocalizationFileComboBox;
 	@FXML Button tooltipFileBrowseButton;
 	@FXML Button tooltipLocalizationFileBrowseButton;
 	@FXML TableView<CustomTooltip> customTooltipTableView;
@@ -35,6 +35,8 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
 	public CustomTooltipWindow() {
 		setFxmlResource("CustomTooltipWindow.fxml");
 		setTitle("HOIIVUtils Custom ToolTip Localization Window");
+
+		customTooltipList = FXCollections.observableArrayList();
 	}
 
 	/**
@@ -44,6 +46,8 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
 	@FXML
 	void initialize() {
 		includeVersion();
+
+		/* table */
 		loadTableView(this, customTooltipTableView, customTooltipList, CustomTooltip.getDataFunctions());
 	}
 
@@ -56,38 +60,80 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
 		// none necessary;
 	}
 
+	/**
+	 * @param customTooltipList
+	 */
+	@Deprecated
 	public void setCustomTooltipList(ObservableList<CustomTooltip> customTooltipList) {
 		this.customTooltipList = customTooltipList;
 	}
 
+	/**
+	 * @param customTooltips
+	 */
+	@Deprecated
 	public void setCustomTooltipList(Collection<CustomTooltip> customTooltips) {
 		this.customTooltipList = FXCollections.observableArrayList();
-		customTooltipList.addAll(customTooltips);
+		this.customTooltipList.addAll(customTooltips);
+	}
+
+	public void updateCustomTooltipList(Collection<CustomTooltip> customTooltips) {
+		this.customTooltipList.clear();
+		this.customTooltipList.addAll(customTooltips);
 	}
 
 	public void addCustomTooltips(Collection<CustomTooltip> customTooltips) {
-		customTooltipList.addAll(customTooltips);
+		this.customTooltipList.addAll(customTooltips);
 	}
 
 	/* action handlers */
 	public void handleTooltipFileBrowseAction() {
 		File initialFocusDirectory = HOIIVFile.common_folder;
-		File selectedFile = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false, initialFocusDirectory);
+		File selectedFile = HOIUtilsWindow.openChooser(tooltipFileBrowseButton, false, initialFocusDirectory);
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(selectedFile);
 		}
 		if (selectedFile != null) {
-			focusTreeFileTextField.setText(selectedFile.getAbsolutePath());
+			tooltipFileComboBox.setValue(selectedFile); // selectedFile.getAbsolutePath()
+			tooltipFile = selectedFile;
 		}
+
+		/* load custom tooltips from selected file */
+		CustomTooltip.loadTooltips(tooltipFile);
+		ArrayList<CustomTooltip> tooltips = CustomTooltip.getTooltips();
+		if (tooltips == null) {
+			System.err.println("No custom tooltips found");
+			return;
+		}
+		updateCustomTooltipList(tooltips);
 	}
 	public void handleTooltipLocalizationFileBrowseAction() {
 		File initialFocusLocDirectory = HOIIVFile.localization_eng_folder;
-		File selectedFile = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false, initialFocusLocDirectory);
+		File selectedFile = HOIUtilsWindow.openChooser(tooltipLocalizationFileBrowseButton, false, initialFocusLocDirectory);
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(selectedFile);
 		}
 		if (selectedFile != null) {
-			focusLocFileTextField.setText(selectedFile.getAbsolutePath());
+			tooltipLocalizationFileComboBox.setValue(selectedFile); // selectedFile.getAbsolutePath()
+			localizationFile = new LocalizationFile(selectedFile);
+		}
+
+		/* load custom tooltip associated localization from selected file */
+		if (tooltipFile == null) {
+			return;
+		}
+ 		localizationFile.readLocalization();
+
+		for (CustomTooltip tooltip : customTooltipList) {
+			String tooltipID = tooltip.getID();
+			Localization tooltipLocalization = localizationFile.getLocalization(tooltipID);
+			System.out.println(tooltipLocalization);
+
+			if (tooltipLocalization != null) {
+				tooltip.setLocalization(tooltipLocalization);
+			} else {
+				tooltip.setLocalization(null);
+			}
 		}
 	}
 }

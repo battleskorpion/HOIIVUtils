@@ -15,11 +15,11 @@ public class LocalizationFile extends File {
 	protected List<Localization> localizationList;
 //	private HashMap<Integer, String> comments;
 
-	public LocalizationFile(File file) throws IOException {
+	public LocalizationFile(File file) {
 		super(file.toURI());
 
 		if (!file.getPath().endsWith(".yml")) {
-			throw new IOException("Localization files can only be of type .yml");
+			throw new IllegalArgumentException("Localization files can only be of type .yml");
 		}
 
 		localizationList = new ArrayList<>();

@@ -1,10 +1,11 @@
 package hoi4utils.clausewitz_coding.tooltip;
 
-import hoi4utils.clausewitz_coding.country.Country;
+import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -14,6 +15,7 @@ import java.util.function.Function;
 public class CustomTooltip {
 	String tooltipID;
 	public static ArrayList<CustomTooltip> tooltips;
+	private Localization localization;      // localization text for tooltip id
 
 	public CustomTooltip(String ID) {
 		this.tooltipID = ID;
@@ -35,7 +37,7 @@ public class CustomTooltip {
 		tooltips = new ArrayList<>();
 
 		if (file == null) {
-			System.err.println("File null in: " + "CustomTooltip.java -> loadTooltips()");
+			System.err.println("File null in: " + CustomTooltip.class + "-> loadTooltips()");
 			return;
 		}
 		if (!file.exists()) {
@@ -59,12 +61,12 @@ public class CustomTooltip {
 		}
 	}
 
-	public static CustomTooltip[] getTooltips() {
-		if (tooltips.size() == 0) {
+	public static ArrayList<CustomTooltip> getTooltips() {
+		if (tooltips.isEmpty()) {
 			return null;
 		}
 
-		return tooltips.toArray(new CustomTooltip[]{});
+		return tooltips;
 	}
 
 	public String toString() {
@@ -73,5 +75,9 @@ public class CustomTooltip {
 		}
 
 		return super.toString();
+	}
+
+	public void setLocalization(Localization tooltipLocalization) {
+		this.localization = tooltipLocalization;
 	}
 }

@@ -219,7 +219,7 @@ public final class FocusTree extends HOIIVUtils {
 	public File setLocalization(File locFile) {
 		try {
 			this.locFile = new LocalizationFile(locFile);
-		} catch (IOException e) {
+		} catch (IllegalArgumentException e) {
 			HOIUtilsWindow.openError(e);
 			return null;
 		}
