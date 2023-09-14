@@ -1,27 +1,36 @@
 package ui.hoi4localization;
 
+import hoi4utils.HOIIVFile;
 import hoi4utils.HOIIVUtils;
+import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.localization.LocalizationFile;
 import hoi4utils.clausewitz_coding.tooltip.CustomTooltip;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import ui.HOIUtilsWindow;
+import ui.javafx.table.TableViewWindow;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
 
-public class CustomTooltipWindow extends HOIUtilsWindow {
+public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWindow {
 	
 	@FXML public Label idVersion;
-	@FXML public TableColumn<CustomTooltip, String> TooltipIDTableColumn;
-	@FXML public TableColumn<CustomTooltip, String> tooltipTextTableColumn;
-	@FXML public ChoiceBox<File> tooltipFileChoiceBox;
-	@FXML public ChoiceBox<File> tooltipLocalizationFileCheckBox;
-	@FXML public Button tooltipFileBrowseButton;
-	@FXML public Button tooltipLocalizationFileBrowseButton;
-	@FXML public TableView<CustomTooltip> customTooltipTableView;
+	@FXML TableColumn<CustomTooltip, String> TooltipIDTableColumn;
+	@FXML TableColumn<CustomTooltip, String> tooltipTextTableColumn;
+	@FXML ChoiceBox<File> tooltipFileChoiceBox;
+	@FXML ChoiceBox<File> tooltipLocalizationFileCheckBox;
+	@FXML Button tooltipFileBrowseButton;
+	@FXML Button tooltipLocalizationFileBrowseButton;
+	@FXML TableView<CustomTooltip> customTooltipTableView;
 	private File tooltipFile;
  	private LocalizationFile localizationFile;
- 	private CustomTooltip[] customTooltips;
+
+	private ObservableList<CustomTooltip> customTooltipList;
 
 	public CustomTooltipWindow() {
 		setFxmlResource("CustomTooltipWindow.fxml");
@@ -35,29 +44,51 @@ public class CustomTooltipWindow extends HOIUtilsWindow {
 	@FXML
 	void initialize() {
 		includeVersion();
-		loadCustomTooltipTable();
+		loadTableView(this, customTooltipTableView, customTooltipList, CustomTooltip.getDataFunctions());
 	}
 
 	private void includeVersion() {
 		idVersion.setText(HOIIVUtils.hoi4utilsVersion);
 	}
 
-	private void loadCustomTooltipTable() {
-		// todo
-//		List<Function<CustomTooltip, ?>> customTooltipDataFunctions = CustomTooltip.getCountryDataFunctions(false);
-//		ObservableList<TableColumn<CustomTooltip, ?>> tableColumns = customTooltipTableView.getColumns();
-//
-//		setStateDataTableCellFactories();
-//
-//		setTableCellValueFactories(countryDataFunctions, tableColumns);
-//
-//		customTooltipTableView.setItems(countryList);       // country objects, cool! and necessary for the cell value factory,
-//		// this is giving the factories the list of objects to collect
-//		// their data from.
-//
-//		if (Settings.DEV_MODE.enabled()) {
-//			System.out.println("Loaded data of countries into state data table.");
-//		}
+	@Override
+	public void setDataTableCellFactories() {
+		// none necessary;
+	}
+
+	public void setCustomTooltipList(ObservableList<CustomTooltip> customTooltipList) {
+		this.customTooltipList = customTooltipList;
+	}
+
+	public void setCustomTooltipList(Collection<CustomTooltip> customTooltips) {
+		this.customTooltipList = FXCollections.observableArrayList();
+		customTooltipList.addAll(customTooltips);
+	}
+
+	public void addCustomTooltips(Collection<CustomTooltip> customTooltips) {
+		customTooltipList.addAll(customTooltips);
+	}
+
+	/* action handlers */
+	public void handleTooltipFileBrowseAction() {
+		File initialFocusDirectory = HOIIVFile.common_folder;
+		File selectedFile = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false, initialFocusDirectory);
+		if (Settings.DEV_MODE.enabled()) {
+			System.out.println(selectedFile);
+		}
+		if (selectedFile != null) {
+			focusTreeFileTextField.setText(selectedFile.getAbsolutePath());
+		}
+	}
+	public void handleTooltipLocalizationFileBrowseAction() {
+		File initialFocusLocDirectory = HOIIVFile.localization_eng_folder;
+		File selectedFile = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false, initialFocusLocDirectory);
+		if (Settings.DEV_MODE.enabled()) {
+			System.out.println(selectedFile);
+		}
+		if (selectedFile != null) {
+			focusLocFileTextField.setText(selectedFile.getAbsolutePath());
+		}
 	}
 }
 // 	private JPanel CustomTooltipWindowJPanel;

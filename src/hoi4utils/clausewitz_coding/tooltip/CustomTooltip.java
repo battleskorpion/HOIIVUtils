@@ -1,9 +1,13 @@
 package hoi4utils.clausewitz_coding.tooltip;
 
+import hoi4utils.clausewitz_coding.country.Country;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 /*
  * CustomTooltip File
  */
@@ -13,6 +17,14 @@ public class CustomTooltip {
 
 	public CustomTooltip(String ID) {
 		this.tooltipID = ID;
+	}
+
+	public static List<Function<CustomTooltip, ?>> getDataFunctions() {
+		List<Function<CustomTooltip, ?>> dataFunctions = new ArrayList<>(18);         // 18 for optimization, limited number of data functions.
+
+		dataFunctions.add(CustomTooltip::getID);
+
+		return dataFunctions;
 	}
 
 	public String getID() {

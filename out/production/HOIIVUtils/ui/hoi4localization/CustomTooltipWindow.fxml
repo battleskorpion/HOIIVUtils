@@ -13,7 +13,7 @@
 
 <AnchorPane prefHeight="489.0" prefWidth="596.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.hoi4localization.CustomTooltipWindow">
    <children>
-      <TableView layoutY="117.0" prefHeight="423.0" prefWidth="644.0" AnchorPane.topAnchor="130.0">
+      <TableView fx:id="customTooltipTableView" layoutY="117.0" prefHeight="423.0" prefWidth="644.0" AnchorPane.topAnchor="130.0">
         <columns>
           <TableColumn fx:id="TooltipIDTableColumn" prefWidth="123.0" text="ID" />
           <TableColumn fx:id="tooltipTextTableColumn" prefWidth="520.0" text="Text" />

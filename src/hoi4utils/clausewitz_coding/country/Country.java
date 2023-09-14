@@ -239,6 +239,8 @@ public class Country {
 	}
 
 	public static <T> List<Country> loadCountries(List<T> list) {
+		countryList.clear();
+
 		for (T item : list) {
 			countryList.add(new Country(item));
 		}
@@ -247,6 +249,8 @@ public class Country {
 	}
 
 	public static ObservableList<Country> loadCountries(List<CountryTag> countryTags, List<Infrastructure> infrastructureList, List<Resources> resourcesList) {
+		countryList.clear();
+
 		Iterator<CountryTag> countryTagsIterator = countryTags.iterator();
 		Iterator<Infrastructure> infrastructureListIterator = infrastructureList.iterator();
 		Iterator<Resources> resourcesListIterator = resourcesList.iterator();

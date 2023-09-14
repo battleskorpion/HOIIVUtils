@@ -1,25 +1,16 @@
 package ui.buildings;
 
 import hoi4utils.HOIIVUtils;
-import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.country.Country;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.util.Callback;
+import javafx.scene.control.*;
 import ui.HOIUtilsWindow;
 import ui.javafx.table.DoubleTableCell;
 import ui.javafx.table.IntegerOrPercentTableCell;
+import ui.javafx.table.TableViewWindow;
 
-import java.util.List;
-import java.util.function.Function;
-
-public class BuildingsByCountryWindow extends HOIUtilsWindow {
+public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableViewWindow {
 
 	@FXML private MenuItem idExportToExcel;
 	@FXML private CheckMenuItem idPercentageCheckMenuItem;
@@ -59,41 +50,25 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 	@FXML
 	void initialize() {
 		includeVersion();
-		loadBuildingsByCountryTable();
+		loadTableView(this, stateDataTable, countryList, Country.getCountryDataFunctions(false));
 	}
 
 	private void includeVersion() {
 		idVersionMenuItem.setText(HOIIVUtils.hoi4utilsVersion);
 	}
 
-	private void loadBuildingsByCountryTable() {
-		List<Function<Country, ?>> countryDataFunctions = Country.getCountryDataFunctions(false);
-		ObservableList<TableColumn<Country, ?>> tableColumns = stateDataTable.getColumns();
-
-		setStateDataTableCellFactories();
-
-		setTableCellValueFactories(countryDataFunctions, tableColumns);
-
-		stateDataTable.setItems(countryList);       // country objects, cool! and necessary for the cell value factory,
-													// this is giving the factories the list of objects to collect
-													// their data from.
-
-		if (Settings.DEV_MODE.enabled()) {
-			System.out.println("Loaded data of countries into state data table.");
-		}
-	}
-
 	// todo put this in hoi4window parent class or whatever
-	private <S> void setTableCellValueFactories(List<Function<S, ?>> dataFunctions, ObservableList<TableColumn<S, ?>> tableColumns) {
-		for (int i = 0; i < Math.min(dataFunctions.size(), tableColumns.size()); i++) {
-			TableColumn<S, ?> tableColumn = tableColumns.get(i);
-			Function<S, ?> dataFunction = dataFunctions.get(i);
 
-			tableColumn.setCellValueFactory(cellDataCallback(dataFunction));
-		}
+	private void updateResourcesColumnsPercentBehavior() {
+		updateColumnPercentBehavior(stateDataTableAluminiumColumn, resourcesPercent);
+		updateColumnPercentBehavior(stateDataTableChromiumColumn, resourcesPercent);
+		updateColumnPercentBehavior(stateDataTableOilColumn, resourcesPercent);
+		updateColumnPercentBehavior(stateDataTableRubberColumn, resourcesPercent);
+		updateColumnPercentBehavior(stateDataTableSteelColumn, resourcesPercent);
+		updateColumnPercentBehavior(stateDataTableTungstenColumn, resourcesPercent);
 	}
 
-	private void setStateDataTableCellFactories() {
+	public void setDataTableCellFactories() {
 		// table cell factories
 		stateDataTableCivMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		stateDataTablePopFactoryRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
@@ -107,50 +82,6 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow {
 		stateDataTableRubberColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
 		stateDataTableSteelColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
 		stateDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-	}
-
-	// todo put this in hoi4window parent class or whatever
-
-	/**
-	 *
-	 * @param propertyGetter
-	 * @return
-	 * @param <S>
-	 * @param <T>
-	 */
-	private static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(Function<S, ?> propertyGetter) {
-		return cellData -> {
-			if (Settings.DEV_MODE.enabled()) {
-				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
-			}
-			// return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue())); // ? Type safety: Unchecked cast from capture#6-of ? to TJava(16777761)
-			@SuppressWarnings("unchecked")
-			T result = (T) propertyGetter.apply(cellData.getValue());   // yap
-			return new SimpleObjectProperty<>(result);
-			// mehhhh
-		};
-	}
-
-	// Helper method to update cell behavior within a column
-	private <S> void updateColumnPercentBehavior(TableColumn<S, Double> column) {
-		column.setCellFactory(col -> {
-			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();
-			if (resourcesPercent) {
-				cell.setPercent(true);
-			} else {
-				cell.setInteger(true);
-			}
-			return cell;
-		});
-	}
-
-	private void updateResourcesColumnsPercentBehavior() {
-		updateColumnPercentBehavior(stateDataTableAluminiumColumn);
-		updateColumnPercentBehavior(stateDataTableChromiumColumn);
-		updateColumnPercentBehavior(stateDataTableOilColumn);
-		updateColumnPercentBehavior(stateDataTableRubberColumn);
-		updateColumnPercentBehavior(stateDataTableSteelColumn);
-		updateColumnPercentBehavior(stateDataTableTungstenColumn);
 	}
 
 	@FXML

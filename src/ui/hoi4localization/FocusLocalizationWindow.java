@@ -40,7 +40,6 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
     }
 
     public void handleFocusTreeFileBrowseButtonAction() {
-        // todo replace initial with actual focus directory
         File initialFocusDirectory = HOIIVFile.focus_folder;
         File selectedFile = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false, initialFocusDirectory);
         if (Settings.DEV_MODE.enabled()) {
@@ -52,7 +51,6 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
     }
 
     public void handleFocusLocFileBrowseButtonAction() {
-         // todo replace initial with actual focus loc directory
         File initialFocusLocDirectory = HOIIVFile.localization_eng_folder;
         File selectedFile = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false, initialFocusLocDirectory);
         if (Settings.DEV_MODE.enabled()) {

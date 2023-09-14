@@ -2,21 +2,30 @@ package ui;
 
 import hoi4utils.HOIIVFile;
 import hoi4utils.Settings;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import ui.javafx.table.IntegerOrPercentTableCell;
+import ui.javafx.table.TableViewWindow;
 
 import static hoi4utils.Settings.PREFERRED_SCREEN;
 
 import java.io.File;
+import java.util.List;
+import java.util.function.Function;
 
 import javax.swing.JOptionPane;
 
@@ -32,6 +41,26 @@ public abstract class HOIUtilsWindow {
 	Stage stage;
 
 	/**
+	 *
+	 * @param propertyGetter
+	 * @return
+	 * @param <S>
+	 * @param <T>
+	 */
+	private static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(Function<S, ?> propertyGetter) {
+		return cellData -> {
+			if (Settings.DEV_MODE.enabled()) {
+				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
+			}
+			// return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue())); // ? Type safety: Unchecked cast from capture#6-of ? to TJava(16777761)
+			@SuppressWarnings("unchecked")
+			T result = (T) propertyGetter.apply(cellData.getValue());   // yap
+			return new SimpleObjectProperty<>(result);
+			// mehhhh
+		};
+	}
+
+	/**
 	 * Opens the window
 	 */
 	public void open() {
@@ -41,11 +70,8 @@ public abstract class HOIUtilsWindow {
 			} else if (fxmlResource == null) {
 				openError("This Stage's FXML Resource Doesn't exsist, Window Title: " + title);
 			} else {
-				loader = new FXMLLoader(
-						getClass().getResource(
-								fxmlResource
-						)
-				);
+				loader = new FXMLLoader(getClass()
+						.getResource(fxmlResource));
 
 				Stage launchStage = new Stage();
 				Scene scene = new Scene(loader.load());
@@ -208,5 +234,46 @@ public abstract class HOIUtilsWindow {
 
 	public void setStyleSheetURL(String styleSheetURL) {
 		this.styleSheetURL = styleSheetURL;
+	}
+
+	protected <S> void loadTableView(TableViewWindow window, TableView<S> dataTable, ObservableList<S> data, List<Function<S, ?>> dataFunctions) {
+		ObservableList<TableColumn<S, ?>> tableColumns = dataTable.getColumns();
+
+		window.setDataTableCellFactories();
+
+		setTableCellValueFactories(dataFunctions, tableColumns);
+
+		dataTable.setItems(data);       // country objects, cool! and necessary for the cell value factory,
+													// this is giving the factories the list of objects to collect
+													// their data from.
+
+		if (Settings.DEV_MODE.enabled()) {
+			System.out.println("Loaded data of countries into state data table.");
+		}
+	}
+
+	// todo put this in hoi4window parent class or whatever
+	private <S> void setTableCellValueFactories(List<Function<S, ?>> dataFunctions, ObservableList<TableColumn<S, ?>> tableColumns) {
+		for (int i = 0; i < Math.min(dataFunctions.size(), tableColumns.size()); i++) {
+			TableColumn<S, ?> tableColumn = tableColumns.get(i);
+			Function<S, ?> dataFunction = dataFunctions.get(i);
+
+			tableColumn.setCellValueFactory(HOIUtilsWindow.cellDataCallback(dataFunction));
+		}
+	}
+
+	/**
+	 * 	Update cell behavior within a column
+	 */
+	protected <S, T extends TableCell<S, Double>> void updateColumnPercentBehavior(TableColumn<S, Double> column, boolean resourcesPercent) {
+		column.setCellFactory(col -> {
+			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();
+			if (resourcesPercent) {
+				cell.setPercent(true);
+			} else {
+				cell.setInteger(true);
+			}
+			return cell;
+		});
 	}
 }
