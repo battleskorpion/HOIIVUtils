@@ -3,6 +3,7 @@ package ui;
 import hoi4utils.HOIIVFile;
 import hoi4utils.Settings;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -29,7 +30,7 @@ public abstract class HOIUtilsWindow {
 	protected FXMLLoader loader;
 	
 	Stage stage;
-	
+
 	/**
 	 * Opens the window
 	 */

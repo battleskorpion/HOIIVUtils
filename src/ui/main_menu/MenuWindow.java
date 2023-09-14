@@ -10,9 +10,9 @@ import javafx.stage.Stage;
 import ui.HOIUtilsWindow;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.clausewitz_gfx.InterfaceFileListWindow;
-import ui.custom_tooltip.CustomTooltipWindow;
-import ui.focus_localization.FocusLocalizationWindow;
-import ui.focus_localization.UnlocalizedFocusWindow;
+import ui.hoi4localization.CustomTooltipWindow;
+import ui.hoi4localization.FocusLocalizationWindow;
+import ui.hoi4localization.UnlocalizedFocusWindow;
 
 public class MenuWindow extends Application{
 	String fxmlResource = "MenuWindow.fxml";

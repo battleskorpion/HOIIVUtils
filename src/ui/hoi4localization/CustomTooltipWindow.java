@@ -1,16 +1,12 @@
-package ui.custom_tooltip;
+package ui.hoi4localization;
 
 import hoi4utils.HOIIVUtils;
 import hoi4utils.clausewitz_coding.localization.LocalizationFile;
 import hoi4utils.clausewitz_coding.tooltip.CustomTooltip;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.*;
 import ui.HOIUtilsWindow;
 
-import java.awt.*;
 import java.io.File;
 
 public class CustomTooltipWindow extends HOIUtilsWindow {
@@ -22,6 +18,7 @@ public class CustomTooltipWindow extends HOIUtilsWindow {
 	@FXML public ChoiceBox<File> tooltipLocalizationFileCheckBox;
 	@FXML public Button tooltipFileBrowseButton;
 	@FXML public Button tooltipLocalizationFileBrowseButton;
+	@FXML public TableView<CustomTooltip> customTooltipTableView;
 	private File tooltipFile;
  	private LocalizationFile localizationFile;
  	private CustomTooltip[] customTooltips;
@@ -31,13 +28,36 @@ public class CustomTooltipWindow extends HOIUtilsWindow {
 		setTitle("HOIIVUtils Custom ToolTip Localization Window");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 */
 	@FXML
 	void initialize() {
 		includeVersion();
+		loadCustomTooltipTable();
 	}
 
 	private void includeVersion() {
 		idVersion.setText(HOIIVUtils.hoi4utilsVersion);
+	}
+
+	private void loadCustomTooltipTable() {
+		// todo
+//		List<Function<CustomTooltip, ?>> customTooltipDataFunctions = CustomTooltip.getCountryDataFunctions(false);
+//		ObservableList<TableColumn<CustomTooltip, ?>> tableColumns = customTooltipTableView.getColumns();
+//
+//		setStateDataTableCellFactories();
+//
+//		setTableCellValueFactories(countryDataFunctions, tableColumns);
+//
+//		customTooltipTableView.setItems(countryList);       // country objects, cool! and necessary for the cell value factory,
+//		// this is giving the factories the list of objects to collect
+//		// their data from.
+//
+//		if (Settings.DEV_MODE.enabled()) {
+//			System.out.println("Loaded data of countries into state data table.");
+//		}
 	}
 }
 // 	private JPanel CustomTooltipWindowJPanel;

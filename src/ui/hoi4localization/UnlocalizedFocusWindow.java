@@ -1,4 +1,4 @@
-package ui.focus_localization;
+package ui.hoi4localization;
 
 import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;

@@ -1,4 +1,4 @@
-package ui.focus_localization;
+package ui.hoi4localization;
 
 import java.io.File;
 

@@ -11,7 +11,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="489.0" prefWidth="596.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.custom_tooltip.CustomTooltipWindow">
+<AnchorPane prefHeight="489.0" prefWidth="596.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.hoi4localization.CustomTooltipWindow">
    <children>
       <TableView layoutY="117.0" prefHeight="423.0" prefWidth="644.0" AnchorPane.topAnchor="130.0">
         <columns>
