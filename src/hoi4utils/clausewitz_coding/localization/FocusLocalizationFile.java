@@ -13,7 +13,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 
 	protected List<Localization[]> focusLocalizationList;
 
-	public FocusLocalizationFile(File file) throws IOException {
+	public FocusLocalizationFile(File file) throws IllegalArgumentException {
 		super(file);
 
 		focusLocalizationList = new ArrayList<>();

@@ -1,9 +1,12 @@
 package ui.hoi4localization;
 
 import java.io.File;
+import java.io.IOException;
 
 import hoi4utils.HOIIVFile;
+import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
+import hoi4utils.clausewitz_coding.focus.FixFocus;
 import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.focus.FocusTree;
 import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
@@ -45,6 +48,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
         }
         if (selectedFile != null) {
             focusTreeFileTextField.setText(selectedFile.getAbsolutePath());
+            focusTree = new FocusTree(selectedFile);
         }
     }
 
@@ -56,6 +60,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
         }
         if (selectedFile != null) {
             focusLocFileTextField.setText(selectedFile.getAbsolutePath());
+            focusLocFile = new FocusLocalizationFile(selectedFile);
         }
     }
 
@@ -65,6 +70,25 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
             MessagePopupWindow window = new MessagePopupWindow();
             window.open("Error: Focus localization or focus tree not properly initialized.");
         }
-		// Add further handling logic here
+		// Add further handling logic here // todo remove da comment when done
+
+        // todo temp lazy flow control
+        if (focusLocFile != null && focusTree != null) {
+//            for (Focus focus : focusTree) {     // focusTree make implement Iterable or whatever
+//                focusTree.setLocalization()
+//            }
+
+            /* load focus loc */
+            focusLocFile.readLocalization();
+            try {
+                int numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
+                // todo didnt happe?
+                numLocAddedLabel.setText(numLocAddedLabel.getText()
+                        .replace("x", String.valueOf(numLocalizedFocuses)));
+            } catch (IOException e) {
+                openError(e);
+                return;
+            }
+        }
     }
 }

@@ -124,16 +124,18 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
  		localizationFile.readLocalization();
 
 		for (CustomTooltip tooltip : customTooltipList) {
-			String tooltipID = tooltip.getID();
+			String tooltipID = tooltip.id();
 			Localization tooltipLocalization = localizationFile.getLocalization(tooltipID);
+			if (tooltipLocalization == null) {
+				return;
+			}
 			System.out.println(tooltipLocalization);
 
-			if (tooltipLocalization != null) {
-				tooltip.setLocalization(tooltipLocalization);
-			} else {
-				tooltip.setLocalization(null);
-			}
+			tooltip.setLocalization(tooltipLocalization);
 		}
+
+		customTooltipTableView.refresh();       // this is important to ensure the table is refreshed when the list data
+												// is modified, otherwise the localization won't appear in the table.
 	}
 }
 // 	private JPanel CustomTooltipWindowJPanel;

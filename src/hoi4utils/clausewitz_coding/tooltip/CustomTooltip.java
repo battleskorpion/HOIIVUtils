@@ -5,7 +5,6 @@ import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -22,14 +21,15 @@ public class CustomTooltip {
 	}
 
 	public static List<Function<CustomTooltip, ?>> getDataFunctions() {
-		List<Function<CustomTooltip, ?>> dataFunctions = new ArrayList<>(18);         // 18 for optimization, limited number of data functions.
+		List<Function<CustomTooltip, ?>> dataFunctions = new ArrayList<>(2);         // 2 for optimization, limited number of data functions.
 
-		dataFunctions.add(CustomTooltip::getID);
+		dataFunctions.add(CustomTooltip::id);
+		dataFunctions.add(CustomTooltip::getTooltipText);
 
 		return dataFunctions;
 	}
 
-	public String getID() {
+	public String id() {
 		return tooltipID;
 	}
 
@@ -48,11 +48,11 @@ public class CustomTooltip {
 		}
 
 		Parser parser = new Parser(file);
-		Expression[] tooltipExpressions = parser.expression().getAll("custom_trigger_tooltip");
+		Expression[] tooltipExpressions = parser.findAll("custom_trigger_tooltip"); // prev = parser.expression().getAll("custom_trigger_tooltip");
 		for (Expression exp : tooltipExpressions) {
-			System.out.println("expression: " + exp);
+//			System.out.println("expression: " + exp);
 			Expression tooltipExp = exp.getSubexpression("tooltip");
-			System.out.println("subexpression: " + tooltipExp);
+//			System.out.println("subexpression: " + tooltipExp);
 			String expID = tooltipExp.getText();
 			if (expID == null) {
 				continue;
@@ -79,5 +79,16 @@ public class CustomTooltip {
 
 	public void setLocalization(Localization tooltipLocalization) {
 		this.localization = tooltipLocalization;
+	}
+
+	public Localization localization() {
+		return localization;
+	}
+
+	public String getTooltipText() {
+		if (localization == null) {
+			return null;
+		}
+		return localization.text();
 	}
 }

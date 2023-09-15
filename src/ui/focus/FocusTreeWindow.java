@@ -38,15 +38,11 @@ public class FocusTreeWindow extends JFrame {
 	}
 
 	public void createUIComponents() {
-		try {
-			FocusTree focusTree = FocusTree.get(new CountryTag("SMA"));
-			if (focusTree == null) {
-				focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
-			}
-			focusTreeBuilderWindow$FocusTreeViewport1 = new FocusTreeViewport(focusTree);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		FocusTree focusTree = FocusTree.get(new CountryTag("SMA"));
+		if (focusTree == null) {
+			focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
 		}
+		focusTreeBuilderWindow$FocusTreeViewport1 = new FocusTreeViewport(focusTree);
 	}
 
 	public class FocusTreeViewport extends JPanel {

@@ -15,7 +15,7 @@ public class LocalizationFile extends File {
 	protected List<Localization> localizationList;
 //	private HashMap<Integer, String> comments;
 
-	public LocalizationFile(File file) {
+	public LocalizationFile(File file) throws IllegalArgumentException {
 		super(file.toURI());
 
 		if (!file.getPath().endsWith(".yml")) {

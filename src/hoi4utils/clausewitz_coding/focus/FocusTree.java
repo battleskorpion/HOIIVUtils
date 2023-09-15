@@ -34,9 +34,8 @@ public final class FocusTree extends HOIIVUtils {
 	 * Instantiate focus tree from pre-existing focus tree (file).
 	 * 
 	 * @param focus_file pre-existing focus tree.
-	 * @throws IOException file not found or otherwise unable to be accessed.
 	 */
-	public FocusTree(File focus_file) throws IOException {
+	public FocusTree(File focus_file) {
 		this.focus_file = focus_file;
 		country = new CountryTag("###");
 		focuses = new HashMap<>();
