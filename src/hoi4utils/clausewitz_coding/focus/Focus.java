@@ -14,6 +14,9 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
+import java.util.function.Function;
+
 /*
  * Focus just Focus
  */
@@ -54,6 +57,16 @@ public class Focus {
 
 		this.focusTree = focusTree;
 		focusIDs.add(focus_id);
+	}
+
+	public static List<Function<Focus,?>> getDataFunctions() {
+		List<Function<Focus, ?>> dataFunctions = new ArrayList<>(2);         // 2 for optimization, limited number of data functions.
+
+		dataFunctions.add(Focus::id);
+		dataFunctions.add(Focus::nameLocalization);
+		dataFunctions.add(Focus::descLocalization);
+
+		return dataFunctions;
 	}
 
 	public String id() {

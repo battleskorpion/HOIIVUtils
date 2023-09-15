@@ -33,8 +33,10 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
 	private ObservableList<CustomTooltip> customTooltipList;
 
 	public CustomTooltipWindow() {
+		/* window */
 		setFxmlResource("CustomTooltipWindow.fxml");
 		setTitle("HOIIVUtils Custom ToolTip Localization Window");
+
 		customTooltipList = FXCollections.observableArrayList();
 	}
 

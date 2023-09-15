@@ -10,6 +10,9 @@ import hoi4utils.clausewitz_coding.focus.FixFocus;
 import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.focus.FocusTree;
 import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
+import hoi4utils.clausewitz_coding.tooltip.CustomTooltip;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,9 +20,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import ui.HOIUtilsWindow;
+import ui.javafx.table.TableViewWindow;
 import ui.message_popup.MessagePopupWindow;
 
-public class FocusLocalizationWindow extends HOIUtilsWindow {
+public class FocusLocalizationWindow extends HOIUtilsWindow implements TableViewWindow {
 
     @FXML private Label numLocAddedLabel;
     @FXML private TextField focusTreeFileTextField;
@@ -35,9 +39,24 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
     private FocusTree focusTree;
     private FocusLocalizationFile focusLocFile;
 
+    private final ObservableList<Focus> focusObservableList;
+
     public FocusLocalizationWindow() {
+        /* window */
         setFxmlResource("FocusLocalizationWindow.fxml");
         setTitle("HOIIVUtils Focus Localization");
+
+        focusObservableList = FXCollections.observableArrayList();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @FXML
+    void initialize() {
+        /* table */
+        loadTableView(this, focusListTable, focusObservableList, Focus.getDataFunctions());
     }
 
     public void handleFocusTreeFileBrowseButtonAction() {
@@ -90,5 +109,13 @@ public class FocusLocalizationWindow extends HOIUtilsWindow {
                 return;
             }
         }
+
+        focusObservableList.clear();
+        focusObservableList.addAll(focusTree.listFocuses());
+    }
+
+    @Override
+    public void setDataTableCellFactories() {
+        // none necessary
     }
 }

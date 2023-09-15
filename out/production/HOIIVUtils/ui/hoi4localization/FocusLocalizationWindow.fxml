@@ -33,9 +33,9 @@
 	  <Label GridPane.rowIndex="3" />
 	  <TableView fx:id="focusListTable" maxWidth="1.7976931348623157E308" minHeight="100.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
 		<columns>
-		  <TableColumn fx:id="focusIDColumn" prefWidth="230.0" text="C1" />
-		  <TableColumn fx:id="focusNameColumn" prefWidth="230.0" text="C2" />
-			<TableColumn fx:id="focusDescColumn" prefWidth="229.0" text="Column X" />
+		  <TableColumn fx:id="focusIDColumn" prefWidth="230.0" text="ID" />
+		  <TableColumn fx:id="focusNameColumn" prefWidth="230.0" text="Name" />
+			<TableColumn fx:id="focusDescColumn" prefWidth="229.0" text="Desc" />
 		</columns>
 	  </TableView>
 	  <Label fx:id="focusTreeNameLabel" prefHeight="17.0" prefWidth="170.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />

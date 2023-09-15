@@ -4,6 +4,7 @@ import hoi4utils.HOIIVUtils;
 import hoi4utils.clausewitz_coding.localization.LocalizationFile;
 import hoi4utils.clausewitz_coding.country.CountryTag;
 import hoi4utils.clausewitz_coding.country.CountryTags;
+import hoi4utils.clausewitz_coding.tooltip.CustomTooltip;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import javafx.collections.FXCollections;
@@ -13,6 +14,8 @@ import ui.HOIUtilsWindow;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
+
 /**
  * ALL of the FocusTree/FocusTrees
  */
