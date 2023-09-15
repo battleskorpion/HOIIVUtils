@@ -3,9 +3,7 @@ package ui.hoi4localization;
 import java.io.File;
 
 import hoi4utils.HOIIVFile;
-import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
-import hoi4utils.SettingsManager;
 import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.focus.FocusTree;
 import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;

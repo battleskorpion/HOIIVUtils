@@ -4,10 +4,11 @@ import java.util.Set;
 
 /**
  * Refer to <url> <a href="https://hoi4.paradoxwikis.com/Division_modding">HOI4 Division Modding Wiki</a> </url>
+ * todo
  */
 public class DivisionTemplate {
 	private String name;
-	//private String division_names_group;      // todo
+	//private String division_names_group
 	private Set<Regiment> regiments;        // combat batallions
 	private Set<Regiment> support;          // support companies, can be empty/null set.
 	private int priority = 1;                   // = 1 default, 0-2 generally
