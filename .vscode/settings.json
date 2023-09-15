@@ -1,40 +1,21 @@
 {
-	"java.project.referencedlib": {
-		"include": [
-			"lib/**/*.jar",
-			"lib/flatlaf-3.2.jar",
-			"lib/javafx-sdk-20.0.2/lib/javafx.base.jar",
-			"lib/javafx-sdk-20.0.2/lib/javafx.controls.jar",
-			"lib/javafx-sdk-20.0.2/lib/javafx.fxml.jar",
-			"lib/javafx-sdk-20.0.2/lib/javafx.graphics.jar",
-			"lib/javafx-sdk-20.0.2/lib/javafx.media.jar",
-			"lib/javafx-sdk-20.0.2/lib/javafx.swing.jar",
-			"lib/javafx-sdk-20.0.2/lib/javafx.web.jar",
-			"lib/javafx-sdk-20.0.2/lib/javafx-swt.jar"
-		],
-		"exclude": [
-			
-		]
-	},
-	"java.completion.filteredTypes": [
-		"com.sun.*",
-		"sun.*",
-		"jdk.*",
-		"org.graalvm.*",
-		"io.micrometer.shaded.*"
-	],
-	"java.project.explorer.showNonJavaResources": true,
-	"redhat.telemetry.enabled": true,
-	"workbench.iconTheme": "vscode-icons",
+	"window.commandCenter": true,
+	"explorer.compactFolders": false,
+	"editor.insertSpaces": false,
+	"editor.indentSize": "tabSize",
+    "workbench.startupEditor": "none",
+    "workbench.iconTheme": "vscode-icons",
+    "redhat.telemetry.enabled": true,
 	"git.decorations.enabled": false,
 	"git.confirmSync": false,
 	"git.enableSmartCommit": true,
-	"java.configuration.runtimes": [],
-	"java.project.exportJar.targetPath": "${workspaceFolder}/out/artifacts/${workspaceFolderBasename}_jar/${workspaceFolderBasename}.jar",
+	"git.autofetch": true,
 	"ShortcutMenuBar.beautify": false,
 	"ShortcutMenuBar.openFilesList": false,
 	"ShortcutMenuBar.redo": true,
 	"ShortcutMenuBar.toggleActivityBar": true,
+	"ShortcutMenuBar.navigateBack": false,
+	"ShortcutMenuBar.navigateForward": false,
 	"ShortcutMenuBar.userButton04Command": "workbench.action.reopenClosedEditor",
 	"ShortcutMenuBar.userButton06Command": "extension.scenebuilder.open-in",
 	"ShortcutMenuBar.userButton09Command": "commitMsg.autofill, git.commitAll, git.sync",
@@ -45,14 +26,6 @@
 		"remoteBranches",
 		"tags"
 	],
-	"window.commandCenter": true,
-	"ShortcutMenuBar.navigateBack": false,
-	"ShortcutMenuBar.navigateForward": false,
-	"editor.insertSpaces": false,
-	"editor.indentSize": "tabSize",
-	"java.dependency.packagePresentation": "hierarchical",
-	"java.dependency.showMembers": true,
-	"explorer.compactFolders": false,
 	"todo-tree.regex.regex": "(//|#|<!--|/\\*|^\\s*\\*)\\s*($TAGS)",
 	"todo-tree.filtering.excludeGlobs": [
         "**/vendor/**",
@@ -66,10 +39,20 @@
         "**/*.min.*",
         "**/*.map"
 	],
-	"git.autofetch": true,
-	"workbench.startupEditor": "none",
+	// Java Project HOIIVUtils settings
 	"java.project.referencedLibraries": [
 		"lib/**/*.jar"
-	]
-	
+	],
+	"java.configuration.runtimes": [],
+	"java.dependency.packagePresentation": "hierarchical",
+	"java.dependency.showMembers": true,
+	"java.project.exportJar.targetPath": "${workspaceFolder}/out/artifacts/${workspaceFolderBasename}_jar/${workspaceFolderBasename}.jar",
+	"java.project.explorer.showNonJavaResources": true,
+	"java.completion.filteredTypes": [
+		"com.sun.*",
+		"sun.*",
+		"jdk.*",
+		"org.graalvm.*",
+		"io.micrometer.shaded.*"
+	],
 }

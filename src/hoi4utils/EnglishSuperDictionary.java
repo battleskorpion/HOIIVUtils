@@ -6,24 +6,22 @@ import java.util.HashSet;
 
 public class EnglishSuperDictionary {
 
-	/**
-	 * Captilizes 
-	 * @param str
-	 * @return
+	/** 
+	 * Capitalizes every word in a string with a pre set whitelist
+	 * @param string 
+	 * @return Returns the edited string unless the string has no words
 	 */
-	public static String titleCapitalize(String str) {
-		if (str == null) {
+	public static String titleCapitalize(String string) {
+		if (string == null) {
 			return null;
 		}
-		if (str.trim().isEmpty()) {
-			return str;
+		if (string.trim().isEmpty()) {
+			return string;
 		}
 	
-		// some vars
-		ArrayList<String> words = new ArrayList<String>(Arrays.asList(str.split(" ")));
+		ArrayList<String> words = new ArrayList<>(Arrays.asList(string.split(" ")));
 		HashSet<String> whitelist = EnglishSuperDictionary.createCapitalizationWhitelist();
 	
-		// first word always capitalized
 		if (words.get(0).length() == 1) {
 			words.set(0, "" + Character.toUpperCase(words.get(0).charAt(0)));
 		} else if (words.get(0).length() > 1) {
@@ -34,12 +32,8 @@ public class EnglishSuperDictionary {
 			System.out.println("first word length < 1");
 		}
 	
-		// rest of words (if applicable)
 		System.out.println("num words: " + words.size());
 		for (int i = 1; i < words.size(); i++) {
-	
-			// if not acronym (acronym = all caps already)
-			// && not on whitelist
 			if (!EnglishSuperDictionary.isAcronym(words.get(i)) && !(whitelist.contains(words.get(i)))) {
 				if (words.get(i).length() == 1) {
 					words.set(i, "" + Character.toUpperCase(words.get(i).charAt(0)));
@@ -57,7 +51,6 @@ public class EnglishSuperDictionary {
 	}
 
 	static boolean isAcronym(String word) {
-		// check for acronym (all caps already)
 		int num_cap_letters = EnglishSuperDictionary.numCapLetters(word);
 	
 		return num_cap_letters == word.length();
