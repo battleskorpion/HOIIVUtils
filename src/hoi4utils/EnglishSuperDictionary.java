@@ -7,19 +7,19 @@ import java.util.HashSet;
 public class EnglishSuperDictionary {
 
 	/** 
-	 * Capitalizes every word in a string with a pre set whitelist
-	 * @param string 
+	 * Capitalizes every word in a string with a pre-set whitelist
+	 * @param title
 	 * @return Returns the edited string unless the string has no words
 	 */
-	public static String titleCapitalize(String string) {
-		if (string == null) {
+	public static String titleCapitalize(String title) {
+		if (title == null) {
 			return null;
 		}
-		if (string.trim().isEmpty()) {
-			return string;
+		if (title.trim().isEmpty()) {
+			return title;
 		}
 	
-		ArrayList<String> words = new ArrayList<>(Arrays.asList(string.split(" ")));
+		ArrayList<String> words = new ArrayList<>(Arrays.asList(title.split(" ")));
 		HashSet<String> whitelist = EnglishSuperDictionary.createCapitalizationWhitelist();
 	
 		if (words.get(0).length() == 1) {
