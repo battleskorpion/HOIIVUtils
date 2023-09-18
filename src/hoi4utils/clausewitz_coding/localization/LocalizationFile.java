@@ -243,6 +243,11 @@ public class LocalizationFile extends File {
 		return newLocalization;
 	}
 
+	/**
+	 * todo
+	 * @param ID
+	 * @return
+	 */
 	public boolean isLocalized(String ID) {
 		Localization loc = getLocalization(ID);
 		return (loc != null && loc.status() != Localization.Status.DEFAULT);

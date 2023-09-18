@@ -47,7 +47,7 @@
       <TextField fx:id="focusLocFileTextField" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
       <Button fx:id="focusTreeFileBrowseButton" maxWidth="100.0" mnemonicParsing="false" onAction="#handleFocusTreeFileBrowseButtonAction" text="Browse" GridPane.columnIndex="3" />
       <Button fx:id="focusLocFileBrowseButton" maxWidth="100.0" mnemonicParsing="false" onAction="#handleFocusLocFileBrowseButtonAction" text="Browse" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-      <Button fx:id="loadButton" mnemonicParsing="false" onAction="#handleLoadButtonAction" prefHeight="25.0" prefWidth="86.0" text="Load" GridPane.rowIndex="2" />
+      <Button fx:id="loadButton" mnemonicParsing="false" onAction="#handleLoadButtonAction" onMouseClicked="#handleLoadButtonAction" prefHeight="25.0" prefWidth="86.0" text="Load" GridPane.rowIndex="2" />
    </children>
    <padding>
 	  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

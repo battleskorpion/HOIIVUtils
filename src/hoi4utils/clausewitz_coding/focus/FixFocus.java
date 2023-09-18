@@ -82,11 +82,10 @@ public class FixFocus extends HOIIVUtils {
 
 		ArrayList<Focus> focusesUnloc = new ArrayList<>();
 		assert focusTree.listFocusNames() != null;
-		for (Focus focus : focusTree.focuses())
-		{
+
+		for (Focus focus : focusTree.focuses()) {
 			// if focus id not localized
-			if (!localization.isLocalized(focus.id()))
-			{
+			if (!localization.isLocalized(focus.id())) {
 				// write to loc file
 				// separate words in focus name
 				int i = 0;	//counter
@@ -110,7 +109,19 @@ public class FixFocus extends HOIIVUtils {
 				focus.setDescLocalization(descLoc);
 
 				focusesUnloc.add(focus);
+				continue;           // localize and move on
 			}
+
+			Localization.Status locStatus = localization.getLocalization(focus.id()).status();
+			if (locStatus.equals(Localization.Status.EXISTS)) {
+				Localization nameLoc = localization.getLocalization(focus.id());
+				Localization descLoc = localization.getLocalizationDesc(focus.id());
+				focus.setNameLocalization(nameLoc);
+				focus.setDescLocalization(descLoc);
+			}
+			//System.err.println(focusTree.focuses().size());
+			//System.out.println(localization.getLocalization(focus.id()).status() + " , test");
+
 		}
 
 		localization.writeLocalization();
