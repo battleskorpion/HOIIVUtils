@@ -40,7 +40,7 @@
 	  </TableView>
 	  <Label fx:id="focusTreeNameLabel" prefHeight="17.0" prefWidth="170.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
 	  <Label GridPane.rowIndex="4" />
-	  <Label fx:id="numLocAddedLabel" text="Added localization to x focuses" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+	  <Label fx:id="numLocAddedLabel" text="Added localization to x focuses" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
       <Label text="Focus tree file: " />
       <Label text="Localization file: " GridPane.rowIndex="1" />
       <TextField fx:id="focusTreeFileTextField" GridPane.columnIndex="1" GridPane.columnSpan="2" />
@@ -48,6 +48,7 @@
       <Button fx:id="focusTreeFileBrowseButton" maxWidth="100.0" mnemonicParsing="false" onAction="#handleFocusTreeFileBrowseButtonAction" text="Browse" GridPane.columnIndex="3" />
       <Button fx:id="focusLocFileBrowseButton" maxWidth="100.0" mnemonicParsing="false" onAction="#handleFocusLocFileBrowseButtonAction" text="Browse" GridPane.columnIndex="3" GridPane.rowIndex="1" />
       <Button fx:id="loadButton" mnemonicParsing="false" onAction="#handleLoadButtonAction" onMouseClicked="#handleLoadButtonAction" prefHeight="25.0" prefWidth="86.0" text="Load" GridPane.rowIndex="2" />
+      <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSaveButtonAction" onMouseClicked="#handleLoadButtonAction" prefHeight="25.0" prefWidth="86.0" text="Save" GridPane.rowIndex="4" />
    </children>
    <padding>
 	  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

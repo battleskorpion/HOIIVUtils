@@ -126,7 +126,7 @@ public class FixFocus extends HOIIVUtils {
 
 		}
 
-		localization.writeLocalization();
+		//localization.writeLocalization();     // eh nah not here
 		return focusesUnloc.size();
 	}
 

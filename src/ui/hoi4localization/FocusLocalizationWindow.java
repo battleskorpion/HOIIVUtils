@@ -36,6 +36,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
     @FXML private TextField focusLocFileTextField;
     @FXML private Button focusLocFileBrowseButton;
     @FXML private Button loadButton;
+    @FXML private Button saveButton;
     @FXML private TableView<Focus> focusListTable;
     @FXML private TableColumn<Focus, String> focusIDColumn;
     @FXML private TableColumn<Focus, String> focusNameColumn;
@@ -61,6 +62,9 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
     void initialize() {
         /* table */
         loadTableView(this, focusListTable, focusObservableList, Focus.getDataFunctions());
+
+        /* buttons */
+        saveButton.setDisable(true);
     }
 
     public void handleFocusTreeFileBrowseButtonAction() {
@@ -115,6 +119,19 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
 
         focusObservableList.clear();
         focusObservableList.addAll(focusTree.listFocuses());
+
+        /* enable saving of localization */
+        saveButton.setDisable(false);
+    }
+
+    public void handleSaveButtonAction() {
+        if (focusLocFile == null) {
+            // Handle the case where focusLocFile is not properly initialized
+            MessagePopupWindow window = new MessagePopupWindow();
+            window.open("Error: Focus localization file not properly initialized.");
+        }
+
+        focusLocFile.writeLocalization();
     }
 
     @Override
