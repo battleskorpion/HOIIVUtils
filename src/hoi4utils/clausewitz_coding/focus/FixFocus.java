@@ -117,7 +117,7 @@ public class FixFocus extends HOIIVUtils {
 			Localization.Status locStatus = localization.getLocalization(focus.id()).status();
 			if (locStatus.equals(Localization.Status.EXISTS)) {
 				Localization nameLoc = localization.getLocalization(focus.id());
-				Localization descLoc = localization.getLocalizationDesc(focus.id());
+				Localization descLoc = localization.getLocalizationDesc(focus.id() + "_desc");      // todo why null here
 				focus.setNameLocalization(nameLoc);
 				focus.setDescLocalization(descLoc);
 			}

@@ -221,11 +221,11 @@ public class FocusLocalizationFile extends LocalizationFile {
 		}
 
 		// loop through description localizations
-		for (Localization loc : focusLocalizationList.get(1)) {
-			if (loc.ID().equals(ID)) {
-				return loc;
+		for (List<Localization> locList : focusLocalizationList) {
+			if (locList.get(1).ID().equals(ID)) {
+				return locList.get(1);
 			}
-			System.out.println(loc.ID());
+			System.out.println(locList.get(1).ID());
 		}
 
 		return null;
