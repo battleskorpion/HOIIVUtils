@@ -50,8 +50,11 @@ public class FocusLocalizationFile extends LocalizationFile {
 		for (Localization localization : tempLocList) {
 			ArrayList<Localization> list = new ArrayList<>();
 			list.add(localization);
-			Localization loc = tempLocDescList.get(localization.ID() + "_desc");
-			list.add(loc);
+			Localization descLoc = tempLocDescList.get(localization.ID() + "_desc");
+			if (descLoc == null) {
+				descLoc = new Localization(localization.ID() + "_desc", "");
+			}
+			list.add(descLoc);
 			focusLocalizationList.add(list);
 		}
 	}
