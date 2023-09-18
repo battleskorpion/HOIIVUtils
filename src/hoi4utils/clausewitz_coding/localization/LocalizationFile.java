@@ -37,10 +37,11 @@ public class LocalizationFile extends File {
 
 	public void readLocalization() {
 //		int line = 0;
-
 		if (!exists()) {
 			return;
 		}
+
+		localizationList.clear();
 
 		/* file reader */
 		Scanner reader = null;
@@ -91,20 +92,20 @@ public class LocalizationFile extends File {
 					if (text.charAt(text.length() - 1) == '\n') {
 						text = text.substring(0, text.length() - 1);
 					}
-					if (text.length() == 0) {
+					if (text.isEmpty()) {
 						continue;
 					}
 					if (text.charAt(0) == '\"') {
 						text = text.substring(1, text.length());
 					}
-					if (text.length() == 0) {
+					if (text.isEmpty()) {
 						continue;
 					}
 					if (text.charAt(text.length() - 1) == '\"') {
 						text = text.substring(0, text.length() - 1);
 					}
-					if (text.length() == 0) {
-						continue;
+					if (text.isEmpty()) {
+						//continue;                   // NO WHY WOULD WE DO THIS AAAAAAAAAA EMPTY LOCALIZATION SOMETIMES IS FINE
 					}
 					text = text.replaceAll("(Â§)", "§");
 					Localization localization = new Localization(id, text, Localization.Status.EXISTS);
@@ -250,6 +251,7 @@ public class LocalizationFile extends File {
 	 */
 	public boolean isLocalized(String ID) {
 		Localization loc = getLocalization(ID);
+//		HOIUtilsWindow.openError(loc.status() + "");
 		return (loc != null && loc.status() != Localization.Status.DEFAULT);
 	}
 

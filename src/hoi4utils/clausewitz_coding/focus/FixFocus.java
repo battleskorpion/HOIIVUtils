@@ -6,6 +6,8 @@ import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.EnglishSuperDictionary;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
+import ui.HOIUtilsWindow;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -34,7 +36,7 @@ public class FixFocus extends HOIIVUtils {
 		for (Focus focus : focusTree.focuses())
 		{
 			// if focus id not localized
-			if (!localization.isLocalized(focus.id.toString()))
+			if (!localization.isLocalized(focus.id()))
 			{
 				// write to loc file
 				// separate words in focus name
@@ -49,12 +51,12 @@ public class FixFocus extends HOIIVUtils {
 				// set focus loc
 				focus.setNameLocalization(focus_loc);
 
-
 				focusesUnloc.add(focus);
 
 				localization.setLocalization(focus.id(), focus_loc);
 				localization.setLocalizationDesc(focus.id + "_desc", "added focus on " + LocalDateTime.now() + " by hoi4localizer.");
 			}
+//			HOIUtilsWindow.openError("Test");
 		}
 
 		/* ui */
