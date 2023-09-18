@@ -244,7 +244,8 @@ public class LocalizationFile extends File {
 	}
 
 	public boolean isLocalized(String ID) {
-		return getLocalization(ID) != null;
+		Localization loc = getLocalization(ID);
+		return (loc != null && loc.status() != Localization.Status.DEFAULT);
 	}
 
 }

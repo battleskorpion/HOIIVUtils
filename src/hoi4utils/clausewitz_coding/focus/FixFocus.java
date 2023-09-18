@@ -1,5 +1,6 @@
 package hoi4utils.clausewitz_coding.focus;
 
+import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.country.CountryTags;
 import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.EnglishSuperDictionary;
@@ -96,6 +97,9 @@ public class FixFocus extends HOIIVUtils {
 				// localize focus name
 				focus_loc = EnglishSuperDictionary.titleCapitalize(focus.id().substring(i).replaceAll("_+", " ").trim()); // regex
 				focus_loc_desc = "added focus on " + LocalDateTime.now() + " by hoi4localizer.";
+				if (Settings.DEV_MODE.enabled()) {
+					System.out.println("focus loc: " + focus_loc + ", desc: " + focus_loc_desc);
+				}
 
 				// set focus loc
 //				focus.setNameLocalization(focus_loc);
