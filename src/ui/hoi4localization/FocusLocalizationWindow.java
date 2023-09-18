@@ -96,32 +96,36 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
             // Handle the case where focusLocFile or focusTree is not properly initialized
             MessagePopupWindow window = new MessagePopupWindow();
             window.open("Error: Focus localization or focus tree not properly initialized.");
+            return;
         }
 		// Add further handling logic here // todo remove da comment when done
 
         // todo temp lazy flow control
-        if (focusLocFile != null && focusTree != null) {
-//            for (Focus focus : focusTree) {     // focusTree make implement Iterable or whatever
-//                focusTree.setLocalization()
-//            }
 
-            /* load focus loc */
-            try {
-                int numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
-                // todo didnt happe?
-                numLocAddedLabel.setText(numLocAddedLabel.getText()
-                        .replace("x", String.valueOf(numLocalizedFocuses)));
-            } catch (IOException e) {
-                openError(e);
-                return;
-            }
-        }
+	    /* load focus loc */
+	    try {
+	        int numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
+	        // todo didnt happe?
+	        updateNumLocalizedFocuses(numLocalizedFocuses);
+	    } catch (IOException e) {
+	        openError(e);
+	        return;
+	    }
 
-        focusObservableList.clear();
-        focusObservableList.addAll(focusTree.listFocuses());
+        updateObservableFocusList();
 
         /* enable saving of localization */
         saveButton.setDisable(false);
+    }
+
+    private void updateObservableFocusList() {
+        focusObservableList.clear();
+        focusObservableList.addAll(focusTree.listFocuses());
+    }
+
+    private void updateNumLocalizedFocuses(int numLocalizedFocuses) {
+        numLocAddedLabel.setText(numLocAddedLabel.getText()
+                .replace("x", String.valueOf(numLocalizedFocuses)));
     }
 
     public void handleSaveButtonAction() {

@@ -87,7 +87,6 @@ public class FocusLocalizationFile extends LocalizationFile {
 			for (List<Localization> localization : focusLocalizationList) {
 				int idpos;      // where to look for line separator for adding desc.
 
-				//HOIUtilsWindow.openError("THIS IS A TEST");     // todo runs twice this does ???
 				if (localization.get(0).status() == Localization.Status.UPDATED) {
 					/* replace loc */
 					int start = fileBuffer.indexOf(localization.get(0).ID());
