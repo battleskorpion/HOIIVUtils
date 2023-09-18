@@ -2,14 +2,27 @@ package cleveland;
 
 import java.io.IOException;
 
+import cleveland.console.ConsoleApplication;
+import cleveland.example.MyCliApplication;
+
 /**
  * cleveland brown
  */
-public class Cleveland {
-
+public class Cleveland extends ConsoleApplication {
 	protected static String[] args;
 
-	public static void main(String[] args) throws RuntimeException,IOException {
+	@Override
+	protected void invokeMain(final String[] args) {
+		MyCliApplication.main(args);
+	}
 
+	public static void main(String[] args) throws RuntimeException,IOException {
+		System.out.println("Before sleep");
+		try {
+		  Thread.sleep(5000);
+		} catch (InterruptedException e) {
+		  throw new RuntimeException(e);
+		}
+		System.out.println("After sleep");
 	}
 }
