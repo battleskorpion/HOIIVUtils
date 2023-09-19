@@ -142,7 +142,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 					}
 					int temp = fileBuffer.indexOf("\"", start);
 					int end = 1;
-					// end char must be literally " and not \"
+					// end char must be literally " and not \"      // todo. there is a failure in this logic? as far as i can see
 					do {
 						end = fileBuffer.indexOf("\"", temp + 1);
 					} while (fileBuffer.charAt(end - 1) == '\\');
