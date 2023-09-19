@@ -90,7 +90,7 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
 	/* action handlers */
 	public void handleTooltipFileBrowseAction() {
 		File initialFocusDirectory = HOIIVFile.common_folder;
-		File selectedFile = HOIUtilsWindow.openChooser(tooltipFileBrowseButton, false, initialFocusDirectory);
+		File selectedFile = openChooser(tooltipFileBrowseButton, false, initialFocusDirectory);
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(selectedFile);
 		}
@@ -110,7 +110,7 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
 	}
 	public void handleTooltipLocalizationFileBrowseAction() {
 		File initialFocusLocDirectory = HOIIVFile.localization_eng_folder;
-		File selectedFile = HOIUtilsWindow.openChooser(tooltipLocalizationFileBrowseButton, false, initialFocusLocDirectory);
+		File selectedFile = openChooser(tooltipLocalizationFileBrowseButton, false, initialFocusLocDirectory);
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(selectedFile);
 		}

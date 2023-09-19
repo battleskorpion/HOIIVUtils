@@ -19,10 +19,8 @@ import hoi4utils.fileIO.FileListener.FileWatcher;
  * ? <insert about whatever the file watchers do> chris learning what is a file watcher
  * - Future things
  */
-public class HOIIVFile {
+public class HOIIVFile implements FileUtils {
 
-	public static final File usersHome = new File(System.getProperty("user.home"));
-	public static final File usersDocuments = new File(usersHome + File.separator + "Documents");
 	public static final File usersParadoxHOIIVModFolder = new File(File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
 
 	public static final String modPath = SettingsManager.get(MOD_PATH);
@@ -117,16 +115,4 @@ public class HOIIVFile {
 		}).watch();
 	}
 
-	/**
-	 * 
-	 * @param data
-	 * @return
-	 */
-	public static boolean usefulData(String data) {
-		if (data.isEmpty()) {
-			return false;
-		}
-	
-		return data.trim().charAt(0) != '#';
-	}
 }

@@ -23,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import ui.FXWindow;
 import ui.HOIUtilsWindow;
 import ui.javafx.table.TableViewWindow;
 import ui.message_popup.MessagePopupWindow;
@@ -69,7 +70,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
 
     public void handleFocusTreeFileBrowseButtonAction() {
         File initialFocusDirectory = HOIIVFile.focus_folder;
-        File selectedFile = HOIUtilsWindow.openChooser(focusTreeFileBrowseButton, false, initialFocusDirectory);
+        File selectedFile = openChooser(focusTreeFileBrowseButton, false, initialFocusDirectory);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }
@@ -81,7 +82,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
 
     public void handleFocusLocFileBrowseButtonAction() {
         File initialFocusLocDirectory = HOIIVFile.localization_eng_folder;
-        File selectedFile = HOIUtilsWindow.openChooser(focusLocFileBrowseButton, false, initialFocusLocDirectory);
+        File selectedFile = openChooser(focusLocFileBrowseButton, false, initialFocusLocDirectory);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }

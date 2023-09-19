@@ -1,9 +1,8 @@
 package ui.main_menu;
 
+import hoi4utils.*;
+import ui.FXWindow;
 import ui.HOIUtilsWindow;
-import hoi4utils.HOIIVFile;
-import hoi4utils.HOIIVUtils;
-import hoi4utils.Settings;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,7 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import hoi4utils.SettingsManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,7 +23,7 @@ import static hoi4utils.Settings.MOD_PATH;
 /**
  * SettingsWindow is the window and controller for the program settings
  */
-public class SettingsWindow extends Application {
+public class SettingsWindow extends Application implements FXWindow {
 	String fxmlResource = "SettingsWindow.fxml";
 	String title = "HOIIVUtils Settings";
 	String styleSheetURL = "resources/javafx_dark.css";
@@ -85,7 +84,7 @@ public class SettingsWindow extends Application {
 			}
 		} 
 		catch (Exception exc) {
-			HOIUtilsWindow.openError(exc);
+			openError(exc);
 		}
 	}
 
@@ -175,9 +174,9 @@ public class SettingsWindow extends Application {
 	 * Saves the directory path to MOD_PATH
 	 */
 	public void handleBrowseAction() {
-		File initialModPath = new File(HOIIVFile.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
+		File initialModPath = new File(FileUtils.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
 
-		File selectedDirectory = HOIUtilsWindow.openChooser(idBrowseButton, true, initialModPath); // ! im making this pass any class (that is a "Node" at least, bc that makes sense, something that can go on a fxwindow I think), much welcome :D
+		File selectedDirectory = openChooser(idBrowseButton, true, initialModPath); // ! im making this pass any class (that is a "Node" at least, bc that makes sense, something that can go on a fxwindow I think), much welcome :D
 		if (selectedDirectory == null) {
 			return;
 		}
@@ -218,7 +217,7 @@ public class SettingsWindow extends Application {
 		if (!settingsSaved) {
 			return;
 		}
-		HOIUtilsWindow.hideWindow(idOkButton);
+		hideWindow(idOkButton);
 		MenuWindow menuWindow = new MenuWindow();
 		menuWindow.open();
 	}
@@ -232,10 +231,52 @@ public class SettingsWindow extends Application {
 				SettingsManager.saveSettings(tempSettings);
 			}
 		} catch (IOException exception) {
-			HOIUtilsWindow.openError("Settings failed to save.");
+			openError("Settings failed to save.");
 			return false;
 		}
 		HOIIVFile.createHOIIVFilePaths();
 		return true;
+	}
+
+	/* from HOIUtilsWindow but can only extend one class */
+	/**
+	 * Opens window and updates fxmlResource and title
+	 * @param fxmlResource window .fxml resource
+	 * @param title window title
+	 */
+	@Override
+	public void open(String fxmlResource, String title) {
+		this.fxmlResource = fxmlResource;
+		this.title = title;
+	}
+
+	@Override
+	public String getFxmlResource() {
+		return fxmlResource;
+	}
+
+	@Override
+	public String getTitle() {
+		return title;
+	}
+
+	@Override
+	public String getStyleSheetURL() {
+		return styleSheetURL;
+	}
+
+	@Override
+	public void setFxmlResource(String fxmlResource) {
+		this.fxmlResource = fxmlResource;
+	}
+
+	@Override
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	@Override
+	public void setStyleSheetURL(String styleSheetURL) {
+		this.styleSheetURL = styleSheetURL;
 	}
 }

@@ -1,11 +1,12 @@
 package hoi4utils.clausewitz_coding.localization;
 
+import hoi4utils.FileUtils;
+import ui.FXWindow;
 import ui.HOIUtilsWindow;
 
 import java.io.*;
 import java.util.*;
 
-import hoi4utils.HOIIVFile;
 /**
  * This is the LocalizationFile file.
  */
@@ -48,7 +49,7 @@ public class LocalizationFile extends File {
 		try {
 			reader = new Scanner(this);
 		} catch (Exception exception) {
-			HOIUtilsWindow.openError(exception);
+			FXWindow.openGlobalErrorWindow(exception);
 		}
 		if (reader == null) {
 			return;
@@ -60,7 +61,7 @@ public class LocalizationFile extends File {
 			if (reader.hasNextLine()) {
 				String data = reader.nextLine().replaceAll("\\s", "");
 //				line++;
-				if (HOIIVFile.usefulData(data)) {
+				if (FileUtils.usefulData(data)) {
 					if (data.trim().contains("l_")) {
 						if(!data.contains(language)) {
 							// todo
@@ -85,7 +86,7 @@ public class LocalizationFile extends File {
 			String data = reader.nextLine().trim();
 //			line++;
 
-			if (HOIIVFile.usefulData(data)) {
+			if (FileUtils.usefulData(data)) {
 				if (data.contains(loc_key)) {
 					String id = data.substring(0, data.indexOf(loc_key)).trim();
 					String text = data.substring(data.indexOf("\""), data.lastIndexOf("\"") + 1).trim();
@@ -182,7 +183,7 @@ public class LocalizationFile extends File {
 			scanner.close();
 		}
 		catch (Exception exception) {
-			HOIUtilsWindow.openError(exception);
+			FXWindow.openGlobalErrorWindow(exception);
 		}
 	}
 

@@ -1,6 +1,5 @@
 package ui.main_menu;
 
-import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.state.State;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -8,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import ui.FXWindow;
 import ui.HOIUtilsWindow;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.clausewitz_gfx.InterfaceFileListWindow;
@@ -16,7 +16,7 @@ import ui.hoi4localization.CustomTooltipWindow;
 import ui.hoi4localization.FocusLocalizationWindow;
 import ui.hoi4localization.UnlocalizedFocusWindow;
 
-public class MenuWindow extends Application{
+public class MenuWindow extends Application implements FXWindow {
 	String fxmlResource = "MenuWindow.fxml";
 	String title = "HOIIVUtils Menu";
 	String styleSheetURL = "resources/javafx_dark.css";
@@ -72,12 +72,12 @@ public class MenuWindow extends Application{
 			}
 		} 
 		catch (Exception exc) {
-			HOIUtilsWindow.openError(exc);
+			openError(exc);
 		}
 	}
 
 	public void openSettings() {
-		HOIUtilsWindow.closeWindow(settingsButton); //closes the menu window
+		closeWindow(settingsButton); //closes the menu window
 		SettingsWindow window = new SettingsWindow();
 		window.open();
 	}
@@ -116,5 +116,47 @@ public class MenuWindow extends Application{
 	public void openFocusTreeViewer() {
 		FocusTreeWindow window = new FocusTreeWindow();
 		window.setVisible(true);
+	}
+
+	/* from HOIUtilsWindow but can only extend one class */
+	/**
+	 * Opens window and updates fxmlResource and title
+	 * @param fxmlResource window .fxml resource
+	 * @param title window title
+	 */
+	@Override
+	public void open(String fxmlResource, String title) {
+		this.fxmlResource = fxmlResource;
+		this.title = title;
+	}
+
+	@Override
+	public String getFxmlResource() {
+		return fxmlResource;
+	}
+
+	@Override
+	public String getTitle() {
+		return title;
+	}
+
+	@Override
+	public String getStyleSheetURL() {
+		return styleSheetURL;
+	}
+
+	@Override
+	public void setFxmlResource(String fxmlResource) {
+		this.fxmlResource = fxmlResource;
+	}
+
+	@Override
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	@Override
+	public void setStyleSheetURL(String styleSheetURL) {
+		this.styleSheetURL = styleSheetURL;
 	}
 }

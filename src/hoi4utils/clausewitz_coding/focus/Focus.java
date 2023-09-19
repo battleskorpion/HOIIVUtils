@@ -7,7 +7,7 @@ import hoi4utils.clausewitz_coding.gfx.Interface;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.ddsreader.DDSReader;
 import javafx.beans.property.SimpleStringProperty;
-import ui.HOIUtilsWindow;
+import ui.FXWindow;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -22,7 +22,7 @@ import java.util.function.Function;
  */
 public class Focus {
 	private static final int FOCUS_COST_FACTOR = 7;
-	private final int DEFAULT_FOCUS_COST = 10; // default cost (weeks) when making new focus or etc.
+	private final int DEFAULT_FOCUS_COST = 10; // default cost (in weeks by default) when making a new focus.
 	private static final HashSet<String> focusIDs = new HashSet<>();
 
 	protected FocusTree focusTree;
@@ -49,7 +49,7 @@ public class Focus {
 
 	public Focus(String focus_id, FocusTree focusTree) {
 		if (focusIDs.contains(focus_id)) {
-			System.err.println("Error: focus id " + focus_id + " already exists."); // todo throw exception instead
+			System.err.println("Error: focus id " + focus_id + " already exists."); // todo throw exception instead?
 			return;
 		}
 		this.id = new SimpleStringProperty(focus_id);
@@ -60,7 +60,7 @@ public class Focus {
 	}
 
 	public static List<Function<Focus,?>> getDataFunctions() {
-		List<Function<Focus, ?>> dataFunctions = new ArrayList<>(2);         // 2 for optimization, limited number of data functions.
+		List<Function<Focus, ?>> dataFunctions = new ArrayList<>(3);         // for optimization, limited number of data functions.
 
 		dataFunctions.add(Focus::id);
 		dataFunctions.add(Focus::nameLocalization);
@@ -133,7 +133,7 @@ public class Focus {
 			return position();
 		}
 		if (relative_position_id.equals(this.id())) {
-			System.err.println("Relative position id same as focus id for " + this);
+			System.err.println("Relative position id same as focus id for " + this);        // todo not an error of this program necessarily, issue should be handled differently?
 			return position();
 		}
 
@@ -193,7 +193,7 @@ public class Focus {
 	private void setID(Expression exp) {
 		if (exp == null) {
 			id = null;
-			HOIUtilsWindow.openError("Expression was null for setting focus ID.");
+			FXWindow.openGlobalErrorWindow("Expression was null for setting focus ID.");
 			return;
 		}
 

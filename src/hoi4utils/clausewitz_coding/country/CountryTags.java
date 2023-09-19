@@ -1,6 +1,6 @@
 package hoi4utils.clausewitz_coding.country;
 
-import hoi4utils.HOIIVFile;
+import hoi4utils.FileUtils;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.SettingsManager;
 
@@ -39,7 +39,7 @@ public class CountryTags extends HOIIVUtils {
 			// make a list of country tags
 			while (countryTagsReader.hasNextLine()) {
 				String data = countryTagsReader.nextLine().replaceAll("\\s", "");
-				if (HOIIVFile.usefulData(data)) {
+				if (FileUtils.usefulData(data)) {
 					// takes the defined tag at the beginning of the line
 					CountryTag tag = new CountryTag(data.substring(0, data.indexOf('=')).trim());
 					if (tag.equals(CountryTag.NULL_TAG)) {
@@ -61,7 +61,7 @@ public class CountryTags extends HOIIVUtils {
 				// make a list of country tags
 				while (countryTagsReader.hasNextLine()) {
 					String data = countryTagsReader.nextLine().replaceAll("\\s", "");
-					if (HOIIVFile.usefulData(data)) {
+					if (FileUtils.usefulData(data)) {
 						// takes the defined tag at the beginning of the line
 						CountryTag tag = new CountryTag(data.substring(0, data.indexOf('=')).trim());
 						if (tag.equals(CountryTag.NULL_TAG)) {
@@ -89,7 +89,7 @@ public class CountryTags extends HOIIVUtils {
 				// make a list of country tags
 				while (countryTagsReader.hasNextLine()) {
 					String data = countryTagsReader.nextLine().replaceAll("\\s", "");
-					if (HOIIVFile.usefulData(data)) {
+					if (FileUtils.usefulData(data)) {
 						// takes the defined tag at the beginning of the line
 						CountryTag tag = new CountryTag(data.substring(0, data.indexOf('=')).trim());
 						if (tag.equals(CountryTag.NULL_TAG)) {

@@ -4,6 +4,7 @@ import hoi4utils.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import ui.FXWindow;
 import ui.HOIUtilsWindow;
 
 /**
@@ -38,15 +39,15 @@ public class MessagePopupWindow extends HOIUtilsWindow {
 	/**
 	 * Opens the window
 	 * passes the message from any widow to the message pop up window
-	 * @param string A string to sent to message pop up
+	 * @param message A string to sent to message pop up
 	 */
-	public void open(String string) {
+	public void open(String message) {
 		super.open();
 		MessagePopupWindow controller = loader.getController();
-		controller.initData(string);
+		controller.initData(message);
 	}
 
 	public void handleCloseButtonAction() {
-		HOIUtilsWindow.closeWindow(closeButton);
+		closeWindow(closeButton);
 	}
 }

@@ -5,6 +5,7 @@ import hoi4utils.clausewitz_coding.country.Country;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import ui.FXWindow;
 import ui.HOIUtilsWindow;
 import ui.javafx.table.DoubleTableCell;
 import ui.javafx.table.IntegerOrPercentTableCell;
@@ -60,12 +61,12 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 	// todo put this in hoi4window parent class or whatever
 
 	private void updateResourcesColumnsPercentBehavior() {
-		updateColumnPercentBehavior(stateDataTableAluminiumColumn, resourcesPercent);
-		updateColumnPercentBehavior(stateDataTableChromiumColumn, resourcesPercent);
-		updateColumnPercentBehavior(stateDataTableOilColumn, resourcesPercent);
-		updateColumnPercentBehavior(stateDataTableRubberColumn, resourcesPercent);
-		updateColumnPercentBehavior(stateDataTableSteelColumn, resourcesPercent);
-		updateColumnPercentBehavior(stateDataTableTungstenColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(stateDataTableAluminiumColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(stateDataTableChromiumColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(stateDataTableOilColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(stateDataTableRubberColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(stateDataTableSteelColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(stateDataTableTungstenColumn, resourcesPercent);
 	}
 
 	public void setDataTableCellFactories() {

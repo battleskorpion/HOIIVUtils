@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.io.IOException;
 
 import hoi4utils.HOIIVUtils;
+import ui.FXWindow;
 import ui.HOIUtilsWindow;
 /**
  * This is the FocusLocalization file.
@@ -71,7 +72,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 			}
 			scanner.close();
 		} catch (Exception exception) {
-			HOIUtilsWindow.openError(exception);
+			FXWindow.openGlobalErrorWindow(exception);
 			return;
 		}
 
@@ -146,7 +147,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 						end = fileBuffer.indexOf("\"", temp + 1);
 					} while (fileBuffer.charAt(end - 1) == '\\');
 					if (end < 0) {
-						HOIUtilsWindow.openError("End of localization id is negative!");
+						FXWindow.openGlobalErrorWindow("End of localization id is negative!");
 					}
 
 					String loc = localization.get(1).toString();
@@ -179,7 +180,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 			PWriter.close();
 		}
 		catch (Exception exception) {
-			HOIUtilsWindow.openError(exception);
+			FXWindow.openGlobalErrorWindow(exception);
 		}
 	}
 
