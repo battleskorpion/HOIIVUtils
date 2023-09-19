@@ -1,16 +1,15 @@
 package ui.main_menu;
 
 import hoi4utils.*;
+import javafx.scene.control.*;
+import javafx.stage.Screen;
+import javafx.util.Callback;
 import ui.FXWindow;
 import ui.HOIUtilsWindow;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -38,6 +37,7 @@ public class SettingsWindow extends Application implements FXWindow {
 	@FXML public CheckBox idSkipSettingsCheckBox;
 	@FXML public Button idOkButton;
 	@FXML public Button idDelSettingsButton;
+	@FXML public ComboBox<Screen> preferredMonitorComboBox;
 
 	HashMap<Settings, String> tempSettings;
 
@@ -50,6 +50,21 @@ public class SettingsWindow extends Application implements FXWindow {
 		includeVersion();
 		setDefault();
 		includeSettingValues();
+
+		preferredMonitorComboBox.setItems(Screen.getScreens());
+		preferredMonitorComboBox.setCellFactory(cell -> new ListCell<>() {
+			@Override
+			protected void updateItem(Screen item, boolean empty) {
+				super.updateItem(item, empty);
+				if (item == null || empty) {
+					setText(null);
+				} else {
+					int i = getIndex() + 1; // Entry number starts from 1
+					setText("Screen " + i + ": " + item.getBounds().getWidth() + "x" + item.getBounds().getHeight());
+				}
+			}
+		});
+
 	}
 
 	@Override
@@ -201,6 +216,13 @@ public class SettingsWindow extends Application implements FXWindow {
 
 	public void handleSkipSettingsCheckBoxAction() {
 		updateTempSetting(Settings.SKIP_SETTINGS, idSkipSettingsCheckBox.isSelected());
+	}
+
+	public void handlePreferredMonitorSelection() {
+		// change preferred monitor setting. // todo future: change settings window location upon decision/etc?
+		// monitors are labeled with ints, default being 0
+		// interpret index of selection as monitor selection
+		updateTempSetting(Settings.PREFERRED_SCREEN, preferredMonitorComboBox.getSelectionModel().getSelectedIndex());
 	}
 
 	public void updateTempSetting(Settings setting, Object property) {

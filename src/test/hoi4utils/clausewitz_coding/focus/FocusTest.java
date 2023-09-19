@@ -13,7 +13,7 @@ public class FocusTest {
 		when(focus.nameLocalization()).thenReturn("ALA_test_focus:0 \"Test Focus\"");
 		when(focus.descLocalization()).thenReturn("ALA_test_focus_desc:0 \"\"");
 
-		
+
 	}
 
 	@Test
