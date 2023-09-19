@@ -1,5 +1,6 @@
 package ui.main_menu;
 
+import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.state.State;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -10,6 +11,7 @@ import javafx.stage.Stage;
 import ui.HOIUtilsWindow;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.clausewitz_gfx.InterfaceFileListWindow;
+import ui.focus.FocusTreeWindow;
 import ui.hoi4localization.CustomTooltipWindow;
 import ui.hoi4localization.FocusLocalizationWindow;
 import ui.hoi4localization.UnlocalizedFocusWindow;
@@ -27,6 +29,7 @@ public class MenuWindow extends Application{
 	@FXML public Button customTooltipLocalizationButton;
 	@FXML public Button viewBuilding;
 	@FXML public Button viewGFX;
+	@FXML public Button focusTreeViewButton;
 	
 
 	/* Constructor */
@@ -108,5 +111,10 @@ public class MenuWindow extends Application{
 	public void openInterfaceFileList() {
 		InterfaceFileListWindow window = new InterfaceFileListWindow();
 		window.open();
+	}
+
+	public void openFocusTreeViewer() {
+		FocusTreeWindow window = new FocusTreeWindow();
+		window.setVisible(true);
 	}
 }

@@ -28,7 +28,7 @@ public class Parser {
 				int tabAmt = numMatches(line, "\t");
 
 				/* do nothing to lines with # */
-				if (!line.matches(("(?i)(\\s*[^\\\\]?#.*)?"))) {
+					if (!line.matches(("(?i)(\\s*[^\\\\]?#.*)?"))) {
 					/*
 					if text [a-z] after '{', replace with "{\n\t + text"
 					line.matches(regex) -> regex is inclusive of entire line if line matches "(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)"
