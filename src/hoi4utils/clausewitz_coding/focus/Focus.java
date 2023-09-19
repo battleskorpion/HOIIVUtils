@@ -1,6 +1,7 @@
 package hoi4utils.clausewitz_coding.focus;
 
 import hoi4utils.Settings;
+import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
 import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.clausewitz_coding.code.trigger.Trigger;
 import hoi4utils.clausewitz_coding.gfx.Interface;
@@ -579,5 +580,19 @@ public class Focus {
 
 	public Localization getNameLocalization() {
 		return nameLocalization;
+	}
+
+	public void setLocalization(FocusLocalizationFile localization) {
+		Localization nameLoc = localization.getLocalization(id());
+		Localization descLoc = localization.getLocalizationDesc(id() + "_desc");
+		setNameLocalization(nameLoc);
+		setDescLocalization(descLoc);
+	}
+
+	public void setLocalization(FocusLocalizationFile localization, String focusNameLoc, String focusDescLoc) {
+		Localization nameLoc = localization.setLocalization(id(), focusNameLoc);
+		Localization descLoc = localization.setLocalizationDesc(id() + "_desc", focusDescLoc);
+		setNameLocalization(nameLoc);
+		setDescLocalization(descLoc);
 	}
 }

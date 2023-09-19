@@ -1,6 +1,7 @@
 package hoi4utils.clausewitz_coding.focus.tree_builder;
-/*
+/**
  * FocusTreeBuilder Documentation
+ * // ? todo necessary??
  */
 public class FocusTreeBuilder {
 

@@ -3,6 +3,7 @@ package hoi4utils.clausewitz_coding.country;
 import java.util.Objects;
 public final class CountryTag {
 	public static final CountryTag NULL_TAG = new CountryTag("###");
+	public static final int COUNTRY_TAG_LENGTH = 3;         // standard country tag length (for a normal country tag)
 	private final String tag;
 
 	public CountryTag(String tag) {
@@ -17,6 +18,7 @@ public final class CountryTag {
 		return tag;
 	}
 
+	// todo make this adhere to equals implementation requirements
 	public boolean equals(Object other) {
 		if (other.getClass() == this.getClass()) {
 			return this.tag.equals(((CountryTag) other).tag);

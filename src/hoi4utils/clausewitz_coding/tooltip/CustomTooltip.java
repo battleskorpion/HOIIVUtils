@@ -36,16 +36,7 @@ public class CustomTooltip {
 	public static void loadTooltips(File file) {
 		tooltips = new ArrayList<>();
 
-		if (file == null) {
-			System.err.println("File null in: " + CustomTooltip.class + "-> loadTooltips()");
-			return;
-		}
-		if (!file.exists()) {
-			System.err.println("File does not exist: " + file);
-		}
-		if (!file.isFile()) {
-			System.err.println("File is not file: " + file);
-		}
+		if (!validFile(file)) return;
 
 		Parser parser = new Parser(file);
 		Expression[] tooltipExpressions = parser.findAll("custom_trigger_tooltip"); // prev = parser.expression().getAll("custom_trigger_tooltip");
@@ -59,6 +50,22 @@ public class CustomTooltip {
 			}
 			tooltips.add(new CustomTooltip(expID));
 		}
+	}
+
+	private static boolean validFile(File file) {
+		if (file == null) {
+			System.err.println("File null in: " + CustomTooltip.class + "-> loadTooltips()");
+			return false;
+		}
+		if (!file.exists()) {
+			System.err.println("File does not exist: " + file);
+			return false;
+		}
+		if (!file.isFile()) {
+			System.err.println("File is not file: " + file);
+			return false;
+		}
+		return true;
 	}
 
 	public static ArrayList<CustomTooltip> getTooltips() {

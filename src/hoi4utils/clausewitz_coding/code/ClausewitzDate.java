@@ -3,6 +3,7 @@ package hoi4utils.clausewitz_coding.code;
 import java.util.Objects;
 
 public class ClausewitzDate {
+	public static final int DEFAULT_HOUR = 12;
 	private static ClausewitzDate current = new ClausewitzDate();
 	private final int year;
 	private final int month;
@@ -30,6 +31,7 @@ public class ClausewitzDate {
 		int pos1;
 		int pos2;
 
+		// ? todo rewrite this parse it could be better
 		/* year */
 		pos1 = 0;
 		pos2 = s.indexOf('.');
@@ -59,11 +61,11 @@ public class ClausewitzDate {
 		pos1 = pos2 + 1;
 		pos2 = s.indexOf('.', pos1);
 		if (pos2 <= pos1) {
-			temphour = 12;			  // valid to not have hour (in case, default)
+			temphour = DEFAULT_HOUR;			  // valid to not have hour (in case, default)
 		} else {
 			temphour = Integer.parseInt(s.substring(pos1, pos2));
 			if (temphour < 0 || temphour > 24) {
-				temphour = 12;		  // just default it
+				temphour = DEFAULT_HOUR;		  // just default it
 			}
 		}
 		hour = temphour;				// hour is final
@@ -95,7 +97,7 @@ public class ClausewitzDate {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(year, month, day);	  // objects with different hours will have the same hash code
-													// as they are considered equal by equals().
+		return Objects.hash(year, month, day);	    // objects with different hours will have the same hash code
+													// as they are considered equal by equals().    // todo is this okay?
 	}
 }

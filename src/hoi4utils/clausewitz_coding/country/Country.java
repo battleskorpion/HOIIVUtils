@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+// todo make country extend countrytag????
+// todo consider... implements infrastructure, resources?????
 public class Country {
 	private static final ObservableList<Country> countryList = FXCollections.observableArrayList();
 	private static final int AIRFIELD_CAPACITY_PER_LEVEL = 200;
@@ -45,6 +47,7 @@ public class Country {
 		this.resources = resources;
 	}
 
+	// todo if country extends country tag this could be much better
 	public <T> Country(T item) {
 		if (item instanceof CountryTag) {
 			this.countryTag = (CountryTag) item;

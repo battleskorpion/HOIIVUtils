@@ -26,8 +26,10 @@ public class Expression {
 				continue;
 			}
 
-			exp = exp.replaceAll("= ", "=");
-			exp = exp.replaceAll(" =", "=");
+//			exp = exp.replaceAll("= ", "=");
+//			exp = exp.replaceAll(" =", "=");
+//			exp = exp.replaceAll("(?<=\\S)(\\s*=\\s*)(?=\\S)", " = ");
+			exp = exp.replaceAll("\\s*=\\s*", "=");
 
 			if (expression == null && exp.contains("={")) {
 				expression = exp;
@@ -47,13 +49,12 @@ public class Expression {
 	// for adding subexpressions with subexpressions
 	private Expression(String exp, Iterator<String> it) {
 //		exp = exp.replaceAll(" ", "");
-		expression = exp;
-		expression = expression.replaceAll("= ", "=");
-		expression = expression.replaceAll(" =", "=");
+		expression = exp.replaceAll("\\s*=\\s*", "=");
 		subexpressions = new ArrayList<>();
 
 		while(it.hasNext()) {
 			exp = it.next();
+			exp = exp.replaceAll("\\s*=\\s*", "=");
 //			System.out.println(exp);
 
 			if (!usefulData(exp)) {
@@ -76,8 +77,7 @@ public class Expression {
 		if (expression == null) {
 			return;
 		}
-		expression = expression.replaceAll("= ", "=");
-		expression = expression.replaceAll(" =", "=");
+		expression = expression.replaceAll("\\s*=\\s*", "=");
 		this.expression = expression;
 		this.subexpressions = null;
 	}
@@ -101,9 +101,7 @@ public class Expression {
 		return false;
 	}
 
-	// fuck HOI4
 	// schizophrenics
-	// hi gamerz
 
 	/**
 	 * Gets the first instance of an expression in parsed file
@@ -219,7 +217,7 @@ public class Expression {
 		}
 
 		// if none found return null
-		if (expressions.size() == 0) {
+		if (expressions.isEmpty()) {
 			return null;
 		}
 
@@ -286,8 +284,8 @@ public class Expression {
 	}
 
 	public String toString(int l) {
-		StringBuilder s = new StringBuilder("");
-		s.append(l + ":" + expression);
+		StringBuilder s = new StringBuilder();
+		s.append(l).append(":").append(expression);
 		//s += "\n";
 		if (subexpressions != null) {
 			for (Expression exp : subexpressions) {
@@ -319,7 +317,7 @@ public class Expression {
 		}
 
 		if (!whitespace) {
-			subexpsSplit.removeIf((str) -> str.matches("\s+"));
+			subexpsSplit.removeIf((str) -> str.matches("\\s+"));
 		}
 		return subexpsSplit;
 	}
