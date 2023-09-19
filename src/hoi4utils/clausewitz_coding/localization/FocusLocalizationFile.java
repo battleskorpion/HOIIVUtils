@@ -263,6 +263,37 @@ public class FocusLocalizationFile extends LocalizationFile {
 		return newLoc;
 	}
 
+	@Override
+	public void setLocalization(Localization localization) {
+		super.setLocalization(localization);
+
+		int i = 0;
+		for (List<Localization> locList : focusLocalizationList) {
+			int j = 0;
+			for (Localization l : locList) {
+				if (l.ID().equals(localization.ID())) {
+					focusLocalizationList.get(i).remove(j);
+					focusLocalizationList.get(i).add(j, localization);
+				}
+				j++;
+			}
+			i++;
+		}
+
+		/* if not exists in focus loc list add it */
+		if (localization.ID().endsWith("_desc")) {
+			// really should need a focus first, but sure?
+			System.out.println("Note: adding \"_desc\" before focus id localization.");
+			addLocalization(new Localization(remove_descFromIdentifier(localization), "[New focus localization added by HOI4Utils on " + LocalDate.now() + "]", Localization.Status.DEFAULT), localization);
+		} else {
+			addLocalization(localization, new Localization(localization.ID() + "_desc", "", Localization.Status.DEFAULT));
+		}
+	}
+
+	private String remove_descFromIdentifier(Localization localization) {
+		return localization.ID().substring(0, localization.ID().length() - 5);
+	}
+
 	public Localization setLocalizationDesc(String key, String text) {
 		for (List<Localization> loc : focusLocalizationList) {
 			if (loc.get(1).ID().equals(key)) {
@@ -274,5 +305,4 @@ public class FocusLocalizationFile extends LocalizationFile {
 		}
 		return null;
 	}
-
 }

@@ -256,4 +256,17 @@ public class LocalizationFile extends File {
 		return (loc != null && loc.status() != Localization.Status.DEFAULT);
 	}
 
+	public void setLocalization(Localization localization) {
+		int i = 0;
+		for (Localization l : localizationList) {
+			if (l.ID().equals(localization.ID())) {
+				localizationList.remove(i);
+				localizationList.add(i, localization);
+				return;
+			}
+			i++;
+		}
+
+		localizationList.add(localization);
+	}
 }

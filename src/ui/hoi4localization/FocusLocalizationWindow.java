@@ -2,6 +2,7 @@ package ui.hoi4localization;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import hoi4utils.HOIIVFile;
 import hoi4utils.HOIIVUtils;
@@ -15,11 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
@@ -130,6 +127,28 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
         focusObservableList.addAll(focusTree.listFocuses());
     }
 
+    private void updateObservableFocusList(Focus focus) {
+        if (focus == null) {
+            System.out.println("Focus was null and therefore did not update focus list.");
+            return;
+        }
+
+        int i = 0;
+        Iterator<Focus> iterator = focusObservableList.iterator();
+        while (iterator.hasNext()) {
+            Focus f = iterator.next();
+            if (f.id().equals(focus.id())) {
+                iterator.remove(); // Remove the current element using the iterator
+                focusObservableList.add(i, focus);
+                return; // update is done
+            }
+            i++;
+        }
+
+        /* never updated list, means focus not found in list. */
+        System.err.println("Attempted to update focus " + focus + " in focus observable list, but it was not found in the list.");
+    }
+
     private void updateNumLocalizedFocuses(int numLocalizedFocuses) {
         numLocAddedLabel.setText(numLocAddedLabel.getText()
                 .replace("x", String.valueOf(numLocalizedFocuses)));
@@ -149,10 +168,17 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
     public void setDataTableCellFactories() {
         // none necessary
         focusDescColumn.setCellFactory(TextFieldTableCell.forTableColumn()); // This makes the column editable
+        setOnFocusColumnEditCommit();
+    }
+
+    private void setOnFocusColumnEditCommit() {
         focusDescColumn.setOnEditCommit(event -> {
             // This method will be called when a user edits and commits a cell value.
             Focus focus = event.getRowValue();
             focus.setDescLocalization(event.getNewValue());
+            updateObservableFocusList(focus);
         });
     }
+
+
 }

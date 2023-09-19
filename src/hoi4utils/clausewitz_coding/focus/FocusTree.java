@@ -1,21 +1,20 @@
 package hoi4utils.clausewitz_coding.focus;
 
 import hoi4utils.HOIIVUtils;
+import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
+import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.clausewitz_coding.localization.LocalizationFile;
 import hoi4utils.clausewitz_coding.country.CountryTag;
 import hoi4utils.clausewitz_coding.country.CountryTags;
-import hoi4utils.clausewitz_coding.tooltip.CustomTooltip;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ui.FXWindow;
-import ui.HOIUtilsWindow;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * ALL of the FocusTree/FocusTrees
@@ -27,7 +26,7 @@ public final class FocusTree extends HOIIVUtils {
 	private ArrayList<String> focus_names;
 	private File focus_file;
 	private CountryTag country;
-	private LocalizationFile locFile = null;
+	private FocusLocalizationFile focusLocFile = null;
 	private String id;
 	// private Modifier countryModifier;
 	// private boolean defaultFocus; // ! todo Do This
@@ -212,7 +211,7 @@ public final class FocusTree extends HOIIVUtils {
 	 * @return Localization file for this focus tree, or null.
 	 */
 	public LocalizationFile locFile() {
-		return locFile;
+		return focusLocFile;
 	}
 
 	public File focusFile() {
@@ -221,7 +220,7 @@ public final class FocusTree extends HOIIVUtils {
 
 	public File setLocalization(File locFile) {
 		try {
-			this.locFile = new LocalizationFile(locFile);
+			this.focusLocFile = new FocusLocalizationFile(locFile);
 		} catch (IllegalArgumentException e) {
 			FXWindow.openGlobalErrorWindow(e.getLocalizedMessage());
 			return null;
@@ -365,5 +364,9 @@ public final class FocusTree extends HOIIVUtils {
 		ObservableList<Focus> focusList = FXCollections.observableArrayList();
 		focusList.addAll(focuses());
 		return focusList;
+	}
+
+	public void updateLocalization(Localization nameLocalization) {
+		focusLocFile.setLocalization(nameLocalization);
 	}
 }

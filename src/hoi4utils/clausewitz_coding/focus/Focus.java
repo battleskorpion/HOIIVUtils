@@ -277,11 +277,11 @@ public class Focus {
 
 	/**
 	 * Sets name localization and decides the status.
-	 * @param focus_loc
+	 * @param text
 	 */
-	public void setNameLocalization(String focus_loc) {
+	public void setNameLocalization(String text) {
 		if (nameLocalization == null) {
-			nameLocalization = new Localization(id(), focus_loc, Localization.Status.DEFAULT);
+			setNameLocalization(text, Localization.Status.DEFAULT);
 			return;
 		}
 
@@ -297,9 +297,7 @@ public class Focus {
 			status = Localization.Status.UPDATED;
 		}
 
-		nameLocalization = new Localization(id, focus_loc, status);
-
-		// todo?
+		setNameLocalization(text, status);
 	}
 
 	/**
@@ -316,6 +314,7 @@ public class Focus {
 		String id = nameLocalization.ID();
 
 		nameLocalization = new Localization(id, text, status);
+		focusTree.updateLocalization(nameLocalization);
 	}
 	public SimpleStringProperty nameLocalizationProperty() {
 		return new SimpleStringProperty(nameLocalization());
