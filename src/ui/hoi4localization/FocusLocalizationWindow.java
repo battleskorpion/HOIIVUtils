@@ -92,6 +92,8 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
         if (selectedFile != null) {
             focusLocFileTextField.setText(selectedFile.getAbsolutePath());
             focusLocFile = new FocusLocalizationFile(selectedFile);
+            focusTree.setLocalization(focusLocFile);
+            System.out.println("Set localization file of " + focusTree + " to " + focusLocFile);
         }
     }
 
@@ -176,7 +178,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
             // This method will be called when a user edits and commits a cell value.
             Focus focus = event.getRowValue();
             focus.setDescLocalization(event.getNewValue());
-            updateObservableFocusList(focus);
+            //System.out.println(focusObservableList.get(3));
         });
     }
 

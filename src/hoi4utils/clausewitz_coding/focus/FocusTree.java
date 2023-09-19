@@ -222,10 +222,17 @@ public final class FocusTree extends HOIIVUtils {
 		try {
 			this.focusLocFile = new FocusLocalizationFile(locFile);
 		} catch (IllegalArgumentException e) {
-			FXWindow.openGlobalErrorWindow(e.getLocalizedMessage());
+			FXWindow.openGlobalErrorWindow("Illegal argument: " + e.getLocalizedMessage());
 			return null;
+		} catch (NullPointerException e) {
+			FXWindow.openGlobalErrorWindow("Focus loc. file does not exist/is not available or other error. Details: \n\t" + e.getLocalizedMessage());
 		}
 		return locFile;
+	}
+
+	public File setLocalization(FocusLocalizationFile file) {
+		this.focusLocFile = file;
+		return focusLocFile;
 	}
 
 	@Override

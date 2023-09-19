@@ -274,6 +274,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 				if (l.ID().equals(localization.ID())) {
 					focusLocalizationList.get(i).remove(j);
 					focusLocalizationList.get(i).add(j, localization);
+					return;
 				}
 				j++;
 			}

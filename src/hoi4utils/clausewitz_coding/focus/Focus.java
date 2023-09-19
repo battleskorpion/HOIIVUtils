@@ -285,7 +285,6 @@ public class Focus {
 			return;
 		}
 
-		String id = nameLocalization.ID();
 		Localization.Status status;
 
 		if (nameLocalization.status() == Localization.Status.NEW)
@@ -312,10 +311,10 @@ public class Focus {
 		}
 
 		String id = nameLocalization.ID();
-
 		nameLocalization = new Localization(id, text, status);
 		focusTree.updateLocalization(nameLocalization);
 	}
+
 	public SimpleStringProperty nameLocalizationProperty() {
 		return new SimpleStringProperty(nameLocalization());
 	}
@@ -334,7 +333,6 @@ public class Focus {
 			return;
 		}
 
-		String id = descLocalization.ID();
 		Localization.Status status;
 
 		if (descLocalization.status() == Localization.Status.NEW)
@@ -346,9 +344,22 @@ public class Focus {
 			status = Localization.Status.UPDATED;
 		}
 
-		descLocalization = new Localization(id, text, status);
+//		descLocalization = new Localization(id, text, status);
+		setDescLocalization(text, status);
 		// todo?
 	}
+
+	public void setDescLocalization(String text, Localization.Status status) {
+		if (descLocalization == null) {
+			descLocalization = new Localization(id(), text, status);
+			return;
+		}
+
+		String id = descLocalization.ID();
+		descLocalization = new Localization(id, text, status);
+		focusTree.updateLocalization(descLocalization);
+	}
+
 
 	public String descLocalization() {
 		if (descLocalization == null) {
