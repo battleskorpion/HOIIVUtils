@@ -7,10 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
@@ -157,11 +154,9 @@ public interface FXWindow {
 	void setStyleSheetURL(String styleSheetURL);
 
 	default <S> void loadTableView(TableViewWindow window, TableView<S> dataTable, ObservableList<S> data, List<Function<S, ?>> dataFunctions) {
-		ObservableList<TableColumn<S, ?>> tableColumns = dataTable.getColumns();
-
 		window.setDataTableCellFactories();
 
-		setTableCellValueFactories(dataFunctions, tableColumns);
+		setTableCellValueFactories(dataFunctions, dataTable);
 
 		dataTable.setItems(data);       // country objects, cool! and necessary for the cell value factory,
 													// this is giving the factories the list of objects to collect
@@ -171,13 +166,17 @@ public interface FXWindow {
 	}
 
 	// todo put this in hoi4window parent class or whatever
-	default <S> void setTableCellValueFactories(List<Function<S, ?>> dataFunctions, ObservableList<TableColumn<S, ?>> tableColumns) {
+	default <S> void setTableCellValueFactories(List<Function<S, ?>> dataFunctions, TableView<S> dataTable) {
+		/* table columns */
+		ObservableList<TableColumn<S, ?>> tableColumns = dataTable.getColumns();
 		for (int i = 0; i < Math.min(dataFunctions.size(), tableColumns.size()); i++) {
 			TableColumn<S, ?> tableColumn = tableColumns.get(i);
 			Function<S, ?> dataFunction = dataFunctions.get(i);
 
 			tableColumn.setCellValueFactory(FXWindow.cellDataCallback(dataFunction));
 		}
+
+		/* table rows */
 	}
 
 	/**

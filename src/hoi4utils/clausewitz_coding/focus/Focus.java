@@ -576,4 +576,8 @@ public class Focus {
 	public int completionTime() {
 		return cost * FOCUS_COST_FACTOR;
 	}
+
+	public Localization getNameLocalization() {
+		return nameLocalization;
+	}
 }

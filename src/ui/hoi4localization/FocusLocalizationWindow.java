@@ -5,23 +5,20 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import hoi4utils.HOIIVFile;
-import hoi4utils.HOIIVUtils;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.focus.FixFocus;
 import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_coding.focus.FocusTree;
 import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
-import hoi4utils.clausewitz_coding.tooltip.CustomTooltip;
+import hoi4utils.clausewitz_coding.localization.Localization;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.InputEvent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import ui.FXWindow;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import ui.HOIUtilsWindow;
 import ui.javafx.table.TableViewWindow;
 import ui.message_popup.MessagePopupWindow;
@@ -168,9 +165,46 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
 
     @Override
     public void setDataTableCellFactories() {
-        // none necessary
+        /* column factory */
         focusDescColumn.setCellFactory(TextFieldTableCell.forTableColumn()); // This makes the column editable
         setOnFocusColumnEditCommit();
+
+        /* row factory */
+        focusListTable.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(Focus focus, boolean empty) {
+                super.updateItem(focus, empty);
+
+                if (focus == null || empty) {
+                    setGraphic(null); // Clear any previous content
+                } else {
+                    Localization.Status textStatus = focus.getNameLocalization().status();
+                    Localization.Status descStatus = focus.getDescLocalization().status();
+                    boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED || descStatus == Localization.Status.UPDATED;
+                    boolean hasStatusNew = descStatus == Localization.Status.NEW || textStatus == Localization.Status.NEW;
+
+//                    // Apply text highlighting style if needed
+//                    if (hasStatusUpdated) {
+//                        setTextFill(Color.BLACK); // Set text color to black
+//                        setStyle("-fx-background-color: yellow;"); // Customize background color here
+//                    } else if (hasStatusNew) {
+//                        setTextFill(Color.BLACK); // Set text color to black
+//                        setStyle("-fx-background-color: cyan;"); // Customize background color here
+//                    } else {
+//                        setTextFill(Color.BLACK); // Set text color to black
+//                        setStyle(""); // Reset style
+//                    }
+                    // Apply text style
+                    if (hasStatusUpdated || hasStatusNew) {
+                        setTextFill(Color.BLACK); // Set text color to black
+                        setStyle("-fx-font-weight: bold; -fx-background-color: #328fa8;"); // Apply bold text using CSS
+                    } else {
+                        setTextFill(Color.BLACK); // Set text color to black
+                        setStyle("-fx-background-color: transparent;"); // Reset style
+                    }
+                }
+            }
+        });
     }
 
     private void setOnFocusColumnEditCommit() {
@@ -178,7 +212,6 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
             // This method will be called when a user edits and commits a cell value.
             Focus focus = event.getRowValue();
             focus.setDescLocalization(event.getNewValue());
-            //System.out.println(focusObservableList.get(3));
         });
     }
 

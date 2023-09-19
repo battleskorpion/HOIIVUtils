@@ -17,6 +17,7 @@ public abstract class HOIUtilsWindow implements FXWindow {
 	protected FXMLLoader loader;
 	
 	Stage stage;
+	protected Scene scene;
 
 	/**
 	 * Opens the window
@@ -33,7 +34,7 @@ public abstract class HOIUtilsWindow implements FXWindow {
 						.getResource(fxmlResource));
 
 				Stage launchStage = new Stage();
-				Scene scene = new Scene(loader.load());
+				scene = new Scene(loader.load());
 				launchStage.setScene(scene);
 				launchStage.setTitle(title);
 				
@@ -43,6 +44,7 @@ public abstract class HOIUtilsWindow implements FXWindow {
 					System.out.println("use stylesheet: " + new File(styleSheetURL).getAbsolutePath());
 				}
 				scene.getStylesheets().add(styleSheetURL);
+				scene.getStylesheets().add("resources/utils-highlight-background.css"); // todo temp? idk
 
 				decideScreen(launchStage);
 				launchStage.show();
