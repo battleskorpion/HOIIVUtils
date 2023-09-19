@@ -103,7 +103,7 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
 		CustomTooltip.loadTooltips(tooltipFile);
 		ArrayList<CustomTooltip> tooltips = CustomTooltip.getTooltips();
 		if (tooltips == null) {
-			System.err.println("No custom tooltips found");
+			System.out.println("No custom tooltips found");
 			return;
 		}
 		updateCustomTooltipList(tooltips);
