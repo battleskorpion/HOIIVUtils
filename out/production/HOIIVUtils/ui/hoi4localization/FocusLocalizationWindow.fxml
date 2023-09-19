@@ -15,10 +15,10 @@
 <GridPane fx:id="focusLocalizationPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.hoi4localization.FocusLocalizationWindow">
   <columnConstraints>
 	<ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="80.0" />
-	<ColumnConstraints hgrow="SOMETIMES" maxWidth="536.0" minWidth="10.0" prefWidth="120.0" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="536.0" minWidth="10.0" prefWidth="284.0" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="-Infinity" prefWidth="100.0" />
-	  <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.0" minWidth="10.0" prefWidth="83.0" />
+	<ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="40.0" prefWidth="120.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="284.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="40.0" prefWidth="100.0" />
+	  <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.0" minWidth="-Infinity" prefWidth="83.0" />
   </columnConstraints>
   <rowConstraints>
 	<RowConstraints maxHeight="-Infinity" minHeight="-Infinity" />
@@ -31,18 +31,18 @@
 	  <Insets />
    </opaqueInsets>
    <children>
-	  <Label text="Focus Tree:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+	  <Label maxHeight="-Infinity" maxWidth="-Infinity" text="Focus Tree:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 	  <Label GridPane.rowIndex="3" />
 	  <TableView fx:id="focusListTable" maxWidth="1.7976931348623157E308" minHeight="100.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
 		<columns>
-		  <TableColumn fx:id="focusIDColumn" minWidth="40.0" prefWidth="230.0" text="ID" />
-		  <TableColumn fx:id="focusNameColumn" minWidth="40.0" prefWidth="230.0" text="Name" />
+		  <TableColumn fx:id="focusIDColumn" editable="false" minWidth="40.0" prefWidth="230.0" text="ID" />
+		  <TableColumn fx:id="focusNameColumn" editable="false" minWidth="40.0" prefWidth="230.0" text="Name" />
 			<TableColumn fx:id="focusDescColumn" maxWidth="1.7976931348623157E308" minWidth="80.0" prefWidth="229.0" text="Desc" />
 		</columns>
 	  </TableView>
 	  <Label fx:id="focusTreeNameLabel" prefHeight="17.0" prefWidth="170.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
 	  <Label GridPane.rowIndex="4" />
-	  <Label fx:id="numLocAddedLabel" text="Added localization to x focuses" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+	  <Label fx:id="numLocAddedLabel" maxHeight="-Infinity" maxWidth="-Infinity" text="Added localization to x focuses" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
       <Label text="Focus tree file: " />
       <Label text="Localization file: " GridPane.rowIndex="1" />
       <TextField fx:id="focusTreeFileTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" />
