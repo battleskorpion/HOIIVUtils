@@ -1,16 +1,16 @@
 package hoi4utils.clausewitz_coding.localization;
 
-import java.io.*;
+import ui.FXWindow;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.io.IOException;
-
-import hoi4utils.HOIIVUtils;
-import ui.FXWindow;
-import ui.HOIUtilsWindow;
 /**
  * This is the FocusLocalization file.
  */

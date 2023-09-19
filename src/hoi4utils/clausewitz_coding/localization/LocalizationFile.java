@@ -2,10 +2,11 @@ package hoi4utils.clausewitz_coding.localization;
 
 import hoi4utils.FileUtils;
 import ui.FXWindow;
-import ui.HOIUtilsWindow;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * This is the LocalizationFile file.
