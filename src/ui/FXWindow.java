@@ -28,40 +28,6 @@ import java.util.function.Function;
 import static hoi4utils.Settings.PREFERRED_SCREEN;
 
 public interface FXWindow {
-	/**
-	 * @param propertyGetter
-	 * @param <S>
-	 * @param <T>
-	 * @return
-	 */
-	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(Function<S, ?> propertyGetter) {
-		return cellData -> {
-//			if (Settings.DEV_MODE.enabled()) {
-//				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
-//			}
-			// return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue())); // ? Type safety: Unchecked cast from capture#6-of ? to TJava(16777761)
-			@SuppressWarnings("unchecked")
-			T result = (T) propertyGetter.apply(cellData.getValue());   // yap
-			return new SimpleObjectProperty<>(result);
-			// mehhhh
-		};
-	}
-
-	/**
-	 * 	Update cell behavior within a column
-	 */
-	static <S, T extends TableCell<S, Double>> void updateColumnPercentBehavior(TableColumn<S, Double> column, boolean resourcesPercent) {
-		column.setCellFactory(col -> {
-			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();
-			if (resourcesPercent) {
-				cell.setPercent(true);
-			} else {
-				cell.setInteger(true);
-			}
-			return cell;
-		});
-	}
-
 	static void openGlobalErrorWindow(Exception exception) {
 		openGlobalErrorWindow(exception.getLocalizedMessage());
 	}
@@ -212,5 +178,39 @@ public interface FXWindow {
 
 			tableColumn.setCellValueFactory(FXWindow.cellDataCallback(dataFunction));
 		}
+	}
+
+	/**
+	 * @param propertyGetter
+	 * @param <S>
+	 * @param <T>
+	 * @return
+	 */
+	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(Function<S, ?> propertyGetter) {
+		return cellData -> {
+//			if (Settings.DEV_MODE.enabled()) {
+//				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
+//			}
+			// return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue())); // ? Type safety: Unchecked cast from capture#6-of ? to TJava(16777761)
+			@SuppressWarnings("unchecked")
+			T result = (T) propertyGetter.apply(cellData.getValue());   // yap
+			return new SimpleObjectProperty<>(result);
+			// mehhhh
+		};
+	}
+
+	/**
+	 * 	Update cell behavior within a column
+	 */
+	static <S, T extends TableCell<S, Double>> void updateColumnPercentBehavior(TableColumn<S, Double> column, boolean resourcesPercent) {
+		column.setCellFactory(col -> {
+			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();
+			if (resourcesPercent) {
+				cell.setPercent(true);
+			} else {
+				cell.setInteger(true);
+			}
+			return cell;
+		});
 	}
 }

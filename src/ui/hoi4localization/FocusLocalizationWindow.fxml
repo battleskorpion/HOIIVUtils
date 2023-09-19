@@ -33,7 +33,7 @@
    <children>
 	  <Label maxHeight="-Infinity" maxWidth="-Infinity" text="Focus Tree:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 	  <Label GridPane.rowIndex="3" />
-	  <TableView fx:id="focusListTable" maxWidth="1.7976931348623157E308" minHeight="100.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
+	  <TableView fx:id="focusListTable" editable="true" maxWidth="1.7976931348623157E308" minHeight="100.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
 		<columns>
 		  <TableColumn fx:id="focusIDColumn" editable="false" minWidth="40.0" prefWidth="230.0" text="ID" />
 		  <TableColumn fx:id="focusNameColumn" editable="false" minWidth="40.0" prefWidth="230.0" text="Name" />

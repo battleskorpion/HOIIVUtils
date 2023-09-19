@@ -20,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -66,6 +67,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
 
         /* buttons */
         saveButton.setDisable(true);
+        // focusDescColumn.setEditable(true);       // redundant
     }
 
     public void handleFocusTreeFileBrowseButtonAction() {
@@ -146,5 +148,11 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
     @Override
     public void setDataTableCellFactories() {
         // none necessary
+        focusDescColumn.setCellFactory(TextFieldTableCell.forTableColumn()); // This makes the column editable
+        focusDescColumn.setOnEditCommit(event -> {
+            // This method will be called when a user edits and commits a cell value.
+            Focus focus = event.getRowValue();
+            focus.setDescLocalization(event.getNewValue());
+        });
     }
 }
