@@ -1,8 +1,9 @@
 package hoi4utils.mapgen.colorgen;
 
+import hoi4utils.SettingsManager;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
-import hoi4utils.SettingsManager;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;

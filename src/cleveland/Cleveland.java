@@ -1,9 +1,9 @@
 package cleveland;
 
-import java.io.IOException;
-
 import cleveland.console.ConsoleApplication;
 import cleveland.example.MyCliApplication;
+
+import java.io.IOException;
 
 /**
  * cleveland brown

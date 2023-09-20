@@ -1,15 +1,15 @@
 package hoi4utils;
 
-import static hoi4utils.Settings.MOD_PATH;
-
-import java.awt.EventQueue;
-import java.io.File;
-import java.io.IOException;
-
 import hoi4utils.clausewitz_coding.state.State;
 import hoi4utils.fileIO.FileListener.FileAdapter;
 import hoi4utils.fileIO.FileListener.FileEvent;
 import hoi4utils.fileIO.FileListener.FileWatcher;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+
+import static hoi4utils.Settings.MOD_PATH;
 
 /**
  * HOIIV File

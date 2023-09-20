@@ -1,7 +1,7 @@
 package hoi4utils;
 
-import ui.main_menu.SettingsWindow;
 import ui.main_menu.MenuWindow;
+import ui.main_menu.SettingsWindow;
 
 import java.io.IOException;
 

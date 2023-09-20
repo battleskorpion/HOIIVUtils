@@ -1,13 +1,11 @@
 package hoi4utils.clausewitz_coding.focus;
 
-import hoi4utils.Settings;
-import hoi4utils.clausewitz_coding.country.CountryTag;
-import hoi4utils.clausewitz_coding.country.CountryTags;
-import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.EnglishSuperDictionary;
 import hoi4utils.HOIIVUtils;
+import hoi4utils.Settings;
+import hoi4utils.clausewitz_coding.country.CountryTags;
 import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
-import ui.HOIUtilsWindow;
+import hoi4utils.clausewitz_coding.localization.Localization;
 
 import java.io.File;
 import java.io.IOException;

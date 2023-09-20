@@ -1,17 +1,15 @@
 package ui.main_menu;
 
 import hoi4utils.*;
-import javafx.scene.control.*;
-import javafx.stage.Screen;
-import javafx.util.Callback;
-import ui.FXWindow;
-import ui.HOIUtilsWindow;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import ui.FXWindow;
 
 import java.io.File;
 import java.io.IOException;

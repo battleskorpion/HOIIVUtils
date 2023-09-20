@@ -3,6 +3,7 @@ package hoi4utils.clausewitz_coding.tooltip;
 import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

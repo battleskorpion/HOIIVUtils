@@ -3,12 +3,13 @@ package hoi4utils.clausewitz_coding.state;
 import hoi4utils.HOIIVFile;
 import hoi4utils.clausewitz_coding.InfrastructureData;
 import hoi4utils.clausewitz_coding.code.ClausewitzDate;
+import hoi4utils.clausewitz_coding.country.CountryTag;
 import hoi4utils.clausewitz_coding.country.CountryTags;
-import hoi4utils.clausewitz_parser.Expression;
-import hoi4utils.clausewitz_parser.Parser;
 import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
 import hoi4utils.clausewitz_coding.state.resources.Resources;
-import hoi4utils.clausewitz_coding.country.CountryTag;
+import hoi4utils.clausewitz_parser.Expression;
+import hoi4utils.clausewitz_parser.Parser;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;

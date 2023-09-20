@@ -1,10 +1,12 @@
 package hoi4utils.clausewitz_coding.idea;
 
-import hoi4utils.clausewitz_coding.country.CountryTags;
 import hoi4utils.EnglishSuperDictionary;
 import hoi4utils.HOIIVUtils;
+import hoi4utils.clausewitz_coding.country.CountryTags;
 import hoi4utils.clausewitz_coding.localization.LocalizationFile;
-import java.io.*;
+
+import java.io.File;
+import java.io.IOException;
 /**
  * This is the FixIdea file.
  */

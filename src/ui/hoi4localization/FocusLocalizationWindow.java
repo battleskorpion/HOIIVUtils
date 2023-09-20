@@ -1,9 +1,5 @@
 package ui.hoi4localization;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-
 import hoi4utils.HOIIVFile;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_coding.focus.FixFocus;
@@ -17,11 +13,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import ui.HOIUtilsWindow;
 import ui.javafx.table.TableViewWindow;
 import ui.message_popup.MessagePopupWindow;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
 
 public class FocusLocalizationWindow extends HOIUtilsWindow implements TableViewWindow {
 

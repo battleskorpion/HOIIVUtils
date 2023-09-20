@@ -1,11 +1,11 @@
 package hoi4utils.clausewitz_coding.focus;
 
 import hoi4utils.HOIIVUtils;
+import hoi4utils.clausewitz_coding.country.CountryTag;
+import hoi4utils.clausewitz_coding.country.CountryTags;
 import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
 import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.clausewitz_coding.localization.LocalizationFile;
-import hoi4utils.clausewitz_coding.country.CountryTag;
-import hoi4utils.clausewitz_coding.country.CountryTags;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import javafx.collections.FXCollections;

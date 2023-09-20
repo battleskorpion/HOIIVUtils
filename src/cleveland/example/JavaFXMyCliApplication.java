@@ -14,8 +14,6 @@ package cleveland.example;
 
 import cleveland.console.ConsoleApplication;
 
-import java.io.IOException;
-
 
 /**
  * JavaFXのコンソールで、CLIアプリケーションを実行するクラスです。

@@ -1,10 +1,10 @@
 package hoi4utils.clausewitz_coding.focus;
 
 import hoi4utils.Settings;
-import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
-import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.clausewitz_coding.code.trigger.Trigger;
 import hoi4utils.clausewitz_coding.gfx.Interface;
+import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
+import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.ddsreader.DDSReader;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,8 +14,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 /*

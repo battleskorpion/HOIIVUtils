@@ -2,6 +2,7 @@ package ui.javafx.table;
 
 import javafx.scene.control.TableCell;
 import javafx.util.StringConverter;
+
 import java.text.DecimalFormat;
 
 public class IntegerOrPercentTableCell<S> extends TableCell<S, Double> {
