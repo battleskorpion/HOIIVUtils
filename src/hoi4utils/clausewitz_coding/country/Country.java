@@ -1,14 +1,13 @@
 package hoi4utils.clausewitz_coding.country;
 
+import hoi4utils.clausewitz_coding.InfrastructureData;
 import hoi4utils.clausewitz_coding.state.State;
 import hoi4utils.clausewitz_coding.state.buildings.Infrastructure;
-import hoi4utils.clausewitz_coding.state.resources.Resource;
 import hoi4utils.clausewitz_coding.state.resources.Resources;
 import hoi4utils.clausewitz_coding.technology.Technology;
 import hoi4utils.clausewitz_coding.units.OrdersOfBattle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import jdk.jfr.Percentage;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,9 +17,8 @@ import java.util.function.Function;
 
 // todo make country extend countrytag????
 // todo consider... implements infrastructure, resources?????
-public class Country {
+public class Country implements InfrastructureData {
 	private static final ObservableList<Country> countryList = FXCollections.observableArrayList();
-	private static final int AIRFIELD_CAPACITY_PER_LEVEL = 200;
 	private CountryTag countryTag;
 	private Infrastructure infrastructure;          // infrastructure of all owned states
 	private Resources resources;                    // resources of all owned states
@@ -80,17 +78,17 @@ public class Country {
 		List<Function<Country, ?>> dataFunctions = new ArrayList<>(18);         // 18 for optimization, limited number of data functions.
 
 		dataFunctions.add(Country::name);
-		dataFunctions.add(Country::population);
-		dataFunctions.add(Country::civilianFactories);
-		dataFunctions.add(Country::militaryFactories);
-		dataFunctions.add(Country::navalDockyards);
-		dataFunctions.add(Country::airfields);
-		dataFunctions.add(Country::civMilRatio);
-		dataFunctions.add(Country::popPerFactoryRatio);
-		dataFunctions.add(Country::popPerCivRatio);
-		dataFunctions.add(Country::popPerMilRatio);
-		dataFunctions.add(Country::popAirportCapacityRatio);
-		dataFunctions.add(Country::popPerStateRatio);
+		dataFunctions.add(c -> c.infrastructure.population());
+		dataFunctions.add(c -> c.infrastructure.civMilRatio());
+		dataFunctions.add(c -> c.infrastructure.militaryFactories());
+		dataFunctions.add(c -> c.infrastructure.navalDockyards());
+		dataFunctions.add(c -> c.infrastructure.airfields());
+		dataFunctions.add(c -> c.infrastructure.civMilRatio());
+		dataFunctions.add(c -> c.infrastructure.popPerFactoryRatio());
+		dataFunctions.add(c -> c.infrastructure.popPerCivRatio());
+		dataFunctions.add(c -> c.infrastructure.popPerMilRatio());
+		dataFunctions.add(c -> c.infrastructure.popAirportCapacityRatio());
+		dataFunctions.add(c -> c.infrastructure.popPerStateRatio(c.numOwnedStates()));
 		if (resourcePercentages) {
 			dataFunctions.add(Country::aluminum);
 			dataFunctions.add(Country::chromium);
@@ -118,33 +116,40 @@ public class Country {
 		this.countryTag = countryTag;
 	}
 
+	@Override
 	public Infrastructure getInfrastructureRecord() {
 		return infrastructure;
 	}
 
-	public int infrastructure() {
-		return infrastructure.infrastructure();
-	}
-
-	public int civilianFactories() {
-		return infrastructure.civilianFactories();
-	}
-
-	public int militaryFactories() {
-		return infrastructure.militaryFactories();
-	}
-
-	public int navalDockyards() {
-		return infrastructure.navalDockyards();
-	}
-
-	public int navalPorts() {
-		return infrastructure.navalPorts();
-	}
-
-	public int airfields() {
-		return infrastructure.airfields();
-	}
+//	@Override
+//	public int infrastructure() {
+//		return infrastructure.infrastructure();
+//	}
+//
+//	@Override
+//	public int civilianFactories() {
+//		return infrastructure.civilianFactories();
+//	}
+//
+//	@Override
+//	public int militaryFactories() {
+//		return infrastructure.militaryFactories();
+//	}
+//
+//	@Override
+//	public int navalDockyards() {
+//		return infrastructure.navalDockyards();
+//	}
+//
+//	@Override
+//	public int navalPorts() {
+//		return infrastructure.navalPorts();
+//	}
+//
+//	@Override
+//	public int airfields() {
+//		return infrastructure.airfields();
+//	}
 
 	public void setInfrastructure(Infrastructure infrastructure) {
 		this.infrastructure = infrastructure;
@@ -158,9 +163,10 @@ public class Country {
 		this.resources = resources;
 	}
 
-	public int population() {
-		return infrastructure.population();
-	}
+//	@Override
+//	public int population() {
+//		return infrastructure.population();
+//	}
 
 	public int aluminum() {
 		return resources.get("aluminum").amt();
@@ -212,35 +218,6 @@ public class Country {
 		return (double) aluminum() / State.resourcesOfStates().get("aluminum").amt();
 	}
 
-
-	public void updateInfrastructure(int value) {
-		this.infrastructure = new Infrastructure(population(), value, civilianFactories(), militaryFactories(), navalDockyards(), navalPorts(), airfields());
-	}
-
-	public void updatePopulation(int value) {
-		this.infrastructure = new Infrastructure(value, infrastructure(), civilianFactories(), militaryFactories(), navalDockyards(), navalPorts(), airfields());
-	}
-
-	public void updateCivilianFactories(int value) {
-		this.infrastructure = new Infrastructure(population(), infrastructure(), value, militaryFactories(), navalDockyards(), navalPorts(), airfields());
-	}
-
-	public void updateMilitaryFactories(int value) {
-		this.infrastructure = new Infrastructure(population(), infrastructure(), civilianFactories(), value, navalDockyards(), navalPorts(), airfields());
-	}
-
-	public void updateNavalDockyards(int value) {
-		this.infrastructure = new Infrastructure(population(), infrastructure(), civilianFactories(), militaryFactories(), value, navalPorts(), airfields());
-	}
-
-	public void updateNavalPorts(int value) {
-		this.infrastructure = new Infrastructure(population(), infrastructure(), civilianFactories(), militaryFactories(), navalDockyards(), value, airfields());
-	}
-
-	public void updateAirfields(int value) {
-		this.infrastructure = new Infrastructure(population(), infrastructure(), civilianFactories(), militaryFactories(), navalDockyards(), navalPorts(), value);
-	}
-
 	public static <T> List<Country> loadCountries(List<T> list) {
 		countryList.clear();
 
@@ -278,40 +255,7 @@ public class Country {
 		return countryTag.toString();
 	}
 
-
-	public double civMilRatio() {
-		return (double) civilianFactories() / militaryFactories();
-	}
-
-	public double popPerFactoryRatio() {
-		return (double) population() / factories();
-	}
-
-	public double popPerCivRatio() {
-		return (double) population() / civilianFactories();
-	}
-
-	public double popPerMilRatio() {
-		return (double) population() / militaryFactories();
-	}
-
-	public double popAirportCapacityRatio() {
-		return (double) population() / airfieldsCapacity();
-	}
-
-	public double popPerStateRatio() {
-		return (double) population() / numOwnedStates();
-	}
-
-	private double factories() {
-		return militaryFactories() + civilianFactories();
-	}
-
-	private double airfieldsCapacity() {
-		return airfields() * AIRFIELD_CAPACITY_PER_LEVEL;
-	}
-
-	private double numOwnedStates() {
+	private int numOwnedStates() {
 		return 1;   // todo;
 	}
 }

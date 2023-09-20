@@ -1,6 +1,7 @@
 package hoi4utils.clausewitz_coding.state;
 
 import hoi4utils.HOIIVFile;
+import hoi4utils.clausewitz_coding.InfrastructureData;
 import hoi4utils.clausewitz_coding.code.ClausewitzDate;
 import hoi4utils.clausewitz_coding.country.CountryTags;
 import hoi4utils.clausewitz_parser.Expression;
@@ -17,7 +18,7 @@ import java.util.Map;
 /**
  * Loads HOI4 State files, each instance represents a state as defined in "history/states"
  */
-public class State {
+public class State implements InfrastructureData {
 	/* static */
 	private static final ArrayList<State> states = new ArrayList<>();
 
@@ -333,6 +334,7 @@ public class State {
 		return infrastructureOfStates(ownedStatesOfCountry(tag));
 	}
 
+	// ! todo test if working
 	public static List<Resources> resourcesOfCountries() {
 		List<CountryTag> countryList = CountryTags.getCountryTags();
 		List<Resources> countriesResourcesList = new ArrayList<>();
@@ -374,6 +376,10 @@ public class State {
 
 	public File getFile() {
 		return stateFile;
+	}
+
+	public Infrastructure getInfrastructureRecord() {
+		return stateInfrastructure;
 	}
 
 }
