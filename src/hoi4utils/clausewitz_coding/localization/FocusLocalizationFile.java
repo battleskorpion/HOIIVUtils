@@ -11,6 +11,46 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+
+/* todo strange bug
+	SAC_purity_through_unity:0 "Purity through Unity"
+			SAC_purity_through_unity_desc:0 ""
+
+			SAC_bomber_focus:0 "Bomber Focus"
+			SAC_bomber_focus_desc:0 ""
+
+			SAC_nondiscriminate_recruitment:0 "Nondiscriminate Recruitment"
+			SAC_nondiscriminate_recruitment_desc:0 ""
+
+			SAC_push_social_reform:0 "Push Social Reform"
+			SAC_push_social_reform_desc:0 ""
+
+			SAC_take_out_fascists:0 "Take Out Fascists"
+			SAC_extra_tech_slot_2:0 "Extra Tech Slot 2"
+			SAC_extra_tech_slot_desc:0 ""
+
+			SAC_extra_tech_slot_2_desc:0 ""
+
+			SAC_nuclear_effort:0 "Nuclear Effort"
+			SAC_nuclear_effort_desc:0 ""
+
+			SAC_forign_intervention:0 "Forign Intervention"
+			SAC_forign_intervention_desc:0 ""
+
+			SAC_infrastructure_effort_2:0 "Infrastructure Effort 2"
+			SAC_infrastructure_effort_2_desc:0 ""
+
+			SAC_equipment_effort_2:0 "Equipment Effort 2"
+			SAC_equipment_effort_2_desc:0 ""
+
+			SAC_call_workers_to_arms:0 "Call Workers to Arms"
+			SAC_call_workers_to_arms_desc:0 ""
+
+			SAC_aviation_effort:0 "Aviation Effort"
+			SAC_capital_ships_effort:0 "Capital Ships Effort"
+			SAC_capital_ships_effort_desc:0 ""
+*/
+
 /**
  * This is the FocusLocalization file.
  */
@@ -110,6 +150,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 					System.out.println("replaced " + localization.get(0).ID());
 
 					idpos = start + loc.length();
+					idpos = fileBuffer.indexOf("\n", idpos);
 				} else if (localization.get(0).status() == Localization.Status.NEW) {
 					/* append loc */
 					String loc = localization.get(0).toString();
@@ -118,8 +159,17 @@ public class FocusLocalizationFile extends LocalizationFile {
 					System.out.println("append " + localization.get(0).ID());
 
 					idpos = fileBuffer.length();
+//					idpos = fileBuffer.indexOf("\n", idpos);
 				} else {
-					idpos = 0;
+					//idpos = 0;
+					Localization loc = localization.get(0);
+					idpos = fileBuffer.indexOf(loc.ID());
+					if (idpos == -1) {
+						idpos = fileBuffer.length();
+					} else {
+						idpos += loc.toString().length();
+						idpos = fileBuffer.indexOf("\n", idpos);
+					}
 				}
 
 				/* fix null description, shouldn't really be at this point but hey that's fine */
@@ -162,13 +212,14 @@ public class FocusLocalizationFile extends LocalizationFile {
 
 					if (idpos == 0) {
 						fileBuffer.append("\t").append(loc).append(System.lineSeparator());
+						System.out.println("append " + localization.get(1).ID());
 					} else {
 						/* skip new lines */
 						while (fileBuffer.indexOf(System.lineSeparator()) == idpos) {
 							idpos++;
 						}
-						fileBuffer.insert(idpos, "\t" + loc + System.lineSeparator());
-						System.out.println("append " + localization.get(1).ID());
+						fileBuffer.insert(idpos, System.lineSeparator() + "\t" + loc + System.lineSeparator());
+						System.out.println("insert " + localization.get(1).ID());
 					}
 				} else {
 

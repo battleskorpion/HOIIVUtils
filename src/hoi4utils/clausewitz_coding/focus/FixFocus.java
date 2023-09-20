@@ -66,7 +66,7 @@ public class FixFocus extends HOIIVUtils {
 //		focusLocProgress.setNumFocusesUnloc(numFocusesUnloc);
 //		focusLocProgress.refreshUnlocFocusesTable(focusesUnloc);
 
-		localization.writeLocalization();
+//		localization.writeLocalization();
 		return true;
 	}
 
