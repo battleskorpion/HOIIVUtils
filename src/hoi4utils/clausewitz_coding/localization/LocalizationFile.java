@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 /**
  * This is the LocalizationFile file.
+ * @implNote  git/.yml prefers/requires "    " instead of using \t and "\n" for newline/line separator.
  */
 public class LocalizationFile extends File {
 	private static String loc_key = ":0";

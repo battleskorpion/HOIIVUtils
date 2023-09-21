@@ -1,4 +1,4 @@
-package hoi4utils.mapgen.test.temp;
+package hoi4utils.map.test.temp;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
