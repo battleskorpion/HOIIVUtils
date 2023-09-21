@@ -1,4 +1,4 @@
-package hoi4utils.mapgen.colorgen;
+package hoi4utils.map.province;
 
 import hoi4utils.SettingsManager;
 import hoi4utils.clausewitz_parser.Expression;

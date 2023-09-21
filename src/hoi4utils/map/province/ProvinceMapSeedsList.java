@@ -1,4 +1,4 @@
-package hoi4utils.mapgen.test.mapgen;
+package hoi4utils.map.province;
 
 import java.awt.*;
 import java.util.ArrayList;
