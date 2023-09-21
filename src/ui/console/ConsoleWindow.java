@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+import ui.FXWindow;
+
 public class ConsoleWindow extends Application {
 	String fxmlResource = "ConsoleWindow.fxml";
 	String title = "HOIIVUtils Console";
@@ -15,7 +17,7 @@ public class ConsoleWindow extends Application {
 
     @FXML private TextArea consoleTextArea;
 
-	public void initializeConsoleWindow(String[] args) {
+	public void initializeConsoleWindow() {
         try {
 			FXMLLoader loader = new FXMLLoader(
 				getClass().getResource(
@@ -62,4 +64,17 @@ public class ConsoleWindow extends Application {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'start'");
     }
+
+	public void open() {
+        try {
+			if (stage != null) {
+				stage.show();
+			} else {
+				start(new Stage());
+			}
+		} 
+		catch (Exception exc) {
+			openError(exc);
+		}
+	}
 }
