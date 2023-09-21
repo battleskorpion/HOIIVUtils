@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import ui.FXWindow;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.clausewitz_gfx.InterfaceFileListWindow;
+import ui.console.ConsoleWindow;
 import ui.focus.FocusTreeWindow;
 import ui.hoi4localization.CustomTooltipWindow;
 import ui.hoi4localization.FocusLocalizationWindow;
@@ -23,6 +24,7 @@ public class MenuWindow extends Application implements FXWindow {
 
 	@FXML public Button settingsButton;
 	@FXML public Button statisticsButton;
+	@FXML public Button consoleButton;
 	@FXML public Button focusLocalizButton;
 	@FXML public Button findFocusesWithoutLocalization;
 	@FXML public Button customTooltipLocalizationButton;
@@ -83,6 +85,11 @@ public class MenuWindow extends Application implements FXWindow {
 
 	public void openStatistics() {
 		StatisticsWindow window = new StatisticsWindow();
+		window.open();
+	}
+
+	public void openConsole() {
+		ConsoleWindow window = new ConsoleWindow();
 		window.open();
 	}
 

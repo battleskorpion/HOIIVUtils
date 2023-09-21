@@ -32,6 +32,7 @@ public class SettingsWindow extends Application implements FXWindow {
 	@FXML public Label idHOIIVModFolderLabel;
 	@FXML public Button idBrowseButton;
 	@FXML public CheckBox idDevModeCheckBox;
+	@FXML public CheckBox idOpenConsoleOnLaunchCheckBox;
 	@FXML public CheckBox idSkipSettingsCheckBox;
 	@FXML public Button idOkButton;
 	@FXML public Button idDelSettingsButton;
@@ -212,6 +213,10 @@ public class SettingsWindow extends Application implements FXWindow {
 		updateTempSetting(Settings.DEV_MODE, idDevModeCheckBox.isSelected());
 	}
 
+	public void handleOpenConsoleOnLaunchCheckBoxAction() {
+		updateTempSetting(Settings.OPEN_CONSOLE_ON_LAUNCH, idOpenConsoleOnLaunchCheckBox.isSelected());
+	}
+
 	public void handleSkipSettingsCheckBoxAction() {
 		updateTempSetting(Settings.SKIP_SETTINGS, idSkipSettingsCheckBox.isSelected());
 	}
@@ -238,6 +243,10 @@ public class SettingsWindow extends Application implements FXWindow {
 			return;
 		}
 		hideWindow(idOkButton);
+		openMenuWindow();
+	}
+
+	private void openMenuWindow() {
 		MenuWindow menuWindow = new MenuWindow();
 		menuWindow.open();
 	}

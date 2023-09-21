@@ -37,6 +37,15 @@ public enum Settings {
 			return "false";
 		}
 	},
+	OPEN_CONSOLE_ON_LAUNCH {
+		public Object getSetting() {
+			return SettingsManager.settingValues.get(this).equals("true");
+		}
+
+		public String defaultProperty() {
+			return "false";
+		}
+	},
 	PREFERRED_SCREEN {
 		public Object getSetting() {
 			try {
