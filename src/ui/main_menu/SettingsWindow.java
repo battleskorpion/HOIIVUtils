@@ -176,6 +176,7 @@ public class SettingsWindow extends Application implements FXWindow {
 	private void setDefault() {
 		idModPathTextField.clear();
 		idDevModeCheckBox.setSelected(false);
+		idOpenConsoleOnLaunchCheckBox.setSelected(false);
 		idSkipSettingsCheckBox.setSelected(false);
 		idDelSettingsButton.setDisable(true);
 		disableOkButton();

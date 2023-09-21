@@ -9,11 +9,11 @@ import javafx.stage.Stage;
 
 import ui.FXWindow;
 
-public class ConsoleWindow extends Application {
+public class ConsoleWindow extends Application implements FXWindow {
 	String fxmlResource = "ConsoleWindow.fxml";
 	String title = "HOIIVUtils Console";
 	String styleSheetURL = "resources/javafx_dark.css";
-	private Stage stage;
+	Stage stage;
 
     @FXML private TextArea consoleTextArea;
 
@@ -77,4 +77,46 @@ public class ConsoleWindow extends Application {
 			openError(exc);
 		}
 	}
+
+    @Override
+    public void open(String fxmlResource, String title) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'open'");
+    }
+
+    @Override
+    public String getFxmlResource() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getFxmlResource'");
+    }
+
+    @Override
+    public String getTitle() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTitle'");
+    }
+
+    @Override
+    public String getStyleSheetURL() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getStyleSheetURL'");
+    }
+
+    @Override
+    public void setFxmlResource(String fxmlResource) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setFxmlResource'");
+    }
+
+    @Override
+    public void setTitle(String title) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setTitle'");
+    }
+
+    @Override
+    public void setStyleSheetURL(String styleSheetURL) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setStyleSheetURL'");
+    }
 }
