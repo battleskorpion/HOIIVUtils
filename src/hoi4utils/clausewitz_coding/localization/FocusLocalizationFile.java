@@ -53,6 +53,7 @@ import java.util.Scanner;
 
 /**
  * This is the FocusLocalization file.
+ * @implNote  git/.yml prefers/requires "    " instead of using \t and "\n" for newline/line separator.
  */
 public class FocusLocalizationFile extends LocalizationFile {
 
@@ -108,7 +109,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 			Scanner scanner = new Scanner(this);
 			fileBuffer = new StringBuilder();
 			while (scanner.hasNextLine()) {
-				fileBuffer.append(scanner.nextLine()).append(System.lineSeparator());
+				fileBuffer.append(scanner.nextLine()).append("\n");
 			}
 			scanner.close();
 		} catch (Exception exception) {
@@ -155,7 +156,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 					/* append loc */
 					String loc = localization.get(0).toString();
 					loc = loc.replaceAll("§", "Â§");		// necessary with UTF-8 BOM
-					fileBuffer.append("\t").append(loc).append(System.lineSeparator());
+					fileBuffer.append("    ").append(loc).append("\n");
 					System.out.println("append " + localization.get(0).ID());
 
 					idpos = fileBuffer.length();
@@ -211,14 +212,15 @@ public class FocusLocalizationFile extends LocalizationFile {
 					loc = loc.replaceAll("§", "Â§");		// necessary with UTF-8 BOM
 
 					if (idpos == 0) {
-						fileBuffer.append("\t").append(loc).append(System.lineSeparator());
+						fileBuffer.append("    ").append(loc).append("\n");
 						System.out.println("append " + localization.get(1).ID());
 					} else {
 						/* skip new lines */
-						while (fileBuffer.indexOf(System.lineSeparator()) == idpos) {
+						while (fileBuffer.indexOf("\n") == idpos) {
 							idpos++;
 						}
-						fileBuffer.insert(idpos, System.lineSeparator() + "\t" + loc + System.lineSeparator());
+						fileBuffer.insert(idpos, "\n" + "    " + loc + "\n");       // last newline here is an *extra* newline, for creating a blank line
+																						// between locs for separate focuses
 						System.out.println("insert " + localization.get(1).ID());
 					}
 				} else {

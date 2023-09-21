@@ -1,4 +1,4 @@
-package hoi4utils.mapgen.test.mapgen;
+package hoi4utils.map.province;
 
 public enum ProvinceGenerationType {
     GRID_SEED,

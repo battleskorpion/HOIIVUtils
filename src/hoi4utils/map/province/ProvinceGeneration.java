@@ -1,4 +1,4 @@
-package hoi4utils.mapgen.test.mapgen;
+package hoi4utils.map.province;
 
 import opensimplex2.OpenSimplex2;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RejectedExecutionException;
 
-import static hoi4utils.mapgen.test.mapgen.values.stateBorderMap;
+import static hoi4utils.map.province.values.stateBorderMap;
 
 //import static ho.values.stateBorderMap;
 
@@ -37,25 +37,9 @@ public class ProvinceGeneration {
 
 	public static void provinceGeneration() {
 		/* create new image (map) */
-		provinceMap = new BufferedImage(values.imageWidth, values.imageHeight,
+		provinceMap = new ProvinceMap(values.imageWidth, values.imageHeight,
 				BufferedImage.TYPE_INT_RGB);
-
-		/* initialize points list */
-		points = new ProvinceMapPointsList(values.imageWidth, values.imageHeight);
-
-		/* initialize mapping of seeds to states (regions for purposes of province generation) */
-		// TODO: optimization may be possible
-//		stateSeedsMap = new HashMap<>();
-		stateMapList = new StateMapList();
-		System.out.println(stateMapList);
-
-		/* white canvas (kinda unnecessary) */
-		for (int y = 0; y < values.imageHeight; y++) {
-			for (int x = 0; x < values.imageWidth; x++) {
-				// set color at pixel cords
-				provinceMap.setRGB(x, y, values.rgb_white);
-			}
-		}
+		initLists();
 
 		// load heightmap, states map
 		loadMaps();
@@ -64,6 +48,17 @@ public class ProvinceGeneration {
 		seedGeneration();
 
 		provinceDetermination();
+	}
+
+	private static void initLists() {
+		/* initialize points list */
+		points = new ProvinceMapPointsList(values.imageWidth, values.imageHeight);
+
+		/* initialize mapping of seeds to states (regions for purposes of province generation) */
+		// TODO: optimization may be possible
+//		stateSeedsMap = new HashMap<>();
+		stateMapList = new StateMapList();
+		System.out.println(stateMapList);
 	}
 
 	/**
@@ -80,6 +75,7 @@ public class ProvinceGeneration {
 		values.imageWidth = values.heightmap.getWidth();
 		values.imageHeight = values.heightmap.getHeight(); 	// may break things but good idea
 	}
+
 	private static void seedGeneration() {
 		if(values.generationType == ProvinceGenerationType.GRID_SEED) {
 			gridSeedGeneration();
@@ -265,6 +261,7 @@ public class ProvinceGeneration {
 		 * Auto-generated serialVersionUID
 		 */
 		private static final long serialVersionUID = 7925866053687723919L;
+		public static final double NOISE_MULTIPLIER = 0.05;
 
 		protected static int splitThreshold = 8;		// split until 1 row each
 
@@ -340,8 +337,8 @@ public class ProvinceGeneration {
 
 //						int xOffset = (int) (widthPerSeed  * ((noise.get(x * 0.005, y * 0.005, 0.0) - 1) * 0.5));		// * ((noise.getValue(x * 0.005, y * 0.005, 0.0) - 1) * 0.5)));	 good values for 32*32 seeds and 4608 * 2816 image
 //						int yOffset = (int) (heightPerSeed * ((noise.get(x * 0.005, y * 0.005, 1.0) - 1) * 0.5));
-						int xOffset = (int) (widthPerSeed * (noise1) * 0.05);	//TODO work on values
-						int yOffset = (int) (heightPerSeed * (noise2) * 0.05);
+						int xOffset = (int) (widthPerSeed * (noise1) * NOISE_MULTIPLIER);	//TODO work on values
+						int yOffset = (int) (heightPerSeed * (noise2) * NOISE_MULTIPLIER);
 
 						int rgb;
 						//int heightmapValue = values.heightmap.getRGB(x, y);
