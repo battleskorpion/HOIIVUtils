@@ -18,11 +18,18 @@ public class HOIIVUtils {
 	public static SettingsManager settings;
 
 	public static void main(String[] args) throws RuntimeException,IOException {
+        // // Configure the logger from the LoggerUtility class
+        // LoggerUtility.configureLogger();
+
+        // // Get the logger instance
+        // java.util.logging.Logger logger = LoggerUtility.getLogger();
+		
 		try {
 			SettingsManager.getSavedSettings();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		
 		
 		if (firstTimeSetup) {
 			settingsWindow = new SettingsWindow();
