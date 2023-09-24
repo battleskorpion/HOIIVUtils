@@ -1,41 +1,39 @@
 package hoi4utils.map.province;
 
-import hoi4utils.map.province.ProvinceMapPoint;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class StateMapList {
-    private HashMap<Integer, ArrayList<ProvinceMapPoint>> stateMapSeeds;
+    private HashMap<Integer, ArrayList<MapPoint>> stateMapSeeds;
 
     public StateMapList() {
         stateMapSeeds = new HashMap<>();
     }
 
-    public void addSeed(int stateMapColor, ProvinceMapPoint provinceMapPoint) {
-        stateMapSeeds.putIfAbsent(stateMapColor, new ArrayList<ProvinceMapPoint>());
+    public void addSeed(int stateMapColor, MapPoint mapPoint) {
+        stateMapSeeds.putIfAbsent(stateMapColor, new ArrayList<MapPoint>());
 
-        stateMapSeeds.get(stateMapColor).add(provinceMapPoint);
+        stateMapSeeds.get(stateMapColor).add(mapPoint);
     }
 
     public boolean containsState(int stateBorderValue) {
         return stateMapSeeds.containsKey(stateBorderValue);
     }
 
-    public ArrayList<ProvinceMapPoint> seedsList(int state) {
+    public ArrayList<MapPoint> seedsList(int state) {
         return stateMapSeeds.get(state);
     }
 
-    public ArrayList<ProvinceMapPoint> seedsList(int state, int type) {
-        ArrayList<ProvinceMapPoint> seeds = new ArrayList<>();
-        for (ProvinceMapPoint seed : seedsList(state)) {
+    public ArrayList<MapPoint> seedsList(int state, int type) {
+        ArrayList<MapPoint> seeds = new ArrayList<>();
+        for (MapPoint seed : seedsList(state)) {
             if (seed.type == type) {
                 seeds.add(seed);
             }
         }
 
         if (seeds.size() == 0) {
-            ArrayList<ProvinceMapPoint> seedsList = seedsList(state);
+            ArrayList<MapPoint> seedsList = seedsList(state);
             if (seedsList.size() == 0) {
                 System.err.println("No seeds of type for state int: " + state);
             }

@@ -116,21 +116,21 @@ public class ProvinceGeneration {
 				int stateMapColor = stateBorderMap.getRGB(seedX, seedY);
 
 				/* add point to points array */
-				ProvinceMapPoint provinceMapPoint;
+				MapPoint mapPoint;
 				/* calculate sea or land prov. */
 				int type = provinceType(heightmapHeight); 	// 0: land
 															// 1: sea
-				provinceMapPoint = new ProvinceMapPoint(seedX, seedY, true, type);
-				points.set(provinceMapPoint);
+				mapPoint = new MapPoint(seedX, seedY, true, type);
+				points.set(mapPoint);
 
 				/* add point to seeds array */
 				// x and y needed
 //				Integer rgbInteger = rgb;
 				Point point = new Point(seedX, seedY);
-				seeds.add(provinceMapPoint, rgb);		//TODO rgb? now in map point idk hmmmmmm
-				provinceMapPoint.rgb = rgb;
+				seeds.add(mapPoint, rgb);		//TODO rgb? now in map point idk hmmmmmm
+				mapPoint.rgb = rgb;
 //				stateSeedsMap.put(provinceMapPoint, stateMapColor);
-				stateMapList.addSeed(stateMapColor, provinceMapPoint);
+				stateMapList.addSeed(stateMapColor, mapPoint);
 
 				// TODO no not here
 				// TODO don't need thiS???? #redundant
@@ -388,7 +388,7 @@ public class ProvinceGeneration {
 
 	}
 
-	private static int determineColor(int x, int xOffset, int y, int yOffset, final ArrayList<ProvinceMapPoint> seeds)
+	private static int determineColor(int x, int xOffset, int y, int yOffset, final ArrayList<MapPoint> seeds)
 	{
 		int nearestColor = values.rgb_white;            // color of nearest seed (int value)
 		// (default white)
@@ -401,7 +401,7 @@ public class ProvinceGeneration {
 		// iterate through each seed
 		//for (int s = 0; s < seeds.size(); s++) {
 //		for (Iterator<Point> pointIterator = seedsRGBValue.keySet().iterator(); pointIterator.hasNext(); ) {
-		for (ProvinceMapPoint point : seeds) {
+		for (MapPoint point : seeds) {
 //			System.out.println(seeds.size()); // TODO: size is 683 7 or 3?
 			// calculate the difference in x and y direction
 			int xdiff = point.x - (x + xOffset);

@@ -8,7 +8,7 @@ public abstract class AbstractSeedGeneration implements SeedGeneration {
 		this.heightmap = heightmap;
 	}
 
-	protected AbstractSeedGeneration() {
-		heightmap = null;
-	}
+//	protected AbstractSeedGeneration() {
+//		heightmap = null;
+//	}
 }

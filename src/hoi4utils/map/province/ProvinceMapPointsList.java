@@ -6,7 +6,7 @@ public class ProvinceMapPointsList {
 	/**
 	 * y, x order
 	 */
-	private ArrayList<ArrayList<ProvinceMapPoint>> mapPointsList;
+	private ArrayList<ArrayList<MapPoint>> mapPointsList;
 
 	public ProvinceMapPointsList(int x, int y) {
 		/*
@@ -14,9 +14,9 @@ public class ProvinceMapPointsList {
 		 */
 		mapPointsList = new ArrayList<>(y);
 		for(int i = 0; i < y; i++) {
-			mapPointsList.add(new ArrayList<ProvinceMapPoint>(x));
+			mapPointsList.add(new ArrayList<MapPoint>(x));
 			for(int j = 0; j < x; j++) {
-				mapPointsList.get(i).add(new ProvinceMapPoint(x, y));
+				mapPointsList.get(i).add(new MapPoint(x, y));
 			}
 		}
 	}
@@ -25,15 +25,15 @@ public class ProvinceMapPointsList {
 	 * add point to points array list
 	 * @param point point
 	 */
-	public void add(ProvinceMapPoint point) {
+	public void add(MapPoint point) {
 		mapPointsList.get(point.y).add(point.x, point);
 	}
 
-	public ProvinceMapPoint get(int x, int y) {
+	public MapPoint get(int x, int y) {
 		return mapPointsList.get(y).get(x);
 	}
 
-	public void set(ProvinceMapPoint point) {
+	public void set(MapPoint point) {
 		mapPointsList.get(point.y).set(point.x, point);
 	}
 
@@ -42,7 +42,7 @@ public class ProvinceMapPointsList {
 	 * @param point point
 	 * @return
 	 */
-	public ProvinceMapPoint remove(ProvinceMapPoint point) {
+	public MapPoint remove(MapPoint point) {
 		return mapPointsList.get(point.y).remove(point.x);
 	}
 
@@ -52,7 +52,7 @@ public class ProvinceMapPointsList {
 	 * @param y y-coord
 	 * @return
 	 */
-	public ProvinceMapPoint remove(int x, int y) {
+	public MapPoint remove(int x, int y) {
 		return null;
 	}
 
