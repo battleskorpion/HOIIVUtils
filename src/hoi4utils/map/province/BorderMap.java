@@ -108,4 +108,9 @@ public class BorderMap extends BufferedImage {
 	public BorderMap(Heightmap heightmap) {
 		this(heightmap.getWidth(), heightmap.getHeight());
 	}
+
+	public BorderMap(BufferedImage read) {
+		super(read.getWidth(), read.getHeight(), read.getType());
+		this.getGraphics().drawImage(read, 0, 0, null);
+	}
 }

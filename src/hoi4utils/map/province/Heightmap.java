@@ -30,6 +30,11 @@ public class Heightmap extends BufferedImage {
 		super(width, height, imageType);
 	}
 
+	public Heightmap(BufferedImage temp) {
+		super(temp.getWidth(), temp.getHeight(), temp.getType());
+		this.getGraphics().drawImage(temp, 0, 0, null);
+	}
+
 //	/**
 //	 * Constructs a {@code Heightmap} of one of the predefined
 //	 * image types:

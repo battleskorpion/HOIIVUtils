@@ -1,9 +1,6 @@
 package hoi4utils.map.province;
 
-import hoi4utils.map.DynamicSeedGeneration;
-import hoi4utils.map.GridSeedGeneration;
-import hoi4utils.map.SeedGeneration;
-import hoi4utils.map.SeedsList;
+import hoi4utils.map.*;
 import opensimplex2.OpenSimplex2;
 
 import javax.imageio.ImageIO;
@@ -16,10 +13,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RejectedExecutionException;
 
-import static hoi4utils.map.province.values.generationType;
-import static hoi4utils.map.province.values.stateBorderMap;
-
-//import static ho.values.stateBorderMap;
+import static hoi4utils.map.values.generationType;
+import static hoi4utils.map.values.stateBorderMap;
 
 public class ProvinceGeneration extends MapGeneration {
 	private ProvinceMap provinceMap;
@@ -42,11 +37,11 @@ public class ProvinceGeneration extends MapGeneration {
 		}
 	}
 
-	private void generate(Heightmap heightmap) {
+	private void generate() {
 		/* create new image (map) */
 		provinceMap = new ProvinceMap(heightmap);
+		stateBorderMap = loadStateBorderMap(values.stateBordersName); // ! todo temp!!
 		initLists();        // todo like hmmm more classes not sure
-		loadStateBorderMap(values.stateBordersName); // ! todo temp!!
 
 		/* seeds generation */
 		SeedGeneration seedGeneration;
@@ -59,13 +54,19 @@ public class ProvinceGeneration extends MapGeneration {
 		provinceDetermination();
 	}
 
+	private void generate(Heightmap heightmap) {
+		this.heightmap = heightmap;
+		generate();
+	}
+
 	private void generate(String heightmapName) {
-		generate(loadHeightmap(heightmapName));
+		heightmap = loadHeightmap(heightmapName);
+		generate();
 	}
 
 	private void initLists() {
 		/* initialize points list */
-		points = new ProvinceMapPointsList(values.imageWidth, values.imageHeight);
+		points = new ProvinceMapPointsList(heightmap.getWidth(), heightmap.getHeight());
 
 		/* initialize mapping of seeds to states (regions for purposes of province generation) */
 		// TODO: optimization may be possible
@@ -87,15 +88,16 @@ public class ProvinceGeneration extends MapGeneration {
 //		values.imageWidth = values.heightmap.getWidth();
 //		values.imageHeight = values.heightmap.getHeight(); 	// may break things but good idea
 		try {
-			return (Heightmap) ImageIO.read(new File(heightmapName));
+			BufferedImage temp = ImageIO.read(new File(heightmapName));
+			return new Heightmap(temp);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private BufferedImage loadStateBorderMap(String stateBorderMapName) {
+	private BorderMap loadStateBorderMap(String stateBorderMapName) {
 		try {
-			return stateBorderMap = (BorderMap) ImageIO.read(new File(stateBorderMapName));
+			return stateBorderMap = new BorderMap(ImageIO.read(new File(stateBorderMapName)));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -161,7 +163,7 @@ public class ProvinceGeneration extends MapGeneration {
 		 * constructor (y set as 0 to imageHeight). Recommended constructor for initial initialization.
 		 */
 		public ForkColorDetermination(ProvinceMap provinceMap, Heightmap heightmap) {
-			this(provinceMap, heightmap, 0, values.imageHeight);
+			this(provinceMap, heightmap, 0, heightmap.getHeight());
 		}
 
 		/**
@@ -196,8 +198,8 @@ public class ProvinceGeneration extends MapGeneration {
 		 * Determine color for each point
 		 */
 		protected void computeDirectly() {
-			final int widthPerSeed = values.imageWidth  / values.numSeedsX;
-			final int heightPerSeed = values.imageHeight / values.numSeedsY;
+			final int widthPerSeed = heightmap.getWidth()  / values.numSeedsX;
+			final int heightPerSeed = heightmap.getHeight() / values.numSeedsY;
 			Random random = new Random();
 			int seed = random.nextInt();
 

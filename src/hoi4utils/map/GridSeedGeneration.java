@@ -2,10 +2,9 @@ package hoi4utils.map;
 
 import hoi4utils.map.province.*;
 
-import java.awt.*;
 import java.util.Random;
 
-import static hoi4utils.map.province.values.stateBorderMap;
+import static hoi4utils.map.values.stateBorderMap;
 
 public class GridSeedGeneration extends AbstractSeedGeneration {
 	public GridSeedGeneration(Heightmap heightmap) {

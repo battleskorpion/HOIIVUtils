@@ -1,5 +1,7 @@
 package hoi4utils.map.province;
 
+import hoi4utils.map.values;
+
 import java.awt.*;
 import java.util.Random;
 
