@@ -170,11 +170,14 @@ public class SettingsManager {
 		settingsPWriter.close();
 	}
 
-	public static void getSavedSettings() throws IOException {
+	public static void getSavedSettings() {
 		if (new File(HOI4UTILS_PROPERTIES_PATH + "\\HOIIVUtils_properties.txt").exists()) {
 			HOIIVUtils.firstTimeSetup = false;
-			HOIIVUtils.settings = new SettingsManager();
-			//HOIIVUtils.decideScreen(primaryStage);
+			try {
+				HOIIVUtils.settings = new SettingsManager();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			if (Settings.DEV_MODE.enabled()) {
 				System.out.println("Performing standard settings startup.");
 			}

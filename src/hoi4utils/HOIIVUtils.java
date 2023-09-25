@@ -17,25 +17,15 @@ public class HOIIVUtils {
 	public static MenuWindow menuWindow;
 	public static SettingsManager settings;
 
-	public static void main(String[] args) throws RuntimeException,IOException {
-        // // Configure the logger from the LoggerUtility class
-        // LoggerUtility.configureLogger();
-
-        // // Get the logger instance
-        // java.util.logging.Logger logger = LoggerUtility.getLogger();
-		
-		try {
-			SettingsManager.getSavedSettings();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		
+	public static void main(String[] args) {
+		SettingsManager.getSavedSettings();
 		
 		if (firstTimeSetup) {
 			settingsWindow = new SettingsWindow();
 			settingsWindow.launchSettingsWindow(args);
 		} else {
 			HOIIVFile.createHOIIVFilePaths();
+			
 			if (Settings.SKIP_SETTINGS.enabled()) {
 				menuWindow = new MenuWindow();
 				menuWindow.launchMenuWindow(args);
