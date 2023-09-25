@@ -174,14 +174,14 @@ public class SettingsManager {
 	public static void getSavedSettings() {
 		if (new File(HOI4UTILS_PROPERTIES_PATH + "\\HOIIVUtils_properties.txt").exists()) {
 			HOIIVUtils.firstTimeSetup = false;
+
 			try {
 				SettingsManager.settings = new SettingsManager();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			if (Settings.DEV_MODE.enabled()) {
-				System.out.println("Performing standard settings startup.");
-			}
+
+			System.out.println("Performing standard startup cuz settings were found");
 		}
 		else {
 			HOIIVUtils.firstTimeSetup = true;

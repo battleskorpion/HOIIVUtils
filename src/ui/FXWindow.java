@@ -42,9 +42,9 @@ public interface FXWindow {
 	 * @see File
 	 * @see Node
 	 */
-	default File openChooser(Node fxcomponent, boolean ford, File initialDirectory) {
+	default File openChooser(Node node, boolean ford, File initialDirectory) {
 		File theChosenOne;
-		Stage stage = (Stage) (fxcomponent.getScene().getWindow());      // .getScene() works on a Node object, which is why this function is okay to accept any Node object/descendants.
+		Stage stage = (Stage) (node.getScene().getWindow());
 		if (ford) {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 			if (initialDirectory.exists() && initialDirectory.isDirectory()) {
@@ -148,13 +148,9 @@ public interface FXWindow {
 
 	String getTitle();
 
-	String getStyleSheetURL();
-
 	void setFxmlResource(String fxmlResource);
 
 	void setTitle(String title);
-
-	void setStyleSheetURL(String styleSheetURL);
 
 	default <S> void loadTableView(TableViewWindow window, TableView<S> dataTable, ObservableList<S> data, List<Function<S, ?>> dataFunctions) {
 		window.setDataTableCellFactories();

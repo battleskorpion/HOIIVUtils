@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import ui.FXWindow;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.clausewitz_gfx.InterfaceFileListWindow;
-import ui.console.ConsoleWindow;
+import ui.console.ConsoleController;
 import ui.focus.FocusTreeWindow;
 import ui.hoi4localization.CustomTooltipWindow;
 import ui.hoi4localization.FocusLocalizationWindow;
@@ -25,7 +25,7 @@ public class MenuController extends Application implements FXWindow {
 	private Parent root;
 	String fxmlResource = "Menu.fxml";
 	String title = "Menu";
-	String styleSheetURL = "resources/javafx_dark.css";
+	String DARK_MODE_STYLESHEETURL = "resources/javafx_dark.css";
 
 	@FXML public Button settingsButton;
 	@FXML public Button statisticsButton;
@@ -50,7 +50,7 @@ public class MenuController extends Application implements FXWindow {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
-			scene.getStylesheets().add(styleSheetURL);
+			scene.getStylesheets().add(DARK_MODE_STYLESHEETURL);
 	
 			this.stage = stage;
 			stage.setScene(scene);
@@ -64,7 +64,7 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void launchMenuWindow(String[] args) {
-		System.out.println("launchMenuWindow ran in Menu Controller");
+		System.out.println("Menu Controller ran launchMenuWindow");
 		launch(args);
 	}
 
@@ -90,7 +90,7 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openConsole() {
-		ConsoleWindow window = new ConsoleWindow();
+		ConsoleController window = new ConsoleController();
 		window.open();
 	}
 
@@ -148,11 +148,6 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	@Override
-	public String getStyleSheetURL() {
-		return styleSheetURL;
-	}
-
-	@Override
 	public void setFxmlResource(String fxmlResource) {
 		this.fxmlResource = fxmlResource;
 	}
@@ -160,10 +155,5 @@ public class MenuController extends Application implements FXWindow {
 	@Override
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	@Override
-	public void setStyleSheetURL(String styleSheetURL) {
-		this.styleSheetURL = styleSheetURL;
 	}
 }

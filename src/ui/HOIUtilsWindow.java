@@ -1,32 +1,27 @@
 package ui;
 
+import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public abstract class HOIUtilsWindow implements FXWindow {
-	private Stage stage;
-	private Scene scene;
-	private Parent root;
-	protected FXMLLoader loader;
 	private String fxmlResource;
-	private String title = "HOIIVUtils (default title)";
-	private String styleSheetURL = "resources/javafx_dark.css";
-	/**
-	 * Allows windows to get the controller
-	 */
+	private String title;
+	private Stage stage;
+	protected FXMLLoader loader;
 	
-
 	/**
-	 * Opens the window
+	 * Opens the stage
 	 */
 	@Override
 	public void open() {
 		if (stage != null) {
 			stage.show();
-			System.out.println("HOIUtilsWindow showed stage with open cuz stage was NOT null");
+			System.out.println("HOIUtilsWindow showed stage with open cuz stage was NOT null. fxml: " + fxmlResource + " title: " + title);
 		} else if (fxmlResource == null) {
+			System.out.println("HOIUtilsWindow couldn't create a new scene cause the fxml was null. fxmlResource: " + fxmlResource + " title: " + title);
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
 			try {
@@ -34,7 +29,7 @@ public abstract class HOIUtilsWindow implements FXWindow {
 				System.out.println("HOIUtils Window creating stage with fxml" + fxmlResource);
 				Parent root = loader.load();
 				Scene scene = new Scene(root);
-				scene.getStylesheets().add(styleSheetURL);
+				scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 				scene.getStylesheets().add("resources/utils-highlight-background.css"); // todo temp? idk
 	
 				Stage launchStage = new Stage();
@@ -43,7 +38,7 @@ public abstract class HOIUtilsWindow implements FXWindow {
 				launchStage.setTitle(title);
 				decideScreen(launchStage);
 				launchStage.show();
-				System.out.println("HOIUtilsWindow created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource);
+				System.out.println("HOIUtilsWindow created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource + " title: " + title);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -51,14 +46,15 @@ public abstract class HOIUtilsWindow implements FXWindow {
 	}
 
 	/**
-	 * Opens window and updates fxmlResource and title
-	 * @param fxmlResource window .fxml resource
-	 * @param title window title
+	 * Opens stage and updates fxmlResource and title
+	 * @param fxmlResource stage .fxml resource
+	 * @param title stage title
 	 */
 	@Override
 	public void open(String fxmlResource, String title) {
 		this.fxmlResource = fxmlResource;
 		this.title = title;
+		System.out.println("open(String fxmlResource, String title)" + "fxmlResource: " + fxmlResource + " title: " + title);
 	}
 
 	@Override
@@ -72,11 +68,6 @@ public abstract class HOIUtilsWindow implements FXWindow {
 	}
 
 	@Override
-	public String getStyleSheetURL() {
-		return styleSheetURL;
-	}
-
-	@Override
 	public void setFxmlResource(String fxmlResource) {
 		this.fxmlResource = fxmlResource;
 	}
@@ -85,10 +76,4 @@ public abstract class HOIUtilsWindow implements FXWindow {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
-	@Override
-	public void setStyleSheetURL(String styleSheetURL) {
-		this.styleSheetURL = styleSheetURL;
-	}
-
 }

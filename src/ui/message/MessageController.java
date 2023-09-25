@@ -17,10 +17,11 @@ import ui.HOIUtilsWindow;
  */
 public class MessageController extends HOIUtilsWindow {
 	
+	String message;
+	
 	@FXML public Label messageLabel;
 	@FXML public Button closeButton;
 
-	String message;
 	
 
 	public MessageController() {

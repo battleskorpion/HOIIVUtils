@@ -23,12 +23,9 @@ import static hoi4utils.Settings.MOD_PATH;
  * SettingsWindow is the window and controller for the program settings
  */
 public class SettingsController extends Application implements FXWindow {
+	private String fxmlResource = "Settings.fxml";
+	private String title = "Settings";
 	private Stage stage;
-	private Scene scene;
-	private Parent root;
-	String fxmlResource = "Settings.fxml";
-	String title = "HOIIVUtils Settings";
-	String styleSheetURL = "resources/javafx_dark.css";
 	
 	@FXML public Pane idPane;
 	@FXML public Label idVersionLabel;
@@ -76,17 +73,18 @@ public class SettingsController extends Application implements FXWindow {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
-			scene.getStylesheets().add(styleSheetURL);
+			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 
 			this.stage = stage;
 			stage.setScene(scene);
 			
 			stage.setTitle(title);
 			stage.show();
-			if ("Settings.fxml".equals(fxmlResource)) {
+			if (fxmlResource.equals("Settings.fxml")) {
 				stage.maxWidthProperty().bind(stage.widthProperty());
 				stage.minWidthProperty().bind(stage.widthProperty());
 			}
+			System.out.println("Settings Controller created it's own stage and showed it");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -95,16 +93,15 @@ public class SettingsController extends Application implements FXWindow {
 	public void open() {
 		if (stage != null) {
 			stage.show();
-			if ("Settings.fxml".equals(fxmlResource)) {
+			if (fxmlResource.equals("Settings.fxml")) {
 				stage.maxWidthProperty().bind(stage.widthProperty());
 				stage.minWidthProperty().bind(stage.widthProperty());
 			}
-			System.out.println("Settings Controller showed stage with open cuz stage was not null");
-			System.out.println(stage);
+			System.out.println("Settings Controller showed setting stage with open cuz settings stage was NOT null");
 			
 		} else {
 			start(new Stage());
-			System.out.println("Settings Controller started stage with open cuz stage was null");
+			System.out.println("Settings Controller create settings stage with open cuz settings stage was null");
 		}
 	}
 
@@ -117,7 +114,7 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	public void includeSettingValues() {
-		if (!HOIIVUtils.firstTimeSetup) {
+		if (Boolean.FALSE.equals(HOIIVUtils.firstTimeSetup)) {
 			if (!"null".equals(MOD_PATH.getSetting())) {
 				idModPathTextField.setText((String) MOD_PATH.getSetting());
 			}
@@ -260,7 +257,7 @@ public class SettingsController extends Application implements FXWindow {
 
 	public boolean updateSettings() {
 		try {
-			if (HOIIVUtils.firstTimeSetup) {
+			if (Boolean.TRUE.equals(HOIIVUtils.firstTimeSetup)) {
 				SettingsManager.settings = new SettingsManager(tempSettings);
 				HOIIVUtils.firstTimeSetup = false;
 			} else {
@@ -297,11 +294,6 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	@Override
-	public String getStyleSheetURL() {
-		return styleSheetURL;
-	}
-
-	@Override
 	public void setFxmlResource(String fxmlResource) {
 		this.fxmlResource = fxmlResource;
 	}
@@ -309,10 +301,5 @@ public class SettingsController extends Application implements FXWindow {
 	@Override
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	@Override
-	public void setStyleSheetURL(String styleSheetURL) {
-		this.styleSheetURL = styleSheetURL;
 	}
 }
