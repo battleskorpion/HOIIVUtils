@@ -6,7 +6,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class SeedsList {
+public class SeedsList implements Iterable<MapPoint> {
 	private ArrayList<HashSet<MapPoint>> seedsList;
 //	private HashSet<MapPoint> seedsRGBList;
 
@@ -19,16 +19,13 @@ public class SeedsList {
 	}
 
 	public void add(MapPoint point) {
-		add(point, null);
-	}
+//		if(!point.seed()) { // todo remove
+//			// error
+//			return;
+//		}
 
-	public void add(MapPoint point, Integer rgb) {
-		if(!point.seed()) { // todo
-			// error
-			return;
-		}
-
-		seedsList.get(point.type()).putIfAbsent(new Point(point.x, point.y), point);
+		//seedsList.get(point.type()).putIfAbsent(new Point(point.x, point.y), point);
+		seedsList.get(point.type()).add(point);
 
 //		if(rgb != null) {
 //			seedsRGBList.put(point, rgb);
@@ -75,11 +72,25 @@ public class SeedsList {
 //		seedsList.get(point.type).put(new Point(point.x, point.y), point);
 //	}
 
-	public Iterator<HashSet<MapPoint>> iterator() {
-		return seedsList.iterator();
+//	public Iterator<HashSet<MapPoint>> iterator() {
+//		return seedsList.iterator();
+//	}
+	public Iterator<MapPoint> iterator() {
+		// todo !
+		return new Iterator<MapPoint>() {
+			@Override
+			public boolean hasNext() {
+				return false;
+			}
+
+			@Override
+			public MapPoint next() {
+				return null;
+			}
+		}
 	}
 
-	public Iterator rgbIterator() {
-		return seedsRGBList.entrySet().iterator();
-	}
+//	public Iterator rgbIterator() {
+//		return seedsRGBList.entrySet().iterator();
+//	}
 }

@@ -47,4 +47,8 @@ public class MapPoint extends Point {
 	public int rgb() {
 		return rgb;
 	}
+
+	public void setRGB(int rgb) {
+		this.rgb = rgb;
+	}
 }
