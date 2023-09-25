@@ -1,11 +1,14 @@
 package hoi4utils.map;
 
 import hoi4utils.map.province.Heightmap;
-import hoi4utils.map.province.ProvinceMapSeedsList;
+import hoi4utils.map.province.MapPoint;
 import hoi4utils.map.province.values;
 import opensimplex2.OpenSimplex2;
 
+import java.util.Iterator;
 import java.util.Random;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 public class DynamicSeedGeneration extends AbstractSeedGeneration {
 	public DynamicSeedGeneration(Heightmap heightmap) {
@@ -18,7 +21,7 @@ public class DynamicSeedGeneration extends AbstractSeedGeneration {
 	 */
 	public void generate()	{
 		Random random = new Random(); 		// Random number generator for generating seed locations
-		seeds = new ProvinceMapSeedsList();
+		seeds = new SeedsList();
 
 		/*
 		create regions/islands
@@ -26,8 +29,8 @@ public class DynamicSeedGeneration extends AbstractSeedGeneration {
 		long seed = random.nextLong();
 		int avg = 0;
 
-		for(int y = 0; y < values.imageWidth; y++) {
-			for (int x = 0; x < values.imageWidth; x++) {
+		for(int y = 0; y < heightmap.getHeight(); y++) {
+			for (int x = 0; x < heightmap.getWidth(); x++) {
 				avg += OpenSimplex2.noise2(seed, x, y);
 			}
 		}

@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Rectangle?>
+
 <GridPane prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.main_menu.SettingsWindow">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -62,6 +70,7 @@
                   <Label alignment="CENTER_RIGHT" layoutX="275.0" layoutY="107.0" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" GridPane.rowIndex="1" />
                   <CheckBox fx:id="idSkipSettingsCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSkipSettingsCheckBoxAction" opacity="0.66" prefHeight="18.0" prefWidth="228.0" text="Don't show this window again." GridPane.columnIndex="1" GridPane.rowIndex="9" />
                   <Button fx:id="idDelSettingsButton" mnemonicParsing="false" onAction="#handleDelSettingsButtonAction" text="Delete Saved Settings" GridPane.columnIndex="4" GridPane.rowIndex="9" />
+                  <CheckBox fx:id="idOpenConsoleOnLaunchCheckBox" mnemonicParsing="false" onAction="#handleOpenConsoleOnLaunchCheckBoxAction" text="Open Console on Launch" GridPane.rowIndex="4" />
                </children>
                <padding>
             	  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
