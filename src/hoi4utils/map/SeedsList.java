@@ -4,14 +4,14 @@ import hoi4utils.map.province.MapPoint;
 
 import java.awt.*;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class SeedsList implements Iterable<MapPoint> {
+	public static final int SEEDS_LIST_SIZE = 3;
 	private ArrayList<HashSet<MapPoint>> seedsList;
 //	private HashSet<MapPoint> seedsRGBList;
 
 	public SeedsList() {
-		seedsList = new ArrayList<>(3);     // land, sea, lake
+		seedsList = new ArrayList<>(SEEDS_LIST_SIZE);     // land, sea, lake
 		for(int i = 0; i < 3; i++) {
 			seedsList.add(new HashSet<>());
 		}
@@ -77,17 +77,37 @@ public class SeedsList implements Iterable<MapPoint> {
 //	}
 	public Iterator<MapPoint> iterator() {
 		// todo !
-		return new Iterator<MapPoint>() {
+		return new Iterator<>() {
+			private int listIndex = 0;
+			private Iterator<MapPoint> setIterator = seedsList.get(0).iterator(); // init with the first set
+
 			@Override
 			public boolean hasNext() {
+				// Check if there are more elements in the set
+				if (setIterator.hasNext()) {
+					return true;
+				}
+
+				// Check if there are more sets in the seeds list to iterate over
+				while (listIndex < SEEDS_LIST_SIZE - 1) {
+					listIndex++;
+					setIterator = seedsList.get(listIndex).iterator();
+					if (setIterator.hasNext()) {
+						return true;
+					}
+				}
+
 				return false;
 			}
 
 			@Override
 			public MapPoint next() {
-				return null;
+				if (!hasNext()) {
+					throw new NoSuchElementException();
+				}
+				return setIterator.next();
 			}
-		}
+		};
 	}
 
 //	public Iterator rgbIterator() {
