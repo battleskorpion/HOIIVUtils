@@ -57,20 +57,24 @@ public class MenuController extends Application implements FXWindow {
 			
 			stage.setTitle(title);
 			stage.show();
+			System.out.println("Menu Controller created it's own stage and showed it");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void launchMenuWindow(String... var0) {
-		launch(var0);
+	public void launchMenuWindow(String[] args) {
+		System.out.println("launchMenuWindow ran in Menu Controller");
+		launch(args);
 	}
 
 	public void open(){
 		if (stage != null) {
 			stage.show();
+			System.out.println("Menu controller showed stage with open");
 		} else {
 			start(new Stage());
+			System.out.println("Menu controller started a new stage with open cuz stage was null");
 		}
 	}
 

@@ -99,8 +99,12 @@ public class SettingsController extends Application implements FXWindow {
 				stage.maxWidthProperty().bind(stage.widthProperty());
 				stage.minWidthProperty().bind(stage.widthProperty());
 			}
+			System.out.println("Settings Controller showed stage with open cuz stage was not null");
+			System.out.println(stage);
+			
 		} else {
 			start(new Stage());
+			System.out.println("Settings Controller started stage with open cuz stage was null");
 		}
 	}
 
