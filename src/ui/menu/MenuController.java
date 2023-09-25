@@ -63,19 +63,14 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void launchMenuWindow(String... var0) {
-		Application.launch(var0);
+		launch(var0);
 	}
 
 	public void open(){
-		try {
-			if (stage != null) {
-				stage.show();
-			} else {
-				start(new Stage());
-			}
-		} 
-		catch (Exception exc) {
-			openError(exc);
+		if (stage != null) {
+			stage.show();
+		} else {
+			start(new Stage());
 		}
 	}
 
