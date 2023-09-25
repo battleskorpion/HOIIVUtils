@@ -4,6 +4,7 @@ import hoi4utils.*;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
@@ -67,43 +68,42 @@ public class SettingsWindow extends Application implements FXWindow {
 	}
 
 	@Override
-	public void start(Stage stage) throws Exception {
-		FXMLLoader loader = new FXMLLoader(
-			getClass().getResource(
-				fxmlResource
-			)
-		);
+	public void start(Stage stage) {
+		try{
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
+			Parent root = loader.load();
+			Scene scene = new Scene(root);
+			scene.getStylesheets().add(styleSheetURL);
 
-		this.stage = stage;
-		Scene scene = new Scene(loader.load());
-		stage.setScene(scene);
-		stage.setTitle(title);
-
-		/* style */
-		scene.getStylesheets().add(styleSheetURL);
-
-		stage.show();
-		stage.maxWidthProperty().bind(stage.widthProperty());
-		stage.minWidthProperty().bind(stage.widthProperty());
-	}
-
-	public void open() {
-		try {
-			if (stage != null) {
-				stage.show();
-				stage.maxWidthProperty().bind(stage.widthProperty());
-				stage.minWidthProperty().bind(stage.widthProperty());
-			} else {
-				start(new Stage());
-			}
-		} 
-		catch (Exception exc) {
-			openError(exc);
+			this.stage = stage;
+			stage.setScene(scene);
+			
+			stage.setTitle(title);
+			stage.show();
+			stage.maxWidthProperty().bind(stage.widthProperty());
+			stage.minWidthProperty().bind(stage.widthProperty());
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 
-	public void launchSettingsWindow(String... var0) {
-		Application.launch(var0);
+	public void open() {
+		if (stage != null) {
+			stage.show();
+			stage.maxWidthProperty().bind(stage.widthProperty());
+			stage.minWidthProperty().bind(stage.widthProperty());
+		} else {
+			try {
+				start(new Stage());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void launchSettingsWindow(String[] args) {
+		launch(args);
 	}
 
 	public void includeVersion() {
