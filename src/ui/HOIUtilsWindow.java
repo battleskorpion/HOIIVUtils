@@ -25,11 +25,13 @@ public abstract class HOIUtilsWindow implements FXWindow {
 	public void open() {
 		if (stage != null) {
 			stage.show();
+			System.out.println("HOIUtilsWindow showed stage with open cuz stage was NOT null");
 		} else if (fxmlResource == null) {
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
 			try {
 				FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
+				System.out.println("HOIUtils Window creating stage with fxml" + fxmlResource);
 				Parent root = loader.load();
 				Scene scene = new Scene(root);
 				scene.getStylesheets().add(styleSheetURL);
@@ -41,6 +43,7 @@ public abstract class HOIUtilsWindow implements FXWindow {
 				launchStage.setTitle(title);
 				decideScreen(launchStage);
 				launchStage.show();
+				System.out.println("HOIUtilsWindow created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

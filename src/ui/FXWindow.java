@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import ui.javafx.table.IntegerOrPercentTableCell;
 import ui.javafx.table.TableViewWindow;
-import ui.message_popup.MessagePopupWindow;
+import ui.message.MessageController;
 
 import javax.swing.*;
 import java.io.File;
@@ -80,7 +80,7 @@ public interface FXWindow {
 	}
 
 	static void openGlobalErrorWindow(String s) {
-		MessagePopupWindow errWindow = new MessagePopupWindow();
+		MessageController errWindow = new MessageController();
 		errWindow.open("s");
 	}
 

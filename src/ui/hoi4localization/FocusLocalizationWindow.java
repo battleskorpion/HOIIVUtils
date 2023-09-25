@@ -15,7 +15,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
 import ui.HOIUtilsWindow;
 import ui.javafx.table.TableViewWindow;
-import ui.message_popup.MessagePopupWindow;
+import ui.message.MessageController;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,7 +95,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
     public void handleLoadButtonAction() {
         if (focusLocFile == null || focusTree == null) {
             // Handle the case where focusLocFile or focusTree is not properly initialized
-            MessagePopupWindow window = new MessagePopupWindow();
+            MessageController window = new MessageController();
             window.open("Error: Focus localization or focus tree not properly initialized.");
             return;
         }
@@ -154,7 +154,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
     public void handleSaveButtonAction() {
         if (focusLocFile == null) {
             // Handle the case where focusLocFile is not properly initialized
-            MessagePopupWindow window = new MessagePopupWindow();
+            MessageController window = new MessageController();
             window.open("Error: Focus localization file not properly initialized.");
         }
 

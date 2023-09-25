@@ -1,4 +1,4 @@
-package ui.message_popup;
+package ui.message;
 
 import hoi4utils.Settings;
 import javafx.fxml.FXML;
@@ -15,7 +15,7 @@ import ui.HOIUtilsWindow;
  * * MessagePopupWindow window = new MessagePopupWindow();
  * * window.open("Error: Focus localization or focus tree not properly initialized.");
  */
-public class MessagePopupWindow extends HOIUtilsWindow {
+public class MessageController extends HOIUtilsWindow {
 	
 	@FXML public Label messageLabel;
 	@FXML public Button closeButton;
@@ -23,9 +23,9 @@ public class MessagePopupWindow extends HOIUtilsWindow {
 	String message;
 	
 
-	public MessagePopupWindow() {
-		setFxmlResource("MessagePopupWindow.fxml");
-		setTitle("HOIIVUtils Message");
+	public MessageController() {
+		setFxmlResource("Message.fxml");
+		setTitle("Message");
 	}
 
 	void initData(String message) {
@@ -42,7 +42,8 @@ public class MessagePopupWindow extends HOIUtilsWindow {
 	 */
 	public void open(String message) {
 		super.open();
-		MessagePopupWindow controller = loader.getController();
+		System.out.println("Message Stage started with message: " + message + "\n and loader is: " + loader);
+		MessageController controller = loader.getController();
 		controller.initData(message);
 	}
 

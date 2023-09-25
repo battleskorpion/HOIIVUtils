@@ -4,7 +4,7 @@ import hoi4utils.clausewitz_coding.state.State;
 import hoi4utils.fileIO.FileListener.FileAdapter;
 import hoi4utils.fileIO.FileListener.FileEvent;
 import hoi4utils.fileIO.FileListener.FileWatcher;
-import ui.message_popup.MessagePopupWindow;
+import ui.message.MessageController;
 
 import java.awt.*;
 import java.io.File;
@@ -41,7 +41,7 @@ public class HOIIVFile implements FileUtils {
 			System.out.println(modPath);
 		}
 		if (modPath == null) {
-			MessagePopupWindow window = new MessagePopupWindow();
+			MessageController window = new MessageController();
             window.open("Error: modPath was null and we can't create any files");
             return;
 		}
