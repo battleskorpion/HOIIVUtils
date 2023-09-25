@@ -1,9 +1,10 @@
-package ui.main_menu;
+package ui.menu;
 
 import hoi4utils.clausewitz_coding.state.State;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -15,12 +16,16 @@ import ui.focus.FocusTreeWindow;
 import ui.hoi4localization.CustomTooltipWindow;
 import ui.hoi4localization.FocusLocalizationWindow;
 import ui.hoi4localization.UnlocalizedFocusWindow;
+import ui.settings.SettingsController;
+import ui.statistics.StatisticsController;
 
-public class MenuWindow extends Application implements FXWindow {
-	String fxmlResource = "MenuWindow.fxml";
-	String title = "HOIIVUtils Menu";
+public class MenuController extends Application implements FXWindow {
+	private Stage stage;
+	private Scene scene;
+	private Parent root;
+	String fxmlResource = "Menu.fxml";
+	String title = "Menu";
 	String styleSheetURL = "resources/javafx_dark.css";
-	Stage stage;
 
 	@FXML public Button settingsButton;
 	@FXML public Button statisticsButton;
@@ -34,30 +39,27 @@ public class MenuWindow extends Application implements FXWindow {
 	
 
 	/* Constructor */
-	public MenuWindow() {
-		fxmlResource = "MenuWindow.fxml";
-		title = "HOIIVUtils Menu";
+	public MenuController() {
+		fxmlResource = "Menu.fxml";
+		title = "Menu";
 	}
 
 	@Override
-	public void start(Stage stage) throws Exception {
-		FXMLLoader loader = new FXMLLoader(
-			getClass().getResource(
-				fxmlResource
-			)
-		);
-
-		this.stage = stage;
-		Scene scene = new Scene(loader.load());
-		stage.setScene(scene);
-		stage.setTitle(title);
-
-		/* style */
-		scene.getStylesheets().add(styleSheetURL);
-
-		stage.show();
-
-		stage.show();
+	public void start(Stage stage) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
+			Parent root = loader.load();
+			Scene scene = new Scene(root);
+			scene.getStylesheets().add(styleSheetURL);
+	
+			this.stage = stage;
+			stage.setScene(scene);
+			
+			stage.setTitle(title);
+			stage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void launchMenuWindow(String... var0) {
@@ -79,12 +81,12 @@ public class MenuWindow extends Application implements FXWindow {
 
 	public void openSettings() {
 		closeWindow(settingsButton); //closes the menu window
-		SettingsWindow window = new SettingsWindow();
+		SettingsController window = new SettingsController();
 		window.open();
 	}
 
 	public void openStatistics() {
-		StatisticsWindow window = new StatisticsWindow();
+		StatisticsController window = new StatisticsController();
 		window.open();
 	}
 

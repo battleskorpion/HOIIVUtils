@@ -58,7 +58,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 	}
 
 	private void includeVersion() {
-		idVersionMenuItem.setText(HOIIVUtils.hoi4utilsVersion);
+		idVersionMenuItem.setText(HOIIVUtils.HOIIVUTILS_VERSION);
 	}
 
 	// todo put this in hoi4window parent class or whatever

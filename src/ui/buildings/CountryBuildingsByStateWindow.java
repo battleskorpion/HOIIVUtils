@@ -23,7 +23,7 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 	}
 
 	private void includeVersion() {
-		idVersion.setText(HOIIVUtils.hoi4utilsVersion);
+		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION);
 	}
 }
 

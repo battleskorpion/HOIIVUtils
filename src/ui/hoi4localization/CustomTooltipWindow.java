@@ -53,7 +53,7 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
 	}
 
 	private void includeVersion() {
-		idVersion.setText(HOIIVUtils.hoi4utilsVersion);
+		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION);
 	}
 
 	@Override

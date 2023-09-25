@@ -1,4 +1,4 @@
-package ui.main_menu;
+package ui.settings;
 
 import hoi4utils.*;
 import javafx.application.Application;
@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import ui.FXWindow;
+import ui.menu.MenuController;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,12 +22,14 @@ import static hoi4utils.Settings.MOD_PATH;
 /**
  * SettingsWindow is the window and controller for the program settings
  */
-public class SettingsWindow extends Application implements FXWindow {
-	String fxmlResource = "SettingsWindow.fxml";
+public class SettingsController extends Application implements FXWindow {
+	private Stage stage;
+	private Scene scene;
+	private Parent root;
+	String fxmlResource = "Settings.fxml";
 	String title = "HOIIVUtils Settings";
 	String styleSheetURL = "resources/javafx_dark.css";
-	Stage stage;
-
+	
 	@FXML public Pane idPane;
 	@FXML public Label idVersionLabel;
 	@FXML public TextField idModPathTextField;
@@ -41,7 +44,7 @@ public class SettingsWindow extends Application implements FXWindow {
 
 	HashMap<Settings, String> tempSettings;
 
-	public SettingsWindow() {
+	public SettingsController() {
 		tempSettings = new HashMap<>();// we should convert this to an EnumMap with default values
 	}
 
@@ -80,8 +83,10 @@ public class SettingsWindow extends Application implements FXWindow {
 			
 			stage.setTitle(title);
 			stage.show();
-			stage.maxWidthProperty().bind(stage.widthProperty());
-			stage.minWidthProperty().bind(stage.widthProperty());
+			if ("Settings.fxml".equals(fxmlResource)) {
+				stage.maxWidthProperty().bind(stage.widthProperty());
+				stage.minWidthProperty().bind(stage.widthProperty());
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -90,15 +95,12 @@ public class SettingsWindow extends Application implements FXWindow {
 	public void open() {
 		if (stage != null) {
 			stage.show();
-			stage.maxWidthProperty().bind(stage.widthProperty());
-			stage.minWidthProperty().bind(stage.widthProperty());
-		} else {
-			try {
-				start(new Stage());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if ("Settings.fxml".equals(fxmlResource)) {
+				stage.maxWidthProperty().bind(stage.widthProperty());
+				stage.minWidthProperty().bind(stage.widthProperty());
 			}
+		} else {
+			start(new Stage());
 		}
 	}
 
@@ -107,7 +109,7 @@ public class SettingsWindow extends Application implements FXWindow {
 	}
 
 	public void includeVersion() {
-		idVersionLabel.setText(HOIIVUtils.hoi4utilsVersion);
+		idVersionLabel.setText(HOIIVUtils.HOIIVUTILS_VERSION);
 	}
 
 	public void includeSettingValues() {
@@ -248,14 +250,14 @@ public class SettingsWindow extends Application implements FXWindow {
 	}
 
 	private void openMenuWindow() {
-		MenuWindow menuWindow = new MenuWindow();
+		MenuController menuWindow = new MenuController();
 		menuWindow.open();
 	}
 
 	public boolean updateSettings() {
 		try {
 			if (HOIIVUtils.firstTimeSetup) {
-				HOIIVUtils.settings = new SettingsManager(tempSettings);
+				SettingsManager.settings = new SettingsManager(tempSettings);
 				HOIIVUtils.firstTimeSetup = false;
 			} else {
 				SettingsManager.saveSettings(tempSettings);

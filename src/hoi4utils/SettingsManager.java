@@ -22,6 +22,7 @@ public class SettingsManager {
 	private static BufferedWriter settingsBWriter;
 	private static PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); 				// for println syntax
 	static HashMap<Settings, String> settingValues = new HashMap<>();
+	public static SettingsManager settings;
 
 	public SettingsManager() throws IOException {
 		new File(HOI4UTILS_PROPERTIES_PATH).mkdir();
@@ -174,7 +175,7 @@ public class SettingsManager {
 		if (new File(HOI4UTILS_PROPERTIES_PATH + "\\HOIIVUtils_properties.txt").exists()) {
 			HOIIVUtils.firstTimeSetup = false;
 			try {
-				HOIIVUtils.settings = new SettingsManager();
+				SettingsManager.settings = new SettingsManager();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

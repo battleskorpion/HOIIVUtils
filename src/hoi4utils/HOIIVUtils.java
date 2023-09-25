@@ -1,37 +1,34 @@
 package hoi4utils;
 
-import ui.main_menu.MenuWindow;
-import ui.main_menu.SettingsWindow;
-
-import java.io.IOException;
+import ui.menu.MenuController;
+import ui.settings.SettingsController;
 
 /*
 * HOIIVUtils File
 */
 public class HOIIVUtils {
 
-	public static String[] args;
-	public static final String hoi4utilsVersion = "Version 0.4.1";
-	public static boolean firstTimeSetup;
-	public static SettingsWindow settingsWindow;
-	public static MenuWindow menuWindow;
-	public static SettingsManager settings;
-
+	public static final String HOIIVUTILS_NAME = "HOIIVUtils";
+	public static final String HOIIVUTILS_VERSION = "Version 0.4.1";
+	public static final String DARK_MODE_STYLESHEETURL = "resources/javafx_dark.css";
+	public static Boolean firstTimeSetup;
+	public static SettingsController settingsController;
+	public static MenuController menuController;
 	public static void main(String[] args) {
 		SettingsManager.getSavedSettings();
 		
 		if (firstTimeSetup) {
-			settingsWindow = new SettingsWindow();
-			settingsWindow.launchSettingsWindow(args);
+			settingsController = new SettingsController();
+			settingsController.launchSettingsWindow(args);
 		} else {
 			HOIIVFile.createHOIIVFilePaths();
 			
 			if (Settings.SKIP_SETTINGS.enabled()) {
-				menuWindow = new MenuWindow();
-				menuWindow.launchMenuWindow(args);
+				menuController = new MenuController();
+				menuController.launchMenuWindow(args);
 			} else {
-				settingsWindow = new SettingsWindow();
-				settingsWindow.launchSettingsWindow(args);
+				settingsController = new SettingsController();
+				settingsController.launchSettingsWindow(args);
 			}
 		}
 	}

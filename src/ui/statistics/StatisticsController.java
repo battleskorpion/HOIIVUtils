@@ -1,18 +1,18 @@
-package ui.main_menu;
+package ui.statistics;
 
 import hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import ui.HOIUtilsWindow;
 
-public class StatisticsWindow extends HOIUtilsWindow{
+public class StatisticsController extends HOIUtilsWindow{
 
 	@FXML public Label idVersion;
 	@FXML public Label idWindowName;
 
-	public StatisticsWindow() {
-		setFxmlResource("StatisticsWindow.fxml");
-		setTitle("HOIIVUtils Statistics Window");
+	public StatisticsController() {
+		setFxmlResource("Statistics.fxml");
+		setTitle("HOIIVUtils Statistics");
 	}
 
 	@FXML
@@ -22,6 +22,6 @@ public class StatisticsWindow extends HOIUtilsWindow{
 	}
 
 	private void includeVersion() {
-		idVersion.setText(HOIIVUtils.hoi4utilsVersion);
+		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION);
 	}
 }
