@@ -1,5 +1,6 @@
 package ui.menu;
 
+import hoi4utils.HOIIVUtils;
 import hoi4utils.clausewitz_coding.state.State;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -21,11 +22,8 @@ import ui.statistics.StatisticsController;
 
 public class MenuController extends Application implements FXWindow {
 	private Stage stage;
-	private Scene scene;
-	private Parent root;
-	String fxmlResource = "Menu.fxml";
-	String title = "Menu";
-	String DARK_MODE_STYLESHEETURL = "resources/javafx_dark.css";
+	private String fxmlResource = "Menu.fxml";
+	private String title = "Menu";
 
 	@FXML public Button settingsButton;
 	@FXML public Button statisticsButton;
@@ -50,7 +48,7 @@ public class MenuController extends Application implements FXWindow {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
-			scene.getStylesheets().add(DARK_MODE_STYLESHEETURL);
+			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 	
 			this.stage = stage;
 			stage.setScene(scene);

@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 public abstract class HOIUtilsWindow implements FXWindow {
 	private String fxmlResource;
 	private String title;
-	private Stage stage;
+	protected Stage stage;
 	protected FXMLLoader loader;
 	
 	/**
@@ -27,12 +27,16 @@ public abstract class HOIUtilsWindow implements FXWindow {
 			try {
 				FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
 				System.out.println("HOIUtils Window creating stage with fxml" + fxmlResource);
+				this.loader = loader;
 				Parent root = loader.load();
 				Scene scene = new Scene(root);
 				scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
-				scene.getStylesheets().add("resources/utils-highlight-background.css"); // todo temp? idk
+
+				// TODO 
+				scene.getStylesheets().add("resources/utils-highlight-background.css");
 	
 				Stage launchStage = new Stage();
+				this.stage = launchStage;
 				launchStage.setScene(scene);
 	
 				launchStage.setTitle(title);

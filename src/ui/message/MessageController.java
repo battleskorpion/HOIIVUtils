@@ -1,9 +1,10 @@
 package ui.message;
 
-import hoi4utils.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import ui.HOIUtilsWindow;
 
 /**
@@ -16,26 +17,18 @@ import ui.HOIUtilsWindow;
  * * window.open("Error: Focus localization or focus tree not properly initialized.");
  */
 public class MessageController extends HOIUtilsWindow {
+	private String fxmlResource = "Message.fxml";
+	private String title = "Message";
 	
-	String message;
-	
-	@FXML public Label messageLabel;
-	@FXML public Button closeButton;
-
-	
+	@FXML Label messageLabel;
+	@FXML Button closeButton;
+	@FXML AnchorPane anchorPane;
 
 	public MessageController() {
-		setFxmlResource("Message.fxml");
-		setTitle("Message");
+		setFxmlResource(fxmlResource);
+		setTitle(title);
 	}
-
-	void initData(String message) {
-		if (Settings.DEV_MODE.enabled()) {
-			System.out.println(message);
-		}	
-     	messageLabel.setText(message);
-	}
-
+	
 	/**
 	 * Opens the window
 	 * passes the message from any widow to the message pop up window
@@ -45,7 +38,20 @@ public class MessageController extends HOIUtilsWindow {
 		super.open();
 		System.out.println("Message Stage started with message: " + message + "\n and loader is: " + loader);
 		MessageController controller = loader.getController();
-		controller.initData(message);
+		controller.setMessage(message);
+	}
+
+	/**
+	 * Changes the label to display the message we want and then formats the window to fit the text
+	 * @param message A String that is used to set the message
+	 */
+	public void setMessage(String message) {
+		messageLabel.setText(message);
+		double labelPrefWidth = messageLabel.prefWidth(-1);
+        double labelPrefHeight = messageLabel.prefHeight(labelPrefWidth);
+		Stage stage = (Stage) anchorPane.getScene().getWindow();
+		stage.setMinWidth(labelPrefWidth + 20);
+		stage.setMinHeight(labelPrefHeight);
 	}
 
 	public void handleCloseButtonAction() {
