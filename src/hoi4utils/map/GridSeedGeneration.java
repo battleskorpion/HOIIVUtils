@@ -4,8 +4,6 @@ import hoi4utils.map.province.*;
 
 import java.util.Random;
 
-import static hoi4utils.map.values.stateBorderMap;
-
 public class GridSeedGeneration extends AbstractSeedGeneration {
 	public GridSeedGeneration(Heightmap heightmap) {
 		super(heightmap);
@@ -34,7 +32,7 @@ public class GridSeedGeneration extends AbstractSeedGeneration {
 				// heightmap is in grayscale meaning only need to find red value to get height value
 				// at point.
 				int heightmapHeight = (heightmap.getRGB(seedX, seedY) >> 16) & 0xFF;
-				int rgb = mapPointColorGeneration(seedX, seedY, heightmapHeight, stateBorderMap); 			// rgb color int value
+				int rgb = mapPointColorGeneration(seedX, seedY, heightmapHeight); 			// rgb color int value
 
 				/* add point to points array */
 				MapPoint mapPoint;
@@ -70,11 +68,4 @@ public class GridSeedGeneration extends AbstractSeedGeneration {
 		}
 	}
 
-	public void generate(StateMapList stateMapList) {
-		generate();
-		for (MapPoint seed : seeds) {
-			int stateMapColor = stateBorderMap.getRGB(seed.x, seed.y);
-			stateMapList.addSeed(stateMapColor, seed);
-		}
-	}
 }

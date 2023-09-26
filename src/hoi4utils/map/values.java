@@ -1,6 +1,5 @@
 package hoi4utils.map;
 
-import hoi4utils.map.province.BorderMap;
 import hoi4utils.map.province.Heightmap;
 import hoi4utils.map.province.ProvinceGenerationType;
 
@@ -32,8 +31,7 @@ public abstract class values {
 //			= new ArrayList<HashMap<Integer, HashMap<Point, Integer>>>(2);
 	public static int rgb_white;
 	public static Heightmap heightmap; 			// elevation data heightmap
-	public static BorderMap stateBorderMap; 		// heightmap of preferred borders
-//	private boolean constructorCalled = false; 			// whether the constructor of this class has been called previously
+	//	private boolean constructorCalled = false; 			// whether the constructor of this class has been called previously
 }
 
 

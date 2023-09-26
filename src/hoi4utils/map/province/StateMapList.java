@@ -32,9 +32,9 @@ public class StateMapList {
             }
         }
 
-        if (seeds.size() == 0) {
+        if (seeds.isEmpty()) {
             ArrayList<MapPoint> seedsList = seedsList(state);
-            if (seedsList.size() == 0) {
+            if (seedsList.isEmpty()) {
                 System.err.println("No seeds of type for state int: " + state);
             }
             return seedsList;

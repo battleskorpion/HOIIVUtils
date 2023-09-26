@@ -13,10 +13,11 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RejectedExecutionException;
 
+import static hoi4utils.map.province.ProvinceGeneration.ForkColorDetermination.OFFSET_NOISE_MODIFIER;
 import static hoi4utils.map.values.generationType;
-import static hoi4utils.map.values.stateBorderMap;
 
 public class ProvinceGeneration extends AbstractMapGeneration {
+	public BorderMap stateBorderMap; 		// heightmap of preferred borders
 	private ProvinceMap provinceMap;
 	private ProvinceMapPointsList points;
 	private SeedsList seeds;
@@ -50,6 +51,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		} else {
 			seedGeneration = new DynamicSeedGeneration(heightmap);
 		}
+		seedGeneration.generate(stateMapList, stateBorderMap);
 
 		executeProvinceDetermination();
 	}
@@ -131,7 +133,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		 * Auto-generated serialVersionUID
 		 */
 		private static final long serialVersionUID = 7925866053687723919L;
-		public static final double NOISE_MULTIPLIER = 0.05;
+		public static final float OFFSET_NOISE_MODIFIER = 0.05f;        /* float datatype is used by simplex noise, and may improve performance over double */
 
 		protected static int splitThreshold = 8;		// split until 1 row each
 
@@ -207,14 +209,10 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 			try {
 				for (int y = startY; y < endY; y++) {
 					for (int x = 0; x < heightmap.getWidth(); x++) {
-						/* noise */
-						double noise1 = OpenSimplex2.noise2(seed, x * 0.005, y * 0.005);
-						double noise2 = OpenSimplex2.noise2(seed, x * 0.005, y * 0.005);
-
 //						int xOffset = (int) (widthPerSeed  * ((noise.get(x * 0.005, y * 0.005, 0.0) - 1) * 0.5));		// * ((noise.getValue(x * 0.005, y * 0.005, 0.0) - 1) * 0.5)));	 good values for 32*32 seeds and 4608 * 2816 image
 //						int yOffset = (int) (heightPerSeed * ((noise.get(x * 0.005, y * 0.005, 1.0) - 1) * 0.5));
-						int xOffset = (int) (widthPerSeed * (noise1) * NOISE_MULTIPLIER);	//TODO work on values
-						int yOffset = (int) (heightPerSeed * (noise2) * NOISE_MULTIPLIER);
+						int xOffset = offsetWithNoise(widthPerSeed, seed, x, y);	//TODO work on values
+						int yOffset = offsetWithNoise(heightPerSeed, seed, x, y);
 
 						int rgb;
 						//int heightmapValue = values.heightmap.getRGB(x, y);
@@ -240,6 +238,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 						}
 						else {
 							rgb = 0;    // bad
+							System.out.println("state map list did not contain state of: " + stateBorderValue);
 						}
 
 						points.setRGB(x, y, rgb);
@@ -254,6 +253,19 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 			}
 		}
 
+	}
+
+	private int offsetWithNoise(int offsetPotential, int seed, int x, int y) {
+		double noise = simplexNoise2(seed, x, y, OFFSET_NOISE_MODIFIER);
+		return (int) (offsetPotential * noise);
+	}
+
+	private float simplexNoise2(int seed, int x, int y) {
+		return simplexNoise2(seed, x, y, 1);
+	}
+
+	private float simplexNoise2(int seed, int x, int y, float multiplier) {
+		return OpenSimplex2.noise2(seed, x * 0.005, y * 0.005) * multiplier;
 	}
 
 	private static int determineColor(int x, int xOffset, int y, int yOffset, final ArrayList<MapPoint> seeds)
