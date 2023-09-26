@@ -28,6 +28,8 @@ public class HOIIVFile implements FileUtils {
 
 	public static FileWatcher stateFilesWatcher;
 
+	public static File modPathFile;
+
 	public static File focus_folder;
 	public static File states_folder;
 	public static File strat_region_dir;
@@ -37,6 +39,7 @@ public class HOIIVFile implements FileUtils {
 
 
 	public static void createHOIIVFilePaths() {
+		String modPath = SettingsManager.get(MOD_PATH);
 		System.out.println("modPath: " + modPath);
 
 		if (modPath == null) {
@@ -46,20 +49,14 @@ public class HOIIVFile implements FileUtils {
 		}
 
 		File modPathFile = new File(modPath);
-		System.out.println("HOIIVFile created a File for 'modPath' called modPathFile");
-
+		
 		common_folder = new File(modPath + "\\common");
-		System.out.println("HOIIVFile created a File for 'modPath\\common' called 'common_folder'");
 		states_folder = new File(modPath + "\\history\\states");
-		System.out.println("HOIIVFile created a File for 'modPath\\history\\states' called 'states_folder'");
 		strat_region_dir =  new File(modPath + "\\map\\strategicregions");
-		System.out.println("HOIIVFile created a File for 'modPath\\map\\strategicregions' called 'strat_region_dir'");
 		localization_eng_folder =  new File(modPath + "\\localisation\\english");
-		System.out.println("HOIIVFile created a File for 'modPath\\localisation\\english' called 'localization_eng_folder'");
 		focus_folder = new File(modPath + "\\common\\national_focus");
-		System.out.println("HOIIVFile created a File for 'modPath \\common\\national_focus' called 'focus_folder'");
 		hoi4mods_folder = modPathFile.getParentFile();
-		System.out.println("HOIIVFile gets the parent file for modPath called hoi4mods_folder. Parent file is called: \n" + hoi4mods_folder);
+		System.out.println("HOIIVFile created paths");
 	}
 
 	/**

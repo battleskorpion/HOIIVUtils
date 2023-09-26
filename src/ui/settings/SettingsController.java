@@ -249,17 +249,21 @@ public class SettingsController extends Application implements FXWindow {
 		hideWindow(idOkButton);
 		openMenuWindow();
 	}
-
+	
 	private void openMenuWindow() {
 		MenuController menuWindow = new MenuController();
 		menuWindow.open();
 	}
-
+	
 	public boolean updateSettings() {
 		try {
 			if (Boolean.TRUE.equals(HOIIVUtils.firstTimeSetup)) {
 				SettingsManager.settings = new SettingsManager(tempSettings);
 				HOIIVUtils.firstTimeSetup = false;
+				SettingsManager.getSavedSettings();
+				if (HOIIVFile.modPathFile == null) {
+					HOIIVFile.createHOIIVFilePaths();
+				}
 			} else {
 				SettingsManager.saveSettings(tempSettings);
 			}
@@ -267,7 +271,6 @@ public class SettingsController extends Application implements FXWindow {
 			openError("Settings failed to save.");
 			return false;
 		}
-		HOIIVFile.createHOIIVFilePaths();
 		return true;
 	}
 
