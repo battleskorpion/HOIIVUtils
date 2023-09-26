@@ -1,11 +1,11 @@
-package hoi4utils.map.province;
+package hoi4utils.map;
 
-import hoi4utils.map.values;
+import hoi4utils.map.province.BorderMap;
 
 import java.awt.*;
 import java.util.Random;
 
-public abstract class MapGeneration {
+public abstract class AbstractMapGeneration {
 	protected static int mapPointColorGeneration(int seedX, int seedY, int heightmapHeight, BorderMap borderMap) {
 		int rgb;                        // rgb color int value
 		int stateMapColor;

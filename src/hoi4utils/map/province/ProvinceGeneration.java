@@ -16,7 +16,7 @@ import java.util.concurrent.RejectedExecutionException;
 import static hoi4utils.map.values.generationType;
 import static hoi4utils.map.values.stateBorderMap;
 
-public class ProvinceGeneration extends MapGeneration {
+public class ProvinceGeneration extends AbstractMapGeneration {
 	private ProvinceMap provinceMap;
 	private ProvinceMapPointsList points;
 	private SeedsList seeds;
@@ -51,7 +51,7 @@ public class ProvinceGeneration extends MapGeneration {
 			seedGeneration = new DynamicSeedGeneration(heightmap);
 		}
 
-		provinceDetermination();
+		executeProvinceDetermination();
 	}
 
 	private void generate(Heightmap heightmap) {
@@ -103,8 +103,8 @@ public class ProvinceGeneration extends MapGeneration {
 		}
 	}
 
-	private void provinceDetermination() {
-		hoi4utils.map.province.ProvinceGeneration.ForkColorDetermination forkColorDetermination = new hoi4utils.map.province.ProvinceGeneration.ForkColorDetermination(provinceMap, heightmap);
+	private void executeProvinceDetermination() {
+		ForkColorDetermination forkColorDetermination = new ForkColorDetermination(provinceMap, heightmap);
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 		try {
 			forkJoinPool.invoke(forkColorDetermination);
@@ -191,7 +191,8 @@ public class ProvinceGeneration extends MapGeneration {
 
 			int split = dy / 2;
 
-			invokeAll(new hoi4utils.map.province.ProvinceGeneration.ForkColorDetermination(provinceMap, heightmap, startY, startY + split), new hoi4utils.map.province.ProvinceGeneration.ForkColorDetermination(provinceMap, heightmap, startY + split, endY));
+			invokeAll(new ForkColorDetermination(provinceMap, heightmap, startY, startY + split),
+					new ForkColorDetermination(provinceMap, heightmap, startY + split, endY));
 		}
 
 		/**
@@ -235,7 +236,6 @@ public class ProvinceGeneration extends MapGeneration {
 //								}
 //							});
 
-							//rgb = determineColor(x, xOffset, y, yOffset, stateMapList.seedsList(stateBorderValue));
 							rgb = determineColor(x, xOffset, y, yOffset, stateMapList.seedsList(stateBorderValue, type));
 						}
 						else {
@@ -244,14 +244,7 @@ public class ProvinceGeneration extends MapGeneration {
 
 						points.setRGB(x, y, rgb);
 						provinceMap.setRGB(x, y, rgb);
-//						try {
-//							if (testWidth / 2 + xOffset < testWidth && testWidth / 2 + yOffset < testWidth) {
-//								testImage.setRGB(testWidth / 2 + xOffset, testWidth / 2 + yOffset, rgb);
-//							}
-//						}
-//						catch (Exception exc) {
-//
-//						}
+
 						//offset.put(new Point(x, y), new Point(xOffset, yOffset));
 					}
 				}
