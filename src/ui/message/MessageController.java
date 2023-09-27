@@ -46,10 +46,10 @@ public class MessageController extends HOIUtilsWindow {
 	 * @param message A String that is used to set the message
 	 */
 	public void setMessage(String message) {
+		Stage stage = (Stage) messageLabel.getScene().getWindow();
 		messageLabel.setText(message);
 		double labelPrefWidth = messageLabel.prefWidth(-1);
         double labelPrefHeight = messageLabel.prefHeight(labelPrefWidth);
-		Stage stage = (Stage) anchorPane.getScene().getWindow();
 		stage.setMinWidth(labelPrefWidth + 20);
 		stage.setMinHeight(labelPrefHeight);
 	}
