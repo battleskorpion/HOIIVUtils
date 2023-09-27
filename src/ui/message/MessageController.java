@@ -36,7 +36,7 @@ public class MessageController extends HOIUtilsWindow {
 	 */
 	public void open(String message) {
 		super.open();
-		System.out.println("Message Stage started with message: " + message + "\n and loader is: " + loader);
+		System.out.println("Message Stage started with message: " + message + "\n and loader is: " + fxmlResource);
 		MessageController controller = loader.getController();
 		controller.setMessage(message);
 	}
