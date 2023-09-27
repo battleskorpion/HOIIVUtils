@@ -66,6 +66,11 @@ public class SettingsController extends Application implements FXWindow {
 		});
 
 	}
+	
+	public void launchSettingsWindow(String[] args) {
+		System.out.println("Settings Controller ran launchSettingsWindow");
+		launch(args);
+	}
 
 	@Override
 	public void start(Stage stage) {
@@ -103,10 +108,6 @@ public class SettingsController extends Application implements FXWindow {
 			start(new Stage());
 			System.out.println("Settings Controller create settings stage with open cuz settings stage was null");
 		}
-	}
-
-	public void launchSettingsWindow(String[] args) {
-		launch(args);
 	}
 
 	public void includeVersion() {

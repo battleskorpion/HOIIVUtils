@@ -42,6 +42,11 @@ public class MenuController extends Application implements FXWindow {
 		title = "Menu";
 	}
 
+	public void launchMenuWindow(String[] args) {
+		System.out.println("Menu Controller ran launchMenuWindow");
+		launch(args);
+	}
+
 	@Override
 	public void start(Stage stage) {
 		try {
@@ -59,11 +64,6 @@ public class MenuController extends Application implements FXWindow {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void launchMenuWindow(String[] args) {
-		System.out.println("Menu Controller ran launchMenuWindow");
-		launch(args);
 	}
 
 	public void open(){
