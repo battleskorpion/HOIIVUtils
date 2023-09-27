@@ -16,7 +16,7 @@ public class DynamicSeedGeneration extends AbstractSeedGeneration {
 	 */
 	public void generate()	{
 		Random random = new Random(); 		// Random number generator for generating seed locations
-		seeds = new SeedsList();
+		seeds = new SeedsSet();
 
 		/*
 		create regions/islands

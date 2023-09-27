@@ -5,31 +5,20 @@ import hoi4utils.map.province.MapPoint;
 import java.awt.*;
 import java.util.*;
 
-public class SeedsList implements Iterable<MapPoint> {
+public class SeedsSet<P extends MapPoint> extends AbstractSet<P> implements Iterable<P>, Set<P> {
 	public static final int SEEDS_LIST_SIZE = 3;
-	private ArrayList<HashSet<MapPoint>> seedsList;
+	private ArrayList<Set<P>> seedsList;    // note: more mem-efficient to use one set, with tradeoffs, but then would really be a more generic MapPoint set
 //	private HashSet<MapPoint> seedsRGBList;
 
-	public SeedsList() {
+	public SeedsSet() {
 		seedsList = new ArrayList<>(SEEDS_LIST_SIZE);     // land, sea, lake
 		for(int i = 0; i < 3; i++) {
 			seedsList.add(new HashSet<>());
 		}
-//		seedsRGBList = new HashMap<>();
 	}
 
-	public void add(MapPoint point) {
-//		if(!point.seed()) { // todo remove
-//			// error
-//			return;
-//		}
-
-		//seedsList.get(point.type()).putIfAbsent(new Point(point.x, point.y), point);
-		seedsList.get(point.type()).add(point);
-
-//		if(rgb != null) {
-//			seedsRGBList.put(point, rgb);
-//		}
+	public boolean add(P point) {
+		return seedsList.get(point.type()).add(point);
 	}
 
 	public MapPoint get(int x, int y) { return get(new Point(x, y)); }
@@ -39,7 +28,7 @@ public class SeedsList implements Iterable<MapPoint> {
 	}
 
 	public int getRGB(Point point) {
-		for (Set<MapPoint> set : seedsList) {
+		for (Set<P> set : seedsList) {
 			for (MapPoint mp : set) {
 				if (mp.equals(point)) {
 					return mp.rgb();
@@ -51,10 +40,9 @@ public class SeedsList implements Iterable<MapPoint> {
 		return -1;
 	}
 
-
 	public MapPoint get(Point point) {
-		for (HashSet<MapPoint> mapSet : seedsList) {
-			for (MapPoint mapPoint : mapSet) {
+		for (Set<P> mapSet : seedsList) {
+			for (P mapPoint : mapSet) {
 				if (mapPoint.equals(point)) {
 					return mapPoint;
 				}
@@ -63,23 +51,11 @@ public class SeedsList implements Iterable<MapPoint> {
 		return null;
 	}
 
-//	public void set(Point point) {
-//		if(!point.seed) {
-//			// error
-//			return;
-//		}
-//
-//		seedsList.get(point.type).put(new Point(point.x, point.y), point);
-//	}
-
-//	public Iterator<HashSet<MapPoint>> iterator() {
-//		return seedsList.iterator();
-//	}
-	public Iterator<MapPoint> iterator() {
+	public Iterator<P> iterator() {
 		// todo !
 		return new Iterator<>() {
 			private int listIndex = 0;
-			private Iterator<MapPoint> setIterator = seedsList.get(0).iterator(); // init with the first set
+			private Iterator<P> setIterator = seedsList.get(0).iterator(); // init with the first set
 
 			@Override
 			public boolean hasNext() {
@@ -101,7 +77,7 @@ public class SeedsList implements Iterable<MapPoint> {
 			}
 
 			@Override
-			public MapPoint next() {
+			public P next() {
 				if (!hasNext()) {
 					throw new NoSuchElementException();
 				}
@@ -110,7 +86,12 @@ public class SeedsList implements Iterable<MapPoint> {
 		};
 	}
 
-//	public Iterator rgbIterator() {
-//		return seedsRGBList.entrySet().iterator();
-//	}
+	@Override
+	public int size() {
+		int size = 0;
+		for (Set<P> set : seedsList) {
+			size += set.size();
+		}
+		return size;
+	}
 }

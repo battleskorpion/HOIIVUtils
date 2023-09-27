@@ -23,19 +23,32 @@ public class MapPoint extends Point {
 		return type;
 	}
 
-	// Override the equals method to compare based on coordinates
+	/**
+	 * similar to impl in {@code Point}
+	 * @param obj an object to be compared with this {@code Point2D}
+	 * @return {@code true} if the object to be compared is
+	 *         an instance of {@code Point2D} and has
+	 *         the same values; {@code false} otherwise.
+	 *
+	 * @see Point
+	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+//		if (this == obj) {
+//			return true;
+//		}
+//
+//		if (obj == null || getClass() != obj.getClass()) {
+//			return false;
+//		}
+//
+//		MapPoint other = (MapPoint) obj;
+//		return this.x == other.x && this.y == other.y;
+		if (obj instanceof MapPoint) {
+			MapPoint other = (MapPoint) obj;
+			return this.x == other.x && y == other.y;
 		}
-
-		if (obj == null || getClass() != obj.getClass()) {
-			return false;
-		}
-
-		MapPoint other = (MapPoint) obj;
-		return this.x == other.x && this.y == other.y;
+		return super.equals(obj);
 	}
 
 	// Optionally, you might want to override hashCode as well

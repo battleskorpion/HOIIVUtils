@@ -7,8 +7,12 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RejectedExecutionException;
@@ -20,10 +24,10 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	public BorderMap stateBorderMap; 		// heightmap of preferred borders
 	private ProvinceMap provinceMap;
 	private ProvinceMapPointsList points;
-	private SeedsList seeds;
+	private SeedsSet seeds;
 
 	//	private static HashMap<ProvinceMapPoint, Integer> stateSeedsMap;
-	private StateMapList stateMapList;
+	private BorderMapping stateMapList;
 	private Heightmap heightmap;
 	private SeedGeneration seedGeneration;
 
@@ -57,7 +61,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	}
 
 	private void generate(Heightmap heightmap) {
-		this.heightmap = heightmap;
+		this.heightmap = heightmap;     // todo can we optimize Heightmap since grayscale?
 		generate();
 	}
 
@@ -73,7 +77,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		/* initialize mapping of seeds to states (regions for purposes of province generation) */
 		// TODO: optimization may be possible
 //		stateSeedsMap = new HashMap<>();
-		stateMapList = new StateMapList();
+		stateMapList = new BorderMapping();
 	}
 
 	/**
@@ -140,24 +144,24 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		/**
 		 * y-value to start at
 		 */
-		private int startY;
+		private final int startY;
 
 		/**
 		 * y-value to go until (do not do work at this y-value, do work up to this y-value)
 		 */
-		private int endY;
+		private final int endY;
 
 		/**
 		 * number of y-values to work with
 		 */
-		private int dy;
+		private final int dy;
 
 		/**
 		 * simplex noise to offset color determination
 		 */
 		private OpenSimplex2 noise;
-		private ProvinceMap provinceMap;
-		private Heightmap heightmap;
+		private final ProvinceMap provinceMap;
+		private final Heightmap heightmap;
 
 //		private Iterator<Map.Entry<ProvinceMapPoint, Integer>> seedsRGBMapIterator;
 
@@ -268,7 +272,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		return OpenSimplex2.noise2(seed, x * 0.005, y * 0.005) * multiplier;
 	}
 
-	private static int determineColor(int x, int xOffset, int y, int yOffset, final ArrayList<MapPoint> seeds)
+	private static int determineColor(int x, int xOffset, int y, int yOffset, final Set<MapPoint> seeds)
 	{
 		int nearestColor = values.rgb_white;            // color of nearest seed (int value)
 		// (default white)
@@ -282,16 +286,14 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		//for (int s = 0; s < seeds.size(); s++) {
 //		for (Iterator<Point> pointIterator = seedsRGBValue.keySet().iterator(); pointIterator.hasNext(); ) {
 		for (MapPoint point : seeds) {
-//			System.out.println(seeds.size()); // TODO: size is 683 7 or 3?
 			// calculate the difference in x and y direction
 			int xdiff = point.x - (x + xOffset);
 			int ydiff = point.y - (y + yOffset);
 
-			// calculate euclidean distance, sqrt is not needed
+			// calculate current Euclidean distance, sqrt is not needed
 			// because we only compare and do not need the real value
 			int cdist = xdiff * xdiff + ydiff * ydiff;
 
-			// is the current distance smaller than the old distance?
 			if (cdist < dist) {
 				nearestColor = point.rgb;        // index 2 is rgb int value of seed // seeds.get(s).get(2)
 				dist = cdist;
