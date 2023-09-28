@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
@@ -211,8 +212,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 					for (int x = 0; x < heightmap.getWidth(); x++) {
 //						int xOffset = (int) (widthPerSeed  * ((noise.get(x * 0.005, y * 0.005, 0.0) - 1) * 0.5));		// * ((noise.getValue(x * 0.005, y * 0.005, 0.0) - 1) * 0.5)));	 good values for 32*32 seeds and 4608 * 2816 image
 //						int yOffset = (int) (heightPerSeed * ((noise.get(x * 0.005, y * 0.005, 1.0) - 1) * 0.5));
-						int xOffset = offsetWithNoise(widthPerSeed, seed, x, y);	//TODO work on values
-						int yOffset = offsetWithNoise(heightPerSeed, seed, x, y);
 
 						int rgb;
 						//int heightmapValue = values.heightmap.getRGB(x, y);
@@ -220,20 +219,9 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 						int stateBorderValue = stateBorderMap.getRGB(x, y);
 						int type = provinceType(heightmapHeight);
 
-//						if(stateSeedsMap.containsValue(stateBorderValue)) {
 						if(stateMapList.containsState(stateBorderValue)) {
-//							/*
-//							all seeds in this state
-//							// TODO: why is this a hashmap. all values will be the same (need arrayList etc.)
-//							 */
-//							HashMap<ProvinceMapPoint, Integer> stateSeeds = new HashMap<>();
-//							// TODO: def prob can use advanced collections methods etc for better algorithm
-//							stateSeedsMap.forEach((key, value) -> {
-//								if(value == stateBorderValue) {
-//									stateSeeds.put(key, value);
-//								}
-//							});
-
+							int xOffset = offsetWithNoise(widthPerSeed, seed, x, y);	//TODO work on values
+							int yOffset = offsetWithNoise(heightPerSeed, seed, x, y);
 							rgb = determineColor(x, xOffset, y, yOffset, stateMapList.seedsList(stateBorderValue, type));
 						}
 						else {
@@ -255,6 +243,8 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 
 	}
 
+
+
 	private int offsetWithNoise(int offsetPotential, int seed, int x, int y) {
 		double noise = simplexNoise2(seed, x, y, OFFSET_NOISE_MODIFIER);
 		return (int) (offsetPotential * noise);
@@ -268,7 +258,14 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		return OpenSimplex2.noise2(seed, x * 0.005, y * 0.005) * multiplier;
 	}
 
-	private static int determineColor(int x, int xOffset, int y, int yOffset, final Set<MapPoint> seeds)
+	/**
+	 * determines color from closest seed to point x,y
+	 * @param x
+	 * @param y
+	 * @param seeds
+	 * @return
+	 */
+	private static int determineColor(int x, int y, final Collection<MapPoint> seeds)
 	{
 		int nearestColor = values.rgb_white;            // color of nearest seed (int value)
 		// (default white)
@@ -283,8 +280,8 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 //		for (Iterator<Point> pointIterator = seedsRGBValue.keySet().iterator(); pointIterator.hasNext(); ) {
 		for (MapPoint point : seeds) {
 			// calculate the difference in x and y direction
-			int xdiff = point.x - (x + xOffset);
-			int ydiff = point.y - (y + yOffset);
+			int xdiff = point.x - x;
+			int ydiff = point.y - y;
 
 			// calculate current Euclidean distance, sqrt is not needed
 			// because we only compare and do not need the real value
@@ -297,6 +294,10 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		}
 
 		return nearestColor;
+	}
+
+	private int determineColor(int x, int xOffset, int y, int yOffset, Collection<MapPoint> mapPoints) {
+		return determineColor(x + xOffset, y + yOffset, mapPoints);
 	}
 
 	//	/**

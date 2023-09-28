@@ -3,13 +3,18 @@ package hoi4utils.map.province;
 import hoi4utils.map.SeedsSet;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BorderMapping<P extends MapPoint> {
     /** Integer can be int representation of color */
     private final HashMap<Integer, SeedsSet<P>> borderMapSeeds;      // consider allowing non-hashset instead, for sake of lower-memory use
+
+//    /* cache */
+//    private final Map<String, Set<P>> seedsSetCache = new HashMap<>();
+//    private final Map<String, List<P>> seedsListCache = new HashMap<>();
 
     public BorderMapping() {
         borderMapSeeds = new HashMap<>();
@@ -33,10 +38,7 @@ public class BorderMapping<P extends MapPoint> {
         return borderMapSeeds.containsKey(borderAreaValue);
     }
 
-    public SeedsSet<P> seedsList(int borderArea) {
-        if (!containsState(borderArea)) {
-            return null;
-        }
+    public SeedsSet<P> seedsSet(int borderArea) {
         return borderMapSeeds.get(borderArea);
     }
 
@@ -63,20 +65,35 @@ public class BorderMapping<P extends MapPoint> {
 //    }
 
     /**
-     *
+     * Returns a set of seeds corresponding to the borderArea.
      * @param borderArea
      * @param type
      * @return null if the border area did not exist, or
      */
-    public Set<P> seedsList(int borderArea, int type) {
-        if (!containsState(borderArea)) {
-            return null;
-        }
-        SeedsSet<P> seeds = seedsList(borderArea);
+    public Set<P> seedsSet(int borderArea, int type) {
+        SeedsSet<P> seeds = borderMapSeeds.get(borderArea);
+        if (seeds == null) return null;
 
         Set<P> seedsOfType = seeds.stream()
                 .filter(mapPoint -> mapPoint.type() == type)
                 .collect(Collectors.toSet());
+        return seedsOfType;
+    }
+
+    // TODO cache?
+    /**
+     * Returns a list of seeds corresponding to the borderArea, best intended for iteration.
+     * @param borderArea
+     * @param type
+     * @return null if the border area did not exist, or
+     */
+    public List<P> seedsList(int borderArea, int type) {
+        SeedsSet<P> seeds = borderMapSeeds.get(borderArea);
+        if (seeds == null) return null;
+
+        List<P> seedsOfType = seeds.stream()
+                .filter(mapPoint -> mapPoint.type() == type)
+                .collect(Collectors.toList());
         return seedsOfType;
     }
 }
