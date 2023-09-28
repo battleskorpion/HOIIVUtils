@@ -7,10 +7,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Time;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
@@ -24,10 +20,10 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	public BorderMap stateBorderMap; 		// heightmap of preferred borders
 	private ProvinceMap provinceMap;
 	private ProvinceMapPointsList points;
-	private SeedsSet seeds;
+	private SeedsSet<MapPoint> seeds;
 
 	//	private static HashMap<ProvinceMapPoint, Integer> stateSeedsMap;
-	private BorderMapping stateMapList;
+	private BorderMapping<MapPoint> stateMapList;
 	private Heightmap heightmap;
 	private SeedGeneration seedGeneration;
 
@@ -77,7 +73,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		/* initialize mapping of seeds to states (regions for purposes of province generation) */
 		// TODO: optimization may be possible
 //		stateSeedsMap = new HashMap<>();
-		stateMapList = new BorderMapping();
+		stateMapList = new BorderMapping<>();
 	}
 
 	/**
@@ -139,15 +135,15 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		private static final long serialVersionUID = 7925866053687723919L;
 		public static final float OFFSET_NOISE_MODIFIER = 0.05f;        /* float datatype is used by simplex noise, and may improve performance over double */
 
-		protected static int splitThreshold = 8;		// split until 1 row each
+		protected static int splitThreshold = 8;
 
 		/**
-		 * y-value to start at
+		 * y-value to start at (inclusive)
 		 */
 		private final int startY;
 
 		/**
-		 * y-value to go until (do not do work at this y-value, do work up to this y-value)
+		 * y-value to go until (exclusive)
 		 */
 		private final int endY;
 
