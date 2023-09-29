@@ -1,6 +1,7 @@
 package hoi4utils.map.province;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProvinceMapPointsList {
 	/**
@@ -57,5 +58,14 @@ public class ProvinceMapPointsList {
 
 	public void setRGB(int x, int y, int rgb) {
 		get(x, y).rgb = rgb;
+	}
+
+	public List<MapPoint> sortedList(int fromX, int fromY, int toX, int toY) {
+		// todo null check etc.
+
+		List<MapPoint> points = Arrays.stream(mapPointsList)
+				.sorted(/* comparator*/)
+				.collect(Collectors.toList());
+		return points;
 	}
 }
