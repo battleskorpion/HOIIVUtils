@@ -2,19 +2,16 @@ package hoi4utils.map.province;
 
 import hoi4utils.map.SeedsSet;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BorderMapping<P extends MapPoint> {
     /** Integer can be int representation of color */
     private final HashMap<Integer, SeedsSet<P>> borderMapSeeds;      // consider allowing non-hashset instead, for sake of lower-memory use
 
-//    /* cache */
-//    private final Map<String, Set<P>> seedsSetCache = new HashMap<>();
-//    private final Map<String, List<P>> seedsListCache = new HashMap<>();
+    /* cache */
+    private Map<Integer, Map<Integer, Set<P>>> seedSetCache = new HashMap<>();
+    private Map<Integer, Map<Integer, List<P>>> seedListCache = new HashMap<>();
 
     public BorderMapping() {
         borderMapSeeds = new HashMap<>();
@@ -71,12 +68,19 @@ public class BorderMapping<P extends MapPoint> {
      * @return null if the border area did not exist, or
      */
     public Set<P> seedsSet(int borderArea, int type) {
+        // Check if the seed set is cached
+        if (seedSetCache.containsKey(borderArea) && seedSetCache.get(borderArea).containsKey(type)) {
+            return seedSetCache.get(borderArea).get(type);
+        }
+
         SeedsSet<P> seeds = borderMapSeeds.get(borderArea);
         if (seeds == null) return null;
 
         Set<P> seedsOfType = seeds.stream()
                 .filter(mapPoint -> mapPoint.type() == type)
                 .collect(Collectors.toSet());
+
+        addToSeedSetCache(borderArea, type, seedsOfType);
         return seedsOfType;
     }
 
@@ -88,12 +92,35 @@ public class BorderMapping<P extends MapPoint> {
      * @return null if the border area did not exist, or
      */
     public List<P> seedsList(int borderArea, int type) {
+        // Check if the seed list is cached
+        if (seedListCache.containsKey(borderArea) && seedListCache.get(borderArea).containsKey(type)) {
+            return seedListCache.get(borderArea).get(type);
+        }
+
         SeedsSet<P> seeds = borderMapSeeds.get(borderArea);
         if (seeds == null) return null;
 
         List<P> seedsOfType = seeds.stream()
                 .filter(mapPoint -> mapPoint.type() == type)
                 .collect(Collectors.toList());
+
+        addToSeedListCache(borderArea, type, seedsOfType);
         return seedsOfType;
+    }
+
+    private void addToSeedListCache(int borderArea, int type, List<P> seedsOfType) {
+        // Create map by border area if necessary
+        seedListCache.computeIfAbsent(borderArea, k -> new HashMap<>());
+
+        // add seed collection to cache
+        seedListCache.get(borderArea).put(type, seedsOfType);
+    }
+
+    private void addToSeedSetCache(int borderArea, int type, Set<P> seedsOfType) {
+        // Create map by border area if necessary
+        seedSetCache.computeIfAbsent(borderArea, k -> new HashMap<>());
+
+        // add seed collection to cache
+        seedSetCache.get(borderArea).put(type, seedsOfType);
     }
 }

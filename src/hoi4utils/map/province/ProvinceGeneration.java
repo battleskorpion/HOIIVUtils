@@ -123,6 +123,118 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		}
 	}
 
+	/**
+	 * Pixel color determination using {@link RecursiveAction} for multithreading efficency.
+	 *
+	 * @see RecursiveAction
+	 * @see OpenSimplex2
+	 */
+	public class ForkColorDetermination extends RecursiveAction {
+		/**
+		 * Auto-generated serialVersionUID
+		 */
+		private static final long serialVersionUID = 7925866053687723919L;
+		public static final float OFFSET_NOISE_MODIFIER = 0.05f;        /* float datatype is used by simplex noise, and may improve performance over double */
+
+		protected static int splitThreshold = 16;       // was 8
+
+		/**
+		 * y-value to start at (inclusive)
+		 */
+		private final int startY;
+
+		/**
+		 * y-value to go until (exclusive)
+		 */
+		private final int endY;
+
+		/**
+		 * number of y-values to work with
+		 */
+		private final int dy;
+
+		/**
+		 * simplex noise to offset color determination
+		 */
+		private OpenSimplex2 noise;
+		private final ProvinceMap provinceMap;
+		private final Heightmap heightmap;
+
+//		private Iterator<Map.Entry<ProvinceMapPoint, Integer>> seedsRGBMapIterator;
+
+		/**
+		 * constructor (y set as 0 to imageHeight). Recommended constructor for initial initialization.
+		 */
+		public ForkColorDetermination(ProvinceMap provinceMap, Heightmap heightmap) {
+			this(provinceMap, heightmap, 0, heightmap.getHeight());
+		}
+
+		/**
+		 * constructor
+		 * // todo pass in prev fork color determination instead of province map, heightmap?
+		 */
+		public ForkColorDetermination(ProvinceMap provinceMap, Heightmap heightmap, int startY, int endY) {
+			this.provinceMap = provinceMap;
+			this.heightmap = heightmap;
+			this.startY = startY;
+			this.endY = endY;
+			dy = endY - startY;
+		}
+
+		@Override
+		protected void compute() {
+			if (dy <= splitThreshold) {
+				computeDirectly();
+				return;
+			}
+
+			int split = dy / 2;
+
+			invokeAll(new ForkColorDetermination(provinceMap, heightmap, startY, startY + split),
+					new ForkColorDetermination(provinceMap, heightmap, startY + split, endY));
+		}
+
+		/**
+		 * Determine color for each point
+		 */
+		protected void computeDirectly() {
+			final int widthPerSeed = heightmap.getWidth()  / values.numSeedsX;
+			final int heightPerSeed = heightmap.getHeight() / values.numSeedsY;
+			Random random = new Random();
+			int seed = random.nextInt();
+			System.out.println("run: " + startY + ", " + endY);
+
+			try {
+				for (int y = startY; y < endY; y++) {
+					for (int x = 0; x < heightmap.getWidth(); x++) {
+
+						int rgb;
+						//int heightmapValue = values.heightmap.getRGB(x, y);
+						int heightmapHeight = (heightmap.getRGB(x, y) >> 16) & 0xFF;
+						int stateBorderValue = stateBorderMap.getRGB(x, y);
+						int type = provinceType(heightmapHeight);
+
+						if(stateMapList.containsState(stateBorderValue)) {
+							int xOffset = offsetWithNoise(widthPerSeed, seed, x, y);	//TODO work on values
+							int yOffset = offsetWithNoise(heightPerSeed, seed, x, y);
+							rgb = determineColor(x, xOffset, y, yOffset, stateMapList.seedsList(stateBorderValue, type));
+						}
+						else {
+							rgb = 0;    // bad
+							System.out.println("state map list did not contain state of: " + stateBorderValue);
+						}
+
+						points.setRGB(x, y, rgb);
+						provinceMap.setRGB(x, y, rgb);
+					}
+				}
+			}
+			catch (Exception exc) {
+				exc.printStackTrace();
+			}
+		}
+
+	}
 //	/**
 //	 * Pixel color determination using {@link RecursiveAction} for multithreading efficency.
 //	 *
@@ -136,7 +248,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 //		private static final long serialVersionUID = 7925866053687723919L;
 //		public static final float OFFSET_NOISE_MODIFIER = 0.05f;        /* float datatype is used by simplex noise, and may improve performance over double */
 //
-//		protected static int splitThreshold = 16;       // was 8
+//		protected static int splitThreshold = 32;
 //
 //		/**
 //		 * y-value to start at (inclusive)
@@ -204,37 +316,30 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 //		protected void computeDirectly() {
 //			final int widthPerSeed = heightmap.getWidth()  / values.numSeedsX;
 //			final int heightPerSeed = heightmap.getHeight() / values.numSeedsY;
+//			final int numPointsToCompute = (endY - startY) * heightmap.getWidth();
 //			Random random = new Random();
-//			int seed = random.nextInt();
+//			int noiseSeed = random.nextInt();
 //			System.out.println("run: " + startY + ", " + endY);
 //
 //			try {
-//				for (int y = startY; y < endY; y++) {
-//					for (int x = 0; x < heightmap.getWidth(); x++) {
-////						int xOffset = (int) (widthPerSeed  * ((noise.get(x * 0.005, y * 0.005, 0.0) - 1) * 0.5));		// * ((noise.getValue(x * 0.005, y * 0.005, 0.0) - 1) * 0.5)));	 good values for 32*32 seeds and 4608 * 2816 image
-////						int yOffset = (int) (heightPerSeed * ((noise.get(x * 0.005, y * 0.005, 1.0) - 1) * 0.5));
+//				for (MapPoint p : points.sortedList(0, startY, heightmap.getWidth() - 1, endY - 1)) {
+//					int rgb;
+//					//int heightmapValue = values.heightmap.getRGB(x, y);
+//					int heightmapHeight = (heightmap.getRGB(p.x, p.y) >> 16) & 0xFF;
+//					int stateBorderValue = stateBorderMap.getRGB(p.x, p.y);
+//					int type = provinceType(heightmapHeight);
 //
-//						int rgb;
-//						//int heightmapValue = values.heightmap.getRGB(x, y);
-//						int heightmapHeight = (heightmap.getRGB(x, y) >> 16) & 0xFF;
-//						int stateBorderValue = stateBorderMap.getRGB(x, y);
-//						int type = provinceType(heightmapHeight);
-//
-//						if(stateMapList.containsState(stateBorderValue)) {
-//							int xOffset = offsetWithNoise(widthPerSeed, seed, x, y);	//TODO work on values
-//							int yOffset = offsetWithNoise(heightPerSeed, seed, x, y);
-//							rgb = determineColor(x, xOffset, y, yOffset, stateMapList.seedsList(stateBorderValue, type));
-//						}
-//						else {
-//							rgb = 0;    // bad
-//							System.out.println("state map list did not contain state of: " + stateBorderValue);
-//						}
-//
-//						points.setRGB(x, y, rgb);
-//						provinceMap.setRGB(x, y, rgb);
-//
-//						//offset.put(new Point(x, y), new Point(xOffset, yOffset));
+//					if (stateMapList.containsState(stateBorderValue)) {
+//						int xOffset = offsetWithNoise(widthPerSeed, noiseSeed, p.x, p.y);    //TODO work on values
+//						int yOffset = offsetWithNoise(heightPerSeed, noiseSeed, p.x, p.y);
+//						rgb = determineColor(p.x, xOffset, p.y, yOffset, stateMapList.seedsList(stateBorderValue, type));
+//					} else {
+//						rgb = 0;    // bad
+//						System.out.println("state map list did not contain state of: " + stateBorderValue);
 //					}
+//
+//					points.setRGB(p.x, p.y, rgb);
+//					provinceMap.setRGB(p.x, p.y, rgb);
 //				}
 //			}
 //			catch (Exception exc) {
@@ -243,119 +348,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 //		}
 //
 //	}
-	/**
-	 * Pixel color determination using {@link RecursiveAction} for multithreading efficency.
-	 *
-	 * @see RecursiveAction
-	 * @see OpenSimplex2
-	 */
-	public class ForkColorDetermination extends RecursiveAction {
-		/**
-		 * Auto-generated serialVersionUID
-		 */
-		private static final long serialVersionUID = 7925866053687723919L;
-		public static final float OFFSET_NOISE_MODIFIER = 0.05f;        /* float datatype is used by simplex noise, and may improve performance over double */
-
-		protected static int splitThreshold = 32;
-
-		/**
-		 * y-value to start at (inclusive)
-		 */
-		private final int startY;
-
-		/**
-		 * y-value to go until (exclusive)
-		 */
-		private final int endY;
-
-		/**
-		 * number of y-values to work with
-		 */
-		private final int dy;
-
-		/**
-		 * simplex noise to offset color determination
-		 */
-		private OpenSimplex2 noise;
-		private final ProvinceMap provinceMap;
-		private final Heightmap heightmap;
-
-//		private Iterator<Map.Entry<ProvinceMapPoint, Integer>> seedsRGBMapIterator;
-
-		/**
-		 * constructor (y set as 0 to imageHeight). Recommended constructor for initial initialization.
-		 */
-		public ForkColorDetermination(ProvinceMap provinceMap, Heightmap heightmap) {
-			this(provinceMap, heightmap, 0, heightmap.getHeight());
-		}
-
-		/**
-		 * constructor
-		 * // todo pass in prev fork color determination instead of province map, heightmap?
-		 */
-		public ForkColorDetermination(ProvinceMap provinceMap, Heightmap heightmap, int startY, int endY) {
-			this.provinceMap = provinceMap;
-			this.heightmap = heightmap;
-			this.startY = startY;
-			this.endY = endY;
-			dy = endY - startY;
-//			noise = new OpenSimplex2();
-//			noise.setNoiseQuality(NoiseQualitySimplex.SMOOTH);
-
-//			seedsRGBMapIterator = seeds.rgbIterator(); // no usage anymore
-		}
-
-		@Override
-		protected void compute() {
-			if (dy <= splitThreshold) {
-				computeDirectly();
-				return;
-			}
-
-			int split = dy / 2;
-
-			invokeAll(new ForkColorDetermination(provinceMap, heightmap, startY, startY + split),
-					new ForkColorDetermination(provinceMap, heightmap, startY + split, endY));
-		}
-
-		/**
-		 * Determine color for each point
-		 */
-		protected void computeDirectly() {
-			final int widthPerSeed = heightmap.getWidth()  / values.numSeedsX;
-			final int heightPerSeed = heightmap.getHeight() / values.numSeedsY;
-			final int numPointsToCompute = (endY - startY) * heightmap.getWidth();
-			Random random = new Random();
-			int noiseSeed = random.nextInt();
-			System.out.println("run: " + startY + ", " + endY);
-
-			try {
-				for (MapPoint p : points.sortedList(0, startY, heightmap.getWidth() - 1, endY - 1)) {
-					int rgb;
-					//int heightmapValue = values.heightmap.getRGB(x, y);
-					int heightmapHeight = (heightmap.getRGB(p.x, p.y) >> 16) & 0xFF;
-					int stateBorderValue = stateBorderMap.getRGB(p.x, p.y);
-					int type = provinceType(heightmapHeight);
-
-					if (stateMapList.containsState(stateBorderValue)) {
-						int xOffset = offsetWithNoise(widthPerSeed, noiseSeed, p.x, p.y);    //TODO work on values
-						int yOffset = offsetWithNoise(heightPerSeed, noiseSeed, p.x, p.y);
-						rgb = determineColor(p.x, xOffset, p.y, yOffset, stateMapList.seedsList(stateBorderValue, type));
-					} else {
-						rgb = 0;    // bad
-						System.out.println("state map list did not contain state of: " + stateBorderValue);
-					}
-
-					points.setRGB(p.x, p.y, rgb);
-					provinceMap.setRGB(p.x, p.y, rgb);
-				}
-			}
-			catch (Exception exc) {
-				exc.printStackTrace();
-			}
-		}
-
-	}
 
 
 
