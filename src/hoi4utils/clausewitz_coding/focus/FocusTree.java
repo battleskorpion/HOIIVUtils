@@ -19,7 +19,8 @@ import java.util.*;
 /**
  * ALL of the FocusTree/FocusTrees
  */
-public final class FocusTree extends HOIIVUtils {
+// todo extends file?
+public final class FocusTree {
 
 	// private HashSet<Focus> focuses;
 	private final HashMap<String, Focus> focuses;
