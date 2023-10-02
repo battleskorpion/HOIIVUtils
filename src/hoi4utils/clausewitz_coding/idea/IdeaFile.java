@@ -1,11 +1,14 @@
 package hoi4utils.clausewitz_coding.idea;
 
-import hoi4utils.HOIIVFile;
+import hoi4utils.clausewitz_parser.Parser;
 
 import java.io.File;
-import java.net.URI;
+import java.util.ArrayList;
 
 public class IdeaFile extends File {
+
+	private final ArrayList<Idea> ideaList;
+	private final Parser ideaFileParser;
 
 	/**
 	 * Creates a new {@code File} instance by converting the given
@@ -17,7 +20,16 @@ public class IdeaFile extends File {
 	 */
 	public IdeaFile(String pathname) {
 		super(pathname);
+
+		ideaList = new ArrayList<>();
+		ideaFileParser = new Parser(this);
 	}
 
+	public Parser getParser() {
+		return ideaFileParser;
+	}
 
+	public ArrayList<Idea> listIdeas() {
+		return ideaList;
+	}
 }

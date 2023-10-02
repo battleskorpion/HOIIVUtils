@@ -20,7 +20,7 @@ import java.util.*;
  * ALL of the FocusTree/FocusTrees
  */
 // todo extends file?
-public final class FocusTree {
+public class FocusTree {
 
 	// private HashSet<Focus> focuses;
 	private final HashMap<String, Focus> focuses;
