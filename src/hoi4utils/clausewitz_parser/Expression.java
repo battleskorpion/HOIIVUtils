@@ -324,4 +324,7 @@ public class Expression {
 	}
 
 
+	public String expression() {
+		return expression;
+	}
 }

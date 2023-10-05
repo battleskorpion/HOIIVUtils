@@ -31,6 +31,7 @@ public class HOIIVFile implements FileUtils {
 	public static File modPathFile;
 
 	public static File focus_folder;
+	public static File ideas_folder;
 	public static File states_folder;
 	public static File strat_region_dir;
 	public static File localization_eng_folder;
@@ -55,6 +56,7 @@ public class HOIIVFile implements FileUtils {
 		strat_region_dir =  new File(modPath + "\\map\\strategicregions");
 		localization_eng_folder =  new File(modPath + "\\localisation\\english");
 		focus_folder = new File(modPath + "\\common\\national_focus");
+		ideas_folder = new File(modPath + "\\common\\ideas");
 		hoi4mods_folder = modPathFile.getParentFile();
 		System.out.println("HOIIVFile created paths");
 	}

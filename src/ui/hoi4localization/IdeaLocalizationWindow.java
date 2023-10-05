@@ -34,7 +34,6 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
     @FXML private TableView<Idea> ideaListTable;
     @FXML private TableColumn<Idea, String> ideaIDColumn;
     @FXML private TableColumn<Idea, String> ideaNameColumn;
-    @FXML private TableColumn<Idea, String> ideaDescColumn;
 
     private IdeaFile ideaFile;
     private LocalizationFile ideaLocFile;
@@ -64,7 +63,7 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
     }
 
     public void handleIdeaFileBrowseButtonAction() {
-        File initialIdeaDirectory = HOIIVFile.idea_folder;
+        File initialIdeaDirectory = HOIIVFile.ideas_folder;
         File selectedFile = openChooser(ideaFileBrowseButton, false, initialIdeaDirectory);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
@@ -72,7 +71,7 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
 
         if (selectedFile != null) {
             ideaFileTextField.setText(selectedFile.getAbsolutePath());
-//            ideaFile= new IdeaTree(selectedFile);
+            ideaFile = new IdeaFile(selectedFile.getAbsolutePath());    // todo?
             ideaFileNameLabel.setText(ideaFile.toString());
         } else {
             ideaFileNameLabel.setText("[not found]");
@@ -100,9 +99,6 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
             window.open("Error: Idea localization or idea tree not properly initialized.");
             return;
         }
-		// Add further handling logic here // todo remove da comment when done
-
-        // todo temp lazy flow control
 
 	    /* load idea loc */
 	    try {
@@ -169,8 +165,7 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
     @Override
     public void setDataTableCellFactories() {
         /* column factory */
-        ideaDescColumn.setCellFactory(TextFieldTableCell.forTableColumn()); // This makes the column editable
-        setOnIdeaColumnEditCommit();
+//        ideaDescColumn.setCellFactory(TextFieldTableCell.forTableColumn()); // This makes the column editable
 
         /* row factory */
         ideaListTable.setRowFactory(tv -> new TableRow<>() {
@@ -181,22 +176,10 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
                 if (idea == null || empty) {
                     setGraphic(null); // Clear any previous content
                 } else {
-                    Localization.Status textStatus = idea.getNameLocalization().status();   // todo
-                    Localization.Status descStatus = idea.getDescLocalization().status();   // todo
-                    boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED || descStatus == Localization.Status.UPDATED;
-                    boolean hasStatusNew = descStatus == Localization.Status.NEW || textStatus == Localization.Status.NEW;
+                    Localization.Status textStatus = idea.getLocalization().status();   // todo
+                    boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED;
+                    boolean hasStatusNew = textStatus == Localization.Status.NEW;
 
-//                    // Apply text highlighting style if needed
-//                    if (hasStatusUpdated) {
-//                        setTextFill(Color.BLACK); // Set text color to black
-//                        setStyle("-fx-background-color: yellow;"); // Customize background color here
-//                    } else if (hasStatusNew) {
-//                        setTextFill(Color.BLACK); // Set text color to black
-//                        setStyle("-fx-background-color: cyan;"); // Customize background color here
-//                    } else {
-//                        setTextFill(Color.BLACK); // Set text color to black
-//                        setStyle(""); // Reset style
-//                    }
                     // Apply text style
                     if (hasStatusUpdated || hasStatusNew) {
                         setTextFill(Color.BLACK); // Set text color to black
@@ -209,14 +192,5 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
             }
         });
     }
-
-    private void setOnIdeaColumnEditCommit() {
-        ideaDescColumn.setOnEditCommit(event -> {
-            // This method will be called when a user edits and commits a cell value.
-            Idea idea = event.getRowValue();
-            idea.setDescLocalization(event.getNewValue());  // todo
-        });
-    }
-
 
 }

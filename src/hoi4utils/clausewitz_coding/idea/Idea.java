@@ -2,11 +2,19 @@ package hoi4utils.clausewitz_coding.idea;
 
 import hoi4utils.FileUtils;
 import hoi4utils.clausewitz_coding.code.modifier.Modifier;
+import hoi4utils.clausewitz_coding.focus.Focus;
+import hoi4utils.clausewitz_coding.localization.Localization;
+import hoi4utils.clausewitz_coding.localization.LocalizationFile;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
+import javafx.beans.property.SimpleStringProperty;
+import ui.FXWindow;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 /**
  * This is the Idea file.
  */
@@ -16,14 +24,24 @@ public abstract class Idea {
 	protected static ArrayList<Idea> idea_list; // todo change to hash etc.
 
 	/* idea */
-	protected String ideaID;
+	protected SimpleStringProperty id;
 	// private ArrayList<String> loc_name;
 	protected File file; // file idea is defined in
 	protected ArrayList<Modifier> modifiers;
 	protected int removalCost = -1; // -1 default
+	protected Localization localization;
 
-	protected Idea(String ideaID) {
-		this.ideaID = ideaID;
+	protected Idea(String id) {
+		this.id = new SimpleStringProperty(id);
+	}
+
+	public static List<Function<Idea,?>> getDataFunctions() {
+		List<Function<Idea, ?>> dataFunctions = new ArrayList<>(2);         // for optimization, limited number of data functions.
+
+		dataFunctions.add(Idea::id);
+		dataFunctions.add(Idea::localization);
+
+		return dataFunctions;
 	}
 
 	protected void addModifier(Modifier modifier) {
@@ -32,7 +50,7 @@ public abstract class Idea {
 
 	public Idea getIdea(String ideaID) {
 		for (Idea idea : idea_list) {
-			if (idea.ideaID.equals(ideaID)) {
+			if (idea.id().equals(ideaID)) {
 				return idea;
 			}
 		}
@@ -83,44 +101,100 @@ public abstract class Idea {
 		return null; // todo
 	}
 
-	@SuppressWarnings("SuspiciousMethodCalls")
-	public static ArrayList<String> load(File idea_file) {
-		// Scanner ideaReader = new Scanner(idea_file);
-		idea_list = new ArrayList<>();
-
-		// make a list of all idea names
-		// ! todo Int not being used / index of idea name in string
-		// int ideaListIndex;
-		Parser ideaParser = new Parser(idea_file);
-		Expression[] data = ideaParser.findAll();
-		for (Expression exp : data) {
-			String s = exp.getText();
-			if (s == null) {
-				continue;
-			}
-			s = s.trim();
-
-			// need enough data length before checks are made to prevent error
-			if (FileUtils.usefulData(s) && s.length() >= 5) {
-				//! if (CountryTags.getCountryTags().contains(s.substring(0, 3)) && s.startsWith("={", s.length() - 2)) {
-					// if here, ***should*** be good! data is an idea name,
-					// once we clean it up
-
-					// return idea var name, remove "={"
-					String ideaName = s.substring(0, s.length() - 2);
-					Idea idea;
-					/* find idea type and instantiate idea */
-					if (true) { // todo
-						idea = new CountryIdea(ideaName);
-					} /* else {
-							idea = new ManpowerIdea(ideaName);
-						}*/
-					idea_list.add(idea);
-				}
-			}
-	//!	} // !
-		// return idea_list;
-		return null;
+	public String id() {
+		if (id == null) {
+			return null;
+		}
+		return id.get();
 	}
 
+	public void setID(String id) {
+		this.id.set(id);
+	}
+
+	private void setID(Expression exp) {
+		if (exp == null) {
+			id = null;
+			FXWindow.openGlobalErrorWindow("Expression was null for setting idea ID.");
+			return;
+		}
+
+		id = new SimpleStringProperty(exp.getText());
+	}
+
+
+	public void setLocalization() {
+		setLocalization(id(), Localization.Status.DEFAULT);
+	}
+
+	public void setLocalization(LocalizationFile localization) {
+		Localization loc = localization.getLocalization(id());
+		this.localization = loc;
+	}
+
+	/**
+	 * Sets name localization and decides the status.
+	 * @param text
+	 */
+	public void setLocalization(String text) {
+		if (localization == null) {
+			setLocalization(text, Localization.Status.DEFAULT);
+			return;
+		}
+
+		Localization.Status status;
+
+		if (localization.status() == Localization.Status.NEW)
+		{
+			status = Localization.Status.NEW;
+		}
+		else {
+			// including if nameLocalization.status() == Localization.Status.DEFAULT, itll now be updated
+			status = Localization.Status.UPDATED;
+		}
+
+		setLocalization(text, status);
+	}
+
+	/**
+	 * Sets localization with a specific status. Only use if specifying status is necessary.
+	 * @param text
+	 * @param status
+	 */
+	public void setLocalization(String text, Localization.Status status) {
+		if (localization == null) {
+			localization = new Localization(id(), text, status);
+			return;
+		}
+
+		String id = localization.ID();
+		localization = new Localization(id, text, status);
+	}
+
+	public Localization getLocalization() {
+		return localization;
+	}
+
+	public String localization() {
+		if (localization == null) {
+			return "[null]";
+		}
+		return localization.text();
+	}
+
+	public static Idea loadIdea(String ideaId, Expression ideaExp, Expression ideaCategoryExp) {
+		String ideaCategory = ideaCategoryExp.getText();
+
+		if (ideaCategory == null) {
+			System.out.println("error: null category for idea: " + ideaId + ", idea exp: ");
+			System.out.println(ideaExp);
+			return null;    // todo area
+		}
+		return switch (ideaCategory) {
+			case "economy" -> new EconomyIdea(ideaId);
+			case "country" -> new CountryIdea(ideaId);
+			case "manpower" -> new ManpowerIdea(ideaId);
+			default -> null;
+		};
+	}
 }

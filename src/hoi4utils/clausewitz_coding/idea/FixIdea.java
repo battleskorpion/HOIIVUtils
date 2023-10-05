@@ -3,52 +3,54 @@ package hoi4utils.clausewitz_coding.idea;
 import hoi4utils.EnglishSuperDictionary;
 import hoi4utils.HOIIVUtils;
 import hoi4utils.clausewitz_coding.country.CountryTags;
+import hoi4utils.clausewitz_coding.localization.Localization;
 import hoi4utils.clausewitz_coding.localization.LocalizationFile;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import static hoi4utils.clausewitz_coding.country.CountryTag.COUNTRY_TAG_LENGTH;
+
 /**
  * This is the FixIdea file.
  */
 public class FixIdea extends HOIIVUtils {
 
-	public static boolean addIdeaLoc(File idea_file, File loc_file) throws IOException {
-
-		// some vars
-		LocalizationFile localization = new LocalizationFile(loc_file);
+	public static int addIdeaLoc(IdeaFile idea_file, LocalizationFile localization) throws IOException {
 		localization.readLocalization();
 
 		String idea_loc;
+		ArrayList<Idea> ideasAddedLoc = new ArrayList<>();
 
-		Idea.load(idea_file);
-		assert Idea.getIdeas() != null;
-		for (Idea idea : Idea.getIdeas()) {
+		assert idea_file.listIdeas() != null;
+		for (Idea idea : idea_file.listIdeas()) {
 			// if idea id not localized
-			if (!localization.isLocalized(idea.ideaID)) {
+			if (!localization.isLocalized(idea.id())) {
 				// write to loc file
 				// separate words in idea name
+
+				/* ignore country tag */
 				int i = 0;
-//				if(CountryTags.list().contains(new CountryTag(idea.ideaID.substring(0, 3)))) {
-				if (CountryTags.exists(idea.ideaID.substring(0, 3))) {
-					i+=3;
+				if (CountryTags.exists(idea.id().substring(0, COUNTRY_TAG_LENGTH))) {
+					i += COUNTRY_TAG_LENGTH;
 				}
 
-				idea_loc = EnglishSuperDictionary.titleCapitalize(idea.ideaID.substring(i).replaceAll("_+", " ").trim()); // regex
-				localization.setLocalization(idea.ideaID, idea_loc);
+				idea_loc = idea.id().substring(i).replaceAll("_+", " ").trim();
+				idea_loc = EnglishSuperDictionary.titleCapitalize(idea_loc); // regex
 
-//				idea_loc = idea + loc_key + " ";
-//				idea_loc += "\"";
-//				idea_loc += titleCapitalize(idea.ideaID.substring(i, idea.ideaID.length()).replaceAll("_+", " ").trim()); // regex
-//				idea_loc += "\"";
-//				locPWriter.println("");
-//				locPWriter.println("	" + idea_loc); 									// NO TAB, YML PREFERS SPACES
-//				// add blank desc line:
-//				locPWriter.println("	" + idea + "_desc" + loc_key + " " + "\"" + "\""); // NO TAB, YML PREFERS SPACES
-//				System.out.println("added idea to loc, idea " + idea_loc);
+				localization.setLocalization(idea.id(), idea_loc);
+				ideasAddedLoc.add(idea);
+				continue;           // localize and move on
+			}
+
+			// add preexisting loc
+			Localization.Status locStatus = localization.getLocalization(idea.id()).status();
+			if (locStatus.equals(Localization.Status.EXISTS)) {
+				idea.setLocalization(localization);
 			}
 		}
 
-		localization.writeLocalization();
-		return true;
+//		localization.writeLocalization();       // eh nah not here
+		return ideasAddedLoc.size();
 	}
 }

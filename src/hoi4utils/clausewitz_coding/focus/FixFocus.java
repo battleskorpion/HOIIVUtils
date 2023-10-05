@@ -83,10 +83,9 @@ public class FixFocus extends HOIIVUtils {
 
 		String focus_loc;
 		String focus_loc_desc;
+		ArrayList<Focus> focusesAddedLoc = new ArrayList<>();
 
-		ArrayList<Focus> focusesUnloc = new ArrayList<>();
 		assert focusTree.listFocusNames() != null;
-
 		for (Focus focus : focusTree.focuses()) {
 			// if focus id not localized
 			if (!localization.isLocalized(focus.id())) {
@@ -108,25 +107,20 @@ public class FixFocus extends HOIIVUtils {
 				}
 
 				// set focus loc
-//				focus.setNameLocalization(focus_loc);
-//				focus.setDescLocalization(focus_loc_desc);
 				focus.setLocalization(localization, focus_loc, focus_loc_desc);
-
-				focusesUnloc.add(focus);
+				focusesAddedLoc.add(focus);
 				continue;           // localize and move on
 			}
 
+			// add preexisting loc
 			Localization.Status locStatus = localization.getLocalization(focus.id()).status();
 			if (locStatus.equals(Localization.Status.EXISTS)) {
 				focus.setLocalization(localization);
 			}
-			//System.err.println(focusTree.focuses().size());
-			//System.out.println(localization.getLocalization(focus.id()).status() + " , test");
-
 		}
 
 		//localization.writeLocalization();     // eh nah not here
-		return focusesUnloc.size();
+		return focusesAddedLoc.size();
 	}
 
 }

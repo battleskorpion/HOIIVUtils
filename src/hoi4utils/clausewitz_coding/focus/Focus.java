@@ -175,7 +175,7 @@ public class Focus {
 
 		focusExp = exp.get("focus=");
 
-		setID(exp.getSubexpression(id.get()));
+		setID(exp.getSubexpression(id()));
 		setXY(focusExp.getImmediate("x="), focusExp.getImmediate("y="));
 		setRelativePositionID(focusExp.getSubexpression("relative_position_id="));
 		// setFocusLoc();
@@ -272,7 +272,7 @@ public class Focus {
 	 * to the focus id.
 	 */
 	public void setNameLocalization() {
-		setNameLocalization(id.get(), Localization.Status.DEFAULT);
+		setNameLocalization(id(), Localization.Status.DEFAULT);
 	}
 	public void setNameLocalization(Localization localization) {
 		nameLocalization = localization;

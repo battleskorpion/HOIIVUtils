@@ -1,6 +1,7 @@
 package ui.menu;
 
 import hoi4utils.HOIIVUtils;
+import hoi4utils.clausewitz_coding.idea.Idea;
 import hoi4utils.clausewitz_coding.state.State;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import ui.console.ConsoleController;
 import ui.focus.FocusTreeWindow;
 import ui.hoi4localization.CustomTooltipWindow;
 import ui.hoi4localization.FocusLocalizationWindow;
+import ui.hoi4localization.IdeaLocalizationWindow;
 import ui.hoi4localization.UnlocalizedFocusWindow;
 import ui.settings.SettingsController;
 import ui.statistics.StatisticsController;
@@ -94,6 +96,11 @@ public class MenuController extends Application implements FXWindow {
 
 	public void openLocalizeFocusTree() {
 		FocusLocalizationWindow window = new FocusLocalizationWindow();
+		window.open();
+	}
+
+	public void openLocalizeIdeaFile() {
+		IdeaLocalizationWindow window = new IdeaLocalizationWindow();
 		window.open();
 	}
 

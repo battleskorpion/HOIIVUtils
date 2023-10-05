@@ -65,8 +65,6 @@ public class FocusTree {
 		FocusTree.add(country(), this);
 	}
 
-	// public ArrayList<String> find(File focus_file) throws IOException {
-	// Scanner focusReader = new Scanner(focus_file);
 	private ArrayList<String> parse() {
 		if (this.focus_file == null) {
 			System.err.println(this + "File of focus tree not set.");
@@ -89,11 +87,10 @@ public class FocusTree {
 			System.err.println("focusesExps null in " + this.getClass());
 			return null;
 		}
-		System.out.println(Arrays.toString(focusesExps));
 		System.out.println("Num focuses detected: " + focusesExps.length);
 
 		/* focuses */
-		focus_names = new ArrayList<String>(); // todo needed?
+		focus_names = new ArrayList<>(); // todo needed?
 		minX = 0; // min x is 0 or less
 
 		for (Expression focusExp : focusesExps) {

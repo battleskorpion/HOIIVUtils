@@ -99,9 +99,6 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
             window.open("Error: Focus localization or focus tree not properly initialized.");
             return;
         }
-		// Add further handling logic here // todo remove da comment when done
-
-        // todo temp lazy flow control
 
 	    /* load focus loc */
 	    try {
