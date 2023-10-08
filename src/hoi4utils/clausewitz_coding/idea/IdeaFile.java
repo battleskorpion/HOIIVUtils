@@ -1,6 +1,5 @@
 package hoi4utils.clausewitz_coding.idea;
 
-import hoi4utils.clausewitz_coding.focus.Focus;
 import hoi4utils.clausewitz_parser.Expression;
 import hoi4utils.clausewitz_parser.Parser;
 import javafx.collections.FXCollections;
