@@ -101,9 +101,9 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
 
 	    /* load idea loc */
 	    try {
-	        int numLocalizedIdeaes = FixIdea.addIdeaLoc(ideaFile, ideaLocFile);
+	        int numLocalizedIdeas = FixIdea.addIdeaLoc(ideaFile, ideaLocFile);
 	        // todo didnt happe?
-	        updateNumLocalizedIdeaes(numLocalizedIdeaes);
+	        updateNumLocalizedIdeaes(numLocalizedIdeas);
 	    } catch (IOException e) {
 	        openError(e);
 	        return;

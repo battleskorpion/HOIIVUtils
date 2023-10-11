@@ -143,34 +143,6 @@ public class FocusTree {
 			country = new CountryTag(countryModifierExp.get("tag").getText());
 		}
 
-		// // make a list of all focus names
-		// boolean findFocusName = false;
-		// int focus_name_index; // index of focus name in string
-		// while (focusReader.hasNextLine()) {
-		// String data = focusReader.nextLine().replaceAll("\\s", "");
-		// if (usefulData(data)) {
-		// if (!findFocusName) {
-		// if ((data.trim().length() >= 6) && (data.trim().substring(0,
-		// 6).equals("focus="))) {
-		// findFocusName = true;
-		// }
-		// } else {
-		// if (data.trim().length() >= 3 && data.trim().substring(0, 3).equals(("id=")))
-		// {
-		// focus_name_index = data.indexOf("id=") + 3;
-		// String focus_id = data.substring(focus_name_index, data.length()).trim();
-		// focus_names.add(focus_id);
-		// focuses.add(new Focus(focus_id));
-		//
-		// /* get country */
-		// country = new CountryTag(data.trim().substring(focus_name_index,
-		// focus_name_index + 3));
-		//
-		// findFocusName = false;
-		// }
-		// }
-		// }
-		// }
 		return focus_names;
 	}
 
