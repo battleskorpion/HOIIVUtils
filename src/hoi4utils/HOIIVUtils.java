@@ -16,6 +16,8 @@ public class HOIIVUtils {
 	public static MenuController menuController;
 	public static void main(String[] args) {
 		SettingsManager.getSavedSettings();
+
+		HOIIVUtilsLog.startLog();
 		
 		if (Boolean.TRUE.equals(firstTimeSetup)) {
 			System.out.println("HOIIVUtils launched stage settings cuz it was first time setup");
