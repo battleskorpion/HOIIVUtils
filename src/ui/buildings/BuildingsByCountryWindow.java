@@ -1,7 +1,7 @@
 package ui.buildings;
 
 import hoi4utils.HOIIVUtils;
-import hoi4utils.clausewitz_coding.country.Country;
+import hoi4utils.clausewitz_data.country.Country;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;

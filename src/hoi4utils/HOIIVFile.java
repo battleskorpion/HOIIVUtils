@@ -1,6 +1,6 @@
 package hoi4utils;
 
-import hoi4utils.clausewitz_coding.state.State;
+import hoi4utils.clausewitz_data.state.State;
 import hoi4utils.fileIO.FileListener.FileAdapter;
 import hoi4utils.fileIO.FileListener.FileEvent;
 import hoi4utils.fileIO.FileListener.FileWatcher;

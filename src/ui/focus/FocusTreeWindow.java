@@ -1,9 +1,9 @@
 package ui.focus;
 
 import hoi4utils.HOIIVFile;
-import hoi4utils.clausewitz_coding.country.CountryTag;
-import hoi4utils.clausewitz_coding.focus.Focus;
-import hoi4utils.clausewitz_coding.focus.FocusTree;
+import hoi4utils.clausewitz_data.country.CountryTag;
+import hoi4utils.clausewitz_data.focus.Focus;
+import hoi4utils.clausewitz_data.focus.FocusTree;
 import hoi4utils.ddsreader.DDSReader;
 
 import javax.swing.*;

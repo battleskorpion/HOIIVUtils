@@ -1,6 +1,6 @@
 package test.hoi4utils.clausewitz_coding.focus;
 
-import hoi4utils.clausewitz_coding.focus.Focus;
+import hoi4utils.clausewitz_data.focus.Focus;
 //import org.junit.Test; //org.junit can't be found
 
 import static org.mockito.Mockito.mock;

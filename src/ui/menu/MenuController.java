@@ -1,8 +1,7 @@
 package ui.menu;
 
 import hoi4utils.HOIIVUtils;
-import hoi4utils.clausewitz_coding.idea.Idea;
-import hoi4utils.clausewitz_coding.state.State;
+import hoi4utils.clausewitz_data.state.State;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

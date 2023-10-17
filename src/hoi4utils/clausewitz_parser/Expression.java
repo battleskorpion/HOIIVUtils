@@ -184,9 +184,17 @@ public class Expression {
 		String exp = expression;
 		if (expression.contains("#")) {
 			exp = expression.substring(0, expression.indexOf("#"));
+			if (exp.trim().isEmpty()) {
+				throw new RuntimeException("Expression was comment");
+			}
 		}
 
-		return Double.parseDouble(exp.substring(exp.indexOf("=") + 1).trim().replace(",", ""));
+		try {
+			return Double.parseDouble(exp.substring(exp.indexOf("=") + 1).trim().replace(",", ""));
+		} catch (NumberFormatException exc) {
+			System.err.println("line: ");
+			throw exc;
+		}
 	}
 
 
@@ -326,5 +334,17 @@ public class Expression {
 
 	public String expression() {
 		return expression;
+	}
+
+	public boolean contains(String s) {
+		if (!usefulData(expression())) {
+			return false;
+		}
+
+		return expression().contains(s);
+	}
+
+	public void setValue(double v) {
+		expression = expression.replaceAll("=([-+])?([0-9](\\.[0-9]+)*)+", "=" + v);
 	}
 }

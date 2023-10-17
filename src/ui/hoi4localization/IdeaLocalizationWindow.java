@@ -2,11 +2,11 @@ package ui.hoi4localization;
 
 import hoi4utils.HOIIVFile;
 import hoi4utils.Settings;
-import hoi4utils.clausewitz_coding.idea.FixIdea;
-import hoi4utils.clausewitz_coding.idea.Idea;
-import hoi4utils.clausewitz_coding.idea.IdeaFile;
-import hoi4utils.clausewitz_coding.localization.LocalizationFile;
-import hoi4utils.clausewitz_coding.localization.Localization;
+import hoi4utils.clausewitz_data.idea.FixIdea;
+import hoi4utils.clausewitz_data.idea.Idea;
+import hoi4utils.clausewitz_data.idea.IdeaFile;
+import hoi4utils.clausewitz_data.localization.LocalizationFile;
+import hoi4utils.clausewitz_data.localization.Localization;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

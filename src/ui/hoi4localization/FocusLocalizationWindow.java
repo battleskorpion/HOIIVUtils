@@ -2,11 +2,11 @@ package ui.hoi4localization;
 
 import hoi4utils.HOIIVFile;
 import hoi4utils.Settings;
-import hoi4utils.clausewitz_coding.focus.FixFocus;
-import hoi4utils.clausewitz_coding.focus.Focus;
-import hoi4utils.clausewitz_coding.focus.FocusTree;
-import hoi4utils.clausewitz_coding.localization.FocusLocalizationFile;
-import hoi4utils.clausewitz_coding.localization.Localization;
+import hoi4utils.clausewitz_data.focus.FixFocus;
+import hoi4utils.clausewitz_data.focus.Focus;
+import hoi4utils.clausewitz_data.focus.FocusTree;
+import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
+import hoi4utils.clausewitz_data.localization.Localization;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
