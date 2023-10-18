@@ -31,11 +31,13 @@ public class Parser {
 					if (!line.matches(("(?i)(\\s*[^\\\\]?#.*)?"))) {
 					/*
 					if text [a-z] after '{', replace with "{\n\t + text"
-					line.matches(regex) -> regex is inclusive of entire line if line matches "(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)"
+					line.matches(regex) -> regex is inclusive of entire line if line matches
+					"(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)"
 					so that the line will match -> done by leading and following "([^\r\n]*)"
 					 */
 					if (line.matches("(?i)(([^\\r\\n]*)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)([^\\r\\n]*))")) {
-						line = line.replaceAll("(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)", "\\{" + System.lineSeparator() + "\t$1$2");		// old: \{\s*([a-z]+)
+						line = line.replaceAll("(?i)\\{[^\\S\\t\\r\\n]*(\\t*)([a-z]+)",
+								"\\{" + System.lineSeparator() + "\t$1$2");		// old: \{\s*([a-z]+)
 
 						/* add tabs to new lines */
 						String replacement = "$1" + "\t".repeat(tabAmt);
