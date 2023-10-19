@@ -7,7 +7,7 @@ import hoi4utils.clausewitz_data.gfx.Interface;
 import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import hoi4utils.clausewitz_data.localization.Localization;
 import hoi4utils.clausewitz_parser.Expression;
-import hoi4utils.clausewitz_parser_new.Node;
+import clausewitz_parser_new.Node;
 import hoi4utils.ddsreader.DDSReader;
 import javafx.beans.property.SimpleStringProperty;
 import ui.FXWindow;

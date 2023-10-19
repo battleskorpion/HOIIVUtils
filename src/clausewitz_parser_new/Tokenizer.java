@@ -1,4 +1,4 @@
-package hoi4utils.clausewitz_parser_new;
+package clausewitz_parser_new;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,6 +10,7 @@ public class Tokenizer {
 	private int find_start_index = 0;
 	private boolean peekOccurred = false;
 
+	// todo ex: id = SMI_Support_Black_Legio... too long?, no good.
 	public Tokenizer(String input) {
 		this.input = input;
 //		this.pattern = Pattern.compile(regexPattern);
@@ -19,6 +20,7 @@ public class Tokenizer {
 
 	// todo unknown if good
 	public Token next() {
+		try {
 		/* matcher.find(int) resets the matcher, therefore,
 		only use this call when necessary */
 		if (peekOccurred) {
@@ -36,6 +38,11 @@ public class Tokenizer {
 			return new Token(value, start);
 		}
 		return null;
+		} catch (StackOverflowError e) {
+			System.err.println("EEEE"); // todo
+			System.err.println(matcher.group());
+			return null;
+		}
 	}
 
 	/**
@@ -54,8 +61,7 @@ public class Tokenizer {
 				/* peek occurred already true */
 				return new Token(value, start);
 			}
-		}
-		else if (matcher.find()) {
+		} else if (matcher.find()) {
 			String value = matcher.group();
 			int start = matcher.start();
 			find_start_index = matcher.start();

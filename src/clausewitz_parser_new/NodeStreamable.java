@@ -1,4 +1,4 @@
-package hoi4utils.clausewitz_parser_new;
+package clausewitz_parser_new;
 
 import java.util.List;
 import java.util.function.Consumer;

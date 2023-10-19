@@ -1,13 +1,13 @@
 package hoi4utils.clausewitz_data.focus;
 
+import clausewitz_parser_new.Node;
+import clausewitz_parser_new.Parser;
 import hoi4utils.clausewitz_data.Localizable;
 import hoi4utils.clausewitz_data.country.CountryTag;
 import hoi4utils.clausewitz_data.country.CountryTags;
 import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import hoi4utils.clausewitz_data.localization.Localization;
 import hoi4utils.clausewitz_data.localization.LocalizationFile;
-//import hoi4utils.clausewitz_parser.Expression;
-import hoi4utils.clausewitz_parser_new.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ui.FXWindow;
