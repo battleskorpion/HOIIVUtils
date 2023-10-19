@@ -6,8 +6,8 @@ import hoi4utils.clausewitz_data.country.CountryTags;
 import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import hoi4utils.clausewitz_data.localization.Localization;
 import hoi4utils.clausewitz_data.localization.LocalizationFile;
-import hoi4utils.clausewitz_parser.Expression;
-import hoi4utils.clausewitz_parser.Parser;
+//import hoi4utils.clausewitz_parser.Expression;
+import hoi4utils.clausewitz_parser_new.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ui.FXWindow;
@@ -77,74 +77,112 @@ public class FocusTree implements Localizable {
 		}
 
 		/* parser */
-		Parser focusParser = new Parser(this.focus_file);
-		Expression focusTreeExp = focusParser.expression();
-		Expression[] focusesExps = focusTreeExp.getAll("focus={");
-		// System.out.println(focusesExps[focusesExps.length-1]);
-		// if (focuses == null) {
-		// return null;
-		// }
-		if (focusesExps == null) {
-			System.err.println("focusesExps null in " + this.getClass());
+		Parser focusTreeParser = new Parser(this.focus_file);
+		Node focusTreeNode;
+		try {
+			 focusTreeNode = focusTreeParser.parse();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		List<Focus> focuses = getFocuses(focusTreeNode);
+
+
+//		Expression focusTreeExp = focusTreeParser.expression();
+//		Expression[] focusesExps = focusTreeExp.getAll("focus={");
+//		// System.out.println(focusesExps[focusesExps.length-1]);
+//		// if (focuses == null) {
+//		// return null;
+//		// }
+//		if (focusesExps == null) {
+//			System.err.println("focusesExps null in " + this.getClass());
+//			return null;
+//		}
+//		System.out.println("Num focuses detected: " + focusesExps.length);
+//
+//		/* focuses */
+//		focus_names = new ArrayList<>(); // todo needed?
+//		minX = 0; // min x is 0 or less
+//
+//		for (Expression focusExp : focusesExps) {
+//			Focus focus;
+//
+//			/* focus id */
+//			{
+//				Expression focusIDExp = focusExp.get("id=");
+//				if (focusIDExp == null) {
+//					continue; // id important
+//				}
+//				String focus_id = focusIDExp.getText(); // gets the ##### from "id = #####"
+//				if (focus_id == null) {
+//					continue; // id important
+//				}
+//				focus = new Focus(focus_id, this);
+//				focus_names.add(focus_id);
+//				focuses.put(focus_id, focus);
+//
+//				// todo THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
+//			}
+//		}
+//
+//		for (Expression focusExp : focusesExps) {
+//			Focus focus;
+//
+//			/* focus id */
+//			{
+//				Expression focusIDExp = focusExp.get("id=");
+//				if (focusIDExp == null) {
+//					continue; // id important
+//				}
+//				String focus_id = focusIDExp.getText(); // gets the ##### from "id = #####"
+//				if (focus_id == null) {
+//					continue; // id important
+//				}
+//				focus = getFocus(focus_id);
+//
+//				// todo THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
+//				focus.loadAttributes(focusExp);
+//				if (focus.absoluteX() < minX) {
+//					minX = focus.x();
+//				}
+//			}
+//		}
+//
+//		/* country */
+//		Expression countryModifierExp = focusTreeExp.get("country").get("modifier");
+//		if (countryModifierExp != null && countryModifierExp.get("tag") != null) {
+//			country = new CountryTag(countryModifierExp.get("tag").getText());
+//		}
+//
+//		return focus_names;
+		return null;
+	}
+
+	private List<Focus> getFocuses(Node focusTreeNode) {
+		if (focusTreeNode.value().list() == null) {
+			System.err.println("Expected list of nodes, for focuses getter");
 			return null;
 		}
-		System.out.println("Num focuses detected: " + focusesExps.length);
 
-		/* focuses */
-		focus_names = new ArrayList<>(); // todo needed?
-		minX = 0; // min x is 0 or less
-
-		for (Expression focusExp : focusesExps) {
+		// todo? is this ok
+//		ArrayList<Node> focusTreesNodes = (ArrayList<Node>) focusTreeNode.value();
+//		ArrayList<Node> focusTreeNodes = (ArrayList<Node>) focusTreesNodes.get(0).value();
+		// todo woooo
+		List<Node> focusTreeNodes =
+				focusTreeNode.filterName("focus_tree")
+				.filterName("focus").toList();
+		for (Node node : focusTreeNodes) {
+//			System.out.println(node.name);
+			/* new of old todo */
 			Focus focus;
-
 			/* focus id */
-			{
-				Expression focusIDExp = focusExp.get("id=");
-				if (focusIDExp == null) {
-					continue; // id important
-				}
-				String focus_id = focusIDExp.getText(); // gets the ##### from "id = #####"
-				if (focus_id == null) {
-					continue; // id important
-				}
-				focus = new Focus(focus_id, this);
-				focus_names.add(focus_id);
-				focuses.put(focus_id, focus);
-
-				// todo THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
-			}
+			String focus_id = node.getValue("id").string();     // gets the ##### from "id = #####"
+			focus = new Focus(focus_id, this, node);
+			focus_names.add(focus_id);
+			focuses.put(focus_id, focus);
 		}
 
-		for (Expression focusExp : focusesExps) {
-			Focus focus;
-
-			/* focus id */
-			{
-				Expression focusIDExp = focusExp.get("id=");
-				if (focusIDExp == null) {
-					continue; // id important
-				}
-				String focus_id = focusIDExp.getText(); // gets the ##### from "id = #####"
-				if (focus_id == null) {
-					continue; // id important
-				}
-				focus = getFocus(focus_id);
-
-				// todo THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
-				focus.loadAttributes(focusExp);
-				if (focus.absoluteX() < minX) {
-					minX = focus.x();
-				}
-			}
-		}
-
-		/* country */
-		Expression countryModifierExp = focusTreeExp.get("country").get("modifier");
-		if (countryModifierExp != null && countryModifierExp.get("tag") != null) {
-			country = new CountryTag(countryModifierExp.get("tag").getText());
-		}
-
-		return focus_names;
+		return null;
 	}
 
 	/**

@@ -32,6 +32,13 @@ public class HOIIVUtilsLog {
 		} catch (IOException e) {
 			writeToLog("writeToLog has caused a error lol, probly cause the log file doesn't exist or something", "ERROR");
 			writeToLogError("writeToLog has caused a error lol", e);
+			return;
+		} catch (NullPointerException exc ) {
+			if (log == null) {
+				System.err.println("writeToLog has caused a error lol, " +
+						"probly cause the log file doesn't exist or something");
+			}
+			return;
 		}
 	}
 

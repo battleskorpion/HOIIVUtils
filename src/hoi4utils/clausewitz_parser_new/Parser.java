@@ -1,5 +1,8 @@
 package hoi4utils.clausewitz_parser_new;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 /*
@@ -9,24 +12,61 @@ import java.util.ArrayList;
 public class Parser {
 	public static final String escape_backslash_regex = "\\\\";
 	public static final String escape_quote_regex = "\\\\\"";
-	private static String input = "test = test2";
+	private static String input_test = "test = test2\ntest3 = test4\ntest5 = test6";
+	private static String input_test2 = """
+            focus_tree = {
+            id = SMI_michigan
+            
+            country = {
+            factor = 0
+            modifier = {
+            add = 10
+            tag = SMI
+            }
+            }
+            default = no
+            
+			focus = {
+			id = "exp_focus"
+			completion_reward = {
+			}
+			}
+
+			focus = {
+			id = "exp_focus2"
+			completion_reward = {
+			}
+			}
+			
+			}
+			""";
 	private final Tokenizer tokens;
 
 	public static void main(String[] args) {
 		Parser parser;
 		try {
-			parser = new Parser(input);
+			parser = new Parser(input_test2);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
 //		System.out.println(parser.tokens.next());
 //		System.out.println(parser.tokens.next());
+
+		ArrayList<Node> nodes;
+		Node n;
 		try {
-			System.out.println(((ArrayList<Node>)parser.parse().value.value).get(0).name);
+			n = parser.parse();
+			nodes = (ArrayList<Node>) n.valueObject();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+//		System.out.println(n.value());
+		ArrayList<Node> subnodes = (ArrayList<Node>) nodes.get(0).valueObject();
+		for (Node node : subnodes) {
+			System.out.println(node.name);
+		}
+
 	}
 
 	public Parser (String input) {
@@ -34,7 +74,22 @@ public class Parser {
 		if (input.charAt(input.length() - 1) != '$') {
 			input += "$";
 		}
+		tokens = new Tokenizer(input);
+	}
 
+	public Parser(File focusFile) {
+		/* get input from file */
+		String input;
+		try {
+			input = Files.readString(focusFile.toPath());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		/* EOF */
+		if (input.charAt(input.length() - 1) != '$') {
+			input += "$";
+		}
 		tokens = new Tokenizer(input);
 	}
 
@@ -89,7 +144,7 @@ public class Parser {
 			node.nameToken = name;
 			node.operator = null;
 			node.operatorToken = null;
-			node.value = null;
+			/* node.value = null; */
 			node.valueAttachment = null;
 			node.valueAttachmentToken = null;
 
@@ -111,7 +166,7 @@ public class Parser {
 		Token valueAttachmentToken = null;
 		NodeValue parsedValue = parseNodeValue(tokens);
 
-		if (parsedValue != null && parsedValue.value instanceof Node) {
+		if (parsedValue != null && parsedValue.valueObject() instanceof Node) {
 			Token peekedToken = tokens.peek();
 			if (peekedToken.value.equals("{")) {
 				valueAttachment = new SymbolNode(parsedValue);
@@ -127,12 +182,12 @@ public class Parser {
 		}
 
 		// todo
-		Node node = new Node();
+		Node node = new Node(parsedValue);
 		node.name = name.value;
 		node.nameToken = name;
 		node.operator = operator.value;
 		node.operatorToken = operator;
-		node.value = parsedValue;
+//		node.value = parsedValue;
 //		node.valueStartToken = (Token) parsedValue[1];
 //		node.valueEndToken = (Token) parsedValue[2];
 		node.valueAttachment = valueAttachment;
@@ -181,66 +236,4 @@ public class Parser {
 		throw new IllegalStateException("Parser expected a string, number, symbol, or {");
 	}
 
-	public class Node {
-		public String name;
-		public String operator;
-
-		public NodeValue value;
-		public SymbolNode valueAttachment;
-		public Token valueAttachmentToken;
-		public Token nameToken;
-		public Token operatorToken;
-
-		public Node (String name, String operator, NodeValue value, SymbolNode valueAttachment,
-		             Token valueAttachmentToken, Token nameToken, Token operatorToken) {
-			this.name = name;
-			this.operator = operator;
-			this.value = value;
-			this.valueAttachment = valueAttachment;
-			this.valueAttachmentToken = valueAttachmentToken;
-			this.nameToken = nameToken;
-			this.operatorToken = operatorToken;
-		}
-
-		public Node(NodeValue value) {
-			this(null, null, value, null, null, null, null);
-		}
-
-		public Node() {
-			this((NodeValue) null);
-		}
-
-		public Node(ArrayList<Node> value) {
-			this(new NodeValue(value));
-		}
-
-		public String name() {
-			return name;
-		}
-	}
-
-	public class SymbolNode {
-		public String name;
-
-		public SymbolNode(NodeValue parsedValue) {
-			this.name = parsedValue.value.toString();   // todo?
-		}
-	}
-
-	/**
-	 *  stores string, number, ArrayList<Node>, SymbolNode, or null
-	 */
-	public class NodeValue {
-		public Object value;
-
-		public NodeValue(Object value) {
-			this.value = value;
-		}
-
-		public NodeValue(ArrayList<Node> value) {
-			this.value = value;
-		}
-
-		// todo check allowables
-	}
 }

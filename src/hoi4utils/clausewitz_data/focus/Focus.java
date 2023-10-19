@@ -7,6 +7,7 @@ import hoi4utils.clausewitz_data.gfx.Interface;
 import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import hoi4utils.clausewitz_data.localization.Localization;
 import hoi4utils.clausewitz_parser.Expression;
+import hoi4utils.clausewitz_parser_new.Node;
 import hoi4utils.ddsreader.DDSReader;
 import javafx.beans.property.SimpleStringProperty;
 import ui.FXWindow;
@@ -15,10 +16,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 /*
@@ -61,6 +60,12 @@ public class Focus implements Localizable {
 
 		this.focusTree = focusTree;
 		focusIDs.add(focus_id);
+	}
+
+	public Focus(String focusId, FocusTree focusTree, Node node) {
+		this(focusId, focusTree);
+
+		loadAttributes(node);
 	}
 
 	public static List<Function<Focus,?>> getDataFunctions() {
@@ -166,24 +171,24 @@ public class Focus implements Localizable {
 	 * Adds focus attributes (prerequisite, mutually exclusive, etc...) to focus
 	 * by parsing expressions for each potential attribute.
 	 * 
-	 * @param exp Expression representing focus - must include "focus".
+	 * @param exp Node representing focus - must include "focus".
 	 */
-	public void loadAttributes(Expression exp) {
-		if (exp.get("focus") == null) {
+	public void loadAttributes(Node exp) {
+		if (!exp.name.equals("focus")) {
 			System.err.println(this + " - Not valid focus expression/definition.");
 			return;
 		}
 
-		focusExp = exp.get("focus=");
+//		focusExp = exp.get("focus=");
 
-		setID(exp.getSubexpression(id()));
-		setXY(focusExp.getImmediate("x="), focusExp.getImmediate("y="));
-		setRelativePositionID(focusExp.getSubexpression("relative_position_id="));
+		setID(exp.getValue("id").string());
+		setXY(exp.getValue("x").integer(), exp.getValue("y").integer());
+		setRelativePositionID(exp.getValue("relative_position_id").string());
 		// setFocusLoc();
-		setIcon(focusExp.getSubexpression("icon="));
-		setPrerequisite(focusExp.getAllSubexpressions("prerequisite="));
-		setMutuallyExclusive(focusExp.getSubexpression("mutually_exclusive="));
-		setAvailable(focusExp.getSubexpression("available="));
+		setIcon(exp.getValue("icon").string());
+		setPrerequisite(exp.filterName("prerequisite").toList());
+		setMutuallyExclusive(exp.filterName("mutually_exclusive").toList());
+		setAvailable(exp.getValue("available").string());
 	}
 
 	public Expression getFocusExpression() {
@@ -235,12 +240,12 @@ public class Focus implements Localizable {
 		return setXY(x.getValue(), y.getValue());
 	}
 
-	private void setRelativePositionID(Expression exp) {
+	private void setRelativePositionID(String exp) {
 		if (exp == null) {
 			relative_position_id = null; // perfectly acceptable
 			return;
 		}
-		relative_position_id = exp.getText(); // todo new focus instance eeehhhh??
+		relative_position_id = exp;
 	}
 
 	public void setCost() {
@@ -427,8 +432,8 @@ public class Focus implements Localizable {
 		}
 	}
 
-	public void setPrerequisite(Expression exp) {
-		setPrerequisite(new Expression[] { exp });
+	public void setPrerequisite(Node exp) {
+		setPrerequisite(List.of(exp));
 	}
 
 	/**
@@ -436,52 +441,53 @@ public class Focus implements Localizable {
 	 * 
 	 * @param exps
 	 */
-	public void setPrerequisite(Expression[] exps) {
+	public void setPrerequisite(List<Node> exps) {
 		if (exps == null) {
 			prerequisite = null;
 			return;
 		}
-		for (Expression exp : exps) {
-			for (Expression subexp : exp.getSubexpressions()) {
-				if (subexp.getText() == null) {
-					prerequisite = null;
-					System.err.println("Focus prerequisite invalid, " + this.id + ", " + exp);
-					return;
-				}
-			}
-		}
+//		for (Node exp : exps) {
+////			for (Expression subexp : exp.getSubexpressions()) {
+////				if (subexp.getText() == null) {
+////					prerequisite = null;
+////					System.err.println("Focus prerequisite invalid, " + this.id + ", " + exp);
+////					return;
+////				}
+////			}
+//		}
 
 		Set<Set<Focus>> prerequisites = new HashSet<>();
 
 		/* sort through prerequisite={ expressions */
-		for (Expression exp : exps) {
-			HashSet<Focus> subset = new HashSet<>();
-
-			if (exp == null || exp.getSubexpression("focus=") == null) {
+		for (Node prereqExp : exps) {
+			if (prereqExp == null || !prereqExp.contains("focus")) {
 				continue;
 			}
 
-			for (String prereqStr : exp.subexpressionSplit("focus=", false)) {
-				if (prereqStr == null) {
+			HashSet<Focus> subset = new HashSet<>();
+			for (Node prereqNode : prereqExp.filter("focus").toList()) {
+				if (prereqNode.value() == null) {
+					// todo better error reporting
+					System.err.println("Expected a value associated with prerequisite focus assignment");
 					continue;
 				}
 
-				prereqStr = prereqStr.trim();
-				if (!prereqStr.matches("[\\S]+")) {
-					System.err.println("Focus prerequisite is invalid, " + this.id + ", " + prereqStr);
-					prerequisite = null;
-					return;
-				}
+				String prereq = prereqNode.value().string();
+//				prereqStr = prereqStr.trim();
+//				if (!prereqStr.matches("[\\S]+")) {
+//					System.err.println("Focus prerequisite is invalid, " + this.id + ", " + prereqStr);
+//					prerequisite = null;
+//					return;
+//				}
 
-				if (focusTree.getFocus(prereqStr) != null) {
-					subset.add(focusTree.getFocus(prereqStr)); // todo error check someday
+				if (focusTree.getFocus(prereq) != null) {
+					subset.add(focusTree.getFocus(prereq)); // todo error check someday
 				} else {
-					System.err.println("Focus prerequisite is invalid (not focus), " + this.id + ", " + prereqStr);
+					System.err.println("Focus prerequisite is invalid (not detected focus), " + this.id + ", " + prereq);
 				}
-				System.out.println(prereqStr);
 			}
 
-			if (subset.size() > 0) {
+			if (!subset.isEmpty()) {
 				prerequisites.add(subset);
 			}
 		}
@@ -505,7 +511,14 @@ public class Focus implements Localizable {
 		this.prerequisite = prerequisite;
 	}
 
-	public void setMutuallyExclusive(Expression exp) {
+	public void setMutuallyExclusive(String exp) {
+		if (exp == null) {
+			mutually_exclusive = null;
+			return;
+		}
+	}
+
+	public void setMutuallyExclusive(List<Node> exp) {
 		if (exp == null) {
 			mutually_exclusive = null;
 			return;
@@ -545,7 +558,7 @@ public class Focus implements Localizable {
 		}
 	}
 
-	public void setAvailable(Expression exp) {
+	public void setAvailable(String exp) {
 		if (exp == null) {
 			available = null;
 			return;
