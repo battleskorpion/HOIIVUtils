@@ -1,4 +1,4 @@
-package test.hoi4utils.clausewitz_coding.focus;
+package src.hoi4utils.clausewitz_data.focus;
 
 import hoi4utils.clausewitz_data.focus.Focus;
 //import org.junit.Test; //org.junit can't be found

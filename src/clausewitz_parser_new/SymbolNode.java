@@ -1,4 +1,4 @@
-package hoi4utils.clausewitz_parser_new;
+package clausewitz_parser_new;
 
 public class SymbolNode {
 	public String name;

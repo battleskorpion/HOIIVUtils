@@ -1,4 +1,4 @@
-package hoi4utils.clausewitz_parser_new;
+package clausewitz_parser_new;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,62 +12,7 @@ import java.util.ArrayList;
 public class Parser {
 	public static final String escape_backslash_regex = "\\\\";
 	public static final String escape_quote_regex = "\\\\\"";
-	private static String input_test = "test = test2\ntest3 = test4\ntest5 = test6";
-	private static String input_test2 = """
-            focus_tree = {
-            id = SMI_michigan
-            
-            country = {
-            factor = 0
-            modifier = {
-            add = 10
-            tag = SMI
-            }
-            }
-            default = no
-            
-			focus = {
-			id = "exp_focus"
-			completion_reward = {
-			}
-			}
-
-			focus = {
-			id = "exp_focus2"
-			completion_reward = {
-			}
-			}
-			
-			}
-			""";
 	private final Tokenizer tokens;
-
-	public static void main(String[] args) {
-		Parser parser;
-		try {
-			parser = new Parser(input_test2);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-//		System.out.println(parser.tokens.next());
-//		System.out.println(parser.tokens.next());
-
-		ArrayList<Node> nodes;
-		Node n;
-		try {
-			n = parser.parse();
-			nodes = (ArrayList<Node>) n.valueObject();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-//		System.out.println(n.value());
-		ArrayList<Node> subnodes = (ArrayList<Node>) nodes.get(0).valueObject();
-		for (Node node : subnodes) {
-			System.out.println(node.name);
-		}
-
-	}
 
 	public Parser (String input) {
 		/* EOF */
@@ -93,18 +38,23 @@ public class Parser {
 		tokens = new Tokenizer(input);
 	}
 
-	public Node parse() throws Exception {
+	public Node parse() throws ParserException {
 		ArrayList<Node> value = parseBlockContent(tokens);
 
-		/* need to reach up to eof indicator */
+		/*
+		need to reach up to eof indicator
+		if last token is '}' this could indicate there was a
+		missing '{' in the code
+		*/
 		if (tokens.peek().type != TokenType.eof) {
-			throw new Exception("Input not completely parsed by clausewitz-file parser");
+			throw new ParserException("Input not completely parsed by clausewitz-file parser \n" +
+					"\t\tlast token: " +tokens.peek().value);
 		}
 
 		return new Node(value);
 	}
 
-	public ArrayList<Node> parseBlockContent(Tokenizer tokens) {
+	public ArrayList<Node> parseBlockContent(Tokenizer tokens) throws ParserException {
 		final ArrayList<Node> nodes = new ArrayList<Node>();
 
 		while (true) {
@@ -113,16 +63,30 @@ public class Parser {
 				break;
 			}
 
-			nodes.add(parseNode(tokens));
+			try {
+				nodes.add(parseNode(tokens));
+			} catch (ParserException e) {
+				throw e;
+			}
 		}
 
 		return nodes;
 	}
 
-	public Node parseNode(Tokenizer tokens) {
+	public Node parseNode(Tokenizer tokens) throws ParserException {
 		Token name = tokens.next();
+
+		/* skip comments */
+		if (name.type == TokenType.comment) {
+			Node node = new Node();
+			node.name = name.value;
+			node.nameToken = name;
+			return node;
+		}
+		System.out.println(name.value);
+
 		if (name.type != TokenType.string && name.type != TokenType.symbol && name.type != TokenType.number) {
-			throw new IllegalStateException("Parser: name token had incorrect token type ");
+			throw new ParserException("Parser: incorrect token type " + name.type + ", token: " + name + " at index: " + name.start);
 		}
 
 		var nextToken = tokens.peek();
@@ -166,6 +130,7 @@ public class Parser {
 		Token valueAttachmentToken = null;
 		NodeValue parsedValue = parseNodeValue(tokens);
 
+		/* Handle value attachment (e.g., when there's a nested block) */
 		if (parsedValue != null && parsedValue.valueObject() instanceof Node) {
 			Token peekedToken = tokens.peek();
 			if (peekedToken.value.equals("{")) {
@@ -175,8 +140,9 @@ public class Parser {
 			}
 		}
 
+		// Skip comments before tailComma
 		Token tailComma = tokens.peek();
-		while (tailComma.value.matches("^[,;]")) {
+		while (tailComma.type == TokenType.comment || tailComma.value.matches("^[,;]")) {
 			tokens.next();
 			tailComma = tokens.peek();
 		}
@@ -196,8 +162,12 @@ public class Parser {
 		return node;
 	}
 
-	public NodeValue parseNodeValue(Tokenizer tokens) {
+	public NodeValue parseNodeValue(Tokenizer tokens) throws ParserException {
 		var nextToken = tokens.next();
+		// todo maybe?
+		if (nextToken == null) {
+			return null;
+		}
 
 		// todo eeeh?
 		switch (nextToken.type) {
