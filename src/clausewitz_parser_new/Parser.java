@@ -55,7 +55,7 @@ public class Parser {
 	}
 
 	public ArrayList<Node> parseBlockContent(Tokenizer tokens) throws ParserException {
-		final ArrayList<Node> nodes = new ArrayList<Node>();
+		final ArrayList<Node> nodes = new ArrayList<>();
 
 		while (true) {
 			final Token nextToken = tokens.peek();
@@ -90,13 +90,14 @@ public class Parser {
 		}
 
 		var nextToken = tokens.peek();
-		String regex = "^[,;}]";
-		if (nextToken.type != TokenType.operator || nextToken.value.matches(regex)) {
-			while (nextToken.value.matches(regex)) {
+		// todo dollar sign regex okay?
+		if (nextToken.type != TokenType.operator || nextToken.value.matches("^[,;}]$")) {
+			while (nextToken.value.matches("^[,;]$")) {
 				tokens.next();
 				nextToken = tokens.peek();
 			}
 
+			/* handle escaped characters */
 			var nameValue = name.value;
 			if (name.type == TokenType.string) {
 				nameValue = nameValue.substring(1, nameValue.length() - 2).replaceAll(escape_quote_regex, "\"").replaceAll(escape_backslash_regex, "\\");

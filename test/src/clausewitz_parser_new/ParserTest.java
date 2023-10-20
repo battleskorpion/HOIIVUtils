@@ -104,4 +104,28 @@ public class ParserTest {
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Test
+	public void focusWithSearchFilterTest1 () {
+		Parser parser;
+		Node n;
+		try {
+			parser = new Parser(new File("test\\src\\clausewitz_parser_new\\focus_with_search_filter_test1.txt"));
+			n = parser.parse();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Test
+	public void focusWithSearchFilterTest2 () {
+		Parser parser;
+		Node n;
+		try {
+			parser = new Parser(new File("test\\src\\clausewitz_parser_new\\focus_with_search_filter_test2.txt"));
+			n = parser.parse();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
