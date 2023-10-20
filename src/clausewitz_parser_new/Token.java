@@ -20,14 +20,12 @@ public class Token {
 	// strings issues
 	static {
 		tokenRegex.put(TokenType.comment, Pattern.compile("#.*(?:[\\r\\n]|$)"));
-		//tokenRegex.put(TokenType.symbol, Pattern.compile("(?:\\d+\\.)?[a-zA-Z_@\\[\\]][\\w:.@\\[\\]\\-?^/\\u00A0-\\u024F]*"));
-		// TODO what is the imporatance of this part (?:\d+\.)? , removing helps not go crash
-		tokenRegex.put(TokenType.symbol, Pattern.compile("[a-zA-Z_@\\[\\]][\\w:.@\\[\\]\\-?^/\\u00A0-\\u024F]*"));
+		// TODO (?:\d+\.)? , removing may help not go crash
+		tokenRegex.put(TokenType.symbol, Pattern.compile("(?:\\d+\\.)?[a-zA-Z_@\\[\\]][\\w:.@\\[\\]\\-?^/\\u00A0-\\u024F]*"));
 		tokenRegex.put(TokenType.operator, Pattern.compile("[={}<>;,]|>=|<=|!="));
-		// todo string pattern was problematic
+		// string pattern was problematic
 		//tokenRegex.put(TokenType.string, Pattern.compile("\"(?:\"|\\\\|[^\"])*\""));
-		// tried "\"(?:\"|[^\"])*\"" still issue
-		tokenRegex.put(TokenType.string, Pattern.compile("\"(?:\"|[^\"])*\""));
+		tokenRegex.put(TokenType.string, Pattern.compile("\"(\\\\.|[^\"])*\""));
 		tokenRegex.put(TokenType.number, Pattern.compile("-?\\d*\\.\\d+|-?\\d+|0x\\d+"));
 		tokenRegex.put(TokenType.eof, Pattern.compile("$"));
 	}

@@ -13,7 +13,6 @@ public class Tokenizer {
 	// todo ex: id = SMI_Support_Black_Legio... too long?, no good.
 	public Tokenizer(String input) {
 		this.input = input;
-//		this.pattern = Pattern.compile(regexPattern);
 		this.pattern = createPattern();
 		this.matcher = this.pattern.matcher(input);
 	}

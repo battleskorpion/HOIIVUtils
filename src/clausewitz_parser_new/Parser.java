@@ -172,6 +172,11 @@ public class Parser {
 		// todo eeeh?
 		switch (nextToken.type) {
 			case string -> {
+				/* substring from 1 to length() - 2: don't replace "" */
+				if (nextToken.value.length() == 2) {
+
+					return new NodeValue(nextToken.value);
+				}
 				return new NodeValue(
 						nextToken.value.substring(1, nextToken.length() - 2)
 								.replaceAll(escape_quote_regex, "\"")
