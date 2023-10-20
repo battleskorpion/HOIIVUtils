@@ -80,7 +80,7 @@ public class NodeStream<NodeType extends Node> implements NodeStreamable<NodeTyp
 	}
 
 	@Override
-	public Node findFirstName(String str) {
+	public NodeType findFirst(String str) {
 		return findFirst(node -> node.name.equals(str));
 	}
 

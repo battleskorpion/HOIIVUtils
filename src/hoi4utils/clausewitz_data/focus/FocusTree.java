@@ -10,11 +10,14 @@ import hoi4utils.clausewitz_data.localization.Localization;
 import hoi4utils.clausewitz_data.localization.LocalizationFile;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.jetbrains.annotations.*;
 import ui.FXWindow;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * ALL of the FocusTree/FocusTrees
@@ -81,12 +84,12 @@ public class FocusTree implements Localizable {
 		Node focusTreeNode;
 		try {
 			 focusTreeNode = focusTreeParser.parse();
+			 focusTreeNode = focusTreeNode.filterName("focus_tree").toList().get(0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
 		List<Focus> focuses = getFocuses(focusTreeNode);
-
 
 //		Expression focusTreeExp = focusTreeParser.expression();
 //		Expression[] focusesExps = focusTreeExp.getAll("focus={");
@@ -101,7 +104,12 @@ public class FocusTree implements Localizable {
 //		System.out.println("Num focuses detected: " + focusesExps.length);
 //
 //		/* focuses */
-//		focus_names = new ArrayList<>(); // todo needed?
+		focus_names = new ArrayList<>();
+		focus_names.addAll(focuses.parallelStream()
+				.map(Focus::id).toList());
+		this.focuses.clear();
+		this.focuses.putAll(focuses.parallelStream()
+				.collect(Collectors.toMap(Focus::id, f -> f)));
 //		minX = 0; // min x is 0 or less
 //
 //		for (Expression focusExp : focusesExps) {
@@ -147,30 +155,29 @@ public class FocusTree implements Localizable {
 //				}
 //			}
 //		}
-//
-//		/* country */
-//		Expression countryModifierExp = focusTreeExp.get("country").get("modifier");
-//		if (countryModifierExp != null && countryModifierExp.get("tag") != null) {
-//			country = new CountryTag(countryModifierExp.get("tag").getText());
-//		}
-//
-//		return focus_names;
-		return null;
+
+		/* country */
+		// todo should not be .findFirst("modifier"); need mofifier handling. but thats okay.
+		Node countryModifierExp = focusTreeNode.findFirst("country").findFirst("modifier");
+		if (countryModifierExp != null) {
+			country = new CountryTag(countryModifierExp.getValue("tag").string());
+		}
+
+		return focus_names;
 	}
 
+	@NotNull
 	private List<Focus> getFocuses(Node focusTreeNode) {
 		if (focusTreeNode.value().list() == null) {
 			System.err.println("Expected list of nodes, for focuses getter");
 			return null;
 		}
 
-		// todo? is this ok
-//		ArrayList<Node> focusTreesNodes = (ArrayList<Node>) focusTreeNode.value();
-//		ArrayList<Node> focusTreeNodes = (ArrayList<Node>) focusTreesNodes.get(0).value();
+		List<Focus> focuses = new ArrayList<>();
+
 		// todo woooo
 		List<Node> focusTreeNodes =
-				focusTreeNode.filterName("focus_tree")
-				.filterName("focus").toList();
+				focusTreeNode.filterName("focus").toList();
 		for (Node node : focusTreeNodes) {
 //			System.out.println(node.name);
 			/* new of old todo */
@@ -178,11 +185,12 @@ public class FocusTree implements Localizable {
 			/* focus id */
 			String focus_id = node.getValue("id").string();     // gets the ##### from "id = #####"
 			focus = new Focus(focus_id, this, node);
-			focus_names.add(focus_id);
-			focuses.put(focus_id, focus);
+//			focus_names.add(focus_id);
+//			focuses.put(focus_id, focus);
+			focuses.add(focus);
 		}
 
-		return null;
+		return focuses;
 	}
 
 	/**

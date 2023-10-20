@@ -10,14 +10,12 @@ public class Tokenizer {
 	private int find_start_index = 0;
 	private boolean peekOccurred = false;
 
-	// todo ex: id = SMI_Support_Black_Legio... too long?, no good.
 	public Tokenizer(String input) {
 		this.input = input;
 		this.pattern = createPattern();
 		this.matcher = this.pattern.matcher(input);
 	}
 
-	// todo unknown if good
 	public Token next() {
 		try {
 		/* matcher.find(int) resets the matcher, therefore,

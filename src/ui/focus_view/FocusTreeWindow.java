@@ -1,4 +1,4 @@
-package ui.focus;
+package ui.focus_view;
 
 import hoi4utils.HOIIVFile;
 import hoi4utils.clausewitz_data.country.CountryTag;

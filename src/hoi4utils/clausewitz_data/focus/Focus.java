@@ -183,7 +183,7 @@ public class Focus implements Localizable {
 
 		setID(exp.getValue("id").string());
 		setXY(exp.getValue("x").integer(), exp.getValue("y").integer());
-		setRelativePositionID(exp.getValue("relative_position_id").string());
+		setRelativePositionID(exp.getValue("relative_position_id").string()); // todo need Optional for easier null handling probably
 		// setFocusLoc();
 		setIcon(exp.getValue("icon").string());
 		setPrerequisite(exp.filterName("prerequisite").toList());

@@ -11,6 +11,7 @@ public class Node implements NodeStreamable<Node> {
 	public String name;
 	public String operator;
 
+	/* never null, stores null */
 	private NodeValue value;
 	public SymbolNode valueAttachment;
 	public Token valueAttachmentToken;
@@ -21,7 +22,7 @@ public class Node implements NodeStreamable<Node> {
 	             Token valueAttachmentToken, Token nameToken, Token operatorToken) {
 		this.name = name;
 		this.operator = operator;
-		this.value = value;
+		this.value = (value == null) ?  new NodeValue() : value;
 		this.valueAttachment = valueAttachment;
 		this.valueAttachmentToken = valueAttachmentToken;
 		this.nameToken = nameToken;
@@ -129,12 +130,15 @@ public class Node implements NodeStreamable<Node> {
 
 	@Override
 	public Node findFirst(Predicate<Node> predicate) {
-		return new NodeStream<>(this).findFirst(predicate);
+		var result = new NodeStream<>(this).findFirst(predicate);
+		return (result != null) ? result : new Node();
 	}
 
 	@Override
-	public Node findFirstName(String str) {
-		return new NodeStream<>(this).findFirstName(str);
+	// note: was findFirstName, refactored
+	public Node findFirst(String str) {
+		var result = new NodeStream<>(this).findFirst(str);
+		return (result != null) ? result : new Node();
 	}
 
 	@Override
@@ -148,7 +152,7 @@ public class Node implements NodeStreamable<Node> {
 	}
 
 	public NodeValue getValue(String id) {
-		return findFirstName(id).value;
+		return findFirst(id).value;
 	}
 
 }

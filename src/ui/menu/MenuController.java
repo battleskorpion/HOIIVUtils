@@ -13,7 +13,7 @@ import ui.FXWindow;
 import ui.buildings.BuildingsByCountryWindow;
 import ui.clausewitz_gfx.InterfaceFileListWindow;
 import ui.console.ConsoleController;
-import ui.focus.FocusTreeWindow;
+import ui.focus_view.FocusTreeWindow;
 import ui.hoi4localization.CustomTooltipWindow;
 import ui.hoi4localization.FocusLocalizationWindow;
 import ui.hoi4localization.IdeaLocalizationWindow;
