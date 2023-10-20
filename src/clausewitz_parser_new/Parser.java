@@ -83,7 +83,7 @@ public class Parser {
 			node.nameToken = name;
 			return node;
 		}
-		System.out.println(name.value);
+//		System.out.println(name.value);
 
 		if (name.type != TokenType.string && name.type != TokenType.symbol && name.type != TokenType.number) {
 			throw new ParserException("Parser: incorrect token type " + name.type + ", token: " + name + " at index: " + name.start);
