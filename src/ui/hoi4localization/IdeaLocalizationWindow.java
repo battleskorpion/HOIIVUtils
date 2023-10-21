@@ -49,7 +49,6 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
 
     /**
      * {@inheritDoc}
-     *
      */
     @FXML
     void initialize() {

@@ -18,6 +18,7 @@ import ui.hoi4localization.CustomTooltipWindow;
 import ui.hoi4localization.FocusLocalizationWindow;
 import ui.hoi4localization.IdeaLocalizationWindow;
 import ui.hoi4localization.UnlocalizedFocusWindow;
+import ui.parser.ParserViewerWindow;
 import ui.settings.SettingsController;
 import ui.statistics.StatisticsController;
 
@@ -127,6 +128,11 @@ public class MenuController extends Application implements FXWindow {
 	public void openFocusTreeViewer() {
 		FocusTreeWindow window = new FocusTreeWindow();
 		window.setVisible(true);
+	}
+
+	public void openParserView() {
+		ParserViewerWindow window = new ParserViewerWindow();
+		window.open();
 	}
 
 	/* from HOIUtilsWindow but can only extend one class */

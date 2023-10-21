@@ -38,7 +38,8 @@ public class FixIdea extends HOIIVUtils {
 				idea_loc = idea.id().substring(i).replaceAll("_+", " ").trim();
 				idea_loc = EnglishSuperDictionary.titleCapitalize(idea_loc); // regex
 
-				localization.setLocalization(idea.id(), idea_loc);
+				var newLoc = localization.setLocalization(idea.id(), idea_loc);
+				idea.setLocalization(newLoc);
 				ideasAddedLoc.add(idea);
 				continue;           // localize and move on
 			}

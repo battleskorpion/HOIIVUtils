@@ -157,4 +157,7 @@ public class Node implements NodeStreamable<Node> {
 		return findFirst(id).value;
 	}
 
+	public boolean isParent() {
+		return value().isList();
+	}
 }

@@ -1,5 +1,6 @@
 package hoi4utils.clausewitz_data.idea;
 
+import clausewitz_parser_new.Node;
 import hoi4utils.clausewitz_data.Localizable;
 import hoi4utils.clausewitz_code.modifier.Modifier;
 import hoi4utils.clausewitz_data.localization.Localization;
@@ -31,6 +32,7 @@ public abstract class Idea implements Localizable {
 
 	protected Idea(String id) {
 		this.id = new SimpleStringProperty(id);
+		this.setLocalization();
 	}
 
 	public static List<Function<Idea,?>> getDataFunctions() {
@@ -180,8 +182,7 @@ public abstract class Idea implements Localizable {
 		return localization.text();
 	}
 
-	public static Idea loadIdea(String ideaId, Expression ideaExp, Expression ideaCategoryExp) {
-		String ideaCategory = ideaCategoryExp.getText();
+	public static Idea loadIdea(String ideaId, Node ideaExp, String ideaCategory) {
 
 		if (ideaCategory == null) {
 			System.out.println("error: null category for idea: " + ideaId + ", idea exp: ");
@@ -194,5 +195,9 @@ public abstract class Idea implements Localizable {
 			case "manpower" -> new ManpowerIdea(ideaId);
 			default -> null;
 		};
+	}
+
+	public void setLocalization(Localization newLoc) {
+		this.localization = newLoc;
 	}
 }

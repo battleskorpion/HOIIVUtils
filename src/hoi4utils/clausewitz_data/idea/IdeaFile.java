@@ -1,9 +1,11 @@
 package hoi4utils.clausewitz_data.idea;
 
-import hoi4utils.clausewitz_parser.Expression;
-import hoi4utils.clausewitz_parser.Parser;
+import clausewitz_parser_new.Node;
+import clausewitz_parser_new.Parser;
+import clausewitz_parser_new.ParserException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
@@ -43,8 +45,8 @@ public class IdeaFile extends File {
 		return ideaList;
 	}
 
-	private ArrayList<String> parse() {
-		/* format of an idea file:
+	/**
+	 *  <p>format of an idea file:
 			ideas = {
 				idea_category_1 = {
 					idea_1 = {
@@ -57,70 +59,59 @@ public class IdeaFile extends File {
 					}
 				}
 			}
-		*/
+	    </p>
+	 */
+	private ArrayList<String> parse() {
 		if (!this.exists()) {
 			System.err.println(this + "Idea file does not exist.");
 			return null;
 		}
 
 		/* parser */
-		Expression ideaFileExp = ideaFileParser.expression();
-
-		/*
-		.get("ideas={").getSubexpressions() will be the subexps for
-		idea categories.
-		then the further .getSubexpressions() will be for each idea.
-		 */
-		Expression[] ideasCategoriesExps = ideaFileExp.get("ideas={").getSubexpressions();
-		ArrayList<ArrayList<Expression>> ideasExps = new ArrayList<>();
-		for (Expression ideaCategoryExp : ideasCategoriesExps) {
-			ArrayList<Expression> ideasList
-					= new ArrayList<>(Arrays.stream(ideaCategoryExp.getSubexpressions())
-					.filter(IdeaFile::isValidIdeaIdentifierExpression).toList());
-			System.out.println(ideasList);
-			ideasExps.add(ideasList);
+		Node ideaCategoryExps;
+		try {
+			ideaCategoryExps = ideaFileParser.parse();
+			ideaCategoryExps = ideaCategoryExps.findFirst("ideas");
+		} catch (ParserException e) {
+			throw new RuntimeException(e);
 		}
 
-		if (ideasExps.isEmpty()) {
-			System.err.println("ideasExps empty " + this.getClass());
+		List<Node> ideaCategoryNodeList = ideaCategoryExps.value().list();
+		/* return null when no ideas */
+		if (ideaCategoryNodeList == null) {
 			return null;
 		}
-		System.out.println("Num focuses detected: " + ideasExps.size());
 
 		/* focuses */
 		ArrayList<String> idea_names = new ArrayList<>();
-
-		for (int i = 0; i < ideasExps.size(); i++) {
-			for (Expression ideaExp : ideasExps.get(i)) {
+		for (Node ideaCategoryNode : ideaCategoryNodeList) {
+			List<Node> ideasInCategoryList = ideaCategoryNode
+					.filter(Node::isParent).toList();
+			if (ideasInCategoryList == null) {
+				continue;
+			}
+			String ideaCategory = ideaCategoryNode.name;
+			for (Node ideaExp : ideasInCategoryList) {
 				Idea idea;
 
 				/* idea id */
-				{
-//					Expression ideaIDExp = ideaExp.get("id=");
-//					Expression ideaIDExp = ideaExp.getText();
-//					if (ideaIDExp == null) {
-//						continue; // id important
-//					}
-					String idea_id = ideaExp.getText(); // gets the ##### from "id = #####"
-					if (idea_id == null) {
-						continue; // id important
-					}
-					idea = Idea.loadIdea(idea_id, ideaExp, ideasCategoriesExps[i]);
-					idea_names.add(idea_id);
-					ideas.put(idea_id, idea);
-				}
+				String idea_id = ideaExp.name();
+				idea = Idea.loadIdea(idea_id, ideaExp, ideaCategory);
+				idea_names.add(idea_id);
+				ideas.put(idea_id, idea);
 			}
 		}
 
+		System.out.println("Num ideas loaded: " + idea_names.size());
 		return idea_names;
 	}
 
-	public static boolean isValidIdeaIdentifierExpression(Expression exp) {
-		if (exp.expression().matches("\\s*[[A-Z][a-z]_]*=\\{\\s*")) {
-			return true;
-		}
-
-		return false;
-	}
+//	public static boolean isValidIdeaIdentifierExpression(Expression exp) {
+//		if (exp.expression().matches("\\s*[[A-Z][a-z]_]*=\\{\\s*")) {
+//			return true;
+//		}
+//
+//		return false;
+//	}
 
 }

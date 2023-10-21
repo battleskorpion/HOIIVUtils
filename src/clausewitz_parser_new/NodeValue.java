@@ -86,5 +86,9 @@ public final class NodeValue {
 		throw new IllegalStateException("Expected NodeValue to be a Node");
 	}
 
+	public boolean isList() {
+		return value instanceof List<?>;
+	}
+
 	// todo check allowables
 }

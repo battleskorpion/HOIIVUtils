@@ -14,6 +14,8 @@ public class Parser {
 	public static final String escape_quote_regex = "\\\\\"";
 	private final Tokenizer tokens;
 
+	private Node rootNode;
+
 	public Parser (String input) {
 		/* EOF */
 		if (input.charAt(input.length() - 1) != '$') {
@@ -51,7 +53,8 @@ public class Parser {
 					"\t\tlast token: " +tokens.peek().value);
 		}
 
-		return new Node(value);
+		rootNode = new Node(value);
+		return rootNode;
 	}
 
 	public ArrayList<Node> parseBlockContent(Tokenizer tokens) throws ParserException {
@@ -212,4 +215,7 @@ public class Parser {
 		throw new IllegalStateException("Parser expected a string, number, symbol, or {");
 	}
 
+	public Node rootNode() {
+		return rootNode;
+	}
 }

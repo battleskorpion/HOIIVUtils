@@ -24,6 +24,7 @@
 	  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 	  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 	  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
 	  <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#openSettings" text="Settings" GridPane.columnIndex="1" GridPane.hgrow="NEVER" />
@@ -42,6 +43,7 @@
             <Insets left="73.0" />
          </GridPane.margin>
       </Button>
+      <Button maxWidth="-Infinity" mnemonicParsing="false" onAction="#openParserView" prefWidth="400.0" text="Parser View" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
    </children>
    <padding>
 	  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

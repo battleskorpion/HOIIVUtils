@@ -88,21 +88,9 @@ public class FocusTree implements Localizable {
 			throw new RuntimeException(e);
 		}
 
+		/* focuses */
 		List<Focus> focuses = getFocuses(focusTreeNode);
 
-//		Expression focusTreeExp = focusTreeParser.expression();
-//		Expression[] focusesExps = focusTreeExp.getAll("focus={");
-//		// System.out.println(focusesExps[focusesExps.length-1]);
-//		// if (focuses == null) {
-//		// return null;
-//		// }
-//		if (focusesExps == null) {
-//			System.err.println("focusesExps null in " + this.getClass());
-//			return null;
-//		}
-//		System.out.println("Num focuses detected: " + focusesExps.length);
-//
-//		/* focuses */
 		focus_names = new ArrayList<>();
 		focus_names.addAll(focuses.parallelStream()
 				.map(Focus::id).toList());
@@ -110,50 +98,6 @@ public class FocusTree implements Localizable {
 		this.focuses.putAll(focuses.parallelStream()
 				.collect(Collectors.toMap(Focus::id, f -> f)));
 //		minX = 0; // min x is 0 or less
-//
-//		for (Expression focusExp : focusesExps) {
-//			Focus focus;
-//
-//			/* focus id */
-//			{
-//				Expression focusIDExp = focusExp.get("id=");
-//				if (focusIDExp == null) {
-//					continue; // id important
-//				}
-//				String focus_id = focusIDExp.getText(); // gets the ##### from "id = #####"
-//				if (focus_id == null) {
-//					continue; // id important
-//				}
-//				focus = new Focus(focus_id, this);
-//				focus_names.add(focus_id);
-//				focuses.put(focus_id, focus);
-//
-//				// todo THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
-//			}
-//		}
-//
-//		for (Expression focusExp : focusesExps) {
-//			Focus focus;
-//
-//			/* focus id */
-//			{
-//				Expression focusIDExp = focusExp.get("id=");
-//				if (focusIDExp == null) {
-//					continue; // id important
-//				}
-//				String focus_id = focusIDExp.getText(); // gets the ##### from "id = #####"
-//				if (focus_id == null) {
-//					continue; // id important
-//				}
-//				focus = getFocus(focus_id);
-//
-//				// todo THIS SHOULD RUN ONCE PER FOCUS TREE IDEALLY NOT FOR EACH LINE
-//				focus.loadAttributes(focusExp);
-//				if (focus.absoluteX() < minX) {
-//					minX = focus.x();
-//				}
-//			}
-//		}
 
 		/* country */
 		// todo should not be .findFirst("modifier"); need mofifier handling. but thats okay.
