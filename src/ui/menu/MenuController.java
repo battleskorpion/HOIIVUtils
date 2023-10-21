@@ -22,10 +22,13 @@ import ui.parser.ParserViewerWindow;
 import ui.settings.SettingsController;
 import ui.statistics.StatisticsController;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 public class MenuController extends Application implements FXWindow {
 	private Stage stage;
-	private String fxmlResource = "Menu.fxml";
-	private String title = "Menu";
+	private String fxmlResource;
+	private String title;
 
 	@FXML public Button settingsButton;
 	@FXML public Button statisticsButton;
@@ -52,7 +55,10 @@ public class MenuController extends Application implements FXWindow {
 	@Override
 	public void start(Stage stage) {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
+			Locale currentLocale = Locale.getDefault();
+
+			ResourceBundle bundle = ResourceBundle.getBundle("resources.menu", currentLocale);
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource), bundle);
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
