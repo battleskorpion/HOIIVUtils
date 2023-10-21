@@ -1,5 +1,7 @@
 package clausewitz_parser_new;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -12,7 +14,7 @@ public class Node implements NodeStreamable<Node> {
 	public String operator;
 
 	/* never null, stores null */
-	private NodeValue value;
+	@NotNull private final NodeValue value;
 	public SymbolNode valueAttachment;
 	public Token valueAttachmentToken;
 	public Token nameToken;

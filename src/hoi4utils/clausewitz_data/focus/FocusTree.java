@@ -16,7 +16,6 @@ import ui.FXWindow;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -178,9 +177,8 @@ public class FocusTree implements Localizable {
 		// todo woooo
 		List<Node> focusTreeNodes =
 				focusTreeNode.filterName("focus").toList();
+		// todo call a get focus function on each node
 		for (Node node : focusTreeNodes) {
-//			System.out.println(node.name);
-			/* new of old todo */
 			Focus focus;
 			/* focus id */
 			String focus_id = node.getValue("id").string();     // gets the ##### from "id = #####"
@@ -190,7 +188,31 @@ public class FocusTree implements Localizable {
 			focuses.add(focus);
 		}
 
+		/* when all focuses init loaded */
+		checkPendingFocusReferences();
+
 		return focuses;
+	}
+
+	private void checkPendingFocusReferences() {
+		List<Focus> resolvedReferences = new ArrayList<>();
+//		private final HashMap<String, Consumer<List<Node>>> pendingFocusReferences = new HashMap<>();
+
+		// todo more efficient algo
+		List<PendingFocusReferenceList> pendingFocusReferenceLists = focuses().parallelStream().map(Focus::getPendingFocusReferences).toList();
+
+		/* resolve references of focuses that exist */
+		for (var pendingFocusReferenceList : pendingFocusReferenceLists) {
+			var pendingFocusReferences = pendingFocusReferenceList.pendingFocusReferences;
+//			pendingFocusReferenceList.pendingFocusReferences.stream()
+//					.filter((pfr) -> focus_names.contains(pfr.id()))
+//					.forEach(PendingFocusReference::resolve);
+			List<String> referencesToRemove = pendingFocusReferences.stream()
+					.map(PendingFocusReference::id)
+					.filter(id -> focus_names.contains(id)).toList();
+			referencesToRemove.forEach(pendingFocusReferenceList::resolve);
+		}
+
 	}
 
 	/**
@@ -292,7 +314,7 @@ public class FocusTree implements Localizable {
 		return focusTrees;
 	}
 
-	public static FocusTree[] list() {
+	public static FocusTree[] listFocusTrees() {
 		return focusTrees.values().toArray(new FocusTree[0]);
 	}
 
@@ -303,7 +325,7 @@ public class FocusTree implements Localizable {
 	 */
 	public static FocusTree get(CountryTag tag) { return focusTrees.get(tag); }
 	public static FocusTree getdankwizardisfrench(CountryTag tag) {
-		for (FocusTree tree : list()) {
+		for (FocusTree tree : listFocusTrees()) {
 			assert tree.country() != null;
 			if (tree.country().equals(tag)) {
 				return tree;
@@ -316,7 +338,7 @@ public class FocusTree implements Localizable {
 	public static ArrayList<FocusTree> unlocalizedFocusTrees() {
 		ArrayList<FocusTree> focusTrees = new ArrayList<>();
 
-		for (FocusTree tree : list()) {
+		for (FocusTree tree : listFocusTrees()) {
 			if (tree.locFile() == null) {
 				focusTrees.add(tree);
 			}
@@ -330,7 +352,7 @@ public class FocusTree implements Localizable {
 
 		// todo may be able to do something else in this function -
 		// todo all focus trees - localized focus trees - unlocalized focus trees
-		for (FocusTree tree : list()) {
+		for (FocusTree tree : listFocusTrees()) {
 			aa:
 			if (tree.locFile() != null) {
 				Scanner locReader = new Scanner(tree.locFile().getFile());
@@ -358,7 +380,7 @@ public class FocusTree implements Localizable {
 	public static ArrayList<FocusTree> localizedFocusTrees() throws IOException {
 		ArrayList<FocusTree> focusTrees = new ArrayList<>();
 
-		for (FocusTree tree : list()) {
+		for (FocusTree tree : listFocusTrees()) {
 			aa:
 			if (tree.locFile() != null) {
 				Scanner locReader = new Scanner(tree.locFile().getFile());

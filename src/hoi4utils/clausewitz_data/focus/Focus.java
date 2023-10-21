@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /*
@@ -28,6 +29,7 @@ public class Focus implements Localizable {
 	private final int DEFAULT_FOCUS_COST = 10; // default cost (in weeks by default) when making a new focus.
 	private static final HashSet<String> focusIDs = new HashSet<>();
 
+	/* attributes */
 	protected FocusTree focusTree;
 	Expression focusExp;
 	protected SimpleStringProperty id;
@@ -49,6 +51,15 @@ public class Focus implements Localizable {
 	// private AIWillDo ai_will_do; // todo
 	// select effect
 	// completion award
+
+	/* variables */
+
+	/**
+	 * Set of the focus id's this focus is still attempting to reference (but may not be loaded/created yet).
+	 */
+//	private final Map<String, Consumer<List<Node>>> pendingFocusReferences = new HashMap<>();
+	private final PendingFocusReferenceList pendingFocusReferences
+			= new PendingFocusReferenceList();
 
 	public Focus(String focus_id, FocusTree focusTree) {
 		if (focusIDs.contains(focus_id)) {
@@ -188,7 +199,7 @@ public class Focus implements Localizable {
 		setIcon(exp.getValue("icon").string());
 		setPrerequisite(exp.filterName("prerequisite").toList());
 		setMutuallyExclusive(exp.filterName("mutually_exclusive").toList());
-		setAvailable(exp.getValue("available").string());
+		setAvailable(exp.findFirst("available"));
 	}
 
 	public Expression getFocusExpression() {
@@ -446,6 +457,7 @@ public class Focus implements Localizable {
 			prerequisite = null;
 			return;
 		}
+		removePrerequisites();
 //		for (Node exp : exps) {
 ////			for (Expression subexp : exp.getSubexpressions()) {
 ////				if (subexp.getText() == null) {
@@ -483,7 +495,8 @@ public class Focus implements Localizable {
 				if (focusTree.getFocus(prereq) != null) {
 					subset.add(focusTree.getFocus(prereq)); // todo error check someday
 				} else {
-					System.err.println("Focus prerequisite is invalid (not detected focus), " + this.id + ", " + prereq);
+//					System.err.println("Focus prerequisite is invalid (not detected focus), " + this.id + ", " + prereq);   // add to pending instead
+					addPendingFocusReference(prereq, this::setPrerequisite, exps);
 				}
 			}
 
@@ -493,6 +506,17 @@ public class Focus implements Localizable {
 		}
 
 		setPrerequisite(prerequisites);
+	}
+
+
+	private void addPendingFocusReference(String pendingFocusId, Consumer<List<Node>> pendingAction, List<Node> args) {
+		pendingFocusReferences.addReference(pendingFocusId, pendingAction, args);
+	}
+
+	private void removePrerequisites() {
+		if (this.prerequisite != null) {
+			this.prerequisite.clear();
+		}
 	}
 
 	/**
@@ -523,6 +547,7 @@ public class Focus implements Localizable {
 			mutually_exclusive = null;
 			return;
 		}
+		// todo
 	}
 
 	/**
@@ -558,7 +583,7 @@ public class Focus implements Localizable {
 		}
 	}
 
-	public void setAvailable(String exp) {
+	public void setAvailable(Node exp) {
 		if (exp == null) {
 			available = null;
 			return;
@@ -615,5 +640,17 @@ public class Focus implements Localizable {
 	@Override
 	public int numLocalizableProperties() {
 		return 2;
+	}
+
+	public PendingFocusReferenceList getPendingFocusReferences() {
+		return pendingFocusReferences;
+	}
+
+	public boolean removePendingFocusReference(String reference) {
+		return pendingFocusReferences.removeReference(reference);
+	}
+
+	public boolean removePendingFocusReference(Focus reference) {
+		return removePendingFocusReference(reference.id());
 	}
 }

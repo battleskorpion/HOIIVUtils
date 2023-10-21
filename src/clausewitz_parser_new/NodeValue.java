@@ -1,6 +1,7 @@
 package clausewitz_parser_new;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  stores string, number, ArrayList<Node>, SymbolNode, or null
@@ -44,7 +45,8 @@ public final class NodeValue {
 		if (value == null) return null;
 
 		// todo better error handling
-		throw new IllegalStateException("Expected NodeValue to be a string");
+		System.err.println("Expected NodeValue value to be a string, value: " + value);
+		throw new IllegalStateException("Expected NodeValue value to be a string");
 	}
 
 	public int integer() {
@@ -63,10 +65,25 @@ public final class NodeValue {
 		if (value instanceof ArrayList<?>) {
 			return (ArrayList<Node>) value;
 		}
+		if (value instanceof Node) {
+			ArrayList<Node> list = new ArrayList<>();
+			list.add((Node) value);
+			return list;
+		}
 		if (value == null) return null;
 
 		// todo better error handling
 		throw new IllegalStateException("Expected NodeValue to be an ArrayList<Node>");
+	}
+
+	public Node node() {
+		if (value instanceof Node) {
+			return (Node) value;
+		}
+		if (value == null) return null;
+
+		System.err.println("Expected NodeValue value to be a node, value: " + value);
+		throw new IllegalStateException("Expected NodeValue to be a Node");
 	}
 
 	// todo check allowables
