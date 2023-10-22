@@ -10,6 +10,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import ui.FXWindow;
 import ui.HOIUtilsWindow;
+import ui.javafx.export.ExcelExport;
 import ui.javafx.table.DoubleTableCell;
 import ui.javafx.table.IntegerOrPercentTableCell;
 import ui.javafx.table.TableViewWindow;
@@ -90,7 +91,8 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 
 	@FXML
 	public void handleExportToExcelAction() {
-		    // Handle exporting to Excel
+		ExcelExport<Country> excelExport = new ExcelExport<>();
+		excelExport.export(stateDataTable);
 	}
 
 	public void handlePercentageCheckMenuItemAction() {
