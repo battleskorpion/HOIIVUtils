@@ -161,8 +161,9 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
     @Override
     public void setDataTableCellFactories() {
         /* column factory */
+        focusNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         focusDescColumn.setCellFactory(TextFieldTableCell.forTableColumn()); // This makes the column editable
-        setOnFocusColumnEditCommit();
+        setColumnOnEditCommits();
 
         /* row factory */
         focusListTable.setRowFactory(tv -> new TableRow<>() {
@@ -202,7 +203,11 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
         });
     }
 
-    private void setOnFocusColumnEditCommit() {
+    @FXML private void setColumnOnEditCommits() {
+        focusNameColumn.setOnEditCommit(event -> {
+            Focus focus = event.getRowValue();
+            focus.setNameLocalization(event.getNewValue());
+        });
         focusDescColumn.setOnEditCommit(event -> {
             // This method will be called when a user edits and commits a cell value.
             Focus focus = event.getRowValue();

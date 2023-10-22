@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 import org.jetbrains.annotations.*;
 import ui.FXWindow;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -148,13 +149,14 @@ public class FocusTree implements Localizable {
 		/* resolve references of focuses that exist */
 		for (var pendingFocusReferenceList : pendingFocusReferenceLists) {
 			var pendingFocusReferences = pendingFocusReferenceList.pendingFocusReferences;
-//			pendingFocusReferenceList.pendingFocusReferences.stream()
-//					.filter((pfr) -> focus_names.contains(pfr.id()))
-//					.forEach(PendingFocusReference::resolve);
 			List<String> referencesToRemove = pendingFocusReferences.stream()
 					.map(PendingFocusReference::id)
 					.filter(id -> focus_names.contains(id)).toList();
 			referencesToRemove.forEach(pendingFocusReferenceList::resolve);
+			// todo temp want better warnings in future
+			/* unresolved references */
+			pendingFocusReferences.forEach(pfr -> JOptionPane.showMessageDialog(null,
+					"Undefined Focus reference invalid: " + pfr.id() + ", " + pfr.pendingActionMap().keySet()));
 		}
 
 	}
