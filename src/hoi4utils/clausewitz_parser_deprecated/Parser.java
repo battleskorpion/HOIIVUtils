@@ -1,4 +1,4 @@
-package hoi4utils.clausewitz_parser;
+package hoi4utils.clausewitz_parser_deprecated;
 
 import java.io.File;
 import java.io.FileNotFoundException;

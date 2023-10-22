@@ -1,8 +1,7 @@
 package hoi4utils.clausewitz_data.focus;
 
-import clausewitz_parser_new.Node;
+import clausewitz_parser.Node;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

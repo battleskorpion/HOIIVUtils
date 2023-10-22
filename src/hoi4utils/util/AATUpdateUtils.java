@@ -3,13 +3,11 @@ package hoi4utils.util;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import hoi4utils.HOIIVFile;
 import hoi4utils.HOIIVUtils;
-import hoi4utils.clausewitz_parser.Expression;
-import hoi4utils.clausewitz_parser.Parser;
+import hoi4utils.clausewitz_parser_deprecated.Expression;
 
 public class AATUpdateUtils {
 

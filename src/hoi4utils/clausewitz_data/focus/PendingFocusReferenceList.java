@@ -1,6 +1,6 @@
 package hoi4utils.clausewitz_data.focus;
 
-import clausewitz_parser_new.Node;
+import clausewitz_parser.Node;
 
 import java.util.ArrayList;
 import java.util.List;

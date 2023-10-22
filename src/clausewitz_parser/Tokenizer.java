@@ -1,4 +1,4 @@
-package clausewitz_parser_new;
+package clausewitz_parser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

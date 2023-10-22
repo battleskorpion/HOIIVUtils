@@ -1,8 +1,8 @@
 package hoi4utils.clausewitz_data.tooltip;
 
 import hoi4utils.clausewitz_data.localization.Localization;
-import hoi4utils.clausewitz_parser.Expression;
-import hoi4utils.clausewitz_parser.Parser;
+import hoi4utils.clausewitz_parser_deprecated.Expression;
+import hoi4utils.clausewitz_parser_deprecated.Parser;
 
 import java.io.File;
 import java.util.ArrayList;

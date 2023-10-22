@@ -1,7 +1,7 @@
 package src.clausewitz_parser_new;
 
-import clausewitz_parser_new.Node;
-import clausewitz_parser_new.Parser;
+import clausewitz_parser.Node;
+import clausewitz_parser.Parser;
 import org.junit.Test;
 
 import java.io.File;

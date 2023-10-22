@@ -2,8 +2,8 @@ package hoi4utils.clausewitz_data.state;
 
 import hoi4utils.HOIIVFile;
 import hoi4utils.clausewitz_data.Localizable;
-import hoi4utils.clausewitz_parser.Expression;
-import hoi4utils.clausewitz_parser.Parser;
+import hoi4utils.clausewitz_parser_deprecated.Expression;
+import hoi4utils.clausewitz_parser_deprecated.Parser;
 
 import java.io.File;
 import java.util.ArrayList;

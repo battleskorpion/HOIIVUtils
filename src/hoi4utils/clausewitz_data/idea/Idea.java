@@ -1,11 +1,11 @@
 package hoi4utils.clausewitz_data.idea;
 
-import clausewitz_parser_new.Node;
+import clausewitz_parser.Node;
 import hoi4utils.clausewitz_data.Localizable;
 import hoi4utils.clausewitz_code.modifier.Modifier;
 import hoi4utils.clausewitz_data.localization.Localization;
 import hoi4utils.clausewitz_data.localization.LocalizationFile;
-import hoi4utils.clausewitz_parser.Expression;
+import hoi4utils.clausewitz_parser_deprecated.Expression;
 import javafx.beans.property.SimpleStringProperty;
 import ui.FXWindow;
 

@@ -1,11 +1,10 @@
 package hoi4utils.clausewitz_data.idea;
 
-import clausewitz_parser_new.Node;
-import clausewitz_parser_new.Parser;
-import clausewitz_parser_new.ParserException;
+import clausewitz_parser.Node;
+import clausewitz_parser.Parser;
+import clausewitz_parser.ParserException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;

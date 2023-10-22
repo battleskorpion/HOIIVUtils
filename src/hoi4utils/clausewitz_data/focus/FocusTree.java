@@ -1,7 +1,7 @@
 package hoi4utils.clausewitz_data.focus;
 
-import clausewitz_parser_new.Node;
-import clausewitz_parser_new.Parser;
+import clausewitz_parser.Node;
+import clausewitz_parser.Parser;
 import hoi4utils.clausewitz_data.Localizable;
 import hoi4utils.clausewitz_data.country.CountryTag;
 import hoi4utils.clausewitz_data.country.CountryTags;

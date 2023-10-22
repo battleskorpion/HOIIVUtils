@@ -8,8 +8,8 @@ import hoi4utils.clausewitz_data.country.CountryTag;
 import hoi4utils.clausewitz_data.country.CountryTags;
 import hoi4utils.clausewitz_data.state.buildings.Infrastructure;
 import hoi4utils.clausewitz_data.state.resources.Resources;
-import hoi4utils.clausewitz_parser.Expression;
-import hoi4utils.clausewitz_parser.Parser;
+import hoi4utils.clausewitz_parser_deprecated.Expression;
+import hoi4utils.clausewitz_parser_deprecated.Parser;
 
 import java.io.File;
 import java.util.ArrayList;

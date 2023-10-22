@@ -1,8 +1,8 @@
 package hoi4utils.map.province;
 
 import hoi4utils.SettingsManager;
-import hoi4utils.clausewitz_parser.Expression;
-import hoi4utils.clausewitz_parser.Parser;
+import hoi4utils.clausewitz_parser_deprecated.Expression;
+import hoi4utils.clausewitz_parser_deprecated.Parser;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package clausewitz_parser_new;
+package clausewitz_parser;
 
 /**
  *  clausewitz token types

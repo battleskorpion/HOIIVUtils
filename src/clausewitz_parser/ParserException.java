@@ -1,4 +1,4 @@
-package clausewitz_parser_new;
+package clausewitz_parser;
 
 public class ParserException extends Exception {
     public ParserException() {

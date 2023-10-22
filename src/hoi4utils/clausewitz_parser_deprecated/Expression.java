@@ -1,11 +1,11 @@
-package hoi4utils.clausewitz_parser;
+package hoi4utils.clausewitz_parser_deprecated;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import static hoi4utils.clausewitz_parser.Parser.usefulData;
+import static hoi4utils.clausewitz_parser_deprecated.Parser.usefulData;
 /*
  * Expression File
  */
