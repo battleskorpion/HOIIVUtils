@@ -10,7 +10,7 @@
         <content>
           <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
                <children>
-                  <Canvas fx:id="focusTreeCanvas" height="384.0" width="589.0" />
+                  <Canvas fx:id="focusTreeCanvas" height="384.0" onMouseMoved="#mouseMovedFocusTreeViewAdapter" width="589.0" />
                </children>
             </AnchorPane>
         </content>

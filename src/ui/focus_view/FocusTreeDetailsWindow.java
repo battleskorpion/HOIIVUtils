@@ -1,59 +1,67 @@
 package ui.focus_view;
 
 import hoi4utils.clausewitz_data.focus.Focus;
+import javafx.geometry.Point2D;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.Set;
 
-public class FocusTreeDetailsWindow extends JFrame {
-	private JLabel focusNameJLabel;
-	private JPanel focusTreeDetailsJPanel;
-	private JLabel focusIDJLabel;
-	private JLabel focusDetailsJLabel;
+public class FocusTreeDetailsWindow extends Stage {
+	private Label focusNameLabel;
+	private Label focusIDLabel;
+	private Label focusDetailsLabel;
 
-	Focus focus;
-
-	public FocusTreeDetailsWindow(Focus focus, Point p) {
-		super ("Details");
+	public FocusTreeDetailsWindow(Focus focus, Point2D p) {
+		setTitle("Details");
 
 		if (focus == null) {
-			System.err.println("Focus null in " + this);
+			System.err.println("Focus is null");
 			return;
 		}
 
-		/* window */
-		setLocation(p);
-		setContentPane(focusTreeDetailsJPanel);
-		setSize(700, 500);
-		setUndecorated(true);
-		getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
-		pack();
+		// Create JavaFX UI components
+		VBox root = new VBox(10);
+		focusNameLabel = new Label(focus.nameLocalization());
+		focusIDLabel = new Label(focus.id());
+		focusDetailsLabel = new Label();
 
-		focusNameJLabel.setText(focus.nameLocalization());
-		focusIDJLabel.setText(focus.id());
 		StringBuilder details = new StringBuilder();
 		details.append("\n");
-//		details.append("Requires one of the following");
 		details.append("Completion time: ");
 		details.append(focus.completionTime());
 		details.append("\n");
+
 		for (Set<Focus> prereqSet : focus.getPrerequisites()) {
 			if (prereqSet.size() > 1) {
 				details.append("Requires one of the following: \n");
-				details.append("- ");
 				for (Focus f : prereqSet) {
+					details.append("- ");
 					details.append(f.nameLocalization());
 					details.append("\n");
 				}
 			} else {
-				details.append("Requires ");
-				details.append(prereqSet.toArray()[0]);
+				details.append("Requires: ");
+				details.append(prereqSet.iterator().next().nameLocalization());
 				details.append("\n");
 			}
 		}
-		details.append("\n\n");
-		details.append("Effect: \n");
-		focusDetailsJLabel.setText(details.toString());
+
+		details.append("\n\nEffect: \n");
+		focusDetailsLabel.setText(details.toString());
+
+		// Add components to the root layout
+		root.getChildren().addAll(focusNameLabel, focusIDLabel, focusDetailsLabel);
+
+		// Create and set the scene
+		Scene scene = new Scene(root, 300, 200);
+		setScene(scene);
+		// Calculate the position relative to the mouse cursor
+		double xOffset = 10; // Adjust as needed
+		double yOffset = 10; // Adjust as needed
+		setX(p.getX() + xOffset);
+		setY(p.getY() + yOffset);
 	}
 }

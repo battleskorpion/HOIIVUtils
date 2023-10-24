@@ -10,14 +10,12 @@ import hoi4utils.clausewitz_parser_deprecated.Expression;
 import clausewitz_parser.Node;
 import hoi4utils.ddsreader.DDSReader;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import javafx_utils.JavaFXImageUtils;
 import ui.FXWindow;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -124,7 +122,7 @@ public class Focus implements Localizable {
 		if (relative_position_id == null) {
 			return x;
 		} else {
-			return absolutePosition().x;
+			return (int) absolutePosition().getX();
 		}
 	}
 
@@ -132,7 +130,7 @@ public class Focus implements Localizable {
 		if (relative_position_id == null) {
 			return y;
 		} else {
-			return absolutePosition().y;
+			return (int) absolutePosition().getY();
 		}
 	}
 
@@ -141,18 +139,18 @@ public class Focus implements Localizable {
 	 * 
 	 * @return point representing xy location, or relative xy if relative.
 	 */
-	public Point position() {
-		return new Point(x, y);
+	public Point2D position() {
+		return new Point2D(x, y);
 	}
 
 	/**
 	 * Absolute focus xy-position.
-	 * 
+	 *
 	 * @return Point representing absolute position of focus.
 	 * @implNote Should only be called after all focuses in focus tree are
-	 *		   instantiated.
+	 * instantiated.
 	 */
-	public Point absolutePosition() {
+	public Point2D absolutePosition() {
 		if (relative_position_id == null) {
 			return position();
 		}
@@ -166,8 +164,8 @@ public class Focus implements Localizable {
 			System.err.println("focus id " + relative_position_id + " not a focus");
 			return position();
 		}
-		Point adjPoint = relative_position_focus.absolutePosition();
-		adjPoint = new Point(adjPoint.x + x, adjPoint.y + y);
+		Point2D adjPoint = relative_position_focus.absolutePosition();
+		adjPoint = new Point2D(adjPoint.getX() + x, adjPoint.getY() + y);
 		// System.out.println(adjPoint + ", " + id + ", " + relative_position_focus.id +
 		// ", " + relative_position_focus.position());
 

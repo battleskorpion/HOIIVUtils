@@ -9,7 +9,6 @@ package ui.focus_view;
 //import hoi4utils.ddsreader.DDSReader;
 
 import hoi4utils.HOIIVFile;
-import hoi4utils.clausewitz_data.country.Country;
 import hoi4utils.clausewitz_data.country.CountryTag;
 import hoi4utils.clausewitz_data.focus.FixFocus;
 import hoi4utils.clausewitz_data.focus.Focus;
@@ -17,29 +16,35 @@ import hoi4utils.clausewitz_data.focus.FocusTree;
 import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import hoi4utils.ddsreader.DDSReader;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx_utils.JavaFXImageUtils;
 import ui.HOIUtilsWindow;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Set;
 
 public class FocusTreeWindow extends HOIUtilsWindow {
+	static final int FOCUS_X_SCALE = 90;	  // ~2x per 1 y
+	static final int FOCUS_Y_SCALE = 140;
+
 	@FXML Canvas focusTreeCanvas;
 	@FXML ScrollPane focusTreeCanvasScrollPane;
+
+	FocusTree focusTree;
+	FocusTreeDetailsWindow focusTreeDetailsWindow;
+	Focus focusDetailsFocus;
 
 	public FocusTreeWindow() {
 		setFxmlResource("FocusTreeWindow.fxml");
 		setTitle("Focus Tree View");
-
 	}
 
 	@FXML
@@ -49,7 +54,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 //		focusTreeCanvasScrollPane.setFitToWidth(true);
 //		focusTreeCanvasScrollPane.setFitToHeight(true);
 
-		FocusTree focusTree = FocusTree.get(new CountryTag("SMA"));
+		focusTree = FocusTree.get(new CountryTag("SMA"));
 		if (focusTree == null) {
 			focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
 //			focusTree.setLocalization();
@@ -60,6 +65,8 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 				throw new RuntimeException(e);
 			}
 		}
+
+
 		drawFocusTree(focusTree);
 	}
 
@@ -71,8 +78,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		//		if (focusTree != null) {    // todo
 		// }
 
-		final int X_SCALE = 90;	  // ~2x per 1 y
-		final int Y_SCALE = 140;
 		GraphicsContext gc2D = focusTreeCanvas.getGraphicsContext2D();
 
 		int minX = -focusTree.minX();       // todo
@@ -99,10 +104,10 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 		for (Focus focus : focusTree.focuses()) {
 			gc2D.setFill(Color.WHITE);
-			int x1 = X_SCALE * (focus.absoluteX() + minX);
-			int y1 = Y_SCALE * focus.absoluteY();
-			int yAdj1 = (int)(Y_SCALE / 2.2);
-			int yAdj2 = (Y_SCALE / 2) + 20;
+			int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX);
+			int y1 = FOCUS_Y_SCALE * focus.absoluteY();
+			int yAdj1 = (int)(FOCUS_Y_SCALE / 2.2);
+			int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
 
 			gc2D.strokeRect(x1, y1, 100, 100);
 //			BufferedImage image = ImageIO.read(new File(focus.icon()));   // todo
@@ -114,10 +119,10 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 				for (Set<Focus> prereqFocusSet : focus.getPrerequisites()) {
 					for (Focus prereqFocus : prereqFocusSet) {
-						int linex1 = x1 + (X_SCALE / 2);
+						int linex1 = x1 + (FOCUS_X_SCALE / 2);
 						int liney1 = y1;
-						int linex2 = (X_SCALE * (prereqFocus.absoluteX() + minX)) + (X_SCALE / 2);
-						int liney2 = (Y_SCALE * prereqFocus.absoluteY()) + 100;
+						int linex2 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2);
+						int liney2 = (FOCUS_Y_SCALE * prereqFocus.absoluteY()) + 100;
 						gc2D.strokeLine(linex1, liney1, linex2, liney2);
 					}
 				}
@@ -127,6 +132,50 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			gc2D.fillText(name, x1, y1 + yAdj2);
 		}
 	}
+
+	@FXML
+	public void mouseMovedFocusTreeViewAdapter(MouseEvent e) {
+		/* get focus being hovered over */
+		Point2D p = new Point2D(e.getX(), e.getY());
+		Focus focusTemp = getFocusHover(p);
+		if (focusTemp == null) {
+		/*
+		if no focus being hovered over -> if there was a focus detail view open,
+		get rid of it and reset
+		 */
+			if (focusTreeDetailsWindow != null) {
+				focusTreeDetailsWindow.close();
+				focusTreeDetailsWindow = null;
+				focusDetailsFocus = null;
+			}
+			return;
+		}
+		if (focusTemp == focusDetailsFocus) {
+			return;
+		}
+		focusDetailsFocus = focusTemp;
+
+		/* focus details view */
+		if (focusTreeDetailsWindow != null) {
+			focusTreeDetailsWindow.close();
+		}
+		focusTreeDetailsWindow = new FocusTreeDetailsWindow(focusDetailsFocus, p);
+		focusTreeDetailsWindow.show();
+	}
+
+	private Focus getFocusHover(Point2D p) {
+		int x = (int) (p.getX() / FOCUS_X_SCALE) + focusTree.minX();
+		int y = (int) (p.getY() / FOCUS_Y_SCALE);
+
+		for (Focus f : focusTree.focuses()) {
+			if (f.absolutePosition().equals(new Point2D(x, y))) {
+				return f;
+			}
+		}
+
+		return null;
+	}
+
 }
 
 /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
