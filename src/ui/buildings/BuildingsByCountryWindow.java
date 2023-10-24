@@ -50,8 +50,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 
 		countryList = Country.loadCountries();
 	}
-	
-/* Start */
+
 	@FXML
 	void initialize() {
 		includeVersion();

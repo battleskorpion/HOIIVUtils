@@ -10,6 +10,10 @@ import hoi4utils.clausewitz_parser_deprecated.Expression;
 import clausewitz_parser.Node;
 import hoi4utils.ddsreader.DDSReader;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx_utils.JavaFXImageUtils;
 import ui.FXWindow;
 
 import java.awt.*;
@@ -36,7 +40,7 @@ public class Focus implements Localizable {
 	protected Localization nameLocalization;
 	protected Localization descLocalization;
 	protected SimpleStringProperty icon;
-	protected BufferedImage ddsImage;
+	protected Image ddsImage;
 	protected Set<Set<Focus>> prerequisite; // can be multiple, but hoi4 code is simply "prerequisite"
 	protected Set<Focus> mutually_exclusive;
 	protected Trigger available;
@@ -436,8 +440,9 @@ public class Focus implements Localizable {
 			int ddswidth = DDSReader.getWidth(buffer);
 			int ddsheight = DDSReader.getHeight(buffer);
 
-			ddsImage = new BufferedImage(ddswidth, ddsheight, BufferedImage.TYPE_INT_ARGB);
-			ddsImage.setRGB(0, 0, ddswidth, ddsheight, ddspixels, 0, ddswidth);
+//			ddsImage = new BufferedImage(ddswidth, ddsheight, BufferedImage.TYPE_INT_ARGB);
+//			ddsImage.setRGB(0, 0, ddswidth, ddsheight, ddspixels, 0, ddswidth);
+			ddsImage = JavaFXImageUtils.imageFromDDS(ddspixels, ddswidth, ddsheight);
 		} catch (IOException exc) {
 			exc.printStackTrace();
 		}

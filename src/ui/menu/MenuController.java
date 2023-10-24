@@ -133,7 +133,7 @@ public class MenuController extends Application implements FXWindow {
 
 	public void openFocusTreeViewer() {
 		FocusTreeWindow window = new FocusTreeWindow();
-		window.setVisible(true);
+		window.open();
 	}
 
 	public void openParserView() {
