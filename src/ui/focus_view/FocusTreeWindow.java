@@ -13,6 +13,7 @@ import hoi4utils.clausewitz_data.country.Country;
 import hoi4utils.clausewitz_data.country.CountryTag;
 import hoi4utils.clausewitz_data.focus.Focus;
 import hoi4utils.clausewitz_data.focus.FocusTree;
+import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import hoi4utils.ddsreader.DDSReader;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -50,6 +51,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		FocusTree focusTree = FocusTree.get(new CountryTag("SMA"));
 		if (focusTree == null) {
 			focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
+			//focusTree.setLocalization(new FocusLocalizationFile())
 		}
 		drawFocusTree(focusTree);
 	}
