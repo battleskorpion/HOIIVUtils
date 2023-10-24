@@ -65,6 +65,12 @@ public class FocusLocalizationFile extends LocalizationFile {
 		focusLocalizationList = new ArrayList<>();
 	}
 
+	public FocusLocalizationFile(String str) throws IllegalArgumentException {
+		super(new File(str));
+
+		focusLocalizationList = new ArrayList<>();
+	}
+
 
 	public String toString() {
 		if (super.isFile()) {

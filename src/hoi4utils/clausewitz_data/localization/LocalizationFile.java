@@ -117,7 +117,7 @@ public class LocalizationFile extends File {
 					System.out.println("localization: " + text);
 				} else if (data.contains(":")) {
 					System.err.println("Fix incorrect loc key: " + data);
-					System.exit(-1);
+//					System.exit(-1);
 				}
 			}
 //			} else {

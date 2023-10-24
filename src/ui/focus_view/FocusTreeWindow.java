@@ -11,6 +11,7 @@ package ui.focus_view;
 import hoi4utils.HOIIVFile;
 import hoi4utils.clausewitz_data.country.Country;
 import hoi4utils.clausewitz_data.country.CountryTag;
+import hoi4utils.clausewitz_data.focus.FixFocus;
 import hoi4utils.clausewitz_data.focus.Focus;
 import hoi4utils.clausewitz_data.focus.FocusTree;
 import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
@@ -51,7 +52,13 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		FocusTree focusTree = FocusTree.get(new CountryTag("SMA"));
 		if (focusTree == null) {
 			focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
-			//focusTree.setLocalization(new FocusLocalizationFile())
+//			focusTree.setLocalization();
+			try {
+				FixFocus.addFocusLoc(focusTree, new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
 		}
 		drawFocusTree(focusTree);
 	}
@@ -102,14 +109,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			gc2D.drawImage(GFX_focus_unavailable, x1 - 32, y1 + yAdj1);
 			gc2D.drawImage(focus.getDDSImage(), x1, y1);
 
-			String name;
-			if (focus.nameLocalization() == null) {
-				name = focus.id();
-			} else {
-				name = focus.nameLocalization();
-			}
-			gc2D.fillText(name, x1, y1 + yAdj2);
-
 			if (focus.hasPrerequisites()) {
 				gc2D.setFill(Color.WHITE);
 
@@ -123,6 +122,9 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 					}
 				}
 			}
+
+			String name = focus.name();
+			gc2D.fillText(name, x1, y1 + yAdj2);
 		}
 	}
 }

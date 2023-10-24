@@ -658,4 +658,12 @@ public class Focus implements Localizable {
 	public boolean removePendingFocusReference(Focus reference) {
 		return removePendingFocusReference(reference.id());
 	}
+
+	public String name() {
+		if (nameLocalization() == null) {
+			return id();
+		} else {
+			return nameLocalization();
+		}
+	}
 }
