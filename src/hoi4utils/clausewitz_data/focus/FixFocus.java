@@ -123,4 +123,7 @@ public class FixFocus extends HOIIVUtils {
 		return focusesAddedLoc.size();
 	}
 
+	public static void addFocusLoc(FocusTree focusTree) throws IOException {
+		addFocusLoc(focusTree, focusTree.locFile());
+	}
 }

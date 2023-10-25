@@ -20,10 +20,12 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx_utils.JavaFXImageUtils;
+import org.jetbrains.annotations.NotNull;
 import ui.HOIUtilsWindow;
 
 import java.io.File;
@@ -39,7 +41,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	@FXML ScrollPane focusTreeCanvasScrollPane;
 
 	FocusTree focusTree;
-	FocusTreeDetailsWindow focusTreeDetailsWindow;
+	Tooltip focusTooltipView;
 	Focus focusDetailsFocus;
 
 	public FocusTreeWindow() {
@@ -49,7 +51,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 	@FXML
 	void initialize() {
-		focusTreeCanvas.setWidth(2000);
+		focusTreeCanvas.setWidth(4000);
 		focusTreeCanvas.setHeight(2000);
 //		focusTreeCanvasScrollPane.setFitToWidth(true);
 //		focusTreeCanvasScrollPane.setFitToHeight(true);
@@ -57,15 +59,15 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		focusTree = FocusTree.get(new CountryTag("SMA"));
 		if (focusTree == null) {
 			focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
-//			focusTree.setLocalization();
-			try {
-				FixFocus.addFocusLoc(focusTree, new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
+			focusTree.setLocalization(new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
 		}
 
+		try {
+			FixFocus.addFocusLoc(focusTree);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 
 		drawFocusTree(focusTree);
 	}
@@ -115,7 +117,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			gc2D.drawImage(focus.getDDSImage(), x1, y1);
 
 			if (focus.hasPrerequisites()) {
-				gc2D.setFill(Color.WHITE);
+				gc2D.setStroke(Color.BLACK);
 
 				for (Set<Focus> prereqFocusSet : focus.getPrerequisites()) {
 					for (Focus prereqFocus : prereqFocusSet) {
@@ -124,6 +126,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 						int linex2 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2);
 						int liney2 = (FOCUS_Y_SCALE * prereqFocus.absoluteY()) + 100;
 						gc2D.strokeLine(linex1, liney1, linex2, liney2);
+						System.out.println("TEST stroke");
 					}
 				}
 			}
@@ -143,9 +146,9 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		if no focus being hovered over -> if there was a focus detail view open,
 		get rid of it and reset
 		 */
-			if (focusTreeDetailsWindow != null) {
-				focusTreeDetailsWindow.close();
-				focusTreeDetailsWindow = null;
+			if (focusTooltipView != null) {
+				focusTooltipView.hide();
+				focusTooltipView = null;
 				focusDetailsFocus = null;
 			}
 			return;
@@ -156,11 +159,41 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		focusDetailsFocus = focusTemp;
 
 		/* focus details view */
-		if (focusTreeDetailsWindow != null) {
-			focusTreeDetailsWindow.close();
+		if (focusTooltipView != null) {
+			focusTooltipView.hide();
 		}
-		focusTreeDetailsWindow = new FocusTreeDetailsWindow(focusDetailsFocus, p);
-		focusTreeDetailsWindow.show();
+//		focusTreeDetailsWindow = new FocusTreeDetailsWindow(focusDetailsFocus, p);
+		String details = getFocusDetails(focusDetailsFocus);
+		focusTooltipView = new Tooltip(details);
+		focusTooltipView.show(focusTreeCanvas, e.getScreenX() + 10, e.getScreenY() + 10);
+	}
+
+	@NotNull
+	private String getFocusDetails(Focus focus) {       // todo modification of this should be in Focus class
+		//		focusTreeDetailsWindow.show();
+		StringBuilder details = new StringBuilder();
+		details.append("\n");
+		details.append("Completion time: ");
+		details.append(focus.completionTime());
+		details.append("\n");
+
+		for (Set<Focus> prereqSet : focus.getPrerequisites()) {
+			if (prereqSet.size() > 1) {
+				details.append("Requires one of the following: \n");
+				for (Focus f : prereqSet) {
+					details.append("- ");
+					details.append(f.nameLocalization());
+					details.append("\n");
+				}
+			} else {
+				details.append("Requires: ");
+				details.append(prereqSet.iterator().next().nameLocalization());
+				details.append("\n");
+			}
+		}
+
+		details.append("\n\nEffect: \n");
+		return details.toString();
 	}
 
 	private Focus getFocusHover(Point2D p) {

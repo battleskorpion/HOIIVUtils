@@ -7,7 +7,6 @@ import hoi4utils.clausewitz_data.country.CountryTag;
 import hoi4utils.clausewitz_data.country.CountryTags;
 import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import hoi4utils.clausewitz_data.localization.Localization;
-import hoi4utils.clausewitz_data.localization.LocalizationFile;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.jetbrains.annotations.*;
@@ -79,6 +78,9 @@ public class FocusTree implements Localizable {
 			return null;
 		}
 
+		focus_names = new ArrayList<>();
+		this.focuses.clear();
+
 		/* parser */
 		Parser focusTreeParser = new Parser(this.focus_file);
 		Node focusTreeNode;
@@ -92,12 +94,12 @@ public class FocusTree implements Localizable {
 		/* focuses */
 		List<Focus> focuses = getFocuses(focusTreeNode);
 
-		focus_names = new ArrayList<>();
-		focus_names.addAll(focuses.parallelStream()
-				.map(Focus::id).toList());
-		this.focuses.clear();
-		this.focuses.putAll(focuses.parallelStream()
-				.collect(Collectors.toMap(Focus::id, f -> f)));
+//		focus_names = new ArrayList<>();
+//		focus_names.addAll(focuses.parallelStream()
+//				.map(Focus::id).toList());
+//		this.focuses.clear();
+//		this.focuses.putAll(focuses.parallelStream()
+//				.collect(Collectors.toMap(Focus::id, f -> f)));
 //		minX = 0; // min x is 0 or less
 
 		/* country */
@@ -117,7 +119,7 @@ public class FocusTree implements Localizable {
 			return null;
 		}
 
-		List<Focus> focuses = new ArrayList<>();
+		List<Focus> focusList = new ArrayList<>();
 
 		// todo woooo
 		List<Node> focusTreeNodes =
@@ -128,15 +130,15 @@ public class FocusTree implements Localizable {
 			/* focus id */
 			String focus_id = node.getValue("id").string();     // gets the ##### from "id = #####"
 			focus = new Focus(focus_id, this, node);
-//			focus_names.add(focus_id);
-//			focuses.put(focus_id, focus);
-			focuses.add(focus);
+			focus_names.add(focus_id);
+			focuses.put(focus_id, focus);
+			focusList.add(focus);
 		}
 
 		/* when all focuses init loaded */
 		checkPendingFocusReferences();
 
-		return focuses;
+		return focusList;
 	}
 
 	private void checkPendingFocusReferences() {
@@ -192,10 +194,9 @@ public class FocusTree implements Localizable {
 	}
 
 	/**
-	 *
 	 * @return Localization file for this focus tree, or null.
 	 */
-	public LocalizationFile locFile() {
+	public FocusLocalizationFile locFile() {
 		return focusLocFile;
 	}
 

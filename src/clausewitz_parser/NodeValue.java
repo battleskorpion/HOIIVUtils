@@ -61,6 +61,18 @@ public final class NodeValue {
 		throw new IllegalStateException("Expected NodeValue to be a Number");
 	}
 
+	public double rational() {
+		if (value instanceof Number) {
+			if (value instanceof Double) {
+				return (double) value;
+			}
+			return ((Number) value).doubleValue();
+		}
+
+		// todo better error handling
+		throw new IllegalStateException("Expected NodeValue to be a Number");
+	}
+
 	public ArrayList<Node> list() {
 		if (value instanceof ArrayList<?>) {
 			return (ArrayList<Node>) value;

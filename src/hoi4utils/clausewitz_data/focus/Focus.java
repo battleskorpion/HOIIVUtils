@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx_utils.JavaFXImageUtils;
+import org.jetbrains.annotations.Range;
 import ui.FXWindow;
 
 import java.awt.*;
@@ -45,7 +46,7 @@ public class Focus implements Localizable {
 	protected int x; // if relative, relative x
 	protected int y; // if relative, relative y
 	protected String relative_position_id; // if null, position is not relative
-	protected int cost; // cost of focus (typically in weeks unless changed in defines)
+	protected double cost; // cost of focus (typically in weeks unless changed in defines)
 	protected Set<FocusSearchFilter> focus_search_filters;
 	protected boolean available_if_capitulated;
 	protected boolean cancel_if_invalid;
@@ -199,6 +200,7 @@ public class Focus implements Localizable {
 		setRelativePositionID(exp.getValue("relative_position_id").string()); // todo need Optional for easier null handling probably
 		// setFocusLoc();
 		setIcon(exp.getValue("icon").string());
+		setCost(exp.getValue("cost").rational());
 		setPrerequisite(exp.filterName("prerequisite").toList());
 		setMutuallyExclusive(exp.filterName("mutually_exclusive").toList());
 		setAvailable(exp.findFirst("available"));
@@ -265,8 +267,8 @@ public class Focus implements Localizable {
 		setCost(DEFAULT_FOCUS_COST);
 	}
 
-	public void setCost(int cost) {
-		this.cost = cost;
+	public void setCost(Number cost) {
+		this.cost = cost.doubleValue();
 	}
 
 	public void setCost(Expression exp) {
@@ -498,7 +500,6 @@ public class Focus implements Localizable {
 				if (focusTree.getFocus(prereq) != null) {
 					subset.add(focusTree.getFocus(prereq)); // todo error check someday
 				} else {
-//					System.err.println("Focus prerequisite is invalid (not detected focus), " + this.id + ", " + prereq);   // add to pending instead
 					addPendingFocusReference(prereq, this::setPrerequisite, exps);
 				}
 			}
@@ -607,18 +608,18 @@ public class Focus implements Localizable {
 	}
 
 	public boolean hasPrerequisites() {
-		return !(prerequisite == null || prerequisite.size() == 0);
+		return !(prerequisite == null || prerequisite.isEmpty());
 	}
 
 	public Set<Set<Focus>> getPrerequisites() {
 		return prerequisite;
 	}
 
-	public int cost() {
+	public double cost() {
 		return cost;
 	}
 
-	public int completionTime() {
+	public double completionTime() {
 		return cost * FOCUS_COST_FACTOR;
 	}
 
