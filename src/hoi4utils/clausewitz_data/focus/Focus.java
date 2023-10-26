@@ -20,6 +20,8 @@ import ui.FXWindow;
 import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
@@ -464,16 +466,6 @@ public class Focus implements Localizable {
 			return;
 		}
 		removePrerequisites();
-//		for (Node exp : exps) {
-////			for (Expression subexp : exp.getSubexpressions()) {
-////				if (subexp.getText() == null) {
-////					prerequisite = null;
-////					System.err.println("Focus prerequisite invalid, " + this.id + ", " + exp);
-////					return;
-////				}
-////			}
-//		}
-
 		Set<Set<Focus>> prerequisites = new HashSet<>();
 
 		/* sort through prerequisite={ expressions */
@@ -491,12 +483,6 @@ public class Focus implements Localizable {
 				}
 
 				String prereq = prereqNode.value().string();
-//				prereqStr = prereqStr.trim();
-//				if (!prereqStr.matches("[\\S]+")) {
-//					System.err.println("Focus prerequisite is invalid, " + this.id + ", " + prereqStr);
-//					prerequisite = null;
-//					return;
-//				}
 
 				if (focusTree.getFocus(prereq) != null) {
 					subset.add(focusTree.getFocus(prereq)); // todo error check someday
@@ -524,13 +510,18 @@ public class Focus implements Localizable {
 		}
 	}
 
+	private void removeMutuallyExclusive() {
+		if (this.mutually_exclusive != null) {
+			this.mutually_exclusive.clear();
+		}
+	}
+
 	/**
 	 * sets focus prerequisite focuses
 	 * 
 	 * @param prerequisite Set of prerequisite focuses. Can not include this focus.
 	 */
-	public void setPrerequisite(Set<Set<Focus>> prerequisite) { // todo can have prerequisites where 1 necessary, all
-																// necessary, etc.
+	public void setPrerequisite(Set<Set<Focus>> prerequisite) {
 		// focus can not be its own prerequisite
 		// todo
 		// if (prerequisite.contains(this)) {
@@ -547,12 +538,44 @@ public class Focus implements Localizable {
 		}
 	}
 
-	public void setMutuallyExclusive(List<Node> exp) {
-		if (exp == null) {
+	/**
+	 * <p>From <a href="https://hoi4.paradoxwikis.com/National_focus_modding">National Focus Modding</a>:
+	 * </p>
+	 * <p>"Mutual exclusivity to multiple focuses is usually done by putting several of focus = TAG_focusname
+	 * in the same mutually_exclusive, but defining several of mutually_exclusive is also possible."
+	 * </p>
+	 * @param exps
+	 */
+	public void setMutuallyExclusive(List<Node> exps) {
+		if (exps == null) {
 			mutually_exclusive = null;
 			return;
 		}
-		// todo
+		removeMutuallyExclusive();
+		mutually_exclusive = new HashSet<>();
+
+		/* sort through prerequisite={ expressions */
+		for (Node exclusiveExp : exps) {
+			if (exclusiveExp == null || !exclusiveExp.contains("focus")) {
+				continue;
+			}
+
+			for (Node exclusiveNode : exclusiveExp.filter("focus").toList()) {
+				if (exclusiveNode.value() == null) {
+					// todo better error reporting
+					System.err.println("Expected a value associated with mutually exclusive focus assignment");
+					continue;
+				}
+
+				String exclusive_id = exclusiveNode.value().string();
+
+				if (focusTree.getFocus(exclusive_id) != null) {
+					mutually_exclusive.add(focusTree.getFocus(exclusive_id)); // todo error check someday
+				} else {
+					addPendingFocusReference(exclusive_id, this::setMutuallyExclusive, exps);
+				}
+			}
+		}
 	}
 
 	/**
@@ -610,6 +633,10 @@ public class Focus implements Localizable {
 
 	public boolean hasPrerequisites() {
 		return !(prerequisite == null || prerequisite.isEmpty());
+	}
+
+	public boolean isMutuallyExclusive() {
+		return !(mutually_exclusive == null || mutually_exclusive.isEmpty());
 	}
 
 	public Set<Set<Focus>> getPrerequisites() {
@@ -694,6 +721,11 @@ public class Focus implements Localizable {
 
 		details.append("\n\nEffect: \n");
 		return details.toString();
+	}
+
+
+	public Set<Focus> getMutuallyExclusive() {
+		return mutually_exclusive;
 	}
 }
 

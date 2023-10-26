@@ -21,14 +21,11 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx_utils.JavaFXImageUtils;
-import org.jetbrains.annotations.NotNull;
 import ui.HOIUtilsWindow;
 
 import java.io.File;
@@ -38,7 +35,9 @@ import java.util.Set;
 
 public class FocusTreeWindow extends HOIUtilsWindow {
 	static final int FOCUS_X_SCALE = 90;	  // ~2x per 1 y
+	public static final int CENTER_FOCUS_X = (FOCUS_X_SCALE / 2);
 	static final int FOCUS_Y_SCALE = 140;
+	public static final int CENTER_FOCUS_Y = FOCUS_Y_SCALE / 2;
 
 	@FXML Canvas focusTreeCanvas;
 	@FXML ScrollPane focusTreeCanvasScrollPane;
@@ -165,9 +164,23 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 					}
 				}
 			}
-
-
 		}
+
+		/* mutually exclusive */
+		gc2D.setStroke(Color.DARKRED);
+		for (Focus focus : focusTree.focuses()) {
+			if (focus.isMutuallyExclusive()) {
+				for (Focus mutexFocus : focus.getMutuallyExclusive()) {
+					int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + CENTER_FOCUS_X;
+					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + FOCUS_Y_SCALE / 3;
+					int x2 = (FOCUS_X_SCALE * (mutexFocus.absoluteX() + minX)) + CENTER_FOCUS_X;
+					int y2 = (FOCUS_Y_SCALE * mutexFocus.absoluteY()) + FOCUS_Y_SCALE / 3;
+					gc2D.strokeLine(x1, y1, x2, y2);
+				}
+			}
+		}
+
+		/* focus image */
 		for (Focus focus : focusTree.focuses()){
 			int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX);
 			int y1 = FOCUS_Y_SCALE * focus.absoluteY();
