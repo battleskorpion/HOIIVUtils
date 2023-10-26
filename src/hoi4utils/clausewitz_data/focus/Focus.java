@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx_utils.JavaFXImageUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 import ui.FXWindow;
 
@@ -664,5 +665,36 @@ public class Focus implements Localizable {
 		} else {
 			return nameLocalization();
 		}
+
+	}
+
+	@NotNull
+	private String getFocusDetails() {       // todo modification of this should be in Focus class
+		//		focusTreeDetailsWindow.show();
+		StringBuilder details = new StringBuilder();
+		details.append("\n");
+		details.append("Completion time: ");
+		details.append(this.completionTime());
+		details.append("\n");
+
+		for (Set<Focus> prereqSet : this.getPrerequisites()) {
+			if (prereqSet.size() > 1) {
+				details.append("Requires one of the following: \n");
+				for (Focus f : prereqSet) {
+					details.append("- ");
+					details.append(f.nameLocalization());
+					details.append("\n");
+				}
+			} else {
+				details.append("Requires: ");
+				details.append(prereqSet.iterator().next().nameLocalization());
+				details.append("\n");
+			}
+		}
+
+		details.append("\n\nEffect: \n");
+		return details.toString();
 	}
 }
+
+
