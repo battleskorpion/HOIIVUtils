@@ -23,6 +23,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx_utils.JavaFXImageUtils;
@@ -41,6 +42,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	@FXML Canvas focusTreeCanvas;
 	@FXML ScrollPane focusTreeCanvasScrollPane;
 
+
 	FocusTree focusTree;
 	Tooltip focusTooltipView;
 	Focus focusDetailsFocus;
@@ -54,6 +56,16 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	void initialize() {
 		focusTreeCanvas.setWidth(4000);
 		focusTreeCanvas.setHeight(2000);
+
+
+		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
+			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(true);
+		});
+		focusTreeCanvasScrollPane.setOnMouseReleased(e -> {
+			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(false);
+		});
+
+
 //		focusTreeCanvasScrollPane.setFitToWidth(true);
 //		focusTreeCanvasScrollPane.setFitToHeight(true);
 
