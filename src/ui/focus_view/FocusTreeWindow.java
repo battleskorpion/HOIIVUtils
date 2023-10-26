@@ -54,7 +54,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	}
 
 	int getMaxX(){
-
 		int max = 0;
 
 		for (Focus focus : focusTree.focuses()){
@@ -64,7 +63,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		return max * FOCUS_X_SCALE;
 	}
 	int getMaxY(){
-
 		int max = 0;
 
 		for (Focus focus : focusTree.focuses()){
@@ -75,26 +73,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	}
 	@FXML
 	void initialize() {
-
-
-		System.out.println("x is " + getMaxX());
-		System.out.println("y is " + getMaxY());
-
-		focusTreeCanvas.setWidth(getMaxX());
-		focusTreeCanvas.setHeight(getMaxY());
-
-
-		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
-			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(true);
-		});
-		focusTreeCanvasScrollPane.setOnMouseReleased(e -> {
-			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(false);
-		});
-
-
-//		focusTreeCanvasScrollPane.setFitToWidth(true);
-//		focusTreeCanvasScrollPane.setFitToHeight(true);
-
 		focusTree = FocusTree.get(new CountryTag("SMA"));
 		if (focusTree == null) {
 			focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
@@ -107,6 +85,17 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
+
+		/* focus tree canvas */
+		focusTreeCanvas.setWidth(getMaxX());
+		focusTreeCanvas.setHeight(getMaxY());
+
+		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
+			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(true);
+		});
+		focusTreeCanvasScrollPane.setOnMouseReleased(e -> {
+			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(false);
+		});
 
 		drawFocusTree(focusTree);
 	}
