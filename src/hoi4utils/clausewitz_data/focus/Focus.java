@@ -669,7 +669,7 @@ public class Focus implements Localizable {
 	}
 
 	@NotNull
-	private String getFocusDetails() {       // todo modification of this should be in Focus class
+	public String getFocusDetails() {       // todo modification of this should be in Focus class
 		//		focusTreeDetailsWindow.show();
 		StringBuilder details = new StringBuilder();
 		details.append("\n");
