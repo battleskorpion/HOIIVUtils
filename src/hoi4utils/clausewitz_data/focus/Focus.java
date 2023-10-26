@@ -20,6 +20,8 @@ import ui.FXWindow;
 import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
@@ -104,7 +106,7 @@ public class Focus implements Localizable {
 
 	/**
 	 * if relative, relative x
-	 * 
+	 *
 	 * @return
 	 */
 	public int x() {
@@ -113,7 +115,7 @@ public class Focus implements Localizable {
 
 	/**
 	 * if relative, relative y
-	 * 
+	 *
 	 * @return
 	 */
 	public int y() {
@@ -138,7 +140,7 @@ public class Focus implements Localizable {
 
 	/**
 	 * if relative, relative position
-	 * 
+	 *
 	 * @return point representing xy location, or relative xy if relative.
 	 */
 	public Point2D position() {
@@ -185,7 +187,7 @@ public class Focus implements Localizable {
 	/**
 	 * Adds focus attributes (prerequisite, mutually exclusive, etc...) to focus
 	 * by parsing expressions for each potential attribute.
-	 * 
+	 *
 	 * @param exp Node representing focus - must include "focus".
 	 */
 	public void loadAttributes(Node exp) {
@@ -227,7 +229,7 @@ public class Focus implements Localizable {
 
 	/**
 	 * Sets new xy-coordinates, returns previous xy-coordinates.
-	 * 
+	 *
 	 * @param x focus new x-coordinate
 	 * @param y focus new y-coordinate
 	 * @return previous x and y
@@ -296,6 +298,7 @@ public class Focus implements Localizable {
 	public void setNameLocalization() {
 		setNameLocalization(id(), Localization.Status.DEFAULT);
 	}
+
 	public void setNameLocalization(Localization localization) {
 		nameLocalization = localization;
 	}
@@ -312,11 +315,9 @@ public class Focus implements Localizable {
 
 		Localization.Status status;
 
-		if (nameLocalization.status() == Localization.Status.NEW)
-		{
+		if (nameLocalization.status() == Localization.Status.NEW) {
 			status = Localization.Status.NEW;
-		}
-		else {
+		} else {
 			// including if nameLocalization.status() == Localization.Status.DEFAULT, itll now be updated
 			status = Localization.Status.UPDATED;
 		}
@@ -360,11 +361,9 @@ public class Focus implements Localizable {
 
 		Localization.Status status;
 
-		if (descLocalization.status() == Localization.Status.NEW)
-		{
+		if (descLocalization.status() == Localization.Status.NEW) {
 			status = Localization.Status.NEW;
-		}
-		else {
+		} else {
 			// including if nameLocalization.status() == Localization.Status.DEFAULT, itll now be updated
 			status = Localization.Status.UPDATED;
 		}
@@ -409,7 +408,7 @@ public class Focus implements Localizable {
 
 	/**
 	 * Sets focus icon id
-	 * 
+	 *
 	 * @param icon
 	 */
 	public void setIcon(String icon) {
@@ -455,7 +454,7 @@ public class Focus implements Localizable {
 
 	/**
 	 * accepts groups of prerequisites
-	 * 
+	 *
 	 * @param exps
 	 */
 	public void setPrerequisite(List<Node> exps) {
@@ -526,11 +525,11 @@ public class Focus implements Localizable {
 
 	/**
 	 * sets focus prerequisite focuses
-	 * 
+	 *
 	 * @param prerequisite Set of prerequisite focuses. Can not include this focus.
 	 */
 	public void setPrerequisite(Set<Set<Focus>> prerequisite) { // todo can have prerequisites where 1 necessary, all
-																// necessary, etc.
+		// necessary, etc.
 		// focus can not be its own prerequisite
 		// todo
 		// if (prerequisite.contains(this)) {
@@ -557,7 +556,7 @@ public class Focus implements Localizable {
 
 	/**
 	 * Sets mutually exclusive focuses
-	 * 
+	 *
 	 * @param mutually_exclusive Set of mutually exclusive focus(es) with this
 	 *						   focus. Should not include this focus.
 	 */
@@ -572,7 +571,7 @@ public class Focus implements Localizable {
 
 	/**
 	 * Sets mutually exclusive focus
-	 * 
+	 *
 	 * @param mutually_exclusive mutually exclusive focus
 	 */
 	public void setMutuallyExclusive(Focus mutually_exclusive) {
@@ -597,7 +596,7 @@ public class Focus implements Localizable {
 
 	/**
 	 * Sets available trigger of focus
-	 * 
+	 *
 	 * @param availableTrigger trigger which controls focus availability
 	 */
 	public void setAvailable(Trigger availableTrigger) {
@@ -671,10 +670,13 @@ public class Focus implements Localizable {
 	@NotNull
 	public String getFocusDetails() {       // todo modification of this should be in Focus class
 		//		focusTreeDetailsWindow.show();
+
+		NumberFormat df = DecimalFormat.getIntegerInstance();
+
 		StringBuilder details = new StringBuilder();
 		details.append("\n");
 		details.append("Completion time: ");
-		details.append(this.completionTime());
+		details.append(df.format(Math.floor(this.completionTime())));
 		details.append("\n");
 
 		for (Set<Focus> prereqSet : this.getPrerequisites()) {

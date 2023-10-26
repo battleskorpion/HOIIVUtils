@@ -60,7 +60,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			if (focus.absoluteX() > max)
 				max = focus.absoluteX();
 		}
-		return max * FOCUS_X_SCALE;
+		return max * FOCUS_X_SCALE + 150;
 	}
 	int getMaxY(){
 		int max = 0;
