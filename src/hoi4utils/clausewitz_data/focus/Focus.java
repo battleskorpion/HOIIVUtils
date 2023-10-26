@@ -693,17 +693,20 @@ public class Focus implements Localizable {
 	}
 
 	@NotNull
-	public String getFocusDetails() {       // todo modification of this should be in Focus class
-		//		focusTreeDetailsWindow.show();
-
+	public String getFocusDetails() {
 		NumberFormat df = DecimalFormat.getIntegerInstance();
 
 		StringBuilder details = new StringBuilder();
+		/* id */
+		details.append("ID: ");
+		details.append(id());
 		details.append("\n");
+		/* completion time */
 		details.append("Completion time: ");
 		details.append(df.format(Math.floor(this.completionTime())));
 		details.append("\n");
 
+		/* prerequisites */
 		for (Set<Focus> prereqSet : this.getPrerequisites()) {
 			if (prereqSet.size() > 1) {
 				details.append("Requires one of the following: \n");
@@ -719,6 +722,7 @@ public class Focus implements Localizable {
 			}
 		}
 
+		/* completion reward */
 		details.append("\n\nEffect: \n");
 		return details.toString();
 	}
