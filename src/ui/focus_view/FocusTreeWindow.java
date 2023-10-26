@@ -22,6 +22,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx_utils.JavaFXImageUtils;
@@ -126,7 +127,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 						int linex2 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2);
 						int liney2 = (FOCUS_Y_SCALE * prereqFocus.absoluteY()) + 100;
 						gc2D.strokeLine(linex1, liney1, linex2, liney2);
-						System.out.println("TEST stroke");
 					}
 				}
 			}
