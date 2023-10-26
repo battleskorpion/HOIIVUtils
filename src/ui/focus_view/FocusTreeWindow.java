@@ -52,10 +52,35 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		setTitle("Focus Tree View");
 	}
 
+	int getMaxX(){
+
+		int max = 0;
+
+		for (Focus focus : focusTree.focuses()){
+			if (focus.absoluteX() > max)
+				max = focus.absoluteX();
+		}
+		return max * FOCUS_X_SCALE;
+	}
+	int getMaxY(){
+
+		int max = 0;
+
+		for (Focus focus : focusTree.focuses()){
+			if (focus.absoluteY() > max)
+				max = focus.absoluteY();
+		}
+		return max * FOCUS_Y_SCALE;
+	}
 	@FXML
 	void initialize() {
-		focusTreeCanvas.setWidth(4000);
-		focusTreeCanvas.setHeight(2000);
+
+
+		System.out.println("x is " + getMaxX());
+		System.out.println("y is " + getMaxY());
+
+		focusTreeCanvas.setWidth(getMaxX());
+		focusTreeCanvas.setHeight(getMaxY());
 
 
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
@@ -84,7 +109,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 		drawFocusTree(focusTree);
 	}
-
 	public Canvas focusTreeCanvas() {
 		return focusTreeCanvas;
 	}
@@ -124,29 +148,49 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			int yAdj1 = (int)(FOCUS_Y_SCALE / 2.2);
 			int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
 
-			gc2D.strokeRect(x1, y1, 100, 100);
+			//gc2D.strokeRect(x1, y1, 100, 100);
 //			BufferedImage image = ImageIO.read(new File(focus.icon()));   // todo
-			gc2D.drawImage(GFX_focus_unavailable, x1 - 32, y1 + yAdj1);
-			gc2D.drawImage(focus.getDDSImage(), x1, y1);
+//			gc2D.drawImage(GFX_focus_unavailable, x1 - 32, y1 + yAdj1);
+//			gc2D.drawImage(focus.getDDSImage(), x1, y1);
 
 			if (focus.hasPrerequisites()) {
 				gc2D.setStroke(Color.BLACK);
+				gc2D.setLineWidth(3);
 
 				for (Set<Focus> prereqFocusSet : focus.getPrerequisites()) {
 					for (Focus prereqFocus : prereqFocusSet) {
 						int linex1 = x1 + (FOCUS_X_SCALE / 2);
 						int liney1 = y1;
-						int linex2 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2);
-						int liney2 = (FOCUS_Y_SCALE * prereqFocus.absoluteY()) + 100;
+						int linex2 = linex1;
+						int liney2 = liney1 - 12;
+						int liney4 = (FOCUS_Y_SCALE * prereqFocus.absoluteY());
+						int linex4 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2);
+						int linex3 = linex4;
+						int liney3 = liney2;
+
+
 						gc2D.strokeLine(linex1, liney1, linex2, liney2);
+						gc2D.strokeLine(linex2, liney2, linex3, liney3);
+						gc2D.strokeLine(linex3, liney3, linex4, liney4);
 					}
 				}
 			}
 
+
+		}
+		for (Focus focus : focusTree.focuses()){
+			int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX);
+			int y1 = FOCUS_Y_SCALE * focus.absoluteY();
+			int yAdj1 = (int)(FOCUS_Y_SCALE / 2.2);
+			int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
+			gc2D.drawImage(GFX_focus_unavailable, x1 - 32, y1 + yAdj1);
+			gc2D.drawImage(focus.getDDSImage(), x1, y1);
 			String name = focus.name();
 			gc2D.fillText(name, x1, y1 + yAdj2);
 		}
 	}
+
+
 
 	@FXML
 	public void mouseMovedFocusTreeViewAdapter(MouseEvent e) {
