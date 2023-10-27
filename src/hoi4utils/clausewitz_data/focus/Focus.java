@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-/*
- * Focus just Focus
+/**
+ * Focus class represents an individual focus of a National Focus (Focus Tree).
  */
 public class Focus implements Localizable {
-	private static final int FOCUS_COST_FACTOR = 7;
+	private static final int FOCUS_COST_FACTOR = 7; // turn into from defines, or default 7. (get default vanilla define instead?)
 	private final int DEFAULT_FOCUS_COST = 10; // default cost (in weeks by default) when making a new focus.
 	private static final HashSet<String> focusIDs = new HashSet<>();
 
@@ -63,7 +63,6 @@ public class Focus implements Localizable {
 	/**
 	 * Set of the focus id's this focus is still attempting to reference (but may not be loaded/created yet).
 	 */
-//	private final Map<String, Consumer<List<Node>>> pendingFocusReferences = new HashMap<>();
 	private final PendingFocusReferenceList pendingFocusReferences
 			= new PendingFocusReferenceList();
 
@@ -85,6 +84,10 @@ public class Focus implements Localizable {
 		loadAttributes(node);
 	}
 
+	/**
+	 * Obtain data functions intended for displaying focus properties across a table
+	 * @return
+	 */
 	public static List<Function<Focus,?>> getDataFunctions() {
 		List<Function<Focus, ?>> dataFunctions = new ArrayList<>(3);         // for optimization, limited number of data functions.
 
@@ -95,6 +98,10 @@ public class Focus implements Localizable {
 		return dataFunctions;
 	}
 
+	/**
+	 * Obtains focus id
+	 * @return
+	 */
 	public String id() {
 		if (id == null) {
 			return null;
@@ -102,11 +109,15 @@ public class Focus implements Localizable {
 		return id.get();
 	}
 
+	/**
+	 * Obtains focus id simple string property
+	 * @return
+	 */
 	public SimpleStringProperty idProperty() { return id; }
 
 	/**
-	 * if relative, relative x
-	 *
+	 * if the focus has a relative position, this will give the relative x position.
+	 * <p>Otherwise, equivalent to <code>absoluteX()</code>.</p>
 	 * @return
 	 */
 	public int x() {
@@ -114,14 +125,20 @@ public class Focus implements Localizable {
 	}
 
 	/**
-	 * if relative, relative y
-	 *
+	 * if the focus has a relative position, this will give the relative y position.
+	 * <p>Otherwise, equivalent to <code>absoluteY()</code>.</p>
 	 * @return
 	 */
 	public int y() {
 		return y;
 	}
 
+	/**
+	 * Calculates the focus X position, if the focus has a relative position.
+	 * <p>Otherwise, equivalent to <code>x()</code>.
+	 * Use when knowing the real xy-position of the focus in the focus tree is necessary.</p>
+	 * @return
+	 */
 	public int absoluteX() {
 		if (relative_position_id == null) {
 			return x;
@@ -130,6 +147,12 @@ public class Focus implements Localizable {
 		}
 	}
 
+	/**
+	 * Calculates the focus Y position, if the focus has a relative position.
+	 * <p>Otherwise, equivalent to <code>y()</code>.
+	 * Use when knowing the real xy-position of the focus in the focus tree is necessary.</p>
+	 * @return
+	 */
 	public int absoluteY() {
 		if (relative_position_id == null) {
 			return y;
@@ -139,7 +162,9 @@ public class Focus implements Localizable {
 	}
 
 	/**
-	 * if relative, relative position
+	 * Returns the defined focus xy-position.
+	 * <p>If focus position is relative, returns the relative position.
+	 * Otherwise, equivalent to <code>absolutePosition()</code>.</p>
 	 *
 	 * @return point representing xy location, or relative xy if relative.
 	 */
@@ -149,6 +174,8 @@ public class Focus implements Localizable {
 
 	/**
 	 * Absolute focus xy-position.
+	 * <p>If the defined focus position is relative to another focus,
+	 * calculates and returns the real xy-position in the focus tree. </p>
 	 *
 	 * @return Point representing absolute position of focus.
 	 * @implNote Should only be called after all focuses in focus tree are
@@ -180,6 +207,11 @@ public class Focus implements Localizable {
 		return icon;
 	}
 
+	/**
+	 * When printing this focus, or otherwise using {@code toString()}, return the
+	 * focus ID. 
+	 * @return
+	 */
 	public String toString() {
 		return id();
 	}
