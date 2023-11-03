@@ -6,8 +6,8 @@ public class AirModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.air;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.air;
 	}
 
 	public enum modifiers {

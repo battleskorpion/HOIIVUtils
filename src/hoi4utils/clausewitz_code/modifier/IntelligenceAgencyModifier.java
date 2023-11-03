@@ -6,8 +6,8 @@ public class IntelligenceAgencyModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.intelligence_agency;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.intelligence_agency;
 	}
 
 	public enum modifiers {

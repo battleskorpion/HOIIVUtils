@@ -7,8 +7,8 @@ public class AggressiveModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.aggressive;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.aggressive;
 	}
 
 	public enum modifiers {

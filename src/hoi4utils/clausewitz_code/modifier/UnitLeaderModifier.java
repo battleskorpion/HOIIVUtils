@@ -6,8 +6,8 @@ public class UnitLeaderModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.unit_leader;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.unit_leader;
 	}
 
 	public enum modifiers {

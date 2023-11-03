@@ -7,8 +7,8 @@ public class PeaceModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.peace;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.peace;
 	}
 
 	public enum modifiers {

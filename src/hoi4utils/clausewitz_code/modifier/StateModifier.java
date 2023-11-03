@@ -6,8 +6,8 @@ public class StateModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.state;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.state;
 	}
 
 	public enum modifiers {

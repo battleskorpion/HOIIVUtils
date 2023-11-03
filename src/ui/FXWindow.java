@@ -42,9 +42,9 @@ public interface FXWindow {
 	 * @see File
 	 * @see Node
 	 */
-	default File openChooser(Node node, boolean ford, File initialDirectory) {
+	default File openChooser(Node fxcomponent, boolean ford, File initialDirectory) {
 		File theChosenOne;
-		Stage stage = (Stage) (node.getScene().getWindow());
+		Stage stage = (Stage) (fxcomponent.getScene().getWindow());
 		if (ford) {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 			if (initialDirectory.exists() && initialDirectory.isDirectory()) {
@@ -67,13 +67,13 @@ public interface FXWindow {
 
 	/**
 	 * Opens windows file and directory chooser
+	 * <p>
+	 * For if you don't want to set a initial directory
 	 *
 	 * @param fxcomponent The node (javafx component) that was pressed to open the chooser, must belong to a scene
 	 * @param ford        A quirky boolean that specifies whether you want to return a directory or file: true = return directory, false = return file
 	 * @return theChosenOne, It is up to the the page to handle what you do if the user returns a null
 	 * @see Node
-	 * <p>
-	 * For if you don't want to set a initial directory
 	 */
 	default File openChooser(Node fxcomponent, Boolean ford) {
 		return openChooser(fxcomponent, ford, FileUtils.usersDocuments);

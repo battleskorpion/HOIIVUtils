@@ -18,6 +18,7 @@ import ui.hoi4localization.CustomTooltipWindow;
 import ui.hoi4localization.FocusLocalizationWindow;
 import ui.hoi4localization.IdeaLocalizationWindow;
 import ui.hoi4localization.UnlocalizedFocusWindow;
+import ui.map.MapGenerationWindow;
 import ui.parser.ParserViewerWindow;
 import ui.settings.SettingsController;
 import ui.statistics.StatisticsController;
@@ -133,6 +134,11 @@ public class MenuController extends Application implements FXWindow {
 
 	public void openFocusTreeViewer() {
 		FocusTreeWindow window = new FocusTreeWindow();
+		window.open();
+	}
+
+	public void openMapGeneration() {
+		MapGenerationWindow window = new MapGenerationWindow();
 		window.open();
 	}
 

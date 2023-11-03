@@ -6,8 +6,8 @@ public class DefensiveModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.defensive;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.defensive;
 	}
 
 	public enum modifiers {

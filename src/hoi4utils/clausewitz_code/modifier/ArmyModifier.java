@@ -6,8 +6,8 @@ public class ArmyModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.army;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.army;
 	}
 
 	public enum modifiers {

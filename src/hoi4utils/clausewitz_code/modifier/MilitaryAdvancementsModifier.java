@@ -6,8 +6,8 @@ public class MilitaryAdvancementsModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.military_advancements;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.military_advancements;
 	}
 
 	public enum modifiers {

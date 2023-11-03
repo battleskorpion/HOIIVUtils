@@ -1,7 +1,10 @@
 package hoi4utils.map.province;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
+import java.io.File;
+import java.io.IOException;
 
 public class Heightmap extends BufferedImage {
 	/**
@@ -33,6 +36,10 @@ public class Heightmap extends BufferedImage {
 	public Heightmap(BufferedImage temp) {
 		super(temp.getWidth(), temp.getHeight(), temp.getType());
 		this.getGraphics().drawImage(temp, 0, 0, null);
+	}
+
+	public Heightmap(File file) throws IOException {
+		this(ImageIO.read(file));
 	}
 
 //	/**

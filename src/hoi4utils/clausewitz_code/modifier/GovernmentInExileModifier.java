@@ -6,8 +6,8 @@ public class GovernmentInExileModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.government_in_exile;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.government_in_exile;
 	}
 
 	public enum modifiers {

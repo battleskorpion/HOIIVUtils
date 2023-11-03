@@ -1,6 +1,6 @@
 package hoi4utils.clausewitz_code.trigger;
 
-import hoi4utils.clausewitz_code.scope.ScopeTargetType;
+import hoi4utils.clausewitz_code.scope.ScopeType;
 
 import java.util.EnumSet;
 
@@ -550,8 +550,8 @@ public enum CountryTrigger implements Trigger {
 	}
 
 	@Override
-	public ScopeTargetType scopeTargetType() {
-		return ScopeTargetType.COUNTRY;
+	public ScopeType scopeTargetType() {
+		return ScopeType.COUNTRY;
 	}
 
 	@Override

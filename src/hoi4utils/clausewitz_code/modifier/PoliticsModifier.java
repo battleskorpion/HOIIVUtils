@@ -6,8 +6,8 @@ public class PoliticsModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.politics;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.politics;
 	}
 
 	public enum modifiers {

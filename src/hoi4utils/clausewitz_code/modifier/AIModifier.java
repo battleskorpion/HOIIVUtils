@@ -6,8 +6,8 @@ public class AIModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.ai;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.ai;
 	}
 
 	public enum modifiers {

@@ -232,7 +232,7 @@ public class Focus implements Localizable {
 
 		setID(exp.getValue("id").string());
 		setXY(exp.getValue("x").integer(), exp.getValue("y").integer());
-		setRelativePositionID(exp.getValue("relative_position_id").string()); // todo need Optional for easier null handling probably
+		setRelativePositionID(exp.getValue("relative_position_id").string());
 		// setFocusLoc();
 		setIcon(exp.getValue("icon").string());
 		setCost(exp.getValue("cost").rational());
@@ -514,7 +514,7 @@ public class Focus implements Localizable {
 				String prereq = prereqNode.value().string();
 
 				if (focusTree.getFocus(prereq) != null) {
-					subset.add(focusTree.getFocus(prereq)); // todo error check someday
+					subset.add(focusTree.getFocus(prereq)); // todo 'error' (not us?) check someday
 				} else {
 					addPendingFocusReference(prereq, this::setPrerequisite, exps);
 				}

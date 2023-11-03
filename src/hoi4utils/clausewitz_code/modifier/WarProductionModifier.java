@@ -6,8 +6,8 @@ public class WarProductionModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.war_production;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.war_production;
 	}
 
 	public enum modifiers {

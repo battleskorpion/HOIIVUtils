@@ -6,8 +6,8 @@ public class CountryModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.country;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.country;
 	}
 	
 	public enum modifiers {

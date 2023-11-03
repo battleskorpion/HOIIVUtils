@@ -7,8 +7,8 @@ public class NavalModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.naval;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.naval;
 	}
 
 	public enum modifiers {

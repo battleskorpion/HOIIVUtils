@@ -6,8 +6,8 @@ public class AutonomyModifier implements Modifier {
 	}
 
 	@Override
-	public Scope getScope() {
-		return Scope.autonomy;
+	public ModifierCategory getCategory() {
+		return ModifierCategory.autonomy;
 	}
 
 	public enum modifiers {

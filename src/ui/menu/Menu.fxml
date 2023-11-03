@@ -35,7 +35,7 @@
 	  <Button fx:id="viewBuilding" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openBuildingsByCountry" prefWidth="400.0" text="%country.data.view" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
 	  <Button fx:id="focusTreeViewButton" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openFocusTreeViewer" prefWidth="400.0" text="%focus_tree.view" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
 	  <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="%map.gen.province.colors" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
-	  <Button disable="true" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="400.0" text="%map.gen" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
+	  <Button maxWidth="-Infinity" mnemonicParsing="false" onAction="#openMapGeneration" prefWidth="400.0" text="%map.gen" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
 	  <Button fx:id="statisticsButton" mnemonicParsing="false" onAction="#openStatistics" text="Statistics" GridPane.columnIndex="2" />
 	  <Button fx:id="viewGFX" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openInterfaceFileList" prefWidth="400.0" text="%gfx.view" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
       <Button fx:id="consoleButton" mnemonicParsing="false" onAction="#openConsole" text="Console" GridPane.columnIndex="2">
