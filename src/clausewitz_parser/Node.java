@@ -47,6 +47,7 @@ public class Node implements NodeStreamable<Node> {
 		return name;
 	}
 
+	@NotNull
 	public NodeValue value() {
 		return value;
 	}
@@ -159,5 +160,9 @@ public class Node implements NodeStreamable<Node> {
 
 	public boolean isParent() {
 		return value().isList();
+	}
+
+	public boolean valueIsNull() {
+		return value().valueObject() == null;
 	}
 }

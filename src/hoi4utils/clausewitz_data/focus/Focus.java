@@ -1,6 +1,8 @@
 package hoi4utils.clausewitz_data.focus;
 
 import hoi4utils.Settings;
+import hoi4utils.clausewitz_code.effect.Effect;
+import hoi4utils.clausewitz_code.scope.Scope;
 import hoi4utils.clausewitz_data.Localizable;
 import hoi4utils.clausewitz_code.trigger.Trigger;
 import hoi4utils.clausewitz_data.gfx.Interface;
@@ -56,9 +58,11 @@ public class Focus implements Localizable {
 	protected boolean continue_if_invalid;
 	// private AIWillDo ai_will_do; // todo
 	// select effect
-	// completion award
 
-	/* variables */
+	/**
+	 * completion raward
+	 */
+	protected List<Effect> completionReward;
 
 	/**
 	 * Set of the focus id's this focus is still attempting to reference (but may not be loaded/created yet).
@@ -239,6 +243,7 @@ public class Focus implements Localizable {
 		setPrerequisite(exp.filterName("prerequisite").toList());
 		setMutuallyExclusive(exp.filterName("mutually_exclusive").toList());
 		setAvailable(exp.findFirst("available"));
+		setCompletionReward(exp.findFirst("completion_reward"));
 	}
 
 	public Expression getFocusExpression() {
@@ -759,9 +764,37 @@ public class Focus implements Localizable {
 		return details.toString();
 	}
 
-
 	public Set<Focus> getMutuallyExclusive() {
 		return mutually_exclusive;
+	}
+
+	public List<Effect> completionReward() {
+		return completionReward;
+	}
+
+	public void setCompletionReward(List<Effect> completionReward) {
+		this.completionReward = completionReward;
+	}
+
+	public void setCompletionReward(Node completionRewardNode) {
+		completionReward = new ArrayList<>();
+		if (completionRewardNode.valueIsNull()) {
+			return;   // keep newly set empty list, showing completion reward
+					  // was defined but had no effects
+		}
+
+		String cr_identifier = completionRewardNode.name;
+
+		System.out.println("focus: ");
+		Scope scope = Scope.of()
+		for (Node n : completionRewardNode.value().list()) {
+			System.out.println("\t" + n.name);
+			/* check if its a deeper scope first */
+
+
+			/* else add effect? */
+			//Effect effect = Effect.of(n.name, scope)  // todo
+		}
 	}
 }
 

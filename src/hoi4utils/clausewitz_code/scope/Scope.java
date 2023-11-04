@@ -24,6 +24,7 @@ public class Scope {
 		this.fromScopeAllowed = fromScopeAllowed;
 		this.targetScopeAllowed = targetScopeAllowed;
 		this.scopeCategory = scopeCategory;
+
 		scopes.put(name, this);
 	}
 
@@ -37,7 +38,7 @@ public class Scope {
 		this(name, EnumSet.of(fromScopeAllowed), targetScopeAllowed, scopeCategory);
 	}
 
-	public Scope of(String name, ScopeType from, ScopeType target) throws Exception {
+	public static Scope of(String name, ScopeType from, ScopeType target) throws Exception {
 		Scope scope = scopes.get(name);
 		scope.setFrom(from);
 		scope.setTarget(target);
