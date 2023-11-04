@@ -1,5 +1,6 @@
 package hoi4utils;
 
+import hoi4utils.clausewitz_code.effect.EffectDatabase;
 import hoi4utils.clausewitz_code.modifier.ModifierDatabase;
 import ui.menu.MenuController;
 import ui.settings.SettingsController;
@@ -22,6 +23,7 @@ public class HOIIVUtils {
 
 		/* preprocessing which doesn't require settings */
 		ModifierDatabase mdb = new ModifierDatabase();  // load modifiers
+		EffectDatabase edb = new EffectDatabase();      // load effects
 		
 		if (Boolean.TRUE.equals(firstTimeSetup)) {
 			System.out.println("HOIIVUtils launched stage settings cuz it was first time setup");

@@ -22,4 +22,22 @@ public enum ScopeType {
 	mio,
 	contract,
 	UNKNOWN,
+	/* special */
+	self,       // = "this".... ah java ....
+	root,
+	from,
+	prev,
+	owner,
+	controller,
+	occupied,
+	capital,
+	strategic_region;
+
+	public static ScopeType valueFromString(String str) {
+		if ("this".equals(str)) {
+			return self;
+		} else {
+			return valueOf(str);
+		}
+	}
 }
