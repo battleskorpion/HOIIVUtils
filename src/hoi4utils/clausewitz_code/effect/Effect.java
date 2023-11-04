@@ -25,14 +25,26 @@ public class Effect {
 		this.supportedTargets = supportedTargets;
 
 		effects.put(identifier, this);
+		System.out.println("effect: " + identifier);
 	}
 
 	public Effect(String identifier, EnumSet<ScopeType> supportedScopes) {
 		this(identifier, supportedScopes, null);
 	}
 
-		public static Effect of(String identifier) {
-		return effects.get(identifier);
+	public static Effect of(String identifier, ScopeType scope, ScopeType targetScope) {
+		Effect effect = effects.get(identifier);
+		if (!effect.supportedScopes.contains(scope)) {
+			System.err.println("Effect was not returned: " + identifier
+					+ " does not support scope " + targetScope);
+			return null;
+		}
+		if (effect.supportedTargets != null && !effect.supportedTargets.contains(targetScope)) {
+			System.err.println("Effect was not returned: " + identifier
+					+ " does not support target scope " + targetScope);
+			return null;
+		}
+		return effect;
 	}
 
 	public String identifier() {
