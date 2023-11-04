@@ -551,7 +551,7 @@ public enum CountryTrigger implements Trigger {
 
 	@Override
 	public ScopeType scopeTargetType() {
-		return ScopeType.COUNTRY;
+		return ScopeType.country;
 	}
 
 	@Override

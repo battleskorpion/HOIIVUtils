@@ -1,5 +1,6 @@
 package hoi4utils;
 
+import hoi4utils.clausewitz_code.modifier.ModifierDatabase;
 import ui.menu.MenuController;
 import ui.settings.SettingsController;
 
@@ -18,6 +19,9 @@ public class HOIIVUtils {
 		SettingsManager.getSavedSettings();
 
 		HOIIVUtilsLog.startLog();
+
+		/* preprocessing which doesn't require settings */
+		ModifierDatabase mdb = new ModifierDatabase();  // load modifiers
 		
 		if (Boolean.TRUE.equals(firstTimeSetup)) {
 			System.out.println("HOIIVUtils launched stage settings cuz it was first time setup");

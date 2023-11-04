@@ -11,14 +11,15 @@ package hoi4utils.clausewitz_code.scope;
  * <a href="https://hoi4.paradoxwikis.com/Scopes">Hoi4 Wiki</a>
  */
 public enum ScopeType {
-	ANY,
-	COUNTRY,
-	STATE,
-	CHARACTER,  //  subsets inc. LEADER, OPERATIVE,
-	LEADER,
-	OPERATIVE,
-	DIVISION,
-	MIO,
-	CONTRACT,
+	any,
+	country,
+	combatant,  // todo is this a more specific country subset?
+	state,
+	character,  // todo subsets inc. LEADER, OPERATIVE,
+	leader,
+	operative,
+	division,
+	mio,
+	contract,
 	UNKNOWN,
 }
