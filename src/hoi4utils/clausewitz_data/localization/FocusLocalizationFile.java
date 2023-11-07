@@ -283,7 +283,6 @@ public class FocusLocalizationFile extends LocalizationFile {
 			if (locList.get(1).ID().equals(ID)) {
 				return locList.get(1);
 			}
-			System.out.println(locList.get(1).ID());
 		}
 
 		return null;

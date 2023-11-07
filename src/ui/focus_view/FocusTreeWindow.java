@@ -9,6 +9,7 @@ package ui.focus_view;
 //import hoi4utils.ddsreader.DDSReader;
 
 import hoi4utils.HOIIVFile;
+import hoi4utils.Settings;
 import hoi4utils.clausewitz_data.country.CountryTag;
 import hoi4utils.clausewitz_data.focus.FixFocus;
 import hoi4utils.clausewitz_data.focus.Focus;
@@ -28,6 +29,7 @@ import javafx.scene.paint.Color;
 import javafx_utils.JavaFXImageUtils;
 import ui.HOIUtilsWindow;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -109,6 +111,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		GraphicsContext gc2D = focusTreeCanvas.getGraphicsContext2D();
 
 		int minX = -focusTree.minX();       // todo
+//		JOptionPane.showMessageDialog(null, minX);
 		double width = focusTreeCanvas.getWidth();
 		double height = focusTreeCanvas.getHeight();
 		gc2D.setFill(Color.DARKGRAY);
@@ -156,7 +159,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 						int linex4 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2);
 						int linex3 = linex4;
 						int liney3 = liney2;
-
 
 						gc2D.strokeLine(linex1, liney1, linex2, liney2);
 						gc2D.strokeLine(linex2, liney2, linex3, liney3);

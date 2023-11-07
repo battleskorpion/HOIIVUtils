@@ -98,9 +98,23 @@ public final class NodeValue {
 		throw new IllegalStateException("Expected NodeValue to be a Node");
 	}
 
+	public String asString() {
+		if (value instanceof String) {
+			return (String) value;
+		}
+		if (value == null) return "[null]";
+		if (value instanceof Integer) return Integer.toString((int) value);
+		if (value instanceof Double) return Double.toString((double) value);
+		if (value instanceof Number) return Long.toString((long) value);    // sure why not
+		if (value instanceof List<?>) return "[list]";                      // sure why not
+		if (value instanceof Node) return ((Node) value).toString();
+		return "[invalid type]";
+	}
+
 	public boolean isList() {
 		return value instanceof List<?>;
 	}
+
 
 	// todo check allowables
 }

@@ -131,7 +131,6 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
 			if (tooltipLocalization == null) {
 				return;
 			}
-			System.out.println(tooltipLocalization);
 
 			tooltip.setLocalization(tooltipLocalization);
 		}

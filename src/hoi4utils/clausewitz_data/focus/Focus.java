@@ -3,6 +3,7 @@ package hoi4utils.clausewitz_data.focus;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_code.effect.Effect;
 import hoi4utils.clausewitz_code.scope.Scope;
+import hoi4utils.clausewitz_code.scope.ScopeType;
 import hoi4utils.clausewitz_data.Localizable;
 import hoi4utils.clausewitz_code.trigger.Trigger;
 import hoi4utils.clausewitz_data.gfx.Interface;
@@ -759,8 +760,19 @@ public class Focus implements Localizable {
 			}
 		}
 
-		/* completion reward */
-		details.append("\n\nEffect: \n");
+		if(hasCompletionReward()) {
+			/* completion reward */
+			details.append("\nEffect: \n");
+			for (Effect effect : completionReward) {
+				details.append("\t");
+				details.append(effect.name());
+				if (effect.value() != null) {
+					details.append(" = ");
+					details.append(effect.value());
+				}
+				details.append("\n");
+			}
+		}
 		return details.toString();
 	}
 
@@ -776,6 +788,11 @@ public class Focus implements Localizable {
 		this.completionReward = completionReward;
 	}
 
+	/**
+	 * todo stuff
+	 * @param completionRewardNode format: "completion_reward = { ... }"
+	 *                             (assumed to be correct)
+	 */
 	public void setCompletionReward(Node completionRewardNode) {
 		completionReward = new ArrayList<>();
 		if (completionRewardNode.valueIsNull()) {
@@ -785,17 +802,48 @@ public class Focus implements Localizable {
 
 		String cr_identifier = completionRewardNode.name;
 
-		System.out.println("focus: ");
-		Scope scope = Scope.of()
+//		System.out.println("focus: ");
 		for (Node n : completionRewardNode.value().list()) {
-			System.out.println("\t" + n.name);
+			Scope scope = Scope.of(this.focusTree.country());
+
+//			System.out.println("\t" + n.name);
 			/* check if its a deeper scope first */
-
-
-			/* else add effect? */
-			//Effect effect = Effect.of(n.name, scope)  // todo
+			if (n.value().isList()) {
+				// todo
+			} else if (!n.valueIsNull()){
+				/* else if target, add effect with target */
+				Effect effect = Effect.of(n.name, scope);  // todo
+				if (effect == null) {
+					System.err.println("effect not found: " + n.name);
+					continue;
+				}
+				if (effect.hasSupportedTargets()) {
+					try {
+						effect.setTarget(n.value().string(), scope);
+					} catch (Exception e) {
+						throw new RuntimeException(e); // todo
+					}
+				}
+				effect.setValue(n.value());
+				completionReward.add(effect);
+			} else {
+				/* else add effect */
+				Effect effect = Effect.of(n.name, scope);  // todo
+				if (effect == null) {
+					System.err.println("effect not found: " + n.name);
+					continue;
+				}
+				effect.setTarget(scope);
+				completionReward.add(effect);
+			}
 		}
 	}
+
+	private boolean hasCompletionReward() {
+		return (completionReward != null && !completionReward.isEmpty());
+	}
+
+
 }
 
 

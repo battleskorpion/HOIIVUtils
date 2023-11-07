@@ -108,13 +108,13 @@ public class LocalizationFile extends File {
 						text = text.substring(0, text.length() - 1);
 					}
 					if (text.isEmpty()) {
-						//continue;                   // NO WHY WOULD WE DO THIS AAAAAAAAAA EMPTY LOCALIZATION SOMETIMES IS FINE
+						//continue;                   // NO WHY WOULD WE DO THIS AAAAAAAAAA EMPTY LOCALIZATION SOMETIMES IS FINE*
 					}
 					text = text.replaceAll("(Â§)", "§");
 					Localization localization = new Localization(id, text, Localization.Status.EXISTS);
 					localizationList.add(localization);
 					// print to statistics?
-					System.out.println("localization: " + text);
+//					System.out.println("localization: " + text);
 				} else if (data.contains(":")) {
 					System.err.println("Fix incorrect loc key: " + data);
 //					System.exit(-1);
@@ -220,7 +220,6 @@ public class LocalizationFile extends File {
 			if (loc.ID().equals(ID)) {
 				return loc;
 			}
-			System.out.println(loc.ID());
 		}
 
 		return null;
