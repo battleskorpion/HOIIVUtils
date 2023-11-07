@@ -54,24 +54,18 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		setTitle("Focus Tree View");
 	}
 
+	private int getMinX() {
+		return focusTree.minX();
+	}
+
 	int getMaxX(){
-		int max = 0;
-
-		for (Focus focus : focusTree.focuses()){
-			if (focus.absoluteX() > max)
-				max = focus.absoluteX();
-		}
-		return max * FOCUS_X_SCALE + 150;
+		return focusTree.focuses().stream().mapToInt(Focus::absoluteX).max().orElse(200);
 	}
+
 	int getMaxY(){
-		int max = 0;
-
-		for (Focus focus : focusTree.focuses()){
-			if (focus.absoluteY() > max)
-				max = focus.absoluteY();
-		}
-		return max * FOCUS_Y_SCALE;
+		return focusTree.focuses().stream().mapToInt(Focus::absoluteY).max().orElse(200);
 	}
+
 	@FXML
 	void initialize() {
 		focusTree = FocusTree.get(new CountryTag("SMA"));
@@ -88,8 +82,8 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		}
 
 		/* focus tree canvas */
-		focusTreeCanvas.setWidth(getMaxX());
-		focusTreeCanvas.setHeight(getMaxY());
+		focusTreeCanvas.setWidth((getMaxX() + -getMinX()) * FOCUS_X_SCALE + 150);
+		focusTreeCanvas.setHeight((getMaxY() * FOCUS_Y_SCALE));
 
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(true);
@@ -100,6 +94,9 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 		drawFocusTree(focusTree);
 	}
+
+
+
 	public Canvas focusTreeCanvas() {
 		return focusTreeCanvas;
 	}
@@ -110,7 +107,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 		GraphicsContext gc2D = focusTreeCanvas.getGraphicsContext2D();
 
-		int minX = -focusTree.minX();       // todo
+		int minX = -getMinX();       // todo
 //		JOptionPane.showMessageDialog(null, minX);
 		double width = focusTreeCanvas.getWidth();
 		double height = focusTreeCanvas.getHeight();

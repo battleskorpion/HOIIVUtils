@@ -93,7 +93,7 @@ public class FocusTree implements Localizable {
 
 		/* focuses */
 		List<Focus> focuses = getFocuses(focusTreeNode);
-		minX = focuses.stream().mapToInt(Focus::x).min().orElse(0);
+		minX = focuses.stream().mapToInt(Focus::absoluteX).min().orElse(0);
 
 //		focus_names = new ArrayList<>();
 //		focus_names.addAll(focuses.parallelStream()
