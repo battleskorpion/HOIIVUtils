@@ -83,7 +83,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 		/* focus tree canvas */
 		focusTreeCanvas.setWidth((getMaxX() + -getMinX()) * FOCUS_X_SCALE + 150);
-		focusTreeCanvas.setHeight((getMaxY() * FOCUS_Y_SCALE));
+		focusTreeCanvas.setHeight((getMaxY() * FOCUS_Y_SCALE) + (FOCUS_Y_SCALE * 2));
 
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(true);
