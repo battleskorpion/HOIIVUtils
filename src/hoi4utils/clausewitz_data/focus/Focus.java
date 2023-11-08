@@ -730,6 +730,11 @@ public class Focus implements Localizable {
 
 	}
 
+	/**
+	 *
+	 * @return String representing focus completion reward effects,
+	 * with custom tooltips, not including hidden effects,
+	 */
 	@NotNull
 	public String getFocusDetails() {
 		NumberFormat df = DecimalFormat.getIntegerInstance();
@@ -765,6 +770,10 @@ public class Focus implements Localizable {
 			details.append("\nEffect: \n");
 			for (Effect effect : completionReward) {
 				details.append("\t");
+				if (effect.hasTarget() && !effect.isScope(Scope.of(this.focusTree.country()))) {
+					details.append(effect.target());
+					details.append("\t");
+				}
 				details.append(effect.name());
 				if (effect.value() != null) {
 					details.append(" = ");
@@ -830,6 +839,7 @@ public class Focus implements Localizable {
 				/* else add effect */
 				Effect effect = Effect.of(n.name, scope);  // todo
 				if (effect == null) {
+
 					System.err.println("effect not found: " + n.name);
 					continue;
 				}

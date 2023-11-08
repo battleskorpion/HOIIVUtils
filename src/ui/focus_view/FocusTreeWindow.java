@@ -193,7 +193,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	}
 
 
-
+;
 	@FXML
 	public void mouseMovedFocusTreeViewAdapter(MouseEvent e) {
 		/* get focus being hovered over */

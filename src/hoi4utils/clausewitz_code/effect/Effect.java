@@ -126,4 +126,23 @@ public class Effect {
 		}
 		return value.asString();
 	}
+
+	public boolean isScope(Scope of) {
+		return targetScope != null && targetScope.name.equals(of.name);
+	}
+
+	public Scope targetScope() {
+		return targetScope;
+	}
+
+	public String target() {
+		if (targetScope == null) {
+			return "[null target]";
+		}
+		return targetScope.name;
+	}
+
+	public boolean hasTarget() {
+		return targetScope != null;
+	}
 }
