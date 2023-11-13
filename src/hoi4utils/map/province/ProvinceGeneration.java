@@ -1,12 +1,14 @@
 package hoi4utils.map.province;
 
 import hoi4utils.map.*;
+import hoi4utils.map.seed.*;
 import opensimplex2.OpenSimplex2;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
@@ -27,6 +29,8 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	private BorderMapping<MapPoint> stateMapList;
 	private Heightmap heightmap;
 	private SeedGeneration seedGeneration;
+	/** threadLimit = 0: max (use all processors/threads). */
+	private int threadLimit = 0;
 
 	public static void main(String[] args) {
 		ProvinceGeneration provinceGeneration = new ProvinceGeneration();
@@ -81,13 +85,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	 * values - load heightmap, states map
 	 */
 	private Heightmap loadHeightmap(String heightmapName) {
-//		try {
-//			values.heightmap = ImageIO.read(new File(values.heightmapName));    		// loadBMPImage("heightmap.bmp");
-//			stateBorderMap = ImageIO.read(new File(values.stateBordersName));    // loadBMPImage("state_borders.bmp");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			return;
-//		}
 //		values.imageWidth = values.heightmap.getWidth();
 //		values.imageHeight = values.heightmap.getHeight(); 	// may break things but good idea
 		try {
@@ -108,7 +105,12 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 
 	private void executeProvinceDetermination() {
 		ForkColorDetermination forkColorDetermination = new ForkColorDetermination(provinceMap, heightmap);
-		ForkJoinPool forkJoinPool = new ForkJoinPool();
+		ForkJoinPool forkJoinPool;
+		if (threadLimit == 0) {
+			forkJoinPool = new ForkJoinPool();
+		} else {
+			forkJoinPool = new ForkJoinPool(threadLimit);
+		}
 		try {
 			forkJoinPool.invoke(forkColorDetermination);
 		}
@@ -125,7 +127,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 
 	private int offsetWithNoise(int offsetPotential, int seed, int x, int y) {
 		double noise = simplexNoise2(seed, x, y, OFFSET_NOISE_MODIFIER);     //multiplier try (2.0f / offsetPotential)
-//		System.out.println(offsetPotential * noise);
 //		long roundedNoise = Math.round(noise); // Round to the nearest integer        // may lead to more even distribution when int cast occurs.
 		return (int) (offsetPotential * noise);
 	}
@@ -145,30 +146,22 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	 * @param seeds
 	 * @return
 	 */
-	private static int determineColor(int x, int y, final Collection<MapPoint> seeds)
-	{
-		int nearestColor = values.rgb_white;            // color of nearest seed (int value)
+	private static int determineColor(int x, int y, final Collection<MapPoint> seeds) {
 		// (default white)
+		int nearestColor = values.rgb_white;     // color of nearest seed (int value)
 		int dist = Integer.MAX_VALUE;            // select a big number
 
-		//Point point = new Point(x + xOffset, y + yOffset);
-
-		//determineClosestPoint(point, seedsRGBValue);
-
-		// iterate through each seed
-		//for (int s = 0; s < seeds.size(); s++) {
-//		for (Iterator<Point> pointIterator = seedsRGBValue.keySet().iterator(); pointIterator.hasNext(); ) {
+		// todo stream operation?
 		for (MapPoint point : seeds) {
 			// calculate the difference in x and y direction
 			int xdiff = point.x - x;
 			int ydiff = point.y - y;
 
-			// calculate current Euclidean distance, sqrt is not needed
-			// because we only compare and do not need the real value
+			// calculate current squared Euclidean distance, for comparing only
 			int cdist = xdiff * xdiff + ydiff * ydiff;
 
 			if (cdist < dist) {
-				nearestColor = point.rgb();        // index 2 is rgb int value of seed // seeds.get(s).get(2)
+				nearestColor = point.rgb();
 				dist = cdist;
 			}
 		}
@@ -180,27 +173,8 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		return determineColor(x + xOffset, y + yOffset, mapPoints);
 	}
 
-	//	/**
-//	 * note: can/should seed generation be used for some other stuff as well ie state gen (as in, when doing only state gen?, etc.) not sure.
-//	 */
-//	private class SeedGeneration {
-//		// todo use enum set here, constructor etc.
-//		// ? different seed generation types in different classes with interface??? and/or abstract class
-////		private void seedGeneration(Heightmap heightmap) {
-////			this.heightmap = heightmap;z
-////			if(values.generationType == ProvinceGenerationType.GRID_SEED) {
-////				gridSeedGeneration();
-////			} else if(values.generationType == ProvinceGenerationType.DYNAMIC) {
-////				dynamicSeedGeneration();
-////			} else {
-////				System.out.println("HELP");
-////			}
-////		}
-//
-//	}
-
 	/**
-	 * Pixel color determination using {@link RecursiveAction} for multithreading efficency.
+	 * Pixel color determination using {@link RecursiveAction} for multithreading efficiency.
 	 *
 	 * @see RecursiveAction
 	 * @see OpenSimplex2
@@ -210,8 +184,10 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		/**
 		 * Auto-generated serialVersionUID
 		 */
+		@Serial
 		private static final long serialVersionUID = 7925866053687723919L;
-		public static final float OFFSET_NOISE_MODIFIER = 1.0f;        /* float datatype is used by simplex noise, and may improve performance over double */
+		/** float datatype is used by simplex noise, and may improve performance over double */
+		public static final float OFFSET_NOISE_MODIFIER = 1.0f;
 		protected static int splitThreshold = 16;       // was 8
 		private static final int seed;
 
@@ -283,8 +259,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 			final int widthPerSeed = heightmap.getWidth()  / values.numSeedsX;
 			final int heightPerSeed = heightmap.getHeight() / values.numSeedsY;
 			final int offsetPotential = 4;
-//			Random random = new Random();
-//			int seed = random.nextInt();
 			System.out.println("run: " + startY + ", " + endY);
 
 //			if (widthPerSeed < heightPerSeed) {

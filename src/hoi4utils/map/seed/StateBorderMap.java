@@ -1,4 +1,4 @@
-package hoi4utils.map;
+package hoi4utils.map.seed;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;

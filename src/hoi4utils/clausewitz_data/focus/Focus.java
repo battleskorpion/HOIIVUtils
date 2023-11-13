@@ -3,7 +3,6 @@ package hoi4utils.clausewitz_data.focus;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_code.effect.Effect;
 import hoi4utils.clausewitz_code.scope.Scope;
-import hoi4utils.clausewitz_code.scope.ScopeType;
 import hoi4utils.clausewitz_data.Localizable;
 import hoi4utils.clausewitz_code.trigger.Trigger;
 import hoi4utils.clausewitz_data.gfx.Interface;
@@ -15,9 +14,8 @@ import hoi4utils.ddsreader.DDSReader;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
-import javafx_utils.JavaFXImageUtils;
+import ui.javafx.image.JavaFXImageUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
 import ui.FXWindow;
 
 import java.awt.*;

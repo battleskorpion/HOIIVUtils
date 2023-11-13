@@ -1,4 +1,4 @@
-package javafx_utils;
+package ui.javafx.image;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;

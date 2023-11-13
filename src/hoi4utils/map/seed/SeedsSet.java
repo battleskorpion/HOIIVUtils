@@ -1,4 +1,6 @@
-package hoi4utils.map;
+package hoi4utils.map.seed;
+
+import hoi4utils.map.MapPoint;
 
 import java.awt.*;
 import java.util.*;

@@ -1,4 +1,4 @@
-package hoi4utils.map.province;
+package hoi4utils.map.seed;
 
 import hoi4utils.map.Heightmap;
 

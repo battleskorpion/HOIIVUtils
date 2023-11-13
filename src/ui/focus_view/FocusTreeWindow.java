@@ -1,15 +1,6 @@
 package ui.focus_view;
 
-//package ui.focus_view;
-//
-//import hoi4utils.HOIIVFile;
-//import hoi4utils.clausewitz_data.country.CountryTag;
-//import hoi4utils.clausewitz_data.focus.Focus;
-//import hoi4utils.clausewitz_data.focus.FocusTree;
-//import hoi4utils.ddsreader.DDSReader;
-
 import hoi4utils.HOIIVFile;
-import hoi4utils.Settings;
 import hoi4utils.clausewitz_data.country.CountryTag;
 import hoi4utils.clausewitz_data.focus.FixFocus;
 import hoi4utils.clausewitz_data.focus.Focus;
@@ -26,10 +17,9 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx_utils.JavaFXImageUtils;
+import ui.javafx.image.JavaFXImageUtils;
 import ui.HOIUtilsWindow;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

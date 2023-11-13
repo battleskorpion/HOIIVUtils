@@ -1,7 +1,8 @@
-package hoi4utils.map;
+package hoi4utils.map.seed;
 
-import hoi4utils.map.province.BorderMap;
-import hoi4utils.map.province.BorderMapping;
+import hoi4utils.map.AbstractMapGeneration;
+import hoi4utils.map.Heightmap;
+import hoi4utils.map.MapPoint;
 
 public abstract class AbstractSeedGeneration extends AbstractMapGeneration implements SeedGeneration {
 	protected Heightmap heightmap; // should always need a heightmap, simple way differentiate water and land.

@@ -1,4 +1,8 @@
-package hoi4utils.map;
+package hoi4utils.map.seed;
+
+import hoi4utils.map.Heightmap;
+import hoi4utils.map.MapPoint;
+import hoi4utils.map.values;
 
 import java.util.Random;
 

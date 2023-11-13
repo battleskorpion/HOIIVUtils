@@ -1,7 +1,4 @@
-package hoi4utils.map;
-
-import hoi4utils.map.province.BorderMap;
-import hoi4utils.map.province.BorderMapping;
+package hoi4utils.map.seed;
 
 public interface SeedGeneration {
 	void generate();

@@ -1,5 +1,7 @@
-package hoi4utils.map;
+package hoi4utils.map.seed;
 
+import hoi4utils.map.Heightmap;
+import hoi4utils.map.values;
 import opensimplex2.OpenSimplex2;
 
 import java.util.Random;
