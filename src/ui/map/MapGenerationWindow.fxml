@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
@@ -17,7 +18,7 @@
    <children>
       <TabPane layoutX="14.0" layoutY="8.0" prefHeight="330.0" prefWidth="477.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
-          <Tab text="Untitled Tab 1">
+          <Tab text="Heightmap">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -54,11 +55,44 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-          <Tab text="Untitled Tab 2">
+          <Tab text="Terrain">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
             </content>
           </Tab>
+            <Tab text="State Borders">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
+            <Tab text="Province.bmp">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <GridPane layoutX="152.0" layoutY="96.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="485.0" minWidth="10.0" prefWidth="406.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.0" minWidth="10.0" prefWidth="194.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="202.0" minHeight="0.0" prefHeight="60.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="202.0" minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="308.0" minHeight="9.0" prefHeight="236.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="321.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Button maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Generate" GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                 </GridPane.margin>
+                              </Button>
+                              <ChoiceBox maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" />
+                           </children>
+                        </GridPane>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
         </tabs>
       </TabPane>
    </children>

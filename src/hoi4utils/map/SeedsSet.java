@@ -1,7 +1,5 @@
 package hoi4utils.map;
 
-import hoi4utils.map.province.MapPoint;
-
 import java.awt.*;
 import java.util.*;
 

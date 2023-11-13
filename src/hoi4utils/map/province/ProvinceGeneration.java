@@ -168,7 +168,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 			int cdist = xdiff * xdiff + ydiff * ydiff;
 
 			if (cdist < dist) {
-				nearestColor = point.rgb;        // index 2 is rgb int value of seed // seeds.get(s).get(2)
+				nearestColor = point.rgb();        // index 2 is rgb int value of seed // seeds.get(s).get(2)
 				dist = cdist;
 			}
 		}

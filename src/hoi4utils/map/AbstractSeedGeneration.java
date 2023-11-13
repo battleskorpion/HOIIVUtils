@@ -1,8 +1,6 @@
 package hoi4utils.map;
 
 import hoi4utils.map.province.BorderMap;
-import hoi4utils.map.province.Heightmap;
-import hoi4utils.map.province.MapPoint;
 import hoi4utils.map.province.BorderMapping;
 
 public abstract class AbstractSeedGeneration extends AbstractMapGeneration implements SeedGeneration {

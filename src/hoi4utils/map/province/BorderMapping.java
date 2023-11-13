@@ -1,5 +1,6 @@
 package hoi4utils.map.province;
 
+import hoi4utils.map.MapPoint;
 import hoi4utils.map.SeedsSet;
 
 import java.util.*;

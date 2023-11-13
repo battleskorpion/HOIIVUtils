@@ -1,5 +1,7 @@
 package hoi4utils.map.province;
 
+import hoi4utils.map.Heightmap;
+
 import java.awt.image.*;
 import java.util.Hashtable;
 

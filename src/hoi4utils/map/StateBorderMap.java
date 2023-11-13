@@ -1,4 +1,4 @@
-package hoi4utils.map.province;
+package hoi4utils.map;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;

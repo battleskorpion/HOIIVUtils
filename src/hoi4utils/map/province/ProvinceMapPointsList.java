@@ -1,7 +1,6 @@
 package hoi4utils.map.province;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import hoi4utils.map.MapPoint;
 
 public class ProvinceMapPointsList {
 	/**
@@ -57,6 +56,6 @@ public class ProvinceMapPointsList {
 //	}
 
 	public void setRGB(int x, int y, int rgb) {
-		get(x, y).rgb = rgb;
+		get(x, y).setRGB(rgb);
 	}
 }

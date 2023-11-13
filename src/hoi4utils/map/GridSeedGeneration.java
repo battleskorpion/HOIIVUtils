@@ -1,7 +1,5 @@
 package hoi4utils.map;
 
-import hoi4utils.map.province.*;
-
 import java.util.Random;
 
 public class GridSeedGeneration extends AbstractSeedGeneration {

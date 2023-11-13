@@ -1,6 +1,5 @@
 package hoi4utils.map;
 
-import hoi4utils.map.province.Heightmap;
 import hoi4utils.map.province.ProvinceGenerationType;
 
 import java.awt.*;
