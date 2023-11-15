@@ -42,6 +42,10 @@ public class Heightmap extends BufferedImage {
 		this(ImageIO.read(file));
 	}
 
+	public int getArea() {
+		return getWidth() * getHeight();
+	}
+
 //	/**
 //	 * Constructs a {@code Heightmap} of one of the predefined
 //	 * image types:

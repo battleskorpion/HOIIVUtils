@@ -4,9 +4,9 @@ import hoi4utils.map.AbstractMapGeneration;
 import hoi4utils.map.Heightmap;
 import hoi4utils.map.MapPoint;
 
-public abstract class AbstractSeedGeneration extends AbstractMapGeneration implements SeedGeneration {
+public abstract class AbstractSeedGeneration<P extends MapPoint> extends AbstractMapGeneration implements SeedGeneration<P> {
 	protected Heightmap heightmap; // should always need a heightmap, simple way differentiate water and land.
-	protected SeedsSet<MapPoint> seeds;
+	protected SeedsSet<P> seeds;
 
 	protected AbstractSeedGeneration(Heightmap heightmap) {
 		this.heightmap = heightmap;
@@ -14,9 +14,9 @@ public abstract class AbstractSeedGeneration extends AbstractMapGeneration imple
 	}
 
 	@Override
-	public void generate(BorderMapping stateMapList, BorderMap borderMap) {
+	public void generate(BorderMapping<P> stateMapList, BorderMap borderMap) {
 		generate();
-		for (MapPoint seed : seeds) {
+		for (P seed : seeds) {
 			int stateMapColor = borderMap.getRGB(seed.x, seed.y);
 			stateMapList.addSeed(stateMapColor, seed);
 		}
