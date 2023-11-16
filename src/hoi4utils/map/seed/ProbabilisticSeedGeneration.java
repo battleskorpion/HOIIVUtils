@@ -29,13 +29,13 @@ public class ProbabilisticSeedGeneration extends AbstractSeedGeneration<MapPoint
 		for (int sy = 0; sy < values.numSeedsY; sy++) {
 			for (int sx = 0; sx < values.numSeedsX; sx++) {
 				MapPoint dynP;
-				int heightmapHeight = 0;
+				byte heightmapHeight = 0;
 				do {
 //					int px = random.nextInt(heightmap.getWidth());
 //					int py = random.nextInt(heightmap.getHeight());
 					dynP = weightedRandomPoint(random);
+					heightmapHeight = heightmap.xyHeight(dynP.x, dynP.y);
 					int type = provinceType(heightmapHeight);
-					heightmapHeight = (heightmap.getRGB(dynP.x, dynP.y) >> 16) & 0xFF;
 //					p = new MapPoint(dynP, type);
 				} while (seeds.contains(dynP));
 				int rgb = mapPointColorGeneration(dynP.x, dynP.y, heightmapHeight);

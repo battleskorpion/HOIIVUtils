@@ -9,6 +9,7 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import ui.HOIUtilsWindow;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -38,17 +39,18 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 	 * {@inheritDoc}
 	 */
 	@FXML void initialize() {
-		heightmapCanvas.setWidth(heightmap.getWidth() / 4);
-		heightmapCanvas.setHeight(heightmap.getHeight() / 4);
+		heightmapCanvas.setWidth(heightmap.width() / 4.0);
+		heightmapCanvas.setHeight(heightmap.xyHeight() / 4.0);
 
 		GraphicsContext gc = heightmapCanvas.getGraphicsContext2D();
 
-		WritableImage wImage = new WritableImage(heightmap.getWidth() / 4, heightmap.getHeight() / 4);
+		WritableImage wImage = new WritableImage(heightmap.width() / 4, heightmap.xyHeight() / 4);
 		PixelWriter pixelWriter = wImage.getPixelWriter();
 		for (int y = 0; y < wImage.getHeight(); y++) {
 			for (int x = 0; x < wImage.getWidth(); x++) {
-				int px = heightmap.getRGB(x * 4, y * 4);
-				pixelWriter.setArgb(x, y, px);
+				int px = heightmap.xyHeight(x * 4, y * 4);
+				Color c = new Color(px, px, px);
+				pixelWriter.setArgb(x, y, c.getRGB());
 			}
 		}
 		gc.drawImage(wImage, 0, 0);

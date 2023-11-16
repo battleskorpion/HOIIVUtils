@@ -2,40 +2,27 @@ package hoi4utils.map;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
 
-public class Heightmap extends BufferedImage {
-	/**
-	 * Constructs a {@code Heightmap} of one of the predefined
-	 * image types.  The {@code ColorSpace} for the image is the
-	 * default sRGB space.
-	 *
-	 * @param width     width of the created image
-	 * @param height    height of the created image
-	 * @param imageType type of the created image
-	 * @see #TYPE_INT_RGB
-	 * @see #TYPE_INT_ARGB
-	 * @see #TYPE_INT_ARGB_PRE
-	 * @see #TYPE_INT_BGR
-	 * @see #TYPE_3BYTE_BGR
-	 * @see #TYPE_4BYTE_ABGR
-	 * @see #TYPE_4BYTE_ABGR_PRE
-	 * @see #TYPE_BYTE_GRAY
-	 * @see #TYPE_USHORT_GRAY
-	 * @see #TYPE_BYTE_BINARY
-	 * @see #TYPE_BYTE_INDEXED
-	 * @see #TYPE_USHORT_565_RGB
-	 * @see #TYPE_USHORT_555_RGB
-	 */
-	public Heightmap(int width, int height, int imageType) {
-		super(width, height, imageType);
-	}
+//public class Heightmap extends BufferedImage {
+public class Heightmap {
+	byte[][] heightmap;     // y, x
+	int width;
+	int height;
 
 	public Heightmap(BufferedImage temp) {
-		super(temp.getWidth(), temp.getHeight(), temp.getType());
-		this.getGraphics().drawImage(temp, 0, 0, null);
+		width = temp.getWidth();
+		height = temp.getHeight();
+
+		heightmap = new byte[height][width];
+		for (int y = 0; y < temp.getHeight(); y++) {
+			for (int x = 0; x < temp.getWidth(); x++) {
+				//heightmap[y][x] = (byte) (temp.getRGB(x, y) & 0xFF);
+				heightmap[y][x] = (byte) (temp.getColorModel().getRed(temp.getRaster()
+						.getDataElements(x, y, null)));
+			}
+		}
 	}
 
 	public Heightmap(File file) throws IOException {
@@ -43,7 +30,19 @@ public class Heightmap extends BufferedImage {
 	}
 
 	public int getArea() {
-		return getWidth() * getHeight();
+		return width * height;
+	}
+
+	public int width() {
+		return width;
+	}
+
+	public int xyHeight() {
+		return height;
+	}
+
+	public byte xyHeight(int x, int y) {
+		return heightmap[y][x];
 	}
 
 //	/**

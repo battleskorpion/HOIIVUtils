@@ -108,7 +108,7 @@ public class BorderMap extends BufferedImage {
 	 * @param heightmap
 	 */
 	public BorderMap(Heightmap heightmap) {
-		this(heightmap.getWidth(), heightmap.getHeight());
+		this(heightmap.width(), heightmap.xyHeight());
 	}
 
 	public BorderMap(BufferedImage read) {

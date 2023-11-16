@@ -10,23 +10,25 @@ import java.util.concurrent.RecursiveTask;
 import java.util.stream.IntStream;
 
 public class SeedProbabilityMap extends AbstractMapGeneration {
-	double[][] seedProbabilityMap;
-	double[] cumulativeProbabilities; // per map, inclusive of previous maps
+	double[][] seedProbabilityMap;      // y, x
+	double[] cumulativeProbabilities;   // per map, inclusive of previous maps
 	final Heightmap heightmap;
+	int pointNumber = 0;
 
 	public SeedProbabilityMap(Heightmap heightmap) {
 		this.heightmap = heightmap;
 
-		seedProbabilityMap = new double[heightmap.getHeight()][heightmap.getWidth()]; // y, x
-		cumulativeProbabilities = new double[(heightmap.getHeight())];
+		seedProbabilityMap = new double[heightmap.xyHeight()][heightmap.width()]; // y, x
+		cumulativeProbabilities = new double[(heightmap.xyHeight())];
 		initializeProbabilityMap();
 	}
 
 	private void initializeProbabilityMap() {
-		for (int yi = 0; yi < heightmap.getHeight(); yi++) {
-			for (int xi = 0; xi < heightmap.getWidth(); xi++) {
+		for (int yi = 0; yi < heightmap.xyHeight(); yi++) {
+			for (int xi = 0; xi < heightmap.xyHeight(); xi++) {
 				double p = 1.0;
-				int height = (heightmap.getRGB(xi, yi) >> 16) & 0xFF;
+				// improved performance over .getRGB()
+				byte height = heightmap.xyHeight(xi, yi);
 				int type = provinceType(height);
 
 				/* probability */
@@ -67,12 +69,13 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 
 		// Find the first MapPoint where cumulative probability >= p
 		double cumulative = (y == 0) ? 0.0 : cumulativeProbabilities[y - 1];
-		System.out.println(cumulative);
+		//System.out.println(cumulative);
+		System.out.println(++pointNumber);
 		MapPoint mp = null;
 		for (int x = 0; x < seedProbabilityMap[y].length; x++) {
 			cumulative += seedProbabilityMap[y][x];
 			if (cumulative >= p) {
-				mp = new MapPoint(x, y, provinceType((heightmap.getRGB(x, y) >> 16) & 0xFF));
+				mp = new MapPoint(x, y, provinceType(heightmap.xyHeight(x, y)));
 				break;
 			}
 		}
@@ -81,7 +84,33 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 			System.out.println("bad probability? " + p);    // todo
 			return getPoint(random);
 		}
+		/* adjust probabilities */
+		adjustProbabilitiesInRadius(mp, 9);
 		return mp;
+	}
+
+	private void adjustProbabilitiesInRadius(MapPoint mp, int r) {
+		int minY = Math.max(mp.y - r, 0);
+		int maxY = Math.min(mp.y + r, seedProbabilityMap.length - 1);
+		int minX = Math.max(mp.x - r, 0);
+		int maxX = Math.min(mp.x + r, seedProbabilityMap[0].length - 1);
+		double[] distanceModifiers = new double[r + 1]; // 0 to r
+		distanceModifiers[0] = 0.0;
+		for (int i = 1; i <= r; i++) {
+			distanceModifiers[i] = (double) (i - 0.2) / r; // Normalize the value to be between 0 and 1
+		}
+
+		//int rSquared = r * r;
+		for (int y = minY; y <= maxY; y++) {
+			for (int x = minX; x <= maxX; x++) {
+				double distance = mp.distance(x, y);
+				// Check if the distance is within the specified radius
+				if (distance <= r) {
+					// Adjust the probability at position (y, x)
+					seedProbabilityMap[y][x] *= distanceModifiers[(int) distance];
+				}
+			}
+		}
 	}
 
 	private int findCumulativeProbabilityIndex(double p) {
@@ -96,11 +125,20 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 		private final int start;        // inclusive
 		private final int end;          // exclusive
 		private final double pSum;      // probability sum
+		private final double recipSum;
 
 		public CumulativeProbabilityPerXTask(int start, int end, double pSum) {
 			this.start = start;
 			this.end = end;
 			this.pSum = pSum;
+			this.recipSum = 1.0 / pSum;
+		}
+
+		private CumulativeProbabilityPerXTask(int start, int end, double pSum, double recipSum) {
+			this.start = start;
+			this.end = end;
+			this.pSum = pSum;
+			this.recipSum = recipSum;
 		}
 
 		@Override
@@ -108,8 +146,8 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 			if (end - start > THRESHOLD) {
 				int mid = (start + end) / 2;
 				invokeAll(
-						new CumulativeProbabilityPerXTask(start, mid, pSum),
-						new CumulativeProbabilityPerXTask(mid, end, pSum)
+						new CumulativeProbabilityPerXTask(start, mid, pSum, recipSum),
+						new CumulativeProbabilityPerXTask(mid, end, pSum, recipSum)
 				);
 			} else {
 				cumulativeProbability(start, end);
@@ -118,8 +156,6 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 		}
 
 		private void cumulativeProbability(int start, int end) {
-			final double recipSum = 1.0 / pSum;
-
 			for (int i = start; i < end; i++) {
 				double cumulativeProbability = 0.0;
 				for (int j = 0; j < seedProbabilityMap[i].length; j++) {

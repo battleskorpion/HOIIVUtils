@@ -73,7 +73,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 
 	private void initLists() {
 		/* initialize points list */
-		points = new ProvinceMapPointsList(heightmap.getWidth(), heightmap.getHeight());
+		points = new ProvinceMapPointsList(heightmap.width(), heightmap.xyHeight());
 
 		/* initialize mapping of seeds to states (regions for purposes of province generation) */
 		// TODO: optimization may be possible
@@ -224,7 +224,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		 * constructor (y set as 0 to imageHeight). Recommended constructor for initial initialization.
 		 */
 		public ForkColorDetermination(ProvinceMap provinceMap, Heightmap heightmap) {
-			this(provinceMap, heightmap, 0, heightmap.getHeight());
+			this(provinceMap, heightmap, 0, heightmap.xyHeight());
 		}
 
 		/**
@@ -256,8 +256,8 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		 * Determine color for each point
 		 */
 		protected void computeDirectly() {
-			final int widthPerSeed = heightmap.getWidth()  / values.numSeedsX;
-			final int heightPerSeed = heightmap.getHeight() / values.numSeedsY;
+			final int widthPerSeed = heightmap.width()  / values.numSeedsX;
+			final int heightPerSeed = heightmap.xyHeight() / values.numSeedsY;
 			final int offsetPotential = 4;
 			System.out.println("run: " + startY + ", " + endY);
 
@@ -269,9 +269,9 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 
 			try {
 				for (int y = startY; y < endY; y++) {
-					for (int x = 0; x < heightmap.getWidth(); x++) {
+					for (int x = 0; x < heightmap.width(); x++) {
 						int rgb;
-						int heightmapHeight = (heightmap.getRGB(x, y) >> 16) & 0xFF;
+						byte heightmapHeight = heightmap.xyHeight(x, y);
 						int stateBorderValue = stateBorderMap.getRGB(x, y);
 						int type = provinceType(heightmapHeight);
 
