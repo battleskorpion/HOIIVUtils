@@ -7,7 +7,7 @@ import java.awt.*;
 public abstract class values {
 	public static String heightmapName = "resources\\map\\heightmap.bmp";			//"heightmap_new_england.bmp";
 	public static String stateBordersName = "resources\\map\\state_borders_none.bmp"; //"state_borders_new_england.bmp";
-	public static ProvinceGenerationType generationType = ProvinceGenerationType.GRID_SEED;	//dynamic
+	public static ProvinceGenerationType generationType = ProvinceGenerationType.PROBABILISTIC;	//dynamic, GRID_SEED
 
 	public values() {
 		// convert Color.white to int representation
@@ -22,8 +22,10 @@ public abstract class values {
 	public static final int SEA_LEVEL_INT_RGB = ((SEA_LEVEL_RGB.getRed() << 8) + SEA_LEVEL_RGB.getGreen()) << 8 + SEA_LEVEL_RGB.getBlue();
 	protected static int imageWidth = 4608; 	// 1024, 512, 256 works	// 5632 - default	// 4608 nad
 	protected static int imageHeight = 2816;	// 1024, 512, 256 works	// 2048 - default	// 2816 nad
-	public static int numSeedsY = 64; 		// 64 is ok	// 64^2 = 4096
-	public static int numSeedsX = 64; 		// 64 is ok // 64^2 = 4096
+//	public static int numSeedsY = 64; 		// 64 is ok	// 64^2 = 4096
+//	public static int numSeedsX = 64; 		// 64 is ok // 64^2 = 4096
+	public static int numSeedsY = 64;
+	public static int numSeedsX = 64;
 	public static int numSeeds = numSeedsX * numSeedsY;
 	public static int numPoints = imageWidth * imageHeight;
 //	protected static ArrayList<HashMap<Integer, HashMap<Point, Integer>>> seedsRGBValueMaps

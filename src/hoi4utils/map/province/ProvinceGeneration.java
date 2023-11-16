@@ -54,7 +54,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		if (generationType == ProvinceGenerationType.GRID_SEED) {
 			seedGeneration = new GridSeedGeneration(heightmap);
 		} else {
-			seedGeneration = new DynamicSeedGeneration(heightmap);
+			seedGeneration = new ProbabilisticSeedGeneration(heightmap);
 		}
 		seedGeneration.generate(stateMapList, stateBorderMap);
 

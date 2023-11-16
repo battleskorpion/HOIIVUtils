@@ -19,6 +19,11 @@ public class MapPoint extends Point {
 		this(x, y, 0);
 	}
 
+	public MapPoint(Point dynP, int type) {
+		super(dynP);
+		this.type = type;
+	}
+
 	public int type() {
 		return type;
 	}
