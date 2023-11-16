@@ -40,11 +40,11 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 	 */
 	@FXML void initialize() {
 		heightmapCanvas.setWidth(heightmap.width() / 4.0);
-		heightmapCanvas.setHeight(heightmap.xyHeight() / 4.0);
+		heightmapCanvas.setHeight(heightmap.height() / 4.0);
 
 		GraphicsContext gc = heightmapCanvas.getGraphicsContext2D();
 
-		WritableImage wImage = new WritableImage(heightmap.width() / 4, heightmap.xyHeight() / 4);
+		WritableImage wImage = new WritableImage(heightmap.width() / 4, heightmap.height() / 4);
 		PixelWriter pixelWriter = wImage.getPixelWriter();
 		for (int y = 0; y < wImage.getHeight(); y++) {
 			for (int x = 0; x < wImage.getWidth(); x++) {

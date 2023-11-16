@@ -111,7 +111,7 @@ public class ProvinceMap extends BufferedImage {
 	 * @param heightmap
 	 */
 	public ProvinceMap(Heightmap heightmap) {
-		this(heightmap.width(), heightmap.xyHeight());
+		this(heightmap.width(), heightmap.height());
 	}
 
 	private void initProvinceMap() {

@@ -14,13 +14,10 @@ public class Heightmap {
 	public Heightmap(BufferedImage temp) {
 		width = temp.getWidth();
 		height = temp.getHeight();
-
 		heightmap = new byte[height][width];
 		for (int y = 0; y < temp.getHeight(); y++) {
 			for (int x = 0; x < temp.getWidth(); x++) {
-				//heightmap[y][x] = (byte) (temp.getRGB(x, y) & 0xFF);
-				heightmap[y][x] = (byte) (temp.getColorModel().getRed(temp.getRaster()
-						.getDataElements(x, y, null)));
+				heightmap[y][x] = (byte) (temp.getRGB(x, y) & 0xFF);
 			}
 		}
 	}
@@ -37,7 +34,7 @@ public class Heightmap {
 		return width;
 	}
 
-	public int xyHeight() {
+	public int height() {
 		return height;
 	}
 
