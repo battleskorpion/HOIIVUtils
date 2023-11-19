@@ -15,12 +15,15 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 //	double[] partialSums;               // per x, sum of all x probabilities.
 	final Heightmap heightmap;
 	int pointNumber = 0;
+	ForkJoinPool fjpool;
+	double probabilitySum = 0;
 
 	public SeedProbabilityMap(Heightmap heightmap) {
 		this.heightmap = heightmap;
-
 		seedProbabilityMap = new double[heightmap.height()][heightmap.width()]; // y, x
 		cumulativeProbabilities = new double[(heightmap.height())];
+		fjpool = new ForkJoinPool();
+
 		initializeProbabilityMap();
 	}
 
@@ -44,16 +47,21 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 
 	public void normalize() {
 		int length = seedProbabilityMap.length;
-		ForkJoinPool pool = new ForkJoinPool();
-		double sum = pool.invoke(new ProbabilitySumTask(0, length));
+		double sum;
+		if (probabilitySum == 0) {
+			sum = fjpool.invoke(new ProbabilitySumTask(0, length));
+		} else {
+			sum = probabilitySum;
+		}
 		if (sum == 0) {
 			return;
 		}
 
-		pool.invoke(new CumulativeProbabilityPerXTask(0, length, sum));
+		fjpool.invoke(new CumulativeProbabilityAndNormalizeTask(0, length, sum));
 		for (int i = 1; i < cumulativeProbabilities.length; i++) {
 			cumulativeProbabilities[i] += cumulativeProbabilities[i - 1];
 		}
+		probabilitySum = 1.0;
 	}
 
 	public MapPoint getPoint(Random random) {
@@ -86,8 +94,15 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 		}
 		/* adjust probabilities */
 		//adjustProbabilitiesInRadius(mp, 9); instead, ? ->
-		seedProbabilityMap[mp.y][mp.x] = 0.0;
+		setSeedProbabilityMapYX(mp.y, mp.x, 0.0);
 		return mp;
+	}
+
+	private void setSeedProbabilityMapYX(int y, int x, double v) {
+		// todo optimize?
+		probabilitySum -= seedProbabilityMap[y][x];
+		seedProbabilityMap[y][x] = v;
+		probabilitySum += v;
 	}
 
 	private void adjustProbabilitiesInRadius(MapPoint mp, int r) {
@@ -109,7 +124,8 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 				// Check if the distance is within the specified radius
 				if (distance <= r) {
 					// Adjust the probability at position (y, x)
-					seedProbabilityMap[y][x] *= distanceModifiers[(int) distance];
+					// todo optimize??
+					setSeedProbabilityMapYX(y, x, seedProbabilityMap[y][x] *= distanceModifiers[(int) distance]);
 				}
 			}
 		}
@@ -122,21 +138,21 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 				.orElse(-1);
 	}
 
-	public class CumulativeProbabilityPerXTask extends RecursiveTask<Void> {
+	public class CumulativeProbabilityAndNormalizeTask extends RecursiveTask<Void> {
 		private static final int THRESHOLD = 16;
 		private final int start;        // inclusive
 		private final int end;          // exclusive
 		private final double pSum;      // probability sum
 		private final double recipSum;
 
-		public CumulativeProbabilityPerXTask(int start, int end, double pSum) {
+		public CumulativeProbabilityAndNormalizeTask(int start, int end, double pSum) {
 			this.start = start;
 			this.end = end;
 			this.pSum = pSum;
 			this.recipSum = 1.0 / pSum;
 		}
 
-		private CumulativeProbabilityPerXTask(int start, int end, double pSum, double recipSum) {
+		private CumulativeProbabilityAndNormalizeTask(int start, int end, double pSum, double recipSum) {
 			this.start = start;
 			this.end = end;
 			this.pSum = pSum;
@@ -148,8 +164,8 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 			if (end - start > THRESHOLD) {
 				int mid = (start + end) / 2;
 				invokeAll(
-						new CumulativeProbabilityPerXTask(start, mid, pSum, recipSum),
-						new CumulativeProbabilityPerXTask(mid, end, pSum, recipSum)
+						new CumulativeProbabilityAndNormalizeTask(start, mid, pSum, recipSum),
+						new CumulativeProbabilityAndNormalizeTask(mid, end, pSum, recipSum)
 				);
 			} else {
 				cumulativeProbability(start, end);
