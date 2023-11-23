@@ -7,7 +7,7 @@ import java.awt.*;
 public abstract class values {
 	public static String heightmapName = "resources\\map\\heightmap.bmp";			//"heightmap_new_england.bmp";
 	public static String stateBordersName = "resources\\map\\state_borders_none.bmp"; //"state_borders_new_england.bmp";
-	public static ProvinceGenerationType generationType = ProvinceGenerationType.PROBABILISTIC;	//dynamic, GRID_SEED, PROBABILISTIC
+	public static ProvinceGenerationType generationType = ProvinceGenerationType.GRID_SEED;	//dynamic, GRID_SEED, PROBABILISTIC
 
 	public values() {
 		// convert Color.white to int representation

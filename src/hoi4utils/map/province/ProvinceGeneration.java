@@ -271,7 +271,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 				for (int y = startY; y < endY; y++) {
 					for (int x = 0; x < heightmap.width(); x++) {
 						int rgb;
-						byte heightmapHeight = heightmap.xyHeight(x, y);
+						int heightmapHeight = heightmap.xyHeight(x, y);
 						int stateBorderValue = stateBorderMap.getRGB(x, y);
 						int type = provinceType(heightmapHeight);
 

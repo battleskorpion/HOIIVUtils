@@ -52,7 +52,7 @@ public abstract class AbstractMapGeneration {
 		return rgb;
 	}
 
-	protected static int provinceType(byte heightmapHeight) {
+	protected static int provinceType(int heightmapHeight) {
 		if (heightmapHeight < values.HEIGHTMAP_SEA_LEVEL) {
 			return 1; 	// sea
 		}

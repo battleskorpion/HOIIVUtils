@@ -32,7 +32,7 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 			for (int xi = 0; xi < heightmap.width(); xi++) {
 				double p = 1.0;
 				// improved performance over .getRGB()
-				byte height = heightmap.xyHeight(xi, yi);
+				int height = heightmap.xyHeight(xi, yi);
 				int type = provinceType(height);
 
 				/* probability */
