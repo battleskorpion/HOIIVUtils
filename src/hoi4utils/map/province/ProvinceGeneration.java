@@ -3,6 +3,11 @@ package hoi4utils.map.province;
 import hoi4utils.map.*;
 import hoi4utils.map.seed.*;
 import opensimplex2.OpenSimplex2;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultUndirectedGraph;
+import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -25,12 +30,12 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	private ProvinceMapPointsList points;
 	private SeedsSet<MapPoint> seeds;
 
-	//	private static HashMap<ProvinceMapPoint, Integer> stateSeedsMap;
 	private BorderMapping<MapPoint> stateMapList;
 	private Heightmap heightmap;
 	private SeedGeneration seedGeneration;
 	/** threadLimit = 0: max (use all processors/threads). */
 	private int threadLimit = 0;
+	boolean adjProvinceByGraphConnectivity = true;
 
 	public static void main(String[] args) {
 		ProvinceGeneration provinceGeneration = new ProvinceGeneration();
@@ -77,7 +82,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 
 		/* initialize mapping of seeds to states (regions for purposes of province generation) */
 		// TODO: optimization may be possible
-//		stateSeedsMap = new HashMap<>();
 		stateMapList = new BorderMapping<>();
 	}
 
@@ -85,8 +89,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	 * values - load heightmap, states map
 	 */
 	private Heightmap loadHeightmap(String heightmapName) {
-//		values.imageWidth = values.heightmap.getWidth();
-//		values.imageHeight = values.heightmap.getHeight(); 	// may break things but good idea
 		try {
 			BufferedImage temp = ImageIO.read(new File(heightmapName));
 			return new Heightmap(temp);
@@ -122,6 +124,10 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		}
 		catch(Exception exc) {
 			exc.printStackTrace();
+		}
+		if (adjProvinceByGraphConnectivity) {
+			ForkProvinceConnectivityDetermination forkProvinceConnectivityDetermination = new ForkProvinceConnectivityDetermination(points);
+			forkJoinPool.invoke(forkProvinceConnectivityDetermination);
 		}
 	}
 
@@ -261,12 +267,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 			final int offsetPotential = 4;
 			System.out.println("run: " + startY + ", " + endY);
 
-//			if (widthPerSeed < heightPerSeed) {
-//				offsetPotential = (int) (widthPerSeed * 0.1);
-//			} else {
-//				offsetPotential = (int) (heightPerSeed * 0.1);
-//			}
-
 			try {
 				for (int y = startY; y < endY; y++) {
 					for (int x = 0; x < heightmap.width(); x++) {
@@ -275,15 +275,9 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 						int stateBorderValue = stateBorderMap.getRGB(x, y);
 						int type = provinceType(heightmapHeight);
 
-//						if(stateMapList.containsState(stateBorderValue)) {
 						int xOffset = offsetWithNoise(offsetPotential, seed, x, y);    //TODO work on values
 						int yOffset = offsetWithNoise(offsetPotential, seed, x, y);
 						rgb = determineColor(x, xOffset, y, yOffset, stateMapList.seedsList(stateBorderValue, type));
-//						}
-//						else {
-//							rgb = 0;    // bad
-//							System.out.println("state map list did not contain state of: " + stateBorderValue);
-//						}
 
 						points.setRGB(x, y, rgb);
 						provinceMap.setRGB(x, y, rgb);
@@ -293,6 +287,100 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 			catch (Exception exc) {
 				exc.printStackTrace();
 			}
+		}
+
+	}
+
+	/**
+	 * Province connectivity determination (->graph) using {@link RecursiveAction} for multithreading efficiency.
+	 *
+	 * @see RecursiveAction
+	 */
+	public class ForkProvinceConnectivityDetermination extends RecursiveAction {
+
+		/** Auto-generated serialVersionUID */
+		@Serial
+		private static final long serialVersionUID = 9171676481286895487L;
+		protected static int splitThreshold = 16;       // was 8
+		private final int startY;
+		private final int endY;
+		private final int dy;
+		private final ProvinceMapPointsList mapPoints;
+		private static final Graph<MapPoint, DefaultEdge> mpGraph = new DefaultUndirectedGraph<>(DefaultEdge.class);
+		private static final Graph<MapPoint, DefaultEdge> sync_mpGraph = new AsSynchronizedGraph<>(mpGraph);
+
+		/**
+		 * constructor (y set as 0 to height). Recommended constructor for initial initialization.
+		 */
+		public ForkProvinceConnectivityDetermination(ProvinceMapPointsList mapPoints) {
+			this(mapPoints, 0, mapPoints.height());
+		}
+
+		/**
+		 * constructor
+		 * // todo pass in prev fork color determination instead of province map, heightmap?
+		 */
+		public ForkProvinceConnectivityDetermination(ProvinceMapPointsList mapPoints, int startY, int endY) {
+			this.mapPoints = mapPoints;
+			this.startY = startY;
+			this.endY = endY;
+			dy = endY - startY;
+		}
+
+		@Override
+		protected void compute() {
+			if (dy <= splitThreshold) {
+				computeDirectly();
+				return;
+			}
+
+			int split = dy / 2;
+
+			invokeAll(new ForkProvinceConnectivityDetermination(mapPoints, startY, startY + split),
+					new ForkProvinceConnectivityDetermination(mapPoints, startY + split, endY));
+		}
+
+		protected void computeDirectly() {
+			try {
+				for (int y = startY; y < endY; y++) {
+					for (int x = 0; x < heightmap.width(); x++) {
+						int currentType = mapPoints.get(x, y).type();
+						connectNeighbors(x, y, currentType);
+					}
+				}
+			}
+			catch (Exception exc) {
+				exc.printStackTrace();
+			}
+		}
+
+		private void connectNeighbors(int x, int y, int currentType) {
+			// Left neighbor
+			connectIfApplicable(x, y, x - 1, y, currentType);
+			// Right neighbor
+			connectIfApplicable(x, y,x + 1, y, currentType);
+			// Up neighbor
+			connectIfApplicable(x, y, x, y - 1, currentType);
+			// Down neighbor
+			connectIfApplicable(x, y, x, y + 1, currentType);
+		}
+
+		private void connectIfApplicable(int x, int y, int nx, int ny, int currentType) {
+			if (isValidCoordinate(nx, ny) && mapPoints.get(nx, ny).type() == currentType) {
+				MapPoint p = mapPoints.get(x, y);
+				MapPoint np = mapPoints.get(nx, ny);
+				if (!sync_mpGraph.containsVertex(p)) {
+					sync_mpGraph.addVertex(mapPoints.get(x, y));
+				}
+				if (!sync_mpGraph.containsVertex(np)) {
+					sync_mpGraph.addVertex(mapPoints.get(nx, ny));
+				}
+				sync_mpGraph.addEdge(p, np);
+			}
+		}
+
+		private boolean isValidCoordinate(int x, int y) {
+			return x >= 0 && x < mapPoints.width() && y >= 0 && y < mapPoints.height();
 		}
 
 	}

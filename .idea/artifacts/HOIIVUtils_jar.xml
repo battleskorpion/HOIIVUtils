@@ -7,6 +7,7 @@
       </element>
       <element id="library" level="project" name="javafx-lib" />
       <element id="library" level="project" name="poi-3.10-FINAL" />
+      <element id="library" level="project" name="jgrapht" />
     </root>
   </artifact>
 </component>

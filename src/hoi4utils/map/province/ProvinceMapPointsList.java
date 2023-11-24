@@ -3,6 +3,9 @@ package hoi4utils.map.province;
 import hoi4utils.map.MapPoint;
 
 public class ProvinceMapPointsList {
+	final int width;
+	final int height;
+
 	/**
 	 * y, x order
 	 */
@@ -18,6 +21,8 @@ public class ProvinceMapPointsList {
 				mapPointsList[i][j] = new MapPoint(j, i);
 			}
 		}
+		width = x;
+		height = y;
 	}
 
 	/**
@@ -57,5 +62,13 @@ public class ProvinceMapPointsList {
 
 	public void setRGB(int x, int y, int rgb) {
 		get(x, y).setRGB(rgb);
+	}
+
+	public int height() {
+		return height;
+	}
+
+	public int width() {
+		return width;
 	}
 }
