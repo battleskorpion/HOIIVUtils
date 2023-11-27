@@ -39,6 +39,7 @@
         "**/*.min.*",
         "**/*.map"
 	],
+	"java.compile.nullAnalysis.mode": "automatic",
 	// Java Project HOIIVUtils settings
 	"java.project.referencedLibraries": [
 		"lib/**/*.jar"

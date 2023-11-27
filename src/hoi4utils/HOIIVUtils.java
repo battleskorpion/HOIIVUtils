@@ -5,9 +5,10 @@ import hoi4utils.clausewitz_code.modifier.ModifierDatabase;
 import ui.menu.MenuController;
 import ui.settings.SettingsController;
 
-/*
-* HOIIVUtils File
-*/
+/**
+ * HOIIVUtils.java
+ * main method is here
+ */
 public class HOIIVUtils {
 
 	public static final String HOIIVUTILS_NAME = "HOIIVUtils";
