@@ -1,10 +1,13 @@
 package hoi4utils.map.province;
 
-import hoi4utils.map.*;
+import hoi4utils.map.AbstractMapGeneration;
+import hoi4utils.map.Heightmap;
+import hoi4utils.map.MapPoint;
 import hoi4utils.map.seed.*;
+import hoi4utils.map.values;
 import opensimplex2.OpenSimplex2;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultUndirectedGraph;
 import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
@@ -35,7 +38,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	private SeedGeneration seedGeneration;
 	/** threadLimit = 0: max (use all processors/threads). */
 	private int threadLimit = 0;
-	boolean adjProvinceByGraphConnectivity = true;
+	boolean adjProvinceByGraphConnectivity = false;
 
 	public static void main(String[] args) {
 		ProvinceGeneration provinceGeneration = new ProvinceGeneration();
@@ -55,7 +58,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		initLists();        // todo like hmmm more classes not sure
 
 		/* seeds generation */
-		SeedGeneration seedGeneration;
+		SeedGeneration<MapPoint> seedGeneration;
 		if (generationType == ProvinceGenerationType.GRID_SEED) {
 			seedGeneration = new GridSeedGeneration(heightmap);
 		} else {
@@ -376,6 +379,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 					sync_mpGraph.addVertex(mapPoints.get(nx, ny));
 				}
 				sync_mpGraph.addEdge(p, np);
+				// todo optimize prev ?
 			}
 		}
 

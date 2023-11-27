@@ -4,9 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Tokenizer {
-	private String input;
-	private Pattern pattern;
-	private Matcher matcher;
+	private final String input;
+	private final Pattern pattern;
+	private final Matcher matcher;
 	private int find_start_index = 0;
 	private boolean peekOccurred = false;
 

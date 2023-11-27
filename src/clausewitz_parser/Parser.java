@@ -13,14 +13,11 @@ public class Parser {
 	public static final String escape_backslash_regex = "\\\\";
 	public static final String escape_quote_regex = "\\\\\"";
 	private final Tokenizer tokens;
-
 	private Node rootNode;
 
 	public Parser (String input) {
 		/* EOF */
-		if (input.charAt(input.length() - 1) != '$') {
-			input += "$";
-		}
+		input += Token.EOF_INDICATOR;
 		tokens = new Tokenizer(input);
 	}
 
@@ -34,9 +31,7 @@ public class Parser {
 		}
 
 		/* EOF */
-		if (input.charAt(input.length() - 1) != '$') {
-			input += "$";
-		}
+		input += Token.EOF_INDICATOR;
 		tokens = new Tokenizer(input);
 	}
 
@@ -103,7 +98,9 @@ public class Parser {
 			/* handle escaped characters */
 			var nameValue = name.value;
 			if (name.type == TokenType.string) {
-				nameValue = nameValue.substring(1, nameValue.length() - 2).replaceAll(escape_quote_regex, "\"").replaceAll(escape_backslash_regex, "\\");
+				nameValue = nameValue.substring(1, nameValue.length() - 2)
+						.replaceAll(escape_quote_regex, "\"")
+						.replaceAll(escape_backslash_regex, "\\");
 			}
 
 			// TODO
@@ -178,7 +175,6 @@ public class Parser {
 			case string -> {
 				/* substring from 1 to length() - 2: don't replace "" */
 				if (nextToken.value.length() == 2) {
-
 					return new NodeValue(nextToken.value);
 				}
 				return new NodeValue(
@@ -210,6 +206,7 @@ public class Parser {
 				}
 				break; 			// necessary if addtl. case added, so will keep.
 			}
+			default -> throw new IllegalStateException("Unexpected value: " + nextToken.type);
 		}
 
 		throw new IllegalStateException("Parser expected a string, number, symbol, or {");

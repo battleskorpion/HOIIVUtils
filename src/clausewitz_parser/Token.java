@@ -15,6 +15,7 @@ public class Token {
 	public int start;
 
 	public static final Map<TokenType, Pattern> tokenRegex = new HashMap<>();
+	public static final String EOF_INDICATOR = "$";
 
 	// todo review each
 	// strings issues
@@ -27,7 +28,7 @@ public class Token {
 		//tokenRegex.put(TokenType.string, Pattern.compile("\"(?:\"|\\\\|[^\"])*\""));
 		tokenRegex.put(TokenType.string, Pattern.compile("\"(\\\\.|[^\"])*\""));
 		tokenRegex.put(TokenType.number, Pattern.compile("-?\\d*\\.\\d+|-?\\d+|0x\\d+"));
-		tokenRegex.put(TokenType.eof, Pattern.compile("$"));
+		tokenRegex.put(TokenType.eof, Pattern.compile(EOF_INDICATOR));
 	}
 
 	public Token (String value, int start, TokenType type) {
