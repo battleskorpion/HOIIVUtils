@@ -8,6 +8,7 @@
       <element id="library" level="project" name="javafx-lib" />
       <element id="library" level="project" name="poi-3.10-FINAL" />
       <element id="library" level="project" name="jgrapht" />
+      <element id="library" level="project" name="slf4j-api-1.7.36" />
     </root>
   </artifact>
 </component>
