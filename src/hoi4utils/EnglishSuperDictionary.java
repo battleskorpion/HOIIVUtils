@@ -3,6 +3,7 @@ package hoi4utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 public class EnglishSuperDictionary {
 
@@ -23,9 +24,9 @@ public class EnglishSuperDictionary {
 		HashSet<String> whitelist = EnglishSuperDictionary.createCapitalizationWhitelist();
 	
 		if (words.get(0).length() == 1) {
-			words.set(0, "" + Character.toUpperCase(words.get(0).charAt(0)));
+			words.set(0, Character.toUpperCase(words.get(0).charAt(0)) + "");
 		} else if (words.get(0).length() > 1) {
-			words.set(0, "" + Character.toUpperCase(words.get(0).charAt(0))
+			words.set(0, Character.toUpperCase(words.get(0).charAt(0))
 					+ words.get(0).substring(1));
 		} else {
 			// todo this should never happen now right?
@@ -36,10 +37,10 @@ public class EnglishSuperDictionary {
 		for (int i = 1; i < words.size(); i++) {
 			if (!EnglishSuperDictionary.isAcronym(words.get(i)) && !(whitelist.contains(words.get(i)))) {
 				if (words.get(i).length() == 1) {
-					words.set(i, "" + Character.toUpperCase(words.get(i).charAt(0)));
+					words.set(i, Character.toUpperCase(words.get(i).charAt(0)) + "");
 				} else if (words.get(i).length() > 1) {
 					// System.out.println("working cap");
-					words.set(i, "" + Character.toUpperCase(words.get(i).charAt(0))
+					words.set(i, Character.toUpperCase(words.get(i).charAt(0))
 							+ words.get(i).substring(1));
 				}
 			}
@@ -72,46 +73,49 @@ public class EnglishSuperDictionary {
 	}
 
 	static HashSet<String> createCapitalizationWhitelist() {
-		HashSet<String> whitelist = new HashSet<String>();
-	
+		String[] whitelist =
+		{
+				"a",
+				"above",
+				"after",
+				"among",        // among us
+				"an",
+				"and",
+				"around",
+				"as",
+				"at",
+				"below",
+				"beneath",
+				"beside",
+				"between",
+				"but",
+				"by",
+				"for",
+				"from",
+				"if",
+				"in",
+				"into",
+				"nor",
+				"of",
+				"off",
+				"on",
+				"onto",
+				"or",
+				"over",
+				"since",
+				"the",
+				"through",
+				"throughout",
+				"to",
+				"under",
+				"underneath",
+				"until",
+				"up",
+				"with",
+		};
+
 		// create the whitelist
-		whitelist.add("a");
-		whitelist.add("above");
-		whitelist.add("after");
-		whitelist.add("among"); // among us
-		whitelist.add("an");
-		whitelist.add("and");
-		whitelist.add("around");
-		whitelist.add("as");
-		whitelist.add("at");
-		whitelist.add("below");
-		whitelist.add("beneath");
-		whitelist.add("beside");
-		whitelist.add("between");
-		whitelist.add("but");
-		whitelist.add("by");
-		whitelist.add("for");
-		whitelist.add("from");
-		whitelist.add("if");
-		whitelist.add("in");
-		whitelist.add("into");
-		whitelist.add("nor");
-		whitelist.add("of");
-		whitelist.add("off");
-		whitelist.add("on");
-		whitelist.add("onto");
-		whitelist.add("or");
-		whitelist.add("over");
-		whitelist.add("since");
-		whitelist.add("the");
-		whitelist.add("through");
-		whitelist.add("throughout");
-		whitelist.add("to");
-		whitelist.add("under");
-		whitelist.add("until");
-		whitelist.add("up");
-		whitelist.add("with");
-		return whitelist;
+		return new HashSet<>(List.of(whitelist));
 	}
 	
 }

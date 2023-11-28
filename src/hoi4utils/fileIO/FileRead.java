@@ -13,10 +13,10 @@ public class FileRead
 	{
 		// scan file and read from it 
 		Scanner file_scan = new Scanner(f); 
-		StringBuffer buffer = new StringBuffer(); 
+		StringBuilder buffer = new StringBuilder();
 		while (file_scan.hasNextLine()) 
 		{
-			buffer.append(file_scan.nextLine()+System.lineSeparator());
+			buffer.append(file_scan.nextLine()).append(System.lineSeparator());
 		}
 		String fileContents = buffer.toString();
 		// testing 
