@@ -1,4 +1,7 @@
 package hoi4utils.clausewitz_data.focus.tree_builder;
+
+import java.io.File;
+
 /**
  * FocusTreeBuilder Documentation
  * // ? todo necessary??
@@ -6,12 +9,17 @@ package hoi4utils.clausewitz_data.focus.tree_builder;
 public class FocusTreeBuilder {
 
 	// each instance of this class will represent a builder for *one* focus tree
-	protected void addFocus(String focusName) {
+	public void addFocus(String focusName) {
 
 	}
 
-	protected void removeFocus(String focusName) {
+	public void removeFocus(String focusName) {
 
+	}
+
+	public String saveTo(File file) {
+		return "";
+		// for focus focus in focus, print
 	}
 
 }
