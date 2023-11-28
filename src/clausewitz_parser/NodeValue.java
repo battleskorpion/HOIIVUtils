@@ -94,8 +94,7 @@ public final class NodeValue {
 		}
 		if (value == null) return null;
 
-		System.err.println("Expected NodeValue value to be a node, value: " + value);
-		throw new IllegalStateException("Expected NodeValue to be a Node");
+		throw new IllegalStateException("Expected NodeValue to be a Node, value: " + value);
 	}
 
 	public String asString() {

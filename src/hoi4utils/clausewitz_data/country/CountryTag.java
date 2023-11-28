@@ -7,18 +7,20 @@ public final class CountryTag {
 	private final String tag;
 
 	public CountryTag(String tag) {
-		if (tag == null || tag.equals("")) {
+		if (tag == null || tag.isEmpty()) {
 			tag = NULL_TAG.tag;
 		}
 
 		this.tag = tag;
 	}
 
+	@Override
 	public String toString() {
 		return tag;
 	}
 
 	// todo make this adhere to equals implementation requirements
+	@Override
 	public boolean equals(Object other) {
 		if (other.getClass() == this.getClass()) {
 			return this.tag.equals(((CountryTag) other).tag);

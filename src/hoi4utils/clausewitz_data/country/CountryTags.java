@@ -19,7 +19,7 @@ public class CountryTags extends HOIIVUtils {
 	private static File countries_main_file;
 
 	private static ArrayList<CountryTag> loadCountryTags() throws IOException {
-		country_tags = new ArrayList<CountryTag>();
+		country_tags = new ArrayList<>();
 		country_tags_folder = new File(SettingsManager.get(MOD_PATH) + "\\common\\country_tags");
 		countries_main_file = new File(country_tags_folder.getPath() + "\\00_countries.txt");
 

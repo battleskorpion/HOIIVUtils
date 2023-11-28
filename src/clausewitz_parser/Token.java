@@ -21,7 +21,6 @@ public class Token {
 	// strings issues
 	static {
 		tokenRegex.put(TokenType.comment, Pattern.compile("#.*(?:[\\r\\n]|$)"));
-		// TODO (?:\d+\.)? , removing may help not go crash
 		tokenRegex.put(TokenType.symbol, Pattern.compile("(?:\\d+\\.)?[a-zA-Z_@\\[\\]][\\w:.@\\[\\]\\-?^/\\u00A0-\\u024F]*"));
 		tokenRegex.put(TokenType.operator, Pattern.compile("[={}<>;,]|>=|<=|!="));
 		// string pattern was problematic
@@ -52,7 +51,6 @@ public class Token {
 				return entry.getKey();
 			}
 		}
-		// else unknown type
 		return TokenType.unknown;
 	}
 

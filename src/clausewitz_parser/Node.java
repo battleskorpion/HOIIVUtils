@@ -56,39 +56,6 @@ public class Node implements NodeStreamable<Node> {
 		return value.valueObject();
 	}
 
-//	// todo token type
-//	public Node get(TokenType tokenType, String str) {
-//		Object value = value();
-//		if (value instanceof ArrayList<?>) {
-//			for (Node node : (ArrayList<Node>) value) {
-//				if (node.name.equals(str)) {
-//					return node;
-//				}
-//			}
-//			return null; // not found in the list
-//		}
-////		else if (value instanceof SymbolNode) {
-////			return ((SymbolNode) value).name.equals(str) ? value : null;
-////		}
-//		return null;
-//	}
-//
-//	public ArrayList<Node> getAll(TokenType tokenType, String str) {
-//		Object value = value();
-//		ArrayList<Node> result = new ArrayList<>();
-//		if (value instanceof ArrayList<?>) {
-//			for (Node node : (ArrayList<Node>) value) {
-//				if (node.name.equals(str)) {
-//					result.add(node);
-//				}
-//			}
-//		} else {
-//			return null;
-//		}
-//
-//		return result;
-//	}
-
 	// no clue
 	NodeStream<Node> stream() {
 		NodeStream<Node> nodeStream = new NodeStream<>(this);

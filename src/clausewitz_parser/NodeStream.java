@@ -84,11 +84,8 @@ public class NodeStream<NodeType extends Node> implements NodeStreamable<NodeTyp
 		return findFirst(node -> node.name.equals(str));
 	}
 
-	// todo filter name should filter.. a name.
 	@Override
 	public NodeStreamable<NodeType> filterName(String str) {
-//		return stream
-//				.filter(node -> node.name.equals(str));
 		return filter(node -> node.name.equals(str));
 	}
 

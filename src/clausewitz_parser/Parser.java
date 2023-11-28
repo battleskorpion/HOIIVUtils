@@ -88,7 +88,6 @@ public class Parser {
 		}
 
 		var nextToken = tokens.peek();
-		// todo dollar sign regex okay?
 		if (nextToken.type != TokenType.operator || nextToken.value.matches("^[,;}]$")) {
 			while (nextToken.value.matches("^[,;]$")) {
 				tokens.next();
@@ -96,12 +95,7 @@ public class Parser {
 			}
 
 			/* handle escaped characters */
-			var nameValue = name.value;
-			if (name.type == TokenType.string) {
-				nameValue = nameValue.substring(1, nameValue.length() - 2)
-						.replaceAll(escape_quote_regex, "\"")
-						.replaceAll(escape_backslash_regex, "\\");
-			}
+			var nameValue = unescapeCharacters(name, name.value);
 
 			// TODO
 			Node node = new Node();
@@ -161,6 +155,15 @@ public class Parser {
 		node.valueAttachmentToken = valueAttachmentToken;
 
 		return node;
+	}
+
+	private String unescapeCharacters(Token name, String nameValue) {
+		if (name.type == TokenType.string) {
+			nameValue = nameValue.substring(1, nameValue.length() - 2)
+					.replaceAll(escape_quote_regex, "\"")
+					.replaceAll(escape_backslash_regex, "\\");
+		}
+		return nameValue;
 	}
 
 	public NodeValue parseNodeValue(Tokenizer tokens) throws ParserException {

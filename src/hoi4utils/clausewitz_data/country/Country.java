@@ -90,6 +90,8 @@ public class Country implements InfrastructureData {
 		dataFunctions.add(c -> c.infrastructure.popPerMilRatio());
 		dataFunctions.add(c -> c.infrastructure.popAirportCapacityRatio());
 		dataFunctions.add(c -> c.infrastructure.popPerStateRatio(c.numOwnedStates()));
+		/* todo better way to do this obv! plz fix :(
+		with (wrapper function that returns either or depndent on resourcesPerfcentages boolean value ofc */
 		if (resourcePercentages) {
 			dataFunctions.add(Country::aluminum);
 			dataFunctions.add(Country::chromium);
