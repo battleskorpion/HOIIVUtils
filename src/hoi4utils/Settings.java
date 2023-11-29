@@ -71,7 +71,12 @@ public enum Settings {
 		public String defaultProperty() {
 			return "true";
 		}
-	}
+	},
+	HOI4_PATH {
+		public String toString() {
+			return (String) getSetting();
+		}
+	},
 	;
 
 	/**

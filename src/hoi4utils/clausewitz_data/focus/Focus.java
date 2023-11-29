@@ -5,6 +5,7 @@ import hoi4utils.clausewitz_code.effect.Effect;
 import hoi4utils.clausewitz_code.scope.Scope;
 import hoi4utils.clausewitz_data.Localizable;
 import hoi4utils.clausewitz_code.trigger.Trigger;
+import hoi4utils.clausewitz_data.country.CountryTags;
 import hoi4utils.clausewitz_data.gfx.Interface;
 import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import hoi4utils.clausewitz_data.localization.Localization;
@@ -680,7 +681,11 @@ public class Focus implements Localizable {
 		return cost;
 	}
 
-	public double completionTime() {
+	public double displayedCompletionTime() {
+		return Math.floor(preciseCompletionTime());
+	}
+
+	public double preciseCompletionTime() {
 		return cost * FOCUS_COST_FACTOR;
 	}
 
@@ -744,7 +749,7 @@ public class Focus implements Localizable {
 		details.append("\n");
 		/* completion time */
 		details.append("Completion time: ");
-		details.append(df.format(Math.floor(this.completionTime())));
+		details.append(df.format(displayedCompletionTime()));
 		details.append("\n");
 
 		/* prerequisites */
@@ -796,7 +801,6 @@ public class Focus implements Localizable {
 	}
 
 	/**
-	 * todo stuff
 	 * @param completionRewardNode format: "completion_reward = { ... }"
 	 *                             (assumed to be correct)
 	 */
@@ -809,15 +813,34 @@ public class Focus implements Localizable {
 
 		String cr_identifier = completionRewardNode.name;
 
-//		System.out.println("focus: ");
-		for (Node n : completionRewardNode.value().list()) {
-			Scope scope = Scope.of(this.focusTree.country());
+		setCompletionRewardsOfNode(completionRewardNode);
+	}
 
-//			System.out.println("\t" + n.name);
+	private void setCompletionRewardsOfNode(Node completionRewardNode) {
+		setCompletionRewardsOfNode(completionRewardNode, Scope.of(this.focusTree.country()));
+	}
+
+	/**
+	 * todo stuff
+	 * @param completionRewardNode
+	 * @param scope
+	 */
+	private void setCompletionRewardsOfNode(Node completionRewardNode, Scope scope) {
+		for (Node n : completionRewardNode.value().list()) {
 			/* check if its a deeper scope first */
 			if (n.value().isList()) {
 				// todo
-			} else if (!n.valueIsNull()){
+//				// todo could this be handled better more generically with some other unique
+				// scoping stuff like country tags like.... ? ....
+				Scope s = null;
+				if (CountryTags.exists(n.name)) {
+					s = Scope.of(CountryTags.get(n.name));
+				}
+				if (s != null) {
+					setCompletionRewardsOfNode(n, s);
+				}
+//				System.out.println(n.name);
+			} else if (!n.valueIsNull()) {
 				/* else if target, add effect with target */
 				Effect effect = Effect.of(n.name, scope);  // todo
 				if (effect == null) {
@@ -837,7 +860,6 @@ public class Focus implements Localizable {
 				/* else add effect */
 				Effect effect = Effect.of(n.name, scope);  // todo
 				if (effect == null) {
-
 					System.err.println("effect not found: " + n.name);
 					continue;
 				}

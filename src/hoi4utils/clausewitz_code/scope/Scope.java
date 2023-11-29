@@ -5,17 +5,17 @@ import hoi4utils.clausewitz_data.country.CountryTag;
 import java.util.EnumSet;
 import java.util.HashMap;
 
-public class Scope {
+public class Scope implements Cloneable {
 	public static HashMap<String, Scope> scopes = new HashMap<>();
 
 	public final String name;
 	private final EnumSet<ScopeType> withinScopeAllowed;     // 'from' (in the context of)
 //	// usually 'country' or 'any'
 	private final ScopeType targetScopeType;             // 'to'   (targeting)
-	//private ScopeType scopeType;
+	public final ScopeCategory scopeCategory;
+
 	private Scope withinScope = null;
 	//private Scope targetScope = null;   // null if is the target?
-	public ScopeCategory scopeCategory;
 
 	protected Scope(String name, ScopeType fromScopeAllowed, ScopeType targetScopeType,
 	                ScopeCategory scopeCategory) {
@@ -33,15 +33,27 @@ public class Scope {
 	}
 
 	public static Scope of(String name, Scope within) throws Exception {
-		Scope scope = scopes.get(name);
+		Scope scope = getClone(name);
+		if (scope == null) return null;
 		scope.setWithin(within);
 //		scope.setTarget(target);
 
 		return scope;
 	}
 
+	// todo hopefully theres no conflicts here? or refactor necessary here
+	// dont think its possible that there would be.
 	public static Scope of(CountryTag countryTag) {
-		return new Scope(countryTag.toString(), ScopeType.any, ScopeType.country, ScopeCategory.DUAL);
+		if (countryTag == null) {
+			return null;
+		}
+		String tag = countryTag.toString();
+		Scope s = getClone(tag);
+		if (s == null) {
+			return new Scope(countryTag.toString(), ScopeType.any, ScopeType.country, ScopeCategory.DUAL);
+		} else {
+			return s;
+		}
 	}
 
 	private void setWithin(Scope scope) throws Exception {
@@ -58,6 +70,24 @@ public class Scope {
 //		target.setWithin(this);
 //		//targetScope = target;
 //	}
+
+	private static Scope getClone(String name) {
+		Scope clone;
+		try {
+			Scope scope = scopes.get(name);
+			if (scope == null) return null;
+			clone = (Scope) scopes.get(name).clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+		return clone;
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Scope s = (Scope) super.clone();
+		return s;
+	}
 
 	/* base scopes */ // todo! double check scope categories esp ones that are supposedly 'effect'
 	// todo: <character>

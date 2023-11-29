@@ -4,6 +4,7 @@ import java.util.Objects;
 public final class CountryTag {
 	public static final CountryTag NULL_TAG = new CountryTag("###");
 	public static final int COUNTRY_TAG_LENGTH = 3;         // standard country tag length (for a normal country tag)
+
 	private final String tag;
 
 	public CountryTag(String tag) {
@@ -12,6 +13,10 @@ public final class CountryTag {
 		}
 
 		this.tag = tag;
+	}
+
+	public String tag() {
+		return tag;
 	}
 
 	@Override

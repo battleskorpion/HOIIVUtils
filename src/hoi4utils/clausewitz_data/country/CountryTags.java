@@ -121,11 +121,18 @@ public class CountryTags extends HOIIVUtils {
 		}
 	}
 
-	public static boolean exists(String substring) {
+	public static CountryTag get(String tag) {
+		if (exists(tag)) {
+			return country_tags.stream().filter(ct -> ct.tag().equals(tag)).findFirst().orElse(null);
+		}
+		return null;
+	}
+
+	public static boolean exists(String tag) {
 		if (country_tags == null) {
 			getCountryTags();
 		}
 
-		return country_tags.contains(new CountryTag(substring));
+		return country_tags.contains(new CountryTag(tag));
 	}
 }

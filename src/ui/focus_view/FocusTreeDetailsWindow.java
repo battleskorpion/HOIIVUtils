@@ -31,7 +31,7 @@ public class FocusTreeDetailsWindow extends Stage {
 		StringBuilder details = new StringBuilder();
 		details.append("\n");
 		details.append("Completion time: ");
-		details.append(focus.completionTime());
+		details.append(focus.preciseCompletionTime());
 		details.append("\n");
 
 		for (Set<Focus> prereqSet : focus.getPrerequisites()) {
