@@ -18,6 +18,7 @@ public enum ScopeType {
 	character,  // todo subsets inc. LEADER, OPERATIVE,
 	leader,
 	operative,
+	operation,
 	division,
 	mio,
 	contract,
