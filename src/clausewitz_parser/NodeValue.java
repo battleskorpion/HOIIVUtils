@@ -6,6 +6,7 @@ import java.util.List;
 /**
  *  stores string, number, ArrayList<Node>, SymbolNode, or null
  */
+// todo should be subclasseed to impl effect parameter?
 public final class NodeValue {
 	private final Object value;
 
@@ -113,7 +114,6 @@ public final class NodeValue {
 	public boolean isList() {
 		return value instanceof List<?>;
 	}
-
 
 	// todo check allowables
 }

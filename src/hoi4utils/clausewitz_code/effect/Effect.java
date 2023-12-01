@@ -1,28 +1,28 @@
 package hoi4utils.clausewitz_code.effect;
 
+import clausewitz_parser.Node;
 import clausewitz_parser.NodeValue;
 import hoi4utils.clausewitz_code.scope.Scope;
 import hoi4utils.clausewitz_code.scope.ScopeType;
 
-import java.util.EnumSet;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * For information: <a href="https://hoi4.paradoxwikis.com/Effect">Effects Wiki</a>
 */
-public class Effect {
+public class Effect implements EffectParameter, Cloneable {
 	public static SortedMap<String, Effect> effects = new TreeMap<>();
 
 	private final String identifier;
-	private EffectParameter parameters = null;  // null by default
-	private NodeValue value;
+	//////private EffectParameter parameters = null;  // null by default
+	private NodeValue parametersNode;
+	private List<EffectParameter> parameters = null;
 
 	private final EnumSet<ScopeType> supportedScopes;
 	private final EnumSet<ScopeType> supportedTargets;   // can be null
 
+	private Scope withinScope = null;
 	private Scope targetScope;
-
 
 	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets) {
 		this.identifier = identifier;
@@ -53,25 +53,44 @@ public class Effect {
 //	}
 
 	public static Effect of(String identifier, Scope scope) {
-		Effect effect = effects.get(identifier);
+		Effect effect;
+		effect = effects.get(identifier);
 		if (effect == null) {
 			return null;
 		}
-		if (effect.checkSupportedInScope(scope)) {
+		if (!effect.isSupportedInScope(scope)) {
 			System.err.println("Effect was not returned: " + identifier
-					+ " does not support scope " + scope);
+					+ " is not supported in scope " + scope);
 			return null;
 		}
-//		if (effect.checkSupportedTarget(scope)) {
+		//		if (effect.checkSupportedTarget(scope)) {
 //			System.err.println("Effect was not returned: " + identifier
 //					+ " does not support target scope " + scope.targetScope);
 //			return null;
 //		}
+
+		try {
+			effect = (Effect) effect.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+
+		effect.withinScope = scope;
 		return effect;
 	}
 
-	public boolean checkSupportedInScope(Scope scope) {
-		return !this.supportedScopes.contains(scope.targetScopeType());
+	public static Effect of(String identifier, Scope scope, NodeValue params) {
+		Effect effect;
+		effect = of(identifier, scope);
+		if (effect == null) return null;
+
+		effect.setParameters(params);
+		return effect;
+	}
+
+	public boolean isSupportedInScope(Scope scope) {
+		if (this.supportedScopes.contains(ScopeType.any)) return true;
+		return this.supportedScopes.contains(scope.targetScopeType());
 	}
 
 	public boolean checkSupportedTarget(Scope scope) {
@@ -84,13 +103,13 @@ public class Effect {
 		return identifier;
 	}
 
-	public EffectParameter parameters() {
-		return parameters;
-	}
+//	public EffectParameter parameters() {
+//		return parameters;
+//	}
 
-	public void setParameters(EffectParameter parameters) {
-		this.parameters = parameters;
-	}
+//	public void setParameters(EffectParameter parameters) {
+//		this.parameters = parameters;
+//	}
 
 	public EnumSet<ScopeType> supportedScopes() {
 		return supportedScopes;
@@ -112,8 +131,44 @@ public class Effect {
 		setTarget(Scope.of(string, within));
 	}
 
-	public void setValue(NodeValue value) {
-		this.value = value;
+	// todo wip
+	public void setParameters(NodeValue value) {
+		this.parametersNode = value;
+		if (parametersNode.isList()) {
+			List<Node> list = parametersNode.list();
+			for (Node n : list) {
+				NodeValue v = n.value();
+				if (!v.isList()) parameters.add(new Parameter(n.name, v));
+				else {
+					Effect subeffect = Effect.of(n.name, this.withinScope(), n.value());
+					if (subeffect != null) {
+//						s = scope;
+						/* if target, add effect with target */
+						if (subeffect.hasSupportedTargets()) {
+							try {
+//								effect.setTarget(n.value().string(), scope);
+								// todo how to set target in this case
+							} catch (Exception e) {
+								throw new RuntimeException(e); // todo
+							}
+						}
+//						subeffect.setParameters(n.value()); use new of() func.
+						parameters.add(subeffect);
+					} else {
+						System.out.println("Effect param unknown: " + n.name);
+					}
+				}
+			}
+		}
+		else {
+			parameters.add(new Parameter(value));
+		}
+
+		// handle required/acceptable parameters
+	}
+
+	private Scope withinScope() {
+		return withinScope;
 	}
 
 	public String name() {
@@ -121,10 +176,20 @@ public class Effect {
 	}
 
 	public String value() {
-		if (value == null) {
+		if (parametersNode == null) {
 			return null;
 		}
-		return value.asString();
+		if (!parametersNode.isList()) return parametersNode.asString();
+		else return "[parameter block]";
+	}
+
+	// todo to parameters() ?
+	public List<EffectParameter> parameterList() {
+//		if (parametersNode.isList()) return parametersNode.list().stream().map((v) -> v.value().asString()).toList();
+//		else {
+//			return List.of(value());
+//		}
+		return parameters;
 	}
 
 	public boolean isScope(Scope of) {
@@ -144,5 +209,39 @@ public class Effect {
 
 	public boolean hasTarget() {
 		return targetScope != null;
+	}
+
+	public boolean hasParameterBlock() {
+		if (parametersNode == null) return false;
+		return parametersNode.isList();
+	}
+
+	@Override
+	public String displayParameter() {
+		StringBuilder s = new StringBuilder();
+
+		s.append(name());
+		s.append(" = ");
+		if (!parametersNode.isList()) {
+			s.append(parametersNode.asString());
+		}
+		else {
+			s.append("{\n");
+			for (EffectParameter p : parameters) {
+				s.append("\t");
+				s.append(p.displayParameter());
+				s.append("\n");
+			}
+			s.append("}\n");
+		}
+		return s.toString();
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Effect c = (Effect) super.clone();
+		c.parameters = new ArrayList<>();
+
+		return c;
 	}
 }

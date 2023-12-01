@@ -32,7 +32,7 @@ public class Scope implements Cloneable {
 		scopes.put(name, this);
 	}
 
-	public static Scope of(String name, Scope within) throws Exception {
+	public static Scope of(String name, Scope within) throws NotPermittedWithinScopeException {
 		Scope scope = getClone(name);
 		if (scope == null) return null;
 		scope.setWithin(within);
@@ -56,11 +56,19 @@ public class Scope implements Cloneable {
 		}
 	}
 
-	private void setWithin(Scope scope) throws Exception {
-		if (!withinScopeAllowed.contains(scope.targetScopeType)) {
-			throw new Exception("From scope is not allowed for this scope");
+	private void setWithin(Scope scope) throws NotPermittedWithinScopeException {
+		if (!permittedWithinScope(scope)) {
+			throw new NotPermittedWithinScopeException("From scope is not allowed for this scope");
 		}
 		withinScope = scope;
+	}
+
+	private boolean permittedWithinScope(Scope scope) {
+		if (withinScopeAllowed.contains(ScopeType.any)) {
+			return true;
+		} else {
+			return withinScopeAllowed.contains(scope.targetScopeType);
+		}
 	}
 
 //	private void setTarget(Scope target) throws Exception {
@@ -85,8 +93,13 @@ public class Scope implements Cloneable {
 
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		Scope s = (Scope) super.clone();
-		return s;
+		Scope c = (Scope) super.clone();
+		return c;
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 	/* base scopes */ // todo! double check scope categories esp ones that are supposedly 'effect'

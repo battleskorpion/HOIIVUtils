@@ -2,6 +2,8 @@ package hoi4utils.clausewitz_data.focus;
 
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_code.effect.Effect;
+import hoi4utils.clausewitz_code.effect.EffectParameter;
+import hoi4utils.clausewitz_code.scope.NotPermittedWithinScopeException;
 import hoi4utils.clausewitz_code.scope.Scope;
 import hoi4utils.clausewitz_data.Localizable;
 import hoi4utils.clausewitz_code.trigger.Trigger;
@@ -772,13 +774,23 @@ public class Focus implements Localizable {
 			/* completion reward */
 			details.append("\nEffect: \n");
 			for (Effect effect : completionReward) {
+//				System.out.println(effect.name());
 				details.append("\t");
 				if (effect.hasTarget() && !effect.isScope(Scope.of(this.focusTree.country()))) {
 					details.append(effect.target());
 					details.append("\t");
 				}
 				details.append(effect.name());
-				if (effect.value() != null) {
+				if (effect.hasParameterBlock()) {
+					details.append(" = {\n");
+					for (EffectParameter n : effect.parameterList()) {
+						details.append("\t\t");
+						details.append(n.displayParameter());
+						details.append("\n");
+					}
+					details.append("\t}");
+				}
+				else if (effect.value() != null) {
 					details.append(" = ");
 					details.append(effect.value());
 				}
@@ -836,13 +848,43 @@ public class Focus implements Localizable {
 				if (CountryTags.exists(n.name)) {
 					s = Scope.of(CountryTags.get(n.name));
 				}
+				else {
+					try {
+						s = Scope.of(n.name, scope);
+					} catch (NotPermittedWithinScopeException e) {
+						System.out.println(e.getMessage());
+						break;
+					}
+				}
+
 				if (s != null) {
 					setCompletionRewardsOfNode(n, s);
+				} else {
+					/* if its not a scope may be an effect */
+					// todo refactor area
+					Effect effect = Effect.of(n.name, scope, n.value());
+					if (effect != null) {
+//						s = scope;
+						/* if target, add effect with target */
+						// todo why tbh. at least here and not there, why?
+						if (effect.hasSupportedTargets()) {
+							try {
+//								effect.setTarget(n.value().string(), scope);
+								// todo how to set target in this case
+							} catch (Exception e) {
+								throw new RuntimeException(e); // todo
+							}
+						}
+						//effect.setParameters(n.value()); use new of() func.
+						completionReward.add(effect);
+					} else {
+						System.out.println("Scope " + n.name + " unknown.");
+					}
 				}
 //				System.out.println(n.name);
 			} else if (!n.valueIsNull()) {
 				/* else if target, add effect with target */
-				Effect effect = Effect.of(n.name, scope);  // todo
+				Effect effect = Effect.of(n.name, scope, n.value());  // todo
 				if (effect == null) {
 					System.err.println("effect not found: " + n.name);
 					continue;
@@ -854,7 +896,7 @@ public class Focus implements Localizable {
 						throw new RuntimeException(e); // todo
 					}
 				}
-				effect.setValue(n.value());
+				//effect.setParameters(n.value()); use new of() func.
 				completionReward.add(effect);
 			} else {
 				/* else add effect */
