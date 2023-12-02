@@ -40,8 +40,35 @@ public enum ParameterValueType {
 		public List<String> identifiers() {
 			return List.of("variable", "var");
 		}
-	}
+	},
+	flag
 	;
+
+	public static boolean isParameterValueType(String s) {
+		if (s.startsWith("<") && s.endsWith(">")) {
+			s = s.substring(1, s.length() - 1); // remove ends
+			for (ParameterValueType p : ParameterValueType.values()) {
+				if (p.identifiers().contains(s)) {
+					return true;
+				}
+			}
+		} else {
+			return false;
+		}
+		return false;
+	}
+
+	public static ParameterValueType of(String s) {
+		if (s.startsWith("<") && s.endsWith(">")) {
+			s = s.substring(1, s.length() - 1); // remove ends
+			for (ParameterValueType p : ParameterValueType.values()) {
+				if (p.identifiers().contains(s)) {
+					return p;
+				}
+			}
+		}
+		return null;
+	}
 
 	public List<String> identifiers() {
 		return List.of(this.name());

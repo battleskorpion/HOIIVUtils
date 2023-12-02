@@ -11,12 +11,13 @@ import java.util.*;
  * For information: <a href="https://hoi4.paradoxwikis.com/Effect">Effects Wiki</a>
 */
 public class Effect implements EffectParameter, Cloneable {
-	public static SortedMap<String, Effect> effects = new TreeMap<>();
+	public static final SortedMap<String, Effect> effects = new TreeMap<>();
 
 	private final String identifier;
 	//////private EffectParameter parameters = null;  // null by default
 	private NodeValue parametersNode;
 	private List<EffectParameter> parameters = null;
+	private List<Parameter> requiredParameters;
 
 	private final EnumSet<ScopeType> supportedScopes;
 	private final EnumSet<ScopeType> supportedTargets;   // can be null
@@ -24,17 +25,18 @@ public class Effect implements EffectParameter, Cloneable {
 	private Scope withinScope = null;
 	private Scope targetScope;
 
-	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets) {
+	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets, List<Parameter> requiredParameters) {
 		this.identifier = identifier;
 		this.supportedScopes = supportedScopes;
 		this.supportedTargets = supportedTargets;
+		this.requiredParameters = requiredParameters;
 
 		effects.put(identifier, this);
 		System.out.println("effect: " + identifier);
 	}
 
-	public Effect(String identifier, EnumSet<ScopeType> supportedScopes) {
-		this(identifier, supportedScopes, null);
+	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, List<Parameter> requiredParameters) {
+		this(identifier, supportedScopes, null, requiredParameters);
 	}
 
 //	public static Effect of(String identifier, ScopeType scope, ScopeType targetScope) {
@@ -79,7 +81,7 @@ public class Effect implements EffectParameter, Cloneable {
 		return effect;
 	}
 
-	public static Effect of(String identifier, Scope scope, NodeValue params) {
+	public static Effect of(String identifier, Scope scope, NodeValue params) throws InvalidEffectParameterException {
 		Effect effect;
 		effect = of(identifier, scope);
 		if (effect == null) return null;
@@ -132,39 +134,79 @@ public class Effect implements EffectParameter, Cloneable {
 	}
 
 	// todo wip
-	public void setParameters(NodeValue value) {
+	public void setParameters(NodeValue value) throws InvalidEffectParameterException {
 		this.parametersNode = value;
+//		if (parametersNode.isList()) {
+//			List<Node> list = parametersNode.list();
+//			for (Node n : list) {
+//				NodeValue v = n.value();
+//				if (!v.isList()) parameters.add(new Parameter(n.name, v));
+//				else {
+//					Effect subeffect = Effect.of(n.name, this.withinScope(), n.value());
+//					if (subeffect != null) {
+////						s = scope;
+//						/* if target, add effect with target */
+//						if (subeffect.hasSupportedTargets()) {
+//							try {
+////								effect.setTarget(n.value().string(), scope);
+//								// todo how to set target in this case
+//							} catch (Exception e) {
+//								throw new RuntimeException(e); // todo
+//							}
+//						}
+////						subeffect.setParameters(n.value()); use new of() func.
+//						parameters.add(subeffect);
+//					} else {
+//						System.out.println("Effect param unknown: " + n.name);
+//					}
+//				}
+//			}
+//		}
+//		else {
+//			parameters.add(new Parameter(value));
+//		}
 		if (parametersNode.isList()) {
 			List<Node> list = parametersNode.list();
 			for (Node n : list) {
 				NodeValue v = n.value();
-				if (!v.isList()) parameters.add(new Parameter(n.name, v));
+				//if (!v.isList()) parameters.add(new Parameter(n.name, v));
+				if (!v.isList()) parameters.add(Parameter.of(n.name, v));
 				else {
 					Effect subeffect = Effect.of(n.name, this.withinScope(), n.value());
 					if (subeffect != null) {
 //						s = scope;
-						/* if target, add effect with target */
-						if (subeffect.hasSupportedTargets()) {
-							try {
+//						/* if target, add effect with target */
+//						if (subeffect.hasSupportedTargets()) {
+//							try {
 //								effect.setTarget(n.value().string(), scope);
-								// todo how to set target in this case
-							} catch (Exception e) {
-								throw new RuntimeException(e); // todo
-							}
-						}
-//						subeffect.setParameters(n.value()); use new of() func.
+//								// todo how to set target in this case
+//							} catch (Exception e) {
+//								throw new RuntimeException(e); // todo
+//							}
+//						}
 						parameters.add(subeffect);
+					} else if (!Parameter.isParameter(n.name, v)) {
+						throw new InvalidEffectParameterException("Effect parameter unknown: " + n.name);
 					} else {
-						System.out.println("Effect param unknown: " + n.name);
+						//parameters.add(new Parameter(n.name, v));
+						parameters.add(Parameter.of(n.name, v));
 					}
 				}
 			}
-		}
-		else {
-			parameters.add(new Parameter(value));
+		} else {
+			//parameters.add(new Parameter(value));
+			parameters.add(Parameter.of(null, value));
+			if (!acceptsParameter(value)) {
+				throw new InvalidEffectParameterException("Invalid parameter for effect " + this + ": " + value);
+			}
 		}
 
 		// handle required/acceptable parameters
+	}
+
+	private boolean acceptsParameter(NodeValue value) {
+		// TODO
+		return true;
 	}
 
 	private Scope withinScope() {
@@ -229,7 +271,7 @@ public class Effect implements EffectParameter, Cloneable {
 			s.append("{\n");
 			for (EffectParameter p : parameters) {
 				s.append("\t");
-				s.append(p.displayParameter());
+				s.append(p == null ? "[effect parameter was null]" : p.displayParameter());
 				s.append("\n");
 			}
 			s.append("}\n");

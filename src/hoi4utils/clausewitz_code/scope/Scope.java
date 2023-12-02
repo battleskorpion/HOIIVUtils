@@ -84,7 +84,7 @@ public class Scope implements Cloneable {
 		try {
 			Scope scope = scopes.get(name);
 			if (scope == null) return null;
-			clone = (Scope) scopes.get(name).clone();
+			clone = (Scope) scope.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException(e);
 		}

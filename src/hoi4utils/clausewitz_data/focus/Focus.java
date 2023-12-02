@@ -3,6 +3,7 @@ package hoi4utils.clausewitz_data.focus;
 import hoi4utils.Settings;
 import hoi4utils.clausewitz_code.effect.Effect;
 import hoi4utils.clausewitz_code.effect.EffectParameter;
+import hoi4utils.clausewitz_code.effect.InvalidEffectParameterException;
 import hoi4utils.clausewitz_code.scope.NotPermittedWithinScopeException;
 import hoi4utils.clausewitz_code.scope.Scope;
 import hoi4utils.clausewitz_data.Localizable;
@@ -785,7 +786,11 @@ public class Focus implements Localizable {
 					details.append(" = {\n");
 					for (EffectParameter n : effect.parameterList()) {
 						details.append("\t\t");
-						details.append(n.displayParameter());
+						if (n == null) {
+							details.append("[effect parameter was null]");
+						} else {
+							details.append(n.displayParameter());
+						}
 						details.append("\n");
 					}
 					details.append("\t}");
@@ -862,7 +867,12 @@ public class Focus implements Localizable {
 				} else {
 					/* if its not a scope may be an effect */
 					// todo refactor area
-					Effect effect = Effect.of(n.name, scope, n.value());
+					Effect effect = null;
+					try {
+						effect = Effect.of(n.name, scope, n.value());
+					} catch (InvalidEffectParameterException e) {
+						System.out.println(e.getMessage());
+					}
 					if (effect != null) {
 //						s = scope;
 						/* if target, add effect with target */
@@ -884,7 +894,12 @@ public class Focus implements Localizable {
 //				System.out.println(n.name);
 			} else if (!n.valueIsNull()) {
 				/* else if target, add effect with target */
-				Effect effect = Effect.of(n.name, scope, n.value());  // todo
+				Effect effect = null;  // todo
+				try {
+					effect = Effect.of(n.name, scope, n.value());
+				} catch (InvalidEffectParameterException e) {
+					System.out.println(e.getMessage());
+				}
 				if (effect == null) {
 					System.err.println("effect not found: " + n.name);
 					continue;

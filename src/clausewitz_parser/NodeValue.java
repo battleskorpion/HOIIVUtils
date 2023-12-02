@@ -115,5 +115,17 @@ public final class NodeValue {
 		return value instanceof List<?>;
 	}
 
+	public boolean isString() {
+		return value instanceof String;
+	}
+
+	public boolean isNumber() {
+		return value instanceof Number;
+	}
+
+//	public boolean isBoolean() {
+//		return value instanceof Boolean;
+//	}
+
 	// todo check allowables
 }

@@ -69,16 +69,72 @@ public class EffectDatabase {
 //				System.out.println("id " + identifier);
 				String supportedScopes_str = resultSet.getString("supported_scopes");
 				String supportedTargets_str = resultSet.getString("supported_targets");
+				String requiredParametersFull_str = resultSet.getString("required_parameters_full");
+				String requiredParametersSimple_str = resultSet.getString("required_parameters_simple");
+				String optionalParameters_str = resultSet.getString("optional_parameters");
 
 				EnumSet<ScopeType> supportedScopes = parseEnumSet(supportedScopes_str);
 				EnumSet<ScopeType> supportedTargets = parseEnumSet(supportedTargets_str);
 
-				// Create a Modifier instance and add it to the loaded list
+				/* required parameters */
+				List<Parameter> requiredParameters = new ArrayList<>();
+				//Parameter.addValidIdentifier();
+				if (requiredParametersFull_str == null || requiredParametersFull_str.isEmpty() || requiredParametersFull_str.equals("none")) {
+					//
+				} else {
+					String[] parameters_str = requiredParametersFull_str.split(", ");
+
+					/* single parameter */
+					if (parameters_str.length == 1) {
+						String[] args = parameters_str[0].split(" ");
+						if (ParameterValueType.isParameterValueType(args[0])) {
+
+						} else if (args[0].contains("<") || args[0].contains(">")) {
+							// err
+							throw new RuntimeException("Invalid effects database element: not recognized parameter value type: " + args[0]);
+						} else {
+							// else is identifier (and parameter value type)
+							// FIXME
+							//Parameter.addValidParameter(parameters_str[0]);
+							if (args.length < 2) {
+								System.out.println(Arrays.toString(args));
+							}
+							ParameterValueType pValueType = ParameterValueType.of(args[1]);
+							requiredParameters.add(new Parameter(parameters_str[0], pValueType));
+						}
+					}
+					/* multi parameter */
+					else {
+						String parameter_str;
+						for (int i = 0; i < parameters_str.length; i++) {
+							parameter_str = parameters_str[i];
+							String[] args = parameter_str.split(" ");
+							if (args[0].contains("<") || args[0].contains(">")) {
+								// err
+								throw new RuntimeException("Invalid effects database element: invalid placement of parameter value type: " + args[0]);
+							}
+//							Parameter.addValidParameter(args[0]);
+							if (args.length < 2) {
+								System.out.println(Arrays.toString(args));
+							}
+							ParameterValueType pValueType = ParameterValueType.of(args[1]);
+							requiredParameters.add(new Parameter(args[0], pValueType));
+
+//							for (int j = 1; j < args.length; j++) {
+//								//if (args[j])
+//							}
+						}
+					}
+				}
+
+				/* optional parameters */
+
+				// Create a Effect instance and add it to the loaded list
 				Effect effect;
 				if (supportedTargets == null) {
-					effect = new Effect(identifier, supportedScopes);
+					effect = new Effect(identifier, supportedScopes, requiredParameters);
 				} else {
-					effect = new Effect(identifier, supportedScopes, supportedTargets);
+					effect = new Effect(identifier, supportedScopes, supportedTargets, requiredParameters);
 				}
 				loadedEffects.add(effect);
 			}
