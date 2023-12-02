@@ -11,30 +11,34 @@ public class Parameter implements EffectParameter, Cloneable {
 //		Parameter p = new Parameter(null, ParameterValueType.);
 //		allValidParameters.add(p);
 //	}
-final List<ParameterValueType> allowedParameterValueTypes;
+	final List<ParameterValueType> allowedParameterValueTypes;
 
 
 	final String identifier;
 	ParameterValueType parameterValueType;  // todo necessary?
 	ParameterValue value;
 
-	Parameter(String name, List<ParameterValueType> allowedParameterValueTypes) {
+	Parameter(String name, List<ParameterValueType> allowedParameterValueTypes) throws NullParameterTypeException {
 		this.identifier = name;
-		this.allowedParameterValueTypes = allowedParameterValueTypes;
+		if (allowedParameterValueTypes == null) {
+			throw new NullParameterTypeException("allowedParameterValueType null, " + name);
+		} else {
+			this.allowedParameterValueTypes = allowedParameterValueTypes;
+		}
 		allParameters.put(name, this);
 	}
 
-	Parameter(String name, ParameterValueType allowedParameterValueType) {
+	Parameter(String name, ParameterValueType allowedParameterValueType) throws NullParameterTypeException {
 		this.identifier = name;
 		if (allowedParameterValueType == null) {
-			this.allowedParameterValueTypes = null;
+			throw new NullParameterTypeException("allowedParameterValueType null, " + name);
 		} else {
 			this.allowedParameterValueTypes = List.of(allowedParameterValueType);
 		}
 		allParameters.put(name, this);
 	}
 
-	Parameter(String name) {
+	Parameter(String name) throws NullParameterTypeException {
 		this(name, (ParameterValueType) null);
 	}
 
@@ -59,6 +63,15 @@ final List<ParameterValueType> allowedParameterValueTypes;
 			throw new RuntimeException(e);
 		}
 		return clone;
+	}
+
+	public static boolean containsScopeParameter(List<Parameter> requiredParameters) {
+		for (Parameter p : requiredParameters) {
+			if (p.allowedParameterValueTypes.contains((ParameterValueType.scope))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -93,7 +106,7 @@ final List<ParameterValueType> allowedParameterValueTypes;
 	}
 
 	@Override
-	public String displayParameter() {
+	public String displayScript() {
 //		return "[parameter]";
 		if (identifier == null) {
 			return value.toString();

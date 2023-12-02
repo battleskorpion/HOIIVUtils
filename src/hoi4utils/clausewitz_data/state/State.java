@@ -285,6 +285,10 @@ public class State implements InfrastructureData, Localizable {
 				+ "but state not found in states list");
 	}
 
+	public static State get(int id) {
+		return states.stream().filter(state -> state.stateID == id).findFirst().orElse(null);
+	}
+
 	public Resources findStateResources(Parser stateParser) {
 		int aluminum = 0;
 		int chromium = 0;
@@ -385,4 +389,7 @@ public class State implements InfrastructureData, Localizable {
 		return stateInfrastructure;
 	}
 
+	public int id() {
+		return stateID;
+	}
 }

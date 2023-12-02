@@ -2,6 +2,7 @@ package hoi4utils.clausewitz_code.effect;
 
 import clausewitz_parser.Node;
 import clausewitz_parser.NodeValue;
+import hoi4utils.clausewitz_code.scope.NotPermittedInScopeException;
 import hoi4utils.clausewitz_code.scope.Scope;
 import hoi4utils.clausewitz_code.scope.ScopeType;
 
@@ -24,12 +25,14 @@ public class Effect implements EffectParameter, Cloneable {
 
 	private Scope withinScope = null;
 	private Scope targetScope;
+	private final boolean isScope;
 
 	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets, List<Parameter> requiredParameters) {
 		this.identifier = identifier;
 		this.supportedScopes = supportedScopes;
 		this.supportedTargets = supportedTargets;
 		this.requiredParameters = requiredParameters;
+		this.isScope = Parameter.containsScopeParameter(requiredParameters);
 
 		effects.put(identifier, this);
 		System.out.println("effect: " + identifier);
@@ -54,16 +57,15 @@ public class Effect implements EffectParameter, Cloneable {
 //		return effect;
 //	}
 
-	public static Effect of(String identifier, Scope scope) {
+	public static Effect of(String identifier, Scope scope) throws NotPermittedInScopeException {
 		Effect effect;
 		effect = effects.get(identifier);
 		if (effect == null) {
 			return null;
 		}
 		if (!effect.isSupportedInScope(scope)) {
-			System.err.println("Effect was not returned: " + identifier
+			throw new NotPermittedInScopeException("Effect was not returned: " + identifier
 					+ " is not supported in scope " + scope);
-			return null;
 		}
 		//		if (effect.checkSupportedTarget(scope)) {
 //			System.err.println("Effect was not returned: " + identifier
@@ -81,7 +83,7 @@ public class Effect implements EffectParameter, Cloneable {
 		return effect;
 	}
 
-	public static Effect of(String identifier, Scope scope, NodeValue params) throws InvalidEffectParameterException {
+	public static Effect of(String identifier, Scope scope, NodeValue params) throws InvalidEffectParameterException, NotPermittedInScopeException {
 		Effect effect;
 		effect = of(identifier, scope);
 		if (effect == null) return null;
@@ -134,7 +136,7 @@ public class Effect implements EffectParameter, Cloneable {
 	}
 
 	// todo wip
-	public void setParameters(NodeValue value) throws InvalidEffectParameterException {
+	public void setParameters(NodeValue value) throws InvalidEffectParameterException, NotPermittedInScopeException {
 		this.parametersNode = value;
 //		if (parametersNode.isList()) {
 //			List<Node> list = parametersNode.list();
@@ -172,7 +174,13 @@ public class Effect implements EffectParameter, Cloneable {
 				//if (!v.isList()) parameters.add(new Parameter(n.name, v));
 				if (!v.isList()) parameters.add(Parameter.of(n.name, v));
 				else {
-					Effect subeffect = Effect.of(n.name, this.withinScope(), n.value());
+					Effect subeffect;
+					if (Scope.of(this) != null) {
+						subeffect = Effect.of(n.name, Scope.of(this), n.value());
+					} else {
+						subeffect = Effect.of(n.name, this.withinScope(), n.value());;
+					}
+					//Effect subeffect = Effect.of(n.name, this.withinScope(), n.value());
 					if (subeffect != null) {
 //						s = scope;
 //						/* if target, add effect with target */
@@ -188,8 +196,9 @@ public class Effect implements EffectParameter, Cloneable {
 					} else if (!Parameter.isParameter(n.name, v)) {
 						throw new InvalidEffectParameterException("Effect parameter unknown: " + n.name);
 					} else {
-						//parameters.add(new Parameter(n.name, v));
-						parameters.add(Parameter.of(n.name, v));
+						Parameter p = Parameter.of(n.name, v);
+						parameters.add(p);
+//						if (p == null) JOptionPane.showMessageDialog(null, "help me: " + n.name + ", " + v);
 					}
 				}
 			}
@@ -234,8 +243,9 @@ public class Effect implements EffectParameter, Cloneable {
 		return parameters;
 	}
 
-	public boolean isScope(Scope of) {
-		return targetScope != null && targetScope.name.equals(of.name);
+	public boolean isScope() {
+//		return targetScope != null && targetScope.name.equals(of.name);
+		return isScope;
 	}
 
 	public Scope targetScope() {
@@ -259,9 +269,31 @@ public class Effect implements EffectParameter, Cloneable {
 	}
 
 	@Override
-	public String displayParameter() {
+	public String displayScript() {
+//		StringBuilder s = new StringBuilder();
+//
+//		s.append(name());
+//		s.append(" = ");
+//		if (!parametersNode.isList()) {
+//			s.append(parametersNode.asString());
+//		}
+//		else {
+//			s.append("{\n");
+//			for (EffectParameter p : parameters) {
+//				s.append("\t");
+//				s.append(p == null ? "[effect parameter was null]" : p.displayParameter());
+//				s.append("\n");
+//			}
+//			s.append("}\n");
+//		}
+//		return s.toString();
+		return displayScript(1);
+	}
+
+	public String displayScript(int tabs) {
 		StringBuilder s = new StringBuilder();
 
+		s.append("\t".repeat(Math.max(0, tabs - 1)));
 		s.append(name());
 		s.append(" = ");
 		if (!parametersNode.isList()) {
@@ -270,10 +302,11 @@ public class Effect implements EffectParameter, Cloneable {
 		else {
 			s.append("{\n");
 			for (EffectParameter p : parameters) {
-				s.append("\t");
-				s.append(p == null ? "[effect parameter was null]" : p.displayParameter());
+				s.append("\t".repeat(tabs));
+				s.append(p == null ? "[effect parameter was null]" : p.displayScript());
 				s.append("\n");
 			}
+			s.append("\t".repeat(Math.max(0, tabs - 1)));
 			s.append("}\n");
 		}
 		return s.toString();
@@ -286,4 +319,5 @@ public class Effect implements EffectParameter, Cloneable {
 
 		return c;
 	}
+
 }

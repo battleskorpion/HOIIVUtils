@@ -89,7 +89,13 @@ public class EffectDatabase {
 						//String[] args = parameters_str[0].split(" ");
 						String[] args = parameters_str[0].split("\\s(?![^<>]*>)");
 						if (ParameterValueType.isParameterValueType(args[0])) {
-
+							ParameterValueType pValueType = ParameterValueType.scope;
+							try {
+								requiredParameters.add(new Parameter(args[0], pValueType));
+							} catch (NullParameterTypeException e) {
+								System.out.println("null param exception: " + Arrays.toString(args));
+								throw new RuntimeException(e);
+							}
 						} else if (args[0].contains("<") || args[0].contains(">")) {
 							// err
 							throw new RuntimeException("Invalid effects database element: not recognized parameter value type: " + args[0]);
@@ -101,7 +107,12 @@ public class EffectDatabase {
 								System.out.println(Arrays.toString(args));
 							}
 							ParameterValueType pValueType = ParameterValueType.of(args[1]);
-							requiredParameters.add(new Parameter(parameters_str[0], pValueType));
+							try {
+								requiredParameters.add(new Parameter(parameters_str[0], pValueType));
+							} catch (NullParameterTypeException e) {
+								System.out.println("null param exception: " + Arrays.toString(parameters_str));
+								throw new RuntimeException(e);
+							}
 						}
 					}
 					/* multi parameter */
@@ -119,7 +130,12 @@ public class EffectDatabase {
 								System.out.println(Arrays.toString(args));
 							}
 							ParameterValueType pValueType = ParameterValueType.of(args[1]);
-							requiredParameters.add(new Parameter(args[0], pValueType));
+							try {
+								requiredParameters.add(new Parameter(args[0], pValueType));
+							} catch (NullParameterTypeException e) {
+								System.out.println("null param exception: " + Arrays.toString(args));
+								throw new RuntimeException(e);
+							}
 
 //							for (int j = 1; j < args.length; j++) {
 //								//if (args[j])

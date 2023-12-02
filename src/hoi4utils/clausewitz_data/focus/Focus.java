@@ -1,11 +1,13 @@
 package hoi4utils.clausewitz_data.focus;
 
 import hoi4utils.Settings;
+import hoi4utils.clausewitz_code.HOI4Script;
 import hoi4utils.clausewitz_code.effect.Effect;
 import hoi4utils.clausewitz_code.effect.EffectParameter;
 import hoi4utils.clausewitz_code.effect.InvalidEffectParameterException;
-import hoi4utils.clausewitz_code.scope.NotPermittedWithinScopeException;
+import hoi4utils.clausewitz_code.scope.NotPermittedInScopeException;
 import hoi4utils.clausewitz_code.scope.Scope;
+import hoi4utils.clausewitz_code.scope.ScopeCategory;
 import hoi4utils.clausewitz_data.Localizable;
 import hoi4utils.clausewitz_code.trigger.Trigger;
 import hoi4utils.clausewitz_data.country.CountryTags;
@@ -775,30 +777,32 @@ public class Focus implements Localizable {
 			/* completion reward */
 			details.append("\nEffect: \n");
 			for (Effect effect : completionReward) {
-//				System.out.println(effect.name());
-				details.append("\t");
-				if (effect.hasTarget() && !effect.isScope(Scope.of(this.focusTree.country()))) {
-					details.append(effect.target());
-					details.append("\t");
-				}
-				details.append(effect.name());
-				if (effect.hasParameterBlock()) {
-					details.append(" = {\n");
-					for (EffectParameter n : effect.parameterList()) {
-						details.append("\t\t");
-						if (n == null) {
-							details.append("[effect parameter was null]");
-						} else {
-							details.append(n.displayParameter());
-						}
-						details.append("\n");
-					}
-					details.append("\t}");
-				}
-				else if (effect.value() != null) {
-					details.append(" = ");
-					details.append(effect.value());
-				}
+//				details.append("\t");
+//				// todo why would why huh? idk.
+////				if (effect.hasTarget() && !effect.isScope(Scope.of(this.focusTree.country()))) {
+////					details.append(effect.target());
+////					details.append("\t");
+////				}
+//				details.append(effect.name());
+//				if (effect.hasParameterBlock()) {
+//					details.append(" = {\n");
+//					for (EffectParameter n : effect.parameterList()) {
+//						details.append("\t\t");
+//						if (n == null) {
+//							details.append("[effect parameter was null]");
+//						} else {
+//							details.append(n.displayParameter());
+//						}
+//						details.append("\n");
+//					}
+//					details.append("\t}");
+//				}
+//				else if (effect.value() != null) {
+//					details.append(" = ");
+//					details.append(effect.value());
+//				}
+//				details.append("\n");
+				details.append(effect.displayScript());
 				details.append("\n");
 			}
 		}
@@ -856,40 +860,30 @@ public class Focus implements Localizable {
 				else {
 					try {
 						s = Scope.of(n.name, scope);
-					} catch (NotPermittedWithinScopeException e) {
+					} catch (NotPermittedInScopeException e) {
 						System.out.println(e.getMessage());
 						break;
 					}
 				}
 
-				if (s != null) {
-					setCompletionRewardsOfNode(n, s);
-				} else {
+				if (s == null || s.scopeCategory == ScopeCategory.EFFECT) {
 					/* if its not a scope may be an effect */
 					// todo refactor area
 					Effect effect = null;
 					try {
 						effect = Effect.of(n.name, scope, n.value());
-					} catch (InvalidEffectParameterException e) {
-						System.out.println(e.getMessage());
+					} catch (InvalidEffectParameterException exc) {
+						System.out.println(exc.getMessage());
+					} catch (NotPermittedInScopeException exc) {
+						System.out.println(exc.getMessage() + ", scope: " + scope + ", list? " + n.name);
 					}
 					if (effect != null) {
-//						s = scope;
-						/* if target, add effect with target */
-						// todo why tbh. at least here and not there, why?
-						if (effect.hasSupportedTargets()) {
-							try {
-//								effect.setTarget(n.value().string(), scope);
-								// todo how to set target in this case
-							} catch (Exception e) {
-								throw new RuntimeException(e); // todo
-							}
-						}
-						//effect.setParameters(n.value()); use new of() func.
 						completionReward.add(effect);
 					} else {
 						System.out.println("Scope " + n.name + " unknown.");
 					}
+				} else {
+					setCompletionRewardsOfNode(n, s);
 				}
 //				System.out.println(n.name);
 			} else if (!n.valueIsNull()) {
@@ -899,6 +893,8 @@ public class Focus implements Localizable {
 					effect = Effect.of(n.name, scope, n.value());
 				} catch (InvalidEffectParameterException e) {
 					System.out.println(e.getMessage());
+				} catch (NotPermittedInScopeException e) {
+					System.out.println(e.getMessage() + ", scope: " + scope);
 				}
 				if (effect == null) {
 					System.err.println("effect not found: " + n.name);
@@ -915,7 +911,13 @@ public class Focus implements Localizable {
 				completionReward.add(effect);
 			} else {
 				/* else add effect */
-				Effect effect = Effect.of(n.name, scope);  // todo
+				Effect effect = null;  // todo
+				try {
+					effect = Effect.of(n.name, scope);
+				} catch (NotPermittedInScopeException e) {
+					System.out.println(e.getMessage());
+					continue;
+				}
 				if (effect == null) {
 					System.err.println("effect not found: " + n.name);
 					continue;

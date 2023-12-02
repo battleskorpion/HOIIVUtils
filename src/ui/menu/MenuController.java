@@ -73,6 +73,7 @@ public class MenuController extends Application implements FXWindow {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		State.readStates();
 	}
 
 	public void open(){
@@ -122,7 +123,7 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openBuildingsByCountry() {
-		State.readStates();
+//		State.readStates();
 		BuildingsByCountryWindow window = new BuildingsByCountryWindow();
 		window.open();
 	}

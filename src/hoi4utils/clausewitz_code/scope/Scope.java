@@ -1,11 +1,17 @@
 package hoi4utils.clausewitz_code.scope;
 
+import hoi4utils.clausewitz_code.HOI4Script;
+import hoi4utils.clausewitz_code.effect.Effect;
+import hoi4utils.clausewitz_code.effect.EffectParameter;
 import hoi4utils.clausewitz_data.country.CountryTag;
+import hoi4utils.clausewitz_data.state.State;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 
-public class Scope implements Cloneable {
+public class Scope implements Cloneable, HOI4Script {
 	public static HashMap<String, Scope> scopes = new HashMap<>();
 
 	public final String name;
@@ -13,6 +19,7 @@ public class Scope implements Cloneable {
 //	// usually 'country' or 'any'
 	private final ScopeType targetScopeType;             // 'to'   (targeting)
 	public final ScopeCategory scopeCategory;
+	private List<HOI4Script> content;
 
 	private Scope withinScope = null;
 	//private Scope targetScope = null;   // null if is the target?
@@ -32,7 +39,24 @@ public class Scope implements Cloneable {
 		scopes.put(name, this);
 	}
 
-	public static Scope of(String name, Scope within) throws NotPermittedWithinScopeException {
+	public static Scope of(String name, Scope within) throws NotPermittedInScopeException {
+		try {
+			int id = Integer.parseInt(name);
+			if (within.canTargetCountry()) {
+				// state?
+				// State.isValidStateID(id)
+//				System.out.println(name + ", ?");
+				Scope state_scope = of(State.get(id));
+				if (state_scope == null) {
+					System.out.println("invalid state id: " + id + ", in Scope.of()");
+					return null;
+				}
+				state_scope.setWithin(within);
+				return state_scope;
+			}
+		} catch (NumberFormatException ignored) {
+
+		}
 		Scope scope = getClone(name);
 		if (scope == null) return null;
 		scope.setWithin(within);
@@ -56,11 +80,46 @@ public class Scope implements Cloneable {
 		}
 	}
 
-	private void setWithin(Scope scope) throws NotPermittedWithinScopeException {
+	private static Scope of(State state) {
+		if (state == null) {
+			return null;
+		}
+		String state_str = state.id() + "@state";
+		Scope s = getClone(state_str);
+		if (s == null) {
+			return new Scope(state.id() + "@state", ScopeType.any, ScopeType.state, ScopeCategory.DUAL);
+		} else {
+			return s;
+		}
+	}
+
+	public static Scope of(Effect effect) {
+		if (effect == null || !effect.isScope()) {
+			return null;
+		}
+		String effect_identifier = effect.name();
+		Scope s = getClone(effect_identifier);
+		if (s == null) {
+			return null;
+		} else {
+			return s;
+		}
+	}
+
+	private void setWithin(Scope scope) throws NotPermittedInScopeException {
 		if (!permittedWithinScope(scope)) {
-			throw new NotPermittedWithinScopeException("From scope is not allowed for this scope");
+			throw new NotPermittedInScopeException("From scope is not allowed for this scope");
 		}
 		withinScope = scope;
+	}
+
+	public void setContains(List<HOI4Script> script) {
+		this.content = script;
+	}
+
+	public void setContains(HOI4Script script) {
+		this.content = new ArrayList<>();
+		content.add(script);
 	}
 
 	private boolean permittedWithinScope(Scope scope) {
@@ -78,6 +137,10 @@ public class Scope implements Cloneable {
 //		target.setWithin(this);
 //		//targetScope = target;
 //	}
+
+	private boolean canTargetCountry() {
+		return targetScopeType.equals(ScopeType.country);
+	}
 
 	private static Scope getClone(String name) {
 		Scope clone;
@@ -125,6 +188,7 @@ public class Scope implements Cloneable {
 		new Scope("overlord",                       ScopeType.country,  ScopeType.country,      ScopeCategory.DUAL);
 		new Scope("faction_leader",                 ScopeType.country,  ScopeType.country,      ScopeCategory.DUAL);
 		// scoepDef("TAG");
+		new Scope(CountryTag.NULL_TAG.toString(),         ScopeType.any,      ScopeType.country,      ScopeCategory.DUAL);
 		new Scope("any_country",                    ScopeType.any,      ScopeType.country,      ScopeCategory.TRIGGER);
 		new Scope("any_country_with_original_tag",  ScopeType.any,      ScopeType.country,      ScopeCategory.TRIGGER);
 		new Scope("any_neighbor_country",           ScopeType.country,  ScopeType.country,      ScopeCategory.TRIGGER);
@@ -214,6 +278,33 @@ public class Scope implements Cloneable {
 
 	public boolean isPotentialEffectTarget() {
 		return scopeCategory == ScopeCategory.EFFECT || scopeCategory == ScopeCategory.DUAL;
+	}
+
+	@Override
+	public String displayScript() {
+		return displayScript(1);
+	}
+
+	public String displayScript(int tabs) {
+		if (content == null || content.isEmpty()) {
+			return name;
+		} else {
+			StringBuilder s = new StringBuilder();
+
+			s.append("\t".repeat(Math.max(0, tabs - 1)));
+			s.append(name);
+			s.append(" = ");
+
+			s.append("{\n");
+			for (HOI4Script p : content) {
+				s.append("\t".repeat(tabs));
+				s.append(p == null ? "[scope parameter was null]" : p.displayScript());
+				s.append("\n");
+			}
+			s.append("\t".repeat(Math.max(0, tabs - 1)));
+			s.append("}\n");
+			return s.toString();
+		}
 	}
 
 }
