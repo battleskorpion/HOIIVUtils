@@ -86,7 +86,8 @@ public class EffectDatabase {
 
 					/* single parameter */
 					if (parameters_str.length == 1) {
-						String[] args = parameters_str[0].split(" ");
+						//String[] args = parameters_str[0].split(" ");
+						String[] args = parameters_str[0].split("\\s(?![^<>]*>)");
 						if (ParameterValueType.isParameterValueType(args[0])) {
 
 						} else if (args[0].contains("<") || args[0].contains(">")) {
@@ -108,7 +109,7 @@ public class EffectDatabase {
 						String parameter_str;
 						for (int i = 0; i < parameters_str.length; i++) {
 							parameter_str = parameters_str[i];
-							String[] args = parameter_str.split(" ");
+							String[] args = parameter_str.split("\\s(?![^<>]*>)");
 							if (args[0].contains("<") || args[0].contains(">")) {
 								// err
 								throw new RuntimeException("Invalid effects database element: invalid placement of parameter value type: " + args[0]);

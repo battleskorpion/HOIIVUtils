@@ -41,14 +41,22 @@ public enum ParameterValueType {
 			return List.of("variable", "var");
 		}
 	},
-	flag
+	flag,
+	idea,
+	trait,
+	state {
+		public List<String> identifiers() { return List.of("state", "state_id"); }
+	},
 	;
 
 	public static boolean isParameterValueType(String s) {
 		if (s.startsWith("<") && s.endsWith(">")) {
 			s = s.substring(1, s.length() - 1); // remove ends
+			String[] args = s.split(" ");
+			// 1st arg should be identifier of parameter value type
+			// other args should be @<modifier name> .... <optional modifier arguments>
 			for (ParameterValueType p : ParameterValueType.values()) {
-				if (p.identifiers().contains(s)) {
+				if (p.identifiers().contains(args[0])) {
 					return true;
 				}
 			}
