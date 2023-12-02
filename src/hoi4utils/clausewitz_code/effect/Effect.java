@@ -19,6 +19,7 @@ public class Effect implements EffectParameter, Cloneable {
 	private NodeValue parametersNode;
 	private List<EffectParameter> parameters = null;
 	private List<Parameter> requiredParameters;
+	private List<Parameter> optionalParameters;
 
 	private final EnumSet<ScopeType> supportedScopes;
 	private final EnumSet<ScopeType> supportedTargets;   // can be null
@@ -27,19 +28,36 @@ public class Effect implements EffectParameter, Cloneable {
 	private Scope targetScope;
 	private final boolean isScope;
 
-	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets, List<Parameter> requiredParameters) {
+	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets, List<Parameter> requiredParameters, List<Parameter> optionalParameters) {
 		this.identifier = identifier;
 		this.supportedScopes = supportedScopes;
 		this.supportedTargets = supportedTargets;
 		this.requiredParameters = requiredParameters;
-		this.isScope = Parameter.containsScopeParameter(requiredParameters);
+		this.optionalParameters = optionalParameters;
+//		this.isScope = Parameter.containsScopeParameter(requiredParameters);
+		this.isScope = Scope.of(this) != null;
+		if (this.isScope) {
+			try {
+				optionalParameters.add(new Parameter("limit", ParameterValueType.scope));
+			} catch (NullParameterTypeException e) {
+				throw new RuntimeException(e);
+			}
+		}
 
 		effects.put(identifier, this);
 		System.out.println("effect: " + identifier);
 	}
 
+	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets, List<Parameter> requiredParameters) {
+		this(identifier, supportedScopes, supportedTargets, requiredParameters, null);
+	}
+
+	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, List<Parameter> requiredParameters, List<Parameter> optionalParameters) {
+		this(identifier, supportedScopes, null, requiredParameters, optionalParameters);
+	}
+
 	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, List<Parameter> requiredParameters) {
-		this(identifier, supportedScopes, null, requiredParameters);
+		this(identifier, supportedScopes, null, requiredParameters, null);
 	}
 
 //	public static Effect of(String identifier, ScopeType scope, ScopeType targetScope) {
