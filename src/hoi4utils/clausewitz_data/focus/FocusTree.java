@@ -122,10 +122,8 @@ public class FocusTree implements Localizable {
 
 		List<Focus> focusList = new ArrayList<>();
 
-		// todo woooo
 		List<Node> focusTreeNodes =
 				focusTreeNode.filterName("focus").toList();
-		// todo call a get focus function on each node
 		for (Node node : focusTreeNodes) {
 			Focus focus;
 			/* focus id */
@@ -146,7 +144,6 @@ public class FocusTree implements Localizable {
 		List<Focus> resolvedReferences = new ArrayList<>();
 //		private final HashMap<String, Consumer<List<Node>>> pendingFocusReferences = new HashMap<>();
 
-		// todo more efficient algo
 		List<PendingFocusReferenceList> pendingFocusReferenceLists = focuses().parallelStream().map(Focus::getPendingFocusReferences).toList();
 
 		/* resolve references of focuses that exist */
@@ -272,6 +269,7 @@ public class FocusTree implements Localizable {
 	 * @return The focus tree, or null if could not be found/not yet created.
 	 */
 	public static FocusTree get(CountryTag tag) { return focusTrees.get(tag); }
+
 	public static FocusTree getdankwizardisfrench(CountryTag tag) {
 		for (FocusTree tree : listFocusTrees()) {
 			assert tree.country() != null;
