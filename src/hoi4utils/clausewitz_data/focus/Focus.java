@@ -44,7 +44,7 @@ public class Focus implements Localizable {
 
 	/* attributes */
 	protected FocusTree focusTree;
-	Expression focusExp;
+	//Expression focusExp;
 	protected SimpleStringProperty id;
 	protected Localization nameLocalization;
 	protected Localization descLocalization;
@@ -66,6 +66,8 @@ public class Focus implements Localizable {
 
 	/**
 	 * completion raward
+	 * null: no definition within focus = {...} block
+	 * empty: definition exists, but contents is empty, focus = { }
 	 */
 	protected List<Effect> completionReward;
 
@@ -251,22 +253,8 @@ public class Focus implements Localizable {
 		setCompletionReward(exp.findFirst("completion_reward"));
 	}
 
-	public Expression getFocusExpression() {
-		return focusExp;
-	}
-
 	public void setID(String id) {
 		this.id.set(id);
-	}
-
-	private void setID(Expression exp) {
-		if (exp == null) {
-			id = null;
-			FXWindow.openGlobalErrorWindow("Expression was null for setting focus ID.");
-			return;
-		}
-
-		id = new SimpleStringProperty(exp.getText());
 	}
 
 	/**
@@ -538,17 +526,29 @@ public class Focus implements Localizable {
 		setPrerequisite(prerequisites);
 	}
 
-
+	/**
+	 * Add reference of a property of this focus to an unloaded focus; as it
+	 * has not yet been loaded, is not actually defined, or is otherwise unknown.
+	 * @param pendingFocusId
+	 * @param pendingAction
+	 * @param args
+	 */
 	private void addPendingFocusReference(String pendingFocusId, Consumer<List<Node>> pendingAction, List<Node> args) {
 		pendingFocusReferences.addReference(pendingFocusId, pendingAction, args);
 	}
 
+	/**
+	 * Removes all defined focus prerequisites
+	 */
 	private void removePrerequisites() {
 		if (this.prerequisite != null) {
 			this.prerequisite.clear();
 		}
 	}
 
+	/**
+	 * Removes all defined focus mutually exclusive focuses
+	 */
 	private void removeMutuallyExclusive() {
 		if (this.mutually_exclusive != null) {
 			this.mutually_exclusive.clear();
@@ -686,6 +686,11 @@ public class Focus implements Localizable {
 		return cost;
 	}
 
+	/**
+	 * Returns the clausewitz displayed/gameplay focus completion time, which is the truncate/floor of the
+	 * defined completion time (cost * weeks (default).
+	 * @return
+	 */
 	public double displayedCompletionTime() {
 		return Math.floor(preciseCompletionTime());
 	}
@@ -729,6 +734,11 @@ public class Focus implements Localizable {
 		return removePendingFocusReference(reference.id());
 	}
 
+	/**
+	 * Focus name defined in the current localization language (or English).
+	 *
+	 * @return Focus localized name, or null if not defined or not found.
+	 */
 	public String name() {
 		if (nameLocalization() == null) {
 			return id();
