@@ -16,7 +16,8 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static hoi4utils.clausewitz_data.country.CountryTag.COUNTRY_TAG_LENGTH;
 
 /**
  * ALL of the FocusTree/FocusTrees
@@ -230,7 +231,7 @@ public class FocusTree implements Localizable {
 
 	@Override
 	public String toString() {
-		if (id != null && !id.equals("")) {
+		if (id != null && !id.isEmpty()) {
 			return id;
 		}
 		return country.toString();
@@ -339,8 +340,8 @@ public class FocusTree implements Localizable {
 				//ArrayList<Boolean> localized; Commited out till Skorp fixies this
 				while (locReader.hasNext()) {
 					String locLine = locReader.nextLine();
-					if (locLine.trim().length() >= 3) {
-						String potentialTag = locLine.trim().substring(0, 3);
+					if (locLine.trim().length() >= COUNTRY_TAG_LENGTH) {
+						String potentialTag = locLine.trim().substring(0, COUNTRY_TAG_LENGTH);
 
 						if (CountryTags.exists(potentialTag)) {
 

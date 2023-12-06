@@ -155,79 +155,70 @@ public class Effect implements EffectParameter, Cloneable {
 
 	// todo wip
 	public void setParameters(NodeValue value) throws InvalidEffectParameterException, NotPermittedInScopeException {
+		StringBuilder excMessage = new StringBuilder();
+
 		this.parametersNode = value;
-//		if (parametersNode.isList()) {
-//			List<Node> list = parametersNode.list();
-//			for (Node n : list) {
-//				NodeValue v = n.value();
-//				if (!v.isList()) parameters.add(new Parameter(n.name, v));
-//				else {
-//					Effect subeffect = Effect.of(n.name, this.withinScope(), n.value());
-//					if (subeffect != null) {
-////						s = scope;
-//						/* if target, add effect with target */
-//						if (subeffect.hasSupportedTargets()) {
-//							try {
-////								effect.setTarget(n.value().string(), scope);
-//								// todo how to set target in this case
-//							} catch (Exception e) {
-//								throw new RuntimeException(e); // todo
-//							}
-//						}
-////						subeffect.setParameters(n.value()); use new of() func.
-//						parameters.add(subeffect);
-//					} else {
-//						System.out.println("Effect param unknown: " + n.name);
-//					}
-//				}
-//			}
-//		}
-//		else {
-//			parameters.add(new Parameter(value));
-//		}
 		if (parametersNode.isList()) {
 			List<Node> list = parametersNode.list();
-			for (Node n : list) {
+			for (Node n : Objects.requireNonNull(list)) {
 				NodeValue v = n.value();
-				//if (!v.isList()) parameters.add(new Parameter(n.name, v));
-				if (!v.isList()) parameters.add(Parameter.of(n.name, v));
+				if (!v.isList()) {
+					Parameter p = Parameter.of(n.name, v);
+					if (p == null) {
+						/*
+						this is done here (rather than impl with Parameter) as effects need the scope of parent effect
+						thus it makes it simpler to treat Effect as a valid parameter type for other Effects as well.
+						 */
+						Effect subeffect;
+						if (Scope.of(this) != null) {
+							subeffect = Effect.of(n.name, Scope.of(this), v);
+						} else {
+							subeffect = Effect.of(n.name, this.withinScope(), v);
+						}
+						if (subeffect != null) {
+							parameters.add(subeffect);
+						} else {
+							if (excMessage.isEmpty()) excMessage.append("In Effect ").append(this.name()).append(": ");
+							excMessage.append("\n\t").append("Effect parameter invalid or effect unknown, effect: ").append(n.name)
+									.append(", value: ").append(v.asString());
+						}
+					} else {
+						parameters.add(p);
+					}
+				}
 				else {
+					// todo try parameter first?
+					/*
+					this is done here as effects need the scope of parent effect
+					thus it makes it simpler to treat Effect as a valid parameter type for other Effects as well.
+					 */
 					Effect subeffect;
 					if (Scope.of(this) != null) {
-						subeffect = Effect.of(n.name, Scope.of(this), n.value());
+						subeffect = Effect.of(n.name, Scope.of(this), v);
 					} else {
-						subeffect = Effect.of(n.name, this.withinScope(), n.value());;
+						subeffect = Effect.of(n.name, this.withinScope(), v);
 					}
-					//Effect subeffect = Effect.of(n.name, this.withinScope(), n.value());
 					if (subeffect != null) {
-//						s = scope;
-//						/* if target, add effect with target */
-//						if (subeffect.hasSupportedTargets()) {
-//							try {
-//								effect.setTarget(n.value().string(), scope);
-//								// todo how to set target in this case
-//							} catch (Exception e) {
-//								throw new RuntimeException(e); // todo
-//							}
-//						}
 						parameters.add(subeffect);
 					} else if (!Parameter.isParameter(n.name, v)) {
-						throw new InvalidEffectParameterException("Effect parameter unknown: " + n.name);
+						if (excMessage.isEmpty()) excMessage.append("In Effect ").append(this.name()).append(": ");
+						excMessage.append("\n\t").append("Effect parameter unknown: ").append(n.name);
 					} else {
 						Parameter p = Parameter.of(n.name, v);
 						parameters.add(p);
-//						if (p == null) JOptionPane.showMessageDialog(null, "help me: " + n.name + ", " + v);
 					}
 				}
 			}
 		} else {
-			//parameters.add(new Parameter(value));
 			parameters.add(Parameter.of(null, value));
 			if (!acceptsParameter(value)) {
 				throw new InvalidEffectParameterException("Invalid parameter for effect " + this + ": " + value);
 			}
 		}
 
+		if (!excMessage.isEmpty()) {
+			throw new InvalidEffectParameterException(excMessage.toString());
+		}
 		// handle required/acceptable parameters
 	}
 
