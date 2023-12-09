@@ -1,9 +1,0 @@
-/* Apply background color */
-.utils-highlight-background {
-    -fx-background-color: yellow; /* Set your desired background color here */
-}
-
-/* Define text color for the same class */
-.utils-highlight-background .text {
-    -fx-fill: black; /* Set your desired text color here */
-}
