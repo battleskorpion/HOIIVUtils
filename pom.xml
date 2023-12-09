@@ -19,6 +19,16 @@
 	</properties>
 
 	<build>
+		<!-- https://intellij-support.jetbrains.com/hc/en-us/community/posts/206180799-Issue-with-fxml-files-not-being-copied-to-target-classes -->
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.fxml</include>
+				</includes>
+			</resource>
+		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
