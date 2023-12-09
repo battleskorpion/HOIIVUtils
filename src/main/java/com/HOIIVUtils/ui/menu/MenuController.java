@@ -23,6 +23,7 @@ import com.HOIIVUtils.ui.map.MapGenerationWindow;
 import com.HOIIVUtils.ui.parser.ParserViewerWindow;
 import com.HOIIVUtils.ui.settings.SettingsController;
 
+import javax.swing.*;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -73,6 +74,7 @@ public class MenuController extends Application implements FXWindow {
 			stage.show();
 			System.out.println("Menu Controller created it's own stage and showed it");
 		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "Error menu controller!");
 			e.printStackTrace();
 		}
 		State.readStates();
