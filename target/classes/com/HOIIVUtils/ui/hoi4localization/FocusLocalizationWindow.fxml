@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="focusLocalizationPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.hoi4localization.FocusLocalizationWindow">
+  <columnConstraints>
+	<ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="80.0" />
+	<ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="40.0" prefWidth="120.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="284.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="40.0" prefWidth="100.0" />
+	  <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.0" minWidth="-Infinity" prefWidth="83.0" />
+  </columnConstraints>
+  <rowConstraints>
+	<RowConstraints maxHeight="-Infinity" minHeight="-Infinity" />
+	<RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" />
+	<RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="30.0" prefHeight="300.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
+  </rowConstraints>
+   <opaqueInsets>
+	  <Insets />
+   </opaqueInsets>
+   <children>
+	  <Label maxHeight="-Infinity" maxWidth="-Infinity" text="Focus Tree:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+	  <Label GridPane.rowIndex="3" />
+	  <TableView fx:id="focusListTable" editable="true" maxWidth="1.7976931348623157E308" minHeight="100.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
+		<columns>
+		  <TableColumn fx:id="focusIDColumn" editable="false" minWidth="40.0" prefWidth="230.0" text="ID" />
+		  <TableColumn fx:id="focusNameColumn" minWidth="40.0" prefWidth="230.0" text="Name" />
+			<TableColumn fx:id="focusDescColumn" maxWidth="1.7976931348623157E308" minWidth="80.0" prefWidth="229.0" text="Desc" />
+		</columns>
+	  </TableView>
+	  <Label fx:id="focusTreeNameLabel" prefHeight="17.0" prefWidth="170.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+	  <Label GridPane.rowIndex="4" />
+	  <Label fx:id="numLocAddedLabel" maxHeight="-Infinity" maxWidth="-Infinity" text="Added localization to x focuses" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+      <Label text="Focus tree file: " />
+      <Label text="Localization file: " GridPane.rowIndex="1" />
+      <TextField fx:id="focusTreeFileTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" />
+      <TextField fx:id="focusLocFileTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+      <Button fx:id="focusTreeFileBrowseButton" maxWidth="100.0" minWidth="60.0" mnemonicParsing="false" onAction="#handleFocusTreeFileBrowseButtonAction" text="Browse" GridPane.columnIndex="4" />
+      <Button fx:id="focusLocFileBrowseButton" maxWidth="100.0" minWidth="60.0" mnemonicParsing="false" onAction="#handleFocusLocFileBrowseButtonAction" text="Browse" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+      <Button fx:id="loadButton" mnemonicParsing="false" onAction="#handleLoadButtonAction" onMouseClicked="#handleLoadButtonAction" prefHeight="25.0" prefWidth="86.0" text="Load" GridPane.rowIndex="2" />
+      <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSaveButtonAction" onMouseClicked="#handleLoadButtonAction" prefHeight="25.0" prefWidth="86.0" text="Save" GridPane.rowIndex="4" />
+      <MenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="95.0" text="Settings" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="2">
+        <items>
+            <RadioMenuItem mnemonicParsing="false" text="Auto-detect localization file" />
+        </items>
+      </MenuButton>
+   </children>
+   <padding>
+	  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</GridPane>
