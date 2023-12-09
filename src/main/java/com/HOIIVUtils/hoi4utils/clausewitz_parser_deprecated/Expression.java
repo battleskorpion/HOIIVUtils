@@ -193,7 +193,7 @@ public class Expression {
 		try {
 			return Double.parseDouble(exp.substring(exp.indexOf("=") + 1).trim().replace(",", ""));
 		} catch (NumberFormatException exc) {
-			System.err.println("line: ");
+//			System.err.println("line: ");
 			throw exc;
 		}
 	}

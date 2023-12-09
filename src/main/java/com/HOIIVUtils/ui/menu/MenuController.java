@@ -62,7 +62,6 @@ public class MenuController extends Application implements FXWindow {
 
 			ResourceBundle bundle = ResourceBundle.getBundle("main/resources.menu", currentLocale);
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource), bundle);
-			//FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
