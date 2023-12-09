@@ -18,9 +18,6 @@ public class Heightmap {
 		for (int y = 0; y < temp.getHeight(); y++) {
 			for (int x = 0; x < temp.getWidth(); x++) {
 				heightmap[y][x] = (byte) (temp.getRGB(x, y) & 0xFF);
-				if (heightmap[y][x] != (temp.getRGB(x, y) & 0xFF)) {
-					System.err.println(heightmap[y][x]);
-				}
 			}
 		}
 	}
@@ -46,6 +43,10 @@ public class Heightmap {
 	}
 	public int height_yx(int y, int x) {
 		return heightmap[y][x] & 0xFF;
+	}
+
+	public final byte[][] snapshot() {
+		return heightmap.clone();
 	}
 
 //	/**

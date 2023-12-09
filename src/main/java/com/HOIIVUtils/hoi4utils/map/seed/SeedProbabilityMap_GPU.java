@@ -7,10 +7,13 @@ import com.aparapi.Kernel;
 import com.aparapi.Range;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 	double[][] seedProbabilityMap;      // y, x
@@ -35,36 +38,23 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 	}
 
 	private void initializeProbabilityMap() {
-//		for (int yi = 0; yi < height; yi++) {
-//			for (int xi = 0; xi < width; xi++) {
-//				double p = 1.0;
-//				// improved performance over .getRGB()
-//				int height = heightmap.height_xy(xi, yi);
-//				int type = provinceType(height);
-//
-//				/* probability */
-//				p *= type == 0 ? 1.15 : 0.85;
-//
-//				seedProbabilityMap[yi][xi] = p;
-//			}
-//			cumulativeProbabilities[yi] = 0.0;
-//		}
-//		normalize();
-
+		final double[][] _seedMap = new double[height][width];
+		final double[] _cumulativeProbabilities = new double[height];
+		final byte[][] _heightmap = heightmap.snapshot();
 		Kernel kernel = new Kernel() {
 			@Override
 			public void run() {
 				int x = getGlobalId(0);
 				int y = getGlobalId(1);
-				if (x >= 0 && x < (getGlobalSize(0) - 1) && y >= 0 && y < (getGlobalSize(1) - 1)) {
-					int xyheight = heightmap.height_xy(x, y);
+				if (x < getGlobalSize(0) && y < getGlobalSize(1)) {
+					int xyheight = _heightmap[y][x] & 0xFF;
 					int type = provinceType(xyheight); // is this bad here? probably.
-					seedProbabilityMap[y][x] *= type == 0 ? 1.15 : 0.85;
+					_seedMap[y][x] = type == 0 ? 1.15 : 0.85;
 //					result[i] = inA[i] + inB[i];
-				}
-				if (x == 0) {
-					/* once per row */
-					cumulativeProbabilities[y] = 0.0;
+					if (x == 0) {
+						/* once per row */
+						_cumulativeProbabilities[y] = 0.0;
+					}
 				}
 			}
 		};
@@ -73,6 +63,9 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		// [prime number run bad with this impl, but thats fine bc we use specific multiples of 2, 4, 8 for the maps]
 		Range range = Range.create2D(width, height);
 		kernel.execute(range);
+		kernel.dispose();
+		seedProbabilityMap = _seedMap;
+		cumulativeProbabilities = _cumulativeProbabilities;
 
 		normalize();
 	}
@@ -81,7 +74,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		int length = seedProbabilityMap.length;
 		double sum;
 		if (probabilitySum == 0) {
-			sum = fjpool.invoke(new ProbabilitySumTask(0, length));
+			sum = mapReduce2D(seedProbabilityMap);
 		} else {
 			sum = probabilitySum;
 		}
@@ -89,11 +82,119 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 			return;
 		}
 
-		fjpool.invoke(new CumulativeProbabilityAndNormalizeTask(0, length, sum));
-		for (int i = 1; i < cumulativeProbabilities.length; i++) {
-			cumulativeProbabilities[i] += cumulativeProbabilities[i - 1];
+		final double[] _cumulativeProbabilities = new double[height];
+		final double[][] _map = seedProbabilityMap.clone();
+		Kernel cumulativeKernel = new Kernel() {
+			@Override
+			public void run() {
+				int y = getGlobalId();
+				_cumulativeProbabilities[y] = 0;
+				for (int i = 0; i < width; i++) {
+					_cumulativeProbabilities[y] += _map[y][i];
+				}
+			}
+		};
+		cumulativeKernel.execute(Range.create(_cumulativeProbabilities.length));
+		cumulativeKernel.dispose();
+		cumulativeProbabilities[0] = _cumulativeProbabilities[0];
+		for (int i = 1; i < height; i++) {
+			cumulativeProbabilities[i] += cumulativeProbabilities[i - 1] + _cumulativeProbabilities[i];
 		}
+		System.out.println("c: " + Arrays.toString(cumulativeProbabilities));
+
+		double sumRecip = 1 / sum;
+		seedProbabilityMap = multiplyAll(seedProbabilityMap, sumRecip);
 		probabilitySum = 1.0;
+	}
+
+	/**
+	 * Based on example in aparapi examples
+	 * @return
+	 */
+	private double mapReduce2D(double[][] matrix) {
+		int size = matrix.length * matrix[0].length;
+		final double[] _sdata = new double[size];
+		final int count = 3;
+		System.out.println("map reduce array size: " + size);
+
+        System.arraycopy(Stream.of(matrix)
+		        .parallel()
+		        .flatMapToDouble(DoubleStream::of)
+		        .toArray(),
+		        0, _sdata, 0, size);
+
+		// this will hold our values between the phases.
+		double[][] totals = new double[count][size];
+
+		/*
+		map phase
+		 */
+		final double[][] kernelTotals = totals;
+		Kernel mapKernel = new Kernel() {
+			@Override
+			public void run() {
+				int gid = getGlobalId();
+				double value = _sdata[gid];
+				for (int index = 0; index < count; index++) {
+					if (value >= (double) index / count && value < (double) (index + 1) / count)
+						kernelTotals[index][gid] = 1.0;
+				}
+			}
+		};
+		mapKernel.execute(Range.create(size));
+		System.out.println(mapKernel.getTargetDevice());
+		mapKernel.dispose();
+		totals = kernelTotals;
+
+		/*
+		reduce phase
+		 */
+		while (size > 1) {
+			int nextSize = size / 2;
+			final double[][] currentTotals = totals;
+			final double[][] nextTotals = new double[count][nextSize];
+			Kernel reduceKernel = new Kernel() {
+				@Override
+				public void run() {
+					int gid = getGlobalId();
+					for (int index = 0; index < count; index++) {
+						nextTotals[index][gid] = currentTotals[index][gid * 2] + currentTotals[index][gid * 2 + 1];
+					}
+				}
+			};
+			reduceKernel.execute(Range.create(nextSize));
+			reduceKernel.dispose();
+
+			totals = nextTotals;
+			size = nextSize;
+		}
+		assert size == 1;
+
+		double[] result = Arrays.stream(totals)
+				.parallel()
+				.mapToDouble(row -> row[0])
+				.toArray();
+
+//		System.out.println(Arrays.toString(result));
+		return result[0] + result[1] + result[2];
+	}
+
+	private double[][] multiplyAll(double[][] matrix, final double value) {
+		final int width = matrix.length;
+		final int height = matrix[0].length;
+		final double[][] in = matrix.clone();
+		final double[][] out = new double[width][height];
+		Kernel multKernal = new Kernel() {
+			@Override
+			public void run() {
+				int x = getGlobalId(0);
+				int y = getGlobalId(1);
+				out[x][y] = in[x][y] * value;
+			}
+		};
+		multKernal.execute(Range.create2D(width, height));
+		multKernal.dispose();
+		return out;
 	}
 
 	public MapPoint getPoint(Random random) {
@@ -104,14 +205,14 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		int y = findCumulativeProbabilityIndex(p);
 		if (y == -1) {
 			System.err.println("Index -1 in " + this);
-			Arrays.stream(cumulativeProbabilities).forEach(System.out::println);
+//			Arrays.stream(cumulativeProbabilities).forEach(System.out::println);
 			return null;
 		}
 
 		// Find the first MapPoint where cumulative probability >= p
 		double cumulative = (y == 0) ? 0.0 : cumulativeProbabilities[y - 1];
-		//System.out.println(cumulative);
-		System.out.println(++pointNumber);
+		System.out.println("cumulative:" + cumulative);
+		System.out.println("cumulative1:" + cumulativeProbabilities[y]);
 		MapPoint mp = null;
 		for (int x = 0; x < seedProbabilityMap[y].length; x++) {
 			cumulative += seedProbabilityMap[y][x];
@@ -124,6 +225,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 			System.out.println("bad probability? " + p);    // todo
 			return getPoint(random);
 		}
+		System.out.println(++pointNumber);
 		/* adjust probabilities */
 		//adjustProbabilitiesInRadius(mp, 9); instead, ? ->
 		setSeedProbabilityMapYX(mp.y, mp.x, 0.0);
@@ -168,89 +270,6 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 				.filter(i -> Double.compare(cumulativeProbabilities[i], p) >= 0)
 				.findFirst()
 				.orElse(-1);
-	}
-
-	public class CumulativeProbabilityAndNormalizeTask extends RecursiveTask<Void> {
-		private static final int THRESHOLD = 16;
-		private final int start;        // inclusive
-		private final int end;          // exclusive
-		private final double pSum;      // probability sum
-		private final double recipSum;
-
-		public CumulativeProbabilityAndNormalizeTask(int start, int end, double pSum) {
-			this.start = start;
-			this.end = end;
-			this.pSum = pSum;
-			this.recipSum = 1.0 / pSum;
-		}
-
-		private CumulativeProbabilityAndNormalizeTask(int start, int end, double pSum, double recipSum) {
-			this.start = start;
-			this.end = end;
-			this.pSum = pSum;
-			this.recipSum = recipSum;
-		}
-
-		@Override
-		protected Void compute() {
-			if (end - start > THRESHOLD) {
-				int mid = (start + end) / 2;
-				invokeAll(
-						new CumulativeProbabilityAndNormalizeTask(start, mid, pSum, recipSum),
-						new CumulativeProbabilityAndNormalizeTask(mid, end, pSum, recipSum)
-				);
-			} else {
-				cumulativeProbability(start, end);
-			}
-			return null;
-		}
-
-		private void cumulativeProbability(int start, int end) {
-			for (int i = start; i < end; i++) {
-				double cumulativeProbability = 0.0;
-				for (int j = 0; j < seedProbabilityMap[i].length; j++) {
-					seedProbabilityMap[i][j] *= recipSum;
-					cumulativeProbability += seedProbabilityMap[i][j];
-				}
-				cumulativeProbabilities[i] = cumulativeProbability;
-			}
-		}
-	}
-
-	public class ProbabilitySumTask extends RecursiveTask<Double> {
-		private static final int THRESHOLD = 16; // Adjust based on your data size
-		private final int start;
-		private final int end;
-
-		public ProbabilitySumTask(int start, int end) {
-			this.start = start;
-			this.end = end;
-		}
-
-		@Override
-		protected Double compute() {
-			if (end - start > THRESHOLD) {
-				int mid = (start + end) / 2;
-				var left = new ProbabilitySumTask(start, mid);
-				var right = new ProbabilitySumTask(mid, end);
-
-				invokeAll(left, right);
-
-				return left.join() + right.join();
-			} else {
-				return computePartialSum();
-			}
-		}
-
-		private double computePartialSum() {
-			double sum = 0.0;
-			for (int i = start; i < end; i++) {
-				for (double v : seedProbabilityMap[i]) {
-					sum += v;
-				}
-			}
-			return sum;
-		}
 	}
 
 }
