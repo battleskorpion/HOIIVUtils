@@ -76,7 +76,7 @@ public class SettingsController extends Application implements FXWindow {
 	public void start(Stage stage) {
 		try{
 			//FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/HOIIVUtils/ui/settings/settings.fxml"));
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
