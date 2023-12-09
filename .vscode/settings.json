@@ -1,6 +1,6 @@
 {
 	"window.commandCenter": true,
-	"explorer.compactFolders": false,
+	"explorer.compactFolders": true,
 	"editor.insertSpaces": false,
 	"editor.indentSize": "tabSize",
     "workbench.startupEditor": "none",
