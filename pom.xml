@@ -8,6 +8,20 @@
     <artifactId>HOIIVUtils</artifactId>
     <version>7.0.1</version>
 
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javafx.version>21.0.1</javafx.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>universityOfManchester-graal</id>
+            <url>https://raw.githubusercontent.com/beehive-lab/tornado/maven-tornadovm</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -18,12 +32,6 @@
         </plugins>
     </build>
 
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <javafx.version>21.0.1</javafx.version>
-    </properties>
     <dependencies>
         <!-- Add your project dependencies here -->
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
@@ -90,6 +98,11 @@
             <version>2.0.9</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.aparapi</groupId>
+            <artifactId>aparapi</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -7,11 +7,11 @@ import com.HOIIVUtils.hoi4utils.map.values;
 import java.util.*;
 
 public class ProbabilisticSeedGeneration extends AbstractSeedGeneration<MapPoint> {
-	private final SeedProbabilityMap seedProbabilityMap;
+	private final SeedProbabilityMap_GPU seedProbabilityMap;
 
 	public ProbabilisticSeedGeneration(Heightmap heightmap) {
 		super(heightmap);
-		seedProbabilityMap = new SeedProbabilityMap(heightmap);
+		seedProbabilityMap = new SeedProbabilityMap_GPU(heightmap);
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class ProbabilisticSeedGeneration extends AbstractSeedGeneration<MapPoint
 //					int px = random.nextInt(heightmap.getWidth());
 //					int py = random.nextInt(heightmap.getHeight());
 					dynP = weightedRandomPoint(random);
-					heightmapHeight = heightmap.xyHeight(dynP.x, dynP.y);
+					heightmapHeight = heightmap.height_xy(dynP.x, dynP.y);
 					int type = provinceType(heightmapHeight);
 //					p = new MapPoint(dynP, type);
 				} while (seeds.contains(dynP));

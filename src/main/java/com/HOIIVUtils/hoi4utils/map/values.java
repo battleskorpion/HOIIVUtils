@@ -5,8 +5,8 @@ import com.HOIIVUtils.hoi4utils.map.province.ProvinceGenerationType;
 import java.awt.*;
 
 public abstract class values {
-	public static String heightmapName = "resources\\map\\heightmap.bmp";			//"heightmap_new_england.bmp";
-	public static String stateBordersName = "resources\\map\\state_borders_none.bmp"; //"state_borders_new_england.bmp";
+	public static String heightmapName = "src\\main\\resources\\map\\heightmap.bmp";			//"heightmap_new_england.bmp";
+	public static String stateBordersName = "src\\main\\resources\\map\\state_borders_none.bmp"; //"state_borders_new_england.bmp";
 	public static ProvinceGenerationType generationType = ProvinceGenerationType.GRID_SEED;	//dynamic, GRID_SEED, PROBABILISTIC
 
 	public values() {

@@ -48,7 +48,7 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 		PixelWriter pixelWriter = wImage.getPixelWriter();
 		for (int y = 0; y < wImage.getHeight(); y++) {
 			for (int x = 0; x < wImage.getWidth(); x++) {
-				int px = heightmap.xyHeight(x * 4, y * 4);
+				int px = heightmap.height_xy(x * 4, y * 4);
 				Color c = new Color(px, px, px);
 				pixelWriter.setArgb(x, y, c.getRGB());
 			}

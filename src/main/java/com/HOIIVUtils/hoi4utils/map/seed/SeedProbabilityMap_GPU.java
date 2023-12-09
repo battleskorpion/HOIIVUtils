@@ -3,45 +3,77 @@ package com.HOIIVUtils.hoi4utils.map.seed;
 import com.HOIIVUtils.hoi4utils.map.AbstractMapGeneration;
 import com.HOIIVUtils.hoi4utils.map.Heightmap;
 import com.HOIIVUtils.hoi4utils.map.MapPoint;
+import com.aparapi.Kernel;
+import com.aparapi.Range;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.IntStream;
 
-public class SeedProbabilityMap extends AbstractMapGeneration {
+public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 	double[][] seedProbabilityMap;      // y, x
 	double[] cumulativeProbabilities;   // per x, inclusive of previous maps
 //	double[] partialSums;               // per x, sum of all x probabilities.
 	final Heightmap heightmap;
+	final int width;
+	final int height;
 	int pointNumber = 0;
 	ForkJoinPool fjpool;
 	double probabilitySum = 0;
 
-	public SeedProbabilityMap(Heightmap heightmap) {
+	public SeedProbabilityMap_GPU(Heightmap heightmap) {
 		this.heightmap = heightmap;
-		seedProbabilityMap = new double[heightmap.height()][heightmap.width()]; // y, x
-		cumulativeProbabilities = new double[(heightmap.height())];
+		this.width = heightmap.width();
+		this.height = heightmap.height();
+		seedProbabilityMap = new double[height][width]; // y, x
+		cumulativeProbabilities = new double[height];
 		fjpool = new ForkJoinPool();
 
 		initializeProbabilityMap();
 	}
 
 	private void initializeProbabilityMap() {
-		for (int yi = 0; yi < heightmap.height(); yi++) {
-			for (int xi = 0; xi < heightmap.width(); xi++) {
-				double p = 1.0;
-				// improved performance over .getRGB()
-				int height = heightmap.height_xy(xi, yi);
-				int type = provinceType(height);
+//		for (int yi = 0; yi < height; yi++) {
+//			for (int xi = 0; xi < width; xi++) {
+//				double p = 1.0;
+//				// improved performance over .getRGB()
+//				int height = heightmap.height_xy(xi, yi);
+//				int type = provinceType(height);
+//
+//				/* probability */
+//				p *= type == 0 ? 1.15 : 0.85;
+//
+//				seedProbabilityMap[yi][xi] = p;
+//			}
+//			cumulativeProbabilities[yi] = 0.0;
+//		}
+//		normalize();
 
-				/* probability */
-				p *= type == 0 ? 1.15 : 0.85;
-
-				seedProbabilityMap[yi][xi] = p;
+		Kernel kernel = new Kernel() {
+			@Override
+			public void run() {
+				int x = getGlobalId(0);
+				int y = getGlobalId(1);
+				if (x >= 0 && x < (getGlobalSize(0) - 1) && y >= 0 && y < (getGlobalSize(1) - 1)) {
+					int xyheight = heightmap.height_xy(x, y);
+					int type = provinceType(xyheight); // is this bad here? probably.
+					seedProbabilityMap[y][x] *= type == 0 ? 1.15 : 0.85;
+//					result[i] = inA[i] + inB[i];
+				}
+				if (x == 0) {
+					/* once per row */
+					cumulativeProbabilities[y] = 0.0;
+				}
 			}
-			cumulativeProbabilities[yi] = 0.0;
-		}
+		};
+
+		// The group size must always be a ‘factor’ of the global range. So globalRange % groupSize == 0
+		// [prime number run bad with this impl, but thats fine bc we use specific multiples of 2, 4, 8 for the maps]
+		Range range = Range.create2D(width, height);
+		kernel.execute(range);
+
 		normalize();
 	}
 

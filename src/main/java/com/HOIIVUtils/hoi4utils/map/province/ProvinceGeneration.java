@@ -7,7 +7,6 @@ import com.HOIIVUtils.hoi4utils.map.seed.*;
 import com.HOIIVUtils.hoi4utils.map.values;
 import com.opensimplex2.OpenSimplex2;
 import org.jgrapht.Graph;
-import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultUndirectedGraph;
 import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
@@ -274,7 +273,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 				for (int y = startY; y < endY; y++) {
 					for (int x = 0; x < heightmap.width(); x++) {
 						int rgb;
-						int heightmapHeight = heightmap.xyHeight(x, y);
+						int heightmapHeight = heightmap.height_xy(x, y);
 						int stateBorderValue = stateBorderMap.getRGB(x, y);
 						int type = provinceType(heightmapHeight);
 

@@ -48,7 +48,7 @@ public class GridSeedGeneration extends AbstractSeedGeneration<MapPoint> {
 				int seedY = (int) Math.floor(y) + yOffset; 		// y-value of seed
 
 				/* heightmap color stuff */
-				int heightmapHeight = heightmap.xyHeight(seedX, seedY);
+				int heightmapHeight = heightmap.height_xy(seedX, seedY);
 				int rgb = mapPointColorGeneration(seedX, seedY, heightmapHeight); 			// rgb color int value
 
 				/* add point to points array */

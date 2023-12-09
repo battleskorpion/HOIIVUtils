@@ -41,7 +41,10 @@ public class Heightmap {
 		return height;
 	}
 
-	public int xyHeight(int x, int y) {
+	public int height_xy(int x, int y) {
+		return heightmap[y][x] & 0xFF;
+	}
+	public int height_yx(int y, int x) {
 		return heightmap[y][x] & 0xFF;
 	}
 
