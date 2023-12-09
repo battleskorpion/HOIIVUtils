@@ -85,10 +85,10 @@ public class SettingsController extends Application implements FXWindow {
 			
 			stage.setTitle(title);
 			stage.show();
-			if (fxmlResource.equals("fxml/Settings.fxml")) {
+//			if (fxmlResource.equals("fxml/Settings.fxml")) {
 				stage.maxWidthProperty().bind(stage.widthProperty());
 				stage.minWidthProperty().bind(stage.widthProperty());
-			}
+//			}
 			System.out.println("Settings Controller created it's own stage and showed it");
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -98,10 +98,10 @@ public class SettingsController extends Application implements FXWindow {
 	public void open() {
 		if (stage != null) {
 			stage.show();
-			if (fxmlResource.equals("fxml/Settings.fxml")) {
+//			if (fxmlResource.equals("fxml/Settings.fxml")) {
 				stage.maxWidthProperty().bind(stage.widthProperty());
 				stage.minWidthProperty().bind(stage.widthProperty());
-			}
+//			}
 			System.out.println("Settings Controller showed setting stage with open cuz settings stage was NOT null");
 			
 		} else {

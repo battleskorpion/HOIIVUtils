@@ -45,7 +45,7 @@ public class MenuController extends Application implements FXWindow {
 	/* Constructor */
 	public MenuController() {
 		//fxmlResource = COM_UI + "menu/Menu.fxml";
-		fxmlResource = "/com/HOIIVUtils/ui/menu/menu.fxml";
+		fxmlResource = "menu.fxml";
 		title = "Menu";
 	}
 
@@ -59,13 +59,12 @@ public class MenuController extends Application implements FXWindow {
 		try {
 			Locale currentLocale = Locale.getDefault();
 
-			System.out.println("MENU TEST1");
 			ResourceBundle bundle = ResourceBundle.getBundle("menu", currentLocale);
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource), bundle);
+			System.out.println("class: " + getClass().getResource(fxmlResource));
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
-			System.out.println("MENU TEST2");
 
 			this.stage = stage;
 			stage.setScene(scene);
