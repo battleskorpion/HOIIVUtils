@@ -23,7 +23,7 @@ import static com.HOIIVUtils.hoi4utils.Settings.MOD_PATH;
  * SettingsWindow is the window and controller for the program settings
  */
 public class SettingsController extends Application implements FXWindow {
-	private String fxmlResource = "Settings.fxml";
+	private String fxmlResource = "fxml/Settings.fxml";
 	private String title = "Settings";
 	private Stage stage;
 	
@@ -75,6 +75,7 @@ public class SettingsController extends Application implements FXWindow {
 	@Override
 	public void start(Stage stage) {
 		try{
+			//FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
@@ -85,7 +86,7 @@ public class SettingsController extends Application implements FXWindow {
 			
 			stage.setTitle(title);
 			stage.show();
-			if (fxmlResource.equals("Settings.fxml")) {
+			if (fxmlResource.equals("fxml/Settings.fxml")) {
 				stage.maxWidthProperty().bind(stage.widthProperty());
 				stage.minWidthProperty().bind(stage.widthProperty());
 			}
@@ -98,7 +99,7 @@ public class SettingsController extends Application implements FXWindow {
 	public void open() {
 		if (stage != null) {
 			stage.show();
-			if (fxmlResource.equals("Settings.fxml")) {
+			if (fxmlResource.equals("fxml/Settings.fxml")) {
 				stage.maxWidthProperty().bind(stage.widthProperty());
 				stage.minWidthProperty().bind(stage.widthProperty());
 			}

@@ -14,7 +14,7 @@
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- sure? -->
-		<javafx.version>17.0.2</javafx.version>
+		<javafx.version>21.0.1</javafx.version>
 		<javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
 	</properties>
 
@@ -28,11 +28,21 @@
 					<outputDirectory>HOIIVUtils</outputDirectory>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>com.zenjava</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<version>8.8.3</version>
+				<configuration>
+					<vendor>HOIIVUtils</vendor>
+					<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
 		<!-- Add your project dependencies here -->
+		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
