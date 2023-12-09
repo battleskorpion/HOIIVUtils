@@ -6,7 +6,7 @@
 
     <groupId>com.HOIIVUtils</groupId>
     <artifactId>HOIIVUtils</artifactId>
-    <version>7.0.1</version>
+    <version>7.0.2</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -15,6 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <javafx.version>21.0.1</javafx.version>
+        <javafx.maven.plugin.version>0.0.7</javafx.maven.plugin.version>
     </properties>
 
     <build>
@@ -29,6 +30,14 @@
                             <mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>${javafx.maven.plugin.version}</version>
+                <configuration>
+                    <mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
                 </configuration>
             </plugin>
         </plugins>
@@ -95,7 +104,6 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.44.1.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -106,7 +114,6 @@
             <artifactId>slf4j-jdk14</artifactId>
             <version>2.0.9</version>
         </dependency>
-
         <dependency>
             <groupId>com.aparapi</groupId>
             <artifactId>aparapi</artifactId>
