@@ -22,13 +22,13 @@ public class ModifierDatabase {
 
 	public ModifierDatabase(String databaseName) {
 		// todo
-//		try {
-//			connection = DriverManager.getConnection("jdbc:sqlite:resources/" + databaseName);
-//			createTable();
-//			loadModifiers();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/" + databaseName);
+			createTable();
+			loadModifiers();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public ModifierDatabase() {

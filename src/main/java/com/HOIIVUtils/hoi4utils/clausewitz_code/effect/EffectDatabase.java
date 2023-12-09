@@ -17,13 +17,12 @@ public class EffectDatabase {
 	private Connection connection;
 
 	public EffectDatabase(String databaseName) {
-		// todo
-//		try {
-//			connection = DriverManager.getConnection("jdbc:sqlite:resources/" + databaseName);
-//			loadEffects();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/" + databaseName);
+			loadEffects();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 //	public static void main(String[] args) {
