@@ -14,13 +14,17 @@ public class HOIIVUtilsLog {
 	static File log;
 	static File logsDir;
 
-
 	/**
 	 * format "date and time [message2] "
 	 * @param message1 Actual message
 	 * @param message2 stuff like WARNING or INFO
 	 */
 	public static void writeToLog(String message1, String message2) {
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
+		if (!hoi4utils_file.exists()) {
+			return;
+//			throw new RuntimeException("HOIIVUtils directory does not exist/could not be created");
+		}
 		Date currentDate = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String formattedDate = dateFormat.format(currentDate);
@@ -43,6 +47,11 @@ public class HOIIVUtilsLog {
 	}
 
 	public static void writeToLogError(String message1, Throwable throwable) {
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
+		if (!hoi4utils_file.exists()) {
+			return;
+//			throw new RuntimeException("HOIIVUtils directory does not exist/could not be created");
+		}
 
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
@@ -90,6 +99,11 @@ public class HOIIVUtilsLog {
 	static void startLog() {
 		logsDir = createLogsDir();
 		log = createTheLogFile();
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
+		if (!hoi4utils_file.exists()) {
+			return;
+//			throw new RuntimeException("HOIIVUtils directory does not exist/could not be created");
+		}
 		writeToLog(logsDir.toString(), "INFO");
 		writeToLog(log.toString(), "INFO");
 	}
@@ -98,7 +112,8 @@ public class HOIIVUtilsLog {
 		File nlogsDir = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH + File.separator + "logs");
 		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
 		if (!hoi4utils_file.exists()) {
-			throw new RuntimeException("HOIIVUtils directory does not exist/could not be created"); 
+			return null;
+//			throw new RuntimeException("HOIIVUtils directory does not exist/could not be created");
 		}
 		if(!nlogsDir.exists()) {
 			if(nlogsDir.mkdir()) {
@@ -111,6 +126,11 @@ public class HOIIVUtilsLog {
 	}
 
 	static File createTheLogFile() {
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
+		if (!hoi4utils_file.exists()) {
+			return null;
+//			throw new RuntimeException("HOIIVUtils directory does not exist/could not be created");
+		}
 		writeToLog(logsDir.toString(), "INFO");
 		File currentLogFile = new File(logsDir + File.separator + "log.txt");
 		try {
@@ -128,6 +148,11 @@ public class HOIIVUtilsLog {
 	}
 
 	static void deleteTheLogData(File logFile) {
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
+		if (!hoi4utils_file.exists()) {
+			return;
+//			throw new RuntimeException("HOIIVUtils directory does not exist/could not be created");
+		}
 		 try (FileWriter fileWriter = new FileWriter(logFile)) {
 			// Write an empty string to the file to clear its content
 			fileWriter.write("");
