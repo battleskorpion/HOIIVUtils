@@ -16,6 +16,9 @@ public class SettingsManager {
 
 	public static final String USER_DOCS_PATH = System.getProperty("user.home") + File.separator + "Documents";
 	public static final String HOI4UTILS_PROPERTIES_PATH = USER_DOCS_PATH + File.separator + "HOIIVUtils";
+	static {
+		System.err.println(HOI4UTILS_PROPERTIES_PATH);
+	}
 
 	private static File settings_file;
 	private static FileWriter settingsWriter;
