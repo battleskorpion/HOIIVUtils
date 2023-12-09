@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public interface FXWindow {
+	//String COM_UI = "/com/HOIIVUtils/ui/";
 	static void openGlobalErrorWindow(Exception exception) {
 		openGlobalErrorWindow(exception.getLocalizedMessage());
 	}

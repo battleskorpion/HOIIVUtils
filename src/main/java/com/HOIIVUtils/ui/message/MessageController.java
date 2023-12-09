@@ -17,7 +17,7 @@ import com.HOIIVUtils.ui.HOIUtilsWindow;
  * * window.open("Error: Focus localization or focus tree not properly initialized.");
  */
 public class MessageController extends HOIUtilsWindow {
-	private String fxmlResource = "Message.fxml";
+	private String fxmlResource = "/com/HOIIVUtils/ui/message/Message.fxml";
 	private String title = "Message";
 	
 	@FXML Label messageLabel;
