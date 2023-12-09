@@ -4,17 +4,35 @@
 		 
 	<modelVersion>4.0.0</modelVersion>
 	
-	<groupId>com.example</groupId>
-	<artifactId>your-project-name</artifactId>
-	<version>1.0.0</version>
+	<groupId>com.HOIIVUtils</groupId> <!-- com.example -->
+	<artifactId>HOIIVUtils</artifactId>
+	<version>6.0.0</version>
 	
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- sure? -->
+		<javafx.version>17.0.1</javafx.version>
+		<javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
 	</properties>
-	
+
 	<dependencies>
 		<!-- Add your project dependencies here -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>${javafx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-fxml</artifactId>
+			<version>17.0.2</version>
+		</dependency>
 	</dependencies>
 	
 </project>

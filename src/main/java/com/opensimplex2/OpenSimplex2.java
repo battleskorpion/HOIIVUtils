@@ -2,7 +2,7 @@
  * K.jpg's OpenSimplex 2, faster variant
  * https://github.com/KdotJPG/OpenSimplex2
  */
-package opensimplex2;
+package com.opensimplex2;
 
 public class OpenSimplex2 {
 
