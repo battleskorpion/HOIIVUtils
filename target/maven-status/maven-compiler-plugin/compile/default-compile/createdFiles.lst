@@ -56,9 +56,11 @@ com\HOIIVUtils\hoi4utils\clausewitz_code\scope\Scope.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\modifier\Modifier$ValueType.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\effect\ParameterValueType.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$19.class
+com\HOIIVUtils\hoi4utils\clausewitz_data\idea\FixIdea.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\effect\ParameterValueType$7.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$49.class
 com\HOIIVUtils\hoi4utils\map\province\Province.class
+com\HOIIVUtils\hoi4utils\map\seed\GridSeedGeneration.class
 com\HOIIVUtils\hoi4utils\Settings$5.class
 com\HOIIVUtils\ui\colorgen\ColorGeneratorMenu$2.class
 com\HOIIVUtils\hoi4utils\clausewitz_data\country\CountryTags.class
@@ -73,6 +75,7 @@ com\HOIIVUtils\ui\settings\SettingsController.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$26.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\effect\InvalidEffectParameterException.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$54.class
+com\HOIIVUtils\hoi4utils\clausewitz_data\idea\CountryIdea.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\effect\EffectCategory.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\scope\ScopeCategory.class
 com\HOIIVUtils\hoi4utils\clausewitz_parser_deprecated\Parser.class
@@ -84,6 +87,7 @@ com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$31.class
 com\HOIIVUtils\hoi4utils\fileIO\FileListener\FileListener.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\effect\Parameter.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\effect\ParameterValueType$9.class
+com\HOIIVUtils\ui\buildings\CountryBuildingsByStateWindow.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$24.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$47.class
 com\HOIIVUtils\hoi4utils\clausewitz_data\idea\ManpowerIdea.class
@@ -100,6 +104,7 @@ com\HOIIVUtils\hoi4utils\clausewitz_code\effect\EffectParameter.class
 com\HOIIVUtils\hoi4utils\Settings$2.class
 com\HOIIVUtils\clausewitz_parser\Parser$1.class
 com\HOIIVUtils\ui\focus_view\FocusTreeDetailsWindow.class
+com\HOIIVUtils\ui\statistics\StatisticsController.class
 com\HOIIVUtils\ui\focus_view\FocusTreeStrength$1.class
 com\HOIIVUtils\ui\hoi4localization\IdeaLocalizationWindow$1.class
 com\HOIIVUtils\ui\map\old\RiverGenWindow$2.class
@@ -122,6 +127,7 @@ com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger.class
 com\HOIIVUtils\hoi4utils\map\seed\SeedGeneration.class
 com\HOIIVUtils\hoi4utils\clausewitz_data\focus\PendingFocusReferenceList.class
 com\HOIIVUtils\hoi4utils\clausewitz_data\gfx\SpriteType.class
+com\HOIIVUtils\hoi4utils\clausewitz_data\gfx\Interface.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\effect\NullParameterTypeException.class
 com\HOIIVUtils\hoi4utils\clausewitz_data\idea\Idea.class
 com\HOIIVUtils\hoi4utils\Settings$4.class
@@ -137,6 +143,7 @@ com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$5.class
 com\HOIIVUtils\hoi4utils\map\seed\BorderMap.class
 com\HOIIVUtils\hoi4utils\HOIIVUtils.class
 com\HOIIVUtils\hoi4utils\fileIO\FileListener\FileAdapter.class
+com\HOIIVUtils\hoi4utils\map\province\VictoryPoint.class
 com\HOIIVUtils\hoi4utils\clausewitz_data\focus\PendingFocusReference.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$34.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$27.class
@@ -185,6 +192,7 @@ com\HOIIVUtils\hoi4utils\clausewitz_data\units\DivisionTemplate.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$1.class
 com\HOIIVUtils\hoi4utils\HOIIVFile.class
 com\HOIIVUtils\hoi4utils\map\seed\SeedsSet$1.class
+com\HOIIVUtils\hoi4utils\clausewitz_data\idea\EconomyIdea.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\BooleanTrigger.class
 com\HOIIVUtils\ui\hoi4localization\FocusLocalizationWindow.class
 com\HOIIVUtils\ui\javafx\export\ExcelExport.class
@@ -207,6 +215,7 @@ com\HOIIVUtils\ui\javafx\table\TableViewWindow.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$14.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$3.class
 com\HOIIVUtils\hoi4utils\clausewitz_code\trigger\CountryTrigger$37.class
+com\HOIIVUtils\ui\parser\ParserViewerWindow.class
 com\HOIIVUtils\hoi4utils\clausewitz_data\focus\FocusTree.class
 com\opensimplex2\OpenSimplex2.class
 com\HOIIVUtils\hoi4utils\map\seed\BorderMapping.class

@@ -58,7 +58,7 @@ public class MenuController extends Application implements FXWindow {
 		try {
 			Locale currentLocale = Locale.getDefault();
 
-			ResourceBundle bundle = ResourceBundle.getBundle("resources.menu", currentLocale);
+			ResourceBundle bundle = ResourceBundle.getBundle("menu", currentLocale);
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource), bundle);
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
