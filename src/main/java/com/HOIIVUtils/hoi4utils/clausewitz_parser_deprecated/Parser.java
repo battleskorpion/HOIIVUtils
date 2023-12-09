@@ -59,7 +59,7 @@ public class Parser {
 				data.add(line);
 			}
 		}
-		System.out.println("Lines parsed: " + data.size() + ", file: " + file.getName());
+//		System.out.println("Lines parsed: " + data.size() + ", file: " + file.getName());
 		fileExpressions = new Expression(data.toArray(new String[]{}));
 
 		scanner.close();
