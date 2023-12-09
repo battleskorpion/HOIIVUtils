@@ -11,16 +11,11 @@
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <javafx.version>21.0.1</javafx.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>universityOfManchester-graal</id>
-            <url>https://raw.githubusercontent.com/beehive-lab/tornado/maven-tornadovm</url>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>
@@ -28,9 +23,23 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>universityOfManchester-graal</id>
+            <url>https://raw.githubusercontent.com/beehive-lab/tornado/maven-tornadovm</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <!-- Add your project dependencies here -->
