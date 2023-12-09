@@ -3,7 +3,7 @@ package com.HOIIVUtils.hoi4utils.clausewitz_code.modifier;
 //import java.sql.Array;
 //import java.util.ArrayList;
 
-import hoi4utils.clausewitz_code.scope.Scope;
+import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.Scope;
 
 import java.util.*;
 

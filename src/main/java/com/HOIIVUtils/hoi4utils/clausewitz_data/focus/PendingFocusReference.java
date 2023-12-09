@@ -1,6 +1,6 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.focus;
 
-import clausewitz_parser.Node;
+import com.HOIIVUtils.clausewitz_parser.Node;
 
 import java.util.HashMap;
 import java.util.List;

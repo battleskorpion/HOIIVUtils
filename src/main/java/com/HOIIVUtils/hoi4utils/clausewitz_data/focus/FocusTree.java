@@ -1,23 +1,23 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.focus;
 
-import clausewitz_parser.Node;
-import clausewitz_parser.Parser;
+import com.HOIIVUtils.clausewitz_parser.Node;
+import com.HOIIVUtils.clausewitz_parser.Parser;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
-import hoi4utils.clausewitz_data.country.CountryTag;
-import hoi4utils.clausewitz_data.country.CountryTags;
-import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
-import hoi4utils.clausewitz_data.localization.Localization;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.jetbrains.annotations.*;
-import ui.FXWindow;
+import com.HOIIVUtils.ui.FXWindow;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static hoi4utils.clausewitz_data.country.CountryTag.COUNTRY_TAG_LENGTH;
+import static com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag.COUNTRY_TAG_LENGTH;
 
 /**
  * ALL of the FocusTree/FocusTrees

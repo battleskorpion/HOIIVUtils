@@ -3,7 +3,7 @@ package com.HOIIVUtils.ui.statistics;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIUtilsWindow;
 
 public class StatisticsController extends HOIUtilsWindow{
 

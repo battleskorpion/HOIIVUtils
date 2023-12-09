@@ -2,11 +2,11 @@ package com.HOIIVUtils.ui.focus_view;
 
 import com.HOIIVUtils.hoi4utils.ddsreader.DDSReader;
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
-import hoi4utils.clausewitz_data.country.CountryTag;
-import hoi4utils.clausewitz_data.focus.FixFocus;
-import hoi4utils.clausewitz_data.focus.Focus;
-import hoi4utils.clausewitz_data.focus.FocusTree;
-import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FixFocus;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.Focus;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -17,8 +17,8 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import ui.javafx.image.JavaFXImageUtils;
-import ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.javafx.image.JavaFXImageUtils;
+import com.HOIIVUtils.ui.HOIUtilsWindow;
 
 import java.io.File;
 import java.io.FileInputStream;

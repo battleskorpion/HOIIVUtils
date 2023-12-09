@@ -1,6 +1,6 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data;
 
-import hoi4utils.clausewitz_data.state.buildings.Infrastructure;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.state.buildings.Infrastructure;
 
 public interface InfrastructureData {
 	Infrastructure getInfrastructureRecord();

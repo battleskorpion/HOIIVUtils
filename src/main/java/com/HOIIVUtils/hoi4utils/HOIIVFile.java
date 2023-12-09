@@ -3,8 +3,8 @@ package com.HOIIVUtils.hoi4utils;
 import com.HOIIVUtils.hoi4utils.fileIO.FileListener.FileAdapter;
 import com.HOIIVUtils.hoi4utils.fileIO.FileListener.FileEvent;
 import com.HOIIVUtils.hoi4utils.fileIO.FileListener.FileWatcher;
-import hoi4utils.clausewitz_data.state.State;
-import ui.message.MessageController;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.state.State;
+import com.HOIIVUtils.ui.message.MessageController;
 
 import java.awt.*;
 import java.io.File;

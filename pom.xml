@@ -6,11 +6,13 @@
 	
 	<groupId>com.HOIIVUtils</groupId> <!-- com.example -->
 	<artifactId>HOIIVUtils</artifactId>
+	<packaging>jar</packaging>
 	<version>6.0.0</version>
+	<name>HOIIVUtils</name>
 	
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- sure? -->
 		<javafx.version>17.0.1</javafx.version>
 		<javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
@@ -32,6 +34,12 @@
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-fxml</artifactId>
 			<version>17.0.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>24.1.0</version>
 		</dependency>
 	</dependencies>
 	

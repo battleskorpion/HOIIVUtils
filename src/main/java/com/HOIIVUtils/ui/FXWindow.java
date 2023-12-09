@@ -16,9 +16,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import ui.javafx.table.IntegerOrPercentTableCell;
-import ui.javafx.table.TableViewWindow;
-import ui.message.MessageController;
+import com.HOIIVUtils.ui.javafx.table.IntegerOrPercentTableCell;
+import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
+import com.HOIIVUtils.ui.message.MessageController;
 
 import javax.swing.*;
 import java.io.File;

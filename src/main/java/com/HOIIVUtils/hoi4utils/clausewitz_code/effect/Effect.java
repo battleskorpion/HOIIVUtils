@@ -1,10 +1,10 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code.effect;
 
-import clausewitz_parser.Node;
-import clausewitz_parser.NodeValue;
+import com.HOIIVUtils.clausewitz_parser.Node;
+import com.HOIIVUtils.clausewitz_parser.NodeValue;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.NotPermittedInScopeException;
-import hoi4utils.clausewitz_code.scope.Scope;
-import hoi4utils.clausewitz_code.scope.ScopeType;
+import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.Scope;
+import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.ScopeType;
 
 import java.util.*;
 

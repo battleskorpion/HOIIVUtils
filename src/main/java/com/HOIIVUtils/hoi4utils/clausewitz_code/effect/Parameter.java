@@ -1,6 +1,6 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code.effect;
 
-import clausewitz_parser.NodeValue;
+import com.HOIIVUtils.clausewitz_parser.NodeValue;
 
 import java.util.*;
 

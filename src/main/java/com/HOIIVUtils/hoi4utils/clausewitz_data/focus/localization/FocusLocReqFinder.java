@@ -1,8 +1,8 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.focus.localization;
 
-import hoi4utils.clausewitz_data.country.CountryTag;
-import hoi4utils.clausewitz_data.country.CountryTags;
-import hoi4utils.clausewitz_data.focus.FocusTree;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
 
 import java.io.File;
 import java.io.IOException;
