@@ -23,7 +23,7 @@ import static com.HOIIVUtils.hoi4utils.Settings.MOD_PATH;
  * SettingsWindow is the window and controller for the program settings
  */
 public class SettingsController extends Application implements FXWindow {
-	private String fxmlResource = "/com/HOIIVUtils/ui/settings/settings.fxml";
+	private String fxmlResource = "/com/HOIIVUtils/ui/settings/Settings.fxml";
 	private String title = "Settings";
 	private Stage stage;
 	
@@ -75,7 +75,8 @@ public class SettingsController extends Application implements FXWindow {
 	@Override
 	public void start(Stage stage) {
 		try{
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("Settings.fxml"));
+			System.out.println("loader things: " + loader + " " + loader.getLocation() + " " + loader.getResources() + " " + loader.getController() + " " + loader.getCharset() + " " + loader.getControllerFactory() + " " + loader.getNamespace() + " " + loader.getBuilderFactory() + " " + loader.getLoadListener());
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
