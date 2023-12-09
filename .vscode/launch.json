@@ -6,51 +6,10 @@
 	"configurations": [
 		{
 			"type": "java",
-			"name": "Current File",
-			"request": "launch",
-			"mainClass": "${file}"
-		},
-		{
-			"type": "java",
 			"name": "HOIIVUtils",
 			"request": "launch",
 			"mainClass": "com.HOIIVUtils.hoi4utils.HOIIVUtils",
-			"projectName": "HOIIVUtils"
+			"projectName": "HOI4Utils"
 		},
-		{
-			"type": "java",
-			"name": "reader",
-			"request": "launch",
-			"mainClass": "com.HOIIVUtils.hoi4utils.clausewitz_data.localization.reader",
-			"projectName": "HOIIVUtils"
-		},
-		{
-			"type": "java",
-			"name": "ColorGenerator",
-			"request": "launch",
-			"mainClass": "com.HOIIVUtils.hoi4utils.map.province.ColorGenerator",
-			"projectName": "HOIIVUtils"
-		},
-		{
-			"type": "java",
-			"name": "ProvinceGeneration",
-			"request": "launch",
-			"mainClass": "com.HOIIVUtils.hoi4utils.map.province.ProvinceGeneration",
-			"projectName": "HOIIVUtils"
-		},
-		{
-			"type": "java",
-			"name": "heightmapfix",
-			"request": "launch",
-			"mainClass": "com.HOIIVUtils.hoi4utils.map.test.temp.heightmapfix",
-			"projectName": "HOIIVUtils"
-		},
-		{
-			"type": "java",
-			"name": "AATUpdateUtils",
-			"request": "launch",
-			"mainClass": "com.HOIIVUtils.hoi4utils.util.AATUpdateUtils",
-			"projectName": "HOIIVUtils"
-		}
 	]
 }
