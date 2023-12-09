@@ -9,6 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ModifierDatabase {
+
+	static {
+		try {
+			Class.forName("org.sqlite.JDBC");
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private Connection connection;
 
 	public ModifierDatabase(String databaseName) {
