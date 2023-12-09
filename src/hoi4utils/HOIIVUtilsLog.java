@@ -96,6 +96,10 @@ public class HOIIVUtilsLog {
 
 	static File createLogsDir() {
 		File nlogsDir = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH + File.separator + "logs");
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
+		if (!hoi4utils_file.exists()) {
+			throw new RuntimeException("HOIIVUtils directory does not exist/could not be created"); 
+		}
 		if(!nlogsDir.exists()) {
 			if(nlogsDir.mkdir()) {
 				writeToLog("Directory created successfully.", "INFO");
