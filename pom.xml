@@ -32,7 +32,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>target</outputDirectory>
+							<outputDirectory>target/classes/resources</outputDirectory>
 							<resources>
 								<resource>
 									<directory>src/main/resources</directory>
