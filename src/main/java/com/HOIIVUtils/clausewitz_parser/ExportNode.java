@@ -1,4 +1,4 @@
-//package hoi4utils.clausewitz_parser_new;
+package com.HOIIVUtils.clausewitz_parser;//package hoi4utils.clausewitz_parser_new;
 //
 //import java.util.Map;
 //import java.util.HashMap;

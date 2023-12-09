@@ -1,4 +1,4 @@
-//package hoi4utils.clausewitz_code.flow_control;
+package com.HOIIVUtils.hoi4utils.clausewitz_code.flow_control;//package hoi4utils.clausewitz_code.flow_control;
 //
 //import hoi4utils.clausewitz_code.HOI4Script;
 //import hoi4utils.clausewitz_code.effect.EffectParameter;

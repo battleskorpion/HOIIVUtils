@@ -21,13 +21,14 @@ public class ModifierDatabase {
 	private Connection connection;
 
 	public ModifierDatabase(String databaseName) {
-		try {
-			connection = DriverManager.getConnection("jdbc:sqlite:resources/" + databaseName);
-			createTable();
-			loadModifiers();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		// todo
+//		try {
+//			connection = DriverManager.getConnection("jdbc:sqlite:resources/" + databaseName);
+//			createTable();
+//			loadModifiers();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public ModifierDatabase() {

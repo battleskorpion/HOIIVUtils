@@ -1,4 +1,4 @@
-//package hoi4utils.map.province;
+package com.HOIIVUtils.hoi4utils.map.province;//package hoi4utils.map.province;
 //
 //import java.awt.*;
 //import java.util.ArrayList;

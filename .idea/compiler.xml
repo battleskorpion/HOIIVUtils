@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <option name="BUILD_PROCESS_HEAP_SIZE" value="1000" />
     <annotationProcessing>
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="HOIIVUtils" />
+        <module name="HOI4Utils" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="your-project-name" target="1.8" />
+      <module name="HOIIVUtils" target="21" />
+      <module name="untitled111" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
