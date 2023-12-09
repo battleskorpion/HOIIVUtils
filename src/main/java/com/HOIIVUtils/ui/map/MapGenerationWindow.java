@@ -7,7 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIUtilsWindow;
 
 import java.awt.*;
 import java.io.File;

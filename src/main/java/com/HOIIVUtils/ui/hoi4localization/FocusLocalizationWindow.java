@@ -2,20 +2,20 @@ package com.HOIIVUtils.ui.hoi4localization;
 
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
 import com.HOIIVUtils.hoi4utils.Settings;
-import hoi4utils.clausewitz_data.focus.FixFocus;
-import hoi4utils.clausewitz_data.focus.Focus;
-import hoi4utils.clausewitz_data.focus.FocusTree;
-import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
-import hoi4utils.clausewitz_data.localization.Localization;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FixFocus;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.Focus;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
-import ui.HOIUtilsWindow;
-import ui.javafx.table.TableViewWindow;
-import ui.message.MessageController;
+import com.HOIIVUtils.ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
+import com.HOIIVUtils.ui.message.MessageController;
 
 import java.io.File;
 import java.io.IOException;

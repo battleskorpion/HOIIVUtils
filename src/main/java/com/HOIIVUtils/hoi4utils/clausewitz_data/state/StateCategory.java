@@ -1,6 +1,7 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.state;
 
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
 import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Expression;
 import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Parser;
 

@@ -1,8 +1,8 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.idea;
 
-import clausewitz_parser.Node;
-import clausewitz_parser.Parser;
-import clausewitz_parser.ParserException;
+import com.HOIIVUtils.clausewitz_parser.Node;
+import com.HOIIVUtils.clausewitz_parser.Parser;
+import com.HOIIVUtils.clausewitz_parser.ParserException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 

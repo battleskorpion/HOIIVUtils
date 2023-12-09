@@ -3,7 +3,7 @@ package com.HOIIVUtils.ui.console;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIUtilsWindow;
 
 public class ConsoleController extends HOIUtilsWindow {
 	String fxmlResource = "ConsoleWindow.fxml";

@@ -1,7 +1,7 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.localization;
 
 import com.HOIIVUtils.hoi4utils.FileUtils;
-import ui.FXWindow;
+import com.HOIIVUtils.ui.FXWindow;
 
 import java.io.*;
 import java.util.ArrayList;

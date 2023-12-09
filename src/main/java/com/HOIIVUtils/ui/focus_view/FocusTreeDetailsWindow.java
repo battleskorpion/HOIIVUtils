@@ -1,6 +1,6 @@
 package com.HOIIVUtils.ui.focus_view;
 
-import hoi4utils.clausewitz_data.focus.Focus;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.Focus;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;

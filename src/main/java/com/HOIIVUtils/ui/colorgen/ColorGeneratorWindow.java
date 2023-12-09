@@ -2,7 +2,7 @@ package com.HOIIVUtils.ui.colorgen;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
-import ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIUtilsWindow;
 
 public class ColorGeneratorWindow extends HOIUtilsWindow {
 	public ColorGeneratorWindow() {

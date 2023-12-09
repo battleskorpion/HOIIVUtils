@@ -3,7 +3,7 @@ package com.HOIIVUtils.ui.clausewitz_gfx;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIUtilsWindow;
 
 // todo add actual effect (enable/disable) from check boxes
 public class InterfaceFileListWindow extends HOIUtilsWindow {

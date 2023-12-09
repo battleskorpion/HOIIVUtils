@@ -1,6 +1,6 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.tooltip;
 
-import hoi4utils.clausewitz_data.localization.Localization;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Expression;
 import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Parser;
 

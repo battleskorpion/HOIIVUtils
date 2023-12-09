@@ -3,7 +3,7 @@ package com.HOIIVUtils.ui.buildings;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIUtilsWindow;
 
 public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 

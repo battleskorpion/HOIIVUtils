@@ -1,13 +1,13 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.idea;
 
-import clausewitz_parser.Node;
+import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.modifier.Modifier;
-import hoi4utils.clausewitz_data.localization.Localization;
-import hoi4utils.clausewitz_data.localization.LocalizationFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Expression;
 import javafx.beans.property.SimpleStringProperty;
-import ui.FXWindow;
+import com.HOIIVUtils.ui.FXWindow;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -2,19 +2,19 @@ package com.HOIIVUtils.ui.hoi4localization;
 
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
 import com.HOIIVUtils.hoi4utils.Settings;
-import hoi4utils.clausewitz_data.idea.FixIdea;
-import hoi4utils.clausewitz_data.idea.Idea;
-import hoi4utils.clausewitz_data.idea.IdeaFile;
-import hoi4utils.clausewitz_data.localization.LocalizationFile;
-import hoi4utils.clausewitz_data.localization.Localization;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.idea.FixIdea;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.idea.Idea;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.idea.IdeaFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
-import ui.HOIUtilsWindow;
-import ui.javafx.table.TableViewWindow;
-import ui.message.MessageController;
+import com.HOIIVUtils.ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
+import com.HOIIVUtils.ui.message.MessageController;
 
 import java.io.File;
 import java.io.IOException;

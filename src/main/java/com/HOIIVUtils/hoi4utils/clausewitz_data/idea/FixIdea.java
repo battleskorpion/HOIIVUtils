@@ -2,14 +2,14 @@ package com.HOIIVUtils.hoi4utils.clausewitz_data.idea;
 
 import com.HOIIVUtils.hoi4utils.EnglishSuperDictionary;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
-import hoi4utils.clausewitz_data.country.CountryTags;
-import hoi4utils.clausewitz_data.localization.Localization;
-import hoi4utils.clausewitz_data.localization.LocalizationFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static hoi4utils.clausewitz_data.country.CountryTag.COUNTRY_TAG_LENGTH;
+import static com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag.COUNTRY_TAG_LENGTH;
 
 /**
  * This is the FixIdea file.

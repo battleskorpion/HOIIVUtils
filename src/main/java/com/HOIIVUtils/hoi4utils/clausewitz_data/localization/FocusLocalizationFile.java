@@ -1,6 +1,6 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.localization;
 
-import ui.FXWindow;
+import com.HOIIVUtils.ui.FXWindow;
 
 import java.io.BufferedWriter;
 import java.io.File;

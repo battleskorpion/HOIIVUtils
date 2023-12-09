@@ -2,8 +2,8 @@ package com.HOIIVUtils.hoi4utils;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_code.effect.EffectDatabase;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.modifier.ModifierDatabase;
-import ui.menu.MenuController;
-import ui.settings.SettingsController;
+import com.HOIIVUtils.ui.menu.MenuController;
+import com.HOIIVUtils.ui.settings.SettingsController;
 
 /**
  * HOIIVUtils.java

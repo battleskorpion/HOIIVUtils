@@ -1,7 +1,7 @@
-package hoi4utils.clausewitz_data.state;
+package com.HOIIVUtils.hoi4utils.clausewitz_data.state;
 
-import hoi4utils.clausewitz_code.ClausewitzDate;
-import hoi4utils.clausewitz_data.country.CountryTag;
+import com.HOIIVUtils.hoi4utils.clausewitz_code.ClausewitzDate;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
 /*
  * Claim File
  */

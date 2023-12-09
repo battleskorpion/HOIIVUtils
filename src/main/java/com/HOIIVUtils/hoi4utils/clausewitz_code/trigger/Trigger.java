@@ -1,6 +1,6 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code.trigger;
 
-import hoi4utils.clausewitz_code.scope.ScopeType;
+import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.ScopeType;
 
 import java.util.EnumSet;
 

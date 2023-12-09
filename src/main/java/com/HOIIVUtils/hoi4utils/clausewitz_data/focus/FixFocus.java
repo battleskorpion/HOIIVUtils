@@ -3,16 +3,16 @@ package com.HOIIVUtils.hoi4utils.clausewitz_data.focus;
 import com.HOIIVUtils.hoi4utils.EnglishSuperDictionary;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import com.HOIIVUtils.hoi4utils.Settings;
-import hoi4utils.clausewitz_data.country.CountryTags;
-import hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
-import hoi4utils.clausewitz_data.localization.Localization;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import static hoi4utils.clausewitz_data.country.CountryTag.COUNTRY_TAG_LENGTH;
+import static com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag.COUNTRY_TAG_LENGTH;
 
 /*
  * FixFoucus Documentation
