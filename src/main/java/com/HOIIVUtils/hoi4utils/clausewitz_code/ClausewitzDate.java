@@ -1,8 +1,10 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
-public class ClausewitzDate {
+public class ClausewitzDate implements Comparable<ClausewitzDate> {
 	public static final int DEFAULT_HOUR = 12;
 	private static ClausewitzDate current = new ClausewitzDate();
 	private final int year;
@@ -97,7 +99,14 @@ public class ClausewitzDate {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(year, month, day);	    // objects with different hours will have the same hash code
-													// as they are considered equal by equals().    // todo is this okay?
+		return Objects.hash(year, month, day);	    // objects with different hours must have the same hash code
+													// as they are considered equal by equals().
+	}
+
+	@Override
+	public int compareTo(@NotNull ClausewitzDate o) {
+		return this.year > o.year ? 1 : this.year < o.year ? -1
+				: this.month > o.month ? 1 : this.month < o.month ? -1
+				: Integer.compare(this.day, o.day);
 	}
 }
