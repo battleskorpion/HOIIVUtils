@@ -6,7 +6,7 @@
 
     <groupId>com.HOIIVUtils</groupId>
     <artifactId>HOIIVUtils</artifactId>
-    <version>7.0.2</version>
+    <version>8.0.0</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
