@@ -2,6 +2,7 @@ package com.HOIIVUtils.hoi4utils.clausewitz_code.effect;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.ScopeType;
 
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,7 +19,12 @@ public class EffectDatabase {
 
 	public EffectDatabase(String databaseName) {
 		try {
-			connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/" + databaseName);
+			URL url = getClass().getClassLoader().getResource("modifiers.db");
+			if (url == null) {
+				throw new SQLException("Unable to find 'modifiers.db'");
+			}
+			String path = url.getPath();
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			loadEffects();
 		} catch (SQLException e) {
 			e.printStackTrace();
