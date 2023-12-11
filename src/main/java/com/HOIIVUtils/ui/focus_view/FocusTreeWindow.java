@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -21,7 +22,6 @@ import com.HOIIVUtils.ui.javafx.image.JavaFXImageUtils;
 import com.HOIIVUtils.ui.HOIUtilsWindow;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +35,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 	@FXML Canvas focusTreeCanvas;
 	@FXML ScrollPane focusTreeCanvasScrollPane;
-
+	@FXML ChoiceBox<FocusTree> focusTreeDropdown;
 
 	FocusTree focusTree;
 	Tooltip focusTooltipView;
@@ -60,6 +60,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 	@FXML
 	void initialize() {
+		focusTreeDropdown.setItems(FocusTree.observeFocusTrees());
 		focusTree = FocusTree.get(new CountryTag("SMA"));
 		if (focusTree == null) {
 			focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));

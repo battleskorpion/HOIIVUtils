@@ -8,7 +8,9 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import org.jetbrains.annotations.*;
 import com.HOIIVUtils.ui.FXWindow;
 
@@ -25,9 +27,19 @@ import static com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag.COUNTR
  */
 // todo extends file?
 public class FocusTree implements Localizable {
+	private static final ObservableMap<CountryTag, FocusTree> focusTrees
+			= FXCollections.observableHashMap();
+	private static final ObservableList<FocusTree> focusTreesList = FXCollections.observableArrayList();
+	static {
+		focusTrees.addListener((MapChangeListener<CountryTag, FocusTree>) change -> {
+			updateObservableValues();
+		});
+	}
+
 
 	// private HashSet<Focus> focuses;
-	private final HashMap<String, Focus> focuses;
+	private final ObservableMap<String, Focus> focuses;
+
 	private ArrayList<String> focus_names;
 	private File focus_file;
 	private CountryTag country;
@@ -46,7 +58,7 @@ public class FocusTree implements Localizable {
 	public FocusTree(File focus_file) {
 		this.focus_file = focus_file;
 		country = new CountryTag("###");
-		focuses = new HashMap<>();
+		focuses = FXCollections.observableHashMap();
 		minX = 0;
 
 		parse();
@@ -64,9 +76,13 @@ public class FocusTree implements Localizable {
 		//! defaultFocus = false;
 		//! continuousFocusPosition = new Point(50, 1200);
 		country = tag;
-		focuses = new HashMap<>();
+		focuses = FXCollections.observableHashMap();
 
 		FocusTree.add(country(), this);
+	}
+
+	public static ObservableList<FocusTree> observeFocusTrees() {
+		return focusTreesList;
 	}
 
 	private ArrayList<String> parse() {
@@ -253,11 +269,9 @@ public class FocusTree implements Localizable {
 		return minX;
 	}
 
-	private static final HashMap<CountryTag, FocusTree> focusTrees = new HashMap<>();
-
 	public static HashMap<CountryTag, FocusTree> add(CountryTag tag, FocusTree focusTree) {
 		focusTrees.put(tag, focusTree);
-		return focusTrees;
+		return new HashMap<>(focusTrees);
 	}
 
 	public static FocusTree[] listFocusTrees() {
@@ -361,5 +375,9 @@ public class FocusTree implements Localizable {
 
 	public void updateLocalization(Localization nameLocalization) {
 		focusLocFile.setLocalization(nameLocalization);
+	}
+
+	private static void updateObservableValues() {
+		focusTreesList.setAll(focusTrees.values());
 	}
 }

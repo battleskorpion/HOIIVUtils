@@ -2,9 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -22,13 +21,8 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Focus Tree:" />
-            <MenuButton maxWidth="400.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="285.0" text="MenuButton" GridPane.columnIndex="1">
-              <items>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
-                <MenuItem mnemonicParsing="false" text="Action 2" />
-              </items>
-            </MenuButton>
+            <Label fx:id="focusTreeLabel" text="Focus Tree:" />
+            <ChoiceBox fx:id="focusTreeDropdown" maxWidth="1.7976931348623157E308" minWidth="50.0" prefWidth="150.0" GridPane.columnIndex="1" />
          </children>
          <padding>
             <Insets left="5.0" right="5.0" />

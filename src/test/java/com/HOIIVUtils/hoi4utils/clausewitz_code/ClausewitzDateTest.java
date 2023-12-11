@@ -1,7 +1,5 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code;
 
-import org.junit.jupiter.api.Test;
-
 import java.time.DateTimeException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

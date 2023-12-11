@@ -1,0 +1,22 @@
+focus = {
+    id = SGA_1000_Crosses_will_burn
+    icon = GFX_focus_STX_Unite_southcarolina
+    x = 0
+    y = 1
+    relative_position_id = SGA_Georgia_is_mourning
+    prerequisite = { focus = SGA_Georgia_is_mourning }
+    cost = 10
+
+    search_filters = { FOCUS_FILTER_RESEARCH }
+
+    available_if_capitulated = yes
+    ai_will_do = {
+    	factor = 1
+    }
+
+    completion_reward = {
+    country_event = {
+            id = georgia.16
+        }
+    }
+}

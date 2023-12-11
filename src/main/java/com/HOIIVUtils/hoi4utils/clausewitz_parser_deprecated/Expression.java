@@ -10,6 +10,7 @@ import static com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Parser.usefu
  * Expression File
  * @deprecated
  */
+@Deprecated
 public class Expression {
 	private Iterator<String> it;
 	String expression;

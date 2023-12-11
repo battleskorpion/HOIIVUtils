@@ -15,16 +15,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EffectDatabase {
+
+	static {
+		try {
+			Class.forName("org.sqlite.JDBC");
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private Connection connection;
 
 	public EffectDatabase(String databaseName) {
+		// todo
 		try {
-			URL url = getClass().getClassLoader().getResource("effects.db");
-			if (url == null) {
-				throw new SQLException("Unable to find 'effects.db'");
-			}
-			String path = url.getPath();
-			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/" + databaseName);
+			createTable();
 			loadEffects();
 		} catch (SQLException e) {
 			e.printStackTrace();
