@@ -19,9 +19,9 @@ public class EffectDatabase {
 
 	public EffectDatabase(String databaseName) {
 		try {
-			URL url = getClass().getClassLoader().getResource("modifiers.db");
+			URL url = getClass().getClassLoader().getResource("effects.db");
 			if (url == null) {
-				throw new SQLException("Unable to find 'modifiers.db'");
+				throw new SQLException("Unable to find 'effects.db'");
 			}
 			String path = url.getPath();
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
