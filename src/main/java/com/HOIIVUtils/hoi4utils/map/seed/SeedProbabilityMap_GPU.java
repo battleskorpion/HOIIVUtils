@@ -135,7 +135,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 			}
 		};
 		mapKernel.execute(Range.create(size));
-		System.out.println(mapKernel.getTargetDevice());
+		System.out.println("map reduce array size: " + size);
 		mapKernel.dispose();
 		totals = kernelTotals;
 
@@ -240,11 +240,12 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		double[][] finalTotals = totals;
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				int finalI = i;
-				int finalJ = j;
-				result[i][j] = IntStream.range(0, count)
-						.mapToDouble(index -> finalTotals[index][finalI * cols + finalJ]) // Use finalTotals here
-						.sum();
+//				int finalI = i;
+//				int finalJ = j;
+//				result[i][j] = IntStream.range(0, count)
+//						.mapToDouble(index -> finalTotals[index][finalI * cols + finalJ]) // Use finalTotals here
+//						.sum();
+				result[i][j] = finalTotals[0][i * cols + j];
 			}
 		}
 
