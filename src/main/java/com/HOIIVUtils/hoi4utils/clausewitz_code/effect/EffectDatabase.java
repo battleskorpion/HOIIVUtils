@@ -2,7 +2,12 @@ package com.HOIIVUtils.hoi4utils.clausewitz_code.effect;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.ScopeType;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,12 +32,21 @@ public class EffectDatabase {
 	private Connection connection;
 
 	public EffectDatabase(String databaseName) {
-		// todo
 		try {
-			connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/" + databaseName);
-			createTable();
+			URL url = getClass().getClassLoader().getResource(databaseName);
+			if (url == null) {
+				throw new SQLException("Unable to find '" + databaseName + "'");
+			}
+
+			File tempFile = File.createTempFile("effects", ".db");
+			tempFile.deleteOnExit();
+			try (InputStream inputStream = url.openStream()) {
+				Files.copy(inputStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			}
+
+			connection = DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath());
 			loadEffects();
-		} catch (SQLException e) {
+		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 		}
 	}
