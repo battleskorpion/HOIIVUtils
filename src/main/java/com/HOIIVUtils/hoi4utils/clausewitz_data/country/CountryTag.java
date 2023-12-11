@@ -7,6 +7,7 @@ public final class CountryTag {
 
 	private final String tag;
 
+
 	public CountryTag(String tag) {
 		if (tag == null || tag.isEmpty()) {
 			tag = NULL_TAG.tag;

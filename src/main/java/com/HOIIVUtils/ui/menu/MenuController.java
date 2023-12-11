@@ -1,5 +1,6 @@
 package com.HOIIVUtils.ui.menu;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
 import com.HOIIVUtils.ui.console.ConsoleController;
 import com.HOIIVUtils.ui.hoi4localization.CustomTooltipWindow;
 import com.HOIIVUtils.ui.hoi4localization.FocusLocalizationWindow;
@@ -75,7 +76,8 @@ public class MenuController extends Application implements FXWindow {
 			JOptionPane.showMessageDialog(null, "Error menu controller!");
 			e.printStackTrace();
 		}
-		State.readStates();
+		State.read();
+		FocusTree.read();
 	}
 
 	public void open(){

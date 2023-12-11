@@ -127,7 +127,7 @@ public class State implements InfrastructureData, Localizable {
 		}
 	}
 
-	public static void readStates() {
+	public static void read() {
 		if (!HOIIVFile.states_folder.exists() || !HOIIVFile.states_folder.isDirectory()) {
 			System.err.println("In State.java - " + HOIIVFile.states_folder + " is not a directory, or etc.");
 			return;
@@ -138,7 +138,8 @@ public class State implements InfrastructureData, Localizable {
 		}
 
 		for (File stateFile : HOIIVFile.states_folder.listFiles()) {
-			new State(stateFile);
+			if (stateFile.getName().endsWith(".txt"))
+				new State(stateFile);
 		}
 	}
 

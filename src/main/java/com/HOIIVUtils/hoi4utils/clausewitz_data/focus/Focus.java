@@ -245,7 +245,12 @@ public class Focus implements Localizable {
 		setRelativePositionID(exp.getValue("relative_position_id").string());
 		// setFocusLoc();
 		setIcon(exp.getValue("icon").string());
-		setCost(exp.getValue("cost").rational());
+		try {
+			setCost(exp.getValue("cost").rational());
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+			setCost(DEFAULT_FOCUS_COST);    // todo better error reporting
+		}
 		setPrerequisite(exp.filterName("prerequisite").toList());
 		setMutuallyExclusive(exp.filterName("mutually_exclusive").toList());
 		setAvailable(exp.findFirst("available"));
@@ -912,7 +917,11 @@ public class Focus implements Localizable {
 				if (effect.hasSupportedTargets()) {
 					try {
 						effect.setTarget(n.value().string(), scope);
-					} catch (Exception e) {
+					} catch (IllegalStateException e) {
+						e.printStackTrace();
+						continue; // todo idk tbh.
+					}
+					catch (Exception e) {
 						throw new RuntimeException(e); // todo
 					}
 				}

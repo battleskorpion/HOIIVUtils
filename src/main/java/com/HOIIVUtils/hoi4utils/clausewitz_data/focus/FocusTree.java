@@ -2,7 +2,9 @@ package com.HOIIVUtils.hoi4utils.clausewitz_data.focus;
 
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.Parser;
+import com.HOIIVUtils.hoi4utils.HOIIVFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.Country;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
@@ -85,6 +87,23 @@ public class FocusTree implements Localizable {
 		return focusTreesList;
 	}
 
+	public static void read() {
+		if (!HOIIVFile.focus_folder.exists() || !HOIIVFile.focus_folder.isDirectory()) {
+			System.err.println("Focus folder does not exist or is not a directory.");
+			return;
+		}
+		if (HOIIVFile.focus_folder.listFiles() == null || HOIIVFile.focus_folder.listFiles().length == 0) {
+			System.err.println("No focuses found in " + HOIIVFile.focus_folder);
+			return;
+		}
+
+		for (File f : HOIIVFile.focus_folder.listFiles()) {
+			if (f.getName().endsWith(".txt")) {
+				new FocusTree(f);
+			}
+		}
+	}
+
 	private ArrayList<String> parse() {
 		if (this.focus_file == null) {
 			System.err.println(this + "File of focus tree not set.");
@@ -103,7 +122,12 @@ public class FocusTree implements Localizable {
 		Node focusTreeNode;
 		try {
 			 focusTreeNode = focusTreeParser.parse();
-			 focusTreeNode = focusTreeNode.filterName("focus_tree").toList().get(0);
+			 var l = focusTreeNode.filterName("focus_tree").toList();
+			 if (l.isEmpty()) {
+				 System.out.println("focus_tree filter yielded no results for " + focus_file);
+				 return null;
+			 }
+			 focusTreeNode = l.get(0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -124,7 +148,15 @@ public class FocusTree implements Localizable {
 		// todo should not be .findFirst("modifier"); need mofifier handling. but thats okay.
 		Node countryModifierExp = focusTreeNode.findFirst("country").findFirst("modifier");
 		if (countryModifierExp != null) {
-			country = new CountryTag(countryModifierExp.getValue("tag").string());
+			try {
+				if (countryModifierExp.getValue("tag") != null)
+					country = new CountryTag(countryModifierExp.getValue("tag").string());
+				else
+					country = CountryTag.NULL_TAG;
+			} catch (NullPointerException e) {
+				System.out.println("Country modifier tag not found, focus file: " + focus_file);
+				throw new RuntimeException(e);
+			}
 		}
 
 		return focus_names;
@@ -238,6 +270,8 @@ public class FocusTree implements Localizable {
 
 	@Override
 	public boolean equals(Object other) {
+		if (other == null) return false;
+
 		if (other.getClass() == this.getClass()) {
 			return this.focus_file == ((FocusTree) other).focus_file;
 		}

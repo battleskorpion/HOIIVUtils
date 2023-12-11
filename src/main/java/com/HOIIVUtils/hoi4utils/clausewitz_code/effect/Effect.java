@@ -111,6 +111,10 @@ public class Effect implements EffectParameter, Cloneable {
 	}
 
 	public boolean isSupportedInScope(Scope scope) {
+		if (this.supportedScopes == null) {
+			System.out.println("Error: supported scopes was null for effect " + this);
+			return false;
+		}
 		if (this.supportedScopes.contains(ScopeType.any)) return true;
 		return this.supportedScopes.contains(scope.targetScopeType());
 	}
@@ -329,4 +333,12 @@ public class Effect implements EffectParameter, Cloneable {
 		return c;
 	}
 
+	@Override
+	public String toString() {
+		if (this.name() != null) {
+			return this.name();
+		} else {
+			return super.toString();
+		}
+	}
 }

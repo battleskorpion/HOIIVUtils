@@ -62,6 +62,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	void initialize() {
 		focusTreeDropdown.setItems(FocusTree.observeFocusTrees());
 		focusTree = FocusTree.get(new CountryTag("SMA"));
+		focusTree.setLocalization(new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
 		if (focusTree == null) {
 			focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
 			focusTree.setLocalization(new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
