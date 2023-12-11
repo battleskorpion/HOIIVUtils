@@ -90,7 +90,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 				int y = getGlobalId();
 				_cumulativeProbabilities[y] = 0;
 				for (int i = 0; i < width; i++) {
-					_cumulativeProbabilities[y] += _map[y][i];
+					_cumulativeProbabilities[y] = _cumulativeProbabilities[y] + _map[y][i];
 				}
 			}
 		};
