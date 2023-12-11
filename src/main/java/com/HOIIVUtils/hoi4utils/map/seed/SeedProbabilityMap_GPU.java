@@ -204,10 +204,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 			public void run() {
 				int gid = getGlobalId();
 				double value = _sdata[gid];
-				for (int index = 0; index < count; index++) {
-					if (value >= (double) index / count && value < (double) (index + 1) / count)
-						kernelTotals[index][gid] = 1.0;
-				}
+				kernelTotals[0][gid] = value;
 			}
 		};
 		mapKernel.execute(Range.create(size));
