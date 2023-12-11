@@ -6,10 +6,17 @@
 	"configurations": [
 		{
 			"type": "java",
+			"name": "Main",
+			"request": "launch",
+			"mainClass": "com.HOIIVUtils.hoi4utils.map.seed.Main",
+			"projectName": "HOI4Utils"
+		},
+		{
+			"type": "java",
 			"name": "HOIIVUtils",
 			"request": "launch",
 			"mainClass": "com.HOIIVUtils.hoi4utils.HOIIVUtils",
 			"projectName": "HOI4Utils"
-		},
+		}
 	]
 }

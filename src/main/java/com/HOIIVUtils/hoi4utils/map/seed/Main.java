@@ -38,7 +38,7 @@ public class Main {
         mapKernel.execute(Range.create(size));
         mapKernel.dispose();
         totals = kernelTotals;
-        System.out.println(Arrays.deepToString(totals));
+        //System.out.println(Arrays.deepToString(totals));
 
         //////////////////
         // REDUCE PHASE //
