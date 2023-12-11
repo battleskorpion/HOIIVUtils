@@ -1,5 +1,7 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code;
 
+import org.junit.jupiter.api.Test;
+
 import java.time.DateTimeException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -91,7 +93,7 @@ class ClausewitzDateTest {
 
     @org.junit.jupiter.api.Test
     void date_exc3() {
-        assertThrows(IllegalArgumentException.class, () -> ClausewitzDate.of("1941.13.31.1"));
+        assertThrows(DateTimeException.class, () -> ClausewitzDate.of("1941.13.31.1"));
     }
 
     @org.junit.jupiter.api.Test
@@ -101,12 +103,12 @@ class ClausewitzDateTest {
 
     @org.junit.jupiter.api.Test
     void date_exc5() {
-        assertThrows(IllegalArgumentException.class, () -> ClausewitzDate.of("1941.12.31.25"));
+        assertThrows(DateTimeException.class, () -> ClausewitzDate.of("1941.12.31.25"));
     }
 
     @org.junit.jupiter.api.Test
     void date_exc6() {
-        assertThrows(IllegalArgumentException.class, () -> ClausewitzDate.of("1941.12.31.-1"));
+        assertThrows(DateTimeException.class, () -> ClausewitzDate.of("1941.12.31.-1"));
     }
 
     @org.junit.jupiter.api.Test

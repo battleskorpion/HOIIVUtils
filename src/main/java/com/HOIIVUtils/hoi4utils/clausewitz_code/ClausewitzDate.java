@@ -49,7 +49,13 @@ public class ClausewitzDate implements Temporal, TemporalAdjuster, Comparable<Cl
 		return create(year, month, day, hour);
 	}
 
-	private static ClausewitzDate create(int year, int month, int day, int hour) {
+	private static ClausewitzDate create(int year, int month, int day, int hour)  {
+		if (hour < 0 || hour >= 24) {
+			throw new DateTimeException("Invalid hour '" + hour + "'");
+		}
+		if (month < 1 || month > 12) {
+			throw new DateTimeException("Invalid month '" + month + "'");
+		}
 		if (day > 28) {
 			int dom = switch (month) {
 				case 2 -> (IsoChronology.INSTANCE.isLeapYear(year) ? 29 : 28);
@@ -94,10 +100,10 @@ public class ClausewitzDate implements Temporal, TemporalAdjuster, Comparable<Cl
 		/* day */
 		pos1 = pos2 + 1;
 		pos2 = s.indexOf('.', pos1);
-		if (pos2 <= pos1) {
+		if (pos2 < pos1) {
 			pos2 = s.length();
 		}
-		if (pos2 - pos1 == 1) {
+		if (pos2 == pos1) {
 			throw new IllegalArgumentException(s + " is not a valid clausewitz date");
 		}
 		day = Integer.parseInt(s.substring(pos1, pos2));
@@ -106,7 +112,7 @@ public class ClausewitzDate implements Temporal, TemporalAdjuster, Comparable<Cl
 		int temphour;
 		pos1 = pos2 + 1;
 		pos2 = s.length();
-		if (pos2 <= (pos1 + 1)) {
+		if (pos2 <= pos1) {
 			temphour = DEFAULT_HOUR;			  // valid to not have hour (in case, default)
 		} else {
 			temphour = Integer.parseInt(s.substring(pos1, pos2));
