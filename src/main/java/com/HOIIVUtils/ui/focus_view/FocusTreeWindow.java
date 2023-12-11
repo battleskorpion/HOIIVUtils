@@ -22,7 +22,9 @@ import com.HOIIVUtils.ui.HOIUtilsWindow;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
 public class FocusTreeWindow extends HOIUtilsWindow {
@@ -107,9 +109,12 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		/* dds stuff */
 		Image GFX_focus_unavailable = null;
 		try {
-			FileInputStream fis = new FileInputStream("hoi4files\\gfx\\focus_unavailable_bg.dds");
+			InputStream fis = getClass().getClassLoader().getResourceAsStream("com/HOIIVUtils/hoi4utils/hoi4files/gfx/focus_unavailable_bg.dds");
+			if (fis == null) {
+				throw new FileNotFoundException("Unable to find 'com/HOIIVUtils/hoi4utils/hoi4files/gfx/focus_unavailable_bg.dds'");
+			}
 			byte[] buffer = new byte[fis.available()];
-			fis.read(buffer);
+			int bytesRead = fis.read(buffer);
 			fis.close();
 			int[] ddspixels = DDSReader.read(buffer, DDSReader.ARGB, 0);
 			int ddswidth = DDSReader.getWidth(buffer);
