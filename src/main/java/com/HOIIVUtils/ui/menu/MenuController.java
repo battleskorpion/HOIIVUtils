@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 
 public class MenuController extends Application implements FXWindow {
 	private Stage stage;
-	private String fxmlResource;
+	private String fxmlResource = "Menu.fxml";
 	private String title;
 
 	@FXML public Button settingsButton;
@@ -45,8 +45,7 @@ public class MenuController extends Application implements FXWindow {
 
 	/* Constructor */
 	public MenuController() {
-		//fxmlResource = COM_UI + "menu/Menu.fxml";
-		fxmlResource = "menu.fxml";
+		fxmlResource = "Menu.fxml";
 		title = "Menu";
 	}
 
