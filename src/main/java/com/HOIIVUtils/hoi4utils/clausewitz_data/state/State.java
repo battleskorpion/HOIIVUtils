@@ -81,7 +81,7 @@ public class State implements InfrastructureData, Localizable {
 			// owner
 			if (historyExp.getImmediate("owner") != null) {
 				// empty date constructor for default date
-				owner.put(new ClausewitzDate(), new Owner(new CountryTag(historyExp.getImmediate("owner").getText())));
+				owner.put(ClausewitzDate.of(), new Owner(new CountryTag(historyExp.getImmediate("owner").getText())));
 			}
 		} /*
 		   * else {
