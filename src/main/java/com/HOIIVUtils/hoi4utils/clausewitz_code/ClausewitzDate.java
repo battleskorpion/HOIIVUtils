@@ -95,9 +95,9 @@ public class ClausewitzDate implements Temporal, TemporalAdjuster, Comparable<Cl
 		pos1 = pos2 + 1;
 		pos2 = s.indexOf('.', pos1);
 		if (pos2 <= pos1) {
-			throw new IllegalArgumentException(s + " is not a valid clausewitz date");
+			pos2 = s.length();
 		}
-		if (pos2 == s.length() - 1) {
+		if (pos2 - pos1 == 1) {
 			throw new IllegalArgumentException(s + " is not a valid clausewitz date");
 		}
 		day = Integer.parseInt(s.substring(pos1, pos2));
@@ -105,15 +105,15 @@ public class ClausewitzDate implements Temporal, TemporalAdjuster, Comparable<Cl
 		/* hour */
 		int temphour;
 		pos1 = pos2 + 1;
-		pos2 = s.indexOf('.', pos1);
-		if (pos2 <= pos1) {
+		pos2 = s.length();
+		if (pos2 <= (pos1 + 1)) {
 			temphour = DEFAULT_HOUR;			  // valid to not have hour (in case, default)
 		} else {
 			temphour = Integer.parseInt(s.substring(pos1, pos2));
 		}
 		hour = temphour;				// hour is final
 
-		return new ClausewitzDate(year, month, day, hour);
+		return create(year, month, day, hour);
 	}
 
 	private static ClausewitzDate of(ClausewitzDate date, int hour) {

@@ -9,7 +9,7 @@ class ClausewitzDateTest {
 
     @org.junit.jupiter.api.Test
     void current () {
-        ClausewitzDate current = ClausewitzDate.of()
+        ClausewitzDate current = ClausewitzDate.of();
         assertEquals(1936, current.year());
         assertEquals(1, current.month());
         assertEquals(1, current.day());
