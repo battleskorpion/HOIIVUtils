@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.menu.MenuController">
+<GridPane minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/22-ea+16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.menu.MenuController">
    <columnConstraints>
 	  <ColumnConstraints />
 	  <ColumnConstraints hgrow="SOMETIMES" maxWidth="355.0" minWidth="40.0" prefWidth="69.0" />
