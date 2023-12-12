@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.focus_view.FocusTreeWindow">
+<AnchorPane prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.focus_view.FocusTreeWindow">
    <children>
       <GridPane prefHeight="30.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -22,7 +22,7 @@
         </rowConstraints>
          <children>
             <Label fx:id="focusTreeLabel" text="Focus Tree:" />
-            <ChoiceBox fx:id="focusTreeDropdown" maxWidth="1.7976931348623157E308" minWidth="50.0" prefWidth="150.0" GridPane.columnIndex="1" />
+            <ChoiceBox fx:id="focusTreeDropdown" maxWidth="1.7976931348623157E308" minWidth="50.0" prefWidth="150.0" minHeight="10.0" maxHeight="25.0" GridPane.columnIndex="1" />
          </children>
          <padding>
             <Insets left="5.0" right="5.0" />
