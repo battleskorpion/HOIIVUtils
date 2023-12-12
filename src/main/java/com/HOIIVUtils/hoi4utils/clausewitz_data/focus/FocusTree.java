@@ -204,7 +204,9 @@ public class FocusTree implements Localizable {
 			referencesToRemove.forEach(pendingFocusReferenceList::resolve);
 			// todo temp want better warnings in future
 			/* unresolved references */
-			pendingFocusReferences.forEach(pfr -> JOptionPane.showMessageDialog(null,
+//			pendingFocusReferences.forEach(pfr -> JOptionPane.showMessageDialog(null,
+//					"Undefined Focus reference invalid: " + pfr.id() + ", " + pfr.pendingActionMap().keySet()));
+			pendingFocusReferences.forEach(pfr -> System.out.println("Warning: [Focus.java] " +
 					"Undefined Focus reference invalid: " + pfr.id() + ", " + pfr.pendingActionMap().keySet()));
 		}
 
