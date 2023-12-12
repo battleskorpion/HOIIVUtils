@@ -89,8 +89,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		drawFocusTree(focusTree);
 	}
 
-
-
 	public Canvas focusTreeCanvas() {
 		return focusTreeCanvas;
 	}
