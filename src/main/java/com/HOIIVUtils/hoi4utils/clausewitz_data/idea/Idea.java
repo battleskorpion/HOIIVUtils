@@ -5,7 +5,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.modifier.Modifier;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
-import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Expression;
+import com.HOIIVUtils.clausewitz_parser.Node;
 import javafx.beans.property.SimpleStringProperty;
 import com.HOIIVUtils.ui.FXWindow;
 
@@ -112,15 +112,15 @@ public abstract class Idea implements Localizable {
 		this.id.set(id);
 	}
 
-	private void setID(Expression exp) {
-		if (exp == null) {
-			id = null;
-			FXWindow.openGlobalErrorWindow("Expression was null for setting idea ID.");
-			return;
-		}
-
-		id = new SimpleStringProperty(exp.getText());
-	}
+//	private void setID(Expression exp) {
+//		if (exp == null) {
+//			id = null;
+//			FXWindow.openGlobalErrorWindow("Expression was null for setting idea ID.");
+//			return;
+//		}
+//
+//		id = new SimpleStringProperty(exp.getText());
+//	}
 
 
 	public void setLocalization() {

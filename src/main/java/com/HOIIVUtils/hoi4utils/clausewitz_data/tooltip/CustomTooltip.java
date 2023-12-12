@@ -1,8 +1,9 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.tooltip;
 
+import com.HOIIVUtils.clausewitz_parser.ParserException;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
-import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Expression;
-import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Parser;
+import com.HOIIVUtils.clausewitz_parser.Node;
+import com.HOIIVUtils.clausewitz_parser.Parser;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,12 +41,18 @@ public class CustomTooltip {
 		if (!validFile(file)) return;
 
 		Parser parser = new Parser(file);
-		Expression[] tooltipExpressions = parser.findAll("custom_trigger_tooltip"); // prev = parser.expression().getAll("custom_trigger_tooltip");
-		for (Expression exp : tooltipExpressions) {
-//			System.out.println("expression: " + exp);
-			Expression tooltipExp = exp.getSubexpression("tooltip");
-//			System.out.println("subexpression: " + tooltipExp);
-			String expID = tooltipExp.getText();
+		Node rootNode = null;
+		try {
+			rootNode = parser.parse();
+		} catch (ParserException e) {
+			throw new RuntimeException(e);
+		}
+		Node[] tooltipExpressions = rootNode.filter("custom_trigger_tooltip").toList().toArray(new Node[0]); // prev2 = prev = parser.expression().getAll("custom_trigger_tooltip");
+		for (Node exp : tooltipExpressions) {
+			if (!exp.contains("tooltip")) {
+				continue;
+			}
+			String expID = exp.getValue("tooltip").string();
 			if (expID == null) {
 				continue;
 			}

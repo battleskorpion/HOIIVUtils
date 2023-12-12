@@ -11,7 +11,6 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.gfx.Interface;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
-import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Expression;
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.hoi4utils.ddsreader.DDSReader;
 import javafx.beans.property.SimpleStringProperty;
@@ -48,7 +47,7 @@ public class Focus implements Localizable {
 	protected Image ddsImage;
 	protected Set<Set<Focus>> prerequisite; // can be multiple, but hoi4 code is simply "prerequisite"
 	protected Set<Focus> mutually_exclusive;
-	protected Trigger available;
+//	protected Trigger available;
 	protected int x; // if relative, relative x
 	protected int y; // if relative, relative y
 	protected String relative_position_id; // if null, position is not relative
@@ -276,17 +275,17 @@ public class Focus implements Localizable {
 		return setXY(xy.x, xy.y);
 	}
 
-	private Point setXY(Expression x, Expression y) {
+	private Point setXY(Node x, Node y) {
 		if (x == null && y == null) {
 			return setXY(0, 0);
 		}
 		if (x == null) {
-			return setXY(0, y.getValue());
+			return setXY(0, y.value().integer());
 		}
 		if (y == null) {
-			return setXY(x.getValue(), 0);
+			return setXY(x.value().integer(), 0);
 		}
-		return setXY(x.getValue(), y.getValue());
+		return setXY(x.value().integer(), y.value().integer());
 	}
 
 	private void setRelativePositionID(String exp) {
@@ -305,14 +304,14 @@ public class Focus implements Localizable {
 		this.cost = cost.doubleValue();
 	}
 
-	public void setCost(Expression exp) {
-		if (exp == null) {
-			cost = 0;
-			return;
-		}
-
-		this.cost = exp.getValue();
-	}
+//	public void setCost(Expression exp) {
+//		if (exp == null) {
+//			cost = 0;
+//			return;
+//		}
+//
+//		this.cost = exp.getValue();
+//	}
 
 	public String nameLocalization() {
 		if (nameLocalization == null) {
@@ -427,15 +426,15 @@ public class Focus implements Localizable {
 		return descLocalization;
 	}
 
-	// todo implement icon lookup
-	public void setIcon(Expression exp) {
-		if (exp == null) {
-			// icon = null;
-			// return;
-		}
-
-		setIcon(exp.getText());
-	}
+//	// todo implement icon lookup
+//	public void setIcon(Expression exp) {
+//		if (exp == null) {
+//			// icon = null;
+//			// return;
+//		}
+//
+//		setIcon(exp.getText());
+//	}
 
 	/**
 	 * Sets focus icon id
@@ -653,19 +652,19 @@ public class Focus implements Localizable {
 
 	public void setAvailable(Node exp) {
 		if (exp == null) {
-			available = null;
+//			available = null;
 			return;
 		}
 	}
 
-	/**
-	 * Sets available trigger of focus
-	 *
-	 * @param availableTrigger trigger which controls focus availability
-	 */
-	public void setAvailable(Trigger availableTrigger) {
-		this.available = availableTrigger;
-	}
+//	/**
+//	 * Sets available trigger of focus
+//	 *
+//	 * @param availableTrigger trigger which controls focus availability
+//	 */
+//	public void setAvailable(Trigger availableTrigger) {
+//		this.available = availableTrigger;
+//	}
 
 	public Image getDDSImage() {
 		return ddsImage;

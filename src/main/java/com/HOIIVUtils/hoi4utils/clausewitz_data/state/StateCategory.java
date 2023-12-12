@@ -1,9 +1,10 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.state;
 
+import com.HOIIVUtils.clausewitz_parser.ParserException;
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
-import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Expression;
-import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Parser;
+import com.HOIIVUtils.clausewitz_parser.Node;
+import com.HOIIVUtils.clausewitz_parser.Parser;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,13 +56,18 @@ public class StateCategory {
 			/* custom state categories */
 			for (File file : state_category_folder.listFiles()) {
 				Parser parser = new Parser(file);
-				Expression exp = parser.expression();
+				Node rootExp = null;
+				try {
+					rootExp = parser.parse();
+				} catch (ParserException e) {
+					throw new RuntimeException(e);
+				}
 
-				if (exp.get(file.getName()) != null ) {
-					Expression categoryExp = exp.get(file.getName());
+				if (rootExp.contains(file.getName())) {
+					Node categoryExp = rootExp.findFirst(file.getName());
 					// ! todo Implement the string
 					//String category_name = categoryExp.getText();
-					if (categoryExp.get("local_building_slots") != null) {
+					if (categoryExp.contains("local_building_slots")) {
 					//	int numBuildingSlots = categoryExp.get("local_building_slots").getValue();
 					} else {
 					//	int numBuildingSlots = 0;

@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Scanner;
 
-import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Expression;
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 
@@ -41,23 +40,24 @@ public class AATUpdateUtils {
             }
 
             StringBuilder fileBuffer = new StringBuilder();
-            while (s.hasNextLine()) {
-                String line = s.nextLine();
-                System.out.println(line);
-                Expression exp = new Expression(line);
-                if (exp.contains("consumer_goods_factor=")) {
-                    double v = exp.getDoubleValue() * MULTIPLIER;
-                    NumberFormat nf = DecimalFormat.getInstance();
-                    nf.setMaximumFractionDigits(3);
-                    exp.setValue(Double.parseDouble(nf.format(v)));
-                    fileBuffer.append(exp.expression());
-                }
-                else {
-                    fileBuffer.append(line);
-                }
-
-                fileBuffer.append("\n");
-            }
+            // todo was old deprecated parser
+//            while (s.hasNextLine()) {
+//                String line = s.nextLine();
+//                System.out.println(line);
+//                Expression exp = new Expression(line);
+//                if (exp.contains("consumer_goods_factor=")) {
+//                    double v = exp.getDoubleValue() * MULTIPLIER;
+//                    NumberFormat nf = DecimalFormat.getInstance();
+//                    nf.setMaximumFractionDigits(3);
+//                    exp.setValue(Double.parseDouble(nf.format(v)));
+//                    fileBuffer.append(exp.expression());
+//                }
+//                else {
+//                    fileBuffer.append(line);
+//                }
+//
+//                fileBuffer.append("\n");
+//            }
 
             s.close();
             FileWriter writer = null;
