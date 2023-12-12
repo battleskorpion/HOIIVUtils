@@ -8,8 +8,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.state.buildings.Infrastructure;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.state.resources.Resources;
-import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Expression;
-import com.HOIIVUtils.hoi4utils.clausewitz_parser_deprecated.Parser;
+import com.HOIIVUtils.clausewitz_parser.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,65 +56,71 @@ public class State implements InfrastructureData, Localizable {
 		/* parse state data */
 		Parser stateParser = new Parser(stateFile);
 		// Expression exp = stateParser.expressions();
+		Node stateNode = null;
+		try {
+			stateNode = stateParser.parse();
+		} catch (ParserException e) {
+			throw new RuntimeException(e);
+		}
 
 		// id
-		if (stateParser.find("id") != null) {
-			stateID = stateParser.find("id").getValue();
+		if (stateNode.contains("id")) {
+			stateID = stateNode.getValue("id").integer();
 		}
 		// population (manpower)
-		if (stateParser.find("manpower") != null) {
-			population = stateParser.find("manpower").getValue(); // todo after here etc.
+		if (stateNode.contains("manpower")) {
+			population = stateNode.getValue("manpower").integer(); // todo after here etc.
 		}
 		// state category
-		if (stateParser.find("state_category") != null) {
+		if (stateNode.contains("state_category")) {
 
 		}
 
 		/* buildings */
-		Expression historyExp = stateParser.find("history");
-		System.out.println(historyExp.getSubexpressions());
-		Expression buildingsExp = null;
-		// todo fix purposless code if statemnt nevered mattered
-		if (historyExp != null) {
-			buildingsExp = historyExp.getImmediate("buildings"); // default buildings
+		if (stateNode.contains("history")) {
+			Node historyNode = stateNode.findFirst("history");
+			Node buildingsNode = null;
+			if (historyNode.contains("buildings")) {
+				buildingsNode = historyNode.findFirst("buildings");
+			}
 			// owner
-			if (historyExp.getImmediate("owner") != null) {
+			if (historyNode.contains("owner")) {
 				// empty date constructor for default date
-				owner.put(ClausewitzDate.of(), new Owner(new CountryTag(historyExp.getImmediate("owner").getText())));
+				owner.put(ClausewitzDate.of(), new Owner(new CountryTag(historyNode.getValue("owner").string())));
+			} else {
+				System.err.println("Warning: state owner not defined, " + stateFile.getName());
 			}
-		} /*
-		   * else {
-		   * System.err.println("State error: history does not exist, " +
-		   * stateFile.getName());
-		   * }
-		   */
-		if (buildingsExp == null) {
-			System.err.println("Warning: buildings does not exist, " + stateFile.getName());
-			stateInfrastructure = null;
+			if (buildingsNode == null) {
+				System.err.println("Warning: buildings (incl. infrastructure) not defined in state, " + stateFile.getName());
+				stateInfrastructure = null;
+			} else {
+				// infrastructure
+				if (buildingsNode.contains("infrastructure")) {
+					infrastructure = buildingsNode.getValue("infrastructure").integer(); // todo after here etc.
+				}
+				// civilian factories
+				if (buildingsNode.contains("industrial_complex")) {
+					civilianFactories = buildingsNode.getValue("industrial_complex").integer(); // todo after here etc.
+				}
+				// military factories
+				if (buildingsNode.contains("arms_factory")) {
+					militaryFactories = buildingsNode.getValue("arms_factory").integer(); // todo after here etc.
+				}
+				// dockyards
+				if (buildingsNode.contains("dockyard")) {
+					dockyards = buildingsNode.getValue("dockyard").integer(); // todo after here etc.
+				}
+				// airfields
+				if (buildingsNode.contains("air_base")) {
+					airfields = buildingsNode.getValue("air_base").integer(); // todo after here etc.
+				}
+			}
 		} else {
-			// infrastructure
-			if (buildingsExp.get("infrastructure") != null) {
-				infrastructure = buildingsExp.get("infrastructure").getValue(); // todo after here etc.
-			}
-			// civilian factories
-			if (buildingsExp.get("industrial_complex") != null) {
-				civilianFactories = buildingsExp.get("industrial_complex").getValue(); // todo after here etc.
-			}
-			// military factories
-			if (buildingsExp.get("arms_factory") != null) {
-				militaryFactories = buildingsExp.get("arms_factory").getValue(); // todo after here etc.
-			}
-			// dockyards
-			if (buildingsExp.get("dockyard") != null) {
-				dockyards = buildingsExp.get("dockyard").getValue(); // todo after here etc.
-			}
-			// airfields
-			if (buildingsExp.get("air_base") != null) {
-				airfields = buildingsExp.get("air_base").getValue(); // todo after here etc.
-			}
+			System.err.println("Warning: history not defined in state, " + stateFile.getName());
 		}
 
-		resourcesData = findStateResources(stateParser);
+		// resources
+		resourcesData = findStateResources(stateNode);
 
 		// data record
 		stateInfrastructure = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories,
@@ -290,7 +295,7 @@ public class State implements InfrastructureData, Localizable {
 		return states.stream().filter(state -> state.stateID == id).findFirst().orElse(null);
 	}
 
-	public Resources findStateResources(Parser stateParser) {
+	public Resources findStateResources(Node stateNode) {
 		int aluminum = 0;
 		int chromium = 0;
 		int oil = 0;
@@ -298,30 +303,35 @@ public class State implements InfrastructureData, Localizable {
 		int steel = 0;
 		int tungsten = 0;
 
+		if (!stateNode.contains("resources")) {
+			return new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
+		}
+
 		/* resources */
+		Node resourcesNode = stateNode.findFirst("resources");
 		// aluminum (aluminium bri'ish spelling)
-		if (stateParser.find("aluminium") != null) {        // ! todo always null
-			aluminum = (int) stateParser.find("aluminium").getDoubleValue();
+		if (resourcesNode.contains("aluminium")) {        // ! todo always null
+			aluminum = (int) resourcesNode.getValue("aluminium").rational();
 		}
 		// chromium
-		if (stateParser.find("chromium") != null) {
-			chromium = (int) stateParser.find("chromium").getDoubleValue();
+		if (resourcesNode.contains("chromium")) {
+			chromium = (int) resourcesNode.getValue("chromium").rational();
 		}
 		// rubber
-		if (stateParser.find("rubber") != null) {
-			rubber = (int) stateParser.find("rubber").getDoubleValue();
+		if (resourcesNode.contains("rubber")) {
+			rubber = (int) resourcesNode.getValue("rubber").rational();
 		}
 		// oil
-		if (stateParser.find("oil") != null) {
-			oil = (int) stateParser.find("oil").getDoubleValue();
+		if (resourcesNode.contains("oil")) {
+			oil = (int) resourcesNode.getValue("oil").rational();
 		}
 		// steel
-		if (stateParser.find("steel") != null) {
-			steel = (int) stateParser.find("steel").getDoubleValue();
+		if (resourcesNode.contains("steel")) {
+			steel = (int) resourcesNode.getValue("steel").rational();
 		}
 		// tungsten
-		if (stateParser.find("tungsten") != null) {
-			tungsten = (int) stateParser.find("tungsten").getDoubleValue();
+		if (resourcesNode.contains("tungsten")) {
+			tungsten = (int) resourcesNode.getValue("tungsten").rational();
 		}
 
 		return new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
