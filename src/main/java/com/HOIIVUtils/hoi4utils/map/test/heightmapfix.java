@@ -1,4 +1,4 @@
-package com.HOIIVUtils.hoi4utils.map.test.temp;
+package com.HOIIVUtils.hoi4utils.map.test;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
