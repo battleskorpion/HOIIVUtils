@@ -32,7 +32,7 @@ import java.util.function.Function;
 /**
  * Focus class represents an individual focus of a National Focus (Focus Tree).
  */
-public class Focus implements Localizable {
+public class Focus implements Localizable, Comparable<Focus> {
 	private static final int FOCUS_COST_FACTOR = 7; // turn into from defines, or default 7. (get default vanilla define instead?)
 	private final int DEFAULT_FOCUS_COST = 10; // default cost (in weeks by default) when making a new focus.
 	private static final HashSet<String> focusIDs = new HashSet<>();
@@ -947,6 +947,10 @@ public class Focus implements Localizable {
 	}
 
 
+	@Override
+	public int compareTo(@NotNull Focus o) {
+		return this.id().compareTo(o.id());
+	}
 }
 
 

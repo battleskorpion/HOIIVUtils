@@ -28,13 +28,14 @@ import static com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag.COUNTR
  * Localizable data: focus tree name. Each focus is its own localizable data.
  */
 // todo extends file?
-public class FocusTree implements Localizable {
+public class FocusTree implements Localizable, Comparable<FocusTree> {
 	private static final ObservableMap<CountryTag, FocusTree> focusTrees
 			= FXCollections.observableHashMap();
 	private static final ObservableList<FocusTree> focusTreesList = FXCollections.observableArrayList();
 	static {
 		focusTrees.addListener((MapChangeListener<CountryTag, FocusTree>) change -> {
 			updateObservableValues();
+			focusTreesList.sort(Comparator.naturalOrder());
 		});
 	}
 
@@ -415,5 +416,11 @@ public class FocusTree implements Localizable {
 
 	private static void updateObservableValues() {
 		focusTreesList.setAll(focusTrees.values());
+	}
+
+	@Override
+	public int compareTo(@NotNull FocusTree o) {
+		int c = this.country.compareTo(o.country);
+		return c == 0 ? this.id.compareTo(o.id) : c;
 	}
 }

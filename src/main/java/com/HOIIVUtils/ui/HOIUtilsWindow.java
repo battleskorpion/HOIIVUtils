@@ -80,4 +80,6 @@ public abstract class HOIUtilsWindow implements FXWindow {
 	public void setTitle(String title) {
 		this.title = title;
 	}
+
+
 }

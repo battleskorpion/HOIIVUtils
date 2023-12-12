@@ -33,14 +33,19 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	public static final int CENTER_FOCUS_X = (FOCUS_X_SCALE / 2);
 	static final int FOCUS_Y_SCALE = 140;
 	public static final int CENTER_FOCUS_Y = FOCUS_Y_SCALE / 2;
+	public static final int VISIBLE_DROPDOWN_ROW_COUNT = 20;
 
 	@FXML Canvas focusTreeCanvas;
 	@FXML ScrollPane focusTreeCanvasScrollPane;
 	@FXML ComboBox<FocusTree> focusTreeDropdown;
 
-	FocusTree focusTree;
-	Tooltip focusTooltipView;
-	Focus focusDetailsFocus;
+	private FocusTree focusTree;
+	private Tooltip focusTooltipView;
+	private Focus focusDetailsFocus;
+
+	private double mouseX, mouseY;
+	private Focus draggedFocus;
+
 
 	public FocusTreeWindow() {
 		setFxmlResource("FocusTreeWindow.fxml");
@@ -63,15 +68,21 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	void initialize() {
 		focusTreeDropdown.setItems(FocusTree.observeFocusTrees());
 		focusTreeDropdown.setTooltip(new Tooltip("Select a focus tree to view"));
-		
 		focusTreeDropdown.getSelectionModel().select(0);
+		focusTreeDropdown.setVisibleRowCount(VISIBLE_DROPDOWN_ROW_COUNT);
 		focusTreeDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				focusTree = newValue;
 				drawFocusTree(focusTree);
 			}
 		});
-		
+		focusTreeDropdown.setEditable(false);
+		// Enable auto-selection based on user typing
+		focusTreeDropdown.setOnKeyTyped(event -> {
+			String typedText = focusTreeDropdown.getEditor().getText();
+			selectClosestMatch(focusTreeDropdown, typedText);
+		});
+
 		focusTree = FocusTree.get(new CountryTag("SMA"));
 		focusTree.setLocalization(new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
 		if (focusTree == null) {
@@ -244,4 +255,46 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		return null;
 	}
 
+	private void selectClosestMatch(ComboBox<FocusTree> comboBox, String typedText) {
+		for (FocusTree item : comboBox.getItems()) {
+			if (item.country().tag().toLowerCase().startsWith(typedText.toLowerCase())) {
+				comboBox.getSelectionModel().select(item);
+				comboBox.getEditor().setText(String.valueOf(item));
+				return;
+			}
+		}
+	}
+
+	@FXML
+	public void mousePressedFocusTreeViewAdapter(MouseEvent e) {
+		mouseX = e.getX();
+		mouseY = e.getY();
+
+		// Identify the focus being dragged based on the mouse press position
+		draggedFocus = getFocusHover(new Point2D(mouseX, mouseY));
+	}
+
+	@FXML
+	public void mouseDraggedFocusTreeViewAdapter(MouseEvent e) {
+		if (e.isPrimaryButtonDown() && draggedFocus != null) {
+			double deltaX = e.getX() - mouseX;
+			double deltaY = e.getY() - mouseY;
+
+			// Update focus positions based on mouse movement
+			int newX = draggedFocus.x() + (int) ((deltaX / FOCUS_X_SCALE));
+			int newY = draggedFocus.y() + (int) (deltaY / FOCUS_Y_SCALE);
+			draggedFocus.setXY(newX, newY);
+
+			// Redraw the focus tree with updated positions
+			drawFocusTree(focusTree);
+
+			mouseX = e.getX();
+			mouseY = e.getY();
+		}
+	}
+
+	@FXML
+	public void mouseReleasedFocusTreeViewAdapter(MouseEvent e) {
+		draggedFocus = null; // Reset the reference when the mouse is released
+	}
 }

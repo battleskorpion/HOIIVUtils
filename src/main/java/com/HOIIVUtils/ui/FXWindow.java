@@ -7,10 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
@@ -23,6 +20,8 @@ import com.HOIIVUtils.ui.message.MessageController;
 import javax.swing.*;
 import java.io.File;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface FXWindow {
@@ -210,4 +209,5 @@ public interface FXWindow {
 			return cell;
 		});
 	}
+
 }

@@ -42,4 +42,8 @@ public final class CountryTag {
 	public int hashCode() {
 		return Objects.hash(tag);
 	}
+
+	public int compareTo(CountryTag country) {
+		return this.tag.compareTo(country.tag);
+	}
 }
