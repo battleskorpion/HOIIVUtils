@@ -12,6 +12,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -35,7 +36,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 	@FXML Canvas focusTreeCanvas;
 	@FXML ScrollPane focusTreeCanvasScrollPane;
-	@FXML ChoiceBox<FocusTree> focusTreeDropdown;
+	@FXML ComboBox<FocusTree> focusTreeDropdown;
 
 	FocusTree focusTree;
 	Tooltip focusTooltipView;
@@ -61,8 +62,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	@FXML
 	void initialize() {
 		focusTreeDropdown.setItems(FocusTree.observeFocusTrees());
-		focusTreeDropdown.setPrefWidth(200);
-		focusTreeDropdown.setPrefHeight(30);
 		focusTreeDropdown.setTooltip(new Tooltip("Select a focus tree to view"));
 		
 		focusTreeDropdown.getSelectionModel().select(0);
