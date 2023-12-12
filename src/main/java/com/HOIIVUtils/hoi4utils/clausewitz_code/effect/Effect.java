@@ -45,7 +45,7 @@ public class Effect implements EffectParameter, Cloneable {
 		}
 
 		effects.put(identifier, this);
-		System.out.println("effect: " + identifier);
+//		System.out.println("effect: " + identifier);
 	}
 
 	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets, List<Parameter> requiredParameters) {
