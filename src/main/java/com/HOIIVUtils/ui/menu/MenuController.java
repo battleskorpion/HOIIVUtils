@@ -1,6 +1,7 @@
 package com.HOIIVUtils.ui.menu;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
+import com.HOIIVUtils.ui.HOIUtilsWindow;
 import com.HOIIVUtils.ui.console.ConsoleController;
 import com.HOIIVUtils.ui.hoi4localization.CustomTooltipWindow;
 import com.HOIIVUtils.ui.hoi4localization.FocusLocalizationWindow;
@@ -96,34 +97,32 @@ public class MenuController extends Application implements FXWindow {
 		window.open();
 	}
 
+	private void openUtilsWindow(HOIUtilsWindow utilsWindow) {
+		utilsWindow.open();
+	}
+
 	public void openStatistics() {
-		StatisticsController window = new StatisticsController();
-		window.open();
+		openUtilsWindow(new StatisticsController());
 	}
 
 	public void openConsole() {
-		ConsoleController window = new ConsoleController();
-		window.open();
+		openUtilsWindow(new ConsoleController());
 	}
 
 	public void openLocalizeFocusTree() {
-		FocusLocalizationWindow window = new FocusLocalizationWindow();
-		window.open();
+		openUtilsWindow(new FocusLocalizationWindow());
 	}
 
 	public void openLocalizeIdeaFile() {
-		IdeaLocalizationWindow window = new IdeaLocalizationWindow();
-		window.open();
+		openUtilsWindow(new IdeaLocalizationWindow());
 	}
 
 	public void openUnlocalizedFocus() {
-		UnlocalizedFocusWindow window = new UnlocalizedFocusWindow();
-		window.open();
+		openUtilsWindow(new UnlocalizedFocusWindow());
 	}
 
 	public void openCustomTooltip() {
-		CustomTooltipWindow window = new CustomTooltipWindow();
-		window.open();
+		openUtilsWindow(new CustomTooltipWindow());
 	}
 
 	public void openBuildingsByCountry() {
