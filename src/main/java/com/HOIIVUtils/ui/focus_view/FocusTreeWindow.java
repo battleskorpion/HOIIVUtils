@@ -61,6 +61,18 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	@FXML
 	void initialize() {
 		focusTreeDropdown.setItems(FocusTree.observeFocusTrees());
+		focusTreeDropdown.setPrefWidth(200);
+		focusTreeDropdown.setPrefHeight(30);
+		focusTreeDropdown.setTooltip(new Tooltip("Select a focus tree to view"));
+		
+		focusTreeDropdown.getSelectionModel().select(0);
+		focusTreeDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				focusTree = newValue;
+				drawFocusTree(focusTree);
+			}
+		});
+		
 		focusTree = FocusTree.get(new CountryTag("SMA"));
 		focusTree.setLocalization(new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
 		if (focusTree == null) {
@@ -76,7 +88,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		}
 
 		/* focus tree canvas */
-		focusTreeCanvas.setWidth((getMaxX() + -getMinX()) * FOCUS_X_SCALE + 150);
+		focusTreeCanvas.setWidth((double) (getMaxX() + -getMinX()) * FOCUS_X_SCALE + 150);
 		focusTreeCanvas.setHeight((getMaxY() * FOCUS_Y_SCALE) + (FOCUS_Y_SCALE * 2));
 
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
@@ -85,7 +97,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		focusTreeCanvasScrollPane.setOnMouseReleased(e -> {
 			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(false);
 		});
-
 		drawFocusTree(focusTree);
 	}
 
