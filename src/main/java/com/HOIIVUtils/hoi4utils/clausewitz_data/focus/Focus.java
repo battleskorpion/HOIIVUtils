@@ -518,9 +518,7 @@ public class Focus implements Localizable, Comparable<Focus> {
 				}
 			}
 
-			if (!subset.isEmpty()) {
-				prerequisites.add(subset);
-			}
+			if (!subset.isEmpty()) prerequisites.add(subset);
 		}
 
 		setPrerequisite(prerequisites);

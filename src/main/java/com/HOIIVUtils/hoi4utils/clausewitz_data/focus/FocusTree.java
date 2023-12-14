@@ -4,7 +4,6 @@ import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.Parser;
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.country.Country;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
@@ -16,7 +15,6 @@ import javafx.collections.ObservableMap;
 import org.jetbrains.annotations.*;
 import com.HOIIVUtils.ui.FXWindow;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -43,7 +41,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree> {
 	// private HashSet<Focus> focuses;
 	private final ObservableMap<String, Focus> focuses;
 
-	private ArrayList<String> focus_names;
+	private ArrayList<String> focusIDList;
 	private File focus_file;
 	private CountryTag country;
 	private FocusLocalizationFile focusLocFile = null;
@@ -105,6 +103,30 @@ public class FocusTree implements Localizable, Comparable<FocusTree> {
 		}
 	}
 
+	public static void attemptReadLocalization() {
+		// todo not just english :(
+		if (!HOIIVFile.localization_eng_folder.exists() || !HOIIVFile.localization_eng_folder.isDirectory()) {
+			System.err.println("Localization folder does not exist or is not a directory.");
+			return;
+		}
+		if (HOIIVFile.localization_eng_folder.listFiles() == null || HOIIVFile.localization_eng_folder.listFiles().length == 0) {
+			System.err.println("No localization files found in " + HOIIVFile.localization_eng_folder);
+			return;
+		}
+
+		aa:
+		for (FocusTree focusTree : unlocalizedFocusTrees()) {
+			for (File f : HOIIVFile.localization_eng_folder.listFiles()) {
+				FocusLocalizationFile flf = new FocusLocalizationFile(f);
+				flf.readLocalization();
+				if (flf.containsLocalizationFor(focusTree)) {
+					focusTree.setLocalization(flf);     // sure why not
+					continue aa;
+				}
+			}
+		}
+	}
+
 	private ArrayList<String> parse() {
 		if (this.focus_file == null) {
 			System.err.println(this + "File of focus tree not set.");
@@ -115,7 +137,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree> {
 			return null;
 		}
 
-		focus_names = new ArrayList<>();
+		focusIDList = new ArrayList<>();
 		this.focuses.clear();
 
 		/* parser */
@@ -160,7 +182,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree> {
 			}
 		}
 
-		return focus_names;
+		return focusIDList;
 	}
 
 	@NotNull
@@ -179,7 +201,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree> {
 			/* focus id */
 			String focus_id = node.getValue("id").string();     // gets the ##### from "id = #####"
 			focus = new Focus(focus_id, this, node);
-			focus_names.add(focus_id);
+			focusIDList.add(focus_id);
 			focuses.put(focus_id, focus);
 			focusList.add(focus);
 		}
@@ -201,7 +223,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree> {
 			var pendingFocusReferences = pendingFocusReferenceList.pendingFocusReferences;
 			List<String> referencesToRemove = pendingFocusReferences.stream()
 					.map(PendingFocusReference::id)
-					.filter(id -> focus_names.contains(id)).toList();
+					.filter(id -> focusIDList.contains(id)).toList();
 			referencesToRemove.forEach(pendingFocusReferenceList::resolve);
 			// todo temp want better warnings in future
 			/* unresolved references */
@@ -218,12 +240,12 @@ public class FocusTree implements Localizable, Comparable<FocusTree> {
 	 * 
 	 * @return
 	 */
-	public ArrayList<String> listFocusNames() throws IOException {
-		if (focus_names == null) {
+	public ArrayList<String> listFocusIDs() {
+		if (focusIDList == null) {
 			return null; // bad :(
 		}
 
-		return focus_names;
+		return focusIDList;
 	}
 
 	// public static ArrayList<String> list(File focus_file) throws IOException {
@@ -354,7 +376,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree> {
 			aa:
 			if (tree.locFile() != null) {
 				Scanner locReader = new Scanner(tree.locFile().getFile());
-				ArrayList<String> focuses = tree.listFocusNames();
+				ArrayList<String> focuses = tree.listFocusIDs();
 				if (focuses == null) {
 					break aa;
 				}
@@ -382,7 +404,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree> {
 			aa:
 			if (tree.locFile() != null) {
 				Scanner locReader = new Scanner(tree.locFile().getFile());
-				ArrayList<String> focuses = tree.listFocusNames();
+				ArrayList<String> focuses = tree.listFocusIDs();
 				if (focuses == null) {
 					break aa;
 

@@ -1,6 +1,7 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.idea;
 
 import com.HOIIVUtils.clausewitz_parser.Node;
+import com.HOIIVUtils.hoi4utils.clausewitz_code.effect.EffectParameter;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.modifier.Modifier;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
@@ -17,7 +18,7 @@ import java.util.function.Function;
 /**
  * This is the Idea file.
  */
-public abstract class Idea implements Localizable {
+public class Idea implements Localizable, EffectParameter {
 
 	/* static */
 	protected static ArrayList<Idea> idea_list; // todo change to hash etc.
@@ -200,4 +201,10 @@ public abstract class Idea implements Localizable {
 	public void setLocalization(Localization newLoc) {
 		this.localization = newLoc;
 	}
+
+	@Override
+	public String displayScript() {
+		return "[n/a - idea]";
+	}
+
 }

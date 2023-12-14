@@ -1,5 +1,7 @@
 package com.HOIIVUtils.ui.menu;
 
+import com.HOIIVUtils.hoi4utils.Settings;
+import com.HOIIVUtils.hoi4utils.SettingsManager;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
 import com.HOIIVUtils.ui.HOIUtilsWindow;
 import com.HOIIVUtils.ui.console.ConsoleController;
@@ -79,9 +81,12 @@ public class MenuController extends Application implements FXWindow {
 		}
 		State.read();
 		FocusTree.read();
+		if (Settings.ATTEMPT_LOAD_LOCALIZATION.enabled()) {
+			FocusTree.attemptReadLocalization();
+		}
 	}
 
-	public void open(){
+	public void open() {
 		if (stage != null) {
 			stage.show();
 			System.out.println("Menu controller showed stage with open");

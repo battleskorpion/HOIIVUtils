@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+// todo make interface?
 public abstract class HOIUtilsWindow implements FXWindow {
 	private String fxmlResource;
 	private String title;

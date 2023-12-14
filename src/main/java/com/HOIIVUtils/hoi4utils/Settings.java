@@ -67,7 +67,6 @@ public enum Settings {
 		public Object getSetting() {
 			return SettingsManager.settingValues.get(this).equals("true");
 		}
-
 		public String defaultProperty() {
 			return "true";
 		}
@@ -76,6 +75,10 @@ public enum Settings {
 		public String toString() {
 			return (String) getSetting();
 		}
+	},
+	ATTEMPT_LOAD_LOCALIZATION {
+		public Object getSetting() { return SettingsManager.settingValues.get(this).equals("true"); }
+		public String defaultProperty() { return "true"; }
 	},
 	;
 

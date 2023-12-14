@@ -1,5 +1,6 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.localization;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
 import com.HOIIVUtils.ui.FXWindow;
 
 import java.io.BufferedWriter;
@@ -362,5 +363,10 @@ public class FocusLocalizationFile extends LocalizationFile {
 			}
 		}
 		return null;
+	}
+
+	public boolean containsLocalizationFor(FocusTree focusTree) {
+		var idList = focusTree.listFocusIDs();
+		return localizationList.parallelStream().anyMatch(l -> idList.contains(l.ID()));
 	}
 }

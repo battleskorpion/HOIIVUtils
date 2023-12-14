@@ -55,7 +55,7 @@ public class FocusLocReqFinder {
 							// System.out.println(potentialTag + " REEEEEE ");
 							/* link loc file to focus file */
 							if (FocusTree.getdankwizardisfrench(tag) != null) {
-								ArrayList<String> focuses = FocusTree.getdankwizardisfrench(tag).listFocusNames();
+								ArrayList<String> focuses = FocusTree.getdankwizardisfrench(tag).listFocusIDs();
 								if (focuses != null) {
 									if (focuses.contains(locLine.substring(0, locLine.indexOf(":")))) {
 										FocusTree.getdankwizardisfrench(tag).setLocalization(loc_file);
