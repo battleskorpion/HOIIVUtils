@@ -56,7 +56,7 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>${javafx.maven.plugin.version}</version>
 				<configuration>
-					<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUTils</mainClass>
+					<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -79,7 +79,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUTils</mainClass>
+							<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
