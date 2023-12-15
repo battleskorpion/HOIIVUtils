@@ -3,7 +3,6 @@ package com.HOIIVUtils.hoi4utils.clausewitz_data.localization;
 import com.HOIIVUtils.hoi4utils.FileUtils;
 import com.HOIIVUtils.ui.FXWindow;
 import org.jetbrains.annotations.NotNull;
-import sun.reflect.ReflectionFactory;
 
 import java.io.File;
 import java.net.URI;
