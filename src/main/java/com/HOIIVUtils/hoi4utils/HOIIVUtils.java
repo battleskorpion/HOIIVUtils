@@ -12,7 +12,7 @@ import com.HOIIVUtils.ui.settings.SettingsController;
 public class HOIIVUtils {
 
 	public static final String HOIIVUTILS_NAME = "HOIIVUtils";
-	public static final String HOIIVUTILS_VERSION = "Version 8.0.0";
+	public static final String HOIIVUTILS_VERSION = "Version 9.0.0";
 	public static final String DARK_MODE_STYLESHEETURL = "resources/javafx_dark.css";
 	public static Boolean firstTimeSetup;
 	public static SettingsController settingsController;

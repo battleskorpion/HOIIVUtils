@@ -6,7 +6,7 @@
 
 	<groupId>com.HOIIVUtils</groupId>
 	<artifactId>HOIIVUtils</artifactId>
-	<version>8.0.0</version>
+	<version>9.0.0</version>
 	<name>HOIIVUtils</name>
 	<description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
 	<url>https://github.com/battleskorpion/HOIIVUtils</url>
@@ -109,7 +109,7 @@
 						<configuration>
 							<headerType>console</headerType>
 							<outfile>target/HOIIVUtils.exe</outfile>
-							<jar>target/HOIIVUtils-8.0.0-jar-with-dependencies.jar</jar>
+							<jar>target/HOIIVUtils-9.0.0-jar-with-dependencies.jar</jar>
 							<jre>
 								<path>C:\Program Files\Eclipse Adoptium\jdk-21.0.1.12-hotspot\bin\java.exe</path>
 								<minVersion>21</minVersion>
