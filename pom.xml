@@ -31,6 +31,21 @@
 		
 		<junit.jupiter.version>5.10.1</junit.jupiter.version>
 
+		<launch4j.version>3.14</launch4j.version>
+
+		<launch4j.maven.plugin.version>2.4.1</launch4j.maven.plugin.version>
+
+		<!-- add all other dependencies version to the properties so maven can update the versions here instead having the version numbers in the dependency where they can get outdated -->
+		<org.jgrapht.version>1.5.2</org.jgrapht.version>
+		<org.jetbrains.version>24.1.0</org.jetbrains.version>
+		<org.apache.poi.version>5.2.5</org.apache.poi.version>
+
+		<!-- CLI command that tells maven to check for updates: 
+
+			mvn versions:display-property-updates
+
+		-->
+
 		<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUTils</mainClass>
 	</properties>
 
@@ -56,6 +71,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<!-- move the version number to properties -->
 				<version>3.3.0</version>
 				<configuration>
 					<descriptorRefs>
@@ -82,7 +98,7 @@
 			<plugin>
 				<groupId>com.akathist.maven.plugins.launch4j</groupId>
 				<artifactId>launch4j-maven-plugin</artifactId>
-				<version>1.7.25</version>
+				<version>${launch4j.maven.plugin.version}</version>
 				<executions>
 					<execution>
 						<id>l4j-clui</id>
@@ -92,16 +108,16 @@
 						</goals>
 						<configuration>
 							<headerType>console</headerType>
-							<outfile>target/your-app.exe</outfile>
-							<jar>target/your-app-jar-with-dependencies.jar</jar>
+							<outfile>target/HOIIVUtils.exe</outfile>
+							<jar>target/HOIIVUtils-8.0.0-jar-with-dependencies.jar</jar>
 							<jre>
 								<path>C:\Program Files\Eclipse Adoptium\jdk-21.0.1.12-hotspot\bin\java.exe</path>
-								<minVersion>17</minVersion>
+								<minVersion>21</minVersion>
 							</jre>
 							<versionInfo>
 								<fileVersion>1.0.0.0</fileVersion>
 								<txtFileVersion>1.0.0</txtFileVersion>
-								<fileDescription>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</fileDescription>
+								<fileDescription>150 Line limit my ass</fileDescription>
 								<productName>HOIIVUtils</productName>
 								<internalName>HOIIVUtils</internalName>
 							</versionInfo>

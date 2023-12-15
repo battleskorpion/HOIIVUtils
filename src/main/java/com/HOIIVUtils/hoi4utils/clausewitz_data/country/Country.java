@@ -68,7 +68,9 @@ public class Country implements InfrastructureData {
 	 * @return
 	 * @deprecated
 	 */
+	@Deprecated
 	public static List<Country> getList() {
+		// TODO: Remove this deprecated code someday.
 		if (countryList == null || countryList.isEmpty()) {
 			loadCountries();
 		}
