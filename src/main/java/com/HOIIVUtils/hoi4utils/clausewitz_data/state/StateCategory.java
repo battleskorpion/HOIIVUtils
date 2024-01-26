@@ -5,6 +5,7 @@ import com.HOIIVUtils.hoi4utils.HOIIVFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.Parser;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class StateCategory {
 	 * @param categoryName
 	 * @param buildingSlots
 	 */
-	public record StateCategoryType(String categoryName, int buildingSlots) implements Localizable {
+	public record StateCategoryType(String categoryName, int buildingSlots) implements Localizable, Comparable<StateCategoryType> {
 		static ArrayList<StateCategoryType> stateCategoryTypes = new ArrayList<>();
 
 		public StateCategoryType {
@@ -44,6 +45,15 @@ public class StateCategory {
 			new StateCategoryType("tiny_island", 0);
 			new StateCategoryType("town", 4);
 			new StateCategoryType("wasteland", 0);
+		}
+
+		@Override
+		public int compareTo(@NotNull StateCategory.StateCategoryType o) {
+			int compare = Integer.compare(buildingSlots, o.buildingSlots);
+			if (compare == 0) {
+				compare = categoryName.compareTo(o.categoryName);
+			}
+			return compare;
 		}
 	}
 

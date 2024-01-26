@@ -8,6 +8,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.technology.Technology;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.units.OrdersOfBattle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,7 +19,7 @@ import java.util.function.Function;
 // todo make country extend countrytag???? ehhhhh
 // todo consider... implements infrastructure, resources?????
 // todo localizable data?
-public class Country implements InfrastructureData {
+public class Country implements InfrastructureData, Comparable<Country> {
 	private static final ObservableList<Country> countryList = FXCollections.observableArrayList();
 	private CountryTag countryTag;
 	private Infrastructure infrastructure;          // infrastructure of all owned states
@@ -262,5 +263,10 @@ public class Country implements InfrastructureData {
 
 	private int numOwnedStates() {
 		return 1;   // todo;
+	}
+
+	@Override
+	public int compareTo(@NotNull Country o) {
+		return countryTag.compareTo(o.countryTag);
 	}
 }

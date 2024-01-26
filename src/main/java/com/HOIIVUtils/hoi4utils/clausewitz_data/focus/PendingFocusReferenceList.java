@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class PendingFocusReferenceList {
+public class PendingFocusReferenceList extends ArrayList<PendingFocusReference> {
 	List<PendingFocusReference> pendingFocusReferences;
 
 	public PendingFocusReferenceList() {

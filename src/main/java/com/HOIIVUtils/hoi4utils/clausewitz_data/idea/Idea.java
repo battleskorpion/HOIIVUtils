@@ -7,6 +7,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_code.modifier.Modifier;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
 import javafx.beans.property.SimpleStringProperty;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.function.Function;
 /**
  * This is the Idea file.
  */
-public class Idea implements Localizable, EffectParameter {
+public class Idea implements Localizable, EffectParameter, Comparable<Idea> {
 
 	/* static */
 	protected static ArrayList<Idea> idea_list; // todo change to hash etc.
@@ -205,4 +206,8 @@ public class Idea implements Localizable, EffectParameter {
 		return "[n/a - idea]";
 	}
 
+	@Override
+	public int compareTo(@NotNull Idea o) {
+		return id().compareTo(o.id());
+	}
 }

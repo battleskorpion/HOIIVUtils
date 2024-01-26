@@ -16,6 +16,8 @@ import com.HOIIVUtils.ui.javafx.table.IntegerOrPercentTableCell;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 import javafx.scene.input.MouseButton;
 
+import javax.swing.*;
+
 public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableViewWindow {
 
 	@FXML private MenuItem idExportToExcel;
@@ -135,11 +137,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 		countryBuildingsByStateWindow.open();
 	}
 }
-/*	 
-	private JPanel BuildingsByCountryWindowJPanel;
-	private JTable buildingsTable;
-	private DefaultTableModel buildingsTableModel;
-
+/*
 	// popup menu
 	JPopupMenu popupSettings = new JPopupMenu();
 	JCheckBoxMenuItem aluminumDisplayAsPercentOption = new JCheckBoxMenuItem("Display Aluminum as Percent");
@@ -148,57 +146,6 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 	JCheckBoxMenuItem rubberDisplayAsPercentOption = new JCheckBoxMenuItem("Display Rubber as Percent ");
 	JCheckBoxMenuItem steelDisplayAsPercentOption = new JCheckBoxMenuItem("Display Steel as Percent ");
 	JCheckBoxMenuItem tungstenDisplayAsPercentOption = new JCheckBoxMenuItem("Display Tungsten as Percent ");
-
-	public BuildingsByCountryWindow() {
-		super("Buildings by Country");
-
-		// table model
-		buildingsTableModel = new DefaultTableModel() {
-			@Override
-			public int getRowCount() {
-				return CountryTags.list().size();
-			}
-
-			@Override
-			public int getColumnCount() {
-				return 18;
-			}
-
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-
-			@Override
-			public Class<?> getColumnClass(int column) {
-				switch (column) {
-					case 0:
-						return String.class;
-					case 1, 2, 3, 4, 5:
-						return Integer.class;
-					case 6, 7, 8, 9, 10, 11:
-						return Double.class;
-					default:
-						return Integer.class;
-				}
-			}
-		};
-		String[] columns = {"Country", "Population", "Civilian Factories", "Military Factories", "Dockyards", "Airfields",
-				"Civ/Mil Ratio", "Pop / Factory", "Pop / Civ Ratio", "Pop / Mil Ratio", "Pop / Air Capacity", "Pop / State",
-				"Aluminum", "Chromium", "Oil", "Rubber", "Steel", "Tungsten"};
-		buildingsTableModel.setColumnIdentifiers(columns);
-		buildingsTable.setModel(buildingsTableModel);
-
-		// row sorter
-		buildingsTable.setAutoCreateRowSorter(true);
-
-		// add popup hoi4utils.settings
-		popupSettings.add(aluminumDisplayAsPercentOption);
-		popupSettings.add(chromiumDisplayAsPercentOption);
-		popupSettings.add(oilDisplayAsPercentOption);
-		popupSettings.add(rubberDisplayAsPercentOption);
-		popupSettings.add(steelDisplayAsPercentOption);
-		popupSettings.add(tungstenDisplayAsPercentOption);
 
 		// table renderer (formatting)
 		buildingsTable.setDefaultRenderer(Integer.class, new DefaultTableCellRenderer() {

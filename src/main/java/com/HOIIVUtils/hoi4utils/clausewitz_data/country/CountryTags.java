@@ -3,15 +3,18 @@ package com.HOIIVUtils.hoi4utils.clausewitz_data.country;
 import com.HOIIVUtils.hoi4utils.FileUtils;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import com.HOIIVUtils.hoi4utils.SettingsManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import static com.HOIIVUtils.hoi4utils.Settings.MOD_PATH;
 
-public class CountryTags extends HOIIVUtils {
+public class CountryTags extends HOIIVUtils implements Iterable<CountryTag> {
 
 	private static ArrayList<CountryTag> country_tags;
 
@@ -134,5 +137,11 @@ public class CountryTags extends HOIIVUtils {
 		}
 
 		return country_tags.contains(new CountryTag(tag));
+	}
+
+	@NotNull
+	@Override
+	public Iterator<CountryTag> iterator() {
+		return country_tags.iterator();
 	}
 }

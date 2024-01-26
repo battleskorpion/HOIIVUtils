@@ -10,16 +10,18 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.state.buildings.Infrastructure;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.state.resources.Resources;
 import com.HOIIVUtils.clausewitz_parser.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * Loads HOI4 State files, each instance represents a state as defined in "history/states"
  * Localizable: state name
  */
-public class State implements InfrastructureData, Localizable {
+public class State implements InfrastructureData, Localizable, Iterable<State>, Comparable<State> {
 	/* static */
 	private static final ArrayList<State> states = new ArrayList<>();
 
@@ -445,5 +447,16 @@ public class State implements InfrastructureData, Localizable {
 
 	public int id() {
 		return stateID;
+	}
+
+	@NotNull
+	@Override
+	public Iterator<State> iterator() {
+		return states.iterator();
+	}
+
+	@Override
+	public int compareTo(@NotNull State o) {
+		return Integer.compare(stateID, o.stateID);
 	}
 }

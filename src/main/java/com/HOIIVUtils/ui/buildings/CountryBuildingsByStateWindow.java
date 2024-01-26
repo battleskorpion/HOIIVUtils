@@ -13,6 +13,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import com.HOIIVUtils.ui.HOIUtilsWindow;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseButton;
+
+import java.awt.*;
+import java.io.IOException;
 
 public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements TableViewWindow {
 
@@ -50,6 +56,28 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements Tab
 
 		this.country = country;
 		stateList = FXCollections.observableArrayList(State.ownedStatesOfCountry(country));
+
+		/* action listeners */
+		// double click to view state file
+		stateDataTable.setOnMouseClicked(event -> {
+			if(event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
+				viewSelectedStateFile();
+			}
+		});
+	}
+
+	private void viewSelectedStateFile() {
+		State state = stateDataTable.getSelectionModel().getSelectedItem();
+		if (state == null) {
+			return; // no/invalid state selected
+		}
+
+		try {
+			Desktop.getDesktop().edit(state.getFile());
+		} catch (IOException exc) {
+			System.err.println("Unable to open state file: " + state);
+			throw new RuntimeException(exc);
+		}
 	}
 
 	@FXML

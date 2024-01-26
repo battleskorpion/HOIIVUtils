@@ -1,10 +1,12 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.state;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
+import org.jetbrains.annotations.NotNull;
+
 /*
  * Owner File
  */
-public record Owner (CountryTag tag) {
+public record Owner (CountryTag tag) implements Comparable<Owner> {
 
 	/**
 	 * returns whether the owner country represented by this record is the same country as represented by
@@ -19,5 +21,10 @@ public record Owner (CountryTag tag) {
 		}
 
 		return false;
+	}
+
+	@Override
+	public int compareTo(@NotNull Owner o) {
+		return this.tag.compareTo(o.tag);
 	}
 }
