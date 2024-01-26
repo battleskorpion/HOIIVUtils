@@ -1,6 +1,7 @@
 package com.HOIIVUtils.clausewitz_parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -106,7 +107,8 @@ public final class NodeValue {
 		if (value instanceof Integer) return Integer.toString((int) value);
 		if (value instanceof Double) return Double.toString((double) value);
 		if (value instanceof Number) return Long.toString((long) value);    // sure why not
-		if (value instanceof List<?>) return "[list]";                      // sure why not
+		//if (value instanceof List<?>) return "[list]";                      // sure why not
+		if (value instanceof List<?> l) return Arrays.toString(l.toArray()); 					// sure why not
 		if (value instanceof Node) return ((Node) value).toString();
 		return "[invalid type]";
 	}

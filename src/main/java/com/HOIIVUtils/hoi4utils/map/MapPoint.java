@@ -49,8 +49,7 @@ public class MapPoint extends Point {
 //
 //		MapPoint other = (MapPoint) obj;
 //		return this.x == other.x && this.y == other.y;
-		if (obj instanceof MapPoint) {
-			MapPoint other = (MapPoint) obj;
+		if (obj instanceof MapPoint other) {
 			return this.x == other.x && y == other.y;
 		}
 		return super.equals(obj);

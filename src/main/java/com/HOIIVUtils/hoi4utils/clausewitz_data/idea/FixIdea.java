@@ -17,7 +17,7 @@ import static com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag.COUNTR
 public class FixIdea extends HOIIVUtils {
 
 	public static int addIdeaLoc(IdeaFile idea_file, LocalizationFile localization) throws IOException {
-		localization.readLocalization();
+		localization.read();
 
 		String idea_loc;
 		ArrayList<Idea> ideasAddedLoc = new ArrayList<>();

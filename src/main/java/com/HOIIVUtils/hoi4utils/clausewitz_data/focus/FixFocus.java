@@ -5,6 +5,7 @@ import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import com.HOIIVUtils.hoi4utils.Settings;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 
 import java.io.File;
@@ -23,8 +24,13 @@ public class FixFocus extends HOIIVUtils {
 
 		//ArrayList<String> focuses_nonlocalized = new ArrayList<String>();
 		FocusTree focusTree = new FocusTree(focus_file);
-		FocusLocalizationFile localization = new FocusLocalizationFile(loc_file);
-		localization.readLocalization();
+		FocusLocalizationFile localization = null;
+		try {
+			localization = new FocusLocalizationFile(loc_file);
+		} catch (IllegalLocalizationFileTypeException e) {
+			throw new RuntimeException(e);
+		}
+		localization.read();
 
 		/* open the ui */
 //		FocusTreeLocProgress focusLocProgress = new FocusTreeLocProgress(focusTree);
@@ -79,7 +85,7 @@ public class FixFocus extends HOIIVUtils {
 	 * @throws IOException
 	 */
 	public static int addFocusLoc(FocusTree focusTree, FocusLocalizationFile localization) throws IOException {
-		localization.readLocalization();
+		localization.read();
 
 		String focus_loc;
 		String focus_loc_desc;

@@ -6,9 +6,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.modifier.Modifier;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
-import com.HOIIVUtils.clausewitz_parser.Node;
 import javafx.beans.property.SimpleStringProperty;
-import com.HOIIVUtils.ui.FXWindow;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -60,13 +60,13 @@ public class FocusLocalizationFile extends LocalizationFile {
 
 	protected List<List<Localization>> focusLocalizationList;
 
-	public FocusLocalizationFile(File file) throws IllegalArgumentException {
+	public FocusLocalizationFile(File file) throws IllegalLocalizationFileTypeException {
 		super(file);
 
 		focusLocalizationList = new ArrayList<>();
 	}
 
-	public FocusLocalizationFile(String str) throws IllegalArgumentException {
+	public FocusLocalizationFile(String str) throws IllegalLocalizationFileTypeException {
 		super(new File(str));
 
 		focusLocalizationList = new ArrayList<>();
@@ -81,9 +81,9 @@ public class FocusLocalizationFile extends LocalizationFile {
 	}
 
 	@Override
-	public void readLocalization() {
+	public void read() {
 		focusLocalizationList.clear();
-		super.readLocalization();
+		super.read();
 
 		//System.err.println("test, " + localizationList.toString());
 		List<Localization> tempLocList = new ArrayList<>();

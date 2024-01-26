@@ -7,6 +7,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
@@ -117,8 +118,13 @@ public class FocusTree implements Localizable, Comparable<FocusTree> {
 		aa:
 		for (FocusTree focusTree : unlocalizedFocusTrees()) {
 			for (File f : HOIIVFile.localization_eng_folder.listFiles()) {
-				FocusLocalizationFile flf = new FocusLocalizationFile(f);
-				flf.readLocalization();
+				FocusLocalizationFile flf;
+				try {
+					flf = new FocusLocalizationFile(f);
+				} catch (IllegalLocalizationFileTypeException exc) {
+					continue;
+				}
+				flf.read();
 				if (flf.containsLocalizationFor(focusTree)) {
 					focusTree.setLocalization(flf);     // sure why not
 					continue aa;
@@ -284,6 +290,8 @@ public class FocusTree implements Localizable, Comparable<FocusTree> {
 			return null;
 		} catch (NullPointerException e) {
 			FXWindow.openGlobalErrorWindow("Focus loc. file does not exist/is not available or other error. Details: \n\t" + e.getLocalizedMessage());
+		} catch (IllegalLocalizationFileTypeException e) {
+			throw new RuntimeException(e);
 		}
 		return locFile;
 	}

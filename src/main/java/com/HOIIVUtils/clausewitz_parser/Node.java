@@ -132,4 +132,8 @@ public class Node implements NodeStreamable<Node> {
 	public boolean valueIsNull() {
 		return value().valueObject() == null;
 	}
+
+	public String toString() {
+		return name + operator + value.asString(); // todo
+	}
 }

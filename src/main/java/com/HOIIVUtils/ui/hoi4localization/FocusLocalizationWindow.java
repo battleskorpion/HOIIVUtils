@@ -6,6 +6,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FixFocus;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.Focus;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -86,7 +87,11 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
         }
         if (selectedFile != null) {
             focusLocFileTextField.setText(selectedFile.getAbsolutePath());
-            focusLocFile = new FocusLocalizationFile(selectedFile);
+            try {
+                focusLocFile = new FocusLocalizationFile(selectedFile);
+            } catch (IllegalLocalizationFileTypeException e) {
+                throw new RuntimeException(e);
+            }
             focusTree.setLocalization(focusLocFile);
             System.out.println("Set localization file of " + focusTree + " to " + focusLocFile);
         }

@@ -58,7 +58,7 @@ public class State implements InfrastructureData, Localizable {
 		// Expression exp = stateParser.expressions();
 		Node stateNode = null;
 		try {
-			stateNode = stateParser.parse();
+			stateNode = stateParser.parse().findFirst("state");
 		} catch (ParserException e) {
 			throw new RuntimeException(e);
 		}
@@ -66,6 +66,9 @@ public class State implements InfrastructureData, Localizable {
 		// id
 		if (stateNode.contains("id")) {
 			stateID = stateNode.getValue("id").integer();
+		} else {
+			System.out.println(stateNode.value().asString());
+			throw new UndefinedStateIDException(stateFile);
 		}
 		// population (manpower)
 		if (stateNode.contains("manpower")) {
@@ -117,6 +120,7 @@ public class State implements InfrastructureData, Localizable {
 			}
 		} else {
 			System.err.println("Warning: history not defined in state, " + stateFile.getName());
+			System.out.println(stateNode.value().asString());
 		}
 
 		// resources
@@ -162,7 +166,7 @@ public class State implements InfrastructureData, Localizable {
 					countryStates.add(state);
 				}
 			} else {
-				System.out.println("No owner for state: " + state);
+				System.out.println("Undefined owner for state: " + state);
 			}
 		}
 

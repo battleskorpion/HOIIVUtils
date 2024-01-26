@@ -3,6 +3,7 @@ package com.HOIIVUtils.ui.hoi4localization;
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import com.HOIIVUtils.hoi4utils.Settings;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.tooltip.CustomTooltip;
@@ -116,14 +117,18 @@ public class CustomTooltipWindow extends HOIUtilsWindow implements TableViewWind
 		}
 		if (selectedFile != null) {
 			tooltipLocalizationFileComboBox.setValue(selectedFile); // selectedFile.getAbsolutePath()
-			localizationFile = new LocalizationFile(selectedFile);
+			try {
+				localizationFile = new LocalizationFile(selectedFile);
+			} catch (IllegalLocalizationFileTypeException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 		/* load custom tooltip associated localization from selected file */
 		if (tooltipFile == null) {
 			return;
 		}
- 		localizationFile.readLocalization();
+ 		localizationFile.read();
 
 		for (CustomTooltip tooltip : customTooltipList) {
 			String tooltipID = tooltip.id();

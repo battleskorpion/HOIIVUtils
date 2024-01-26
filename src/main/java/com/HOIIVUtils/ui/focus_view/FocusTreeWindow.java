@@ -1,5 +1,6 @@
 package com.HOIIVUtils.ui.focus_view;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.hoi4utils.ddsreader.DDSReader;
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
@@ -84,10 +85,18 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		});
 
 		focusTree = FocusTree.get(new CountryTag("SMA"));
-		focusTree.setLocalization(new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
+		try {
+			focusTree.setLocalization(new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
+		} catch (IllegalLocalizationFileTypeException e) {
+			throw new RuntimeException(e);
+		}
 		if (focusTree == null) {
 			focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
-			focusTree.setLocalization(new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
+			try {
+				focusTree.setLocalization(new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
+			} catch (IllegalLocalizationFileTypeException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 		try {
