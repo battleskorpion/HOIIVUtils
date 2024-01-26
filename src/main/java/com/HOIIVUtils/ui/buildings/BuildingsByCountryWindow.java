@@ -14,6 +14,7 @@ import com.HOIIVUtils.ui.FXWindow;
 import com.HOIIVUtils.ui.HOIUtilsWindow;
 import com.HOIIVUtils.ui.javafx.table.IntegerOrPercentTableCell;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
+import javafx.scene.input.MouseButton;
 
 public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableViewWindow {
 
@@ -55,6 +56,13 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 	void initialize() {
 		includeVersion();
 		loadTableView(this, stateDataTable, countryList, Country.getCountryDataFunctions(false));
+
+		/* action listeners */
+		stateDataTable.setOnMouseClicked(event -> {
+			if(event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
+				viewCountryBuildingsByState();
+			}
+		});
 	}
 
 	private void includeVersion() {
@@ -116,6 +124,15 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 	public void toggleResourcesPercent() {
 		resourcesPercent = !resourcesPercent;
 		updateResourcesColumnsPercentBehavior();
+	}
+
+	public void viewCountryBuildingsByState() {
+		Country country = stateDataTable.getSelectionModel().getSelectedItem();
+		if (country == null) {
+			return;
+		}
+		CountryBuildingsByStateWindow countryBuildingsByStateWindow = new CountryBuildingsByStateWindow(country);
+		countryBuildingsByStateWindow.open();
 	}
 }
 /*	 

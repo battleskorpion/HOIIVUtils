@@ -1,5 +1,7 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.state.resources;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_data.state.State;
+
 public class Resource {
 	private static String[] resourceIdentifiers = {"aluminum", "chromium", "oil", "rubber", "steel", "tungsten"};    // default: aluminum, chromium, oil, rubber, steel, tungsten todo load in resources if modified.
 	private static int identifierCounter = 0;
@@ -57,4 +59,8 @@ public class Resource {
 	public void setAmt(int amt) {
 		this.amt = amt;
 	}
+
+    public double percentOfGlobal() {
+		return (double) amt / State.resourcesOfStates().get(identifier).amt();
+    }
 }

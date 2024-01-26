@@ -4,6 +4,7 @@ import com.HOIIVUtils.hoi4utils.HOIIVFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.InfrastructureData;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.ClausewitzDate;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.Country;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.state.buildings.Infrastructure;
@@ -11,10 +12,8 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.state.resources.Resources;
 import com.HOIIVUtils.clausewitz_parser.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Loads HOI4 State files, each instance represents a state as defined in "history/states"
@@ -154,6 +153,10 @@ public class State implements InfrastructureData, Localizable {
 
 	public static ArrayList<State> list() {
 		return states;
+	}
+
+	public static ArrayList<State> ownedStatesOfCountry(Country country) {
+		return ownedStatesOfCountry(country.countryTag());
 	}
 
 	public static ArrayList<State> ownedStatesOfCountry(CountryTag tag) {
@@ -298,6 +301,42 @@ public class State implements InfrastructureData, Localizable {
 	public static State get(int id) {
 		return states.stream().filter(state -> state.stateID == id).findFirst().orElse(null);
 	}
+
+	public static List<Function<State, ?>> getStateDataFunctions(boolean resourcePercentages) {
+		List<Function<State, ?>> dataFunctions = new ArrayList<>(17);         // for optimization, limited number of data functions.
+
+		dataFunctions.add(State::id);
+		dataFunctions.add(c -> c.stateInfrastructure.population());
+		dataFunctions.add(c -> c.stateInfrastructure.civMilRatio());
+		dataFunctions.add(c -> c.stateInfrastructure.militaryFactories());
+		dataFunctions.add(c -> c.stateInfrastructure.navalDockyards());
+		dataFunctions.add(c -> c.stateInfrastructure.airfields());
+		dataFunctions.add(c -> c.stateInfrastructure.civMilRatio());
+		dataFunctions.add(c -> c.stateInfrastructure.popPerFactoryRatio());
+		dataFunctions.add(c -> c.stateInfrastructure.popPerCivRatio());
+		dataFunctions.add(c -> c.stateInfrastructure.popPerMilRatio());
+		dataFunctions.add(c -> c.stateInfrastructure.popAirportCapacityRatio());
+		/* todo better way to do this obv! plz fix :(
+		with (wrapper function that returns either or depndent on resourcesPerfcentages boolean value ofc */
+		if (resourcePercentages) {
+			dataFunctions.add(s -> s.getResources().get("aluminum").amt());
+			dataFunctions.add(s -> s.getResources().get("chromium").amt());
+			dataFunctions.add(s -> s.getResources().get("oil").amt());
+			dataFunctions.add(s -> s.getResources().get("rubber").amt());
+			dataFunctions.add(s -> s.getResources().get("steel").amt());
+			dataFunctions.add(s -> s.getResources().get("tungsten").amt());
+		} else {
+			dataFunctions.add(s -> s.getResources().get("aluminum").percentOfGlobal());
+			dataFunctions.add(s -> s.getResources().get("chromium").percentOfGlobal());
+			dataFunctions.add(s -> s.getResources().get("oil").percentOfGlobal());
+			dataFunctions.add(s -> s.getResources().get("rubber").percentOfGlobal());
+			dataFunctions.add(s -> s.getResources().get("steel").percentOfGlobal());
+			dataFunctions.add(s -> s.getResources().get("tungsten").percentOfGlobal());
+		}
+
+		return dataFunctions;
+	}
+
 
 	public Resources findStateResources(Node stateNode) {
 		int aluminum = 0;

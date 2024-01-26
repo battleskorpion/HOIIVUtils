@@ -1,29 +1,116 @@
 package com.HOIIVUtils.ui.buildings;
 
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.Country;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.state.State;
+import com.HOIIVUtils.ui.FXWindow;
+import com.HOIIVUtils.ui.javafx.export.ExcelExport;
+import com.HOIIVUtils.ui.javafx.table.DoubleTableCell;
+import com.HOIIVUtils.ui.javafx.table.IntegerOrPercentTableCell;
+import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import com.HOIIVUtils.ui.HOIUtilsWindow;
 
-public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
+public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements TableViewWindow {
 
 	@FXML public Label idVersion;
-	@FXML public Label idWindowName;
 	@FXML public String className = this.getClass().getName();
+	@FXML private CheckMenuItem idPercentageCheckMenuItem;
+	@FXML private MenuItem idExportToExcel;
+	@FXML TableView<State> stateDataTable;
+	@FXML
+	TableColumn<State, String> stateDataTableStateColumn;
+	@FXML TableColumn<State, Integer> stateDataTablePopulationColumn;
+	@FXML TableColumn<State, Integer> stateDataTableCivFactoryColumn;
+	@FXML TableColumn<State, Integer> stateDataTableMilFactoryColumn;
+	@FXML TableColumn<State, Integer> stateDataTableDockyardsColumn;
+	@FXML TableColumn<State, Integer> stateDataTableAirfieldsColumn;
+	@FXML TableColumn<State, Double> stateDataTableCivMilRatioColumn;
+	@FXML TableColumn<State, Double> stateDataTablePopFactoryRatioColumn;
+	@FXML TableColumn<State, Double> stateDataTablePopCivRatioColumn;
+	@FXML TableColumn<State, Double> stateDataTablePopMilRatioColumn;
+	@FXML TableColumn<State, Double> stateDataTablePopAirCapacityRatioColumn;
+	@FXML TableColumn<State, Double> stateDataTableAluminiumColumn;       // todo dont do these yet
+	@FXML TableColumn<State, Double> stateDataTableChromiumColumn;
+	@FXML TableColumn<State, Double> stateDataTableOilColumn;
+	@FXML TableColumn<State, Double> stateDataTableRubberColumn;
+	@FXML TableColumn<State, Double> stateDataTableSteelColumn;
+	@FXML TableColumn<State, Double> stateDataTableTungstenColumn;
 
-	public CountryBuildingsByStateWindow() {
-		setFxmlResource(className + ".fxml");
-		setTitle("HOIIVUtils Buildings By Country Window");
+	private Boolean resourcesPercent;
+	private final Country country;
+	private final ObservableList<State> stateList;
+
+	public CountryBuildingsByStateWindow(Country country) {
+		setFxmlResource("CountryBuildingsByStateWindow.fxml");
+		setTitle("HOIIVUtils Buildings By State Window, Country: " + country.name());
+
+		this.country = country;
+		stateList = FXCollections.observableArrayList(State.ownedStatesOfCountry(country));
 	}
 
 	@FXML
 	void initialize() {
 		includeVersion();
-		idWindowName.setText(className + "WIP");
+		loadTableView(this, stateDataTable, stateList, State.getStateDataFunctions(false));
 	}
 
 	private void includeVersion() {
 		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION);
+	}
+
+	private void updateResourcesColumnsPercentBehavior() {
+		FXWindow.updateColumnPercentBehavior(stateDataTableAluminiumColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(stateDataTableChromiumColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(stateDataTableOilColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(stateDataTableRubberColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(stateDataTableSteelColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(stateDataTableTungstenColumn, resourcesPercent);
+	}
+
+	@Override
+	public void setDataTableCellFactories() {
+		// table cell factories
+		stateDataTableCivMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopFactoryRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopCivRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		stateDataTableAluminiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableChromiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableOilColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableRubberColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableSteelColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+	}
+
+	@FXML
+	public void handleExportToExcelAction() {
+		ExcelExport<State> excelExport = new ExcelExport<>();
+		excelExport.export(stateDataTable);
+	}
+
+	public void handlePercentageCheckMenuItemAction() {
+		if (idPercentageCheckMenuItem.isSelected()) {
+			setResourcesPercent(true);
+			System.out.println("Percentage values are on");
+		} else {
+			setResourcesPercent(false);
+			System.out.println("Percentage values are off");
+		}
+	}
+
+	public void setResourcesPercent(Boolean resourcesPercent) {
+		this.resourcesPercent = resourcesPercent;
+		updateResourcesColumnsPercentBehavior();
+	}
+
+	public void toggleResourcesPercent() {
+		resourcesPercent = !resourcesPercent;
+		updateResourcesColumnsPercentBehavior();
 	}
 }
 
@@ -48,7 +135,7 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 		super("Buildings by State");
 
 		if (tag == null) {
-			throw new IllegalArgumentException("Null country tag"); 
+			throw new IllegalArgumentException("Null country tag");
 		}
 
 		// init special
@@ -218,7 +305,7 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();
 
-		/* file listener 
+		/* file listener
 		stateDirWatcher.addListener(new FileAdapter() {
 			@Override
 			public void onCreated(FileEvent event) {
@@ -275,7 +362,7 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow{
 			}
 		}).watch();
 
-		/* action listeners 
+		/* action listeners
 		statesBuildingsTable.addMouseListener(new MouseAdapter() {
 			/**
 			 * {@inheritDoc}
