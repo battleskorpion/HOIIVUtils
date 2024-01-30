@@ -52,9 +52,13 @@ public class Focus implements Localizable, Comparable<Focus> {
 	protected int y; // if relative, relative y
 	protected String relative_position_id; // if null, position is not relative
 	protected double cost; // cost of focus (typically in weeks unless changed in defines)
+
 	protected Set<FocusSearchFilter> focus_search_filters;
+
 	protected boolean available_if_capitulated;
+
 	protected boolean cancel_if_invalid;
+
 	protected boolean continue_if_invalid;
 	// private AIWillDo ai_will_do; // todo
 	// select effect
@@ -209,6 +213,10 @@ public class Focus implements Localizable, Comparable<Focus> {
 		return adjPoint;
 	}
 
+	/**
+	 * Obtains focus icon id
+	 * @return focus icon id
+	 */
 	public SimpleStringProperty icon() {
 		return icon;
 	}
@@ -253,6 +261,10 @@ public class Focus implements Localizable, Comparable<Focus> {
 		setCompletionReward(exp.findFirst("completion_reward"));
 	}
 
+	/**
+	 * Sets focus id
+	 * @param id focus id
+	 */
 	public void setID(String id) {
 		this.id.set(id);
 	}
@@ -271,10 +283,21 @@ public class Focus implements Localizable, Comparable<Focus> {
 		return prev;
 	}
 
+	/**
+	 * Sets new xy-coordinates, returns previous xy-coordinates.
+	 * @param xy focus new xy-coordinates
+	 * @return previous xy-coordinates
+	 */
 	public Point setXY(Point xy) {
 		return setXY(xy.x, xy.y);
 	}
 
+	/**
+	 * Sets new xy-coordinates, returns previous xy-coordinates.
+	 * @param x focus new x-coordinate
+	 * @param y focus new y-coordinate
+	 * @return previous xy-coordinates
+	 */
 	private Point setXY(Node x, Node y) {
 		if (x == null && y == null) {
 			return setXY(0, 0);
@@ -288,6 +311,10 @@ public class Focus implements Localizable, Comparable<Focus> {
 		return setXY(x.value().integer(), y.value().integer());
 	}
 
+	/**
+	 * Sets relative position id
+	 * @param exp relative position id
+	 */
 	private void setRelativePositionID(String exp) {
 		if (exp == null) {
 			relative_position_id = null; // perfectly acceptable
@@ -296,10 +323,18 @@ public class Focus implements Localizable, Comparable<Focus> {
 		relative_position_id = exp;
 	}
 
+	/**
+	 * Sets focus cost to default cost
+	 */
 	public void setCost() {
 		setCost(DEFAULT_FOCUS_COST);
 	}
 
+	/**
+	 * Sets focus cost (in weeks by default)
+	 * @param cost focus cost
+	 * todo: add defines support
+	 */
 	public void setCost(Number cost) {
 		this.cost = cost.doubleValue();
 	}
@@ -313,13 +348,16 @@ public class Focus implements Localizable, Comparable<Focus> {
 //		this.cost = exp.getValue();
 //	}
 
+	/**
+	 * Returns focus name localization in the current language, or other.
+	 * @return focus name localization
+	 */
 	public String nameLocalization() {
 		if (nameLocalization == null) {
 			return "[null]";
 		}
 		return nameLocalization.text();
 	}
-
 
 	/**
 	 * Default method for setting localization name of focus. Sets the localization name
@@ -371,18 +409,34 @@ public class Focus implements Localizable, Comparable<Focus> {
 		focusTree.updateLocalization(nameLocalization);
 	}
 
+	/**
+	 * Returns focus name localization as an observable string property.
+	 * @return focus name localization
+	 */
 	public SimpleStringProperty nameLocalizationProperty() {
 		return new SimpleStringProperty(nameLocalization());
 	}
 
+	/**
+	 * Returns focus description localization as an observable string property.
+	 * @return focus description localization
+	 */
 	public SimpleStringProperty descLocalizationProperty() {
 		return new SimpleStringProperty(descLocalization());
 	}
 
+	/**
+	 * Set focus description localization
+	 * @param localization focus description localization
+	 */
 	public void setDescLocalization(Localization localization) {
 		descLocalization = localization;
 	}
 
+	/**
+	 * Sets focus description localization to the specified text.
+	 * @param text focus description localization
+	 */
 	public void setDescLocalization(String text) {
 		if (descLocalization == null) {
 			descLocalization = new Localization(id() + "_desc", text, Localization.Status.DEFAULT);
@@ -403,6 +457,11 @@ public class Focus implements Localizable, Comparable<Focus> {
 		// todo?
 	}
 
+	/**
+	 * Sets focus description localization with a specific status, if necessary.
+	 * @param text focus description localization
+	 * @param status status of localization
+	 */
 	public void setDescLocalization(String text, Localization.Status status) {
 		if (descLocalization == null) {
 			descLocalization = new Localization(id(), text, status);
@@ -414,7 +473,10 @@ public class Focus implements Localizable, Comparable<Focus> {
 		focusTree.updateLocalization(descLocalization);
 	}
 
-
+	/**
+	 * Returns focus description localization in the current language, or other.
+	 * @return focus description localization
+	 */
 	public String descLocalization() {
 		if (descLocalization == null) {
 			return "[null]";
@@ -422,6 +484,10 @@ public class Focus implements Localizable, Comparable<Focus> {
 		return descLocalization.text();
 	}
 
+	/**
+	 * Returns focus description localization
+	 * @return focus description localization
+	 */
 	public Localization getDescLocalization() {
 		return descLocalization;
 	}
@@ -438,8 +504,7 @@ public class Focus implements Localizable, Comparable<Focus> {
 
 	/**
 	 * Sets focus icon id
-	 *
-	 * @param icon
+	 * @param icon focus icon id
 	 */
 	public void setIcon(String icon) {
 		// null string -> set no (null) icon
@@ -485,7 +550,7 @@ public class Focus implements Localizable, Comparable<Focus> {
 	/**
 	 * accepts groups of prerequisites
 	 *
-	 * @param exps
+	 * @param exps list of prerequisite={...} expressions
 	 */
 	public void setPrerequisite(List<Node> exps) {
 		if (exps == null) {
@@ -527,9 +592,9 @@ public class Focus implements Localizable, Comparable<Focus> {
 	/**
 	 * Add reference of a property of this focus to an unloaded focus; as it
 	 * has not yet been loaded, is not actually defined, or is otherwise unknown.
-	 * @param pendingFocusId
-	 * @param pendingAction
-	 * @param args
+	 * @param pendingFocusId id of focus that is not yet loaded or defined
+	 * @param pendingAction operation to perform when focus is loaded
+	 * @param args arguments to pass to pendingAction
 	 */
 	private void addPendingFocusReference(String pendingFocusId, Consumer<List<Node>> pendingAction, List<Node> args) {
 		pendingFocusReferences.addReference(pendingFocusId, pendingAction, args);
@@ -568,6 +633,10 @@ public class Focus implements Localizable, Comparable<Focus> {
 		this.prerequisite = prerequisite;
 	}
 
+	/**
+	 * sets focus prerequisite focus
+	 * @param exp
+	 */
 	public void setMutuallyExclusive(String exp) {
 		if (exp == null) {
 			mutually_exclusive = null;
@@ -641,6 +710,10 @@ public class Focus implements Localizable, Comparable<Focus> {
 		setMutuallyExclusive(set);
 	}
 
+	/**
+	 * Sets focus available trigger
+	 * @param mutually_exclusive mutually exclusive focus
+	 */
 	public void addMutuallyExclusive(Focus mutually_exclusive) {
 		if (this.mutually_exclusive == null) {
 			this.mutually_exclusive = new HashSet<>();
@@ -648,6 +721,10 @@ public class Focus implements Localizable, Comparable<Focus> {
 		}
 	}
 
+	/**
+	 * Sets focus available trigger
+	 * @param exp available trigger
+	 */
 	public void setAvailable(Node exp) {
 		if (exp == null) {
 //			available = null;
@@ -664,22 +741,42 @@ public class Focus implements Localizable, Comparable<Focus> {
 //		this.available = availableTrigger;
 //	}
 
+	/**
+	 * Gets focus icon DDS image
+	 * @return
+	 */
 	public Image getDDSImage() {
 		return ddsImage;
 	}
 
+	/**
+	 * Returns true if the focus has a prerequisite focus.
+	 * @return true if the focus has a prerequisite focus
+	 */
 	public boolean hasPrerequisites() {
 		return !(prerequisite == null || prerequisite.isEmpty());
 	}
 
+	/**
+	 * Returns true if the focus has a mutually exclusive focus.
+	 * @return true if the focus has a mutually exclusive focus
+	 */
 	public boolean isMutuallyExclusive() {
 		return !(mutually_exclusive == null || mutually_exclusive.isEmpty());
 	}
 
+	/**
+	 * Returns true if the focus has a completion reward.
+	 * @return true if the focus has a completion reward
+	 */
 	public Set<Set<Focus>> getPrerequisites() {
 		return prerequisite;
 	}
 
+	/**
+	 * Returns true if the focus has a completion reward.
+	 * @return true if the focus has a completion reward
+	 */
 	public double cost() {
 		return cost;
 	}
@@ -693,14 +790,26 @@ public class Focus implements Localizable, Comparable<Focus> {
 		return Math.floor(preciseCompletionTime());
 	}
 
+	/**
+	 * Returns the precise focus completion time, which is the defined completion time (cost * weeks (default)).
+	 * @return precise focus completion time
+	 */
 	public double preciseCompletionTime() {
 		return cost * FOCUS_COST_FACTOR;
 	}
 
+	/**
+	 * Returns true if the focus has a completion reward.
+	 * @return true if the focus has a completion reward
+	 */
 	public Localization getNameLocalization() {
 		return nameLocalization;
 	}
 
+	/**
+	 * Returns true if the focus has a completion reward.
+	 * @param localization localization to set
+	 */
 	public void setLocalization(FocusLocalizationFile localization) {
 		Localization nameLoc = localization.getLocalization(id());
 		Localization descLoc = localization.getLocalizationDesc(id() + "_desc");
@@ -708,6 +817,12 @@ public class Focus implements Localizable, Comparable<Focus> {
 		setDescLocalization(descLoc);
 	}
 
+	/**
+	 * Sets localization of focus
+	 * @param localization localization to set
+	 * @param focusNameLoc focus name localization
+	 * @param focusDescLoc focus description localization
+	 */
 	public void setLocalization(FocusLocalizationFile localization, String focusNameLoc, String focusDescLoc) {
 		Localization nameLoc = localization.setLocalization(id(), focusNameLoc);
 		Localization descLoc = localization.setLocalizationDesc(id() + "_desc", focusDescLoc);
@@ -715,26 +830,43 @@ public class Focus implements Localizable, Comparable<Focus> {
 		setDescLocalization(descLoc);
 	}
 
+	/**
+	 * Returns the number of localizable focus properties.
+	 * @return number of localizable properties
+	 */
 	@Override
 	public int numLocalizableProperties() {
 		return 2;
 	}
 
+	/**
+	 * Returns the list of pending focus references
+	 * @return list of pending focus references
+	 */
 	public PendingFocusReferenceList getPendingFocusReferences() {
 		return pendingFocusReferences;
 	}
 
+	/**
+	 * Removes pending focus reference
+ 	 * @param reference focus id reference
+	 * @return true if reference was removed
+	 */
 	public boolean removePendingFocusReference(String reference) {
 		return pendingFocusReferences.removeReference(reference);
 	}
 
+	/**
+	 * Removes pending focus reference
+	 * @param reference focus reference
+	 * @return true if reference was removed
+	 */
 	public boolean removePendingFocusReference(Focus reference) {
 		return removePendingFocusReference(reference.id());
 	}
 
 	/**
 	 * Focus name defined in the current localization language (or English).
-	 *
 	 * @return Focus localized name, or null if not defined or not found.
 	 */
 	public String name() {
@@ -830,6 +962,7 @@ public class Focus implements Localizable, Comparable<Focus> {
 	}
 
 	/**
+	 * Sets completion reward of focus
 	 * @param completionRewardNode format: "completion_reward = { ... }"
 	 *                             (assumed to be correct)
 	 */
@@ -940,14 +1073,69 @@ public class Focus implements Localizable, Comparable<Focus> {
 		}
 	}
 
+	/**
+	 * Returns true if the focus has a completion reward.
+	 * @return true if the focus has a completion reward
+	 */
 	private boolean hasCompletionReward() {
 		return (completionReward != null && !completionReward.isEmpty());
 	}
 
-
 	@Override
 	public int compareTo(@NotNull Focus o) {
 		return this.id().compareTo(o.id());
+	}
+
+	/**
+	 * Returns true if the focus has a completion reward.
+	 * @return true if the focus has a completion reward
+	 */
+	public Set<FocusSearchFilter> getFocusSearchFilters() {
+		return focus_search_filters;
+	}
+
+	/**
+	 * Sets focus search filters
+	 * @param focus_search_filters focus search filters
+	 */
+	public void setFocusSearchFilters(Set<FocusSearchFilter> focus_search_filters) {
+		this.focus_search_filters = focus_search_filters;
+	}
+
+	public boolean isAvailableIfCapitulated() {
+		return available_if_capitulated;
+	}
+
+	public void setAvailableIfCapitulated(boolean available_if_capitulated) {
+		this.available_if_capitulated = available_if_capitulated;
+	}
+
+	public void setAvailableIfCapitulated() {
+		this.available_if_capitulated = true;
+	}
+
+	public boolean willCancelIfInvalid() {
+		return cancel_if_invalid;
+	}
+
+	public void setCancelIfInvalid(boolean cancel_if_invalid) {
+		this.cancel_if_invalid = cancel_if_invalid;
+	}
+
+	public void setCancelIfInvalid() {
+		this.cancel_if_invalid = true;
+	}
+
+	public boolean willContinueIfInvalid() {
+		return continue_if_invalid;
+	}
+
+	public void setContinueIfInvalid(boolean continue_if_invalid) {
+		this.continue_if_invalid = continue_if_invalid;
+	}
+
+	public void setContinueIfInvalid() {
+		this.continue_if_invalid = true;
 	}
 }
 
