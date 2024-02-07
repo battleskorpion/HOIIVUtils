@@ -3,7 +3,7 @@ package com.HOIIVUtils.hoi4utils.clausewitz_code.scope;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.HOI4Script;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.effect.Effect;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.state.State;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.state.State;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

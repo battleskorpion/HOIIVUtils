@@ -1,9 +1,9 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.country;
 
-import com.HOIIVUtils.hoi4utils.clausewitz_data.InfrastructureData;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.state.State;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.state.buildings.Infrastructure;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.state.resources.Resources;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.state.InfrastructureData;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.state.State;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.buildings.Infrastructure;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.resources.Resources;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.technology.Technology;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.units.OrdersOfBattle;
 import javafx.collections.FXCollections;
@@ -24,13 +24,14 @@ public class Country implements InfrastructureData, Comparable<Country> {
 	private CountryTag countryTag;
 	private Infrastructure infrastructure;          // infrastructure of all owned states
 	private Resources resources;                    // resources of all owned states
-	private Set<OrdersOfBattle> oob;                // set of potential orders of battles defined in history/countries file (oob)
+	private Set<OrdersOfBattle> oob_list;           // set of potential orders of battles defined in history/countries file (oob)
 	private int defaultResearchSlots;               // default research slots as defined in history/countries file or similar
 
-	//private Set<CountryFlag> countryFlags;
+	private Set<CountryFlag> countryFlags;
+	private int capital;                            // country capital as defined by applicable oob or unknown
 	private double stability;                       // stability percentage defined from 0.0-1.0
 	private double warSupport;                      // war support percentage defined from 0.0-1.0
-	private Set<Technology> startingTech;      // starting technology defined in history/countries file
+	private Set<Technology> startingTech;           // starting technology defined in history/countries file
 
 
 	public Country() {

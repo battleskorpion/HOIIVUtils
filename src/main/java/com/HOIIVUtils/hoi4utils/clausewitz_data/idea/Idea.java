@@ -2,7 +2,7 @@ package com.HOIIVUtils.hoi4utils.clausewitz_data.idea;
 
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.effect.EffectParameter;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localizable;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.modifier.Modifier;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
@@ -35,7 +35,7 @@ public class Idea implements Localizable, EffectParameter, Comparable<Idea> {
 		this.setLocalization();
 	}
 
-	public static List<Function<Idea,?>> getDataFunctions() {
+	public static List<Function<Idea, ?>> getDataFunctions() {
 		List<Function<Idea, ?>> dataFunctions = new ArrayList<>(2);         // for optimization, limited number of data functions.
 
 		dataFunctions.add(Idea::id);
@@ -128,8 +128,7 @@ public class Idea implements Localizable, EffectParameter, Comparable<Idea> {
 	}
 
 	public void setLocalization(LocalizationFile localization) {
-		Localization loc = localization.getLocalization(id());
-		this.localization = loc;
+        this.localization = localization.getLocalization(id());
 	}
 
 	/**
@@ -190,10 +189,10 @@ public class Idea implements Localizable, EffectParameter, Comparable<Idea> {
 			return null;    // todo area
 		}
 		return switch (ideaCategory) {
-			case "economy" -> new EconomyIdea(ideaId);
-			case "country" -> new CountryIdea(ideaId);
-			case "manpower" -> new ManpowerIdea(ideaId);
-			default -> null;
+//			case "economy" -> new EconomyIdea(ideaId);
+//			case "country" -> new CountryIdea(ideaId);
+//			case "manpower" -> new ManpowerIdea(ideaId);
+			default -> ideaId == null ? null : new Idea(ideaId);
 		};
 	}
 

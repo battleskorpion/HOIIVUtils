@@ -35,7 +35,10 @@ public class FixIdea extends HOIIVUtils {
 					i += COUNTRY_TAG_LENGTH;
 				}
 
-				idea_loc = idea.id().substring(i).replaceAll("_+", " ").trim();
+				idea_loc = idea.id().substring(i)
+						.replaceAll("_+", " ")
+						.replaceAll("\\s\\s+", " ")
+						.trim();
 				idea_loc = EnglishSuperDictionary.titleCapitalize(idea_loc); // regex
 
 				var newLoc = localization.setLocalization(idea.id(), idea_loc);

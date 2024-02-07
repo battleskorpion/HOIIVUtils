@@ -3,7 +3,7 @@ package com.HOIIVUtils.hoi4utils.clausewitz_data.focus;
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.Parser;
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.Localizable;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localizable;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;

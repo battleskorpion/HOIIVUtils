@@ -12,13 +12,14 @@ import java.util.Scanner;
 
 public class LocalizationFile extends File {
     private static final String l_english = "l_english:";
-    private static String loc_key = ":0";
+    private static String loc_key = ":0";   // todo this just the default each loc could have its own
     private static String language_def = l_english;
     protected List<Localization> localizationList;
 
     public LocalizationFile(@NotNull String pathname) throws IllegalLocalizationFileTypeException {
         super(pathname);
 
+        // todo are other file endings allowed for yaml/hoi4?
         if (!pathname.endsWith(".yml")) {
             throw new IllegalLocalizationFileTypeException("Localization files can only be of type .yml");
         }

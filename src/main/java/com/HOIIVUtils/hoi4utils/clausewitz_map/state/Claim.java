@@ -1,0 +1,12 @@
+package com.HOIIVUtils.hoi4utils.clausewitz_map.state;
+
+import com.HOIIVUtils.hoi4utils.clausewitz_code.ClausewitzDate;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.state.State;
+
+/*
+ * Claim File
+ */
+public record Claim (CountryTag tag, State state, ClausewitzDate date, boolean definedInHistory) {
+
+}

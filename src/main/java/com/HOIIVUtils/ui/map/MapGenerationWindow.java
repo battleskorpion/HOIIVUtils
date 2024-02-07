@@ -1,6 +1,6 @@
 package com.HOIIVUtils.ui.map;
 
-import com.HOIIVUtils.hoi4utils.map.Heightmap;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;

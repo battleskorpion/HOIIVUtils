@@ -136,4 +136,8 @@ public class Node implements NodeStreamable<Node> {
 	public String toString() {
 		return name + operator + value.asString(); // todo
 	}
+
+	public int nameAsInteger() {
+		return Integer.parseInt(name);
+	}
 }
