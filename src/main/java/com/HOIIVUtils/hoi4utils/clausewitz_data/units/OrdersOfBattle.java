@@ -1,6 +1,7 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.units;
 
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryFlag;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.idea.Idea;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.technology.Technology;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.Character;
