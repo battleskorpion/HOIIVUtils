@@ -59,7 +59,7 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements Tab
 
 		/* action listeners */
 		// double click to view state file
-		stateDataTable.setOnMouseClicked(event -> {
+		stateDataTable.setOnMouseClicked(event -> { // todo init stateDataTable in initialization() or whatever it is :)
 			if(event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
 				viewSelectedStateFile();
 			}
