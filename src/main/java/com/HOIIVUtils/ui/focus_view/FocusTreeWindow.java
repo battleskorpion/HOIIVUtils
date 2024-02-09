@@ -107,7 +107,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		}
 
 		/* focus tree canvas */
-		focusTreeCanvas.setWidth((double) (getMaxX() + -getMinX()) * FOCUS_X_SCALE + 150);
+		focusTreeCanvas.setWidth((double) (getMaxX() + -getMinX()) * FOCUS_X_SCALE + 180);
 		focusTreeCanvas.setHeight((getMaxY() * FOCUS_Y_SCALE) + (FOCUS_Y_SCALE * 2));
 
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
@@ -130,6 +130,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		GraphicsContext gc2D = focusTreeCanvas.getGraphicsContext2D();
 
 		int minX = -getMinX();       // todo
+		final int X_OFFSET_FIX = 30;
 //		JOptionPane.showMessageDialog(null, minX);
 		double width = focusTreeCanvas.getWidth();
 		double height = focusTreeCanvas.getHeight();
@@ -157,7 +158,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 		for (Focus focus : focusTree.focuses()) {
 			gc2D.setFill(Color.WHITE);
-			int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX);
+			int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + X_OFFSET_FIX;
 			int y1 = FOCUS_Y_SCALE * focus.absoluteY();
 			int yAdj1 = (int)(FOCUS_Y_SCALE / 2.2);
 			int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
@@ -178,7 +179,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 						int linex2 = linex1;
 						int liney2 = liney1 - 12;
 						int liney4 = (FOCUS_Y_SCALE * prereqFocus.absoluteY());
-						int linex4 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2);
+						int linex4 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
 						int linex3 = linex4;
 						int liney3 = liney2;
 
@@ -195,9 +196,9 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		for (Focus focus : focusTree.focuses()) {
 			if (focus.isMutuallyExclusive()) {
 				for (Focus mutexFocus : focus.getMutuallyExclusive()) {
-					int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + CENTER_FOCUS_X;
+					int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + CENTER_FOCUS_X + X_OFFSET_FIX;
 					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + FOCUS_Y_SCALE / 3;
-					int x2 = (FOCUS_X_SCALE * (mutexFocus.absoluteX() + minX)) + CENTER_FOCUS_X;
+					int x2 = (FOCUS_X_SCALE * (mutexFocus.absoluteX() + minX)) + CENTER_FOCUS_X + X_OFFSET_FIX;
 					int y2 = (FOCUS_Y_SCALE * mutexFocus.absoluteY()) + FOCUS_Y_SCALE / 3;
 					gc2D.strokeLine(x1, y1, x2, y2);
 				}
@@ -206,14 +207,14 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 		/* focus image */
 		for (Focus focus : focusTree.focuses()){
-			int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX);
+			int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + X_OFFSET_FIX;
 			int y1 = FOCUS_Y_SCALE * focus.absoluteY();
 			int yAdj1 = (int)(FOCUS_Y_SCALE / 2.2);
 			int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
 			gc2D.drawImage(GFX_focus_unavailable, x1 - 32, y1 + yAdj1);
 			gc2D.drawImage(focus.getDDSImage(), x1, y1);
 			String name = focus.name();
-			gc2D.fillText(name, x1, y1 + yAdj2);
+			gc2D.fillText(name, x1 - 20, y1 + yAdj2);
 		}
 	}
 

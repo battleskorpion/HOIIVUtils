@@ -6,6 +6,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_code.effect.InvalidEffectParameterExc
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.NotPermittedInScopeException;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.Scope;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.ScopeCategory;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.PoliticalPower;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localizable;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.gfx.Interface;

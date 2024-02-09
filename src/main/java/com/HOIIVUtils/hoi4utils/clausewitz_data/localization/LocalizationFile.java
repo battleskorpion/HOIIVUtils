@@ -131,8 +131,33 @@ public class LocalizationFile extends File {
                     localizationList.add(localization);
                     // print to statistics?
 //					System.out.println("localization: " + text);
-                } else if (data.contains(":")) {
-                    System.err.println("Fix incorrect loc key: " + data);
+                }
+                else if (data.contains(":")) {
+                    String id = data.substring(0, data.indexOf(":")).trim();
+                    String text = data.substring(data.indexOf("\""), data.lastIndexOf("\"") + 1).trim();
+                    if (text.charAt(text.length() - 1) == '\n') {
+                        text = text.substring(0, text.length() - 1);
+                    }
+                    if (text.isEmpty()) {
+                        continue;
+                    }
+                    if (text.charAt(0) == '\"') {
+                        text = text.substring(1);
+                    }
+                    if (text.isEmpty()) {
+                        continue;
+                    }
+                    if (text.charAt(text.length() - 1) == '\"') {
+                        text = text.substring(0, text.length() - 1);
+                    }
+                    if (text.isEmpty()) {
+                        //continue;                   // NO WHY WOULD WE DO THIS AAAAAAAAAA EMPTY LOCALIZATION SOMETIMES IS FINE*
+                    }
+                    text = text.replaceAll("(Â§)", "§");
+                    Localization localization = new Localization(id, text, Localization.Status.EXISTS);
+                    localizationList.add(localization);
+                    // print to statistics?
+//					System.out.println("localization: " + text);
                 }
             }
         }
