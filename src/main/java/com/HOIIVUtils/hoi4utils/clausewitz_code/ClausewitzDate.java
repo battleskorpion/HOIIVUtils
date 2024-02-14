@@ -130,7 +130,7 @@ public class ClausewitzDate implements Temporal, TemporalAdjuster, Comparable<Cl
 		return ClausewitzDate.of(this, LocalTime.MIDNIGHT.getHour());
 	}
 
-	public static ClausewitzDate current() {
+	public static ClausewitzDate defaulty() {
 		return DEFAULT_DATE;
 	}
 

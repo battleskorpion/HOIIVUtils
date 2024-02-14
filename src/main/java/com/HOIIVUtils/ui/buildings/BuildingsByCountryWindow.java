@@ -1,5 +1,6 @@
 package com.HOIIVUtils.ui.buildings;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_code.ClausewitzDate;
 import com.HOIIVUtils.ui.javafx.export.ExcelExport;
 import com.HOIIVUtils.ui.javafx.table.DoubleTableCell;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
@@ -15,8 +16,6 @@ import com.HOIIVUtils.ui.HOIUtilsWindow;
 import com.HOIIVUtils.ui.javafx.table.IntegerOrPercentTableCell;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 import javafx.scene.input.MouseButton;
-
-import javax.swing.*;
 
 public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableViewWindow {
 
@@ -44,6 +43,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 	@FXML TableColumn<Country, Double> stateDataTableTungstenColumn;
 
 	private Boolean resourcesPercent;
+	private ClausewitzDate date = ClausewitzDate.defaulty();
 
 	private final ObservableList<Country> countryList;
 
@@ -136,6 +136,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 		CountryBuildingsByStateWindow countryBuildingsByStateWindow = new CountryBuildingsByStateWindow(country);
 		countryBuildingsByStateWindow.open();
 	}
+
 }
 /*
 	// popup menu

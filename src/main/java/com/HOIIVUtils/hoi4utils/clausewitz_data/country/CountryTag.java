@@ -2,8 +2,6 @@ package com.HOIIVUtils.hoi4utils.clausewitz_data.country;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public record CountryTag(String tag) implements Comparable<CountryTag> {
 	public static final CountryTag NULL_TAG = new CountryTag("###");
 	public static final int COUNTRY_TAG_LENGTH = 3;         // standard country tag length (for a normal country tag)

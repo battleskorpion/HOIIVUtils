@@ -6,7 +6,6 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.idea.Idea;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.technology.Technology;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.Character;
 
-import java.util.Map;
 import java.util.Set;
 
 /**

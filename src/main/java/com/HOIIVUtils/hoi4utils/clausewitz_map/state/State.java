@@ -180,7 +180,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 		ArrayList<State> countryStates = new ArrayList<>();
 
 		for (State state : states) {
-			Owner owner = state.owner.get(ClausewitzDate.current());
+			Owner owner = state.owner.get(ClausewitzDate.defaulty());
 			if (owner != null) {
 				if (owner.isCountry(tag)) {
 					countryStates.add(state);
