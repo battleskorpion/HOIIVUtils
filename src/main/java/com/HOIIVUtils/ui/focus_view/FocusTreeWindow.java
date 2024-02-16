@@ -75,9 +75,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		focusTreeDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				focusTree = newValue;
-				if (Settings.DRAW_FOCUS_TREE.enabled()) {
-					drawFocusTree(focusTree);
-				}
+				drawFocusTree(focusTree);
 			}
 		});
 		focusTreeDropdown.setEditable(false);
@@ -121,9 +119,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		});
 
 		/* draw the focus tree */
-		if (Settings.DRAW_FOCUS_TREE.enabled()) {
-			drawFocusTree(focusTree);
-		}
+		drawFocusTree(focusTree);
 
 		if (Settings.DEV_MODE.enabled()) {
 			JOptionPane.showMessageDialog(null, "dev @end of initialize() - loaded focuses: " + focusTree.focuses().size()
@@ -137,6 +133,8 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	}
 
 	public void drawFocusTree(FocusTree focusTree) {
+		if (Settings.DRAW_FOCUS_TREE.disabled()) return;
+
 		//		if (focusTree != null) {    // todo
 		// }
 
@@ -309,9 +307,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			draggedFocus.setXY(newX, newY);
 
 			// Redraw the focus tree with updated positions
-			if (Settings.DRAW_FOCUS_TREE.enabled()) {
-				drawFocusTree(focusTree);
-			}
+			drawFocusTree(focusTree);
 
 			mouseX = e.getX();
 			mouseY = e.getY();
