@@ -127,7 +127,8 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 		if (Settings.DEV_MODE.enabled()) {
 			JOptionPane.showMessageDialog(null, "dev @end of initialize() - loaded focuses: " + focusTree.focuses().size()
-			+ "\n" + "loaded tree of country: " + focusTree.country());
+			+ "\n" + "loaded tree of country: " + focusTree.country()
+			+ "\n" + "draw focus tree: " + Settings.DRAW_FOCUS_TREE.enabled());
 		}
 	}
 
