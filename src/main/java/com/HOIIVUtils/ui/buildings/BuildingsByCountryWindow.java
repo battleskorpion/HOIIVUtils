@@ -1,5 +1,6 @@
 package com.HOIIVUtils.ui.buildings;
 
+import com.HOIIVUtils.hoi4utils.Settings;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.ClausewitzDate;
 import com.HOIIVUtils.ui.javafx.export.ExcelExport;
 import com.HOIIVUtils.ui.javafx.table.DoubleTableCell;
@@ -16,6 +17,8 @@ import com.HOIIVUtils.ui.HOIUtilsWindow;
 import com.HOIIVUtils.ui.javafx.table.IntegerOrPercentTableCell;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 import javafx.scene.input.MouseButton;
+
+import javax.swing.*;
 
 public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableViewWindow {
 
@@ -65,6 +68,10 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 				viewCountryBuildingsByState();
 			}
 		});
+
+		if (Settings.DEV_MODE.enabled()) {
+			JOptionPane.showMessageDialog(null, "dev - loaded rows: " + stateDataTable.getItems().size());
+		}
 	}
 
 	private void includeVersion() {

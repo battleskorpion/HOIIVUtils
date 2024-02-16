@@ -80,6 +80,11 @@ public enum Settings {
 		public Object getSetting() { return SettingsManager.settingValues.get(this).equals("true"); }
 		public String defaultProperty() { return "true"; }
 	},
+	DRAW_FOCUS_TREE {
+		public Object getSetting() { return SettingsManager.settingValues.get(this).equals("true"); }
+
+		public String defaultProperty() { return "true"; }
+	},
 	;
 
 	/**
@@ -90,6 +95,13 @@ public enum Settings {
 	public boolean enabled() {
 		return SettingsManager.settingValues.get(this).equals("true");
 	}
+
+	/**
+	 * Returns if setting is disabled (setting is false).
+	 *
+	 * @return true if the setting's property is equal to false, false otherwise.
+	 */
+	public boolean disabled() { return SettingsManager.settingValues.get(this).equals("false"); }
 
 	/**
 	 * Sets the value of the setting

@@ -32,11 +32,12 @@ public class SettingsController extends Application implements FXWindow {
 	@FXML public TextField idModPathTextField;
 	@FXML public Label idHOIIVModFolderLabel;
 	@FXML public Button idBrowseButton;
-	@FXML public CheckBox idDevModeCheckBox;
+	@FXML public CheckBox devModeCheckBox;
 	@FXML public CheckBox idOpenConsoleOnLaunchCheckBox;
 	@FXML public CheckBox idSkipSettingsCheckBox;
 	@FXML public Button idOkButton;
 	@FXML public Button idDelSettingsButton;
+	@FXML public CheckBox drawFocusTreesCheckBox;
 	@FXML public ComboBox<Screen> preferredMonitorComboBox;
 
 	HashMap<Settings, String> tempSettings;
@@ -120,7 +121,8 @@ public class SettingsController extends Application implements FXWindow {
 			if (!"null".equals(MOD_PATH.getSetting())) {
 				idModPathTextField.setText((String) MOD_PATH.getSetting());
 			}
-			idDevModeCheckBox.setSelected(Settings.DEV_MODE.enabled());
+			devModeCheckBox.setSelected(Settings.DEV_MODE.enabled());
+			drawFocusTreesCheckBox.setSelected(Settings.DRAW_FOCUS_TREE.enabled());
 			idSkipSettingsCheckBox.setSelected(Settings.SKIP_SETTINGS.enabled());
 			idDelSettingsButton.setDisable(false);
 			enableOkButton();
@@ -180,7 +182,7 @@ public class SettingsController extends Application implements FXWindow {
 
 	private void setDefault() {
 		idModPathTextField.clear();
-		idDevModeCheckBox.setSelected(false);
+		devModeCheckBox.setSelected(false);
 		idOpenConsoleOnLaunchCheckBox.setSelected(false);
 		idSkipSettingsCheckBox.setSelected(false);
 		idDelSettingsButton.setDisable(true);
@@ -216,7 +218,11 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	public void handleDevModeCheckBoxAction() {
-		updateTempSetting(Settings.DEV_MODE, idDevModeCheckBox.isSelected());
+		updateTempSetting(Settings.DEV_MODE, devModeCheckBox.isSelected());
+	}
+
+	public void handleDrawFocusTreesCheckBoxAction() {
+		updateTempSetting(Settings.DRAW_FOCUS_TREE, drawFocusTreesCheckBox.isSelected());
 	}
 
 	public void handleOpenConsoleOnLaunchCheckBoxAction() {

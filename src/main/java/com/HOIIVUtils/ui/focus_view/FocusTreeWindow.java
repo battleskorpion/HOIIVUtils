@@ -1,5 +1,6 @@
 package com.HOIIVUtils.ui.focus_view;
 
+import com.HOIIVUtils.hoi4utils.Settings;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.hoi4utils.ddsreader.DDSReader;
 import com.HOIIVUtils.hoi4utils.HOIIVFile;
@@ -22,6 +23,7 @@ import javafx.scene.paint.Color;
 import com.HOIIVUtils.ui.javafx.image.JavaFXImageUtils;
 import com.HOIIVUtils.ui.HOIUtilsWindow;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -73,7 +75,9 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		focusTreeDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				focusTree = newValue;
-				drawFocusTree(focusTree);
+				if (Settings.DRAW_FOCUS_TREE.enabled()) {
+					drawFocusTree(focusTree);
+				}
 			}
 		});
 		focusTreeDropdown.setEditable(false);
@@ -115,7 +119,16 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		focusTreeCanvasScrollPane.setOnMouseReleased(e -> {
 			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(false);
 		});
-		drawFocusTree(focusTree);
+
+		/* draw the focus tree */
+		if (Settings.DRAW_FOCUS_TREE.enabled()) {
+			drawFocusTree(focusTree);
+		}
+
+		if (Settings.DEV_MODE.enabled()) {
+			JOptionPane.showMessageDialog(null, "dev @end of initialize() - loaded focuses: " + focusTree.focuses().size()
+			+ "\n" + "loaded tree of country: " + focusTree.country());
+		}
 	}
 
 	public Canvas focusTreeCanvas() {
@@ -295,7 +308,9 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			draggedFocus.setXY(newX, newY);
 
 			// Redraw the focus tree with updated positions
-			drawFocusTree(focusTree);
+			if (Settings.DRAW_FOCUS_TREE.enabled()) {
+				drawFocusTree(focusTree);
+			}
 
 			mouseX = e.getX();
 			mouseY = e.getY();
