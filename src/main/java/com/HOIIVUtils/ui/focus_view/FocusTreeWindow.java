@@ -10,6 +10,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.Focus;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import javafx.fxml.FXML;
+import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -58,6 +59,8 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		return focusTree.minX();
 	}
 
+	private Image GFX_focus_unavailable;
+
 	int getMaxX(){
 		return focusTree.focuses().stream().mapToInt(Focus::absoluteX).max().orElse(200);
 	}
@@ -80,12 +83,9 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 				}
 			}
 		});
-		focusTreeDropdown.setEditable(false);
-		// Enable auto-selection based on user typing
-		focusTreeDropdown.setOnKeyTyped(event -> {
-			String typedText = focusTreeDropdown.getEditor().getText();
-			selectClosestMatch(focusTreeDropdown, typedText);
-		});
+
+		// Load the focus unavailable image
+		GFX_focus_unavailable = loadFocusUnavailableImage();
 
 		focusTree = FocusTree.get(new CountryTag("SMA"));
 		try {
@@ -120,82 +120,113 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(false);
 		});
 
-		/* draw the focus tree */
+		// Draw the focus tree
 		if (Settings.DRAW_FOCUS_TREE.enabled()) {
 			drawFocusTree(focusTree);
 		}
 
 		if (Settings.DEV_MODE.enabled()) {
 			JOptionPane.showMessageDialog(null, "dev @end of initialize() - loaded focuses: " + focusTree.focuses().size()
-			+ "\n" + "loaded tree of country: " + focusTree.country()
-			+ "\n" + "draw focus tree: " + Settings.DRAW_FOCUS_TREE.enabled());
+					+ "\n" + "loaded tree of country: " + focusTree.country()
+					+ "\n" + "draw focus tree: " + Settings.DRAW_FOCUS_TREE.enabled());
 		}
 	}
+
 
 	public Canvas focusTreeCanvas() {
 		return focusTreeCanvas;
 	}
 
+	private Image loadFocusUnavailableImage() {
+		InputStream fis = null;
+		try {
+			fis = getClass().getClassLoader().getResourceAsStream("com/HOIIVUtils/hoi4utils/hoi4files/gfx/focus_unavailable_bg.dds");
+			if (fis == null) {
+				throw new FileNotFoundException("Unable to find 'com/HOIIVUtils/hoi4utils/hoi4files/gfx/focus_unavailable_bg.dds'");
+			}
+
+			byte[] buffer = new byte[fis.available()];
+			int bytesRead = fis.read(buffer);
+			fis.close();
+
+			int[] ddspixels = DDSReader.read(buffer, DDSReader.ARGB, 0);
+			int ddswidth = DDSReader.getWidth(buffer);
+			int ddsheight = DDSReader.getHeight(buffer);
+
+			return JavaFXImageUtils.imageFromDDS(ddspixels, ddswidth, ddsheight);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private void drawFocus(GraphicsContext gc2D, Focus focus, int minX) {
+		final int X_OFFSET_FIX = 30;
+
+		gc2D.setFill(Color.WHITE);
+		int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + X_OFFSET_FIX;
+		int y1 = FOCUS_Y_SCALE * focus.absoluteY();
+		int yAdj1 = (int)(FOCUS_Y_SCALE / 2.2);
+		int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
+
+		gc2D.drawImage(GFX_focus_unavailable, x1 - 32, y1 + yAdj1);
+		gc2D.drawImage(focus.getDDSImage(), x1, y1);
+		String name = focus.name();
+		gc2D.fillText(name, x1 - 20, y1 + yAdj2);
+	}
+
 	public void drawFocusTree(FocusTree focusTree) {
-		//		if (focusTree != null) {    // todo
-		// }
+		if (focusTree == null) {
+			throw new IllegalArgumentException("Focus tree cannot be null");
+		}
 
 		GraphicsContext gc2D = focusTreeCanvas.getGraphicsContext2D();
 
-		int minX = -getMinX();       // todo
+		// Calculate the minimum X coordinate
+		int minX = -getMinX();
 		final int X_OFFSET_FIX = 30;
-//		JOptionPane.showMessageDialog(null, minX);
+
+		// Clear the canvas with a dark gray color
 		double width = focusTreeCanvas.getWidth();
 		double height = focusTreeCanvas.getHeight();
 		gc2D.setFill(Color.DARKGRAY);
 		gc2D.fillRect(0, 0, width, height);
 
-		/* dds stuff */
-		Image GFX_focus_unavailable = null;
-		try {
-			InputStream fis = getClass().getClassLoader().getResourceAsStream("com/HOIIVUtils/hoi4utils/hoi4files/gfx/focus_unavailable_bg.dds");
-			if (fis == null) {
-				throw new FileNotFoundException("Unable to find 'com/HOIIVUtils/hoi4utils/hoi4files/gfx/focus_unavailable_bg.dds'");
-			}
-			byte[] buffer = new byte[fis.available()];
-			int bytesRead = fis.read(buffer);
-			fis.close();
-			int[] ddspixels = DDSReader.read(buffer, DDSReader.ARGB, 0);
-			int ddswidth = DDSReader.getWidth(buffer);
-			int ddsheight = DDSReader.getHeight(buffer);
+		// Load the focus unavailable image
+		Image GFX_focus_unavailable = loadFocusUnavailableImage();
 
-			GFX_focus_unavailable = JavaFXImageUtils.imageFromDDS(ddspixels, ddswidth, ddsheight);
-		} catch (IOException exc) {
-			exc.printStackTrace();
+		// Draw the focuses
+		for (Focus focus : focusTree.focuses()) {
+			drawFocus(gc2D, focus, minX);
 		}
 
-		for (Focus focus : focusTree.focuses()) {
-			gc2D.setFill(Color.WHITE);
-			int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + X_OFFSET_FIX;
-			int y1 = FOCUS_Y_SCALE * focus.absoluteY();
-			int yAdj1 = (int)(FOCUS_Y_SCALE / 2.2);
-			int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
+		// Draw the prerequisites
 
-			//gc2D.strokeRect(x1, y1, 100, 100);
-//			BufferedImage image = ImageIO.read(new File(focus.icon()));   // todo
-//			gc2D.drawImage(GFX_focus_unavailable, x1 - 32, y1 + yAdj1);
-//			gc2D.drawImage(focus.getDDSImage(), x1, y1);
+//		drawPrerequisites(gc2D, focusTree.focuses(), minX);
 
+		// Draw the mutually exclusive focuses
+//		drawMutuallyExclusiveFocuses(gc2D, focusTree.focuses(), minX);
+	}
+
+
+	private void drawPrerequisites(GraphicsContext gc2D, List<Focus> focuses, int minX) {
+		final int X_OFFSET_FIX = 30;
+
+		gc2D.setStroke(Color.BLACK);
+		gc2D.setLineWidth(3);
+
+		for (Focus focus : focuses) {
 			if (focus.hasPrerequisites()) {
-				gc2D.setStroke(Color.BLACK);
-				gc2D.setLineWidth(3);
-
 				for (Set<Focus> prereqFocusSet : focus.getPrerequisites()) {
 					for (Focus prereqFocus : prereqFocusSet) {
-						int linex1 = x1 + (FOCUS_X_SCALE / 2);
-						int liney1 = y1;
+						int linex1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
+						int liney1 = FOCUS_Y_SCALE * focus.absoluteY();
 						int linex2 = linex1;
 						int liney2 = liney1 - 12;
-						int liney4 = (FOCUS_Y_SCALE * prereqFocus.absoluteY());
-						int linex4 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
-						int linex3 = linex4;
-						int liney3 = liney2;
-
+						int linex3 = FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
+						int liney3 = FOCUS_Y_SCALE * prereqFocus.absoluteY();
+						int linex4 = linex3;
+						int liney4 = liney3 + FOCUS_Y_SCALE;
 						gc2D.strokeLine(linex1, liney1, linex2, liney2);
 						gc2D.strokeLine(linex2, liney2, linex3, liney3);
 						gc2D.strokeLine(linex3, liney3, linex4, liney4);
@@ -203,34 +234,25 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 				}
 			}
 		}
+	}
 
-		/* mutually exclusive */
+	private void drawMutuallyExclusiveFocuses(GraphicsContext gc2D, List<Focus> focuses, int minX) {
+		final int X_OFFSET_FIX = 30;
+
 		gc2D.setStroke(Color.DARKRED);
-		for (Focus focus : focusTree.focuses()) {
+
+		for (Focus focus : focuses) {
 			if (focus.isMutuallyExclusive()) {
 				for (Focus mutexFocus : focus.getMutuallyExclusive()) {
-					int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + CENTER_FOCUS_X + X_OFFSET_FIX;
-					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + FOCUS_Y_SCALE / 3;
-					int x2 = (FOCUS_X_SCALE * (mutexFocus.absoluteX() + minX)) + CENTER_FOCUS_X + X_OFFSET_FIX;
-					int y2 = (FOCUS_Y_SCALE * mutexFocus.absoluteY()) + FOCUS_Y_SCALE / 3;
+					int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
+					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + FOCUS_Y_SCALE / 2;
+					int x2 = FOCUS_X_SCALE * (mutexFocus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
+					int y2 = FOCUS_Y_SCALE * mutexFocus.absoluteY() + FOCUS_Y_SCALE / 2;
 					gc2D.strokeLine(x1, y1, x2, y2);
 				}
 			}
 		}
-
-		/* focus image */
-		for (Focus focus : focusTree.focuses()){
-			int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + X_OFFSET_FIX;
-			int y1 = FOCUS_Y_SCALE * focus.absoluteY();
-			int yAdj1 = (int)(FOCUS_Y_SCALE / 2.2);
-			int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
-			gc2D.drawImage(GFX_focus_unavailable, x1 - 32, y1 + yAdj1);
-			gc2D.drawImage(focus.getDDSImage(), x1, y1);
-			String name = focus.name();
-			gc2D.fillText(name, x1 - 20, y1 + yAdj2);
-		}
 	}
-
 
 ;
 	@FXML
