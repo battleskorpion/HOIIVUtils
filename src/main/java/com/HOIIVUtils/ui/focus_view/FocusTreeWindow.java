@@ -11,6 +11,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import javafx.fxml.FXML;
 import java.util.List;
+import java.util.ArrayList;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -195,17 +196,16 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		// Load the focus unavailable image
 		Image GFX_focus_unavailable = loadFocusUnavailableImage();
 
+		// Draw the prerequisites
+
+		List<Focus> focusList = new ArrayList<>(focusTree.focuses());
+		drawPrerequisites(gc2D, focusList, minX);
+		drawMutuallyExclusiveFocuses(gc2D, focusList, minX);
+
 		// Draw the focuses
 		for (Focus focus : focusTree.focuses()) {
 			drawFocus(gc2D, focus, minX);
 		}
-
-		// Draw the prerequisites
-
-//		drawPrerequisites(gc2D, focusTree.focuses(), minX);
-
-		// Draw the mutually exclusive focuses
-//		drawMutuallyExclusiveFocuses(gc2D, focusTree.focuses(), minX);
 	}
 
 
@@ -238,8 +238,10 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 	private void drawMutuallyExclusiveFocuses(GraphicsContext gc2D, List<Focus> focuses, int minX) {
 		final int X_OFFSET_FIX = 30;
+		final int Y_OFFSET_FIX = 10;
 
 		gc2D.setStroke(Color.DARKRED);
+		gc2D.setLineWidth(3);
 
 		for (Focus focus : focuses) {
 			if (focus.isMutuallyExclusive()) {
@@ -248,7 +250,17 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + FOCUS_Y_SCALE / 2;
 					int x2 = FOCUS_X_SCALE * (mutexFocus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
 					int y2 = FOCUS_Y_SCALE * mutexFocus.absoluteY() + FOCUS_Y_SCALE / 2;
+
+					// Draw a line between the two mutually exclusive focuses
 					gc2D.strokeLine(x1, y1, x2, y2);
+
+					// Draw a circle at the start of the line
+					gc2D.setFill(Color.DARKRED);
+					gc2D.fillOval(x1 - 5, y1 - 5, 10, 10);
+
+					// Draw a circle at the end of the line
+					gc2D.setFill(Color.DARKRED);
+					gc2D.fillOval(x2 - 5, y2 - 5, 10, 10);
 				}
 			}
 		}
