@@ -219,16 +219,21 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			if (focus.hasPrerequisites()) {
 				for (Set<Focus> prereqFocusSet : focus.getPrerequisites()) {
 					for (Focus prereqFocus : prereqFocusSet) {
-						int linex1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
-						int liney1 = FOCUS_Y_SCALE * focus.absoluteY();
+						int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX);
+						int y1 = FOCUS_Y_SCALE * focus.absoluteY();
+						int linex1 = x1 + (FOCUS_X_SCALE / 2)+ X_OFFSET_FIX;
+						int liney1 = y1;
 						int linex2 = linex1;
 						int liney2 = liney1 - 12;
-						int linex3 = FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
-						int liney3 = FOCUS_Y_SCALE * prereqFocus.absoluteY();
-						int linex4 = linex3;
-						int liney4 = liney3 + FOCUS_Y_SCALE;
+						int liney4 = (FOCUS_Y_SCALE * prereqFocus.absoluteY());
+						int linex4 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2)+ X_OFFSET_FIX;
+						int linex3 = linex4;
+						int liney3 = liney2;
+//						gc2D.setStroke(Color.BLACK);
 						gc2D.strokeLine(linex1, liney1, linex2, liney2);
+//						gc2D.setStroke(Color.RED);
 						gc2D.strokeLine(linex2, liney2, linex3, liney3);
+//						gc2D.setStroke(Color.GREEN);
 						gc2D.strokeLine(linex3, liney3, linex4, liney4);
 					}
 				}
