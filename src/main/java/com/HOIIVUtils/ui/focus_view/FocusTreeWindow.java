@@ -12,6 +12,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFi
 import javafx.fxml.FXML;
 import java.util.List;
 import java.util.ArrayList;
+import javafx.scene.control.Button;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -24,12 +25,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import com.HOIIVUtils.ui.javafx.image.JavaFXImageUtils;
 import com.HOIIVUtils.ui.HOIUtilsWindow;
-
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.Set;
 
 public class FocusTreeWindow extends HOIUtilsWindow {
@@ -38,10 +39,13 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	static final int FOCUS_Y_SCALE = 140;
 	public static final int CENTER_FOCUS_Y = FOCUS_Y_SCALE / 2;
 	public static final int VISIBLE_DROPDOWN_ROW_COUNT = 20;
+	public static final int X_OFFSET_FIX = 30;
+	public static final int Y_OFFSET_FIX = 40;
 
 	@FXML Canvas focusTreeCanvas;
 	@FXML ScrollPane focusTreeCanvasScrollPane;
 	@FXML ComboBox<FocusTree> focusTreeDropdown;
+	@FXML Button exportFocusTreeButton;
 
 	private FocusTree focusTree;
 	private Tooltip focusTooltipView;
@@ -55,6 +59,15 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		setFxmlResource("FocusTreeWindow.fxml");
 		setTitle("Focus Tree View");
 	}
+
+	private void exportFocusTree(FocusTree focusTree, String path) {
+    try (PrintWriter writer = new PrintWriter(new File(path))) {
+        // Write the focus tree to the file
+        // writer.println(focusTree.toHoI4Format());
+    } catch (FileNotFoundException e) {
+        JOptionPane.showMessageDialog(null, "Error exporting focus tree: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
 
 	private int getMinX() {
 		return focusTree.minX();
@@ -71,6 +84,13 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	}
 
 	@FXML
+	private void handleExportFocusTreeButtonClick() {
+		String path = "focusOutput.txt";
+		exportFocusTree(focusTree, path);
+		JOptionPane.showMessageDialog(null, "Focus tree exported to " + path, "Export Successful", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	@FXML
 	void initialize() {
 		focusTreeDropdown.setItems(FocusTree.observeFocusTrees());
 		focusTreeDropdown.setTooltip(new Tooltip("Select a focus tree to view"));
@@ -84,10 +104,12 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 				}
 			}
 		});
-
+	
+		exportFocusTreeButton.setOnAction(event -> handleExportFocusTreeButtonClick());
+	
 		// Load the focus unavailable image
 		GFX_focus_unavailable = loadFocusUnavailableImage();
-
+	
 		focusTree = FocusTree.get(new CountryTag("SMA"));
 		try {
 			focusTree.setLocalization(new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
@@ -102,30 +124,33 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 				throw new RuntimeException(e);
 			}
 		}
-
+	
 		try {
 			FixFocus.addFocusLoc(focusTree);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
-
-		/* focus tree canvas */
-		focusTreeCanvas.setWidth((double) (getMaxX() + -getMinX()) * FOCUS_X_SCALE + 180);
-		focusTreeCanvas.setHeight((getMaxY() * FOCUS_Y_SCALE) + (FOCUS_Y_SCALE * 2));
-
+	
+		int maxX = getMaxX();
+		int maxY = getMaxY();
+	
+		// Set the canvas's width and height based on the maximum x and y values
+		focusTreeCanvas.setWidth(Math.max(FOCUS_X_SCALE * (maxX - getMinX()) + 2 * X_OFFSET_FIX, 800));
+		focusTreeCanvas.setHeight(Math.max(FOCUS_Y_SCALE * (maxY + 2), 600));
+	
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(true);
 		});
 		focusTreeCanvasScrollPane.setOnMouseReleased(e -> {
 			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(false);
 		});
-
+	
 		// Draw the focus tree
 		if (Settings.DRAW_FOCUS_TREE.enabled()) {
 			drawFocusTree(focusTree);
 		}
-
+	
 		if (Settings.DEV_MODE.enabled()) {
 			JOptionPane.showMessageDialog(null, "dev @end of initialize() - loaded focuses: " + focusTree.focuses().size()
 					+ "\n" + "loaded tree of country: " + focusTree.country()
@@ -162,11 +187,10 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	}
 
 	private void drawFocus(GraphicsContext gc2D, Focus focus, int minX) {
-		final int X_OFFSET_FIX = 30;
 
 		gc2D.setFill(Color.WHITE);
 		int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + X_OFFSET_FIX;
-		int y1 = FOCUS_Y_SCALE * focus.absoluteY();
+		int y1 = FOCUS_Y_SCALE * focus.absoluteY() + Y_OFFSET_FIX;
 		int yAdj1 = (int)(FOCUS_Y_SCALE / 2.2);
 		int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
 
@@ -185,7 +209,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 		// Calculate the minimum X coordinate
 		int minX = -getMinX();
-		final int X_OFFSET_FIX = 30;
 
 		// Clear the canvas with a dark gray color
 		double width = focusTreeCanvas.getWidth();
@@ -210,7 +233,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 
 
 	private void drawPrerequisites(GraphicsContext gc2D, List<Focus> focuses, int minX) {
-		final int X_OFFSET_FIX = 30;
 
 		gc2D.setStroke(Color.BLACK);
 		gc2D.setLineWidth(3);
@@ -222,10 +244,10 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 						int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX);
 						int y1 = FOCUS_Y_SCALE * focus.absoluteY();
 						int linex1 = x1 + (FOCUS_X_SCALE / 2)+ X_OFFSET_FIX;
-						int liney1 = y1;
+						int liney1 = y1 + Y_OFFSET_FIX;
 						int linex2 = linex1;
 						int liney2 = liney1 - 12;
-						int liney4 = (FOCUS_Y_SCALE * prereqFocus.absoluteY());
+						int liney4 = (FOCUS_Y_SCALE * prereqFocus.absoluteY())+ Y_OFFSET_FIX;
 						int linex4 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2)+ X_OFFSET_FIX;
 						int linex3 = linex4;
 						int liney3 = liney2;
@@ -242,8 +264,6 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 	}
 
 	private void drawMutuallyExclusiveFocuses(GraphicsContext gc2D, List<Focus> focuses, int minX) {
-		final int X_OFFSET_FIX = 30;
-		final int Y_OFFSET_FIX = 10;
 
 		gc2D.setStroke(Color.DARKRED);
 		gc2D.setLineWidth(3);
@@ -252,9 +272,9 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			if (focus.isMutuallyExclusive()) {
 				for (Focus mutexFocus : focus.getMutuallyExclusive()) {
 					int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
-					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + FOCUS_Y_SCALE / 2;
+					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + (FOCUS_Y_SCALE / 2) + Y_OFFSET_FIX;
 					int x2 = FOCUS_X_SCALE * (mutexFocus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
-					int y2 = FOCUS_Y_SCALE * mutexFocus.absoluteY() + FOCUS_Y_SCALE / 2;
+					int y2 = FOCUS_Y_SCALE * mutexFocus.absoluteY() + (FOCUS_Y_SCALE / 2) + Y_OFFSET_FIX;
 
 					// Draw a line between the two mutually exclusive focuses
 					gc2D.strokeLine(x1, y1, x2, y2);
