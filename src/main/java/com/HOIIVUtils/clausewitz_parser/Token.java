@@ -17,18 +17,16 @@ public class Token {
 	public static final Map<TokenType, Pattern> tokenRegex = new HashMap<>();
 	public static final String EOF_INDICATOR = "$";
 
-	// todo review each
-	// strings issues
+
 	static {
-		tokenRegex.put(TokenType.comment, Pattern.compile("#.*(?:[\\r\\n]|$)"));
-		tokenRegex.put(TokenType.symbol, Pattern.compile("(?:\\d+\\.)?[a-zA-Z_@\\[\\]][\\w:.@\\[\\]\\-?^/\\u00A0-\\u024F]*"));
-		tokenRegex.put(TokenType.operator, Pattern.compile("[={}<>;,]|>=|<=|!="));
-		// string pattern was problematic
-		//tokenRegex.put(TokenType.string, Pattern.compile("\"(?:\"|\\\\|[^\"])*\""));
-		tokenRegex.put(TokenType.string, Pattern.compile("\"(\\\\.|[^\"])*\""));
-		tokenRegex.put(TokenType.number, Pattern.compile("-?\\d*\\.\\d+|-?\\d+|0x\\d+"));
+		tokenRegex.put(TokenType.comment, Pattern.compile("#.*(?:[\\r\\n]|$)")); // Nullifies Comments
+		tokenRegex.put(TokenType.symbol, Pattern.compile("(?:\\d+\\.)?[a-zA-Z_@\\[\\]][\\w:.@\\[\\]\\-?^/\\u00A0-\\u024F]*")); // Symbol
+		tokenRegex.put(TokenType.operator, Pattern.compile("[={}<>;,]|>=|<=|!=")); // Seperates Operators
+		tokenRegex.put(TokenType.string, Pattern.compile("\"(\\\\.|[^\"])*\"")); // Seperates Double Quotes
+		tokenRegex.put(TokenType.number, Pattern.compile("-?\\d*\\.\\d+|-?\\d+|0x\\d+")); // Seperates Numbers
 		tokenRegex.put(TokenType.eof, Pattern.compile(EOF_INDICATOR));
 	}
+
 
 	public Token (String value, int start, TokenType type) {
 		this.value = value;

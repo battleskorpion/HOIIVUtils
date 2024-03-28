@@ -17,3 +17,6 @@ replay_pid*
 
 #works finally
 target/
+
+#outputted focus
+focusOutput.txt
