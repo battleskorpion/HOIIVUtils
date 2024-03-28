@@ -217,7 +217,7 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 		}
 
 		/* focus image */
-		for (Focus focus : focusTree.focuses()){
+		for (Focus focus : focusTree.focuses()) {
 			int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + X_OFFSET_FIX;
 			int y1 = FOCUS_Y_SCALE * focus.absoluteY();
 			int yAdj1 = (int)(FOCUS_Y_SCALE / 2.2);

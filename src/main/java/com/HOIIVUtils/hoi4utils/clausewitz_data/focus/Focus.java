@@ -523,7 +523,7 @@ public class Focus implements Localizable, Comparable<Focus> {
 
 			FileInputStream fis;
 			if (gfx == null) {
-				System.err.println("GFX was not found for " + icon);
+//				System.err.println("GFX was not found for " + icon); // too much right now
 				fis = new FileInputStream(Settings.MOD_PATH + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
 			} else {
 				fis = new FileInputStream(Interface.getGFX(icon));

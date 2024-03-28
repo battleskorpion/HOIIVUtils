@@ -2,6 +2,7 @@ package com.HOIIVUtils.hoi4utils;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_code.effect.EffectDatabase;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.modifier.ModifierDatabase;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.gfx.Interface;
 import com.HOIIVUtils.ui.menu.MenuController;
 import com.HOIIVUtils.ui.settings.SettingsController;
 
@@ -32,7 +33,7 @@ public class HOIIVUtils {
 			settingsController.launchSettingsWindow(args);
 		} else {
 			HOIIVFile.createHOIIVFilePaths();
-			
+
 			if (Settings.SKIP_SETTINGS.enabled()) {
 				System.out.println("HOIIVUtils launched stage menu cuz settings was set to be skipped");
 				menuController = new MenuController();

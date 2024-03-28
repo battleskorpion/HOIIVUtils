@@ -137,7 +137,7 @@ public class Interface {
 		}
 	}
 
-	public static void loadGFX() {
+	public static void loadGFXFiles() {
 		File dir = new File(Settings.MOD_PATH + "\\interface");
 		if (!dir.exists() || !dir.isDirectory()) {
 			System.err.println("interface directory does not exist");

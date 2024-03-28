@@ -12,7 +12,7 @@ public enum Settings {
 	CIVILIAN_MILITARY_FACTORY_MAX_RATIO,            // ratio for civ/mil factories highlight in buildings view
 	SKIP_SETTINGS {
 		public Object getSetting() {
-			return SettingsManager.settingValues.get(this).equals("true");
+			return enabled();
 		}
 
 		public String defaultProperty() {
@@ -21,7 +21,7 @@ public enum Settings {
 	},
 	DARK_MODE {
 		public Object getSetting() {
-			return SettingsManager.settingValues.get(this).equals("true");
+			return enabled();
 		}
 
 		public String defaultProperty() {
@@ -30,7 +30,7 @@ public enum Settings {
 	},
 	DEV_MODE {
 		public Object getSetting() {
-			return SettingsManager.settingValues.get(this).equals("true");
+			return enabled();
 		}
 
 		public String defaultProperty() {
@@ -39,7 +39,7 @@ public enum Settings {
 	},
 	OPEN_CONSOLE_ON_LAUNCH {
 		public Object getSetting() {
-			return SettingsManager.settingValues.get(this).equals("true");
+			return enabled();
 		}
 
 		public String defaultProperty() {
@@ -65,7 +65,7 @@ public enum Settings {
 	LOAD_TO_MENU {
 		// to skip settings (if not first time user) and load direct to main menu
 		public Object getSetting() {
-			return SettingsManager.settingValues.get(this).equals("true");
+			return enabled();
 		}
 		public String defaultProperty() {
 			return "true";
@@ -77,11 +77,15 @@ public enum Settings {
 		}
 	},
 	ATTEMPT_LOAD_LOCALIZATION {
-		public Object getSetting() { return SettingsManager.settingValues.get(this).equals("true"); }
+		public Object getSetting() { return enabled(); }
 		public String defaultProperty() { return "true"; }
 	},
 	DRAW_FOCUS_TREE {
-		public Object getSetting() { return SettingsManager.settingValues.get(this).equals("true"); }
+		public Object getSetting() {
+			return enabled();
+		}
+
+		public boolean enabled() { return super.enabled() || DEV_MODE.disabled(); }
 
 		public String defaultProperty() { return "true"; }
 	},
@@ -101,7 +105,7 @@ public enum Settings {
 	 *
 	 * @return true if the setting's property is equal to false, false otherwise.
 	 */
-	public boolean disabled() { return SettingsManager.settingValues.get(this).equals("false"); }
+	public boolean disabled() { return !enabled(); }
 
 	/**
 	 * Sets the value of the setting

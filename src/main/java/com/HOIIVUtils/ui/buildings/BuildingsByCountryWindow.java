@@ -25,25 +25,25 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 	@FXML private MenuItem idExportToExcel;
 	@FXML private CheckMenuItem idPercentageCheckMenuItem;
 	@FXML private MenuItem idVersionMenuItem;
-	@FXML TableView<Country> stateDataTable;
-	@FXML TableColumn<Country, String> stateDataTableCountryColumn;
-	@FXML TableColumn<Country, Integer> stateDataTablePopulationColumn;
-	@FXML TableColumn<Country, Integer> stateDataTableCivFactoryColumn;
-	@FXML TableColumn<Country, Integer> stateDataTableMilFactoryColumn;
-	@FXML TableColumn<Country, Integer> stateDataTableDockyardsColumn;
-	@FXML TableColumn<Country, Integer> stateDataTableAirfieldsColumn;
-	@FXML TableColumn<Country, Double> stateDataTableCivMilRatioColumn;
-	@FXML TableColumn<Country, Double> stateDataTablePopFactoryRatioColumn;
-	@FXML TableColumn<Country, Double> stateDataTablePopCivRatioColumn;
-	@FXML TableColumn<Country, Double> stateDataTablePopMilRatioColumn;
-	@FXML TableColumn<Country, Double> stateDataTablePopAirCapacityRatioColumn;
-	@FXML TableColumn<Country, Double> stateDataTablePopNumStatesRatioColumn;
-	@FXML TableColumn<Country, Double> stateDataTableAluminiumColumn;       // todo dont do these yet
-	@FXML TableColumn<Country, Double> stateDataTableChromiumColumn;
-	@FXML TableColumn<Country, Double> stateDataTableOilColumn;
-	@FXML TableColumn<Country, Double> stateDataTableRubberColumn;
-	@FXML TableColumn<Country, Double> stateDataTableSteelColumn;
-	@FXML TableColumn<Country, Double> stateDataTableTungstenColumn;
+	@FXML TableView<Country> countryDataTable;
+	@FXML TableColumn<Country, String> countryDataTableCountryColumn;
+	@FXML TableColumn<Country, Integer> countryDataTablePopulationColumn;
+	@FXML TableColumn<Country, Integer> countryDataTableCivFactoryColumn;
+	@FXML TableColumn<Country, Integer> countryDataTableMilFactoryColumn;
+	@FXML TableColumn<Country, Integer> countryDataTableDockyardsColumn;
+	@FXML TableColumn<Country, Integer> countryDataTableAirfieldsColumn;
+	@FXML TableColumn<Country, Double> countryDataTableCivMilRatioColumn;
+	@FXML TableColumn<Country, Double> countryDataTablePopFactoryRatioColumn;
+	@FXML TableColumn<Country, Double> countryDataTablePopCivRatioColumn;
+	@FXML TableColumn<Country, Double> countryDataTablePopMilRatioColumn;
+	@FXML TableColumn<Country, Double> countryDataTablePopAirCapacityRatioColumn;
+	@FXML TableColumn<Country, Double> countryDataTablePopNumStatesRatioColumn;
+	@FXML TableColumn<Country, Double> countryDataTableAluminiumColumn;       // todo dont do these yet
+	@FXML TableColumn<Country, Double> countryDataTableChromiumColumn;
+	@FXML TableColumn<Country, Double> countryDataTableOilColumn;
+	@FXML TableColumn<Country, Double> countryDataTableRubberColumn;
+	@FXML TableColumn<Country, Double> countryDataTableSteelColumn;
+	@FXML TableColumn<Country, Double> countryDataTableTungstenColumn;
 
 	private Boolean resourcesPercent;
 	private ClausewitzDate date = ClausewitzDate.defaulty();
@@ -60,17 +60,17 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 	@FXML
 	void initialize() {
 		includeVersion();
-		loadTableView(this, stateDataTable, countryList, Country.getCountryDataFunctions(false));
+		loadTableView(this, countryDataTable, countryList, Country.getCountryDataFunctions(false));
 
 		/* action listeners */
-		stateDataTable.setOnMouseClicked(event -> {
+		countryDataTable.setOnMouseClicked(event -> {
 			if(event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
 				viewCountryBuildingsByState();
 			}
 		});
 
 		if (Settings.DEV_MODE.enabled()) {
-			JOptionPane.showMessageDialog(null, "dev - loaded rows: " + stateDataTable.getItems().size());
+			JOptionPane.showMessageDialog(null, "dev - loaded rows: " + countryDataTable.getItems().size());
 		}
 	}
 
@@ -81,34 +81,34 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 	// todo put this in hoi4window parent class or whatever
 
 	private void updateResourcesColumnsPercentBehavior() {
-		FXWindow.updateColumnPercentBehavior(stateDataTableAluminiumColumn, resourcesPercent);
-		FXWindow.updateColumnPercentBehavior(stateDataTableChromiumColumn, resourcesPercent);
-		FXWindow.updateColumnPercentBehavior(stateDataTableOilColumn, resourcesPercent);
-		FXWindow.updateColumnPercentBehavior(stateDataTableRubberColumn, resourcesPercent);
-		FXWindow.updateColumnPercentBehavior(stateDataTableSteelColumn, resourcesPercent);
-		FXWindow.updateColumnPercentBehavior(stateDataTableTungstenColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(countryDataTableAluminiumColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(countryDataTableChromiumColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(countryDataTableOilColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(countryDataTableRubberColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(countryDataTableSteelColumn, resourcesPercent);
+		FXWindow.updateColumnPercentBehavior(countryDataTableTungstenColumn, resourcesPercent);
 	}
 
 	public void setDataTableCellFactories() {
 		// table cell factories
-		stateDataTableCivMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopFactoryRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopCivRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopNumStatesRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTableAluminiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableChromiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableOilColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableRubberColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableSteelColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		countryDataTableCivMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		countryDataTablePopFactoryRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		countryDataTablePopCivRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		countryDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		countryDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		countryDataTablePopNumStatesRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
+		countryDataTableAluminiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		countryDataTableChromiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		countryDataTableOilColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		countryDataTableRubberColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		countryDataTableSteelColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		countryDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
 	}
 
 	@FXML
 	public void handleExportToExcelAction() {
 		ExcelExport<Country> excelExport = new ExcelExport<>();
-		excelExport.export(stateDataTable);
+		excelExport.export(countryDataTable);
 	}
 
 	public void handlePercentageCheckMenuItemAction() {
@@ -136,7 +136,7 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 	}
 
 	public void viewCountryBuildingsByState() {
-		Country country = stateDataTable.getSelectionModel().getSelectedItem();
+		Country country = countryDataTable.getSelectionModel().getSelectedItem();
 		if (country == null) {
 			return;
 		}

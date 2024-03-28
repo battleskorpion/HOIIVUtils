@@ -52,6 +52,10 @@ public class SettingsController extends Application implements FXWindow {
 		setDefault();
 		includeSettingValues();
 
+		if (Settings.DEV_MODE.disabled()) {
+			drawFocusTreesCheckBox.setDisable(true);
+		}
+
 		preferredMonitorComboBox.setItems(Screen.getScreens());
 		preferredMonitorComboBox.setCellFactory(cell -> new ListCell<>() {
 			@Override
@@ -183,6 +187,7 @@ public class SettingsController extends Application implements FXWindow {
 	private void setDefault() {
 		idModPathTextField.clear();
 		devModeCheckBox.setSelected(false);
+		drawFocusTreesCheckBox.setSelected(true);
 		idOpenConsoleOnLaunchCheckBox.setSelected(false);
 		idSkipSettingsCheckBox.setSelected(false);
 		idDelSettingsButton.setDisable(true);
@@ -219,6 +224,8 @@ public class SettingsController extends Application implements FXWindow {
 
 	public void handleDevModeCheckBoxAction() {
 		updateTempSetting(Settings.DEV_MODE, devModeCheckBox.isSelected());
+		boolean disabled = Settings.DEV_MODE.disabled();
+		drawFocusTreesCheckBox.setDisable(disabled);
 	}
 
 	public void handleDrawFocusTreesCheckBoxAction() {

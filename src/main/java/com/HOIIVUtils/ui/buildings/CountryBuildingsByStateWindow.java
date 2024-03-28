@@ -1,6 +1,7 @@
 package com.HOIIVUtils.ui.buildings;
 
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
+import com.HOIIVUtils.hoi4utils.Settings;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.Country;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.state.State;
 import com.HOIIVUtils.ui.FXWindow;
@@ -17,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
@@ -66,6 +68,16 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements Tab
 		});
 	}
 
+	@FXML
+	void initialize() {
+		includeVersion();
+		loadTableView(this, stateDataTable, stateList, State.getStateDataFunctions(false));
+
+		if (Settings.DEV_MODE.enabled()) {
+			JOptionPane.showMessageDialog(null, "dev - loaded rows: " + stateDataTable.getItems().size());
+		}
+	}
+
 	private void viewSelectedStateFile() {
 		State state = stateDataTable.getSelectionModel().getSelectedItem();
 		if (state == null) {
@@ -78,12 +90,6 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements Tab
 			System.err.println("Unable to open state file: " + state);
 			throw new RuntimeException(exc);
 		}
-	}
-
-	@FXML
-	void initialize() {
-		includeVersion();
-		loadTableView(this, stateDataTable, stateList, State.getStateDataFunctions(false));
 	}
 
 	private void includeVersion() {
