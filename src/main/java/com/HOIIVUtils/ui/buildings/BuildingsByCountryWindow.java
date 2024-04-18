@@ -140,8 +140,8 @@ public class BuildingsByCountryWindow extends HOIUtilsWindow implements TableVie
 		if (country == null) {
 			return;
 		}
-		CountryBuildingsByStateWindow countryBuildingsByStateWindow = new CountryBuildingsByStateWindow(country);
-		countryBuildingsByStateWindow.open();
+		CountryBuildingsByStateWindow countryBuildingsByStateWindow = new CountryBuildingsByStateWindow();
+		countryBuildingsByStateWindow.open(country);
 	}
 
 }

@@ -49,23 +49,12 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements Tab
 	@FXML TableColumn<State, Double> stateDataTableTungstenColumn;
 
 	private Boolean resourcesPercent;
-	private final Country country;
-	private final ObservableList<State> stateList;
+	private Country country;
+	private ObservableList<State> stateList;
 
-	public CountryBuildingsByStateWindow(Country country) {
+	public CountryBuildingsByStateWindow() {
 		setFxmlResource("CountryBuildingsByStateWindow.fxml");
-		setTitle("HOIIVUtils Buildings By State Window, Country: " + country.name());
-
-		this.country = country;
-		stateList = FXCollections.observableArrayList(State.ownedStatesOfCountry(country));
-
-		/* action listeners */
-		// double click to view state file
-		stateDataTable.setOnMouseClicked(event -> { // todo init stateDataTable in initialization() or whatever it is :)
-			if(event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
-				viewSelectedStateFile();
-			}
-		});
+		setTitle("HOIIVUtils Buildings By State Window");
 	}
 
 	@FXML
@@ -76,6 +65,14 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements Tab
 		if (Settings.DEV_MODE.enabled()) {
 			JOptionPane.showMessageDialog(null, "dev - loaded rows: " + stateDataTable.getItems().size());
 		}
+
+		/* action listeners */
+		// double click to view state file
+		stateDataTable.setOnMouseClicked(event -> { // todo init stateDataTable in initialization() or whatever it is :)
+			if(event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
+				viewSelectedStateFile();
+			}
+		});
 	}
 
 	private void viewSelectedStateFile() {
@@ -145,6 +142,22 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements Tab
 	public void toggleResourcesPercent() {
 		resourcesPercent = !resourcesPercent;
 		updateResourcesColumnsPercentBehavior();
+	}
+
+	public void open(Country country) {
+		setCountry(country);
+		super.open();
+	}
+
+	private void setCountry(Country country) {
+		this.country = country;
+
+		setTitle("HOIIVUtils Buildings By State Window, Country: " + country.name());
+		stateList = FXCollections.observableArrayList(State.ownedStatesOfCountry(country));
+	}
+
+	public Country country() {
+		return country;
 	}
 }
 

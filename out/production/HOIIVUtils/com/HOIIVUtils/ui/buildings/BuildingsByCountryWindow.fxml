@@ -11,26 +11,26 @@
 
 <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.buildings.BuildingsByCountryWindow">
    <children>
-      <TableView fx:id="stateDataTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+      <TableView fx:id="countryDataTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
         <columns>
-          <TableColumn fx:id="stateDataTableCountryColumn" prefWidth="88.0" text="Country" />
-          <TableColumn fx:id="stateDataTablePopulationColumn" prefWidth="88.0" text="Population" />
-            <TableColumn fx:id="stateDataTableCivFactoryColumn" prefWidth="88.0" text="Civilian Factories" />
-            <TableColumn fx:id="stateDataTableMilFactoryColumn" prefWidth="88.0" text="Military Factories" />
-            <TableColumn fx:id="stateDataTableDockyardsColumn" prefWidth="88.0" text="Dockyards" />
-            <TableColumn fx:id="stateDataTableAirfieldsColumn" prefWidth="88.0" text="Airfields" />
-            <TableColumn fx:id="stateDataTableCivMilRatioColumn" prefWidth="88.0" text="Civ/Mil Ratio" />
-            <TableColumn fx:id="stateDataTablePopFactoryRatioColumn" prefWidth="88.0" text="Pop / Factory" />
-            <TableColumn fx:id="stateDataTablePopCivRatioColumn" prefWidth="88.0" text="Pop / Civ Ratio" />
-            <TableColumn fx:id="stateDataTablePopMilRatioColumn" prefWidth="88.0" text="Pop / Mil Ratio" />
-            <TableColumn fx:id="stateDataTablePopAirCapacityRatioColumn" prefWidth="88.0" text="Pop / Air Capacity" />
-            <TableColumn fx:id="stateDataTablePopNumStatesRatioColumn" prefWidth="88.0" text="Pop / State" />
-            <TableColumn fx:id="stateDataTableAluminiumColumn" prefWidth="88.0" text="Aluminum" />
-            <TableColumn fx:id="stateDataTableChromiumColumn" prefWidth="88.0" text="Chromium" />
-            <TableColumn fx:id="stateDataTableOilColumn" prefWidth="88.0" text="Oil" />
-            <TableColumn fx:id="stateDataTableRubberColumn" prefWidth="88.0" text="Rubber" />
-            <TableColumn fx:id="stateDataTableSteelColumn" prefWidth="88.0" text="Steel" />
-            <TableColumn fx:id="stateDataTableTungstenColumn" prefWidth="88.0" text="Tungsten" />
+          <TableColumn fx:id="countryDataTableCountryColumn" prefWidth="88.0" text="Country" />
+          <TableColumn fx:id="countryDataTablePopulationColumn" prefWidth="88.0" text="Population" />
+            <TableColumn fx:id="countryDataTableCivFactoryColumn" prefWidth="88.0" text="Civilian Factories" />
+            <TableColumn fx:id="countryDataTableMilFactoryColumn" prefWidth="88.0" text="Military Factories" />
+            <TableColumn fx:id="countryDataTableDockyardsColumn" prefWidth="88.0" text="Dockyards" />
+            <TableColumn fx:id="countryDataTableAirfieldsColumn" prefWidth="88.0" text="Airfields" />
+            <TableColumn fx:id="countryDataTableCivMilRatioColumn" prefWidth="88.0" text="Civ/Mil Ratio" />
+            <TableColumn fx:id="countryDataTablePopFactoryRatioColumn" prefWidth="88.0" text="Pop / Factory" />
+            <TableColumn fx:id="countryDataTablePopCivRatioColumn" prefWidth="88.0" text="Pop / Civ Ratio" />
+            <TableColumn fx:id="countryDataTablePopMilRatioColumn" prefWidth="88.0" text="Pop / Mil Ratio" />
+            <TableColumn fx:id="countryDataTablePopAirCapacityRatioColumn" prefWidth="88.0" text="Pop / Air Capacity" />
+            <TableColumn fx:id="countryDataTablePopNumStatesRatioColumn" prefWidth="88.0" text="Pop / State" />
+            <TableColumn fx:id="countryDataTableAluminiumColumn" prefWidth="88.0" text="Aluminum" />
+            <TableColumn fx:id="countryDataTableChromiumColumn" prefWidth="88.0" text="Chromium" />
+            <TableColumn fx:id="countryDataTableOilColumn" prefWidth="88.0" text="Oil" />
+            <TableColumn fx:id="countryDataTableRubberColumn" prefWidth="88.0" text="Rubber" />
+            <TableColumn fx:id="countryDataTableSteelColumn" prefWidth="88.0" text="Steel" />
+            <TableColumn fx:id="countryDataTableTungstenColumn" prefWidth="88.0" text="Tungsten" />
         </columns>
       </TableView>
       <MenuBar>

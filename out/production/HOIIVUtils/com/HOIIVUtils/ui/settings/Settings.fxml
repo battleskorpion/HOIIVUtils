@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Rectangle?>
 
-<GridPane prefHeight="425.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.settings.SettingsController">
+<GridPane prefHeight="425.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.settings.SettingsController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
@@ -62,7 +62,7 @@
                               <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="40.00003662109373" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                        	  <CheckBox fx:id="idDevModeCheckBox" mnemonicParsing="false" onAction="#handleDevModeCheckBoxAction" text="Developer Mode" GridPane.rowIndex="3" />
+                        	  <CheckBox fx:id="devModeCheckBox" mnemonicParsing="false" onAction="#handleDevModeCheckBoxAction" text="Developer Mode" GridPane.rowIndex="3" />
                         	  <Button fx:id="idBrowseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBrowseAction" prefHeight="25.0" prefWidth="70.0" text="Browse" GridPane.columnIndex="5" GridPane.rowIndex="2" />
                         	  <TextField fx:id="idModPathTextField" onAction="#handleModPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/mod/directory" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
                         	  <Label fx:id="idHOIIVModFolderLabel" text="HOIIV Mod Folder:" GridPane.rowIndex="2" />
@@ -80,6 +80,7 @@
                               <CheckBox fx:id="idSkipSettingsCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSkipSettingsCheckBoxAction" opacity="0.66" prefHeight="18.0" prefWidth="228.0" text="Don't show this window again." GridPane.columnIndex="1" GridPane.rowIndex="9" />
                               <Button fx:id="idDelSettingsButton" mnemonicParsing="false" onAction="#handleDelSettingsButtonAction" text="Delete Saved Settings" GridPane.columnIndex="4" GridPane.rowIndex="9" />
                               <CheckBox fx:id="idOpenConsoleOnLaunchCheckBox" mnemonicParsing="false" onAction="#handleOpenConsoleOnLaunchCheckBoxAction" text="Open Console on Launch" GridPane.rowIndex="4" />
+                              <CheckBox fx:id="drawFocusTreesCheckBox" mnemonicParsing="false" onAction="#handleDrawFocusTreesCheckBoxAction" text="Draw Focus Trees" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                            </children>
                            <padding>
                         	  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
