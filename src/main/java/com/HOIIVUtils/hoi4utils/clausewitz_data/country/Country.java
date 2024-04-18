@@ -268,4 +268,8 @@ public class Country implements InfrastructureData, Comparable<Country> {
 	public int compareTo(@NotNull Country o) {
 		return countryTag.compareTo(o.countryTag);
 	}
+
+	public String toString() {
+		return countryTag.toString() + " " + "[country tag]";
+	}
 }

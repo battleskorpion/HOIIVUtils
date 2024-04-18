@@ -156,8 +156,8 @@ public interface FXWindow {
 		setTableCellValueFactories(dataFunctions, dataTable);
 
 		dataTable.setItems(data);       // country objects, cool! and necessary for the cell value factory,
-													// this is giving the factories the list of objects to collect
-													// their data from.
+										// this is giving the factories the list of objects to collect
+										// their data from.
 
 		System.out.println("Loaded data into table: " + dataTable.getId());
 	}

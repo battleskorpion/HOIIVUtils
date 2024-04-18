@@ -24,7 +24,7 @@ import java.io.IOException;
 
 public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements TableViewWindow {
 
-	@FXML public Label idVersion;
+	//@FXML public Label idVersion;
 	@FXML public String className = this.getClass().getName();
 	@FXML private CheckMenuItem idPercentageCheckMenuItem;
 	@FXML private MenuItem idExportToExcel;
@@ -57,9 +57,20 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements Tab
 		setTitle("HOIIVUtils Buildings By State Window");
 	}
 
+	/**
+	 * This constructor is used internally by javafx.
+	 * Use {@link #CountryBuildingsByStateWindow()} to create a new instance.
+	 *
+	 * @param country
+	 */
+	public CountryBuildingsByStateWindow(Country country) {
+		setCountry(country);
+	}
+
 	@FXML
 	void initialize() {
-		includeVersion();
+		System.out.println("Country: " + country);
+		//includeVersion();
 		loadTableView(this, stateDataTable, stateList, State.getStateDataFunctions(false));
 
 		if (Settings.DEV_MODE.enabled()) {
@@ -89,9 +100,9 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements Tab
 		}
 	}
 
-	private void includeVersion() {
-		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION);
-	}
+//	private void includeVersion() {
+//		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION);
+//	}
 
 	private void updateResourcesColumnsPercentBehavior() {
 		FXWindow.updateColumnPercentBehavior(stateDataTableAluminiumColumn, resourcesPercent);
@@ -144,16 +155,17 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements Tab
 		updateResourcesColumnsPercentBehavior();
 	}
 
-	public void open(Country country) {
-		setCountry(country);
-		super.open();
-	}
+//	public void open(Country country) {
+//		setCountry(country);
+//		super.open();
+//	}
 
-	private void setCountry(Country country) {
+	public void setCountry(Country country) {
 		this.country = country;
 
 		setTitle("HOIIVUtils Buildings By State Window, Country: " + country.name());
 		stateList = FXCollections.observableArrayList(State.ownedStatesOfCountry(country));
+		System.out.println("1 - Country: " + country);
 	}
 
 	public Country country() {
