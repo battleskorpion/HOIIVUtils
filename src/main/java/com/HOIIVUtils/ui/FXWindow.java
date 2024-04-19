@@ -187,7 +187,6 @@ public interface FXWindow {
 //			if (Settings.DEV_MODE.enabled()) {
 //				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
 //			}
-			// return new SimpleObjectProperty<T>((T) propertyGetter.apply(cellData.getValue())); // ? Type safety: Unchecked cast from capture#6-of ? to TJava(16777761)
 			@SuppressWarnings("unchecked")
 			T result = (T) propertyGetter.apply(cellData.getValue());   // yap
 			return new SimpleObjectProperty<>(result);

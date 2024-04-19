@@ -1,6 +1,7 @@
 package com.HOIIVUtils.ui.menu;
 
 import com.HOIIVUtils.hoi4utils.Settings;
+import com.HOIIVUtils.hoi4utils.clausewitz_data.country.Country;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
 import com.HOIIVUtils.ui.HOIUtilsWindow;
 import com.HOIIVUtils.ui.console.ConsoleController;
@@ -17,6 +18,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import com.HOIIVUtils.ui.FXWindow;
 import com.HOIIVUtils.ui.buildings.BuildingsByCountryWindow;
@@ -28,6 +32,7 @@ import com.HOIIVUtils.ui.settings.SettingsController;
 
 import javax.swing.*;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MenuController extends Application implements FXWindow {
