@@ -21,7 +21,7 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 	Heightmap heightmap;
 	{   // todo temp
 		try {
-			heightmap = new Heightmap(new File("resources\\map\\heightmap.bmp"));
+			heightmap = new Heightmap(new File("\\resources\\map\\heightmap.bmp"));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
