@@ -8,7 +8,6 @@ import java.util.ArrayList;
 /*
  * Parser File new
  */
-// todo what is a unitnumber? do i need this
 public class Parser {
 	public static final String escape_backslash_regex = "\\\\";
 	public static final String escape_quote_regex = "\\\\\"";

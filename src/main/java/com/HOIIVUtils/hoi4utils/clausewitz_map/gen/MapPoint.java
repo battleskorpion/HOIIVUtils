@@ -39,16 +39,6 @@ public class MapPoint extends Point {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-//		if (this == obj) {
-//			return true;
-//		}
-//
-//		if (obj == null || getClass() != obj.getClass()) {
-//			return false;
-//		}
-//
-//		MapPoint other = (MapPoint) obj;
-//		return this.x == other.x && this.y == other.y;
 		if (obj instanceof MapPoint other) {
 			return this.x == other.x && y == other.y;
 		}

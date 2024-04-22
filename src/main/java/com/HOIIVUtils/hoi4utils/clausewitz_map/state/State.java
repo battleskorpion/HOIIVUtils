@@ -21,6 +21,8 @@ import java.util.function.Function;
 /**
  * Loads HOI4 State files, each instance represents a state as defined in "history/states"
  * Localizable: state name
+ *
+ * I apologize in advance.
  */
 public class State implements InfrastructureData, Localizable, Iterable<State>, Comparable<State> {
 	/* static */
@@ -335,6 +337,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 		dataFunctions.add(c -> c.stateInfrastructure.popAirportCapacityRatio());
 		/* todo better way to do this obv! plz fix :(
 		with (wrapper function that returns either or depndent on resourcesPerfcentages boolean value ofc */
+		// also if we're gonna have different resources able to load in down the line... it'll break this.
 		if (resourcePercentages) {
 			dataFunctions.add(s -> s.getResources().get("aluminum").amt());
 			dataFunctions.add(s -> s.getResources().get("chromium").amt());

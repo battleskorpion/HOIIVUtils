@@ -14,6 +14,9 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * SeedProbabilityMap, designed for GPU efficiency.
+ */
 public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 	double[][] seedProbabilityMap;      // y, x
 	double[][] cumulativeProbabilities;   // per x, inclusive of previous maps
@@ -47,7 +50,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 				if (x < getGlobalSize(0) && y < getGlobalSize(1)) {
 					int xyheight = _heightmap[y][x] & 0xFF;
 					int type = provinceType(xyheight); // is this bad here? probably.
-					_seedMap[y][x] = type == 0 ? 1.15 : 0.85;
+					_seedMap[y][x] = type == 0 ? 1.15 : 0.85;   // todo magic numbers :(
 					//_seedMap[y][x] = 1.0;
 //					result[i] = inA[i] + inB[i];
 //					if (x == 0) {
@@ -59,7 +62,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		};
 
 		// The group size must always be a ‘factor’ of the global range. So globalRange % groupSize == 0
-		// [prime number run bad with this impl, but thats fine bc we use specific multiples of 2, 4, 8 for the maps]
+		// [prime numbers run bad with this impl, but that's fine bc we use specific multiples of 2, 4, 8 for the maps]
 		Range range = Range.create2D(width, height);
 		kernel.execute(range);
 		kernel.dispose();
