@@ -43,11 +43,11 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		ProvinceGeneration provinceGeneration = new ProvinceGeneration();
 		provinceGeneration.generate(values.heightmapName);
 
-		try {
-			ImageIO.write(provinceGeneration.provinceMap, "bmp", new File("output.bmp"));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		provinceGeneration.writeProvinceMap();
+	}
+
+	public void writeProvinceMap() {
+		provinceMap.write();
 	}
 
 	private void generate() {
@@ -68,12 +68,12 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		executeProvinceDetermination();
 	}
 
-	private void generate(Heightmap heightmap) {
+	public void generate(Heightmap heightmap) {
 		this.heightmap = heightmap;
 		generate();
 	}
 
-	private void generate(String heightmapName) {
+	public void generate(String heightmapName) {
 		heightmap = loadHeightmap(heightmapName);
 		generate();
 	}
@@ -201,6 +201,10 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	 */
 	private int determineColor(int x, int xOffset, int y, int yOffset, Collection<MapPoint> mapPoints) {
 		return determineColor(x + xOffset, y + yOffset, mapPoints);
+	}
+
+	public ProvinceMap getProvinceMap() {
+		return provinceMap;
 	}
 
 	/**

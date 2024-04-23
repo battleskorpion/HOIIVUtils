@@ -2,7 +2,10 @@ package com.HOIIVUtils.hoi4utils.clausewitz_map.province;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 
+import javax.imageio.ImageIO;
 import java.awt.image.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Hashtable;
 
 public class ProvinceMap extends BufferedImage {
@@ -123,5 +126,20 @@ public class ProvinceMap extends BufferedImage {
 //				setRGB(x, y, values.rgb_white);
 //			}
 //		}
+	}
+
+    public void write() {
+	    try {
+		    ImageIO.write(this, "bmp", new File("output.bmp"));
+	    } catch (IOException e) {
+		    throw new RuntimeException(e);
+	    }
+    }
+
+	public int width() {
+		return getWidth();
+	}
+	public int height() {
+		return getHeight();
 	}
 }
