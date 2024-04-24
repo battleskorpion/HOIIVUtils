@@ -3,7 +3,6 @@ package com.HOIIVUtils.ui.map;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceGeneration;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceMap;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.values;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -13,12 +12,14 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import com.HOIIVUtils.ui.HOIUtilsWindow;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class MapGenerationWindow extends HOIUtilsWindow {
 
@@ -59,13 +60,23 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 	}
 
 	private void drawHeightmap() {
-		GraphicsContext gc = heightmapCanvas.getGraphicsContext2D();
+		drawImageOnCanvas(heightmapCanvas, heightmap.width(), heightmap.height(), heightmap::height_xy);
+	}
 
-		WritableImage wImage = new WritableImage(heightmap.width() / 4, heightmap.height() / 4);
+	private void drawImageOnCanvas(Canvas canvas, int imgWidth, int imgHeight,
+	                               BiFunction<Integer, Integer, Integer> rbg_supplier) {
+		drawImageOnCanvas(canvas, imgWidth, imgHeight, rbg_supplier, 4);
+	}
+
+	private void drawImageOnCanvas(Canvas canvas, int imgWidth, int imgHeight,
+	                               BiFunction<Integer, Integer, Integer> rbg_supplier, int zoom) {
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+
+		WritableImage wImage = new WritableImage(imgWidth / zoom, imgHeight / zoom);
 		PixelWriter pixelWriter = wImage.getPixelWriter();
 		for (int y = 0; y < wImage.getHeight(); y++) {
 			for (int x = 0; x < wImage.getWidth(); x++) {
-				int px = heightmap.height_xy(x * 4, y * 4);
+				int px = rbg_supplier.apply(x * zoom, y * zoom);
 				Color c = new Color(px, px, px);
 				pixelWriter.setArgb(x, y, c.getRGB());
 			}
@@ -74,19 +85,8 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 	}
 
 	private void drawProvinceMap() {
-		GraphicsContext gc = provinceCanvas.getGraphicsContext2D();
 		ProvinceMap map = provinceGeneration.getProvinceMap();
-
-		WritableImage wImage = new WritableImage(map.width() / 4, map.height() / 4);
-		PixelWriter pixelWriter = wImage.getPixelWriter();
-		for (int y = 0; y < wImage.getHeight(); y++) {
-			for (int x = 0; x < wImage.getWidth(); x++) {
-				int px = map.getRGB(x * 4, y * 4);
-				Color c = new Color(px);
-				pixelWriter.setArgb(x, y, c.getRGB());
-			}
-		}
-		gc.drawImage(wImage, 0, 0);
+		drawImageOnCanvas(provinceCanvas, map.width(), map.height(), map::getRGB);
 	}
 
 	@FXML void OnBrowseHeightmap() {
