@@ -1,5 +1,6 @@
 package com.HOIIVUtils.ui.map;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceGeneration;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceMap;
@@ -126,7 +127,8 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 	}
 
 	@FXML void onGenerateProvinces() {
-		provinceGeneration = new ProvinceGeneration();
+		ProvinceGenProperties properties = new ProvinceGenProperties(0, heightmap.width(), heightmap.height(), 200);
+		provinceGeneration = new ProvinceGeneration(properties);
 		provinceGeneration.generate(heightmap);
 
 		provinceGeneration.writeProvinceMap();

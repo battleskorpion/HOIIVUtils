@@ -1,5 +1,6 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_map.province;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.AbstractMapGeneration;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.MapPoint;
@@ -22,8 +23,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RejectedExecutionException;
 
+import static com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties.rgb_white;
 import static com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceGeneration.ForkColorDetermination.OFFSET_NOISE_MODIFIER;
-import static com.HOIIVUtils.hoi4utils.clausewitz_map.values.generationType;
 
 public class ProvinceGeneration extends AbstractMapGeneration {
 	public static final double NOISE_POLLING_FACTOR = 0.025;     // 0.005        // 0.025
@@ -36,12 +37,22 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	private Heightmap heightmap;
 	private SeedGeneration seedGeneration;
 	/** threadLimit = 0: max (use all processors/threads). */
-	private int threadLimit = 0;
+	private int threadLimit = 0;        // 0 for no limit
 	boolean adjProvinceByGraphConnectivity = false;
+	private ProvinceGenProperties properties;
+
+	private ProvinceGeneration() {
+		this.properties = new ProvinceGenProperties();
+	}
+
+	public ProvinceGeneration(ProvinceGenProperties properties) {
+		super();
+		this.properties = properties;
+	}
 
 	public static void main(String[] args) {
 		ProvinceGeneration provinceGeneration = new ProvinceGeneration();
-		provinceGeneration.generate(values.heightmapName);
+		provinceGeneration.generate("src\\main\\resources\\map\\heightmap.bmp");
 
 		provinceGeneration.writeProvinceMap();
 	}
@@ -53,12 +64,13 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	private void generate() {
 		/* create new image (map) */
 		provinceMap = new ProvinceMap(heightmap);
-		stateBorderMap = loadStateBorderMap(values.stateBordersName); // ! todo temp!!
+		// todo still temp!!!
+		stateBorderMap = loadStateBorderMap("src\\main\\resources\\map\\state_borders_none.bmp"); // ! todo temp!!
 		initLists();        // todo like hmmm more classes not sure
 
 		/* seeds generation */
 		SeedGeneration<MapPoint> seedGeneration;
-		if (generationType == ProvinceGenerationType.GRID_SEED) {
+		if (properties.generationType() == ProvinceGenerationType.GRID_SEED) {
 			seedGeneration = new GridSeedGeneration(heightmap);
 		} else {
 			seedGeneration = new ProbabilisticSeedGeneration(heightmap);
@@ -163,7 +175,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	 */
 	private static int determineColor(int x, int y, final Collection<MapPoint> seeds) {
 		// (default white)
-		int nearestColor = values.rgb_white;     // color of nearest seed (int value)
+		int nearestColor = rgb_white;     // color of nearest seed (int value)
 		int dist = Integer.MAX_VALUE;            // select a big number
 
 		// todo stream operation?
@@ -290,8 +302,8 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		 * Determine color for each point
 		 */
 		protected void computeDirectly() {
-			final int widthPerSeed = heightmap.width()  / values.numSeedsX;
-			final int heightPerSeed = heightmap.height() / values.numSeedsY;
+			final int widthPerSeed = heightmap.width()  / properties.numSeedsX();
+			final int heightPerSeed = heightmap.height() / properties.numSeedsY();
 			final int offsetPotential = 4;
 			System.out.println("run: " + startY + ", " + endY);
 
