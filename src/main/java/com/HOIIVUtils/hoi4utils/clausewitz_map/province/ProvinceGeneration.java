@@ -5,7 +5,6 @@ import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.AbstractMapGeneration;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.MapPoint;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.*;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.values;
 import com.opensimplex2.OpenSimplex2;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
