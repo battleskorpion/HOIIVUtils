@@ -1,9 +1,13 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_map.gen;
 
+import javafx.scene.image.Image;
+
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 //public class Heightmap extends BufferedImage {
 public class Heightmap {
@@ -22,8 +26,12 @@ public class Heightmap {
 		}
 	}
 
-	public Heightmap(File file) throws IOException {
+	public Heightmap(File file) throws IOException, IllegalArgumentException {
 		this(ImageIO.read(file));
+	}
+
+	public Heightmap(Path p) throws IOException, IllegalArgumentException {
+		this(p.toFile());
 	}
 
 	public int getArea() {

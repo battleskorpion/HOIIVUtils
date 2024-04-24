@@ -41,25 +41,6 @@ public class ProvinceMapPointsList {
 		mapPointsList[point.y][point.x] = point;
 	}
 
-//	/**
-//	 * @deprecated
-//	 * @param point point
-//	 * @return
-//	 */
-//	public MapPoint remove(MapPoint point) {
-//		return mapPointsList.get(point.y).remove(point.x);
-//	}
-//
-//	/**
-//	 * @deprecated
-//	 * @param x x-coord
-//	 * @param y y-coord
-//	 * @return
-//	 */
-//	public MapPoint remove(int x, int y) {
-//		return null;
-//	}
-
 	public void setRGB(int x, int y, int rgb) {
 		get(x, y).setRGB(rgb);
 	}

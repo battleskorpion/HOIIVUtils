@@ -197,6 +197,7 @@ public interface FXWindow {
 	/**
 	 * 	Update cell behavior within a column
 	 */
+	// todo why is T never used and we have it....
 	static <S, T extends TableCell<S, Double>> void updateColumnPercentBehavior(TableColumn<S, Double> column, boolean resourcesPercent) {
 		column.setCellFactory(col -> {
 			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();

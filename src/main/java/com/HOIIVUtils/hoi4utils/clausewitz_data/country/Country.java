@@ -94,6 +94,7 @@ public class Country implements InfrastructureData, Comparable<Country> {
 		dataFunctions.add(c -> c.infrastructure.popPerMilRatio());
 		dataFunctions.add(c -> c.infrastructure.popAirportCapacityRatio());
 		dataFunctions.add(c -> c.infrastructure.popPerStateRatio(c.numOwnedStates()));
+		// again, this resource code is not expandable. fix sometime :(
 		if (resourcePercentages) {
 			dataFunctions.add(Country::aluminum);
 			dataFunctions.add(Country::chromium);

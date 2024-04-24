@@ -111,6 +111,8 @@ public class BorderMapping<P extends MapPoint> {
     private void addToSeedListCache(int borderArea, int type, List<P> seedsOfType) {
         // Create map by border area if necessary
         seedListCache.computeIfAbsent(borderArea, k -> new HashMap<>());
+        // todo concurrent modification exception!!!!
+        // originating from (ProvinceGeneration$ForkColorDetermination.computeDirectly)
 
         // add seed collection to cache
         seedListCache.get(borderArea).put(type, seedsOfType);

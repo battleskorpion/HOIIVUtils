@@ -10,7 +10,7 @@ import org.apache.poi.ss.formula.functions.T;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
-// todo make interface?
+// todo rename this, its generic enough.
 public abstract class HOIUtilsWindow implements FXWindow {
 	private String fxmlResource;
 	private String title;

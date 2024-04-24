@@ -43,11 +43,11 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		ProvinceGeneration provinceGeneration = new ProvinceGeneration();
 		provinceGeneration.generate(values.heightmapName);
 
-		try {
-			ImageIO.write(provinceGeneration.provinceMap, "bmp", new File("output.bmp"));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		provinceGeneration.writeProvinceMap();
+	}
+
+	public void writeProvinceMap() {
+		provinceMap.write();
 	}
 
 	private void generate() {
@@ -68,12 +68,12 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		executeProvinceDetermination();
 	}
 
-	private void generate(Heightmap heightmap) {
-		this.heightmap = heightmap;     // todo can we optimize Heightmap since grayscale?
+	public void generate(Heightmap heightmap) {
+		this.heightmap = heightmap;
 		generate();
 	}
 
-	private void generate(String heightmapName) {
+	public void generate(String heightmapName) {
 		heightmap = loadHeightmap(heightmapName);
 		generate();
 	}
@@ -128,7 +128,8 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 			exc.printStackTrace();
 		}
 		if (adjProvinceByGraphConnectivity) {
-			ForkProvinceConnectivityDetermination forkProvinceConnectivityDetermination = new ForkProvinceConnectivityDetermination(points);
+			ForkProvinceConnectivityDetermination forkProvinceConnectivityDetermination
+					= new ForkProvinceConnectivityDetermination(points);
 			forkJoinPool.invoke(forkProvinceConnectivityDetermination);
 		}
 	}
@@ -148,10 +149,16 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	}
 
 	/**
-	 * determines color from closest seed to point x,y
-	 * @param x
-	 * @param y
-	 * @param seeds
+	 * Determines color from closest seed to point x,y.
+	 * <p>
+	 * This method adds no offset, so if variation is needed, offset should be added to the x/y
+	 * coordinates before calling this method, or by using the <code>determineColor</code> with offset method.
+	 * It is not checked whether the x- and y-coordinates are within a valid range, so that variation
+	 * still works near the map edges.
+	 * This method can be called any number of times with the same point. </p>
+	 * @param x x-coordiate of point
+	 * @param y y-coordinate of point
+	 * @param seeds collection of map seeds to use when determining color of this point by distance.
 	 * @return
 	 */
 	private static int determineColor(int x, int y, final Collection<MapPoint> seeds) {
@@ -177,8 +184,27 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		return nearestColor;
 	}
 
+	/**
+	 * Determines color from closest seed to point x,y.
+	 * <p>
+	 * The x- and y-offset is for adding variation to the province the point belongs to. The color will be
+	 * determined relative to the closest seed to the offset point, but can be assigned to the original xy point.
+	 * It is not checked whether the x- and y-coordinates, or the offset coordinates, are within a valid range,
+	 * so that variation still works near the map edges.
+	 * This method can be called any number of times with the same point. </p>
+	 * @param x x-coordiate of point
+	 * @param xOffset
+	 * @param y y-coordinate of point
+	 * @param yOffset
+	 * @param mapPoints collection of map seeds to use when determining color of this point by distance with offset.
+	 * @return
+	 */
 	private int determineColor(int x, int xOffset, int y, int yOffset, Collection<MapPoint> mapPoints) {
 		return determineColor(x + xOffset, y + yOffset, mapPoints);
+	}
+
+	public ProvinceMap getProvinceMap() {
+		return provinceMap;
 	}
 
 	/**

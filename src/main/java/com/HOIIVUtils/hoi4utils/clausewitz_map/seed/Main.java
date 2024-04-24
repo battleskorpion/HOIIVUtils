@@ -5,6 +5,7 @@ import com.aparapi.Range;
 
 import java.util.Arrays;
 
+// todo I think this must be for testing.
 public class Main {
     public static void main(String[] args) {
         int size = 1048576;
