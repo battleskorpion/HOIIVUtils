@@ -1,8 +1,8 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_map.seed;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.MapPoint;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.values;
 
 import java.util.Random;
 
@@ -16,10 +16,10 @@ public class GridSeedGeneration extends AbstractSeedGeneration<MapPoint> {
 	private final int gridCenterYFloor;
 	private final int gridCenterXFloor;
 
-	public GridSeedGeneration(Heightmap heightmap) {
-		super(heightmap);
-		gridHeight = (double) heightmap.height() / values.numSeedsY;
-		gridWidth = (double) heightmap.width() / values.numSeedsX;
+	public GridSeedGeneration(ProvinceGenProperties properties, Heightmap heightmap) {
+		super(heightmap, properties);
+		gridHeight = (double) heightmap.height() / properties.numSeedsY();
+		gridWidth = (double) heightmap.width() / properties.numSeedsX();
 		gridHeightFloor = (int) Math.floor(gridHeight);
 		gridWidthFloor = (int) Math.floor(gridWidth);
 		gridCenterY = gridHeight / 2.0;
@@ -49,11 +49,11 @@ public class GridSeedGeneration extends AbstractSeedGeneration<MapPoint> {
 
 				/* heightmap color stuff */
 				int heightmapHeight = heightmap.height_xy(seedX, seedY);
-				int rgb = mapPointColorGeneration(seedX, seedY, heightmapHeight); 			// rgb color int value
+				int rgb = mapPointColorGeneration(seedX, seedY, heightmapHeight, properties.seaLevel()); 			// rgb color int value
 
 				/* add point to points array */
 				MapPoint mapPoint;
-				int type = provinceType(heightmapHeight); 	// 0: land
+				int type = provinceType(heightmapHeight, properties.seaLevel()); 	// 0: land
 															// 1: sea
 				mapPoint = new MapPoint(seedX, seedY, type);
 

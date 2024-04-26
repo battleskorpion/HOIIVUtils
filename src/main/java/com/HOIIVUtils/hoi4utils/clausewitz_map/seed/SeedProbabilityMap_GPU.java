@@ -1,5 +1,6 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_map.seed;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_map.SeedGenProperties;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.AbstractMapGeneration;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.MapPoint;
@@ -26,13 +27,15 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 	int pointNumber = 0;
 //	ForkJoinPool fjpool;
 	double probabilitySum = 0;
+	SeedGenProperties properties;
 
-	public SeedProbabilityMap_GPU(Heightmap heightmap) {
+	public SeedProbabilityMap_GPU(Heightmap heightmap, SeedGenProperties properties) {
 		this.heightmap = heightmap;
 		this.width = heightmap.width();
 		this.height = heightmap.height();
 		seedProbabilityMap = new double[height][width]; // y, x
 		cumulativeProbabilities = new double[height][width];
+		this.properties = properties;
 //		fjpool = new ForkJoinPool();
 
 		initializeProbabilityMap();
@@ -49,7 +52,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 				int y = getGlobalId(1);
 				if (x < getGlobalSize(0) && y < getGlobalSize(1)) {
 					int xyheight = _heightmap[y][x] & 0xFF;
-					int type = provinceType(xyheight); // is this bad here? probably.
+					int type = provinceType(xyheight, properties.seaLevel()); // is this bad here? probably.
 					_seedMap[y][x] = type == 0 ? 1.15 : 0.85;   // todo magic numbers :(
 					//_seedMap[y][x] = 1.0;
 //					result[i] = inA[i] + inB[i];
@@ -290,7 +293,8 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		// Find the first MapPoint where cumulative probability >= p
 		System.out.println("cumulative:" + cumulativeP + ", " + cumulativeProbabilities[cumulativeP.y][cumulativeP.x]);
 //		System.out.println("cumulative1:" + Arrays.deepToString(cumulativeProbabilities));
-		MapPoint mp = new MapPoint(cumulativeP.x, cumulativeP.y, provinceType(heightmap.height_xy(cumulativeP.x, cumulativeP.y)));
+		MapPoint mp = new MapPoint(cumulativeP.x, cumulativeP.y, provinceType(heightmap.height_xy(cumulativeP.x, cumulativeP.y),
+				properties.seaLevel()));
 //		if (mp == null) {
 //			System.out.println("bad probability? " + p);    // todo
 //			return getPoint(random);

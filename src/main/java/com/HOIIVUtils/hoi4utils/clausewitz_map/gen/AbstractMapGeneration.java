@@ -1,12 +1,16 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_map.gen;
 
-import com.HOIIVUtils.hoi4utils.clausewitz_map.values;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.MapGenProperties;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
 
 import java.awt.*;
 import java.util.Random;
 
 public abstract class AbstractMapGeneration {
-	protected static int mapPointColorGeneration(int seedX, int seedY, int heightmapHeight) {
+	public AbstractMapGeneration() {
+	}
+
+	protected int mapPointColorGeneration(int seedX, int seedY, int heightmapHeight, int seaLevel) {
 		int rgb;                        // rgb color int value
 //		int stateMapColor;
 		Color color;
@@ -23,7 +27,7 @@ public abstract class AbstractMapGeneration {
 		aa:
 		do {
 			/* prov color */
-			if (heightmapHeight < values.HEIGHTMAP_SEA_LEVEL) {
+			if (heightmapHeight < seaLevel) {
 				// generate new color until unique color generated (color does not exist already)
 				color = new Color(random.nextInt(64), random.nextInt(64), random.nextInt(64));
 			}
@@ -54,8 +58,8 @@ public abstract class AbstractMapGeneration {
 		return rgb;
 	}
 
-	protected static int provinceType(int heightmapHeight) {
-		if (heightmapHeight < values.HEIGHTMAP_SEA_LEVEL) {
+	protected int provinceType(int heightmapHeight, int seaLevel) {
+		if (heightmapHeight < seaLevel) {
 			return 1; 	// sea
 		}
 		return 0; 		// land

@@ -1,19 +1,17 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_map;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceGenerationType;
-import org.apache.commons.math3.util.MathArrays;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class ProvinceGenProperties {
+public class ProvinceGenProperties implements MapGenProperties, SeedGenProperties {
     protected ProvinceGenerationType generationType;	//dynamic, GRID_SEED, PROBABILISTIC
-    private byte HEIGHTMAP_SEA_LEVEL = 45;       //95;
+    private byte HEIGHTMAP_SEA_LEVEL; // = 45    //95;
     //public static final int SEA_LEVEL_INT_RGB = ((SEA_LEVEL_RGB.getRed() << 8) + SEA_LEVEL_RGB.getGreen()) << 8 + SEA_LEVEL_RGB.getBlue();
-    protected int imageWidth = 4608; 	// 1024, 512, 256 works	// 5632 - default	// 4608 nad
-    protected int imageHeight = 2816;	// 1024, 512, 256 works	// 2048 - default	// 2816 nad
+    protected int imageWidth; 	// 1024, 512, 256 works	// 5632 - default	// 4608 nad
+    protected int imageHeight;	// 1024, 512, 256 works	// 2048 - default	// 2816 nad
     protected int numSeedsY = 64;
     protected int numSeedsX = 80;
 
@@ -22,9 +20,6 @@ public class ProvinceGenProperties {
         rgb_white = Color.white.getRed();
         rgb_white = (rgb_white << 8) + Color.white.getGreen();
         rgb_white = (rgb_white << 8) + Color.white.getBlue();
-    }
-
-    public ProvinceGenProperties() {
     }
 
     public ProvinceGenProperties(int seaLevel, int imageWidth, int imageHeight, int numSeedsX, int numSeedsY) {
@@ -140,6 +135,7 @@ public class ProvinceGenProperties {
     public int seaLevel() {
         return HEIGHTMAP_SEA_LEVEL;
     }
+
     public int seaLevel_INT_RGB() {
         Color SEA_LEVEL_RGB = seaLevel_RGB();
         return ((SEA_LEVEL_RGB.getRed() << 8) + SEA_LEVEL_RGB.getGreen() << 8) + SEA_LEVEL_RGB.getBlue();

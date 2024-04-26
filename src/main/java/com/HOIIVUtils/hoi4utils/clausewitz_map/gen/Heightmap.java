@@ -57,6 +57,12 @@ public class Heightmap {
 		return heightmap.clone();
 	}
 
+    public int height_xy_INT_RGB(int x, int y) {
+		int height_xy = heightmap[y][x] & 0xFF;
+		Color heightColor = new Color(height_xy, height_xy, height_xy);
+		return heightColor.getRGB();
+    }
+
 //	/**
 //	 * Constructs a {@code Heightmap} of one of the predefined
 //	 * image types:

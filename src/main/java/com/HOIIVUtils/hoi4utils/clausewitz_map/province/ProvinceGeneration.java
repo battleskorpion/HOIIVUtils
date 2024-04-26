@@ -38,14 +38,13 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	/** threadLimit = 0: max (use all processors/threads). */
 	private int threadLimit = 0;        // 0 for no limit
 	boolean adjProvinceByGraphConnectivity = false;
-	private ProvinceGenProperties properties;
+	ProvinceGenProperties properties;
 
 	private ProvinceGeneration() {
-		this.properties = new ProvinceGenProperties();
+		this.properties = new ProvinceGenProperties(95, 4608, 2816);
 	}
 
 	public ProvinceGeneration(ProvinceGenProperties properties) {
-		super();
 		this.properties = properties;
 	}
 
@@ -70,9 +69,9 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		/* seeds generation */
 		SeedGeneration<MapPoint> seedGeneration;
 		if (properties.generationType() == ProvinceGenerationType.GRID_SEED) {
-			seedGeneration = new GridSeedGeneration(heightmap);
+			seedGeneration = new GridSeedGeneration(properties, heightmap);
 		} else {
-			seedGeneration = new ProbabilisticSeedGeneration(heightmap);
+			seedGeneration = new ProbabilisticSeedGeneration(heightmap, properties);
 		}
 		seedGeneration.generate(stateMapList, stateBorderMap);
 
@@ -312,7 +311,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 						int rgb;
 						int heightmapHeight = heightmap.height_xy(x, y);
 						int stateBorderValue = stateBorderMap.getRGB(x, y);
-						int type = provinceType(heightmapHeight);
+						int type = provinceType(heightmapHeight, properties.seaLevel());
 
 						int xOffset = offsetWithNoise(offsetPotential, seed, x, y);    //TODO work on values
 						int yOffset = offsetWithNoise(offsetPotential, seed, x, y);
