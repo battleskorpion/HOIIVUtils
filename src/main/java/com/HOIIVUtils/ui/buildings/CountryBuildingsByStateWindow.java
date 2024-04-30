@@ -60,6 +60,7 @@ public class CountryBuildingsByStateWindow extends HOIUtilsWindow implements Tab
 	/**
 	 * This constructor is used internally by javafx.
 	 * Use {@link #CountryBuildingsByStateWindow()} to create a new instance.
+	 * Then call {@link #open(Object...)} to set the country.
 	 *
 	 * @param country
 	 */

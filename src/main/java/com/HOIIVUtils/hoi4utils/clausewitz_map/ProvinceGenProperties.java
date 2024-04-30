@@ -43,6 +43,10 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
         this.generationType = generationType;
     }
 
+    public ProvinceGenProperties(ProvinceGenProperties properties) {
+        this.copy(properties);
+    }
+
     public ProvinceGenProperties(int seaLevel, int imageWidth, int imageHeight, int numSeeds) {
         this(ProvinceGenerationType.GRID_SEED, seaLevel, imageWidth, imageHeight, numSeeds);
     }
@@ -89,9 +93,7 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
 
-        int[] solution = solveNumSeedsXY(imageWidth, imageHeight, numSeeds);
-        this.numSeedsY = solution[0];
-        this.numSeedsX = solution[1];
+        setNumSeeds(numSeeds);
     }
 
     private static int[] solveNumSeedsXY(double imageWidth, double imageHeight, int numSeeds) {
@@ -185,6 +187,12 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
         this.numSeedsX = numSeedsX;
     }
 
+    public void setNumSeeds(int numSeeds) {
+        int[] solution = solveNumSeedsXY(imageWidth, imageHeight, numSeeds);
+        this.numSeedsY = solution[0];
+        this.numSeedsX = solution[1];
+    }
+
     public void setSeaLevel(int seaLevel) {
         this.HEIGHTMAP_SEA_LEVEL = (byte) seaLevel;
     }
@@ -193,5 +201,12 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
         this.HEIGHTMAP_SEA_LEVEL = (byte) seaLevel.getRed();
     }
 
+    public void copy(ProvinceGenProperties propertiesUpdated) {
+        this.HEIGHTMAP_SEA_LEVEL = propertiesUpdated.HEIGHTMAP_SEA_LEVEL;
+        this.imageWidth = propertiesUpdated.imageWidth;
+        this.imageHeight = propertiesUpdated.imageHeight;
+        this.numSeedsX = propertiesUpdated.numSeedsX;
+        this.numSeedsY = propertiesUpdated.numSeedsY;
+    }
 }
 

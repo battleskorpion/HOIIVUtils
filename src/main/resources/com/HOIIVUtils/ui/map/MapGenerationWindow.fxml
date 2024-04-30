@@ -100,7 +100,7 @@
                                     </AnchorPane>
                                 </content>
                               </ScrollPane>
-                              <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="239.0" text="Map Generation Settings" />
+                              <Button mnemonicParsing="false" onAction="#onOpenProvinceGenSettingsWindow" prefHeight="25.0" prefWidth="239.0" text="Map Generation Settings" />
                            </children>
                         </GridPane>
                      </children>

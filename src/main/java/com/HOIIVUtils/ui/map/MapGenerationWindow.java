@@ -135,4 +135,8 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 		provinceGeneration.writeProvinceMap();
 		drawProvinceMap();
 	}
+
+	@FXML void onOpenProvinceGenSettingsWindow() {
+		new MapGenerationSettingsWindow().open(properties);
+	}
 }

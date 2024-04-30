@@ -45,6 +45,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		final double[][] _seedMap = new double[height][width];
 //		final double[] _cumulativeProbabilities = new double[height];
 		final byte[][] _heightmap = heightmap.snapshot();
+		final int seaLevel = properties.seaLevel();   // necessary as can not use interface related call in kernel
 		Kernel kernel = new Kernel() {
 			@Override
 			public void run() {
@@ -52,7 +53,8 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 				int y = getGlobalId(1);
 				if (x < getGlobalSize(0) && y < getGlobalSize(1)) {
 					int xyheight = _heightmap[y][x] & 0xFF;
-					int type = provinceType(xyheight, properties.seaLevel()); // is this bad here? probably.
+					//int type = provinceType(xyheight, seaLevel); // is this bad here? probably.
+					int type = xyheight < seaLevel ? 0 : 1;
 					_seedMap[y][x] = type == 0 ? 1.15 : 0.85;   // todo magic numbers :(
 					//_seedMap[y][x] = 1.0;
 //					result[i] = inA[i] + inB[i];
@@ -243,6 +245,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		// Reconstruct the result matrix
 		double[][] result = new double[rows][cols];
 		double[][] finalTotals = totals;
+		//System.out.println(Arrays.deepToString(finalTotals));
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 //				int finalI = i;
