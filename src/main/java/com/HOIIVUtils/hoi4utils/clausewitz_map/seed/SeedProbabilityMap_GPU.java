@@ -210,8 +210,17 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		add value[gid - ([gid % 2^(index)] + 1)] to value[gid]
 		~12.8m array -> 24 iterations
 		 */
+		// Constants
+		int GRANULARITY = 8; // Number of reductions per thread
+		final int rsize = _sdata.length;
+
+		// Buffers
 		double[] bufferA = _sdata.clone();
 		double[] bufferB = new double[bufferA.length];
+
+		// Range calculation
+		int workSize = (rsize + GRANULARITY - 1) / GRANULARITY;
+
 		for (int i = 0;; i++) {
 			final int pow_2_i = 1 << i;
 			final double[] currentBuffer = (i % 2 == 0) ? bufferA : bufferB;
@@ -220,21 +229,28 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 			Kernel reduceKernel = new Kernel() {
 				@Override
 				public void run() {
-					int gid = getGlobalId();
-					if (gid % (pow_2_i << 1) >= pow_2_i)
-						nextBuffer[gid] = currentBuffer[gid] + currentBuffer[gid - (gid % pow_2_i + 1)];
-					else
-						nextBuffer[gid] = currentBuffer[gid];
+					int workId = getGlobalId();
+					int gidBase = workId * GRANULARITY;
+					for (int j = 0; j < GRANULARITY; j++) {
+						int gid = gidBase + j;
+						if (gid >= rsize) break;
+
+						if (gid % (pow_2_i << 1) >= pow_2_i)
+							nextBuffer[gid] = currentBuffer[gid] + currentBuffer[gid - (gid % pow_2_i + 1)];
+						else
+							nextBuffer[gid] = currentBuffer[gid];
+					}
 				}
 			};
 
-			reduceKernel.execute(Range.create(bufferA.length));
+			reduceKernel.execute(Range.create(workSize));
 			reduceKernel.dispose();
 
 			System.out.println("reducing iteration: " + i);
 			System.out.println("reducing arr: " + nextBuffer[0] + ", " + nextBuffer[1] + ",.. " + nextBuffer[size - 1]);
 			if (pow_2_i >= bufferA.length) break;
 		}
+
 		// Use the final buffer result
 		double[] cumulativeTotals = (int) (Math.log(bufferA.length) / Math.log(2)) % 2 == 0 ? bufferA : bufferB;
 
