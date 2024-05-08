@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22-ea+16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.map.MapGenerationWindow">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.map.MapGenerationWindow">
    <children>
       <TabPane layoutX="14.0" layoutY="8.0" prefHeight="330.0" prefWidth="477.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
@@ -24,9 +24,9 @@
                      <children>
                         <GridPane prefHeight="293.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.0" minWidth="40.0" prefWidth="355.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="45.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="240.0" minWidth="20.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="40.0" prefWidth="355.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="20.0" prefWidth="85.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
@@ -35,8 +35,11 @@
                           </rowConstraints>
                            <children>
                               <Label text="Heightmap file:" />
-                              <TextField maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
-                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" GridPane.columnIndex="2" />
+                              <TextField fx:id="heightmapTextField" maxWidth="1.7976931348623157E308" onAction="#onEnterHeightmap" GridPane.columnIndex="1">
+                                 <GridPane.margin>
+                                    <Insets />
+                                 </GridPane.margin></TextField>
+                              <Button fx:id="browseHeightmapButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnBrowseHeightmap" text="Browse" GridPane.columnIndex="2" />
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
                               <ScrollPane prefHeight="36.0" prefWidth="413.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
                                 <content>
@@ -71,22 +74,33 @@
                      <children>
                         <GridPane layoutX="152.0" layoutY="96.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="485.0" minWidth="10.0" prefWidth="406.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.0" minWidth="10.0" prefWidth="194.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="277.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="146.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.0" minWidth="10.0" prefWidth="177.0" />
                           </columnConstraints>
                           <rowConstraints>
-                            <RowConstraints maxHeight="202.0" minHeight="0.0" prefHeight="60.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="202.0" minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="308.0" minHeight="9.0" prefHeight="236.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="254.0" vgrow="ALWAYS" />
                             <RowConstraints maxHeight="321.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Button maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Generate" GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
+                              <Button fx:id="provinceGenerationButton" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#onGenerateProvinces" prefHeight="25.0" prefWidth="100.0" text="Generate" GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
                                  <GridPane.margin>
                                     <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                  </GridPane.margin>
                               </Button>
-                              <ChoiceBox maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" />
+                              <ChoiceBox maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.hgrow="SOMETIMES" />
+                              <ScrollPane prefHeight="229.0" prefWidth="379.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+                                <content>
+                                  <AnchorPane>
+                                       <children>
+                                          <Canvas fx:id="provinceCanvas" height="258.0" width="529.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </ScrollPane>
+                              <Button mnemonicParsing="false" onAction="#onOpenProvinceGenSettingsWindow" prefHeight="25.0" prefWidth="239.0" text="Map Generation Settings" />
                            </children>
                         </GridPane>
                      </children>

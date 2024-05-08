@@ -20,7 +20,7 @@ import java.util.stream.Stream;
  */
 public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 	double[][] seedProbabilityMap;      // y, x
-	double[][] cumulativeProbabilities;   // per x, inclusive of previous maps
+	double[][] cumulativeProbabilities;   // per x, inclusive of previous maps // todo this comment makes no sense
 	final Heightmap heightmap;
 	final int width;
 	final int height;
@@ -190,7 +190,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		int cols = matrix[0].length;
 		int size = rows * cols;
 		final double[] _sdata = new double[size];
-		final int count = 3;
+		//final int count = 3;        // todo 3? no.
 
 		// Flatten the matrix into a 1D array
 		System.arraycopy(Stream.of(matrix)
@@ -198,67 +198,50 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 				.flatMapToDouble(Arrays::stream)
 				.toArray(),
 				0, _sdata, 0, size);
+		System.out.println("cumulative reduce array size: " + size);
+		System.out.println("arr:" + _sdata[0] + ", " + _sdata[1]);
 
 		// Initialize totals array
-		double[][] totals = new double[count][size];
+		double[][] values = new double[rows][cols];
 
 		/*
-	    map phase
-	     */
-		final double[][] kernelTotals = totals;
-		Kernel mapKernel = new Kernel() {
-			@Override
-			public void run() {
-				int gid = getGlobalId();
-				double value = _sdata[gid];
-				kernelTotals[0][gid] = value;
-			}
-		};
-		mapKernel.execute(Range.create(size));
-		mapKernel.dispose();
-		totals = kernelTotals;
+		reduce phase
+		if gid % 2^(index + 1) >= 2^(index)
+		add value[gid - ([gid % 2^(index)] + 1)] to value[gid]
+		~12.8m array -> 24 iterations
+		 */
+		double[] cumulativeTotals = _sdata;
+		for (int i = 0;; i++) {
+			final double[] currentTotals = cumulativeTotals;
+			final double[] nextTotals = currentTotals.clone();
+			final int pow_2_i = 1 << i;
 
-	    /*
-	    reduce phase
-	     */
-		while (size > 1) {
-			int nextSize = size / 2;
-			final double[][] currentTotals = totals;
-			final double[][] nextTotals = new double[count][nextSize];
 			Kernel reduceKernel = new Kernel() {
 				@Override
 				public void run() {
 					int gid = getGlobalId();
-					for (int index = 0; index < count; index++) {
-						nextTotals[index][gid] = currentTotals[index][gid * 2] + currentTotals[index][gid * 2 + 1];
-					}
+					if (gid % (pow_2_i << 1) >= pow_2_i)
+						nextTotals[gid] += currentTotals[gid - (gid % pow_2_i + 1)];
+					else nextTotals[gid] += 0;
 				}
 			};
-			reduceKernel.execute(Range.create(nextSize));
+			reduceKernel.execute(Range.create(size));
 			reduceKernel.dispose();
-
-			totals = nextTotals;
-			size = nextSize;
+			cumulativeTotals = nextTotals;
+			System.out.println("reducing iteration: " + i);
+			System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
+			if (pow_2_i >= size) break;
 		}
-		assert size == 1;
 
-		// Reconstruct the result matrix
+//		// Reconstruct the result matrix
 		double[][] result = new double[rows][cols];
-		double[][] finalTotals = totals;
-		//System.out.println(Arrays.deepToString(finalTotals));
 		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-//				int finalI = i;
-//				int finalJ = j;
-//				result[i][j] = IntStream.range(0, count)
-//						.mapToDouble(index -> finalTotals[index][finalI * cols + finalJ]) // Use finalTotals here
-//						.sum();
-				result[i][j] = finalTotals[0][i * cols + j];
-			}
+            System.arraycopy(cumulativeTotals, i * cols, result[i], 0, cols);
 		}
 
 		// Uncomment the next line if you want to print the result
-//		System.out.println(Arrays.deepToString(result));
+		//System.out.println(Arrays.deepToString(result));
+		System.out.println("arr res:" + result[0][0] + ", " + result[0][1]);
 		return result;
 	}
 
@@ -345,13 +328,21 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 	}
 
 	public Point findCumulativeProbabilityIndex(double p) {
-		Optional<Point> result = IntStream.range(0, cumulativeProbabilities.length)
-				.boxed()
-				.flatMap(i -> IntStream.range(0, cumulativeProbabilities[i].length)
-						.filter(j -> Double.compare(cumulativeProbabilities[i][j], p) >= 0)
-						.mapToObj(j -> new Point(i, j)))
-				.findFirst();
-
-		return result.orElse(null);
+//		Optional<Point> result = IntStream.range(0, cumulativeProbabilities.length)
+//				.boxed()
+//				.flatMap(i -> IntStream.range(0, cumulativeProbabilities[i].length)
+//						.filter(j -> Double.compare(cumulativeProbabilities[i][j], p) >= 0)
+//						.mapToObj(j -> new Point(i, j)))
+//				.findFirst();
+//
+//		return result.orElse(null);
+		for (int y = 0; y < cumulativeProbabilities.length; y++) {
+			for (int x = 0; x < cumulativeProbabilities[y].length; x++) {
+				if (Double.compare(cumulativeProbabilities[y][x], p) >= 0) {
+					return new Point(x, y);
+				}
+			}
+		}
+		return null;
 	}
 }
