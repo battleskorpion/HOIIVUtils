@@ -210,33 +210,28 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		add value[gid - ([gid % 2^(index)] + 1)] to value[gid]
 		~12.8m array -> 24 iterations
 		 */
-		double[] bufferA = _sdata.clone();
-		double[] bufferB = new double[bufferA.length];
+		double[] cumulativeTotals = _sdata;
 		for (int i = 0;; i++) {
+			final double[] currentTotals = cumulativeTotals;
+			final double[] nextTotals = currentTotals.clone();
 			final int pow_2_i = 1 << i;
-			final double[] currentBuffer = (i % 2 == 0) ? bufferA : bufferB;
-			final double[] nextBuffer = (i % 2 == 0) ? bufferB : bufferA;
 
 			Kernel reduceKernel = new Kernel() {
 				@Override
 				public void run() {
 					int gid = getGlobalId();
 					if (gid % (pow_2_i << 1) >= pow_2_i)
-						nextBuffer[gid] = currentBuffer[gid] + currentBuffer[gid - (gid % pow_2_i + 1)];
-					else
-						nextBuffer[gid] = currentBuffer[gid];
+						nextTotals[gid] += currentTotals[gid - (gid % pow_2_i + 1)];
+					else nextTotals[gid] += 0;
 				}
 			};
-
-			reduceKernel.execute(Range.create(bufferA.length));
+			reduceKernel.execute(Range.create(size));
 			reduceKernel.dispose();
-
+			cumulativeTotals = nextTotals;
 			System.out.println("reducing iteration: " + i);
-			System.out.println("reducing arr: " + nextBuffer[0] + ", " + nextBuffer[1] + ",.. " + nextBuffer[size - 1]);
-			if (pow_2_i >= bufferA.length) break;
+			System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
+			if (pow_2_i >= size) break;
 		}
-		// Use the final buffer result
-		double[] cumulativeTotals = (int) (Math.log(bufferA.length) / Math.log(2)) % 2 == 0 ? bufferA : bufferB;
 
 //		// Reconstruct the result matrix
 		double[][] result = new double[rows][cols];
