@@ -211,27 +211,47 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		~12.8m array -> 24 iterations
 		 */
 		double[] cumulativeTotals = _sdata;
-		for (int i = 0;; i++) {
-			final double[] currentTotals = cumulativeTotals;
-			final double[] nextTotals = currentTotals.clone();
-			final int pow_2_i = 1 << i;
-
-			Kernel reduceKernel = new Kernel() {
-				@Override
-				public void run() {
-					int gid = getGlobalId();
+		final int maxIterations = (int) Math.ceil(Math.log(size) / Math.log(2));
+		Kernel reduceKernel = new Kernel() {
+			@Override
+			public void run() {
+				int gid = getGlobalId();
+				for (int i = 0; i < maxIterations; i++) {
+					int pow_2_i = 1 << i;
+					//int gid = getGlobalId();
 					if (gid % (pow_2_i << 1) >= pow_2_i)
 						nextTotals[gid] += currentTotals[gid - (gid % pow_2_i + 1)];
 					else nextTotals[gid] += 0;
+
+					cumulativeTotals = nextTotals;
+					System.out.println("reducing iteration: " + i);
+					System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
 				}
-			};
-			reduceKernel.execute(Range.create(size));
-			reduceKernel.dispose();
-			cumulativeTotals = nextTotals;
-			System.out.println("reducing iteration: " + i);
-			System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
-			if (pow_2_i >= size) break;
-		}
+			}
+		};
+		reduceKernel.execute(Range.create(size));
+		reduceKernel.dispose();
+//		for (int i = 0;; i++) {
+//			final double[] currentTotals = cumulativeTotals;
+//			final double[] nextTotals = currentTotals.clone();
+//			final int pow_2_i = 1 << i;
+//
+//			Kernel reduceKernel = new Kernel() {
+//				@Override
+//				public void run() {
+//					int gid = getGlobalId();
+//					if (gid % (pow_2_i << 1) >= pow_2_i)
+//						nextTotals[gid] += currentTotals[gid - (gid % pow_2_i + 1)];
+//					else nextTotals[gid] += 0;
+//				}
+//			};
+//			reduceKernel.execute(Range.create(size));
+//			reduceKernel.dispose();
+//			cumulativeTotals = nextTotals;
+//			System.out.println("reducing iteration: " + i);
+//			System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
+//			if (pow_2_i >= size) break;
+//		}
 
 //		// Reconstruct the result matrix
 		double[][] result = new double[rows][cols];
