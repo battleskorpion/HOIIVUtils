@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class MapGenerationWindow extends HOIUtilsWindow {
 

@@ -108,6 +108,33 @@ public class BorderMapping<P extends MapPoint> {
         return seedsOfType;
     }
 
+    /**
+     * Returns a list of seeds corresponding to all border areas and types (all seeds).
+     * @return null if the border area did not exist, or
+     */
+    public List<P> seedsList() {
+        List<P> seeds = new ArrayList<>();
+        for (SeedsSet<P> seedSet : borderMapSeeds.values()) {
+            seeds.addAll(seedSet);
+        }
+        return seeds;
+    }
+
+    public List<Integer> getSeedsCorrelatingBorderAreas(List<P> seeds) {
+        List<Integer> borderAreas = new ArrayList<>();
+
+        for (P seed : seeds) {
+            for (Map.Entry<Integer, SeedsSet<P>> entry : borderMapSeeds.entrySet()) {
+                if (entry.getValue().contains(seed)) {
+                    borderAreas.add(entry.getKey());
+                    break;
+                }
+            }
+        }
+
+        return borderAreas;
+    }
+
     private void addToSeedListCache(int borderArea, int type, List<P> seedsOfType) {
         // Create map by border area if necessary
         seedListCache.computeIfAbsent(borderArea, k -> new HashMap<>());

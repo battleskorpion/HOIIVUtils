@@ -210,8 +210,11 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		add value[gid - ([gid % 2^(index)] + 1)] to value[gid]
 		~12.8m array -> 24 iterations
 		 */
-		double[] cumulativeTotals = _sdata;
+		final double[] cumulativeTotals = _sdata;
 		final int maxIterations = (int) Math.ceil(Math.log(size) / Math.log(2));
+		System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
+		// this is not neccessarily the most efficient algo, but.
+		// todo uHhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh (weird output? or somewhere else?)
 		Kernel reduceKernel = new Kernel() {
 			@Override
 			public void run() {
@@ -220,17 +223,20 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 					int pow_2_i = 1 << i;
 					//int gid = getGlobalId();
 					if (gid % (pow_2_i << 1) >= pow_2_i)
-						nextTotals[gid] += currentTotals[gid - (gid % pow_2_i + 1)];
-					else nextTotals[gid] += 0;
+						cumulativeTotals[gid] += cumulativeTotals[gid - (gid % pow_2_i + 1)];
+					else cumulativeTotals[gid] += 0;
 
-					cumulativeTotals = nextTotals;
-					System.out.println("reducing iteration: " + i);
-					System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
+					////cumulativeTotals = nextTotals;
+					//System.out.println("reducing iteration: " + i);
+					//System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
+
+					this.localBarrier();    // todo needed?
 				}
 			}
 		};
 		reduceKernel.execute(Range.create(size));
 		reduceKernel.dispose();
+		System.out.println("reduced arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
 //		for (int i = 0;; i++) {
 //			final double[] currentTotals = cumulativeTotals;
 //			final double[] nextTotals = currentTotals.clone();

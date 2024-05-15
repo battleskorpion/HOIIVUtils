@@ -1,13 +1,16 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_map;
 
-import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceGenerationType;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceDeterminationType;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.SeedGenType;
 
 import java.awt.*;
+import java.lang.annotation.Native;
 import java.util.Arrays;
 import java.util.Comparator;
 
 public class ProvinceGenProperties implements MapGenProperties, SeedGenProperties {
-    protected ProvinceGenerationType generationType;	//dynamic, GRID_SEED, PROBABILISTIC
+    protected SeedGenType generationType;	//dynamic, GRID_SEED, PROBABILISTIC
+    protected ProvinceDeterminationType determinationType;
     private byte HEIGHTMAP_SEA_LEVEL; // = 45    //95;
     //public static final int SEA_LEVEL_INT_RGB = ((SEA_LEVEL_RGB.getRed() << 8) + SEA_LEVEL_RGB.getGreen()) << 8 + SEA_LEVEL_RGB.getBlue();
     protected int imageWidth; 	// 1024, 512, 256 works	// 5632 - default	// 4608 nad
@@ -15,32 +18,33 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
     protected int numSeedsY = 64;
     protected int numSeedsX = 80;
 
-    public static int rgb_white;
+    public static final int rgb_white;
     static {
-        rgb_white = Color.white.getRed();
-        rgb_white = (rgb_white << 8) + Color.white.getGreen();
-        rgb_white = (rgb_white << 8) + Color.white.getBlue();
+        int rgb_white_temp = Color.white.getRed();
+        rgb_white_temp = (rgb_white_temp << 8) + Color.white.getGreen();
+        rgb_white = (rgb_white_temp << 8) + Color.white.getBlue();
     }
 
     public ProvinceGenProperties(int seaLevel, int imageWidth, int imageHeight, int numSeedsX, int numSeedsY) {
-        this(ProvinceGenerationType.GRID_SEED, (byte) seaLevel, imageWidth, imageHeight, numSeedsX, numSeedsY);
+        this(SeedGenType.GRID, ProvinceDeterminationType.DISTANCE_MULTITHREADED, (byte) seaLevel, imageWidth, imageHeight, numSeedsX, numSeedsY);
     }
 
     public ProvinceGenProperties(int seaLevel, byte imageWidth, int imageHeight, int numSeedsX, int numSeedsY) {
-        this(ProvinceGenerationType.GRID_SEED, seaLevel, imageWidth, imageHeight, numSeedsX, numSeedsY);
+        this(SeedGenType.GRID, ProvinceDeterminationType.DISTANCE_MULTITHREADED, seaLevel, imageWidth, imageHeight, numSeedsX, numSeedsY);
     }
 
-    public ProvinceGenProperties(ProvinceGenerationType generationType, int seaLevel, int imageWidth, int imageHeight, int numSeedsX, int numSeedsY) {
-        this(generationType, (byte) seaLevel, imageWidth, imageHeight, numSeedsX, numSeedsY);
+    public ProvinceGenProperties(SeedGenType generationType, ProvinceDeterminationType determinationType, int seaLevel, int imageWidth, int imageHeight, int numSeedsX, int numSeedsY) {
+        this(generationType, determinationType, (byte) seaLevel, imageWidth, imageHeight, numSeedsX, numSeedsY);
     }
 
-    public ProvinceGenProperties(ProvinceGenerationType generationType, byte seaLevel, int imageWidth, int imageHeight, int numSeedsX, int numSeedsY) {
+    public ProvinceGenProperties(SeedGenType generationType, ProvinceDeterminationType determinationType, byte seaLevel, int imageWidth, int imageHeight, int numSeedsX, int numSeedsY) {
         this.HEIGHTMAP_SEA_LEVEL = seaLevel;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
         this.numSeedsX = numSeedsX;
         this.numSeedsY = numSeedsY;
         this.generationType = generationType;
+        this.determinationType = determinationType;
     }
 
     public ProvinceGenProperties(ProvinceGenProperties properties) {
@@ -48,10 +52,10 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
     }
 
     public ProvinceGenProperties(int seaLevel, int imageWidth, int imageHeight, int numSeeds) {
-        this(ProvinceGenerationType.GRID_SEED, seaLevel, imageWidth, imageHeight, numSeeds);
+        this(SeedGenType.GRID, ProvinceDeterminationType.DISTANCE_MULTITHREADED, seaLevel, imageWidth, imageHeight, numSeeds);
     }
 
-    public ProvinceGenProperties(ProvinceGenerationType generationType, int seaLevel, int imageWidth, int imageHeight, int numSeeds) {
+    public ProvinceGenProperties(SeedGenType generationType, ProvinceDeterminationType determinationType, int seaLevel, int imageWidth, int imageHeight, int numSeeds) {
         /* math
         numSeeds [s] = numSeedsX * numSeedsY
         numSeedsX [x] = numSeeds / numSeedsY
@@ -89,6 +93,7 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
         squares aren't linear so you can't just round up or down y for the best approximation.
          */
         this.generationType = generationType;
+        this.determinationType = determinationType;
         this.HEIGHTMAP_SEA_LEVEL = (byte) seaLevel;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
@@ -126,8 +131,16 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
     }
 
 
-    public ProvinceGenerationType generationType() {
+    public SeedGenType generationType() {
         return generationType;
+    }
+
+    public ProvinceDeterminationType determinationType() {
+        return determinationType;
+    }
+
+    public void setDeterminationType(ProvinceDeterminationType determinationType) {
+        this.determinationType = determinationType;
     }
 
     public Color seaLevel_RGB() {
@@ -167,7 +180,7 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
         return numSeedsX;
     }
 
-    public void setGenerationType(ProvinceGenerationType generationType) {
+    public void setGenerationType(SeedGenType generationType) {
         this.generationType = generationType;
     }
 

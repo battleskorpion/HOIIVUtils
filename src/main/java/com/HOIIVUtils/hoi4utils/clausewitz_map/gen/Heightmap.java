@@ -63,6 +63,10 @@ public class Heightmap {
 		return heightColor.getRGB();
     }
 
+	public byte[][] heightmap() {
+		return heightmap;
+	}
+
 //	/**
 //	 * Constructs a {@code Heightmap} of one of the predefined
 //	 * image types:

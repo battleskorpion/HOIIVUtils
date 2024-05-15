@@ -5,31 +5,16 @@ import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.AbstractMapGeneration;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.MapPoint;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.*;
-import com.opensimplex2.OpenSimplex2;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DefaultUndirectedGraph;
-import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serial;
-import java.util.Collection;
-import java.util.Random;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
-import java.util.concurrent.RejectedExecutionException;
-
-import static com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties.rgb_white;
-import static com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceGeneration.ForkColorDetermination.OFFSET_NOISE_MODIFIER;
 
 public class ProvinceGeneration extends AbstractMapGeneration {
-	public static final double NOISE_POLLING_FACTOR = 0.025;     // 0.005        // 0.025
 	public BorderMap stateBorderMap; 		// heightmap of preferred borders
 	private ProvinceMap provinceMap;
-	private ProvinceMapPointsList points;
+//	private ProvinceMapPointsList points;
 	private SeedsSet<MapPoint> seeds;
 
 	private BorderMapping<MapPoint> stateMapList;
@@ -37,7 +22,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	private SeedGeneration seedGeneration;
 	/** threadLimit = 0: max (use all processors/threads). */
 	private int threadLimit = 0;        // 0 for no limit
-	boolean adjProvinceByGraphConnectivity = false;
 	ProvinceGenProperties properties;
 
 	private ProvinceGeneration() {
@@ -64,18 +48,28 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		provinceMap = new ProvinceMap(heightmap);
 		// todo still temp!!!
 		stateBorderMap = loadStateBorderMap("src\\main\\resources\\map\\state_borders_none.bmp"); // ! todo temp!!
-		initLists();        // todo like hmmm more classes not sure
+		/* initialize mapping of seeds to states (regions for purposes of province generation) */
+		// TODO: optimization may be possible
+		stateMapList = new BorderMapping<>();
 
 		/* seeds generation */
 		SeedGeneration<MapPoint> seedGeneration;
-		if (properties.generationType() == ProvinceGenerationType.GRID_SEED) {
+		if (properties.generationType() == SeedGenType.GRID) {
 			seedGeneration = new GridSeedGeneration(properties, heightmap);
 		} else {
 			seedGeneration = new ProbabilisticSeedGeneration(heightmap, properties);
 		}
 		seedGeneration.generate(stateMapList, stateBorderMap);
 
-		executeProvinceDetermination();
+		ProvinceDetermination<MapPoint> provinceDetermination;
+		properties.setDeterminationType(ProvinceDeterminationType.DISTANCE_GPU);    // todo
+		if (properties.determinationType() == ProvinceDeterminationType.DISTANCE_MULTITHREADED) {
+			provinceDetermination = new DistanceMTDetermination<>(heightmap, provinceMap, properties, threadLimit);
+		} else {
+			provinceDetermination = new DistanceGPUDetermination<>(heightmap, provinceMap, properties);
+		}
+		//executeProvinceDetermination();
+		provinceDetermination.generate(stateMapList, stateBorderMap);
 	}
 
 	public void generate(Heightmap heightmap) {
@@ -86,15 +80,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	public void generate(String heightmapName) {
 		heightmap = loadHeightmap(heightmapName);
 		generate();
-	}
-
-	private void initLists() {
-		/* initialize points list */
-		points = new ProvinceMapPointsList(heightmap.width(), heightmap.height());
-
-		/* initialize mapping of seeds to states (regions for purposes of province generation) */
-		// TODO: optimization may be possible
-		stateMapList = new BorderMapping<>();
 	}
 
 	/**
@@ -117,311 +102,8 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		}
 	}
 
-	private void executeProvinceDetermination() {
-		ForkColorDetermination forkColorDetermination = new ForkColorDetermination(provinceMap, heightmap);
-		ForkJoinPool forkJoinPool;
-		if (threadLimit == 0) {
-			forkJoinPool = new ForkJoinPool();
-		} else {
-			forkJoinPool = new ForkJoinPool(threadLimit);
-		}
-		try {
-			forkJoinPool.invoke(forkColorDetermination);
-		}
-		catch(NullPointerException exc) {
-			exc.printStackTrace();
-		}
-		catch(RejectedExecutionException exc) {
-			exc.printStackTrace();
-		}
-		catch(Exception exc) {
-			exc.printStackTrace();
-		}
-		if (adjProvinceByGraphConnectivity) {
-			ForkProvinceConnectivityDetermination forkProvinceConnectivityDetermination
-					= new ForkProvinceConnectivityDetermination(points);
-			forkJoinPool.invoke(forkProvinceConnectivityDetermination);
-		}
-	}
-
-	private int offsetWithNoise(int offsetPotential, int seed, int x, int y) {
-		double noise = simplexNoise2(seed, x, y, OFFSET_NOISE_MODIFIER);     //multiplier try (2.0f / offsetPotential)
-//		long roundedNoise = Math.round(noise); // Round to the nearest integer        // may lead to more even distribution when int cast occurs.
-		return (int) (offsetPotential * noise);
-	}
-
-	private float simplexNoise2(int seed, int x, int y) {
-		return simplexNoise2(seed, x, y, 1);
-	}
-
-	private float simplexNoise2(int seed, int x, int y, float multiplier) {
-		return OpenSimplex2.noise2(seed, x * NOISE_POLLING_FACTOR, y * NOISE_POLLING_FACTOR) * multiplier;
-	}
-
-	/**
-	 * Determines color from closest seed to point x,y.
-	 * <p>
-	 * This method adds no offset, so if variation is needed, offset should be added to the x/y
-	 * coordinates before calling this method, or by using the <code>determineColor</code> with offset method.
-	 * It is not checked whether the x- and y-coordinates are within a valid range, so that variation
-	 * still works near the map edges.
-	 * This method can be called any number of times with the same point. </p>
-	 * @param x x-coordiate of point
-	 * @param y y-coordinate of point
-	 * @param seeds collection of map seeds to use when determining color of this point by distance.
-	 * @return
-	 */
-	private static int determineColor(int x, int y, final Collection<MapPoint> seeds) {
-		// (default white)
-		int nearestColor = rgb_white;     // color of nearest seed (int value)
-		int dist = Integer.MAX_VALUE;            // select a big number
-
-		// todo stream operation?
-		for (MapPoint point : seeds) {
-			// calculate the difference in x and y direction
-			int xdiff = point.x - x;
-			int ydiff = point.y - y;
-
-			// calculate current squared Euclidean distance, for comparing only
-			int cdist = xdiff * xdiff + ydiff * ydiff;
-
-			if (cdist < dist) {
-				nearestColor = point.rgb();
-				dist = cdist;
-			}
-		}
-
-		return nearestColor;
-	}
-
-	/**
-	 * Determines color from closest seed to point x,y.
-	 * <p>
-	 * The x- and y-offset is for adding variation to the province the point belongs to. The color will be
-	 * determined relative to the closest seed to the offset point, but can be assigned to the original xy point.
-	 * It is not checked whether the x- and y-coordinates, or the offset coordinates, are within a valid range,
-	 * so that variation still works near the map edges.
-	 * This method can be called any number of times with the same point. </p>
-	 * @param x x-coordiate of point
-	 * @param xOffset
-	 * @param y y-coordinate of point
-	 * @param yOffset
-	 * @param mapPoints collection of map seeds to use when determining color of this point by distance with offset.
-	 * @return
-	 */
-	private int determineColor(int x, int xOffset, int y, int yOffset, Collection<MapPoint> mapPoints) {
-		return determineColor(x + xOffset, y + yOffset, mapPoints);
-	}
-
 	public ProvinceMap getProvinceMap() {
 		return provinceMap;
-	}
-
-	/**
-	 * Pixel color determination using {@link RecursiveAction} for multithreading efficiency.
-	 *
-	 * @see RecursiveAction
-	 * @see OpenSimplex2
-	 */
-	public class ForkColorDetermination extends RecursiveAction {
-
-		/**
-		 * Auto-generated serialVersionUID
-		 */
-		@Serial
-		private static final long serialVersionUID = 7925866053687723919L;
-		/** float datatype is used by simplex noise, and may improve performance over double */
-		public static final float OFFSET_NOISE_MODIFIER = 1.0f;
-		protected static int splitThreshold = 16;       // was 8
-		private static final int seed;
-
-		/**
-		 * y-value to start at (inclusive)
-		 */
-		private final int startY;
-
-		/**
-		 * y-value to go until (exclusive)
-		 */
-		private final int endY;
-
-		/**
-		 * number of y-values to work with
-		 */
-		private final int dy;
-
-		/**
-		 * simplex noise to offset color determination
-		 */
-		private OpenSimplex2 noise;
-		private final ProvinceMap provinceMap;
-		private final Heightmap heightmap;
-
-		static {
-			Random random = new Random();
-			seed = random.nextInt();
-		}
-
-//		private Iterator<Map.Entry<ProvinceMapPoint, Integer>> seedsRGBMapIterator;
-
-		/**
-		 * constructor (y set as 0 to imageHeight). Recommended constructor for initial initialization.
-		 */
-		public ForkColorDetermination(ProvinceMap provinceMap, Heightmap heightmap) {
-			this(provinceMap, heightmap, 0, heightmap.height());
-		}
-
-		/**
-		 * constructor
-		 * // todo pass in prev fork color determination instead of province map, heightmap?
-		 */
-		public ForkColorDetermination(ProvinceMap provinceMap, Heightmap heightmap, int startY, int endY) {
-			this.provinceMap = provinceMap;
-			this.heightmap = heightmap;
-			this.startY = startY;
-			this.endY = endY;
-			dy = endY - startY;
-		}
-
-		@Override
-		protected void compute() {
-			if (dy <= splitThreshold) {
-				computeDirectly();
-				return;
-			}
-
-			int split = dy / 2;
-
-			invokeAll(new ForkColorDetermination(provinceMap, heightmap, startY, startY + split),
-					new ForkColorDetermination(provinceMap, heightmap, startY + split, endY));
-		}
-
-		/**
-		 * Determine color for each point
-		 */
-		protected void computeDirectly() {
-			final int widthPerSeed = heightmap.width()  / properties.numSeedsX();
-			final int heightPerSeed = heightmap.height() / properties.numSeedsY();
-			final int offsetPotential = 4;
-			System.out.println("run: " + startY + ", " + endY);
-
-			try {
-				for (int y = startY; y < endY; y++) {
-					for (int x = 0; x < heightmap.width(); x++) {
-						int rgb;
-						int heightmapHeight = heightmap.height_xy(x, y);
-						int stateBorderValue = stateBorderMap.getRGB(x, y);
-						int type = provinceType(heightmapHeight, properties.seaLevel());
-
-						int xOffset = offsetWithNoise(offsetPotential, seed, x, y);    //TODO work on values
-						int yOffset = offsetWithNoise(offsetPotential, seed, x, y);
-						rgb = determineColor(x, xOffset, y, yOffset, stateMapList.seedsList(stateBorderValue, type));
-
-						points.setRGB(x, y, rgb);
-						provinceMap.setRGB(x, y, rgb);
-					}
-				}
-			}
-			catch (Exception exc) {
-				exc.printStackTrace();
-			}
-		}
-
-	}
-
-	/**
-	 * Province connectivity determination (->graph) using {@link RecursiveAction} for multithreading efficiency.
-	 *
-	 * @see RecursiveAction
-	 */
-	public class ForkProvinceConnectivityDetermination extends RecursiveAction {
-
-		/** Auto-generated serialVersionUID */
-		@Serial
-		private static final long serialVersionUID = 9171676481286895487L;
-		protected static int splitThreshold = 16;       // was 8
-		private final int startY;
-		private final int endY;
-		private final int dy;
-		private final ProvinceMapPointsList mapPoints;
-		private static final Graph<MapPoint, DefaultEdge> mpGraph = new DefaultUndirectedGraph<>(DefaultEdge.class);
-		private static final Graph<MapPoint, DefaultEdge> sync_mpGraph = new AsSynchronizedGraph<>(mpGraph);
-
-		/**
-		 * constructor (y set as 0 to height). Recommended constructor for initial initialization.
-		 */
-		public ForkProvinceConnectivityDetermination(ProvinceMapPointsList mapPoints) {
-			this(mapPoints, 0, mapPoints.height());
-		}
-
-		/**
-		 * constructor
-		 * // todo pass in prev fork color determination instead of province map, heightmap?
-		 */
-		public ForkProvinceConnectivityDetermination(ProvinceMapPointsList mapPoints, int startY, int endY) {
-			this.mapPoints = mapPoints;
-			this.startY = startY;
-			this.endY = endY;
-			dy = endY - startY;
-		}
-
-		@Override
-		protected void compute() {
-			if (dy <= splitThreshold) {
-				computeDirectly();
-				return;
-			}
-
-			int split = dy / 2;
-
-			invokeAll(new ForkProvinceConnectivityDetermination(mapPoints, startY, startY + split),
-					new ForkProvinceConnectivityDetermination(mapPoints, startY + split, endY));
-		}
-
-		protected void computeDirectly() {
-			try {
-				for (int y = startY; y < endY; y++) {
-					for (int x = 0; x < heightmap.width(); x++) {
-						int currentType = mapPoints.get(x, y).type();
-						connectNeighbors(x, y, currentType);
-					}
-				}
-			}
-			catch (Exception exc) {
-				exc.printStackTrace();
-			}
-		}
-
-		private void connectNeighbors(int x, int y, int currentType) {
-			// Left neighbor
-			connectIfApplicable(x, y, x - 1, y, currentType);
-			// Right neighbor
-			connectIfApplicable(x, y,x + 1, y, currentType);
-			// Up neighbor
-			connectIfApplicable(x, y, x, y - 1, currentType);
-			// Down neighbor
-			connectIfApplicable(x, y, x, y + 1, currentType);
-		}
-
-		private void connectIfApplicable(int x, int y, int nx, int ny, int currentType) {
-			if (isValidCoordinate(nx, ny) && mapPoints.get(nx, ny).type() == currentType) {
-				MapPoint p = mapPoints.get(x, y);
-				MapPoint np = mapPoints.get(nx, ny);
-				if (!sync_mpGraph.containsVertex(p)) {
-					sync_mpGraph.addVertex(mapPoints.get(x, y));
-				}
-				if (!sync_mpGraph.containsVertex(np)) {
-					sync_mpGraph.addVertex(mapPoints.get(nx, ny));
-				}
-				sync_mpGraph.addEdge(p, np);
-				// todo optimize prev ?
-			}
-		}
-
-		private boolean isValidCoordinate(int x, int y) {
-			return x >= 0 && x < mapPoints.width() && y >= 0 && y < mapPoints.height();
-		}
-
 	}
 }
 

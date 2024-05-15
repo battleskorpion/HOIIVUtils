@@ -1,11 +1,9 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_map.gen;
 
-import com.HOIIVUtils.hoi4utils.clausewitz_map.MapGenProperties;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
-
 import java.awt.*;
 import java.util.Random;
 
+// todo these abstract helper functions could go into an interface or etc.
 public abstract class AbstractMapGeneration {
 	public AbstractMapGeneration() {
 	}
