@@ -1,9 +1,8 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code.modifier;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,12 +26,12 @@ public class ModifierDatabase {
 	public ModifierDatabase(String databaseName) {
 		// todo
 		try {
-			URI dbUri = getClass().getClassLoader().getResource(databaseName).toURI();
-			Path dbPath = Paths.get(dbUri);
-			connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+			byte[] dbBytes = readDatabaseAsByteArray(databaseName);
+			connection = DriverManager.getConnection("jdbc:sqlite::memory:");
+			loadDatabase(dbBytes);
 			createTable();
 			loadModifiers();
-		} catch (SQLException | URISyntaxException e) {
+		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -44,24 +43,30 @@ public class ModifierDatabase {
 //		}
 	}
 
-//	public static void main(String[] args) {
-//		ModifierDatabase modifierDB = new ModifierDatabase("modifiers.db");
-//
-//		// Insert modifiers
-////		modifierDB.insertModifier("modifier1", "good", "percentage", 1, "none", "aggressive");
-////		modifierDB.insertModifier("modifier2", "bad", "number", 2, "daily", "defensive");
-//
-//		// Retrieve and use modifiers
-////		modifierDB.loadModifiers();
-//
-//		// temp
-//		for(Modifier modifier : Modifier.modifiers.values()) {
-//			modifierDB.insertModifier(modifier);
-//		}
-//
-//		// Close the database connection
-//		modifierDB.close();
-//	}
+	private byte[] readDatabaseAsByteArray(String resourcePath) throws IOException {
+		try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
+		     ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+			if (inputStream == null) {
+				throw new IOException("Resource not found: " + resourcePath);
+			}
+
+			byte[] buffer = new byte[1024];
+			int bytesRead;
+			while ((bytesRead = inputStream.read(buffer)) != -1) {
+				outputStream.write(buffer, 0, bytesRead);
+			}
+			return outputStream.toByteArray();
+		}
+	}
+
+	private void loadDatabase(byte[] dbBytes) throws SQLException {
+		String sql = "RESTORE FROM MEMORY";
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setBytes(1, dbBytes);
+			statement.executeUpdate();
+		}
+	}
 
 	private void createTable() {
 		String createTableSQL = "CREATE TABLE IF NOT EXISTS modifiers (" +
@@ -111,28 +116,6 @@ public class ModifierDatabase {
 		}
 	}
 
-//	public void retrieveModifiers() {
-//		String retrieveSQL = "SELECT * FROM modifiers";
-//		try {
-//			PreparedStatement retrieveStatement = connection.prepareStatement(retrieveSQL);
-//			ResultSet resultSet = retrieveStatement.executeQuery();
-//			while (resultSet.next()) {
-//				int id = resultSet.getInt("id");
-//				String identifier = resultSet.getString("identifier");
-//				String colorType = resultSet.getString("color_type");
-//				String valueType = resultSet.getString("value_type");
-//				int precision = resultSet.getInt("precision");
-//				String postfix = resultSet.getString("postfix");
-//				String category = resultSet.getString("category");
-//
-//				// Do something with the retrieved modifier data (e.g., store in a data structure)
-//				System.out.println("ID: " + id + ", Identifier: " + identifier + ", Color Type: " + colorType);
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//	}
-
 	public List<Modifier> loadModifiers() {
 		List<Modifier> loadedModifiers = new ArrayList<>();
 		String retrieveSQL = "SELECT * FROM modifiers";
@@ -158,4 +141,3 @@ public class ModifierDatabase {
 		return loadedModifiers;
 	}
 }
-

@@ -28,11 +28,11 @@ import static com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag.COUNTR
  */
 // todo extends file?
 public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<Focus> {
-	private static final ObservableMap<CountryTag, FocusTree> focusTrees
+	private static final ObservableMap<File, FocusTree> focusTrees
 			= FXCollections.observableHashMap();
 	private static final ObservableList<FocusTree> focusTreesList = FXCollections.observableArrayList();
 	static {
-		focusTrees.addListener((MapChangeListener<CountryTag, FocusTree>) change -> {
+		focusTrees.addListener((MapChangeListener<File, FocusTree>) change -> {
 			updateObservableValues();
 			focusTreesList.sort(Comparator.naturalOrder());
 		});
@@ -52,36 +52,43 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 	// private Point continuousFocusPosition; // ! todo DO THIS
 	private int minX; // min x of all focuses
 
+	public static FocusTree get(File focus_file) {
+		if (!focusTrees.containsKey(focus_file)) {
+			new FocusTree(focus_file);
+		}
+		return focusTrees.get(focus_file);
+	}
+
 	/**
 	 * Instantiate focus tree from pre-existing focus tree (file).
 	 * 
 	 * @param focus_file pre-existing focus tree.
 	 */
-	public FocusTree(File focus_file) {
+	private FocusTree(File focus_file) {
 		this.focus_file = focus_file;
 		country = new CountryTag("###");
 		focuses = FXCollections.observableHashMap();
 		minX = 0;
 
 		parse();
-		FocusTree.add(country(), this);
+		FocusTree.add(this);
 	}
 
-	/**
-	 * Instantiate new focus tree.
-	 * 
-	 * @param id Focus tree id (usually kept same as file/country name).
-	 */
-	public FocusTree(String id, CountryTag tag) {
-		this.id = id;
-		// countryModifier = new CountryModifier();
-		//! defaultFocus = false;
-		//! continuousFocusPosition = new Point(50, 1200);
-		country = tag;
-		focuses = FXCollections.observableHashMap();
-
-		FocusTree.add(country(), this);
-	}
+//	/**
+//	 * Instantiate new focus tree.
+//	 *
+//	 * @param id Focus tree id (usually kept same as file/country name).
+//	 */
+//	private FocusTree(String id, CountryTag tag) {
+//		this.id = id;
+//		// countryModifier = new CountryModifier();
+//		//! defaultFocus = false;
+//		//! continuousFocusPosition = new Point(50, 1200);
+//		country = tag;
+//		focuses = FXCollections.observableHashMap();
+//
+//		FocusTree.add(country(), this);
+//	}
 
 	public static ObservableList<FocusTree> observeFocusTrees() {
 		return focusTreesList;
@@ -114,7 +121,6 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 			System.err.println("No localization files found in " + HOIIVFile.localization_eng_folder);
 			return;
 		}
-
 		aa:
 		for (FocusTree focusTree : unlocalizedFocusTrees()) {
 			for (File f : HOIIVFile.localization_eng_folder.listFiles()) {
@@ -126,7 +132,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 				}
 				flf.read();
 				if (flf.containsLocalizationFor(focusTree)) {
-					focusTree.setLocalization(flf);     // sure why not
+					focusTree.setLocalization(flf);
 					continue aa;
 				}
 			}
@@ -206,7 +212,12 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 			Focus focus;
 			/* focus id */
 			String focus_id = node.getValue("id").string();     // gets the ##### from "id = #####"
-			focus = new Focus(focus_id, this, node);
+			try {
+				focus = new Focus(focus_id, this, node);
+			} catch (DuplicateFocusException e) {
+				System.err.println(e.getMessage());
+				continue;
+			}
 			focusIDList.add(focus_id);
 			focuses.put(focus_id, focus);
 			focusList.add(focus);
@@ -325,10 +336,6 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 	}
 
 	public Focus getFocus(String focus_id) {
-		if (focuses.get(focus_id) == null) {
-			System.err.println(focuses.keySet());
-		}
-
 		return focuses.get(focus_id);
 	}
 
@@ -336,8 +343,8 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		return minX;
 	}
 
-	public static HashMap<CountryTag, FocusTree> add(CountryTag tag, FocusTree focusTree) {
-		focusTrees.put(tag, focusTree);
+	public static HashMap<File, FocusTree> add(FocusTree focusTree) {
+		focusTrees.put(focusTree.focus_file, focusTree);
 		return new HashMap<>(focusTrees);
 	}
 

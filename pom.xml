@@ -25,7 +25,7 @@
 		<junit.jupiter.version>5.10.1</junit.jupiter.version>
 		
 		<version.maven.compiler>3.11.0</version.maven.compiler>
-		
+
 		<javafx.version>22-ea+16</javafx.version>
 		
 		<javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
@@ -107,10 +107,10 @@
 						</goals>
 						<configuration>
 							<headerType>console</headerType>
-							<outfile>target/HOIIVUtils.exe</outfile>
+							<outfile>HOIIVUtils.exe</outfile>
 							<jar>target/HOIIVUtils-${project.version}-jar-with-dependencies.jar</jar>
 							<jre>
-								<path>C:\Program Files\Eclipse Adoptium\jdk-21.0.1.12-hotspot\bin\java.exe</path>
+								<path>%JAVA_HOME%</path>
 								<minVersion>21</minVersion>
 							</jre>
 							<versionInfo>
