@@ -9,7 +9,7 @@ North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59
 
 ## Installation
 
-**WIP!** we are working on maven to produce a usable exe or jar to ensure that you don't need the source code in order to use it!  
+**WIP!** we are working on providing the jdk/jre along with the program, so in the meantime!  
 Install java openjdk 21 LTS: [https://adoptium.net/](https://adoptium.net/)  
 Clone this repository main branch.  
 
