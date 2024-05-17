@@ -4,6 +4,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.MapPoint;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class SeedsSet<P extends MapPoint> extends AbstractSet<P> implements Iterable<P>, Set<P> {
 	public static final int SEEDS_LIST_SIZE = 3;
@@ -15,6 +16,11 @@ public class SeedsSet<P extends MapPoint> extends AbstractSet<P> implements Iter
 		for(int i = 0; i < 3; i++) {
 			seedsList.add(new HashSet<>());
 		}
+	}
+
+	public SeedsSet(List<P> collect) {
+		this();
+		this.addAll(collect);
 	}
 
 	public boolean add(P point) {

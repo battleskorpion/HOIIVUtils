@@ -15,7 +15,7 @@ public class MapGenerationSettingsWindow extends HOIUtilsWindow {
     @FXML
     TextField numSeedsTextField;
     @FXML
-    ChoiceBox<SeedGenType> seedGenAlgorithmChoiceBox;
+    ChoiceBox<SeedGenType> seedGenChoiceBox;
 
     private ProvinceGenProperties properties = null;
 
@@ -42,8 +42,8 @@ public class MapGenerationSettingsWindow extends HOIUtilsWindow {
         seaLevelTextField.setText(String.valueOf(properties.seaLevel()));
         numSeedsTextField.setText(String.valueOf(properties.numSeeds()));
         // default should be grid_seed
-        seedGenAlgorithmChoiceBox.getItems().addAll(SeedGenType.values());
-        seedGenAlgorithmChoiceBox.setValue(properties.generationType());
+        seedGenChoiceBox.getItems().addAll(SeedGenType.values());
+        seedGenChoiceBox.setValue(properties.generationType());
     }
 
     @FXML
@@ -59,7 +59,7 @@ public class MapGenerationSettingsWindow extends HOIUtilsWindow {
     @FXML private void onApplyChanges() {
         int seaLevel = Integer.parseInt(seaLevelTextField.getText());
         int numSeeds = Integer.parseInt(numSeedsTextField.getText());
-        SeedGenType generationType = seedGenAlgorithmChoiceBox.getValue();
+        SeedGenType generationType = seedGenChoiceBox.getValue();
         System.out.println("prev. seaLevel: " + properties.seaLevel() + ", prev. numSeeds: " + properties.numSeeds());
         properties.setSeaLevel(seaLevel);
         properties.setNumSeeds(numSeeds);

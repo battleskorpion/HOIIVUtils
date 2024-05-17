@@ -17,6 +17,7 @@ public class DistanceGPUDetermination<P extends MapPoint> extends AbstractMapGen
     private BorderMapping<P> stateMapList;
     private BorderMap stateBorderMap;
 
+
     public DistanceGPUDetermination(Heightmap heightmap, ProvinceMap provinceMap, ProvinceGenProperties properties) {
         this.heightmap = heightmap;
         this.provinceMap = provinceMap;
@@ -46,7 +47,7 @@ public class DistanceGPUDetermination<P extends MapPoint> extends AbstractMapGen
 
     private class DistanceKernel extends Kernel {
         final byte[] heightmap_values;
-          final int[] rgb_values;
+        final int[] rgb_values;
         final int[] seedsX; // Array to hold x-coordinates of seeds
         final int[] seedsY; // Array to hold y-coordinates of seeds
         final int[] seedsRGB;
