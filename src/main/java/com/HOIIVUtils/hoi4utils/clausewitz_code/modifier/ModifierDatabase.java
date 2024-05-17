@@ -1,5 +1,9 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code.modifier;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -23,10 +27,12 @@ public class ModifierDatabase {
 	public ModifierDatabase(String databaseName) {
 		// todo
 		try {
-			connection = DriverManager.getConnection("jdbc:sqlite:" + databaseName);
+			URI dbUri = getClass().getClassLoader().getResource(databaseName).toURI();
+			Path dbPath = Paths.get(dbUri);
+			connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
 			createTable();
 			loadModifiers();
-		} catch (SQLException e) {
+		} catch (SQLException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 	}

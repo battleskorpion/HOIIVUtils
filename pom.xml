@@ -108,7 +108,7 @@
 						<configuration>
 							<headerType>console</headerType>
 							<outfile>target/HOIIVUtils.exe</outfile>
-							<jar>target/HOIIVUtils-9.0.0-jar-with-dependencies.jar</jar>
+							<jar>target/HOIIVUtils-${version}-jar-with-dependencies.jar</jar>
 							<jre>
 								<path>C:\Program Files\Eclipse Adoptium\jdk-21.0.1.12-hotspot\bin\java.exe</path>
 								<minVersion>21</minVersion>
