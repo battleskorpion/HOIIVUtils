@@ -1,5 +1,6 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_map.seed;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_map.SeedGenProperties;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.AbstractMapGeneration;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.MapPoint;
@@ -17,12 +18,14 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 	int pointNumber = 0;
 	ForkJoinPool fjpool;
 	double probabilitySum = 0;
+	SeedGenProperties properties;
 
-	public SeedProbabilityMap(Heightmap heightmap) {
+	public SeedProbabilityMap(Heightmap heightmap, SeedGenProperties properties) {
 		this.heightmap = heightmap;
 		seedProbabilityMap = new double[heightmap.height()][heightmap.width()]; // y, x
 		cumulativeProbabilities = new double[(heightmap.height())];
 		fjpool = new ForkJoinPool();
+		this.properties = properties;
 
 		initializeProbabilityMap();
 	}
@@ -33,7 +36,7 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 				double p = 1.0;
 				// improved performance over .getRGB()
 				int height = heightmap.height_xy(xi, yi);
-				int type = provinceType(height);
+				int type = provinceType(height, properties.seaLevel());
 
 				/* probability */
 				p *= type == 0 ? 1.15 : 0.85;
@@ -84,7 +87,7 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 		for (int x = 0; x < seedProbabilityMap[y].length; x++) {
 			cumulative += seedProbabilityMap[y][x];
 			if (cumulative >= p) {
-				mp = new MapPoint(x, y, provinceType(heightmap.height_xy(x, y)));
+				mp = new MapPoint(x, y, provinceType(heightmap.height_xy(x, y), properties.seaLevel()));
 				break;
 			}
 		}

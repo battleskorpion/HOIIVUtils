@@ -23,7 +23,8 @@ public class FixFocus extends HOIIVUtils {
 	public static boolean addFocusLoc(File focus_file, File loc_file) throws IOException {
 
 		//ArrayList<String> focuses_nonlocalized = new ArrayList<String>();
-		FocusTree focusTree = new FocusTree(focus_file);
+		//FocusTree focusTree = new FocusTree(focus_file);
+		FocusTree focusTree = FocusTree.get(focus_file);
 		FocusLocalizationFile localization = null;
 		try {
 			localization = new FocusLocalizationFile(loc_file);

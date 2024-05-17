@@ -1,17 +1,17 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_map.seed;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_map.SeedGenProperties;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.MapPoint;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.values;
 
 import java.util.*;
 
 public class ProbabilisticSeedGeneration extends AbstractSeedGeneration<MapPoint> {
 	private final SeedProbabilityMap_GPU seedProbabilityMap;
 
-	public ProbabilisticSeedGeneration(Heightmap heightmap) {
-		super(heightmap);
-		seedProbabilityMap = new SeedProbabilityMap_GPU(heightmap);
+	public ProbabilisticSeedGeneration(Heightmap heightmap, SeedGenProperties properties) {
+		super(heightmap, properties);
+		seedProbabilityMap = new SeedProbabilityMap_GPU(heightmap, properties);
 	}
 
 	/**
@@ -26,8 +26,8 @@ public class ProbabilisticSeedGeneration extends AbstractSeedGeneration<MapPoint
 		 */
 		long seed = random.nextLong();
 
-		for (int sy = 0; sy < values.numSeedsY; sy++) {
-			for (int sx = 0; sx < values.numSeedsX; sx++) {
+		for (int sy = 0; sy < properties.numSeedsY(); sy++) {
+			for (int sx = 0; sx < properties.numSeedsX(); sx++) {
 				MapPoint dynP;
 				int heightmapHeight = 0;
 				do {
@@ -35,10 +35,10 @@ public class ProbabilisticSeedGeneration extends AbstractSeedGeneration<MapPoint
 //					int py = random.nextInt(heightmap.getHeight());
 					dynP = weightedRandomPoint(random);
 					heightmapHeight = heightmap.height_xy(dynP.x, dynP.y);
-					int type = provinceType(heightmapHeight);
+					int type = provinceType(heightmapHeight, properties.seaLevel());
 //					p = new MapPoint(dynP, type);
 				} while (seeds.contains(dynP));
-				int rgb = mapPointColorGeneration(dynP.x, dynP.y, heightmapHeight);
+				int rgb = mapPointColorGeneration(dynP.x, dynP.y, heightmapHeight, properties.seaLevel());
 				dynP.setRGB(rgb);
 				seeds.add(dynP);
 			}

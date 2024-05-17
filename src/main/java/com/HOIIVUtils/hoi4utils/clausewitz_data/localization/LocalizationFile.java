@@ -105,59 +105,50 @@ public class LocalizationFile extends File {
             String data = reader.nextLine().trim();
 
             if (FileUtils.usefulData(data)) {
-                if (data.contains(loc_key)) {
-                    String id = data.substring(0, data.indexOf(loc_key)).trim();
-                    String text = data.substring(data.indexOf("\""), data.lastIndexOf("\"") + 1).trim();
-                    if (text.charAt(text.length() - 1) == '\n') {
-                        text = text.substring(0, text.length() - 1);
+                try {
+                    String id = null;
+                    String text = null;
+
+                    if (data.contains(loc_key)) {
+                        int locKeyIndex = data.indexOf(loc_key);
+                        id = data.substring(0, locKeyIndex).trim();
+                        int startQuoteIndex = data.indexOf("\"", locKeyIndex);
+                        int endQuoteIndex = data.lastIndexOf("\"");
+
+                        if (startQuoteIndex != -1 && endQuoteIndex != -1 && startQuoteIndex < endQuoteIndex) {
+                            text = data.substring(startQuoteIndex + 1, endQuoteIndex).trim();
+                        } else {
+                            System.err.println("Invalid quote indices: startQuoteIndex=" + startQuoteIndex + ", endQuoteIndex=" + endQuoteIndex);
+                            System.err.println("\t-> data: " + data);
+                        }
+                    } else if (data.contains(":")) {
+                        int colonIndex = data.indexOf(":");
+                        id = data.substring(0, colonIndex).trim();
+                        int startQuoteIndex = data.indexOf("\"", colonIndex);
+                        int endQuoteIndex = data.lastIndexOf("\"");
+
+                        if (startQuoteIndex != -1 && endQuoteIndex != -1 && startQuoteIndex < endQuoteIndex) {
+                            text = data.substring(startQuoteIndex + 1, endQuoteIndex).trim();
+                        } else {
+                            System.err.println("Invalid quote indices: startQuoteIndex=" + startQuoteIndex + ", endQuoteIndex=" + endQuoteIndex);
+                            System.err.println("\t-> data: " + data);
+                        }
                     }
-                    if (text.isEmpty()) {
-                        continue;
+
+                    if (id != null && text != null) {
+                        text = text.replaceAll("(Â§)", "§");
+                        if (text.startsWith("\"")) {
+                            text = text.substring(1);
+                        }
+                        if (text.endsWith("\"")) {
+                            text = text.substring(0, text.length() - 1);
+                        }
+                        Localization localization = new Localization(id, text, Localization.Status.EXISTS);
+                        localizationList.add(localization);
                     }
-                    if (text.charAt(0) == '\"') {
-                        text = text.substring(1);
-                    }
-                    if (text.isEmpty()) {
-                        continue;
-                    }
-                    if (text.charAt(text.length() - 1) == '\"') {
-                        text = text.substring(0, text.length() - 1);
-                    }
-                    if (text.isEmpty()) {
-                        //continue;                   // NO WHY WOULD WE DO THIS AAAAAAAAAA EMPTY LOCALIZATION SOMETIMES IS FINE*
-                    }
-                    text = text.replaceAll("(Â§)", "§");
-                    Localization localization = new Localization(id, text, Localization.Status.EXISTS);
-                    localizationList.add(localization);
-                    // print to statistics?
-//					System.out.println("localization: " + text);
-                }
-                else if (data.contains(":")) {
-                    String id = data.substring(0, data.indexOf(":")).trim();
-                    String text = data.substring(data.indexOf("\""), data.lastIndexOf("\"") + 1).trim();
-                    if (text.charAt(text.length() - 1) == '\n') {
-                        text = text.substring(0, text.length() - 1);
-                    }
-                    if (text.isEmpty()) {
-                        continue;
-                    }
-                    if (text.charAt(0) == '\"') {
-                        text = text.substring(1);
-                    }
-                    if (text.isEmpty()) {
-                        continue;
-                    }
-                    if (text.charAt(text.length() - 1) == '\"') {
-                        text = text.substring(0, text.length() - 1);
-                    }
-                    if (text.isEmpty()) {
-                        //continue;                   // NO WHY WOULD WE DO THIS AAAAAAAAAA EMPTY LOCALIZATION SOMETIMES IS FINE*
-                    }
-                    text = text.replaceAll("(Â§)", "§");
-                    Localization localization = new Localization(id, text, Localization.Status.EXISTS);
-                    localizationList.add(localization);
-                    // print to statistics?
-//					System.out.println("localization: " + text);
+                } catch (StringIndexOutOfBoundsException e) {
+                    System.err.println("String index out of bounds for data: " + data);
+                    e.printStackTrace();
                 }
             }
         }

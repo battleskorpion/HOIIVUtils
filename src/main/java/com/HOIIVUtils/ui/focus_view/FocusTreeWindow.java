@@ -115,7 +115,8 @@ public class FocusTreeWindow extends HOIUtilsWindow {
 			throw new RuntimeException(e);
 		}
 		if (focusTree == null) {
-			focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
+			//focusTree = new FocusTree(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
+			focusTree = FocusTree.get(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
 			try {
 				focusTree.setLocalization(new FocusLocalizationFile(HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
 			} catch (IllegalLocalizationFileTypeException e) {

@@ -72,7 +72,8 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
 
         if (selectedFile != null) {
             focusTreeFileTextField.setText(selectedFile.getAbsolutePath());
-            focusTree = new FocusTree(selectedFile);
+            //focusTree = new FocusTree(selectedFile);
+            focusTree = FocusTree.get(selectedFile);
             focusTreeNameLabel.setText(focusTree.toString());
         } else {
             focusTreeNameLabel.setText("[not found]");

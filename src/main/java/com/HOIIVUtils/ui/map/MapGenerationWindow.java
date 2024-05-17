@@ -1,5 +1,6 @@
 package com.HOIIVUtils.ui.map;
 
+import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceGeneration;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceMap;
@@ -18,8 +19,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class MapGenerationWindow extends HOIUtilsWindow {
 
@@ -30,7 +29,8 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 	@FXML Button browseHeightmapButton;
 	@FXML Button provinceGenerationButton;
 	Heightmap heightmap;
-	ProvinceGeneration provinceGeneration;
+	public ProvinceGeneration provinceGeneration;
+	public ProvinceGenProperties properties;
 
 		/* static initialization */
 	{   // todo temp
@@ -45,6 +45,9 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 		/* window */
 		setFxmlResource("MapGenerationWindow.fxml");
 		setTitle("Map Generation");
+
+		properties = new ProvinceGenProperties(45, heightmap.width(), heightmap.height(), 4000); // sea level 4? for china?
+		provinceGeneration = new ProvinceGeneration(properties);
 	}
 
 	/**
@@ -60,7 +63,7 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 	}
 
 	private void drawHeightmap() {
-		drawImageOnCanvas(heightmapCanvas, heightmap.width(), heightmap.height(), heightmap::height_xy);
+		drawImageOnCanvas(heightmapCanvas, heightmap.width(), heightmap.height(), heightmap::height_xy_INT_RGB);
 	}
 
 	private void drawImageOnCanvas(Canvas canvas, int imgWidth, int imgHeight,
@@ -77,7 +80,7 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 		for (int y = 0; y < wImage.getHeight(); y++) {
 			for (int x = 0; x < wImage.getWidth(); x++) {
 				int px = rbg_supplier.apply(x * zoom, y * zoom);
-				Color c = new Color(px, px, px);
+				Color c = new Color(px);
 				pixelWriter.setArgb(x, y, c.getRGB());
 			}
 		}
@@ -126,10 +129,13 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 	}
 
 	@FXML void onGenerateProvinces() {
-		provinceGeneration = new ProvinceGeneration();
 		provinceGeneration.generate(heightmap);
 
 		provinceGeneration.writeProvinceMap();
 		drawProvinceMap();
+	}
+
+	@FXML void onOpenProvinceGenSettingsWindow() {
+		new MapGenerationSettingsWindow().open(properties);
 	}
 }

@@ -76,10 +76,9 @@ public class Focus implements Localizable, Comparable<Focus> {
 	private final PendingFocusReferenceList pendingFocusReferences
 			= new PendingFocusReferenceList();
 
-	public Focus(String focus_id, FocusTree focusTree) {
+	public Focus(String focus_id, FocusTree focusTree) throws DuplicateFocusException {
 		if (focusIDs.contains(focus_id)) {
-			System.err.println("Error: focus id " + focus_id + " already exists."); // todo throw exception instead?
-			return;
+			throw new DuplicateFocusException("Error: focus id " + focus_id + " already exists.");
 		}
 		this.id = new SimpleStringProperty(focus_id);
 		this.setNameLocalization();
@@ -88,7 +87,7 @@ public class Focus implements Localizable, Comparable<Focus> {
 		focusIDs.add(focus_id);
 	}
 
-	public Focus(String focusId, FocusTree focusTree, Node node) {
+	public Focus(String focusId, FocusTree focusTree, Node node) throws DuplicateFocusException{
 		this(focusId, focusTree);
 
 		loadAttributes(node);
