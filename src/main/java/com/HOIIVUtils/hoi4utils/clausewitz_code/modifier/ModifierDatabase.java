@@ -23,7 +23,7 @@ public class ModifierDatabase {
 	public ModifierDatabase(String databaseName) {
 		// todo
 		try {
-			connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/" + databaseName);
+			connection = DriverManager.getConnection("jdbc:sqlite:" + databaseName);
 			createTable();
 			loadModifiers();
 		} catch (SQLException e) {
