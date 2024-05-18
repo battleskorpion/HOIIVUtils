@@ -4,7 +4,7 @@
 
 This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.  
 
-Started This to help with our Hearts of Iron 4 mod where you can find the discord link below.  
+Started this to help with our Hearts of Iron 4 mod where you can find the discord link below.  
 North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59BcbM)  
 
 ## Installation
@@ -17,11 +17,11 @@ Clone this repository main branch.
 
 Use Github Desktop to insure that you are fully up to date. ***(Recommended)***  
 To use this program: WIP :If you want to run the program
-This is in pre-pre-alpha and we constinetly push commits that break the program so please keep in mind how **WIP** this is!  
+This is in pre-pre-alpha and we constinetly push commits that break the program (on the dev branch now at least) so please keep in mind how **WIP** this is!  
 
 ## Credits and Contributors
 
-Battleskropion  
+battleskorpion  
 Chris Cason  
 SlothMcShain  
 Fullcord  
