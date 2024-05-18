@@ -7,29 +7,24 @@
 	<groupId>com.HOIIVUtils</groupId>
 	<artifactId>HOIIVUtils</artifactId>
 	<version>10.1.0-SNAPSHOT</version>
+
 	<name>HOIIVUtils</name>
-	<description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
 	<url>https://github.com/battleskorpion/HOIIVUtils</url>
+	<description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
-		<maven.compiler.release>21</maven.compiler.release>
-		<java.version>21</java.version>
 
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<!-- Explain what uses this -->
 
-		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<maven.compiler.release>21</maven.compiler.release> <!-- Explain what uses this -->
 
-		<launch4j.version>3.14</launch4j.version>
-		<!-- CLI command that tells maven to check for updates: 
+		<java.version>21</java.version> <!-- Explain what uses this -->
 
-			mvn versions:display-property-updates
-
-		-->
-
-		<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUTils</mainClass>
+		<testSourceDirectory>src/test/java</testSourceDirectory> <!-- Explain what uses this -->
 	</properties>
 
 	<build>
@@ -49,6 +44,7 @@
 				</includes>
 			</resource>
 		</resources>
+
 		<plugins>
 			<!-- JavaFX Plugin -->
 			<plugin>
@@ -336,5 +332,10 @@
 			<version>3.0.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.testfx</groupId>
+			<artifactId>testfx-junit5</artifactId>
+			<version>4.0.18</version>
+		</dependency>
 	</dependencies>
 </project>
