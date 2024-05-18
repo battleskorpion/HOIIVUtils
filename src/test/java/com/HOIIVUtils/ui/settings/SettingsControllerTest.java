@@ -22,8 +22,8 @@ class SettingsControllerTest {
 	@Test
 	void testStart() {
 		SettingsController settingsController = new SettingsController();
-        settingsController.start(new Stage());
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(settingsController.getFxmlResource()));
-        assertNotNull(loader.getController(), "Controller should not be null");
+		settingsController.start(new Stage());
+		FXMLLoader loader = new FXMLLoader(getClass().getResource(settingsController.getFxmlResource()));
+		assertNotNull(loader.getController(), "Controller should not be null");
 	}
 }

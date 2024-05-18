@@ -18,15 +18,16 @@ public class HOIIVUtils {
 	public static Boolean firstTimeSetup;
 	public static SettingsController settingsController;
 	public static MenuController menuController;
+
 	public static void main(String[] args) {
 		SettingsManager.getSavedSettings();
 
 		HOIIVUtilsLog.startLog();
 
 		/* preprocessing which doesn't require settings */
-		ModifierDatabase mdb = new ModifierDatabase();  // load modifiers
-		EffectDatabase edb = new EffectDatabase();      // load effects
-		
+		ModifierDatabase mdb = new ModifierDatabase(); // load modifiers
+		EffectDatabase edb = new EffectDatabase(); // load effects
+
 		if (Boolean.TRUE.equals(firstTimeSetup)) {
 			System.out.println("HOIIVUtils launched stage settings cuz it was first time setup");
 			settingsController = new SettingsController();
@@ -39,7 +40,8 @@ public class HOIIVUtils {
 				menuController = new MenuController();
 				menuController.launchMenuWindow(args);
 			} else {
-				System.out.println("HOIIVUtils created launched settings cuz it was NOT first time and settings was NOT skipped");
+				System.out.println(
+						"HOIIVUtils created launched settings cuz it was NOT first time and settings was NOT skipped");
 				settingsController = new SettingsController();
 				settingsController.launchSettingsWindow(args);
 			}

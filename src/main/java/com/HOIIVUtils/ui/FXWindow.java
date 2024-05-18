@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface FXWindow {
-	//String COM_UI = "/com/HOIIVUtils/ui/";
+	// String COM_UI = "/com/HOIIVUtils/ui/";
 	static void openGlobalErrorWindow(Exception exception) {
 		openGlobalErrorWindow(exception.getLocalizedMessage());
 	}
@@ -33,10 +33,15 @@ public interface FXWindow {
 	/**
 	 * Opens windows file and directory chooser
 	 *
-	 * @param fxcomponent      The node (javafx component) that was pressed to open the chooser, must belong to a scene
-	 * @param initialDirectory The initial directory of the file chooser, instead of the default user directory.
-	 * @param ford             A quirky boolean that specifies whether you want to return a directory or file: true = return directory, false = return file
-	 * @return theChosenOne, It is up to the the page to handle what you do if the user returns a null
+	 * @param fxcomponent      The node (javafx component) that was pressed to open
+	 *                         the chooser, must belong to a scene
+	 * @param initialDirectory The initial directory of the file chooser, instead of
+	 *                         the default user directory.
+	 * @param ford             A quirky boolean that specifies whether you want to
+	 *                         return a directory or file: true = return directory,
+	 *                         false = return file
+	 * @return theChosenOne, It is up to the the page to handle what you do if the
+	 *         user returns a null
 	 * @see File
 	 * @see Node
 	 */
@@ -68,9 +73,13 @@ public interface FXWindow {
 	 * <p>
 	 * For if you don't want to set a initial directory
 	 *
-	 * @param fxcomponent The node (javafx component) that was pressed to open the chooser, must belong to a scene
-	 * @param ford        A quirky boolean that specifies whether you want to return a directory or file: true = return directory, false = return file
-	 * @return theChosenOne, It is up to the the page to handle what you do if the user returns a null
+	 * @param fxcomponent The node (javafx component) that was pressed to open the
+	 *                    chooser, must belong to a scene
+	 * @param ford        A quirky boolean that specifies whether you want to return
+	 *                    a directory or file: true = return directory, false =
+	 *                    return file
+	 * @return theChosenOne, It is up to the the page to handle what you do if the
+	 *         user returns a null
 	 * @see Node
 	 */
 	default File openChooser(Node fxcomponent, Boolean ford) {
@@ -112,7 +121,8 @@ public interface FXWindow {
 	}
 
 	/**
-	 * @param fxcomponent The node (javafx component), must belong to a scene. The stage the scene belongs to will be hidden.
+	 * @param fxcomponent The node (javafx component), must belong to a scene. The
+	 *                    stage the scene belongs to will be hidden.
 	 * @see Node
 	 * @see javafx.stage.Window
 	 */
@@ -128,7 +138,8 @@ public interface FXWindow {
 		if (Settings.DEV_MODE.enabled()) {
 			exception.printStackTrace();
 		}
-		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(), JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(),
+				JOptionPane.WARNING_MESSAGE);
 	}
 
 	default void openError(String s) {
@@ -150,14 +161,15 @@ public interface FXWindow {
 
 	void setTitle(String title);
 
-	default <S> void loadTableView(TableViewWindow window, TableView<S> dataTable, ObservableList<S> data, List<Function<S, ?>> dataFunctions) {
+	default <S> void loadTableView(TableViewWindow window, TableView<S> dataTable, ObservableList<S> data,
+			List<Function<S, ?>> dataFunctions) {
 		window.setDataTableCellFactories();
 
 		setTableCellValueFactories(dataFunctions, dataTable);
 
-		dataTable.setItems(data);       // country objects, cool! and necessary for the cell value factory,
-										// this is giving the factories the list of objects to collect
-										// their data from.
+		dataTable.setItems(data); // country objects, cool! and necessary for the cell value factory,
+									// this is giving the factories the list of objects to collect
+									// their data from.
 
 		System.out.println("Loaded data into table: " + dataTable.getId());
 	}
@@ -182,23 +194,26 @@ public interface FXWindow {
 	 * @param <T>
 	 * @return
 	 */
-	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(Function<S, ?> propertyGetter) {
+	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(
+			Function<S, ?> propertyGetter) {
 		return cellData -> {
-//			if (Settings.DEV_MODE.enabled()) {
-//				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
-//			}
+			// if (Settings.DEV_MODE.enabled()) {
+			// System.out.println("Table callback created, data: " +
+			// propertyGetter.apply(cellData.getValue()));
+			// }
 			@SuppressWarnings("unchecked")
-			T result = (T) propertyGetter.apply(cellData.getValue());   // yap
+			T result = (T) propertyGetter.apply(cellData.getValue()); // yap
 			return new SimpleObjectProperty<>(result);
 			// mehhhh
 		};
 	}
 
 	/**
-	 * 	Update cell behavior within a column
+	 * Update cell behavior within a column
 	 */
 	// todo why is T never used and we have it....
-	static <S, T extends TableCell<S, Double>> void updateColumnPercentBehavior(TableColumn<S, Double> column, boolean resourcesPercent) {
+	static <S, T extends TableCell<S, Double>> void updateColumnPercentBehavior(TableColumn<S, Double> column,
+			boolean resourcesPercent) {
 		column.setCellFactory(col -> {
 			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();
 			if (resourcesPercent) {

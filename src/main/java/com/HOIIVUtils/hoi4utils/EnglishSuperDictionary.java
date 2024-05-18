@@ -7,8 +7,9 @@ import java.util.List;
 
 public class EnglishSuperDictionary {
 
-	/** 
+	/**
 	 * Capitalizes every word in a string with a pre-set whitelist
+	 * 
 	 * @param title
 	 * @return Returns the edited string unless the string has no words
 	 */
@@ -19,10 +20,10 @@ public class EnglishSuperDictionary {
 		if (title.trim().isEmpty()) {
 			return title;
 		}
-	
+
 		ArrayList<String> words = new ArrayList<>(Arrays.asList(title.split(" ")));
 		HashSet<String> whitelist = EnglishSuperDictionary.createCapitalizationWhitelist();
-	
+
 		if (words.get(0).length() == 1) {
 			words.set(0, Character.toUpperCase(words.get(0).charAt(0)) + "");
 		} else if (words.get(0).length() > 1) {
@@ -32,7 +33,7 @@ public class EnglishSuperDictionary {
 			// todo this should never happen now right?
 			System.out.println("first word length < 1");
 		}
-	
+
 		System.out.println("num words: " + words.size());
 		for (int i = 1; i < words.size(); i++) {
 			if (!EnglishSuperDictionary.isAcronym(words.get(i)) && !(whitelist.contains(words.get(i)))) {
@@ -44,24 +45,24 @@ public class EnglishSuperDictionary {
 							+ words.get(i).substring(1));
 				}
 			}
-	
+
 		}
-	
+
 		System.out.println("capitalized: " + String.join(" ", words));
 		return String.join(" ", words);
 	}
 
 	static boolean isAcronym(String word) {
 		int num_cap_letters = EnglishSuperDictionary.numCapLetters(word);
-	
+
 		return num_cap_letters == word.length();
 	}
 
 	static int numCapLetters(String word) {
 		if (word == null) {
-			return 0; 
+			return 0;
 		}
-	
+
 		int num_cap_letters;
 		num_cap_letters = 0;
 		for (int j = 0; j < word.length(); j++) {
@@ -73,12 +74,11 @@ public class EnglishSuperDictionary {
 	}
 
 	static HashSet<String> createCapitalizationWhitelist() {
-		String[] whitelist =
-		{
+		String[] whitelist = {
 				"a",
 				"above",
 				"after",
-				"among",        // among us
+				"among", // among us
 				"an",
 				"and",
 				"around",
@@ -117,5 +117,5 @@ public class EnglishSuperDictionary {
 		// create the whitelist
 		return new HashSet<>(List.of(whitelist));
 	}
-	
+
 }
