@@ -9,23 +9,36 @@ North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59
 
 ## Installation
 
-**WIP!** we are working on providing the jdk/jre along with the program, so in the meantime!  
+**WIP!** we are working on several things including:
+
+- providing the jdk/jre along with the program, so in the meantime!  
+- making an installer
+- Changing where the settings save
+- Several Util Windows that are already listed in the main window  
+- A proper log and console
+- Learn how to use containers and test on linux
+
 Install java openjdk 21 LTS: [https://adoptium.net/](https://adoptium.net/)  
-Clone this repository. Enjoy. 
+
+For Windows: Download the the latest release (jar with dependecies.jar) or (.exe) and run it  
+For Linux: Download the latest release (jar with dependecies.jar) and run it
+
+You can also download and compile it with the mvnw
 
 ## Usage
 
-Use Github Desktop to insure that you are fully up to date. ***(Recommended)***  
-To use this program: After following the installation instructions and having the up to date version, run HOIIVUtils.exe. 
-This is in pre-pre-alpha and we constinetly push commits that break the program (on the dev branch now at least) so please keep in mind how **WIP** this is!  
+Please keep in mind how **WIP** this is!  
+This is in pre-pre-alpha and we constinetly push commits that break the program (on the dev branch now at least(hopefuly))  
+Run the jar or exe  
+Select your prefered settings  
+Select your SOURCE mod folder (required)  
+Click Ok  
 
 ## Credits and Contributors
 
 battleskorpion  
-Chris Cason  
+thiccchris
 SlothMcShain  
 Fullcord  
+Juddur
 Gro0mp  
-Juddur  
-
-

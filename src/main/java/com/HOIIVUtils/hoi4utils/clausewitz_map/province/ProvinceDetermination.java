@@ -4,6 +4,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.MapPoint;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.BorderMap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.BorderMapping;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.BorderMapping_CPU;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultUndirectedGraph;

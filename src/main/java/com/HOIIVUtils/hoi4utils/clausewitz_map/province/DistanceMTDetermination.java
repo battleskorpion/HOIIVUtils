@@ -6,6 +6,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.MapPoint;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.BorderMap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.BorderMapping;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.BorderMapping_CPU;
 import com.opensimplex2.OpenSimplex2;
 
 import java.io.Serial;

@@ -23,7 +23,7 @@ public class SettingsManager {
 	private static File settings_file;
 	private static FileWriter settingsWriter;
 	private static BufferedWriter settingsBWriter;
-	private static PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); 				// for println syntax
+	private static PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); // for println syntax
 	static HashMap<Settings, String> settingValues = new HashMap<>();
 	public static SettingsManager settings;
 
@@ -35,7 +35,7 @@ public class SettingsManager {
 		readSettings();
 	}
 
-	public SettingsManager(HashMap<Settings, String> settings) throws IOException { 
+	public SettingsManager(HashMap<Settings, String> settings) throws IOException {
 		String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
 		String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
 		new File(hoi4UtilsPropertiesPath).mkdir();
@@ -59,9 +59,12 @@ public class SettingsManager {
 	public static void readSettings() {
 		try {
 			Scanner settingReader = new Scanner(settings_file);
-//			System.out.println(settingReader.nextLine());
+			// System.out.println(settingReader.nextLine());
 
-			/* if file is empty then write blank hoi4utils.settings to new hoi4utils.settings file */
+			/*
+			 * if file is empty then write blank hoi4utils.settings to new
+			 * hoi4utils.settings file
+			 */
 			if (!settingReader.hasNext()) {
 				writeBlankSettings();
 				settingReader.close();
@@ -93,7 +96,7 @@ public class SettingsManager {
 	 * Writes a blank setting to the hoi4utils.settings file
 	 */
 	private static void writeBlankSetting(Settings setting) throws IOException {
-		settingsWriter = new FileWriter(settings_file, true);		// true = append
+		settingsWriter = new FileWriter(settings_file, true); // true = append
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
@@ -106,7 +109,7 @@ public class SettingsManager {
 	 * Writes default hoi4utils.settings to the hoi4utils.settings file
 	 */
 	public static void writeBlankSettings() throws IOException {
-		settingsWriter = new FileWriter(settings_file, false);		// true = append
+		settingsWriter = new FileWriter(settings_file, false); // true = append
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
@@ -124,7 +127,7 @@ public class SettingsManager {
 	 * Saves setting with specified value
 	 */
 	public static void saveSetting(Settings setting, String settingValue) throws IOException {
-		settingsWriter = new FileWriter(settings_file, false);		// true = append
+		settingsWriter = new FileWriter(settings_file, false); // true = append
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
@@ -137,7 +140,9 @@ public class SettingsManager {
 	}
 
 	/**
-	 * Saves a list of hoi4utils.settings to hoi4utils.settings file, all other hoi4utils.settings remain the same.
+	 * Saves a list of hoi4utils.settings to hoi4utils.settings file, all other
+	 * hoi4utils.settings remain the same.
+	 * 
 	 * @param newSettings list of updated hoi4utils.settings to save
 	 * @throws IOException
 	 */
@@ -146,7 +151,7 @@ public class SettingsManager {
 			return;
 		}
 
-		settingsWriter = new FileWriter(settings_file, false);		// true = append
+		settingsWriter = new FileWriter(settings_file, false); // true = append
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
@@ -160,10 +165,11 @@ public class SettingsManager {
 
 	/**
 	 * Saves all hoi4utils.settings to hoi4utils.settings file.
+	 * 
 	 * @throws IOException
 	 */
 	public static void saveSettings() throws IOException {
-		settingsWriter = new FileWriter(settings_file, false);		// true = append
+		settingsWriter = new FileWriter(settings_file, false); // true = append
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
@@ -185,31 +191,30 @@ public class SettingsManager {
 			}
 
 			System.out.println("Performing standard startup cuz settings were found");
-		}
-		else {
+		} else {
 			HOIIVUtils.firstTimeSetup = true;
 		}
 	}
 
 	public static void deleteAllSettings() throws IOException {
-        Path dir = Paths.get(HOI4UTILS_PROPERTIES_PATH); //path to the directory  
-        Files
-            .walk(dir) // Traverse the file tree in depth-first order
-            .sorted(Comparator.reverseOrder())
-            .forEach(path -> {
-                try {
-					if (Settings.DEV_MODE.enabled()) {
-						System.out.println("Deleting: " + path);
+		Path dir = Paths.get(HOI4UTILS_PROPERTIES_PATH); // path to the directory
+		Files
+				.walk(dir) // Traverse the file tree in depth-first order
+				.sorted(Comparator.reverseOrder())
+				.forEach(path -> {
+					try {
+						if (Settings.DEV_MODE.enabled()) {
+							System.out.println("Deleting: " + path);
+						}
+						Files.delete(path); // delete each file or directory
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-                    Files.delete(path);  //delete each file or directory
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+				});
 	}
-	
-	public static String get(Settings setting) { 
-		return settingValues.get(setting); 
+
+	public static String get(Settings setting) {
+		return settingValues.get(setting);
 	}
 
 	public static boolean isNull(Settings setting) {

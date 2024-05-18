@@ -26,19 +26,31 @@ public class SettingsController extends Application implements FXWindow {
 	private String fxmlResource = "Settings.fxml";
 	private String title = "Settings";
 	private Stage stage;
-	
-	@FXML public Pane idPane;
-	@FXML public Label idVersionLabel;
-	@FXML public TextField idModPathTextField;
-	@FXML public Label idHOIIVModFolderLabel;
-	@FXML public Button idBrowseButton;
-	@FXML public CheckBox devModeCheckBox;
-	@FXML public CheckBox idOpenConsoleOnLaunchCheckBox;
-	@FXML public CheckBox idSkipSettingsCheckBox;
-	@FXML public Button idOkButton;
-	@FXML public Button idDelSettingsButton;
-	@FXML public CheckBox drawFocusTreesCheckBox;
-	@FXML public ComboBox<Screen> preferredMonitorComboBox;
+
+	@FXML
+	public Pane idPane;
+	@FXML
+	public Label idVersionLabel;
+	@FXML
+	public TextField idModPathTextField;
+	@FXML
+	public Label idHOIIVModFolderLabel;
+	@FXML
+	public Button idBrowseButton;
+	@FXML
+	public CheckBox devModeCheckBox;
+	@FXML
+	public CheckBox idOpenConsoleOnLaunchCheckBox;
+	@FXML
+	public CheckBox idSkipSettingsCheckBox;
+	@FXML
+	public Button idOkButton;
+	@FXML
+	public Button idDelSettingsButton;
+	@FXML
+	public CheckBox drawFocusTreesCheckBox;
+	@FXML
+	public ComboBox<Screen> preferredMonitorComboBox;
 
 	HashMap<Settings, String> tempSettings;
 
@@ -52,9 +64,9 @@ public class SettingsController extends Application implements FXWindow {
 		setDefault();
 		includeSettingValues();
 
-		if (Settings.DEV_MODE.disabled()) {
-			drawFocusTreesCheckBox.setDisable(true);
-		}
+		// You can not enable or disable fxml in initialization because at this point
+		// the fxml has not been loaded yet so the fxml elements are null which will
+		// cause a crash
 
 		preferredMonitorComboBox.setItems(Screen.getScreens());
 		preferredMonitorComboBox.setCellFactory(cell -> new ListCell<>() {
@@ -71,7 +83,7 @@ public class SettingsController extends Application implements FXWindow {
 		});
 
 	}
-	
+
 	public void launchSettingsWindow(String[] args) {
 		System.out.println("Settings Controller ran launchSettingsWindow");
 		launch(args);
@@ -79,24 +91,26 @@ public class SettingsController extends Application implements FXWindow {
 
 	@Override
 	public void start(Stage stage) {
-		try{
+		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
-			System.out.println("loader things: " + loader + " " + loader.getLocation() + " " + loader.getResources() + " " + loader.getController() + " " + loader.getCharset() + " " + loader.getControllerFactory() + " " + loader.getNamespace() + " " + loader.getBuilderFactory() + " " + loader.getLoadListener());
+			System.out.println("loader things: " + loader + " " + loader.getLocation() + " " + loader.getResources()
+					+ " " + loader.getController() + " " + loader.getCharset() + " " + loader.getControllerFactory()
+					+ " " + loader.getNamespace() + " " + loader.getBuilderFactory() + " " + loader.getLoadListener());
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 
 			this.stage = stage;
 			stage.setScene(scene);
-			
+
 			stage.setTitle(title);
 			stage.show();
-//			if (fxmlResource.equals("fxml/Settings.fxml")) {
-				stage.maxWidthProperty().bind(stage.widthProperty());
-				stage.minWidthProperty().bind(stage.widthProperty());
-//			}
+			// if (fxmlResource.equals("fxml/Settings.fxml")) {
+			stage.maxWidthProperty().bind(stage.widthProperty());
+			stage.minWidthProperty().bind(stage.widthProperty());
+			// }
 			System.out.println("Settings Controller created it's own stage and showed it");
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -104,12 +118,12 @@ public class SettingsController extends Application implements FXWindow {
 	public void open() {
 		if (stage != null) {
 			stage.show();
-//			if (fxmlResource.equals("fxml/Settings.fxml")) {
-				stage.maxWidthProperty().bind(stage.widthProperty());
-				stage.minWidthProperty().bind(stage.widthProperty());
-//			}
+			// if (fxmlResource.equals("fxml/Settings.fxml")) {
+			stage.maxWidthProperty().bind(stage.widthProperty());
+			stage.minWidthProperty().bind(stage.widthProperty());
+			// }
 			System.out.println("Settings Controller showed setting stage with open cuz settings stage was NOT null");
-			
+
 		} else {
 			start(new Stage());
 			System.out.println("Settings Controller create settings stage with open cuz settings stage was null");
@@ -140,12 +154,13 @@ public class SettingsController extends Application implements FXWindow {
 	public void disableOkButton() {
 		idOkButton.setDisable(true);
 	}
-	
-	/** User Interactive Text Feild in Settings Window
+
+	/**
+	 * User Interactive Text Feild in Settings Window
 	 * Allows the user to type in the text field.
 	 * It detects whever the user entered a valid directory.
 	 * Saves the directory path to hoi4utils settings: MOD_PATH
-	*/
+	 */
 	public void handleModPathTextField() {
 		if (modPathIsDirectory()) {
 			if (idOkButton.isDisabled()) {
@@ -162,7 +177,9 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * returns true if the mod path in mod path text field is a directory path that exists.
+	 * returns true if the mod path in mod path text field is a directory path that
+	 * exists.
+	 * 
 	 * @return
 	 */
 	public boolean modPathIsDirectory() {
@@ -193,17 +210,23 @@ public class SettingsController extends Application implements FXWindow {
 		idDelSettingsButton.setDisable(true);
 		disableOkButton();
 	}
-	
-	/** User Interactive Button in Settings Window
+
+	/**
+	 * User Interactive Button in Settings Window
 	 * Opens up operating system Directory Chooser
 	 * Will do nothing if the user exits or cancels window
 	 * Updates Text Field when directory is selected
 	 * Saves the directory path to MOD_PATH
 	 */
 	public void handleBrowseAction() {
-		File initialModPath = new File(FileUtils.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
+		File initialModPath = new File(
+				FileUtils.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
 
-		File selectedDirectory = openChooser(idBrowseButton, true, initialModPath); // ! im making this pass any class (that is a "Node" at least, bc that makes sense, something that can go on a fxwindow I think), much welcome :D
+		File selectedDirectory = openChooser(idBrowseButton, true, initialModPath); // ! im making this pass any class
+																					// (that is a "Node" at least, bc
+																					// that makes sense, something that
+																					// can go on a fxwindow I think),
+																					// much welcome :D
 		if (selectedDirectory == null) {
 			return;
 		}
@@ -241,7 +264,8 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	public void handlePreferredMonitorSelection() {
-		// change preferred monitor setting. // todo future: change settings window location upon decision/etc?
+		// change preferred monitor setting. // todo future: change settings window
+		// location upon decision/etc?
 		// monitors are labeled with ints, default being 0
 		// interpret index of selection as monitor selection
 		updateTempSetting(Settings.PREFERRED_SCREEN, preferredMonitorComboBox.getSelectionModel().getSelectedIndex());
@@ -251,8 +275,8 @@ public class SettingsController extends Application implements FXWindow {
 		tempSettings.put(setting, String.valueOf(property));
 	}
 
-
-	/** User Interactive Button in Settings Window
+	/**
+	 * User Interactive Button in Settings Window
 	 * Closes Settings Window
 	 * Opens Menu Window
 	 */
@@ -264,12 +288,12 @@ public class SettingsController extends Application implements FXWindow {
 		hideWindow(idOkButton);
 		openMenuWindow();
 	}
-	
+
 	private void openMenuWindow() {
 		MenuController menuWindow = new MenuController();
 		menuWindow.open();
 	}
-	
+
 	public boolean updateSettings() {
 		try {
 			if (Boolean.TRUE.equals(HOIIVUtils.firstTimeSetup)) {
@@ -292,8 +316,9 @@ public class SettingsController extends Application implements FXWindow {
 	/* from HOIUtilsWindow but can only extend one class */
 	/**
 	 * Opens window and updates fxmlResource and title
+	 * 
 	 * @param fxmlResource window .fxml resource
-	 * @param title window title
+	 * @param title        window title
 	 */
 	@Override
 	public void open(String fxmlResource, String title) {

@@ -65,4 +65,7 @@
 			"debug": false
 		}
 	],
+	"maven.view": "hierarchical",
+	"editor.formatOnPaste": true,
+	"editor.formatOnSave": true,
 }

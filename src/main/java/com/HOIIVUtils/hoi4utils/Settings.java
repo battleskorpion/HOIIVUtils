@@ -8,8 +8,8 @@ public enum Settings {
 			return (String) getSetting();
 		}
 	},
-	CURRENT_MOD,        // todo not in use
-	CIVILIAN_MILITARY_FACTORY_MAX_RATIO,            // ratio for civ/mil factories highlight in buildings view
+	CURRENT_MOD, // todo not in use
+	CIVILIAN_MILITARY_FACTORY_MAX_RATIO, // ratio for civ/mil factories highlight in buildings view
 	SKIP_SETTINGS {
 		public Object getSetting() {
 			return enabled();
@@ -67,6 +67,7 @@ public enum Settings {
 		public Object getSetting() {
 			return enabled();
 		}
+
 		public String defaultProperty() {
 			return "true";
 		}
@@ -77,17 +78,26 @@ public enum Settings {
 		}
 	},
 	ATTEMPT_LOAD_LOCALIZATION {
-		public Object getSetting() { return enabled(); }
-		public String defaultProperty() { return "true"; }
+		public Object getSetting() {
+			return enabled();
+		}
+
+		public String defaultProperty() {
+			return "true";
+		}
 	},
 	DRAW_FOCUS_TREE {
 		public Object getSetting() {
 			return enabled();
 		}
 
-		public boolean enabled() { return super.enabled() || DEV_MODE.disabled(); }
+		public boolean enabled() {
+			return super.enabled() || DEV_MODE.disabled();
+		}
 
-		public String defaultProperty() { return "true"; }
+		public String defaultProperty() {
+			return "true";
+		}
 	},
 	;
 
@@ -105,7 +115,9 @@ public enum Settings {
 	 *
 	 * @return true if the setting's property is equal to false, false otherwise.
 	 */
-	public boolean disabled() { return !enabled(); }
+	public boolean disabled() {
+		return !enabled();
+	}
 
 	/**
 	 * Sets the value of the setting

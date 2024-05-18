@@ -1,1 +1,1 @@
-java -jar target\HOIIVUtils-9.0.0-jar-with-dependencies.jar
+java -jar target\HOIIVUtils-10.1.0-SNAPSHOT-jar-with-dependencies.jar
