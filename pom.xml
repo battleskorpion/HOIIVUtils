@@ -6,7 +6,7 @@
 
 	<groupId>com.HOIIVUtils</groupId>
 	<artifactId>HOIIVUtils</artifactId>
-	<version>10.0.0-SNAPSHOT</version>
+	<version>10.1.0-SNAPSHOT</version>
 	<name>HOIIVUtils</name>
 	<description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
 	<url>https://github.com/battleskorpion/HOIIVUtils</url>
@@ -33,6 +33,22 @@
 	</properties>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.fxml</include>
+					<include>**/*.css</include>
+					<include>**/*.txt</include>
+					<include>**/*.png</include>
+					<include>**/*.bmp</include>
+					<include>**/*.sql</include>
+					<!-- It does not like .dds or .db files-->
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<!-- JavaFX Plugin -->
 			<plugin>
@@ -72,14 +88,6 @@
 				<configuration>
 					<configLocation>checkstyle.xml</configLocation>
 				</configuration>
-			</plugin>
-
-			<!-- Prettier Plugin -->
-			<plugin>
-				<groupId>com.hubspot.maven.plugins</groupId>
-				<artifactId>prettier-maven-plugin</artifactId>
-				<!-- Find the latest version at https://github.com/jhipster/prettier-java/releases -->
-				<version>2.6.0</version>
 			</plugin>
 
 			<!-- Assembly Plugin -->

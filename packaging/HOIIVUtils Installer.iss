@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "HOIIVUtils"
-#define MyAppVersion "9.0.0"
+#define MyAppVersion "10.0.0-SNAPSHOT"
 
 [Setup]
 SignTool=signtool12
