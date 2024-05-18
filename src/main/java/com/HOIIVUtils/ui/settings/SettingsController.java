@@ -81,8 +81,8 @@ public class SettingsController extends Application implements FXWindow {
 	public void start(Stage stage) {
 		try{
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
-			System.out.println("loader things: " + loader + " " + loader.getLocation() + " " + loader.getResources() + " " + loader.getController() + " " + loader.getCharset() + " " + loader.getControllerFactory() + " " + loader.getNamespace() + " " + loader.getBuilderFactory() + " " + loader.getLoadListener());
-			Parent root = loader.load();
+			System.out.println("loader things: " + loader + " " + loader.getLocation() + " " + loader.getResources() + " " + loader.getController() + " " + loader.getCharset() + " " + loader.getControllerFactory() + " " + loader.getNamespace() + " " + loader.getBuilderFactory() + " " + loader.getLoadListener()); // * I added this line to see what the loader is doing, I think it's not loading the controller properly, none of these should be null, espcially the controller
+			Parent root = loader.load();  // ! TODO This is where the error is happening on my machine, tried to make a unit test for it but I can't make it because I don't know how to test JavaFX stuff like Stages
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 
