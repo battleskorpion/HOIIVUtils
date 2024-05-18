@@ -11,12 +11,12 @@ North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59
 
 **WIP!** we are working on providing the jdk/jre along with the program, so in the meantime!  
 Install java openjdk 21 LTS: [https://adoptium.net/](https://adoptium.net/)  
-Clone this repository main branch.  
+Clone this repository. Enjoy. 
 
 ## Usage
 
 Use Github Desktop to insure that you are fully up to date. ***(Recommended)***  
-To use this program: WIP :If you want to run the program
+To use this program: After following the installation instructions and having the up to date version, run HOIIVUtils.exe. 
 This is in pre-pre-alpha and we constinetly push commits that break the program (on the dev branch now at least) so please keep in mind how **WIP** this is!  
 
 ## Credits and Contributors
