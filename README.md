@@ -2,28 +2,43 @@
 
 ## Description
 
-This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.
+This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.  
 
-Started This to help with our Hearts of Iron 4 mod where you can find the discord link below.  
-North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59BcbM)
+Started this to help with our Hearts of Iron 4 mod where you can find the discord link below.  
+North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59BcbM)  
 
 ## Installation
 
-**WIP!** we are working on maven to produce a usable exe or jar to ensure that you don't need the source code in order to use it!  
+**WIP!** we are working on several things including:
+
+- providing the jdk/jre along with the program, so in the meantime!  
+- making an installer
+- Changing where the settings save
+- Several Util Windows that are already listed in the main window  
+- A proper log and console
+- Learn how to use containers and test on linux
+
 Install java openjdk 21 LTS: [https://adoptium.net/](https://adoptium.net/)  
-Clone this repository main branch.
+
+For Windows: Download the the latest release (jar with dependecies.jar) or (.exe) and run it  
+For Linux: Download the latest release (jar with dependecies.jar) and run it
+
+You can also download and compile it with the mvnw
 
 ## Usage
 
-Use Github Desktop to insure that you are fully up to date. **_(Recommended)_**  
-To use this program: WIP :If you want to run the program
-This is in pre-pre-alpha and we constinetly push commits that break the program so please keep in mind how **WIP** this is!
+Please keep in mind how **WIP** this is!  
+This is in pre-pre-alpha and we constinetly push commits that break the program (on the dev branch now at least(hopefuly))  
+Run the jar or exe  
+Select your prefered settings  
+Select your SOURCE mod folder (required)  
+Click Ok  
 
 ## Credits and Contributors
 
-Battleskropion  
-Chris Cason  
+battleskorpion  
+thiccchris
 SlothMcShain  
 Fullcord  
-Gro0mp  
 Juddur
+Gro0mp  
