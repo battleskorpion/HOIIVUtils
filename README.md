@@ -37,7 +37,7 @@ Click Ok
 ## Credits and Contributors
 
 battleskorpion  
-thiccchris
+thiccchris  
 SlothMcShain  
 Fullcord  
 Juddur
