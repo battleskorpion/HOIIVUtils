@@ -33,33 +33,52 @@ public class HOIIVUtils {
 	public static SettingsController settingsController;
 	public static MenuController menuController;
 
+	/**
+	 * Main method for HOIIVUtils.
+	 * 
+	 * If firstTimeSetup is true, then launch the settings window.
+	 * If firstTimeSetup is false, then create the HOIIVUtils directory
+	 * and launch the settings window if SKIP_SETTINGS is false, otherwise
+	 * launch the menu window.
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		System.out.println(HOIIVUTILS_NAME + " " + HOIIVUTILS_VERSION + " launched");
 		SettingsManager.getSavedSettings();
 
+		// Start log
 		HOIIVUtilsLog.startLog();
 
+		// Load modifiers and effects
 		/* preprocessing which doesn't require settings */
 		ModifierDatabase mdb = new ModifierDatabase(); // load modifiers
 		EffectDatabase edb = new EffectDatabase(); // load effects
 
+		// Check if this is the first time the program is run
 		if (Boolean.TRUE.equals(firstTimeSetup)) {
 			System.out.println("HOIIVUtils launched stage settings cuz it was first time setup");
+			// Launch settings window
 			settingsController = new SettingsController();
 			settingsController.launchSettingsWindow(args);
 		} else {
+			// Create the HOIIVUtils directory
 			HOIIVFile.createHOIIVFilePaths();
 
+			// Check if the settings should be skipped
 			if (Settings.SKIP_SETTINGS.enabled()) {
 				System.out.println("HOIIVUtils launched stage menu cuz settings was set to be skipped");
+				// Launch menu window
 				menuController = new MenuController();
 				menuController.launchMenuWindow(args);
 			} else {
 				System.out.println(
 						"HOIIVUtils created launched settings cuz it was NOT first time and settings was NOT skipped");
+				// Launch settings window
 				settingsController = new SettingsController();
 				settingsController.launchSettingsWindow(args);
 			}
 		}
 	}
+
 }

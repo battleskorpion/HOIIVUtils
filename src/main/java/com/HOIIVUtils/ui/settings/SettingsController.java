@@ -81,13 +81,24 @@ public class SettingsController extends Application implements FXWindow {
 		preferredMonitorComboBox.setItems(Screen.getScreens());
 
 		preferredMonitorComboBox.setCellFactory(cell -> new ListCell<>() {
+			/**
+			 * Updates the item in the list view to the given value.
+			 * The text of the item is set to "Screen <number>: <width>x<height>" if the
+			 * item is not empty,
+			 * and null if the item is empty.
+			 * 
+			 * @param item  the item to be updated
+			 * @param empty whether the item is empty
+			 */
 			@Override
 			protected void updateItem(Screen item, boolean empty) {
 				super.updateItem(item, empty);
 				if (item == null || empty) {
 					setText(null);
 				} else {
-					int i = getIndex() + 1; // Entry number starts from 1
+					// The entry number starts from 1 (not 0) so add 1 to the index
+					int i = getIndex() + 1;
+					// Set the text of the item to "Screen <number>: <width>x<height>"
 					setText("Screen " + i + ": " + item.getBounds().getWidth() + "x" + item.getBounds().getHeight());
 				}
 			}
@@ -100,22 +111,45 @@ public class SettingsController extends Application implements FXWindow {
 		launch(args);
 	}
 
+	/**
+	 * Starts the settings window. This method is called when the
+	 * program is first launched, and it is responsible for creating
+	 * the stage and setting the scene.
+	 * 
+	 * @param stage the stage to be used for the settings window
+	 */
 	@Override
 	public void start(Stage stage) {
+		System.out.println("Settings Controller ran start method, attempting to load fxml file: " + fxmlResource);
+		// Create a FXMLLoader to load the fxml file
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
+
 		try {
+			// Load the fxml file
+			System.out.println("Attempting to load fxml file...");
 			Parent root = loader.load();
 			System.out.println("Successfully loaded fxml file.");
+
+			// Create a new scene and set the root node of the scene to
+			// the loaded fxml node
+			System.out.println("Attempting to create a new scene and set its root node to the loaded fxml node...");
 			Scene scene = new Scene(root);
+
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 
+			// Save the stage and set its scene to the created scene
 			this.stage = stage;
 			stage.setScene(scene);
 
 			stage.setTitle(title);
+
 			stage.show();
+
+			// Bind the width and height of the stage to its maximum value
+			// to make the stage full screen
 			stage.maxWidthProperty().bind(stage.widthProperty());
-			stage.minWidthProperty().bind(stage.widthProperty());
+			stage.maxHeightProperty().bind(stage.heightProperty());
+
 			System.out.println("Settings Controller created it's own stage and showed it");
 		} catch (Exception e) {
 			System.out.println("Failed to load fxml file!!!!!");
@@ -123,18 +157,29 @@ public class SettingsController extends Application implements FXWindow {
 		}
 	}
 
+	/**
+	 * Shows the settings window. If the window is already open, it is
+	 * simply shown again. If the window is not open, it is created and
+	 * shown.
+	 */
 	public void open() {
 		if (stage != null) {
+			// If the window is already open, show it again
+			System.out
+					.println("Settings Controller showing settings stage with open cuz settings stage was NOT null...");
 			stage.show();
-			// if (fxmlResource.equals("fxml/Settings.fxml")) {
+			System.out.println("Settings Controller showed settings stage");
+
+			// Bind the width and height of the stage to its maximum value
+			// to make the stage full screen
 			stage.maxWidthProperty().bind(stage.widthProperty());
 			stage.minWidthProperty().bind(stage.widthProperty());
-			// }
-			System.out.println("Settings Controller showed setting stage with open cuz settings stage was NOT null");
 
 		} else {
+			// If the window is not open, create a new one and show it
+			System.out.println("Settings Controller creating settings stage with open cuz settings stage was null...");
 			start(new Stage());
-			System.out.println("Settings Controller create settings stage with open cuz settings stage was null");
+			System.out.println("Settings Controller created settings stage");
 		}
 	}
 
@@ -291,22 +336,40 @@ public class SettingsController extends Application implements FXWindow {
 		menuWindow.open();
 	}
 
+	/**
+	 * Updates the settings and saves them to the settings file.
+	 * If firstTimeSetup is true, it will create a new SettingsManager with the
+	 * tempSettings.
+	 * If firstTimeSetup is false, it will save the tempSettings to the settings
+	 * file.
+	 * If firstTimeSetup is true and the modPathFile is null, it will create a new
+	 * HOIIVFilePaths object.
+	 * 
+	 * @return true if the settings were updated and saved successfully, false if
+	 *         not.
+	 */
 	public boolean updateSettings() {
 		try {
 			if (Boolean.TRUE.equals(HOIIVUtils.firstTimeSetup)) {
+				// If firstTimeSetup is true, create a new SettingsManager with the tempSettings
 				SettingsManager.settings = new SettingsManager(tempSettings);
 				HOIIVUtils.firstTimeSetup = false;
+				// Load the saved settings into the SettingsManager
 				SettingsManager.getSavedSettings();
+				// If the modPathFile is null, create a new HOIIVFilePaths object
 				if (HOIIVFile.modPathFile == null) {
 					HOIIVFile.createHOIIVFilePaths();
 				}
 			} else {
+				// If firstTimeSetup is false, save the tempSettings to the settings file
 				SettingsManager.saveSettings(tempSettings);
 			}
 		} catch (IOException exception) {
+			// If there was an IOException while saving the settings, open an error window
 			openError("Settings failed to save.");
 			return false;
 		}
+		// Return true if the settings were updated and saved successfully, false if not
 		return true;
 	}
 
