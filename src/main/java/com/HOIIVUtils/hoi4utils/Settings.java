@@ -2,8 +2,11 @@ package com.HOIIVUtils.hoi4utils;
 
 import java.io.IOException;
 
+import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsSaveException;
+
 public enum Settings {
 	MOD_PATH {
+		@Override
 		public String toString() {
 			return (String) getSetting();
 		}
@@ -11,42 +14,62 @@ public enum Settings {
 	CURRENT_MOD, // todo not in use
 	CIVILIAN_MILITARY_FACTORY_MAX_RATIO, // ratio for civ/mil factories highlight in buildings view
 	SKIP_SETTINGS {
+		@Override
 		public Object getSetting() {
 			return enabled();
 		}
 
+		@Override
 		public String defaultProperty() {
-			return "false";
+			return DEFAULT_VALUE;
 		}
 	},
 	DARK_MODE {
+		@Override
 		public Object getSetting() {
 			return enabled();
 		}
 
+		@Override
 		public String defaultProperty() {
-			return "false";
+			return DEFAULT_VALUE;
 		}
 	},
 	DEV_MODE {
+		@Override
 		public Object getSetting() {
 			return enabled();
 		}
 
+		@Override
 		public String defaultProperty() {
-			return "false";
+			return DEFAULT_VALUE;
+		}
+	},
+	DEMO_MODE {
+		@Override
+		public Object getSetting() {
+			return enabled();
+		}
+
+		@Override
+		public String defaultProperty() {
+			return DEFAULT_VALUE;
 		}
 	},
 	OPEN_CONSOLE_ON_LAUNCH {
+		@Override
 		public Object getSetting() {
 			return enabled();
 		}
 
+		@Override
 		public String defaultProperty() {
-			return "false";
+			return DEFAULT_VALUE;
 		}
 	},
 	PREFERRED_SCREEN {
+		@Override
 		public Object getSetting() {
 			try {
 				return Integer.parseInt(SettingsManager.settingValues.get(this));
@@ -58,57 +81,59 @@ public enum Settings {
 			}
 		}
 
+		@Override
 		public String defaultProperty() {
 			return "0";
 		}
 	},
 	LOAD_TO_MENU {
 		// to skip settings (if not first time user) and load direct to main menu
+		@Override
 		public Object getSetting() {
 			return enabled();
 		}
 
+		@Override
 		public String defaultProperty() {
 			return "true";
 		}
 	},
 	HOI4_PATH {
+		@Override
 		public String toString() {
 			return (String) getSetting();
 		}
 	},
 	ATTEMPT_LOAD_LOCALIZATION {
+		@Override
 		public Object getSetting() {
 			return enabled();
 		}
 
+		@Override
 		public String defaultProperty() {
 			return "true";
 		}
 	},
 	DRAW_FOCUS_TREE {
+		@Override
 		public Object getSetting() {
 			return enabled();
 		}
 
+		@Override
 		public boolean enabled() {
 			return super.enabled() || DEV_MODE.disabled();
 		}
 
+		@Override
 		public String defaultProperty() {
 			return "true";
 		}
 	},
-	DEMO_MODE {
-		public Object getSetting() {
-			return enabled();
-		}
-
-		public String defaultProperty() {
-			return "false";
-		}
-	},
 	;
+
+	private static final String DEFAULT_VALUE = "false";
 
 	/**
 	 * Returns if setting is enabled (setting is true).
@@ -132,8 +157,9 @@ public enum Settings {
 	 * Sets the value of the setting
 	 *
 	 * @param value
+	 * @throws SettingsSaveException
 	 */
-	void setValue(Object value) {
+	void setValue(Object value) throws SettingsSaveException {
 		SettingsManager.settingValues.put(this, String.valueOf(value));
 		try {
 			SettingsManager.saveSettings();
@@ -141,9 +167,8 @@ public enum Settings {
 				System.out.println("Updated setting " + this.name() + ": " + SettingsManager.settingValues.get(this));
 			}
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new SettingsSaveException("Error saving settings", e);
 		}
-		return;
 	}
 
 	public String defaultProperty() {
@@ -154,7 +179,8 @@ public enum Settings {
 		return SettingsManager.settingValues.get(this);
 	}
 
+	@Override
 	public String toString() {
-		return null;
+		return "";
 	}
 }
