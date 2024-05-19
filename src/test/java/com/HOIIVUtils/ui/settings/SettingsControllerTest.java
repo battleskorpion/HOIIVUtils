@@ -8,7 +8,6 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import javafx.application.Platform;
-import java.io.IOException;
 
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;

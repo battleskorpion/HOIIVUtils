@@ -1,10 +1,11 @@
 package com.HOIIVUtils.hoi4utils;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.fail;
 
 class HOIIVUtilsTest {
 
+	@org.junit.jupiter.api.Test
+	void test() {
+		fail("Not yet implemented");
+	}
 }

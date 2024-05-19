@@ -199,19 +199,6 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
                             || descStatus == Localization.Status.UPDATED;
                     boolean hasStatusNew = descStatus == Localization.Status.NEW
                             || textStatus == Localization.Status.NEW;
-
-                    // // Apply text highlighting style if needed
-                    // if (hasStatusUpdated) {
-                    // setTextFill(Color.BLACK); // Set text color to black
-                    // setStyle("-fx-background-color: yellow;"); // Customize background color here
-                    // } else if (hasStatusNew) {
-                    // setTextFill(Color.BLACK); // Set text color to black
-                    // setStyle("-fx-background-color: cyan;"); // Customize background color here
-                    // } else {
-                    // setTextFill(Color.BLACK); // Set text color to black
-                    // setStyle(""); // Reset style
-                    // }
-                    // Apply text style
                     if (hasStatusUpdated || hasStatusNew) {
                         setTextFill(Color.BLACK); // Set text color to black
                         setStyle("-fx-font-weight: bold; -fx-background-color: #328fa8;"); // Apply bold text using CSS
