@@ -7,8 +7,9 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localizable;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTags;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
+import com.HOIIVUtils.hoi4utils.ioexceptions.IllegalLocalizationFileTypeException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
@@ -28,8 +29,7 @@ import static com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag.COUNTR
  */
 // todo extends file?
 public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<Focus> {
-	private static final ObservableMap<File, FocusTree> focusTrees
-			= FXCollections.observableHashMap();
+	private static final ObservableMap<File, FocusTree> focusTrees = FXCollections.observableHashMap();
 	private static final ObservableList<FocusTree> focusTreesList = FXCollections.observableArrayList();
 	static {
 		focusTrees.addListener((MapChangeListener<File, FocusTree>) change -> {
@@ -37,7 +37,6 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 			focusTreesList.sort(Comparator.naturalOrder());
 		});
 	}
-
 
 	// private HashSet<Focus> focuses;
 	private final ObservableMap<String, Focus> focuses;
@@ -74,21 +73,21 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		FocusTree.add(this);
 	}
 
-//	/**
-//	 * Instantiate new focus tree.
-//	 *
-//	 * @param id Focus tree id (usually kept same as file/country name).
-//	 */
-//	private FocusTree(String id, CountryTag tag) {
-//		this.id = id;
-//		// countryModifier = new CountryModifier();
-//		//! defaultFocus = false;
-//		//! continuousFocusPosition = new Point(50, 1200);
-//		country = tag;
-//		focuses = FXCollections.observableHashMap();
-//
-//		FocusTree.add(country(), this);
-//	}
+	// /**
+	// * Instantiate new focus tree.
+	// *
+	// * @param id Focus tree id (usually kept same as file/country name).
+	// */
+	// private FocusTree(String id, CountryTag tag) {
+	// this.id = id;
+	// // countryModifier = new CountryModifier();
+	// //! defaultFocus = false;
+	// //! continuousFocusPosition = new Point(50, 1200);
+	// country = tag;
+	// focuses = FXCollections.observableHashMap();
+	//
+	// FocusTree.add(country(), this);
+	// }
 
 	public static ObservableList<FocusTree> observeFocusTrees() {
 		return focusTreesList;
@@ -117,12 +116,12 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 			System.err.println("Localization folder does not exist or is not a directory.");
 			return;
 		}
-		if (HOIIVFile.localization_eng_folder.listFiles() == null || HOIIVFile.localization_eng_folder.listFiles().length == 0) {
+		if (HOIIVFile.localization_eng_folder.listFiles() == null
+				|| HOIIVFile.localization_eng_folder.listFiles().length == 0) {
 			System.err.println("No localization files found in " + HOIIVFile.localization_eng_folder);
 			return;
 		}
-		aa:
-		for (FocusTree focusTree : unlocalizedFocusTrees()) {
+		aa: for (FocusTree focusTree : unlocalizedFocusTrees()) {
 			for (File f : HOIIVFile.localization_eng_folder.listFiles()) {
 				FocusLocalizationFile flf;
 				try {
@@ -156,13 +155,13 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		Parser focusTreeParser = new Parser(this.focus_file);
 		Node focusTreeNode;
 		try {
-			 focusTreeNode = focusTreeParser.parse();
-			 var l = focusTreeNode.filterName("focus_tree").toList();
-			 if (l.isEmpty()) {
-				 System.out.println("focus_tree filter yielded no results for " + focus_file);
-				 return null;
-			 }
-			 focusTreeNode = l.get(0);
+			focusTreeNode = focusTreeParser.parse();
+			var l = focusTreeNode.filterName("focus_tree").toList();
+			if (l.isEmpty()) {
+				System.out.println("focus_tree filter yielded no results for " + focus_file);
+				return null;
+			}
+			focusTreeNode = l.get(0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -171,16 +170,17 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		List<Focus> focuses = getFocuses(focusTreeNode);
 		minX = focuses.stream().mapToInt(Focus::absoluteX).min().orElse(0);
 
-//		focus_names = new ArrayList<>();
-//		focus_names.addAll(focuses.parallelStream()
-//				.map(Focus::id).toList());
-//		this.focuses.clear();
-//		this.focuses.putAll(focuses.parallelStream()
-//				.collect(Collectors.toMap(Focus::id, f -> f)));
-//		minX = 0; // min x is 0 or less
+		// focus_names = new ArrayList<>();
+		// focus_names.addAll(focuses.parallelStream()
+		// .map(Focus::id).toList());
+		// this.focuses.clear();
+		// this.focuses.putAll(focuses.parallelStream()
+		// .collect(Collectors.toMap(Focus::id, f -> f)));
+		// minX = 0; // min x is 0 or less
 
 		/* country */
-		// todo should not be .findFirst("modifier"); need mofifier handling. but thats okay.
+		// todo should not be .findFirst("modifier"); need mofifier handling. but thats
+		// okay.
 		Node countryModifierExp = focusTreeNode.findFirst("country").findFirst("modifier");
 		if (countryModifierExp != null) {
 			try {
@@ -206,12 +206,11 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 
 		List<Focus> focusList = new ArrayList<>();
 
-		List<Node> focusTreeNodes =
-				focusTreeNode.filterName("focus").toList();
+		List<Node> focusTreeNodes = focusTreeNode.filterName("focus").toList();
 		for (Node node : focusTreeNodes) {
 			Focus focus;
 			/* focus id */
-			String focus_id = node.getValue("id").string();     // gets the ##### from "id = #####"
+			String focus_id = node.getValue("id").string(); // gets the ##### from "id = #####"
 			try {
 				focus = new Focus(focus_id, this, node);
 			} catch (DuplicateFocusException e) {
@@ -231,9 +230,11 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 
 	private void checkPendingFocusReferences() {
 		List<Focus> resolvedReferences = new ArrayList<>();
-//		private final HashMap<String, Consumer<List<Node>>> pendingFocusReferences = new HashMap<>();
+		// private final HashMap<String, Consumer<List<Node>>> pendingFocusReferences =
+		// new HashMap<>();
 
-		List<PendingFocusReferenceList> pendingFocusReferenceLists = focuses().parallelStream().map(Focus::getPendingFocusReferences).toList();
+		List<PendingFocusReferenceList> pendingFocusReferenceLists = focuses().parallelStream()
+				.map(Focus::getPendingFocusReferences).toList();
 
 		/* resolve references of focuses that exist */
 		for (var pendingFocusReferenceList : pendingFocusReferenceLists) {
@@ -244,8 +245,9 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 			referencesToRemove.forEach(pendingFocusReferenceList::resolve);
 			// todo temp want better warnings in future
 			/* unresolved references */
-//			pendingFocusReferences.forEach(pfr -> JOptionPane.showMessageDialog(null,
-//					"Undefined Focus reference invalid: " + pfr.id() + ", " + pfr.pendingActionMap().keySet()));
+			// pendingFocusReferences.forEach(pfr -> JOptionPane.showMessageDialog(null,
+			// "Undefined Focus reference invalid: " + pfr.id() + ", " +
+			// pfr.pendingActionMap().keySet()));
 			pendingFocusReferences.forEach(pfr -> System.out.println("Warning: [Focus.java] " +
 					"Undefined Focus reference invalid: " + pfr.id() + ", " + pfr.pendingActionMap().keySet()));
 		}
@@ -300,7 +302,9 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 			FXWindow.openGlobalErrorWindow("Illegal argument: " + e.getLocalizedMessage());
 			return null;
 		} catch (NullPointerException e) {
-			FXWindow.openGlobalErrorWindow("Focus loc. file does not exist/is not available or other error. Details: \n\t" + e.getLocalizedMessage());
+			FXWindow.openGlobalErrorWindow(
+					"Focus loc. file does not exist/is not available or other error. Details: \n\t"
+							+ e.getLocalizedMessage());
 		} catch (IllegalLocalizationFileTypeException e) {
 			throw new RuntimeException(e);
 		}
@@ -314,7 +318,8 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 
 	@Override
 	public boolean equals(Object other) {
-		if (other == null) return false;
+		if (other == null)
+			return false;
 
 		if (other.getClass() == this.getClass()) {
 			return this.focus_file == ((FocusTree) other).focus_file;
@@ -354,10 +359,13 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 
 	/**
 	 * Returns focus tree corresponding to the tag, if it exists
+	 * 
 	 * @param tag
 	 * @return The focus tree, or null if could not be found/not yet created.
 	 */
-	public static FocusTree get(CountryTag tag) { return focusTrees.get(tag); }
+	public static FocusTree get(CountryTag tag) {
+		return focusTrees.get(tag);
+	}
 
 	public static FocusTree getdankwizardisfrench(CountryTag tag) {
 		for (FocusTree tree : listFocusTrees()) {
@@ -388,15 +396,14 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		// todo may be able to do something else in this function -
 		// todo all focus trees - localized focus trees - unlocalized focus trees
 		for (FocusTree tree : listFocusTrees()) {
-			aa:
-			if (tree.locFile() != null) {
+			aa: if (tree.locFile() != null) {
 				Scanner locReader = new Scanner(tree.locFile().getFile());
 				ArrayList<String> focuses = tree.listFocusIDs();
 				if (focuses == null) {
 					break aa;
 				}
 
-				//ArrayList<Boolean> localized; Commited out till Skorp fixes this
+				// ArrayList<Boolean> localized; Commited out till Skorp fixes this
 				while (locReader.hasNext()) {
 					String locLine = locReader.nextLine();
 					if (locLine.trim().length() >= 3) {
@@ -416,8 +423,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		ArrayList<FocusTree> focusTrees = new ArrayList<>();
 
 		for (FocusTree tree : listFocusTrees()) {
-			aa:
-			if (tree.locFile() != null) {
+			aa: if (tree.locFile() != null) {
 				Scanner locReader = new Scanner(tree.locFile().getFile());
 				ArrayList<String> focuses = tree.listFocusIDs();
 				if (focuses == null) {
@@ -425,7 +431,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 
 				}
 
-				//ArrayList<Boolean> localized; Commited out till Skorp fixies this
+				// ArrayList<Boolean> localized; Commited out till Skorp fixies this
 				while (locReader.hasNext()) {
 					String locLine = locReader.nextLine();
 					if (locLine.trim().length() >= COUNTRY_TAG_LENGTH) {

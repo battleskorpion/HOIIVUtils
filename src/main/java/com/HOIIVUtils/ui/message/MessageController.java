@@ -49,11 +49,16 @@ public class MessageController extends HOIIVUtilsStageLoader {
 		super.open();
 		System.out.println("Message Stage started with message: " + message + "\n and loader is: " + fxmlResource);
 		// Get the controller for the message popup window
+		if (loader == null) {
+			System.out.println("MessageController.open(String message) loader is null!!!!!");
+			return;
+		}
 		MessageController controller = loader.getController();
 		System.out.println("MessageController.open(String message) found controller: " + controller);
 		// Set the message for the message popup window
 		controller.setMessage(message);
 		System.out.println("MessageController.open(String message) set message: " + message);
+		// make the achore pane resize to fix the message
 	}
 
 	/**

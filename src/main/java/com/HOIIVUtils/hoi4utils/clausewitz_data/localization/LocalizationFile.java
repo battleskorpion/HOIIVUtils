@@ -1,6 +1,7 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.localization;
 
 import com.HOIIVUtils.hoi4utils.FileUtils;
+import com.HOIIVUtils.hoi4utils.ioexceptions.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.ui.FXWindow;
 import org.jetbrains.annotations.NotNull;
 

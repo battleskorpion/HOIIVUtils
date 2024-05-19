@@ -6,8 +6,9 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FixFocus;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.Focus;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
+import com.HOIIVUtils.hoi4utils.ioexceptions.IllegalLocalizationFileTypeException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -84,7 +85,6 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
 
         if (selectedFile != null) {
             focusTreeFileTextField.setText(selectedFile.getAbsolutePath());
-            // focusTree = new FocusTree(selectedFile);
             focusTree = FocusTree.get(selectedFile);
             focusTreeNameLabel.setText(focusTree.toString());
         } else {
@@ -103,7 +103,8 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
             try {
                 focusLocFile = new FocusLocalizationFile(selectedFile);
             } catch (IllegalLocalizationFileTypeException e) {
-                throw new RuntimeException(e);
+                openError(e);
+                return;
             }
             focusTree.setLocalization(focusLocFile);
             System.out.println("Set localization file of " + focusTree + " to " + focusLocFile);
@@ -139,6 +140,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
         focusObservableList.addAll(focusTree.listFocuses());
     }
 
+    @SuppressWarnings("unused")
     private void updateObservableFocusList(Focus focus) {
         if (focus == null) {
             System.out.println("Focus was null and therefore did not update focus list.");
@@ -172,6 +174,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
             // Handle the case where focusLocFile is not properly initialized
             MessageController window = new MessageController();
             window.open("Error: Focus localization file not properly initialized.");
+            return;
         }
 
         focusLocFile.writeLocalization();

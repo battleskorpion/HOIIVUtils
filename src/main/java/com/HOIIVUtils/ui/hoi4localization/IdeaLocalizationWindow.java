@@ -5,9 +5,10 @@ import com.HOIIVUtils.hoi4utils.Settings;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.idea.FixIdea;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.idea.Idea;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.idea.IdeaFile;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
+import com.HOIIVUtils.hoi4utils.ioexceptions.IllegalLocalizationFileTypeException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -52,7 +53,6 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
     private final ObservableList<Idea> ideaObservableList;
 
     public IdeaLocalizationWindow() {
-        /* window */
         setFxmlResource("IdeaLocalizationWindow.fxml");
         setTitle("HOIIVUtils Idea Localization");
 
@@ -60,16 +60,18 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
     }
 
     /**
-     * {@inheritDoc}
+     * Initializes the window.
+     * 
+     * This method is automatically called after the FXML file has been loaded.
+     * It sets up the table view and sets the save button to be disabled.
      */
     @FXML
     void initialize() {
-        /* table */
+        // Set up the table view
         loadTableView(this, ideaListTable, ideaObservableList, Idea.getDataFunctions());
 
-        /* buttons */
+        // Set the save button to be disabled
         saveButton.setDisable(true);
-        // ideaDescColumn.setEditable(true); // redundant
     }
 
     public void handleIdeaFileBrowseButtonAction() {
@@ -107,9 +109,16 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
         }
     }
 
+    /**
+     * Handles the action of the load button.
+     * Loads the localization file of the idea tree into the idea tree.
+     * If the localization file or idea tree is not properly initialized, it will
+     * open an error
+     * window.
+     */
     public void handleLoadButtonAction() {
         if (ideaLocFile == null || ideaFile == null) {
-            // Handle the case where ideaLocFile or ideaFileis not properly initialized
+            // Handle the case where ideaLocFile or ideaFile is not properly initialized
             MessageController window = new MessageController();
             window.open("Error: Idea localization or idea tree not properly initialized.");
             return;
@@ -117,22 +126,33 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
 
         /* load idea loc */
         try {
+            // Load the localization file into the idea tree
             int numLocalizedIdeas = FixIdea.addIdeaLoc(ideaFile, ideaLocFile);
-            // todo didnt happe?
+            // Update the number of localized ideas displayed on the window
             updateNumLocalizedIdeaes(numLocalizedIdeas);
         } catch (IOException e) {
+            // If the file cannot be loaded, open an error window
             openError(e);
             return;
         }
 
+        // Update the observable list of ideas
         updateObservableIdeaList();
 
         /* enable saving of localization */
+        // After the localization file has been loaded, enable the save button
         saveButton.setDisable(false);
     }
 
+    /**
+     * Updates the idea observable list by clearing the list and adding all
+     * ideas from the idea file.
+     */
     private void updateObservableIdeaList() {
+        // Clear the list
         ideaObservableList.clear();
+
+        // Add all ideas from the idea file to the list
         ideaObservableList.addAll(ideaFile.listIdeas());
     }
 
@@ -176,16 +196,25 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
                 .replace("x", String.valueOf(numLocalizedIdeaes)));
     }
 
+    /**
+     * Handles the action of the save button.
+     * Saves the localization file.
+     * If the localization file is not properly initialized, it will open an error
+     * window.
+     */
     public void handleSaveButtonAction() {
         if (ideaLocFile == null) {
             // Handle the case where ideaLocFile is not properly initialized
             MessageController window = new MessageController();
             window.open("Error: Idea localization file not properly initialized.");
+            return;
         }
 
         try {
+            // Saves the localization file
             ideaLocFile.writeLocalization();
         } catch (IOException e) {
+            // If the file cannot be saved, open an error window
             openError(e);
         }
     }

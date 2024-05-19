@@ -98,7 +98,7 @@ public class SettingsManager {
 			settingReader.close();
 
 		} catch (IOException e) {
-			throw new SettingsFileException(e);
+			throw new SettingsFileException("Error reading settings", e);
 		}
 
 	}
