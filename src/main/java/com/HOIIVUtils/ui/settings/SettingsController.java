@@ -150,7 +150,7 @@ public class SettingsController extends Application implements FXWindow {
 			stage.maxWidthProperty().bind(stage.widthProperty());
 			stage.maxHeightProperty().bind(stage.heightProperty());
 
-			System.out.println("Settings Controller created it's own stage and showed it");
+			System.out.println("The SettingsController instantiated its own Stage and displayed it.");
 		} catch (Exception e) {
 			System.out.println("Failed to load fxml file!!!!!");
 			e.printStackTrace();
