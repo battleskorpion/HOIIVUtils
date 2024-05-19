@@ -2,7 +2,7 @@ package com.HOIIVUtils.ui.menu;
 
 import com.HOIIVUtils.hoi4utils.Settings;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
-import com.HOIIVUtils.ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import com.HOIIVUtils.ui.console.ConsoleController;
 import com.HOIIVUtils.ui.hoi4localization.CustomTooltipWindow;
 import com.HOIIVUtils.ui.hoi4localization.FocusLocalizationWindow;
@@ -35,16 +35,24 @@ public class MenuController extends Application implements FXWindow {
 	private String fxmlResource = "Menu.fxml";
 	private String title;
 
-	@FXML public Button settingsButton;
-	@FXML public Button statisticsButton;
-	@FXML public Button consoleButton;
-	@FXML public Button focusLocalizButton;
-	@FXML public Button findFocusesWithoutLocalization;
-	@FXML public Button customTooltipLocalizationButton;
-	@FXML public Button viewBuilding;
-	@FXML public Button viewGFX;
-	@FXML public Button focusTreeViewButton;
-	
+	@FXML
+	public Button settingsButton;
+	@FXML
+	public Button statisticsButton;
+	@FXML
+	public Button consoleButton;
+	@FXML
+	public Button focusLocalizButton;
+	@FXML
+	public Button findFocusesWithoutLocalization;
+	@FXML
+	public Button customTooltipLocalizationButton;
+	@FXML
+	public Button viewBuilding;
+	@FXML
+	public Button viewGFX;
+	@FXML
+	public Button focusTreeViewButton;
 
 	/* Constructor */
 	public MenuController() {
@@ -70,11 +78,11 @@ public class MenuController extends Application implements FXWindow {
 
 			this.stage = stage;
 			stage.setScene(scene);
-			
+
 			stage.setTitle(title);
 			stage.show();
 			System.out.println("Menu Controller created it's own stage and showed it");
-		} catch(Exception e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error menu controller!");
 			e.printStackTrace();
 		}
@@ -96,12 +104,12 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openSettings() {
-		closeWindow(settingsButton); //closes the menu window
+		closeWindow(settingsButton); // closes the menu window
 		SettingsController window = new SettingsController();
 		window.open();
 	}
 
-	private void openUtilsWindow(HOIUtilsWindow utilsWindow) {
+	private void openUtilsWindow(HOIIVUtilsStageLoader utilsWindow) {
 		utilsWindow.open();
 	}
 
@@ -130,7 +138,7 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openBuildingsByCountry() {
-//		State.readStates();
+		// State.readStates();
 		BuildingsByCountryWindow window = new BuildingsByCountryWindow();
 		window.open();
 	}
@@ -158,8 +166,9 @@ public class MenuController extends Application implements FXWindow {
 	/* from HOIUtilsWindow but can only extend one class */
 	/**
 	 * Opens window and updates fxmlResource and title
+	 * 
 	 * @param fxmlResource window .fxml resource
-	 * @param title window title
+	 * @param title        window title
 	 */
 	@Override
 	public void open(String fxmlResource, String title) {

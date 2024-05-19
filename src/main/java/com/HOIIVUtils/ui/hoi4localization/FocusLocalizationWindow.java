@@ -14,7 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
-import com.HOIIVUtils.ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 import com.HOIIVUtils.ui.message.MessageController;
 
@@ -22,20 +22,32 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class FocusLocalizationWindow extends HOIUtilsWindow implements TableViewWindow {
+public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
 
-    @FXML private Label numLocAddedLabel;
-    @FXML private TextField focusTreeFileTextField;
-    @FXML private Button focusTreeFileBrowseButton;
-    @FXML private Label focusTreeNameLabel;
-    @FXML private TextField focusLocFileTextField;
-    @FXML private Button focusLocFileBrowseButton;
-    @FXML private Button loadButton;
-    @FXML private Button saveButton;
-    @FXML private TableView<Focus> focusListTable;
-    @FXML private TableColumn<Focus, String> focusIDColumn;
-    @FXML private TableColumn<Focus, String> focusNameColumn;
-    @FXML private TableColumn<Focus, String> focusDescColumn;
+    @FXML
+    private Label numLocAddedLabel;
+    @FXML
+    private TextField focusTreeFileTextField;
+    @FXML
+    private Button focusTreeFileBrowseButton;
+    @FXML
+    private Label focusTreeNameLabel;
+    @FXML
+    private TextField focusLocFileTextField;
+    @FXML
+    private Button focusLocFileBrowseButton;
+    @FXML
+    private Button loadButton;
+    @FXML
+    private Button saveButton;
+    @FXML
+    private TableView<Focus> focusListTable;
+    @FXML
+    private TableColumn<Focus, String> focusIDColumn;
+    @FXML
+    private TableColumn<Focus, String> focusNameColumn;
+    @FXML
+    private TableColumn<Focus, String> focusDescColumn;
     private FocusTree focusTree;
     private FocusLocalizationFile focusLocFile;
 
@@ -60,7 +72,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
 
         /* buttons */
         saveButton.setDisable(true);
-        // focusDescColumn.setEditable(true);       // redundant
+        // focusDescColumn.setEditable(true); // redundant
     }
 
     public void handleFocusTreeFileBrowseButtonAction() {
@@ -72,7 +84,7 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
 
         if (selectedFile != null) {
             focusTreeFileTextField.setText(selectedFile.getAbsolutePath());
-            //focusTree = new FocusTree(selectedFile);
+            // focusTree = new FocusTree(selectedFile);
             focusTree = FocusTree.get(selectedFile);
             focusTreeNameLabel.setText(focusTree.toString());
         } else {
@@ -106,15 +118,15 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
             return;
         }
 
-	    /* load focus loc */
-	    try {
-	        int numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
-	        // todo didnt happe?
-	        updateNumLocalizedFocuses(numLocalizedFocuses);
-	    } catch (IOException e) {
-	        openError(e);
-	        return;
-	    }
+        /* load focus loc */
+        try {
+            int numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
+            // todo didnt happe?
+            updateNumLocalizedFocuses(numLocalizedFocuses);
+        } catch (IOException e) {
+            openError(e);
+            return;
+        }
 
         updateObservableFocusList();
 
@@ -146,7 +158,8 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
         }
 
         /* never updated list, means focus not found in list. */
-        System.err.println("Attempted to update focus " + focus + " in focus observable list, but it was not found in the list.");
+        System.err.println(
+                "Attempted to update focus " + focus + " in focus observable list, but it was not found in the list.");
     }
 
     private void updateNumLocalizedFocuses(int numLocalizedFocuses) {
@@ -182,20 +195,22 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
                 } else {
                     Localization.Status textStatus = focus.getNameLocalization().status();
                     Localization.Status descStatus = focus.getDescLocalization().status();
-                    boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED || descStatus == Localization.Status.UPDATED;
-                    boolean hasStatusNew = descStatus == Localization.Status.NEW || textStatus == Localization.Status.NEW;
+                    boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
+                            || descStatus == Localization.Status.UPDATED;
+                    boolean hasStatusNew = descStatus == Localization.Status.NEW
+                            || textStatus == Localization.Status.NEW;
 
-//                    // Apply text highlighting style if needed
-//                    if (hasStatusUpdated) {
-//                        setTextFill(Color.BLACK); // Set text color to black
-//                        setStyle("-fx-background-color: yellow;"); // Customize background color here
-//                    } else if (hasStatusNew) {
-//                        setTextFill(Color.BLACK); // Set text color to black
-//                        setStyle("-fx-background-color: cyan;"); // Customize background color here
-//                    } else {
-//                        setTextFill(Color.BLACK); // Set text color to black
-//                        setStyle(""); // Reset style
-//                    }
+                    // // Apply text highlighting style if needed
+                    // if (hasStatusUpdated) {
+                    // setTextFill(Color.BLACK); // Set text color to black
+                    // setStyle("-fx-background-color: yellow;"); // Customize background color here
+                    // } else if (hasStatusNew) {
+                    // setTextFill(Color.BLACK); // Set text color to black
+                    // setStyle("-fx-background-color: cyan;"); // Customize background color here
+                    // } else {
+                    // setTextFill(Color.BLACK); // Set text color to black
+                    // setStyle(""); // Reset style
+                    // }
                     // Apply text style
                     if (hasStatusUpdated || hasStatusNew) {
                         setTextFill(Color.BLACK); // Set text color to black
@@ -209,7 +224,8 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
         });
     }
 
-    @FXML private void setColumnOnEditCommits() {
+    @FXML
+    private void setColumnOnEditCommits() {
         focusNameColumn.setOnEditCommit(event -> {
             Focus focus = event.getRowValue();
             focus.setNameLocalization(event.getNewValue());
@@ -220,6 +236,5 @@ public class FocusLocalizationWindow extends HOIUtilsWindow implements TableView
             focus.setDescLocalization(event.getNewValue());
         });
     }
-
 
 }

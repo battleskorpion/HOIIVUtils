@@ -2,13 +2,13 @@ package com.HOIIVUtils.ui.map;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.SeedGenType;
-import com.HOIIVUtils.ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 
 // todo rename to province gen properties window or whatever
-public class MapGenerationSettingsWindow extends HOIUtilsWindow {
+public class MapGenerationSettingsWindow extends HOIIVUtilsStageLoader {
 
     @FXML
     TextField seaLevelTextField;
@@ -38,7 +38,8 @@ public class MapGenerationSettingsWindow extends HOIUtilsWindow {
     /**
      * {@inheritDoc}
      */
-    @FXML void initialize() {
+    @FXML
+    void initialize() {
         seaLevelTextField.setText(String.valueOf(properties.seaLevel()));
         numSeedsTextField.setText(String.valueOf(properties.numSeeds()));
         // default should be grid_seed
@@ -56,7 +57,8 @@ public class MapGenerationSettingsWindow extends HOIUtilsWindow {
         // dont actually change properties until apply, but update any preview
     }
 
-    @FXML private void onApplyChanges() {
+    @FXML
+    private void onApplyChanges() {
         int seaLevel = Integer.parseInt(seaLevelTextField.getText());
         int numSeeds = Integer.parseInt(numSeedsTextField.getText());
         SeedGenType generationType = seedGenChoiceBox.getValue();
@@ -64,6 +66,7 @@ public class MapGenerationSettingsWindow extends HOIUtilsWindow {
         properties.setSeaLevel(seaLevel);
         properties.setNumSeeds(numSeeds);
         properties.setGenerationType(generationType);
-        System.out.println("updated seaLevel: " + properties.seaLevel() + ", updated numSeeds: " + properties.numSeeds());
+        System.out
+                .println("updated seaLevel: " + properties.seaLevel() + ", updated numSeeds: " + properties.numSeeds());
     }
 }

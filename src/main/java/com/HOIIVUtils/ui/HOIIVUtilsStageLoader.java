@@ -5,13 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.apache.poi.ss.formula.functions.T;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
-// todo rename this, its generic enough.
-public abstract class HOIUtilsWindow implements FXWindow {
+public abstract class HOIIVUtilsStageLoader implements FXWindow {
 	private String fxmlResource;
 	private String title;
 	protected Stage stage;
@@ -36,9 +33,9 @@ public abstract class HOIUtilsWindow implements FXWindow {
 				System.out.println("HOIUtils Window creating stage with fxml" + fxmlResource);
 				Parent root = launchLoader.load();
 				Scene scene = new Scene(root);
+
 				scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 
-				// TODO
 				scene.getStylesheets().add("resources/utils-highlight-background.css");
 
 				Stage launchStage = new Stage();

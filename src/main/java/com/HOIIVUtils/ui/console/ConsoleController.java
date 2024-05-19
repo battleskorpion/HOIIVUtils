@@ -3,14 +3,16 @@ package com.HOIIVUtils.ui.console;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import com.HOIIVUtils.ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 
-public class ConsoleController extends HOIUtilsWindow {
+public class ConsoleController extends HOIIVUtilsStageLoader {
 	String fxmlResource = "ConsoleWindow.fxml";
 	String title = "Console";
 
-    @FXML public Label idVersion;
-	@FXML public Label idWindowName;
+	@FXML
+	public Label idVersion;
+	@FXML
+	public Label idWindowName;
 
 	public ConsoleController() {
 		setFxmlResource("Console.fxml");

@@ -3,12 +3,14 @@ package com.HOIIVUtils.ui.statistics;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import com.HOIIVUtils.ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 
-public class StatisticsController extends HOIUtilsWindow{
+public class StatisticsController extends HOIIVUtilsStageLoader {
 
-	@FXML public Label idVersion;
-	@FXML public Label idWindowName;
+	@FXML
+	public Label idVersion;
+	@FXML
+	public Label idWindowName;
 
 	public StatisticsController() {
 		setFxmlResource("Statistics.fxml");

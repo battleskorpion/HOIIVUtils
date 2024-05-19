@@ -1,9 +1,9 @@
 package com.HOIIVUtils.ui.parser;
 
 import javafx.fxml.FXML;
-import com.HOIIVUtils.ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 
-public class ParserViewerWindow extends HOIUtilsWindow {
+public class ParserViewerWindow extends HOIIVUtilsStageLoader {
 	public ParserViewerWindow() {
 		/* window */
 		setFxmlResource("ParserViewerWindow.fxml");

@@ -13,7 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
-import com.HOIIVUtils.ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 import com.HOIIVUtils.ui.message.MessageController;
 
@@ -21,19 +21,30 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewWindow {
+public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
 
-    @FXML private Label numLocAddedLabel;
-    @FXML private TextField ideaFileTextField;
-    @FXML private Button ideaFileBrowseButton;
-    @FXML private Label ideaFileNameLabel;
-    @FXML private TextField ideaLocFileTextField;
-    @FXML private Button ideaLocFileBrowseButton;
-    @FXML private Button loadButton;
-    @FXML private Button saveButton;
-    @FXML private TableView<Idea> ideaListTable;
-    @FXML private TableColumn<Idea, String> ideaIDColumn;
-    @FXML private TableColumn<Idea, String> ideaNameColumn;
+    @FXML
+    private Label numLocAddedLabel;
+    @FXML
+    private TextField ideaFileTextField;
+    @FXML
+    private Button ideaFileBrowseButton;
+    @FXML
+    private Label ideaFileNameLabel;
+    @FXML
+    private TextField ideaLocFileTextField;
+    @FXML
+    private Button ideaLocFileBrowseButton;
+    @FXML
+    private Button loadButton;
+    @FXML
+    private Button saveButton;
+    @FXML
+    private TableView<Idea> ideaListTable;
+    @FXML
+    private TableColumn<Idea, String> ideaIDColumn;
+    @FXML
+    private TableColumn<Idea, String> ideaNameColumn;
 
     private IdeaFile ideaFile;
     private LocalizationFile ideaLocFile;
@@ -58,7 +69,7 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
 
         /* buttons */
         saveButton.setDisable(true);
-        // ideaDescColumn.setEditable(true);       // redundant
+        // ideaDescColumn.setEditable(true); // redundant
     }
 
     public void handleIdeaFileBrowseButtonAction() {
@@ -70,7 +81,7 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
 
         if (selectedFile != null) {
             ideaFileTextField.setText(selectedFile.getAbsolutePath());
-            ideaFile = new IdeaFile(selectedFile.getAbsolutePath());    // todo?
+            ideaFile = new IdeaFile(selectedFile.getAbsolutePath()); // todo?
             ideaFileNameLabel.setText(ideaFile.toString());
         } else {
             ideaFileNameLabel.setText("[not found]");
@@ -90,8 +101,8 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
             } catch (IllegalLocalizationFileTypeException e) {
                 throw new RuntimeException(e);
             }
-//            ideaFile.setLocalization(ideaLocFile); // todo ?
-            System.out.println("Set localization file of " + ideaFile+ " to " + ideaLocFile);
+            // ideaFile.setLocalization(ideaLocFile); // todo ?
+            System.out.println("Set localization file of " + ideaFile + " to " + ideaLocFile);
         }
     }
 
@@ -103,15 +114,15 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
             return;
         }
 
-	    /* load idea loc */
-	    try {
-	        int numLocalizedIdeas = FixIdea.addIdeaLoc(ideaFile, ideaLocFile);
-	        // todo didnt happe?
-	        updateNumLocalizedIdeaes(numLocalizedIdeas);
-	    } catch (IOException e) {
-	        openError(e);
-	        return;
-	    }
+        /* load idea loc */
+        try {
+            int numLocalizedIdeas = FixIdea.addIdeaLoc(ideaFile, ideaLocFile);
+            // todo didnt happe?
+            updateNumLocalizedIdeaes(numLocalizedIdeas);
+        } catch (IOException e) {
+            openError(e);
+            return;
+        }
 
         updateObservableIdeaList();
 
@@ -143,7 +154,8 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
         }
 
         /* never updated list, means idea not found in list. */
-        System.err.println("Attempted to update idea " + idea + " in idea observable list, but it was not found in the list.");
+        System.err.println(
+                "Attempted to update idea " + idea + " in idea observable list, but it was not found in the list.");
     }
 
     private void updateNumLocalizedIdeaes(int numLocalizedIdeaes) {
@@ -168,7 +180,8 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
     @Override
     public void setDataTableCellFactories() {
         /* column factory */
-//        ideaDescColumn.setCellFactory(TextFieldTableCell.forTableColumn()); // This makes the column editable
+        // ideaDescColumn.setCellFactory(TextFieldTableCell.forTableColumn()); // This
+        // makes the column editable
 
         /* row factory */
         ideaListTable.setRowFactory(tv -> new TableRow<>() {
@@ -179,7 +192,7 @@ public class IdeaLocalizationWindow extends HOIUtilsWindow implements TableViewW
                 if (idea == null || empty) {
                     setGraphic(null); // Clear any previous content
                 } else {
-                    Localization.Status textStatus = idea.getLocalization().status();   // todo
+                    Localization.Status textStatus = idea.getLocalization().status(); // todo
                     boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED;
                     boolean hasStatusNew = textStatus == Localization.Status.NEW;
 
