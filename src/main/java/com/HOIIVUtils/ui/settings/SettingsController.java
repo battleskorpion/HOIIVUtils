@@ -15,8 +15,7 @@ import com.HOIIVUtils.ui.menu.MenuController;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.HashMap;
 
 import static com.HOIIVUtils.hoi4utils.Settings.MOD_PATH;
 
@@ -60,10 +59,10 @@ public class SettingsController extends Application implements FXWindow {
 	@FXML
 	public CheckBox idDemoModeCheckBox;
 
-	private Map<Settings, String> tempSettings;
+	HashMap<Settings, String> tempSettings;
 
 	public SettingsController() {
-		tempSettings = new EnumMap<>(Settings.class);
+		tempSettings = new HashMap<>();// we should convert this to an EnumMap with default values
 	}
 
 	@FXML

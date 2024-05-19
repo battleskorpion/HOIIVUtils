@@ -32,7 +32,7 @@ public class SettingsManager {
 	private static FileWriter settingsWriter;
 	private static BufferedWriter settingsBWriter;
 	private static PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); // for println syntax
-	static EnumMap<Settings, String> settingValues = new EnumMap<>(Settings.class);
+	static HashMap<Settings, String> settingValues = new HashMap<>();
 	public static SettingsManager settings;
 
 	// These constructors are the most cancer of time.
@@ -45,7 +45,7 @@ public class SettingsManager {
 		readSettings();
 	}
 
-	SettingsManager(HashMap<Settings, String> settings) throws IOException {
+	public SettingsManager(HashMap<Settings, String> settings) throws IOException {
 		String userDocsPath = System.getProperty("user.home") + File.separator + "Documents";
 		String hoi4UtilsPropertiesPath = userDocsPath + File.separator + "HOIIVUtils";
 
@@ -63,12 +63,6 @@ public class SettingsManager {
 			readSettings();
 			saveSettings(settings);
 		}
-	}
-
-	public SettingsManager(Map<Settings, String> settings) {
-		// initialize the settings with the provided map
-		this.settings = (SettingsManager) settings; // The static field SettingsManager.settings should be accessed in a
-													// static way
 	}
 
 	/**
@@ -160,11 +154,11 @@ public class SettingsManager {
 	 * Saves a list of hoi4utils.settings to hoi4utils.settings file, all other
 	 * hoi4utils.settings remain the same.
 	 * 
-	 * @param tempSettings list of updated hoi4utils.settings to save
+	 * @param newSettings list of updated hoi4utils.settings to save
 	 * @throws IOException
 	 */
-	public static void saveSettings(Map<Settings, String> tempSettings) throws IOException {
-		if (tempSettings == null) {
+	public static void saveSettings(HashMap<Settings, String> newSettings) throws IOException {
+		if (newSettings == null) {
 			return;
 		}
 
@@ -172,7 +166,7 @@ public class SettingsManager {
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
-		settingValues.putAll(tempSettings);
+		settingValues.putAll(newSettings);
 		for (Settings s : Settings.values()) {
 			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
 		}
