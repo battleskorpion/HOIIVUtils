@@ -99,7 +99,8 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
             try {
                 ideaLocFile = new LocalizationFile(selectedFile);
             } catch (IllegalLocalizationFileTypeException e) {
-                throw new RuntimeException(e);
+                openError(e);
+                return;
             }
             // ideaFile.setLocalization(ideaLocFile); // todo ?
             System.out.println("Set localization file of " + ideaFile + " to " + ideaLocFile);
@@ -135,27 +136,39 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
         ideaObservableList.addAll(ideaFile.listIdeas());
     }
 
+    /**
+     * Updates the idea observable list by replacing the idea with the given id with
+     * the given idea.
+     * If the idea is not found in the list, it will be added to the list.
+     * 
+     * @param idea the idea to update in the list
+     */
+    @SuppressWarnings("unused")
     private void updateObservableIdeaList(Idea idea) {
         if (idea == null) {
             System.out.println("Idea was null and therefore did not update idea list.");
             return;
         }
 
+        // Find the index of the idea in the list
         int i = 0;
         Iterator<Idea> iterator = ideaObservableList.iterator();
         while (iterator.hasNext()) {
             Idea f = iterator.next();
             if (f.id().equals(idea.id())) {
-                iterator.remove(); // Remove the current element using the iterator
-                ideaObservableList.add(i, idea);
-                return; // update is done
+                break; // found the idea
             }
             i++;
         }
 
-        /* never updated list, means idea not found in list. */
-        System.err.println(
-                "Attempted to update idea " + idea + " in idea observable list, but it was not found in the list.");
+        // Update the idea in the list
+        if (iterator.hasNext()) {
+            iterator.remove(); // Remove the current element using the iterator
+            ideaObservableList.add(i, idea);
+        } else {
+            // Idea not found in list, add it
+            ideaObservableList.add(idea);
+        }
     }
 
     private void updateNumLocalizedIdeaes(int numLocalizedIdeaes) {
@@ -173,7 +186,7 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
         try {
             ideaLocFile.writeLocalization();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            openError(e);
         }
     }
 

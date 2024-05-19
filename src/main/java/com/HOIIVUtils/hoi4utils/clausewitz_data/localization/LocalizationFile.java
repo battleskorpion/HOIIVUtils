@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 public class LocalizationFile extends File {
     private static final String l_english = "l_english:";
-    private static String loc_key = ":0";   // todo this just the default each loc could have its own
+    private static String loc_key = ":0"; // todo this just the default each loc could have its own
     private static String language_def = l_english;
     protected List<Localization> localizationList;
 
@@ -47,7 +47,9 @@ public class LocalizationFile extends File {
         localizationList = new ArrayList<>();
     }
 
-    public File getFile() { return this; }
+    public File getFile() {
+        return this;
+    }
 
     public String toString() {
         if (super.isFile()) {
@@ -76,13 +78,13 @@ public class LocalizationFile extends File {
 
         /* language declaration */
         boolean found_lang = false;
-        while(!found_lang) {
+        while (!found_lang) {
             if (reader.hasNextLine()) {
                 String data = reader.nextLine().replaceAll("\\s", "");
-//				line++;
+                // line++;
                 if (FileUtils.usefulData(data)) {
                     if (data.trim().contains("l_")) {
-                        if(!data.contains(language_def)) {
+                        if (!data.contains(language_def)) {
                             // todo
                             System.err.println("language not english, not presently supported.");
                             return;
@@ -90,8 +92,7 @@ public class LocalizationFile extends File {
                         found_lang = true;
                     }
                 }
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -118,7 +119,8 @@ public class LocalizationFile extends File {
                         if (startQuoteIndex != -1 && endQuoteIndex != -1 && startQuoteIndex < endQuoteIndex) {
                             text = data.substring(startQuoteIndex + 1, endQuoteIndex).trim();
                         } else {
-                            System.err.println("Invalid quote indices: startQuoteIndex=" + startQuoteIndex + ", endQuoteIndex=" + endQuoteIndex);
+                            System.err.println("Invalid quote indices: startQuoteIndex=" + startQuoteIndex
+                                    + ", endQuoteIndex=" + endQuoteIndex);
                             System.err.println("\t-> data: " + data);
                         }
                     } else if (data.contains(":")) {
@@ -130,7 +132,8 @@ public class LocalizationFile extends File {
                         if (startQuoteIndex != -1 && endQuoteIndex != -1 && startQuoteIndex < endQuoteIndex) {
                             text = data.substring(startQuoteIndex + 1, endQuoteIndex).trim();
                         } else {
-                            System.err.println("Invalid quote indices: startQuoteIndex=" + startQuoteIndex + ", endQuoteIndex=" + endQuoteIndex);
+                            System.err.println("Invalid quote indices: startQuoteIndex=" + startQuoteIndex
+                                    + ", endQuoteIndex=" + endQuoteIndex);
                             System.err.println("\t-> data: " + data);
                         }
                     }
@@ -166,10 +169,10 @@ public class LocalizationFile extends File {
 
             FileWriter writer = new FileWriter(this, false);
             BufferedWriter BWriter = new BufferedWriter(writer);
-            PrintWriter PWriter = new PrintWriter(BWriter);				// for println syntax
+            PrintWriter PWriter = new PrintWriter(BWriter); // for println syntax
 
-            //		String localization_line;
-            //		PWriter.println(language);
+            // String localization_line;
+            // PWriter.println(language);
 
             for (Localization localization : localizationList) {
                 if (localization.status() == Localization.Status.UPDATED) {
@@ -189,17 +192,17 @@ public class LocalizationFile extends File {
                     }
 
                     String loc = localization.toString();
-                    loc = loc.replaceAll("§", "Â§");		// necessary with UTF-8 BOM
+                    loc = loc.replaceAll("§", "Â§"); // necessary with UTF-8 BOM
                     fileBuffer.replace(start, end + 1, loc);
                     System.out.println("replaced " + localization.ID());
                 } else if (localization.status() == Localization.Status.NEW) {
                     /* append loc */
                     String loc = localization.toString();
-                    loc = loc.replaceAll("§", "Â§");		// necessary with UTF-8 BOM
+                    loc = loc.replaceAll("§", "Â§"); // necessary with UTF-8 BOM
                     fileBuffer.append("\t").append(loc).append(System.lineSeparator());
                     System.out.println("append " + localization.ID());
                 } else {
-//					System.out.println("no change " + localization.ID());
+                    // System.out.println("no change " + localization.ID());
                 }
             }
 
@@ -207,8 +210,7 @@ public class LocalizationFile extends File {
             PWriter.print(fileBuffer);
             PWriter.close();
             scanner.close();
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             FXWindow.openGlobalErrorWindow(exception);
         }
     }
@@ -231,11 +233,12 @@ public class LocalizationFile extends File {
 
     /**
      * Gets localization from this file corresponding to the ID
+     * 
      * @param ID
      * @return Localization corresponding with ID, or null if not found
      */
     public Localization getLocalization(String ID) {
-        if(ID == null) {
+        if (ID == null) {
             System.err.println("Null localization ID in " + this);
             return null;
         }
@@ -256,7 +259,7 @@ public class LocalizationFile extends File {
             if (loc.ID().equals(key)) {
                 Localization newLocalization = new Localization(key, text, Localization.Status.UPDATED);
 
-                listTemp.remove(loc);	  // record is final
+                listTemp.remove(loc); // record is final
                 listTemp.add(newLocalization);
                 localizationList = listTemp;
 
@@ -272,12 +275,13 @@ public class LocalizationFile extends File {
 
     /**
      * todo
+     * 
      * @param ID
      * @return
      */
     public boolean isLocalized(String ID) {
         Localization loc = getLocalization(ID);
-//		HOIUtilsWindow.openError(loc.status() + "");
+        // HOIIVUtilsStageLoader.openError(loc.status() + "");
         return (loc != null && loc.status() != Localization.Status.DEFAULT);
     }
 

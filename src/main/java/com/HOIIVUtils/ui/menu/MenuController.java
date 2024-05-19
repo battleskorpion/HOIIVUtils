@@ -138,7 +138,6 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openBuildingsByCountry() {
-		// State.readStates();
 		BuildingsByCountryWindow window = new BuildingsByCountryWindow();
 		window.open();
 	}
@@ -163,7 +162,7 @@ public class MenuController extends Application implements FXWindow {
 		window.open();
 	}
 
-	/* from HOIUtilsWindow but can only extend one class */
+	/* from HOIIVUtilsStageLoader but can only extend one class */
 	/**
 	 * Opens window and updates fxmlResource and title
 	 * 

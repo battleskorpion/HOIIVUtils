@@ -54,7 +54,9 @@ import java.util.Scanner;
 
 /**
  * This is the FocusLocalization file.
- * @implNote  git/.yml prefers/requires "    " instead of using \t and "\n" for newline/line separator.
+ * 
+ * @implNote git/.yml prefers/requires " " instead of using \t and "\n" for
+ *           newline/line separator.
  */
 public class FocusLocalizationFile extends LocalizationFile {
 
@@ -72,7 +74,6 @@ public class FocusLocalizationFile extends LocalizationFile {
 		focusLocalizationList = new ArrayList<>();
 	}
 
-
 	public String toString() {
 		if (super.isFile()) {
 			return super.toString();
@@ -85,7 +86,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 		focusLocalizationList.clear();
 		super.read();
 
-		//System.err.println("test, " + localizationList.toString());
+		// System.err.println("test, " + localizationList.toString());
 		List<Localization> tempLocList = new ArrayList<>();
 		HashMap<String, Localization> tempLocDescList = new HashMap<>();
 		for (Localization localization : localizationList) {
@@ -125,16 +126,16 @@ public class FocusLocalizationFile extends LocalizationFile {
 		}
 
 		try {
-//	  System.out.println(fileBuffer);
+			// System.out.println(fileBuffer);
 
-			FileWriter writer = new FileWriter(this, false);     // true = append
+			FileWriter writer = new FileWriter(this, false); // true = append
 			BufferedWriter BWriter = new BufferedWriter(writer);
-			PrintWriter PWriter = new PrintWriter(BWriter);			        // for println syntax
+			PrintWriter PWriter = new PrintWriter(BWriter); // for println syntax
 
-//	  PWriter.println(language);
+			// PWriter.println(language);
 
 			for (List<Localization> localization : focusLocalizationList) {
-				int idpos;      // where to look for line separator for adding desc.
+				int idpos; // where to look for line separator for adding desc.
 
 				if (localization.get(0).status() == Localization.Status.UPDATED) {
 					/* replace loc */
@@ -153,7 +154,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 					}
 
 					String loc = localization.get(0).toString();
-					loc = loc.replaceAll("§", "Â§");		// necessary with UTF-8 BOM
+					loc = loc.replaceAll("§", "Â§"); // necessary with UTF-8 BOM
 					fileBuffer.replace(start, end + 1, loc);
 					System.out.println("replaced " + localization.get(0).ID());
 
@@ -162,14 +163,14 @@ public class FocusLocalizationFile extends LocalizationFile {
 				} else if (localization.get(0).status() == Localization.Status.NEW) {
 					/* append loc */
 					String loc = localization.get(0).toString();
-					loc = loc.replaceAll("§", "Â§");		// necessary with UTF-8 BOM
+					loc = loc.replaceAll("§", "Â§"); // necessary with UTF-8 BOM
 					fileBuffer.append("    ").append(loc).append("\n");
 					System.out.println("append " + localization.get(0).ID());
 
 					idpos = fileBuffer.length();
-//					idpos = fileBuffer.indexOf("\n", idpos);
+					// idpos = fileBuffer.indexOf("\n", idpos);
 				} else {
-					//idpos = 0;
+					// idpos = 0;
 					Localization loc = localization.get(0);
 					idpos = fileBuffer.indexOf(loc.ID());
 					if (idpos == -1) {
@@ -180,27 +181,34 @@ public class FocusLocalizationFile extends LocalizationFile {
 					}
 				}
 
-				/* fix null description, shouldn't really be at this point but hey that's fine */
+				/*
+				 * fix null description, shouldn't really be at this point but hey that's fine
+				 */
 				if (localization.size() < 2) {
-					System.out.println("localization description was missing for: " + localization.get(0) + ". Proceeding to write default localization.");
+					System.out.println("localization description was missing for: " + localization.get(0)
+							+ ". Proceeding to write default localization.");
 					localization.add(new Localization(localization.get(0).ID() + "_desc",
-							"[Localization desc was missing in HOI4Utils] "  + LocalDate.now(), Localization.Status.NEW));
+							"[Localization desc was missing in HOI4Utils] " + LocalDate.now(),
+							Localization.Status.NEW));
 				}
 				if (localization.get(1) == null) {
-					System.out.println("localization description was null for: " + localization.get(0) + ". Proceeding to write default localization.");
-					localization.set(1, new Localization( localization.get(0).ID() + "_desc",
-							"[Localization desc was null in HOI4Utils] "  + LocalDate.now(), Localization.Status.NEW));
+					System.out.println("localization description was null for: " + localization.get(0)
+							+ ". Proceeding to write default localization.");
+					localization.set(1, new Localization(localization.get(0).ID() + "_desc",
+							"[Localization desc was null in HOI4Utils] " + LocalDate.now(), Localization.Status.NEW));
 				}
 				if (localization.get(1).status() == Localization.Status.UPDATED) {
 					/* replace loc */
 					int start = fileBuffer.indexOf(localization.get(1).ID());
 					if (start < 0) {
-						//HOIUtilsWindow.openError("Start of localization id is negative, for localization with \"updated\" status");
-						continue;         // shouldn't do anything, localization was supposedly updated
+						// HOIIVUtilsStageLoader.openError("Start of localization id is negative, for
+						// localization with \"updated\" status");
+						continue; // shouldn't do anything, localization was supposedly updated
 					}
 					int temp = fileBuffer.indexOf("\"", start);
 					int end = 1;
-					// end char must be literally " and not \"      // todo. there is a failure in this logic? as far as i can see
+					// end char must be literally " and not \" // todo. there is a failure in this
+					// logic? as far as i can see
 					do {
 						end = fileBuffer.indexOf("\"", temp + 1);
 					} while (fileBuffer.charAt(end - 1) == '\\');
@@ -209,14 +217,14 @@ public class FocusLocalizationFile extends LocalizationFile {
 					}
 
 					String loc = localization.get(1).toString();
-					loc = loc.replaceAll("§", "Â§");		// necessary with UTF-8 BOM
+					loc = loc.replaceAll("§", "Â§"); // necessary with UTF-8 BOM
 					fileBuffer.replace(start, end + 1, loc);
 					System.out.println("replaced " + localization.get(1).ID());
 				} else if (localization.get(1).status() == Localization.Status.NEW) {
 					// todo put localization of desriptions near the focus loc if possible
 					/* append loc */
 					String loc = localization.get(1).toString();
-					loc = loc.replaceAll("§", "Â§");		// necessary with UTF-8 BOM
+					loc = loc.replaceAll("§", "Â§"); // necessary with UTF-8 BOM
 
 					if (idpos == 0) {
 						fileBuffer.append("    ").append(loc).append("\n");
@@ -226,8 +234,9 @@ public class FocusLocalizationFile extends LocalizationFile {
 						while (fileBuffer.indexOf("\n") == idpos) {
 							idpos++;
 						}
-						fileBuffer.insert(idpos, "\n" + "    " + loc + "\n");       // last newline here is an *extra* newline, for creating a blank line
-																						// between locs for separate focuses
+						fileBuffer.insert(idpos, "\n" + "    " + loc + "\n"); // last newline here is an *extra*
+																				// newline, for creating a blank line
+																				// between locs for separate focuses
 						System.out.println("insert " + localization.get(1).ID());
 					}
 				} else {
@@ -238,8 +247,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 			/* print */
 			PWriter.print(fileBuffer);
 			PWriter.close();
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			FXWindow.openGlobalErrorWindow(exception);
 		}
 	}
@@ -255,11 +263,12 @@ public class FocusLocalizationFile extends LocalizationFile {
 
 	/**
 	 * Gets localization from this file corresponding to the ID
+	 * 
 	 * @param ID
 	 * @return Localization corresponding with ID, or null if not found
 	 */
 	public Localization getLocalization(String ID) {
-		if(ID == null) {
+		if (ID == null) {
 			System.err.println("Null localization ID in " + this);
 			return null;
 		}
@@ -274,7 +283,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 	}
 
 	public Localization getLocalizationDesc(String ID) {
-		if(ID == null) {
+		if (ID == null) {
 			System.err.println("Null localization ID in " + this);
 			return null;
 		}
@@ -296,10 +305,9 @@ public class FocusLocalizationFile extends LocalizationFile {
 		for (List<Localization> loc : focusLocalizationList) {
 			if (loc.get(0).ID().equals(key)) {
 				Localization newLoc = new Localization(key, text, Localization.Status.UPDATED);
-				Localization[] newLocList = new Localization[]{newLoc, loc.get(1)};
+				Localization[] newLocList = new Localization[] { newLoc, loc.get(1) };
 
-
-				listTemp.remove(loc.get(0));	  // record is final
+				listTemp.remove(loc.get(0)); // record is final
 				listTemp.add(newLoc);
 				localizationList = listTemp;
 
@@ -311,7 +319,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 
 		Localization newLoc = new Localization(key, text, Localization.Status.NEW);
 		Localization newLocDesc = new Localization(key + "_desc", "[null]", Localization.Status.NEW);
-		Localization[] newLocList = new Localization[]{newLoc, newLocDesc};
+		Localization[] newLocList = new Localization[] { newLoc, newLocDesc };
 
 		listTemp.add(newLoc);
 		localizationList = listTemp;
@@ -343,9 +351,12 @@ public class FocusLocalizationFile extends LocalizationFile {
 		if (localization.ID().endsWith("_desc")) {
 			// really should need a focus first, but sure?
 			System.out.println("Note: adding \"_desc\" before focus id localization.");
-			addLocalization(new Localization(remove_descFromIdentifier(localization), "[New focus localization added by HOI4Utils on " + LocalDate.now() + "]", Localization.Status.DEFAULT), localization);
+			addLocalization(new Localization(remove_descFromIdentifier(localization),
+					"[New focus localization added by HOI4Utils on " + LocalDate.now() + "]",
+					Localization.Status.DEFAULT), localization);
 		} else {
-			addLocalization(localization, new Localization(localization.ID() + "_desc", "", Localization.Status.DEFAULT));
+			addLocalization(localization,
+					new Localization(localization.ID() + "_desc", "", Localization.Status.DEFAULT));
 		}
 	}
 
@@ -358,7 +369,7 @@ public class FocusLocalizationFile extends LocalizationFile {
 			if (loc.get(1).ID().equals(key)) {
 				focusLocalizationList.remove(loc);
 				Localization localization = new Localization(key, text, Localization.Status.UPDATED);
-				focusLocalizationList.add(List.of(new Localization[]{loc.get(0), localization}));
+				focusLocalizationList.add(List.of(new Localization[] { loc.get(0), localization }));
 				return localization;
 			}
 		}

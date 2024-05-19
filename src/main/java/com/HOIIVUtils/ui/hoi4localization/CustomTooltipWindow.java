@@ -250,7 +250,7 @@ public class CustomTooltipWindow extends HOIIVUtilsStageLoader implements TableV
 // try {
 // localizationFile = new LocalizationFile(j.getSelectedFile());
 // } catch (IOException ex) {
-// HOIUtilsWindow.openError(ex);
+// HOIIVUtilsStageLoader.openError(ex);
 // return;
 // }
 // } else {

@@ -38,15 +38,22 @@ public class MessageController extends HOIIVUtilsStageLoader {
 
 	/**
 	 * Opens the window
-	 * passes the message from any widow to the message pop up window
+	 * passes the message from any window to the message pop up window
+	 * This method is called from any window that needs to send a message to the
+	 * message popup window
 	 * 
 	 * @param message A string to sent to message pop up
 	 */
 	public void open(String message) {
+		System.out.println("MessageController.open(String message) called with message: " + message);
 		super.open();
 		System.out.println("Message Stage started with message: " + message + "\n and loader is: " + fxmlResource);
+		// Get the controller for the message popup window
 		MessageController controller = loader.getController();
+		System.out.println("MessageController.open(String message) found controller: " + controller);
+		// Set the message for the message popup window
 		controller.setMessage(message);
+		System.out.println("MessageController.open(String message) set message: " + message);
 	}
 
 	/**

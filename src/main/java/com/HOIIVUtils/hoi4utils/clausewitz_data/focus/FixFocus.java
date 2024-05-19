@@ -22,8 +22,8 @@ public class FixFocus extends HOIIVUtils {
 
 	public static boolean addFocusLoc(File focus_file, File loc_file) throws IOException {
 
-		//ArrayList<String> focuses_nonlocalized = new ArrayList<String>();
-		//FocusTree focusTree = new FocusTree(focus_file);
+		// ArrayList<String> focuses_nonlocalized = new ArrayList<String>();
+		// FocusTree focusTree = new FocusTree(focus_file);
 		FocusTree focusTree = FocusTree.get(focus_file);
 		FocusLocalizationFile localization = null;
 		try {
@@ -34,28 +34,27 @@ public class FixFocus extends HOIIVUtils {
 		localization.read();
 
 		/* open the ui */
-//		FocusTreeLocProgress focusLocProgress = new FocusTreeLocProgress(focusTree);
-//		focusLocProgress.setVisible(true);
+		// FocusTreeLocProgress focusLocProgress = new FocusTreeLocProgress(focusTree);
+		// focusLocProgress.setVisible(true);
 		// todo
 
 		String focus_loc;
 
 		ArrayList<Focus> focusesUnloc = new ArrayList<>();
 		assert focusTree.listFocusIDs() != null;
-		for (Focus focus : focusTree.focuses())
-		{
+		for (Focus focus : focusTree.focuses()) {
 			// if focus id not localized
-			if (!localization.isLocalized(focus.id()))
-			{
+			if (!localization.isLocalized(focus.id())) {
 				// write to loc file
 				// separate words in focus name
-				int i = 0;	//counter
+				int i = 0; // counter
 				if (CountryTags.exists(focus.id().substring(0, 3))) {
 					i += 3;
 				}
 
 				// localize focus name
-				focus_loc = EnglishSuperDictionary.titleCapitalize(focus.id().substring(i).replaceAll("_+", " ").trim()); // regex
+				focus_loc = EnglishSuperDictionary
+						.titleCapitalize(focus.id().substring(i).replaceAll("_+", " ").trim()); // regex
 
 				// set focus loc
 				focus.setNameLocalization(focus_loc);
@@ -63,23 +62,27 @@ public class FixFocus extends HOIIVUtils {
 				focusesUnloc.add(focus);
 
 				localization.setLocalization(focus.id(), focus_loc);
-				localization.setLocalizationDesc(focus.id + "_desc", "added focus on " + LocalDateTime.now() + " by hoi4localizer.");
+				localization.setLocalizationDesc(focus.id + "_desc",
+						"added focus on " + LocalDateTime.now() + " by hoi4localizer.");
 			}
-//			HOIUtilsWindow.openError("Test");
+			// HOIIVUtilsStageLoader.openError("Test");
 		}
 
 		/* ui */
-//		focusLocProgress.incrementProgressBar();
-//		focusLocProgress.setNumFocusesUnloc(numFocusesUnloc);
-//		focusLocProgress.refreshUnlocFocusesTable(focusesUnloc);
+		// focusLocProgress.incrementProgressBar();
+		// focusLocProgress.setNumFocusesUnloc(numFocusesUnloc);
+		// focusLocProgress.refreshUnlocFocusesTable(focusesUnloc);
 
-//		localization.writeLocalization();
+		// localization.writeLocalization();
 		return true;
 	}
 
 	/**
-	 * Adds focus localization for unlocalized focuses in the focus tree, which are focuses with an id
-	 * but without a given name in the selected localization file of a particular language.
+	 * Adds focus localization for unlocalized focuses in the focus tree, which are
+	 * focuses with an id
+	 * but without a given name in the selected localization file of a particular
+	 * language.
+	 * 
 	 * @param focusTree
 	 * @param localization
 	 * @return
@@ -100,7 +103,7 @@ public class FixFocus extends HOIIVUtils {
 				// separate words in focus name
 
 				/* ignore country tag */
-				int i = 0;	        // title start index
+				int i = 0; // title start index
 				if (CountryTags.exists(focus.id().substring(0, COUNTRY_TAG_LENGTH))) {
 					i += COUNTRY_TAG_LENGTH;
 				}
@@ -116,7 +119,7 @@ public class FixFocus extends HOIIVUtils {
 				// set focus loc
 				focus.setLocalization(localization, focus_loc, focus_loc_desc);
 				focusesAddedLoc.add(focus);
-				continue;           // localize and move on
+				continue; // localize and move on
 			}
 
 			// add preexisting loc
@@ -126,7 +129,7 @@ public class FixFocus extends HOIIVUtils {
 			}
 		}
 
-		//localization.writeLocalization();     // eh nah not here
+		// localization.writeLocalization(); // eh nah not here
 		return focusesAddedLoc.size();
 	}
 

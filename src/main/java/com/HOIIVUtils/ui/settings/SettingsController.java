@@ -422,7 +422,7 @@ public class SettingsController extends Application implements FXWindow {
 		return true;
 	}
 
-	/* from HOIUtilsWindow but can only extend one class */
+	/* from HOIIVUtilsStageLoader but can only extend one class */
 	/**
 	 * Opens window and updates fxmlResource and title
 	 * 

@@ -21,11 +21,13 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 	public void open() {
 		if (stage != null) {
 			stage.show();
-			System.out.println("HOIUtilsWindow showed stage with open cuz stage was NOT null. fxml: " + fxmlResource
-					+ " title: " + title);
+			System.out.println(
+					"HOIIVUtilsStageLoader showed stage with open cuz stage was NOT null. fxml: " + fxmlResource
+							+ " title: " + title);
 		} else if (fxmlResource == null) {
-			System.out.println("HOIUtilsWindow couldn't create a new scene cause the fxml was null. fxmlResource: "
-					+ fxmlResource + " title: " + title);
+			System.out
+					.println("HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. fxmlResource: "
+							+ fxmlResource + " title: " + title);
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
 			try {
@@ -47,7 +49,7 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 				this.loader = launchLoader;
 				this.stage = launchStage;
 				System.out.println(
-						"HOIUtilsWindow created and showed stage with open cuz stage was null and fxml resource is: "
+						"HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: "
 								+ fxmlResource + " title: " + title);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -66,11 +68,13 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 
 		if (stage != null) {
 			stage.show();
-			System.out.println("HOIUtilsWindow showed stage with open cuz stage was NOT null. fxml: " + fxmlResource
-					+ " title: " + title);
+			System.out.println(
+					"HOIIVUtilsStageLoader showed stage with open cuz stage was NOT null. fxml: " + fxmlResource
+							+ " title: " + title);
 		} else if (fxmlResource == null) {
-			System.out.println("HOIUtilsWindow couldn't create a new scene cause the fxml was null. fxmlResource: "
-					+ fxmlResource + " title: " + title);
+			System.out
+					.println("HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. fxmlResource: "
+							+ fxmlResource + " title: " + title);
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
 			try {
@@ -100,7 +104,7 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 				this.loader = launchLoader;
 				this.stage = launchStage;
 				System.out.println(
-						"HOIUtilsWindow created and showed stage with open cuz stage was null and fxml resource is: "
+						"HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: "
 								+ fxmlResource + " title: " + title);
 			} catch (Exception e) {
 				e.printStackTrace();
