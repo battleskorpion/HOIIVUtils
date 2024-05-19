@@ -24,9 +24,9 @@ import static com.HOIIVUtils.hoi4utils.Settings.MOD_PATH;
  * SettingsWindow is the window and controller for the program settings
  */
 public class SettingsController extends Application implements FXWindow {
-	private String fxmlResource = "Settings.fxml";
-	private String title = "Settings";
-	private Stage stage;
+	protected String fxmlResource = "Settings.fxml";
+	protected String title = "Settings";
+	protected Stage stage;
 
 	@FXML
 	public Pane idPane;
