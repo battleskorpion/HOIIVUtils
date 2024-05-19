@@ -20,12 +20,9 @@ import com.HOIIVUtils.ui.message.MessageController;
 import javax.swing.*;
 import java.io.File;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface FXWindow {
-	// String COM_UI = "/com/HOIIVUtils/ui/";
 	static void openGlobalErrorWindow(Exception exception) {
 		openGlobalErrorWindow(exception.getLocalizedMessage());
 	}
@@ -88,7 +85,7 @@ public interface FXWindow {
 
 	static void openGlobalErrorWindow(String s) {
 		MessageController errWindow = new MessageController();
-		errWindow.open("s");
+		errWindow.open(s);
 	}
 
 	/**
@@ -174,55 +171,80 @@ public interface FXWindow {
 		System.out.println("Loaded data into table: " + dataTable.getId());
 	}
 
-	// todo put this in hoi4window parent class or whatever
-	default <S> void setTableCellValueFactories(List<Function<S, ?>> dataFunctions, TableView<S> dataTable) {
-		/* table columns */
-		ObservableList<TableColumn<S, ?>> tableColumns = dataTable.getColumns();
-		for (int i = 0; i < Math.min(dataFunctions.size(), tableColumns.size()); i++) {
-			TableColumn<S, ?> tableColumn = tableColumns.get(i);
+	/**
+	 * Set the cell value factories for the table columns
+	 * 
+	 * @param <S>           the type of the table row
+	 * @param dataFunctions a list of functions that take a table row and return the
+	 *                      value
+	 *                      for the column
+	 * @param tableView     the table view to set the cell value factories for
+	 */
+	default <S> void setTableCellValueFactories(List<Function<S, ?>> dataFunctions, TableView<S> tableView) {
+		// set the cell value factories for the table columns
+		ObservableList<TableColumn<S, ?>> columns = tableView.getColumns();
+
+		// get the minimum size of the dataFunctions and columns lists
+		// so we don't index out of bounds
+		int minSize = Math.min(dataFunctions.size(), columns.size());
+
+		// loop through the minimum size of the lists
+		for (int i = 0; i < minSize; i++) {
+			// get the column and data function for the current index
+			TableColumn<S, ?> column = columns.get(i);
 			Function<S, ?> dataFunction = dataFunctions.get(i);
 
-			tableColumn.setCellValueFactory(FXWindow.cellDataCallback(dataFunction));
+			// set the cell value factory for the column
+			column.setCellValueFactory(cellDataCallback(dataFunction));
 		}
-
-		/* table rows */
 	}
 
 	/**
-	 * @param propertyGetter
-	 * @param <S>
-	 * @param <T>
-	 * @return
+	 * Create a cell value factory for a table column
+	 * 
+	 * @param <S>            the type of the table row
+	 * @param <T>            the type of the table column
+	 * @param propertyGetter a function that takes a table row and returns the value
+	 *                       for the column
+	 * @return a cell value factory that applies the given function to the table row
 	 */
 	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(
 			Function<S, ?> propertyGetter) {
 		return cellData -> {
-			// if (Settings.DEV_MODE.enabled()) {
-			// System.out.println("Table callback created, data: " +
-			// propertyGetter.apply(cellData.getValue()));
-			// }
+			if (Settings.DEV_MODE.enabled()) {
+				System.out.println("Table callback created, data: " +
+						propertyGetter.apply(cellData.getValue()));
+			}
+			// unchecked cast is necessary because the compiler doesn't know that the given
+			// function will return a value of type T
 			@SuppressWarnings("unchecked")
 			T result = (T) propertyGetter.apply(cellData.getValue()); // yap
 			return new SimpleObjectProperty<>(result);
-			// mehhhh
 		};
 	}
 
 	/**
 	 * Update cell behavior within a column
+	 * 
+	 * This method updates the cell behavior of a given column within a table
+	 * view to either display the values as integers or as a percentage of the
+	 * total value of the column.
+	 * 
+	 * @param columnIndex        the table column to update
+	 * @param displayPercentages whether to display the values as percentages or not
+	 * 
+	 * @see IntegerOrPercentTableCell
 	 */
-	// todo why is T never used and we have it....
-	static <S, T extends TableCell<S, Double>> void updateColumnPercentBehavior(TableColumn<S, Double> column,
-			boolean resourcesPercent) {
-		column.setCellFactory(col -> {
+	static <S> void updateColumnPercentBehavior(TableColumn<S, Double> columnIndex,
+			boolean displayPercentages) {
+		// Set the cell factory for the column to a cell that can display
+		// either integers or percentages
+		columnIndex.setCellFactory(col -> {
+			// Create a new cell instance that can display either integers or percentages
 			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();
-			if (resourcesPercent) {
-				cell.setPercent(true);
-			} else {
-				cell.setInteger(true);
-			}
+			cell.setInteger(!displayPercentages);
+			cell.setPercent(displayPercentages);
 			return cell;
 		});
 	}
-
 }
