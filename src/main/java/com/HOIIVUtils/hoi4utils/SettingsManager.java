@@ -9,12 +9,16 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsFileException;
 
 /**
- * HOIIVUtil Properties File
- * 
+ * The SettingsManager class is responsible for managing the HOIIVUtils
+ * properties file.
+ * It provides methods to read and write settings from/to the file.
+ *
+ * @author battleskorpion
  */
 public class SettingsManager {
 
@@ -31,19 +35,23 @@ public class SettingsManager {
 	static EnumMap<Settings, String> settingValues = new EnumMap<>(Settings.class);
 	public static SettingsManager settings;
 
+	// These constructors are the most cancer of time.
 	SettingsManager() throws IOException {
 		new File(HOI4UTILS_PROPERTIES_PATH).mkdir();
 		settingsFile = new File(HOI4UTILS_PROPERTIES_PATH + File.separator + "HOIIVUtils_properties.txt");
+
 		settingsFile.createNewFile();
 
 		readSettings();
 	}
 
 	SettingsManager(HashMap<Settings, String> settings) throws IOException {
-		String user_docs_path = System.getProperty("user.home") + File.separator + "Documents";
-		String hoi4UtilsPropertiesPath = user_docs_path + File.separator + "HOIIVUtils";
+		String userDocsPath = System.getProperty("user.home") + File.separator + "Documents";
+		String hoi4UtilsPropertiesPath = userDocsPath + File.separator + "HOIIVUtils";
+
 		new File(hoi4UtilsPropertiesPath).mkdir();
 		settingsFile = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
+
 		boolean newSettingsFileCreated = settingsFile.createNewFile();
 
 		if (settings == null) {
@@ -59,7 +67,8 @@ public class SettingsManager {
 
 	public SettingsManager(Map<Settings, String> settings) {
 		// initialize the settings with the provided map
-		this.settings = (SettingsManager) settings;
+		this.settings = (SettingsManager) settings; // The static field SettingsManager.settings should be accessed in a
+													// static way
 	}
 
 	/**
@@ -204,21 +213,35 @@ public class SettingsManager {
 		}
 	}
 
+	/**
+	 * Deletes all hoi4utils.settings from the hoi4utils.settings directory.
+	 * 
+	 * @throws IOException
+	 */
 	public static void deleteAllSettings() throws IOException {
-		Path dir = Paths.get(HOI4UTILS_PROPERTIES_PATH); // path to the directory
-		Files
-				.walk(dir) // Traverse the file tree in depth-first order
-				.sorted(Comparator.reverseOrder())
-				.forEach(path -> {
-					try {
-						if (Settings.DEV_MODE.enabled()) {
-							System.out.println("Deleting: " + path);
+		// Get the path to the hoi4utils.settings directory
+		Path dir = Paths.get(HOI4UTILS_PROPERTIES_PATH);
+
+		// Use try-with-resources to delete the files and directories
+		try (Stream<Path> paths = Files.walk(dir)) {
+			// Sort the paths in reverse order so that the
+			// directories are deleted first
+			paths.sorted(Comparator.reverseOrder())
+					.forEach(path -> {
+						try {
+							// If DEV_MODE is enabled, print the path to the file or
+							// directory that is being deleted
+							if (Settings.DEV_MODE.enabled()) {
+								System.out.println("Deleting: " + path);
+							}
+							// Delete the file or directory
+							Files.delete(path);
+						} catch (IOException e) {
+							// Print the exception if something goes wrong
+							e.printStackTrace();
 						}
-						Files.delete(path); // delete each file or directory
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				});
+					});
+		}
 	}
 
 	public static String get(Settings setting) {

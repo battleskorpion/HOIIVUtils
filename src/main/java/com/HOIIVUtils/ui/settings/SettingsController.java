@@ -21,7 +21,12 @@ import java.util.Map;
 import static com.HOIIVUtils.hoi4utils.Settings.MOD_PATH;
 
 /**
- * SettingsWindow is the window and controller for the program settings
+ * The SettingsController class is responsible for handling the program settings
+ * window and its associated functionality.
+ * It provides methods to interact with the settings UI and update the settings
+ * accordingly.
+ *
+ * @author thiccchris
  */
 public class SettingsController extends Application implements FXWindow {
 	protected String fxmlResource = "Settings.fxml";
@@ -291,10 +296,23 @@ public class SettingsController extends Application implements FXWindow {
 		updateTempSetting(Settings.DRAW_FOCUS_TREE, drawFocusTreesCheckBox.isSelected());
 	}
 
+	/**
+	 * Handles the action of the Demo Mode checkbox being clicked.
+	 * Updates the temporary setting for DEMO_MODE to the value of the checkbox.
+	 * Enables or disables the OK button based on the value of the checkbox.
+	 */
 	public void handleDemoModeCheckBoxAction() {
 		updateTempSetting(Settings.DEMO_MODE, idDemoModeCheckBox.isSelected());
 
-		enableOkButton();
+		if (idDemoModeCheckBox.isSelected()) {
+			idBrowseButton.setDisable(true);
+			idModPathTextField.setDisable(true);
+			enableOkButton();
+		} else {
+			idBrowseButton.setDisable(false);
+			idModPathTextField.setDisable(false);
+			disableOkButton();
+		}
 	}
 
 	public void handleOpenConsoleOnLaunchCheckBoxAction() {
@@ -352,6 +370,7 @@ public class SettingsController extends Application implements FXWindow {
 		try {
 			if (Boolean.TRUE.equals(HOIIVUtils.firstTimeSetup)) {
 				// If firstTimeSetup is true, create a new SettingsManager with the tempSettings
+				// This is also cancer
 				SettingsManager.settings = new SettingsManager(tempSettings);
 				HOIIVUtils.firstTimeSetup = false;
 				// Load the saved settings into the SettingsManager
