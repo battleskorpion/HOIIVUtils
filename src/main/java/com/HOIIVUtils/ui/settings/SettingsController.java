@@ -12,11 +12,11 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import com.HOIIVUtils.ui.FXWindow;
 import com.HOIIVUtils.ui.menu.MenuController;
-import com.aparapi.internal.tool.InstructionViewer.Form.Check;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.Map;
 
 import static com.HOIIVUtils.hoi4utils.Settings.MOD_PATH;
 
@@ -55,10 +55,10 @@ public class SettingsController extends Application implements FXWindow {
 	@FXML
 	public CheckBox idDemoModeCheckBox;
 
-	HashMap<Settings, String> tempSettings;
+	private Map<Settings, String> tempSettings;
 
 	public SettingsController() {
-		tempSettings = new HashMap<>();// we should convert this to an EnumMap with default values
+		tempSettings = new EnumMap<>(Settings.class);
 	}
 
 	@FXML
