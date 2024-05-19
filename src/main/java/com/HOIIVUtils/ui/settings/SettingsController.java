@@ -248,6 +248,8 @@ public class SettingsController extends Application implements FXWindow {
 
 	public void handleDemoModeCheckBoxAction() {
 		updateTempSetting(Settings.DEMO_MODE, idDemoModeCheckBox.isSelected());
+
+		enableOkButton();
 	}
 
 	public void handleOpenConsoleOnLaunchCheckBoxAction() {
