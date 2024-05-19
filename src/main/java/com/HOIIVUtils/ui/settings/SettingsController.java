@@ -71,12 +71,19 @@ public class SettingsController extends Application implements FXWindow {
 
 		setDefault();
 
+		// If there is saved settings, load them into the settings window
 		if (Boolean.FALSE.equals(HOIIVUtils.firstTimeSetup)) {
 			if (!"null".equals(MOD_PATH.getSetting())) {
 				idModPathTextField.setText((String) MOD_PATH.getSetting());
 			}
 			devModeCheckBox.setSelected(Settings.DEV_MODE.enabled());
 			drawFocusTreesCheckBox.setSelected(Settings.DRAW_FOCUS_TREE.enabled());
+			idDemoModeCheckBox.setSelected(Settings.DEMO_MODE.enabled());
+			if (idDemoModeCheckBox.isSelected()) {
+				idBrowseButton.setDisable(true);
+				idModPathTextField.setDisable(true);
+			}
+			idOpenConsoleOnLaunchCheckBox.setSelected(Settings.OPEN_CONSOLE_ON_LAUNCH.enabled());
 			idSkipSettingsCheckBox.setSelected(Settings.SKIP_SETTINGS.enabled());
 			idDelSettingsButton.setDisable(false);
 			enableOkButton();
@@ -231,22 +238,46 @@ public class SettingsController extends Application implements FXWindow {
 		return fileModPath.isDirectory();
 	}
 
+	/**
+	 * Handles the action of the delete settings button being clicked.
+	 * This deletes all the settings and resets the settings to their default
+	 * values.
+	 * It also sets the firstTimeSetup flag to true, so that the SettingsManager
+	 * will
+	 * create a new SettingsManager with the default values when the program is next
+	 * launched.
+	 */
 	public void handleDelSettingsButtonAction() {
 		try {
+			// Delete all the settings
 			SettingsManager.deleteAllSettings();
 		} catch (IOException e) {
+			// If there was an IOException while deleting the settings, print the stack
+			// trace
 			e.printStackTrace();
 		}
+		// Reset the settings to their default values
 		setDefault();
+		// Set the firstTimeSetup flag to true
 		HOIIVUtils.firstTimeSetup = true;
 	}
 
+	/**
+	 * Resets the settings to their default values.
+	 * This involves clearing the mod path text field and setting all the checkboxes
+	 * to their default values.
+	 * It also disables the OK button and the delete settings button.
+	 */
 	private void setDefault() {
+		// Clear the mod path text field
 		idModPathTextField.clear();
+		// Set the checkboxes to their default values
 		devModeCheckBox.setSelected(false);
 		drawFocusTreesCheckBox.setSelected(true);
+		idDemoModeCheckBox.setSelected(false);
 		idOpenConsoleOnLaunchCheckBox.setSelected(false);
 		idSkipSettingsCheckBox.setSelected(false);
+		// Disable the OK button and the delete settings button
 		idDelSettingsButton.setDisable(true);
 		disableOkButton();
 	}
