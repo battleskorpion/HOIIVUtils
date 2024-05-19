@@ -6,7 +6,6 @@ import java.util.Properties;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_code.effect.EffectDatabase;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.modifier.ModifierDatabase;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.gfx.Interface;
 import com.HOIIVUtils.ui.menu.MenuController;
 import com.HOIIVUtils.ui.settings.SettingsController;
 
@@ -52,7 +51,9 @@ public class HOIIVUtils {
 
 		// Load modifiers and effects
 		/* preprocessing which doesn't require settings */
+		@SuppressWarnings("unused")
 		ModifierDatabase mdb = new ModifierDatabase(); // load modifiers
+		@SuppressWarnings("unused")
 		EffectDatabase edb = new EffectDatabase(); // load effects
 
 		// Check if this is the first time the program is run
