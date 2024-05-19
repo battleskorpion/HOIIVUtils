@@ -9,9 +9,27 @@
 	<version>10.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
+	<prerequisites>
+		<maven>3.9.6</maven>
+	</prerequisites>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<!-- Explain what uses this -->
+		<maven.compiler.release>21</maven.compiler.release> <!-- Explain what uses this -->
+		<java.version>21</java.version> <!-- Explain what uses this -->
+		<testSourceDirectory>src/test/java</testSourceDirectory> <!-- Explain what uses this -->
+		<maven.compiler.testSource>21</maven.compiler.testSource>
+		<maven.compiler.testTarget>21</maven.compiler.testTarget>
+	</properties>
+
 	<name>HOIIVUtils</name>
 	<description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
 	<url>https://github.com/battleskorpion/HOIIVUtils</url>
+
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -19,31 +37,45 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	<developers>
-		<developer>
-			<name>Chris Cason</name>
-			<url>https://github.com/thiccchris</url>
-		</developer>
-	</developers>
+
 	<scm>
 		<url>https://github.com/battleskorpion/HOIIVUtils</url>
 		<connection>scm:git:git://github.com/battleskorpion/HOIIVUtils.git</connection>
 	</scm>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>21</maven.compiler.source>
-		<maven.compiler.target>21</maven.compiler.target>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/battleskorpion/HOIIVUtils/issues</url>
+	</issueManagement>
 
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<!-- Explain what uses this -->
+	<developers>
+		<developer>
+			<id>battleskorpion</id>
+			<url>https://github.com/battleskorpion</url>
+			<roles>
+				<role>Project Owner</role>
+				<role>Developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+		<developer>
+			<id>thiccchris</id>
+			<name>Chris Cason</name>
+			<url>https://github.com/thiccchris</url>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>-7</timezone>
+		</developer>
+	</developers>
 
-		<maven.compiler.release>21</maven.compiler.release> <!-- Explain what uses this -->
-
-		<java.version>21</java.version> <!-- Explain what uses this -->
-
-		<testSourceDirectory>src/test/java</testSourceDirectory> <!-- Explain what uses this -->
-	</properties>
+	<repositories>
+		<repository>
+			<id>universityOfManchester-graal</id>
+			<url>https://raw.githubusercontent.com/beehive-lab/tornado/maven-tornadovm</url>
+			<!-- what does this mean or even do ?? -->
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -74,12 +106,6 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.10.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
 			<version>5.10.2</version>
 			<scope>test</scope>
 		</dependency>
@@ -143,11 +169,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<version>2.0.13</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>2.0.13</version>
 		</dependency>
@@ -188,16 +209,16 @@
 
 		<plugins>
 			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.13.0</version>
+			</plugin>
+			<plugin>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.8</version>
 				<configuration>
 					<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -272,11 +293,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<repositories>
-		<repository>
-			<id>universityOfManchester-graal</id>
-			<url>https://raw.githubusercontent.com/beehive-lab/tornado/maven-tornadovm</url>
-		</repository>
-	</repositories>
 </project>
