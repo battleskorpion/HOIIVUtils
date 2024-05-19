@@ -12,6 +12,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import com.HOIIVUtils.ui.FXWindow;
 import com.HOIIVUtils.ui.menu.MenuController;
+import com.aparapi.internal.tool.InstructionViewer.Form.Check;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +52,8 @@ public class SettingsController extends Application implements FXWindow {
 	public CheckBox drawFocusTreesCheckBox;
 	@FXML
 	public ComboBox<Screen> preferredMonitorComboBox;
+	@FXML
+	public CheckBox idDemoModeCheckBox;
 
 	HashMap<Settings, String> tempSettings;
 
@@ -60,15 +63,23 @@ public class SettingsController extends Application implements FXWindow {
 
 	@FXML
 	void initialize() {
-		includeVersion();
-		setDefault();
-		includeSettingValues();
+		idVersionLabel.setText(HOIIVUtils.HOIIVUTILS_VERSION);
 
-		// You can not enable or disable fxml in initialization because at this point
-		// the fxml has not been loaded yet so the fxml elements are null which will
-		// cause a crash
+		setDefault();
+
+		if (Boolean.FALSE.equals(HOIIVUtils.firstTimeSetup)) {
+			if (!"null".equals(MOD_PATH.getSetting())) {
+				idModPathTextField.setText((String) MOD_PATH.getSetting());
+			}
+			devModeCheckBox.setSelected(Settings.DEV_MODE.enabled());
+			drawFocusTreesCheckBox.setSelected(Settings.DRAW_FOCUS_TREE.enabled());
+			idSkipSettingsCheckBox.setSelected(Settings.SKIP_SETTINGS.enabled());
+			idDelSettingsButton.setDisable(false);
+			enableOkButton();
+		}
 
 		preferredMonitorComboBox.setItems(Screen.getScreens());
+
 		preferredMonitorComboBox.setCellFactory(cell -> new ListCell<>() {
 			@Override
 			protected void updateItem(Screen item, boolean empty) {
@@ -91,12 +102,10 @@ public class SettingsController extends Application implements FXWindow {
 
 	@Override
 	public void start(Stage stage) {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
-			System.out.println("loader things: " + loader + " " + loader.getLocation() + " " + loader.getResources()
-					+ " " + loader.getController() + " " + loader.getCharset() + " " + loader.getControllerFactory()
-					+ " " + loader.getNamespace() + " " + loader.getBuilderFactory() + " " + loader.getLoadListener());
 			Parent root = loader.load();
+			System.out.println("Successfully loaded fxml file.");
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 
@@ -105,12 +114,11 @@ public class SettingsController extends Application implements FXWindow {
 
 			stage.setTitle(title);
 			stage.show();
-			// if (fxmlResource.equals("fxml/Settings.fxml")) {
 			stage.maxWidthProperty().bind(stage.widthProperty());
 			stage.minWidthProperty().bind(stage.widthProperty());
-			// }
 			System.out.println("Settings Controller created it's own stage and showed it");
 		} catch (Exception e) {
+			System.out.println("Failed to load fxml file!!!!!");
 			e.printStackTrace();
 		}
 	}
@@ -127,23 +135,6 @@ public class SettingsController extends Application implements FXWindow {
 		} else {
 			start(new Stage());
 			System.out.println("Settings Controller create settings stage with open cuz settings stage was null");
-		}
-	}
-
-	public void includeVersion() {
-		idVersionLabel.setText(HOIIVUtils.HOIIVUTILS_VERSION);
-	}
-
-	public void includeSettingValues() {
-		if (Boolean.FALSE.equals(HOIIVUtils.firstTimeSetup)) {
-			if (!"null".equals(MOD_PATH.getSetting())) {
-				idModPathTextField.setText((String) MOD_PATH.getSetting());
-			}
-			devModeCheckBox.setSelected(Settings.DEV_MODE.enabled());
-			drawFocusTreesCheckBox.setSelected(Settings.DRAW_FOCUS_TREE.enabled());
-			idSkipSettingsCheckBox.setSelected(Settings.SKIP_SETTINGS.enabled());
-			idDelSettingsButton.setDisable(false);
-			enableOkButton();
 		}
 	}
 
@@ -253,6 +244,10 @@ public class SettingsController extends Application implements FXWindow {
 
 	public void handleDrawFocusTreesCheckBoxAction() {
 		updateTempSetting(Settings.DRAW_FOCUS_TREE, drawFocusTreesCheckBox.isSelected());
+	}
+
+	public void handleDemoModeCheckBoxAction() {
+		// updateTempSetting(Settings.DEMO_MODE, idDemoModeCheckBox.isSelected());
 	}
 
 	public void handleOpenConsoleOnLaunchCheckBoxAction() {
