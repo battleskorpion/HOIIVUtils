@@ -99,6 +99,15 @@ public enum Settings {
 			return "true";
 		}
 	},
+	DEMO_MODE {
+		public Object getSetting() {
+			return enabled();
+		}
+
+		public String defaultProperty() {
+			return "false";
+		}
+	},
 	;
 
 	/**
