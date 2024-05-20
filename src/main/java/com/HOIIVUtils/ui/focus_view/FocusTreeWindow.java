@@ -55,7 +55,8 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 	private Tooltip focusTooltipView;
 	private Focus focusDetailsFocus;
 
-	private double mouseX, mouseY;
+	private double mouseX;
+	private double mouseY;
 	private Focus draggedFocus;
 
 	public FocusTreeWindow() {
@@ -77,7 +78,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		return focusTree.minX();
 	}
 
-	private Image GFX_focus_unavailable;
+	private Image gfxFocusUnavailable;
 
 	int getMaxX() {
 		return focusTree.focuses().stream().mapToInt(Focus::absoluteX).max().orElse(200);
@@ -95,12 +96,20 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	/**
+	 * Called when the application is initialized.
+	 * 
+	 * Sets up the focus tree dropdown and its listeners, sets the focus tree
+	 * canvas's width and height, draws the focus tree, and sets up the
+	 * focus tree canvas's scroll pane.
+	 */
 	@FXML
 	void initialize() {
+		// Set up the focus tree dropdown and its listeners
 		focusTreeDropdown.setItems(FocusTree.observeFocusTrees());
 		focusTreeDropdown.setTooltip(new Tooltip("Select a focus tree to view"));
-		focusTreeDropdown.getSelectionModel().select(0);
 		focusTreeDropdown.setVisibleRowCount(VISIBLE_DROPDOWN_ROW_COUNT);
+		focusTreeDropdown.getSelectionModel().select(0);
 		focusTreeDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				focusTree = newValue;
@@ -111,24 +120,25 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		exportFocusTreeButton.setOnAction(event -> handleExportFocusTreeButtonClick());
 
 		// Load the focus unavailable image
-		GFX_focus_unavailable = loadFocusUnavailableImage();
+		gfxFocusUnavailable = loadFocusUnavailableImage();
 
+		// Set up the focus tree
 		focusTree = FocusTree.get(new CountryTag("SMA"));
 		try {
 			focusTree.setLocalization(new FocusLocalizationFile(
 					HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
 		} catch (IllegalLocalizationFileTypeException e) {
-			throw new RuntimeException(e);
+			throw new IllegalLocalizationFileTypeException("Error loading focus tree localization", e);
 		}
+
+		// If focusTree is still null, assign a new value
 		if (focusTree == null) {
-			// focusTree = new FocusTree(new File(HOIIVFile.focus_folder +
-			// "//massachusetts.txt"));
 			focusTree = FocusTree.get(new File(HOIIVFile.focus_folder + "//massachusetts.txt"));
 			try {
 				focusTree.setLocalization(new FocusLocalizationFile(
 						HOIIVFile.localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
 			} catch (IllegalLocalizationFileTypeException e) {
-				throw new RuntimeException(e);
+				throw new IllegalLocalizationFileTypeException("Error loading focus tree localization", e);
 			}
 		}
 
@@ -136,9 +146,9 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 			FixFocus.addFocusLoc(focusTree);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e);
 		}
 
+		// Calculate the maximum X and Y values
 		int maxX = getMaxX();
 		int maxY = getMaxY();
 
@@ -146,6 +156,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		focusTreeCanvas.setWidth(Math.max(FOCUS_X_SCALE * (maxX - getMinX()) + 2 * X_OFFSET_FIX, 800));
 		focusTreeCanvas.setHeight(Math.max(FOCUS_Y_SCALE * (maxY + 2), 600));
 
+		// Set up the focus tree canvas's scroll pane
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.MIDDLE)
 				focusTreeCanvasScrollPane.setPannable(true);
@@ -205,7 +216,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		int yAdj1 = (int) (FOCUS_Y_SCALE / 2.2);
 		int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
 
-		gc2D.drawImage(GFX_focus_unavailable, x1 - 32, y1 + yAdj1);
+		gc2D.drawImage(gfxFocusUnavailable, x1 - 32, y1 + yAdj1);
 		gc2D.drawImage(focus.getDDSImage(), x1, y1);
 		String name = focus.name();
 		gc2D.fillText(name, x1 - 20, y1 + yAdj2);
@@ -309,7 +320,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 			int y1 = FOCUS_Y_SCALE * focus.absoluteY();
 			int yAdj1 = (int) (FOCUS_Y_SCALE / 2.2);
 			int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
-			gc2D.drawImage(GFX_focus_unavailable, x1 - 32, y1 + yAdj1);
+			gc2D.drawImage(gfxFocusUnavailable, x1 - 32, y1 + yAdj1);
 			gc2D.drawImage(focus.getDDSImage(), x1, y1);
 			String name = focus.name();
 			gc2D.fillText(name, x1 - 20, y1 + yAdj2);

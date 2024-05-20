@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class LocalizationFile extends File {
@@ -16,13 +17,14 @@ public class LocalizationFile extends File {
     private static String loc_key = ":0"; // todo this just the default each loc could have its own
     private static String language_def = l_english;
     protected List<Localization> localizationList;
+    private static final String LOCALIZATION_FILE_TYPE_ERROR = "Localization files can only be of type .yml";
 
     public LocalizationFile(@NotNull String pathname) throws IllegalLocalizationFileTypeException {
         super(pathname);
 
         // todo are other file endings allowed for yaml/hoi4?
         if (!pathname.endsWith(".yml")) {
-            throw new IllegalLocalizationFileTypeException("Localization files can only be of type .yml");
+            throw new IllegalLocalizationFileTypeException(LOCALIZATION_FILE_TYPE_ERROR);
         }
 
         localizationList = new ArrayList<>();
@@ -32,7 +34,7 @@ public class LocalizationFile extends File {
         super(uri);
 
         if (!uri.getPath().endsWith(".yml")) {
-            throw new IllegalLocalizationFileTypeException("Localization files can only be of type .yml");
+            throw new IllegalLocalizationFileTypeException(LOCALIZATION_FILE_TYPE_ERROR);
         }
 
         localizationList = new ArrayList<>();
@@ -42,7 +44,7 @@ public class LocalizationFile extends File {
         super(file.toURI());
 
         if (!file.getPath().endsWith(".yml")) {
-            throw new IllegalLocalizationFileTypeException("Localization files can only be of type .yml");
+            throw new IllegalLocalizationFileTypeException(LOCALIZATION_FILE_TYPE_ERROR);
         }
 
         localizationList = new ArrayList<>();
@@ -52,6 +54,7 @@ public class LocalizationFile extends File {
         return this;
     }
 
+    @Override
     public String toString() {
         if (super.isFile()) {
             return super.toString();
@@ -172,9 +175,6 @@ public class LocalizationFile extends File {
             BufferedWriter BWriter = new BufferedWriter(writer);
             PrintWriter PWriter = new PrintWriter(BWriter); // for println syntax
 
-            // String localization_line;
-            // PWriter.println(language);
-
             for (Localization localization : localizationList) {
                 if (localization.status() == Localization.Status.UPDATED) {
                     /* replace loc */
@@ -216,6 +216,11 @@ public class LocalizationFile extends File {
         }
     }
 
+    /**
+     * Adds a new localization to the localization list if it doesn't already exist.
+     *
+     * @param newLocalization the localization to be added
+     */
     public void addLocalization(Localization newLocalization) {
         if (newLocalization == null) {
             return;
@@ -235,17 +240,17 @@ public class LocalizationFile extends File {
     /**
      * Gets localization from this file corresponding to the ID
      * 
-     * @param ID
+     * @param localizationId
      * @return Localization corresponding with ID, or null if not found
      */
-    public Localization getLocalization(String ID) {
-        if (ID == null) {
+    public Localization getLocalization(String localizationId) {
+        if (localizationId == null) {
             System.err.println("Null localization ID in " + this);
             return null;
         }
 
         for (Localization loc : localizationList) {
-            if (loc.ID().equals(ID)) {
+            if (loc.ID().equals(localizationId)) {
                 return loc;
             }
         }
@@ -253,6 +258,16 @@ public class LocalizationFile extends File {
         return null;
     }
 
+    /**
+     * Sets the localization for the given key with the provided text. If a
+     * localization with the same key already exists,
+     * it is updated with the new text. Otherwise, a new localization is created and
+     * added to the list.
+     *
+     * @param key  the identifier of the localization
+     * @param text the text to set for the localization
+     * @return the updated or newly created localization
+     */
     public Localization setLocalization(String key, String text) {
         ArrayList<Localization> listTemp = new ArrayList<>(localizationList);
 
@@ -275,17 +290,23 @@ public class LocalizationFile extends File {
     }
 
     /**
-     * todo
-     * 
-     * @param ID
-     * @return
+     * Checks if the given localization ID is localized.
+     *
+     * @param localizationId the ID of the localization to check
+     * @return true if the localization is localized, false otherwise
      */
-    public boolean isLocalized(String ID) {
-        Localization loc = getLocalization(ID);
-        // HOIIVUtilsStageLoader.openError(loc.status() + "");
+    public boolean isLocalized(String localizationId) {
+        Localization loc = getLocalization(localizationId);
         return (loc != null && loc.status() != Localization.Status.DEFAULT);
     }
 
+    /**
+     * Sets the localization for the given ID. If the localization already exists,
+     * it is updated.
+     * If it does not exist, it is added to the list.
+     *
+     * @param localization the localization to set or update
+     */
     public void setLocalization(Localization localization) {
         int i = 0;
         for (Localization l : localizationList) {
@@ -298,5 +319,34 @@ public class LocalizationFile extends File {
         }
 
         localizationList.add(localization);
+    }
+
+    /**
+     * Checks if this object is equal to the given object.
+     *
+     * @param obj the object to compare to
+     * @return true if the objects are equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        LocalizationFile other = (LocalizationFile) obj;
+        return Objects.equals(getAbsolutePath(), other.getAbsolutePath());
+    }
+
+    /**
+     * Calculates and returns a hash code value for the object. The hash code is
+     * generated using the absolute path of the object's file.
+     *
+     * @return the hash code value of the object's absolute path
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(getAbsolutePath());
     }
 }
