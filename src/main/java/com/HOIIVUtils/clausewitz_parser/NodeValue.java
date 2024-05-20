@@ -5,15 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *  stores string, number, ArrayList<Node>, SymbolNode, or null
+ * stores string, number, ArrayList<Node>, SymbolNode, or null
  */
 // todo should be subclasseed to impl effect parameter?
 public final class NodeValue {
 	private final Object value;
-
-//	public NodeValue(Object value) {
-//		this.value = value;
-//	}
 
 	public NodeValue(ArrayList<Node> value) {
 		this.value = value;
@@ -44,7 +40,8 @@ public final class NodeValue {
 		if (value instanceof String) {
 			return (String) value;
 		}
-		if (value == null) return null;
+		if (value == null)
+			return null;
 
 		// todo better error handling
 		System.err.println("Expected NodeValue value to be a string, value: " + value);
@@ -77,14 +74,15 @@ public final class NodeValue {
 
 	public ArrayList<Node> list() {
 		if (value instanceof ArrayList<?>) {
-			return (ArrayList<Node>) value;
+			return (ArrayList<Node>) value; // ! unchecked cast
 		}
 		if (value instanceof Node) {
 			ArrayList<Node> list = new ArrayList<>();
 			list.add((Node) value);
 			return list;
 		}
-		if (value == null) return null;
+		if (value == null)
+			return null;
 
 		// todo better error handling
 		throw new IllegalStateException("Expected NodeValue to be an ArrayList<Node>");
@@ -94,7 +92,8 @@ public final class NodeValue {
 		if (value instanceof Node) {
 			return (Node) value;
 		}
-		if (value == null) return null;
+		if (value == null)
+			return null;
 
 		throw new IllegalStateException("Expected NodeValue to be a Node, value: " + value);
 	}
@@ -103,13 +102,19 @@ public final class NodeValue {
 		if (value instanceof String) {
 			return (String) value;
 		}
-		if (value == null) return "[null]";
-		if (value instanceof Integer) return Integer.toString((int) value);
-		if (value instanceof Double) return Double.toString((double) value);
-		if (value instanceof Number) return Long.toString((long) value);    // sure why not
-		//if (value instanceof List<?>) return "[list]";                      // sure why not
-		if (value instanceof List<?> l) return Arrays.toString(l.toArray()); 					// sure why not
-		if (value instanceof Node) return ((Node) value).toString();
+		if (value == null)
+			return "[null]";
+		if (value instanceof Integer)
+			return Integer.toString((int) value);
+		if (value instanceof Double)
+			return Double.toString((double) value);
+		if (value instanceof Number)
+			return Long.toString((long) value); // sure why not
+		// if (value instanceof List<?>) return "[list]"; // sure why not
+		if (value instanceof List<?> l)
+			return Arrays.toString(l.toArray()); // sure why not
+		if (value instanceof Node)
+			return ((Node) value).toString();
 		return "[invalid type]";
 	}
 
@@ -125,9 +130,9 @@ public final class NodeValue {
 		return value instanceof Number;
 	}
 
-//	public boolean isBoolean() {
-//		return value instanceof Boolean;
-//	}
+	// public boolean isBoolean() {
+	// return value instanceof Boolean;
+	// }
 
 	// todo check allowables
 }

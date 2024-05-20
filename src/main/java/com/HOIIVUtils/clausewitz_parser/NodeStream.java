@@ -57,10 +57,10 @@ public class NodeStream<T extends Node> implements NodeStreamable<T> {
 
 		// todo necessary etc.?
 		if (nodeToStream.valueObject() instanceof ArrayList<?>) {
-			stream = stream.flatMap(node -> ((ArrayList<T>) node.valueObject()).stream());
+			stream = stream.flatMap(node -> ((ArrayList<T>) node.valueObject()).stream()); // ! Unchecked cast
 		} else if (nodeToStream.valueObject() instanceof Node) {
 			// stream = concat(stream, ((NodeType) nodeToStream.value()).stream());
-			stream = Stream.concat(stream, Stream.of((T) nodeToStream.valueObject()));
+			stream = Stream.concat(stream, Stream.of((T) nodeToStream.valueObject())); // ! Unchecked cast
 		}
 	}
 

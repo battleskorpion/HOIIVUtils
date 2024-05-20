@@ -397,20 +397,21 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		// todo all focus trees - localized focus trees - unlocalized focus trees
 		for (FocusTree tree : listFocusTrees()) {
 			aa: if (tree.locFile() != null) {
-				Scanner locReader = new Scanner(tree.locFile().getFile());
-				ArrayList<String> focuses = tree.listFocusIDs();
-				if (focuses == null) {
-					break aa;
-				}
+				try (Scanner locReader = new Scanner(tree.locFile().getFile())) {
+					ArrayList<String> focuses = tree.listFocusIDs();
+					if (focuses == null) {
+						break aa;
+					}
 
-				// ArrayList<Boolean> localized; Commited out till Skorp fixes this
-				while (locReader.hasNext()) {
-					String locLine = locReader.nextLine();
-					if (locLine.trim().length() >= 3) {
-						String potentialTag = locLine.trim().substring(0, 3);
+					// ArrayList<Boolean> localized; Commited out till Skorp fixes this
+					while (locReader.hasNext()) {
+						String locLine = locReader.nextLine();
+						if (locLine.trim().length() >= 3) {
+							String potentialTag = locLine.trim().substring(0, 3);
 
-						if (CountryTags.exists(potentialTag)) {
+							if (CountryTags.exists(potentialTag)) {
 
+							}
 						}
 					}
 				}

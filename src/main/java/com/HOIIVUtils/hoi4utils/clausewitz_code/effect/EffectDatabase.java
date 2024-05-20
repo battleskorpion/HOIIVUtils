@@ -131,7 +131,7 @@ public class EffectDatabase {
 											+ args[0]);
 						} else {
 							// else is identifier (and parameter value type)
-							// TODO: this is broken, fix it
+							// TODO this is broken, fix it
 							// Parameter.addValidParameter(parameters_str[0]);
 							if (args.length < 2) {
 								System.out.println(Arrays.toString(args));
