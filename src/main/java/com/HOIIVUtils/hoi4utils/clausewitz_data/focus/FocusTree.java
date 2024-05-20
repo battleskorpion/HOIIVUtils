@@ -425,7 +425,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 
 		for (FocusTree tree : listFocusTrees()) {
 			aa: if (tree.locFile() != null) {
-				Scanner locReader = new Scanner(tree.locFile().getFile());
+				Scanner locReader = new Scanner(tree.locFile().getFile()); // ! TODO close this
 				ArrayList<String> focuses = tree.listFocusIDs();
 				if (focuses == null) {
 					break aa;
@@ -439,7 +439,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 						String potentialTag = locLine.trim().substring(0, COUNTRY_TAG_LENGTH);
 
 						if (CountryTags.exists(potentialTag)) {
-
+							// TODO don't know but remove it if it's not needed
 						}
 					}
 				}

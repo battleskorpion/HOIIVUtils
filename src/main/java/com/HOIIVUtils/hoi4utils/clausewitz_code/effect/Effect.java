@@ -243,7 +243,7 @@ public class Effect implements EffectParameter, Cloneable {
 	}
 
 	private boolean acceptsParameter(NodeValue value) {
-		// TODO
+		// TODO Build out this method to do whatever "acceptsParameter(NodeValue value)"
 		return true;
 	}
 

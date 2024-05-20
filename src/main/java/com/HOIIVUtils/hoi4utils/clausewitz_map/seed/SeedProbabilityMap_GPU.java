@@ -9,23 +9,21 @@ import com.aparapi.Range;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
  * SeedProbabilityMap, designed for GPU efficiency.
  */
 public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
-	double[][] seedProbabilityMap;      // y, x
-	double[][] cumulativeProbabilities;   // per x, inclusive of previous maps // todo this comment makes no sense
+	double[][] seedProbabilityMap; // y, x
+	double[][] cumulativeProbabilities; // per x, inclusive of previous maps // todo this comment makes no sense
 	final Heightmap heightmap;
 	final int width;
 	final int height;
 	int pointNumber = 0;
-//	ForkJoinPool fjpool;
+	// ForkJoinPool fjpool;
 	double probabilitySum = 0;
 	SeedGenProperties properties;
 
@@ -36,16 +34,16 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		seedProbabilityMap = new double[height][width]; // y, x
 		cumulativeProbabilities = new double[height][width];
 		this.properties = properties;
-//		fjpool = new ForkJoinPool();
+		// fjpool = new ForkJoinPool();
 
 		initializeProbabilityMap();
 	}
 
 	private void initializeProbabilityMap() {
 		final double[][] _seedMap = new double[height][width];
-//		final double[] _cumulativeProbabilities = new double[height];
+		// final double[] _cumulativeProbabilities = new double[height];
 		final byte[][] _heightmap = heightmap.snapshot();
-		final int seaLevel = properties.seaLevel();   // necessary as can not use interface related call in kernel
+		final int seaLevel = properties.seaLevel(); // necessary as can not use interface related call in kernel
 		Kernel kernel = new Kernel() {
 			@Override
 			public void run() {
@@ -53,28 +51,30 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 				int y = getGlobalId(1);
 				if (x < getGlobalSize(0) && y < getGlobalSize(1)) {
 					int xyheight = _heightmap[y][x] & 0xFF;
-					//int type = provinceType(xyheight, seaLevel); // is this bad here? probably.
+					// int type = provinceType(xyheight, seaLevel); // is this bad here? probably.
 					int type = xyheight < seaLevel ? 0 : 1;
-					_seedMap[y][x] = type == 0 ? 1.15 : 0.85;   // todo magic numbers :(
-					//_seedMap[y][x] = 1.0;
-//					result[i] = inA[i] + inB[i];
-//					if (x == 0) {
-//						/* once per row */
-//						_cumulativeProbabilities[y] = 0.0;
-//					}
+					_seedMap[y][x] = type == 0 ? 1.15 : 0.85; // todo magic numbers :(
+					// _seedMap[y][x] = 1.0;
+					// result[i] = inA[i] + inB[i];
+					// if (x == 0) {
+					// /* once per row */
+					// _cumulativeProbabilities[y] = 0.0;
+					// }
 				}
 			}
 		};
 
-		// The group size must always be a ‘factor’ of the global range. So globalRange % groupSize == 0
-		// [prime numbers run bad with this impl, but that's fine bc we use specific multiples of 2, 4, 8 for the maps]
+		// The group size must always be a ‘factor’ of the global range. So globalRange
+		// % groupSize == 0
+		// [prime numbers run bad with this impl, but that's fine bc we use specific
+		// multiples of 2, 4, 8 for the maps]
 		Range range = Range.create2D(width, height);
 		kernel.execute(range);
 		kernel.dispose();
 		seedProbabilityMap = _seedMap;
-//		cumulativeProbabilities = _cumulativeProbabilities;
+		// cumulativeProbabilities = _cumulativeProbabilities;
 
-		normalize();    // will calc cumulative probabilities
+		normalize(); // will calc cumulative probabilities
 	}
 
 	public void normalize() {
@@ -90,8 +90,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 			System.out.println("t3");
 			probabilitySum = sum;
 			return;
-		}
-		else if (sum == 1) {
+		} else if (sum == 1) {
 			System.out.println("t4");
 			cumulativeProbabilities = cumulativeReduce2D(seedProbabilityMap);
 			probabilitySum = sum;
@@ -107,6 +106,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 
 	/**
 	 * Based on example in aparapi examples
+	 * 
 	 * @return
 	 */
 	private double mapReduce2D(double[][] matrix) {
@@ -117,17 +117,17 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		final int count = 3;
 		System.out.println("map reduce array size: " + size);
 
-        System.arraycopy(Stream.of(matrix)
-		        .parallel()
-		        .flatMapToDouble(DoubleStream::of)
-		        .toArray(),
-		        0, _sdata, 0, size);
+		System.arraycopy(Stream.of(matrix)
+				.parallel()
+				.flatMapToDouble(DoubleStream::of)
+				.toArray(),
+				0, _sdata, 0, size);
 
 		// this will hold our values between the phases.
 		double[][] totals = new double[count][size];
 
 		/*
-		map phase
+		 * map phase
 		 */
 		final double[][] kernelTotals = totals;
 		Kernel mapKernel = new Kernel() {
@@ -147,7 +147,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		totals = kernelTotals;
 
 		/*
-		reduce phase
+		 * reduce phase
 		 */
 		while (size > 1) {
 			int nextSize = size / 2;
@@ -175,7 +175,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 				.mapToDouble(row -> row[0])
 				.toArray();
 
-//		System.out.println(Arrays.toString(result));
+		// System.out.println(Arrays.toString(result));
 		return result[0] + result[1] + result[2];
 	}
 
@@ -190,7 +190,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		int cols = matrix[0].length;
 		int size = rows * cols;
 		final double[] _sdata = new double[size];
-		//final int count = 3;        // todo 3? no.
+		// final int count = 3; // todo 3? no.
 
 		// Flatten the matrix into a 1D array
 		System.arraycopy(Stream.of(matrix)
@@ -205,14 +205,15 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		double[][] values = new double[rows][cols];
 
 		/*
-		reduce phase
-		if gid % 2^(index + 1) >= 2^(index)
-		add value[gid - ([gid % 2^(index)] + 1)] to value[gid]
-		~12.8m array -> 24 iterations
+		 * reduce phase
+		 * if gid % 2^(index + 1) >= 2^(index)
+		 * add value[gid - ([gid % 2^(index)] + 1)] to value[gid]
+		 * ~12.8m array -> 24 iterations
 		 */
 		final double[] cumulativeTotals = _sdata;
 		final int maxIterations = (int) Math.ceil(Math.log(size) / Math.log(2));
-		System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
+		System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. "
+				+ cumulativeTotals[size - 1]);
 		// this is not neccessarily the most efficient algo, but.
 		// todo uHhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh (weird output? or somewhere else?)
 		Kernel reduceKernel = new Kernel() {
@@ -221,52 +222,56 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 				int gid = getGlobalId();
 				for (int i = 0; i < maxIterations; i++) {
 					int pow_2_i = 1 << i;
-					//int gid = getGlobalId();
+					// int gid = getGlobalId();
 					if (gid % (pow_2_i << 1) >= pow_2_i)
 						cumulativeTotals[gid] += cumulativeTotals[gid - (gid % pow_2_i + 1)];
-					else cumulativeTotals[gid] += 0;
+					else
+						cumulativeTotals[gid] += 0;
 
-					////cumulativeTotals = nextTotals;
-					//System.out.println("reducing iteration: " + i);
-					//System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
+					//// cumulativeTotals = nextTotals;
+					// System.out.println("reducing iteration: " + i);
+					// System.out.println("reducing arr: " + cumulativeTotals[0] + ", " +
+					//// cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
 
-					this.localBarrier();    // todo needed?
+					this.localBarrier(); // todo needed?
 				}
 			}
 		};
 		reduceKernel.execute(Range.create(size));
 		reduceKernel.dispose();
-		System.out.println("reduced arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
-//		for (int i = 0;; i++) {
-//			final double[] currentTotals = cumulativeTotals;
-//			final double[] nextTotals = currentTotals.clone();
-//			final int pow_2_i = 1 << i;
-//
-//			Kernel reduceKernel = new Kernel() {
-//				@Override
-//				public void run() {
-//					int gid = getGlobalId();
-//					if (gid % (pow_2_i << 1) >= pow_2_i)
-//						nextTotals[gid] += currentTotals[gid - (gid % pow_2_i + 1)];
-//					else nextTotals[gid] += 0;
-//				}
-//			};
-//			reduceKernel.execute(Range.create(size));
-//			reduceKernel.dispose();
-//			cumulativeTotals = nextTotals;
-//			System.out.println("reducing iteration: " + i);
-//			System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
-//			if (pow_2_i >= size) break;
-//		}
+		System.out.println("reduced arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. "
+				+ cumulativeTotals[size - 1]);
+		// for (int i = 0;; i++) {
+		// final double[] currentTotals = cumulativeTotals;
+		// final double[] nextTotals = currentTotals.clone();
+		// final int pow_2_i = 1 << i;
+		//
+		// Kernel reduceKernel = new Kernel() {
+		// @Override
+		// public void run() {
+		// int gid = getGlobalId();
+		// if (gid % (pow_2_i << 1) >= pow_2_i)
+		// nextTotals[gid] += currentTotals[gid - (gid % pow_2_i + 1)];
+		// else nextTotals[gid] += 0;
+		// }
+		// };
+		// reduceKernel.execute(Range.create(size));
+		// reduceKernel.dispose();
+		// cumulativeTotals = nextTotals;
+		// System.out.println("reducing iteration: " + i);
+		// System.out.println("reducing arr: " + cumulativeTotals[0] + ", " +
+		// cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
+		// if (pow_2_i >= size) break;
+		// }
 
-//		// Reconstruct the result matrix
+		// // Reconstruct the result matrix
 		double[][] result = new double[rows][cols];
 		for (int i = 0; i < rows; i++) {
-            System.arraycopy(cumulativeTotals, i * cols, result[i], 0, cols);
+			System.arraycopy(cumulativeTotals, i * cols, result[i], 0, cols);
 		}
 
 		// Uncomment the next line if you want to print the result
-		//System.out.println(Arrays.deepToString(result));
+		// System.out.println(Arrays.deepToString(result));
 		System.out.println("arr res:" + result[0][0] + ", " + result[0][1]);
 		return result;
 	}
@@ -298,22 +303,24 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		if (cumulativeP == null) {
 			System.err.println("Cumulative probability index null " + this);
 			System.out.println("bad probability? " + p);
-//			Arrays.stream(cumulativeProbabilities).forEach(System.out::println);
+			// Arrays.stream(cumulativeProbabilities).forEach(System.out::println);
 			return null;
 		}
 
 		// Find the first MapPoint where cumulative probability >= p
 		System.out.println("cumulative:" + cumulativeP + ", " + cumulativeProbabilities[cumulativeP.y][cumulativeP.x]);
-//		System.out.println("cumulative1:" + Arrays.deepToString(cumulativeProbabilities));
-		MapPoint mp = new MapPoint(cumulativeP.x, cumulativeP.y, provinceType(heightmap.height_xy(cumulativeP.x, cumulativeP.y),
-				properties.seaLevel()));
-//		if (mp == null) {
-//			System.out.println("bad probability? " + p);    // todo
-//			return getPoint(random);
-//		}
+		// System.out.println("cumulative1:" +
+		// Arrays.deepToString(cumulativeProbabilities));
+		MapPoint mp = new MapPoint(cumulativeP.x, cumulativeP.y,
+				provinceType(heightmap.height_xy(cumulativeP.x, cumulativeP.y),
+						properties.seaLevel()));
+		// if (mp == null) {
+		// System.out.println("bad probability? " + p); // todo
+		// return getPoint(random);
+		// }
 		System.out.println(++pointNumber);
 		/* adjust probabilities */
-		//adjustProbabilitiesInRadius(mp, 9); instead, ? ->
+		// adjustProbabilitiesInRadius(mp, 9); instead, ? ->
 		setSeedProbabilityMapYX(mp.y, mp.x, 0.0);
 		return mp;
 	}
@@ -339,7 +346,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 			distanceModifiers[i] = (double) (i - 0.2) / r; // Normalize the value to be between 0 and 1
 		}
 
-		//int rSquared = r * r;
+		// int rSquared = r * r;
 		for (int y = minY; y <= maxY; y++) {
 			for (int x = minX; x <= maxX; x++) {
 				double distance = mp.distance(x, y);
@@ -354,14 +361,14 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 	}
 
 	public Point findCumulativeProbabilityIndex(double p) {
-//		Optional<Point> result = IntStream.range(0, cumulativeProbabilities.length)
-//				.boxed()
-//				.flatMap(i -> IntStream.range(0, cumulativeProbabilities[i].length)
-//						.filter(j -> Double.compare(cumulativeProbabilities[i][j], p) >= 0)
-//						.mapToObj(j -> new Point(i, j)))
-//				.findFirst();
-//
-//		return result.orElse(null);
+		// Optional<Point> result = IntStream.range(0, cumulativeProbabilities.length)
+		// .boxed()
+		// .flatMap(i -> IntStream.range(0, cumulativeProbabilities[i].length)
+		// .filter(j -> Double.compare(cumulativeProbabilities[i][j], p) >= 0)
+		// .mapToObj(j -> new Point(i, j)))
+		// .findFirst();
+		//
+		// return result.orElse(null);
 		for (int y = 0; y < cumulativeProbabilities.length; y++) {
 			for (int x = 0; x < cumulativeProbabilities[y].length; x++) {
 				if (Double.compare(cumulativeProbabilities[y][x], p) >= 0) {

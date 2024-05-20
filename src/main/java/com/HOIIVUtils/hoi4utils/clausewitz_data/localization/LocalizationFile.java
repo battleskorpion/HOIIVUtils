@@ -72,7 +72,7 @@ public class LocalizationFile extends File {
         /* file reader */
         Scanner reader = null;
         try {
-            reader = new Scanner(this);
+            reader = new Scanner(this); // ! TODO never closed, close it
         } catch (Exception exception) {
             FXWindow.openGlobalErrorWindow(exception);
         }

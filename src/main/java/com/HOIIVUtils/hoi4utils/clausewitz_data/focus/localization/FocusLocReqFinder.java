@@ -46,7 +46,7 @@ public class FocusLocReqFinder {
 		// todo: blacklist files that definitely arent for focuses, or something idk
 		for (File loc_file : Objects.requireNonNull(localization_dir.listFiles())) {
 			if (loc_file.isFile()) {
-				Scanner locReader = new Scanner(loc_file); // ! never closed
+				Scanner locReader = new Scanner(loc_file); // ! TODO never closed, close it
 
 				aa: while (locReader.hasNext()) {
 					String locLine = locReader.nextLine();
