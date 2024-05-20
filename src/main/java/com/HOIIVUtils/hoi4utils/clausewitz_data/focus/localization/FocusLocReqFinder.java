@@ -13,13 +13,16 @@ import java.util.Scanner;
 public class FocusLocReqFinder {
 
 	public static boolean findLocReqFocuses(File hoi4_dir) throws IOException {
-		//File common_dir = new File(hoi4_dir.getPath() + "\\common"); //! todo fix the strings
+		// File common_dir = new File(hoi4_dir.getPath() + "\\common"); //! todo fix the
+		// strings
 		File national_focus_dir = new File(hoi4_dir.getPath() + "\\common" + "\\national_focus");
-		//File country_tags_file = new File(hoi4_dir + "\\common\\country_tags\\00_countries.txt"); //! todo fix the strings
+		// File country_tags_file = new File(hoi4_dir +
+		// "\\common\\country_tags\\00_countries.txt"); //! todo fix the strings
 		File localization_dir = new File(hoi4_dir + "\\localisation\\english");
 
-//!		String focusLocPathname = hoi4_dir + "\\localisation\\english\\focus_";
-//!		ArrayList<File> focusLocFiles = new ArrayList<>(); //! todo why is this even here???
+		// ! String focusLocPathname = hoi4_dir + "\\localisation\\english\\focus_";
+		// ! ArrayList<File> focusLocFiles = new ArrayList<>(); //! todo why is this
+		// even here???
 
 		CountryTags.getCountryTags(); // make sure country tags are generated
 
@@ -29,7 +32,7 @@ public class FocusLocReqFinder {
 												// focus files in them todo
 
 				// make a list of all focus names
-//!				FocusTree focus = new FocusTree(focus_file); //! todo fix the focus
+				// ! FocusTree focus = new FocusTree(focus_file); //! todo fix the focus
 				// todo how long does it take to init these focus trees????
 
 				// System.out.println(focus.country());
@@ -43,7 +46,7 @@ public class FocusLocReqFinder {
 		// todo: blacklist files that definitely arent for focuses, or something idk
 		for (File loc_file : Objects.requireNonNull(localization_dir.listFiles())) {
 			if (loc_file.isFile()) {
-				Scanner locReader = new Scanner(loc_file);
+				Scanner locReader = new Scanner(loc_file); // ! never closed
 
 				aa: while (locReader.hasNext()) {
 					String locLine = locReader.nextLine();
