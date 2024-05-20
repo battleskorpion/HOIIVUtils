@@ -3,11 +3,33 @@ package com.HOIIVUtils.clausewitz_parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The Tokenizer class is used to tokenize a string of text into tokens.
+ *
+ * <p>
+ * A Tokenizer is an iterator that produces a sequence of tokens from a string
+ * of text. It uses regular expressions to match the tokens in the text and
+ * provides methods for iterating over the tokens.
+ *
+ * <p>
+ * Here's an example of how to use a Tokenizer to tokenize a string of text:
+ *
+ * <pre>
+ * {@code
+ * Tokenizer tokenizer = new Tokenizer("Hello, world!");
+ * Token token;
+ * while ((token = tokenizer.next()) != null) {
+ * 	System.out.println(token);
+ * }
+ * }
+ * </pre>
+ */
 public class Tokenizer {
+	@SuppressWarnings("unused")
 	private final String input;
 	private final Pattern pattern;
 	private final Matcher matcher;
-	private int find_start_index = 0;
+	private int findStartIndex = 0;
 	private boolean peekOccurred = false;
 
 	public Tokenizer(String input) {
@@ -16,25 +38,33 @@ public class Tokenizer {
 		this.matcher = this.pattern.matcher(input);
 	}
 
+	/**
+	 * Returns the next token from the tokenizer, or null if there are no more
+	 * tokens.
+	 *
+	 * @return the next token from the tokenizer, or null if there are no more
+	 *         tokens
+	 */
 	public Token next() {
 		try {
-		/* matcher.find(int) resets the matcher, therefore,
-		only use this call when necessary */
-		if (peekOccurred) {
-			if (matcher.find(find_start_index)) {
+			/*
+			 * matcher.find(int) resets the matcher, therefore,
+			 * only use this call when necessary
+			 */
+			if (peekOccurred) {
+				if (matcher.find(findStartIndex)) {
+					String value = matcher.group(0);
+					int start = matcher.start();
+					peekOccurred = false;
+					return new Token(value, start);
+				}
+			} else if (matcher.find()) {
 				String value = matcher.group(0);
 				int start = matcher.start();
-				peekOccurred = false;
+				/* peek occurred already false */
 				return new Token(value, start);
 			}
-		}
-		else if (matcher.find()) {
-			String value = matcher.group(0);
-			int start = matcher.start();
-			/* peek occurred already false */
-			return new Token(value, start);
-		}
-		return null;
+			return null;
 		} catch (StackOverflowError e) {
 			System.err.println("EEEE"); // todo
 			System.err.println(matcher.group());
@@ -43,15 +73,17 @@ public class Tokenizer {
 	}
 
 	/**
-	 * <code> Matcher </code> has no peek() function therefore this logic is necessary.
+	 * <code> Matcher </code> has no peek() function therefore this logic is
+	 * necessary.
 	 * returns the next token from matcher, the next <code> find() </code> call to
 	 * <code> matcher </code> however will be from the same start index.
+	 * 
 	 * @see Matcher
 	 * @return Next token from matcher
 	 */
 	public Token peek() {
 		if (peekOccurred) {
-			if (matcher.find(find_start_index)) {
+			if (matcher.find(findStartIndex)) {
 				String value = matcher.group();
 				int start = matcher.start();
 				/* find_start_index remains the same */
@@ -61,7 +93,7 @@ public class Tokenizer {
 		} else if (matcher.find()) {
 			String value = matcher.group();
 			int start = matcher.start();
-			find_start_index = matcher.start();
+			findStartIndex = matcher.start();
 			peekOccurred = true;
 			return new Token(value, start);
 		}
@@ -69,6 +101,11 @@ public class Tokenizer {
 		return null;
 	}
 
+	/**
+	 * Creates a pattern that matches the tokens in the text.
+	 *
+	 * @return a pattern that matches the tokens in the text
+	 */
 	private Pattern createPattern() {
 		StringBuilder patternBuilder = new StringBuilder();
 
@@ -80,7 +117,7 @@ public class Tokenizer {
 		}
 
 		if (!patternBuilder.isEmpty()) {
-			return Pattern.compile(patternBuilder.substring(1));  // Skip the leading "|"
+			return Pattern.compile(patternBuilder.substring(1)); // Skip the leading "|"
 		} else {
 			throw new IllegalStateException("No patterns found for token types.");
 		}

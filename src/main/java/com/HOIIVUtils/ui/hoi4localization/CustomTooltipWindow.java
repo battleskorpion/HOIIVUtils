@@ -24,7 +24,7 @@ public class CustomTooltipWindow extends HOIIVUtilsStageLoader implements TableV
 	@FXML
 	public Label idVersion;
 	@FXML
-	TableColumn<CustomTooltip, String> TooltipIDTableColumn;
+	TableColumn<CustomTooltip, String> tooltipIdTableColumn;
 	@FXML
 	TableColumn<CustomTooltip, String> tooltipTextTableColumn;
 	@FXML
@@ -68,7 +68,6 @@ public class CustomTooltipWindow extends HOIIVUtilsStageLoader implements TableV
 
 	@Override
 	public void setDataTableCellFactories() {
-		// none necessary;
 	}
 
 	/**
@@ -130,7 +129,8 @@ public class CustomTooltipWindow extends HOIIVUtilsStageLoader implements TableV
 			try {
 				localizationFile = new LocalizationFile(selectedFile);
 			} catch (IllegalLocalizationFileTypeException e) {
-				throw new RuntimeException(e);
+				e.printStackTrace();
+				return;
 			}
 		}
 
