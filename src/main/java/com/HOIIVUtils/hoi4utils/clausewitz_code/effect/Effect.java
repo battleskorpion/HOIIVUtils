@@ -5,36 +5,40 @@ import com.HOIIVUtils.clausewitz_parser.NodeValue;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.NotPermittedInScopeException;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.Scope;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.ScopeType;
+import com.HOIIVUtils.hoi4utils.ioexceptions.InvalidEffectParameterException;
+import com.HOIIVUtils.hoi4utils.ioexceptions.NullParameterTypeException;
 
 import java.util.*;
 
 /**
- * For information: <a href="https://hoi4.paradoxwikis.com/Effect">Effects Wiki</a>
-*/
+ * For information: <a href="https://hoi4.paradoxwikis.com/Effect">Effects
+ * Wiki</a>
+ */
 public class Effect implements EffectParameter, Cloneable {
-	public static final SortedMap<String, Effect> effects = new TreeMap<>();
+	protected static final SortedMap<String, Effect> effects = new TreeMap<>();
 
 	private final String identifier;
-	//////private EffectParameter parameters = null;  // null by default
 	private NodeValue parametersNode;
 	private List<EffectParameter> parameters = null;
+	@SuppressWarnings("unused")
 	private List<Parameter> requiredParameters;
+	@SuppressWarnings("unused")
 	private List<Parameter> optionalParameters;
 
 	private final EnumSet<ScopeType> supportedScopes;
-	private final EnumSet<ScopeType> supportedTargets;   // can be null
+	private final EnumSet<ScopeType> supportedTargets; // can be null
 
 	private Scope withinScope = null;
 	private Scope targetScope;
 	private final boolean isScope;
 
-	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets, List<Parameter> requiredParameters, List<Parameter> optionalParameters) {
+	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets,
+			List<Parameter> requiredParameters, List<Parameter> optionalParameters) {
 		this.identifier = identifier;
 		this.supportedScopes = supportedScopes;
 		this.supportedTargets = supportedTargets;
 		this.requiredParameters = requiredParameters;
 		this.optionalParameters = optionalParameters;
-//		this.isScope = Parameter.containsScopeParameter(requiredParameters);
 		this.isScope = Scope.of(this) != null;
 		if (this.isScope) {
 			try {
@@ -45,14 +49,16 @@ public class Effect implements EffectParameter, Cloneable {
 		}
 
 		effects.put(identifier, this);
-//		System.out.println("effect: " + identifier);
+		// System.out.println("effect: " + identifier);
 	}
 
-	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets, List<Parameter> requiredParameters) {
+	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, EnumSet<ScopeType> supportedTargets,
+			List<Parameter> requiredParameters) {
 		this(identifier, supportedScopes, supportedTargets, requiredParameters, null);
 	}
 
-	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, List<Parameter> requiredParameters, List<Parameter> optionalParameters) {
+	public Effect(String identifier, EnumSet<ScopeType> supportedScopes, List<Parameter> requiredParameters,
+			List<Parameter> optionalParameters) {
 		this(identifier, supportedScopes, null, requiredParameters, optionalParameters);
 	}
 
@@ -60,20 +66,22 @@ public class Effect implements EffectParameter, Cloneable {
 		this(identifier, supportedScopes, null, requiredParameters, null);
 	}
 
-//	public static Effect of(String identifier, ScopeType scope, ScopeType targetScope) {
-//		Effect effect = effects.get(identifier);
-//		if (!effect.supportedScopes.contains(scope)) {
-//			System.err.println("Effect was not returned: " + identifier
-//					+ " does not support scope " + targetScope);
-//			return null;
-//		}
-//		if (effect.supportedTargets != null && !effect.supportedTargets.contains(targetScope)) {
-//			System.err.println("Effect was not returned: " + identifier
-//					+ " does not support target scope " + targetScope);
-//			return null;
-//		}
-//		return effect;
-//	}
+	// public static Effect of(String identifier, ScopeType scope, ScopeType
+	// targetScope) {
+	// Effect effect = effects.get(identifier);
+	// if (!effect.supportedScopes.contains(scope)) {
+	// System.err.println("Effect was not returned: " + identifier
+	// + " does not support scope " + targetScope);
+	// return null;
+	// }
+	// if (effect.supportedTargets != null &&
+	// !effect.supportedTargets.contains(targetScope)) {
+	// System.err.println("Effect was not returned: " + identifier
+	// + " does not support target scope " + targetScope);
+	// return null;
+	// }
+	// return effect;
+	// }
 
 	public static Effect of(String identifier, Scope scope) throws NotPermittedInScopeException {
 		Effect effect;
@@ -85,11 +93,11 @@ public class Effect implements EffectParameter, Cloneable {
 			throw new NotPermittedInScopeException("Effect was not returned: " + identifier
 					+ " is not supported in scope " + scope);
 		}
-		//		if (effect.checkSupportedTarget(scope)) {
-//			System.err.println("Effect was not returned: " + identifier
-//					+ " does not support target scope " + scope.targetScope);
-//			return null;
-//		}
+		// if (effect.checkSupportedTarget(scope)) {
+		// System.err.println("Effect was not returned: " + identifier
+		// + " does not support target scope " + scope.targetScope);
+		// return null;
+		// }
 
 		try {
 			effect = (Effect) effect.clone();
@@ -101,10 +109,12 @@ public class Effect implements EffectParameter, Cloneable {
 		return effect;
 	}
 
-	public static Effect of(String identifier, Scope scope, NodeValue params) throws InvalidEffectParameterException, NotPermittedInScopeException {
+	public static Effect of(String identifier, Scope scope, NodeValue params)
+			throws InvalidEffectParameterException, NotPermittedInScopeException {
 		Effect effect;
 		effect = of(identifier, scope);
-		if (effect == null) return null;
+		if (effect == null)
+			return null;
 
 		effect.setParameters(params);
 		return effect;
@@ -115,7 +125,8 @@ public class Effect implements EffectParameter, Cloneable {
 			System.out.println("Error: supported scopes was null for effect " + this);
 			return false;
 		}
-		if (this.supportedScopes.contains(ScopeType.any)) return true;
+		if (this.supportedScopes.contains(ScopeType.any))
+			return true;
 		return this.supportedScopes.contains(scope.targetScopeType());
 	}
 
@@ -129,13 +140,13 @@ public class Effect implements EffectParameter, Cloneable {
 		return identifier;
 	}
 
-//	public EffectParameter parameters() {
-//		return parameters;
-//	}
+	// public EffectParameter parameters() {
+	// return parameters;
+	// }
 
-//	public void setParameters(EffectParameter parameters) {
-//		this.parameters = parameters;
-//	}
+	// public void setParameters(EffectParameter parameters) {
+	// this.parameters = parameters;
+	// }
 
 	public EnumSet<ScopeType> supportedScopes() {
 		return supportedScopes;
@@ -170,8 +181,10 @@ public class Effect implements EffectParameter, Cloneable {
 					Parameter p = Parameter.of(n.name, v);
 					if (p == null) {
 						/*
-						this is done here (rather than impl with Parameter) as effects need the scope of parent effect
-						thus it makes it simpler to treat Effect as a valid parameter type for other Effects as well.
+						 * this is done here (rather than impl with Parameter) as effects need the scope
+						 * of parent effect
+						 * thus it makes it simpler to treat Effect as a valid parameter type for other
+						 * Effects as well.
 						 */
 						Effect subeffect;
 						if (Scope.of(this) != null) {
@@ -182,19 +195,21 @@ public class Effect implements EffectParameter, Cloneable {
 						if (subeffect != null) {
 							parameters.add(subeffect);
 						} else {
-							if (excMessage.isEmpty()) excMessage.append("In Effect ").append(this.name()).append(": ");
-							excMessage.append("\n\t").append("Effect parameter invalid or effect unknown, effect: ").append(n.name)
+							if (excMessage.isEmpty())
+								excMessage.append("In Effect ").append(this.name()).append(": ");
+							excMessage.append("\n\t").append("Effect parameter invalid or effect unknown, effect: ")
+									.append(n.name)
 									.append(", value: ").append(v.asString());
 						}
 					} else {
 						parameters.add(p);
 					}
-				}
-				else {
+				} else {
 					// todo try parameter first?
 					/*
-					this is done here as effects need the scope of parent effect
-					thus it makes it simpler to treat Effect as a valid parameter type for other Effects as well.
+					 * this is done here as effects need the scope of parent effect
+					 * thus it makes it simpler to treat Effect as a valid parameter type for other
+					 * Effects as well.
 					 */
 					Effect subeffect;
 					if (Scope.of(this) != null) {
@@ -205,7 +220,8 @@ public class Effect implements EffectParameter, Cloneable {
 					if (subeffect != null) {
 						parameters.add(subeffect);
 					} else if (!Parameter.isParameter(n.name, v)) {
-						if (excMessage.isEmpty()) excMessage.append("In Effect ").append(this.name()).append(": ");
+						if (excMessage.isEmpty())
+							excMessage.append("In Effect ").append(this.name()).append(": ");
 						excMessage.append("\n\t").append("Effect parameter unknown: ").append(n.name);
 					} else {
 						Parameter p = Parameter.of(n.name, v);
@@ -243,21 +259,24 @@ public class Effect implements EffectParameter, Cloneable {
 		if (parametersNode == null) {
 			return null;
 		}
-		if (!parametersNode.isList()) return parametersNode.asString();
-		else return "[parameter block]";
+		if (!parametersNode.isList())
+			return parametersNode.asString();
+		else
+			return "[parameter block]";
 	}
 
 	// todo to parameters() ?
 	public List<EffectParameter> parameterList() {
-//		if (parametersNode.isList()) return parametersNode.list().stream().map((v) -> v.value().asString()).toList();
-//		else {
-//			return List.of(value());
-//		}
+		// if (parametersNode.isList()) return parametersNode.list().stream().map((v) ->
+		// v.value().asString()).toList();
+		// else {
+		// return List.of(value());
+		// }
 		return parameters;
 	}
 
 	public boolean isScope() {
-//		return targetScope != null && targetScope.name.equals(of.name);
+		// return targetScope != null && targetScope.name.equals(of.name);
 		return isScope;
 	}
 
@@ -277,29 +296,30 @@ public class Effect implements EffectParameter, Cloneable {
 	}
 
 	public boolean hasParameterBlock() {
-		if (parametersNode == null) return false;
+		if (parametersNode == null)
+			return false;
 		return parametersNode.isList();
 	}
 
 	@Override
 	public String displayScript() {
-//		StringBuilder s = new StringBuilder();
-//
-//		s.append(name());
-//		s.append(" = ");
-//		if (!parametersNode.isList()) {
-//			s.append(parametersNode.asString());
-//		}
-//		else {
-//			s.append("{\n");
-//			for (EffectParameter p : parameters) {
-//				s.append("\t");
-//				s.append(p == null ? "[effect parameter was null]" : p.displayParameter());
-//				s.append("\n");
-//			}
-//			s.append("}\n");
-//		}
-//		return s.toString();
+		// StringBuilder s = new StringBuilder();
+		//
+		// s.append(name());
+		// s.append(" = ");
+		// if (!parametersNode.isList()) {
+		// s.append(parametersNode.asString());
+		// }
+		// else {
+		// s.append("{\n");
+		// for (EffectParameter p : parameters) {
+		// s.append("\t");
+		// s.append(p == null ? "[effect parameter was null]" : p.displayParameter());
+		// s.append("\n");
+		// }
+		// s.append("}\n");
+		// }
+		// return s.toString();
 		return displayScript(1);
 	}
 
@@ -311,8 +331,7 @@ public class Effect implements EffectParameter, Cloneable {
 		s.append(" = ");
 		if (!parametersNode.isList()) {
 			s.append(parametersNode.asString());
-		}
-		else {
+		} else {
 			s.append("{\n");
 			for (EffectParameter p : parameters) {
 				s.append("\t".repeat(tabs));

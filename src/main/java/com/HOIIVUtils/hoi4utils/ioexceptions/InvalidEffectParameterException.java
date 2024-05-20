@@ -1,4 +1,4 @@
-package com.HOIIVUtils.hoi4utils.clausewitz_code.effect;
+package com.HOIIVUtils.hoi4utils.ioexceptions;
 
 public class InvalidEffectParameterException extends Exception {
 	public InvalidEffectParameterException() {

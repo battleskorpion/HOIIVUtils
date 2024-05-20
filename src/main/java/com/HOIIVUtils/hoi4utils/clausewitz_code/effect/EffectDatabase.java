@@ -1,6 +1,7 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code.effect;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.ScopeType;
+import com.HOIIVUtils.hoi4utils.ioexceptions.NullParameterTypeException;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,22 +52,22 @@ public class EffectDatabase {
 		}
 	}
 
-//	public static void main(String[] args) {
-//		EffectDatabase effectDB = new EffectDatabase("effects.db");
-//
-//		// Retrieve and use modifiers
-////		effectDatabase.loadEffects();
-//		effectDB.createTable();
-//
-//		// Close the database connection
-//		effectDB.close();
-//	}
+	// public static void main(String[] args) {
+	// EffectDatabase effectDB = new EffectDatabase("effects.db");
+	//
+	// // Retrieve and use modifiers
+	//// effectDatabase.loadEffects();
+	// effectDB.createTable();
+	//
+	// // Close the database connection
+	// effectDB.close();
+	// }
 
 	public EffectDatabase() {
 		this("effects.db");
-//		for(Effect effect : Effect.effects.values()) {
-//			System.out.println("effect: " + effect.identifier());
-//		}
+		// for(Effect effect : Effect.effects.values()) {
+		// System.out.println("effect: " + effect.identifier());
+		// }
 	}
 
 	private void createTable() {
@@ -74,7 +75,7 @@ public class EffectDatabase {
 				"id INTEGER PRIMARY KEY AUTOINCREMENT," +
 				"identifier TEXT," +
 				"supported_scopes TEXT," + // Add this column for supported scopes
-				"supported_targets TEXT" +  // Add this column for supported targets
+				"supported_targets TEXT" + // Add this column for supported targets
 				")";
 		try {
 			PreparedStatement createTable = connection.prepareStatement(createTableSQL);
@@ -92,7 +93,7 @@ public class EffectDatabase {
 			ResultSet resultSet = retrieveStatement.executeQuery();
 			while (resultSet.next()) {
 				String identifier = resultSet.getString("identifier");
-//				System.out.println("id " + identifier);
+				// System.out.println("id " + identifier);
 				String supportedScopes_str = resultSet.getString("supported_scopes");
 				String supportedTargets_str = resultSet.getString("supported_targets");
 				String requiredParametersFull_str = resultSet.getString("required_parameters_full");
@@ -104,15 +105,16 @@ public class EffectDatabase {
 
 				/* required parameters */
 				List<Parameter> requiredParameters = new ArrayList<>();
-				//Parameter.addValidIdentifier();
-				if (requiredParametersFull_str == null || requiredParametersFull_str.isEmpty() || requiredParametersFull_str.equals("none")) {
+				// Parameter.addValidIdentifier();
+				if (requiredParametersFull_str == null || requiredParametersFull_str.isEmpty()
+						|| requiredParametersFull_str.equals("none")) {
 					//
 				} else {
 					String[] parameters_str = requiredParametersFull_str.split(", ");
 
 					/* single parameter */
 					if (parameters_str.length == 1) {
-						//String[] args = parameters_str[0].split(" ");
+						// String[] args = parameters_str[0].split(" ");
 						String[] args = parameters_str[0].split("\\s(?![^<>]*>)");
 						if (ParameterValueType.isParameterValueType(args[0])) {
 							ParameterValueType pValueType = ParameterValueType.scope;
@@ -124,11 +126,13 @@ public class EffectDatabase {
 							}
 						} else if (args[0].contains("<") || args[0].contains(">")) {
 							// err
-							throw new RuntimeException("Invalid effects database element: not recognized parameter value type: " + args[0]);
+							throw new RuntimeException(
+									"Invalid effects database element: not recognized parameter value type: "
+											+ args[0]);
 						} else {
 							// else is identifier (and parameter value type)
 							// FIXME
-							//Parameter.addValidParameter(parameters_str[0]);
+							// Parameter.addValidParameter(parameters_str[0]);
 							if (args.length < 2) {
 								System.out.println(Arrays.toString(args));
 							}
@@ -149,9 +153,11 @@ public class EffectDatabase {
 							String[] args = parameter_str.split("\\s(?![^<>]*>)");
 							if (args[0].contains("<") || args[0].contains(">")) {
 								// err
-								throw new RuntimeException("Invalid effects database element: invalid placement of parameter value type: " + args[0]);
+								throw new RuntimeException(
+										"Invalid effects database element: invalid placement of parameter value type: "
+												+ args[0]);
 							}
-//							Parameter.addValidParameter(args[0]);
+							// Parameter.addValidParameter(args[0]);
 							if (args.length < 2) {
 								System.out.println(Arrays.toString(args));
 							}
@@ -163,9 +169,9 @@ public class EffectDatabase {
 								throw new RuntimeException(e);
 							}
 
-//							for (int j = 1; j < args.length; j++) {
-//								//if (args[j])
-//							}
+							// for (int j = 1; j < args.length; j++) {
+							// //if (args[j])
+							// }
 						}
 					}
 				}

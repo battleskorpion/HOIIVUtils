@@ -1,21 +1,21 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code.effect;
 
 import com.HOIIVUtils.clausewitz_parser.NodeValue;
+import com.HOIIVUtils.hoi4utils.ioexceptions.NullParameterTypeException;
 
 import java.util.*;
 
 public class Parameter implements EffectParameter, Cloneable {
 	private static final HashMap<String, Parameter> allParameters = new HashMap<>();
-//	private static final HashSet<Parameter> allValidParameters = new HashSet<>();
-//	static {
-//		Parameter p = new Parameter(null, ParameterValueType.);
-//		allValidParameters.add(p);
-//	}
+	// private static final HashSet<Parameter> allValidParameters = new HashSet<>();
+	// static {
+	// Parameter p = new Parameter(null, ParameterValueType.);
+	// allValidParameters.add(p);
+	// }
 	final List<ParameterValueType> allowedParameterValueTypes;
 
-
 	final String identifier;
-	ParameterValueType parameterValueType;  // todo necessary?
+	ParameterValueType parameterValueType; // todo necessary?
 	ParameterValue value;
 
 	Parameter(String name, List<ParameterValueType> allowedParameterValueTypes) throws NullParameterTypeException {
@@ -44,7 +44,8 @@ public class Parameter implements EffectParameter, Cloneable {
 
 	public static Parameter of(String name, NodeValue v) {
 		Parameter parameter = getClone(name);
-		if (parameter == null) return null;
+		if (parameter == null)
+			return null;
 		parameter.value = new ParameterValue(v);
 		return parameter;
 	}
@@ -57,7 +58,8 @@ public class Parameter implements EffectParameter, Cloneable {
 		Parameter clone;
 		try {
 			Parameter parameter = allParameters.get(name);
-			if (parameter == null) return null;
+			if (parameter == null)
+				return null;
 			clone = (Parameter) parameter.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException(e);
@@ -81,14 +83,15 @@ public class Parameter implements EffectParameter, Cloneable {
 		return c;
 	}
 
-//	public static void addValidParameter(String identifier, Set<ParameterValueType> validParameterValueTypes) {
-////		if (!allParameters.keySet().contains(identifier)) {
-////			Parameter p = new Parameter(identifier, validParameterValueTypes);
-////			allParameters.put(identifier, p);
-////		} else {
-////			allParameters.get(identifier).addValidParameterValueTypes(validParameterValueTypes);
-////		}
-//	}
+	// public static void addValidParameter(String identifier,
+	// Set<ParameterValueType> validParameterValueTypes) {
+	//// if (!allParameters.keySet().contains(identifier)) {
+	//// Parameter p = new Parameter(identifier, validParameterValueTypes);
+	//// allParameters.put(identifier, p);
+	//// } else {
+	//// allParameters.get(identifier).addValidParameterValueTypes(validParameterValueTypes);
+	//// }
+	// }
 
 	public static boolean isParameter(String name, NodeValue v) {
 		if (v.isString()) {
@@ -99,7 +102,7 @@ public class Parameter implements EffectParameter, Cloneable {
 		}
 		if (v.isList()) {
 			// todo not sure
-			return true;    // maybe? hm..
+			return true; // maybe? hm..
 		}
 
 		return false;
@@ -107,7 +110,7 @@ public class Parameter implements EffectParameter, Cloneable {
 
 	@Override
 	public String displayScript() {
-//		return "[parameter]";
+		// return "[parameter]";
 		if (identifier == null) {
 			return value.toString();
 		}
@@ -137,15 +140,15 @@ public class Parameter implements EffectParameter, Cloneable {
 			}
 
 			if (value instanceof List) {
-//				s.append(identifier);
-//				s.append(" = ");
-//				s.append("{\n");
-//				for (var n : (List<Node>) value) {
-//					s.append("\t");
-//					s.append(n.);
-//					s.append("\n");
-//				}
-//				s.append("}\n");
+				// s.append(identifier);
+				// s.append(" = ");
+				// s.append("{\n");
+				// for (var n : (List<Node>) value) {
+				// s.append("\t");
+				// s.append(n.);
+				// s.append("\n");
+				// }
+				// s.append("}\n");
 				s.append("[parameter -> list]");
 			} else {
 				s.append(value.toString());
