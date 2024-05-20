@@ -1,6 +1,5 @@
 package com.HOIIVUtils.ui.buildings;
 
-import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import com.HOIIVUtils.hoi4utils.Settings;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.country.Country;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.state.State;
@@ -14,7 +13,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 
