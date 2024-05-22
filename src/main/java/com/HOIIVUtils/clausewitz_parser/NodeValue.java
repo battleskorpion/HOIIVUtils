@@ -72,6 +72,17 @@ public final class NodeValue {
 		throw new IllegalStateException("Expected NodeValue to be a Number");
 	}
 
+	public boolean bool(Node.BoolType boolType) {
+		if (value instanceof String) {
+			return value.equals(boolType.trueResponse());
+		}
+		if (value == null)
+			return false;
+
+		// todo better error handling
+		throw new IllegalStateException("Expected NodeValue to be interpretable as a Boolean");
+	}
+
 	public ArrayList<Node> list() {
 		if (value instanceof ArrayList<?>) {
 			return (ArrayList<Node>) value; // ! unchecked cast
@@ -130,7 +141,7 @@ public final class NodeValue {
 		return value instanceof Number;
 	}
 
-	// public boolean isBoolean() {
+    // public boolean isBoolean() {
 	// return value instanceof Boolean;
 	// }
 

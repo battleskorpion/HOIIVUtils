@@ -58,7 +58,7 @@ public class StateCategory {
 	}
 
 	public static void loadStateCategories() {
-		File dir = new File(HOIIVFile.common_folder + "\\state_category");
+		File dir = new File(HOIIVFile.mod_common_folder + "\\state_category");
 
 		if (dir.exists() && dir.isDirectory() && dir.listFiles().length > 0) {
 			state_category_folder = dir;

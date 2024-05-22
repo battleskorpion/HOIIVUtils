@@ -11,6 +11,7 @@ import com.HOIIVUtils.ui.hoi4localization.UnlocalizedFocusWindow;
 import com.HOIIVUtils.ui.statistics.StatisticsController;
 import com.HOIIVUtils.hoi4utils.HOIIVUtils;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.state.State;
+import com.HOIIVUtils.ui.units.CompareUnitsWindow;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -53,6 +54,8 @@ public class MenuController extends Application implements FXWindow {
 	public Button viewGFX;
 	@FXML
 	public Button focusTreeViewButton;
+	@FXML
+	public Button viewUnitComparison;
 
 	/* Constructor */
 	public MenuController() {
@@ -149,6 +152,11 @@ public class MenuController extends Application implements FXWindow {
 
 	public void openFocusTreeViewer() {
 		FocusTreeWindow window = new FocusTreeWindow();
+		window.open();
+	}
+
+	public void openUnitComparisonView() {
+		CompareUnitsWindow window = new CompareUnitsWindow();
 		window.open();
 	}
 

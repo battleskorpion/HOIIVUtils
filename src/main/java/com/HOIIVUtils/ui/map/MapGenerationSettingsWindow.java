@@ -1,6 +1,7 @@
 package com.HOIIVUtils.ui.map;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
+import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceDeterminationType;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.SeedGenType;
 import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ public class MapGenerationSettingsWindow extends HOIIVUtilsStageLoader {
     TextField numSeedsTextField;
     @FXML
     ChoiceBox<SeedGenType> seedGenChoiceBox;
+    ChoiceBox<ProvinceDeterminationType> provinceDeterminationChoiceBox;
 
     private ProvinceGenProperties properties = null;
 
@@ -45,6 +47,8 @@ public class MapGenerationSettingsWindow extends HOIIVUtilsStageLoader {
         // default should be grid_seed
         seedGenChoiceBox.getItems().addAll(SeedGenType.values());
         seedGenChoiceBox.setValue(properties.generationType());
+        provinceDeterminationChoiceBox.getItems().addAll(ProvinceDeterminationType.values());
+        provinceDeterminationChoiceBox.setValue(properties.determinationType());
     }
 
     @FXML
@@ -62,11 +66,12 @@ public class MapGenerationSettingsWindow extends HOIIVUtilsStageLoader {
         int seaLevel = Integer.parseInt(seaLevelTextField.getText());
         int numSeeds = Integer.parseInt(numSeedsTextField.getText());
         SeedGenType generationType = seedGenChoiceBox.getValue();
+        ProvinceDeterminationType determinationType = provinceDeterminationChoiceBox.getValue();
         System.out.println("prev. seaLevel: " + properties.seaLevel() + ", prev. numSeeds: " + properties.numSeeds());
         properties.setSeaLevel(seaLevel);
         properties.setNumSeeds(numSeeds);
         properties.setGenerationType(generationType);
-        System.out
-                .println("updated seaLevel: " + properties.seaLevel() + ", updated numSeeds: " + properties.numSeeds());
+        properties.setDeterminationType(determinationType);
+        System.out.println("updated seaLevel: " + properties.seaLevel() + ", updated numSeeds: " + properties.numSeeds());
     }
 }

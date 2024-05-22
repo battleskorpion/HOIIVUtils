@@ -10,7 +10,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class Node implements NodeStreamable<Node> {
-	public String name;
+	public static BoolType boolType;
+    public String name;
 	public String operator;
 
 	/* never null, stores null */
@@ -139,5 +140,26 @@ public class Node implements NodeStreamable<Node> {
 
 	public int nameAsInteger() {
 		return Integer.parseInt(name);
+	}
+
+	public enum BoolType {
+	    TRUE_FALSE("true", "false"),
+	    YES_NO("yes", "no");
+
+	    private final String trueResponse;
+	    private final String falseResponse;
+
+	    BoolType(String trueResponse, String falseResponse) {
+	        this.trueResponse = trueResponse;
+	        this.falseResponse = falseResponse;
+	    }
+
+	    public String trueResponse() {
+	        return trueResponse;
+	    }
+
+	    public String falseResponse() {
+	        return falseResponse;
+	    }
 	}
 }

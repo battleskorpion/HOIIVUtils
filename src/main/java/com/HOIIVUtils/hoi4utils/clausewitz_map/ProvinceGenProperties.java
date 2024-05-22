@@ -144,6 +144,10 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
         return generationType;
     }
 
+    public void setGenerationType(SeedGenType generationType) {
+        this.generationType = generationType;
+    }
+
     public ProvinceDeterminationType determinationType() {
         return determinationType;
     }
@@ -187,10 +191,6 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
 
     public int numSeedsX() {
         return numSeedsX;
-    }
-
-    public void setGenerationType(SeedGenType generationType) {
-        this.generationType = generationType;
     }
 
     public void setImageWidth(int imageWidth) {

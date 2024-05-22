@@ -50,7 +50,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		stateBorderMap = loadStateBorderMap("src\\main\\resources\\map\\state_borders_none.bmp"); // ! todo temp!!
 		/* initialize mapping of seeds to states (regions for purposes of province generation) */
 		// TODO: optimization may be possible
-		properties.setDeterminationType(ProvinceDeterminationType.DISTANCE_MULTITHREADED);    // todo
 		if (properties.determinationType() == ProvinceDeterminationType.DISTANCE_GPU) {
 			stateMapList = new BorderMapping_GPU<>();
 		} else {

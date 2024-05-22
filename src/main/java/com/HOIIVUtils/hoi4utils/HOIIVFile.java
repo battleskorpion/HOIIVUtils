@@ -35,8 +35,9 @@ public class HOIIVFile implements FileUtils {
 	public static File states_folder;
 	public static File strat_region_dir;
 	public static File localization_eng_folder;
-	public static File common_folder;
+	public static File mod_common_folder;
 	public static File hoi4mods_folder;
+	public static File units_folder;
 
 	public static void createHOIIVFilePaths() {
 		String modPath = SettingsManager.get(Settings.MOD_PATH);
@@ -50,12 +51,13 @@ public class HOIIVFile implements FileUtils {
 
 		File modPathFile = new File(modPath);
 
-		common_folder = new File(modPath + "\\common");
+		mod_common_folder = new File(modPath + "\\common");
 		states_folder = new File(modPath + "\\history\\states");
 		strat_region_dir = new File(modPath + "\\map\\strategicregions");
 		localization_eng_folder = new File(modPath + "\\localisation\\english");
 		focus_folder = new File(modPath + "\\common\\national_focus");
 		ideas_folder = new File(modPath + "\\common\\ideas");
+		units_folder = new File(modPath + "\\common\\units");
 		hoi4mods_folder = modPathFile.getParentFile();
 		System.out.println("HOIIVFile created paths");
 	}

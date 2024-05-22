@@ -98,7 +98,7 @@ public class CustomTooltipWindow extends HOIIVUtilsStageLoader implements TableV
 
 	/* action handlers */
 	public void handleTooltipFileBrowseAction() {
-		File initialFocusDirectory = HOIIVFile.common_folder;
+		File initialFocusDirectory = HOIIVFile.mod_common_folder;
 		File selectedFile = openChooser(tooltipFileBrowseButton, false, initialFocusDirectory);
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(selectedFile);
