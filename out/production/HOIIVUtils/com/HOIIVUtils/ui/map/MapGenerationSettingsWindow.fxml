@@ -25,7 +25,7 @@
             <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="-Infinity" minHeight="25.0" prefHeight="35.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="15.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="-Infinity" minHeight="25.0" prefHeight="35.0" vgrow="SOMETIMES" />
         </rowConstraints>
@@ -36,12 +36,12 @@
                </padding></Label>
             <Slider fx:id="seaLevelSlider" max="255.0" value="95.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
             <TextField fx:id="seaLevelTextField" onAction="#onSetSeaLevel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" />
-            <Label text="Seed Generation Algorithm" GridPane.columnSpan="2" GridPane.rowIndex="2">
+            <Label text="Seed Generation" GridPane.columnSpan="2" GridPane.rowIndex="2">
                <padding>
                   <Insets left="5.0" />
                </padding>
             </Label>
-            <ChoiceBox fx:id="seedGenAlgorithmChoiceBox" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <ChoiceBox fx:id="seedGenChoiceBox" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <Label text="# of Seeds*" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
@@ -58,6 +58,12 @@
                   <Insets right="5.0" />
                </GridPane.margin>
             </Button>
+            <Label text="Province Determination" GridPane.rowIndex="5">
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </Label>
+            <ChoiceBox fx:id="provinceDeterminationChoiceBox" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
          </children>
       </GridPane>
    </children>
