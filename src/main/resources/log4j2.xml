@@ -1,0 +1,13 @@
+<Configuration>
+	<Appenders>
+		<Console name="Console">
+			<PatternLayout
+				pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="Console"></AppenderRef>
+		</Root>
+	</Loggers>
+</Configuration>

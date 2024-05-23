@@ -1,6 +1,6 @@
 package com.HOIIVUtils.hoi4utils;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class HOIIVUtilsTest {
 

@@ -1,12 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<groupId>com.HOIIVUtils</groupId>
-	<artifactId>HOIIVUtils</artifactId>
-	<version>10.1.0-SNAPSHOT</version>
+	<artifactId>HOIIVUtils-Maven</artifactId>
+	<version>11.0.0-SNAPSHOT</version>
+
+	<name>HOIIVUtils-Maven</name>
+
 	<packaging>jar</packaging>
 
 	<prerequisites>
@@ -15,18 +16,18 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.release>21</maven.compiler.release>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<!-- Explain what uses this -->
-		<maven.compiler.release>21</maven.compiler.release> <!-- Explain what uses this -->
-		<java.version>21</java.version> <!-- Explain what uses this -->
-		<testSourceDirectory>src/test/java</testSourceDirectory> <!-- Explain what uses this -->
 		<maven.compiler.testSource>21</maven.compiler.testSource>
 		<maven.compiler.testTarget>21</maven.compiler.testTarget>
+		<JavaFX.version>22.0.1</JavaFX.version>
+		<JUnit.version>5.10.2</JUnit.version>
+		<log4j.version>2.22.1</log4j.version>
+		<lombok.version>1.18.30</lombok.version>
 	</properties>
 
-	<name>HOIIVUtils</name>
 	<description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
 	<url>https://github.com/battleskorpion/HOIIVUtils</url>
 
@@ -77,56 +78,51 @@
 <!--		</repository>-->
 <!--	</repositories>-->
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>${JUnit.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<version>3.9.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-jar-plugin</artifactId>
-			<version>3.4.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-resources-plugin</artifactId>
-			<version>3.3.1</version>
-		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
-			<version>22.0.1</version>
+			<version>${JavaFX.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-fxml</artifactId>
-			<version>22.0.1</version>
+			<version>${JavaFX.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.10.2</version>
+			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-params</artifactId>
-			<version>5.10.2</version>
-			<scope>test</scope>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-launcher</artifactId>
-			<version>1.10.2</version>
-			<scope>test</scope>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-runner</artifactId>
-			<version>1.10.2</version>
-			<scope>test</scope>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-core</artifactId>
@@ -162,16 +158,16 @@
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.36.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>2.0.13</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>2.0.13</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.slf4j</groupId>-->
+<!--			<artifactId>slf4j-api</artifactId>-->
+<!--			<version>2.0.13</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.slf4j</groupId>-->
+<!--			<artifactId>slf4j-simple</artifactId>-->
+<!--			<version>2.0.13</version>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>com.aparapi</groupId>
 			<artifactId>aparapi</artifactId>
@@ -197,27 +193,24 @@
 	</dependencies>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>**/*.properties</include>
-					<include>**/*.fxml</include>
-					<include>**/*.css</include>
-					<include>**/*.txt</include>
-					<include>**/*.png</include>
-					<include>**/*.bmp</include>
-					<include>**/*.sql</include>
-					<!-- It does not like .dds or .db files-->
-				</includes>
-			</resource>
-		</resources>
-
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version>
+				<version>3.12.1</version>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.1</version>
 			</plugin>
 			<plugin>
 				<groupId>org.openjfx</groupId>
@@ -225,16 +218,6 @@
 				<version>0.0.8</version>
 				<configuration>
 					<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.2.5</version>
-				<configuration>
-					<includes>
-						<include>**/*Test.java</include>
-					</includes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -304,5 +287,23 @@
 				</executions>
 			</plugin>
 		</plugins>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.fxml</include>
+					<include>**/*.css</include>
+					<include>**/*.txt</include>
+					<include>**/*.png</include>
+					<include>**/*.bmp</include>
+					<include>**/*.sql</include>
+					<!-- It does not like .dds or .db files-->
+				</includes>
+			</resource>
+		</resources>
 	</build>
+
 </project>
