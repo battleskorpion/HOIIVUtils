@@ -32,11 +32,11 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 		} else {
 			try {
 				FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
-				System.out.println("HOIUtils Window creating stage with fxml" + fxmlResource);
+				System.out.println("HOIIVUtilsStageLoader creating stage with fxml" + fxmlResource);
 				Parent root = launchLoader.load();
 				Scene scene = new Scene(root);
 
-				//scene.getStylesheets().add(getClass().getResource(HOIIVUtils.DARK_MODE_STYLESHEETURL).toExternalForm());
+				// scene.getStylesheets().add(getClass().getResource(HOIIVUtils.DARK_MODE_STYLESHEETURL).toExternalForm());
 				scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 
 				scene.getStylesheets().add(getClass().getResource("../highlight-background.css").toExternalForm());
@@ -88,7 +88,7 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 						throw new RuntimeException(e);
 					}
 				});
-				System.out.println("HOIUtils Window creating stage with fxml" + fxmlResource);
+				System.out.println("HOIIVUtilsStageLoader creating stage with fxml" + fxmlResource);
 				Parent root = launchLoader.load();
 				Scene scene = new Scene(root);
 				scene.getStylesheets().add(getClass().getResource(HOIIVUtils.DARK_MODE_STYLESHEETURL).toExternalForm());
