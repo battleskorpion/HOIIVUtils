@@ -1,14 +1,14 @@
 module com.HOIIVUtils {
     requires transitive javafx.controls;
     requires javafx.fxml;
-	requires static lombok;
-	requires org.apache.logging.log4j;
+    requires static lombok;
+    requires org.apache.logging.log4j;
     requires java.sql;
     requires java.desktop;
     requires org.jetbrains.annotations;
     requires org.jgrapht.core;
     requires org.apache.poi.poi;
-    requires aparapi;            // leave aparapi last cause aparapi has terrible config
+    requires aparapi; // leave aparapi last cause aparapi has terrible config
     requires org.xerial.sqlitejdbc;
 
     opens com.HOIIVUtils.ui to javafx.fxml;
