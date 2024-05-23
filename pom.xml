@@ -71,14 +71,6 @@
 		</developer>
 	</developers>
 
-	<!--	<repositories>-->
-	<!--		<repository>-->
-	<!--			<id>universityOfManchester-graal</id>-->
-	<!--			<url>https://raw.githubusercontent.com/beehive-lab/tornado/maven-tornadovm</url>-->
-	<!--			&lt;!&ndash; what does this mean or even do ?? &ndash;&gt;-->
-	<!--		</repository>-->
-	<!--	</repositories>-->
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -173,16 +165,16 @@
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.36.0</version>
 		</dependency>
-		<!--		<dependency>-->
-		<!--			<groupId>org.slf4j</groupId>-->
-		<!--			<artifactId>slf4j-api</artifactId>-->
-		<!--			<version>2.0.13</version>-->
-		<!--		</dependency>-->
-		<!--		<dependency>-->
-		<!--			<groupId>org.slf4j</groupId>-->
-		<!--			<artifactId>slf4j-simple</artifactId>-->
-		<!--			<version>2.0.13</version>-->
-		<!--		</dependency>-->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>2.0.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>2.0.13</version>
+		</dependency>
 		<dependency>
 			<groupId>com.aparapi</groupId>
 			<artifactId>aparapi</artifactId>
@@ -198,7 +190,6 @@
 			<artifactId>testfx-core</artifactId>
 			<version>4.0.18</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
