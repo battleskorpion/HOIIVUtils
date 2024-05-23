@@ -19,5 +19,8 @@
         <module name="HOIIVUtils-Maven" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="HOIIVUtils" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>
