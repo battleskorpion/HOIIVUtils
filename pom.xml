@@ -5,14 +5,7 @@
 	<groupId>com.HOIIVUtils</groupId>
 	<artifactId>HOIIVUtils</artifactId>
 	<version>11.0.0-SNAPSHOT</version>
-
-	<name>HOIIVUtils</name>
-
 	<packaging>jar</packaging>
-
-	<prerequisites>
-		<maven>3.9.6</maven>
-	</prerequisites>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,13 +15,13 @@
 		<maven.compiler.target>21</maven.compiler.target>
 		<maven.compiler.testSource>21</maven.compiler.testSource>
 		<maven.compiler.testTarget>21</maven.compiler.testTarget>
-		<JavaFX.version>22.0.1</JavaFX.version>
+		<JavaFX.version>23-ea+18</JavaFX.version>
 		<JUnit.version>5.10.2</JUnit.version>
-		<log4j.version>2.22.1</log4j.version>
-		<lombok.version>1.18.30</lombok.version>
-
+		<log4j.version>2.23.1</log4j.version>
+		<lombok.version>1.18.32</lombok.version>
 	</properties>
 
+	<name>HOIIVUtils</name>
 	<description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
 	<url>https://github.com/battleskorpion/HOIIVUtils</url>
 
@@ -288,11 +281,9 @@
 								<minVersion>21</minVersion>
 							</jre>
 							<versionInfo>
-								<fileVersion>1.0.0.0</fileVersion>
-								<txtFileVersion>1.0.0</txtFileVersion>
-								<fileDescription>150 Line limit my ass</fileDescription>
-								<productName>HOIIVUtils</productName>
-								<internalName>HOIIVUtils</internalName>
+								<fileVersion>0.11.0.0</fileVersion>
+								<txtFileVersion>${project.version}</txtFileVersion>
+								<fileDescription>HOIIVUtils</fileDescription>
 							</versionInfo>
 						</configuration>
 					</execution>
