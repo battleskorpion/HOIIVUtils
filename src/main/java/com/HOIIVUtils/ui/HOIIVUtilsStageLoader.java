@@ -90,10 +90,12 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 				System.out.println("HOIUtils Window creating stage with fxml" + fxmlResource);
 				Parent root = launchLoader.load();
 				Scene scene = new Scene(root);
-				scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
+				scene.getStylesheets().add(getClass().getResource(HOIIVUtils.DARK_MODE_STYLESHEETURL).toExternalForm());
 
 				// TODO Finish implementing "resources/utils-highlight-background.css"
-				scene.getStylesheets().add("resources/utils-highlight-background.css");
+				scene.getStylesheets()
+						.add(getClass().getResource("com/HOIIVUtils/ui/highlight-background.css")
+								.toExternalForm());
 
 				Stage launchStage = new Stage();
 				launchStage.setScene(scene);
