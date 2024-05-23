@@ -59,12 +59,6 @@
 	"java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable",
 	"java.configuration.updateBuildConfiguration": "automatic",
 	"terminal.integrated.scrollback": 1e+69,
-	"maven.terminal.favorites": [
-		{
-			"command": "package -T 16 -f pom.xml",
-			"debug": false
-		}
-	],
 	"maven.view": "hierarchical",
 	"editor.formatOnPaste": true,
 	"editor.formatOnSave": true,

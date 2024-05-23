@@ -71,13 +71,13 @@
 		</developer>
 	</developers>
 
-<!--	<repositories>-->
-<!--		<repository>-->
-<!--			<id>universityOfManchester-graal</id>-->
-<!--			<url>https://raw.githubusercontent.com/beehive-lab/tornado/maven-tornadovm</url>-->
-<!--			&lt;!&ndash; what does this mean or even do ?? &ndash;&gt;-->
-<!--		</repository>-->
-<!--	</repositories>-->
+	<!--	<repositories>-->
+	<!--		<repository>-->
+	<!--			<id>universityOfManchester-graal</id>-->
+	<!--			<url>https://raw.githubusercontent.com/beehive-lab/tornado/maven-tornadovm</url>-->
+	<!--			&lt;!&ndash; what does this mean or even do ?? &ndash;&gt;-->
+	<!--		</repository>-->
+	<!--	</repositories>-->
 
 	<dependencyManagement>
 		<dependencies>
@@ -173,16 +173,16 @@
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.36.0</version>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.slf4j</groupId>-->
-<!--			<artifactId>slf4j-api</artifactId>-->
-<!--			<version>2.0.13</version>-->
-<!--		</dependency>-->
-<!--		<dependency>-->
-<!--			<groupId>org.slf4j</groupId>-->
-<!--			<artifactId>slf4j-simple</artifactId>-->
-<!--			<version>2.0.13</version>-->
-<!--		</dependency>-->
+		<!--		<dependency>-->
+		<!--			<groupId>org.slf4j</groupId>-->
+		<!--			<artifactId>slf4j-api</artifactId>-->
+		<!--			<version>2.0.13</version>-->
+		<!--		</dependency>-->
+		<!--		<dependency>-->
+		<!--			<groupId>org.slf4j</groupId>-->
+		<!--			<artifactId>slf4j-simple</artifactId>-->
+		<!--			<version>2.0.13</version>-->
+		<!--		</dependency>-->
 		<dependency>
 			<groupId>com.aparapi</groupId>
 			<artifactId>aparapi</artifactId>
@@ -263,7 +263,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
+							<mainClass>com.HOIIVUtils/com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
