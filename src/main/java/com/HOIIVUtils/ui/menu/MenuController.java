@@ -157,7 +157,7 @@ public class MenuController extends Application implements FXWindow {
 
 	public void openUnitComparisonView() {
 		CompareUnitsWindow window = new CompareUnitsWindow();
-		window.open();
+		window.open(); 
 	}
 
 	public void openMapGeneration() {
