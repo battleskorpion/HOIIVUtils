@@ -49,6 +49,5 @@ module com.HOIIVUtils {
     exports com.HOIIVUtils.ui.settings;
     exports com.HOIIVUtils.ui.statistics;
     exports com.HOIIVUtils.ui.units;
-    // add the css files
 
 }
