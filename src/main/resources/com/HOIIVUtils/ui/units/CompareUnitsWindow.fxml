@@ -10,15 +10,15 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.units.CompareUnitsWindow">
    <children>
-      <ScrollPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-        <content>
-          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="390.0" prefWidth="590.0">
-               <children>
-                  <SplitPane dividerPositions="0.4098639455782313" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <AnchorPane layoutY="30.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="303.0" prefWidth="575.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+         <children>
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <content>
+                  <SplitPane dividerPositions="0.5">
                     <items>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
                            <children>
-                              <GridPane fx:id="CustomUnitDetailsPane" layoutX="14.0" layoutY="55.0" prefHeight="251.0" prefWidth="205.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <GridPane fx:id="CustomUnitDetailsPane" layoutX="14.0" layoutY="55.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
@@ -28,9 +28,9 @@
                               </GridPane>
                            </children>
                         </AnchorPane>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
                            <children>
-                              <GridPane fx:id="BaseUnitDetailsPane" prefHeight="294.0" prefWidth="303.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <GridPane fx:id="BaseUnitDetailsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                  </columnConstraints>
@@ -42,9 +42,9 @@
                         </AnchorPane>
                     </items>
                   </SplitPane>
-               </children>
-            </AnchorPane>
-        </content>
-      </ScrollPane>
+               </content>
+            </ScrollPane>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

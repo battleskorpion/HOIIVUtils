@@ -8,6 +8,7 @@ import com.HOIIVUtils.clausewitz_parser.ParserException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /*
  * Unit File
@@ -16,18 +17,18 @@ public record SubUnit(
 		String abbreviation,
 		String sprite,
 		String mapIconCategory,
-		int priority,
-		int aiPriority,
+		Integer priority,
+		Integer aiPriority,
 		boolean active,
 		String group,
-		int combatWidth,
-		int manpower,
-		int maxOrganization,
-		double defaultMorale,
-		double maxStrength,
-		int trainingTime,
-		double weight,
-		double supplyConsumption
+		Integer combatWidth,
+		Integer manpower,
+		Integer maxOrganization,
+		Integer defaultMorale,
+		Integer maxStrength,
+		Integer trainingTime,
+		Double weight,
+		Double supplyConsumption
 ) {
 	public static List<SubUnit> read(File dir) {
 		if (!dir.isDirectory()) {
@@ -39,6 +40,7 @@ public record SubUnit(
 
 		List<SubUnit> subUnits = new ArrayList<>();
 		for (File f : dir.listFiles()) {
+			if (f.isDirectory()) continue;
 			Parser parser = new Parser(f);
 			Node rootNode;
 			try {
@@ -54,26 +56,48 @@ public record SubUnit(
 						subUnitNode.getValue("abbreviation").string(),
 						subUnitNode.getValue("sprite").string(),
 						subUnitNode.getValue("map_icon_category").string(),
-						subUnitNode.getValue("priority").integer(),
-						subUnitNode.getValue("ai_priority").integer(),
+						subUnitNode.getValue("priority").intClass(),
+						subUnitNode.getValue("ai_priority").intClass(),
 						subUnitNode.getValue("active").bool(Node.BoolType.YES_NO),
 						//subUnit.type = subUnitNode.getValue("type").string(),
 						subUnitNode.getValue("group").string(),
 						//subUnit.categories
-						subUnitNode.getValue("combat_width").integer(),
+						subUnitNode.getValue("combat_width").intClass(),
 						//subUnit.need
-						subUnitNode.getValue("manpower").integer(),
-						subUnitNode.getValue("max_organization").integer(),
-						subUnitNode.getValue("default_morale").rational(),
-						subUnitNode.getValue("max_strength").rational(),
-						subUnitNode.getValue("training_time").integer(),
-						subUnitNode.getValue("weight").rational(),
-						subUnitNode.getValue("supply_consumption").rational()
+						subUnitNode.getValue("manpower").intClass(),
+						subUnitNode.getValue("max_organization").intClass(),
+						subUnitNode.getValue("default_morale").intClass(),
+						subUnitNode.getValue("max_strength").intClass(),
+						subUnitNode.getValue("training_time").intClass(),
+						subUnitNode.getValue("weight").doubleClass(),
+						subUnitNode.getValue("supply_consumption").doubleClass()
 				);
 
 				subUnits.add(subUnit);
 			}
 		}
 		return subUnits;
+	}
+
+	public static List<Function<SubUnit, ?>> getDataFunctions() {
+		List<Function<SubUnit, ?>> dataFunctions = new ArrayList<>(15);
+
+		dataFunctions.add(SubUnit::abbreviation);
+		dataFunctions.add(SubUnit::sprite);
+		dataFunctions.add(SubUnit::mapIconCategory);
+		dataFunctions.add(SubUnit::priority);
+		dataFunctions.add(SubUnit::aiPriority);
+		dataFunctions.add(SubUnit::active);
+		dataFunctions.add(SubUnit::group);
+		dataFunctions.add(SubUnit::combatWidth);
+		dataFunctions.add(SubUnit::manpower);
+		dataFunctions.add(SubUnit::maxOrganization);
+		dataFunctions.add(SubUnit::defaultMorale);
+		dataFunctions.add(SubUnit::maxStrength);
+		dataFunctions.add(SubUnit::trainingTime);
+		dataFunctions.add(SubUnit::weight);
+		dataFunctions.add(SubUnit::supplyConsumption);
+
+		return dataFunctions;
 	}
 }

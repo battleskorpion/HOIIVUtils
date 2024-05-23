@@ -28,9 +28,12 @@ public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
         List<SubUnit> customUnits = SubUnit.read(HOIIVFile.units_folder);
 
         for (int i = 0; i < customUnits.size(); i++) {
+            SubUnit unit = customUnits.get(i);
             TextArea customUnitTextArea = new TextArea();
             customUnitTextArea.appendText("Custom Unit\n");
             customUnitTextArea.appendText("details\n");
+            appendUnitDetails(customUnitTextArea, unit);
+            //customUnitTextArea.setPrefHeight(30);
             CustomUnitDetailsPane.addRow(i, customUnitTextArea);
         }
 
@@ -40,5 +43,11 @@ public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
         BaseUnitDetailsPane.addRow(0, baseUnitTextArea);
     }
 
-
+    private void appendUnitDetails(TextArea unitTextArea, SubUnit unit) {
+        var df = SubUnit.getDataFunctions();
+        for (var f : df) {
+            var data = f.apply(unit);
+            unitTextArea.appendText(data == null ? "[null]" : data.toString());
+        }
+    }
 }

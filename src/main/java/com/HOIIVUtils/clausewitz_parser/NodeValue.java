@@ -45,7 +45,7 @@ public final class NodeValue {
 
 		// todo better error handling
 		System.err.println("Expected NodeValue value to be a string, value: " + value);
-		throw new IllegalStateException("Expected NodeValue value to be a string");
+		throw new IllegalStateException("Expected NodeValue value to be a string, value: " + value);
 	}
 
 	public int integer() {
@@ -57,7 +57,39 @@ public final class NodeValue {
 		}
 
 		// todo better error handling
-		throw new IllegalStateException("Expected NodeValue to be a Number");
+		throw new IllegalStateException("Expected NodeValue to be a Number, value: " + value);
+	}
+
+	public int integerOrElse(int i) {
+		if (value == null) {
+			return i;
+		}
+
+		if (value instanceof Number) {
+			if (value instanceof Integer) {
+				return (int) value;
+			}
+			return ((Number) value).intValue();
+		}
+
+		// todo better error handling
+		throw new IllegalStateException("Expected NodeValue to be a Number or null, value: " + value);
+	}
+
+	public Integer intClass() {
+		if (value == null) {
+			return null;
+		}
+
+		if (value instanceof Number) {
+			if (value instanceof Integer) {
+				return (Integer) value;
+			}
+			return ((Number) value).intValue();
+		}
+
+		// todo better error handling
+		throw new IllegalStateException("Expected NodeValue to be a Number or null, value: " + value);
 	}
 
 	public double rational() {
@@ -69,7 +101,23 @@ public final class NodeValue {
 		}
 
 		// todo better error handling
-		throw new IllegalStateException("Expected NodeValue to be a Number");
+		throw new IllegalStateException("Expected NodeValue to be a Number, value: " + value);
+	}
+
+	public Double doubleClass() {
+		if (value == null) {
+			return null;
+		}
+
+		if (value instanceof Number) {
+			if (value instanceof Double) {
+				return (Double) value;
+			}
+			return ((Number) value).doubleValue();
+		}
+
+		// todo better error handling
+		throw new IllegalStateException("Expected NodeValue to be a Number, value: " + value);
 	}
 
 	public boolean bool(Node.BoolType boolType) {
@@ -80,7 +128,7 @@ public final class NodeValue {
 			return false;
 
 		// todo better error handling
-		throw new IllegalStateException("Expected NodeValue to be interpretable as a Boolean");
+		throw new IllegalStateException("Expected NodeValue to be interpretable as a Boolean, value: " + value);
 	}
 
 	public ArrayList<Node> list() {
@@ -96,7 +144,7 @@ public final class NodeValue {
 			return null;
 
 		// todo better error handling
-		throw new IllegalStateException("Expected NodeValue to be an ArrayList<Node>");
+		throw new IllegalStateException("Expected NodeValue to be an ArrayList<Node>, value: " + value);
 	}
 
 	public Node node() {
@@ -141,7 +189,8 @@ public final class NodeValue {
 		return value instanceof Number;
 	}
 
-    // public boolean isBoolean() {
+
+	// public boolean isBoolean() {
 	// return value instanceof Boolean;
 	// }
 
