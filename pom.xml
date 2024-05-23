@@ -263,7 +263,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.HOIIVUtils/com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
+							<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
