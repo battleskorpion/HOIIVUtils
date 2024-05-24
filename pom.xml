@@ -285,19 +285,21 @@
 						<configuration>
 							<headerType>console</headerType>
 							<outfile>HOIIVUtils.exe</outfile>
-							<jar>target/HOIIVUtils-${project.version}-jar-with-dependencies.jar</jar>
 							<jre>
 								<path>%JAVA_HOME%</path>
 								<minVersion>22</minVersion>
 							</jre>
 							<versionInfo>
-								<fileVersion>0.11.0.0</fileVersion>
+								<fileVersion>11.0.0.0</fileVersion>
 								<txtFileVersion>${project.version}</txtFileVersion>
+								<copyright>Copyright ${project.inceptionYear}
+									${project.organization.name}</copyright>
 								<fileDescription>HOIIVUtils</fileDescription>
 								<productName>${project.name}</productName>
 								<companyName>${project.organization.name}</companyName>
-								<copyright>Copyright ${project.inceptionYear}
-									${project.organization.name}</copyright>
+								<internalName>${project.artifactId}</internalName>
+								<originalFilename>${project.artifactId}.exe</originalFilename>
+								<language>ENGLISH_US</language>
 							</versionInfo>
 						</configuration>
 					</execution>
