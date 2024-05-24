@@ -18,7 +18,7 @@ North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59
 - A proper log and console
 - Learn how to use containers and test on linux
 
-Install java openjdk 21 LTS: [https://adoptium.net/](https://adoptium.net/)  
+Install java openjdk 22: [https://adoptium.net/temurin/releases/?arch=x64&package=jdk&version=22](https://adoptium.net/temurin/releases/?arch=x64&package=jdk&version=22)  
 
 For Windows: Download the the latest release (jar with dependecies.jar) or (.exe) and run it  
 For Linux: Download the latest release (jar with dependecies.jar) and run it

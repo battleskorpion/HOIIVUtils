@@ -10,12 +10,12 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.release>21</maven.compiler.release>
-		<maven.compiler.source>21</maven.compiler.source>
-		<maven.compiler.target>21</maven.compiler.target>
-		<maven.compiler.testSource>21</maven.compiler.testSource>
-		<maven.compiler.testTarget>21</maven.compiler.testTarget>
-		<JavaFX.version>23-ea+18</JavaFX.version>
+		<maven.compiler.release>22</maven.compiler.release>
+		<maven.compiler.source>22</maven.compiler.source>
+		<maven.compiler.target>22</maven.compiler.target>
+		<maven.compiler.testSource>22</maven.compiler.testSource>
+		<maven.compiler.testTarget>22</maven.compiler.testTarget>
+		<JavaFX.version>22.0.1</JavaFX.version>
 		<JUnit.version>5.10.2</JUnit.version>
 		<log4j.version>2.23.1</log4j.version>
 		<lombok.version>1.18.32</lombok.version>
@@ -278,7 +278,7 @@
 							<jar>target/HOIIVUtils-${project.version}-jar-with-dependencies.jar</jar>
 							<jre>
 								<path>%JAVA_HOME%</path>
-								<minVersion>21</minVersion>
+								<minVersion>22</minVersion>
 							</jre>
 							<versionInfo>
 								<fileVersion>0.11.0.0</fileVersion>
