@@ -15,6 +15,8 @@
 		<maven.compiler.target>22</maven.compiler.target>
 		<maven.compiler.testSource>22</maven.compiler.testSource>
 		<maven.compiler.testTarget>22</maven.compiler.testTarget>
+		<project.organization.name>battleskorpian</project.organization.name>
+		<project.inceptionYear>2022</project.inceptionYear>
 		<JavaFX.version>22.0.1</JavaFX.version>
 		<JUnit.version>5.10.2</JUnit.version>
 		<log4j.version>2.23.1</log4j.version>
@@ -205,6 +207,16 @@
 							<version>${lombok.version}</version>
 						</path>
 					</annotationProcessorPaths>
+					<source>${maven.compiler.source}</source>
+					<release>${maven.compiler.release}</release>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<version>0.0.8</version>
+				<configuration>
+					<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -215,14 +227,6 @@
 					<includes>
 						<include>**/*Test.java</include>
 					</includes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.openjfx</groupId>
-				<artifactId>javafx-maven-plugin</artifactId>
-				<version>0.0.8</version>
-				<configuration>
-					<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -238,6 +242,12 @@
 					<configLocation>checkstyle.xml</configLocation>
 				</configuration>
 			</plugin>
+			<!--
+				https://www.youtube.com/watch?v=EyYb0GmtEX4
+			https://stackoverflow.com/questions/38548271/difference-between-the-maven-assembly-plugin-maven-jar-plugin-and-maven-shade-p
+				https://gist.github.com/simonwoo/04b133cb0745e1a0f1d6
+				I think we're doing something wrong but I have no idea.
+			-->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.7.1</version>
@@ -284,6 +294,10 @@
 								<fileVersion>0.11.0.0</fileVersion>
 								<txtFileVersion>${project.version}</txtFileVersion>
 								<fileDescription>HOIIVUtils</fileDescription>
+								<productName>${project.name}</productName>
+								<companyName>${project.organization.name}</companyName>
+								<copyright>Copyright ${project.inceptionYear}
+									${project.organization.name}</copyright>
 							</versionInfo>
 						</configuration>
 					</execution>
