@@ -161,13 +161,9 @@ public enum Settings {
 	 */
 	void setValue(Object value) throws SettingsSaveException {
 		SettingsManager.settingValues.put(this, String.valueOf(value));
-		try {
-			SettingsManager.saveSettings();
-			if ((boolean) DEV_MODE.getSetting()) {
-				System.out.println("Updated setting " + this.name() + ": " + SettingsManager.settingValues.get(this));
-			}
-		} catch (IOException e) {
-			throw new SettingsSaveException("Error saving settings", e);
+		SettingsManager.saveSettings();
+		if ((boolean) DEV_MODE.getSetting()) {
+			System.out.println("Updated setting " + this.name() + ": " + SettingsManager.settingValues.get(this));
 		}
 	}
 

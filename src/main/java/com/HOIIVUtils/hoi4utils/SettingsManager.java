@@ -1,13 +1,9 @@
 package com.HOIIVUtils.hoi4utils;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Stream;
+import java.nio.file.*;
 
 import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsFileException;
 
@@ -20,7 +16,36 @@ import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsFileException;
  */
 public class SettingsManager {
 
+	private static final String PROPERTIES_PATH = System.getProperty("user.home") + File.separator + "Documents"
+			+ File.separator + "HOIIVUtils" + File.separator + "HOIIVUtils_properties.txt";
+	private static Properties properties = new Properties();
+
+	public static void loadSettings() {
+		try (InputStream input = new FileInputStream(PROPERTIES_PATH)) {
+			properties.load(input);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static void saveSettings() {
+		try (OutputStream output = new FileOutputStream(PROPERTIES_PATH)) {
+			properties.store(output, null);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static String getSetting(String key) {
+		return properties.getProperty(key);
+	}
+
+	public static void setSetting(String key, String value) {
+		properties.setProperty(key, value);
+	}
+
 	public static final String APPDATA_PATH = System.getenv("APPDATA");
+	public static final String USER_LOCAL_PATH = System.getProperty("user.home");
 	public static final String USER_DOCS_PATH = System.getProperty("user.home") + File.separator + "Documents";
 	public static final String HOI4UTILS_PROPERTIES_PATH = USER_DOCS_PATH + File.separator + "HOIIVUtils";
 	static {
@@ -173,22 +198,22 @@ public class SettingsManager {
 		settingsPWriter.close();
 	}
 
-	/**
-	 * Saves all hoi4utils.settings to hoi4utils.settings file.
-	 * 
-	 * @throws IOException
-	 */
-	public static void saveSettings() throws IOException {
-		settingsWriter = new FileWriter(settingsFile, false); // true = append
-		settingsBWriter = new BufferedWriter(settingsWriter);
-		settingsPWriter = new PrintWriter(settingsBWriter);
+	// /**
+	// * Saves all hoi4utils.settings to hoi4utils.settings file.
+	// *
+	// * @throws IOException
+	// */
+	// public static void saveSettings() throws IOException {
+	// settingsWriter = new FileWriter(settingsFile, false); // true = append
+	// settingsBWriter = new BufferedWriter(settingsWriter);
+	// settingsPWriter = new PrintWriter(settingsBWriter);
 
-		for (Settings s : Settings.values()) {
-			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
-		}
+	// for (Settings s : Settings.values()) {
+	// settingsPWriter.println(s.name() + ";" + settingValues.get(s));
+	// }
 
-		settingsPWriter.close();
-	}
+	// settingsPWriter.close();
+	// }
 
 	public static void getSavedSettings() {
 		if (new File(HOI4UTILS_PROPERTIES_PATH + "\\HOIIVUtils_properties.txt").exists()) {
