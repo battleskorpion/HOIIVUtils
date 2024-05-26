@@ -45,6 +45,7 @@ public class HOIIVUtils {
 	public static void main(String[] args) {
 		System.out.println(HOIIVUTILS_NAME + " " + HOIIVUTILS_VERSION + " launched");
 		SettingsManager.getSavedSettings();
+		System.out.println(SettingsManager.APPDATA_PATH);
 
 		// Start log
 		HOIIVUtilsLog.startLog();

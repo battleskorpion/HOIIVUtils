@@ -20,6 +20,7 @@ import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsFileException;
  */
 public class SettingsManager {
 
+	public static final String APPDATA_PATH = System.getenv("APPDATA");
 	public static final String USER_DOCS_PATH = System.getProperty("user.home") + File.separator + "Documents";
 	public static final String HOI4UTILS_PROPERTIES_PATH = USER_DOCS_PATH + File.separator + "HOIIVUtils";
 	static {
