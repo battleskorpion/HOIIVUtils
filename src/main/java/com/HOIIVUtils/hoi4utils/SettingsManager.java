@@ -16,7 +16,12 @@ import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsFileException;
  */
 public class SettingsManager {
 
-	public static final String APPDATA_PATH = System.getenv("APPDATA");
+	private static final String OLD_PROPERTIES_PATH = System.getProperty("user.home") + File.separator + "Documents"
+			+ File.separator + "HOIIVUtils" + File.separator + "HOIIVUtils_properties.txt";
+	private static final String NEW_PROPERTIES_PATH = System.getProperty("os.name").startsWith("Windows")
+			? System.getenv("APPDATA") + File.separator + "HOIIVUtils" + File.separator
+					+ "hoi4utils.properties"
+			: System.getProperty("user.home") + File.separator + "HOIIVUtils" + File.separator + "hoi4utils.properties";
 	public static final String USER_DOCS_PATH = System.getProperty("user.home") + File.separator + "Documents";
 	public static final String HOI4UTILS_PROPERTIES_PATH = USER_DOCS_PATH + File.separator + "HOIIVUtils";
 	static {
