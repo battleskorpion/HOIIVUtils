@@ -1,13 +1,9 @@
 package com.HOIIVUtils.hoi4utils;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.stream.Stream;
+import java.nio.file.*;
+import java.util.stream.*;
+import java.util.*;
 
 import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsFileException;
 
