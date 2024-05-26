@@ -66,7 +66,15 @@ public class SettingsManager {
 	}
 
 	/**
-	 * Reads hoi4utils.settings from hoi4utils.settings file
+	 * Reads hoi4utils.settings from hoi4utils.settings file.
+	 *
+	 * This function reads the settings from the hoi4utils.settings file and stores
+	 * them in the settingValues HashMap. If the file is empty, it writes blank
+	 * hoi4utils.settings to a new hoi4utils.settings file. It also checks if all
+	 * the settings are present in the file and writes any missing settings using
+	 * the writeBlankSetting function.
+	 *
+	 * @throws SettingsFileException if there is an error reading the settings file
 	 */
 	public static void readSettings() {
 		try {
@@ -191,6 +199,13 @@ public class SettingsManager {
 		settingsPWriter.close();
 	}
 
+	/**
+	 * Checks if the hoi4utils.settings file exists. If it does, we load the
+	 * settings. If not, we write the default settings to the hoi4utils.settings
+	 * file.
+	 * 
+	 * @see SettingsManager#SettingsManager(HashMap<Settings, String>)
+	 */
 	public static void getSavedSettings() {
 		if (new File(HOI4UTILS_PROPERTIES_PATH + "\\HOIIVUtils_properties.txt").exists()) {
 			HOIIVUtils.firstTimeSetup = false;
@@ -209,8 +224,8 @@ public class SettingsManager {
 
 	/**
 	 * Deletes all hoi4utils.settings from the hoi4utils.settings directory.
-	 * 
-	 * @throws IOException
+	 *
+	 * @throws IOException if an I/O error occurs
 	 */
 	public static void deleteAllSettings() throws IOException {
 		// Get the path to the hoi4utils.settings directory
