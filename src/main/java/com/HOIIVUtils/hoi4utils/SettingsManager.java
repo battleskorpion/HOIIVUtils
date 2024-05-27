@@ -2,7 +2,6 @@ package com.HOIIVUtils.hoi4utils;
 
 import java.io.*;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.stream.*;
 import java.util.*;
 
@@ -59,19 +58,7 @@ public class SettingsManager {
 			try {
 				Files.createDirectories(Paths.get(NEW_PROPERTIES_PATH).getParent());
 				Files.copy(Paths.get(OLD_PROPERTIES_PATH), Paths.get(NEW_PROPERTIES_PATH));
-				Files.walkFileTree(Paths.get(OLD_PROPERTIES_PATH_PARENT), new SimpleFileVisitor<Path>() {
-					@Override
-					public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-						Files.delete(file);
-						return FileVisitResult.CONTINUE;
-					}
 
-					@Override
-					public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-						Files.delete(dir);
-						return FileVisitResult.CONTINUE;
-					}
-				});
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

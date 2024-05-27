@@ -20,7 +20,6 @@ public class HOIIVFile implements FileUtils {
 	public static final File usersParadoxHOIIVModFolder =
 			new File(File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
 
-	@SuppressWarnings("exports")
 	public static FileWatcher stateFilesWatcher;
 
 	public static File modPathFile;
