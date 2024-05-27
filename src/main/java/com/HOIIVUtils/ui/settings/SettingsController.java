@@ -20,10 +20,9 @@ import java.util.HashMap;
 import static com.HOIIVUtils.hoi4utils.Settings.MOD_PATH;
 
 /**
- * The SettingsController class is responsible for handling the program settings
- * window and its associated functionality.
- * It provides methods to interact with the settings UI and update the settings
- * accordingly.
+ * The SettingsController class is responsible for handling the program settings window and its
+ * associated functionality. It provides methods to interact with the settings UI and update the
+ * settings accordingly.
  *
  * @author thiccchris
  */
@@ -93,12 +92,10 @@ public class SettingsController extends Application implements FXWindow {
 
 		preferredMonitorComboBox.setCellFactory(cell -> new ListCell<>() {
 			/**
-			 * Updates the item in the list view to the given value.
-			 * The text of the item is set to "Screen <number>: <width>x<height>" if the
-			 * item is not empty,
-			 * and null if the item is empty.
+			 * Updates the item in the list view to the given value. The text of the item is set to "Screen
+			 * <number>: <width>x<height>" if the item is not empty, and null if the item is empty.
 			 * 
-			 * @param item  the item to be updated
+			 * @param item the item to be updated
 			 * @param empty whether the item is empty
 			 */
 			@Override
@@ -123,9 +120,8 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * Starts the settings window. This method is called when the
-	 * program is first launched, and it is responsible for creating
-	 * the stage and setting the scene.
+	 * Starts the settings window. This method is called when the program is first launched, and it is
+	 * responsible for creating the stage and setting the scene.
 	 * 
 	 * @param stage the stage to be used for the settings window
 	 */
@@ -169,15 +165,13 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * Shows the settings window. If the window is already open, it is
-	 * simply shown again. If the window is not open, it is created and
-	 * shown.
+	 * Shows the settings window. If the window is already open, it is simply shown again. If the window
+	 * is not open, it is created and shown.
 	 */
 	public void open() {
 		if (stage != null) {
 			// If the window is already open, show it again
-			System.out
-					.println("Settings Controller showing settings stage with open cuz settings stage was NOT null...");
+			System.out.println("Settings Controller showing settings stage with open cuz settings stage was NOT null...");
 			stage.show();
 			System.out.println("Settings Controller showed settings stage");
 
@@ -203,10 +197,9 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * User Interactive Text Feild in Settings Window
-	 * Allows the user to type in the text field.
-	 * It detects whever the user entered a valid directory.
-	 * Saves the directory path to hoi4utils settings: MOD_PATH
+	 * User Interactive Text Feild in Settings Window Allows the user to type in the text field. It
+	 * detects whever the user entered a valid directory. Saves the directory path to hoi4utils
+	 * settings: MOD_PATH
 	 */
 	public void handleModPathTextField() {
 		if (modPathIsDirectory()) {
@@ -224,8 +217,7 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * returns true if the mod path in mod path text field is a directory path that
-	 * exists.
+	 * returns true if the mod path in mod path text field is a directory path that exists.
 	 * 
 	 * @return
 	 */
@@ -239,13 +231,10 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * Handles the action of the delete settings button being clicked.
-	 * This deletes all the settings and resets the settings to their default
-	 * values.
-	 * It also sets the firstTimeSetup flag to true, so that the SettingsManager
-	 * will
-	 * create a new SettingsManager with the default values when the program is next
-	 * launched.
+	 * Handles the action of the delete settings button being clicked. This deletes all the settings and
+	 * resets the settings to their default values. It also sets the firstTimeSetup flag to true, so
+	 * that the SettingsManager will create a new SettingsManager with the default values when the
+	 * program is next launched.
 	 */
 	public void handleDelSettingsButtonAction() {
 		try {
@@ -263,10 +252,9 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * Resets the settings to their default values.
-	 * This involves clearing the mod path text field and setting all the checkboxes
-	 * to their default values.
-	 * It also disables the OK button and the delete settings button.
+	 * Resets the settings to their default values. This involves clearing the mod path text field and
+	 * setting all the checkboxes to their default values. It also disables the OK button and the delete
+	 * settings button.
 	 */
 	private void setDefault() {
 		// Clear the mod path text field
@@ -283,15 +271,12 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * User Interactive Button in Settings Window
-	 * Opens up operating system Directory Chooser
-	 * Will do nothing if the user exits or cancels window
-	 * Updates Text Field when directory is selected
-	 * Saves the directory path to MOD_PATH
+	 * User Interactive Button in Settings Window Opens up operating system Directory Chooser Will do
+	 * nothing if the user exits or cancels window Updates Text Field when directory is selected Saves
+	 * the directory path to MOD_PATH
 	 */
 	public void handleBrowseAction() {
-		File initialModPath = new File(
-				FileUtils.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
+		File initialModPath = new File(FileUtils.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
 
 		File selectedDirectory = openChooser(idBrowseButton, true, initialModPath); // ! im making this pass any class
 																					// (that is a "Node" at least, bc
@@ -320,6 +305,7 @@ public class SettingsController extends Application implements FXWindow {
 		updateTempSetting(Settings.DEV_MODE, devModeCheckBox.isSelected());
 		boolean disabled = Settings.DEV_MODE.disabled();
 		drawFocusTreesCheckBox.setDisable(disabled);
+		// TODO this is causing a exception when it is first time setup, but it still saves the dev mode
 	}
 
 	public void handleDrawFocusTreesCheckBoxAction() {
@@ -327,9 +313,9 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * Handles the action of the Demo Mode checkbox being clicked.
-	 * Updates the temporary setting for DEMO_MODE to the value of the checkbox.
-	 * Enables or disables the OK button based on the value of the checkbox.
+	 * Handles the action of the Demo Mode checkbox being clicked. Updates the temporary setting for
+	 * DEMO_MODE to the value of the checkbox. Enables or disables the OK button based on the value of
+	 * the checkbox.
 	 */
 	public void handleDemoModeCheckBoxAction() {
 		updateTempSetting(Settings.DEMO_MODE, idDemoModeCheckBox.isSelected());
@@ -366,9 +352,7 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * User Interactive Button in Settings Window
-	 * Closes Settings Window
-	 * Opens Menu Window
+	 * User Interactive Button in Settings Window Closes Settings Window Opens Menu Window
 	 */
 	public void handleOkButtonAction() {
 		boolean settingsSaved = updateSettings();
@@ -385,16 +369,12 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * Updates the settings and saves them to the settings file.
-	 * If firstTimeSetup is true, it will create a new SettingsManager with the
-	 * tempSettings.
-	 * If firstTimeSetup is false, it will save the tempSettings to the settings
-	 * file.
-	 * If firstTimeSetup is true and the modPathFile is null, it will create a new
-	 * HOIIVFilePaths object.
+	 * Updates the settings and saves them to the settings file. If firstTimeSetup is true, it will
+	 * create a new SettingsManager with the tempSettings. If firstTimeSetup is false, it will save the
+	 * tempSettings to the settings file. If firstTimeSetup is true and the modPathFile is null, it will
+	 * create a new HOIIVFilePaths object.
 	 * 
-	 * @return true if the settings were updated and saved successfully, false if
-	 *         not.
+	 * @return true if the settings were updated and saved successfully, false if not.
 	 */
 	public boolean updateSettings() {
 		try {
@@ -427,7 +407,7 @@ public class SettingsController extends Application implements FXWindow {
 	 * Opens window and updates fxmlResource and title
 	 * 
 	 * @param fxmlResource window .fxml resource
-	 * @param title        window title
+	 * @param title window title
 	 */
 	@Override
 	public void open(String fxmlResource, String title) {
