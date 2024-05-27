@@ -1,8 +1,6 @@
 {
 	"window.commandCenter": true,
 	"explorer.compactFolders": true,
-	"editor.insertSpaces": false,
-	"editor.indentSize": "tabSize",
     "workbench.startupEditor": "none",
     "workbench.iconTheme": "vscode-icons",
     "redhat.telemetry.enabled": true,
@@ -28,7 +26,7 @@
 	],
 	"todo-tree.regex.regex": "(//|#|<!--|/\\*|^\\s*\\*)\\s*($TAGS)",
 	"todo-tree.filtering.excludeGlobs": [
-        "**/vendor/**",
+		"**/vendor/**",
         "**/node_modules/**",
         "**/dist/**",
         "**/bower_components/**",
@@ -40,7 +38,7 @@
         "**/*.map"
 	],
 	"java.compile.nullAnalysis.mode": "automatic",
-	// Java Project HOIIVUtils settings
+	// Java Project HOIIVUtils Settings 
 	"java.project.referencedLibraries": [
 		"lib/**/*.jar"
 	],
@@ -60,6 +58,13 @@
 	"java.configuration.updateBuildConfiguration": "automatic",
 	"terminal.integrated.scrollback": 1e+69,
 	"maven.view": "hierarchical",
-	"editor.formatOnPaste": true,
-	"editor.formatOnSave": true,
+	// formatting
+	"java.format.settings.url": ".vscode\\custom-eclipse-java-google-style.xml",
+	"[java]": {
+		"editor.defaultFormatter": "redhat.java",
+		"editor.indentSize": "tabSize",
+		"editor.insertSpaces": false,
+		"editor.wordWrap": "off",
+		"editor.formatOnSave": true
+	},
 }
