@@ -381,6 +381,7 @@ public class SettingsController extends Application implements FXWindow {
 			HOIIVUtils.firstTimeSetup = false;
 		} else {
 			// If firstTimeSetup is false, save the tempSettings to the settings file
+			SettingsManager.settings = new SettingsManager(tempSettings);
 			SettingsManager.writeSettings(tempSettings);
 		}
 		System.out.println("Settings Updated.");
