@@ -39,12 +39,10 @@ public class SettingsManager {
 		try {
 			Files.createDirectories(Paths.get(NEW_PROPERTIES_PATH).getParent());
 			settingsFile = new File(NEW_PROPERTIES_PATH);
-			System.out.println("settings file: " + settingsFile);
 
 			if (settingsHash == null) {
 				writeBlankSettings();
 			} else if (settingsFile.createNewFile()) {
-				System.out.println("File created: " + settingsFile.getName());
 				writeBlankSettings();
 				writeSettings(settingsHash);
 			} else {
@@ -117,62 +115,62 @@ public class SettingsManager {
 				}
 			}
 			settingReader.close();
+
 		} catch (IOException e) {
 			throw new SettingsFileException("Error reading settings", e);
 		}
+
 	}
 
-
 	/**
-	 * Writes the specified setting with the given value to the settings file.
-	 *
-	 * @param setting the setting to be written
-	 * @param settingValue the value of the setting
-	 * @throws SettingsWriteException if there is an error writing the settings
+	 * Saves setting with specified value
 	 */
-	public static void writeSetting(Settings setting, String settingValue) {
+	public static void writeSetting(Settings setting, String settingValue) throws IOException {
+
 		try {
 			settingsWriter = new FileWriter(settingsFile, false);
 		} catch (IOException e) {
 			throw new SettingsWriteException("Error writing settings", e);
 		}
+
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
+
 		settingValues.put(setting, settingValue);
 		for (Settings s : Settings.values()) {
 			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
 		}
+
 		settingsPWriter.close();
 	}
 
 	/**
-	 * Writes a list of HOIIVUtils Settings to the hoi4utils.properties file, all other HOIIVUtils
-	 * Settings remain the same.
-	 *
-	 * @param newSettings a HashMap containing the updated HOIIVUtils Settings to save. If null, the
-	 *        function returns without doing anything.
-	 * @throws SettingsWriteException if there is an error writing the settings
+	 * Saves a list of HOIIVUtils Settings to hoi4utils.properties file, all other HOIIVUtils Settings
+	 * remain the same.
+	 * 
+	 * @param newSettings list of updated HOIIVUtils Settings to save
 	 */
 	public static void writeSettings(HashMap<Settings, String> newSettings) {
 		if (newSettings == null) {
 			return;
 		}
-		System.out.println(settingsFile);
 
 		try {
 			settingsWriter = new FileWriter(settingsFile, false);
 		} catch (IOException e) {
 			throw new SettingsWriteException("Error writing settings", e);
 		}
+
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
+
 		settingValues.putAll(newSettings);
 		for (Settings s : Settings.values()) {
 			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
 		}
+
 		settingsPWriter.close();
 	}
-
 
 	/**
 	 * Saves all HOIIVUtils Settings to hoi4utils.properties file.
@@ -185,11 +183,32 @@ public class SettingsManager {
 		} catch (IOException e) {
 			throw new SettingsWriteException("Error writing settings", e);
 		}
+
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
+
 		for (Settings s : Settings.values()) {
 			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
 		}
+
+		settingsPWriter.close();
+	}
+
+	/**
+	 * Writes a blank setting to the hoi4utils.properties file
+	 */
+	private static void writeBlankSetting(Settings setting) throws IOException {
+		try {
+			settingsWriter = new FileWriter(settingsFile, true);
+		} catch (IOException e) {
+			throw new SettingsWriteException("Error writing settings", e);
+		}
+		settingsWriter = new FileWriter(settingsFile, true); // true = append
+		settingsBWriter = new BufferedWriter(settingsWriter);
+		settingsPWriter = new PrintWriter(settingsBWriter);
+
+		settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
+
 		settingsPWriter.close();
 	}
 
@@ -202,27 +221,16 @@ public class SettingsManager {
 		} catch (IOException e) {
 			throw new SettingsWriteException("Error writing settings", e);
 		}
+
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
+
 		for (Settings setting : Settings.values()) {
 			settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
+
 			settingValues.put(setting, setting.defaultProperty());
 		}
-		settingsPWriter.close();
-	}
 
-	/**
-	 * Writes a blank setting to the hoi4utils.properties file
-	 */
-	private static void writeBlankSetting(Settings setting) {
-		try {
-			settingsWriter = new FileWriter(settingsFile, true);
-		} catch (IOException e) {
-			throw new SettingsWriteException("Error writing settings", e);
-		}
-		settingsBWriter = new BufferedWriter(settingsWriter);
-		settingsPWriter = new PrintWriter(settingsBWriter);
-		settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
 		settingsPWriter.close();
 	}
 

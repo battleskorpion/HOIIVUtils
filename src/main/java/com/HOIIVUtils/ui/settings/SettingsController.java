@@ -298,7 +298,7 @@ public class SettingsController extends Application implements FXWindow {
 	public void handleDevModeCheckBoxAction() {
 		updateTempSetting(Settings.DEV_MODE, devModeCheckBox.isSelected());
 		System.out.println("Dev Mode: " + devModeCheckBox.isSelected());
-		drawFocusTreesCheckBox.setDisable(Settings.DEV_MODE.disabled()); // TODO this is causing a bug
+		drawFocusTreesCheckBox.setDisable(Settings.DEV_MODE.disabled());
 		System.out.println("Draw Focus Trees: " + drawFocusTreesCheckBox.isDisabled());
 	}
 
@@ -369,7 +369,6 @@ public class SettingsController extends Application implements FXWindow {
 	 * @return true if the settings were updated and saved successfully, false if not.
 	 */
 	public void updateSettings() {
-		System.out.println("Updating Settings...");
 		if (Boolean.TRUE.equals(HOIIVUtils.firstTimeSetup)) {
 			// If firstTimeSetup is true, create a new SettingsManager with the tempSettings
 			// This is also cancer
@@ -378,12 +377,10 @@ public class SettingsController extends Application implements FXWindow {
 			if (HOIIVFile.modPathFile == null) {
 				HOIIVFile.createHOIIVFilePaths();
 			}
-			HOIIVUtils.firstTimeSetup = false;
 		} else {
 			// If firstTimeSetup is false, save the tempSettings to the settings file
 			SettingsManager.writeSettings(tempSettings);
 		}
-		System.out.println("Settings Updated.");
 	}
 
 	/* from HOIIVUtilsStageLoader but can only extend one class */
