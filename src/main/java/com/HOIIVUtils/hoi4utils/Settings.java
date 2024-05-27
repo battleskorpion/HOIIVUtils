@@ -1,6 +1,8 @@
 package com.HOIIVUtils.hoi4utils;
 
-import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsWriteException;
+import java.io.IOException;
+
+import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsSaveException;
 
 public enum Settings {
 	MOD_PATH {
@@ -128,7 +130,8 @@ public enum Settings {
 		public String defaultProperty() {
 			return "true";
 		}
-	},;
+	},
+	;
 
 	private static final String DEFAULT_VALUE = "false";
 
@@ -154,12 +157,18 @@ public enum Settings {
 	 * Sets the value of the setting
 	 *
 	 * @param value
-	 * @throws SettingsWriteException
+	 * @throws SettingsSaveException
 	 */
-	void setValue(Object value) {
+	void setValue(Object value) throws SettingsSaveException {
 		SettingsManager.settingValues.put(this, String.valueOf(value));
-		SettingsManager.writeSettings();
-		System.out.println("Updated setting " + this.name() + ": " + SettingsManager.settingValues.get(this));
+		try {
+			SettingsManager.saveSettings();
+			if ((boolean) DEV_MODE.getSetting()) {
+				System.out.println("Updated setting " + this.name() + ": " + SettingsManager.settingValues.get(this));
+			}
+		} catch (IOException e) {
+			throw new SettingsSaveException("Error saving settings", e);
+		}
 	}
 
 	public String defaultProperty() {

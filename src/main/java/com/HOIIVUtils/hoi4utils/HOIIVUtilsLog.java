@@ -21,10 +21,11 @@ public class HOIIVUtilsLog {
 	 * @param message2 stuff like WARNING or INFO
 	 */
 	public static void writeToLog(String message1, String message2) {
-		File hoi4utils_file = new File(SettingsManager.NEW_PROPERTIES_PATH_PARENT);
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
 		if (!hoi4utils_file.exists()) {
 			return;
-			// throw new RuntimeException("HOIIVUtils directory does not exist/could not be created");
+			// throw new RuntimeException("HOIIVUtils directory does not exist/could not be
+			// created");
 		}
 		Date currentDate = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -35,19 +36,21 @@ public class HOIIVUtilsLog {
 			bufferedWriter.write(formattedDate + "    [" + message2 + "]    " + message1 + ".");
 			bufferedWriter.newLine();
 		} catch (IOException e) {
-			writeToLog("writeToLog has caused a error lol, probly cause the log file doesn't exist or something", "ERROR");
+			writeToLog("writeToLog has caused a error lol, probly cause the log file doesn't exist or something",
+					"ERROR");
 			writeToLogError("writeToLog has caused a error lol", e);
 			return;
 		} catch (NullPointerException exc) {
 			if (log == null) {
-				System.err.println("writeToLog has caused a error lol, " + "probly cause the log file doesn't exist or something");
+				System.err.println("writeToLog has caused a error lol, " +
+						"probly cause the log file doesn't exist or something");
 			}
 			return;
 		}
 	}
 
 	public static void writeToLogError(String message1, Throwable throwable) {
-		File hoi4utils_file = new File(SettingsManager.NEW_PROPERTIES_PATH_PARENT);
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
 		if (!hoi4utils_file.exists()) {
 			return;
 			// throw new RuntimeException("HOIIVUtils directory does not exist/could not be
@@ -75,7 +78,8 @@ public class HOIIVUtilsLog {
 			bufferedWriter.write("------------END-------------");
 			bufferedWriter.newLine();
 		} catch (IOException e) {
-			writeToLog("writeToLogError has caused a error lol, probly cause the log file doesn't exist or something", "ERROR");
+			writeToLog("writeToLogError has caused a error lol, probly cause the log file doesn't exist or something",
+					"ERROR");
 			writeToLogError("writeToLogError has caused a error lol", e);
 		}
 	}
@@ -100,7 +104,7 @@ public class HOIIVUtilsLog {
 	static void startLog() {
 		logsDir = createLogsDir();
 		log = createTheLogFile();
-		File hoi4utils_file = new File(SettingsManager.NEW_PROPERTIES_PATH_PARENT);
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
 		if (!hoi4utils_file.exists()) {
 			return;
 			// throw new RuntimeException("HOIIVUtils directory does not exist/could not be
@@ -111,8 +115,8 @@ public class HOIIVUtilsLog {
 	}
 
 	static File createLogsDir() {
-		File nlogsDir = new File(SettingsManager.NEW_PROPERTIES_PATH_PARENT + File.separator + "logs");
-		File hoi4utils_file = new File(SettingsManager.NEW_PROPERTIES_PATH_PARENT);
+		File nlogsDir = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH + File.separator + "logs");
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
 		if (!hoi4utils_file.exists()) {
 			return null;
 			// throw new RuntimeException("HOIIVUtils directory does not exist/could not be
@@ -129,7 +133,7 @@ public class HOIIVUtilsLog {
 	}
 
 	static File createTheLogFile() {
-		File hoi4utils_file = new File(SettingsManager.NEW_PROPERTIES_PATH_PARENT);
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
 		if (!hoi4utils_file.exists()) {
 			return null;
 			// throw new RuntimeException("HOIIVUtils directory does not exist/could not be
@@ -152,7 +156,7 @@ public class HOIIVUtilsLog {
 	}
 
 	static void deleteTheLogData(File logFile) {
-		File hoi4utils_file = new File(SettingsManager.NEW_PROPERTIES_PATH_PARENT);
+		File hoi4utils_file = new File(SettingsManager.HOI4UTILS_PROPERTIES_PATH);
 		if (!hoi4utils_file.exists()) {
 			return;
 			// throw new RuntimeException("HOIIVUtils directory does not exist/could not be
