@@ -6,27 +6,26 @@ import java.util.stream.*;
 import java.util.*;
 
 import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsFileException;
+import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsWriteException;
 
 /**
- * The SettingsManager class is responsible for managing the HOIIVUtils
- * properties file.
- * It provides methods to read and write settings from/to the file.
+ * The SettingsManager class is responsible for managing the HOIIVUtils properties file. It provides
+ * methods to read and write settings from/to the file.
  *
  * @author battleskorpion
  */
 public class SettingsManager {
 
-	private static final String OLD_PROPERTIES_PATH = System.getProperty("user.home") + File.separator + "Documents"
-			+ File.separator + "HOIIVUtils" + File.separator + "HOIIVUtils_properties.txt";
-	private static final String NEW_PROPERTIES_PATH = System.getProperty("os.name").startsWith("Windows")
-			? System.getenv("APPDATA") + File.separator + "HOIIVUtils" + File.separator
-					+ "hoi4utils.properties"
-			: System.getProperty("user.home") + File.separator + "HOIIVUtils" + File.separator + "hoi4utils.properties";
-	public static final String USER_DOCS_PATH = System.getProperty("user.home") + File.separator + "Documents";
-	public static final String HOI4UTILS_PROPERTIES_PATH = USER_DOCS_PATH + File.separator + "HOIIVUtils";
-	static {
-		System.err.println(HOI4UTILS_PROPERTIES_PATH);
-	}
+	public static final String OLD_PROPERTIES_PATH = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "HOIIVUtils"
+			+ File.separator + "HOIIVUtils_properties.txt";
+	public static final String NEW_PROPERTIES_PATH = System.getProperty("os.name").startsWith("Windows")
+			? System.getenv("APPDATA") + File.separator + "HOIIVUtils" + File.separator + "hoi4utils.properties"
+			: System.getProperty("user.home") + File.separator + ".hoi4utils" + File.separator + "hoi4utils.properties";
+	public static final String OLD_PROPERTIES_PATH_PARENT =
+			System.getProperty("user.home") + File.separator + "Documents" + File.separator + "HOIIVUtils";
+	public static final String NEW_PROPERTIES_PATH_PARENT =
+			System.getProperty("os.name").startsWith("Windows") ? System.getenv("APPDATA") + File.separator + "HOIIVUtils"
+					: System.getProperty("user.home") + File.separator + ".hoi4utils";
 
 	private static File settingsFile;
 	private static FileWriter settingsWriter;
@@ -35,44 +34,44 @@ public class SettingsManager {
 	static HashMap<Settings, String> settingValues = new HashMap<>();
 	public static SettingsManager settings;
 
-	// These constructors are the most cancer of time.
-	SettingsManager() throws IOException {
-		new File(HOI4UTILS_PROPERTIES_PATH).mkdir();
-		settingsFile = new File(HOI4UTILS_PROPERTIES_PATH + File.separator + "HOIIVUtils_properties.txt");
+	public SettingsManager(HashMap<Settings, String> settingsHash) {
+		try {
+			Files.createDirectories(Paths.get(NEW_PROPERTIES_PATH).getParent());
+			settingsFile = new File(NEW_PROPERTIES_PATH);
 
-		settingsFile.createNewFile();
-
-		readSettings();
+			if (settingsHash == null) {
+				writeBlankSettings();
+			} else if (settingsFile.createNewFile()) {
+				writeBlankSettings();
+				writeSettings(settingsHash);
+			} else {
+				readSettings();
+				writeSettings(settingsHash);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public SettingsManager(HashMap<Settings, String> settings) throws IOException {
-		String userDocsPath = System.getProperty("user.home") + File.separator + "Documents";
-		String hoi4UtilsPropertiesPath = userDocsPath + File.separator + "HOIIVUtils";
+	public static void convertOldPropertiesFile() {
+		if (new File(OLD_PROPERTIES_PATH).exists()) {
+			try {
+				Files.createDirectories(Paths.get(NEW_PROPERTIES_PATH).getParent());
+				Files.copy(Paths.get(OLD_PROPERTIES_PATH), Paths.get(NEW_PROPERTIES_PATH));
 
-		new File(hoi4UtilsPropertiesPath).mkdir();
-		settingsFile = new File(hoi4UtilsPropertiesPath + File.separator + "HOIIVUtils_properties.txt");
-
-		boolean newSettingsFileCreated = settingsFile.createNewFile();
-
-		if (settings == null) {
-			writeBlankSettings();
-		} else if (newSettingsFileCreated) {
-			writeBlankSettings();
-			saveSettings(settings);
-		} else {
-			readSettings();
-			saveSettings(settings);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	/**
-	 * Reads hoi4utils.settings from hoi4utils.settings file.
+	 * Reads HOIIVUtils Settings from hoi4utils.properties file.
 	 *
-	 * This function reads the settings from the hoi4utils.settings file and stores
-	 * them in the settingValues HashMap. If the file is empty, it writes blank
-	 * hoi4utils.settings to a new hoi4utils.settings file. It also checks if all
-	 * the settings are present in the file and writes any missing settings using
-	 * the writeBlankSetting function.
+	 * This function reads the settings from the hoi4utils.properties file and stores them in the
+	 * settingValues HashMap. If the file is empty, it writes blank HOIIVUtils Settings to a new
+	 * hoi4utils.properties file. It also checks if all the settings are present in the file and writes
+	 * any missing settings using the writeBlankSetting function.
 	 *
 	 * @throws SettingsFileException if there is an error reading the settings file
 	 */
@@ -81,8 +80,7 @@ public class SettingsManager {
 			Scanner settingReader = new Scanner(settingsFile);
 
 			/*
-			 * if file is empty then write blank hoi4utils.settings to new
-			 * hoi4utils.settings file
+			 * if file is empty then write blank HOIIVUtils Settings to new hoi4utils.properties file
 			 */
 			if (!settingReader.hasNext()) {
 				writeBlankSettings();
@@ -90,7 +88,7 @@ public class SettingsManager {
 				return;
 			}
 
-			/* read hoi4utils.settings */
+			/* read HOIIVUtils Settings */
 			while (settingReader.hasNextLine()) {
 				String[] readSetting = settingReader.nextLine().split(";");
 				Settings setting = Settings.valueOf(readSetting[0]);
@@ -112,41 +110,16 @@ public class SettingsManager {
 	}
 
 	/**
-	 * Writes a blank setting to the hoi4utils.settings file
-	 */
-	private static void writeBlankSetting(Settings setting) throws IOException {
-		settingsWriter = new FileWriter(settingsFile, true); // true = append
-		settingsBWriter = new BufferedWriter(settingsWriter);
-		settingsPWriter = new PrintWriter(settingsBWriter);
-
-		settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
-
-		settingsPWriter.close();
-	}
-
-	/**
-	 * Writes default hoi4utils.settings to the hoi4utils.settings file
-	 */
-	public static void writeBlankSettings() throws IOException {
-		settingsWriter = new FileWriter(settingsFile, false); // true = append
-		settingsBWriter = new BufferedWriter(settingsWriter);
-		settingsPWriter = new PrintWriter(settingsBWriter);
-
-		for (Settings setting : Settings.values()) {
-			settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
-
-			settingValues.put(setting, setting.defaultProperty());
-		}
-
-		settingsPWriter.close();
-
-	}
-
-	/**
 	 * Saves setting with specified value
 	 */
-	public static void saveSetting(Settings setting, String settingValue) throws IOException {
-		settingsWriter = new FileWriter(settingsFile, false); // true = append
+	public static void writeSetting(Settings setting, String settingValue) throws IOException {
+
+		try {
+			settingsWriter = new FileWriter(settingsFile, false);
+		} catch (IOException e) {
+			throw new SettingsWriteException("Error writing settings", e);
+		}
+
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
@@ -159,18 +132,22 @@ public class SettingsManager {
 	}
 
 	/**
-	 * Saves a list of hoi4utils.settings to hoi4utils.settings file, all other
-	 * hoi4utils.settings remain the same.
+	 * Saves a list of HOIIVUtils Settings to hoi4utils.properties file, all other HOIIVUtils Settings
+	 * remain the same.
 	 * 
-	 * @param newSettings list of updated hoi4utils.settings to save
-	 * @throws IOException
+	 * @param newSettings list of updated HOIIVUtils Settings to save
 	 */
-	public static void saveSettings(HashMap<Settings, String> newSettings) throws IOException {
+	public static void writeSettings(HashMap<Settings, String> newSettings) {
 		if (newSettings == null) {
 			return;
 		}
 
-		settingsWriter = new FileWriter(settingsFile, false); // true = append
+		try {
+			settingsWriter = new FileWriter(settingsFile, false);
+		} catch (IOException e) {
+			throw new SettingsWriteException("Error writing settings", e);
+		}
+
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
@@ -183,12 +160,17 @@ public class SettingsManager {
 	}
 
 	/**
-	 * Saves all hoi4utils.settings to hoi4utils.settings file.
-	 * 
-	 * @throws IOException
+	 * Saves all HOIIVUtils Settings to hoi4utils.properties file.
+	 *
+	 * @throws SettingsWriteException if there is an error saving the settings
 	 */
-	public static void saveSettings() throws IOException {
-		settingsWriter = new FileWriter(settingsFile, false); // true = append
+	public static void writeSettings() {
+		try {
+			settingsWriter = new FileWriter(settingsFile, false);
+		} catch (IOException e) {
+			throw new SettingsWriteException("Error writing settings", e);
+		}
+
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 
@@ -200,56 +182,62 @@ public class SettingsManager {
 	}
 
 	/**
-	 * Checks if the hoi4utils.settings file exists. If it does, we load the
-	 * settings. If not, we write the default settings to the hoi4utils.settings
-	 * file.
-	 * 
-	 * @see SettingsManager#SettingsManager(HashMap<Settings, String>)
+	 * Writes a blank setting to the hoi4utils.properties file
 	 */
-	public static void getSavedSettings() {
-		if (new File(HOI4UTILS_PROPERTIES_PATH + "\\HOIIVUtils_properties.txt").exists()) {
-			HOIIVUtils.firstTimeSetup = false;
-
-			try {
-				SettingsManager.settings = new SettingsManager();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			System.out.println("Performing standard startup cuz settings were found");
-		} else {
-			HOIIVUtils.firstTimeSetup = true;
+	private static void writeBlankSetting(Settings setting) throws IOException {
+		try {
+			settingsWriter = new FileWriter(settingsFile, true);
+		} catch (IOException e) {
+			throw new SettingsWriteException("Error writing settings", e);
 		}
+		settingsWriter = new FileWriter(settingsFile, true); // true = append
+		settingsBWriter = new BufferedWriter(settingsWriter);
+		settingsPWriter = new PrintWriter(settingsBWriter);
+
+		settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
+
+		settingsPWriter.close();
 	}
 
 	/**
-	 * Deletes all hoi4utils.settings from the hoi4utils.settings directory.
+	 * Writes default HOIIVUtils Settings to the hoi4utils.properties file
+	 */
+	public static void writeBlankSettings() {
+		try {
+			settingsWriter = new FileWriter(settingsFile, false);
+		} catch (IOException e) {
+			throw new SettingsWriteException("Error writing settings", e);
+		}
+
+		settingsBWriter = new BufferedWriter(settingsWriter);
+		settingsPWriter = new PrintWriter(settingsBWriter);
+
+		for (Settings setting : Settings.values()) {
+			settingsPWriter.println(setting.name() + ";" + setting.defaultProperty());
+
+			settingValues.put(setting, setting.defaultProperty());
+		}
+
+		settingsPWriter.close();
+	}
+
+	/**
+	 * Deletes all HOIIVUtils Settings from the HOIIVUtils Settings directory.
 	 *
 	 * @throws IOException if an I/O error occurs
 	 */
 	public static void deleteAllSettings() throws IOException {
-		// Get the path to the hoi4utils.settings directory
-		Path dir = Paths.get(HOI4UTILS_PROPERTIES_PATH);
-
-		// Use try-with-resources to delete the files and directories
-		try (Stream<Path> paths = Files.walk(dir)) {
+		try (Stream<Path> paths = Files.walk(Paths.get(NEW_PROPERTIES_PATH))) {
 			// Sort the paths in reverse order so that the
 			// directories are deleted first
-			paths.sorted(Comparator.reverseOrder())
-					.forEach(path -> {
-						try {
-							// If DEV_MODE is enabled, print the path to the file or
-							// directory that is being deleted
-							if (Settings.DEV_MODE.enabled()) {
-								System.out.println("Deleting: " + path);
-							}
-							// Delete the file or directory
-							Files.delete(path);
-						} catch (IOException e) {
-							// Print the exception if something goes wrong
-							e.printStackTrace();
-						}
-					});
+			paths.sorted(Comparator.reverseOrder()).forEach(path -> {
+				try {
+					System.out.println("Deleting: " + path);
+					Files.delete(path);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
 		}
 	}
 

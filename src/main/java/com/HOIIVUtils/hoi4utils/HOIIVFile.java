@@ -11,20 +11,14 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * HOIIV File
- * A Everything to do with the files that are found in a HOI 4 mod
- * - Paths
- * - Creating Files and Directories
- * ? <insert about whatever the file watchers do> chris learning what is a file
- * watcher
- * - Future things
+ * HOIIV File A Everything to do with the files that are found in a HOI 4 mod - Paths - Creating
+ * Files and Directories ? <insert about whatever the file watchers do> chris learning what is a
+ * file watcher - Future things
  */
 public class HOIIVFile implements FileUtils {
 
-	public static final File usersParadoxHOIIVModFolder = new File(
-			File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
-
-	public static final String modPath = SettingsManager.get(Settings.MOD_PATH);
+	public static final File usersParadoxHOIIVModFolder =
+			new File(File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
 
 	public static FileWatcher stateFilesWatcher;
 
@@ -40,6 +34,7 @@ public class HOIIVFile implements FileUtils {
 	public static File units_folder;
 
 	public static void createHOIIVFilePaths() {
+		new SettingsManager(null);
 		String modPath = SettingsManager.get(Settings.MOD_PATH);
 		System.out.println("modPath: " + modPath);
 
