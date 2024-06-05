@@ -5,7 +5,7 @@ import java.nio.file.*;
 import java.util.stream.*;
 import java.util.*;
 
-import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsFileException;
+import com.HOIIVUtils.hoi4utils.exceptions.SettingsFileException;
 
 /**
  * The SettingsManager class is responsible for managing the HOIIVUtils

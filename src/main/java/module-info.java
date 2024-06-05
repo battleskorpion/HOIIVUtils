@@ -10,6 +10,8 @@ module com.HOIIVUtils {
     requires org.apache.poi.poi;
     requires aparapi; // leave aparapi last cause aparapi has terrible config
     requires org.xerial.sqlitejdbc;
+    requires io.github.javadiffutils;
+    requires org.fxmisc.richtext;
 
     opens com.HOIIVUtils.ui to javafx.fxml;
     opens com.HOIIVUtils.ui.buildings to javafx.fxml;

@@ -1,7 +1,7 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_data.localization;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
-import com.HOIIVUtils.hoi4utils.ioexceptions.IllegalLocalizationFileTypeException;
+import com.HOIIVUtils.hoi4utils.exceptions.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.ui.FXWindow;
 
 import java.io.BufferedWriter;

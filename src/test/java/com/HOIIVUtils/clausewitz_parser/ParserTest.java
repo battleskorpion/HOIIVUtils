@@ -1,4 +1,4 @@
-package com.HOIIVUtils.clausewitz_parser_new;
+package com.HOIIVUtils.clausewitz_parser;
 //package src.clausewitz_parser_new;
 //
 //import com.HOIIVUtils.clausewitz_parser.Node;

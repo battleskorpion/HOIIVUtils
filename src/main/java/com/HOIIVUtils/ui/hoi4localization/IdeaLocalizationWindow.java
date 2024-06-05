@@ -7,7 +7,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.idea.Idea;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.idea.IdeaFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
-import com.HOIIVUtils.hoi4utils.ioexceptions.IllegalLocalizationFileTypeException;
+import com.HOIIVUtils.hoi4utils.exceptions.IllegalLocalizationFileTypeException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

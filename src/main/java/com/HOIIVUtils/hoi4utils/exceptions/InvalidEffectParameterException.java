@@ -1,4 +1,4 @@
-package com.HOIIVUtils.hoi4utils.ioexceptions;
+package com.HOIIVUtils.hoi4utils.exceptions;
 
 public class InvalidEffectParameterException extends Exception {
 	public InvalidEffectParameterException() {

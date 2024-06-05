@@ -36,4 +36,5 @@ public interface NodeStreamable<NodeType extends Node> {
 	default boolean contains(String str) {
 		return !filter(str).toList().isEmpty();
 	}
+
 }

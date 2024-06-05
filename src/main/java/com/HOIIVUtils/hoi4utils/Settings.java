@@ -2,7 +2,7 @@ package com.HOIIVUtils.hoi4utils;
 
 import java.io.IOException;
 
-import com.HOIIVUtils.hoi4utils.ioexceptions.SettingsSaveException;
+import com.HOIIVUtils.hoi4utils.exceptions.SettingsSaveException;
 
 public enum Settings {
 	MOD_PATH {

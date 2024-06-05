@@ -1,7 +1,7 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code.effect;
 
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.ScopeType;
-import com.HOIIVUtils.hoi4utils.ioexceptions.NullParameterTypeException;
+import com.HOIIVUtils.hoi4utils.exceptions.NullParameterTypeException;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class EffectDatabase {
 	// }
 
 	public EffectDatabase() {
-		this("effects.db");
+		this("databases/effects.db");
 		// for(Effect effect : Effect.effects.values()) {
 		// System.out.println("effect: " + effect.identifier());
 		// }

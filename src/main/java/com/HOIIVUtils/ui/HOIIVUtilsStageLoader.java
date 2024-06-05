@@ -22,12 +22,12 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 		if (stage != null) {
 			stage.show();
 			System.out.println(
-					"HOIIVUtilsStageLoader showed stage with open cuz stage was NOT null. fxml: " + fxmlResource
-							+ " title: " + title);
+					"HOIIVUtilsStageLoader showed stage with open cuz stage was NOT null. fxml: "
+					+ fxmlResource + " title: " + title);
 		} else if (fxmlResource == null) {
-			System.out
-					.println("HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. fxmlResource: "
-							+ fxmlResource + " title: " + title);
+			System.out.println(
+					"HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. fxmlResource: "
+					+ fxmlResource + " title: " + title);
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
 			try {
@@ -51,7 +51,7 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 				this.stage = launchStage;
 				System.out.println(
 						"HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: "
-								+ fxmlResource + " title: " + title);
+						+ fxmlResource + " title: " + title);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -71,11 +71,11 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 			stage.show();
 			System.out.println(
 					"HOIIVUtilsStageLoader showed stage with open cuz stage was NOT null. fxml: " + fxmlResource
-							+ " title: " + title);
+					+ " title: " + title);
 		} else if (fxmlResource == null) {
-			System.out
-					.println("HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. fxmlResource: "
-							+ fxmlResource + " title: " + title);
+			System.out.println(
+					"HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. fxmlResource: "
+					+ fxmlResource + " title: " + title);
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
 			try {
@@ -108,7 +108,7 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 				this.stage = launchStage;
 				System.out.println(
 						"HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: "
-								+ fxmlResource + " title: " + title);
+						+ fxmlResource + " title: " + title);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -7,7 +7,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.Focus;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
-import com.HOIIVUtils.hoi4utils.ioexceptions.IllegalLocalizationFileTypeException;
+import com.HOIIVUtils.hoi4utils.exceptions.IllegalLocalizationFileTypeException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

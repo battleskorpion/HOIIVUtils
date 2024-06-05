@@ -12,7 +12,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFi
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.hoi4utils.ddsreader.DDSReader;
-import com.HOIIVUtils.hoi4utils.ioexceptions.InvalidEffectParameterException;
+import com.HOIIVUtils.hoi4utils.exceptions.InvalidEffectParameterException;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Point2D;

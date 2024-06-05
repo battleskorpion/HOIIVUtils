@@ -6,7 +6,7 @@ import com.HOIIVUtils.hoi4utils.Settings;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_data.tooltip.CustomTooltip;
-import com.HOIIVUtils.hoi4utils.ioexceptions.IllegalLocalizationFileTypeException;
+import com.HOIIVUtils.hoi4utils.exceptions.IllegalLocalizationFileTypeException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

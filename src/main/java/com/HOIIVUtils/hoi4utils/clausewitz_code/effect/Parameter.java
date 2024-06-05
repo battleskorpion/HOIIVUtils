@@ -1,7 +1,7 @@
 package com.HOIIVUtils.hoi4utils.clausewitz_code.effect;
 
 import com.HOIIVUtils.clausewitz_parser.NodeValue;
-import com.HOIIVUtils.hoi4utils.ioexceptions.NullParameterTypeException;
+import com.HOIIVUtils.hoi4utils.exceptions.NullParameterTypeException;
 
 import java.util.*;
 

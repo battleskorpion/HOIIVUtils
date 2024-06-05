@@ -344,9 +344,13 @@
     -fx-border-color: #222222;
     border-color: #222222;
     -fx-text-fill: #AFB1B3;
+    text-fill: #AFB1B3;
     -fx-highlight-fill: #4e4e4e;
+    highlight-fill: #4e4e4e;
     -fx-background-color: #1A1A1A;
     background-color: #1A1A1A;
+    -fx-fill: #AFB1B3;
+    fill: #AFB1B3;
 }
 .text-area:hover{
     -fx-border-color: #3E3E40;

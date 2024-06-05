@@ -32,10 +32,10 @@ public record SubUnit(
 ) {
 	public static List<SubUnit> read(File dir) {
 		if (!dir.isDirectory()) {
-			throw new IllegalArgumentException("this is not a directory");
+			throw new IllegalArgumentException(dir + " is not a directory");
 		}
 		if (dir.listFiles().length == 0) {
-			throw new IllegalArgumentException("This is empty");
+			throw new IllegalArgumentException(dir + " is empty");
 		}
 
 		List<SubUnit> subUnits = new ArrayList<>();
@@ -49,9 +49,16 @@ public record SubUnit(
 				throw new RuntimeException(e);
 			}
 
-			var l = rootNode.filterName("sub_units");
+			var l = rootNode.findFirst("sub_units").toList();
+			if (l.isEmpty()) {
+				System.out.println("No sub_units found in " + f.getName());
+				continue;
+			}
+//			System.out.println(l.size());
+
 			// loop through each sub unit definition in this file
-			for (Node subUnitNode : l.toList()) {
+			for (Node subUnitNode : l) {
+//				System.out.println("subUnitNode: " + subUnitNode.name());
 				SubUnit subUnit = new SubUnit(
 						subUnitNode.getValue("abbreviation").string(),
 						subUnitNode.getValue("sprite").string(),

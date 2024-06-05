@@ -5,8 +5,8 @@ import com.HOIIVUtils.clausewitz_parser.NodeValue;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.NotPermittedInScopeException;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.Scope;
 import com.HOIIVUtils.hoi4utils.clausewitz_code.scope.ScopeType;
-import com.HOIIVUtils.hoi4utils.ioexceptions.InvalidEffectParameterException;
-import com.HOIIVUtils.hoi4utils.ioexceptions.NullParameterTypeException;
+import com.HOIIVUtils.hoi4utils.exceptions.InvalidEffectParameterException;
+import com.HOIIVUtils.hoi4utils.exceptions.NullParameterTypeException;
 
 import java.util.*;
 
