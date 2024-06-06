@@ -94,16 +94,16 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 	}
 
 	public static void read() {
-		if (!HOIIVFile.focus_folder.exists() || !HOIIVFile.focus_folder.isDirectory()) {
+		if (!HOIIVFile.mod_focus_folder.exists() || !HOIIVFile.mod_focus_folder.isDirectory()) {
 			System.err.println("Focus folder does not exist or is not a directory.");
 			return;
 		}
-		if (HOIIVFile.focus_folder.listFiles() == null || HOIIVFile.focus_folder.listFiles().length == 0) {
-			System.err.println("No focuses found in " + HOIIVFile.focus_folder);
+		if (HOIIVFile.mod_focus_folder.listFiles() == null || HOIIVFile.mod_focus_folder.listFiles().length == 0) {
+			System.err.println("No focuses found in " + HOIIVFile.mod_focus_folder);
 			return;
 		}
 
-		for (File f : HOIIVFile.focus_folder.listFiles()) {
+		for (File f : HOIIVFile.mod_focus_folder.listFiles()) {
 			if (f.getName().endsWith(".txt")) {
 				new FocusTree(f);
 			}
@@ -112,17 +112,17 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 
 	public static void attemptReadLocalization() {
 		// todo not just english :(
-		if (!HOIIVFile.localization_eng_folder.exists() || !HOIIVFile.localization_eng_folder.isDirectory()) {
+		if (!HOIIVFile.mod_localization_eng_folder.exists() || !HOIIVFile.mod_localization_eng_folder.isDirectory()) {
 			System.err.println("Localization folder does not exist or is not a directory.");
 			return;
 		}
-		if (HOIIVFile.localization_eng_folder.listFiles() == null
-				|| HOIIVFile.localization_eng_folder.listFiles().length == 0) {
-			System.err.println("No localization files found in " + HOIIVFile.localization_eng_folder);
+		if (HOIIVFile.mod_localization_eng_folder.listFiles() == null
+				|| HOIIVFile.mod_localization_eng_folder.listFiles().length == 0) {
+			System.err.println("No localization files found in " + HOIIVFile.mod_localization_eng_folder);
 			return;
 		}
 		aa: for (FocusTree focusTree : unlocalizedFocusTrees()) {
-			for (File f : HOIIVFile.localization_eng_folder.listFiles()) {
+			for (File f : HOIIVFile.mod_localization_eng_folder.listFiles()) {
 				FocusLocalizationFile flf;
 				try {
 					flf = new FocusLocalizationFile(f);

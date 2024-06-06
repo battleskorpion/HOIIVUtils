@@ -20,11 +20,11 @@ public class Parser {
 		tokens = new Tokenizer(input);
 	}
 
-	public Parser(File focusFile) {
+	public Parser(File f) {
 		/* get input from file */
 		String input;
 		try {
-			input = Files.readString(focusFile.toPath());
+			input = Files.readString(f.toPath());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -61,7 +61,11 @@ public class Parser {
 			}
 
 			try {
-				nodes.add(parseNode(tokens));
+				var n = parseNode(tokens);
+				// check if n is a comment node
+				if (n.nameToken.type != TokenType.comment) {
+					nodes.add(n);
+				}
 			} catch (ParserException e) {
 				throw e;
 			}
@@ -80,6 +84,7 @@ public class Parser {
 			node.nameToken = name;
 			return node;
 		}
+
 		// System.out.println(name.value);
 
 		if (name.type != TokenType.string && name.type != TokenType.symbol && name.type != TokenType.number) {

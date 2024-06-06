@@ -5,10 +5,7 @@ import com.HOIIVUtils.hoi4utils.clausewitz_data.units.SubUnit;
 import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import com.HOIIVUtils.ui.javafx.DiffViewPane;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +18,7 @@ public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
     @FXML
     AnchorPane rootAnchorPane = new AnchorPane();
     private DiffViewPane unitsDiffViewPane;
+    private boolean skipNullProperties = true;
 
     public CompareUnitsWindow() {
         /* window */
@@ -33,7 +31,8 @@ public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
      */
     @FXML
     void initialize() {
-        List<SubUnit> customUnits = SubUnit.read(HOIIVFile.units_folder);
+        List<SubUnit> customUnits = SubUnit.read(HOIIVFile.mod_units_folder);
+        List<SubUnit> baseUnits = SubUnit.read(HOIIVFile.hoi4_units_folder);
 
 //        for (int i = 0; i < customUnits.size(); i++) {
 //            SubUnit unit = customUnits.get(i);
@@ -63,7 +62,7 @@ public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
 
         // add data!
         List<String> customUnitText = new ArrayList<>();
-        for (int i = 0; i < customUnits.size(); i++) {    //84 bad
+        for (int i = 0; i < customUnits.size(); i++) {
             SubUnit unit = customUnits.get(i);
             appendUnitDetails(customUnitText, unit);
             customUnitText.add("");
@@ -82,6 +81,7 @@ public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
         int maxLabelWidth = dfl.stream().mapToInt(String::length).max().orElse(0);
         for (int i = 0; i < df.size(); i++) {
             var data = df.get(i).apply(unit);
+            if (skipNullProperties && data == null) continue;
             var dataLabel = dfl.get(i);
             var spacing = " ".repeat(maxLabelWidth - dataLabel.length());
             var str = dataLabel + ": " + spacing + (data == null ? "[null]" : data + "");

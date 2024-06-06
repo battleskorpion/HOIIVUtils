@@ -11,6 +11,12 @@ public enum Settings {
 			return (String) getSetting();
 		}
 	},
+	HOI4_PATH {
+		@Override
+		public String toString() {
+			return (String) getSetting();
+		}
+	},
 	CURRENT_MOD, // todo not in use
 	CIVILIAN_MILITARY_FACTORY_MAX_RATIO, // ratio for civ/mil factories highlight in buildings view
 	SKIP_SETTINGS {
@@ -98,12 +104,7 @@ public enum Settings {
 			return "true";
 		}
 	},
-	HOI4_PATH {
-		@Override
-		public String toString() {
-			return (String) getSetting();
-		}
-	},
+
 	ATTEMPT_LOAD_LOCALIZATION {
 		@Override
 		public Object getSetting() {

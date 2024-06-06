@@ -4,6 +4,7 @@ package com.HOIIVUtils.hoi4utils.clausewitz_data.units;
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.Parser;
 import com.HOIIVUtils.clausewitz_parser.ParserException;
+import com.HOIIVUtils.hoi4utils.Settings;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,7 +56,9 @@ public record SubUnit(
 				System.out.println("No sub_units found in " + f.getName());
 				continue;
 			}
-//			System.out.println(l.size());
+			if (Settings.DEV_MODE.enabled()) {
+				System.out.println("File: " + f.getName() + ", subunits: " + l.size());
+			}
 
 			// loop through each sub unit definition in this file
 			for (Node subUnitNode : l) {

@@ -155,16 +155,16 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 	}
 
 	public static void read() {
-		if (!HOIIVFile.states_folder.exists() || !HOIIVFile.states_folder.isDirectory()) {
-			System.err.println("In State.java - " + HOIIVFile.states_folder + " is not a directory, or etc.");
+		if (!HOIIVFile.mod_states_folder.exists() || !HOIIVFile.mod_states_folder.isDirectory()) {
+			System.err.println("In State.java - " + HOIIVFile.mod_states_folder + " is not a directory, or etc.");
 			return;
 		}
-		if (HOIIVFile.states_folder.listFiles() == null || HOIIVFile.states_folder.listFiles().length == 0) {
-			System.out.println("No states found in " + HOIIVFile.states_folder);
+		if (HOIIVFile.mod_states_folder.listFiles() == null || HOIIVFile.mod_states_folder.listFiles().length == 0) {
+			System.out.println("No states found in " + HOIIVFile.mod_states_folder);
 			return;
 		}
 
-		for (File stateFile : HOIIVFile.states_folder.listFiles()) {
+		for (File stateFile : HOIIVFile.mod_states_folder.listFiles()) {
 			if (stateFile.getName().endsWith(".txt"))
 				new State(stateFile);
 		}

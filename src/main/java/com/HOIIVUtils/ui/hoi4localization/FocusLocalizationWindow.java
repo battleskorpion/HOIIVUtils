@@ -77,8 +77,8 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
     }
 
     public void handleFocusTreeFileBrowseButtonAction() {
-        File initialFocusDirectory = HOIIVFile.focus_folder;
-        File selectedFile = openChooser(focusTreeFileBrowseButton, false, initialFocusDirectory);
+        File initialFocusDirectory = HOIIVFile.mod_focus_folder;
+        File selectedFile = openChooser(focusTreeFileBrowseButton, initialFocusDirectory, false);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }
@@ -93,8 +93,8 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
     }
 
     public void handleFocusLocFileBrowseButtonAction() {
-        File initialFocusLocDirectory = HOIIVFile.localization_eng_folder;
-        File selectedFile = openChooser(focusLocFileBrowseButton, false, initialFocusLocDirectory);
+        File initialFocusLocDirectory = HOIIVFile.mod_localization_eng_folder;
+        File selectedFile = openChooser(focusLocFileBrowseButton, initialFocusLocDirectory, false);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }

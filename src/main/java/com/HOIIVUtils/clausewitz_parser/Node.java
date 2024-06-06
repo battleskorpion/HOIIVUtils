@@ -122,6 +122,11 @@ public class Node implements NodeStreamable<Node> {
 		return filterName(str);
 	}
 
+	@Override
+	public boolean anyMatch(Predicate<? super Node> predicate) {
+		return new NodeStream<>(this).anyMatch(predicate);
+	}
+
 	public NodeValue getValue(String id) {
 		return findFirst(id).value;
 	}

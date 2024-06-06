@@ -17,8 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Rectangle?>
 
-<GridPane prefHeight="425.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21"
-   xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.settings.SettingsController">
+<GridPane prefHeight="425.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.HOIIVUtils.ui.settings.SettingsController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
@@ -41,101 +40,52 @@
                <content>
                   <ScrollPane hbarPolicy="NEVER" minWidth="300.0">
                      <content>
-                        <GridPane fx:id="idPane" minWidth="290.0" prefHeight="370.0"
-                           prefWidth="690.0">
+                        <GridPane fx:id="idPane" minWidth="290.0" prefHeight="370.0" prefWidth="690.0">
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0"
-                                 minWidth="-Infinity" prefWidth="140.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="100.0"
-                                 prefWidth="187.80003662109374" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0"
-                                 minWidth="14.199987792968727" prefWidth="47.79996337890623" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="64.0"
-                                 prefWidth="64.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="100.0"
-                                 prefWidth="180.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0"
-                                 minWidth="-Infinity" prefWidth="70.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="-Infinity" prefWidth="140.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="100.0" prefWidth="188.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="15.0" prefWidth="48.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="64.0" prefWidth="64.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="100.0" prefWidth="180.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0" minWidth="-Infinity" prefWidth="70.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints />
-                              <RowConstraints maxHeight="25.59998474121094"
-                                 minHeight="22.400003051757814" prefHeight="22.400003051757814" />
-                              <RowConstraints maxHeight="25.599996948242183"
-                                 minHeight="22.400015258789058" prefHeight="25.599996948242183"
-                                 vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="296.0" minHeight="30.0" prefHeight="37.0"
-                                 vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="296.0" minHeight="30.0" prefHeight="37.0"
-                                 vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="291.0" minHeight="30.0" prefHeight="35.0"
-                                 vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="291.0" minHeight="30.0" prefHeight="35.0"
-                                 vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="291.0" minHeight="25.0" prefHeight="35.0"
-                                 vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="271.0" minHeight="10.0"
-                                 prefHeight="127.99996337890624" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="271.0" minHeight="10.0"
-                                 prefHeight="40.00003662109373" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="30.0" minHeight="26.0" prefHeight="26.0" />
+                              <RowConstraints maxHeight="30.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="30.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="296.0" minHeight="30.0" prefHeight="37.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="296.0" minHeight="30.0" prefHeight="37.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="291.0" minHeight="30.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="291.0" minHeight="30.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="291.0" minHeight="25.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="128.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <CheckBox fx:id="devModeCheckBox" mnemonicParsing="false"
-                                 onAction="#handleDevModeCheckBoxAction" text="Developer Mode"
-                                 GridPane.rowIndex="3" />
-                              <Button fx:id="idBrowseButton" maxWidth="1.7976931348623157E308"
-                                 mnemonicParsing="false" onAction="#handleBrowseAction"
-                                 prefHeight="25.0" prefWidth="70.0" text="Browse"
-                                 GridPane.columnIndex="5" GridPane.rowIndex="2" />
-                              <TextField fx:id="idModPathTextField"
-                                 onAction="#handleModPathTextField" prefHeight="25.0"
-                                 prefWidth="414.0" promptText="C:/path/to/mod/directory"
-                                 GridPane.columnIndex="1" GridPane.columnSpan="4"
-                                 GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                              <Label fx:id="idHOIIVModFolderLabel" text="HOIIV Mod Folder:"
-                                 GridPane.rowIndex="2" />
-                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE"
-                                 height="26.0" stroke="BLACK" strokeType="INSIDE" visible="false"
-                                 width="693.0" GridPane.rowIndex="9" />
+                              <CheckBox fx:id="devModeCheckBox" mnemonicParsing="false" onAction="#handleDevModeCheckBoxAction" text="Developer Mode" GridPane.rowIndex="4" />
+                              <Button fx:id="modFolderBrowseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleModFileBrowseAction" prefHeight="25.0" prefWidth="70.0" text="Browse" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+                              <TextField fx:id="modPathTextField" onAction="#handleModPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/mod/directory" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                              <Label fx:id="idHOIIVModFolderLabel" text="Mod Folder:" GridPane.rowIndex="2" />
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="26.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="693.0" GridPane.rowIndex="10" />
                               <Label fx:id="idVersionLabel" text="Label" GridPane.rowIndex="1" />
-                              <Label text="Preferred Monitor: " GridPane.rowIndex="5" />
-                              <Label alignment="TOP_LEFT" maxWidth="1.7976931348623157E308"
-                                 nodeOrientation="LEFT_TO_RIGHT" text="Theme" textAlignment="RIGHT"
-                                 GridPane.rowIndex="6">
+                              <Label text="Preferred Monitor: " GridPane.rowIndex="6" />
+                              <Label alignment="TOP_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" text="Theme" textAlignment="RIGHT" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets />
                                  </GridPane.margin>
                               </Label>
-                              <ComboBox maxWidth="1.7976931348623157E308" prefHeight="25.0"
-                                 prefWidth="186.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <ComboBox fx:id="preferredMonitorComboBox"
-                                 maxWidth="1.7976931348623157E308"
-                                 onAction="#handlePreferredMonitorSelection" prefHeight="25.0"
-                                 prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <Label alignment="CENTER_RIGHT" layoutX="275.0" layoutY="107.0"
-                                 maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT"
-                                 GridPane.rowIndex="1" />
-                              <CheckBox fx:id="idSkipSettingsCheckBox" alignment="CENTER"
-                                 contentDisplay="CENTER" mnemonicParsing="false"
-                                 onAction="#handleSkipSettingsCheckBoxAction" opacity="0.66"
-                                 prefHeight="18.0" prefWidth="228.0"
-                                 text="Don't show this window again." GridPane.columnIndex="1"
-                                 GridPane.rowIndex="9" />
-                              <Button fx:id="idDelSettingsButton" mnemonicParsing="false"
-                                 onAction="#handleDelSettingsButtonAction"
-                                 text="Delete Saved Settings" GridPane.columnIndex="4"
-                                 GridPane.rowIndex="9" />
-                              <CheckBox fx:id="idOpenConsoleOnLaunchCheckBox"
-                                 mnemonicParsing="false"
-                                 onAction="#handleOpenConsoleOnLaunchCheckBoxAction"
-                                 text="Open Console on Launch" GridPane.rowIndex="4" />
-                              <CheckBox fx:id="drawFocusTreesCheckBox" mnemonicParsing="false"
-                                 onAction="#handleDrawFocusTreesCheckBoxAction"
-                                 text="Draw Focus Trees" GridPane.columnIndex="1"
-                                 GridPane.rowIndex="3" />
-                              <CheckBox fx:id="idDemoModeCheckBox" mnemonicParsing="false"
-                                 onAction="#handleDemoModeCheckBoxAction" text="Demo Mode"
-                                 GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                              <ComboBox maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="186.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <ComboBox fx:id="preferredMonitorComboBox" maxWidth="1.7976931348623157E308" onAction="#handlePreferredMonitorSelection" prefHeight="25.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label alignment="CENTER_RIGHT" layoutX="275.0" layoutY="107.0" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" GridPane.rowIndex="1" />
+                              <CheckBox fx:id="idSkipSettingsCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSkipSettingsCheckBoxAction" opacity="0.66" prefHeight="18.0" prefWidth="228.0" text="Don't show this window again." GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <Button fx:id="idDelSettingsButton" mnemonicParsing="false" onAction="#handleDelSettingsButtonAction" text="Delete Saved Settings" GridPane.columnIndex="4" GridPane.rowIndex="10" />
+                              <CheckBox fx:id="idOpenConsoleOnLaunchCheckBox" mnemonicParsing="false" onAction="#handleOpenConsoleOnLaunchCheckBoxAction" text="Open Console on Launch" GridPane.rowIndex="5" />
+                              <CheckBox fx:id="drawFocusTreesCheckBox" mnemonicParsing="false" onAction="#handleDrawFocusTreesCheckBoxAction" text="Draw Focus Trees" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <CheckBox fx:id="idDemoModeCheckBox" mnemonicParsing="false" onAction="#handleDemoModeCheckBoxAction" text="Demo Mode" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                              <Label text="Hearts of Iron IV Folder:" GridPane.rowIndex="3" />
+                              <TextField fx:id="HOI4PathTextField" onAction="#handleHOI4PathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/mod/directory" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                              <Button fx:id="hoi4FolderBrowseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHOI4FileBrowseAction" prefHeight="25.0" prefWidth="70.0" text="Browse" GridPane.columnIndex="5" GridPane.rowIndex="3" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -149,37 +99,27 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Accordion layoutX="122.0" layoutY="75.0" AnchorPane.bottomAnchor="0.0"
-                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                           AnchorPane.topAnchor="0.0">
+                        <Accordion layoutX="122.0" layoutY="75.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <panes>
                               <TitledPane animated="false" text="General">
                                  <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
-                                       prefWidth="200.0" />
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                                  </content>
                               </TitledPane>
                               <TitledPane animated="false" text="Window">
                                  <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
-                                       prefWidth="200.0">
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
                                           <GridPane AnchorPane.leftAnchor="2.0">
                                              <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
-                                                   prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
-                                                   prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                              </columnConstraints>
                                              <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                   vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                   vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                   vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                   vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
                                                 <Label text="Panning" />
@@ -191,8 +131,7 @@
                               </TitledPane>
                               <TitledPane animated="false" text="untitled 3">
                                  <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
-                                       prefWidth="200.0" />
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                                  </content>
                               </TitledPane>
                            </panes>
@@ -203,9 +142,7 @@
             </Tab>
          </tabs>
       </TabPane>
-      <Button fx:id="idOkButton" disable="true" maxWidth="1.7976931348623157E308"
-         mnemonicParsing="false" onAction="#handleOkButtonAction" text="Ok"
-         GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+      <Button fx:id="idOkButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleOkButtonAction" text="Ok" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>

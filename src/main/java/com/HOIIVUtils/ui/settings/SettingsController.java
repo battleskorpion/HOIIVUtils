@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import static com.HOIIVUtils.hoi4utils.Settings.HOI4_PATH;
 import static com.HOIIVUtils.hoi4utils.Settings.MOD_PATH;
 
 /**
@@ -36,11 +37,15 @@ public class SettingsController extends Application implements FXWindow {
 	@FXML
 	public Label idVersionLabel;
 	@FXML
-	public TextField idModPathTextField;
+	public TextField modPathTextField;
+	@FXML
+	public TextField HOI4PathTextField;
 	@FXML
 	public Label idHOIIVModFolderLabel;
 	@FXML
-	public Button idBrowseButton;
+	public Button modFolderBrowseButton;
+	@FXML
+	public Button hoi4FolderBrowseButton;
 	@FXML
 	public CheckBox devModeCheckBox;
 	@FXML
@@ -72,15 +77,18 @@ public class SettingsController extends Application implements FXWindow {
 
 		// If there is saved settings, load them into the settings window
 		if (Boolean.FALSE.equals(HOIIVUtils.firstTimeSetup)) {
+			// who wrote it in this order lmao
 			if (!"null".equals(MOD_PATH.getSetting())) {
-				idModPathTextField.setText((String) MOD_PATH.getSetting());
+				modPathTextField.setText((String) MOD_PATH.getSetting());
+			}
+			if (!"null".equals(HOI4_PATH.getSetting())) {
+				HOI4PathTextField.setText((String) HOI4_PATH.getSetting());
 			}
 			devModeCheckBox.setSelected(Settings.DEV_MODE.enabled());
 			drawFocusTreesCheckBox.setSelected(Settings.DRAW_FOCUS_TREE.enabled());
 			idDemoModeCheckBox.setSelected(Settings.DEMO_MODE.enabled());
 			if (idDemoModeCheckBox.isSelected()) {
-				idBrowseButton.setDisable(true);
-				idModPathTextField.setDisable(true);
+				setDisablePathSelection(true);
 			}
 			idOpenConsoleOnLaunchCheckBox.setSelected(Settings.OPEN_CONSOLE_ON_LAUNCH.enabled());
 			idSkipSettingsCheckBox.setSelected(Settings.SKIP_SETTINGS.enabled());
@@ -112,6 +120,13 @@ public class SettingsController extends Application implements FXWindow {
 			}
 		});
 
+	}
+
+	private void setDisablePathSelection(boolean value) {
+		modFolderBrowseButton.setDisable(value);
+		modPathTextField.setDisable(value);
+		hoi4FolderBrowseButton.setDisable(value);
+		HOI4PathTextField.setDisable(value);
 	}
 
 	public void launchSettingsWindow(String[] args) {
@@ -196,39 +211,28 @@ public class SettingsController extends Application implements FXWindow {
 		idOkButton.setDisable(true);
 	}
 
+	// todo fix the spelling an grammar :(
 	/**
 	 * User Interactive Text Feild in Settings Window Allows the user to type in the text field. It
 	 * detects whever the user entered a valid directory. Saves the directory path to hoi4utils
 	 * settings: MOD_PATH
 	 */
 	public void handleModPathTextField() {
-		if (modPathIsDirectory()) {
-			if (idOkButton.isDisabled()) {
-				enableOkButton();
-			}
-		} else {
-			disableOkButton();
-		}
-		String pathText = idModPathTextField.getText();
-		if (pathText.isEmpty()) {
-			pathText = null;
-		}
-		tempSettings.put(MOD_PATH, pathText);
+		String pathText = modPathTextField.getText();
+		if (pathText.isEmpty()) return;
+
+		File modFile = new File(pathText);
+		setFolderSettingIfValid(modFile, MOD_PATH);
 	}
 
-	/**
-	 * returns true if the mod path in mod path text field is a directory path that exists.
-	 * 
-	 * @return
-	 */
-	public boolean modPathIsDirectory() {
-		File fileModPath = new File(idModPathTextField.getText());
-		boolean exists = fileModPath.exists();
-		if (!exists) {
-			return false;
-		}
-		return fileModPath.isDirectory();
+	public void handleHOI4PathTextField() {
+		String pathText = HOI4PathTextField.getText();
+		if (pathText.isEmpty()) return;
+
+		File modFile = new File(pathText);
+		setFolderSettingIfValid(modFile, HOI4_PATH);
 	}
+
 
 	/**
 	 * Handles the action of the delete settings button being clicked. This deletes all the settings and
@@ -258,7 +262,8 @@ public class SettingsController extends Application implements FXWindow {
 	 */
 	private void setDefault() {
 		// Clear the mod path text field
-		idModPathTextField.clear();
+		modPathTextField.clear();
+		HOI4PathTextField.clear();
 		// Set the checkboxes to their default values
 		devModeCheckBox.setSelected(false);
 		drawFocusTreesCheckBox.setSelected(true);
@@ -275,30 +280,24 @@ public class SettingsController extends Application implements FXWindow {
 	 * nothing if the user exits or cancels window Updates Text Field when directory is selected Saves
 	 * the directory path to MOD_PATH
 	 */
-	public void handleBrowseAction() {
-		File initialModPath = new File(FileUtils.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
+	public void handleModFileBrowseAction() {
+		File modFile = new File(FileUtils.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
 
-		File selectedDirectory = openChooser(idBrowseButton, true, initialModPath); // ! im making this pass any class
-																					// (that is a "Node" at least, bc
-																					// that makes sense, something that
-																					// can go on a fxwindow I think),
-																					// much welcome :D
-		if (selectedDirectory == null) {
-			return;
-		}
-		idModPathTextField.setText(selectedDirectory.getAbsolutePath());
-		updateModPath(selectedDirectory);
+		modFile = openChooser(modFolderBrowseButton, modFile, true);
+		if (modFile == null) return;
+		modPathTextField.setText(modFile.getAbsolutePath());
+		setFolderSettingIfValid(modFile, MOD_PATH);
 	}
 
-	public void updateModPath(File selectedDirectory) {
-		if (modPathIsDirectory()) {
-			if (idOkButton.isDisabled()) {
-				enableOkButton();
-			}
-		} else {
-			disableOkButton();
-		}
-		tempSettings.put(MOD_PATH, selectedDirectory.getAbsolutePath());
+	public void handleHOI4FileBrowseAction() {
+		File hoi4File = FileUtils.ProgramFilesX86 == null
+				? null
+				: new File(FileUtils.ProgramFilesX86 + File.separator + FileUtils.steamHOI4LocalPath);
+
+		hoi4File = openChooser(hoi4FolderBrowseButton, hoi4File, true);
+		if (hoi4File == null) return;
+		HOI4PathTextField.setText(hoi4File.getAbsolutePath());
+		setFolderSettingIfValid(hoi4File, HOI4_PATH);
 	}
 
 	public void handleDevModeCheckBoxAction() {
@@ -321,12 +320,10 @@ public class SettingsController extends Application implements FXWindow {
 		updateTempSetting(Settings.DEMO_MODE, idDemoModeCheckBox.isSelected());
 
 		if (idDemoModeCheckBox.isSelected()) {
-			idBrowseButton.setDisable(true);
-			idModPathTextField.setDisable(true);
+			setDisablePathSelection(true);
 			enableOkButton();
 		} else {
-			idBrowseButton.setDisable(false);
-			idModPathTextField.setDisable(false);
+			setDisablePathSelection(false);
 			disableOkButton();
 		}
 	}
@@ -400,6 +397,15 @@ public class SettingsController extends Application implements FXWindow {
 		}
 		// Return true if the settings were updated and saved successfully, false if not
 		return true;
+	}
+
+	private void setFolderSettingIfValid(File file, Settings modPath) {
+		if (file.exists() && file.isDirectory()) {
+			enableOkButton();
+			tempSettings.put(modPath, file.getAbsolutePath());
+		} else {
+			disableOkButton();
+		}
 	}
 
 	/* from HOIIVUtilsStageLoader but can only extend one class */

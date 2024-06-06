@@ -34,20 +34,21 @@ public interface FXWindow {
 	 *                         the chooser, must belong to a scene
 	 * @param initialDirectory The initial directory of the file chooser, instead of
 	 *                         the default user directory.
+	 *                         If null, the initial directory will not be specified.
 	 * @param ford             A quirky boolean that specifies whether you want to
 	 *                         return a directory or file: true = return directory,
 	 *                         false = return file
 	 * @return theChosenOne, It is up to the the page to handle what you do if the
-	 *         user returns a null
+	 * user returns a null
 	 * @see File
 	 * @see Node
 	 */
-	default File openChooser(Node fxcomponent, boolean ford, File initialDirectory) {
+	default File openChooser(Node fxcomponent, File initialDirectory, boolean ford) {
 		File theChosenOne;
 		Stage stage = (Stage) (fxcomponent.getScene().getWindow());
 		if (ford) {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
-			if (initialDirectory.exists() && initialDirectory.isDirectory()) {
+			if (initialDirectory != null && initialDirectory.exists() && initialDirectory.isDirectory()) {
 				directoryChooser.setInitialDirectory(initialDirectory);
 			} else {
 				directoryChooser.setInitialDirectory(FileUtils.usersDocuments);
@@ -55,7 +56,7 @@ public interface FXWindow {
 			theChosenOne = directoryChooser.showDialog(stage);
 		} else {
 			FileChooser fileChooser = new FileChooser();
-			if (initialDirectory.exists() && initialDirectory.isDirectory()) {
+			if (initialDirectory != null && initialDirectory.exists() && initialDirectory.isDirectory()) {
 				fileChooser.setInitialDirectory(initialDirectory);
 			} else {
 				fileChooser.setInitialDirectory(FileUtils.usersDocuments);
@@ -80,7 +81,7 @@ public interface FXWindow {
 	 * @see Node
 	 */
 	default File openChooser(Node fxcomponent, Boolean ford) {
-		return openChooser(fxcomponent, ford, FileUtils.usersDocuments);
+		return openChooser(fxcomponent, FileUtils.usersDocuments, ford);
 	}
 
 	static void openGlobalErrorWindow(String s) {

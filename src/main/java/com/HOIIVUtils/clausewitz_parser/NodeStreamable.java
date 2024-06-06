@@ -37,4 +37,5 @@ public interface NodeStreamable<NodeType extends Node> {
 		return !filter(str).toList().isEmpty();
 	}
 
+	boolean anyMatch(Predicate<? super NodeType> predicate);
 }

@@ -129,7 +129,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void carraigeReturnTest() {
+	public void commentTest() {
 		Parser parser;
 		Node n;
 		try {
@@ -141,7 +141,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void carraigeReturnTest2() {
+	public void commentTest2() {
 		Parser parser;
 		Node n;
 		try {
@@ -152,6 +152,23 @@ public class ParserTest {
 				assert !node.name().contains("\r");
 				assert !node.value().asString().contains("\r");
 			});
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Test
+	public void commentTest3() {
+		Parser parser;
+		Node n;
+		try {
+			parser = new Parser(new File(test_path + "specialinfantry.txt"));
+			n = parser.parse();
+			assert n.contains("sub_units");
+			// mobenforcer should be a sub unit
+			assert n.findFirst("sub_units").contains("mobenforcer");
+			// mobenforcer should have sprite
+			assert n.findFirst("sub_units").findFirst("mobenforcer").contains("sprite");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

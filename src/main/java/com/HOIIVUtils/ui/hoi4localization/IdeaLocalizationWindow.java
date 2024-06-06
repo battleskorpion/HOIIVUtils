@@ -75,8 +75,8 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
     }
 
     public void handleIdeaFileBrowseButtonAction() {
-        File initialIdeaDirectory = HOIIVFile.ideas_folder;
-        File selectedFile = openChooser(ideaFileBrowseButton, false, initialIdeaDirectory);
+        File initialIdeaDirectory = HOIIVFile.mod_ideas_folder;
+        File selectedFile = openChooser(ideaFileBrowseButton, initialIdeaDirectory, false);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }
@@ -91,8 +91,8 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
     }
 
     public void handleIdeaLocFileBrowseButtonAction() {
-        File initialIdeaLocDirectory = HOIIVFile.localization_eng_folder;
-        File selectedFile = openChooser(ideaLocFileBrowseButton, false, initialIdeaLocDirectory);
+        File initialIdeaLocDirectory = HOIIVFile.mod_localization_eng_folder;
+        File selectedFile = openChooser(ideaLocFileBrowseButton, initialIdeaLocDirectory, false);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }

@@ -18,7 +18,7 @@ public class AATUpdateUtils {
     static double MULTIPLIER = 3.00;
 
     public static void fixconsumergoodsfactor() {
-        File ideadirectory = HOIIVFile.ideas_folder;
+        File ideadirectory = HOIIVFile.mod_ideas_folder;
         for (File ideaFile : ideadirectory.listFiles()) {
             if (ideaFile.isDirectory()) {
                 continue;

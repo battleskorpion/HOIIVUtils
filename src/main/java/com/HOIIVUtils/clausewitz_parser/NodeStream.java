@@ -129,4 +129,9 @@ public class NodeStream<T extends Node> implements NodeStreamable<T> {
 	public NodeStreamable<T> filter(String str) {
 		return filterName(str);
 	}
+
+	@Override
+	public boolean anyMatch(Predicate<? super T> predicate) {
+		return stream.anyMatch(predicate);
+	}
 }
