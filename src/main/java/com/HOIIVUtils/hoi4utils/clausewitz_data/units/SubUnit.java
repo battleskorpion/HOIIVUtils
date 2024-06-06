@@ -14,6 +14,7 @@ import java.util.function.Function;
  * Unit File
  */
 public record SubUnit(
+		String identifier,
 		String abbreviation,
 		String sprite,
 		String mapIconCategory,
@@ -60,6 +61,7 @@ public record SubUnit(
 			for (Node subUnitNode : l) {
 //				System.out.println("subUnitNode: " + subUnitNode.name());
 				SubUnit subUnit = new SubUnit(
+						subUnitNode.name(),
 						subUnitNode.getValue("abbreviation").string(),
 						subUnitNode.getValue("sprite").string(),
 						subUnitNode.getValue("map_icon_category").string(),
@@ -87,8 +89,9 @@ public record SubUnit(
 	}
 
 	public static List<Function<SubUnit, ?>> getDataFunctions() {
-		List<Function<SubUnit, ?>> dataFunctions = new ArrayList<>(15);
+		List<Function<SubUnit, ?>> dataFunctions = new ArrayList<>(16);
 
+		dataFunctions.add(SubUnit::identifier);
 		dataFunctions.add(SubUnit::abbreviation);
 		dataFunctions.add(SubUnit::sprite);
 		dataFunctions.add(SubUnit::mapIconCategory);
@@ -104,7 +107,28 @@ public record SubUnit(
 		dataFunctions.add(SubUnit::trainingTime);
 		dataFunctions.add(SubUnit::weight);
 		dataFunctions.add(SubUnit::supplyConsumption);
-
 		return dataFunctions;
 	}
+
+	public static List<String> getDataLabels() {
+		List<String> dataFunctionLabels = new ArrayList<>(16);
+
+		dataFunctionLabels.add("Subunit");
+		dataFunctionLabels.add("Abbreviation");
+		dataFunctionLabels.add("Sprite");
+		dataFunctionLabels.add("Map Icon Category");
+		dataFunctionLabels.add("Priority");
+		dataFunctionLabels.add("AI Priority");
+		dataFunctionLabels.add("Active");
+		dataFunctionLabels.add("Group");
+		dataFunctionLabels.add("Combat Width");
+		dataFunctionLabels.add("Manpower");
+		dataFunctionLabels.add("Max Organization");
+		dataFunctionLabels.add("Default Morale");
+		dataFunctionLabels.add("Max Strength");
+		dataFunctionLabels.add("Training Time");
+		dataFunctionLabels.add("Weight");
+		dataFunctionLabels.add("Supply Consumption");
+        return dataFunctionLabels;
+    }
 }

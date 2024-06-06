@@ -10,6 +10,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
@@ -58,13 +60,33 @@ public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
         AnchorPane.setBottomAnchor(unitsDiffViewPane, 0.0);
         AnchorPane.setLeftAnchor(unitsDiffViewPane, 0.0);
         AnchorPane.setRightAnchor(unitsDiffViewPane, 0.0);
+
+        // add data!
+        List<String> customUnitText = new ArrayList<>();
+        for (int i = 0; i < customUnits.size(); i++) {    //84 bad
+            SubUnit unit = customUnits.get(i);
+            appendUnitDetails(customUnitText, unit);
+            customUnitText.add("");
+        }
+        List<String> baseUnitText = new ArrayList<>();
+        baseUnitText.add("test temp");
+        baseUnitText.add("2");
+        baseUnitText.add("test temp 2");
+        // append
+        unitsDiffViewPane.setData(customUnitText, baseUnitText);
     }
 
-    private void appendUnitDetails(TextArea unitTextArea, SubUnit unit) {
+    private void appendUnitDetails(Collection<String> unitText, SubUnit unit) {
         var df = SubUnit.getDataFunctions();
-        for (var f : df) {
-            var data = f.apply(unit);
-            unitTextArea.appendText(data == null ? "[null]\n" : data + "\n");
+        var dfl = SubUnit.getDataLabels();
+        int maxLabelWidth = dfl.stream().mapToInt(String::length).max().orElse(0);
+        for (int i = 0; i < df.size(); i++) {
+            var data = df.get(i).apply(unit);
+            var dataLabel = dfl.get(i);
+            var spacing = " ".repeat(maxLabelWidth - dataLabel.length());
+            var str = dataLabel + ": " + spacing + (data == null ? "[null]" : data + "");
+            unitText.add(str);
+            //System.out.println(str + " [" + str.length() + "]");
         }
     }
 }

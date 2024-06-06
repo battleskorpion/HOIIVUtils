@@ -335,7 +335,6 @@
      background-color: #4e4e4e;
 }
 
-
 /* TextArea */
 .text-area{
     -fx-background-radius: 0;
@@ -352,6 +351,30 @@
     -fx-fill: #AFB1B3;
     fill: #AFB1B3;
 }
+
+.text-area .text {
+    -fx-fill: #AFB1B3; /* Text color explicitly (to fix RichTextFX text) */
+}
+
+.text-area .delete {
+    -fx-fill: #ff0000; /* Red for deletions */
+    -fx-background-color: #ffe6e6; /* Light red background for deletions */
+}
+
+.text-area .insert {
+    -fx-fill: #008000; /* Green for insertions */
+    -fx-background-color: #e6ffe6; /* Light green background for insertions */
+}
+
+.text-area .change {
+    -fx-fill: #ffa500; /* Orange for changes */
+    -fx-background-color: #fff3e6; /* Light orange background for changes */
+}
+
+.text-area .unchanged {
+    -fx-fill: #AFB1B3;
+}
+
 .text-area:hover{
     -fx-border-color: #3E3E40;
     border-color: #3E3E40;

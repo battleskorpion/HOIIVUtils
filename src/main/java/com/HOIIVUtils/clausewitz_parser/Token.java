@@ -19,7 +19,7 @@ public class Token {
 
 
 	static {
-		tokenRegex.put(TokenType.comment, Pattern.compile("#.*(?:[\\r\\n]|$)")); // Nullifies Comments
+		tokenRegex.put(TokenType.comment, Pattern.compile("#.*")); // Nullifies Comments  // prev: "#.*(?:[\r\n]|$)"
 		tokenRegex.put(TokenType.symbol, Pattern.compile("(?:\\d+\\.)?[a-zA-Z_@\\[\\]][\\w:.@\\[\\]\\-?^/\\u00A0-\\u024F]*")); // Symbol
 		tokenRegex.put(TokenType.operator, Pattern.compile("[={}<>;,]|>=|<=|!=")); // Seperates Operators
 		tokenRegex.put(TokenType.string, Pattern.compile("\"(\\\\.|[^\"])*\"")); // Seperates Double Quotes

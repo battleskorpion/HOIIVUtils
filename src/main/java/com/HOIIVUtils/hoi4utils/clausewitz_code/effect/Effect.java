@@ -178,7 +178,7 @@ public class Effect implements EffectParameter, Cloneable {
 			for (Node n : Objects.requireNonNull(list)) {
 				NodeValue v = n.value();
 				if (!v.isList()) {
-					Parameter p = Parameter.of(n.name, v);
+					Parameter p = Parameter.of(n.name(), v);
 					if (p == null) {
 						/*
 						 * this is done here (rather than impl with Parameter) as effects need the scope
@@ -188,9 +188,9 @@ public class Effect implements EffectParameter, Cloneable {
 						 */
 						Effect subeffect;
 						if (Scope.of(this) != null) {
-							subeffect = Effect.of(n.name, Scope.of(this), v);
+							subeffect = Effect.of(n.name(), Scope.of(this), v);
 						} else {
-							subeffect = Effect.of(n.name, this.withinScope(), v);
+							subeffect = Effect.of(n.name(), this.withinScope(), v);
 						}
 						if (subeffect != null) {
 							parameters.add(subeffect);
@@ -198,7 +198,7 @@ public class Effect implements EffectParameter, Cloneable {
 							if (excMessage.isEmpty())
 								excMessage.append("In Effect ").append(this.name()).append(": ");
 							excMessage.append("\n\t").append("Effect parameter invalid or effect unknown, effect: ")
-									.append(n.name)
+									.append(n.name())
 									.append(", value: ").append(v.asString());
 						}
 					} else {
@@ -213,18 +213,18 @@ public class Effect implements EffectParameter, Cloneable {
 					 */
 					Effect subeffect;
 					if (Scope.of(this) != null) {
-						subeffect = Effect.of(n.name, Scope.of(this), v);
+						subeffect = Effect.of(n.name(), Scope.of(this), v);
 					} else {
-						subeffect = Effect.of(n.name, this.withinScope(), v);
+						subeffect = Effect.of(n.name(), this.withinScope(), v);
 					}
 					if (subeffect != null) {
 						parameters.add(subeffect);
-					} else if (!Parameter.isParameter(n.name, v)) {
+					} else if (!Parameter.isParameter(n.name(), v)) {
 						if (excMessage.isEmpty())
 							excMessage.append("In Effect ").append(this.name()).append(": ");
-						excMessage.append("\n\t").append("Effect parameter unknown: ").append(n.name);
+						excMessage.append("\n\t").append("Effect parameter unknown: ").append(n.name());
 					} else {
-						Parameter p = Parameter.of(n.name, v);
+						Parameter p = Parameter.of(n.name(), v);
 						parameters.add(p);
 					}
 				}

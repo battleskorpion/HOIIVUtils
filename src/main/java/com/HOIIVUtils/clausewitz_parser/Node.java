@@ -10,16 +10,16 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class Node implements NodeStreamable<Node> {
-	public static BoolType boolType;
-    public String name;
-	public String operator;
+	static BoolType boolType;
+    String name;
+	String operator;
 
 	/* never null, stores null */
 	@NotNull private final NodeValue value;
-	public SymbolNode valueAttachment;
-	public Token valueAttachmentToken;
-	public Token nameToken;
-	public Token operatorToken;
+	SymbolNode valueAttachment;
+	Token valueAttachmentToken;
+	Token nameToken;
+	Token operatorToken;
 
 	public Node (String name, String operator, NodeValue value, SymbolNode valueAttachment,
 	             Token valueAttachmentToken, Token nameToken, Token operatorToken) {

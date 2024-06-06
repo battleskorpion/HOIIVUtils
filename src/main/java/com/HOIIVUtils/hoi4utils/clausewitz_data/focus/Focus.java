@@ -267,7 +267,7 @@ public class Focus implements Localizable, Comparable<Focus> {
 	 * @param exp Node representing focus - must include "focus".
 	 */
 	public void loadAttributes(Node exp) {
-		if (!exp.name.equals("focus")) {
+		if (!exp.name().equals("focus")) {
 			System.err.println(this + " - Not valid focus expression/definition.");
 			return;
 		}
@@ -1054,7 +1054,7 @@ public class Focus implements Localizable, Comparable<Focus> {
 					// was defined but had no effects
 		}
 
-		String cr_identifier = completionRewardNode.name;
+		String cr_identifier = completionRewardNode.name();
 
 		setCompletionRewardsOfNode(completionRewardNode);
 	}
@@ -1077,11 +1077,11 @@ public class Focus implements Localizable, Comparable<Focus> {
 				// // todo could this be handled better more generically with some other unique
 				// scoping stuff like country tags like.... ? ....
 				Scope s = null;
-				if (CountryTags.exists(n.name)) {
-					s = Scope.of(CountryTags.get(n.name));
+				if (CountryTags.exists(n.name())) {
+					s = Scope.of(CountryTags.get(n.name()));
 				} else {
 					try {
-						s = Scope.of(n.name, scope);
+						s = Scope.of(n.name(), scope);
 					} catch (NotPermittedInScopeException e) {
 						System.out.println(e.getMessage());
 						break;
@@ -1093,16 +1093,16 @@ public class Focus implements Localizable, Comparable<Focus> {
 					// todo refactor area
 					Effect effect = null;
 					try {
-						effect = Effect.of(n.name, scope, n.value());
+						effect = Effect.of(n.name(), scope, n.value());
 					} catch (InvalidEffectParameterException exc) {
 						System.out.println(exc.getMessage());
 					} catch (NotPermittedInScopeException exc) {
-						System.out.println(exc.getMessage() + ", scope: " + scope + ", list? " + n.name);
+						System.out.println(exc.getMessage() + ", scope: " + scope + ", list? " + n.name());
 					}
 					if (effect != null) {
 						completionReward.add(effect);
 					} else {
-						System.out.println("Scope " + n.name + " unknown.");
+						System.out.println("Scope " + n.name() + " unknown.");
 					}
 				} else {
 					setCompletionRewardsOfNode(n, s);
@@ -1112,14 +1112,14 @@ public class Focus implements Localizable, Comparable<Focus> {
 				/* else if target, add effect with target */
 				Effect effect = null; // todo
 				try {
-					effect = Effect.of(n.name, scope, n.value());
+					effect = Effect.of(n.name(), scope, n.value());
 				} catch (InvalidEffectParameterException e) {
 					System.out.println(e.getMessage());
 				} catch (NotPermittedInScopeException e) {
 					System.out.println(e.getMessage() + ", scope: " + scope);
 				}
 				if (effect == null) {
-					System.err.println("effect not found: " + n.name);
+					System.err.println("effect not found: " + n.name());
 					continue;
 				}
 				if (effect.hasSupportedTargets()) {
@@ -1138,13 +1138,13 @@ public class Focus implements Localizable, Comparable<Focus> {
 				/* else add effect */
 				Effect effect = null; // todo
 				try {
-					effect = Effect.of(n.name, scope);
+					effect = Effect.of(n.name(), scope);
 				} catch (NotPermittedInScopeException e) {
 					System.out.println(e.getMessage());
 					continue;
 				}
 				if (effect == null) {
-					System.err.println("effect not found: " + n.name);
+					System.err.println("effect not found: " + n.name());
 					continue;
 				}
 				effect.setTarget(scope);

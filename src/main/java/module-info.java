@@ -12,6 +12,7 @@ module com.HOIIVUtils {
     requires org.xerial.sqlitejdbc;
     requires io.github.javadiffutils;
     requires org.fxmisc.richtext;
+    requires reactfx;
 
     opens com.HOIIVUtils.ui to javafx.fxml;
     opens com.HOIIVUtils.ui.buildings to javafx.fxml;

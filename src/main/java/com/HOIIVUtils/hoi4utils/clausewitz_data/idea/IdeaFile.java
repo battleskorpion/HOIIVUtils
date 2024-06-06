@@ -89,7 +89,7 @@ public class IdeaFile extends File {
 			if (ideasInCategoryList == null) {
 				continue;
 			}
-			String ideaCategory = ideaCategoryNode.name;
+			String ideaCategory = ideaCategoryNode.name();
 			for (Node ideaExp : ideasInCategoryList) {
 				Idea idea;
 
