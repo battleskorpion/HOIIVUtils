@@ -1,22 +1,22 @@
 package com.HOIIVUtils.ui.javafx;
 
 import com.github.difflib.DiffUtils;
-import com.github.difflib.patch.AbstractDelta;
 import com.github.difflib.patch.Chunk;
 import com.github.difflib.patch.Patch;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.fxml.FXML;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.poi.ss.formula.functions.Delta;
 import org.fxmisc.richtext.InlineCssTextArea;
-import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 
 /**
@@ -73,7 +73,31 @@ public class DiffViewPane extends AnchorPane {
         leftTextArea.setWrapText(false);
         rightTextArea.setWrapText(false);
         // merge left-right scrolling
-        leftTextArea.estimatedScrollYProperty().bindBidirectional(rightTextArea.estimatedScrollYProperty());
+//        leftTextArea.estimatedScrollYProperty().bindBidirectional(rightTextArea.estimatedScrollYProperty()); //this sucks probably because of the 'estimated' part
+//        leftTextArea.setSnapToPixel(true);
+//        rightTextArea.setSnapToPixel(true);
+        // added random code until something finally worked :D
+        ScrollBar rightScrollBar = new ScrollBar();
+        rightScrollBar.setOrientation(Orientation.VERTICAL);
+        rightPane.getChildren().add(rightScrollBar);
+        AnchorPane.setTopAnchor(rightScrollBar, 0.0);
+        AnchorPane.setBottomAnchor(rightScrollBar, 0.0);
+        AnchorPane.setRightAnchor(rightScrollBar, 0.0);
+
+        // add listener to update scroll bar
+        ChangeListener<Number> scrollListener = (observable, oldValue, newValue) -> {
+            rightScrollBar.setValue(newValue.doubleValue());
+        };
+        leftTextArea.estimatedScrollYProperty().addListener(scrollListener);
+        rightTextArea.estimatedScrollYProperty().addListener(scrollListener);
+        rightScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+            leftTextArea.scrollYToPixel(newValue.doubleValue());
+            rightTextArea.scrollYToPixel(newValue.doubleValue());
+        });
+        rightScrollBar.maxProperty().bind(Bindings.createDoubleBinding(
+                () -> Math.max(leftTextArea.totalHeightEstimateProperty().getOrElse(0.0),
+                        rightTextArea.totalHeightEstimateProperty().getOrElse(0.0)),
+                leftTextArea.totalHeightEstimateProperty(), rightTextArea.totalHeightEstimateProperty()));
     }
 
     public void setData(Collection<String> leftData, Collection<String> rightData) {
@@ -159,5 +183,4 @@ public class DiffViewPane extends AnchorPane {
         leftTextArea.setStyleSpans(leftTitleLength - 1, leftSpansBuilder.create());
         rightTextArea.setStyleSpans(rightTitleLength - 1, rightSpansBuilder.create());
     }
-
 }

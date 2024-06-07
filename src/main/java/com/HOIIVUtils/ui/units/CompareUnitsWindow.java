@@ -34,24 +34,6 @@ public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
         List<SubUnit> customUnits = SubUnit.read(HOIIVFile.mod_units_folder);
         List<SubUnit> baseUnits = SubUnit.read(HOIIVFile.hoi4_units_folder);
 
-//        for (int i = 0; i < customUnits.size(); i++) {
-//            SubUnit unit = customUnits.get(i);
-//            TextArea customUnitTextArea = new TextArea();
-//            customUnitTextArea.appendText("Custom Unit\n");
-//            customUnitTextArea.appendText("details\n");
-//            appendUnitDetails(customUnitTextArea, unit);
-//            //customUnitTextArea.setPrefHeight(30);
-//            customUnitTextArea.setPrefWidth(Region.USE_COMPUTED_SIZE);
-//            customUnitTextArea.setPrefHeight(Region.USE_COMPUTED_SIZE);
-//            CustomUnitDetailsPane.addRow(i, customUnitTextArea);
-//            CustomUnitDetailsPane.setPrefWidth(Region.USE_COMPUTED_SIZE);
-//        }
-//
-//        TextArea baseUnitTextArea = new TextArea();
-//        baseUnitTextArea.appendText("Base Unit\n");
-//        baseUnitTextArea.appendText("details\n");
-//        BaseUnitDetailsPane.addRow(0, baseUnitTextArea);
-
         unitsDiffViewPane = new DiffViewPane("Custom Unit Details", "Base Unit Details");
         rootAnchorPane.getChildren().add(unitsDiffViewPane);
         // set anchors
@@ -60,17 +42,23 @@ public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
         AnchorPane.setLeftAnchor(unitsDiffViewPane, 0.0);
         AnchorPane.setRightAnchor(unitsDiffViewPane, 0.0);
 
-        // add data!
+        /* add data */
+        // custom unit
         List<String> customUnitText = new ArrayList<>();
         for (int i = 0; i < customUnits.size(); i++) {
             SubUnit unit = customUnits.get(i);
             appendUnitDetails(customUnitText, unit);
             customUnitText.add("");
         }
+        if (customUnits.isEmpty()) customUnitText.add("No custom units found");
+        // base unit
         List<String> baseUnitText = new ArrayList<>();
-        baseUnitText.add("test temp");
-        baseUnitText.add("2");
-        baseUnitText.add("test temp 2");
+        for (int i = 0; i < baseUnits.size(); i++) {
+            SubUnit unit = baseUnits.get(i);
+            appendUnitDetails(baseUnitText, unit);
+            baseUnitText.add("");
+        }
+        if (baseUnits.isEmpty()) baseUnitText.add("No base units found");
         // append
         unitsDiffViewPane.setData(customUnitText, baseUnitText);
     }
