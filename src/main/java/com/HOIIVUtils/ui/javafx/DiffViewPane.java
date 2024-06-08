@@ -1,155 +1,164 @@
 package com.HOIIVUtils.ui.javafx;
 
 import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.AbstractDelta;
 import com.github.difflib.patch.Chunk;
 import com.github.difflib.patch.Patch;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
-import javafx.fxml.FXML;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.fxmisc.richtext.InlineCssTextArea;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
-
 /**
  * DiffViewPane
- * <p>
+ * A pane to display differences between two sets of strings.
  */
 public class DiffViewPane extends AnchorPane {
-    private final InlineCssTextArea leftTextArea;
-    private final InlineCssTextArea rightTextArea;
+    private final ListView<String> leftListView;
+    private final ListView<String> rightListView;
     private final String leftTitle;
     private final String rightTitle;
-    SplitPane splitPane;
-    Collection<String> leftData;
-    Collection<String> rightData;
+    private final SplitPane splitPane;
+    private Collection<String> leftData;
+    private Collection<String> rightData;
 
     public DiffViewPane(String leftTitle, String rightTitle) {
-        super();
         this.leftTitle = leftTitle;
         this.rightTitle = rightTitle;
+
         splitPane = new SplitPane();
         this.getChildren().add(splitPane);
-        // anchor split pane
+        // Anchor split pane to all sides of the DiffViewPane
         AnchorPane.setTopAnchor(splitPane, 0.0);
         AnchorPane.setBottomAnchor(splitPane, 0.0);
         AnchorPane.setLeftAnchor(splitPane, 0.0);
         AnchorPane.setRightAnchor(splitPane, 0.0);
 
-        // split pane's anchor panes
+        // Create left and right anchor panes to hold ListViews
         AnchorPane leftPane = new AnchorPane();
         AnchorPane rightPane = new AnchorPane();
         splitPane.getItems().addAll(leftPane, rightPane);
 
-        // anchor pane text areas
-        leftTextArea = new InlineCssTextArea();
-        rightTextArea = new InlineCssTextArea();
-        leftPane.getChildren().add(leftTextArea);
-        rightPane.getChildren().add(rightTextArea);
-        // make the text areas use the .text-area css style
-        leftTextArea.getStyleClass().add("text-area");
-        rightTextArea.getStyleClass().add("text-area");
+        // Initialize ListViews for displaying diffs
+        leftListView = new ListView<>();
+        rightListView = new ListView<>();
+        leftPane.getChildren().add(leftListView);
+        rightPane.getChildren().add(rightListView);
 
-        // anchor text areas
-        AnchorPane.setTopAnchor(leftTextArea, 0.0);
-        AnchorPane.setBottomAnchor(leftTextArea, 0.0);
-        AnchorPane.setLeftAnchor(leftTextArea, 0.0);
-        AnchorPane.setRightAnchor(leftTextArea, 0.0);
-        AnchorPane.setTopAnchor(rightTextArea, 0.0);
-        AnchorPane.setBottomAnchor(rightTextArea, 0.0);
-        AnchorPane.setLeftAnchor(rightTextArea, 0.0);
-        AnchorPane.setRightAnchor(rightTextArea, 0.0);
-        // text area properties
-        leftTextArea.setEditable(false);
-        rightTextArea.setEditable(false);
-        leftTextArea.setWrapText(false);
-        rightTextArea.setWrapText(false);
-        // merge left-right scrolling
-//        leftTextArea.estimatedScrollYProperty().bindBidirectional(rightTextArea.estimatedScrollYProperty()); //this sucks probably because of the 'estimated' part
-//        leftTextArea.setSnapToPixel(true);
-//        rightTextArea.setSnapToPixel(true);
-        // added random code until something finally worked :D
-        ScrollBar rightScrollBar = new ScrollBar();
-        rightScrollBar.setOrientation(Orientation.VERTICAL);
-        rightPane.getChildren().add(rightScrollBar);
-        AnchorPane.setTopAnchor(rightScrollBar, 0.0);
-        AnchorPane.setBottomAnchor(rightScrollBar, 0.0);
-        AnchorPane.setRightAnchor(rightScrollBar, 0.0);
+        // Anchor ListViews to their respective panes
+        AnchorPane.setTopAnchor(leftListView, 0.0);
+        AnchorPane.setBottomAnchor(leftListView, 0.0);
+        AnchorPane.setLeftAnchor(leftListView, 0.0);
+        AnchorPane.setRightAnchor(leftListView, 0.0);
+        AnchorPane.setTopAnchor(rightListView, 0.0);
+        AnchorPane.setBottomAnchor(rightListView, 0.0);
+        AnchorPane.setLeftAnchor(rightListView, 0.0);
+        AnchorPane.setRightAnchor(rightListView, 0.0);
 
-        // add listener to update scroll bar
-        ChangeListener<Number> scrollListener = (observable, oldValue, newValue) -> {
-            rightScrollBar.setValue(newValue.doubleValue());
-        };
-        leftTextArea.estimatedScrollYProperty().addListener(scrollListener);
-        rightTextArea.estimatedScrollYProperty().addListener(scrollListener);
-        rightScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
-            leftTextArea.scrollYToPixel(newValue.doubleValue());
-            rightTextArea.scrollYToPixel(newValue.doubleValue());
-        });
-        rightScrollBar.maxProperty().bind(Bindings.createDoubleBinding(
-                () -> Math.max(leftTextArea.totalHeightEstimateProperty().getOrElse(0.0),
-                        rightTextArea.totalHeightEstimateProperty().getOrElse(0.0)),
-                leftTextArea.totalHeightEstimateProperty(), rightTextArea.totalHeightEstimateProperty()));
+        // Set ListViews as non-editable
+        leftListView.setEditable(false);
+        rightListView.setEditable(false);
+
+        // Bind scrolling of the left and right views
+        bindDiffViewScrolling();
     }
 
+    private void bindDiffViewScrolling() {
+        // wait until skin is attached to access the scrollbar
+        ChangeListener<Skin<?>> leftSkinChangeListener = new ChangeListener<>() {
+            @Override
+            public void changed(ObservableValue<? extends Skin<?>> observable, Skin<?> oldValue, Skin<?> newValue) {
+                leftListView.skinProperty().removeListener(this);
+                var leftScrollbar = getVerticalScrollBar(leftListView);
+                if (leftScrollbar == null) return;
+                leftScrollbar.setOpacity(0);
+                var rightScrollbar = getVerticalScrollBar(rightListView);
+                if (rightScrollbar == null) {
+                    // wait until right scrollbar is available
+                    rightListView.skinProperty().addListener((observableValue, oldSkin, newSkin) -> {
+                        rightListView.skinProperty().removeListener(this);
+                        var rightScrollbar2 = getVerticalScrollBar(rightListView);
+                        if (rightScrollbar2 != null) {
+                            leftScrollbar.valueProperty().bindBidirectional(rightScrollbar2.valueProperty());
+                        }
+                    });
+                } else {
+                    leftScrollbar.valueProperty().bindBidirectional(rightScrollbar.valueProperty());
+                }
+            }
+        };
+        leftListView.skinProperty().addListener(leftSkinChangeListener);
+    }
+
+    /**
+     * Sets the data to be compared and displays the diff.
+     *
+     * @param leftData  the original data
+     * @param rightData the modified data
+     */
     public void setData(Collection<String> leftData, Collection<String> rightData) {
         this.leftData = leftData;
         this.rightData = rightData;
         displayDiff();
     }
 
+    /**
+     * Display the diff between the left and right data.
+     */
     private void displayDiff() {
         List<String> leftLines = (leftData != null) ? List.copyOf(leftData) : Collections.emptyList();
         List<String> rightLines = (rightData != null) ? List.copyOf(rightData) : Collections.emptyList();
         Patch<String> patch = DiffUtils.diff(leftLines, rightLines);
 
-        StyleSpansBuilder<String> leftSpansBuilder = new StyleSpansBuilder<>();
-        StyleSpansBuilder<String> rightSpansBuilder = new StyleSpansBuilder<>();
+        ObservableList<String> leftItems = FXCollections.observableArrayList();
+        ObservableList<String> rightItems = FXCollections.observableArrayList();
 
         int leftIndex = 0;
         int rightIndex = 0;
-        for (var delta : patch.getDeltas()) {
+
+        for (AbstractDelta<String> delta : patch.getDeltas()) {
             Chunk<String> leftChunk = delta.getSource();
             Chunk<String> rightChunk = delta.getTarget();
 
             // Add unchanged lines before the current delta
             while (leftIndex < leftChunk.getPosition()) {
-                leftSpansBuilder.add("-fx-font-family: monospace", leftLines.get(leftIndex).length() + 1);
-                rightSpansBuilder.add("-fx-font-family: monospace", rightLines.get(rightIndex).length() + 1);
+                leftItems.add(leftLines.get(leftIndex));
+                rightItems.add(rightLines.get(rightIndex));
                 leftIndex++;
                 rightIndex++;
             }
 
+            // Handle the different types of changes
             switch (delta.getType()) {
                 case DELETE:
                     for (String line : leftChunk.getLines()) {
-                        leftSpansBuilder.add("-fx-font-family: monospace", line.length() + 1);
-                        rightSpansBuilder.add("-fx-font-family: monospace", 0);
+                        leftItems.add("- " + line);
+                        rightItems.add("");
                         leftIndex++;
                     }
                     break;
                 case INSERT:
                     for (String line : rightChunk.getLines()) {
-                        leftSpansBuilder.add("-fx-font-family: monospace", 0);
-                        rightSpansBuilder.add("-fx-font-family: monospace", line.length() + 1);
+                        leftItems.add("");
+                        rightItems.add("+ " + line);
                         rightIndex++;
                     }
                     break;
                 case CHANGE:
                     for (String line : leftChunk.getLines()) {
-                        leftSpansBuilder.add("-fx-font-family: monospace", line.length() + 1);
+                        leftItems.add("- " + line);
                         leftIndex++;
                     }
                     for (String line : rightChunk.getLines()) {
-                        rightSpansBuilder.add("-fx-font-family: monospace", line.length() + 1);
+                        rightItems.add("+ " + line);
                         rightIndex++;
                     }
                     break;
@@ -158,29 +167,63 @@ public class DiffViewPane extends AnchorPane {
 
         // Add remaining unchanged lines
         while (leftIndex < leftLines.size()) {
-            leftSpansBuilder.add("-fx-font-family: monospace", leftLines.get(leftIndex).length() + 1);
+            leftItems.add(leftLines.get(leftIndex));
             leftIndex++;
         }
         while (rightIndex < rightLines.size()) {
-            rightSpansBuilder.add("-fx-font-family: monospace", rightLines.get(rightIndex).length() + 1);
+            rightItems.add(rightLines.get(rightIndex));
             rightIndex++;
         }
 
-        // Append text (title first though so its not lost)
+        // Prepend titles if available
         if (leftTitle != null) {
-            leftTextArea.replaceText(leftTitle + "\n");
-            leftTextArea.setStyle(0, "-fx-font-size: 16px;");
+            leftItems.add(0, leftTitle);
         }
         if (rightTitle != null) {
-            rightTextArea.replaceText(rightTitle + "\n");
-            rightTextArea.setStyle(0, "-fx-font-size: 16px;");
+            rightItems.add(0, rightTitle);
         }
-        int leftTitleLength = leftTextArea.getLength();
-        int rightTitleLength = rightTextArea.getLength();
-        leftTextArea.appendText(String.join("\n", leftLines) + '\n');
-        rightTextArea.appendText(String.join("\n", rightLines) + '\n');
 
-        leftTextArea.setStyleSpans(leftTitleLength - 1, leftSpansBuilder.create());
-        rightTextArea.setStyleSpans(rightTitleLength - 1, rightSpansBuilder.create());
+        // Set items in ListViews
+        leftListView.setItems(leftItems);
+        rightListView.setItems(rightItems);
+
+        // Use custom cell factory to style items
+        leftListView.setCellFactory(lv -> new DiffCell());
+        rightListView.setCellFactory(lv -> new DiffCell());
     }
+
+    private ScrollBar getVerticalScrollBar(Node scrollableNode) {
+        for (Node node : scrollableNode.lookupAll(".scroll-bar")) {
+            if (node instanceof ScrollBar scrollBar) {
+                if (scrollBar.getOrientation() == Orientation.VERTICAL) {
+                    return scrollBar;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Custom ListCell to style lines based on their diff status.
+     */
+    private static class DiffCell extends ListCell<String> {
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+                setStyle(null);
+            } else {
+                setText(item);
+                if (item.startsWith("-")) {
+                    setStyle("-fx-background-color: lightcoral;");
+                } else if (item.startsWith("+")) {
+                    setStyle("-fx-background-color: lightgreen;");
+                } else {
+                    setStyle(null);  // Use existing CSS for regular lines
+                }
+            }
+        }
+    }
+
 }
