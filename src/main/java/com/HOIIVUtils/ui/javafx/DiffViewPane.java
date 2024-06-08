@@ -63,7 +63,7 @@ public class DiffViewPane extends AnchorPane {
         AnchorPane.setLeftAnchor(rightListView, 0.0);
         AnchorPane.setRightAnchor(rightListView, 0.0);
 
-        // Set ListViews as non-editable
+        // list view properties
         leftListView.setEditable(false);
         rightListView.setEditable(false);
 
@@ -101,12 +101,12 @@ public class DiffViewPane extends AnchorPane {
     /**
      * Sets the data to be compared and displays the diff.
      *
-     * @param leftData  the original data
-     * @param rightData the modified data
+     * @param originalData  the original data
+     * @param revisedData the modified data
      */
-    public void setData(Collection<String> leftData, Collection<String> rightData) {
-        this.leftData = leftData;
-        this.rightData = rightData;
+    public void setData(Collection<String> originalData, Collection<String> revisedData) {
+        this.leftData = originalData;
+        this.rightData = revisedData;
         displayDiff();
     }
 
@@ -130,8 +130,8 @@ public class DiffViewPane extends AnchorPane {
 
             // Add unchanged lines before the current delta
             while (leftIndex < leftChunk.getPosition()) {
-                leftItems.add(leftLines.get(leftIndex));
-                rightItems.add(rightLines.get(rightIndex));
+                leftItems.add("  " + leftLines.get(leftIndex));
+                rightItems.add("  " + rightLines.get(rightIndex));
                 leftIndex++;
                 rightIndex++;
             }
@@ -153,13 +153,26 @@ public class DiffViewPane extends AnchorPane {
                     }
                     break;
                 case CHANGE:
+                    int leftIndexDiff = -leftIndex;
+                    int rightIndexDiff = -rightIndex;
                     for (String line : leftChunk.getLines()) {
-                        leftItems.add("- " + line);
+                        leftItems.add("~ " + line);
                         leftIndex++;
                     }
                     for (String line : rightChunk.getLines()) {
-                        rightItems.add("+ " + line);
+                        rightItems.add("~ " + line);
                         rightIndex++;
+                    }
+                    leftIndexDiff += leftIndex;
+                    rightIndexDiff += rightIndex;
+                    if (leftIndexDiff > rightIndexDiff) {
+                        for (int i = 0; i < leftIndexDiff - rightIndexDiff; i++) {
+                            rightItems.add("");
+                        }
+                    } else if (rightIndexDiff > leftIndexDiff) {
+                        for (int i = 0; i < rightIndexDiff - leftIndexDiff; i++) {
+                            leftItems.add("");
+                        }
                     }
                     break;
             }
@@ -167,11 +180,11 @@ public class DiffViewPane extends AnchorPane {
 
         // Add remaining unchanged lines
         while (leftIndex < leftLines.size()) {
-            leftItems.add(leftLines.get(leftIndex));
+            leftItems.add("  " + leftLines.get(leftIndex));
             leftIndex++;
         }
         while (rightIndex < rightLines.size()) {
-            rightItems.add(rightLines.get(rightIndex));
+            rightItems.add("  " + rightLines.get(rightIndex));
             rightIndex++;
         }
 
@@ -210,17 +223,30 @@ public class DiffViewPane extends AnchorPane {
         @Override
         protected void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
+            /*
+            i dont know why. but this has to be here. Putting it inside the if block is no good.
+             */
+            getStyleClass().remove("diff-insert");
+            getStyleClass().remove("diff-delete");
+            getStyleClass().remove("diff-change");
             if (empty || item == null) {
                 setText(null);
                 setStyle(null);
             } else {
                 setText(item);
                 if (item.startsWith("-")) {
-                    setStyle("-fx-background-color: lightcoral;");
+                    //setStyle("-fx-background-color: lightcoral; -fx-font-family: monospace");
+                    getStyleClass().add("diff-delete");
+                    setStyle("-fx-font-family: monospace");
                 } else if (item.startsWith("+")) {
-                    setStyle("-fx-background-color: lightgreen;");
+                    //setStyle("-fx-background-color: lightgreen; -fx-font-family: monospace");
+                    getStyleClass().add("diff-insert");
+                    setStyle("-fx-font-family: monospace");
+                } else if (item.startsWith("~")) {
+                    getStyleClass().add("diff-change");
+                    setStyle("-fx-font-family: monospace");
                 } else {
-                    setStyle(null);  // Use existing CSS for regular lines
+                    setStyle("-fx-font-family: monospace");
                 }
             }
         }

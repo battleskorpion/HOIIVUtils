@@ -34,7 +34,7 @@ public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
         List<SubUnit> customUnits = SubUnit.read(HOIIVFile.mod_units_folder);
         List<SubUnit> baseUnits = SubUnit.read(HOIIVFile.hoi4_units_folder);
 
-        unitsDiffViewPane = new DiffViewPane("Custom Unit Details", "Base Unit Details");
+        unitsDiffViewPane = new DiffViewPane("Base Unit Details", "Custom Unit Details");
         rootAnchorPane.getChildren().add(unitsDiffViewPane);
         // set anchors
         AnchorPane.setTopAnchor(unitsDiffViewPane, 30.0);
@@ -60,7 +60,7 @@ public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
         }
         if (baseUnits.isEmpty()) baseUnitText.add("No base units found");
         // append
-        unitsDiffViewPane.setData(customUnitText, baseUnitText);
+        unitsDiffViewPane.setData(baseUnitText, customUnitText);
     }
 
     private void appendUnitDetails(Collection<String> unitText, SubUnit unit) {

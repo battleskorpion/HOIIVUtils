@@ -356,22 +356,25 @@
     -fx-fill: #AFB1B3; /* Text color explicitly (to fix RichTextFX text) */
 }
 
-.text-area .delete {
-    -fx-fill: #ff0000; /* Red for deletions */
-    -fx-background-color: #ffe6e6; /* Light red background for deletions */
+.diff-delete {
+    -fx-fill: #ff0000;
+    -fx-background-color: lightcoral;
+    -fx-text-fill: #4a4f4d
 }
 
-.text-area .insert {
-    -fx-fill: #008000; /* Green for insertions */
-    -fx-background-color: #e6ffe6; /* Light green background for insertions */
+.diff-insert {
+    -fx-fill: #008000;
+    -fx-background-color: lightgreen;
+    -fx-text-fill: #68626c
 }
 
-.text-area .change {
-    -fx-fill: #ffa500; /* Orange for changes */
-    -fx-background-color: #fff3e6; /* Light orange background for changes */
+.diff-change {
+    -fx-fill: #ffa500;
+    -fx-background-color: #eecf80;
+    -fx-text-fill: #65656e
 }
 
-.text-area .unchanged {
+.diff-unchanged {
     -fx-fill: #AFB1B3;
 }
 
