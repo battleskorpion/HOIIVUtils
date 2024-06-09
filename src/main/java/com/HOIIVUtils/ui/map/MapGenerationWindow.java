@@ -1,5 +1,6 @@
 package com.HOIIVUtils.ui.map;
 
+import com.HOIIVUtils.hoi4utils.HOIIVFile;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
 import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceGeneration;
@@ -22,6 +23,7 @@ import java.util.function.BiFunction;
 
 public class MapGenerationWindow extends HOIIVUtilsStageLoader {
 
+	private static final String DEFAULT_HEIGHTMAP_PATH = "src\\main\\resources\\map\\heightmap.bmp";
 	// Heightmap heightmap = null;
 	@FXML
 	Canvas heightmapCanvas;
@@ -40,7 +42,7 @@ public class MapGenerationWindow extends HOIIVUtilsStageLoader {
 	/* static initialization */
 	{ // todo temp
 		try {
-			heightmap = new Heightmap(new File("src\\main\\resources\\map\\heightmap.bmp"));
+			heightmap = new Heightmap(new File(DEFAULT_HEIGHTMAP_PATH));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -67,6 +69,10 @@ public class MapGenerationWindow extends HOIIVUtilsStageLoader {
 		provinceCanvas.setHeight(heightmap.height() / 4.0);
 
 		drawHeightmap();
+		// if default heightmap loaded display its filepath
+		if (heightmap != null) {
+			heightmapTextField.setText(DEFAULT_HEIGHTMAP_PATH);
+		}
 	}
 
 	private void drawHeightmap() {
@@ -103,8 +109,7 @@ public class MapGenerationWindow extends HOIIVUtilsStageLoader {
 	void OnBrowseHeightmap() {
 		File f;
 		try {
-			f = openChooser(browseHeightmapButton, false);
-			// f = openChooser(browseHeightmapButton, false, _____); // todo init directory
+			f = openChooser(browseHeightmapButton, HOIIVFile.mod_folder, false);
 			heightmap = new Heightmap(f);
 		} catch (IOException exc) {
 			heightmap = null; // deselect any heightmap
@@ -141,7 +146,7 @@ public class MapGenerationWindow extends HOIIVUtilsStageLoader {
 	void onGenerateProvinces() {
 		provinceGeneration.generate(heightmap);
 
-		provinceGeneration.writeProvinceMap();
+		provinceGeneration.writeProvinceMap(); // todo separate save button
 		drawProvinceMap();
 	}
 

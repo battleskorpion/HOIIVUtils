@@ -35,6 +35,29 @@ module com.HOIIVUtils {
     // Export other necessary packages (adjust if needed)
     exports com.HOIIVUtils.clausewitz_parser;
     exports com.HOIIVUtils.hoi4utils;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_code;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_code.defines;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_code.effect;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_code.modifier;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_code.scope;
+    //exports com.HOIIVUtils.hoi4utils.clausewitz_code.trigger;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_data.country;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_data.focus;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_data.gfx;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_data.idea;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_data.localization;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_data.province;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_data.technology;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_data.tooltip;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_data.units;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_map;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_map.buildings;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_map.gen;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_map.province;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_map.resources;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_map.seed;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_map.state;
+    exports com.HOIIVUtils.hoi4utils.clausewitz_map.test;
     exports com.HOIIVUtils.ui;
     exports com.HOIIVUtils.ui.buildings;
     exports com.HOIIVUtils.ui.clausewitz_gfx;
@@ -52,5 +75,4 @@ module com.HOIIVUtils {
     exports com.HOIIVUtils.ui.settings;
     exports com.HOIIVUtils.ui.statistics;
     exports com.HOIIVUtils.ui.units;
-
 }

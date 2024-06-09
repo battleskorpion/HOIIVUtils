@@ -17,6 +17,7 @@ public class MapGenerationSettingsWindow extends HOIIVUtilsStageLoader {
     TextField numSeedsTextField;
     @FXML
     ChoiceBox<SeedGenType> seedGenChoiceBox;
+    @FXML 
     ChoiceBox<ProvinceDeterminationType> provinceDeterminationChoiceBox;
 
     private ProvinceGenProperties properties = null;

@@ -383,7 +383,7 @@ public class SettingsController extends Application implements FXWindow {
 				// Load the saved settings into the SettingsManager
 				SettingsManager.getSavedSettings();
 				// If the modPathFile is null, create a new HOIIVFilePaths object
-				if (HOIIVFile.modPathFile == null) {
+				if (HOIIVFile.mod_folder == null) {
 					HOIIVFile.createHOIIVFilePaths();
 				}
 			} else {
