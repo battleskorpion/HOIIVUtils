@@ -163,7 +163,9 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 			}
 			focusTreeNode = l.get(0);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			System.err.println("Error parsing focus tree file: " + focus_file);
+			return focusIDList; 
+			//throw new RuntimeException(e);
 		}
 
 		/* focuses */

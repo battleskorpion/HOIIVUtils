@@ -205,17 +205,17 @@ public class Parser {
 					var result = parseBlockContent(tokens);
 					Token right = tokens.next();
 					if (!right.value.equals("}")) {
-						throw new IllegalStateException("Parser expected a matching \"}\"");
+						throw new ParserException("Parser expected a matching \"}\"");
 					}
 
 					return new NodeValue(result);
 				}
 				break; // necessary if addtl. case added, so will keep.
 			}
-			default -> throw new IllegalStateException("Unexpected value: " + nextToken.type);
+			default -> throw new ParserException("Unexpected value: " + nextToken.type);
 		}
 
-		throw new IllegalStateException("Parser expected a string, number, symbol, or {");
+		throw new ParserException("Parser expected a string, number, symbol, or {");
 	}
 
 	public Node rootNode() {

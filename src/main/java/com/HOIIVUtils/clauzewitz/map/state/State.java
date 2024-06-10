@@ -61,6 +61,8 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 
 	// todo simplify
 	private void readStateFile(File stateFile) {
+		LocalizationHandler locHandler = LocalizationHandler.getInstance();
+
 		int infrastructure = 0;
 		int population = 0;
 		int civilianFactories = 0;
@@ -147,7 +149,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 							vpNode.getValue("value").integer());
 					victoryPoints.add(vp);
 				}
-				localizationHandler.findForEach(victoryPoints, "VICTORY_POINTS_\\d+");
+				//locHandler.addLocalization(victoryPoints, "VICTORY_POINTS_\\d+");
 			}
 		} else {
 			System.out.println("Warning: history not defined in state, " + stateFile.getName());
