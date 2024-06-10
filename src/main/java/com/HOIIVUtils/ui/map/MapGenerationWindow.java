@@ -147,6 +147,7 @@ public class MapGenerationWindow extends HOIIVUtilsStageLoader {
 
 	@FXML
 	void onGenerateProvinces() {
+		// todo let ui and do generate on other
 		provinceGenerationButton.setVisible(false);
 		provinceGenerationProgressBar.setVisible(true);
 		provinceGenerationProgressBar.setProgress(0);
@@ -158,6 +159,7 @@ public class MapGenerationWindow extends HOIIVUtilsStageLoader {
 
 		provinceGenerationProgressBar.setVisible(false);
 		provinceGenerationButton.setVisible(true);
+		provinceGenerationButton.setText("Generate");
 	}
 
 	@FXML
