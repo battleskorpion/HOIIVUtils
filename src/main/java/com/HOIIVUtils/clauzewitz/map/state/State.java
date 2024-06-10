@@ -147,7 +147,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 							vpNode.getValue("value").integer());
 					victoryPoints.add(vp);
 				}
-				localizationHandler.findForEach(victoryPoints, "VICTORY_POINTS_\\d+");
+				// localizationHandler.findForEach(victoryPoints, "VICTORY_POINTS_\\d+");
 			}
 		} else {
 			System.out.println("Warning: history not defined in state, " + stateFile.getName());

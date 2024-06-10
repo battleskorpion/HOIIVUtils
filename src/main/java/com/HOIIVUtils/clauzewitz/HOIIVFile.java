@@ -16,21 +16,16 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * HOIIV File
- * A Everything to do with the files that are found in a HOI 4 mod
- * - Paths
- * - Creating Files and Directories
- * ? <insert about whatever the file watchers do> chris learning what is a file
- * watcher
- * - Future things
+ * HOIIV File A Everything to do with the files that are found in a HOI 4 mod - Paths - Creating
+ * Files and Directories ? <insert about whatever the file watchers do> chris learning what is a
+ * file watcher - Future things
  */
 public class HOIIVFile implements FileUtils {
 
-	public static final File usersParadoxHOIIVModFolder = new File(
-			File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
+	public static final File usersParadoxHOIIVModFolder =
+			new File(File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
 
-	public static final String modPath = SettingsManager.get(Settings.MOD_PATH);
-
+	@SuppressWarnings("exports")
 	public static FileWatcher stateFilesWatcher;
 
 	public static File mod_folder;
@@ -57,6 +52,9 @@ public class HOIIVFile implements FileUtils {
 	private static final PublicFieldChangeNotifier changeNotifier = new PublicFieldChangeNotifier(HOIIVFile.class);
 
 	public static void createHOIIVFilePaths() {
+		// get hash map from hoi4utils.properties
+		new SettingsManager(null);
+		System.out.println("new SettingsManager(null)");
 		String modPath = SettingsManager.get(Settings.MOD_PATH);
 		String hoi4Path = SettingsManager.get(Settings.HOI4_PATH);
 		System.out.println("modPath: " + modPath);

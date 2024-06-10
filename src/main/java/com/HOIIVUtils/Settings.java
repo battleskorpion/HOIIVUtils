@@ -1,8 +1,6 @@
 package com.HOIIVUtils;
 
-import java.io.IOException;
-
-import com.HOIIVUtils.clauzewitz.exceptions.SettingsSaveException;
+import com.HOIIVUtils.clauzewitz.exceptions.SettingsWriteException;
 
 public enum Settings {
 	MOD_PATH {
@@ -123,16 +121,10 @@ public enum Settings {
 		}
 
 		@Override
-		public boolean enabled() {
-			return super.enabled() || DEV_MODE.disabled();
-		}
-
-		@Override
 		public String defaultProperty() {
-			return "true";
+			return DEFAULT_VALUE;
 		}
-	},
-	;
+	},;
 
 	private static final String DEFAULT_VALUE = "false";
 
@@ -158,18 +150,12 @@ public enum Settings {
 	 * Sets the value of the setting
 	 *
 	 * @param value
-	 * @throws SettingsSaveException
+	 * @throws SettingsWriteException
 	 */
-	void setValue(Object value) throws SettingsSaveException {
+	void setValue(Object value) {
 		SettingsManager.settingValues.put(this, String.valueOf(value));
-		try {
-			SettingsManager.saveSettings();
-			if ((boolean) DEV_MODE.getSetting()) {
-				System.out.println("Updated setting " + this.name() + ": " + SettingsManager.settingValues.get(this));
-			}
-		} catch (IOException e) {
-			throw new SettingsSaveException("Error saving settings", e);
-		}
+		SettingsManager.writeSettings();
+		System.out.println("Updated setting " + this.name() + ": " + SettingsManager.settingValues.get(this));
 	}
 
 	public String defaultProperty() {
