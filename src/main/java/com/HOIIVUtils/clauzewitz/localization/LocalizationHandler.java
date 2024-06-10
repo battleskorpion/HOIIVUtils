@@ -1,7 +1,10 @@
 package com.HOIIVUtils.clauzewitz.localization;
 
+import com.HOIIVUtils.PublicFieldChangeNotifier;
+import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
 
+import java.beans.PropertyChangeListenerProxy;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +15,7 @@ public class LocalizationHandler {
 
     private LocalizationHandler() {
         locFiles = new ArrayList<>();
+        addLocalizationFolderChangeListener();
     }
 
     private static final class InstanceHolder {
@@ -22,7 +26,7 @@ public class LocalizationHandler {
         return InstanceHolder.instance;
     }
 
-    public void readLocalization(File localizationFolder) {
+    private void readLocalization(File localizationFolder) {
         if (!localizationFolder.exists() || !localizationFolder.isDirectory()) {
             System.err.println("Localization folder is not a directory or does not exist: " + localizationFolder.getAbsolutePath());
             return;
@@ -47,6 +51,15 @@ public class LocalizationHandler {
         }
     }
 
+    private void addLocalizationFolderChangeListener() {
+        HOIIVFile.addPropertyChangeListener(new PropertyChangeListenerProxy(HOIIVFile.mod_localization_folder_field_name, (evt) -> {
+            File localizationFolder = (File) evt.getNewValue();
+            if (localizationFolder != null) {
+                readLocalization(localizationFolder);
+            }
+        }));
+    }
+
 //    public String getLocalizedString(String key) {
 //        return localizationData.getOrDefault(key, key);
 //    }
@@ -56,3 +69,4 @@ public class LocalizationHandler {
 //    }
 
 }
+

@@ -112,17 +112,17 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 
 	public static void attemptReadLocalization() {
 		// todo not just english :(
-		if (!HOIIVFile.mod_localization_eng_folder.exists() || !HOIIVFile.mod_localization_eng_folder.isDirectory()) {
+		if (!HOIIVFile.mod_localization_folder.exists() || !HOIIVFile.mod_localization_folder.isDirectory()) {
 			System.err.println("Localization folder does not exist or is not a directory.");
 			return;
 		}
-		if (HOIIVFile.mod_localization_eng_folder.listFiles() == null
-				|| HOIIVFile.mod_localization_eng_folder.listFiles().length == 0) {
-			System.err.println("No localization files found in " + HOIIVFile.mod_localization_eng_folder);
+		if (HOIIVFile.mod_localization_folder.listFiles() == null
+				|| HOIIVFile.mod_localization_folder.listFiles().length == 0) {
+			System.err.println("No localization files found in " + HOIIVFile.mod_localization_folder);
 			return;
 		}
 		aa: for (FocusTree focusTree : unlocalizedFocusTrees()) {
-			for (File f : HOIIVFile.mod_localization_eng_folder.listFiles()) {
+			for (File f : HOIIVFile.mod_localization_folder.listFiles()) {
 				FocusLocalizationFile flf;
 				try {
 					flf = new FocusLocalizationFile(f);

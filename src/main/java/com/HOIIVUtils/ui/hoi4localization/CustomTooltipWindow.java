@@ -119,7 +119,7 @@ public class CustomTooltipWindow extends HOIIVUtilsStageLoader implements TableV
 	}
 
 	public void handleTooltipLocalizationFileBrowseAction() {
-		File initialFocusLocDirectory = HOIIVFile.mod_localization_eng_folder;
+		File initialFocusLocDirectory = HOIIVFile.mod_localization_folder;
 		File selectedFile = openChooser(tooltipLocalizationFileBrowseButton, initialFocusLocDirectory, false);
 		if (Settings.DEV_MODE.enabled()) {
 			System.out.println(selectedFile);

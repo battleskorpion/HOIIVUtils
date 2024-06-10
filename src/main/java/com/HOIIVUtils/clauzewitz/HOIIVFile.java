@@ -1,6 +1,7 @@
 package com.HOIIVUtils.clauzewitz;
 
 import com.HOIIVUtils.FileUtils;
+import com.HOIIVUtils.PublicFieldChangeNotifier;
 import com.HOIIVUtils.Settings;
 import com.HOIIVUtils.SettingsManager;
 import com.HOIIVUtils.fileIO.FileListener.FileAdapter;
@@ -10,6 +11,7 @@ import com.HOIIVUtils.clauzewitz.map.state.State;
 import com.HOIIVUtils.ui.message.MessageController;
 
 import java.awt.*;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -32,16 +34,27 @@ public class HOIIVFile implements FileUtils {
 	public static FileWatcher stateFilesWatcher;
 
 	public static File mod_folder;
-
 	public static File mod_focus_folder;
 	public static File mod_ideas_folder;
 	public static File mod_states_folder;
 	public static File mod_strat_region_dir;
-	public static File mod_localization_eng_folder;
+	public static File mod_localization_folder;
 	public static File mod_common_folder;
 	public static File hoi4mods_folder;
 	public static File mod_units_folder;
 	public static File hoi4_units_folder;
+	public static final String mod_folder_field_name = "mod_folder";
+	public static final String mod_focus_folder_field_name = "mod_focus_folder";
+	public static final String mod_ideas_folder_field_name = "mod_ideas_folder";
+	public static final String mod_states_folder_field_name = "mod_states_folder";
+	public static final String mod_strat_region_dir_field_name = "mod_strat_region_dir";
+	public static final String mod_localization_folder_field_name = "mod_localization_folder";
+	public static final String mod_common_folder_field_name = "mod_common_folder";
+	public static final String hoi4mods_folder_field_name = "hoi4mods_folder";
+	public static final String mod_units_folder_field_name = "mod_units_folder";
+	public static final String hoi4_units_folder_field_name = "hoi4_units_folder";
+
+	private static final PublicFieldChangeNotifier changeNotifier = new PublicFieldChangeNotifier(HOIIVFile.class);
 
 	public static void createHOIIVFilePaths() {
 		String modPath = SettingsManager.get(Settings.MOD_PATH);
@@ -60,13 +73,16 @@ public class HOIIVFile implements FileUtils {
 		mod_common_folder = new File(modPath + "\\common");
 		mod_states_folder = new File(modPath + "\\history\\states");
 		mod_strat_region_dir = new File(modPath + "\\map\\strategicregions");
-		mod_localization_eng_folder = new File(modPath + "\\localisation\\english");
+		mod_localization_folder = new File(modPath + "\\localisation\\english");
 		mod_focus_folder = new File(modPath + "\\common\\national_focus");
 		mod_ideas_folder = new File(modPath + "\\common\\ideas");
 		mod_units_folder = new File(modPath + "\\common\\units");
 		hoi4_units_folder = new File(hoi4Path + "\\common\\units");
 		hoi4mods_folder = modPathFile.getParentFile();
 		System.out.println("HOIIVFile created paths");
+
+		// Check for changes after setting the fields
+		changeNotifier.checkAndNotifyChanges();
 	}
 
 	/**
@@ -86,8 +102,6 @@ public class HOIIVFile implements FileUtils {
 		stateFilesWatcher.addListener(new FileAdapter() {
 			@Override
 			public void onCreated(FileEvent event) {
-				// System.out.println("State created in states dir");
-				// todo building view thing
 				EventQueue.invokeLater(() -> {
 					stateFilesWatcher.listenerPerformAction++;
 					File file = event.getFile();
@@ -102,8 +116,6 @@ public class HOIIVFile implements FileUtils {
 
 			@Override
 			public void onModified(FileEvent event) {
-				// System.out.println("State modified in states dir");
-				// todo building view thing
 				EventQueue.invokeLater(() -> {
 					stateFilesWatcher.listenerPerformAction++;
 					File file = event.getFile();
@@ -118,8 +130,6 @@ public class HOIIVFile implements FileUtils {
 
 			@Override
 			public void onDeleted(FileEvent event) {
-				// System.out.println("State deleted in states dir");
-				// todo building view thing
 				EventQueue.invokeLater(() -> {
 					stateFilesWatcher.listenerPerformAction++;
 					File file = event.getFile();
@@ -134,4 +144,11 @@ public class HOIIVFile implements FileUtils {
 		}).watch();
 	}
 
+	public static void addPropertyChangeListener(PropertyChangeListener listener) {
+		changeNotifier.addPropertyChangeListener(listener);
+	}
+
+	public static void removePropertyChangeListener(PropertyChangeListener listener) {
+		changeNotifier.removePropertyChangeListener(listener);
+	}
 }

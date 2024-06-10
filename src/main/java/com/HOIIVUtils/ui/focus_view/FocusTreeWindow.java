@@ -126,7 +126,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		focusTree = FocusTree.get(new CountryTag("SMA"));
 		try {
 			focusTree.setLocalization(new FocusLocalizationFile(
-					HOIIVFile.mod_localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
+					HOIIVFile.mod_localization_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
 		} catch (IllegalLocalizationFileTypeException e) {
 			throw new IllegalLocalizationFileTypeException("Error loading focus tree localization", e);
 		}
@@ -136,7 +136,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 			focusTree = FocusTree.get(new File(HOIIVFile.mod_focus_folder + "//massachusetts.txt"));
 			try {
 				focusTree.setLocalization(new FocusLocalizationFile(
-						HOIIVFile.mod_localization_eng_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
+						HOIIVFile.mod_localization_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
 			} catch (IllegalLocalizationFileTypeException e) {
 				throw new IllegalLocalizationFileTypeException("Error loading focus tree localization", e);
 			}

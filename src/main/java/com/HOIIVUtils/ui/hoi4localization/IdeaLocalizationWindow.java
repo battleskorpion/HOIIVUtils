@@ -91,7 +91,7 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
     }
 
     public void handleIdeaLocFileBrowseButtonAction() {
-        File initialIdeaLocDirectory = HOIIVFile.mod_localization_eng_folder;
+        File initialIdeaLocDirectory = HOIIVFile.mod_localization_folder;
         File selectedFile = openChooser(ideaLocFileBrowseButton, initialIdeaLocDirectory, false);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
