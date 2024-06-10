@@ -1,8 +1,8 @@
 package com.HOIIVUtils.ui.map;
 
-import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceDeterminationType;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.seed.SeedGenType;
+import com.HOIIVUtils.clauzewitz.map.ProvinceGenProperties;
+import com.HOIIVUtils.clauzewitz.map.province.ProvinceDeterminationType;
+import com.HOIIVUtils.clauzewitz.map.seed.SeedGenType;
 import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;

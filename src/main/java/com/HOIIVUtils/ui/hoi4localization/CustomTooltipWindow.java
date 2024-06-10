@@ -1,12 +1,12 @@
 package com.HOIIVUtils.ui.hoi4localization;
 
-import com.HOIIVUtils.hoi4utils.HOIIVFile;
-import com.HOIIVUtils.hoi4utils.HOIIVUtils;
-import com.HOIIVUtils.hoi4utils.Settings;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.LocalizationFile;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.tooltip.CustomTooltip;
-import com.HOIIVUtils.hoi4utils.exceptions.IllegalLocalizationFileTypeException;
+import com.HOIIVUtils.clauzewitz.HOIIVFile;
+import com.HOIIVUtils.clauzewitz.HOIIVUtils;
+import com.HOIIVUtils.Settings;
+import com.HOIIVUtils.clauzewitz.localization.Localization;
+import com.HOIIVUtils.clauzewitz.localization.LocalizationFile;
+import com.HOIIVUtils.clauzewitz.data.tooltip.CustomTooltip;
+import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

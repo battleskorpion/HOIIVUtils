@@ -40,7 +40,7 @@ Scan-Directory -dir $baseDir
 # End of the module-info.java content
 $moduleContent += "    exports com.HOIIVUtils.ui;
     exports com.HOIIVUtils.clausewitz_parser;
-    exports com.HOIIVUtils.hoi4utils;
+    exports com.HOIIVUtils.clauzewitz;
 }"
 
 # Write the content to the module-info.java file

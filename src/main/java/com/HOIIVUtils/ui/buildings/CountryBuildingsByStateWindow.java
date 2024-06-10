@@ -1,8 +1,8 @@
 package com.HOIIVUtils.ui.buildings;
 
-import com.HOIIVUtils.hoi4utils.Settings;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.country.Country;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.state.State;
+import com.HOIIVUtils.Settings;
+import com.HOIIVUtils.clauzewitz.data.country.Country;
+import com.HOIIVUtils.clauzewitz.map.state.State;
 import com.HOIIVUtils.ui.FXWindow;
 import com.HOIIVUtils.ui.javafx.export.ExcelExport;
 import com.HOIIVUtils.ui.javafx.table.DoubleTableCell;

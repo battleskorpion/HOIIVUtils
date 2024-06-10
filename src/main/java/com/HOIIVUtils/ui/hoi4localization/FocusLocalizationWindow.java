@@ -1,13 +1,13 @@
 package com.HOIIVUtils.ui.hoi4localization;
 
-import com.HOIIVUtils.hoi4utils.HOIIVFile;
-import com.HOIIVUtils.hoi4utils.Settings;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FixFocus;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.Focus;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.Localization;
-import com.HOIIVUtils.hoi4utils.exceptions.IllegalLocalizationFileTypeException;
+import com.HOIIVUtils.clauzewitz.HOIIVFile;
+import com.HOIIVUtils.Settings;
+import com.HOIIVUtils.clauzewitz.data.focus.FixFocus;
+import com.HOIIVUtils.clauzewitz.data.focus.Focus;
+import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
+import com.HOIIVUtils.clauzewitz.localization.FocusLocalizationFile;
+import com.HOIIVUtils.clauzewitz.localization.Localization;
+import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

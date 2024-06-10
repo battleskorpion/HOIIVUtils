@@ -1,6 +1,9 @@
 package com.HOIIVUtils.ui.settings;
 
-import com.HOIIVUtils.hoi4utils.*;
+import com.HOIIVUtils.FileUtils;
+import com.HOIIVUtils.Settings;
+import com.HOIIVUtils.SettingsManager;
+import com.HOIIVUtils.clauzewitz.*;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,8 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import static com.HOIIVUtils.hoi4utils.Settings.HOI4_PATH;
-import static com.HOIIVUtils.hoi4utils.Settings.MOD_PATH;
+import static com.HOIIVUtils.Settings.HOI4_PATH;
+import static com.HOIIVUtils.Settings.MOD_PATH;
 
 /**
  * The SettingsController class is responsible for handling the program settings window and its

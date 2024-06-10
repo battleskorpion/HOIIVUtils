@@ -1,6 +1,6 @@
 package com.HOIIVUtils.ui;
 
-import com.HOIIVUtils.hoi4utils.HOIIVUtils;
+import com.HOIIVUtils.clauzewitz.HOIIVUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

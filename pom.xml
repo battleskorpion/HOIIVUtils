@@ -226,7 +226,7 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.8</version>
 				<configuration>
-					<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
+					<mainClass>com.HOIIVUtils.clauzewitz.HOIIVUtils</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -267,7 +267,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.HOIIVUtils.hoi4utils.HOIIVUtils</mainClass>
+							<mainClass>com.HOIIVUtils.clauzewitz.HOIIVUtils</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

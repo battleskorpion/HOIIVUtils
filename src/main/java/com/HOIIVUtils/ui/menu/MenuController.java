@@ -1,7 +1,7 @@
 package com.HOIIVUtils.ui.menu;
 
-import com.HOIIVUtils.hoi4utils.Settings;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
+import com.HOIIVUtils.Settings;
+import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
 import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import com.HOIIVUtils.ui.console.ConsoleController;
 import com.HOIIVUtils.ui.hoi4localization.CustomTooltipWindow;
@@ -9,8 +9,8 @@ import com.HOIIVUtils.ui.hoi4localization.FocusLocalizationWindow;
 import com.HOIIVUtils.ui.hoi4localization.IdeaLocalizationWindow;
 import com.HOIIVUtils.ui.hoi4localization.UnlocalizedFocusWindow;
 import com.HOIIVUtils.ui.statistics.StatisticsController;
-import com.HOIIVUtils.hoi4utils.HOIIVUtils;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.state.State;
+import com.HOIIVUtils.clauzewitz.HOIIVUtils;
+import com.HOIIVUtils.clauzewitz.map.state.State;
 import com.HOIIVUtils.ui.units.CompareUnitsWindow;
 import javafx.application.Application;
 import javafx.fxml.FXML;

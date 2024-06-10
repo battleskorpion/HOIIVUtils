@@ -1,6 +1,6 @@
 package com.HOIIVUtils.ui.console;
 
-import com.HOIIVUtils.hoi4utils.HOIIVUtils;
+import com.HOIIVUtils.clauzewitz.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;

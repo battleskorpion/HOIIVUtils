@@ -1,14 +1,14 @@
 package com.HOIIVUtils.ui.focus_view;
 
-import com.HOIIVUtils.hoi4utils.Settings;
-import com.HOIIVUtils.hoi4utils.ddsreader.DDSReader;
-import com.HOIIVUtils.hoi4utils.exceptions.IllegalLocalizationFileTypeException;
-import com.HOIIVUtils.hoi4utils.HOIIVFile;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.country.CountryTag;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FixFocus;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.Focus;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.localization.FocusLocalizationFile;
+import com.HOIIVUtils.Settings;
+import com.HOIIVUtils.ddsreader.DDSReader;
+import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
+import com.HOIIVUtils.clauzewitz.HOIIVFile;
+import com.HOIIVUtils.clauzewitz.data.country.CountryTag;
+import com.HOIIVUtils.clauzewitz.data.focus.FixFocus;
+import com.HOIIVUtils.clauzewitz.data.focus.Focus;
+import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
+import com.HOIIVUtils.clauzewitz.localization.FocusLocalizationFile;
 import javafx.fxml.FXML;
 import java.util.List;
 import java.util.ArrayList;
@@ -187,7 +187,8 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		InputStream fis = null;
 		try {
 			fis = getClass().getClassLoader()
-					.getResourceAsStream("com/HOIIVUtils/hoi4utils/hoi4files/gfx/focus_unavailable_bg.dds");
+					.getResourceAsStream(
+							"com/HOIIVUtils/clauzewitz/hoi4files/gfx/focus_unavailable_bg.dds");
 			if (fis == null) {
 				throw new FileNotFoundException(
 						"Unable to find 'com/HOIIVUtils/hoi4utils/hoi4files/gfx/focus_unavailable_bg.dds'");

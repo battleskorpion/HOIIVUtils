@@ -1,7 +1,7 @@
 package com.HOIIVUtils.ui.units;
 
-import com.HOIIVUtils.hoi4utils.HOIIVFile;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.units.SubUnit;
+import com.HOIIVUtils.clauzewitz.HOIIVFile;
+import com.HOIIVUtils.clauzewitz.data.units.SubUnit;
 import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import com.HOIIVUtils.ui.javafx.DiffViewPane;
 import javafx.fxml.FXML;

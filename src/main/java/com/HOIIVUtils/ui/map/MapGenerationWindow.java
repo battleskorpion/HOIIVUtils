@@ -1,10 +1,10 @@
 package com.HOIIVUtils.ui.map;
 
-import com.HOIIVUtils.hoi4utils.HOIIVFile;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceGeneration;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceMap;
+import com.HOIIVUtils.clauzewitz.HOIIVFile;
+import com.HOIIVUtils.clauzewitz.map.ProvinceGenProperties;
+import com.HOIIVUtils.clauzewitz.map.gen.Heightmap;
+import com.HOIIVUtils.clauzewitz.map.province.ProvinceGeneration;
+import com.HOIIVUtils.clauzewitz.map.province.ProvinceMap;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;

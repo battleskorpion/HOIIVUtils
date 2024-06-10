@@ -1,7 +1,7 @@
 package com.HOIIVUtils.ui;
 
-import com.HOIIVUtils.hoi4utils.FileUtils;
-import com.HOIIVUtils.hoi4utils.Settings;
+import com.HOIIVUtils.FileUtils;
+import com.HOIIVUtils.Settings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;

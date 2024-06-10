@@ -1,11 +1,11 @@
 package com.HOIIVUtils.ui.buildings;
 
-import com.HOIIVUtils.hoi4utils.Settings;
-import com.HOIIVUtils.hoi4utils.clausewitz_code.ClausewitzDate;
+import com.HOIIVUtils.Settings;
+import com.HOIIVUtils.clauzewitz.code.ClausewitzDate;
 import com.HOIIVUtils.ui.javafx.export.ExcelExport;
 import com.HOIIVUtils.ui.javafx.table.DoubleTableCell;
-import com.HOIIVUtils.hoi4utils.HOIIVUtils;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.country.Country;
+import com.HOIIVUtils.clauzewitz.HOIIVUtils;
+import com.HOIIVUtils.clauzewitz.data.country.Country;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;

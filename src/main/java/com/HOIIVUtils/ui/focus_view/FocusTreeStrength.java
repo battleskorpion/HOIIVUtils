@@ -1,14 +1,14 @@
 package com.HOIIVUtils.ui.focus_view;
 
-import com.HOIIVUtils.hoi4utils.HOIIVFile;
-import com.HOIIVUtils.hoi4utils.SettingsManager;
+import com.HOIIVUtils.clauzewitz.HOIIVFile;
+import com.HOIIVUtils.SettingsManager;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
-import static com.HOIIVUtils.hoi4utils.Settings.MOD_PATH;
+import static com.HOIIVUtils.Settings.MOD_PATH;
 
 public class FocusTreeStrength extends JFrame {
 	File focus_file;
