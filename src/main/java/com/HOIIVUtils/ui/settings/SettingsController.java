@@ -42,7 +42,7 @@ public class SettingsController extends Application implements FXWindow {
 	@FXML
 	public TextField modPathTextField;
 	@FXML
-	public TextField HOI4PathTextField;
+	public TextField hoi4PathTextField;
 	@FXML
 	public Label idHOIIVModFolderLabel;
 	@FXML
@@ -79,16 +79,17 @@ public class SettingsController extends Application implements FXWindow {
 		setDefault();
 
 		// If there is saved settings, load them into the settings window
-		if (Boolean.FALSE.equals(HOIIVUtils.firstTimeSetup)) {
-			// who wrote it in this order lmao
+		if (Boolean.TRUE.equals(new File(SettingsManager.NEW_PROPERTIES_PATH).exists())) { // This was it, this one line was the reason my code was not working
+			System.out.println("SettingsController: Loading saved settings...");
 			if (!"null".equals(MOD_PATH.getSetting())) {
 				modPathTextField.setText((String) MOD_PATH.getSetting());
 			}
 			if (!"null".equals(HOI4_PATH.getSetting())) {
-				HOI4PathTextField.setText((String) HOI4_PATH.getSetting());
+				hoi4PathTextField.setText((String) HOI4_PATH.getSetting());
 			}
 			devModeCheckBox.setSelected(Settings.DEV_MODE.enabled());
 			drawFocusTreesCheckBox.setSelected(Settings.DRAW_FOCUS_TREE.enabled());
+			drawFocusTreesCheckBox.setDisable(!Settings.DEV_MODE.enabled());
 			idDemoModeCheckBox.setSelected(Settings.DEMO_MODE.enabled());
 			if (idDemoModeCheckBox.isSelected()) {
 				setDisablePathSelection(true);
@@ -96,7 +97,9 @@ public class SettingsController extends Application implements FXWindow {
 			idOpenConsoleOnLaunchCheckBox.setSelected(Settings.OPEN_CONSOLE_ON_LAUNCH.enabled());
 			idSkipSettingsCheckBox.setSelected(Settings.SKIP_SETTINGS.enabled());
 			idDelSettingsButton.setDisable(false);
-			enableOkButton();
+			if (Settings.DEMO_MODE.enabled()) {
+				enableOkButton();
+			}
 		}
 
 		preferredMonitorComboBox.setItems(Screen.getScreens());
@@ -115,10 +118,8 @@ public class SettingsController extends Application implements FXWindow {
 				if (item == null || empty) {
 					setText(null);
 				} else {
-					// The entry number starts from 1 (not 0) so add 1 to the index
-					int i = getIndex() + 1;
 					// Set the text of the item to "Screen <number>: <width>x<height>"
-					setText("Screen " + i + ": " + item.getBounds().getWidth() + "x" + item.getBounds().getHeight());
+					setText("Screen " + (getIndex() + 1) + ": " + item.getBounds().getWidth() + "x" + item.getBounds().getHeight());
 				}
 			}
 		});
@@ -129,7 +130,7 @@ public class SettingsController extends Application implements FXWindow {
 		modFolderBrowseButton.setDisable(value);
 		modPathTextField.setDisable(value);
 		hoi4FolderBrowseButton.setDisable(value);
-		HOI4PathTextField.setDisable(value);
+		hoi4PathTextField.setDisable(value);
 	}
 
 	public void launchSettingsWindow(String[] args) {
@@ -146,24 +147,26 @@ public class SettingsController extends Application implements FXWindow {
 	@Override
 	public void start(Stage stage) {
 		System.out.println("Settings Controller ran start method, attempting to load fxml file: " + fxmlResource);
-		// Create a FXMLLoader to load the fxml file
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
+		System.out.println("Settings Controller created loader: " + loader);
 
 		try {
-			// Load the fxml file
+			// Load the fxml file and set the root node of the scene to the loaded fxml node
 			System.out.println("Attempting to load fxml file...");
-			Parent root = loader.load();
+			Parent rootFXML = loader.load();
 			System.out.println("Successfully loaded fxml file.");
+			System.out.println("root: " + rootFXML);
 
 			// Create a new scene and set the root node of the scene to
 			// the loaded fxml node
 			System.out.println("Attempting to create a new scene and set its root node to the loaded fxml node...");
-			Scene scene = new Scene(root);
+			Scene scene = new Scene(rootFXML);
 
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 
 			// Save the stage and set its scene to the created scene
 			this.stage = stage;
+
 			stage.setScene(scene);
 
 			stage.setTitle(title);
@@ -222,15 +225,17 @@ public class SettingsController extends Application implements FXWindow {
 	 */
 	public void handleModPathTextField() {
 		String pathText = modPathTextField.getText();
-		if (pathText.isEmpty()) return;
+		if (pathText.isEmpty())
+			return;
 
 		File modFile = new File(pathText);
 		setFolderSettingIfValid(modFile, MOD_PATH);
 	}
 
-	public void handleHOI4PathTextField() {
-		String pathText = HOI4PathTextField.getText();
-		if (pathText.isEmpty()) return;
+	public void handleHOIIVPathTextField() {
+		String pathText = hoi4PathTextField.getText();
+		if (pathText.isEmpty())
+			return;
 
 		File modFile = new File(pathText);
 		setFolderSettingIfValid(modFile, HOI4_PATH);
@@ -245,17 +250,11 @@ public class SettingsController extends Application implements FXWindow {
 	 */
 	public void handleDelSettingsButtonAction() {
 		try {
-			// Delete all the settings
 			SettingsManager.deleteAllSettings();
+			setDefault();
 		} catch (IOException e) {
-			// If there was an IOException while deleting the settings, print the stack
-			// trace
 			e.printStackTrace();
 		}
-		// Reset the settings to their default values
-		setDefault();
-		// Set the firstTimeSetup flag to true
-		HOIIVUtils.firstTimeSetup = true;
 	}
 
 	/**
@@ -266,16 +265,18 @@ public class SettingsController extends Application implements FXWindow {
 	private void setDefault() {
 		// Clear the mod path text field
 		modPathTextField.clear();
-		HOI4PathTextField.clear();
+		hoi4PathTextField.clear();
 		// Set the checkboxes to their default values
 		devModeCheckBox.setSelected(false);
-		drawFocusTreesCheckBox.setSelected(true);
+		drawFocusTreesCheckBox.setDisable(true);
+		drawFocusTreesCheckBox.setSelected(false);
 		idDemoModeCheckBox.setSelected(false);
 		idOpenConsoleOnLaunchCheckBox.setSelected(false);
 		idSkipSettingsCheckBox.setSelected(false);
 		// Disable the OK button and the delete settings button
 		idDelSettingsButton.setDisable(true);
 		disableOkButton();
+		System.out.println("SettingsController: Settings have been reset.");
 	}
 
 	/**
@@ -287,27 +288,27 @@ public class SettingsController extends Application implements FXWindow {
 		File modFile = new File(FileUtils.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
 
 		modFile = openChooser(modFolderBrowseButton, modFile, true);
-		if (modFile == null) return;
+		if (modFile == null)
+			return;
 		modPathTextField.setText(modFile.getAbsolutePath());
 		setFolderSettingIfValid(modFile, MOD_PATH);
 	}
 
-	public void handleHOI4FileBrowseAction() {
-		File hoi4File = FileUtils.ProgramFilesX86 == null
-				? null
-				: new File(FileUtils.ProgramFilesX86 + File.separator + FileUtils.steamHOI4LocalPath);
+	public void handleHOIIVFileBrowseAction() {
+		File hoi4File =
+				FileUtils.ProgramFilesX86 == null ? null : new File(FileUtils.ProgramFilesX86 + File.separator + FileUtils.steamHOI4LocalPath);
 
 		hoi4File = openChooser(hoi4FolderBrowseButton, hoi4File, true);
-		if (hoi4File == null) return;
-		HOI4PathTextField.setText(hoi4File.getAbsolutePath());
+		if (hoi4File == null)
+			return;
+		hoi4PathTextField.setText(hoi4File.getAbsolutePath());
 		setFolderSettingIfValid(hoi4File, HOI4_PATH);
 	}
 
 	public void handleDevModeCheckBoxAction() {
 		updateTempSetting(Settings.DEV_MODE, devModeCheckBox.isSelected());
-		boolean disabled = Settings.DEV_MODE.disabled();
-		drawFocusTreesCheckBox.setDisable(disabled);
-		// TODO this is causing a exception when it is first time setup, but it still saves the dev mode
+		drawFocusTreesCheckBox.setDisable(!devModeCheckBox.isSelected());
+		System.out.println("Focus Trees Checkbox: " + !devModeCheckBox.isSelected());
 	}
 
 	public void handleDrawFocusTreesCheckBoxAction() {
@@ -349,16 +350,14 @@ public class SettingsController extends Application implements FXWindow {
 
 	public void updateTempSetting(Settings setting, Object property) {
 		tempSettings.put(setting, String.valueOf(property));
+		System.out.println("Updated setting " + setting.name() + ": " + tempSettings.get(setting));
 	}
 
 	/**
 	 * User Interactive Button in Settings Window Closes Settings Window Opens Menu Window
 	 */
 	public void handleOkButtonAction() {
-		boolean settingsSaved = updateSettings();
-		if (!settingsSaved) {
-			return;
-		}
+		updateSettings();
 		hideWindow(idOkButton);
 		openMenuWindow();
 	}
@@ -376,30 +375,23 @@ public class SettingsController extends Application implements FXWindow {
 	 * 
 	 * @return true if the settings were updated and saved successfully, false if not.
 	 */
-	public boolean updateSettings() {
-		try {
-			if (Boolean.TRUE.equals(HOIIVUtils.firstTimeSetup)) {
-				// If firstTimeSetup is true, create a new SettingsManager with the tempSettings
-				// This is also cancer
-				SettingsManager.settings = new SettingsManager(tempSettings);
-				HOIIVUtils.firstTimeSetup = false;
-				// Load the saved settings into the SettingsManager
-				SettingsManager.getSavedSettings();
-				// If the modPathFile is null, create a new HOIIVFilePaths object
-				if (HOIIVFile.mod_folder == null) {
-					HOIIVFile.createHOIIVFilePaths();
-				}
-			} else {
-				// If firstTimeSetup is false, save the tempSettings to the settings file
-				SettingsManager.saveSettings(tempSettings);
+	public void updateSettings() {
+		System.out.println("Updating Settings...");
+		if (Boolean.TRUE.equals(HOIIVUtils.firstTimeSetup)) {
+			// If firstTimeSetup is true, create a new SettingsManager with the tempSettings
+			// This is also cancer
+			SettingsManager.settings = new SettingsManager(tempSettings);
+			// If the modPathFile is null, create a new HOIIVFilePaths object
+			if (HOIIVFile.mod_folder == null) {
+				HOIIVFile.createHOIIVFilePaths();
 			}
-		} catch (IOException exception) {
-			// If there was an IOException while saving the settings, open an error window
-			openError("Settings failed to save.");
-			return false;
+			HOIIVUtils.firstTimeSetup = false;
+		} else {
+			// If firstTimeSetup is false, save the tempSettings to the settings file
+			SettingsManager.settings = new SettingsManager(tempSettings);
+			SettingsManager.writeSettings(tempSettings);
 		}
-		// Return true if the settings were updated and saved successfully, false if not
-		return true;
+		System.out.println("Settings Updated.");
 	}
 
 	private void setFolderSettingIfValid(File file, Settings modPath) {

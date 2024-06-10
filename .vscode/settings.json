@@ -64,7 +64,6 @@
 		"editor.defaultFormatter": "redhat.java",
 		"editor.indentSize": "tabSize",
 		"editor.insertSpaces": false,
-		"editor.wordWrap": "off",
-		"editor.formatOnSave": true
+		"editor.wordWrap": "off"
 	},
 }
