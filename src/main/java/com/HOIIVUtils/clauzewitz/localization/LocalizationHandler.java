@@ -74,6 +74,7 @@ public class LocalizationHandler {
         for (LocalizationFile f : locFiles) {
             //potentialLocalization.addAll(f.filter(regex));
         }
+
         // now pattern match (replace any regex patterns with the args)
         for (Localizable obj : list) {
             for (Localization loc : potentialLocalization) {
