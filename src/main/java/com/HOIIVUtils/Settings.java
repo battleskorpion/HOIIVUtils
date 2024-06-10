@@ -20,12 +20,12 @@ public enum Settings {
 	SKIP_SETTINGS {
 		@Override
 		public Object getSetting() {
-			return enabled();
+				return enabled();
 		}
 
 		@Override
 		public String defaultProperty() {
-			return DEFAULT_VALUE;
+			return "true";
 		}
 	},
 	DARK_MODE {
@@ -36,7 +36,7 @@ public enum Settings {
 
 		@Override
 		public String defaultProperty() {
-			return DEFAULT_VALUE;
+			return "true";
 		}
 	},
 	DEV_MODE {
@@ -47,7 +47,7 @@ public enum Settings {
 
 		@Override
 		public String defaultProperty() {
-			return DEFAULT_VALUE;
+			return "false";
 		}
 	},
 	DEMO_MODE {
@@ -58,7 +58,7 @@ public enum Settings {
 
 		@Override
 		public String defaultProperty() {
-			return DEFAULT_VALUE;
+			return "false";
 		}
 	},
 	OPEN_CONSOLE_ON_LAUNCH {
@@ -69,7 +69,7 @@ public enum Settings {
 
 		@Override
 		public String defaultProperty() {
-			return DEFAULT_VALUE;
+			return "false";
 		}
 	},
 	PREFERRED_SCREEN {
@@ -122,11 +122,9 @@ public enum Settings {
 
 		@Override
 		public String defaultProperty() {
-			return DEFAULT_VALUE;
+			return "true";
 		}
 	},;
-
-	private static final String DEFAULT_VALUE = "false";
 
 	/**
 	 * Returns if setting is enabled (setting is true).

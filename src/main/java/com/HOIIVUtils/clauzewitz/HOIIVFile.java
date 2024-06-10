@@ -21,7 +21,6 @@ import java.io.IOException;
  * file watcher - Future things
  */
 public class HOIIVFile implements FileUtils {
-
 	public static final File usersParadoxHOIIVModFolder =
 			new File(File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
 

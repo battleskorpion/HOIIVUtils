@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -35,6 +36,8 @@ public class MapGenerationWindow extends HOIIVUtilsStageLoader {
 	Button browseHeightmapButton;
 	@FXML
 	Button provinceGenerationButton;
+	@FXML
+	ProgressBar provinceGenerationProgressBar;
 	Heightmap heightmap;
 	public ProvinceGeneration provinceGeneration;
 	public ProvinceGenProperties properties;
@@ -144,10 +147,17 @@ public class MapGenerationWindow extends HOIIVUtilsStageLoader {
 
 	@FXML
 	void onGenerateProvinces() {
+		provinceGenerationButton.setVisible(false);
+		provinceGenerationProgressBar.setVisible(true);
+		provinceGenerationProgressBar.setProgress(0);
+
 		provinceGeneration.generate(heightmap);
 
 		provinceGeneration.writeProvinceMap(); // todo separate save button
 		drawProvinceMap();
+
+		provinceGenerationProgressBar.setVisible(false);
+		provinceGenerationButton.setVisible(true);
 	}
 
 	@FXML
