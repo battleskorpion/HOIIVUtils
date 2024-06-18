@@ -7,7 +7,7 @@ import com.HOIIVUtils.ui.console.ConsoleController;
 import com.HOIIVUtils.ui.hoi4localization.CustomTooltipWindow;
 import com.HOIIVUtils.ui.hoi4localization.FocusLocalizationWindow;
 import com.HOIIVUtils.ui.hoi4localization.IdeaLocalizationWindow;
-import com.HOIIVUtils.ui.hoi4localization.UnlocalizedFocusWindow;
+import com.HOIIVUtils.ui.hoi4localization.AllFocusTreesWindow;
 import com.HOIIVUtils.ui.statistics.StatisticsController;
 import com.HOIIVUtils.clauzewitz.HOIIVUtils;
 import com.HOIIVUtils.clauzewitz.map.state.State;
@@ -135,8 +135,8 @@ public class MenuController extends Application implements FXWindow {
 		openUtilsWindow(new IdeaLocalizationWindow());
 	}
 
-	public void openUnlocalizedFocus() {
-		openUtilsWindow(new UnlocalizedFocusWindow());
+	public void openAllFocusesWindow() {
+		openUtilsWindow(new AllFocusTreesWindow());
 	}
 
 	public void openCustomTooltip() {

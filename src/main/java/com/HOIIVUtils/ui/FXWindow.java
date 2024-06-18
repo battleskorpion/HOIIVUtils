@@ -19,7 +19,9 @@ import com.HOIIVUtils.ui.message.MessageController;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public interface FXWindow {
@@ -159,18 +161,25 @@ public interface FXWindow {
 
 	void setTitle(String title);
 
-	default <S> void loadTableView(TableViewWindow window, TableView<S> dataTable, ObservableList<S> data,
-			List<Function<S, ?>> dataFunctions) {
+	default <S> void loadTableView(TableViewWindow window, TableView<S> table, ObservableList<S> data,
+	                               List<Function<S, ?>> dataFunctions) {
 		window.setDataTableCellFactories();
 
-		setTableCellValueFactories(dataFunctions, dataTable);
+		setTableCellValueFactories(dataFunctions, table);
 
-		dataTable.setItems(data); // country objects, cool! and necessary for the cell value factory,
-									// this is giving the factories the list of objects to collect
+		table.setItems(data);       // this is giving the factories the list of objects to collect
 									// their data from.
 
-		System.out.println("Loaded data into table: " + dataTable.getId());
+		if (Settings.DEV_MODE.enabled()) System.out.println("Loaded data into table: " + table.getId());
 	}
+
+//	default <S> void loadTreeTableView(TableViewWindow window, TreeTableView<S> table, ObservableList<S> data,
+//	                                   List<Function<S, ?>> dataFunctions, Function<S, ?> parentingFunction) {
+//		window.setDataTableCellFactories();
+//
+//
+//	}
+
 
 	/**
 	 * Set the cell value factories for the table columns
@@ -185,41 +194,82 @@ public interface FXWindow {
 		// set the cell value factories for the table columns
 		ObservableList<TableColumn<S, ?>> columns = tableView.getColumns();
 
-		// get the minimum size of the dataFunctions and columns lists
-		// so we don't index out of bounds
+		// get the minimum size of the dataFunctions and columns lists, prevents indexing error
 		int minSize = Math.min(dataFunctions.size(), columns.size());
 
-		// loop through the minimum size of the lists
 		for (int i = 0; i < minSize; i++) {
 			// get the column and data function for the current index
 			TableColumn<S, ?> column = columns.get(i);
 			Function<S, ?> dataFunction = dataFunctions.get(i);
 
 			// set the cell value factory for the column
-			column.setCellValueFactory(cellDataCallback(dataFunction));
+			column.setCellValueFactory(tableCellDataCallback(dataFunction));
+		}
+	}
+
+	default <S> void setTreeTableCellValueFactories(List<Function<S, ?>> dataFunctions, TreeTableView<S> treeTableView) {
+		// set the cell value factories for the table columns
+		ObservableList<TreeTableColumn<S, ?>> columns = treeTableView.getColumns();
+
+		// get the minimum size of the dataFunctions and columns lists, prevents indexing error
+		int minSize = Math.min(dataFunctions.size(), columns.size());
+
+		for (int i = 0; i < minSize; i++) {
+			// get the column and data function for the current index
+			TreeTableColumn<S, ?> column = columns.get(i);
+			Function<S, ?> dataFunction = dataFunctions.get(i);
+
+			// set the cell value factory for the column
+			column.setCellValueFactory(treeTableCellDataCallback(dataFunction));
 		}
 	}
 
 	/**
-	 * Create a cell value factory for a table column
-	 * 
+	 * Creates a cell value factory for a table column that applies a given function
+	 * to a table row to retrieve the value for that column.
+	 *
 	 * @param <S>            the type of the table row
 	 * @param <T>            the type of the table column
-	 * @param propertyGetter a function that takes a table row and returns the value
-	 *                       for the column
-	 * @return a cell value factory that applies the given function to the table row
+	 * @param propertyGetter a function that takes a table row of type {@code S} and
+	 *                       returns a value of type {@code T} for the column
+	 * @return a {@code Callback} that produces an {@code ObservableValue<T>} by
+	 *         applying the given function to the table row
 	 */
-	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(
+	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> tableCellDataCallback(
 			Function<S, ?> propertyGetter) {
 		return cellData -> {
 			if (Settings.DEV_MODE.enabled()) {
-				System.out.println("Table callback created, data: " +
-						propertyGetter.apply(cellData.getValue()));
+				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
 			}
 			// unchecked cast is necessary because the compiler doesn't know that the given
 			// function will return a value of type T
 			@SuppressWarnings("unchecked")
 			T result = (T) propertyGetter.apply(cellData.getValue()); // yap
+			return new SimpleObjectProperty<>(result);
+		};
+	}
+
+	/**
+	 * Creates a cell value factory for a tree table column that applies a given
+	 * function to a tree table row to retrieve the value for that column.
+	 *
+	 * @param <S>            the type of the tree table row
+	 * @param <T>            the type of the tree table column
+	 * @param propertyGetter a function that takes a tree table row of type {@code S}
+	 *                       and returns a value of type {@code T} for the column
+	 * @return a {@code Callback} that produces an {@code ObservableValue<T>} by
+	 *         applying the given function to the tree table row
+	 */
+	static <S, T> Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> treeTableCellDataCallback(
+			Function<S, ?> propertyGetter) {
+		return cellData -> {
+			if (Settings.DEV_MODE.enabled()) {
+				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue().getValue()));
+			}
+			// unchecked cast is necessary because the compiler doesn't know that the given
+			// function will return a value of type T
+			@SuppressWarnings("unchecked")
+			T result = (T) propertyGetter.apply(cellData.getValue().getValue());
 			return new SimpleObjectProperty<>(result);
 		};
 	}
@@ -231,16 +281,16 @@ public interface FXWindow {
 	 * view to either display the values as integers or as a percentage of the
 	 * total value of the column.
 	 * 
-	 * @param columnIndex        the table column to update
+	 * @param column        the table column to update
 	 * @param displayPercentages whether to display the values as percentages or not
 	 * 
 	 * @see IntegerOrPercentTableCell
 	 */
-	static <S> void updateColumnPercentBehavior(TableColumn<S, Double> columnIndex,
-			boolean displayPercentages) {
+	static <S> void updateColumnPercentBehavior(TableColumn<S, Double> column,
+	                                            boolean displayPercentages) {
 		// Set the cell factory for the column to a cell that can display
 		// either integers or percentages
-		columnIndex.setCellFactory(col -> {
+		column.setCellFactory(col -> {
 			// Create a new cell instance that can display either integers or percentages
 			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();
 			cell.setInteger(!displayPercentages);
