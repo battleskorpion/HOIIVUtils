@@ -128,7 +128,7 @@ public class BuildingsByCountryWindow extends HOIIVUtilsStageLoader implements T
 	}
 
 	@FXML
-	public void handleExportToExcelAction() {
+	private void handleExportToExcelAction() {
 		ExcelExport<Country> excelExport = new ExcelExport<>();
 		excelExport.export(countryDataTable);
 	}

@@ -196,8 +196,19 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
                 if (focus == null || empty) {
                     setGraphic(null); // Clear any previous content
                 } else {
-                    Localization.Status textStatus = focus.getNameLocalization().status();
-                    Localization.Status descStatus = focus.getDescLocalization().status();
+                    Localization.Status textStatus;
+                    Localization.Status descStatus;
+                    if (focus.getNameLocalization() == null) {
+                        textStatus = Localization.Status.MISSING;
+                    } else {
+                        textStatus = focus.getNameLocalization().status();
+                    }
+                    if (focus.getDescLocalization() == null) {
+                        descStatus = Localization.Status.MISSING;
+                    } else {
+                        descStatus = focus.getDescLocalization().status();
+                    }
+
                     boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
                             || descStatus == Localization.Status.UPDATED;
                     boolean hasStatusNew = descStatus == Localization.Status.NEW

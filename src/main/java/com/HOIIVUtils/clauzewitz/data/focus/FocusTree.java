@@ -110,7 +110,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		}
 	}
 
-	public static void attemptReadLocalization() {
+	public static void loadLocalization() {
 		// todo not just english :(
 		if (!HOIIVFile.mod_localization_folder.exists() || !HOIIVFile.mod_localization_folder.isDirectory()) {
 			System.err.println("Localization folder does not exist or is not a directory.");
@@ -310,11 +310,18 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		} catch (IllegalLocalizationFileTypeException e) {
 			throw new RuntimeException(e);
 		}
+		for (Focus focus : focuses()) {
+			focus.setLocalization(focusLocFile);
+		}
 		return locFile;
 	}
 
+	// todo redo entire localization how it works :(
 	public File setLocalization(FocusLocalizationFile file) {
 		this.focusLocFile = file;
+		for (Focus focus : focuses()) {
+			focus.setLocalization(focusLocFile);
+		}
 		return focusLocFile;
 	}
 

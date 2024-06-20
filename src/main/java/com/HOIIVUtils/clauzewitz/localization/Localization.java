@@ -16,6 +16,7 @@ public record Localization(String ID, String text, Status status) {
 				// program)
 		NEW, // localization is new.
 		UPDATED, // localization already exists in a loc file, but this is an updated version.
+		MISSING, // localization is missing
 	}
 
 	public String toString() {

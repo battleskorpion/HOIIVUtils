@@ -1,5 +1,6 @@
 package com.HOIIVUtils.ui.hoi4localization;
 
+import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.clauzewitz.data.country.Country;
 import com.HOIIVUtils.clauzewitz.data.focus.Focus;
 import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
@@ -13,12 +14,14 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
 
+import java.io.*;
+
 public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
 
 	@FXML
 	private TableView<Focus> focusListTable;
 	@FXML
-	private TableColumn<Focus, Country> countryColumn;
+	private TableColumn<Focus, String> focusIDColumn;
 	@FXML
 	private TableColumn<Focus, String> focusNameColumn;
 	@FXML
@@ -39,17 +42,17 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 	 */
 	@FXML
 	void initialize() {
-		//loadTreeTableView(this, focusListTreeTable, focusObservableList, Focus.getDataFunctions());
-		//int numLocalizedFocus = 0;
+		/* table */
+		loadTableView(this, focusListTable, focusObservableList, Focus.getDataFunctions());
 		updateObservableFocusList();
+
 	}
 
 	@Override
 	public void setDataTableCellFactories() {
 		/* column factory */
-		//countryColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-		focusNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-		focusDescColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+		//focusNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+		//focusDescColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 
 		/* row factory */
 		// todo maybe
@@ -61,8 +64,19 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 				if (focus == null || empty) {
 					setGraphic(null); // Clear any previous content
 				} else {
-					Localization.Status textStatus = focus.getNameLocalization().status();
-					Localization.Status descStatus = focus.getDescLocalization().status();
+					Localization.Status textStatus;
+					Localization.Status descStatus;
+					if (focus.getNameLocalization() == null) {
+						textStatus = Localization.Status.MISSING;
+					} else {
+						textStatus = focus.getNameLocalization().status();
+					}
+					if (focus.getDescLocalization() == null) {
+						descStatus = Localization.Status.MISSING;
+					} else {
+						descStatus = focus.getDescLocalization().status();
+					}
+
 					boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
 							|| descStatus == Localization.Status.UPDATED;
 					boolean hasStatusNew = descStatus == Localization.Status.NEW
@@ -85,75 +99,39 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 			focusObservableList.addAll(focusTree.focuses());
 		}
 	}
+
+	@FXML
+	private void handleExportFocusesMissingDescriptionsAction() {
+		// write to new file
+		File file = new File("focuses_missing_descriptions.csv");
+		try {
+			FileWriter writer = new FileWriter(file, false);
+			BufferedWriter BWriter = new BufferedWriter(writer);
+			PrintWriter PWriter = new PrintWriter(BWriter);
+
+			PWriter.println("Focus ID; Focus Name; Focus Description; Notes");
+			for (var focus : focusObservableList) {
+				if (focus.getDescLocalization() == null) {
+					Focus.getDataFunctions().forEach(dataFunction -> {
+						PWriter.print(dataFunction.apply(focus));
+						PWriter.print(";");
+					});
+					PWriter.print("Missing description (no localization key exists);");
+					PWriter.println();
+				}
+				else if (focus.getDescLocalization().text().isEmpty()) {
+					Focus.getDataFunctions().forEach(dataFunction -> {
+						PWriter.print(dataFunction.apply(focus));
+						PWriter.print(";");
+					});
+					PWriter.print("Empty description (localization key exists);");
+					PWriter.println();
+				}
+			}
+			PWriter.close();
+			System.out.println("Exported focuses missing descriptions csv to " + file.getAbsolutePath());
+		} catch (IOException exc) {
+			exc.printStackTrace();
+		}
+	}
 }
-// private JPanel UnlocalizedFocusJPanel;
-// private JTable unlocalizedFocusTable;
-// private DefaultTableModel unlocalizedFocusTableModel;
-
-// public UnlocalizedFocusWindow (List<FocusTree> focusTrees) {
-// super("Focus Localization"); // JFrame
-
-// // table model
-// unlocalizedFocusTableModel = new DefaultTableModel() {
-
-// @Override
-// public int getRowCount() {
-// return focusTrees.size();
-// }
-
-// @Override
-// public int getColumnCount() {
-// return 4;
-// }
-
-// @Override
-// public boolean isCellEditable(int row, int column) {
-// return false;
-// }
-// };
-// String[] columns = {"Unlocalized Focus Tree", "Localization File", "Focus
-// Tree File", "Status"};
-// unlocalizedFocusTableModel.setColumnIdentifiers(columns);
-// unlocalizedFocusTable.setModel(unlocalizedFocusTableModel);
-
-// // data
-// refreshFocusTreeTable(focusTrees);
-
-// setContentPane(UnlocalizedFocusJPanel);
-// setSize(1200, 500);
-// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-// pack();
-// }
-
-// public static void main(String[] args) {
-// JFrame window = new
-// UnlocalizedFocusWindow(FocusTree.unlocalizedFocusTrees());
-// window.setVisible(true);
-// }
-
-// public void refreshFocusTreeTable(List<FocusTree> focusTrees) {
-// // remove previous data
-// unlocalizedFocusTableModel.getDataVector().removeAllElements();
-// unlocalizedFocusTableModel.setRowCount(focusTrees.size());
-// unlocalizedFocusTableModel.setColumnCount(4);
-// unlocalizedFocusTableModel.fireTableDataChanged();
-
-// for (int i = 0; i < focusTrees.size(); i++) {
-// // focus tree name
-// FocusTree tree = focusTrees.get(i);
-// unlocalizedFocusTableModel.setValueAt(tree, i, 0);
-// // localization file
-// LocalizationFile localization = tree.locFile();
-// if (localization == null) {
-// unlocalizedFocusTableModel.setValueAt("<Not Found>", i, 1);
-// } else {
-// unlocalizedFocusTableModel.setValueAt(localization, i, 1);
-// }
-// // focus tree file
-// unlocalizedFocusTableModel.setValueAt(tree.focusFile().getParentFile().getName()
-// + "\\" + tree.focusFile().getName(), i, 2);
-// }
-
-// }
-
-// }

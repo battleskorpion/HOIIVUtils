@@ -104,9 +104,13 @@ public class SettingsManager {
 			/* read HOIIVUtils Settings */
 			while (settingReader.hasNextLine()) {
 				String[] readSetting = settingReader.nextLine().split(";");
-				Settings setting = Settings.valueOf(readSetting[0]);
-
-				settingValues.put(setting, readSetting[1]);
+				try {
+					Settings setting = Settings.valueOf(readSetting[0]);
+					settingValues.put(setting, readSetting[1]);
+				} catch (IllegalArgumentException e) {
+					System.err.println("Unknown setting: " + readSetting[0]);
+					continue;
+				}
 			}
 
 			for (Settings setting : Settings.values()) {

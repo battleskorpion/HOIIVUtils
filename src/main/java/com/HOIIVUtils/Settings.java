@@ -103,7 +103,7 @@ public enum Settings {
 		}
 	},
 
-	ATTEMPT_LOAD_LOCALIZATION {
+	LOAD_LOCALIZATION {
 		@Override
 		public Object getSetting() {
 			return enabled();
