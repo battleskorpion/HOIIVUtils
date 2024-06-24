@@ -80,7 +80,7 @@ public interface Localizable {
 		return localization(property).text();
 	}
 
-	default String localizationStatus(Property property) {
+	default @NotNull String localizationStatus(Property property) {
 		if (localization(property) == null) return "[null]";
 		return localization(property).status().toString();
 	}
