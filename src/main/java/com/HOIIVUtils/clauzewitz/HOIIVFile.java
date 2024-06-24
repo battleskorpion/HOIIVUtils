@@ -33,6 +33,7 @@ public class HOIIVFile implements FileUtils {
 	public static File mod_states_folder;
 	public static File mod_strat_region_dir;
 	public static File mod_localization_folder;
+	public static File hoi4_localization_folder;
 	public static File mod_common_folder;
 	public static File hoi4mods_folder;
 	public static File mod_units_folder;
@@ -43,6 +44,7 @@ public class HOIIVFile implements FileUtils {
 	public static final String mod_states_folder_field_name = "mod_states_folder";
 	public static final String mod_strat_region_dir_field_name = "mod_strat_region_dir";
 	public static final String mod_localization_folder_field_name = "mod_localization_folder";
+	public static final String hoi4_localization_folder_field_name = "hoi4_localization_folder";
 	public static final String mod_common_folder_field_name = "mod_common_folder";
 	public static final String hoi4mods_folder_field_name = "hoi4mods_folder";
 	public static final String mod_units_folder_field_name = "mod_units_folder";
@@ -50,7 +52,7 @@ public class HOIIVFile implements FileUtils {
 
 	private static final PublicFieldChangeNotifier changeNotifier = new PublicFieldChangeNotifier(HOIIVFile.class);
 
-	public static void createHOIIVFilePaths() {
+    public static void createHOIIVFilePaths() {
 		// get hash map from hoi4utils.properties
 		new SettingsManager(null);
 		System.out.println("new SettingsManager(null)");
@@ -71,6 +73,7 @@ public class HOIIVFile implements FileUtils {
 		mod_states_folder = new File(modPath + "\\history\\states");
 		mod_strat_region_dir = new File(modPath + "\\map\\strategicregions");
 		mod_localization_folder = new File(modPath + "\\localisation\\english");
+		hoi4_localization_folder = new File(hoi4Path + "\\localisation\\english");
 		mod_focus_folder = new File(modPath + "\\common\\national_focus");
 		mod_ideas_folder = new File(modPath + "\\common\\ideas");
 		mod_units_folder = new File(modPath + "\\common\\units");

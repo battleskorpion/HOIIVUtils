@@ -226,14 +226,12 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
         });
     }
 
-    @FXML
     private void setColumnOnEditCommits() {
         focusNameColumn.setOnEditCommit(event -> {
             Focus focus = event.getRowValue();
             focus.replaceLocalization(Localizable.Property.NAME, event.getNewValue());
         });
         focusDescColumn.setOnEditCommit(event -> {
-            // This method will be called when a user edits and commits a cell value.
             Focus focus = event.getRowValue();
             focus.replaceLocalization(Localizable.Property.DESCRIPTION, event.getNewValue());
         });

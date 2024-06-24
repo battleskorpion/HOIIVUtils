@@ -20,9 +20,9 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <TableView fx:id="focusListTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+      <TableView fx:id="focusListTable" editable="true" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
         <columns>
-          <TableColumn fx:id="focusIDColumn" prefWidth="75.0" text="Country" />
+          <TableColumn fx:id="focusIDColumn" editable="false" prefWidth="75.0" text="Country" />
           <TableColumn fx:id="focusNameColumn" prefWidth="75.0" text="Name" />
             <TableColumn fx:id="focusDescColumn" prefWidth="75.0" text="Description" />
         </columns>

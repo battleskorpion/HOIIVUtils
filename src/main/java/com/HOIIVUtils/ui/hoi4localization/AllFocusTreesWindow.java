@@ -55,8 +55,9 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 	@Override
 	public void setDataTableCellFactories() {
 		/* column factory */
-		//focusNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-		//focusDescColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+		focusNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+		focusDescColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+		setColumnOnEditCommits();
 
 		/* row factory */
 		// todo maybe
@@ -67,6 +68,7 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 
 				if (focus == null || empty) {
 					setGraphic(null); // Clear any previous content
+					setEditable(true);
 				} else {
 					Localization.Status textStatus;
 					Localization.Status descStatus;
@@ -85,12 +87,20 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 							|| descStatus == Localization.Status.UPDATED;
 					boolean hasStatusNew = descStatus == Localization.Status.NEW
 							|| textStatus == Localization.Status.NEW;
+					boolean isVanilla = textStatus == Localization.Status.VANILLA;
 					if (hasStatusUpdated || hasStatusNew) {
 						setTextFill(Color.BLACK); // Set text color to black
 						setStyle("-fx-font-weight: bold; -fx-background-color: #328fa8;"); // Apply bold text using CSS
+						setEditable(true);
+					} else if (isVanilla) {
+						setTextFill(Color.BLACK); // Set text color to black
+						setStyle("-fx-background-color: #5d5353;");
+						// if vanilla disable editability of row
+						setEditable(false);
 					} else {
 						setTextFill(Color.BLACK); // Set text color to black
 						setStyle("-fx-background-color: transparent;"); // Reset style
+						setEditable(true);
 					}
 				}
 			}
@@ -142,5 +152,17 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 		} catch (IOException exc) {
 			exc.printStackTrace();
 		}
+	}
+
+	private void setColumnOnEditCommits() {
+		// todo dont do this right away
+		focusNameColumn.setOnEditCommit(event -> {
+			Focus focus = event.getRowValue();
+			focus.replaceLocalization(Localizable.Property.NAME, event.getNewValue());
+		});
+		focusDescColumn.setOnEditCommit(event -> {
+			Focus focus = event.getRowValue();
+			focus.replaceLocalization(Localizable.Property.DESCRIPTION, event.getNewValue());
+		});
 	}
 }

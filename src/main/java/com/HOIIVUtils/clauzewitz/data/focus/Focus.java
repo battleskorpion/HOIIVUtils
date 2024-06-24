@@ -795,12 +795,12 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 				details.append("Requires one of the following: \n");
 				for (Focus f : prereqSet) {
 					details.append("- ");
-					details.append(f.localization(Property.NAME));
+					details.append(f.localizationText(Property.NAME));
 					details.append("\n");
 				}
 			} else {
 				details.append("Requires: ");
-				details.append(prereqSet.iterator().next().localization(Property.DESCRIPTION));
+				details.append(prereqSet.iterator().next().localizationText(Property.NAME));
 				details.append("\n");
 			}
 		}

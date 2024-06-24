@@ -40,21 +40,24 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
             System.err.println("Localization folder unknown.");
             return;
         }
-        loadLocalization(HOIIVFile.mod_localization_folder);
-        // todo vanilla folder
+        /*
+        load mod localization after vanilla to give mod localizations priority
+         */
+        loadLocalization(HOIIVFile.hoi4_localization_folder, Localization.Status.VANILLA);
+        loadLocalization(HOIIVFile.mod_localization_folder, Localization.Status.EXISTS);
     }
 
-    protected void loadLocalization(File localizationFolder) {
+    protected void loadLocalization(File localizationFolder, Localization.Status status) {
         File[] files = localizationFolder.listFiles();
         if (files == null) {
             return;
         }
         for (File file : files) {
             if (file.isDirectory()) {
-                loadLocalization(file);
+                loadLocalization(file, status);
             } else {
                 if (file.getName().endsWith(".yml")) {
-                    loadLocalizationFile(file);
+                    loadLocalizationFile(file, status);
                 } else {
                     System.out.println("Localization files can only be of type .yml. File: " + file.getAbsolutePath());
                 }
@@ -62,7 +65,7 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
         }
     }
 
-    protected void loadLocalizationFile(File file) {
+    protected void loadLocalizationFile(File file, Localization.Status Status) {
         try (Scanner scanner = new Scanner(file)) {
             // check language
             boolean languageFound = false;
@@ -92,8 +95,9 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
                 String[] data = line.splitWithDelimiters(versionNumberRegex, 2);
                 if (data.length != 3) {
                     System.err.println("Invalid localization file format: " + file.getAbsolutePath()
-                            + ".\n" + "line: " + line);
-                    return;
+                            + "\n\tline: " + line
+                            + "\n\tReason: incorrect number of line elements");
+                    continue;
                 }
                 // trim whitespace
                 for (int i = 0; i < data.length; i++) {
@@ -101,18 +105,25 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
                 }
                 // ignore ":" before version number
                 data[1] = data[1].substring(1);
-                // ignore trailing comments
-                // todo make this better (lazy)
-                if (data[2].contains("#")) {
-                    // Replace \# with a placeholder
-                    data[2] = data[2].replaceAll("\\\\#", "\u0000");
-                    if (data[2].contains("#")) {
-                        data[2] = data[2].substring(0, data[2].indexOf("#"));
-                        data[2] = data[2].trim();
-                    }
-                    // Replace the placeholder back to \#
-                    data[2] = data[2].replace("\u0000", "\\#");
+                // ignore escaped quotes
+                data[2] = data[2].replaceAll("//\"", "\u0000");
+                int startQuote = data[2].indexOf("\"");
+                int endQuote = data[2].lastIndexOf("\"");
+                var extra = data[2].substring(endQuote + 1).trim();
+                if (!extra.isEmpty() && !extra.startsWith("#")) {
+                    System.err.println("Invalid localization file format: " + file.getAbsolutePath()
+                            + "\n\tline: " + line
+                            + "\n\tReason: extraneous non-comment data after localization entry: " + extra);
+                    continue;
                 }
+                if (startQuote != 0 || endQuote == -1 || startQuote == endQuote) {
+                    System.err.println("Invalid localization file format: " + file.getAbsolutePath()
+                            + "\n\tline: " + line
+                            + "\n\tReason: localization value is not correctly enclosed in quotes");
+                    continue;
+                }
+                // remove leading/trailing quotes (and any comments)
+                data[2] = data[2].substring(startQuote + 1, endQuote);
 
                 /*
                 .yml example format:
@@ -132,14 +143,9 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
                     value = data[2];
                 }
 
-                if (value.length() == 1 || !value.startsWith("\"") || !value.endsWith("\"")) {
-                    System.err.println("Invalid localization file format: " + file.getAbsolutePath()
-                            + ".\n" + "line: " + line);
-                    return;
-                }
-                // fix file format issues (as it is a UTF-8 BOM file) and remove leading/trailing quotes
-                value = value.replaceAll("(Â§)", "§").substring(1, value.length() - 1);
-                Localization localization = new Localization(key, version, value, Localization.Status.EXISTS);
+                // fix file format issues (as it is a UTF-8 BOM file)
+                value = value.replaceAll("(Â§)", "§");
+                Localization localization = new Localization(key, version, value, Status);
                 localizationCollection.add(localization, file);
             }
         } catch (IOException exc) {
@@ -154,15 +160,6 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
             return;
         }
 
-        // Load all localization files from the directory
-        for (File file : files) {
-            if (file.isDirectory()) {
-                loadLocalization(file);
-            } else if (file.getName().endsWith(".yml")) {
-                loadLocalizationFile(file);
-            } else throw new IllegalLocalizationFileTypeException(file);
-        }
-
         // Separate new and changed localizations
         var changedLocalizations = localizationCollection.filterByStatus(Localization.Status.UPDATED);
         var newLocalizations = localizationCollection.filterByStatus(Localization.Status.NEW);
@@ -170,7 +167,6 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
         // Save updated and new localizations
         changedLocalizations.forEach(entry -> writeAllLocalization(entry.getValue(), entry.getKey()));
         newLocalizations.forEach(entry -> writeAllLocalization(entry.getValue(), entry.getKey()));
-
     }
 
 

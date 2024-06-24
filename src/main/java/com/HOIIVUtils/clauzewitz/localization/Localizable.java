@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
  * Clausewitz-engine localization, and not the general localization/i18n of this program.
  */
 public interface Localizable {
+
 	enum Property {
 		NAME,
 		DESCRIPTION,
@@ -77,6 +78,11 @@ public interface Localizable {
 	default @NotNull String localizationText(Property property) {
 		if (localization(property) == null) return "[null]";
 		return localization(property).text();
+	}
+
+	default String localizationStatus(Property property) {
+		if (localization(property) == null) return "[null]";
+		return localization(property).status().toString();
 	}
 
 	// todo may bring back at some point
