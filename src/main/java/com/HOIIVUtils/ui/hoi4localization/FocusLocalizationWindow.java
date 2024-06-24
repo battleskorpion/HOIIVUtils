@@ -2,13 +2,12 @@ package com.HOIIVUtils.ui.hoi4localization;
 
 import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.Settings;
-import com.HOIIVUtils.clauzewitz.data.focus.FixFocus;
 import com.HOIIVUtils.clauzewitz.data.focus.Focus;
 import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
-import com.HOIIVUtils.clauzewitz.localization.FocusLocalizationFile;
+import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.clauzewitz.localization.Localization;
-import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
 
+import com.HOIIVUtils.ui.FXWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,12 +16,14 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
 import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
-import com.HOIIVUtils.ui.message.MessageController;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 
+
+/**
+ * TODO: have to redo some methods/design to fit with the new localization system
+ */
 public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
 
     @FXML
@@ -50,7 +51,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
     @FXML
     private TableColumn<Focus, String> focusDescColumn;
     private FocusTree focusTree;
-    private FocusLocalizationFile focusLocFile;
+    //private FocusLocalizationFile focusLocFile;
 
     private final ObservableList<Focus> focusObservableList;
 
@@ -78,7 +79,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
 
     public void handleFocusTreeFileBrowseButtonAction() {
         File initialFocusDirectory = HOIIVFile.mod_focus_folder;
-        File selectedFile = openChooser(focusTreeFileBrowseButton, initialFocusDirectory, false);
+        File selectedFile = FXWindow.openChooser(focusTreeFileBrowseButton, initialFocusDirectory, false);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }
@@ -93,46 +94,46 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
     }
 
     public void handleFocusLocFileBrowseButtonAction() {
-        File initialFocusLocDirectory = HOIIVFile.mod_localization_folder;
-        File selectedFile = openChooser(focusLocFileBrowseButton, initialFocusLocDirectory, false);
-        if (Settings.DEV_MODE.enabled()) {
-            System.out.println(selectedFile);
-        }
-        if (selectedFile != null) {
-            focusLocFileTextField.setText(selectedFile.getAbsolutePath());
-            try {
-                focusLocFile = new FocusLocalizationFile(selectedFile);
-            } catch (IllegalLocalizationFileTypeException e) {
-                openError(e);
-                return;
-            }
-            focusTree.setLocalization(focusLocFile);
-            System.out.println("Set localization file of " + focusTree + " to " + focusLocFile);
-        }
+//        File initialFocusLocDirectory = HOIIVFile.mod_localization_folder;
+//        File selectedFile = openChooser(focusLocFileBrowseButton, initialFocusLocDirectory, false);
+//        if (Settings.DEV_MODE.enabled()) {
+//            System.out.println(selectedFile);
+//        }
+//        if (selectedFile != null) {
+//            focusLocFileTextField.setText(selectedFile.getAbsolutePath());
+//            try {
+//                focusLocFile = new FocusLocalizationFile(selectedFile);
+//            } catch (IllegalLocalizationFileTypeException e) {
+//                openError(e);
+//                return;
+//            }
+//            focusTree.setLocalization(focusLocFile);
+//            System.out.println("Set localization file of " + focusTree + " to " + focusLocFile);
+//        }
     }
 
     public void handleLoadButtonAction() {
-        if (focusLocFile == null || focusTree == null) {
-            // Handle the case where focusLocFile or focusTree is not properly initialized
-            MessageController window = new MessageController();
-            window.open("Error: Focus localization or focus tree not properly initialized.");
-            return;
-        }
-
-        /* load focus loc */
-        try {
-            int numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
-            // todo didnt happe?
-            updateNumLocalizedFocuses(numLocalizedFocuses);
-        } catch (IOException e) {
-            openError(e);
-            return;
-        }
-
-        updateObservableFocusList();
-
-        /* enable saving of localization */
-        saveButton.setDisable(false);
+//        if (focusLocFile == null || focusTree == null) {
+//            // Handle the case where focusLocFile or focusTree is not properly initialized
+//            MessageController window = new MessageController();
+//            window.open("Error: Focus localization or focus tree not properly initialized.");
+//            return;
+//        }
+//
+//        /* load focus loc */
+//        try {
+//            int numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
+//            // todo didnt happe?
+//            updateNumLocalizedFocuses(numLocalizedFocuses);
+//        } catch (IOException e) {
+//            openError(e);
+//            return;
+//        }
+//
+//        updateObservableFocusList();
+//
+//        /* enable saving of localization */
+//        saveButton.setDisable(false);
     }
 
     private void updateObservableFocusList() {
@@ -170,14 +171,14 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
     }
 
     public void handleSaveButtonAction() {
-        if (focusLocFile == null) {
-            // Handle the case where focusLocFile is not properly initialized
-            MessageController window = new MessageController();
-            window.open("Error: Focus localization file not properly initialized.");
-            return;
-        }
-
-        focusLocFile.writeLocalization();
+//        if (focusLocFile == null) {
+//            // Handle the case where focusLocFile is not properly initialized
+//            MessageController window = new MessageController();
+//            window.open("Error: Focus localization file not properly initialized.");
+//            return;
+//        }
+//
+//        focusLocFile.writeLocalization();
     }
 
     @Override
@@ -198,15 +199,15 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
                 } else {
                     Localization.Status textStatus;
                     Localization.Status descStatus;
-                    if (focus.getNameLocalization() == null) {
+                    if (focus.localization(Localizable.Property.NAME) == null) {
                         textStatus = Localization.Status.MISSING;
                     } else {
-                        textStatus = focus.getNameLocalization().status();
+                        textStatus = focus.localization(Localizable.Property.NAME).status();
                     }
-                    if (focus.getDescLocalization() == null) {
+                    if (focus.localization(Localizable.Property.DESCRIPTION) == null) {
                         descStatus = Localization.Status.MISSING;
                     } else {
-                        descStatus = focus.getDescLocalization().status();
+                        descStatus = focus.localization(Localizable.Property.DESCRIPTION).status();
                     }
 
                     boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
@@ -229,12 +230,12 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
     private void setColumnOnEditCommits() {
         focusNameColumn.setOnEditCommit(event -> {
             Focus focus = event.getRowValue();
-            focus.setNameLocalization(event.getNewValue());
+            focus.replaceLocalization(Localizable.Property.NAME, event.getNewValue());
         });
         focusDescColumn.setOnEditCommit(event -> {
             // This method will be called when a user edits and commits a cell value.
             Focus focus = event.getRowValue();
-            focus.setDescLocalization(event.getNewValue());
+            focus.replaceLocalization(Localizable.Property.DESCRIPTION, event.getNewValue());
         });
     }
 

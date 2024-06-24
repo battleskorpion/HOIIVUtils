@@ -2,6 +2,8 @@ package com.HOIIVUtils.ui.menu;
 
 import com.HOIIVUtils.Settings;
 import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
+import com.HOIIVUtils.clauzewitz.localization.EnglishLocalizationManager;
+import com.HOIIVUtils.clauzewitz.localization.LocalizationManager;
 import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import com.HOIIVUtils.ui.console.ConsoleController;
 import com.HOIIVUtils.ui.hoi4localization.CustomTooltipWindow;
@@ -90,12 +92,12 @@ public class MenuController extends Application implements FXWindow {
 			e.printStackTrace();
 		}
 		if (!Settings.DEMO_MODE.enabled()) {
+			if (Settings.LOAD_LOCALIZATION.enabled()) {
+				LocalizationManager LocalizationManager = new EnglishLocalizationManager();
+				LocalizationManager.reload();
+			}
 			State.read();
 			FocusTree.read();
-			// ???
-			if (Settings.LOAD_LOCALIZATION.enabled()) {
-				FocusTree.loadLocalization();
-			}
 		}
 	}
 

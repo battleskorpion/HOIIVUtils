@@ -5,11 +5,10 @@ import com.HOIIVUtils.clauzewitz.code.effect.Effect;
 import com.HOIIVUtils.clauzewitz.code.scope.NotPermittedInScopeException;
 import com.HOIIVUtils.clauzewitz.code.scope.Scope;
 import com.HOIIVUtils.clauzewitz.code.scope.ScopeCategory;
+import com.HOIIVUtils.clauzewitz.DataFunctionProvider;
 import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.clauzewitz.data.country.CountryTags;
 import com.HOIIVUtils.clauzewitz.data.gfx.Interface;
-import com.HOIIVUtils.clauzewitz.localization.FocusLocalizationFile;
-import com.HOIIVUtils.clauzewitz.localization.Localization;
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.ddsreader.DDSReader;
 import com.HOIIVUtils.clauzewitz.exceptions.InvalidEffectParameterException;
@@ -22,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -33,9 +33,9 @@ import java.util.function.Function;
 /**
  * Focus class represents an individual focus of a National Focus (Focus Tree).
  */
-public class Focus implements Localizable, Comparable<Focus> {
+public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvider<Focus> {
 	private static final int FOCUS_COST_FACTOR = 7; // turn into from defines, or default 7. (get default vanilla define
-													// instead?)
+	// instead?)
 	private final int DEFAULT_FOCUS_COST = 10; // default cost (in weeks by default) when making a new focus.
 	private static final HashSet<String> focusIDs = new HashSet<>();
 
@@ -43,8 +43,6 @@ public class Focus implements Localizable, Comparable<Focus> {
 	protected FocusTree focusTree;
 	// Expression focusExp;
 	protected SimpleStringProperty id;
-	protected Localization nameLocalization;
-	protected Localization descLocalization;
 	protected SimpleStringProperty icon;
 	protected Image ddsImage;
 	protected Set<Set<Focus>> prerequisite; // can be multiple, but hoi4 code is simply "prerequisite"
@@ -83,7 +81,6 @@ public class Focus implements Localizable, Comparable<Focus> {
 			throw new DuplicateFocusException("Error: focus id " + focus_id + " already exists.");
 		}
 		this.id = new SimpleStringProperty(focus_id);
-		this.setNameLocalization();
 
 		this.focusTree = focusTree;
 		focusIDs.add(focus_id);
@@ -97,16 +94,16 @@ public class Focus implements Localizable, Comparable<Focus> {
 
 	/**
 	 * Obtain data functions intended for displaying focus properties across a table
-	 * 
+	 *
 	 * @return
 	 */
 	public static List<Function<Focus, ?>> getDataFunctions() {
-		List<Function<Focus, ?>> dataFunctions = new ArrayList<>(3); // for optimization, limited number of data
-																		// functions.
+		// for optimization, set number of data functions (why not)
+		List<Function<Focus, ?>> dataFunctions = new ArrayList<>(3);
 
 		dataFunctions.add(Focus::id);
-		dataFunctions.add(Focus::nameLocalization);
-		dataFunctions.add(Focus::descLocalization);
+		dataFunctions.add(focus -> focus.localizationText(Property.NAME));
+		dataFunctions.add(focus -> focus.localizationText(Property.DESCRIPTION));
 
 		return dataFunctions;
 	}
@@ -275,14 +272,29 @@ public class Focus implements Localizable, Comparable<Focus> {
 		// focusExp = exp.get("focus=");
 
 		setID(exp.getValue("id").string());
-		setXY(exp.getValue("x").integer(), exp.getValue("y").integer());
-		setRelativePositionID(exp.getValue("relative_position_id").string());
+		try {
+			setXY(exp.getValue("x").integer(), exp.getValue("y").integer());
+		} catch (IllegalStateException e) {
+			System.err.println(e.getMessage());
+			setXY(0, 0); // todo better error reporting
+		}
+		try {
+			setRelativePositionID(exp.getValue("relative_position_id").string());
+		} catch (IllegalStateException e) {
+			System.err.println(e.getMessage());
+			setRelativePositionID(null); // todo better error reporting
+		}
 		// setFocusLoc();
-		setIcon(exp.getValue("icon").string());
+		try {
+			setIcon(exp.getValue("icon").string());
+		} catch (IllegalStateException e) {
+			System.err.println(e.getMessage());
+			setIcon(null); // todo better error reporting
+		}
 		try {
 			setCost(exp.getValue("cost").rational());
 		} catch (IllegalStateException e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 			setCost(DEFAULT_FOCUS_COST); // todo better error reporting
 		}
 		setPrerequisite(exp.filterName("prerequisite").toList());
@@ -383,164 +395,6 @@ public class Focus implements Localizable, Comparable<Focus> {
 	// this.cost = exp.getValue();
 	// }
 
-	/**
-	 * Returns focus name localization in the current language, or other.
-	 * 
-	 * @return focus name localization
-	 */
-	public String nameLocalization() {
-		if (nameLocalization == null) {
-			return "[null]";
-		}
-		return nameLocalization.text();
-	}
-
-	/**
-	 * Default method for setting localization name of focus. Sets the localization
-	 * name
-	 * to the focus id.
-	 */
-	public void setNameLocalization() {
-		setNameLocalization(id(), Localization.Status.DEFAULT);
-	}
-
-	public void setNameLocalization(Localization localization) {
-		nameLocalization = localization;
-	}
-
-	/**
-	 * Sets name localization and decides the status.
-	 * 
-	 * @param text
-	 */
-	public void setNameLocalization(String text) {
-		if (nameLocalization == null) {
-			setNameLocalization(text, Localization.Status.DEFAULT);
-			return;
-		}
-
-		Localization.Status status;
-
-		if (nameLocalization.status() == Localization.Status.NEW) {
-			status = Localization.Status.NEW;
-		} else {
-			// including if nameLocalization.status() == Localization.Status.DEFAULT, itll
-			// now be updated
-			status = Localization.Status.UPDATED;
-		}
-
-		setNameLocalization(text, status);
-	}
-
-	/**
-	 * Sets name localization with a specific status. Only use if specifying status
-	 * is necessary.
-	 * 
-	 * @param text
-	 * @param status
-	 */
-	public void setNameLocalization(String text, Localization.Status status) {
-		if (nameLocalization == null) {
-			nameLocalization = new Localization(id(), text, status);
-			return;
-		}
-
-		String id = nameLocalization.ID();
-		nameLocalization = new Localization(id, text, status);
-		focusTree.updateLocalization(nameLocalization);
-	}
-
-	/**
-	 * Returns focus name localization as an observable string property.
-	 * 
-	 * @return focus name localization
-	 */
-	public SimpleStringProperty nameLocalizationProperty() {
-		return new SimpleStringProperty(nameLocalization());
-	}
-
-	/**
-	 * Returns focus description localization as an observable string property.
-	 * 
-	 * @return focus description localization
-	 */
-	public SimpleStringProperty descLocalizationProperty() {
-		return new SimpleStringProperty(descLocalization());
-	}
-
-	/**
-	 * Set focus description localization
-	 * 
-	 * @param localization focus description localization
-	 */
-	public void setDescLocalization(Localization localization) {
-		descLocalization = localization;
-	}
-
-	/**
-	 * Sets focus description localization to the specified text.
-	 * 
-	 * @param text focus description localization
-	 */
-	public void setDescLocalization(String text) {
-		if (descLocalization == null) {
-			descLocalization = new Localization(id() + "_desc", text, Localization.Status.DEFAULT);
-			return;
-		}
-
-		Localization.Status status;
-
-		if (descLocalization.status() == Localization.Status.NEW) {
-			status = Localization.Status.NEW;
-		} else {
-			// including if nameLocalization.status() == Localization.Status.DEFAULT, itll
-			// now be updated
-			status = Localization.Status.UPDATED;
-		}
-
-		// descLocalization = new Localization(id, text, status);
-		setDescLocalization(text, status);
-		// todo?
-	}
-
-	/**
-	 * Sets focus description localization with a specific status, if necessary.
-	 * 
-	 * @param text   focus description localization
-	 * @param status status of localization
-	 */
-	public void setDescLocalization(String text, Localization.Status status) {
-		if (descLocalization == null) {
-			descLocalization = new Localization(id(), text, status);
-			return;
-		}
-
-		String id = descLocalization.ID();
-		descLocalization = new Localization(id, text, status);
-		focusTree.updateLocalization(descLocalization);
-	}
-
-	/**
-	 * Returns focus description localization in the current language, or other.
-	 * 
-	 * @return focus description localization
-	 */
-	public String descLocalization() {
-		if (descLocalization == null) {
-			return "[null]";
-		}
-		return descLocalization.text();
-	}
-
-	/**
-	 * Returns focus description localization
-	 * 
-	 * @return focus description localization
-	 */
-	public Localization getDescLocalization() {
-		return descLocalization;
-	}
-
 	// // todo implement icon lookup
 	// public void setIcon(Expression exp) {
 	// if (exp == null) {
@@ -574,7 +428,12 @@ public class Focus implements Localizable, Comparable<Focus> {
 			FileInputStream fis;
 			if (gfx == null) {
 				// System.err.println("GFX was not found for " + icon); // too much right now
-				fis = new FileInputStream(Settings.MOD_PATH + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+				try {
+					fis = new FileInputStream(Settings.MOD_PATH + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+				} catch (FileNotFoundException exc) {
+					ddsImage = null;
+					return;
+				}
 			} else {
 				fis = new FileInputStream(Interface.getGFX(icon));
 			}
@@ -869,54 +728,22 @@ public class Focus implements Localizable, Comparable<Focus> {
 		return cost * FOCUS_COST_FACTOR;
 	}
 
-	/**
-	 * Returns true if the focus has a completion reward.
-	 * 
-	 * @return true if the focus has a completion reward
-	 */
-	public Localization getNameLocalization() {
-		return nameLocalization;
-	}
-
-	/**
-	 * Returns true if the focus has a completion reward.
-	 * 
-	 * @param localization localization to set
-	 */
-	public void setLocalization(FocusLocalizationFile localization) {
-		Localization nameLoc = localization.getLocalization(id());
-		Localization descLoc = localization.getLocalizationDesc(id() + "_desc");
-		setNameLocalization(nameLoc);
-		setDescLocalization(descLoc);
-	}
-
-	/**
-	 * Sets localization of focus
-	 * 
-	 * @param localization localization to set
-	 * @param focusNameLoc focus name localization
-	 * @param focusDescLoc focus description localization
-	 */
-	public void setLocalization(FocusLocalizationFile localization, String focusNameLoc, String focusDescLoc) {
-		Localization nameLoc = localization.setLocalization(id(), focusNameLoc);
-		Localization descLoc = localization.setLocalizationDesc(id() + "_desc", focusDescLoc);
-		setNameLocalization(nameLoc);
-		setDescLocalization(descLoc);
-	}
-
-	/**
-	 * Returns the number of localizable focus properties.
-	 * 
-	 * @return number of localizable properties
-	 */
 	@Override
-	public int numLocalizableProperties() {
-		return 2;
+	public @NotNull Map<Property, String> getLocalizableProperties() {
+		return Map.of(Property.NAME, id(), Property.DESCRIPTION, id() + "_desc");
+	}
+
+	@Override
+	public @NotNull Collection<? extends Localizable> getLocalizableGroup() {
+		if (focusTree == null) {
+			return List.of(this);
+		}
+		return focusTree.getLocalizableGroup();
 	}
 
 	/**
 	 * Returns the list of pending focus references
-	 * 
+	 *
 	 * @return list of pending focus references
 	 */
 	public PendingFocusReferenceList getPendingFocusReferences() {
@@ -944,20 +771,6 @@ public class Focus implements Localizable, Comparable<Focus> {
 	}
 
 	/**
-	 * Focus name defined in the current localization language (or English).
-	 * 
-	 * @return Focus localized name, or null if not defined or not found.
-	 */
-	public String name() {
-		if (nameLocalization() == null) {
-			return id();
-		} else {
-			return nameLocalization();
-		}
-
-	}
-
-	/**
 	 *
 	 * @return String representing focus completion reward effects,
 	 *         with custom tooltips, not including hidden effects,
@@ -982,12 +795,12 @@ public class Focus implements Localizable, Comparable<Focus> {
 				details.append("Requires one of the following: \n");
 				for (Focus f : prereqSet) {
 					details.append("- ");
-					details.append(f.nameLocalization());
+					details.append(f.localization(Property.NAME));
 					details.append("\n");
 				}
 			} else {
 				details.append("Requires: ");
-				details.append(prereqSet.iterator().next().nameLocalization());
+				details.append(prereqSet.iterator().next().localization(Property.DESCRIPTION));
 				details.append("\n");
 			}
 		}

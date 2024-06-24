@@ -2,8 +2,10 @@ package com.HOIIVUtils.ui.hoi4localization;
 
 import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.clauzewitz.data.country.Country;
+import com.HOIIVUtils.clauzewitz.data.focus.FixFocus;
 import com.HOIIVUtils.clauzewitz.data.focus.Focus;
 import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
+import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.clauzewitz.localization.Localization;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 import javafx.collections.FXCollections;
@@ -17,6 +19,9 @@ import javafx.scene.paint.Color;
 import java.io.*;
 
 public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
+
+	private static final Localizable.Property NAME_PROPERTY = Localizable.Property.NAME;
+	private static final Localizable.Property DESC_PROPERTY = Localizable.Property.DESCRIPTION;
 
 	@FXML
 	private TableView<Focus> focusListTable;
@@ -38,7 +43,6 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 
 	/**
 	 * {@inheritDoc}
-	 *
 	 */
 	@FXML
 	void initialize() {
@@ -66,15 +70,15 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 				} else {
 					Localization.Status textStatus;
 					Localization.Status descStatus;
-					if (focus.getNameLocalization() == null) {
+					if (focus.localization(NAME_PROPERTY) == null) {
 						textStatus = Localization.Status.MISSING;
 					} else {
-						textStatus = focus.getNameLocalization().status();
+						textStatus = focus.localization(NAME_PROPERTY).status();
 					}
-					if (focus.getDescLocalization() == null) {
+					if (focus.localization(DESC_PROPERTY) == null) {
 						descStatus = Localization.Status.MISSING;
 					} else {
-						descStatus = focus.getDescLocalization().status();
+						descStatus = focus.localization(DESC_PROPERTY).status();
 					}
 
 					boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
@@ -97,6 +101,11 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 		focusObservableList.clear();
 		for (var focusTree : FocusTree.listFocusTrees()) {
 			focusObservableList.addAll(focusTree.focuses());
+			try {
+				FixFocus.fixLocalization(focusTree);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -111,7 +120,7 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 
 			PWriter.println("Focus ID; Focus Name; Focus Description; Notes");
 			for (var focus : focusObservableList) {
-				if (focus.getDescLocalization() == null) {
+				if (focus.localization(DESC_PROPERTY) == null) {
 					Focus.getDataFunctions().forEach(dataFunction -> {
 						PWriter.print(dataFunction.apply(focus));
 						PWriter.print(";");
@@ -119,7 +128,7 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 					PWriter.print("Missing description (no localization key exists);");
 					PWriter.println();
 				}
-				else if (focus.getDescLocalization().text().isEmpty()) {
+				else if (focus.localization(DESC_PROPERTY).text().isEmpty()) {
 					Focus.getDataFunctions().forEach(dataFunction -> {
 						PWriter.print(dataFunction.apply(focus));
 						PWriter.print(";");

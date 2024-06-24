@@ -7,9 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Scanner;
+import java.util.*;
 
 import static com.HOIIVUtils.Settings.MOD_PATH;
 
@@ -18,12 +16,17 @@ public class CountryTags extends HOIIVUtils implements Iterable<CountryTag> {
 	private static ArrayList<CountryTag> country_tags;
 
 	private static File country_tags_folder;
-	private static File countries_main_file;
+	private static Collection<File> country_tags_files;
 
 	private static ArrayList<CountryTag> loadCountryTags() throws IOException {
 		country_tags = new ArrayList<>();
 		country_tags_folder = new File(SettingsManager.get(MOD_PATH) + "\\common\\country_tags");
-		countries_main_file = new File(country_tags_folder.getPath() + "\\00_countries.txt");
+		if (country_tags_folder.exists() && country_tags_folder.isDirectory() && country_tags_folder.listFiles() != null) {
+			country_tags_files = List.of(Objects.requireNonNull(country_tags_folder.listFiles()));
+		} else {
+			//country_tags_files = new ArrayList<>();
+			country_tags_files = null;
+		}
 
 		if(SettingsManager.get(MOD_PATH) == null) {
 			return null;
@@ -32,26 +35,35 @@ public class CountryTags extends HOIIVUtils implements Iterable<CountryTag> {
 			return null;
 		}
 
-		/* read 00_countries if applicable */
+		/* read countries if applicable */
 		/* else load vanilla tags */
+		// TODO this needs to be better fixed (vanilla overwritten or not???)
 		Scanner countryTagsReader = null;
-		if (countries_main_file.exists()) {
-			countryTagsReader = new Scanner(countries_main_file);
+		if (country_tags_files != null) {
+			for (File f : country_tags_files) {
+				// don't include dynamic country tags (used for civil wars)
+				if (f.getName().contains("dynamic_countries")) {
+					continue;
+				}
 
-			// make a list of country tags
-			while (countryTagsReader.hasNextLine()) {
-				String data = countryTagsReader.nextLine().replaceAll("\\s", "");
-				if (FileUtils.usefulData(data)) {
-					// takes the defined tag at the beginning of the line
-					CountryTag tag = new CountryTag(data.substring(0, data.indexOf('=')).trim());
-					if (tag.equals(CountryTag.NULL_TAG)) {
-						continue;
+				countryTagsReader = new Scanner(f);
+
+				// make a list of country tags
+				while (countryTagsReader.hasNextLine()) {
+					String data = countryTagsReader.nextLine().replaceAll("\\s", "");
+					if (FileUtils.usefulData(data)) {
+						// takes the defined tag at the beginning of the line
+						CountryTag tag = new CountryTag(data.substring(0, data.indexOf('=')).trim());
+						if (tag.equals(CountryTag.NULL_TAG)) {
+							continue;
+						}
+						country_tags.add(tag);
+						//System.out.println(data.substring(0, data.indexOf('=')));
 					}
-					country_tags.add(tag);
-					//System.out.println(data.substring(0, data.indexOf('=')));
 				}
 			}
 		} else {
+			// TODO this needs! to be fixed
 			System.out.println("loading default country tags because country_tags\\00_countries does not exist");
 			File country_tags_default_folder = new File("hoi4files\\country_tags"); 	// with program
 			if (!country_tags_default_folder.exists()) {
@@ -68,34 +80,6 @@ public class CountryTags extends HOIIVUtils implements Iterable<CountryTag> {
 						CountryTag tag = new CountryTag(data.substring(0, data.indexOf('=')).trim());
 						if (tag.equals(CountryTag.NULL_TAG)) {
 							continue;
-						}
-						country_tags.add(tag);
-					}
-				}
-			}
-		}
-
-		/* read other country tags */
-		if (country_tags_folder.listFiles() != null) {
-			for (File file : country_tags_folder.listFiles()) {
-				if (countries_main_file.exists() && file.equals(countries_main_file)) {
-					continue;
-				}
-				// don't include dynamic country tags (used for civil wars)
-				if (file.getName().contains("dynamic_countries")) {
-					continue;
-				}
-
-				countryTagsReader = new Scanner(file);
-
-				// make a list of country tags
-				while (countryTagsReader.hasNextLine()) {
-					String data = countryTagsReader.nextLine().replaceAll("\\s", "");
-					if (FileUtils.usefulData(data)) {
-						// takes the defined tag at the beginning of the line
-						CountryTag tag = new CountryTag(data.substring(0, data.indexOf('=')).trim());
-						if (tag.equals(CountryTag.NULL_TAG)) {
-							continue; 
 						}
 						country_tags.add(tag);
 					}

@@ -2,22 +2,33 @@ package com.HOIIVUtils.clauzewitz.map.province;
 
 import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.clauzewitz.localization.Localization;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * localizable: victory point name
  */
-public class VictoryPoint extends Province implements Localizable {
+public class VictoryPoint implements Localizable {
+	static List<VictoryPoint> victoryPoints = new ArrayList<>();
 	int value;
-	Localization vpName;
+	Province province;
 
-	public VictoryPoint(int province, int value) {
-		this(province, value, null);
+	protected VictoryPoint(int province, int value) {
+		this.province = Province.of(province);
+		this.value = value;
 	}
 
-	public VictoryPoint(int province, int value, Localization vpName) {
-		super(province);
-		this.value = value;
-		this.vpName = vpName;
+	public static VictoryPoint of(int province, int value) {
+		for (VictoryPoint vp : victoryPoints) {
+			if (vp.province.id == province) {
+				return vp;
+			}
+		}
+		return new VictoryPoint(province, value);
 	}
 
 	public int value() {
@@ -28,12 +39,13 @@ public class VictoryPoint extends Province implements Localizable {
 		this.value = value;
 	}
 
-	public Localization name() {
-		return vpName;
+	@Override
+	public @NotNull Map<Property, String> getLocalizableProperties() {
+		return Map.of(Property.NAME, "VP_NAME");
 	}
 
-	public void setName(Localization vpName) {
-		this.vpName = vpName;
+	@Override
+	public @NotNull Collection<? extends Localizable> getLocalizableGroup() {
+		return victoryPoints;
 	}
-
 }

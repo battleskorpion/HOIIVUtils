@@ -2,7 +2,6 @@ package com.HOIIVUtils.clauzewitz.map.state;
 
 import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.clauzewitz.localization.Localizable;
-import com.HOIIVUtils.clauzewitz.localization.LocalizationHandler;
 import com.HOIIVUtils.clauzewitz.code.ClausewitzDate;
 import com.HOIIVUtils.clauzewitz.data.country.Country;
 import com.HOIIVUtils.clauzewitz.data.country.CountryTag;
@@ -61,8 +60,6 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 
 	// todo simplify
 	private void readStateFile(File stateFile) {
-		LocalizationHandler locHandler = LocalizationHandler.getInstance();
-
 		int infrastructure = 0;
 		int population = 0;
 		int civilianFactories = 0;
@@ -145,7 +142,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 						System.out.println("Warning: invalid victory point node in state, " + stateFile.getName());
 						continue;
 					}
-					var vp = new VictoryPoint(vpNode.getValue("province").integer(),
+					var vp = VictoryPoint.of(vpNode.getValue("province").integer(),
 							vpNode.getValue("value").integer());
 					victoryPoints.add(vp);
 				}
@@ -486,5 +483,15 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 	@Override
 	public int compareTo(@NotNull State o) {
 		return Integer.compare(stateID, o.stateID);
+	}
+
+	@Override
+	public @NotNull Map<Property, String> getLocalizableProperties() {
+		return Map.of(Property.NAME, name);
+	}
+
+	@Override
+	public @NotNull Collection<? extends Localizable> getLocalizableGroup() {
+		return states;
 	}
 }

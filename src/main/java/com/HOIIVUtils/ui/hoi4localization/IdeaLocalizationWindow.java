@@ -2,13 +2,11 @@ package com.HOIIVUtils.ui.hoi4localization;
 
 import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.Settings;
-import com.HOIIVUtils.clauzewitz.data.idea.FixIdea;
 import com.HOIIVUtils.clauzewitz.data.idea.Idea;
 import com.HOIIVUtils.clauzewitz.data.idea.IdeaFile;
 import com.HOIIVUtils.clauzewitz.localization.Localization;
-import com.HOIIVUtils.clauzewitz.localization.LocalizationFile;
-import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
 
+import com.HOIIVUtils.ui.FXWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,12 +14,13 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
-import com.HOIIVUtils.ui.message.MessageController;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 
+/**
+ * todo: modify design to work with new localization system
+ */
 public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
 
     @FXML
@@ -48,7 +47,6 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
     private TableColumn<Idea, String> ideaNameColumn;
 
     private IdeaFile ideaFile;
-    private LocalizationFile ideaLocFile;
 
     private final ObservableList<Idea> ideaObservableList;
 
@@ -76,7 +74,7 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
 
     public void handleIdeaFileBrowseButtonAction() {
         File initialIdeaDirectory = HOIIVFile.mod_ideas_folder;
-        File selectedFile = openChooser(ideaFileBrowseButton, initialIdeaDirectory, false);
+        File selectedFile = FXWindow.openChooser(ideaFileBrowseButton, initialIdeaDirectory, false);
         if (Settings.DEV_MODE.enabled()) {
             System.out.println(selectedFile);
         }
@@ -91,22 +89,22 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
     }
 
     public void handleIdeaLocFileBrowseButtonAction() {
-        File initialIdeaLocDirectory = HOIIVFile.mod_localization_folder;
-        File selectedFile = openChooser(ideaLocFileBrowseButton, initialIdeaLocDirectory, false);
-        if (Settings.DEV_MODE.enabled()) {
-            System.out.println(selectedFile);
-        }
-        if (selectedFile != null) {
-            ideaLocFileTextField.setText(selectedFile.getAbsolutePath());
-            try {
-                ideaLocFile = new LocalizationFile(selectedFile);
-            } catch (IllegalLocalizationFileTypeException e) {
-                openError(e);
-                return;
-            }
-            // ideaFile.setLocalization(ideaLocFile); // todo ?
-            System.out.println("Set localization file of " + ideaFile + " to " + ideaLocFile);
-        }
+//        File initialIdeaLocDirectory = HOIIVFile.mod_localization_folder;
+//        File selectedFile = openChooser(ideaLocFileBrowseButton, initialIdeaLocDirectory, false);
+//        if (Settings.DEV_MODE.enabled()) {
+//            System.out.println(selectedFile);
+//        }
+//        if (selectedFile != null) {
+//            ideaLocFileTextField.setText(selectedFile.getAbsolutePath());
+//            try {
+//                ideaLocFile = new LocalizationFile(selectedFile);
+//            } catch (IllegalLocalizationFileTypeException e) {
+//                openError(e);
+//                return;
+//            }
+//            // ideaFile.setLocalization(ideaLocFile); // todo ?
+//            System.out.println("Set localization file of " + ideaFile + " to " + ideaLocFile);
+//        }
     }
 
     /**
@@ -117,31 +115,31 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
      * window.
      */
     public void handleLoadButtonAction() {
-        if (ideaLocFile == null || ideaFile == null) {
-            // Handle the case where ideaLocFile or ideaFile is not properly initialized
-            MessageController window = new MessageController();
-            window.open("Error: Idea localization or idea tree not properly initialized.");
-            return;
-        }
-
-        /* load idea loc */
-        try {
-            // Load the localization file into the idea tree
-            int numLocalizedIdeas = FixIdea.addIdeaLoc(ideaFile, ideaLocFile);
-            // Update the number of localized ideas displayed on the window
-            updateNumLocalizedIdeaes(numLocalizedIdeas);
-        } catch (IOException e) {
-            // If the file cannot be loaded, open an error window
-            openError(e);
-            return;
-        }
-
-        // Update the observable list of ideas
-        updateObservableIdeaList();
-
-        /* enable saving of localization */
-        // After the localization file has been loaded, enable the save button
-        saveButton.setDisable(false);
+//        if (ideaLocFile == null || ideaFile == null) {
+//            // Handle the case where ideaLocFile or ideaFile is not properly initialized
+//            MessageController window = new MessageController();
+//            window.open("Error: Idea localization or idea tree not properly initialized.");
+//            return;
+//        }
+//
+//        /* load idea loc */
+//        try {
+//            // Load the localization file into the idea tree
+//            int numLocalizedIdeas = FixIdea.addIdeaLoc(ideaFile, ideaLocFile);
+//            // Update the number of localized ideas displayed on the window
+//            updateNumLocalizedIdeaes(numLocalizedIdeas);
+//        } catch (IOException e) {
+//            // If the file cannot be loaded, open an error window
+//            openError(e);
+//            return;
+//        }
+//
+//        // Update the observable list of ideas
+//        updateObservableIdeaList();
+//
+//        /* enable saving of localization */
+//        // After the localization file has been loaded, enable the save button
+//        saveButton.setDisable(false);
     }
 
     /**
@@ -203,20 +201,20 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
      * window.
      */
     public void handleSaveButtonAction() {
-        if (ideaLocFile == null) {
-            // Handle the case where ideaLocFile is not properly initialized
-            MessageController window = new MessageController();
-            window.open("Error: Idea localization file not properly initialized.");
-            return;
-        }
-
-        try {
-            // Saves the localization file
-            ideaLocFile.writeLocalization();
-        } catch (IOException e) {
-            // If the file cannot be saved, open an error window
-            openError(e);
-        }
+//        if (ideaLocFile == null) {
+//            // Handle the case where ideaLocFile is not properly initialized
+//            MessageController window = new MessageController();
+//            window.open("Error: Idea localization file not properly initialized.");
+//            return;
+//        }
+//
+//        try {
+//            // Saves the localization file
+//            ideaLocFile.writeLocalization();
+//        } catch (IOException e) {
+//            // If the file cannot be saved, open an error window
+//            openError(e);
+//        }
     }
 
     @Override
@@ -234,7 +232,7 @@ public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements Tab
                 if (idea == null || empty) {
                     setGraphic(null); // Clear any previous content
                 } else {
-                    Localization.Status textStatus = idea.getLocalization().status(); // todo
+                    Localization.Status textStatus = idea.localization().status(); // todo
                     boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED;
                     boolean hasStatusNew = textStatus == Localization.Status.NEW;
 

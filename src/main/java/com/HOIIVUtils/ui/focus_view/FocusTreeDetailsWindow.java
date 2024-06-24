@@ -1,6 +1,7 @@
 package com.HOIIVUtils.ui.focus_view;
 
 import com.HOIIVUtils.clauzewitz.data.focus.Focus;
+import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -24,7 +25,7 @@ public class FocusTreeDetailsWindow extends Stage {
 
 		// Create JavaFX UI components
 		VBox root = new VBox(10);
-		focusNameLabel = new Label(focus.nameLocalization());
+		focusNameLabel = new Label(focus.localization(Localizable.Property.NAME).text());
 		focusIDLabel = new Label(focus.id());
 		focusDetailsLabel = new Label();
 
@@ -39,12 +40,12 @@ public class FocusTreeDetailsWindow extends Stage {
 				details.append("Requires one of the following: \n");
 				for (Focus f : prereqSet) {
 					details.append("- ");
-					details.append(f.nameLocalization());
+					details.append(f.localization(Localizable.Property.NAME).text());
 					details.append("\n");
 				}
 			} else {
 				details.append("Requires: ");
-				details.append(prereqSet.iterator().next().nameLocalization());
+				details.append(prereqSet.iterator().next().localization(Localizable.Property.NAME).text());
 				details.append("\n");
 			}
 		}

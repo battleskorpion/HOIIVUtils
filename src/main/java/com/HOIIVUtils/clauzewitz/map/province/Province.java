@@ -1,11 +1,25 @@
 package com.HOIIVUtils.clauzewitz.map.province;
 
-public class Province {
-	int provinceid;
-	// todo province color? or too mem intense?
+import java.util.ArrayList;
+import java.util.List;
 
-	public Province(int provinceid) {
-		this.provinceid = provinceid;
+public class Province {
+	static List<Province> provinces = new ArrayList<>();
+	int id;
+
+	protected Province(int provinceid) throws IllegalArgumentException {
+		if (provinceid < 0) {
+			throw new IllegalArgumentException("Province id must be non-negative");
+		}
+		this.id = provinceid;
 	}
-	
+
+	public static Province of(int provinceid) throws IllegalArgumentException {
+		for (Province province : provinces) {
+			if (province.id == provinceid) {
+				return province;
+			}
+		}
+		return new Province(provinceid);
+	}
 }

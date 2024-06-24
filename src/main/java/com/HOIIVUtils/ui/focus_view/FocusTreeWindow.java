@@ -1,14 +1,13 @@
 package com.HOIIVUtils.ui.focus_view;
 
 import com.HOIIVUtils.Settings;
+import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.ddsreader.DDSReader;
-import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
 import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.clauzewitz.data.country.CountryTag;
 import com.HOIIVUtils.clauzewitz.data.focus.FixFocus;
 import com.HOIIVUtils.clauzewitz.data.focus.Focus;
 import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
-import com.HOIIVUtils.clauzewitz.localization.FocusLocalizationFile;
 import javafx.fxml.FXML;
 import java.util.List;
 import java.util.ArrayList;
@@ -124,26 +123,17 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 
 		// Set up the focus tree
 		focusTree = FocusTree.get(new CountryTag("SMA"));
-		try {
-			focusTree.setLocalization(new FocusLocalizationFile(
-					HOIIVFile.mod_localization_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
-		} catch (IllegalLocalizationFileTypeException e) {
-			throw new IllegalLocalizationFileTypeException("Error loading focus tree localization", e);
+		if (focusTree == null) {
+			focusTree = FocusTree.listFocusTrees()[0];
 		}
 
 		// If focusTree is still null, assign a new value
 		if (focusTree == null) {
 			focusTree = FocusTree.get(new File(HOIIVFile.mod_focus_folder + "//massachusetts.txt"));
-			try {
-				focusTree.setLocalization(new FocusLocalizationFile(
-						HOIIVFile.mod_localization_folder + "\\focus_Massachusetts_SMA_l_english.yml"));
-			} catch (IllegalLocalizationFileTypeException e) {
-				throw new IllegalLocalizationFileTypeException("Error loading focus tree localization", e);
-			}
 		}
 
 		try {
-			FixFocus.addFocusLoc(focusTree);
+			FixFocus.fixLocalization(focusTree);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -219,7 +209,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 
 		gc2D.drawImage(gfxFocusUnavailable, x1 - 32, y1 + yAdj1);
 		gc2D.drawImage(focus.getDDSImage(), x1, y1);
-		String name = focus.name();
+		String name = focus.localization(Localizable.Property.NAME).text();
 		gc2D.fillText(name, x1 - 20, y1 + yAdj2);
 	}
 
@@ -323,7 +313,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 			int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
 			gc2D.drawImage(gfxFocusUnavailable, x1 - 32, y1 + yAdj1);
 			gc2D.drawImage(focus.getDDSImage(), x1, y1);
-			String name = focus.name();
+			String name = focus.localization(Localizable.Property.NAME).text();
 			gc2D.fillText(name, x1 - 20, y1 + yAdj2);
 		}
 	}

@@ -29,25 +29,8 @@ public interface FXWindow {
 		openGlobalErrorWindow(exception.getLocalizedMessage());
 	}
 
-	/**
-	 * Opens windows file and directory chooser
-	 *
-	 * @param fxcomponent      The node (javafx component) that was pressed to open
-	 *                         the chooser, must belong to a scene
-	 * @param initialDirectory The initial directory of the file chooser, instead of
-	 *                         the default user directory.
-	 *                         If null, the initial directory will not be specified.
-	 * @param ford             A quirky boolean that specifies whether you want to
-	 *                         return a directory or file: true = return directory,
-	 *                         false = return file
-	 * @return theChosenOne, It is up to the the page to handle what you do if the
-	 * user returns a null
-	 * @see File
-	 * @see Node
-	 */
-	default File openChooser(Node fxcomponent, File initialDirectory, boolean ford) {
+	static File openChooser(Stage stage, File initialDirectory, boolean ford) {
 		File theChosenOne;
-		Stage stage = (Stage) (fxcomponent.getScene().getWindow());
 		if (ford) {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 			if (initialDirectory != null && initialDirectory.exists() && initialDirectory.isDirectory()) {
@@ -70,6 +53,26 @@ public interface FXWindow {
 
 	/**
 	 * Opens windows file and directory chooser
+	 *
+	 * @param fxcomponent      The node (javafx component) that was pressed to open
+	 *                         the chooser, must belong to a scene
+	 * @param initialDirectory The initial directory of the file chooser, instead of
+	 *                         the default user directory.
+	 *                         If null, the initial directory will not be specified.
+	 * @param ford             A quirky boolean that specifies whether you want to
+	 *                         return a directory or file: true = return directory,
+	 *                         false = return file
+	 * @return theChosenOne, It is up to the the page to handle what you do if the
+	 * user returns a null
+	 * @see File
+	 * @see Node
+	 */
+	static File openChooser(Node fxcomponent, File initialDirectory, boolean ford) {
+		return openChooser((Stage) (fxcomponent.getScene().getWindow()), initialDirectory, ford);
+	}
+
+	/**
+	 * Opens windows file and directory chooser
 	 * <p>
 	 * For if you don't want to set a initial directory
 	 *
@@ -82,8 +85,12 @@ public interface FXWindow {
 	 *         user returns a null
 	 * @see Node
 	 */
-	default File openChooser(Node fxcomponent, Boolean ford) {
+	static File openChooser(Node fxcomponent, Boolean ford) {
 		return openChooser(fxcomponent, FileUtils.usersDocuments, ford);
+	}
+
+	static File openChooser(File initialDirectory, boolean ford) {
+		return openChooser(new Stage(), initialDirectory, ford);
 	}
 
 	static void openGlobalErrorWindow(String s) {

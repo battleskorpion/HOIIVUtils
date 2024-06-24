@@ -9,6 +9,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 /*
  * StateCategory File
  * //todo refactor stuff here
@@ -54,6 +58,16 @@ public class StateCategory {
 				compare = categoryName.compareTo(o.categoryName);
 			}
 			return compare;
+		}
+
+		@Override
+		public @NotNull Map<Property, String> getLocalizableProperties() {
+			return null;
+		}
+
+		@Override
+		public @NotNull List<? extends Localizable> getLocalizableGroup() {
+			return stateCategoryTypes;
 		}
 	}
 

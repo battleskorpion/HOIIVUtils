@@ -5,6 +5,7 @@ import com.HOIIVUtils.clauzewitz.map.ProvinceGenProperties;
 import com.HOIIVUtils.clauzewitz.map.gen.Heightmap;
 import com.HOIIVUtils.clauzewitz.map.province.ProvinceGeneration;
 import com.HOIIVUtils.clauzewitz.map.province.ProvinceMap;
+import com.HOIIVUtils.ui.FXWindow;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -112,7 +113,7 @@ public class MapGenerationWindow extends HOIIVUtilsStageLoader {
 	void OnBrowseHeightmap() {
 		File f;
 		try {
-			f = openChooser(browseHeightmapButton, HOIIVFile.mod_folder, false);
+			f = FXWindow.openChooser(browseHeightmapButton, HOIIVFile.mod_folder, false);
 			heightmap = new Heightmap(f);
 		} catch (IOException exc) {
 			heightmap = null; // deselect any heightmap

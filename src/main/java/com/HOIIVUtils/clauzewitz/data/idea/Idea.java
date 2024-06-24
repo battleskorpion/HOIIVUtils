@@ -5,13 +5,14 @@ import com.HOIIVUtils.clauzewitz.code.effect.EffectParameter;
 import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.clauzewitz.code.modifier.Modifier;
 import com.HOIIVUtils.clauzewitz.localization.Localization;
-import com.HOIIVUtils.clauzewitz.localization.LocalizationFile;
 import javafx.beans.property.SimpleStringProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -32,14 +33,14 @@ public class Idea implements Localizable, EffectParameter, Comparable<Idea> {
 
 	protected Idea(String id) {
 		this.id = new SimpleStringProperty(id);
-		this.setLocalization();
+		//this.setLocalization();
 	}
 
 	public static List<Function<Idea, ?>> getDataFunctions() {
 		List<Function<Idea, ?>> dataFunctions = new ArrayList<>(2);         // for optimization, limited number of data functions.
 
-		dataFunctions.add(Idea::id);
-		dataFunctions.add(Idea::localization);
+		dataFunctions.add(idea -> idea.localization.ID());
+		dataFunctions.add(idea -> idea.localization.text());
 
 		return dataFunctions;
 	}
@@ -123,62 +124,55 @@ public class Idea implements Localizable, EffectParameter, Comparable<Idea> {
 //	}
 
 
-	public void setLocalization() {
-		setLocalization(id(), Localization.Status.DEFAULT);
-	}
+//	public void setLocalization() {
+//		setLocalization(id(), Localization.Status.DEFAULT);
+//	}
 
-	public void setLocalization(LocalizationFile localization) {
-        this.localization = localization.getLocalization(id());
-	}
+//	public void setLocalization(LocalizationFile localization) {
+//        this.localization = localization.getLocalization(id());
+//	}
 
-	/**
-	 * Sets name localization and decides the status.
-	 * @param text
-	 */
-	public void setLocalization(String text) {
-		if (localization == null) {
-			setLocalization(text, Localization.Status.DEFAULT);
-			return;
-		}
+//	/**
+//	 * Sets name localization and decides the status.
+//	 * @param text
+//	 */
+//	public void setLocalization(String text) {
+//		if (localization == null) {
+//			setLocalization(text, Localization.Status.DEFAULT);
+//			return;
+//		}
+//
+//		Localization.Status status;
+//
+//		if (localization.status() == Localization.Status.NEW)
+//		{
+//			status = Localization.Status.NEW;
+//		}
+//		else {
+//			// including if nameLocalization.status() == Localization.Status.DEFAULT, itll now be updated
+//			status = Localization.Status.UPDATED;
+//		}
+//
+//		setLocalization(text, status);
+//	}
 
-		Localization.Status status;
+//	/**
+//	 * Sets localization with a specific status. Only use if specifying status is necessary.
+//	 * @param text
+//	 * @param status
+//	 */
+//	public void setLocalization(String text, Localization.Status status) {
+//		if (localization == null) {
+//			localization = new Localization(id(), text, null, status);
+//			return;
+//		}
+//
+//		String id = localization.ID();
+//		localization = new Localization(id, text, null, status);
+//	}
 
-		if (localization.status() == Localization.Status.NEW)
-		{
-			status = Localization.Status.NEW;
-		}
-		else {
-			// including if nameLocalization.status() == Localization.Status.DEFAULT, itll now be updated
-			status = Localization.Status.UPDATED;
-		}
-
-		setLocalization(text, status);
-	}
-
-	/**
-	 * Sets localization with a specific status. Only use if specifying status is necessary.
-	 * @param text
-	 * @param status
-	 */
-	public void setLocalization(String text, Localization.Status status) {
-		if (localization == null) {
-			localization = new Localization(id(), text, status);
-			return;
-		}
-
-		String id = localization.ID();
-		localization = new Localization(id, text, status);
-	}
-
-	public Localization getLocalization() {
+	public Localization localization() {
 		return localization;
-	}
-
-	public String localization() {
-		if (localization == null) {
-			return "[null]";
-		}
-		return localization.text();
 	}
 
 	public static Idea loadIdea(String ideaId, Node ideaExp, String ideaCategory) {
@@ -208,5 +202,16 @@ public class Idea implements Localizable, EffectParameter, Comparable<Idea> {
 	@Override
 	public int compareTo(@NotNull Idea o) {
 		return id().compareTo(o.id());
+	}
+
+	@Override
+	public @NotNull Map<Property, String> getLocalizableProperties() {
+		return Map.of(Property.NAME, id());
+	}
+
+	@Override
+	public @NotNull Collection<? extends Localizable> getLocalizableGroup() {
+		return List.of(this);
+		// in future return list of ideas used in similar files.
 	}
 }

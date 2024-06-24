@@ -6,7 +6,6 @@ import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.clauzewitz.data.country.CountryTag;
 import com.HOIIVUtils.clauzewitz.data.country.CountryTags;
-import com.HOIIVUtils.clauzewitz.localization.FocusLocalizationFile;
 import com.HOIIVUtils.clauzewitz.localization.Localization;
 import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
 
@@ -42,9 +41,8 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 	private final ObservableMap<String, Focus> focuses;
 
 	private ArrayList<String> focusIDList;
-	private File focus_file;
+	@NotNull private File focus_file;
 	private CountryTag country;
-	private FocusLocalizationFile focusLocFile = null;
 	private String id;
 	// private Modifier countryModifier;
 	// private boolean defaultFocus; // ! todo Do This
@@ -63,7 +61,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 	 * 
 	 * @param focus_file pre-existing focus tree.
 	 */
-	private FocusTree(File focus_file) {
+	private FocusTree(@NotNull File focus_file) {
 		this.focus_file = focus_file;
 		country = new CountryTag("###");
 		focuses = FXCollections.observableHashMap();
@@ -110,34 +108,6 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		}
 	}
 
-	public static void loadLocalization() {
-		// todo not just english :(
-		if (!HOIIVFile.mod_localization_folder.exists() || !HOIIVFile.mod_localization_folder.isDirectory()) {
-			System.err.println("Localization folder does not exist or is not a directory.");
-			return;
-		}
-		if (HOIIVFile.mod_localization_folder.listFiles() == null
-				|| HOIIVFile.mod_localization_folder.listFiles().length == 0) {
-			System.err.println("No localization files found in " + HOIIVFile.mod_localization_folder);
-			return;
-		}
-		aa: for (FocusTree focusTree : unlocalizedFocusTrees()) {
-			for (File f : HOIIVFile.mod_localization_folder.listFiles()) {
-				FocusLocalizationFile flf;
-				try {
-					flf = new FocusLocalizationFile(f);
-				} catch (IllegalLocalizationFileTypeException exc) {
-					continue;
-				}
-				flf.read();
-				if (flf.containsLocalizationFor(focusTree)) {
-					focusTree.setLocalization(flf);
-					continue aa;
-				}
-			}
-		}
-	}
-
 	private ArrayList<String> parse() {
 		if (this.focus_file == null) {
 			System.err.println(this + "File of focus tree not set.");
@@ -168,17 +138,13 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 			//throw new RuntimeException(e);
 		}
 
-		/* focuses */
-		List<Focus> focuses = getFocuses(focusTreeNode);
-		minX = focuses.stream().mapToInt(Focus::absoluteX).min().orElse(0);
-
-		// focus_names = new ArrayList<>();
-		// focus_names.addAll(focuses.parallelStream()
-		// .map(Focus::id).toList());
-		// this.focuses.clear();
-		// this.focuses.putAll(focuses.parallelStream()
-		// .collect(Collectors.toMap(Focus::id, f -> f)));
-		// minX = 0; // min x is 0 or less
+		/* focus tree id */
+		try {
+			id = focusTreeNode.getValue("id").string();
+		} catch (NullPointerException e) {
+			System.err.println("Focus tree id not found, focus file: " + focus_file);
+			// todo throw exception?
+		}
 
 		/* country */
 		// todo should not be .findFirst("modifier"); need mofifier handling. but thats
@@ -194,7 +160,13 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 				System.out.println("Country modifier tag not found, focus file: " + focus_file);
 				throw new RuntimeException(e);
 			}
+		} else {
+			System.out.println("Country modifier not found, focus file: " + focus_file);
 		}
+
+		/* focuses */
+		List<Focus> focuses = getFocuses(focusTreeNode);
+		minX = focuses.stream().mapToInt(Focus::absoluteX).min().orElse(0);
 
 		return focusIDList;
 	}
@@ -286,43 +258,8 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		}
 	}
 
-	/**
-	 * @return Localization file for this focus tree, or null.
-	 */
-	public FocusLocalizationFile locFile() {
-		return focusLocFile;
-	}
-
 	public File focusFile() {
 		return focus_file;
-	}
-
-	public File setLocalization(File locFile) {
-		try {
-			this.focusLocFile = new FocusLocalizationFile(locFile);
-		} catch (IllegalArgumentException e) {
-			FXWindow.openGlobalErrorWindow("Illegal argument: " + e.getLocalizedMessage());
-			return null;
-		} catch (NullPointerException e) {
-			FXWindow.openGlobalErrorWindow(
-					"Focus loc. file does not exist/is not available or other error. Details: \n\t"
-							+ e.getLocalizedMessage());
-		} catch (IllegalLocalizationFileTypeException e) {
-			throw new RuntimeException(e);
-		}
-		for (Focus focus : focuses()) {
-			focus.setLocalization(focusLocFile);
-		}
-		return locFile;
-	}
-
-	// todo redo entire localization how it works :(
-	public File setLocalization(FocusLocalizationFile file) {
-		this.focusLocFile = file;
-		for (Focus focus : focuses()) {
-			focus.setLocalization(focusLocFile);
-		}
-		return focusLocFile;
 	}
 
 	@Override
@@ -387,84 +324,10 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		return null;
 	}
 
-	public static ArrayList<FocusTree> unlocalizedFocusTrees() {
-		ArrayList<FocusTree> focusTrees = new ArrayList<>();
-
-		for (FocusTree tree : listFocusTrees()) {
-			if (tree.locFile() == null) {
-				focusTrees.add(tree);
-			}
-		}
-
-		return focusTrees;
-	}
-
-	public static ArrayList<FocusTree> partiallyLocalizedFocusTrees() throws IOException {
-		ArrayList<FocusTree> focusTrees = new ArrayList<>();
-
-		// todo may be able to do something else in this function -
-		// todo all focus trees - localized focus trees - unlocalized focus trees
-		for (FocusTree tree : listFocusTrees()) {
-			aa: if (tree.locFile() != null) {
-				try (Scanner locReader = new Scanner(tree.locFile().getFile())) {
-					ArrayList<String> focuses = tree.listFocusIDs();
-					if (focuses == null) {
-						break aa;
-					}
-
-					// ArrayList<Boolean> localized; Commited out till Skorp fixes this
-					while (locReader.hasNext()) {
-						String locLine = locReader.nextLine();
-						if (locLine.trim().length() >= 3) {
-							String potentialTag = locLine.trim().substring(0, 3);
-
-							if (CountryTags.exists(potentialTag)) {
-
-							}
-						}
-					}
-				}
-			}
-		}
-		return focusTrees;
-	}
-
-	public static ArrayList<FocusTree> localizedFocusTrees() throws IOException {
-		ArrayList<FocusTree> focusTrees = new ArrayList<>();
-
-		for (FocusTree tree : listFocusTrees()) {
-			aa: if (tree.locFile() != null) {
-				Scanner locReader = new Scanner(tree.locFile().getFile()); // ! TODO close this
-				ArrayList<String> focuses = tree.listFocusIDs();
-				if (focuses == null) {
-					break aa;
-
-				}
-
-				// ArrayList<Boolean> localized; Commited out till Skorp fixies this
-				while (locReader.hasNext()) {
-					String locLine = locReader.nextLine();
-					if (locLine.trim().length() >= COUNTRY_TAG_LENGTH) {
-						String potentialTag = locLine.trim().substring(0, COUNTRY_TAG_LENGTH);
-
-						if (CountryTags.exists(potentialTag)) {
-							// TODO don't know but remove it if it's not needed
-						}
-					}
-				}
-			}
-		}
-		return focusTrees;
-	}
-
 	public ObservableList<Focus> listFocuses() {
 		ObservableList<Focus> focusList = FXCollections.observableArrayList();
 		focusList.addAll(focuses());
 		return focusList;
-	}
-
-	public void updateLocalization(Localization nameLocalization) {
-		focusLocFile.setLocalization(nameLocalization);
 	}
 
 	private static void updateObservableValues() {
@@ -481,5 +344,19 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 	@Override
 	public Iterator<Focus> iterator() {
 		return focuses().iterator();
+	}
+
+	@Override
+	public @NotNull Map<Property, String> getLocalizableProperties() {
+		return Map.of(Property.NAME, id);
+	}
+
+	/**
+	 * Get the localizable group of this focus tree, which is the list of focuses.
+	 * @return
+	 */
+	@Override
+	public @NotNull Collection<? extends Localizable> getLocalizableGroup() {
+		return focuses();
 	}
 }

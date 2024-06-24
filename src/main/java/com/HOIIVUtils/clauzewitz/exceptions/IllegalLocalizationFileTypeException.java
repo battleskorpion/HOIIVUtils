@@ -1,5 +1,6 @@
 package com.HOIIVUtils.clauzewitz.exceptions;
 
+import java.io.File;
 import java.io.IOException;
 
 public class IllegalLocalizationFileTypeException extends RuntimeException {
@@ -14,4 +15,8 @@ public class IllegalLocalizationFileTypeException extends RuntimeException {
 	public IllegalLocalizationFileTypeException(String message) {
 		super(message);
 	}
+
+    public IllegalLocalizationFileTypeException(File file) {
+		super("Illegal localization file type, must be .yml. File: ");
+    }
 }

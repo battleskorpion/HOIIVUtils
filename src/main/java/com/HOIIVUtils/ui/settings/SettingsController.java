@@ -287,7 +287,7 @@ public class SettingsController extends Application implements FXWindow {
 	public void handleModFileBrowseAction() {
 		File modFile = new File(FileUtils.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
 
-		modFile = openChooser(modFolderBrowseButton, modFile, true);
+		modFile = FXWindow.openChooser(modFolderBrowseButton, modFile, true);
 		if (modFile == null)
 			return;
 		modPathTextField.setText(modFile.getAbsolutePath());
@@ -298,7 +298,7 @@ public class SettingsController extends Application implements FXWindow {
 		File hoi4File =
 				FileUtils.ProgramFilesX86 == null ? null : new File(FileUtils.ProgramFilesX86 + File.separator + FileUtils.steamHOI4LocalPath);
 
-		hoi4File = openChooser(hoi4FolderBrowseButton, hoi4File, true);
+		hoi4File = FXWindow.openChooser(hoi4FolderBrowseButton, hoi4File, true);
 		if (hoi4File == null)
 			return;
 		hoi4PathTextField.setText(hoi4File.getAbsolutePath());

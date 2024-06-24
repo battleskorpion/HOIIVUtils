@@ -14,7 +14,7 @@ public interface FileUtils {
 	 * @return
 	 */
 	static boolean usefulData(String data) {
-		if (data.isEmpty()) {
+		if (data.isBlank()) {
 			return false;
 		}
 
