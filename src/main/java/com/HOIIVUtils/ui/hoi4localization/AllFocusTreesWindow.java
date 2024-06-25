@@ -7,6 +7,7 @@ import com.HOIIVUtils.clauzewitz.data.focus.Focus;
 import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
 import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.clauzewitz.localization.Localization;
+import com.HOIIVUtils.clauzewitz.localization.LocalizationManager;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +18,8 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
 
@@ -32,6 +35,7 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 	@FXML
 	private TableColumn<Focus, String> focusDescColumn;
 	private final ObservableList<Focus> focusObservableList;
+	private final List<Runnable> onSaveActions = new ArrayList<>();
 
 	public AllFocusTreesWindow() {
 		/* window */
@@ -155,14 +159,26 @@ public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableV
 	}
 
 	private void setColumnOnEditCommits() {
-		// todo dont do this right away
+		// todo this is a great idea but will it work visually? (will changes get lost visually)?
 		focusNameColumn.setOnEditCommit(event -> {
 			Focus focus = event.getRowValue();
-			focus.replaceLocalization(Localizable.Property.NAME, event.getNewValue());
+			onSaveActions.add(() -> focus.replaceLocalization(NAME_PROPERTY, event.getNewValue()));
 		});
 		focusDescColumn.setOnEditCommit(event -> {
 			Focus focus = event.getRowValue();
-			focus.replaceLocalization(Localizable.Property.DESCRIPTION, event.getNewValue());
+			onSaveActions.add(() -> focus.replaceLocalization(DESC_PROPERTY, event.getNewValue()));
 		});
+	}
+
+	private void handleSaveButtonAction() {
+		// todo handle any exceptions?
+		if (onSaveActions.isEmpty()) return;
+		onSaveActions.forEach(Runnable::run);
+		/*
+		 * todo should make sure we are maybe using just one from the beginning
+		 *  makes sure that we avoid any funny issues in the future.
+		 */
+		LocalizationManager.get().saveLocalization();
+		onSaveActions.clear();
 	}
 }

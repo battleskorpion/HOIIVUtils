@@ -2,7 +2,6 @@ package com.HOIIVUtils.clauzewitz.localization;
 
 import com.HOIIVUtils.FileUtils;
 import com.HOIIVUtils.clauzewitz.HOIIVFile;
-import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -153,6 +152,7 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
         }
     }
 
+    @Override
     public void saveLocalization() {
         File localizationFolder = HOIIVFile.mod_localization_folder;
         File[] files = localizationFolder.listFiles();
@@ -168,7 +168,6 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
         changedLocalizations.forEach(entry -> writeAllLocalization(entry.getValue(), entry.getKey()));
         newLocalizations.forEach(entry -> writeAllLocalization(entry.getValue(), entry.getKey()));
     }
-
 
     public void writeAllLocalization(List<Localization> list, File file) {
         for (Localization localization : list) {

@@ -134,6 +134,8 @@ public abstract class LocalizationManager {
         else throw new IllegalArgumentException("Localization with the given key does not exist.");
     }
 
+    public abstract void saveLocalization();
+
     /**
      * Adds a new localization to the localization list if it does not already exist.
      *
