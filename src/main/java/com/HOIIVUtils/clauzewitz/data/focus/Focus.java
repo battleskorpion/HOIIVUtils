@@ -313,7 +313,9 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	}
 
 	/**
-	 * Sets new xy-coordinates, returns previous xy-coordinates.
+	 * Sets new xy-coordinates, returns previous xy-coordinates. This sets the defined
+	 * x and y values of the focus. If a relative position id is set,
+	 * the focus position will be offset from the relative focus by the defined x and y values.
 	 *
 	 * @param x focus new x-coordinate
 	 * @param y focus new y-coordinate
@@ -323,6 +325,22 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 		Point prev = new Point(this.x, this.y);
 		this.x = x;
 		this.y = y;
+		return prev;
+	}
+
+	/**
+	 * Sets new xy-coordinates, returns previous xy-coordinates. This sets the absolute
+	 * x and y coordinates of the focus, and is not the same as setting the focus x and y values.
+	 * If a relative position id is set, the focus position will be offset accordingly from the relative focus
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public Point setAbsoluteXY(int x, int y) {
+		Point prev = new Point(this.x, this.y);
+		this.x = x;
+		this.y = y;
+		this.relative_position_id = null;
 		return prev;
 	}
 

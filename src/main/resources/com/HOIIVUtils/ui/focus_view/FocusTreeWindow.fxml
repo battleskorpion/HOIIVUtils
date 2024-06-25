@@ -30,17 +30,17 @@
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="exportFocusTreeButton" onAction="#handleExportFocusTreeButtonClick" mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Export Focus Tree" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+            <Button fx:id="exportFocusTreeButton" mnemonicParsing="false" onAction="#handleExportFocusTreeButtonClick" prefHeight="25.0" prefWidth="150.0" text="Export Focus Tree" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
          </children>
          <padding>
             <Insets left="5.0" right="5.0" />
          </padding>
       </GridPane>
-      <ScrollPane fx:id="focusTreeCanvasScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseDragged="#mouseDraggedFocusTreeViewAdapter" onMousePressed="#mousePressedFocusTreeViewAdapter" onMouseReleased="#mouseReleasedFocusTreeViewAdapter" prefHeight="400.0" prefWidth="601.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+      <ScrollPane fx:id="focusTreeCanvasScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="601.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
         <content>
           <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
                <children>
-                  <Canvas fx:id="focusTreeCanvas" height="384.0" onMouseMoved="#mouseMovedFocusTreeViewAdapter" width="589.0" />
+                  <Canvas fx:id="focusTreeCanvas" height="384.0" onMouseDragged="#mouseDraggedFocusTreeViewAdapter" onMouseMoved="#mouseMovedFocusTreeViewAdapter" onMousePressed="#mousePressedFocusTreeViewAdapter" onMouseReleased="#mouseReleasedFocusTreeViewAdapter" width="589.0" />
                </children>
             </AnchorPane>
         </content>

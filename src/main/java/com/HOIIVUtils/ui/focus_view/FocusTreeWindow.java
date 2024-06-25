@@ -53,9 +53,6 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 	private FocusTree focusTree;
 	private Tooltip focusTooltipView;
 	private Focus focusDetailsFocus;
-
-	private double mouseX;
-	private double mouseY;
 	private Focus draggedFocus;
 
 	public FocusTreeWindow() {
@@ -360,34 +357,43 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 
 	@FXML
 	public void mousePressedFocusTreeViewAdapter(MouseEvent e) {
-		mouseX = e.getX();
-		mouseY = e.getY();
+		// Calculate internal grid position from mouse position
+		int internalX = (int) ((e.getX() - X_OFFSET_FIX) / FOCUS_X_SCALE) + focusTree.minX();
+		int internalY = (int) ((e.getY() - Y_OFFSET_FIX) / FOCUS_Y_SCALE);
 
+		//draggedFocus = getFocusHover(new Point2D(internalX, internalY));
 		// Identify the focus being dragged based on the mouse press position
-		draggedFocus = getFocusHover(new Point2D(mouseX, mouseY));
+		draggedFocus = focusTree.focuses().stream()
+				.filter(f -> f.absoluteX() == internalX && f.absoluteY() == internalY)
+				.findFirst()
+				.orElse(null);
+		if (Settings.DEV_MODE.enabled() && draggedFocus != null)
+			System.out.println("Focus " + draggedFocus + " selected");
 	}
 
 	@FXML
 	public void mouseDraggedFocusTreeViewAdapter(MouseEvent e) {
 		if (e.isPrimaryButtonDown() && draggedFocus != null) {
-			double deltaX = e.getX() - mouseX;
-			double deltaY = e.getY() - mouseY;
+			// Calculate internal grid position from mouse position
+			int internalX = (int) ((e.getX() - X_OFFSET_FIX) / FOCUS_X_SCALE) + focusTree.minX();
+			int internalY = (int) ((e.getY() - Y_OFFSET_FIX) / FOCUS_Y_SCALE);
 
-			// Update focus positions based on mouse movement
-			int newX = draggedFocus.x() + (int) ((deltaX / FOCUS_X_SCALE));
-			int newY = draggedFocus.y() + (int) (deltaY / FOCUS_Y_SCALE);
-			draggedFocus.setXY(newX, newY);
+			// Update the focus position
+			draggedFocus.setAbsoluteXY(internalX, internalY);
+			if (Settings.DEV_MODE.enabled())
+				System.out.println("Focus " + draggedFocus + " moved to " + internalX + ", " + internalY);
 
-			// Redraw the focus tree with updated positions
+			// Redraw the focus tree to reflect the change
 			drawFocusTree();
-
-			mouseX = e.getX();
-			mouseY = e.getY();
 		}
 	}
 
 	@FXML
 	public void mouseReleasedFocusTreeViewAdapter(MouseEvent e) {
+		if (draggedFocus != null) {
+
+		}
+
 		draggedFocus = null; // Reset the reference when the mouse is released
 	}
 }
