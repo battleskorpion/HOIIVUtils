@@ -11,7 +11,7 @@ import java.util.*;
 
 import static com.HOIIVUtils.Settings.MOD_PATH;
 
-public class CountryTags extends HOIIVUtils implements Iterable<CountryTag> {
+public class CountryTagsManager extends HOIIVUtils implements Iterable<CountryTag> {
 
 	private static ArrayList<CountryTag> country_tags;
 
@@ -97,7 +97,7 @@ public class CountryTags extends HOIIVUtils implements Iterable<CountryTag> {
 	public static ArrayList<CountryTag> getCountryTags() {
 		if (country_tags == null) {
 			try {
-				return CountryTags.loadCountryTags();
+				return CountryTagsManager.loadCountryTags();
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -109,7 +109,7 @@ public class CountryTags extends HOIIVUtils implements Iterable<CountryTag> {
 
 	public static CountryTag get(String tag) {
 		if (exists(tag)) {
-			return country_tags.stream().filter(ct -> ct.tag().equals(tag)).findFirst().orElse(null);
+			return country_tags.stream().filter(ct -> ct.get().equals(tag)).findFirst().orElse(null);
 		}
 		return null;
 	}

@@ -152,7 +152,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements Ta
         Iterator<Focus> iterator = focusObservableList.iterator();
         while (iterator.hasNext()) {
             Focus f = iterator.next();
-            if (f.id().equals(focus.id())) {
+            if (f.id.get().equals(focus.id.get())) {
                 iterator.remove(); // Remove the current element using the iterator
                 focusObservableList.add(i, focus);
                 return; // update is done

@@ -1,8 +1,7 @@
 package com.HOIIVUtils.clauzewitz.data.focus;
 
 import com.HOIIVUtils.clauzewitz.HOIIVUtils;
-import com.HOIIVUtils.clauzewitz.data.country.CountryTags;
-import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
+import com.HOIIVUtils.clauzewitz.data.country.CountryTagsManager;
 import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.clauzewitz.localization.LocalizationManager;
 
@@ -21,9 +20,9 @@ public class FixFocus extends HOIIVUtils {
 		File locFile = focusTree.primaryLocalizationFile();
 		if (locFile == null) return;
 		focuses.stream().filter(focus -> focus.localization(Localizable.Property.NAME) == null).forEach(focus -> {
-			String focusName = focus.id();
+			String focusName = focus.id.get();
 			// todo improve country tag detection
-			if (CountryTags.exists(focusName.substring(0, 3))) {
+			if (CountryTagsManager.exists(focusName.substring(0, 3))) {
 				// next character with typical formatting 'should' be a '_'
 				if (focusName.charAt(3) != '_') {
 					System.out.println("Warning: Focus id " + focusName + " is not formatted correctly. An underscore ('_') is typically placed after the country tag.");

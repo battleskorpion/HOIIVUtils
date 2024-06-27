@@ -147,7 +147,14 @@ public class Node implements NodeStreamable<Node> {
 		return Integer.parseInt(name);
 	}
 
-	public enum BoolType {
+    public boolean nameEquals(String s) {
+		if (name == null) {
+			return false;
+		}
+		return name.equals(s);
+    }
+
+    public enum BoolType {
 	    TRUE_FALSE("true", "false"),
 	    YES_NO("yes", "no");
 

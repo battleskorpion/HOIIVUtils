@@ -250,7 +250,7 @@ public class Country implements InfrastructureData, Comparable<Country> {
 
 	public static ObservableList<Country> loadCountries(List<Infrastructure> infrastructureList, List<Resources> resourcesList) {
 		// ! todo resourcesList.get(0).get([resource]).amt() is 0.
-		return loadCountries(CountryTags.getCountryTags(), infrastructureList, resourcesList);
+		return loadCountries(CountryTagsManager.getCountryTags(), infrastructureList, resourcesList);
 	}
 
 	public static ObservableList<Country> loadCountries() {

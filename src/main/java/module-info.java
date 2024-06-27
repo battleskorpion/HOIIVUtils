@@ -76,4 +76,5 @@ module com.HOIIVUtils {
     exports com.HOIIVUtils.ui.statistics;
     exports com.HOIIVUtils.ui.units;
     exports com.HOIIVUtils;
+    exports com.HOIIVUtils.clauzewitz.script;
 }

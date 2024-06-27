@@ -5,7 +5,7 @@ import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.clauzewitz.code.ClausewitzDate;
 import com.HOIIVUtils.clauzewitz.data.country.Country;
 import com.HOIIVUtils.clauzewitz.data.country.CountryTag;
-import com.HOIIVUtils.clauzewitz.data.country.CountryTags;
+import com.HOIIVUtils.clauzewitz.data.country.CountryTagsManager;
 import com.HOIIVUtils.clauzewitz.map.Owner;
 import com.HOIIVUtils.clauzewitz.map.UndefinedStateIDException;
 import com.HOIIVUtils.clauzewitz.map.buildings.Infrastructure;
@@ -408,7 +408,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 	}
 
 	public static List<Infrastructure> infrastructureOfCountries() {
-		List<CountryTag> countryList = CountryTags.getCountryTags();
+		List<CountryTag> countryList = CountryTagsManager.getCountryTags();
 		List<Infrastructure> countriesInfrastructureList = new ArrayList<>();
 
 		for (CountryTag tag : countryList) {
@@ -424,7 +424,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 
 	// ! todo test if working
 	public static List<Resources> resourcesOfCountries() {
-		List<CountryTag> countryList = CountryTags.getCountryTags();
+		List<CountryTag> countryList = CountryTagsManager.getCountryTags();
 		List<Resources> countriesResourcesList = new ArrayList<>();
 
 		for (CountryTag tag : countryList) {

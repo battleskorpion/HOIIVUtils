@@ -2,6 +2,8 @@ package com.HOIIVUtils.ui.focus_view;
 
 import com.HOIIVUtils.Settings;
 import com.HOIIVUtils.clauzewitz.localization.Localizable;
+import com.HOIIVUtils.clauzewitz.script.MultiPDXScript;
+import com.HOIIVUtils.clauzewitz.script.MultiReferencePDXScript;
 import com.HOIIVUtils.ddsreader.DDSReader;
 import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.clauzewitz.data.country.CountryTag;
@@ -31,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.stream.Collectors;
 
 public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 	static final int FOCUS_X_SCALE = 90; // ~2x per 1 y
@@ -162,7 +165,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		if (Settings.DEV_MODE.enabled()) {
 			JOptionPane.showMessageDialog(null,
 					"dev @end of initialize() - loaded focuses: " + focusTree.focuses().size()
-							+ "\n" + "loaded tree of country: " + focusTree.country()
+							+ "\n" + "loaded tree of country: " + focusTree.country.get()
 							+ "\n" + "draw focus tree: " + Settings.DRAW_FOCUS_TREE.enabled());
 		}
 	}
@@ -226,6 +229,8 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		gc2D.setFill(Color.DARKGRAY);
 		gc2D.fillRect(0, 0, width, height);
 
+		if (focuses.isEmpty()) return;
+
 		// Load the focus unavailable image
 		Image GFX_focus_unavailable = loadFocusUnavailableImage();
 
@@ -245,7 +250,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 
 		for (Focus focus : focuses) {
 			if (focus.hasPrerequisites()) {
-				for (Set<Focus> prereqFocusSet : focus.getPrerequisites()) {
+				for (var prereqFocusSet: focus.prerequisites) {
 					for (Focus prereqFocus : prereqFocusSet) {
 						int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + X_OFFSET_FIX;
 						int y1 = FOCUS_Y_SCALE * focus.absoluteY() + Y_OFFSET_FIX;
@@ -279,7 +284,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 
 		for (Focus focus : focuses) {
 			if (focus.isMutuallyExclusive()) {
-				for (Focus mutexFocus : focus.getMutuallyExclusive()) {
+				for (Focus mutexFocus : focus.mutually_exclusive.stream().flatMap(MultiPDXScript::stream).toList()) {
 					int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
 					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + (int) (FOCUS_Y_SCALE / 1.6) + Y_OFFSET_FIX;
 					int x2 = FOCUS_X_SCALE * (mutexFocus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
@@ -347,7 +352,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 
 	private void selectClosestMatch(ComboBox<FocusTree> comboBox, String typedText) {
 		for (FocusTree item : comboBox.getItems()) {
-			if (item.country().tag().toLowerCase().startsWith(typedText.toLowerCase())) {
+			if (item.country.get() != null && item.country.get().get().toLowerCase().startsWith(typedText.toLowerCase())) {
 				comboBox.getSelectionModel().select(item);
 				comboBox.getEditor().setText(String.valueOf(item));
 				return;

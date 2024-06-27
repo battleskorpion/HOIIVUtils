@@ -1,65 +1,56 @@
 package com.HOIIVUtils.clauzewitz.data.focus;
 
-import com.HOIIVUtils.Settings;
+import com.HOIIVUtils.clauzewitz.*;
+import com.HOIIVUtils.clauzewitz.script.*;
 import com.HOIIVUtils.clauzewitz.code.effect.Effect;
 import com.HOIIVUtils.clauzewitz.code.scope.NotPermittedInScopeException;
 import com.HOIIVUtils.clauzewitz.code.scope.Scope;
 import com.HOIIVUtils.clauzewitz.code.scope.ScopeCategory;
-import com.HOIIVUtils.clauzewitz.DataFunctionProvider;
 import com.HOIIVUtils.clauzewitz.localization.Localizable;
-import com.HOIIVUtils.clauzewitz.data.country.CountryTags;
-import com.HOIIVUtils.clauzewitz.data.gfx.Interface;
+import com.HOIIVUtils.clauzewitz.data.country.CountryTagsManager;
 import com.HOIIVUtils.clausewitz_parser.Node;
-import com.HOIIVUtils.ddsreader.DDSReader;
 import com.HOIIVUtils.clauzewitz.exceptions.InvalidEffectParameterException;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
-import com.HOIIVUtils.ui.javafx.image.JavaFXImageUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Focus class represents an individual focus of a National Focus (Focus Tree).
  */
-public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvider<Focus> {
+public class Focus extends PDXScript<PDXScriptList> implements Localizable, Comparable<Focus>, DataFunctionProvider<Focus> {
 	private static final int FOCUS_COST_FACTOR = 7; // turn into from defines, or default 7. (get default vanilla define
 	// instead?)
-	private final int DEFAULT_FOCUS_COST = 10; // default cost (in weeks by default) when making a new focus.
+	private final double DEFAULT_FOCUS_COST = 10.0; // default cost (in weeks by default) when making a new focus.
 	private static final HashSet<String> focusIDs = new HashSet<>();
 
 	/* attributes */
 	protected FocusTree focusTree;
-	// Expression focusExp;
-	protected SimpleStringProperty id;
-	protected SimpleStringProperty icon;
+	public final PDXScript<String> id;
+	public final MultiPDXScript<Icon> icon;
 	protected Image ddsImage;
-	protected Set<Set<Focus>> prerequisite; // can be multiple, but hoi4 code is simply "prerequisite"
-	protected Set<Focus> mutually_exclusive;
-	// protected Trigger available;
-	protected int x; // if relative, relative x
-	protected int y; // if relative, relative y
-	protected String relative_position_id; // if null, position is not relative
-	protected double cost; // cost of focus (typically in weeks unless changed in defines)
+	// todo!
+	@NotNull  public final MultiPDXScript<PrerequisiteSet> prerequisites;
+	@NotNull public final MultiPDXScript<MutuallyExclusiveSet> mutually_exclusive;
+	//public final PDXScript<Trigger> available;
+	@NotNull public final PDXScript<Integer> x; // if relative, relative x
+	@NotNull public final PDXScript<Integer> y; // if relative, relative y
+	@NotNull public final ReferencePDXScript<Focus> relative_position_id; // if null, position is not relative
+	@NotNull public final PDXScript<Double> cost; // cost of focus (typically in weeks unless changed in defines)
+	@NotNull public final PDXScript<Boolean> available_if_capitulated;
 
-	protected Set<FocusSearchFilter> focus_search_filters;
+	@NotNull public final PDXScript<Boolean> cancel_if_invalid;
 
-	protected boolean available_if_capitulated;
-
-	protected boolean cancel_if_invalid;
-
-	protected boolean continue_if_invalid;
+	@NotNull public final PDXScript<Boolean> continue_if_invalid;
 	// private AIWillDo ai_will_do; // todo
 	// select effect
 
@@ -77,19 +68,36 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	private final PendingFocusReferenceList pendingFocusReferences = new PendingFocusReferenceList();
 
 	public Focus(String focus_id, FocusTree focusTree) throws DuplicateFocusException {
+		super("focus");
+		// todo do not check this here! let this be controlled elsewhere?
 		if (focusIDs.contains(focus_id)) {
 			throw new DuplicateFocusException("Error: focus id " + focus_id + " already exists.");
 		}
-		this.id = new SimpleStringProperty(focus_id);
+		this.id = new PDXScript<>("id");
+		this.icon = new MultiPDXScript<>("icon");
+		this.x = new PDXScript<>("x");
+		this.y = new PDXScript<>("y");
+		this.prerequisites = new MultiPDXScript<>("prerequisite");
+		this.mutually_exclusive = new MultiPDXScript<>("mutually_exclusive");
+		this.relative_position_id = new ReferencePDXScript<>(focusTree::focuses, (f) -> f.id.get(),
+				"relative_position_id");
+		this.cost = new PDXScript<>("cost");
+		this.available_if_capitulated = new PDXScript<>("available_if_capitulated");
+		this.cancel_if_invalid = new PDXScript<>("cancel_if_invalid");
+		this.continue_if_invalid = new PDXScript<>("continue_if_invalid");
+		setChildScripts(
+				this.id, this.icon, this.x, this.y, this.prerequisites, this.mutually_exclusive,
+				this.relative_position_id, this.cost, this.available_if_capitulated,
+				this.cancel_if_invalid, this.continue_if_invalid
+		);
 
 		this.focusTree = focusTree;
 		focusIDs.add(focus_id);
 	}
 
-	public Focus(String focusId, FocusTree focusTree, Node node) throws DuplicateFocusException {
+	public Focus(String focusId, FocusTree focusTree, Node node) throws DuplicateFocusException, UnexpectedIdentifierException, NodeValueTypeException{
 		this(focusId, focusTree);
-
-		loadAttributes(node);
+		loadPDX(node);
 	}
 
 	/**
@@ -101,56 +109,11 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 		// for optimization, set number of data functions (why not)
 		List<Function<Focus, ?>> dataFunctions = new ArrayList<>(3);
 
-		dataFunctions.add(Focus::id);
+		dataFunctions.add(focus -> focus.id.get());
 		dataFunctions.add(focus -> focus.localizationText(Property.NAME));
 		dataFunctions.add(focus -> focus.localizationText(Property.DESCRIPTION));
 
 		return dataFunctions;
-	}
-
-	/**
-	 * Obtains focus id
-	 * 
-	 * @return
-	 */
-	public String id() {
-		if (id == null) {
-			return null;
-		}
-		return id.get();
-	}
-
-	/**
-	 * Obtains focus id simple string property
-	 * 
-	 * @return
-	 */
-	public SimpleStringProperty idProperty() {
-		return id;
-	}
-
-	/**
-	 * if the focus has a relative position, this will give the relative x position.
-	 * <p>
-	 * Otherwise, equivalent to <code>absoluteX()</code>.
-	 * </p>
-	 * 
-	 * @return
-	 */
-	public int x() {
-		return x;
-	}
-
-	/**
-	 * if the focus has a relative position, this will give the relative y position.
-	 * <p>
-	 * Otherwise, equivalent to <code>absoluteY()</code>.
-	 * </p>
-	 * 
-	 * @return
-	 */
-	public int y() {
-		return y;
 	}
 
 	/**
@@ -165,7 +128,7 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	 */
 	public int absoluteX() {
 		if (relative_position_id == null) {
-			return x;
+			return x.get();
 		} else {
 			return (int) absolutePosition().getX();
 		}
@@ -183,7 +146,7 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	 */
 	public int absoluteY() {
 		if (relative_position_id == null) {
-			return y;
+			return y.get();
 		} else {
 			return (int) absolutePosition().getY();
 		}
@@ -199,7 +162,7 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	 * @return point representing xy location, or relative xy if relative.
 	 */
 	public Point2D position() {
-		return new Point2D(x, y);
+		return new Point2D(x.getOrElse(0), y.getOrElse(0));
 	}
 
 	/**
@@ -217,34 +180,28 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 		if (relative_position_id == null) {
 			return position();
 		}
-		if (relative_position_id.equals(this.id())) {
-			System.err.println("Relative position id same as focus id for " + this); // todo not an error of this
-																						// program necessarily, issue
-																						// should be handled
-																						// differently?
+		// todo improve comparability
+		//if (relative_position_id.get().id.get().equals(this.id.get())) {
+		if (relative_position_id.objEquals(id)) {
+			/*
+			todo not an error of this program necessarily, issue should be handled
+			 differently?
+			 */
+			System.err.println("Relative position id same as focus id for " + this);
 			return position();
 		}
 
-		Focus relative_position_focus = focusTree.getFocus(relative_position_id);
+		Focus relative_position_focus = relative_position_id.get();
 		if (relative_position_focus == null) {
 			System.err.println("focus id " + relative_position_id + " not a focus");
 			return position();
 		}
 		Point2D adjPoint = relative_position_focus.absolutePosition();
-		adjPoint = new Point2D(adjPoint.getX() + x, adjPoint.getY() + y);
+		adjPoint = new Point2D(adjPoint.getX() + x.get(), adjPoint.getY() + y.get());
 		// System.out.println(adjPoint + ", " + id + ", " + relative_position_focus.id +
 		// ", " + relative_position_focus.position());
 
 		return adjPoint;
-	}
-
-	/**
-	 * Obtains focus icon id
-	 * 
-	 * @return focus icon id
-	 */
-	public SimpleStringProperty icon() {
-		return icon;
 	}
 
 	/**
@@ -254,63 +211,30 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	 * @return
 	 */
 	public String toString() {
-		return id();
+		return id.get();
 	}
 
-	/**
-	 * Adds focus attributes (prerequisite, mutually exclusive, etc...) to focus
-	 * by parsing expressions for each potential attribute.
-	 *
-	 * @param exp Node representing focus - must include "focus".
-	 */
-	public void loadAttributes(Node exp) {
-		if (!exp.name().equals("focus")) {
-			System.err.println(this + " - Not valid focus expression/definition.");
-			return;
-		}
-
-		// focusExp = exp.get("focus=");
-
-		setID(exp.getValue("id").string());
-		try {
-			setXY(exp.getValue("x").integer(), exp.getValue("y").integer());
-		} catch (IllegalStateException e) {
-			System.err.println(e.getMessage());
-			setXY(0, 0); // todo better error reporting
-		}
-		try {
-			setRelativePositionID(exp.getValue("relative_position_id").string());
-		} catch (IllegalStateException e) {
-			System.err.println(e.getMessage());
-			setRelativePositionID(null); // todo better error reporting
-		}
-		// setFocusLoc();
-		try {
-			setIcon(exp.getValue("icon").string());
-		} catch (IllegalStateException e) {
-			System.err.println(e.getMessage());
-			setIcon(null); // todo better error reporting
-		}
-		try {
-			setCost(exp.getValue("cost").rational());
-		} catch (IllegalStateException e) {
-			System.err.println(e.getMessage());
-			setCost(DEFAULT_FOCUS_COST); // todo better error reporting
-		}
-		setPrerequisite(exp.filterName("prerequisite").toList());
-		setMutuallyExclusive(exp.filterName("mutually_exclusive").toList());
-		setAvailable(exp.findFirst("available"));
-		setCompletionReward(exp.findFirst("completion_reward"));
-	}
-
-	/**
-	 * Sets focus id
-	 * 
-	 * @param id focus id
-	 */
-	public void setID(String id) {
-		this.id.set(id);
-	}
+//	/**
+//	 * Adds focus attributes (prerequisite, mutually exclusive, etc...) to focus
+//	 * by parsing expressions for each potential attribute.
+//	 *
+//	 * @param exp Node representing focus - must include "focus".
+//	 */
+//	public void loadAttributes(Node exp) throws UnexpectedIdentifierException {
+//		usingIdentifier(exp);
+//
+//		id.load(exp);
+//		x.load(exp);
+//		y.load(exp);
+//		relative_position_id.load(exp);
+//		icon.load(exp);
+//		cost.loadOrElse(exp, DEFAULT_FOCUS_COST);
+//		prerequisites.load(exp);
+//		mutually_exclusive.load(exp);
+////		available.load(exp);
+////		setAvailable(exp.findFirst("available"));
+//		setCompletionReward(exp.findFirst("completion_reward"));
+//	}
 
 	/**
 	 * Sets new xy-coordinates, returns previous xy-coordinates. This sets the defined
@@ -322,9 +246,9 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	 * @return previous x and y
 	 */
 	public Point setXY(int x, int y) {
-		Point prev = new Point(this.x, this.y);
-		this.x = x;
-		this.y = y;
+		Point prev = new Point(this.x.get(), this.y.get());
+		this.x.set(x);
+		this.y.set(y);
 		return prev;
 	}
 
@@ -337,10 +261,10 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	 * @return
 	 */
 	public Point setAbsoluteXY(int x, int y) {
-		Point prev = new Point(this.x, this.y);
-		this.x = x;
-		this.y = y;
-		this.relative_position_id = null;
+		Point prev = new Point(this.x.get(), this.y.get());
+		this.x.set(x);
+		this.y.set(y);
+		this.relative_position_id.setNull();
 		return prev;
 	}
 
@@ -375,19 +299,6 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	}
 
 	/**
-	 * Sets relative position id
-	 * 
-	 * @param exp relative position id
-	 */
-	private void setRelativePositionID(String exp) {
-		if (exp == null) {
-			relative_position_id = null; // perfectly acceptable
-			return;
-		}
-		relative_position_id = exp;
-	}
-
-	/**
 	 * Sets focus cost to default cost
 	 */
 	public void setCost() {
@@ -396,127 +307,104 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 
 	/**
 	 * Sets focus cost (in weeks by default)
-	 * 
+	 *
 	 * @param cost focus cost
 	 *             todo: add defines support
 	 */
 	public void setCost(Number cost) {
-		this.cost = cost.doubleValue();
+		this.cost.set(cost.doubleValue());
 	}
 
-	// public void setCost(Expression exp) {
-	// if (exp == null) {
-	// cost = 0;
-	// return;
-	// }
-	//
-	// this.cost = exp.getValue();
-	// }
+//	/**
+//	 * Sets focus icon id
+//	 *
+//	 * @param icon focus icon id
+//	 */
+//	public void setIcon(String icon) {
+//		// null string -> set no (null) icon
+//		// icon == null check required to not throw access exception
+//		if (icon == null || icon.isEmpty()) {
+//			// this.icon = null;
+//			// return;
+//		}
+//
+//		this.icon.set(icon);
+//
+//		/* dds binary data buffer */
+//		/* https://github.com/npedotnet/DDSReader */
+//		try {
+//			String gfx = Interface.getGFX(icon);
+//
+//			FileInputStream fis;
+//			if (gfx == null) {
+//				// System.err.println("GFX was not found for " + icon); // too much right now
+//				try {
+//					fis = new FileInputStream(Settings.MOD_PATH + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
+//				} catch (FileNotFoundException exc) {
+//					ddsImage = null;
+//					return;
+//				}
+//			} else {
+//				fis = new FileInputStream(Interface.getGFX(icon));
+//			}
+//			byte[] buffer = new byte[fis.available()];
+//			fis.read(buffer);
+//			fis.close();
+//			int[] ddspixels = DDSReader.read(buffer, DDSReader.ARGB, 0);
+//			int ddswidth = DDSReader.getWidth(buffer);
+//			int ddsheight = DDSReader.getHeight(buffer);
+//
+//			// ddsImage = new BufferedImage(ddswidth, ddsheight,
+//			// BufferedImage.TYPE_INT_ARGB);
+//			// ddsImage.setRGB(0, 0, ddswidth, ddsheight, ddspixels, 0, ddswidth);
+//			ddsImage = JavaFXImageUtils.imageFromDDS(ddspixels, ddswidth, ddsheight);
+//		} catch (IOException exc) {
+//			exc.printStackTrace();
+//		}
+//	}
 
-	// // todo implement icon lookup
-	// public void setIcon(Expression exp) {
-	// if (exp == null) {
-	// // icon = null;
-	// // return;
-	// }
-	//
-	// setIcon(exp.getText());
-	// }
-
-	/**
-	 * Sets focus icon id
-	 * 
-	 * @param icon focus icon id
-	 */
-	public void setIcon(String icon) {
-		// null string -> set no (null) icon
-		// icon == null check required to not throw access exception
-		if (icon == null || icon.equals("")) {
-			// this.icon = null;
-			// return;
-		}
-
-		this.icon = new SimpleStringProperty(icon);
-
-		/* dds binary data buffer */
-		/* https://github.com/npedotnet/DDSReader */
-		try {
-			String gfx = Interface.getGFX(icon);
-
-			FileInputStream fis;
-			if (gfx == null) {
-				// System.err.println("GFX was not found for " + icon); // too much right now
-				try {
-					fis = new FileInputStream(Settings.MOD_PATH + "\\gfx\\interface\\goals\\focus_ally_cuba.dds");
-				} catch (FileNotFoundException exc) {
-					ddsImage = null;
-					return;
-				}
-			} else {
-				fis = new FileInputStream(Interface.getGFX(icon));
-			}
-			byte[] buffer = new byte[fis.available()];
-			fis.read(buffer);
-			fis.close();
-			int[] ddspixels = DDSReader.read(buffer, DDSReader.ARGB, 0);
-			int ddswidth = DDSReader.getWidth(buffer);
-			int ddsheight = DDSReader.getHeight(buffer);
-
-			// ddsImage = new BufferedImage(ddswidth, ddsheight,
-			// BufferedImage.TYPE_INT_ARGB);
-			// ddsImage.setRGB(0, 0, ddswidth, ddsheight, ddspixels, 0, ddswidth);
-			ddsImage = JavaFXImageUtils.imageFromDDS(ddspixels, ddswidth, ddsheight);
-		} catch (IOException exc) {
-			exc.printStackTrace();
-		}
-	}
-
-	public void setPrerequisite(Node exp) {
-		setPrerequisite(List.of(exp));
-	}
-
-	/**
-	 * accepts groups of prerequisites
-	 *
-	 * @param exps list of prerequisite={...} expressions
-	 */
-	public void setPrerequisite(List<Node> exps) {
-		if (exps == null) {
-			prerequisite = null;
-			return;
-		}
-		removePrerequisites();
-		Set<Set<Focus>> prerequisites = new HashSet<>();
-
-		/* sort through prerequisite={ expressions */
-		for (Node prereqExp : exps) {
-			if (prereqExp == null || !prereqExp.contains("focus")) {
-				continue;
-			}
-
-			HashSet<Focus> subset = new HashSet<>();
-			for (Node prereqNode : prereqExp.filter("focus").toList()) {
-				if (prereqNode.value() == null) {
-					// todo better error reporting
-					System.err.println("Expected a value associated with prerequisite focus assignment");
-					continue;
-				}
-
-				String prereq = prereqNode.value().string();
-
-				if (focusTree.getFocus(prereq) != null) {
-					subset.add(focusTree.getFocus(prereq)); // todo 'error' (not us?) check someday
-				} else {
-					addPendingFocusReference(prereq, this::setPrerequisite, exps);
-				}
-			}
-
-			if (!subset.isEmpty())
-				prerequisites.add(subset);
-		}
-
-		setPrerequisite(prerequisites);
-	}
+//	/**
+//	 * accepts groups of prerequisites
+//	 *
+//	 * @param exps list of prerequisite={...} expressions
+//	 */
+//	public void setPrerequisite(List<Node> exps) {
+//		if (exps == null) {
+//			prerequisites.clear();
+//			return;
+//		}
+//		removePrerequisites();
+//		List<List<Focus>> prerequisites = new ArrayList<>();
+//
+//		/* sort through prerequisite={ expressions */
+//		for (Node prereqExp : exps) {
+//			if (prereqExp == null || !prereqExp.contains("focus")) {
+//				continue;
+//			}
+//
+//			List<Focus> subset = new ArrayList<>();
+//			for (Node prereqNode : prereqExp.filter("focus").toList()) {
+//				if (prereqNode.value() == null) {
+//					// todo better error reporting
+//					System.err.println("Expected a value associated with prerequisite focus assignment");
+//					continue;
+//				}
+//
+//				String prereq = prereqNode.value().string();
+//
+//				if (focusTree.getFocus(prereq) != null) {
+//					subset.add(focusTree.getFocus(prereq)); // todo 'error' (not us?) check someday
+//				} else {
+//					addPendingFocusReference(prereq, this::setPrerequisite, exps);
+//				}
+//			}
+//
+//			if (!subset.isEmpty())
+//				prerequisites.add(subset);
+//		}
+//
+//		setPrerequisite(prerequisites);
+//	}
 
 	/**
 	 * Add reference of a property of this focus to an unloaded focus; as it
@@ -534,9 +422,7 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	 * Removes all defined focus prerequisites
 	 */
 	private void removePrerequisites() {
-		if (this.prerequisite != null) {
-			this.prerequisite.clear();
-		}
+		prerequisites.clear();
 	}
 
 	/**
@@ -548,128 +434,63 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 		}
 	}
 
-	/**
-	 * sets focus prerequisite focuses
-	 *
-	 * @param prerequisite Set of prerequisite focuses. Can not include this focus.
-	 */
-	public void setPrerequisite(Set<Set<Focus>> prerequisite) {
-		// focus can not be its own prerequisite
-		// todo
-		// if (prerequisite.contains(this)) {
-		// throw new IllegalArgumentException("Focus can not be its own prerequisite");
-		// }
-
-		this.prerequisite = prerequisite;
-	}
-
-	/**
-	 * sets focus prerequisite focus
-	 * 
-	 * @param exp
-	 */
-	public void setMutuallyExclusive(String exp) {
-		if (exp == null) {
-			mutually_exclusive = null;
-			return;
-		}
-	}
-
-	/**
-	 * <p>
-	 * From <a href="https://hoi4.paradoxwikis.com/National_focus_modding">National
-	 * Focus Modding</a>:
-	 * </p>
-	 * <p>
-	 * "Mutual exclusivity to multiple focuses is usually done by putting several of
-	 * focus = TAG_focusname
-	 * in the same mutually_exclusive, but defining several of mutually_exclusive is
-	 * also possible."
-	 * </p>
-	 * 
-	 * @param exps
-	 */
-	public void setMutuallyExclusive(List<Node> exps) {
-		if (exps == null) {
-			mutually_exclusive = null;
-			return;
-		}
-		removeMutuallyExclusive();
-		mutually_exclusive = new HashSet<>();
-
-		/* sort through prerequisite={ expressions */
-		for (Node exclusiveExp : exps) {
-			if (exclusiveExp == null || !exclusiveExp.contains("focus")) {
-				continue;
-			}
-
-			for (Node exclusiveNode : exclusiveExp.filter("focus").toList()) {
-				if (exclusiveNode.value() == null) {
-					// todo better error reporting
-					System.err.println("Expected a value associated with mutually exclusive focus assignment");
-					continue;
-				}
-
-				String exclusive_id = exclusiveNode.value().string();
-
-				if (focusTree.getFocus(exclusive_id) != null) {
-					mutually_exclusive.add(focusTree.getFocus(exclusive_id)); // todo error check someday
-				} else {
-					addPendingFocusReference(exclusive_id, this::setMutuallyExclusive, exps);
-				}
-			}
-		}
-	}
+//	/**
+//	 * <p>
+//	 * From <a href="https://hoi4.paradoxwikis.com/National_focus_modding">National
+//	 * Focus Modding</a>:
+//	 * </p>
+//	 * <p>
+//	 * "Mutual exclusivity to multiple focuses is usually done by putting several of
+//	 * focus = TAG_focusname
+//	 * in the same mutually_exclusive, but defining several of mutually_exclusive is
+//	 * also possible."
+//	 * </p>
+//	 *
+//	 * @param exps
+//	 */
+//	public void setMutuallyExclusive(List<Node> exps) {
+//		if (exps == null) {
+//			mutually_exclusive = null;
+//			return;
+//		}
+//		removeMutuallyExclusive();
+//		mutually_exclusive = new HashSet<>();
+//
+//		/* sort through prerequisite={ expressions */
+//		for (Node exclusiveExp : exps) {
+//			if (exclusiveExp == null || !exclusiveExp.contains("focus")) {
+//				continue;
+//			}
+//
+//			for (Node exclusiveNode : exclusiveExp.filter("focus").toList()) {
+//				if (exclusiveNode.value() == null) {
+//					// todo better error reporting
+//					System.err.println("Expected a value associated with mutually exclusive focus assignment");
+//					continue;
+//				}
+//
+//				String exclusive_id = exclusiveNode.value().string();
+//
+//				if (focusTree.getFocus(exclusive_id) != null) {
+//					mutually_exclusive.add(focusTree.getFocus(exclusive_id)); // todo error check someday
+//				} else {
+//					addPendingFocusReference(exclusive_id, this::setMutuallyExclusive, exps);
+//				}
+//			}
+//		}
+//	}
 
 	/**
-	 * Sets mutually exclusive focuses
-	 *
-	 * @param mutually_exclusive Set of mutually exclusive focus(es) with this
-	 *                           focus. Should not include this focus.
-	 */
-	public void setMutuallyExclusive(Set<Focus> mutually_exclusive) {
-		// focus can not be mutually exclusive with itself
-		if (mutually_exclusive.contains(this)) {
-			throw new IllegalArgumentException("Focus can not be mutually exclusive with itself");
-		}
-
-		this.mutually_exclusive = mutually_exclusive;
-	}
-
-	/**
-	 * Sets mutually exclusive focus
-	 *
-	 * @param mutually_exclusive mutually exclusive focus
-	 */
-	public void setMutuallyExclusive(Focus mutually_exclusive) {
-		HashSet<Focus> set = new HashSet<>();
-		set.add(mutually_exclusive);
-		setMutuallyExclusive(set);
-	}
-
-	/**
-	 * Sets focus available trigger
-	 * 
-	 * @param mutually_exclusive mutually exclusive focus
-	 */
-	public void addMutuallyExclusive(Focus mutually_exclusive) {
-		if (this.mutually_exclusive == null) {
-			this.mutually_exclusive = new HashSet<>();
-			this.mutually_exclusive.add(mutually_exclusive);
-		}
-	}
-
-	/**
-	 * Sets focus available trigger
-	 * 
-	 * @param exp available trigger
-	 */
-	public void setAvailable(Node exp) {
-		if (exp == null) {
-			// available = null;
-			return;
-		}
-	}
+//	 * Sets focus available trigger
+//	 *
+//	 * @param mutually_exclusive mutually exclusive focus
+//	 */
+//	public void addMutuallyExclusive(Focus mutually_exclusive) {
+//		if (this.mutually_exclusive == null) {
+//			this.mutually_exclusive = new HashSet<>();
+//			this.mutually_exclusive.add(mutually_exclusive);
+//		}
+//	}
 
 	// /**
 	// * Sets available trigger of focus
@@ -695,7 +516,7 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	 * @return true if the focus has a prerequisite focus
 	 */
 	public boolean hasPrerequisites() {
-		return !(prerequisite == null || prerequisite.isEmpty());
+		return !(prerequisites == null || prerequisites.isEmpty());
 	}
 
 	/**
@@ -705,24 +526,6 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	 */
 	public boolean isMutuallyExclusive() {
 		return !(mutually_exclusive == null || mutually_exclusive.isEmpty());
-	}
-
-	/**
-	 * Returns true if the focus has a completion reward.
-	 * 
-	 * @return true if the focus has a completion reward
-	 */
-	public Set<Set<Focus>> getPrerequisites() {
-		return prerequisite;
-	}
-
-	/**
-	 * Returns true if the focus has a completion reward.
-	 * 
-	 * @return true if the focus has a completion reward
-	 */
-	public double cost() {
-		return cost;
 	}
 
 	/**
@@ -743,12 +546,12 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	 * @return precise focus completion time
 	 */
 	public double preciseCompletionTime() {
-		return cost * FOCUS_COST_FACTOR;
+		return cost.get() * FOCUS_COST_FACTOR;
 	}
 
 	@Override
 	public @NotNull Map<Property, String> getLocalizableProperties() {
-		return Map.of(Property.NAME, id(), Property.DESCRIPTION, id() + "_desc");
+		return Map.of(Property.NAME, id.get(), Property.DESCRIPTION, id.get() + "_desc");
 	}
 
 	@Override
@@ -785,7 +588,7 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	 * @return true if reference was removed
 	 */
 	public boolean removePendingFocusReference(Focus reference) {
-		return removePendingFocusReference(reference.id());
+		return removePendingFocusReference(reference.id.get());
 	}
 
 	/**
@@ -800,7 +603,7 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 		StringBuilder details = new StringBuilder();
 		/* id */
 		details.append("ID: ");
-		details.append(id());
+		details.append(id.get());
 		details.append("\n");
 		/* completion time */
 		details.append("Completion time: ");
@@ -808,7 +611,7 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 		details.append("\n");
 
 		/* prerequisites */
-		for (Set<Focus> prereqSet : this.getPrerequisites()) {
+		for (PrerequisiteSet prereqSet: this.prerequisites) {
 			if (prereqSet.size() > 1) {
 				details.append("Requires one of the following: \n");
 				for (Focus f : prereqSet) {
@@ -827,41 +630,37 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 			/* completion reward */
 			details.append("\nEffect: \n");
 			for (Effect effect : completionReward) {
-				// details.append("\t");
-				// // todo why would why huh? idk.
-				//// if (effect.hasTarget() &&
-				// !effect.isScope(Scope.of(this.focusTree.country()))) {
-				//// details.append(effect.target());
-				//// details.append("\t");
-				//// }
-				// details.append(effect.name());
-				// if (effect.hasParameterBlock()) {
-				// details.append(" = {\n");
-				// for (EffectParameter n : effect.parameterList()) {
-				// details.append("\t\t");
-				// if (n == null) {
-				// details.append("[effect parameter was null]");
-				// } else {
-				// details.append(n.displayParameter());
-				// }
-				// details.append("\n");
-				// }
-				// details.append("\t}");
-				// }
-				// else if (effect.value() != null) {
-				// details.append(" = ");
-				// details.append(effect.value());
-				// }
-				// details.append("\n");
+//				 details.append("\t");
+//				 // todo why would why huh? idk.
+//				// if (effect.hasTarget() &&
+//				 !effect.isScope(Scope.of(this.focusTree.country()))) {
+//				// details.append(effect.target());
+//				// details.append("\t");
+//				// }
+//				 details.append(effect.name());
+//				 if (effect.hasParameterBlock()) {
+//				 details.append(" = {\n");
+//				 for (EffectParameter n : effect.parameterList()) {
+//				 details.append("\t\t");
+//				 if (n == null) {
+//				 details.append("[effect parameter was null]");
+//				 } else {
+//				 details.append(n.displayParameter());
+//				 }
+//				 details.append("\n");
+//				 }
+//				 details.append("\t}");
+//				 }
+//				 else if (effect.value() != null) {
+//				 details.append(" = ");
+//				 details.append(effect.value());
+//				 }
+//				 details.append("\n");
 				details.append(effect.displayScript());
 				details.append("\n");
 			}
 		}
 		return details.toString();
-	}
-
-	public Set<Focus> getMutuallyExclusive() {
-		return mutually_exclusive;
 	}
 
 	public List<Effect> completionReward() {
@@ -891,7 +690,7 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 	}
 
 	private void setCompletionRewardsOfNode(Node completionRewardNode) {
-		setCompletionRewardsOfNode(completionRewardNode, Scope.of(this.focusTree.country()));
+		setCompletionRewardsOfNode(completionRewardNode, Scope.of(this.focusTree.country.get()));
 	}
 
 	/**
@@ -908,8 +707,8 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 				// // todo could this be handled better more generically with some other unique
 				// scoping stuff like country tags like.... ? ....
 				Scope s = null;
-				if (CountryTags.exists(n.name())) {
-					s = Scope.of(CountryTags.get(n.name()));
+				if (CountryTagsManager.exists(n.name())) {
+					s = Scope.of(CountryTagsManager.get(n.name()));
 				} else {
 					try {
 						s = Scope.of(n.name(), scope);
@@ -995,60 +794,24 @@ public class Focus implements Localizable, Comparable<Focus>, DataFunctionProvid
 
 	@Override
 	public int compareTo(@NotNull Focus o) {
-		return this.id().compareTo(o.id());
+		return this.id.get().compareTo(o.id.get());
+	}
+
+	public static class PrerequisiteSet extends MultiReferencePDXScript<Focus> {
+		public PrerequisiteSet(Supplier<Collection<Focus>> referenceFocusesSupplier) {
+			super(referenceFocusesSupplier, (f) -> f.id.get(), "focus");
+		}
 	}
 
 	/**
-	 * Returns true if the focus has a completion reward.
-	 * 
-	 * @return true if the focus has a completion reward
+	 * mutually exclusive is a multi-reference of focuses
 	 */
-	public Set<FocusSearchFilter> getFocusSearchFilters() {
-		return focus_search_filters;
+	public static class MutuallyExclusiveSet extends MultiReferencePDXScript<Focus> {
+		public MutuallyExclusiveSet(Supplier<Collection<Focus>> referenceFocusesSupplier) {
+			super(referenceFocusesSupplier, (f) -> f.id.get(),"focus");
+		}
+
 	}
 
-	/**
-	 * Sets focus search filters
-	 * 
-	 * @param focus_search_filters focus search filters
-	 */
-	public void setFocusSearchFilters(Set<FocusSearchFilter> focus_search_filters) {
-		this.focus_search_filters = focus_search_filters;
-	}
 
-	public boolean isAvailableIfCapitulated() {
-		return available_if_capitulated;
-	}
-
-	public void setAvailableIfCapitulated(boolean available_if_capitulated) {
-		this.available_if_capitulated = available_if_capitulated;
-	}
-
-	public void setAvailableIfCapitulated() {
-		this.available_if_capitulated = true;
-	}
-
-	public boolean willCancelIfInvalid() {
-		return cancel_if_invalid;
-	}
-
-	public void setCancelIfInvalid(boolean cancel_if_invalid) {
-		this.cancel_if_invalid = cancel_if_invalid;
-	}
-
-	public void setCancelIfInvalid() {
-		this.cancel_if_invalid = true;
-	}
-
-	public boolean willContinueIfInvalid() {
-		return continue_if_invalid;
-	}
-
-	public void setContinueIfInvalid(boolean continue_if_invalid) {
-		this.continue_if_invalid = continue_if_invalid;
-	}
-
-	public void setContinueIfInvalid() {
-		this.continue_if_invalid = true;
-	}
 }

@@ -1,33 +1,26 @@
 package com.HOIIVUtils.clauzewitz.data.focus;
 
-import com.HOIIVUtils.clausewitz_parser.Node;
-import com.HOIIVUtils.clausewitz_parser.Parser;
 import com.HOIIVUtils.clauzewitz.HOIIVFile;
+import com.HOIIVUtils.clauzewitz.data.country.CountryTagsManager;
+import com.HOIIVUtils.clauzewitz.script.*;
 import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.clauzewitz.data.country.CountryTag;
-import com.HOIIVUtils.clauzewitz.data.country.CountryTags;
-import com.HOIIVUtils.clauzewitz.localization.Localization;
-import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import org.jetbrains.annotations.*;
-import com.HOIIVUtils.ui.FXWindow;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
-
-import static com.HOIIVUtils.clauzewitz.data.country.CountryTag.COUNTRY_TAG_LENGTH;
 
 /**
  * ALL of the FocusTree/FocusTrees
  * Localizable data: focus tree name. Each focus is its own localizable data.
  */
 // todo extends file?
-public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<Focus> {
+public class FocusTree extends PDXScript<PDXScriptList> implements Localizable, Comparable<FocusTree>, Iterable<Focus> {
 	private static final ObservableMap<File, FocusTree> focusTrees = FXCollections.observableHashMap();
 	private static final ObservableList<FocusTree> focusTreesList = FXCollections.observableArrayList();
 	static {
@@ -37,12 +30,12 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		});
 	}
 
-	// private HashSet<Focus> focuses;
-	private final ObservableMap<String, Focus> focuses;
+	//private final ObservableMap<String, Focus> focuses;
+	@NotNull public final ReferencePDXScript<CountryTag> country;
+	@NotNull public final MultiPDXScript<Focus> focuses;
 
 	private ArrayList<String> focusIDList;
 	@NotNull private File focus_file;
-	private CountryTag country;
 	private String id;
 	// private Modifier countryModifier;
 	// private boolean defaultFocus; // ! todo Do This
@@ -57,35 +50,23 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 	}
 
 	/**
-	 * Instantiate focus tree from pre-existing focus tree (file).
+	 * Instantiate focus tree from pre-existing focus tree file.
 	 * 
 	 * @param focus_file pre-existing focus tree.
 	 */
 	private FocusTree(@NotNull File focus_file) {
+		super("focus_tree");
 		this.focus_file = focus_file;
-		country = new CountryTag("###");
-		focuses = FXCollections.observableHashMap();
 		minX = 0;
 
-		parse();
+		/* pdxscript */
+		country = new ReferencePDXScript<>(CountryTagsManager::getCountryTags, CountryTag::get, "country");
+		focuses = new MultiPDXScript<>("focus");
+		setChildScripts(focuses);
+		loadPDX(focus_file);
+
 		FocusTree.add(this);
 	}
-
-	// /**
-	// * Instantiate new focus tree.
-	// *
-	// * @param id Focus tree id (usually kept same as file/country name).
-	// */
-	// private FocusTree(String id, CountryTag tag) {
-	// this.id = id;
-	// // countryModifier = new CountryModifier();
-	// //! defaultFocus = false;
-	// //! continuousFocusPosition = new Point(50, 1200);
-	// country = tag;
-	// focuses = FXCollections.observableHashMap();
-	//
-	// FocusTree.add(country(), this);
-	// }
 
 	public static ObservableList<FocusTree> observeFocusTrees() {
 		return focusTreesList;
@@ -108,99 +89,98 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 		}
 	}
 
-	private ArrayList<String> parse() {
-		if (this.focus_file == null) {
-			System.err.println(this + "File of focus tree not set.");
-			return null;
-		}
-		if (!this.focus_file.exists()) {
-			System.err.println(this + "Focus tree file does not exist.");
-			return null;
-		}
-
-		focusIDList = new ArrayList<>();
-		this.focuses.clear();
-
-		/* parser */
-		Parser focusTreeParser = new Parser(this.focus_file);
-		Node focusTreeNode;
-		try {
-			focusTreeNode = focusTreeParser.parse();
-			var l = focusTreeNode.filterName("focus_tree").toList();
-			if (l.isEmpty()) {
-				System.out.println("focus_tree filter yielded no results for " + focus_file);
-				return null;
-			}
-			focusTreeNode = l.get(0);
-		} catch (Exception e) {
-			System.err.println("Error parsing focus tree file: " + focus_file);
-			return focusIDList; 
-			//throw new RuntimeException(e);
-		}
-
-		/* focus tree id */
-		try {
-			id = focusTreeNode.getValue("id").string();
-		} catch (NullPointerException e) {
-			System.err.println("Focus tree id not found, focus file: " + focus_file);
-			// todo throw exception?
-		}
-
-		/* country */
-		// todo should not be .findFirst("modifier"); need mofifier handling. but thats
-		// okay.
-		Node countryModifierExp = focusTreeNode.findFirst("country").findFirst("modifier");
-		if (countryModifierExp != null) {
-			try {
-				if (countryModifierExp.getValue("tag") != null)
-					country = new CountryTag(countryModifierExp.getValue("tag").string());
-				else
-					country = CountryTag.NULL_TAG;
-			} catch (NullPointerException e) {
-				System.out.println("Country modifier tag not found, focus file: " + focus_file);
-				throw new RuntimeException(e);
-			}
-		} else {
-			System.out.println("Country modifier not found, focus file: " + focus_file);
-		}
-
-		/* focuses */
-		List<Focus> focuses = getFocuses(focusTreeNode);
-		minX = focuses.stream().mapToInt(Focus::absoluteX).min().orElse(0);
-
-		return focusIDList;
-	}
+//	private ArrayList<String> parse() {
+//		if (this.focus_file == null) {
+//			System.err.println(this + "File of focus tree not set.");
+//			return null;
+//		}
+//		if (!this.focus_file.exists()) {
+//			System.err.println(this + "Focus tree file does not exist.");
+//			return null;
+//		}
+//
+//		focusIDList = new ArrayList<>();
+//		this.focuses.clear();
+//
+//		/* parser */
+//		Parser focusTreeParser = new Parser(this.focus_file);
+//		Node focusTreeNode;
+//		try {
+//			focusTreeNode = focusTreeParser.parse();
+//			var l = focusTreeNode.filterName("focus_tree").toList();
+//			if (l.isEmpty()) {
+//				System.out.println("focus_tree filter yielded no results for " + focus_file);
+//				return null;
+//			}
+//			focusTreeNode = l.get(0);
+//		} catch (Exception e) {
+//			System.err.println("Error parsing focus tree file: " + focus_file);
+//			return focusIDList;
+//			//throw new RuntimeException(e);
+//		}
+//
+//		/* focus tree id */
+//		try {
+//			id = focusTreeNode.getValue("id").string();
+//		} catch (NullPointerException e) {
+//			System.err.println("Focus tree id not found, focus file: " + focus_file);
+//			// todo throw exception?
+//		}
+//
+//		/* country */
+//		// todo should not be .findFirst("modifier"); need mofifier handling. but thats
+//		// okay.
+//		Node countryModifierExp = focusTreeNode.findFirst("country").findFirst("modifier");
+//		if (countryModifierExp != null) {
+//			try {
+//				if (countryModifierExp.getValue("tag") != null)
+//					country = new CountryTag(countryModifierExp.getValue("tag").string());
+//				else
+//					country = CountryTag.NULL_TAG;
+//			} catch (NullPointerException e) {
+//				System.out.println("Country modifier tag not found, focus file: " + focus_file);
+//				throw new RuntimeException(e);
+//			}
+//		} else {
+//			System.out.println("Country modifier not found, focus file: " + focus_file);
+//		}
+//
+//		/* focuses */
+//		List<Focus> focuses = getFocuses(focusTreeNode);
+//		minX = focuses.stream().mapToInt(Focus::absoluteX).min().orElse(0);
+//
+//		return focusIDList;
+//	}
 
 	@NotNull
-	private List<Focus> getFocuses(Node focusTreeNode) {
-		if (focusTreeNode.value().list() == null) {
-			System.err.println("Expected list of nodes, for focuses getter");
-			return null;
-		}
-
-		List<Focus> focusList = new ArrayList<>();
-
-		List<Node> focusTreeNodes = focusTreeNode.filterName("focus").toList();
-		for (Node node : focusTreeNodes) {
-			Focus focus;
-			/* focus id */
-			String focus_id = node.getValue("id").string(); // gets the ##### from "id = #####"
-			try {
-				focus = new Focus(focus_id, this, node);
-			} catch (DuplicateFocusException e) {
-				System.err.println(e.getMessage());
-				continue;
-			}
-			focusIDList.add(focus_id);
-			focuses.put(focus_id, focus);
-			focusList.add(focus);
-		}
-
-		/* when all focuses init loaded */
-		checkPendingFocusReferences();
-
-		return focusList;
-	}
+//	private List<Focus> getFocuses(Node focusTreeNode) {
+//		if (focusTreeNode.value().list() == null) {
+//			System.err.println("Expected list of nodes, for focuses getter");
+//			return new ArrayList<>();
+//		}
+//
+//		List<Focus> focusList = new ArrayList<>();
+//
+//		List<Node> focusTreeNodes = focusTreeNode.filterName("focus").toList();
+//		for (Node node : focusTreeNodes) {
+//			Focus focus;
+//			/* focus id */
+//			try {
+//				focus = new Focus(this, node);
+//			} catch (DuplicateFocusException e) {
+//				System.err.println(e.getMessage());
+//				continue;
+//			}
+//			focusIDList.add(focus.id.get());
+//			focuses.put(focus);
+//			focusList.add(focus);
+//		}
+//
+//		/* when all focuses init loaded */
+//		checkPendingFocusReferences();
+//
+//		return focusList;
+//	}
 
 	private void checkPendingFocusReferences() {
 		List<Focus> resolvedReferences = new ArrayList<>();
@@ -249,9 +229,9 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 	// return focus_names;
 	// }
 
-	public CountryTag country() {
-		if (country != null) {
-			return country;
+	public CountryTag countryTag() {
+		if (country.get() != null) {
+			return country.get();
 		} else {
 			// idk :(
 			return null;
@@ -283,11 +263,7 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 	}
 
 	public HashSet<Focus> focuses() {
-		return new HashSet<>(focuses.values());
-	}
-
-	public Focus getFocus(String focus_id) {
-		return focuses.get(focus_id);
+		return new HashSet<>(focuses.stream().toList());
 	}
 
 	public int minX() {
@@ -315,8 +291,8 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 
 	public static FocusTree getdankwizardisfrench(CountryTag tag) {
 		for (FocusTree tree : listFocusTrees()) {
-			assert tree.country() != null;
-			if (tree.country().equals(tag)) {
+			assert tree.country.get() != null;
+			if (tree.country.get().equals(tag)) {
 				return tree;
 			}
 		}
@@ -336,8 +312,15 @@ public class FocusTree implements Localizable, Comparable<FocusTree>, Iterable<F
 
 	@Override
 	public int compareTo(@NotNull FocusTree o) {
-		int c = this.country.compareTo(o.country);
-		return c == 0 ? this.id.compareTo(o.id) : c;
+		int c = 0;
+		if (this.country.get() != null && o.country.get() != null) {
+			c = this.country.get().compareTo(o.country.get());
+		}
+		int d = 0;
+		if (this.id != null && o.id != null) {
+			d = this.id.compareTo(o.id);
+		}
+		return c == 0 ? d : c;
 	}
 
 	@NotNull
