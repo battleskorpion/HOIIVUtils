@@ -69,4 +69,8 @@ public class ReferencePDXScript<T extends PDXScript<?>> extends PDXScript<T> {
         }
         return obj.objEquals(other);
     }
+
+    public String getReferenceName() {
+        return referenceIdentifier;
+    }
 }

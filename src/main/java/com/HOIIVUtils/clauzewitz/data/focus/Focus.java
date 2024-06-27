@@ -41,10 +41,10 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	@NotNull  public final MultiPDXScript<PrerequisiteSet> prerequisites;
 	@NotNull public final MultiPDXScript<MutuallyExclusiveSet> mutually_exclusive;
 	//public final PDXScript<Trigger> available;
-	@NotNull public final PDXScript<Integer> x; // if relative, relative x
-	@NotNull public final PDXScript<Integer> y; // if relative, relative y
+	@NotNull public final IntegerPDX x; // if relative, relative x
+	@NotNull public final IntegerPDX y; // if relative, relative y
 	@NotNull public final ReferencePDXScript<Focus> relative_position_id; // if null, position is not relative
-	@NotNull public final PDXScript<Double> cost; // cost of focus (typically in weeks unless changed in defines)
+	@NotNull public final DoublePDX cost; // cost of focus (typically in weeks unless changed in defines)
 	@NotNull public final PDXScript<Boolean> available_if_capitulated;
 
 	@NotNull public final PDXScript<Boolean> cancel_if_invalid;
@@ -71,15 +71,15 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 		// todo do not check this here! let this be controlled elsewhere?
 		this.id = new PDXScript<>("id");
 		this.icon = new MultiPDXScript<>(Icon::new, "icon");
-		this.x = new PDXScript<>("x");
-		this.y = new PDXScript<>("y");
+		this.x = new IntegerPDX("x");
+		this.y = new IntegerPDX("y");
 		this.prerequisites = new MultiPDXScript<>(PrerequisiteSet::new,
 				"prerequisite");
 		this.mutually_exclusive = new MultiPDXScript<>(() -> new MutuallyExclusiveSet(focusTree::focuses),
 				"mutually_exclusive");
 		this.relative_position_id = new ReferencePDXScript<>(focusTree::focuses, (f) -> f.id.get(),
 				"relative_position_id");
-		this.cost = new PDXScript<>("cost");
+		this.cost = new DoublePDX("cost");
 		this.available_if_capitulated = new PDXScript<>("available_if_capitulated");
 		this.cancel_if_invalid = new PDXScript<>("cancel_if_invalid");
 		this.continue_if_invalid = new PDXScript<>("continue_if_invalid");
@@ -194,7 +194,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 
 		Focus relative_position_focus = relative_position_id.get();
 		if (relative_position_focus == null) {
-			System.err.println("focus id " + relative_position_id + " not a focus");
+			System.err.println("focus id " + relative_position_id.getReferenceName() + " not a focus");
 			return position();
 		}
 		Point adjPoint = relative_position_focus.absolutePosition();

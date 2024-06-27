@@ -54,16 +54,6 @@ public class PDXScript<T> {
         usingIdentifier(expression);
         NodeValue value = expression.value();
 
-        if (value.valueObject() instanceof Number num) {
-            if (obj instanceof Integer) {
-                obj = (T) Integer.valueOf(num.intValue());
-            } else if (obj instanceof Double) {
-                obj = (T) Double.valueOf(num.doubleValue());
-            } else {
-                throw new NodeValueTypeException(expression, "Integer | Double");
-            }
-        }
-
         try {
             obj = (T) value.valueObject();
         } catch (ClassCastException e) {
