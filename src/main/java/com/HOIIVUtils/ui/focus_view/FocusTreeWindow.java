@@ -36,9 +36,9 @@ import java.io.PrintWriter;
 import java.util.stream.Collectors;
 
 public class FocusTreeWindow extends HOIIVUtilsStageLoader {
-	static final int FOCUS_X_SCALE = 90; // ~2x per 1 y
+	public static final int FOCUS_X_SCALE = 90; // ~2x per 1 y
 	public static final int CENTER_FOCUS_X = (FOCUS_X_SCALE / 2);
-	static final int FOCUS_Y_SCALE = 140;
+	public static final int FOCUS_Y_SCALE = 140;
 	public static final int CENTER_FOCUS_Y = FOCUS_Y_SCALE / 2;
 	public static final int VISIBLE_DROPDOWN_ROW_COUNT = 20;
 	public static final int X_OFFSET_FIX = 30;
@@ -144,8 +144,11 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		int maxY = getMaxY();
 
 		// Set the canvas's width and height based on the maximum x and y values
-		focusTreeCanvas.setWidth(Math.max(FOCUS_X_SCALE * (maxX - getMinX()) + 2 * X_OFFSET_FIX, 800));
-		focusTreeCanvas.setHeight(Math.max(FOCUS_Y_SCALE * (maxY + 2), 600));
+		// todo causes internal javafx error???
+//		focusTreeCanvas.setWidth(Math.max(FOCUS_X_SCALE * (maxX - getMinX()) + 2 * X_OFFSET_FIX, 800));
+//		focusTreeCanvas.setHeight(Math.max(FOCUS_Y_SCALE * (maxY + 2), 600));
+		focusTreeCanvas.setWidth(1600);
+		focusTreeCanvas.setHeight(1200);
 
 		// Set up the focus tree canvas's scroll pane
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {

@@ -33,10 +33,10 @@ public class FocusTree extends PDXScript<PDXScriptList> implements Localizable, 
 	//private final ObservableMap<String, Focus> focuses;
 	@NotNull public final ReferencePDXScript<CountryTag> country;
 	@NotNull public final MultiPDXScript<Focus> focuses;
+	@NotNull public final PDXScript<String> id;
 
 	private ArrayList<String> focusIDList;
 	@NotNull private File focus_file;
-	private String id;
 	// private Modifier countryModifier;
 	// private boolean defaultFocus; // ! todo Do This
 	// private Point continuousFocusPosition; // ! todo DO THIS
@@ -60,9 +60,10 @@ public class FocusTree extends PDXScript<PDXScriptList> implements Localizable, 
 		minX = 0;
 
 		/* pdxscript */
+		id = new PDXScript<>("id");
 		country = new ReferencePDXScript<>(CountryTagsManager::getCountryTags, CountryTag::get, "country");
 		focuses = new MultiPDXScript<>("focus");
-		setChildScripts(focuses);
+		setChildScripts(id, country, focuses);
 		loadPDX(focus_file);
 
 		FocusTree.add(this);
@@ -256,10 +257,13 @@ public class FocusTree extends PDXScript<PDXScriptList> implements Localizable, 
 
 	@Override
 	public String toString() {
-		if (id != null && !id.isEmpty()) {
-			return id;
+		if (id.get() != null) {
+			return id.get();
 		}
-		return country.toString();
+		if (country.get() != null) {
+			return country.get().toString();
+		}
+		return super.toString();
 	}
 
 	public HashSet<Focus> focuses() {
@@ -317,8 +321,8 @@ public class FocusTree extends PDXScript<PDXScriptList> implements Localizable, 
 			c = this.country.get().compareTo(o.country.get());
 		}
 		int d = 0;
-		if (this.id != null && o.id != null) {
-			d = this.id.compareTo(o.id);
+		if (this.id.get() != null && o.id.get() != null) {
+			d = this.id.get().compareTo(o.id.get());
 		}
 		return c == 0 ? d : c;
 	}
@@ -331,7 +335,7 @@ public class FocusTree extends PDXScript<PDXScriptList> implements Localizable, 
 
 	@Override
 	public @NotNull Map<Property, String> getLocalizableProperties() {
-		return Map.of(Property.NAME, id);
+		return Map.of(Property.NAME, id.get());
 	}
 
 	/**
