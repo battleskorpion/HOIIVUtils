@@ -12,6 +12,6 @@ public class NodeValueTypeException extends Exception {
     }
 
     public NodeValueTypeException(Node expression, String expected) {
-        super("Invalid node value type: " + expression.name() + " Expected: " + expected);
+        super("Invalid node value type of expression: " + expression.name() + " Expected: " + expected);
     }
 }

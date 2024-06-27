@@ -7,6 +7,7 @@ import com.HOIIVUtils.clausewitz_parser.ParserException;
 import com.HOIIVUtils.clauzewitz.data.focus.Focus;
 import com.HOIIVUtils.clauzewitz.data.focus.Icon;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Arrays;
@@ -53,6 +54,16 @@ public class PDXScript<T> {
         usingIdentifier(expression);
         NodeValue value = expression.value();
 
+        if (value.valueObject() instanceof Number num) {
+            if (obj instanceof Integer) {
+                obj = (T) Integer.valueOf(num.intValue());
+            } else if (obj instanceof Double) {
+                obj = (T) Double.valueOf(num.doubleValue());
+            } else {
+                throw new NodeValueTypeException(expression, "Integer | Double");
+            }
+        }
+
         try {
             obj = (T) value.valueObject();
         } catch (ClassCastException e) {
@@ -60,11 +71,11 @@ public class PDXScript<T> {
         }
     }
 
-    public T get() {
+    public @Nullable T get() {
         return obj;
     }
 
-    public void loadPDX(Node expression) {
+    public void loadPDX(Node expression) throws UnexpectedIdentifierException {
         if (expression.name() == null) {
             System.out.println("Error loading PDX script: " + expression);
             return;
@@ -81,7 +92,13 @@ public class PDXScript<T> {
         if (expressions == null) return;
         expressions.stream().filter(this::isValidIdentifier)
                 .findFirst()
-                .ifPresentOrElse(this::loadPDX, this::setNull);
+                .ifPresentOrElse(expression -> {
+                    try {
+                        loadPDX(expression);
+                    } catch (UnexpectedIdentifierException e) {
+                        throw new RuntimeException(e);
+                    }
+                }, this::setNull);
     }
 
     protected void loadPDX(@NotNull File file) {
@@ -99,7 +116,11 @@ public class PDXScript<T> {
             System.err.println("Error parsing focus tree file: " + file);
             return;
         }
-        loadPDX(rootNode);
+        try {
+            loadPDX(rootNode);
+        } catch (UnexpectedIdentifierException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected boolean isValidIdentifier(Node node) {
@@ -116,7 +137,11 @@ public class PDXScript<T> {
     }
 
     public void loadOrElse(Node exp, T value) {
-        loadPDX(exp);
+        try {
+            loadPDX(exp);
+        } catch (UnexpectedIdentifierException e) {
+            throw new RuntimeException(e);
+        }
         if (obj == null) {
             obj = value;
         }

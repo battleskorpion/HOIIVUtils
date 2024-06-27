@@ -31,11 +31,17 @@ public class MultiPDXScript<T extends PDXScript<?>> extends PDXScript<List<T>> i
         obj = new ArrayList<>();
     }
 
+    public MultiPDXScript(Supplier<T> supplier, List<String> pdxIdentifiers) {
+        super(pdxIdentifiers);
+        this.supplier = supplier;
+        obj = new ArrayList<>();
+    }
+
     @Override
-    public void loadPDX(Node expression) {
+    public void loadPDX(Node expression) throws UnexpectedIdentifierException {
         try {
             add(expression);
-        } catch (UnexpectedIdentifierException | NodeValueTypeException e) {
+        } catch (NodeValueTypeException e) {
             throw new RuntimeException(e);
         }
     }
@@ -44,7 +50,14 @@ public class MultiPDXScript<T extends PDXScript<?>> extends PDXScript<List<T>> i
     public void loadPDX(List<Node> expressions) {
         if (expressions == null) return;
         expressions.stream().filter(this::isValidIdentifier)
-                .forEach(this::loadPDX);
+                .forEach(expression -> {
+                    try {
+                        loadPDX(expression);
+                    } catch (UnexpectedIdentifierException e) {
+                        System.err.println(e.getMessage());
+                        //throw new RuntimeException(e);
+                    }
+                });
     }
 
     @Override
@@ -64,12 +77,17 @@ public class MultiPDXScript<T extends PDXScript<?>> extends PDXScript<List<T>> i
                 pdxScript.loadPDX(value.list());
             }
         } else if (obj instanceof ArrayList<T> childScriptList) {
-            if (!value.isList()) throw new NodeValueTypeException(expression, "list");
-            for (Node childNode : value.list()) {
-                T childScript = supplier.get();
-                childScript.loadPDX(childNode);
-                childScriptList.add(childScript);
-            }
+            // todo unsure?
+//            if (!value.isList()) throw new NodeValueTypeException(expression, "list");
+
+//            for (Node childNode : value.list()) {
+//                T childScript = supplier.get();
+//                childScript.loadPDX(childNode);
+//                childScriptList.add(childScript);
+//            }
+            T childScript = supplier.get();
+            childScript.loadPDX(expression);
+            childScriptList.add(childScript);
         } else {
             try {
                 obj.add((T) value.valueObject());

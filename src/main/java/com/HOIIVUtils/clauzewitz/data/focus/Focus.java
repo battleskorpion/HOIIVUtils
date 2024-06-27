@@ -11,7 +11,6 @@ import com.HOIIVUtils.clauzewitz.data.country.CountryTagsManager;
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clauzewitz.exceptions.InvalidEffectParameterException;
 
-import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import org.jetbrains.annotations.NotNull;
 
@@ -132,7 +131,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 		if (relative_position_id == null) {
 			return x.get();
 		} else {
-			return (int) absolutePosition().getX();
+			return absolutePosition().x;
 		}
 	}
 
@@ -163,8 +162,8 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 *
 	 * @return point representing xy location, or relative xy if relative.
 	 */
-	public Point2D position() {
-		return new Point2D(x.getOrElse(0), y.getOrElse(0));
+	public Point position() {
+		return new Point(x.getOrElse(0), y.getOrElse(0));
 	}
 
 	/**
@@ -178,7 +177,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * @implNote Should only be called after all focuses in focus tree are
 	 *           instantiated.
 	 */
-	public Point2D absolutePosition() {
+	public Point absolutePosition() {
 		if (relative_position_id == null) {
 			return position();
 		}
@@ -198,8 +197,8 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 			System.err.println("focus id " + relative_position_id + " not a focus");
 			return position();
 		}
-		Point2D adjPoint = relative_position_focus.absolutePosition();
-		adjPoint = new Point2D(adjPoint.getX() + x.get(), adjPoint.getY() + y.get());
+		Point adjPoint = relative_position_focus.absolutePosition();
+		adjPoint = new Point(adjPoint.x + x.getOrElse(0), adjPoint.y + y.getOrElse(0));
 		// System.out.println(adjPoint + ", " + id + ", " + relative_position_focus.id +
 		// ", " + relative_position_focus.position());
 
@@ -805,11 +804,11 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 
 	public class PrerequisiteSet extends MultiReferencePDXScript<Focus> {
 		public PrerequisiteSet() {
-			super(() -> focusTree.focuses(), (f) -> f.id.get(), "focus");
+			this(() -> focusTree.focuses());
 		}
 
 		public PrerequisiteSet(Supplier<Collection<Focus>> referenceFocusesSupplier) {
-			super(referenceFocusesSupplier, (f) -> f.id.get(), "focus");
+			super(referenceFocusesSupplier, (f) -> f.id.get(), "prerequisite", "focus");
 		}
 	}
 
@@ -818,7 +817,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 */
 	public class MutuallyExclusiveSet extends MultiReferencePDXScript<Focus> {
 		public MutuallyExclusiveSet(Supplier<Collection<Focus>> referenceFocusesSupplier) {
-			super(referenceFocusesSupplier, (f) -> f.id.get(),"focus");
+			super(referenceFocusesSupplier, (f) -> f.id.get(),"mutually_exclusive", "focus");
 		}
 
 	}

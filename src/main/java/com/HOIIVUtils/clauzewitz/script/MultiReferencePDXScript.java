@@ -13,22 +13,50 @@ import java.util.function.Supplier;
 public class MultiReferencePDXScript<T extends PDXScript<?>> extends MultiPDXScript<T> {
     protected final Supplier<Collection<T>> referenceCollectionSupplier;
     protected final Function<T, String> idExtractor;
-    protected final List<String> referenceIdentifiers;
+    protected final List<String> referencePDXIdentifiers;
+    protected final List<String> referenceNames = new ArrayList<>();
 
     public MultiReferencePDXScript(Supplier<Collection<T>> referenceCollectionSupplier,
-                                   Function<T, String> idExtractor, String PDXIdentifier) {
+                                   Function<T, String> idExtractor, String PDXIdentifier, String referenceIdentifier) {
         super(null, PDXIdentifier);
         this.referenceCollectionSupplier = referenceCollectionSupplier;
         this.idExtractor = idExtractor;
-        referenceIdentifiers = new ArrayList<>();
+        this.referencePDXIdentifiers = List.of(referenceIdentifier);
     }
 
     public MultiReferencePDXScript(Supplier<Collection<T>> referenceCollectionSupplier,
-                                   Function<T, String> idExtractor, String... PDXIdentifiers) {
+                                   Function<T, String> idExtractor, List<String> PDXIdentifiers, List<String> pdxReferenceIdentifier) {
         super(null, PDXIdentifiers);
         this.referenceCollectionSupplier = referenceCollectionSupplier;
         this.idExtractor = idExtractor;
-        referenceIdentifiers = new ArrayList<>();
+        this.referencePDXIdentifiers = pdxReferenceIdentifier;
+    }
+
+    @Override
+    public void loadPDX(Node expression) throws UnexpectedIdentifierException {
+        if (expression.value().isList()) {
+            var list = expression.value().list();
+            if (list == null) {
+                System.out.println("PDX script had empty list: " + expression);
+                return;
+            }
+            usingIdentifier(expression);
+            for (Node node : list) {
+                try {
+                    add(node);
+                } catch (NodeValueTypeException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        // todo supposed to be here? unsure.
+        else {
+            try {
+                add(expression);
+            } catch (UnexpectedIdentifierException | NodeValueTypeException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override
@@ -41,29 +69,39 @@ public class MultiReferencePDXScript<T extends PDXScript<?>> extends MultiPDXScr
 
     @Override
     public void set(Node expression) throws UnexpectedIdentifierException, NodeValueTypeException {
-        usingIdentifier(expression);
+        usingReferenceIdentifier(expression);
         NodeValue value = expression.value();
-        referenceIdentifiers.clear();
-        referenceIdentifiers.add(value.string());
+        referenceNames.clear();
+        referenceNames.add(value.string());
     }
 
     @Override
     protected void add(Node expression) throws UnexpectedIdentifierException, NodeValueTypeException {
-        usingIdentifier(expression);
+        usingReferenceIdentifier(expression);
         NodeValue value = expression.value();
 
-        referenceIdentifiers.add(value.string());
+        referenceNames.add(value.string());
     }
 
     private List<T> resolveReferences() {
         Collection<T> referenceCollection = referenceCollectionSupplier.get();
         for (T reference : referenceCollection) {
-            for (String referenceIdentifier : referenceIdentifiers) {
-                if (idExtractor.apply(reference).equals(referenceIdentifier)) {
+            for (String referenceName : referenceNames) {
+                if (idExtractor.apply(reference).equals(referenceName)) {
                     obj.add(reference);
                 }
             }
         }
         return obj;
+    }
+
+    protected void usingReferenceIdentifier(Node exp) throws UnexpectedIdentifierException {
+        for (int i = 0; i < referencePDXIdentifiers.size(); i++) {
+            if (exp.nameEquals(referencePDXIdentifiers.get(i))) {
+//                activeReferenceIdentifier = i;
+                return;
+            }
+        }
+        throw new UnexpectedIdentifierException(exp);
     }
 }

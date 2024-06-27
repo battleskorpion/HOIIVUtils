@@ -17,7 +17,7 @@ public class FixFocus extends HOIIVUtils {
 
 		var focuses = focusTree.focuses();
 		var locManager = LocalizationManager.get();
-		File locFile = focusTree.primaryLocalizationFile(); // todo getting kinda here
+		File locFile = focusTree.primaryLocalizationFile();
 		if (locFile == null) return;
 		focuses.stream().filter(focus -> focus.localization(Localizable.Property.NAME) == null).forEach(focus -> {
 			String focusName = focus.id.get();
