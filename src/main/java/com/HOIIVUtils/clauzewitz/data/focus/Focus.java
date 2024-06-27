@@ -57,12 +57,14 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * completion raward
 	 * null: no definition within focus = {...} block
 	 * empty: definition exists, but contents is empty, focus = { }
+	 * // todo pdx script time :)
 	 */
 	protected List<Effect> completionReward;
 
 	/**
 	 * Set of the focus id's this focus is still attempting to reference (but may
 	 * not be loaded/created yet).
+	 * @deprecated
 	 */
 	private final PendingFocusReferenceList pendingFocusReferences = new PendingFocusReferenceList();
 
