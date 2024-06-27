@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+// todo uhhhhhhhhhhhhh
 public class MultiReferencePDXScript<T extends PDXScript<?>> extends MultiPDXScript<T> {
     protected final Supplier<Collection<T>> referenceCollectionSupplier;
     protected final Function<T, String> idExtractor;
@@ -16,7 +17,7 @@ public class MultiReferencePDXScript<T extends PDXScript<?>> extends MultiPDXScr
 
     public MultiReferencePDXScript(Supplier<Collection<T>> referenceCollectionSupplier,
                                    Function<T, String> idExtractor, String PDXIdentifier) {
-        super(PDXIdentifier);
+        super(null, PDXIdentifier);
         this.referenceCollectionSupplier = referenceCollectionSupplier;
         this.idExtractor = idExtractor;
         referenceIdentifiers = new ArrayList<>();
@@ -24,7 +25,7 @@ public class MultiReferencePDXScript<T extends PDXScript<?>> extends MultiPDXScr
 
     public MultiReferencePDXScript(Supplier<Collection<T>> referenceCollectionSupplier,
                                    Function<T, String> idExtractor, String... PDXIdentifiers) {
-        super(PDXIdentifiers);
+        super(null, PDXIdentifiers);
         this.referenceCollectionSupplier = referenceCollectionSupplier;
         this.idExtractor = idExtractor;
         referenceIdentifiers = new ArrayList<>();

@@ -34,7 +34,10 @@ public class ReferencePDXScript<T extends PDXScript<?>> extends PDXScript<T> {
     public void set(Node expression) throws UnexpectedIdentifierException, NodeValueTypeException {
         usingIdentifier(expression);
         NodeValue value = expression.value();
-        referenceIdentifier = value.string();
+        if (value.isString())
+            referenceIdentifier = value.string();
+        else
+            throw new NodeValueTypeException(expression, "string");
     }
 
     @Override

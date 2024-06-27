@@ -20,7 +20,7 @@ import java.util.*;
  * Localizable data: focus tree name. Each focus is its own localizable data.
  */
 // todo extends file?
-public class FocusTree extends PDXScript<PDXScriptList> implements Localizable, Comparable<FocusTree>, Iterable<Focus> {
+public class FocusTree extends ComplexPDXScript implements Localizable, Comparable<FocusTree>, Iterable<Focus> {
 	private static final ObservableMap<File, FocusTree> focusTrees = FXCollections.observableHashMap();
 	private static final ObservableList<FocusTree> focusTreesList = FXCollections.observableArrayList();
 	static {
@@ -62,11 +62,16 @@ public class FocusTree extends PDXScript<PDXScriptList> implements Localizable, 
 		/* pdxscript */
 		id = new PDXScript<>("id");
 		country = new ReferencePDXScript<>(CountryTagsManager::getCountryTags, CountryTag::get, "country");
-		focuses = new MultiPDXScript<>("focus");
-		setChildScripts(id, country, focuses);
+		focuses = new MultiPDXScript<>(() -> new Focus(this), "focus");
+		obj.addAll(childScripts());
 		loadPDX(focus_file);
 
 		FocusTree.add(this);
+	}
+
+	@Override
+	protected Collection<? extends PDXScript<?>> childScripts() {
+		return List.of(id, country, focuses);
 	}
 
 	public static ObservableList<FocusTree> observeFocusTrees() {
@@ -267,7 +272,7 @@ public class FocusTree extends PDXScript<PDXScriptList> implements Localizable, 
 	}
 
 	public HashSet<Focus> focuses() {
-		return new HashSet<>(focuses.stream().toList());
+		return new HashSet<>(focuses.get());
 	}
 
 	public int minX() {

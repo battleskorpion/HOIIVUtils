@@ -66,6 +66,7 @@ public interface Localizable {
 	 */
 	default Localization localization(Property property) {
 		String key = getLocalizableProperties().get(property);
+		if (key == null) return null;
 		return LocalizationManager.get(key);
 	}
 
@@ -95,13 +96,28 @@ public interface Localizable {
 //		setLocalization(property, text, primaryLocalizationFile());
 //	}
 
-	default File primaryLocalizationFile() {
-		var localizableGroup = getLocalizableGroup();
-		return localizableGroup.stream()
-				.flatMap(localizable -> localizable.getLocalizationKeys().stream())
-				.map(LocalizationManager::getLocalizationFile)
-				.filter(Objects::nonNull).findFirst().orElse(null);
+//	default File primaryLocalizationFile() {
+//		var localizableGroup = getLocalizableGroup();
+//		return localizableGroup.stream()
+//				.flatMap(localizable -> localizable.getLocalizationKeys().stream())
+//				.map(LocalizationManager::getLocalizationFile)
+//				.filter(Objects::nonNull)
+//				.findFirst().orElse(null);
+//	}
+default File primaryLocalizationFile() {
+	var localizableGroup = getLocalizableGroup();
+	for (Object localizable : localizableGroup) {
+		if (!(localizable instanceof Localizable)) {
+			throw new ClassCastException("Element is not an instance of Localizable: " + localizable.getClass());
+		}
+		System.out.println("Localizable element: " + localizable.getClass());
 	}
+	return localizableGroup.stream()
+			.flatMap(localizable -> localizable.getLocalizationKeys().stream())
+			.map(LocalizationManager::getLocalizationFile)
+			.filter(Objects::nonNull)
+			.findFirst().orElse(null);
+}
 
 	/**
 	 * Gets the localizable group of objects that this object is a part of.

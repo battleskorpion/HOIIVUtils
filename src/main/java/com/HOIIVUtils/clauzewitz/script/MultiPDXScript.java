@@ -3,6 +3,8 @@ package com.HOIIVUtils.clauzewitz.script;
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.NodeValue;
 import com.HOIIVUtils.clauzewitz.data.focus.Focus;
+import org.apache.poi.ss.formula.functions.Complex;
+import org.apache.poi.ss.formula.functions.T;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -10,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -18,15 +22,12 @@ import java.util.stream.Stream;
  * The super PDXScript object will be a list of T objects.
  * @param <T>
  */
-public class MultiPDXScript<T> extends PDXScript<List<T>> implements Iterable<T> {
+public class MultiPDXScript<T extends PDXScript<?>> extends PDXScript<List<T>> implements Iterable<T> {
+    protected final Supplier<T> supplier;
 
-    public MultiPDXScript(String PDXIdentifier) {
-        super(PDXIdentifier);
-        obj = new ArrayList<>();
-    }
-
-    public MultiPDXScript(String... PDXIdentifiers) {
-        super(PDXIdentifiers);
+    public MultiPDXScript(Supplier<T> supplier, @NotNull String... pdxIdentifiers) {
+        super(pdxIdentifiers);
+        this.supplier = supplier;
         obj = new ArrayList<>();
     }
 
@@ -61,6 +62,13 @@ public class MultiPDXScript<T> extends PDXScript<List<T>> implements Iterable<T>
             if (!value.isList()) throw new NodeValueTypeException(expression, "list");
             for (PDXScript<?> pdxScript : childScriptList) {
                 pdxScript.loadPDX(value.list());
+            }
+        } else if (obj instanceof ArrayList<T> childScriptList) {
+            if (!value.isList()) throw new NodeValueTypeException(expression, "list");
+            for (Node childNode : value.list()) {
+                T childScript = supplier.get();
+                childScript.loadPDX(childNode);
+                childScriptList.add(childScript);
             }
         } else {
             try {

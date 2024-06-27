@@ -19,20 +19,24 @@ import java.util.List;
  */
 public class PDXScript<T> {
     protected T obj;
-    private final List<String> PDXIdentifier;
+    protected final List<String> pdxIdentifiers;
     int activeIdentifier = 0;
 
-    public PDXScript(String PDXIdentifier) {
-        this.PDXIdentifier = List.of(PDXIdentifier);
+    public PDXScript(String pdxIdentifiers) {
+        this.pdxIdentifiers = List.of(pdxIdentifiers);
     }
 
     public PDXScript(String... PDXIdentifiers) {
-        this.PDXIdentifier = List.of(PDXIdentifiers);
+        this.pdxIdentifiers = List.of(PDXIdentifiers);
+    }
+
+    public PDXScript(List<String> pdxIdentifiers) {
+        this.pdxIdentifiers = pdxIdentifiers;
     }
 
     protected void usingIdentifier(Node exp) throws UnexpectedIdentifierException {
-        for (int i = 0; i < PDXIdentifier.size(); i++) {
-            if (exp.nameEquals(PDXIdentifier.get(i))) {
+        for (int i = 0; i < pdxIdentifiers.size(); i++) {
+            if (exp.nameEquals(pdxIdentifiers.get(i))) {
                 activeIdentifier = i;
                 return;
             }
@@ -49,19 +53,10 @@ public class PDXScript<T> {
         usingIdentifier(expression);
         NodeValue value = expression.value();
 
-        // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
-        // then load each sub-PDXScript
-        if (obj instanceof PDXScriptList childScriptList) {
-            if (!value.isList()) throw new NodeValueTypeException(expression, "list");
-            for (PDXScript<?> pdxScript : childScriptList) {
-                pdxScript.loadPDX(value.list());
-            }
-        } else {
-            try {
-                obj = (T) value.valueObject();
-            } catch (ClassCastException e) {
-                throw new NodeValueTypeException(expression, e);
-            }
+        try {
+            obj = (T) value.valueObject();
+        } catch (ClassCastException e) {
+            throw new NodeValueTypeException(expression, e);
         }
     }
 
@@ -71,11 +66,7 @@ public class PDXScript<T> {
 
     public void loadPDX(Node expression) {
         if (expression.name() == null) {
-            if (expression.value().isList())
-                loadPDX(expression.value().list());
-            else {
-                System.out.println("Error loading PDX script: " + expression);
-            }
+            System.out.println("Error loading PDX script: " + expression);
             return;
         }
 
@@ -112,7 +103,7 @@ public class PDXScript<T> {
     }
 
     protected boolean isValidIdentifier(Node node) {
-        for (String identifier : PDXIdentifier) {
+        for (String identifier : pdxIdentifiers) {
             if (node.name().equals(identifier)) {
                 return true;
             }
@@ -131,20 +122,8 @@ public class PDXScript<T> {
         }
     }
 
-    protected void setChildScripts(PDXScriptList pdxScripts) {
-        if (obj instanceof PDXScriptList childScriptList) {
-            childScriptList.addAll(pdxScripts);
-        }
-    }
-
-    protected void setChildScripts(PDXScript<?>... pdxScripts) {
-        if (obj instanceof PDXScriptList childScriptList) {
-            childScriptList.addAll(Arrays.asList(pdxScripts));
-        }
-    }
-
     public String toScript() {
-        return PDXIdentifier.get(activeIdentifier) + " = " + obj.toString();
+        return pdxIdentifiers.get(activeIdentifier) + " = " + obj.toString();
     }
 
     public boolean objEquals(PDXScript<?> other) {

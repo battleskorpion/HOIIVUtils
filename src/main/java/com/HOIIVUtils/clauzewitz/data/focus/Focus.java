@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 /**
  * Focus class represents an individual focus of a National Focus (Focus Tree).
  */
-public class Focus extends PDXScript<PDXScriptList> implements Localizable, Comparable<Focus>, DataFunctionProvider<Focus> {
+public class Focus extends ComplexPDXScript implements Localizable, Comparable<Focus>, DataFunctionProvider<Focus> {
 	private static final int FOCUS_COST_FACTOR = 7; // turn into from defines, or default 7. (get default vanilla define
 	// instead?)
 	private final double DEFAULT_FOCUS_COST = 10.0; // default cost (in weeks by default) when making a new focus.
@@ -67,37 +67,39 @@ public class Focus extends PDXScript<PDXScriptList> implements Localizable, Comp
 	 */
 	private final PendingFocusReferenceList pendingFocusReferences = new PendingFocusReferenceList();
 
-	public Focus(String focus_id, FocusTree focusTree) throws DuplicateFocusException {
+	public Focus(FocusTree focusTree) {
 		super("focus");
 		// todo do not check this here! let this be controlled elsewhere?
-		if (focusIDs.contains(focus_id)) {
-			throw new DuplicateFocusException("Error: focus id " + focus_id + " already exists.");
-		}
 		this.id = new PDXScript<>("id");
-		this.icon = new MultiPDXScript<>("icon");
+		this.icon = new MultiPDXScript<>(Icon::new, "icon");
 		this.x = new PDXScript<>("x");
 		this.y = new PDXScript<>("y");
-		this.prerequisites = new MultiPDXScript<>("prerequisite");
-		this.mutually_exclusive = new MultiPDXScript<>("mutually_exclusive");
+		this.prerequisites = new MultiPDXScript<>(PrerequisiteSet::new,
+				"prerequisite");
+		this.mutually_exclusive = new MultiPDXScript<>(() -> new MutuallyExclusiveSet(focusTree::focuses),
+				"mutually_exclusive");
 		this.relative_position_id = new ReferencePDXScript<>(focusTree::focuses, (f) -> f.id.get(),
 				"relative_position_id");
 		this.cost = new PDXScript<>("cost");
 		this.available_if_capitulated = new PDXScript<>("available_if_capitulated");
 		this.cancel_if_invalid = new PDXScript<>("cancel_if_invalid");
 		this.continue_if_invalid = new PDXScript<>("continue_if_invalid");
-		setChildScripts(
-				this.id, this.icon, this.x, this.y, this.prerequisites, this.mutually_exclusive,
-				this.relative_position_id, this.cost, this.available_if_capitulated,
-				this.cancel_if_invalid, this.continue_if_invalid
-		);
+		obj.addAll(childScripts());
 
 		this.focusTree = focusTree;
-		focusIDs.add(focus_id);
+		if (id.get() != null) focusIDs.add(id.get());
 	}
 
-	public Focus(String focusId, FocusTree focusTree, Node node) throws DuplicateFocusException, UnexpectedIdentifierException, NodeValueTypeException{
-		this(focusId, focusTree);
+	public Focus(FocusTree focusTree, Node node) throws DuplicateFocusException, UnexpectedIdentifierException, NodeValueTypeException{
+		this(focusTree);
 		loadPDX(node);
+	}
+
+	@Override
+	protected Collection<? extends PDXScript<?>> childScripts() {
+		return List.of(this.id, this.icon, this.x, this.y, this.prerequisites, this.mutually_exclusive,
+				this.relative_position_id, this.cost, this.available_if_capitulated,
+				this.cancel_if_invalid, this.continue_if_invalid);
 	}
 
 	/**
@@ -551,7 +553,11 @@ public class Focus extends PDXScript<PDXScriptList> implements Localizable, Comp
 
 	@Override
 	public @NotNull Map<Property, String> getLocalizableProperties() {
-		return Map.of(Property.NAME, id.get(), Property.DESCRIPTION, id.get() + "_desc");
+		// lets us map null if we use hashmap instead of generic of() method
+		HashMap<Property, String> properties = new HashMap<>();
+		properties.put(Property.NAME, id.get());
+		properties.put(Property.DESCRIPTION, id.get() + "_desc");
+		return properties;
 	}
 
 	@Override
@@ -797,7 +803,11 @@ public class Focus extends PDXScript<PDXScriptList> implements Localizable, Comp
 		return this.id.get().compareTo(o.id.get());
 	}
 
-	public static class PrerequisiteSet extends MultiReferencePDXScript<Focus> {
+	public class PrerequisiteSet extends MultiReferencePDXScript<Focus> {
+		public PrerequisiteSet() {
+			super(() -> focusTree.focuses(), (f) -> f.id.get(), "focus");
+		}
+
 		public PrerequisiteSet(Supplier<Collection<Focus>> referenceFocusesSupplier) {
 			super(referenceFocusesSupplier, (f) -> f.id.get(), "focus");
 		}
@@ -806,7 +816,7 @@ public class Focus extends PDXScript<PDXScriptList> implements Localizable, Comp
 	/**
 	 * mutually exclusive is a multi-reference of focuses
 	 */
-	public static class MutuallyExclusiveSet extends MultiReferencePDXScript<Focus> {
+	public class MutuallyExclusiveSet extends MultiReferencePDXScript<Focus> {
 		public MutuallyExclusiveSet(Supplier<Collection<Focus>> referenceFocusesSupplier) {
 			super(referenceFocusesSupplier, (f) -> f.id.get(),"focus");
 		}
