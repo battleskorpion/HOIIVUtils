@@ -43,7 +43,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	//public final PDXScript<Trigger> available;
 	@NotNull public final IntegerPDX x; // if relative, relative x
 	@NotNull public final IntegerPDX y; // if relative, relative y
-	@NotNull public final ReferencePDXScript<Focus> relative_position_id; // if null, position is not relative
+	@NotNull public final ReferencePDXScript<Focus> relativePosition; // if null, position is not relative
 	@NotNull public final DoublePDX cost; // cost of focus (typically in weeks unless changed in defines)
 	@NotNull public final PDXScript<Boolean> available_if_capitulated;
 
@@ -79,7 +79,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 				"prerequisite");
 		this.mutually_exclusive = new MultiPDXScript<>(() -> new MutuallyExclusiveSet(focusTree::focuses),
 				"mutually_exclusive");
-		this.relative_position_id = new ReferencePDXScript<>(focusTree::focuses, (f) -> f.id.get(),
+		this.relativePosition = new ReferencePDXScript<>(focusTree::focuses, (f) -> f.id.get(),
 				"relative_position_id");
 		this.cost = new DoublePDX("cost");
 		this.available_if_capitulated = new PDXScript<>("available_if_capitulated");
@@ -99,7 +99,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	@Override
 	protected Collection<? extends PDXScript<?>> childScripts() {
 		return List.of(this.id, this.icon, this.x, this.y, this.prerequisites, this.mutually_exclusive,
-				this.relative_position_id, this.cost, this.available_if_capitulated,
+				this.relativePosition, this.cost, this.available_if_capitulated,
 				this.cancel_if_invalid, this.continue_if_invalid);
 	}
 
@@ -130,7 +130,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * @return
 	 */
 	public int absoluteX() {
-		if (relative_position_id == null) {
+		if (relativePosition == null) {
 			return x.get();
 		} else {
 			return absolutePosition().x;
@@ -148,7 +148,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * @return
 	 */
 	public int absoluteY() {
-		if (relative_position_id == null) {
+		if (relativePosition == null) {
 			return y.get();
 		} else {
 			return (int) absolutePosition().getY();
@@ -179,13 +179,13 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * @implNote Should only be called after all focuses in focus tree are
 	 *           instantiated.
 	 */
-	public Point absolutePosition() {
-		if (relative_position_id == null) {
+	public @NotNull Point absolutePosition() {
+		if (relativePosition.isUndefined()) {
 			return position();
 		}
 		// todo improve comparability
 		//if (relative_position_id.get().id.get().equals(this.id.get())) {
-		if (relative_position_id.objEquals(id)) {
+		if (relativePosition.objEquals(id)) {
 			/*
 			todo not an error of this program necessarily, issue should be handled
 			 differently?
@@ -194,9 +194,9 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 			return position();
 		}
 
-		Focus relative_position_focus = relative_position_id.get();
+		Focus relative_position_focus = relativePosition.get();
 		if (relative_position_focus == null) {
-			System.err.println("focus id " + relative_position_id.getReferenceName() + " not a focus");
+			System.err.println("focus id " + relativePosition.getReferenceName() + " not a focus");
 			return position();
 		}
 		Point adjPoint = relative_position_focus.absolutePosition();
@@ -267,7 +267,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 		Point prev = new Point(this.x.get(), this.y.get());
 		this.x.set(x);
 		this.y.set(y);
-		this.relative_position_id.setNull();
+		this.relativePosition.setNull();
 		return prev;
 	}
 
@@ -802,6 +802,10 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	@Override
 	public int compareTo(@NotNull Focus o) {
 		return this.id.get().compareTo(o.id.get());
+	}
+
+	public boolean hasAbsolutePosition(int x, int y) {
+		return this.absolutePosition().equals(new Point(x, y));
 	}
 
 	public class PrerequisiteSet extends MultiReferencePDXScript<Focus> {

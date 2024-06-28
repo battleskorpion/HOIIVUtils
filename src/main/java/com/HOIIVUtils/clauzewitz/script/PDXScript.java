@@ -4,13 +4,10 @@ import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.NodeValue;
 import com.HOIIVUtils.clausewitz_parser.Parser;
 import com.HOIIVUtils.clausewitz_parser.ParserException;
-import com.HOIIVUtils.clauzewitz.data.focus.Focus;
-import com.HOIIVUtils.clauzewitz.data.focus.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -152,7 +149,7 @@ public class PDXScript<T> {
     }
 
     public T getOrElse(T elseValue) {
-        return obj == null ? elseValue : obj;
+        return isUndefined() ? elseValue : obj;
     }
 
     @Override
@@ -161,5 +158,9 @@ public class PDXScript<T> {
             return super.toString();
         }
         return obj.toString();
+    }
+
+    public boolean isUndefined() {
+        return obj == null;
     }
 }

@@ -12,6 +12,7 @@ import com.HOIIVUtils.clauzewitz.data.focus.Focus;
 import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
 import javafx.fxml.FXML;
 
+import java.awt.*;
 import java.util.*;
 
 import javafx.scene.control.Button;
@@ -345,7 +346,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		int y = (int) (p.getY() / FOCUS_Y_SCALE);
 
 		for (Focus f : focusTree.focuses()) {
-			if (f.absolutePosition().equals(new Point2D(x, y))) {
+			if (f.hasAbsolutePosition(x, y)) {
 				return f;
 			}
 		}
