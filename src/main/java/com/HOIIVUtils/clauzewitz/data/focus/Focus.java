@@ -13,20 +13,20 @@ import com.HOIIVUtils.clauzewitz.exceptions.InvalidEffectParameterException;
 
 import javafx.scene.image.Image;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
  * Focus class represents an individual focus of a National Focus (Focus Tree).
  */
-public class Focus extends ComplexPDXScript implements Localizable, Comparable<Focus>, DataFunctionProvider<Focus> {
+public class Focus extends StructuredPDX implements Localizable, Comparable<Focus>, DataFunctionProvider<Focus> {
 	private static final int FOCUS_COST_FACTOR = 7; // turn into from defines, or default 7. (get default vanilla define
 	// instead?)
 	private final double DEFAULT_FOCUS_COST = 10.0; // default cost (in weeks by default) when making a new focus.
@@ -34,24 +34,21 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 
 	/* attributes */
 	protected FocusTree focusTree;
-	public final PDXScript<String> id;
-	public final MultiPDXScript<Icon> icon;
-	protected Image ddsImage;
-	// todo!
+	@NotNull public final StringPDX id;
+	@NotNull public final MultiPDXScript<Icon> icon;
+	@NotNull public final IntegerPDX x; // if relative, relative x
+	@NotNull public final IntegerPDX y; // if relative, relative y
 	@NotNull  public final MultiPDXScript<PrerequisiteSet> prerequisites;
 	@NotNull public final MultiPDXScript<MutuallyExclusiveSet> mutually_exclusive;
 	//public final PDXScript<Trigger> available;
-	@NotNull public final IntegerPDX x; // if relative, relative x
-	@NotNull public final IntegerPDX y; // if relative, relative y
 	@NotNull public final ReferencePDXScript<Focus> relativePosition; // if null, position is not relative
 	@NotNull public final DoublePDX cost; // cost of focus (typically in weeks unless changed in defines)
-	@NotNull public final PDXScript<Boolean> available_if_capitulated;
-
-	@NotNull public final PDXScript<Boolean> cancel_if_invalid;
-
-	@NotNull public final PDXScript<Boolean> continue_if_invalid;
+	@NotNull public final BooleanPDX available_if_capitulated;
+	@NotNull public final BooleanPDX cancel_if_invalid;
+	@NotNull public final BooleanPDX continue_if_invalid;
 	// private AIWillDo ai_will_do; // todo
 	// select effect
+	protected Image ddsImage;
 
 	/**
 	 * completion raward
@@ -61,17 +58,10 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 */
 	protected List<Effect> completionReward;
 
-	/**
-	 * Set of the focus id's this focus is still attempting to reference (but may
-	 * not be loaded/created yet).
-	 * @deprecated
-	 */
-	private final PendingFocusReferenceList pendingFocusReferences = new PendingFocusReferenceList();
-
 	public Focus(FocusTree focusTree) {
 		super("focus");
 		// todo do not check this here! let this be controlled elsewhere?
-		this.id = new PDXScript<>("id");
+		this.id = new StringPDX("id");
 		this.icon = new MultiPDXScript<>(Icon::new, "icon");
 		this.x = new IntegerPDX("x");
 		this.y = new IntegerPDX("y");
@@ -82,9 +72,12 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 		this.relativePosition = new ReferencePDXScript<>(focusTree::focuses, (f) -> f.id.get(),
 				"relative_position_id");
 		this.cost = new DoublePDX("cost");
-		this.available_if_capitulated = new PDXScript<>("available_if_capitulated");
-		this.cancel_if_invalid = new PDXScript<>("cancel_if_invalid");
-		this.continue_if_invalid = new PDXScript<>("continue_if_invalid");
+		this.available_if_capitulated = new BooleanPDX("available_if_capitulated",
+				false, BoolType.YES_NO);
+		this.cancel_if_invalid = new BooleanPDX("cancel_if_invalid",
+				true, BoolType.YES_NO);
+		this.continue_if_invalid = new BooleanPDX("continue_if_invalid",
+				false, BoolType.YES_NO);
 		obj.addAll(childScripts());
 
 		this.focusTree = focusTree;
@@ -97,7 +90,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	}
 
 	@Override
-	protected Collection<? extends PDXScript<?>> childScripts() {
+	protected Collection<? extends AbstractPDX<?>> childScripts() {
 		return List.of(this.id, this.icon, this.x, this.y, this.prerequisites, this.mutually_exclusive,
 				this.relativePosition, this.cost, this.available_if_capitulated,
 				this.cancel_if_invalid, this.continue_if_invalid);
@@ -130,8 +123,8 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * @return
 	 */
 	public int absoluteX() {
-		if (relativePosition == null) {
-			return x.get();
+		if (relativePosition.isUndefined()) {
+			return x.getOrElse(0);
 		} else {
 			return absolutePosition().x;
 		}
@@ -148,10 +141,10 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * @return
 	 */
 	public int absoluteY() {
-		if (relativePosition == null) {
-			return y.get();
+		if (relativePosition.isUndefined()) {
+			return y.getOrElse(0);
 		} else {
-			return (int) absolutePosition().getY();
+			return absolutePosition().y;
 		}
 	}
 
@@ -249,7 +242,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * @return previous x and y
 	 */
 	public Point setXY(int x, int y) {
-		Point prev = new Point(this.x.get(), this.y.get());
+		Point prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0));
 		this.x.set(x);
 		this.y.set(y);
 		return prev;
@@ -264,7 +257,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * @return
 	 */
 	public Point setAbsoluteXY(int x, int y) {
-		Point prev = new Point(this.x.get(), this.y.get());
+		Point prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0));
 		this.x.set(x);
 		this.y.set(y);
 		this.relativePosition.setNull();
@@ -410,18 +403,6 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 //	}
 
 	/**
-	 * Add reference of a property of this focus to an unloaded focus; as it
-	 * has not yet been loaded, is not actually defined, or is otherwise unknown.
-	 * 
-	 * @param pendingFocusId id of focus that is not yet loaded or defined
-	 * @param pendingAction  operation to perform when focus is loaded
-	 * @param args           arguments to pass to pendingAction
-	 */
-	private void addPendingFocusReference(String pendingFocusId, Consumer<List<Node>> pendingAction, List<Node> args) {
-		pendingFocusReferences.addReference(pendingFocusId, pendingAction, args);
-	}
-
-	/**
 	 * Removes all defined focus prerequisites
 	 */
 	private void removePrerequisites() {
@@ -432,7 +413,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * Removes all defined focus mutually exclusive focuses
 	 */
 	private void removeMutuallyExclusive() {
-		if (this.mutually_exclusive != null) {
+		if (!this.mutually_exclusive.isUndefined()) {
 			this.mutually_exclusive.clear();
 		}
 	}
@@ -519,7 +500,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * @return true if the focus has a prerequisite focus
 	 */
 	public boolean hasPrerequisites() {
-		return !(prerequisites == null || prerequisites.isEmpty());
+		return !(prerequisites.isUndefined() || prerequisites.isEmpty());
 	}
 
 	/**
@@ -528,7 +509,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * @return true if the focus has a mutually exclusive focus
 	 */
 	public boolean isMutuallyExclusive() {
-		return !(mutually_exclusive == null || mutually_exclusive.isEmpty());
+		return !(mutually_exclusive.isUndefined() || mutually_exclusive.isEmpty());
 	}
 
 	/**
@@ -549,7 +530,7 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 	 * @return precise focus completion time
 	 */
 	public double preciseCompletionTime() {
-		return cost.get() * FOCUS_COST_FACTOR;
+		return cost.getOrElse(DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR;
 	}
 
 	@Override
@@ -567,35 +548,6 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 			return List.of(this);
 		}
 		return focusTree.getLocalizableGroup();
-	}
-
-	/**
-	 * Returns the list of pending focus references
-	 *
-	 * @return list of pending focus references
-	 */
-	public PendingFocusReferenceList getPendingFocusReferences() {
-		return pendingFocusReferences;
-	}
-
-	/**
-	 * Removes pending focus reference
-	 * 
-	 * @param reference focus id reference
-	 * @return true if reference was removed
-	 */
-	public boolean removePendingFocusReference(String reference) {
-		return pendingFocusReferences.removeReference(reference);
-	}
-
-	/**
-	 * Removes pending focus reference
-	 * 
-	 * @param reference focus reference
-	 * @return true if reference was removed
-	 */
-	public boolean removePendingFocusReference(Focus reference) {
-		return removePendingFocusReference(reference.id.get());
 	}
 
 	/**
@@ -808,6 +760,11 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 		return this.absolutePosition().equals(new Point(x, y));
 	}
 
+	@Override
+	public boolean objEquals(PDXScript<?> other) {
+		return this.id.objEquals(((Focus) other).id);
+	}
+
 	public class PrerequisiteSet extends MultiReferencePDXScript<Focus> {
 		public PrerequisiteSet() {
 			this(() -> focusTree.focuses());
@@ -828,5 +785,27 @@ public class Focus extends ComplexPDXScript implements Localizable, Comparable<F
 
 	}
 
+	public static class Icon extends DynamicPDX<String, StructuredPDX> {
+		public Icon() {
+			super(() -> new StringPDX("icon"),
+					new StructuredPDX("icon") {
+						@NotNull
+						private final StringPDX value = new StringPDX("value");
 
+						@Override
+						protected Collection<? extends AbstractPDX<?>> childScripts() {
+							return List.of(value);
+						}
+
+						@Override
+						public boolean objEquals(PDXScript<?> other) {
+							if (other instanceof Icon icon) {
+								return value.objEquals(icon.get());
+							}
+							return false;
+						}
+					},
+					"value");
+		}
+	}
 }

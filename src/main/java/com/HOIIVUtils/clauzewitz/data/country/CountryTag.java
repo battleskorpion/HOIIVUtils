@@ -1,11 +1,11 @@
 package com.HOIIVUtils.clauzewitz.data.country;
 
+import com.HOIIVUtils.clauzewitz.script.AbstractPDX;
+import com.HOIIVUtils.clauzewitz.script.BooleanPDX;
 import com.HOIIVUtils.clauzewitz.script.PDXScript;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public final class CountryTag extends PDXScript<String> implements Comparable<CountryTag> {
+public final class CountryTag extends AbstractPDX<String> implements Comparable<CountryTag> {
     public static final CountryTag NULL_TAG = new CountryTag("###");
     public static final int COUNTRY_TAG_LENGTH = 3;         // standard country tag length (for a normal country tag)private final String tag;
 
@@ -46,6 +46,14 @@ public final class CountryTag extends PDXScript<String> implements Comparable<Co
     @Override
     public int compareTo(@NotNull CountryTag o) {
         return this.get().compareTo(o.get());
+    }
+
+    @Override
+    public boolean objEquals(PDXScript<?> other) {
+        if (other instanceof CountryTag pdx) {
+            return this.objEquals(pdx);
+        }
+        return false;
     }
 
 //

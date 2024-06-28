@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 // this class will contain a string identifier that identifies the referenced pdxscript object
 // (usually by its 'id' PDXScript field)
 
-public class ReferencePDXScript<T extends PDXScript<?>> extends PDXScript<T> {
+public class ReferencePDXScript<T extends AbstractPDX<?>> extends AbstractPDX<T> {
     // the collection of potential pdxscript objects that this reference can point to
     protected final Supplier<Collection<T>> referenceCollectionSupplier;
     protected final Function<T, String> idExtractor;
@@ -48,6 +48,16 @@ public class ReferencePDXScript<T extends PDXScript<?>> extends PDXScript<T> {
         return resolveReference();
     }
 
+    @Override
+    public boolean objEquals(PDXScript<?> other) {
+        if (other instanceof ReferencePDXScript<?> pdx) {
+            return referenceIdentifier.equals(pdx.referenceIdentifier)
+                    && this.referenceCollectionSupplier.equals(pdx.referenceCollectionSupplier)
+                    && this.idExtractor.equals(pdx.idExtractor);
+        }
+        return false;
+    }
+
     private T resolveReference() {
         Collection<T> referenceCollection = referenceCollectionSupplier.get();
         for (T reference : referenceCollection) {
@@ -62,7 +72,7 @@ public class ReferencePDXScript<T extends PDXScript<?>> extends PDXScript<T> {
     }
 
     @Override
-    public boolean objEquals(PDXScript<?> other) {
+    public boolean objEquals(AbstractPDX<?> other) {
         if (obj == null) {
             resolveReference();
             if (obj == null) return false;

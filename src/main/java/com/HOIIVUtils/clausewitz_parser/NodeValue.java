@@ -1,5 +1,8 @@
 package com.HOIIVUtils.clausewitz_parser;
 
+import com.HOIIVUtils.clauzewitz.BoolType;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -120,7 +123,7 @@ public final class NodeValue {
 		throw new IllegalStateException("Expected NodeValue to be a Number, value: " + value);
 	}
 
-	public boolean bool(Node.BoolType boolType) {
+	public boolean bool(BoolType boolType) {
 		if (value instanceof String) {
 			return value.equals(boolType.trueResponse());
 		}
@@ -157,6 +160,7 @@ public final class NodeValue {
 		throw new IllegalStateException("Expected NodeValue to be a Node, value: " + value);
 	}
 
+	@NotNull
 	public String asString() {
 		if (value instanceof String) {
 			return (String) value;

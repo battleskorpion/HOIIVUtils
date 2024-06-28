@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 // todo uhhhhhhhhhhhhh
-public class MultiReferencePDXScript<T extends PDXScript<?>> extends MultiPDXScript<T> {
+public class MultiReferencePDXScript<T extends AbstractPDX<?>> extends MultiPDXScript<T> {
     protected final Supplier<Collection<T>> referenceCollectionSupplier;
     protected final Function<T, String> idExtractor;
     protected final List<String> referencePDXIdentifiers;

@@ -5,7 +5,7 @@ import com.HOIIVUtils.clausewitz_parser.NodeValue;
 
 import java.util.List;
 
-public class DoublePDX extends PDXScript<Double>{
+public class DoublePDX extends AbstractPDX<Double> {
     public DoublePDX(String pdxIdentifiers) {
         super(pdxIdentifiers);
     }
@@ -28,5 +28,13 @@ public class DoublePDX extends PDXScript<Double>{
         } else {
             throw new NodeValueTypeException(expression, "Number (as a Double)");
         }
+    }
+
+    @Override
+    public boolean objEquals(PDXScript<?> other) {
+        if (other instanceof DoublePDX pdx) {
+            return obj.equals(pdx.get());
+        }
+        return false;
     }
 }

@@ -1,8 +1,6 @@
 package com.HOIIVUtils.clauzewitz.script;
 
 import com.HOIIVUtils.clausewitz_parser.Node;
-import com.HOIIVUtils.clausewitz_parser.NodeValue;
-import com.HOIIVUtils.clausewitz_parser.Parser;
 import com.HOIIVUtils.clausewitz_parser.ParserException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,157 +8,31 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.List;
 
-/**
- * Any object that can be converted to a PDX script block, such as a focus, national focus tree,
- * or event.
- * <p>
- */
-public class PDXScript<T> {
-    protected T obj;
-    protected final List<String> pdxIdentifiers;
-    int activeIdentifier = 0;
+public interface PDXScript<T> {
+    void set(T obj);
 
-    public PDXScript(String pdxIdentifiers) {
-        this.pdxIdentifiers = List.of(pdxIdentifiers);
-    }
+    void set(Node expression) throws UnexpectedIdentifierException, NodeValueTypeException;
 
-    public PDXScript(String... PDXIdentifiers) {
-        this.pdxIdentifiers = List.of(PDXIdentifiers);
-    }
+    @Nullable
+    T get();
 
-    public PDXScript(List<String> pdxIdentifiers) {
-        this.pdxIdentifiers = pdxIdentifiers;
-    }
+    void loadPDX(Node expression) throws UnexpectedIdentifierException;
 
-    protected void usingIdentifier(Node exp) throws UnexpectedIdentifierException {
-        for (int i = 0; i < pdxIdentifiers.size(); i++) {
-            if (exp.nameEquals(pdxIdentifiers.get(i))) {
-                activeIdentifier = i;
-                return;
-            }
-        }
-        throw new UnexpectedIdentifierException(exp);
-    }
+    void loadPDX(List<Node> expressions);
 
-    public void set(T obj) {
-        this.obj = obj;
-    }
+    //void loadPDX(@NotNull File file);
 
-    @SuppressWarnings("unchecked")
-    public void set(Node expression) throws UnexpectedIdentifierException, NodeValueTypeException {
-        usingIdentifier(expression);
-        NodeValue value = expression.value();
+    boolean isValidIdentifier(Node node);
 
-        try {
-            obj = (T) value.valueObject();
-        } catch (ClassCastException e) {
-            throw new NodeValueTypeException(expression, e);
-        }
-    }
+    void setNull();
 
-    public @Nullable T get() {
-        return obj;
-    }
+    void loadOrElse(Node exp, T value);
 
-    public void loadPDX(Node expression) throws UnexpectedIdentifierException {
-        if (expression.name() == null) {
-            System.out.println("Error loading PDX script: " + expression);
-            return;
-        }
+    String toScript();
 
-        try {
-            set(expression);
-        } catch (UnexpectedIdentifierException | NodeValueTypeException e) {
-            System.out.println("Error loading PDX script:" + e.getMessage() + "\n\t" + expression);
-        }
-    }
+    boolean objEquals(PDXScript<?> other);
 
-    public void loadPDX(List<Node> expressions) {
-        if (expressions == null) return;
-        expressions.stream().filter(this::isValidIdentifier)
-                .findFirst()
-                .ifPresentOrElse(expression -> {
-                    try {
-                        loadPDX(expression);
-                    } catch (UnexpectedIdentifierException e) {
-                        throw new RuntimeException(e);
-                    }
-                }, this::setNull);
-    }
+    T getOrElse(T elseValue);
 
-    protected void loadPDX(@NotNull File file) {
-        if (!file.exists()) {
-            System.err.println("Focus tree file does not exist: " + file);
-            return;
-        }
-
-        /* parser */
-        var pdxParser = new Parser(file);
-        Node rootNode;
-        try {
-            rootNode = pdxParser.parse();
-        } catch (ParserException e) {
-            System.err.println("Error parsing focus tree file: " + file);
-            return;
-        }
-        try {
-            loadPDX(rootNode);
-        } catch (UnexpectedIdentifierException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected boolean isValidIdentifier(Node node) {
-        for (String identifier : pdxIdentifiers) {
-            if (node.name().equals(identifier)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void setNull() {
-        obj = null;
-    }
-
-    public void loadOrElse(Node exp, T value) {
-        try {
-            loadPDX(exp);
-        } catch (UnexpectedIdentifierException e) {
-            throw new RuntimeException(e);
-        }
-        if (obj == null) {
-            obj = value;
-        }
-    }
-
-    public String toScript() {
-        return pdxIdentifiers.get(activeIdentifier) + " = " + obj.toString();
-    }
-
-    public boolean objEquals(PDXScript<?> other) {
-        if (obj == null) {
-            return false;
-        }
-        if (other.obj == null) {
-            return false;
-        }
-        return obj.equals(other.obj);
-    }
-
-    public T getOrElse(T elseValue) {
-        return isUndefined() ? elseValue : obj;
-    }
-
-    @Override
-    public String toString() {
-        if (obj == null) {
-            return super.toString();
-        }
-        return obj.toString();
-    }
-
-    public boolean isUndefined() {
-        return obj == null;
-    }
+    boolean isUndefined();
 }

@@ -1,5 +1,6 @@
 package com.HOIIVUtils.clausewitz_parser;
 
+import com.HOIIVUtils.clauzewitz.BoolType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -154,24 +155,4 @@ public class Node implements NodeStreamable<Node> {
 		return name.equals(s);
     }
 
-    public enum BoolType {
-	    TRUE_FALSE("true", "false"),
-	    YES_NO("yes", "no");
-
-	    private final String trueResponse;
-	    private final String falseResponse;
-
-	    BoolType(String trueResponse, String falseResponse) {
-	        this.trueResponse = trueResponse;
-	        this.falseResponse = falseResponse;
-	    }
-
-	    public String trueResponse() {
-	        return trueResponse;
-	    }
-
-	    public String falseResponse() {
-	        return falseResponse;
-	    }
-	}
 }

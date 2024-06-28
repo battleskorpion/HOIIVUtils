@@ -1,6 +1,7 @@
 
 package com.HOIIVUtils.clauzewitz.data.units;
 
+import com.HOIIVUtils.clauzewitz.BoolType;
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.Parser;
 import com.HOIIVUtils.clausewitz_parser.ParserException;
@@ -70,7 +71,7 @@ public record SubUnit(
 						subUnitNode.getValue("map_icon_category").string(),
 						subUnitNode.getValue("priority").intClass(),
 						subUnitNode.getValue("ai_priority").intClass(),
-						subUnitNode.getValue("active").bool(Node.BoolType.YES_NO),
+						subUnitNode.getValue("active").bool(BoolType.YES_NO),
 						//subUnit.type = subUnitNode.getValue("type").string(),
 						subUnitNode.getValue("group").string(),
 						//subUnit.categories

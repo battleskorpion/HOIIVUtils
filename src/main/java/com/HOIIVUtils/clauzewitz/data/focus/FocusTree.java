@@ -20,7 +20,7 @@ import java.util.*;
  * Localizable data: focus tree name. Each focus is its own localizable data.
  */
 // todo extends file?
-public class FocusTree extends ComplexPDXScript implements Localizable, Comparable<FocusTree>, Iterable<Focus> {
+public class FocusTree extends StructuredPDX implements Localizable, Comparable<FocusTree>, Iterable<Focus> {
 	private static final ObservableMap<File, FocusTree> focusTrees = FXCollections.observableHashMap();
 	private static final ObservableList<FocusTree> focusTreesList = FXCollections.observableArrayList();
 	static {
@@ -33,14 +33,13 @@ public class FocusTree extends ComplexPDXScript implements Localizable, Comparab
 	//private final ObservableMap<String, Focus> focuses;
 	@NotNull public final ReferencePDXScript<CountryTag> country;
 	@NotNull public final MultiPDXScript<Focus> focuses;
-	@NotNull public final PDXScript<String> id;
+	@NotNull public final AbstractPDX<String> id;
 
 	private ArrayList<String> focusIDList;
 	@NotNull private File focus_file;
 	// private Modifier countryModifier;
 	// private boolean defaultFocus; // ! todo Do This
 	// private Point continuousFocusPosition; // ! todo DO THIS
-	private int minX; // min x of all focuses
 
 	public static FocusTree get(File focus_file) {
 		if (!focusTrees.containsKey(focus_file)) {
@@ -57,10 +56,9 @@ public class FocusTree extends ComplexPDXScript implements Localizable, Comparab
 	private FocusTree(@NotNull File focus_file) {
 		super("focus_tree");
 		this.focus_file = focus_file;
-		minX = 0;
 
 		/* pdxscript */
-		id = new PDXScript<>("id");
+		id = new StringPDX("id");
 		country = new ReferencePDXScript<>(CountryTagsManager::getCountryTags, CountryTag::get, "country");
 		focuses = new MultiPDXScript<>(() -> new Focus(this), "focus");
 		obj.addAll(childScripts());
@@ -70,7 +68,7 @@ public class FocusTree extends ComplexPDXScript implements Localizable, Comparab
 	}
 
 	@Override
-	protected Collection<? extends PDXScript<?>> childScripts() {
+	protected Collection<? extends AbstractPDX<?>> childScripts() {
 		return List.of(id, country, focuses);
 	}
 
@@ -158,7 +156,7 @@ public class FocusTree extends ComplexPDXScript implements Localizable, Comparab
 //		return focusIDList;
 //	}
 
-	@NotNull
+//	@NotNull
 //	private List<Focus> getFocuses(Node focusTreeNode) {
 //		if (focusTreeNode.value().list() == null) {
 //			System.err.println("Expected list of nodes, for focuses getter");
@@ -189,28 +187,28 @@ public class FocusTree extends ComplexPDXScript implements Localizable, Comparab
 //	}
 
 	private void checkPendingFocusReferences() {
-		List<Focus> resolvedReferences = new ArrayList<>();
-		// private final HashMap<String, Consumer<List<Node>>> pendingFocusReferences =
-		// new HashMap<>();
-
-		List<PendingFocusReferenceList> pendingFocusReferenceLists = focuses().parallelStream()
-				.map(Focus::getPendingFocusReferences).toList();
-
-		/* resolve references of focuses that exist */
-		for (var pendingFocusReferenceList : pendingFocusReferenceLists) {
-			var pendingFocusReferences = pendingFocusReferenceList.pendingFocusReferences;
-			List<String> referencesToRemove = pendingFocusReferences.stream()
-					.map(PendingFocusReference::id)
-					.filter(id -> focusIDList.contains(id)).toList();
-			referencesToRemove.forEach(pendingFocusReferenceList::resolve);
-			// todo temp want better warnings in future
-			/* unresolved references */
-			// pendingFocusReferences.forEach(pfr -> JOptionPane.showMessageDialog(null,
-			// "Undefined Focus reference invalid: " + pfr.id() + ", " +
-			// pfr.pendingActionMap().keySet()));
-			pendingFocusReferences.forEach(pfr -> System.out.println("Warning: [Focus.java] " +
-					"Undefined Focus reference invalid: " + pfr.id() + ", " + pfr.pendingActionMap().keySet()));
-		}
+//		List<Focus> resolvedReferences = new ArrayList<>();
+//		// private final HashMap<String, Consumer<List<Node>>> pendingFocusReferences =
+//		// new HashMap<>();
+//
+//		List<PendingFocusReferenceList> pendingFocusReferenceLists = focuses().parallelStream()
+//				.map(Focus::getPendingFocusReferences).toList();
+//
+//		/* resolve references of focuses that exist */
+//		for (var pendingFocusReferenceList : pendingFocusReferenceLists) {
+//			var pendingFocusReferences = pendingFocusReferenceList.pendingFocusReferences;
+//			List<String> referencesToRemove = pendingFocusReferences.stream()
+//					.map(PendingFocusReference::id)
+//					.filter(id -> focusIDList.contains(id)).toList();
+//			referencesToRemove.forEach(pendingFocusReferenceList::resolve);
+//			// todo temp want better warnings in future
+//			/* unresolved references */
+//			// pendingFocusReferences.forEach(pfr -> JOptionPane.showMessageDialog(null,
+//			// "Undefined Focus reference invalid: " + pfr.id() + ", " +
+//			// pfr.pendingActionMap().keySet()));
+//			pendingFocusReferences.forEach(pfr -> System.out.println("Warning: [Focus.java] " +
+//					"Undefined Focus reference invalid: " + pfr.id() + ", " + pfr.pendingActionMap().keySet()));
+//		}
 
 	}
 
@@ -271,12 +269,14 @@ public class FocusTree extends ComplexPDXScript implements Localizable, Comparab
 		return super.toString();
 	}
 
-	public HashSet<Focus> focuses() {
-		return new HashSet<>(focuses.get());
+	public @NotNull HashSet<Focus> focuses() {
+		var list = this.focuses.get();
+		if (list == null) return new HashSet<>();
+		return new HashSet<>(list);
 	}
 
 	public int minX() {
-		return minX;
+		return focuses().stream().map(Focus::absoluteX).min(Integer::compareTo).orElse(0);
 	}
 
 	public static HashMap<File, FocusTree> add(FocusTree focusTree) {
@@ -295,13 +295,14 @@ public class FocusTree extends ComplexPDXScript implements Localizable, Comparab
 	 * @return The focus tree, or null if could not be found/not yet created.
 	 */
 	public static FocusTree get(CountryTag tag) {
-		return focusTrees.get(tag);
+//		return focusTrees.get(tag);
+		return focusTrees.values().stream().filter(focusTree -> focusTree.country.objEquals(tag)).findFirst().orElse(null);
 	}
 
 	public static FocusTree getdankwizardisfrench(CountryTag tag) {
 		for (FocusTree tree : listFocusTrees()) {
 			assert tree.country.get() != null;
-			if (tree.country.get().equals(tag)) {
+			if (tree.country.objEquals(tag)) {
 				return tree;
 			}
 		}
@@ -340,7 +341,10 @@ public class FocusTree extends ComplexPDXScript implements Localizable, Comparab
 
 	@Override
 	public @NotNull Map<Property, String> getLocalizableProperties() {
-		return Map.of(Property.NAME, id.get());
+		// lets us map null if we use hashmap instead of generic of() method
+		HashMap<Property, String> properties = new HashMap<>();
+		properties.put(Property.NAME, id.get());
+		return properties;
 	}
 
 	/**
@@ -350,5 +354,13 @@ public class FocusTree extends ComplexPDXScript implements Localizable, Comparab
 	@Override
 	public @NotNull Collection<? extends Localizable> getLocalizableGroup() {
 		return focuses();
+	}
+
+	@Override
+	public boolean objEquals(PDXScript<?> other) {
+		if (other instanceof FocusTree) {
+			return this.equals(other);
+		}
+		return false;
 	}
 }

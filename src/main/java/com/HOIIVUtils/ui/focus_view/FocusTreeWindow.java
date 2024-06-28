@@ -81,11 +81,11 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 	private Image gfxFocusUnavailable;
 
 	int getMaxX() {
-		return focusTree.focuses().stream().mapToInt(Focus::absoluteX).max().orElse(200);
+		return focusTree.focuses().stream().mapToInt(Focus::absoluteX).max().orElse(10);
 	}
 
 	int getMaxY() {
-		return focusTree.focuses().stream().mapToInt(Focus::absoluteY).max().orElse(200);
+		return focusTree.focuses().stream().mapToInt(Focus::absoluteY).max().orElse(10);
 	}
 
 	@FXML
@@ -139,17 +139,6 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		// Calculate the maximum X and Y values
-		int maxX = getMaxX();
-		int maxY = getMaxY();
-
-		// Set the canvas's width and height based on the maximum x and y values
-		// todo causes internal javafx error???
-//		focusTreeCanvas.setWidth(Math.max(FOCUS_X_SCALE * (maxX - getMinX()) + 2 * X_OFFSET_FIX, 800));
-//		focusTreeCanvas.setHeight(Math.max(FOCUS_Y_SCALE * (maxY + 2), 600));
-		focusTreeCanvas.setWidth(1600);
-		focusTreeCanvas.setHeight(1200);
 
 		// Set up the focus tree canvas's scroll pane
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
@@ -206,7 +195,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 
 	private void drawFocus(GraphicsContext gc2D, Focus focus, int minX) {
 		gc2D.setFill(Color.WHITE);
-		int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + X_OFFSET_FIX;
+		int x1 = FOCUS_X_SCALE * (focus.absoluteX() -  minX) + X_OFFSET_FIX;
 		int y1 = FOCUS_Y_SCALE * focus.absoluteY() + Y_OFFSET_FIX;
 		int yAdj1 = (int) (FOCUS_Y_SCALE / 2.2);
 		int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
@@ -224,12 +213,18 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		var focuses = focusTree.focuses();
 		GraphicsContext gc2D = focusTreeCanvas.getGraphicsContext2D();
 
-		// Calculate the minimum X coordinate
-		int minX = -getMinX();
+		// Calculate the maximum/minimum X and Y values
+		int minX = getMinX();
+		int maxX = getMaxX();
+		int maxY = getMaxY();
+
+		// Set the canvas's width and height based on the maximum x and y values
+		double width = Math.max(FOCUS_X_SCALE * (maxX - minX) + 2 * X_OFFSET_FIX, 800);
+		double height = Math.max(FOCUS_Y_SCALE * (maxY + 2), 600);
+		focusTreeCanvas.setWidth(width);
+		focusTreeCanvas.setHeight(height);
 
 		// Clear the canvas with a dark gray color
-		double width = focusTreeCanvas.getWidth();
-		double height = focusTreeCanvas.getHeight();
 		gc2D.setFill(Color.DARKGRAY);
 		gc2D.fillRect(0, 0, width, height);
 
@@ -256,7 +251,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 			if (focus.hasPrerequisites()) {
 				for (var prereqFocusSet: focus.prerequisites) {
 					for (Focus prereqFocus : prereqFocusSet) {
-						int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + X_OFFSET_FIX;
+						int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + X_OFFSET_FIX;
 						int y1 = FOCUS_Y_SCALE * focus.absoluteY() + Y_OFFSET_FIX;
 						int linex1 = x1 + (FOCUS_X_SCALE / 2);
 						int liney1 = y1 + (FOCUS_Y_SCALE / 2);
@@ -264,7 +259,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 						int liney2 = y1 - 12;
 						int liney4 = (FOCUS_Y_SCALE * prereqFocus.absoluteY()) + (FOCUS_Y_SCALE / 2)
 								+ Y_OFFSET_FIX;
-						int linex4 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() + minX)) + (FOCUS_X_SCALE / 2)
+						int linex4 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() - minX)) + (FOCUS_X_SCALE / 2)
 								+ X_OFFSET_FIX;
 						int linex3 = linex4;
 						int liney3 = liney2;
@@ -289,9 +284,9 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 		for (Focus focus : focuses) {
 			if (focus.isMutuallyExclusive()) {
 				for (Focus mutexFocus : focus.mutually_exclusive.stream().flatMap(MultiPDXScript::stream).toList()) {
-					int x1 = FOCUS_X_SCALE * (focus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
+					int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
 					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + (int) (FOCUS_Y_SCALE / 1.6) + Y_OFFSET_FIX;
-					int x2 = FOCUS_X_SCALE * (mutexFocus.absoluteX() + minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
+					int x2 = FOCUS_X_SCALE * (mutexFocus.absoluteX() - minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
 					int y2 = FOCUS_Y_SCALE * mutexFocus.absoluteY() + (int) (FOCUS_Y_SCALE / 1.6) + Y_OFFSET_FIX;
 
 					// Draw a line between the two mutually exclusive focuses
