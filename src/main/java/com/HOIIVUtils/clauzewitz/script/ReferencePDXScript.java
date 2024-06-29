@@ -91,4 +91,9 @@ public class ReferencePDXScript<T extends AbstractPDX<?>> extends AbstractPDX<T>
     public String getReferenceName() {
         return referenceName;
     }
+
+    public void setReferenceName(String newValue) {
+        referenceName = newValue;
+        obj = null;
+    }
 }

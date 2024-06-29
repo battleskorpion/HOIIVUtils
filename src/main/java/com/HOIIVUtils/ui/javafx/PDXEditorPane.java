@@ -1,54 +1,105 @@
 package com.HOIIVUtils.ui.javafx;
 
-import com.HOIIVUtils.clauzewitz.script.PDXScript;
-import com.HOIIVUtils.clauzewitz.script.StructuredPDX;
+import com.HOIIVUtils.clauzewitz.script.*;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 public class PDXEditorPane extends AnchorPane {
     private final PDXScript<?> pdxScript;
-    private final GridPane gridPane;
+    private final VBox vbox;
 
     public PDXEditorPane(PDXScript<?> pdxScript) {
         this.pdxScript = pdxScript;
-        this.gridPane = new GridPane();
-        this.getChildren().add(gridPane);
+        this.vbox = new VBox();
+        this.getChildren().add(vbox);
 
-        // Anchor the grid pane to all sides of the PDXEditorPane
-        AnchorPane.setTopAnchor(gridPane, 0.0);
-        AnchorPane.setBottomAnchor(gridPane, 0.0);
-        AnchorPane.setLeftAnchor(gridPane, 0.0);
-        AnchorPane.setRightAnchor(gridPane, 0.0);
+        // Anchor the vbox to all sides of the PDXEditorPane
+        AnchorPane.setTopAnchor(vbox, 0.0);
+        AnchorPane.setBottomAnchor(vbox, 0.0);
+        AnchorPane.setLeftAnchor(vbox, 0.0);
+        AnchorPane.setRightAnchor(vbox, 0.0);
 
-        // Set padding and spacing for the grid pane
-        gridPane.setPadding(new Insets(10));
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
+        // Set padding and spacing for the vbox
+        vbox.setPadding(new Insets(10));
+        vbox.setSpacing(10);
 
         // Initialize the editor with the properties of the PDXScript
-        initializeEditor();
+        initializeEditor(pdxScript);
     }
 
-    private void initializeEditor() {
-        // Iterate through the properties of the PDXScript and add them to the grid pane
-        int row = 0;
+    private void initializeEditor(PDXScript<?> pdxScript) {
         if (pdxScript instanceof StructuredPDX pdx) {
             for (var property : pdx.pdxProperties()) {
-                Label label = new Label(property.getPDXIdentifier() + ":");
-                var script = property.toScript();
-                if (script == null) continue;
+                HBox hbox = new HBox();
+                hbox.setSpacing(10);
+                Label label = new Label(property.getPDXIdentifier() + " =");
+                label.setFont(Font.font("Monospaced"));
+                label.setMinWidth(150); // Set a fixed width for labels
 
-                TextField textField = new TextField(script);
-//                // Add a listener to update the PDXScript when the text field value changes
-//                textField.textProperty().addListener((observable, oldValue, newValue) -> {
-//                    property.set(newValue);
-//                });
-                gridPane.add(label, 0, row);
-                gridPane.add(textField, 1, row);
-                row++;
+                Node editorNode = createEditorNode(property);
+                if (editorNode != null) {
+                    hbox.getChildren().addAll(label, editorNode);
+                    vbox.getChildren().add(hbox);
+                }
             }
         }
+    }
+
+    private Node createEditorNode(AbstractPDX<?> property) {
+        if (property instanceof StructuredPDX) {
+            VBox subVBox = new VBox();
+            subVBox.setPadding(new Insets(10));
+            subVBox.setSpacing(10);
+
+            Label subLabel = new Label(property.getPDXIdentifier() + " Sub-Properties:");
+            subLabel.setFont(Font.font("Monospaced"));
+
+            subVBox.getChildren().add(subLabel);
+            initializeEditor(property);
+
+            return subVBox;
+        } else if (property instanceof StringPDX pdx) {
+            TextField textField = new TextField(pdx.toScript());
+            textField.setPrefWidth(200);
+            textField.textProperty().addListener((observable, oldValue, newValue) -> {
+                pdx.set(newValue);
+            });
+            return textField;
+        } else if (property instanceof BooleanPDX pdx) {
+            CheckBox checkBox = new CheckBox();
+            checkBox.setSelected(Boolean.parseBoolean(pdx.toScript()));
+            checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                pdx.set(newValue);
+            });
+            return checkBox;
+        } else if (property instanceof IntegerPDX pdx) {
+            Spinner<Integer> spinner = new Spinner<>(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
+            spinner.getValueFactory().setValue(pdx.get());
+            spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+                pdx.set(newValue);
+            });
+            return spinner;
+        } else if (property instanceof DoublePDX pdx) {
+            Spinner<Double> spinner = new Spinner<>(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.MIN_VALUE, Double.MAX_VALUE));
+            spinner.getValueFactory().setValue(pdx.get());
+            spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+                pdx.set(newValue);
+            });
+            return spinner;
+        } else if (property instanceof ReferencePDXScript<?> pdx) {
+            ComboBox<String> comboBox = new ComboBox<>();
+            comboBox.setPrefWidth(200);
+            comboBox.getSelectionModel().select(pdx.toScript());
+            comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                pdx.setReferenceName(newValue);
+            });
+            return comboBox;
+        }
+        return null;
     }
 }

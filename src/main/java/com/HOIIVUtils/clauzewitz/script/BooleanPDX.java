@@ -3,6 +3,8 @@ package com.HOIIVUtils.clauzewitz.script;
 import com.HOIIVUtils.clauzewitz.BoolType;
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.NodeValue;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -36,6 +38,15 @@ public class BooleanPDX extends AbstractPDX<Boolean> {
         } else {
             throw new NodeValueTypeException(expression, "String parsable as Bool matching enum + " + boolType.toString());
         }
+    }
+
+    @Override
+    public @NotNull Boolean get() {
+        var val = super.get();
+        if (val == null) {
+            return defaultValue;
+        }
+        return val;
     }
 
     @Override
