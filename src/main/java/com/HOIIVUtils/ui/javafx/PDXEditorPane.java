@@ -6,7 +6,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
@@ -74,23 +73,18 @@ public class PDXEditorPane extends AnchorPane {
             });
             return textField;
         } else if (property instanceof BooleanPDX pdx) {
-            StackPane stackPane = new StackPane();
-            stackPane.setPrefHeight(25);
-            stackPane.setPrefWidth(20); // Adjust as necessary for the desired width
+            Label customCheckBox = new Label();
+            customCheckBox.setText(pdx.get() ? "yes" : "no");
+            customCheckBox.setFont(Font.font("Monospaced"));
+            customCheckBox.setPrefHeight(25);
+            customCheckBox.getStyleClass().add("custom-check-box");
 
-            CheckBox checkBox = new CheckBox();
-            checkBox.setSelected(Boolean.parseBoolean(pdx.toScript()));
-            checkBox.setPrefHeight(25);
-            checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                pdx.set(newValue);
+            customCheckBox.setOnMouseClicked(event -> {
+                pdx.invert();
+                customCheckBox.setText(pdx.get() ? "yes" : "no");
             });
 
-            Label checkBoxLabel = new Label("yes");
-            checkBoxLabel.setFont(Font.font("Monospaced"));
-            checkBoxLabel.setPrefHeight(25);
-
-            stackPane.getChildren().addAll(checkBox, checkBoxLabel);
-            return stackPane;
+            return customCheckBox;
         } else if (property instanceof IntegerPDX pdx) {
             Spinner<Integer> spinner = new Spinner<>(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
             spinner.getValueFactory().setValue(pdx.get());

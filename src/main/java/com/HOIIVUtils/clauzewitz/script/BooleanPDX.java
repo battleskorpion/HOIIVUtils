@@ -56,4 +56,9 @@ public class BooleanPDX extends AbstractPDX<Boolean> {
         }
         return false;
     }
+
+    public boolean invert() {
+        set(!get());
+        return get();
+    }
 }

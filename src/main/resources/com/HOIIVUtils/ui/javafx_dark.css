@@ -1,10 +1,10 @@
 /*
 *
-*   Author: Antonio Pelusi
-*   Website: https://www.antoniopelusi.com
-*   Source code: https://github.com/antoniopelusi/JavaFX-Dark-Theme
+*   Adapted by HOIIVUtils from:
+*       Author: Antonio Pelusi
+*       Website: https://www.antoniopelusi.com
+*       Source code: https://github.com/antoniopelusi/JavaFX-Dark-Theme
 *
-*   Adapted by HOIIVUtils
 *   xxxxxxxxx
 */
 
@@ -333,6 +333,26 @@
 .check-box:pressed > .box > .mark{
      -fx-background-color: #4e4e4e;
      background-color: #4e4e4e;
+}
+
+/* custom check box */
+.custom-check-box {
+    -fx-border-color: #222222;
+    -fx-border-width: 1;
+    -fx-background-color: #1A1A1A;
+    -fx-text-fill: #AFB1B3;
+    -fx-padding: 3 10 3 10;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.custom-check-box:hover {
+    -fx-background-color: #3E3E40;
+    -fx-cursor: HAND;
+}
+
+.custom-check-box:focused {
+    -fx-border-color: #4e4e4e;
 }
 
 /* TextArea */
