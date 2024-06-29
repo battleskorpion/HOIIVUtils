@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
@@ -40,7 +41,7 @@ public class PDXEditorPane extends AnchorPane {
                 Label label = new Label(property.getPDXIdentifier() + " =");
                 label.setFont(Font.font("Monospaced"));
                 label.setMinWidth(10);
-                label.setPrefHeight(25); // Set a fixed height for labels
+                label.setPrefHeight(25);
 
                 Node editorNode = createEditorNode(property);
                 if (editorNode != null) {
@@ -66,19 +67,30 @@ public class PDXEditorPane extends AnchorPane {
             return subVBox;
         } else if (property instanceof StringPDX pdx) {
             TextField textField = new TextField(pdx.toScript());
+            textField.setPrefWidth(200);
             textField.setPrefHeight(25);
             textField.textProperty().addListener((observable, oldValue, newValue) -> {
                 pdx.set(newValue);
             });
             return textField;
         } else if (property instanceof BooleanPDX pdx) {
+            StackPane stackPane = new StackPane();
+            stackPane.setPrefHeight(25);
+            stackPane.setPrefWidth(20); // Adjust as necessary for the desired width
+
             CheckBox checkBox = new CheckBox();
             checkBox.setSelected(Boolean.parseBoolean(pdx.toScript()));
             checkBox.setPrefHeight(25);
             checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 pdx.set(newValue);
             });
-            return checkBox;
+
+            Label checkBoxLabel = new Label("yes");
+            checkBoxLabel.setFont(Font.font("Monospaced"));
+            checkBoxLabel.setPrefHeight(25);
+
+            stackPane.getChildren().addAll(checkBox, checkBoxLabel);
+            return stackPane;
         } else if (property instanceof IntegerPDX pdx) {
             Spinner<Integer> spinner = new Spinner<>(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
             spinner.getValueFactory().setValue(pdx.get());
