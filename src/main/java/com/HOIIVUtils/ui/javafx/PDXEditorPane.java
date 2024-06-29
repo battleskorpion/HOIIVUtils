@@ -39,7 +39,8 @@ public class PDXEditorPane extends AnchorPane {
                 hbox.setSpacing(10);
                 Label label = new Label(property.getPDXIdentifier() + " =");
                 label.setFont(Font.font("Monospaced"));
-                label.setMinWidth(150); // Set a fixed width for labels
+                label.setMinWidth(10);
+                label.setPrefHeight(25); // Set a fixed height for labels
 
                 Node editorNode = createEditorNode(property);
                 if (editorNode != null) {
@@ -65,7 +66,7 @@ public class PDXEditorPane extends AnchorPane {
             return subVBox;
         } else if (property instanceof StringPDX pdx) {
             TextField textField = new TextField(pdx.toScript());
-            textField.setPrefWidth(200);
+            textField.setPrefHeight(25);
             textField.textProperty().addListener((observable, oldValue, newValue) -> {
                 pdx.set(newValue);
             });
@@ -73,6 +74,7 @@ public class PDXEditorPane extends AnchorPane {
         } else if (property instanceof BooleanPDX pdx) {
             CheckBox checkBox = new CheckBox();
             checkBox.setSelected(Boolean.parseBoolean(pdx.toScript()));
+            checkBox.setPrefHeight(25);
             checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 pdx.set(newValue);
             });
@@ -80,6 +82,7 @@ public class PDXEditorPane extends AnchorPane {
         } else if (property instanceof IntegerPDX pdx) {
             Spinner<Integer> spinner = new Spinner<>(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
             spinner.getValueFactory().setValue(pdx.get());
+            spinner.setPrefHeight(25);
             spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
                 pdx.set(newValue);
             });
@@ -87,6 +90,7 @@ public class PDXEditorPane extends AnchorPane {
         } else if (property instanceof DoublePDX pdx) {
             Spinner<Double> spinner = new Spinner<>(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.MIN_VALUE, Double.MAX_VALUE));
             spinner.getValueFactory().setValue(pdx.get());
+            spinner.setPrefHeight(25);
             spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
                 pdx.set(newValue);
             });
@@ -94,6 +98,7 @@ public class PDXEditorPane extends AnchorPane {
         } else if (property instanceof ReferencePDXScript<?> pdx) {
             ComboBox<String> comboBox = new ComboBox<>();
             comboBox.setPrefWidth(200);
+            comboBox.setPrefHeight(25);
             comboBox.getSelectionModel().select(pdx.toScript());
             comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
                 pdx.setReferenceName(newValue);
