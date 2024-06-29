@@ -9,6 +9,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+/**
+ * A Pane that displays an editor for a PDXScript.
+ *
+ */
 public class PDXEditorPane extends AnchorPane {
     private final PDXScript<?> pdxScript;
     private final VBox vbox;
