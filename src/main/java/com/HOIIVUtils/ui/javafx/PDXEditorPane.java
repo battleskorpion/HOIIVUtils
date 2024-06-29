@@ -1,6 +1,8 @@
 package com.HOIIVUtils.ui.javafx;
 
 import com.HOIIVUtils.clauzewitz.script.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -8,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A Pane that displays an editor for a PDXScript.
@@ -109,7 +112,8 @@ public class PDXEditorPane extends AnchorPane {
             ComboBox<String> comboBox = new ComboBox<>();
             comboBox.setPrefWidth(200);
             comboBox.setPrefHeight(25);
-            comboBox.getSelectionModel().select(pdx.toScript());
+            comboBox.getSelectionModel().select(pdx.getReferenceName());
+            comboBox.setItems(FXCollections.observableArrayList(pdx.getReferenceCollectionNames()));
             comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
                 pdx.setReferenceName(newValue);
             });

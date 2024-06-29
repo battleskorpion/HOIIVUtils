@@ -5,6 +5,7 @@ import com.HOIIVUtils.clausewitz_parser.NodeValue;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -14,6 +15,7 @@ import java.util.function.Supplier;
 // (usually by its 'id' PDXScript field)
 
 public class ReferencePDXScript<T extends AbstractPDX<?>> extends AbstractPDX<T> {
+
     // the collection of potential pdxscript objects that this reference can point to
     protected final Supplier<Collection<T>> referenceCollectionSupplier;
     protected final Function<T, String> idExtractor;
@@ -95,5 +97,13 @@ public class ReferencePDXScript<T extends AbstractPDX<?>> extends AbstractPDX<T>
     public void setReferenceName(String newValue) {
         referenceName = newValue;
         obj = null;
+    }
+
+    public Collection<T> getReferenceCollection() {
+        return referenceCollectionSupplier.get();
+    }
+
+    public List<String> getReferenceCollectionNames() {
+        return referenceCollectionSupplier.get().stream().map(idExtractor).toList();
     }
 }
