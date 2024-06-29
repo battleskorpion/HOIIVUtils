@@ -2,7 +2,7 @@ package com.HOIIVUtils.ui.units;
 
 import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.clauzewitz.data.units.SubUnit;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 import com.HOIIVUtils.ui.javafx.DiffViewPane;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class CompareUnitsWindow extends HOIIVUtilsStageLoader {
+public class CompareUnitsWindow extends HOIIVUtilsWindow {
 
 //    @FXML GridPane CustomUnitDetailsPane = new GridPane();
 //    @FXML GridPane BaseUnitDetailsPane = new GridPane();
     @FXML
     AnchorPane rootAnchorPane = new AnchorPane();
+    @FXML
     private DiffViewPane unitsDiffViewPane;
     private boolean skipNullProperties = true;
 

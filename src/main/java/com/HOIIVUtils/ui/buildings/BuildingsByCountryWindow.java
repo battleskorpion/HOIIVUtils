@@ -13,14 +13,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import com.HOIIVUtils.ui.FXWindow;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 import com.HOIIVUtils.ui.javafx.table.IntegerOrPercentTableCell;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 import javafx.scene.input.MouseButton;
 
 import javax.swing.*;
 
-public class BuildingsByCountryWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
+public class BuildingsByCountryWindow extends HOIIVUtilsWindow implements TableViewWindow {
 
 	@FXML
 	private MenuItem idExportToExcel;

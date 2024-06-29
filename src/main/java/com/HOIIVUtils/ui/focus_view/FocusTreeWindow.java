@@ -3,16 +3,16 @@ package com.HOIIVUtils.ui.focus_view;
 import com.HOIIVUtils.Settings;
 import com.HOIIVUtils.clauzewitz.localization.Localizable;
 import com.HOIIVUtils.clauzewitz.script.MultiPDXScript;
-import com.HOIIVUtils.clauzewitz.script.MultiReferencePDXScript;
+import com.HOIIVUtils.clauzewitz.script.PDXScript;
 import com.HOIIVUtils.ddsreader.DDSReader;
 import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.clauzewitz.data.country.CountryTag;
 import com.HOIIVUtils.clauzewitz.data.focus.FixFocus;
 import com.HOIIVUtils.clauzewitz.data.focus.Focus;
 import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
+import com.HOIIVUtils.ui.pdxscript.PDXEditorWindow;
 import javafx.fxml.FXML;
 
-import java.awt.*;
 import java.util.*;
 
 import javafx.scene.control.Button;
@@ -27,16 +27,15 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import com.HOIIVUtils.ui.javafx.image.JavaFXImageUtils;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.stream.Collectors;
 
-public class FocusTreeWindow extends HOIIVUtilsStageLoader {
+public class FocusTreeWindow extends HOIIVUtilsWindow {
 	public static final int FOCUS_X_SCALE = 90; // ~2x per 1 y
 	public static final int CENTER_FOCUS_X = (FOCUS_X_SCALE / 2);
 	public static final int FOCUS_Y_SCALE = 140;
@@ -195,7 +194,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 
 	private void drawFocus(GraphicsContext gc2D, Focus focus, int minX) {
 		gc2D.setFill(Color.WHITE);
-		int x1 = FOCUS_X_SCALE * (focus.absoluteX() -  minX) + X_OFFSET_FIX;
+		int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + X_OFFSET_FIX;
 		int y1 = FOCUS_Y_SCALE * focus.absoluteY() + Y_OFFSET_FIX;
 		int yAdj1 = (int) (FOCUS_Y_SCALE / 2.2);
 		int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
@@ -305,7 +304,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 	}
 
 	@FXML
-	public void mouseMovedFocusTreeViewAdapter(MouseEvent e) {
+	public void handleFocusTreeViewMouseMoved(MouseEvent e) {
 		/* get focus being hovered over */
 		Point2D p = new Point2D(e.getX(), e.getY());
 		Focus focusTemp = getFocusHover(p);
@@ -331,7 +330,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 			focusTooltipView.hide();
 		}
 		// focusTreeDetailsWindow = new FocusTreeDetailsWindow(focusDetailsFocus, p);
-		String details = focusDetailsFocus.getFocusDetails();
+		String details = focusDetailsFocus.toScript();
 		focusTooltipView = new Tooltip(details);
 		focusTooltipView.show(focusTreeCanvas, e.getScreenX() + 10, e.getScreenY() + 10);
 	}
@@ -360,7 +359,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 	}
 
 	@FXML
-	public void mousePressedFocusTreeViewAdapter(MouseEvent e) {
+	public void handleFocusTreeViewMousePressed(MouseEvent e) {
 		// Calculate internal grid position from mouse position
 		int internalX = (int) ((e.getX() - X_OFFSET_FIX) / FOCUS_X_SCALE) + focusTree.minX();
 		int internalY = (int) ((e.getY() - Y_OFFSET_FIX) / FOCUS_Y_SCALE);
@@ -376,7 +375,7 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 	}
 
 	@FXML
-	public void mouseDraggedFocusTreeViewAdapter(MouseEvent e) {
+	public void handleFocusTreeViewMouseDragged(MouseEvent e) {
 		if (e.isPrimaryButtonDown() && draggedFocus != null) {
 			// Calculate internal grid position from mouse position
 			int internalX = (int) ((e.getX() - X_OFFSET_FIX) / FOCUS_X_SCALE) + focusTree.minX();
@@ -393,11 +392,28 @@ public class FocusTreeWindow extends HOIIVUtilsStageLoader {
 	}
 
 	@FXML
-	public void mouseReleasedFocusTreeViewAdapter(MouseEvent e) {
+	public void handleFocusTreeViewMouseReleased(MouseEvent e) {
 		if (draggedFocus != null) {
 
 		}
 
 		draggedFocus = null; // Reset the reference when the mouse is released
+	}
+
+	@FXML
+	private void handleFocusTreeViewMouseClicked(MouseEvent event) {
+		if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+			Point2D clickedPoint = new Point2D(event.getX(), event.getY());
+			Focus clickedFocus = getFocusHover(clickedPoint);
+			if (clickedFocus != null) {
+				openEditorWindow(clickedFocus);
+			}
+		}
+	}
+
+	@FXML
+	private void openEditorWindow(Focus focus) {
+		PDXEditorWindow pdxEditorWindow = new PDXEditorWindow();
+		pdxEditorWindow.open((PDXScript<?>) focus);
 	}
 }

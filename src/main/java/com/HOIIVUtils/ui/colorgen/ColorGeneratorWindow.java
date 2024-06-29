@@ -2,9 +2,9 @@ package com.HOIIVUtils.ui.colorgen;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 
-public class ColorGeneratorWindow extends HOIIVUtilsStageLoader {
+public class ColorGeneratorWindow extends HOIIVUtilsWindow {
 	public ColorGeneratorWindow() {
 		setFxmlResource("ColorGeneratorWindow.fxml");
 		setTitle("Color Generator");

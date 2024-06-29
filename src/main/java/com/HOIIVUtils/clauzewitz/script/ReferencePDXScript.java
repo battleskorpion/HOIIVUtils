@@ -2,6 +2,7 @@ package com.HOIIVUtils.clauzewitz.script;
 
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.NodeValue;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -16,7 +17,7 @@ public class ReferencePDXScript<T extends AbstractPDX<?>> extends AbstractPDX<T>
     // the collection of potential pdxscript objects that this reference can point to
     protected final Supplier<Collection<T>> referenceCollectionSupplier;
     protected final Function<T, String> idExtractor;
-    String referenceIdentifier;
+    protected String referenceName;
 
     public ReferencePDXScript(Supplier<Collection<T>> referenceCollectionSupplier, Function<T, String> idExtractor, String PDXIdentifier) {
         super(PDXIdentifier);
@@ -35,7 +36,7 @@ public class ReferencePDXScript<T extends AbstractPDX<?>> extends AbstractPDX<T>
         usingIdentifier(expression);
         NodeValue value = expression.value();
         if (value.isString())
-            referenceIdentifier = value.string();
+            referenceName = value.string();
         else
             throw new NodeValueTypeException(expression, "string");
     }
@@ -51,7 +52,7 @@ public class ReferencePDXScript<T extends AbstractPDX<?>> extends AbstractPDX<T>
     @Override
     public boolean objEquals(PDXScript<?> other) {
         if (other instanceof ReferencePDXScript<?> pdx) {
-            return referenceIdentifier.equals(pdx.referenceIdentifier)
+            return referenceName.equals(pdx.referenceName)
                     && this.referenceCollectionSupplier.equals(pdx.referenceCollectionSupplier)
                     && this.idExtractor.equals(pdx.idExtractor);
         }
@@ -63,7 +64,7 @@ public class ReferencePDXScript<T extends AbstractPDX<?>> extends AbstractPDX<T>
         for (T reference : referenceCollection) {
             var referenceID = idExtractor.apply(reference);
             if (referenceID == null) continue;
-            if (referenceID.equals(referenceIdentifier)) {
+            if (referenceID.equals(referenceName)) {
                 obj = reference;
                 return reference;
             }
@@ -80,7 +81,14 @@ public class ReferencePDXScript<T extends AbstractPDX<?>> extends AbstractPDX<T>
         return obj.objEquals(other);
     }
 
+    @Override
+    public @Nullable String toScript() {
+        var scripts = get();
+        if (scripts == null) return null;
+        return (getPDXIdentifier() + " = " + referenceName) + "\n";
+    }
+
     public String getReferenceName() {
-        return referenceIdentifier;
+        return referenceName;
     }
 }

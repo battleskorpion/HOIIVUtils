@@ -3,6 +3,7 @@ package com.HOIIVUtils.clauzewitz.script;
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.NodeValue;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -126,9 +127,26 @@ public class MultiPDXScript<T extends PDXScript<?>> extends AbstractPDX<List<T>>
         return get().size();
     }
 
-
     public Stream<T> stream() {
         return get().stream();
+    }
+
+    @Override
+    public boolean isUndefined() {
+        return obj.isEmpty();
+    }
+
+    @Override
+    public @Nullable String toScript() {
+        StringBuilder sb = new StringBuilder();
+        var scripts = get();
+        if (scripts == null) return null;
+        for (T pdxScript : scripts) {
+            var str = pdxScript.toScript();
+            if (str == null) continue;
+            sb.append(str);
+        }
+        return sb.toString();
     }
 }
 

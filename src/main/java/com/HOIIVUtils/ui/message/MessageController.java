@@ -5,7 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 
 /**
  * Generates A Message Popup Window
@@ -20,7 +20,7 @@ import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
  * * window.open("Error: Focus localization or focus tree not properly
  * initialized.");
  */
-public class MessageController extends HOIIVUtilsStageLoader {
+public class MessageController extends HOIIVUtilsWindow {
 	private String fxmlResource = "/com/HOIIVUtils/ui/message/Message.fxml";
 	private String title = "Message";
 

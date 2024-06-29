@@ -1,7 +1,5 @@
 package com.HOIIVUtils.ui.hoi4localization;
 
-import com.HOIIVUtils.clauzewitz.HOIIVFile;
-import com.HOIIVUtils.clauzewitz.data.country.Country;
 import com.HOIIVUtils.clauzewitz.data.focus.FixFocus;
 import com.HOIIVUtils.clauzewitz.data.focus.Focus;
 import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
@@ -12,7 +10,7 @@ import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
@@ -21,7 +19,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllFocusTreesWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
+public class AllFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWindow {
 
 	private static final Localizable.Property NAME_PROPERTY = Localizable.Property.NAME;
 	private static final Localizable.Property DESC_PROPERTY = Localizable.Property.DESCRIPTION;

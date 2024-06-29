@@ -2,22 +2,22 @@ package com.HOIIVUtils.clauzewitz.script;
 
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.NodeValue;
-import org.apache.poi.ss.formula.functions.T;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.List;
+import java.sql.Struct;
+import java.util.*;
+import java.util.function.Consumer;
 
 public abstract class StructuredPDX extends AbstractPDX<PDXScriptList> {
 
     public StructuredPDX(String pdxIdentifier) {
-        super(pdxIdentifier); 
+        super(pdxIdentifier);
         obj = new PDXScriptList();
     }
 
     public StructuredPDX(List<String> pdxIdentifiers) {
         super(pdxIdentifiers);
-        obj = new PDXScriptList();  
+        obj = new PDXScriptList();
     }
 
     protected abstract Collection<? extends AbstractPDX<?>> childScripts();
@@ -60,7 +60,7 @@ public abstract class StructuredPDX extends AbstractPDX<PDXScriptList> {
      */
     public AbstractPDX<?> getPDXProperty(String identifier) {
         for (AbstractPDX<?> pdx : childScripts()) {
-            if (pdx.getActiveIdentifier().equals(identifier)) {
+            if (pdx.getPDXIdentifier().equals(identifier)) {
                 return pdx;
             }
         }
@@ -118,7 +118,7 @@ public abstract class StructuredPDX extends AbstractPDX<PDXScriptList> {
     @SuppressWarnings("unchecked")
     public <R> AbstractPDX<R> getPDXPropertyOfType(String identifier) {
         for (AbstractPDX<?> pdx : childScripts()) {
-            if (pdx.getActiveIdentifier().equals(identifier)) {
+            if (pdx.getPDXIdentifier().equals(identifier)) {
                 return (AbstractPDX<R>) pdx;
             }
         }
@@ -138,5 +138,11 @@ public abstract class StructuredPDX extends AbstractPDX<PDXScriptList> {
             }
         }
         return null;
+    }
+
+    public Collection<? extends AbstractPDX<?>> pdxProperties() {
+        var scripts = childScripts();
+        if (scripts == null) return null;
+        return Collections.unmodifiableCollection(scripts);
     }
 }

@@ -3,13 +3,13 @@ package com.HOIIVUtils.ui.map;
 import com.HOIIVUtils.clauzewitz.map.ProvinceGenProperties;
 import com.HOIIVUtils.clauzewitz.map.province.ProvinceDeterminationType;
 import com.HOIIVUtils.clauzewitz.map.seed.SeedGenType;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 
 // todo rename to province gen properties window or whatever
-public class MapGenerationSettingsWindow extends HOIIVUtilsStageLoader {
+public class MapGenerationSettingsWindow extends HOIIVUtilsWindow {
 
     @FXML
     TextField seaLevelTextField;
@@ -34,6 +34,7 @@ public class MapGenerationSettingsWindow extends HOIIVUtilsStageLoader {
      *
      * @param properties
      */
+    @SuppressWarnings("unused")
     public MapGenerationSettingsWindow(ProvinceGenProperties properties) {
         this.properties = properties;
     }

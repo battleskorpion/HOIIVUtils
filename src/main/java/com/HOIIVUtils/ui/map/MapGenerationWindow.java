@@ -14,7 +14,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 
 import java.awt.*;
 import java.io.File;
@@ -23,7 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiFunction;
 
-public class MapGenerationWindow extends HOIIVUtilsStageLoader {
+public class MapGenerationWindow extends HOIIVUtilsWindow {
 
 	private static final String DEFAULT_HEIGHTMAP_PATH = "src\\main\\resources\\map\\heightmap.bmp";
 	// Heightmap heightmap = null;

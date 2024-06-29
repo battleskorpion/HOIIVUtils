@@ -40,7 +40,7 @@
         <content>
           <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
                <children>
-                  <Canvas fx:id="focusTreeCanvas" height="384.0" onMouseDragged="#mouseDraggedFocusTreeViewAdapter" onMouseMoved="#mouseMovedFocusTreeViewAdapter" onMousePressed="#mousePressedFocusTreeViewAdapter" onMouseReleased="#mouseReleasedFocusTreeViewAdapter" width="589.0" />
+                  <Canvas fx:id="focusTreeCanvas" height="384.0" onMouseClicked="#handleFocusTreeViewMouseClicked" onMouseDragged="#handleFocusTreeViewMouseDragged" onMouseMoved="#handleFocusTreeViewMouseMoved" onMousePressed="#handleFocusTreeViewMousePressed" onMouseReleased="#handleFocusTreeViewMouseReleased" width="589.0" />
                </children>
             </AnchorPane>
         </content>

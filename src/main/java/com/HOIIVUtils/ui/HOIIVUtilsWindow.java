@@ -8,8 +8,10 @@ import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class HOIIVUtilsStageLoader implements FXWindow {
+public abstract class HOIIVUtilsWindow implements FXWindow {
 	private String fxmlResource;
 	private String title;
 	protected Stage stage;
@@ -70,13 +72,44 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
 			try {
+//				FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
+//				launchLoader.setControllerFactory(c -> {
+//					try {
+//						return getClass().getConstructor(initargs_classes).newInstance(initargs);
+//					} catch (InstantiationException | IllegalAccessException | InvocationTargetException
+//					         | NoSuchMethodException e) {
+//						throw new RuntimeException(e);
+//					}
+//				});
+
+//				FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
+//				launchLoader.setControllerFactory(c -> {
+//					for (Class<?> argClass : initargs_classes) {
+//						Class<?> currentClass = argClass;
+//						while (currentClass != Object.class) {
+//							try {
+//								return getClass().getConstructor(currentClass).newInstance(initargs);
+//							} catch (InstantiationException | IllegalAccessException
+//							         | InvocationTargetException | NoSuchMethodException e) {
+//								currentClass = currentClass.getSuperclass();
+//							}
+//						}
+//					}
+//					throw new RuntimeException("No suitable constructor found");
+//				});
 				FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
 				launchLoader.setControllerFactory(c -> {
-					try {
-						return getClass().getConstructor(initargs_classes).newInstance(initargs);
-					} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-						throw new RuntimeException(e);
+					List<List<Class<?>>> classHierarchies = new ArrayList<>(initargs.length);
+					for (int i = 0; i < initargs.length; i++) {
+						classHierarchies.add(getClassHierarchy(initargs[i].getClass()));
 					}
+					for (List<Class<?>> combination : generateCombinations(classHierarchies, 0)) {
+						try {
+							return getClass().getConstructor(combination.toArray(new Class[0])).newInstance(initargs);
+						} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
+						}
+					}
+					throw new RuntimeException("No suitable constructor found");
 				});
 				System.out.println("HOIIVUtilsStageLoader creating stage with fxml" + fxmlResource);
 				Parent root = launchLoader.load();
@@ -146,4 +179,27 @@ public abstract class HOIIVUtilsStageLoader implements FXWindow {
 		this.title = title;
 	}
 
+	private List<Class<?>> getClassHierarchy(Class<?> clazz) {
+		List<Class<?>> hierarchy = new ArrayList<>();
+		while (clazz != null) {
+			hierarchy.add(clazz);
+			clazz = clazz.getSuperclass();
+		}
+		return hierarchy;
+	}
+
+	private List<List<Class<?>>> generateCombinations(List<List<Class<?>>> classHierarchies, int index) {
+		List<List<Class<?>>> combinations = new ArrayList<>();
+		if (index == classHierarchies.size()) {
+			combinations.add(new ArrayList<>());
+		} else {
+			for (Class<?> clazz : classHierarchies.get(index)) {
+				for (List<Class<?>> combination : generateCombinations(classHierarchies, index + 1)) {
+					combination.add(0, clazz);
+					combinations.add(new ArrayList<>(combination));
+				}
+			}
+		}
+		return combinations;
+	}
 }

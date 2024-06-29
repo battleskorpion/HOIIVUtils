@@ -12,7 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 
@@ -20,7 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
-public class CountryBuildingsByStateWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
+public class CountryBuildingsByStateWindow extends HOIIVUtilsWindow implements TableViewWindow {
 
 	// @FXML public Label idVersion;
 	@FXML

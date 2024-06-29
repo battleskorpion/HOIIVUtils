@@ -3,16 +3,14 @@ package com.HOIIVUtils.ui.hoi4localization;
 import com.HOIIVUtils.clauzewitz.HOIIVFile;
 import com.HOIIVUtils.clauzewitz.HOIIVUtils;
 import com.HOIIVUtils.Settings;
-import com.HOIIVUtils.clauzewitz.localization.Localization;
 import com.HOIIVUtils.clauzewitz.data.tooltip.CustomTooltip;
-import com.HOIIVUtils.clauzewitz.exceptions.IllegalLocalizationFileTypeException;
 
 import com.HOIIVUtils.ui.FXWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 
 import java.io.File;
@@ -22,7 +20,7 @@ import java.util.Collection;
 /**
  * todo: have to redo some functionality to work with new localization system
  */
-public class CustomTooltipWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
+public class CustomTooltipWindow extends HOIIVUtilsWindow implements TableViewWindow {
 
 	@FXML
 	public Label idVersion;

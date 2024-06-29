@@ -134,8 +134,9 @@ public abstract class AbstractPDX<T> implements PDXScript<T> {
         }
     }
 
-    public String toScript() {
-        return pdxIdentifiers.get(activeIdentifier) + " = " + obj.toString();
+    public @Nullable String toScript() {
+        if (obj == null) return null;
+        return pdxIdentifiers.get(activeIdentifier) + " = " + obj + "\n";
     }
 
     public boolean objEquals(AbstractPDX<?> other) {
@@ -164,7 +165,7 @@ public abstract class AbstractPDX<T> implements PDXScript<T> {
         return obj == null;
     }
 
-    protected String getActiveIdentifier() {
+    public String getPDXIdentifier() {
         return pdxIdentifiers.get(activeIdentifier);
     }
 }

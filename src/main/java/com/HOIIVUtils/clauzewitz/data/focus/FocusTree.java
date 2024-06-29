@@ -31,6 +31,7 @@ public class FocusTree extends StructuredPDX implements Localizable, Comparable<
 	}
 
 	//private final ObservableMap<String, Focus> focuses;
+	// todo fix in future. (block that accepts a modifierblock it seems?)
 	@NotNull public final ReferencePDXScript<CountryTag> country;
 	@NotNull public final MultiPDXScript<Focus> focuses;
 	@NotNull public final AbstractPDX<String> id;

@@ -12,7 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 
 import java.io.File;
@@ -21,7 +21,7 @@ import java.util.Iterator;
 /**
  * todo: modify design to work with new localization system
  */
-public class IdeaLocalizationWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
+public class IdeaLocalizationWindow extends HOIIVUtilsWindow implements TableViewWindow {
 
     @FXML
     private Label numLocAddedLabel;

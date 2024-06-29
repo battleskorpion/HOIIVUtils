@@ -4,7 +4,7 @@ import com.HOIIVUtils.Settings;
 import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
 import com.HOIIVUtils.clauzewitz.localization.EnglishLocalizationManager;
 import com.HOIIVUtils.clauzewitz.localization.LocalizationManager;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 import com.HOIIVUtils.ui.console.ConsoleController;
 import com.HOIIVUtils.ui.hoi4localization.CustomTooltipWindow;
 import com.HOIIVUtils.ui.hoi4localization.FocusLocalizationWindow;
@@ -117,7 +117,7 @@ public class MenuController extends Application implements FXWindow {
 		window.open();
 	}
 
-	private void openUtilsWindow(HOIIVUtilsStageLoader utilsWindow) {
+	private void openUtilsWindow(HOIIVUtilsWindow utilsWindow) {
 		utilsWindow.open();
 	}
 

@@ -16,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
@@ -30,7 +28,6 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 	private static final int FOCUS_COST_FACTOR = 7; // turn into from defines, or default 7. (get default vanilla define
 	// instead?)
 	private final double DEFAULT_FOCUS_COST = 10.0; // default cost (in weeks by default) when making a new focus.
-	private static final HashSet<String> focusIDs = new HashSet<>();
 
 	/* attributes */
 	protected FocusTree focusTree;
@@ -38,7 +35,7 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 	@NotNull public final MultiPDXScript<Icon> icon;
 	@NotNull public final IntegerPDX x; // if relative, relative x
 	@NotNull public final IntegerPDX y; // if relative, relative y
-	@NotNull  public final MultiPDXScript<PrerequisiteSet> prerequisites;
+	@NotNull public final MultiPDXScript<PrerequisiteSet> prerequisites;
 	@NotNull public final MultiPDXScript<MutuallyExclusiveSet> mutually_exclusive;
 	//public final PDXScript<Trigger> available;
 	@NotNull public final ReferencePDXScript<Focus> relativePosition; // if null, position is not relative
@@ -81,7 +78,6 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 		obj.addAll(childScripts());
 
 		this.focusTree = focusTree;
-		if (id.get() != null) focusIDs.add(id.get());
 	}
 
 	public Focus(FocusTree focusTree, Node node) throws DuplicateFocusException, UnexpectedIdentifierException, NodeValueTypeException{
@@ -556,67 +552,49 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 	 *         with custom tooltips, not including hidden effects,
 	 */
 	@NotNull
-	public String getFocusDetails() {
-		NumberFormat df = DecimalFormat.getIntegerInstance();
-
+	public String toScript() {
+//		NumberFormat df = DecimalFormat.getIntegerInstance();
+//
+//		StringBuilder details = new StringBuilder();
+//		/* id */
+//		details.append("ID: ");
+//		details.append(id.get());
+//		details.append("\n");
+//		/* completion time */
+//		details.append("Completion time: ");
+//		details.append(df.format(displayedCompletionTime()));
+//		details.append("\n");
+//
+//		/* prerequisites */
+//		for (PrerequisiteSet prereqSet: this.prerequisites) {
+//			if (prereqSet.size() > 1) {
+//				details.append("Requires one of the following: \n");
+//				for (Focus f : prereqSet) {
+//					details.append("- ");
+//					details.append(f.localizationText(Property.NAME));
+//					details.append("\n");
+//				}
+//			} else {
+//				details.append("Requires: ");
+//				details.append(prereqSet.iterator().next().localizationText(Property.NAME));
+//				details.append("\n");
+//			}
+//		}
+//
+//		if (hasCompletionReward()) {
+//			/* completion reward */
+//			details.append("\nEffect: \n");
+//			for (Effect effect : completionReward) {
+//				details.append(effect.displayScript());
+//				details.append("\n");
+//			}
+//		}
+//		return details.toString();
 		StringBuilder details = new StringBuilder();
-		/* id */
-		details.append("ID: ");
-		details.append(id.get());
-		details.append("\n");
-		/* completion time */
-		details.append("Completion time: ");
-		details.append(df.format(displayedCompletionTime()));
-		details.append("\n");
-
-		/* prerequisites */
-		for (PrerequisiteSet prereqSet: this.prerequisites) {
-			if (prereqSet.size() > 1) {
-				details.append("Requires one of the following: \n");
-				for (Focus f : prereqSet) {
-					details.append("- ");
-					details.append(f.localizationText(Property.NAME));
-					details.append("\n");
-				}
-			} else {
-				details.append("Requires: ");
-				details.append(prereqSet.iterator().next().localizationText(Property.NAME));
-				details.append("\n");
-			}
-		}
-
-		if (hasCompletionReward()) {
-			/* completion reward */
-			details.append("\nEffect: \n");
-			for (Effect effect : completionReward) {
-//				 details.append("\t");
-//				 // todo why would why huh? idk.
-//				// if (effect.hasTarget() &&
-//				 !effect.isScope(Scope.of(this.focusTree.country()))) {
-//				// details.append(effect.target());
-//				// details.append("\t");
-//				// }
-//				 details.append(effect.name());
-//				 if (effect.hasParameterBlock()) {
-//				 details.append(" = {\n");
-//				 for (EffectParameter n : effect.parameterList()) {
-//				 details.append("\t\t");
-//				 if (n == null) {
-//				 details.append("[effect parameter was null]");
-//				 } else {
-//				 details.append(n.displayParameter());
-//				 }
-//				 details.append("\n");
-//				 }
-//				 details.append("\t}");
-//				 }
-//				 else if (effect.value() != null) {
-//				 details.append(" = ");
-//				 details.append(effect.value());
-//				 }
-//				 details.append("\n");
-				details.append(effect.displayScript());
-				details.append("\n");
+		for (var property : childScripts()) {
+			String text = property.toScript();
+			if (text != null) {
+				details.append(text);
 			}
 		}
 		return details.toString();
@@ -782,7 +760,6 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 		public MutuallyExclusiveSet(Supplier<Collection<Focus>> referenceFocusesSupplier) {
 			super(referenceFocusesSupplier, (f) -> f.id.get(),"mutually_exclusive", "focus");
 		}
-
 	}
 
 	public static class Icon extends DynamicPDX<String, StructuredPDX> {

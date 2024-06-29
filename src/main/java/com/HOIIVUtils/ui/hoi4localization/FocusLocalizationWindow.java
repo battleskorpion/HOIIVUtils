@@ -14,7 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 import com.HOIIVUtils.ui.javafx.table.TableViewWindow;
 
 import java.io.File;
@@ -24,7 +24,7 @@ import java.util.Iterator;
 /**
  * TODO: have to redo some methods/design to fit with the new localization system
  */
-public class FocusLocalizationWindow extends HOIIVUtilsStageLoader implements TableViewWindow {
+public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableViewWindow {
 
     @FXML
     private Label numLocAddedLabel;

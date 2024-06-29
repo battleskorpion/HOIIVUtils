@@ -2,6 +2,7 @@ package com.HOIIVUtils.clauzewitz.script;
 
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.NodeValue;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -103,5 +104,16 @@ public class MultiReferencePDXScript<T extends AbstractPDX<?>> extends MultiPDXS
             }
         }
         throw new UnexpectedIdentifierException(exp);
+    }
+
+    @Override
+    public @Nullable String toScript() {
+        StringBuilder sb = new StringBuilder();
+        var scripts = get();
+        if (scripts == null) return null;
+        for (var identifier : referenceNames) {
+            sb.append(getPDXIdentifier()).append(" = ").append(identifier).append("\n");
+        }
+        return sb.toString();
     }
 }

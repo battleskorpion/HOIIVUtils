@@ -141,7 +141,11 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
 
     @Override
     public String toScript() {
-        return null;
+        if (!isBlock()) {
+            return simplePDX.toScript();
+        } else {
+            return structuredBlock.toScript();
+        }
     }
 
     @Override

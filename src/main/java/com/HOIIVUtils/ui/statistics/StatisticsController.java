@@ -3,9 +3,9 @@ package com.HOIIVUtils.ui.statistics;
 import com.HOIIVUtils.clauzewitz.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 
-public class StatisticsController extends HOIIVUtilsStageLoader {
+public class StatisticsController extends HOIIVUtilsWindow {
 
 	@FXML
 	public Label idVersion;

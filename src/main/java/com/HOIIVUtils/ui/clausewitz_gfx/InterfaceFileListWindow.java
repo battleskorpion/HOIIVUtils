@@ -3,10 +3,10 @@ package com.HOIIVUtils.ui.clausewitz_gfx;
 import com.HOIIVUtils.clauzewitz.HOIIVUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import com.HOIIVUtils.ui.HOIIVUtilsStageLoader;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 
 // todo add actual effect (enable/disable) from check boxes
-public class InterfaceFileListWindow extends HOIIVUtilsStageLoader {
+public class InterfaceFileListWindow extends HOIIVUtilsWindow {
 
 	@FXML
 	public Label idVersion;
