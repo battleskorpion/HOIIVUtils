@@ -109,6 +109,10 @@ public class PDXEditorPane extends AnchorPane {
             });
             return spinner;
         } else if (property instanceof ReferencePDXScript<?> pdx) {
+            // todo give plus sign to add
+            if (pdx.get() == null) {
+                return null;
+            }
             ComboBox<String> comboBox = new ComboBox<>();
             comboBox.setPrefWidth(200);
             comboBox.setPrefHeight(25);
