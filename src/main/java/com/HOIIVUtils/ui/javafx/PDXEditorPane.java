@@ -2,7 +2,6 @@ package com.HOIIVUtils.ui.javafx;
 
 import com.HOIIVUtils.clauzewitz.script.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -10,11 +9,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A Pane that displays an editor for a PDXScript.
- *
  */
 public class PDXEditorPane extends AnchorPane {
     private final PDXScript<?> pdxScript;
@@ -109,10 +106,10 @@ public class PDXEditorPane extends AnchorPane {
             });
             return spinner;
         } else if (property instanceof ReferencePDXScript<?> pdx) {
-            // todo give plus sign to add
             if (pdx.get() == null) {
                 return null;
             }
+
             ComboBox<String> comboBox = new ComboBox<>();
             comboBox.setPrefWidth(200);
             comboBox.setPrefHeight(25);
