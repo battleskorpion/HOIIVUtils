@@ -39,5 +39,6 @@ public class PDXEditorWindow extends HOIIVUtilsWindow {
         AnchorPane.setBottomAnchor(editorPane, 0.0);
         AnchorPane.setLeftAnchor(editorPane, 0.0);
         AnchorPane.setRightAnchor(editorPane, 0.0);
+
     }
 }
