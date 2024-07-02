@@ -15,13 +15,11 @@ import javafx.fxml.FXML;
 
 import java.util.*;
 
-import javafx.scene.control.Button;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.control.*;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -57,6 +55,10 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	private Tooltip focusTooltipView;
 	private Focus focusDetailsFocus;
 	private Focus draggedFocus;
+	private Point2D marqueeStartPoint;
+	private Point2D marqueeEndPoint;
+	private final List<Focus> selectedFocuses = new ArrayList<>();
+
 
 	public FocusTreeWindow() {
 		setFxmlResource("FocusTreeWindow.fxml");
@@ -193,9 +195,11 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	}
 
 	private void drawFocus(GraphicsContext gc2D, Focus focus, int minX) {
+		boolean isSelected = selectedFocuses.contains(focus);
+
 		gc2D.setFill(Color.WHITE);
 		int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + X_OFFSET_FIX;
-		int y1 = FOCUS_Y_SCALE * focus.absoluteY() + Y_OFFSET_FIX;
+		int y1 = focusToCanvasY(focus);
 		int yAdj1 = (int) (FOCUS_Y_SCALE / 2.2);
 		int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
 
@@ -203,6 +207,12 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		gc2D.drawImage(focus.getDDSImage(), x1, y1);
 		String name = focus.localizationText(Localizable.Property.NAME);
 		gc2D.fillText(name, x1 - 20, y1 + yAdj2);
+
+		if (isSelected) {
+			gc2D.setStroke(Color.YELLOW);
+			gc2D.setLineWidth(2);
+			gc2D.strokeRect(x1 - FOCUS_X_SCALE / 2.3, y1 + yAdj1, FOCUS_X_SCALE * 2, FOCUS_Y_SCALE / 2.3);
+		}
 	}
 
 	public void drawFocusTree() {
@@ -242,6 +252,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		}
 	}
 
+
 	private void drawPrerequisites(GraphicsContext gc2D, Collection<Focus> focuses, int minX) {
 		gc2D.setStroke(Color.BLACK);
 		gc2D.setLineWidth(3);
@@ -251,7 +262,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 				for (var prereqFocusSet: focus.prerequisites) {
 					for (Focus prereqFocus : prereqFocusSet) {
 						int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + X_OFFSET_FIX;
-						int y1 = FOCUS_Y_SCALE * focus.absoluteY() + Y_OFFSET_FIX;
+						int y1 = focusToCanvasY(focus);
 						int linex1 = x1 + (FOCUS_X_SCALE / 2);
 						int liney1 = y1 + (FOCUS_Y_SCALE / 2);
 						int linex2 = linex1;
@@ -360,18 +371,24 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 	@FXML
 	public void handleFocusTreeViewMousePressed(MouseEvent e) {
-		// Calculate internal grid position from mouse position
-		int internalX = (int) ((e.getX() - X_OFFSET_FIX) / FOCUS_X_SCALE) + focusTree.minX();
-		int internalY = (int) ((e.getY() - Y_OFFSET_FIX) / FOCUS_Y_SCALE);
+		if (e.isPrimaryButtonDown()) {
+			// if primary click -> clear focus selection
+			selectedFocuses.clear();
 
-		//draggedFocus = getFocusHover(new Point2D(internalX, internalY));
-		// Identify the focus being dragged based on the mouse press position
-		draggedFocus = focusTree.focuses().stream()
-				.filter(f -> f.absoluteX() == internalX && f.absoluteY() == internalY)
-				.findFirst()
-				.orElse(null);
-		if (Settings.DEV_MODE.enabled() && draggedFocus != null)
-			System.out.println("Focus " + draggedFocus + " selected");
+			// Calculate internal grid position from mouse position
+			int internalX = (int) ((e.getX() - X_OFFSET_FIX) / FOCUS_X_SCALE) + focusTree.minX();
+			int internalY = (int) ((e.getY() - Y_OFFSET_FIX) / FOCUS_Y_SCALE);
+
+			//draggedFocus = getFocusHover(new Point2D(internalX, internalY));
+			// Identify the focus being dragged based on the mouse press position
+			draggedFocus = focusTree.focuses().stream()
+					.filter(f -> f.absoluteX() == internalX && f.absoluteY() == internalY)
+					.findFirst()
+					.orElse(null);
+			if (Settings.DEV_MODE.enabled() && draggedFocus != null) {
+				System.out.println("Focus " + draggedFocus + " selected");
+			}
+		}
 	}
 
 	@FXML
@@ -388,25 +405,63 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 			// Redraw the focus tree to reflect the change
 			drawFocusTree();
+		} else {
+			if (marqueeStartPoint == null)
+				marqueeStartPoint = new Point2D(e.getX(), e.getY());
+			else
+				marqueeEndPoint = new Point2D(e.getX(), e.getY());
 		}
 	}
 
 	@FXML
 	public void handleFocusTreeViewMouseReleased(MouseEvent e) {
 		if (draggedFocus != null) {
-
+			draggedFocus = null; // Reset the reference when the mouse is released
 		}
 
-		draggedFocus = null; // Reset the reference when the mouse is released
+		if (marqueeStartPoint != null || marqueeEndPoint != null) {
+			// Identify the focuses within the marquee selection
+			selectedFocuses.clear(); // Clear previous selections
+			selectedFocuses.addAll(focusTree.focuses().stream()
+					.filter(this::isWithinMarquee)
+					.toList());
+
+			// Perform the desired action on the selected focuses
+			for (Focus focus : selectedFocuses) {
+				// Replace this with your desired action
+				if (Settings.DEV_MODE.enabled()) System.out.println("Marquee selected focus: " + focus);
+			}
+
+			marqueeStartPoint = null;
+			marqueeEndPoint = null;
+		}
+
+		drawFocusTree();
 	}
+
 
 	@FXML
 	private void handleFocusTreeViewMouseClicked(MouseEvent event) {
-		if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-			Point2D clickedPoint = new Point2D(event.getX(), event.getY());
-			Focus clickedFocus = getFocusHover(clickedPoint);
-			if (clickedFocus != null) {
-				openEditorWindow(clickedFocus);
+		if (event.getButton() == MouseButton.PRIMARY) {
+			if (event.getClickCount() == 2) {
+				Point2D clickedPoint = new Point2D(event.getX(), event.getY());
+				Focus clickedFocus = getFocusHover(clickedPoint);
+				if (clickedFocus != null) {
+					openEditorWindow(clickedFocus);
+				}
+			}
+		} else if (event.getButton() == MouseButton.SECONDARY) {
+			if (!selectedFocuses.isEmpty()) {
+				// open context menu via right click
+				// actions for the selected focuses
+				ContextMenu contextMenu = new ContextMenu();
+				MenuItem setRelativeFocusItem = new MenuItem("Set Relative Focus");
+				setRelativeFocusItem.setOnAction(e -> {
+					// Replace this with your desired action
+					if (Settings.DEV_MODE.enabled()) System.out.println("Set relative focus for selected focuses");
+				});
+				contextMenu.getItems().add(setRelativeFocusItem);
+				contextMenu.show(focusTreeCanvas, event.getScreenX(), event.getScreenY());
 			}
 		}
 	}
@@ -415,5 +470,33 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	private void openEditorWindow(Focus focus) {
 		PDXEditorWindow pdxEditorWindow = new PDXEditorWindow();
 		pdxEditorWindow.open((PDXScript<?>) focus);
+	}
+
+	private int focusToCanvasX(Focus f) {
+		return FOCUS_X_SCALE * (f.absoluteX() - getMinX()) + X_OFFSET_FIX;
+	}
+
+	private int focusToCanvasY(Focus f) {
+		return FOCUS_Y_SCALE * f.absoluteY() + Y_OFFSET_FIX;
+	}
+
+	private boolean isWithinMarquee(Focus f) {
+		double focusX = focusToCanvasX(f);
+		double focusY = focusToCanvasY(f);
+		// Check if the focus is within the marquee selection
+		return focusMarqueeRectangle().contains(focusX, focusY);
+	}
+
+	/**
+	 * Returns the rectangle representing the marquee selection. This is an enlarged version of the
+	 * theoretical marquee selection rectangle to account for the focus size.
+	 */
+	private Rectangle2D focusMarqueeRectangle() {
+		return new Rectangle2D(
+				Math.min(marqueeStartPoint.getX(), marqueeEndPoint.getX()) - CENTER_FOCUS_X,
+				Math.min(marqueeStartPoint.getY(), marqueeEndPoint.getY()) - CENTER_FOCUS_Y,
+				Math.abs(marqueeEndPoint.getX() - marqueeStartPoint.getX()) + FOCUS_X_SCALE,
+				Math.abs(marqueeEndPoint.getY() - marqueeStartPoint.getY()) + FOCUS_Y_SCALE
+		);
 	}
 }
