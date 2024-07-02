@@ -493,10 +493,10 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	 */
 	private Rectangle2D focusMarqueeRectangle() {
 		return new Rectangle2D(
-				Math.min(marqueeStartPoint.getX(), marqueeEndPoint.getX()) - CENTER_FOCUS_X,
-				Math.min(marqueeStartPoint.getY(), marqueeEndPoint.getY()) - CENTER_FOCUS_Y,
-				Math.abs(marqueeEndPoint.getX() - marqueeStartPoint.getX()) + FOCUS_X_SCALE,
-				Math.abs(marqueeEndPoint.getY() - marqueeStartPoint.getY()) + FOCUS_Y_SCALE
+				Math.min(marqueeStartPoint.getX(), marqueeEndPoint.getX()) - (CENTER_FOCUS_X / 2.0),
+				Math.min(marqueeStartPoint.getY(), marqueeEndPoint.getY()) - (CENTER_FOCUS_Y / 2.0),
+				Math.abs(marqueeEndPoint.getX() - marqueeStartPoint.getX()) + CENTER_FOCUS_X,
+				Math.abs(marqueeEndPoint.getY() - marqueeStartPoint.getY()) + CENTER_FOCUS_X
 		);
 	}
 }
