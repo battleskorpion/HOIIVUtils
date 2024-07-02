@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 
 import java.util.*;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -34,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.stream.Collectors;
 
 public class FocusTreeWindow extends HOIIVUtilsWindow {
 	public static final int FOCUS_X_SCALE = 90; // ~2x per 1 y
@@ -57,6 +59,8 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	private Tooltip focusTooltipView;
 	private Focus focusDetailsFocus;
 	private Focus draggedFocus;
+	private Point2D marqueeStartPoint;
+	private Point2D marqueeEndPoint;
 
 	public FocusTreeWindow() {
 		setFxmlResource("FocusTreeWindow.fxml");
@@ -388,16 +392,32 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 			// Redraw the focus tree to reflect the change
 			drawFocusTree();
+		} else {
+			if (marqueeStartPoint == null)
+				marqueeStartPoint = new Point2D(e.getX(), e.getY());
+			else
+				marqueeEndPoint = new Point2D(e.getX(), e.getY());
 		}
 	}
 
 	@FXML
 	public void handleFocusTreeViewMouseReleased(MouseEvent e) {
 		if (draggedFocus != null) {
-
+			draggedFocus = null; // Reset the reference when the mouse is released
 		}
 
-		draggedFocus = null; // Reset the reference when the mouse is released
+		if (marqueeStartPoint != null || marqueeEndPoint != null) {
+			// Identify the focuses within the marquee selection
+			List<Focus> selectedFocuses = focusTree.focuses().stream()
+					.filter(this::isWithinMarquee)
+					.toList();
+
+			// Perform the desired action on the selected focuses
+			for (Focus focus : selectedFocuses) {
+				// Replace this with your desired action
+				if (Settings.DEV_MODE.enabled()) System.out.println("Marquee selected focus: " + focus);
+			}
+		}
 	}
 
 	@FXML
@@ -415,5 +435,21 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	private void openEditorWindow(Focus focus) {
 		PDXEditorWindow pdxEditorWindow = new PDXEditorWindow();
 		pdxEditorWindow.open((PDXScript<?>) focus);
+	}
+
+	private boolean isWithinMarquee(Focus f) {
+		double focusX = FOCUS_X_SCALE * f.absoluteX() + X_OFFSET_FIX;
+		double focusY = FOCUS_Y_SCALE * f.absoluteY() + Y_OFFSET_FIX;
+		// Check if the focus is within the marquee selection
+		return marqueeRectangle().contains(focusX, focusY);
+	}
+
+	private Rectangle2D marqueeRectangle() {
+		return new Rectangle2D(
+				Math.min(marqueeStartPoint.getX(), marqueeEndPoint.getX()),
+				Math.min(marqueeStartPoint.getY(), marqueeEndPoint.getY()),
+				Math.abs(marqueeEndPoint.getX() - marqueeStartPoint.getX()),
+				Math.abs(marqueeEndPoint.getY() - marqueeStartPoint.getY())
+		);
 	}
 }
