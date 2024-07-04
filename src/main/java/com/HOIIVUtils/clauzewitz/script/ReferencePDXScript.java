@@ -106,4 +106,10 @@ public class ReferencePDXScript<T extends AbstractPDX<?>> extends AbstractPDX<T>
     public List<String> getReferenceCollectionNames() {
         return referenceCollectionSupplier.get().stream().map(idExtractor).toList();
     }
+
+    @Override
+    public boolean isUndefined() {
+        resolveReference();
+        return obj == null;
+    }
 }

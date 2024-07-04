@@ -152,9 +152,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		});
 
 		// Draw the focus tree
-		if (Settings.DRAW_FOCUS_TREE.enabled()) {
-			drawFocusTree();
-		}
+		drawFocusTree();
 
 		if (Settings.DEV_MODE.enabled()) {
 			JOptionPane.showMessageDialog(null,
@@ -405,7 +403,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 			// Redraw the focus tree to reflect the change
 			drawFocusTree();
-		} else {
+		} else if (e.isSecondaryButtonDown()) {
 			if (marqueeStartPoint == null)
 				marqueeStartPoint = new Point2D(e.getX(), e.getY());
 			else
@@ -419,7 +417,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 			draggedFocus = null; // Reset the reference when the mouse is released
 		}
 
-		if (marqueeStartPoint != null || marqueeEndPoint != null) {
+		if (marqueeStartPoint != null && marqueeEndPoint != null) {
 			// Identify the focuses within the marquee selection
 			selectedFocuses.clear(); // Clear previous selections
 			selectedFocuses.addAll(focusTree.focuses().stream()

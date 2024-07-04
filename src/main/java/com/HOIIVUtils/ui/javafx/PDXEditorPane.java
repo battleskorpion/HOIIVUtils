@@ -156,6 +156,10 @@ public class PDXEditorPane extends AnchorPane {
                 }
             });
             return comboBox;
+        } else if (property instanceof DynamicPDX pdx) {
+
+        } else {
+            System.out.println("Ui node unknown for property type: " + property.getClass());
         }
         return null;
     }

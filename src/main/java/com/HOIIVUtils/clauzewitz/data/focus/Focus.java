@@ -119,11 +119,7 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 	 * @return
 	 */
 	public int absoluteX() {
-		if (relativePosition.isUndefined()) {
-			return x.getOrElse(0);
-		} else {
-			return absolutePosition().x;
-		}
+		return absolutePosition().x;
 	}
 
 	/**
@@ -137,11 +133,7 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 	 * @return
 	 */
 	public int absoluteY() {
-		if (relativePosition.isUndefined()) {
-			return y.getOrElse(0);
-		} else {
-			return absolutePosition().y;
-		}
+		return absolutePosition().y;
 	}
 
 	/**
