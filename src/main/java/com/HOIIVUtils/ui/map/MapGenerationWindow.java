@@ -1,17 +1,20 @@
 package com.HOIIVUtils.ui.map;
 
-import com.HOIIVUtils.hoi4utils.clausewitz_map.ProvinceGenProperties;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.gen.Heightmap;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceGeneration;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.province.ProvinceMap;
+import com.HOIIVUtils.clauzewitz.HOIIVFile;
+import com.HOIIVUtils.clauzewitz.map.ProvinceGenProperties;
+import com.HOIIVUtils.clauzewitz.map.gen.Heightmap;
+import com.HOIIVUtils.clauzewitz.map.province.ProvinceGeneration;
+import com.HOIIVUtils.clauzewitz.map.province.ProvinceMap;
+import com.HOIIVUtils.ui.FXWindow;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import com.HOIIVUtils.ui.HOIUtilsWindow;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 
 import java.awt.*;
 import java.io.File;
@@ -20,22 +23,30 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiFunction;
 
-public class MapGenerationWindow extends HOIUtilsWindow {
+public class MapGenerationWindow extends HOIIVUtilsWindow {
 
-	//Heightmap heightmap = null;
-	@FXML Canvas heightmapCanvas;
-	@FXML Canvas provinceCanvas;
-	@FXML TextField heightmapTextField;
-	@FXML Button browseHeightmapButton;
-	@FXML Button provinceGenerationButton;
+	private static final String DEFAULT_HEIGHTMAP_PATH = "src\\main\\resources\\map\\heightmap.bmp";
+	// Heightmap heightmap = null;
+	@FXML
+	Canvas heightmapCanvas;
+	@FXML
+	Canvas provinceCanvas;
+	@FXML
+	TextField heightmapTextField;
+	@FXML
+	Button browseHeightmapButton;
+	@FXML
+	Button provinceGenerationButton;
+	@FXML
+	ProgressBar provinceGenerationProgressBar;
 	Heightmap heightmap;
 	public ProvinceGeneration provinceGeneration;
 	public ProvinceGenProperties properties;
 
-		/* static initialization */
-	{   // todo temp
+	/* static initialization */
+	{ // todo temp
 		try {
-			heightmap = new Heightmap(new File("src\\main\\resources\\map\\heightmap.bmp"));
+			heightmap = new Heightmap(new File(DEFAULT_HEIGHTMAP_PATH));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -46,20 +57,26 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 		setFxmlResource("MapGenerationWindow.fxml");
 		setTitle("Map Generation");
 
-		properties = new ProvinceGenProperties(45, heightmap.width(), heightmap.height(), 4000); // sea level 4? for china?
+		properties = new ProvinceGenProperties(45, heightmap.width(), heightmap.height(), 4000); // sea level 4? for
+																									// china?
 		provinceGeneration = new ProvinceGeneration(properties);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@FXML void initialize() {
+	@FXML
+	void initialize() {
 		heightmapCanvas.setWidth(heightmap.width() / 4.0);
 		heightmapCanvas.setHeight(heightmap.height() / 4.0);
 		provinceCanvas.setWidth(heightmap.width() / 4.0);
 		provinceCanvas.setHeight(heightmap.height() / 4.0);
 
 		drawHeightmap();
+		// if default heightmap loaded display its filepath
+		if (heightmap != null) {
+			heightmapTextField.setText(DEFAULT_HEIGHTMAP_PATH);
+		}
 	}
 
 	private void drawHeightmap() {
@@ -67,12 +84,12 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 	}
 
 	private void drawImageOnCanvas(Canvas canvas, int imgWidth, int imgHeight,
-	                               BiFunction<Integer, Integer, Integer> rbg_supplier) {
+			BiFunction<Integer, Integer, Integer> rbg_supplier) {
 		drawImageOnCanvas(canvas, imgWidth, imgHeight, rbg_supplier, 4);
 	}
 
 	private void drawImageOnCanvas(Canvas canvas, int imgWidth, int imgHeight,
-	                               BiFunction<Integer, Integer, Integer> rbg_supplier, int zoom) {
+			BiFunction<Integer, Integer, Integer> rbg_supplier, int zoom) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
 		WritableImage wImage = new WritableImage(imgWidth / zoom, imgHeight / zoom);
@@ -92,25 +109,26 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 		drawImageOnCanvas(provinceCanvas, map.width(), map.height(), map::getRGB);
 	}
 
-	@FXML void OnBrowseHeightmap() {
+	@FXML
+	void OnBrowseHeightmap() {
 		File f;
 		try {
-			f = openChooser(browseHeightmapButton, false);
-			// f = openChooser(browseHeightmapButton, false, _____);    // todo init directory
+			f = FXWindow.openChooser(browseHeightmapButton, HOIIVFile.mod_folder, false);
 			heightmap = new Heightmap(f);
 		} catch (IOException exc) {
-			heightmap = null;       // deselect any heightmap
+			heightmap = null; // deselect any heightmap
 			return;
 		} catch (IllegalArgumentException exc) {
 			// thrown when file selected is null
 			return;
 		}
 		// draw heightmap etc.
-		heightmapTextField.setText(f.getPath());    // todo- relative path maybe?
+		heightmapTextField.setText(f.getPath()); // todo- relative path maybe?
 		drawHeightmap();
 	}
 
-	@FXML void onEnterHeightmap() {
+	@FXML
+	void onEnterHeightmap() {
 		var p = Path.of(heightmapTextField.getText());
 		if (!Files.exists(p)) {
 			return;
@@ -128,14 +146,25 @@ public class MapGenerationWindow extends HOIUtilsWindow {
 		drawHeightmap();
 	}
 
-	@FXML void onGenerateProvinces() {
+	@FXML
+	void onGenerateProvinces() {
+		// todo let ui and do generate on other
+		provinceGenerationButton.setVisible(false);
+		provinceGenerationProgressBar.setVisible(true);
+		provinceGenerationProgressBar.setProgress(0);
+
 		provinceGeneration.generate(heightmap);
 
-		provinceGeneration.writeProvinceMap();
+		provinceGeneration.writeProvinceMap(); // todo separate save button
 		drawProvinceMap();
+
+		provinceGenerationProgressBar.setVisible(false);
+		provinceGenerationButton.setVisible(true);
+		provinceGenerationButton.setText("Generate");
 	}
 
-	@FXML void onOpenProvinceGenSettingsWindow() {
+	@FXML
+	void onOpenProvinceGenSettingsWindow() {
 		new MapGenerationSettingsWindow().open(properties);
 	}
 }

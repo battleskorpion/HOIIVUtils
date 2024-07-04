@@ -1,16 +1,19 @@
 package com.HOIIVUtils.ui.menu;
 
-import com.HOIIVUtils.hoi4utils.Settings;
-import com.HOIIVUtils.hoi4utils.clausewitz_data.focus.FocusTree;
-import com.HOIIVUtils.ui.HOIUtilsWindow;
+import com.HOIIVUtils.Settings;
+import com.HOIIVUtils.clauzewitz.data.focus.FocusTree;
+import com.HOIIVUtils.clauzewitz.localization.EnglishLocalizationManager;
+import com.HOIIVUtils.clauzewitz.localization.LocalizationManager;
+import com.HOIIVUtils.ui.HOIIVUtilsWindow;
 import com.HOIIVUtils.ui.console.ConsoleController;
 import com.HOIIVUtils.ui.hoi4localization.CustomTooltipWindow;
 import com.HOIIVUtils.ui.hoi4localization.FocusLocalizationWindow;
 import com.HOIIVUtils.ui.hoi4localization.IdeaLocalizationWindow;
-import com.HOIIVUtils.ui.hoi4localization.UnlocalizedFocusWindow;
+import com.HOIIVUtils.ui.hoi4localization.AllFocusTreesWindow;
 import com.HOIIVUtils.ui.statistics.StatisticsController;
-import com.HOIIVUtils.hoi4utils.HOIIVUtils;
-import com.HOIIVUtils.hoi4utils.clausewitz_map.state.State;
+import com.HOIIVUtils.clauzewitz.HOIIVUtils;
+import com.HOIIVUtils.clauzewitz.map.state.State;
+import com.HOIIVUtils.ui.units.CompareUnitsWindow;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -35,16 +38,26 @@ public class MenuController extends Application implements FXWindow {
 	private String fxmlResource = "Menu.fxml";
 	private String title;
 
-	@FXML public Button settingsButton;
-	@FXML public Button statisticsButton;
-	@FXML public Button consoleButton;
-	@FXML public Button focusLocalizButton;
-	@FXML public Button findFocusesWithoutLocalization;
-	@FXML public Button customTooltipLocalizationButton;
-	@FXML public Button viewBuilding;
-	@FXML public Button viewGFX;
-	@FXML public Button focusTreeViewButton;
-	
+	@FXML
+	public Button settingsButton;
+	@FXML
+	public Button statisticsButton;
+	@FXML
+	public Button consoleButton;
+	@FXML
+	public Button focusLocalizButton;
+	@FXML
+	public Button findFocusesWithoutLocalization;
+	@FXML
+	public Button customTooltipLocalizationButton;
+	@FXML
+	public Button viewBuilding;
+	@FXML
+	public Button viewGFX;
+	@FXML
+	public Button focusTreeViewButton;
+	@FXML
+	public Button viewUnitComparison;
 
 	/* Constructor */
 	public MenuController() {
@@ -70,18 +83,21 @@ public class MenuController extends Application implements FXWindow {
 
 			this.stage = stage;
 			stage.setScene(scene);
-			
+
 			stage.setTitle(title);
 			stage.show();
 			System.out.println("Menu Controller created it's own stage and showed it");
-		} catch(Exception e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error menu controller!");
 			e.printStackTrace();
 		}
-		State.read();
-		FocusTree.read();
-		if (Settings.ATTEMPT_LOAD_LOCALIZATION.enabled()) {
-			FocusTree.attemptReadLocalization();
+		if (!Settings.DEMO_MODE.enabled()) {
+			if (Settings.LOAD_LOCALIZATION.enabled()) {
+				LocalizationManager LocalizationManager = new EnglishLocalizationManager();
+				LocalizationManager.reload();
+			}
+			State.read();
+			FocusTree.read();
 		}
 	}
 
@@ -96,12 +112,12 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openSettings() {
-		closeWindow(settingsButton); //closes the menu window
+		closeWindow(settingsButton); // closes the menu window
 		SettingsController window = new SettingsController();
 		window.open();
 	}
 
-	private void openUtilsWindow(HOIUtilsWindow utilsWindow) {
+	private void openUtilsWindow(HOIIVUtilsWindow utilsWindow) {
 		utilsWindow.open();
 	}
 
@@ -121,8 +137,8 @@ public class MenuController extends Application implements FXWindow {
 		openUtilsWindow(new IdeaLocalizationWindow());
 	}
 
-	public void openUnlocalizedFocus() {
-		openUtilsWindow(new UnlocalizedFocusWindow());
+	public void openAllFocusesWindow() {
+		openUtilsWindow(new AllFocusTreesWindow());
 	}
 
 	public void openCustomTooltip() {
@@ -130,7 +146,6 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openBuildingsByCountry() {
-//		State.readStates();
 		BuildingsByCountryWindow window = new BuildingsByCountryWindow();
 		window.open();
 	}
@@ -145,6 +160,11 @@ public class MenuController extends Application implements FXWindow {
 		window.open();
 	}
 
+	public void openUnitComparisonView() {
+		CompareUnitsWindow window = new CompareUnitsWindow();
+		window.open();
+	}
+
 	public void openMapGeneration() {
 		MapGenerationWindow window = new MapGenerationWindow();
 		window.open();
@@ -155,11 +175,12 @@ public class MenuController extends Application implements FXWindow {
 		window.open();
 	}
 
-	/* from HOIUtilsWindow but can only extend one class */
+	/* from HOIIVUtilsStageLoader but can only extend one class */
 	/**
 	 * Opens window and updates fxmlResource and title
+	 * 
 	 * @param fxmlResource window .fxml resource
-	 * @param title window title
+	 * @param title        window title
 	 */
 	@Override
 	public void open(String fxmlResource, String title) {

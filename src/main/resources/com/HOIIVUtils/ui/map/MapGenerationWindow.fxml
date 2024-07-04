@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -90,6 +91,7 @@
                                     <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                  </GridPane.margin>
                               </Button>
+                              <ProgressBar fx:id="provinceGenerationProgressBar" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" progress="0.0" visible="false" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
                               <ChoiceBox maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.hgrow="SOMETIMES" />
                               <ScrollPane prefHeight="229.0" prefWidth="379.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
                                 <content>

@@ -14,17 +14,17 @@ public class Parser {
 	private final Tokenizer tokens;
 	private Node rootNode;
 
-	public Parser (String input) {
+	public Parser(String input) {
 		/* EOF */
 		input += Token.EOF_INDICATOR;
 		tokens = new Tokenizer(input);
 	}
 
-	public Parser(File focusFile) {
+	public Parser(File f) {
 		/* get input from file */
 		String input;
 		try {
-			input = Files.readString(focusFile.toPath());
+			input = Files.readString(f.toPath());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -38,13 +38,13 @@ public class Parser {
 		ArrayList<Node> value = parseBlockContent(tokens);
 
 		/*
-		need to reach up to eof indicator
-		if last token is '}' this could indicate there was a
-		missing '{' in the code
-		*/
+		 * need to reach up to eof indicator
+		 * if last token is '}' this could indicate there was a
+		 * missing '{' in the code
+		 */
 		if (tokens.peek().type != TokenType.eof) {
 			throw new ParserException("Input not completely parsed by clausewitz-file parser \n" +
-					"\t\tlast token: " +tokens.peek().value);
+					"\t\tlast token: " + tokens.peek().value);
 		}
 
 		rootNode = new Node(value);
@@ -61,7 +61,11 @@ public class Parser {
 			}
 
 			try {
-				nodes.add(parseNode(tokens));
+				var n = parseNode(tokens);
+				// check if n is a comment node
+				if (n.nameToken.type != TokenType.comment) {
+					nodes.add(n);
+				}
 			} catch (ParserException e) {
 				throw e;
 			}
@@ -80,10 +84,12 @@ public class Parser {
 			node.nameToken = name;
 			return node;
 		}
-//		System.out.println(name.value);
+
+		// System.out.println(name.value);
 
 		if (name.type != TokenType.string && name.type != TokenType.symbol && name.type != TokenType.number) {
-			throw new ParserException("Parser: incorrect token type " + name.type + ", token: " + name + " at index: " + name.start);
+			throw new ParserException(
+					"Parser: incorrect token type " + name.type + ", token: " + name + " at index: " + name.start);
 		}
 
 		var nextToken = tokens.peek();
@@ -96,7 +102,7 @@ public class Parser {
 			/* handle escaped characters */
 			var nameValue = unescapeCharacters(name, name.value);
 
-			// TODO
+			// TODO node value?
 			Node node = new Node();
 			node.name = nameValue;
 			node.nameToken = name;
@@ -120,7 +126,7 @@ public class Parser {
 			operator = tokens.next();
 		}
 
-		SymbolNode valueAttachment = null;      // potential 
+		SymbolNode valueAttachment = null; // potential
 		Token valueAttachmentToken = null;
 		NodeValue parsedValue = parseNodeValue(tokens);
 
@@ -129,7 +135,7 @@ public class Parser {
 			Token peekedToken = tokens.peek();
 			if (peekedToken.value.equals("{")) {
 				valueAttachment = new SymbolNode(parsedValue);
-//				valueAttachmentToken = (Token) parsedValue; // todo?
+				// valueAttachmentToken = (Token) parsedValue; // todo?
 				parsedValue = parseNodeValue(tokens);
 			}
 		}
@@ -147,9 +153,9 @@ public class Parser {
 		node.nameToken = name;
 		node.operator = operator.value;
 		node.operatorToken = operator;
-//		node.value = parsedValue;
-//		node.valueStartToken = (Token) parsedValue[1];
-//		node.valueEndToken = (Token) parsedValue[2];
+		// node.value = parsedValue;
+		// node.valueStartToken = (Token) parsedValue[1];
+		// node.valueEndToken = (Token) parsedValue[2];
 		node.valueAttachment = valueAttachment;
 		node.valueAttachmentToken = valueAttachmentToken;
 
@@ -182,16 +188,14 @@ public class Parser {
 				return new NodeValue(
 						nextToken.value.substring(1, nextToken.length() - 2)
 								.replaceAll(escape_quote_regex, "\"")
-								.replaceAll(escape_backslash_regex, "\\")
-				);
+								.replaceAll(escape_backslash_regex, "\\"));
 			}
 			case number -> {
 				/* handles hexadecimal or floating-point/integers */
 				return new NodeValue(
 						nextToken.value.startsWith("0x")
 								? Integer.parseInt(nextToken.value.substring(2), 16)
-								: Double.parseDouble(nextToken.value)
-						);
+								: Double.parseDouble(nextToken.value));
 			}
 			case symbol -> {
 				return new NodeValue(nextToken.value);
@@ -201,17 +205,17 @@ public class Parser {
 					var result = parseBlockContent(tokens);
 					Token right = tokens.next();
 					if (!right.value.equals("}")) {
-						throw new IllegalStateException("Parser expected a matching \"}\"");
+						throw new ParserException("Parser expected a matching \"}\"");
 					}
 
 					return new NodeValue(result);
 				}
-				break; 			// necessary if addtl. case added, so will keep.
+				break; // necessary if addtl. case added, so will keep.
 			}
-			default -> throw new IllegalStateException("Unexpected value: " + nextToken.type);
+			default -> throw new ParserException("Unexpected value: " + nextToken.type);
 		}
 
-		throw new IllegalStateException("Parser expected a string, number, symbol, or {");
+		throw new ParserException("Parser expected a string, number, symbol, or {");
 	}
 
 	public Node rootNode() {

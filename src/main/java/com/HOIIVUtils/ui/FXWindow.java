@@ -1,7 +1,7 @@
 package com.HOIIVUtils.ui;
 
-import com.HOIIVUtils.hoi4utils.FileUtils;
-import com.HOIIVUtils.hoi4utils.Settings;
+import com.HOIIVUtils.FileUtils;
+import com.HOIIVUtils.Settings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -19,15 +19,36 @@ import com.HOIIVUtils.ui.message.MessageController;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.Map;
 import java.util.function.Function;
 
 public interface FXWindow {
-	// String COM_UI = "/com/HOIIVUtils/ui/";
 	static void openGlobalErrorWindow(Exception exception) {
 		openGlobalErrorWindow(exception.getLocalizedMessage());
+	}
+
+	static File openChooser(Stage stage, File initialDirectory, boolean ford) {
+		File theChosenOne;
+		if (ford) {
+			DirectoryChooser directoryChooser = new DirectoryChooser();
+			if (initialDirectory != null && initialDirectory.exists() && initialDirectory.isDirectory()) {
+				directoryChooser.setInitialDirectory(initialDirectory);
+			} else {
+				directoryChooser.setInitialDirectory(FileUtils.usersDocuments);
+			}
+			theChosenOne = directoryChooser.showDialog(stage);
+		} else {
+			FileChooser fileChooser = new FileChooser();
+			if (initialDirectory != null && initialDirectory.exists() && initialDirectory.isDirectory()) {
+				fileChooser.setInitialDirectory(initialDirectory);
+			} else {
+				fileChooser.setInitialDirectory(FileUtils.usersDocuments);
+			}
+			theChosenOne = fileChooser.showOpenDialog(stage);
+		}
+		return theChosenOne;
 	}
 
 	/**
@@ -37,35 +58,17 @@ public interface FXWindow {
 	 *                         the chooser, must belong to a scene
 	 * @param initialDirectory The initial directory of the file chooser, instead of
 	 *                         the default user directory.
+	 *                         If null, the initial directory will not be specified.
 	 * @param ford             A quirky boolean that specifies whether you want to
 	 *                         return a directory or file: true = return directory,
 	 *                         false = return file
 	 * @return theChosenOne, It is up to the the page to handle what you do if the
-	 *         user returns a null
+	 * user returns a null
 	 * @see File
 	 * @see Node
 	 */
-	default File openChooser(Node fxcomponent, boolean ford, File initialDirectory) {
-		File theChosenOne;
-		Stage stage = (Stage) (fxcomponent.getScene().getWindow());
-		if (ford) {
-			DirectoryChooser directoryChooser = new DirectoryChooser();
-			if (initialDirectory.exists() && initialDirectory.isDirectory()) {
-				directoryChooser.setInitialDirectory(initialDirectory);
-			} else {
-				directoryChooser.setInitialDirectory(FileUtils.usersDocuments);
-			}
-			theChosenOne = directoryChooser.showDialog(stage);
-		} else {
-			FileChooser fileChooser = new FileChooser();
-			if (initialDirectory.exists() && initialDirectory.isDirectory()) {
-				fileChooser.setInitialDirectory(initialDirectory);
-			} else {
-				fileChooser.setInitialDirectory(FileUtils.usersDocuments);
-			}
-			theChosenOne = fileChooser.showOpenDialog(stage);
-		}
-		return theChosenOne;
+	static File openChooser(Node fxcomponent, File initialDirectory, boolean ford) {
+		return openChooser((Stage) (fxcomponent.getScene().getWindow()), initialDirectory, ford);
 	}
 
 	/**
@@ -82,13 +85,17 @@ public interface FXWindow {
 	 *         user returns a null
 	 * @see Node
 	 */
-	default File openChooser(Node fxcomponent, Boolean ford) {
-		return openChooser(fxcomponent, ford, FileUtils.usersDocuments);
+	static File openChooser(Node fxcomponent, Boolean ford) {
+		return openChooser(fxcomponent, FileUtils.usersDocuments, ford);
+	}
+
+	static File openChooser(File initialDirectory, boolean ford) {
+		return openChooser(new Stage(), initialDirectory, ford);
 	}
 
 	static void openGlobalErrorWindow(String s) {
 		MessageController errWindow = new MessageController();
-		errWindow.open("s");
+		errWindow.open(s);
 	}
 
 	/**
@@ -161,68 +168,141 @@ public interface FXWindow {
 
 	void setTitle(String title);
 
-	default <S> void loadTableView(TableViewWindow window, TableView<S> dataTable, ObservableList<S> data,
-			List<Function<S, ?>> dataFunctions) {
+	default <S> void loadTableView(TableViewWindow window, TableView<S> table, ObservableList<S> data,
+	                               List<Function<S, ?>> dataFunctions) {
 		window.setDataTableCellFactories();
 
-		setTableCellValueFactories(dataFunctions, dataTable);
+		setTableCellValueFactories(dataFunctions, table);
 
-		dataTable.setItems(data); // country objects, cool! and necessary for the cell value factory,
-									// this is giving the factories the list of objects to collect
+		table.setItems(data);       // this is giving the factories the list of objects to collect
 									// their data from.
 
-		System.out.println("Loaded data into table: " + dataTable.getId());
+		if (Settings.DEV_MODE.enabled()) System.out.println("Loaded data into table: " + table.getId());
 	}
 
-	// todo put this in hoi4window parent class or whatever
-	default <S> void setTableCellValueFactories(List<Function<S, ?>> dataFunctions, TableView<S> dataTable) {
-		/* table columns */
-		ObservableList<TableColumn<S, ?>> tableColumns = dataTable.getColumns();
-		for (int i = 0; i < Math.min(dataFunctions.size(), tableColumns.size()); i++) {
-			TableColumn<S, ?> tableColumn = tableColumns.get(i);
+//	default <S> void loadTreeTableView(TableViewWindow window, TreeTableView<S> table, ObservableList<S> data,
+//	                                   List<Function<S, ?>> dataFunctions, Function<S, ?> parentingFunction) {
+//		window.setDataTableCellFactories();
+//
+//
+//	}
+
+
+	/**
+	 * Set the cell value factories for the table columns
+	 * 
+	 * @param <S>           the type of the table row
+	 * @param dataFunctions a list of functions that take a table row and return the
+	 *                      value
+	 *                      for the column
+	 * @param tableView     the table view to set the cell value factories for
+	 */
+	default <S> void setTableCellValueFactories(List<Function<S, ?>> dataFunctions, TableView<S> tableView) {
+		// set the cell value factories for the table columns
+		ObservableList<TableColumn<S, ?>> columns = tableView.getColumns();
+
+		// get the minimum size of the dataFunctions and columns lists, prevents indexing error
+		int minSize = Math.min(dataFunctions.size(), columns.size());
+
+		for (int i = 0; i < minSize; i++) {
+			// get the column and data function for the current index
+			TableColumn<S, ?> column = columns.get(i);
 			Function<S, ?> dataFunction = dataFunctions.get(i);
 
-			tableColumn.setCellValueFactory(FXWindow.cellDataCallback(dataFunction));
+			// set the cell value factory for the column
+			column.setCellValueFactory(tableCellDataCallback(dataFunction));
 		}
+	}
 
-		/* table rows */
+	default <S> void setTreeTableCellValueFactories(List<Function<S, ?>> dataFunctions, TreeTableView<S> treeTableView) {
+		// set the cell value factories for the table columns
+		ObservableList<TreeTableColumn<S, ?>> columns = treeTableView.getColumns();
+
+		// get the minimum size of the dataFunctions and columns lists, prevents indexing error
+		int minSize = Math.min(dataFunctions.size(), columns.size());
+
+		for (int i = 0; i < minSize; i++) {
+			// get the column and data function for the current index
+			TreeTableColumn<S, ?> column = columns.get(i);
+			Function<S, ?> dataFunction = dataFunctions.get(i);
+
+			// set the cell value factory for the column
+			column.setCellValueFactory(treeTableCellDataCallback(dataFunction));
+		}
 	}
 
 	/**
-	 * @param propertyGetter
-	 * @param <S>
-	 * @param <T>
-	 * @return
+	 * Creates a cell value factory for a table column that applies a given function
+	 * to a table row to retrieve the value for that column.
+	 *
+	 * @param <S>            the type of the table row
+	 * @param <T>            the type of the table column
+	 * @param propertyGetter a function that takes a table row of type {@code S} and
+	 *                       returns a value of type {@code T} for the column
+	 * @return a {@code Callback} that produces an {@code ObservableValue<T>} by
+	 *         applying the given function to the table row
 	 */
-	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellDataCallback(
+	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> tableCellDataCallback(
 			Function<S, ?> propertyGetter) {
 		return cellData -> {
-			// if (Settings.DEV_MODE.enabled()) {
-			// System.out.println("Table callback created, data: " +
-			// propertyGetter.apply(cellData.getValue()));
-			// }
+			if (Settings.DEV_MODE.enabled()) {
+				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
+			}
+			// unchecked cast is necessary because the compiler doesn't know that the given
+			// function will return a value of type T
 			@SuppressWarnings("unchecked")
 			T result = (T) propertyGetter.apply(cellData.getValue()); // yap
 			return new SimpleObjectProperty<>(result);
-			// mehhhh
+		};
+	}
+
+	/**
+	 * Creates a cell value factory for a tree table column that applies a given
+	 * function to a tree table row to retrieve the value for that column.
+	 *
+	 * @param <S>            the type of the tree table row
+	 * @param <T>            the type of the tree table column
+	 * @param propertyGetter a function that takes a tree table row of type {@code S}
+	 *                       and returns a value of type {@code T} for the column
+	 * @return a {@code Callback} that produces an {@code ObservableValue<T>} by
+	 *         applying the given function to the tree table row
+	 */
+	static <S, T> Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> treeTableCellDataCallback(
+			Function<S, ?> propertyGetter) {
+		return cellData -> {
+			if (Settings.DEV_MODE.enabled()) {
+				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue().getValue()));
+			}
+			// unchecked cast is necessary because the compiler doesn't know that the given
+			// function will return a value of type T
+			@SuppressWarnings("unchecked")
+			T result = (T) propertyGetter.apply(cellData.getValue().getValue());
+			return new SimpleObjectProperty<>(result);
 		};
 	}
 
 	/**
 	 * Update cell behavior within a column
+	 * 
+	 * This method updates the cell behavior of a given column within a table
+	 * view to either display the values as integers or as a percentage of the
+	 * total value of the column.
+	 * 
+	 * @param column        the table column to update
+	 * @param displayPercentages whether to display the values as percentages or not
+	 * 
+	 * @see IntegerOrPercentTableCell
 	 */
-	// todo why is T never used and we have it....
-	static <S, T extends TableCell<S, Double>> void updateColumnPercentBehavior(TableColumn<S, Double> column,
-			boolean resourcesPercent) {
+	static <S> void updateColumnPercentBehavior(TableColumn<S, Double> column,
+	                                            boolean displayPercentages) {
+		// Set the cell factory for the column to a cell that can display
+		// either integers or percentages
 		column.setCellFactory(col -> {
+			// Create a new cell instance that can display either integers or percentages
 			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();
-			if (resourcesPercent) {
-				cell.setPercent(true);
-			} else {
-				cell.setInteger(true);
-			}
+			cell.setInteger(!displayPercentages);
+			cell.setPercent(displayPercentages);
 			return cell;
 		});
 	}
-
 }

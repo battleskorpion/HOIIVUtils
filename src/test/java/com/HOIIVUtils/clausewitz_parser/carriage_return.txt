@@ -1,0 +1,16 @@
+focus = {
+    # comments might be bad here specifically\r\n
+    # (I will fix it now and leave the test so it never is allowed againnn)
+    id = SGA_1000_Crosses_will_burn
+    icon = GFX_focus_STX_Unite_southcarolina\n
+    # this comment is actually bad too (but now its fixed) \r
+    # the previous regex for comments was:
+    # this: // prev: "#.*(?:[\r\n]|$)"
+    # but now it is this: "#.*"
+    # much better.
+    x = 0\r
+    y = 1
+    relative_position_id = SGA_Georgia_is_mourning
+    prerequisite = { focus = SGA_Georgia_is_mourning }
+    cost = 10\r\n
+}

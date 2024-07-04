@@ -1,5 +1,6 @@
 package com.HOIIVUtils.clausewitz_parser;
 
+import com.HOIIVUtils.clauzewitz.BoolType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -10,15 +11,16 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class Node implements NodeStreamable<Node> {
-	public String name;
-	public String operator;
+	static BoolType boolType;
+    String name;
+	String operator;
 
 	/* never null, stores null */
 	@NotNull private final NodeValue value;
-	public SymbolNode valueAttachment;
-	public Token valueAttachmentToken;
-	public Token nameToken;
-	public Token operatorToken;
+	SymbolNode valueAttachment;
+	Token valueAttachmentToken;
+	Token nameToken;
+	Token operatorToken;
 
 	public Node (String name, String operator, NodeValue value, SymbolNode valueAttachment,
 	             Token valueAttachmentToken, Token nameToken, Token operatorToken) {
@@ -121,6 +123,11 @@ public class Node implements NodeStreamable<Node> {
 		return filterName(str);
 	}
 
+	@Override
+	public boolean anyMatch(Predicate<? super Node> predicate) {
+		return new NodeStream<>(this).anyMatch(predicate);
+	}
+
 	public NodeValue getValue(String id) {
 		return findFirst(id).value;
 	}
@@ -140,4 +147,12 @@ public class Node implements NodeStreamable<Node> {
 	public int nameAsInteger() {
 		return Integer.parseInt(name);
 	}
+
+    public boolean nameEquals(String s) {
+		if (name == null) {
+			return false;
+		}
+		return name.equals(s);
+    }
+
 }
