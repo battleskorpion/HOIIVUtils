@@ -8,8 +8,7 @@ import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public abstract class HOIIVUtilsWindow implements FXWindow {
 	private String fxmlResource;
@@ -67,41 +66,22 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 			stage.show();
 			System.out.println("HOIIVUtilsStageLoader showed stage with open cuz stage was NOT null. fxml: " + fxmlResource + " title: " + title);
 		} else if (fxmlResource == null) {
-			System.out.println(
-					"HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. fxmlResource: " + fxmlResource + " title: " + title);
+			System.out.println("HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. fxmlResource: " + fxmlResource + " title: " + title);
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
 			try {
-//				FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
-//				launchLoader.setControllerFactory(c -> {
-//					try {
-//						return getClass().getConstructor(initargs_classes).newInstance(initargs);
-//					} catch (InstantiationException | IllegalAccessException | InvocationTargetException
-//					         | NoSuchMethodException e) {
-//						throw new RuntimeException(e);
-//					}
-//				});
-
-//				FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
-//				launchLoader.setControllerFactory(c -> {
-//					for (Class<?> argClass : initargs_classes) {
-//						Class<?> currentClass = argClass;
-//						while (currentClass != Object.class) {
-//							try {
-//								return getClass().getConstructor(currentClass).newInstance(initargs);
-//							} catch (InstantiationException | IllegalAccessException
-//							         | InvocationTargetException | NoSuchMethodException e) {
-//								currentClass = currentClass.getSuperclass();
-//							}
-//						}
-//					}
-//					throw new RuntimeException("No suitable constructor found");
-//				});
 				FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
 				launchLoader.setControllerFactory(c -> {
 					List<List<Class<?>>> classHierarchies = new ArrayList<>(initargs.length);
 					for (int i = 0; i < initargs.length; i++) {
-						classHierarchies.add(getClassHierarchy(initargs[i].getClass()));
+						Set<Class<?>> hierarchyAndInterfaces = new HashSet<>();
+						Class<?> currentClass = initargs[i].getClass();
+						while (currentClass != null) {
+							hierarchyAndInterfaces.add(currentClass);
+							hierarchyAndInterfaces.addAll(Arrays.asList(currentClass.getInterfaces()));
+							currentClass = currentClass.getSuperclass();
+						}
+						classHierarchies.add(new ArrayList<>(hierarchyAndInterfaces));
 					}
 					for (List<Class<?>> combination : generateCombinations(classHierarchies, 0)) {
 						try {
@@ -111,18 +91,13 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 					}
 					throw new RuntimeException("No suitable constructor found");
 				});
-				System.out.println("HOIIVUtilsStageLoader creating stage with fxml" + fxmlResource);
 				Parent root = launchLoader.load();
 				Scene scene = new Scene(root);
-
 				addSceneStylesheets(scene);
-
-
 				Stage launchStage = createLaunchStage(scene);
 				this.loader = launchLoader;
 				this.stage = launchStage;
-				System.out.println("HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource
-						+ " title: " + title);
+				System.out.println("HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource + " title: " + title);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

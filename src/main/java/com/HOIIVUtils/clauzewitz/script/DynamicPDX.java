@@ -1,7 +1,6 @@
 package com.HOIIVUtils.clauzewitz.script;
 
 import com.HOIIVUtils.clausewitz_parser.Node;
-import org.apache.poi.ss.formula.functions.T;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,8 +8,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScript<V> {
-    protected AbstractPDX<V> simplePDX;
-    protected Supplier<AbstractPDX<V>> simplePDXSupplier;
+    protected PDXScript<V> simplePDX;
+    protected Supplier<PDXScript<V>> simplePDXSupplier;
     @NotNull protected final U structuredBlock;
     /**
      * may be null. the structured block does not always have a single property
@@ -19,25 +18,25 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
      */
     private List<String> structuredPDXValueIdentifiers;
 
-    public DynamicPDX(Supplier<AbstractPDX<V>> simplePDXSupplier, @NotNull U structuredBlock) {
+    public DynamicPDX(Supplier<PDXScript<V>> simplePDXSupplier, @NotNull U structuredBlock) {
         this.simplePDXSupplier = simplePDXSupplier;
         this.structuredBlock = structuredBlock;
         this.structuredPDXValueIdentifiers = null;
     }
 
-    public DynamicPDX(Supplier<AbstractPDX<V>> simplePDXSupplier, @NotNull U structuredBlock, String structuredPDXValueIdentifier) {
+    public DynamicPDX(Supplier<PDXScript<V>> simplePDXSupplier, @NotNull U structuredBlock, String structuredPDXValueIdentifier) {
         this.simplePDXSupplier = simplePDXSupplier;
         this.structuredBlock = structuredBlock;
         this.structuredPDXValueIdentifiers = List.of(structuredPDXValueIdentifier);
     }
 
-    public DynamicPDX(Supplier<AbstractPDX<V>> simplePDXSupplier, @NotNull U structuredBlock, List<String> structuredPDXValueIdentifier) {
+    public DynamicPDX(Supplier<PDXScript<V>> simplePDXSupplier, @NotNull U structuredBlock, List<String> structuredPDXValueIdentifier) {
         this.simplePDXSupplier = simplePDXSupplier;
         this.structuredBlock = structuredBlock;
         this.structuredPDXValueIdentifiers = structuredPDXValueIdentifier;
     }
 
-    public void setSimplePDX(AbstractPDX<V> simplePDX) {
+    public void setSimplePDX(PDXScript<V> simplePDX) {
         this.simplePDX = simplePDX;
         this.structuredBlock.setNull();
     }
@@ -182,11 +181,28 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
      * that is equivalent to the simple value. Or, the structured block has a
      * property that is equivalent to a value and the property is null.
      */
-    private @Nullable AbstractPDX<V> getStructuredValueProperty() {
+    private @Nullable PDXScript<V> getStructuredValueProperty() {
         if (isBlock() && structuredPDXValueIdentifiers != null) {
             return structuredBlock.<V>getPDXPropertyOfType(structuredPDXValueIdentifiers);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public String getPDXIdentifier() {
+        if (!isBlock()) {
+            return simplePDX.getPDXIdentifier();
+        } else {
+            return structuredBlock.getPDXIdentifier();
+        }
+    }
+
+    public PDXScript<?> getPDXScript() {
+        if (!isBlock()) {
+            return simplePDX;
+        } else {
+            return structuredBlock;
         }
     }
 }

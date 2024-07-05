@@ -16,31 +16,31 @@ import java.util.List;
  */
 public class PDXEditorPane extends AnchorPane {
     private final PDXScript<?> pdxScript;
-    private final VBox vbox;
-    private final List<AbstractPDX<?>> nullProperties = new ArrayList<>();
+    private final VBox rootVBox;
+    private final List<PDXScript<?>> nullProperties = new ArrayList<>();
     private final List<Node> nullPropertyNodes = new ArrayList<>();
     private boolean displayNullProperties = false;
 
     public PDXEditorPane(PDXScript<?> pdxScript) {
         this.pdxScript = pdxScript;
-        this.vbox = new VBox();
-        this.getChildren().add(vbox);
+        this.rootVBox = new VBox();
+        this.getChildren().add(rootVBox);
 
         // Anchor the vbox to all sides of the PDXEditorPane
-        AnchorPane.setTopAnchor(vbox, 0.0);
-        AnchorPane.setBottomAnchor(vbox, 0.0);
-        AnchorPane.setLeftAnchor(vbox, 0.0);
-        AnchorPane.setRightAnchor(vbox, 0.0);
+        AnchorPane.setTopAnchor(rootVBox, 0.0);
+        AnchorPane.setBottomAnchor(rootVBox, 0.0);
+        AnchorPane.setLeftAnchor(rootVBox, 0.0);
+        AnchorPane.setRightAnchor(rootVBox, 0.0);
 
         // Set padding and spacing for the vbox
-        vbox.setPadding(new Insets(10));
-        vbox.setSpacing(10);
+        rootVBox.setPadding(new Insets(10));
+        rootVBox.setSpacing(10);
 
         // Initialize the editor with the properties of the PDXScript
-        drawEditor(pdxScript);
+        drawEditor(pdxScript, rootVBox);
     }
 
-    private void drawEditor(PDXScript<?> pdxScript) {
+    private void drawEditor(PDXScript<?> pdxScript, VBox vbox) {
         vbox.getChildren().clear(); // Clear existing children to reset the editor
 
         if (pdxScript instanceof StructuredPDX pdx) {
@@ -52,7 +52,7 @@ public class PDXEditorPane extends AnchorPane {
                 label.setMinWidth(10);
                 label.setPrefHeight(25);
 
-                Node editorNode = createEditorNode(property, false, label);
+                Node editorNode = createEditorNode(property, false, vbox);
                 if (editorNode != null) {
                     hbox.getChildren().addAll(label, editorNode);
                     vbox.getChildren().add(hbox);
@@ -77,89 +77,137 @@ public class PDXEditorPane extends AnchorPane {
         }
     }
 
-    private Node createEditorNode(AbstractPDX<?> property, boolean allowNull, Label label) {
-        if (property instanceof StructuredPDX) {
-            VBox subVBox = new VBox();
-            subVBox.setPadding(new Insets(10));
-            subVBox.setSpacing(10);
-
-            Label subLabel = new Label(property.getPDXIdentifier() + " Sub-Properties:");
-            subLabel.setFont(Font.font("Monospaced"));
-
-            subVBox.getChildren().add(subLabel);
-            drawEditor(property);
-
-            return subVBox;
-        } else if (property instanceof StringPDX pdx) {
-            if (pdx.get() == null && !allowNull) return null;
-            TextField textField = new TextField(pdx.toScript() != null ? pdx.toScript() : "");
-            textField.setPrefWidth(200);
-            textField.setPrefHeight(25);
-            textField.textProperty().addListener((observable, oldValue, newValue) -> {
-                pdx.set(newValue);
-                if (!newValue.isEmpty() && nullProperties.contains(property)) {
-                    reloadEditor();
-                }
-            });
-            return textField;
-        } else if (property instanceof BooleanPDX pdx) {
-            Label customCheckBox = new Label();
-            customCheckBox.setText(pdx.get() ? "yes" : "no");
-            customCheckBox.setFont(Font.font("Monospaced"));
-            customCheckBox.setPrefHeight(25);
-            customCheckBox.getStyleClass().add("custom-check-box");
-
-            customCheckBox.setOnMouseClicked(event -> {
-                pdx.invert();
+    private Node createEditorNode(PDXScript<?> property, boolean allowNull, VBox vbox) {
+        switch (property) {
+            case StructuredPDX pdx -> {
+                VBox subVBox = new VBox();
+                subVBox.setPadding(new Insets(10));
+                subVBox.setSpacing(10);
+                Label subLabel = new Label(property.getPDXIdentifier() + " Sub-Properties:");
+                subLabel.setFont(Font.font("Monospaced"));
+                subVBox.getChildren().add(subLabel);
+                drawEditor(property, subVBox);
+                return subVBox;
+            }
+            case StringPDX pdx -> {
+                if (pdx.get() == null && !allowNull) return null;
+                TextField textField = new TextField(pdx.toScript() != null ? pdx.toScript() : "");
+                textField.setPrefWidth(200);
+                textField.setPrefHeight(25);
+                textField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    pdx.set(newValue);
+                    if (!newValue.isEmpty() && nullProperties.contains(property)) {
+                        reloadEditor();
+                    }
+                });
+                return textField;
+            }
+            case BooleanPDX pdx -> {
+                Label customCheckBox = new Label();
                 customCheckBox.setText(pdx.get() ? "yes" : "no");
-                if (nullProperties.contains(property)) {
-                    reloadEditor();
+                customCheckBox.setFont(Font.font("Monospaced"));
+                customCheckBox.setPrefHeight(25);
+                customCheckBox.getStyleClass().add("custom-check-box");
+                customCheckBox.setOnMouseClicked(event -> {
+                    pdx.invert();
+                    customCheckBox.setText(pdx.get() ? "yes" : "no");
+                    if (nullProperties.contains(property)) {
+                        reloadEditor();
+                    }
+                });
+                return customCheckBox;
+            }
+            case IntegerPDX pdx -> {
+                if (pdx.get() == null && !allowNull) return null;
+                Spinner<Integer> spinner = new Spinner<>(
+                        new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE,
+                                Integer.MAX_VALUE));
+                spinner.getValueFactory().setValue(pdx.getOrElse(0));
+                spinner.setPrefHeight(25);
+                spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+                    pdx.set(newValue);
+                    if (nullProperties.contains(property)) {
+                        reloadEditor();
+                    }
+                });
+                return spinner;
+            }
+            case DoublePDX pdx -> {
+                if (pdx.get() == null && !allowNull) return null;
+                Spinner<Double> spinner = new Spinner<>(
+                        new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.MIN_VALUE,
+                                Double.MAX_VALUE));
+                spinner.getValueFactory().setValue(pdx.getOrElse(0.0));
+                spinner.setPrefHeight(25);
+                spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+                    pdx.set(newValue);
+                    if (nullProperties.contains(property)) {
+                        reloadEditor();
+                    }
+                });
+                return spinner;
+            }
+            case ReferencePDXScript<?> pdx -> {
+                if (pdx.get() == null && !allowNull) return null;
+                ComboBox<String> comboBox = new ComboBox<>();
+                comboBox.setPrefWidth(200);
+                comboBox.setPrefHeight(25);
+                comboBox.getSelectionModel().select(pdx.getReferenceName());
+                comboBox.setItems(
+                        FXCollections.observableArrayList(pdx.getReferenceCollectionNames()));
+                comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                    pdx.setReferenceName(newValue);
+                    if (nullProperties.contains(property)) {
+                        reloadEditor();
+                    }
+                });
+                return comboBox;
+            }
+            case DynamicPDX<?, ? extends StructuredPDX> pdx -> {
+                if (pdx.getPDXScript() == null && !allowNull) return null;
+                return createEditorNode(pdx.getPDXScript(), allowNull, vbox);
+            }
+            case MultiReferencePDXScript<?> pdx -> {
+                if (pdx.isUndefined() && !allowNull) return null;
+                VBox subVBox = new VBox();
+                subVBox.setPadding(new Insets(10));
+                subVBox.setSpacing(10);
+//                Label subLabel = new Label(property.getPDXIdentifier() + " Sub-Properties:");
+//                subLabel.setFont(Font.font("Monospaced"));
+//                subVBox.getChildren().add(subLabel);
+                //
+                for (int i = 0; i < pdx.size(); i++) {
+                    ComboBox<String> comboBox = new ComboBox<>();
+                    comboBox.setPrefWidth(200);
+                    comboBox.setPrefHeight(25);
+                    comboBox.getSelectionModel().select(pdx.getReferenceName(i));
+                    comboBox.setItems(FXCollections.observableArrayList(pdx.getReferenceCollectionNames()));
+                    final int index = i;
+                    comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                        pdx.setReferenceName(index, newValue);
+                        if (nullProperties.contains(property)) {
+                            reloadEditor();
+                        }
+                    });
+                    subVBox.getChildren().add(comboBox);
                 }
-            });
-
-            return customCheckBox;
-        } else if (property instanceof IntegerPDX pdx) {
-            if (pdx.get() == null && !allowNull) return null;
-            Spinner<Integer> spinner = new Spinner<>(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
-            spinner.getValueFactory().setValue(pdx.getOrElse(0));
-            spinner.setPrefHeight(25);
-            spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-                pdx.set(newValue);
-                if (nullProperties.contains(property)) {
-                    reloadEditor();
+                return subVBox;
+            }
+            case MultiPDXScript<?> pdx -> {
+                if (pdx.isUndefined() && !allowNull) return null;
+                VBox subVBox = new VBox();
+                subVBox.setPadding(new Insets(10));
+                subVBox.setSpacing(10);
+//                Label subLabel = new Label(property.getPDXIdentifier() + " Sub-Properties:");
+//                subLabel.setFont(Font.font("Monospaced"));
+//                subVBox.getChildren().add(subLabel);
+                for (var pdxScript : pdx) {
+                    subVBox.getChildren().add(createEditorNode(pdxScript, allowNull, subVBox));
                 }
-            });
-            return spinner;
-        } else if (property instanceof DoublePDX pdx) {
-            if (pdx.get() == null && !allowNull) return null;
-            Spinner<Double> spinner = new Spinner<>(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.MIN_VALUE, Double.MAX_VALUE));
-            spinner.getValueFactory().setValue(pdx.getOrElse(0.0));
-            spinner.setPrefHeight(25);
-            spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-                pdx.set(newValue);
-                if (nullProperties.contains(property)) {
-                    reloadEditor();
-                }
-            });
-            return spinner;
-        } else if (property instanceof ReferencePDXScript<?> pdx) {
-            if (pdx.get() == null && !allowNull) return null;
-            ComboBox<String> comboBox = new ComboBox<>();
-            comboBox.setPrefWidth(200);
-            comboBox.setPrefHeight(25);
-            comboBox.getSelectionModel().select(pdx.getReferenceName());
-            comboBox.setItems(FXCollections.observableArrayList(pdx.getReferenceCollectionNames()));
-            comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-                pdx.setReferenceName(newValue);
-                if (nullProperties.contains(property)) {
-                    reloadEditor();
-                }
-            });
-            return comboBox;
-        } else if (property instanceof DynamicPDX pdx) {
-
-        } else {
-            System.out.println("Ui node unknown for property type: " + property.getClass());
+                return subVBox;
+            }
+            case null, default ->
+                    System.out.println("Ui node unknown for property type: " + property.getClass());
         }
         return null;
     }
@@ -170,7 +218,7 @@ public class PDXEditorPane extends AnchorPane {
     private void reloadEditor() {
         nullProperties.clear();
         nullPropertyNodes.clear();
-        drawEditor(pdxScript);
+        drawEditor(pdxScript, rootVBox);
     }
 
     private void showNullProperties() {
@@ -184,10 +232,10 @@ public class PDXEditorPane extends AnchorPane {
             label.setPrefHeight(25);
             label.setStyle("-fx-text-fill: grey;");
 
-            Node editorNode = createEditorNode(property, true, label);
+            Node editorNode = createEditorNode(property, true, rootVBox);
             if (editorNode != null) {
                 hbox.getChildren().addAll(label, editorNode);
-                vbox.getChildren().add(vbox.getChildren().size() - 1, hbox); // Add before the add button
+                rootVBox.getChildren().add(rootVBox.getChildren().size() - 1, hbox); // Add before the add button
                 nullPropertyNodes.add(hbox);
             }
         }
@@ -195,7 +243,7 @@ public class PDXEditorPane extends AnchorPane {
 
     private void hideNullProperties() {
         for (var node : nullPropertyNodes) {
-            vbox.getChildren().remove(node);
+            rootVBox.getChildren().remove(node);
         }
         nullPropertyNodes.clear();
     }

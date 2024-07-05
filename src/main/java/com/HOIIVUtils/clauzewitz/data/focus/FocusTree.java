@@ -69,7 +69,7 @@ public class FocusTree extends StructuredPDX implements Localizable, Comparable<
 	}
 
 	@Override
-	protected Collection<? extends AbstractPDX<?>> childScripts() {
+	protected Collection<? extends PDXScript<?>> childScripts() {
 		return List.of(id, country, focuses);
 	}
 

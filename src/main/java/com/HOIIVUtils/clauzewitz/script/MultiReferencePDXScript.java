@@ -116,4 +116,16 @@ public class MultiReferencePDXScript<T extends AbstractPDX<?>> extends MultiPDXS
         }
         return sb.toString();
     }
+
+    public void setReferenceName(int index, String value) {
+        referenceNames.set(index, value);
+    }
+
+    public String getReferenceName(int i) {
+        return referenceNames.get(i);
+    }
+
+    public List<String> getReferenceCollectionNames() {
+        return referenceCollectionSupplier.get().stream().map(idExtractor).toList();
+    }
 }

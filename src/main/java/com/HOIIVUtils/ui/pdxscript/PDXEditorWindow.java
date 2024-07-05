@@ -12,7 +12,7 @@ public class PDXEditorWindow extends HOIIVUtilsWindow {
     AnchorPane rootAnchorPane;// = new AnchorPane();
     @FXML
     private PDXEditorPane editorPane;
-    private AbstractPDX<?> pdxScript;
+    private PDXScript<?> pdxScript;
 
     public PDXEditorWindow() {
         setFxmlResource("PDXEditorWindow.fxml");
@@ -27,7 +27,7 @@ public class PDXEditorWindow extends HOIIVUtilsWindow {
      * @param pdxScript
      */
     @SuppressWarnings("unused")
-    public PDXEditorWindow(AbstractPDX<?> pdxScript) {
+    public PDXEditorWindow(PDXScript<?> pdxScript) {
         this.pdxScript = pdxScript;
     }
 

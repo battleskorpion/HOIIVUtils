@@ -75,7 +75,7 @@ public class MultiPDXScript<T extends PDXScript<?>> extends AbstractPDX<List<T>>
         // then load each sub-PDXScript
         if (obj instanceof PDXScriptList childScriptList) {
             if (!value.isList()) throw new NodeValueTypeException(expression, "list");
-            for (AbstractPDX<?> pdxScript : childScriptList) {
+            for (PDXScript<?> pdxScript : childScriptList) {
                 pdxScript.loadPDX(value.list());
             }
         } else if (obj instanceof ArrayList<T> childScriptList) {

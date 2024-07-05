@@ -86,7 +86,7 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 	}
 
 	@Override
-	protected Collection<? extends AbstractPDX<?>> childScripts() {
+	protected Collection<? extends PDXScript<?>> childScripts() {
 		return List.of(this.id, this.icon, this.x, this.y, this.prerequisites, this.mutually_exclusive,
 				this.relativePosition, this.cost, this.available_if_capitulated,
 				this.cancel_if_invalid, this.continue_if_invalid);
@@ -762,7 +762,7 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 						private final StringPDX value = new StringPDX("value");
 
 						@Override
-						protected Collection<? extends AbstractPDX<?>> childScripts() {
+						protected Collection<? extends PDXScript<?>> childScripts() {
 							return List.of(value);
 						}
 

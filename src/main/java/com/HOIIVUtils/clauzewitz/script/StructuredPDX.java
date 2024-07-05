@@ -20,7 +20,7 @@ public abstract class StructuredPDX extends AbstractPDX<PDXScriptList> {
         obj = new PDXScriptList();
     }
 
-    protected abstract Collection<? extends AbstractPDX<?>> childScripts();
+    protected abstract Collection<? extends PDXScript<?>> childScripts();
 
     @Override
     public void set(Node expression) throws UnexpectedIdentifierException, NodeValueTypeException {
@@ -29,7 +29,7 @@ public abstract class StructuredPDX extends AbstractPDX<PDXScriptList> {
 
         // then load each sub-PDXScript
         if (!value.isList()) throw new NodeValueTypeException(expression, "list");
-        for (AbstractPDX<?> pdxScript : obj) {
+        for (PDXScript<?> pdxScript : obj) {
             pdxScript.loadPDX(value.list());
         }
     }
@@ -58,8 +58,8 @@ public abstract class StructuredPDX extends AbstractPDX<PDXScriptList> {
      * the given string.
      * @param identifier
      */
-    public AbstractPDX<?> getPDXProperty(String identifier) {
-        for (AbstractPDX<?> pdx : childScripts()) {
+    public PDXScript<?> getPDXProperty(String identifier) {
+        for (PDXScript<?> pdx : childScripts()) {
             if (pdx.getPDXIdentifier().equals(identifier)) {
                 return pdx;
             }
@@ -72,7 +72,7 @@ public abstract class StructuredPDX extends AbstractPDX<PDXScriptList> {
      * the given string.
      * @param identifiers
      */
-    public AbstractPDX<?> getPDXProperty(List<String> identifiers) {
+    public PDXScript<?> getPDXProperty(List<String> identifiers) {
         for (String identifier : identifiers) {
             var pdx = getPDXProperty(identifier);
             if (pdx != null) {
@@ -82,44 +82,16 @@ public abstract class StructuredPDX extends AbstractPDX<PDXScriptList> {
         return null;
     }
 
-//    /**
-//     * Gets the child pdx property with the current identifier matching
-//     * the given string.
-//     * @param identifier
-//     */
-//    public <T extends AbstractPDX<?>> T getPDXPropertyOfType(Class<T> type, String identifier) {
-//        for (AbstractPDX<?> pdx : childScripts()) {
-//            if (pdx.getActiveIdentifier().equals(identifier) && type.isInstance(pdx)) {
-//                return type.cast(pdx);
-//            }
-//        }
-//        return null;
-//    }
-//
-//    /**
-//     * Gets the child pdx property with the current identifier matching
-//     * the given string.
-//     * @param identifiers
-//     */
-//    public <T extends AbstractPDX<?>> T getPDXPropertyOfType(Class<T> type, List<String> identifiers) {
-//        for (String identifier : identifiers) {
-//            var pdx = getPDXPropertyOfType(type, identifier);
-//            if (pdx != null) {
-//                return pdx;
-//            }
-//        }
-//        return null;
-//    }
     /**
      * Gets the child pdx property with the current identifier matching
      * the given string.
      * @param identifier
      */
     @SuppressWarnings("unchecked")
-    public <R> AbstractPDX<R> getPDXPropertyOfType(String identifier) {
-        for (AbstractPDX<?> pdx : childScripts()) {
+    public <R> PDXScript<R> getPDXPropertyOfType(String identifier) {
+        for (PDXScript<?> pdx : childScripts()) {
             if (pdx.getPDXIdentifier().equals(identifier)) {
-                return (AbstractPDX<R>) pdx;
+                return (PDXScript<R>) pdx;
             }
         }
         return null;
@@ -130,9 +102,9 @@ public abstract class StructuredPDX extends AbstractPDX<PDXScriptList> {
      * the given string.
      * @param identifiers
      */
-    public <R> AbstractPDX<R> getPDXPropertyOfType(List<String> identifiers) {
+    public <R> PDXScript<R> getPDXPropertyOfType(List<String> identifiers) {
         for (String identifier : identifiers) {
-            AbstractPDX<R> pdx = getPDXPropertyOfType(identifier);
+            PDXScript<R> pdx = getPDXPropertyOfType(identifier);
             if (pdx != null) {
                 return pdx;
             }
@@ -140,7 +112,7 @@ public abstract class StructuredPDX extends AbstractPDX<PDXScriptList> {
         return null;
     }
 
-    public Collection<? extends AbstractPDX<?>> pdxProperties() {
+    public Collection<? extends PDXScript<?>> pdxProperties() {
         var scripts = childScripts();
         if (scripts == null) return null;
         return Collections.unmodifiableCollection(scripts);

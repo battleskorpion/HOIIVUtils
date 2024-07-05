@@ -35,4 +35,7 @@ public interface PDXScript<T> {
     T getOrElse(T elseValue);
 
     boolean isUndefined();
+
+    String getPDXIdentifier();
+
 }
