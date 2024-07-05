@@ -2,11 +2,11 @@ package com.HOIIVUtils.clauzewitz.script;
 
 import com.HOIIVUtils.clausewitz_parser.Node;
 import com.HOIIVUtils.clausewitz_parser.NodeValue;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public class MultiReferencePDXScript<T extends AbstractPDX<?>> extends MultiPDXScript<T> {
     protected final Supplier<Collection<T>> referenceCollectionSupplier;
     protected final Function<T, String> idExtractor;
-    protected final List<String> referencePDXIdentifiers;
+    protected final List<String> referencePDXTokenIdentifiers;
     protected final List<String> referenceNames = new ArrayList<>();
 
     public MultiReferencePDXScript(Supplier<Collection<T>> referenceCollectionSupplier,
@@ -22,7 +22,7 @@ public class MultiReferencePDXScript<T extends AbstractPDX<?>> extends MultiPDXS
         super(null, PDXIdentifier);
         this.referenceCollectionSupplier = referenceCollectionSupplier;
         this.idExtractor = idExtractor;
-        this.referencePDXIdentifiers = List.of(referenceIdentifier);
+        this.referencePDXTokenIdentifiers = List.of(referenceIdentifier);
     }
 
     public MultiReferencePDXScript(Supplier<Collection<T>> referenceCollectionSupplier,
@@ -30,7 +30,7 @@ public class MultiReferencePDXScript<T extends AbstractPDX<?>> extends MultiPDXS
         super(null, PDXIdentifiers);
         this.referenceCollectionSupplier = referenceCollectionSupplier;
         this.idExtractor = idExtractor;
-        this.referencePDXIdentifiers = pdxReferenceIdentifier;
+        this.referencePDXTokenIdentifiers = pdxReferenceIdentifier;
     }
 
     @Override
@@ -97,8 +97,8 @@ public class MultiReferencePDXScript<T extends AbstractPDX<?>> extends MultiPDXS
     }
 
     protected void usingReferenceIdentifier(Node exp) throws UnexpectedIdentifierException {
-        for (int i = 0; i < referencePDXIdentifiers.size(); i++) {
-            if (exp.nameEquals(referencePDXIdentifiers.get(i))) {
+        for (int i = 0; i < referencePDXTokenIdentifiers.size(); i++) {
+            if (exp.nameEquals(referencePDXTokenIdentifiers.get(i))) {
 //                activeReferenceIdentifier = i;
                 return;
             }
@@ -127,5 +127,25 @@ public class MultiReferencePDXScript<T extends AbstractPDX<?>> extends MultiPDXS
 
     public List<String> getReferenceCollectionNames() {
         return referenceCollectionSupplier.get().stream().map(idExtractor).toList();
+    }
+
+    public void addReferenceName(String newValue) {
+        referenceNames.add(newValue);
+        resolveReferences();
+    }
+
+    /**
+     * Size of actively valid references (resolved PDXScript object references)
+     * @return
+     */
+    @Override
+    public int size() {
+        var list = get();
+        if (list == null) return 0;
+        return list.size();
+    }
+
+    public int referenceSize() {
+        return referenceNames.size();
     }
 }

@@ -171,7 +171,10 @@ public class PDXEditorPane extends AnchorPane {
                 if (pdx.isUndefined() && !allowNull) return null;
                 VBox subVBox = new VBox();
                 subVBox.setSpacing(2);
-                for (int i = 0; i < pdx.size(); i++) {
+                for (int i = 0; i < pdx.referenceSize(); i++) {
+                    HBox propertyHBox = new HBox();
+                    propertyHBox.setSpacing(2);
+                    // combo box
                     ComboBox<String> comboBox = new ComboBox<>();
                     comboBox.setPrefWidth(200);
                     comboBox.setPrefHeight(25);
@@ -184,7 +187,27 @@ public class PDXEditorPane extends AnchorPane {
                             reloadEditor();
                         }
                     });
-                    subVBox.getChildren().add(comboBox);
+                    // plus button
+                    Button plusButton = new Button("+");
+                    plusButton.setOnAction(event -> {
+                        HBox newPropertyHBox = new HBox();
+                        propertyHBox.setSpacing(2);
+                        // combo box
+                        ComboBox<String> newComboBox = new ComboBox<>();
+                        newComboBox.setPrefWidth(200);
+                        newComboBox.setPrefHeight(25);
+                        newComboBox.setItems(FXCollections.observableArrayList(pdx.getReferenceCollectionNames()));
+                        newComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                            // Assuming MultiReferencePDXScript has a method to add a new reference name
+                            pdx.addReferenceName(newValue);
+                            reloadEditor();
+                        });
+                        newPropertyHBox.getChildren().add(newComboBox);
+                        subVBox.getChildren().add(newPropertyHBox);
+                    });
+                    propertyHBox.getChildren().add(comboBox);
+                    propertyHBox.getChildren().add(plusButton);
+                    subVBox.getChildren().add(propertyHBox);
                 }
                 return subVBox;
             }
