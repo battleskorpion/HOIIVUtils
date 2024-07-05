@@ -170,12 +170,7 @@ public class PDXEditorPane extends AnchorPane {
             case MultiReferencePDXScript<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
                 VBox subVBox = new VBox();
-                //subVBox.setPadding(new Insets(10));
                 subVBox.setSpacing(2);
-//                Label subLabel = new Label(property.getPDXIdentifier() + " Sub-Properties:");
-//                subLabel.setFont(Font.font("Monospaced"));
-//                subVBox.getChildren().add(subLabel);
-                //
                 for (int i = 0; i < pdx.size(); i++) {
                     ComboBox<String> comboBox = new ComboBox<>();
                     comboBox.setPrefWidth(200);
@@ -196,11 +191,7 @@ public class PDXEditorPane extends AnchorPane {
             case MultiPDXScript<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
                 VBox subVBox = new VBox();
-//                subVBox.setPadding(new Insets(10));
-//                subVBox.setSpacing(10);
-//                Label subLabel = new Label(property.getPDXIdentifier() + " Sub-Properties:");
-//                subLabel.setFont(Font.font("Monospaced"));
-//                subVBox.getChildren().add(subLabel);
+                subVBox.setSpacing(10);
                 for (var pdxScript : pdx) {
                     subVBox.getChildren().add(createEditorNode(pdxScript, allowNull, subVBox));
                 }
