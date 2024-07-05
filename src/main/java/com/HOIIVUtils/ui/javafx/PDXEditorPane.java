@@ -170,8 +170,8 @@ public class PDXEditorPane extends AnchorPane {
             case MultiReferencePDXScript<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
                 VBox subVBox = new VBox();
-                subVBox.setPadding(new Insets(10));
-                subVBox.setSpacing(10);
+                //subVBox.setPadding(new Insets(10));
+                subVBox.setSpacing(2);
 //                Label subLabel = new Label(property.getPDXIdentifier() + " Sub-Properties:");
 //                subLabel.setFont(Font.font("Monospaced"));
 //                subVBox.getChildren().add(subLabel);
@@ -196,8 +196,8 @@ public class PDXEditorPane extends AnchorPane {
             case MultiPDXScript<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
                 VBox subVBox = new VBox();
-                subVBox.setPadding(new Insets(10));
-                subVBox.setSpacing(10);
+//                subVBox.setPadding(new Insets(10));
+//                subVBox.setSpacing(10);
 //                Label subLabel = new Label(property.getPDXIdentifier() + " Sub-Properties:");
 //                subLabel.setFont(Font.font("Monospaced"));
 //                subVBox.getChildren().add(subLabel);
