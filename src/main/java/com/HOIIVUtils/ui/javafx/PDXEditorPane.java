@@ -91,7 +91,7 @@ public class PDXEditorPane extends AnchorPane {
             }
             case StringPDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
-                TextField textField = new TextField(pdx.toScript() != null ? pdx.toScript() : "");
+                TextField textField = new TextField(pdx.get() != null ? pdx.get() : "");
                 textField.setPrefWidth(200);
                 textField.setPrefHeight(25);
                 textField.textProperty().addListener((observable, oldValue, newValue) -> {
