@@ -13,9 +13,9 @@ import com.HOIIVUtils.clauzewitz.exceptions.InvalidEffectParameterException;
 
 import javafx.scene.image.Image;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.beans.Expression;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
@@ -53,7 +53,8 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 	 * empty: definition exists, but contents is empty, focus = { }
 	 * // todo pdx script time :)
 	 */
-	protected List<Effect> completionReward;
+//	protected List<Effect> completionReward;
+	@NotNull public final CompletionReward completionReward;
 
 	public Focus(FocusTree focusTree) {
 		super("focus");
@@ -775,6 +776,22 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 						}
 					},
 					"value");
+		}
+	}
+
+	private class CompletionReward extends CollectionPDXScript<Effect<?>> {
+		public CompletionReward() {
+			super((Expression exp) -> new Effect(exp), ("completion_reward");
+		}
+
+		@Override
+		public boolean objEquals(PDXScript<?> other) {
+			return false;
+		}
+
+		@Override
+		public void loadPDX(Node expression) throws UnexpectedIdentifierException {
+			super.loadPDX(expression);
 		}
 	}
 }

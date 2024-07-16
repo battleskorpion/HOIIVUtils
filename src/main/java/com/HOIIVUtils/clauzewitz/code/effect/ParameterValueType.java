@@ -1,6 +1,11 @@
 package com.HOIIVUtils.clauzewitz.code.effect;
 
+import com.HOIIVUtils.clauzewitz.data.technology.TechCategory;
+import com.HOIIVUtils.clauzewitz.map.state.State;
+import com.HOIIVUtils.clauzewitz.script.*;
+
 import java.util.List;
+import java.util.Objects;
 
 
 public enum ParameterValueType {
@@ -11,16 +16,20 @@ public enum ParameterValueType {
 		public List<String> identifiers() {
 			return List.of("country", "tag");
 		}
+		//public Class<?> type() { return CountryTag.class; }
 	},
 	cw_bool {
 		public List<String> identifiers() {
 			return List.of("bool", "boolean");
 		}
+		public Class<?> type() { return Boolean.class; }
 	},
 	cw_float {
 		public List<String> identifiers() {
 			return List.of("float", "fraction");
 		}
+		public Class<?> type() { return Double.class; }
+
 	} //		public List<String> modifiers() {
 	//			return List.of(range);
 	//		}
@@ -29,11 +38,13 @@ public enum ParameterValueType {
 		public List<String> identifiers() {
 			return List.of("int", "integer");
 		}
+		public Class<?> type() { return Integer.class; }
 	},
 	cw_string {
 		public List<String> identifiers() {
 			return List.of("string");
 		}
+		public Class<?> type() { return String.class; }
 	},
 //	cw_variable {
 //		public List<String> identifiers() {
@@ -51,6 +62,7 @@ public enum ParameterValueType {
 		public List<String> identifiers() {
 			return List.of("state", "state_id");
 		}
+		public Class<?> type() { return State.class; }
 	},
 	trait,
 	equipment,
@@ -70,6 +82,7 @@ public enum ParameterValueType {
 		public List<String> identifiers() {
 			return List.of("tech_category", "technology_category");
 		}
+		public Class<?> type() { return TechCategory.class; }
 	},
 	advisor_slot,
 	event,
@@ -79,6 +92,8 @@ public enum ParameterValueType {
 		}
 	},
 	;
+
+	private String identifier;
 
 	public static boolean isParameterValueType(String s) {
 		if (s.startsWith("<") && s.endsWith(">")) {
@@ -107,6 +122,7 @@ public enum ParameterValueType {
 			// other args should be @<modifier name> .... <optional modifier arguments>
 			for (ParameterValueType p : ParameterValueType.values()) {
 				if (p.identifiers().contains(args[0])) {
+					p.setIdentifier(args[0]);
 					return p;
 				}
 			}
@@ -114,9 +130,34 @@ public enum ParameterValueType {
 		return null;
 	}
 
+	private void setIdentifier(String arg) {
+		this.identifier = arg;
+	}
+
 	public List<String> identifiers() {
 		return List.of(this.name());
 	}
+	public String identifier() { return this.identifier; }
+
+	public Class<?> type() { return String.class; }
+
+	@SuppressWarnings("unchecked")
+	public <T> PDXScript<T> createPDXScript(Class<T> typeClass) {
+		PDXScript<T> result;
+		if (typeClass.equals(Boolean.class)) {
+			//result = new BooleanPDX(identifier());
+			return null; // todo
+		} else if (typeClass.equals(Double.class)) {
+			result = (PDXScript<T>) new DoublePDX(identifier());
+		} else if (typeClass.equals(Integer.class)) {
+			result = (PDXScript<T>) new IntegerPDX(identifier());
+		} else if (typeClass.equals(String.class)) {
+			result = (PDXScript<T>) new StringPDX(identifier());
+		} else {
+			throw new IllegalArgumentException("Unsupported type: " + typeClass);
+		}
+//		return typeClass.cast(result);
+\	}
 
 	// todo better
 //	public List<String> modifiers() {

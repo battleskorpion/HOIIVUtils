@@ -1,7 +1,11 @@
 package com.HOIIVUtils.clauzewitz.code.effect;
 
 import com.HOIIVUtils.clauzewitz.code.scope.ScopeType;
-import com.HOIIVUtils.clauzewitz.exceptions.NullParameterTypeException;
+import com.HOIIVUtils.clauzewitz.data.focus.Focus;
+import com.HOIIVUtils.clauzewitz.script.PDXScript;
+import com.HOIIVUtils.clauzewitz.script.StringPDX;
+import com.HOIIVUtils.clauzewitz.script.StructuredPDX;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,10 +18,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EffectDatabase {
@@ -85,14 +86,14 @@ public class EffectDatabase {
 		}
 	}
 
-	public List<Effect> loadEffects() {
-		List<Effect> loadedEffects = new ArrayList<>();
+	public List<Effect<?>> loadEffects() {
+		List<Effect<?>> loadedEffects = new ArrayList<>();
 		String retrieveSQL = "SELECT * FROM effects";
 		try {
 			PreparedStatement retrieveStatement = connection.prepareStatement(retrieveSQL);
 			ResultSet resultSet = retrieveStatement.executeQuery();
 			while (resultSet.next()) {
-				String identifier = resultSet.getString("identifier");
+				String pdxIdentifier = resultSet.getString("identifier");
 				// System.out.println("id " + identifier);
 				String supportedScopes_str = resultSet.getString("supported_scopes");
 				String supportedTargets_str = resultSet.getString("supported_targets");
@@ -108,90 +109,67 @@ public class EffectDatabase {
 				// Parameter.addValidIdentifier();
 				if (requiredParametersFull_str == null || requiredParametersFull_str.isEmpty()
 						|| requiredParametersFull_str.equals("none")) {
-					//
+					Effect<?> effect;
+					// todo not effect<string> necessarily
+					effect = new Effect<>(pdxIdentifier, supportedScopes, supportedTargets,
+							StringPDX::new, null);
+					loadedEffects.add(effect);
 				} else {
-					String[] parameters_str = requiredParametersFull_str.split(", ");
+					String[] alternateParameters = requiredParametersFull_str.split("\\s+\\|\\s+");
+					for (String alternateParameter : alternateParameters) {
+						String[] parametersStrlist = alternateParameter.split("\\s+,\\s+");
+						List<? extends PDXScript<?>> childScripts = new ArrayList<>();
+						for (int i = 0; i < parametersStrlist.length; i++) {
+							String parameterStr = parametersStrlist[i];
+							var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1);
+							data = Arrays.stream(data).filter(s -> !s.isEmpty()).toArray(String[]::new);
+							if (data.length >= 2) {
+								var paramIdentifierStr = data[0].trim();
+								var paramTypeStr = data[1].trim();
+								var paramValueType = ParameterValueType.of(paramTypeStr);
 
-					/* single parameter */
-					if (parameters_str.length == 1) {
-						// String[] args = parameters_str[0].split(" ");
-						String[] args = parameters_str[0].split("\\s(?![^<>]*>)");
-						if (ParameterValueType.isParameterValueType(args[0])) {
-							ParameterValueType pValueType = ParameterValueType.scope;
-							try {
-								requiredParameters.add(new Parameter(args[0], pValueType));
-							} catch (NullParameterTypeException e) {
-								System.out.println("null param exception: " + Arrays.toString(args));
-								throw new RuntimeException(e);
+							} else {
+								throw new InvalidParameterException("Invalid parameter definition: " + parameterStr);
 							}
-						} else if (args[0].contains("<") || args[0].contains(">")) {
-							// err
-							throw new RuntimeException(
-									"Invalid effects database element: not recognized parameter value type: "
-											+ args[0]);
+							if (data.length >= 3) {
+								// idk
+							}
+						}
+						var structuredEffectBlock = newStructuredEffectBlock(pdxIdentifier, childScripts);
+						/* Create a Effect instance and add it to the loaded list */
+						Effect<?> effect;
+						if (supportedTargets == null) {
+							effect = new Effect<>(pdxIdentifier, supportedScopes, null,
+									StringPDX::new, structuredEffectBlock);
 						} else {
-							// else is identifier (and parameter value type)
-							// TODO this is broken, fix it
-							// Parameter.addValidParameter(parameters_str[0]);
-							if (args.length < 2) {
-								System.out.println(Arrays.toString(args));
-							}
-							ParameterValueType pValueType = ParameterValueType.of(args[1]);
-							try {
-								requiredParameters.add(new Parameter(parameters_str[0], pValueType));
-							} catch (NullParameterTypeException e) {
-								System.out.println("null param exception: " + Arrays.toString(parameters_str));
-								throw new RuntimeException(e);
-							}
+							effect = new Effect<>(pdxIdentifier, supportedScopes, supportedTargets,
+									StringPDX::new, structuredEffectBlock);
 						}
-					}
-					/* multi parameter */
-					else {
-						String parameter_str;
-						for (int i = 0; i < parameters_str.length; i++) {
-							parameter_str = parameters_str[i];
-							String[] args = parameter_str.split("\\s(?![^<>]*>)");
-							if (args[0].contains("<") || args[0].contains(">")) {
-								// err
-								throw new RuntimeException(
-										"Invalid effects database element: invalid placement of parameter value type: "
-												+ args[0]);
-							}
-							// Parameter.addValidParameter(args[0]);
-							if (args.length < 2) {
-								System.out.println(Arrays.toString(args));
-							}
-							ParameterValueType pValueType = ParameterValueType.of(args[1]);
-							try {
-								requiredParameters.add(new Parameter(args[0], pValueType));
-							} catch (NullParameterTypeException e) {
-								System.out.println("null param exception: " + Arrays.toString(args));
-								throw new RuntimeException(e);
-							}
-
-							// for (int j = 1; j < args.length; j++) {
-							// //if (args[j])
-							// }
-						}
+						loadedEffects.add(effect);
 					}
 				}
-
-				/* optional parameters */
-
-				// Create a Effect instance and add it to the loaded list
-				Effect effect;
-				if (supportedTargets == null) {
-					effect = new Effect(identifier, supportedScopes, requiredParameters);
-				} else {
-					effect = new Effect(identifier, supportedScopes, supportedTargets, requiredParameters);
-				}
-				loadedEffects.add(effect);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		return loadedEffects;
+	}
+
+	@NotNull
+	private static StructuredPDX newStructuredEffectBlock(String pdxIdentifier, List<? extends PDXScript<?>> childScripts) {
+		return new StructuredPDX(pdxIdentifier) {
+			@Override
+			protected Collection<? extends PDXScript<?>> childScripts() {
+				return childScripts;
+			}
+
+			@Override
+			public boolean objEquals(PDXScript<?> other) {
+				// todo
+				return false;
+			}
+		};
 	}
 
 	private EnumSet<ScopeType> parseEnumSet(String enumSetString) {

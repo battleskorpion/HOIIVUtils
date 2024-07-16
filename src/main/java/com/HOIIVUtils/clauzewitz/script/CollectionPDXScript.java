@@ -13,24 +13,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-/**
- * PDX Script that can have multiple instantiation.
- * Example: multiple icon definitions in a focus.
- * The super PDXScript object will be a list of T objects.
- * @param <T>
- */
-public class MultiPDXScript<T extends PDXScript<?>> extends AbstractPDX<List<T>> implements Iterable<T> {
-    protected final Supplier<T> supplier;
+public class CollectionPDXScript<T extends PDXScript<?>> extends AbstractPDX<List<T>> implements Iterable<T> {
 
-    public MultiPDXScript(Supplier<T> supplier, @NotNull String... pdxIdentifiers) {
+    public CollectionPDXScript(@NotNull String... pdxIdentifiers) {
         super(pdxIdentifiers);
-        this.supplier = supplier;
         obj = new ArrayList<>();
     }
 
-    public MultiPDXScript(Supplier<T> supplier, @NotNull List<String> pdxIdentifiers) {
+    public CollectionPDXScript(@NotNull List<String> pdxIdentifiers) {
         super(pdxIdentifiers);
-        this.supplier = supplier;
         obj = new ArrayList<>();
     }
 
@@ -67,8 +58,9 @@ public class MultiPDXScript<T extends PDXScript<?>> extends AbstractPDX<List<T>>
         return super.get();
     }
 
+    @Override
     protected void add(Node expression) throws UnexpectedIdentifierException, NodeValueTypeException {
-        usingIdentifier(expression);
+        //usingIdentifier(expression);  // could be any identifier based on T
         NodeValue value = expression.value();
 
         // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
@@ -79,7 +71,7 @@ public class MultiPDXScript<T extends PDXScript<?>> extends AbstractPDX<List<T>>
                 pdxScript.loadPDX(value.list());
             }
         } else if (obj instanceof ArrayList<T> childScriptList) {
-            T childScript = supplier.get();
+            T childScript = new T(expression);
             childScript.loadPDX(expression);
             childScriptList.add(childScript);
         } else {

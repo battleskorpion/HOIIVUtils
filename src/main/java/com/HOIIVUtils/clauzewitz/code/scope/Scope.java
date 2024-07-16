@@ -1,6 +1,5 @@
 package com.HOIIVUtils.clauzewitz.code.scope;
 
-import com.HOIIVUtils.clauzewitz.code.HOI4Script;
 import com.HOIIVUtils.clauzewitz.code.effect.Effect;
 import com.HOIIVUtils.clauzewitz.data.country.CountryTag;
 import com.HOIIVUtils.clauzewitz.map.state.State;
@@ -10,7 +9,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
-public class Scope implements Cloneable, HOI4Script {
+public class Scope implements Cloneable {
 	public static HashMap<String, Scope> scopes = new HashMap<>();
 
 	public final String name;

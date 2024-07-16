@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScript<V> {
     protected PDXScript<V> simplePDX;
     protected Supplier<PDXScript<V>> simplePDXSupplier;
-    @NotNull protected final U structuredBlock;
+    @Nullable protected final U structuredBlock;
     /**
      * may be null. the structured block does not always have a single property
      * that is equivalent to the simple value. Or, the structured block has a
@@ -18,27 +18,69 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
      */
     private List<String> structuredPDXValueIdentifiers;
 
-    public DynamicPDX(Supplier<PDXScript<V>> simplePDXSupplier, @NotNull U structuredBlock) {
+    public DynamicPDX(@NotNull Supplier<PDXScript<V>> simplePDXSupplier, @NotNull U structuredBlock) {
         this.simplePDXSupplier = simplePDXSupplier;
         this.structuredBlock = structuredBlock;
         this.structuredPDXValueIdentifiers = null;
     }
 
-    public DynamicPDX(Supplier<PDXScript<V>> simplePDXSupplier, @NotNull U structuredBlock, String structuredPDXValueIdentifier) {
+    public DynamicPDX(@NotNull Supplier<PDXScript<V>> simplePDXSupplier, @NotNull U structuredBlock, String structuredPDXValueIdentifier) {
         this.simplePDXSupplier = simplePDXSupplier;
         this.structuredBlock = structuredBlock;
         this.structuredPDXValueIdentifiers = List.of(structuredPDXValueIdentifier);
     }
 
-    public DynamicPDX(Supplier<PDXScript<V>> simplePDXSupplier, @NotNull U structuredBlock, List<String> structuredPDXValueIdentifier) {
+    public DynamicPDX(@NotNull Supplier<PDXScript<V>> simplePDXSupplier, @NotNull U structuredBlock, List<String> structuredPDXValueIdentifier) {
         this.simplePDXSupplier = simplePDXSupplier;
         this.structuredBlock = structuredBlock;
         this.structuredPDXValueIdentifiers = structuredPDXValueIdentifier;
     }
 
+    public DynamicPDX(@NotNull U structuredBlock) {
+        this.simplePDXSupplier = null;
+        this.structuredBlock = structuredBlock;
+        this.structuredPDXValueIdentifiers = null;
+    }
+
+    public DynamicPDX(@NotNull U structuredBlock, String structuredPDXValueIdentifier) {
+        this.simplePDXSupplier = null;
+        this.structuredBlock = structuredBlock;
+        this.structuredPDXValueIdentifiers = List.of(structuredPDXValueIdentifier);
+    }
+
+    public DynamicPDX(@NotNull U structuredBlock, List<String> structuredPDXValueIdentifier) {
+        this.simplePDXSupplier = null;
+        this.structuredBlock = structuredBlock;
+        this.structuredPDXValueIdentifiers = structuredPDXValueIdentifier;
+    }
+
+    public DynamicPDX(@NotNull Supplier<PDXScript<V>> simplePDXSupplier) {
+        this.simplePDXSupplier = simplePDXSupplier;
+        this.structuredBlock = null;
+        this.structuredPDXValueIdentifiers = null;
+    }
+
+    public DynamicPDX(@NotNull Supplier<PDXScript<V>> simplePDXSupplier, String structuredPDXValueIdentifier) {
+        this.simplePDXSupplier = simplePDXSupplier;
+        this.structuredBlock = null;
+        this.structuredPDXValueIdentifiers = List.of(structuredPDXValueIdentifier);
+    }
+
+    public DynamicPDX(@NotNull Supplier<PDXScript<V>> simplePDXSupplier, List<String> structuredPDXValueIdentifier) {
+        this.simplePDXSupplier = simplePDXSupplier;
+        this.structuredBlock = null;
+        this.structuredPDXValueIdentifiers = structuredPDXValueIdentifier;
+    }
+
     public void setSimplePDX(PDXScript<V> simplePDX) {
         this.simplePDX = simplePDX;
-        this.structuredBlock.setNull();
+        this.setNull(structuredBlock);
+    }
+
+    private void setNull(AbstractPDX<?> pdx) {
+        if (pdx != null) {
+            pdx.setNull();
+        }
     }
 
     public void setSimplePDX(V obj) {
@@ -73,7 +115,7 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
         if (!isBlock(expression)) {
             supplySimplePDX();
             simplePDX.set(expression);
-        } else {
+        } else if (blockAllowed()) {
             structuredBlock.set(expression);
         }
     }
@@ -95,7 +137,7 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
         if (!isBlock(expression)) {
             supplySimplePDX();
             simplePDX.loadPDX(expression);
-        } else {
+        } else if (blockAllowed()) {
             structuredBlock.loadPDX(expression);
         }
     }
@@ -108,7 +150,8 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
 
     @Override
     public void loadPDX(List<Node> expressions) {
-        structuredBlock.loadPDX(expressions);
+        if (blockAllowed())
+            structuredBlock.loadPDX(expressions);
         simplePDX.setNull();
     }
 
@@ -117,22 +160,28 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
         // todo i hope this works as intended
         if (!isBlock()) {
             return simplePDX.isValidIdentifier(node);
-        } else {
+        } else if (blockAllowed()) {
             return structuredBlock.isValidIdentifier(node);
+        } else {
+            return false;
         }
+    }
+
+    private boolean blockAllowed() {
+        return structuredBlock != null;
     }
 
     @Override
     public void setNull() {
         simplePDX = null;
-        structuredBlock.setNull();
+        setNull(structuredBlock);
     }
 
     @Override
     public void loadOrElse(Node exp, V value) {
         if (!isBlock()) {
             simplePDX.loadOrElse(exp, value);
-        } else {
+        } else if (blockAllowed()) {
             structuredBlock.loadOrElse(exp, null);
 //            setStructuredBlockValue(value);
         }
@@ -142,8 +191,10 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
     public String toScript() {
         if (!isBlock()) {
             return simplePDX.toScript();
-        } else {
+        } else if (blockAllowed()) {
             return structuredBlock.toScript();
+        } else {
+            return "[null DynamicPDX]";
         }
     }
 
@@ -151,8 +202,10 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
     public boolean objEquals(PDXScript<?> other) {
         if (!isBlock()) {
             return simplePDX.objEquals(other);
-        } else {
+        } else if (blockAllowed()) {
             return structuredBlock.objEquals(other);
+        } else {
+            return false;
         }
     }
 
@@ -182,7 +235,7 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
      * property that is equivalent to a value and the property is null.
      */
     private @Nullable PDXScript<V> getStructuredValueProperty() {
-        if (isBlock() && structuredPDXValueIdentifiers != null) {
+        if (isBlock() && blockAllowed() && structuredPDXValueIdentifiers != null) {
             return structuredBlock.<V>getPDXPropertyOfType(structuredPDXValueIdentifiers);
         } else {
             return null;
@@ -193,8 +246,10 @@ public abstract class DynamicPDX<V, U extends StructuredPDX> implements PDXScrip
     public String getPDXIdentifier() {
         if (!isBlock()) {
             return simplePDX.getPDXIdentifier();
-        } else {
+        } else if (blockAllowed()) {
             return structuredBlock.getPDXIdentifier();
+        } else {
+            return null;
         }
     }
 
