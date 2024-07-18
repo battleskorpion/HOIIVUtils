@@ -80,7 +80,7 @@ public class Parser {
 		/* skip comments */
 		if (name.type == TokenType.comment) {
 			Node node = new Node();
-			node.name = name.value;
+			node.identifier = name.value;
 			node.nameToken = name;
 			return node;
 		}
@@ -104,7 +104,7 @@ public class Parser {
 
 			// TODO node value?
 			Node node = new Node();
-			node.name = nameValue;
+			node.identifier = nameValue;
 			node.nameToken = name;
 			node.operator = null;
 			node.operatorToken = null;
@@ -149,7 +149,7 @@ public class Parser {
 
 		// todo
 		Node node = new Node(parsedValue);
-		node.name = name.value;
+		node.identifier = name.value;
 		node.nameToken = name;
 		node.operator = operator.value;
 		node.operatorToken = operator;

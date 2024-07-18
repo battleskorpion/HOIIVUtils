@@ -27,10 +27,6 @@ public final class NodeValue {
 		this.value = value;
 	}
 
-	public NodeValue(SymbolNode value) {
-		this.value = value;
-	}
-
 	public NodeValue() {
 		this.value = null;
 	}
@@ -162,23 +158,16 @@ public final class NodeValue {
 
 	@NotNull
 	public String asString() {
-		if (value instanceof String) {
-			return (String) value;
-		}
-		if (value == null)
-			return "[null]";
-		if (value instanceof Integer)
-			return Integer.toString((int) value);
-		if (value instanceof Double)
-			return Double.toString((double) value);
-		if (value instanceof Number)
-			return Long.toString((long) value); // sure why not
-		// if (value instanceof List<?>) return "[list]"; // sure why not
-		if (value instanceof List<?> l)
-			return Arrays.toString(l.toArray()); // sure why not
-		if (value instanceof Node)
-			return ((Node) value).toString();
-		return "[invalid type]";
+		return switch (value) {
+			case String s -> s;
+			case Integer i -> Integer.toString(i);
+			case Double d -> Double.toString(d);
+			case Number n -> Long.toString(n.longValue());
+			case List<?> l -> Arrays.toString(l.toArray());
+			case Node n -> n.toString();
+			case null -> "[null]";
+			default -> "[invalid type]";
+		};
 	}
 
 	public boolean isList() {

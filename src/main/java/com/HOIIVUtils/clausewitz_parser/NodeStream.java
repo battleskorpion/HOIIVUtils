@@ -117,12 +117,12 @@ public class NodeStream<T extends Node> implements NodeStreamable<T> {
 
 	@Override
 	public T findFirst(String str) {
-		return findFirst(node -> node.name != null && node.name.equals(str));
+		return findFirst(node -> node.identifier != null && node.identifier.equals(str));
 	}
 
 	@Override
 	public NodeStreamable<T> filterName(String str) {
-		return filter(node -> node.name != null && node.name.equals(str));
+		return filter(node -> node.identifier != null && node.identifier.equals(str));
 	}
 
 	@Override

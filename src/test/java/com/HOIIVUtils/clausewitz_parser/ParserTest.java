@@ -64,7 +64,7 @@ public class ParserTest {
 //		System.out.println(n.value());
         ArrayList<Node> subnodes = (ArrayList<Node>) nodes.get(0).valueObject();
         for (Node node : subnodes) {
-            System.out.println(node.name);
+            System.out.println(node.identifier);
         }
     }
 

@@ -12,29 +12,22 @@ import java.util.stream.Stream;
 
 public class Node implements NodeStreamable<Node> {
 	static BoolType boolType;
-    String name;
+    String identifier;
 	String operator;
-
-	/* never null, stores null */
 	@NotNull private final NodeValue value;
-	SymbolNode valueAttachment;
-	Token valueAttachmentToken;
 	Token nameToken;
 	Token operatorToken;
 
-	public Node (String name, String operator, NodeValue value, SymbolNode valueAttachment,
-	             Token valueAttachmentToken, Token nameToken, Token operatorToken) {
-		this.name = name;
+	public Node(String identifier, String operator, NodeValue value, Token nameToken, Token operatorToken) {
+		this.identifier = identifier;
 		this.operator = operator;
 		this.value = (value == null) ?  new NodeValue() : value;
-		this.valueAttachment = valueAttachment;
-		this.valueAttachmentToken = valueAttachmentToken;
 		this.nameToken = nameToken;
 		this.operatorToken = operatorToken;
 	}
 
 	public Node(NodeValue value) {
-		this(null, null, value, null, null, null, null);
+		this(null, null, value, null, null);
 	}
 
 	public Node() {
@@ -46,7 +39,7 @@ public class Node implements NodeStreamable<Node> {
 	}
 
 	public String name() {
-		return name;
+		return identifier;
 	}
 
 	@NotNull
@@ -141,18 +134,18 @@ public class Node implements NodeStreamable<Node> {
 	}
 
 	public String toString() {
-		return name + operator + value.asString(); // todo
+		return identifier + operator + value.asString(); // todo
 	}
 
 	public int nameAsInteger() {
-		return Integer.parseInt(name);
+		return Integer.parseInt(identifier);
 	}
 
     public boolean nameEquals(String s) {
-		if (name == null) {
+		if (identifier == null) {
 			return false;
 		}
-		return name.equals(s);
+		return identifier.equals(s);
     }
 
 }
