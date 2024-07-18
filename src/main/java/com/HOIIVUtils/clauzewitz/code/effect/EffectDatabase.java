@@ -111,7 +111,7 @@ public class EffectDatabase {
 						|| requiredParametersFull_str.equals("none")) {
 					Effect<?> effect;
 					// todo not effect<string> necessarily
-					effect = new Effect<>(pdxIdentifier, supportedScopes, supportedTargets,
+					effect = new EffectSchema<>(pdxIdentifier, supportedScopes, supportedTargets,
 							StringPDX::new, null);
 					loadedEffects.add(effect);
 				} else {

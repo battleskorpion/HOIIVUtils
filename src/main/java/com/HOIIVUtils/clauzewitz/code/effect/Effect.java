@@ -53,10 +53,6 @@ public class Effect<T> extends DynamicPDX<T, StructuredPDX> implements ScopedPDX
         this.identifier = identifier;
     }
 
-    public Effect(Expression exp) {
-        usingIdentifier(exp);
-    }
-
     public String identifier() {
         return identifier;
     }

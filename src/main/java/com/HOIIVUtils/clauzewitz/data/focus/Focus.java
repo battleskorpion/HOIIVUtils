@@ -781,17 +781,17 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 
 	private class CompletionReward extends CollectionPDXScript<Effect<?>> {
 		public CompletionReward() {
-			super((Expression exp) -> new Effect(exp), ("completion_reward");
+			super("completion_reward");
 		}
 
-		@Override
-		public boolean objEquals(PDXScript<?> other) {
-			return false;
-		}
-
-		@Override
+        @Override
 		public void loadPDX(Node expression) throws UnexpectedIdentifierException {
 			super.loadPDX(expression);
+		}
+
+		@Override
+		protected Effect<?> newChildScript(Node expression) {
+
 		}
 	}
 }

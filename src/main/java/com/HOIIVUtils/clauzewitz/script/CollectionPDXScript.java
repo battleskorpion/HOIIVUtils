@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class CollectionPDXScript<T extends PDXScript<?>> extends AbstractPDX<List<T>> implements Iterable<T> {
+abstract public class CollectionPDXScript<T extends PDXScript<?>> extends AbstractPDX<List<T>> implements Iterable<T> {
 
     public CollectionPDXScript(@NotNull String... pdxIdentifiers) {
         super(pdxIdentifiers);
@@ -58,20 +58,15 @@ public class CollectionPDXScript<T extends PDXScript<?>> extends AbstractPDX<Lis
         return super.get();
     }
 
-    @Override
+
     protected void add(Node expression) throws UnexpectedIdentifierException, NodeValueTypeException {
         //usingIdentifier(expression);  // could be any identifier based on T
         NodeValue value = expression.value();
 
         // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
         // then load each sub-PDXScript
-        if (obj instanceof PDXScriptList childScriptList) {
-            if (!value.isList()) throw new NodeValueTypeException(expression, "list");
-            for (PDXScript<?> pdxScript : childScriptList) {
-                pdxScript.loadPDX(value.list());
-            }
-        } else if (obj instanceof ArrayList<T> childScriptList) {
-            T childScript = new T(expression);
+        if (obj instanceof ArrayList<T> childScriptList) {
+            T childScript = newChildScript(expression);
             childScript.loadPDX(expression);
             childScriptList.add(childScript);
         } else {
@@ -82,6 +77,8 @@ public class CollectionPDXScript<T extends PDXScript<?>> extends AbstractPDX<Lis
             }
         }
     }
+
+    abstract protected T newChildScript(Node expression);
 
     public void clear() {
         obj.clear();
