@@ -7,13 +7,4 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
     </content>
   </component>
-  <component name="AutoImportedSourceRoots">
-    <option name="directories">
-      <list>
-        <option value="src" />
-        <option value="src/main/java" />
-        <option value="target/generated-sources/annotations" />
-      </list>
-    </option>
-  </component>
 </module>

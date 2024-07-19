@@ -6,7 +6,7 @@ $moduleInfoPath = "src\main\java\module-info.java"
 
 # Start of the module-info.java content
 $moduleContent = @"
-module main.java.com.hoi4utils {
+module com.HOIIVUtils {
     requires transitive javafx.controls;
     requires javafx.fxml;
     requires static lombok;
@@ -19,7 +19,7 @@ module main.java.com.hoi4utils {
     requires aparapi;            // leave aparapi last cause aparapi has terrible config
     requires org.xerial.sqlitejdbc;
 
-    opens main.java.com.hoi4utils.ui to javafx.fxml;
+    opens com.HOIIVUtils.ui to javafx.fxml;
 
 "@
 
@@ -29,7 +29,7 @@ function Scan-Directory($dir) {
     foreach ($subDir in $subDirs) {
         $relativePath = $subDir.FullName.Substring($baseDir.Length + 1)
         $packageName = $relativePath -replace '\\', '.'
-        $moduleContent += "    exports main.java.com.hoi4utils.ui.$packageName`r`n"
+        $moduleContent += "    exports com.HOIIVUtils.ui.$packageName`r`n"
         Scan-Directory -dir $subDir.FullName
     }
 }
@@ -38,9 +38,9 @@ function Scan-Directory($dir) {
 Scan-Directory -dir $baseDir
 
 # End of the module-info.java content
-$moduleContent += "    exports main.java.com.hoi4utils.ui;
-    exports main.java.com.hoi4utils.clausewitz_parser;
-    exports main.java.com.hoi4utils.clauzewitz;
+$moduleContent += "    exports com.HOIIVUtils.ui;
+    exports com.HOIIVUtils.clausewitz_parser;
+    exports com.HOIIVUtils.clauzewitz;
 }"
 
 # Write the content to the module-info.java file

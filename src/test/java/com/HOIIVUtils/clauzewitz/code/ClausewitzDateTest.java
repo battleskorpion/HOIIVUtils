@@ -1,4 +1,4 @@
-//package main.java.com.HOIIVUtils.hoi4utils.clausewitz_code;
+//package com.HOIIVUtils.hoi4utils.clausewitz_code;
 //
 //import java.time.DateTimeException;
 //
