@@ -1,0 +1,14 @@
+<root>
+    <item name='main.java.com.hoi4utils.clauzewitz.localization.LocalizationCollection T1[] toArray(T1[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='main.java.com.hoi4utils.clauzewitz.localization.LocalizationCollection T1[] toArray(T1[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='main.java.com.hoi4utils.clauzewitz.localization.LocalizationCollection java.lang.Object[] toArray()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='main.java.com.hoi4utils.clauzewitz.localization.LocalizationCollection java.util.Iterator&lt;main.java.com.hoi4utils.clauzewitz.localization.Localization&gt; iterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

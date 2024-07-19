@@ -8,7 +8,7 @@
 			"type": "java",
 			"name": "HOIIVUtils",
 			"request": "launch",
-			"mainClass": "com.HOIIVUtils/com.HOIIVUtils.clauzewitz.HOIIVUtils",
+			"mainClass": "main.java.com.HOIIVUtils/main.java.com.HOIIVUtils.clauzewitz.HOIIVUtils",
 			"projectName": "HOIIVUtils"
 		}
 	]

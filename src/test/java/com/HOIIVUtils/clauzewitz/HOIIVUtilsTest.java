@@ -1,4 +1,4 @@
-//package com.HOIIVUtils.hoi4utils;
+//package main.java.com.HOIIVUtils.hoi4utils;
 //
 //import static org.junit.jupiter.api.Assertions.fail;
 //

@@ -1,5 +1,7 @@
-package com.HOIIVUtils.clausewitz_parser;
+package main.java.com.hoi4utils.clausewitz_parser;
 
+import main.kotlin.com.hoi4utils.clausewitz_parser.Node;
+import main.kotlin.com.hoi4utils.clausewitz_parser.Parser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
