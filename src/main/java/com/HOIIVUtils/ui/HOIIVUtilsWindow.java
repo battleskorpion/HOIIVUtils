@@ -40,7 +40,7 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 				Parent root = launchLoader.load();
 				Scene scene = new Scene(root);
 
-				addSceneStylesheets(scene);
+				//addSceneStylesheets(scene);
 
 				this.loader = launchLoader;
 				this.stage = createLaunchStage(scene);
@@ -115,7 +115,7 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 				Parent root = launchLoader.load();
 				Scene scene = new Scene(root);
 
-				addSceneStylesheets(scene);
+				//addSceneStylesheets(scene);
 
 
 				Stage launchStage = createLaunchStage(scene);

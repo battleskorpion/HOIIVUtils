@@ -5,7 +5,7 @@
 
 	<groupId>com.HOIIVUtils</groupId>
 	<artifactId>HOIIVUtils</artifactId>
-	<version>11.0.0-SNAPSHOT</version>
+	<version>11.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>HOIIVUtils</name>
@@ -323,17 +323,16 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-<!--				<filtering>true</filtering>-->
-<!--				<includes>-->
-<!--					<include>**/*.properties</include>-->
-<!--					<include>**/*.fxml</include>-->
-<!--					<include>**/*.css</include>-->
-<!--					<include>**/*.txt</include>-->
-<!--					<include>**/*.png</include>-->
-<!--					<include>**/*.bmp</include>-->
-<!--					<include>**/*.sql</include>-->
-<!--					&lt;!&ndash; It does not like .dds or .db files&ndash;&gt;-->
-<!--				</includes>-->
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.fxml</include>
+					<include>**/*.css</include>
+					<include>**/*.txt</include>
+					<include>**/*.png</include>
+					<include>**/*.bmp</include>
+					<include>**/*.sql</include>
+				</includes>
 			</resource>
 		</resources>
 	</build>
