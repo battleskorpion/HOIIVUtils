@@ -19,15 +19,9 @@ import java.util.List
  * <p>
  */
 abstract class AbstractPDX[T] extends PDXScript[T] {
-//  protected var obj: T = null
   final protected var pdxIdentifiers: util.List[String] = _
   private[script] var activeIdentifier = 0
   protected var node: Node = _
-
-//  def this(pdxIdentifier: String) {
-//    this()
-//    this.pdxIdentifiers = util.List.of(pdxIdentifier)
-//  }
 
   def this(pdxIdentifiers: String*) {
     this()
@@ -51,7 +45,7 @@ abstract class AbstractPDX[T] extends PDXScript[T] {
   }
 
   override def set(value: T): Unit = {
-    // todo
+    // todo?
     node.setValue(value)
   }
 
@@ -61,11 +55,12 @@ abstract class AbstractPDX[T] extends PDXScript[T] {
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
     val value = expression.value
-    try obj = value.valueObject.asInstanceOf[T]
-    catch {
-      case e: ClassCastException =>
-        throw new NodeValueTypeException(expression, e)
-    }
+//    try obj = value.valueObject.asInstanceOf[T]
+//    catch {
+//      case e: ClassCastException =>
+//        throw new NodeValueTypeException(expression, e)
+//    }
+    set(value)
   }
 
   override def get(): T = {
@@ -133,7 +128,7 @@ abstract class AbstractPDX[T] extends PDXScript[T] {
   }
 
   override def setNull(): Unit = {
-    obj = null
+    node.setNull()
   }
 
   override def loadOrElse(exp: Node, value: T): Unit = {
@@ -142,31 +137,34 @@ abstract class AbstractPDX[T] extends PDXScript[T] {
       case e: UnexpectedIdentifierException =>
         throw new RuntimeException(e)
     }
-    if (obj == null) obj = value
+    if (node.valueIsNull) set(value)
   }
 
   override def toScript: String = {
-    if (obj == null) return null
-    pdxIdentifiers.get(activeIdentifier) + " = " + obj + "\n"
+    if (node == null || node.isEmpty) return null
+    pdxIdentifiers.get(activeIdentifier) + " = " + node + "\n"
   }
 
-  def objEquals(other: AbstractPDX[_]): Boolean = {
-    if (obj == null) return false
-    if (other.obj == null) return false
-    obj == other.obj
+  def nodeEquals(other: AbstractPDX[_]): Boolean = {
+    if (node == null) return false
+    if (other.node == null) return false
+    node.equals(other.node)
   }
 
   override def getOrElse(elseValue: T): T = {
-    if (isUndefined) elseValue
-    else obj
+    if (isUndefined) return elseValue
+    val value = node.getValue
+    value match
+      case t: T => t
+      case _ => elseValue
   }
 
   override def toString: String = {
-    if (obj == null) return super.toString
-    obj.toString
+    if (node == null || node.isEmpty) return super.toString
+    node.toString
   }
 
-  override def isUndefined: Boolean = obj == null
+  override def isUndefined: Boolean = node == null || node.valueIsNull
 
   override def getPDXIdentifier: String = pdxIdentifiers.get(activeIdentifier)
 }

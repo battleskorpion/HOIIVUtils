@@ -15,7 +15,7 @@ trait PDXScript[T] {
   @throws[UnexpectedIdentifierException]
   def loadPDX(expression: Node): Unit
 
-  def loadPDX(expressions: List[Node]): Unit
+  def loadPDX(expressions: util.List[Node]): Unit
 
   //void loadPDX(@NotNull File file);//void loadPDX(@NotNull File file);
 

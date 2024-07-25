@@ -75,7 +75,7 @@ public class ReferencePDXScript<T extends AbstractPDX<?>> extends AbstractPDX<T>
     }
 
     @Override
-    public boolean objEquals(AbstractPDX<?> other) {
+    public boolean nodeEquals(AbstractPDX<?> other) {
         if (obj == null) {
             resolveReference();
             if (obj == null) return false;

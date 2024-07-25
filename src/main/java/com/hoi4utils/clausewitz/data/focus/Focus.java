@@ -166,7 +166,7 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 		}
 		// todo improve comparability
 		//if (relative_position_id.get().id.get().equals(this.id.get())) {
-		if (relativePosition.objEquals(id)) {
+		if (relativePosition.nodeEquals(id)) {
 			/*
 			todo not an error of this program necessarily, issue should be handled
 			 differently?
@@ -732,7 +732,7 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 
 	@Override
 	public boolean objEquals(PDXScript<?> other) {
-		return this.id.objEquals(((Focus) other).id);
+		return this.id.nodeEquals(((Focus) other).id);
 	}
 
 	public class PrerequisiteSet extends MultiReferencePDXScript<Focus> {

@@ -297,13 +297,13 @@ public class FocusTree extends StructuredPDX implements Localizable, Comparable<
 	 */
 	public static FocusTree get(CountryTag tag) {
 //		return focusTrees.get(tag);
-		return focusTrees.values().stream().filter(focusTree -> focusTree.country.objEquals(tag)).findFirst().orElse(null);
+		return focusTrees.values().stream().filter(focusTree -> focusTree.country.nodeEquals(tag)).findFirst().orElse(null);
 	}
 
 	public static FocusTree getdankwizardisfrench(CountryTag tag) {
 		for (FocusTree tree : listFocusTrees()) {
 			assert tree.country.get() != null;
-			if (tree.country.objEquals(tag)) {
+			if (tree.country.nodeEquals(tag)) {
 				return tree;
 			}
 		}

@@ -9,19 +9,17 @@ import scala.annotation.targetName
 
 
 /**
- * stores string, number, ArrayList<Node>, SymbolNode, or null
+ * stores string, number, ArrayList<Node>, boolean, or null
  */
 // todo should be subclasseed to impl effect parameter?
 final class NodeValue {
-  private var value: String | Int | Double | Boolean | util.ArrayList[Node] = _
+  private var value: String | Int | Double | Boolean | util.ArrayList[Node] | Null = _
 
-  def this(value: String | Int | Double | Boolean | util.ArrayList[Node]) {
+  def this(value: String | Int | Double | Boolean | util.ArrayList[Node] | Null) {
     this()
     this.value = value
   }
-
-  def valueObject: AnyRef = value
-
+  
   def string: String = {
     value match
       case str: String => str
@@ -111,7 +109,7 @@ final class NodeValue {
       case _ => throw new IllegalStateException("Cannot add NodeValues of types " + value.getClass + " and " + other.value.getClass)
   }
   
-  def setValue (value: String | Int | Double | Boolean | util.ArrayList[Node]): Unit = {
+  def setValue (value: String | Int | Double | Boolean | util.ArrayList[Node] | Null): Unit = {
     this.value = value
   }
 }

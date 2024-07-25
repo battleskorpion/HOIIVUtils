@@ -10,9 +10,9 @@ import java.util.function.Function
 import java.util.function.Predicate
 import java.util.stream.Stream
 
-object Node {
-  private val boolType: BoolType = null
-}
+//object Node {
+//  private val boolType: BoolType = null
+//}
 
 class Node(private var identifier: String, private var operator: String, private var value: NodeValue, private var nameToken: Token,
            private var operatorToken: Token) extends NodeStreamable[Node] {
@@ -84,9 +84,17 @@ class Node(private var identifier: String, private var operator: String, private
 
   def getValue(id: String): NodeValue = findFirst(id).value
 
+  def setValue(value: String | Int | Double | Boolean | util.ArrayList[Node]): Unit = {
+    this.value.setValue(value)
+  }
+
   def isParent: Boolean = value.isList
 
-  def valueIsNull: Boolean = value.valueObject == null
+  def valueIsNull: Boolean = value.isNull
+  
+  def isEmpty: Boolean = {
+    value.isNull && identifier == null && operator == null
+  }
 
   override def toString: String = identifier + operator + value.asString // todo
 
@@ -96,4 +104,8 @@ class Node(private var identifier: String, private var operator: String, private
     if (identifier == null) return false
     identifier == s
   }
+  
+  def setNull(): Unit = value = new NodeValue
+  
+  
 }
