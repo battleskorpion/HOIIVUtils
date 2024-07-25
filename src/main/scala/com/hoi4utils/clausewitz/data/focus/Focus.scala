@@ -1,0 +1,217 @@
+package com.hoi4utils.clausewitz.data.focus
+
+class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable with Comparable[Focus] with DataFunctionProvider[Focus] {
+  private val FOCUS_COST_FACTOR = 7
+  private val DEFAULT_FOCUS_COST = 10.0
+
+  /* attributes */
+  val id: StringPDX = new StringPDX("id")
+  val icon: MultiPDXScript[Icon] = new MultiPDXScript(() => new Icon(), "icon")
+  val x: IntegerPDX = new IntegerPDX("x") // if relative, relative x
+  val y: IntegerPDX = new IntegerPDX("y") // if relative, relative y
+  val prerequisites: MultiPDXScript[PrerequisiteSet] = new MultiPDXScript(() => new PrerequisiteSet(() => focusTree.focuses), "prerequisite")
+  val mutuallyExclusive: MultiPDXScript[MutuallyExclusiveSet] = new MultiPDXScript(() => new MutuallyExclusiveSet(() => focusTree.focuses), "mutually_exclusive")
+  val relativePosition: ReferencePDXScript[Focus] = new ReferencePDXScript(() => focusTree.focuses, (f: Focus) => f.id.get(), "relative_position_id")
+  val cost: DoublePDX = new DoublePDX("cost")
+  val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
+  val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
+  val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
+  var ddsImage: Image = _
+
+  val completionReward: CompletionReward = new CompletionReward()
+
+  obj.addAll(childScripts)
+
+  def this(focusTree: FocusTree, node: Node) = {
+    this(focusTree)
+    loadPDX(node)
+  }
+
+  override protected def childScripts(): Seq[PDXScript[_]] = {
+    Seq(id, icon, x, y, prerequisites, mutuallyExclusive, relativePosition, cost, availableIfCapitulated, cancelIfInvalid, continueIfInvalid)
+  }
+
+  def absoluteX(): Int = absolutePosition().x
+
+  def absoluteY(): Int = absolutePosition().y
+
+  def position(): Point = new Point(x.getOrElse(0), y.getOrElse(0))
+
+  def absolutePosition(): Point = {
+    if (relativePosition.isUndefined) {
+      return position()
+    }
+    if (relativePosition.objEquals(id)) {
+      System.err.println("Relative position id same as focus id for " + this)
+      return position()
+    }
+
+    val relativePositionFocus = relativePosition.get()
+    if (relativePositionFocus == null) {
+      System.err.println("focus id " + relativePosition.getReferenceName + " not a focus")
+      return position()
+    }
+    var adjPoint = relativePositionFocus.absolutePosition()
+    adjPoint = new Point(adjPoint.x + x.getOrElse(0), adjPoint.y + y.getOrElse(0))
+
+    adjPoint
+  }
+
+  override def toString: String = id.get()
+
+  def setXY(x: Int, y: Int): Point = {
+    val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
+    this.x.set(x)
+    this.y.set(y)
+    prev
+  }
+
+  def setAbsoluteXY(x: Int, y: Int): Point = {
+    val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
+    this.x.set(x)
+    this.y.set(y)
+    this.relativePosition.setNull()
+    prev
+  }
+
+  def setXY(xy: Point): Point = setXY(xy.x, xy.y)
+
+  def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
+
+  def setCost(cost: Number): Unit = {
+    this.cost.set(cost.doubleValue())
+  }
+
+  def getDDSImage: Image = ddsImage
+
+  def hasPrerequisites: Boolean = !(prerequisites.isUndefined || prerequisites.isEmpty)
+
+  def isMutuallyExclusive: Boolean = !(mutuallyExclusive.isUndefined || mutuallyExclusive.isEmpty)
+
+  def displayedCompletionTime(): Double = Math.floor(preciseCompletionTime())
+
+  def preciseCompletionTime(): Double = cost.getOrElse(DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
+
+  override def getLocalizableProperties: Map[Property, String] = {
+    Map(Property.NAME -> id.get(), Property.DESCRIPTION -> s"${id.get()}_desc")
+  }
+
+  override def getLocalizableGroup: Seq[Localizable] = {
+    if (focusTree == null) {
+      Seq(this)
+    } else {
+      focusTree.getLocalizableGroup
+    }
+  }
+
+  def toScript: String = {
+    val details = new StringBuilder()
+    for (property <- childScripts) {
+      val text = property.toScript
+      if (text != null) {
+        details.append(text)
+      }
+    }
+    details.toString()
+  }
+
+  def completionReward(): List[Effect] = completionReward
+
+  def setCompletionReward(completionReward: List[Effect]): Unit = {
+    this.completionReward = completionReward
+  }
+
+  def setCompletionReward(completionRewardNode: Node): Unit = {
+    completionReward = ListBuffer()
+    if (completionRewardNode.valueIsNull) {
+      return
+    }
+
+    setCompletionRewardsOfNode(completionRewardNode)
+  }
+
+  private def setCompletionRewardsOfNode(completionRewardNode: Node): Unit = {
+    setCompletionRewardsOfNode(completionRewardNode, Scope.of(focusTree.country.get()))
+  }
+
+  private def setCompletionRewardsOfNode(completionRewardNode: Node, scope: Scope): Unit = {
+    for (n <- completionRewardNode.value().list()) {
+      if (n.value().isList) {
+        var s: Scope = null
+        if (CountryTagsManager.exists(n.name())) {
+          s = Scope.of(CountryTagsManager.get(n.name()))
+        } else {
+          try {
+            s = Scope.of(n.name(), scope)
+          } catch {
+            case e: NotPermittedInScopeException =>
+              println(e.getMessage)
+          }
+        }
+
+        if (s == null || s.scopeCategory == ScopeCategory.EFFECT) {
+          var effect: Effect = null
+          try {
+            effect = Effect.of(n.name(), scope, n.value())
+          } catch {
+            case e: InvalidEffectParameterException =>
+              println(e.getMessage)
+            case e: NotPermittedInScopeException =>
+              println(e.getMessage + ", scope: " + scope + ", list? " + n.name())
+          }
+          if (effect != null) {
+            completionReward += effect
+          } else {
+            println("Scope " + n.name() + " unknown.")
+          }
+        } else {
+          setCompletionRewardsOfNode(n, s)
+        }
+      } else if (!n.valueIsNull) {
+        var effect: Effect = null
+        try {
+          effect = Effect.of(n.name(), scope, n.value())
+        } catch {
+          case e: InvalidEffectParameterException =>
+            println(e.getMessage)
+          case e: NotPermittedInScopeException =>
+            println(e.getMessage + ", scope: " + scope)
+        }
+        if (effect == null) {
+          System.err.println("effect not found: " + n.name())
+        } else {
+          if (effect.hasSupportedTargets) {
+            try {
+              effect.setTarget(n.value().string(), scope)
+            } catch {
+              case e: IllegalStateException =>
+                e.printStackTrace()
+            }
+          }
+          completionReward += effect
+        }
+      } else {
+        var effect: Effect = null
+        try {
+          effect = Effect.of(n.name(), scope)
+        } catch {
+          case e: NotPermittedInScopeException =>
+            println(e.getMessage)
+        }
+        if (effect != null) {
+          completionReward += effect
+        }
+      }
+    }
+  }
+}
+
+object Focus {
+  def getDataFunctions: Seq[Function[Focus, _]] = {
+    val dataFunctions = mutable.ListBuffer[Function[Focus, _]]()
+    dataFunctions += (focus => focus.id.get())
+    dataFunctions += (focus => focus.localizationText(Property.NAME))
+    dataFunctions += (focus => focus.localizationText(Property.DESCRIPTION))
+    dataFunctions
+  }
+}

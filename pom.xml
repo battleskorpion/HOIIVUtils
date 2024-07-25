@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.HOIIVUtils</groupId>
+	<groupId>com.hoi4utils</groupId>
 	<artifactId>HOIIVUtils</artifactId>
 	<version>11.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -65,6 +65,7 @@
 		<JUnit.version>5.10.2</JUnit.version>
 		<log4j.version>2.23.1</log4j.version>
 		<lombok.version>1.18.32</lombok.version>
+		<scala.version>3.4.2</scala.version>
 	</properties>
 
 	<dependencyManagement>
@@ -202,6 +203,18 @@
 			<version>0.11.2</version>
 		</dependency>
 
+		<!-- scala -->
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala3-library_3</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_3</artifactId>
+			<version>3.3.0-alpha.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -228,8 +241,13 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.8</version>
 				<configuration>
-					<mainClass>com.HOIIVUtils.clauzewitz.HOIIVUtils</mainClass>
+					<mainClass>com.hoi4utils.clausewitz.HOIIVUtils</mainClass>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.scala-lang</groupId>
+				<artifactId>scala3-library_3</artifactId>
+				<version>3.4.2</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -270,7 +288,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.HOIIVUtils.clauzewitz.HOIIVUtils</mainClass>
+							<mainClass>com.hoi4utils.clausewitz.HOIIVUtils</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -317,6 +335,13 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<!-- scala -->
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>4.9.2</version>
 			</plugin>
 		</plugins>
 
