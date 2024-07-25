@@ -103,7 +103,7 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
 
   def isBlock: Boolean = simplePDX == null
 
-  private def isBlock(expression: Node) = expression.value.isList
+  private def isBlock(expression: Node) = expression.$.isList
 
   override def set(obj: V): Unit = {
     if (!isBlock) setSimplePDX(obj)
@@ -122,7 +122,7 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
   override def get(): V = if (!isBlock) simplePDX.get()
   else if (isBlock) {
     val valueProperty = getStructuredValueProperty
-    if (valueProperty == null) null
+    if (valueProperty == null) null.asInstanceOf[V]
     else valueProperty.get
   }
   else null.asInstanceOf[V]

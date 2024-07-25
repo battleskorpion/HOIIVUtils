@@ -3,21 +3,13 @@ package com.hoi4utils.clausewitz.script
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 
-import java.util
-import java.util.List
-
-
-class IntegerPDX extends AbstractPDX[Integer](pdxIdentifiers) {
+class IntegerPDX(pdxIdentifiers: String*) extends AbstractPDX[Integer](pdxIdentifiers) {
   def this(pdxIdentifiers: String) = {
-    this()
+    this(pdxIdentifiers)
   }
 
-  def this(PDXIdentifiers: String*) = {
-    this()
-  }
-
-  def this(pdxIdentifiers: util.List[String]) = {
-    this()
+  def this(pdxIdentifiers: List[String]) = {
+    this(pdxIdentifiers*)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -30,7 +22,7 @@ class IntegerPDX extends AbstractPDX[Integer](pdxIdentifiers) {
     }
   }
 
-  override def nodeEquals(other: PDXScript[_]): Boolean = {
+  override def nodeEquals(other: PDXScript[?]): Boolean = {
     if (other.isInstanceOf[IntegerPDX]) return node.equals(other.getNode)
     false
   }

@@ -15,15 +15,21 @@ class BooleanPDX(pxdIdentifiers: List[String], final private var defaultValue: B
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.$
-    if (value.isInstanceOf[String]) obj = value.bool(boolType)
-    else throw new NodeValueTypeException(expression, "String parsable as Bool matching enum + " + boolType.toString)
+    this.node = expression
+    this.node.$ match {
+      case _: Boolean =>
+//      case _: String =>
+//        val v = this.node.$.asInstanceOf[String]
+//        if (boolType.maches(v)) obj = boolType.parse(v)
+//        else throw new NodeValueTypeException(expression, "String parsable as Bool matching enum + " + boolType.toString)
+      case _ => throw new NodeValueTypeException(expression, "Boolean or String")
+    }
   }
 
   override def get(): Boolean = {
-    val `val` = super.get()
-    if (`val` == null) return defaultValue
-    `val`
+    val v = super.get()
+    if (v == null) return defaultValue
+    v
   }
 
   def objEquals(other: PDXScript[_]): Boolean = {

@@ -47,14 +47,13 @@ class ReferencePDX[T <: AbstractPDX[?]] extends AbstractPDX[T](pdxIdentifiers) {
     resolveReference
   }
 
-  override def nodeEquals(other: PDXScript[_]): Boolean = {
-    if (other.isInstanceOf[ReferencePDX[_]]) return referenceName == other.referenceName && this.referenceCollectionSupplier == other.referenceCollectionSupplier && this.idExtractor == other.idExtractor
+  override def nodeEquals(other: PDXScript[?]): Boolean = {
+    if (other.isInstanceOf[ReferencePDX[?]]) return referenceName == other.referenceName && this.referenceCollectionSupplier == other.referenceCollectionSupplier && this.idExtractor == other.idExtractor
     false
   }
 
   private def resolveReference: T = {
     val referenceCollection = referenceCollectionSupplier.get
-    import scala.collection.JavaConversions._
     for (reference <- referenceCollection) {
       val referenceID = idExtractor.apply(reference)
       if (referenceID == null) continue //todo: continue is not supported
@@ -63,15 +62,15 @@ class ReferencePDX[T <: AbstractPDX[?]] extends AbstractPDX[T](pdxIdentifiers) {
         return reference
       }
     }
-    null
+    null.asInstanceOf[T]
   }
 
-  override def nodeEquals(other: AbstractPDX[_]): Boolean = {
+  override def nodeEquals(other: AbstractPDX[?]): Boolean = {
     if (node == null) {
       resolveReference
       if (node == null) return false
     }
-    obj.objEquals(other)
+    node.equals(other.node)
   }
 
   override def toScript: String = {
@@ -84,7 +83,7 @@ class ReferencePDX[T <: AbstractPDX[?]] extends AbstractPDX[T](pdxIdentifiers) {
 
   def setReferenceName(newValue: String): Unit = {
     referenceName = newValue
-    obj = null
+    node = null
   }
 
   def getReferenceCollection: util.Collection[T] = referenceCollectionSupplier.get

@@ -30,7 +30,7 @@ abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
   override def loadPDX(expression: Node): Unit = {
     if (expression.name == null) {
       // todo check through schema?
-      if (expression.value.isList) loadPDX(expression.$)
+      if (expression.$.isList) loadPDX(expression.$)
       else System.out.println("Error loading PDX script: " + expression)
       return
     }

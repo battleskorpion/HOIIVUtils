@@ -18,25 +18,26 @@ class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSu
 
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
-    if (expression.$.isList) {
-      val list = expression.$
-      if (list == null) {
-        System.out.println("PDX script had empty list: " + expression)
-        return
-      }
-      usingIdentifier(expression)
-      for (node <- list) {
-        try add(node)
+    expression.$ match {
+      case list: List[Node] =>
+        val list = expression.$
+        if (list == null) {
+          System.out.println("PDX script had empty list: " + expression)
+          return
+        }
+        usingIdentifier(expression)
+        for (node <- list) {
+          try add(node)
+          catch {
+            case e: NodeValueTypeException =>
+              throw new RuntimeException(e)
+          }
+        }
+      case _ => try add(expression)
         catch {
-          case e: NodeValueTypeException =>
+          case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
             throw new RuntimeException(e)
         }
-      }
-    }
-    else try add(expression)
-    catch {
-      case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        throw new RuntimeException(e)
     }
   }
 
@@ -51,8 +52,9 @@ class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSu
     usingReferenceIdentifier(expression)
     val value = expression.$
     referenceNames.clear()
-    if (value.isInstanceOf[String])
-      referenceNames.add(value)
+    value match {
+      case s: String => referenceNames.add(s)
+    }
   }
 
   @throws[UnexpectedIdentifierException]
@@ -60,8 +62,9 @@ class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSu
   override protected def add(expression: Node): Unit = {
     usingReferenceIdentifier(expression)
     val value = expression.$
-    if (value.isInstanceOf[String])
-     referenceNames.add(value)
+    value match
+      case str: String => referenceNames.add(str)
+      case _ =>
   }
 
   private def resolveReferences = {
@@ -77,7 +80,7 @@ class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSu
   @throws[UnexpectedIdentifierException]
   protected def usingReferenceIdentifier(exp: Node): Unit = {
     for (i <- referencePDXTokenIdentifiers.indices) {
-      if (exp.nameEquals(referencePDXTokenIdentifiers[i]) {
+      if (exp.nameEquals(referencePDXTokenIdentifiers[i])) {
         //                activeReferenceIdentifier = i;
         return
       }

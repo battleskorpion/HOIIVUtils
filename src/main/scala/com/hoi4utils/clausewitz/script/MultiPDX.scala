@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable
 
 import java.util.function.Consumer
 import java.util.function.Supplier
+import scala.collection.mutable.ListBuffer
 
 /**
  * PDX Script that can have multiple instantiation.
@@ -15,9 +16,9 @@ import java.util.function.Supplier
  *
  * @param < T>
  */
-class MultiPDX[T <: PDXScript[_]](supplier: Supplier[T], pdxIdentifiers: String*) extends AbstractPDX[List[T]](pdxIdentifiers) with Iterable[T] {
+class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
 
-  def this(supplier: Supplier[T], pdxIdentifiers: List[String]) = {
+  def this(supplier: Supplier[T], pdxIdentifiers: ListBuffer[String]) = {
     this(supplier, pdxIdentifiers: _*)
   }
 
@@ -30,7 +31,7 @@ class MultiPDX[T <: PDXScript[_]](supplier: Supplier[T], pdxIdentifiers: String*
     }
   }
 
-  override def loadPDX(expressions: List[Node]): Unit = {
+  override def loadPDX(expressions: ListBuffer[Node]): Unit = {
     if (expressions != null)
       expressions.stream.filter(this.isValidIdentifier).forEach((expression: Node) => {
         try loadPDX(expression)
@@ -45,13 +46,13 @@ class MultiPDX[T <: PDXScript[_]](supplier: Supplier[T], pdxIdentifiers: String*
 
   override def nodeEquals(other: PDXScript[_]) = false // todo? well.
 
-  override def get(): List[T] = super.get()
+  override def get(): ListBuffer[T] = super.get()
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   protected def add(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.value
+    val value = expression.$
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
 //    else try obj.add(value.valueObject.asInstanceOf[T])
@@ -60,10 +61,10 @@ class MultiPDX[T <: PDXScript[_]](supplier: Supplier[T], pdxIdentifiers: String*
 //        throw new NodeValueTypeException(expression, e)
 //    }
     node.$ match {
-      case l: List[T] =>
+      case l: ListBuffer[T] =>
         val childScript = supplier.get()
         childScript.loadPDX(expression)
-        l.add(childScript)
+        l.addOne(childScript)
       case _ =>
         // todo idk
         throw new NodeValueTypeException(expression, "list")
@@ -72,7 +73,7 @@ class MultiPDX[T <: PDXScript[_]](supplier: Supplier[T], pdxIdentifiers: String*
 
   def clear(): Unit = {
     node.$ match {
-      case l: List[T] => l.clear()
+      case l: ListBuffer[T] => l.clear()
     }
   }
 
@@ -96,7 +97,6 @@ class MultiPDX[T <: PDXScript[_]](supplier: Supplier[T], pdxIdentifiers: String*
     val sb = new StringBuilder
     val scripts = get()
     if (scripts == null) return null
-    import scala.collection.JavaConversions._
     for (pdxScript <- scripts) {
       val str = pdxScript.toScript
       if (str == null) continue //todo: continue is not supported

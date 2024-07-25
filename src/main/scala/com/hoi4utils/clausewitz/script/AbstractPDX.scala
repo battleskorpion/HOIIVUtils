@@ -15,24 +15,13 @@ import java.io.File
  * or event.
  * <p>
  */
-trait AbstractPDX[T] extends PDXScript[T] {
-  final protected var pdxIdentifiers: List[String] = _
+trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T] {
   private[script] var activeIdentifier = 0
   protected var node: Node = _
 
-  def this(pdxIdentifiers: String*) = {
-    this()
-    this.pdxIdentifiers = List.of(pdxIdentifiers)
-  }
-
-  def this(pdxIdentifiers: List[String]) = {
-    this()
-    this.pdxIdentifiers = pdxIdentifiers
-  }
-
   @throws[UnexpectedIdentifierException]
   protected def usingIdentifier(exp: Node): Unit = {
-    for (i <- 0 until pdxIdentifiers.size) {
+    for (i <- pdxIdentifiers.indices) {
       if (exp.nameEquals(pdxIdentifiers.get(i))) {
         activeIdentifier = i
         return
@@ -43,7 +32,8 @@ trait AbstractPDX[T] extends PDXScript[T] {
 
   override def set(value: T): Unit = {
     // todo?
-    node.setValue(value)
+    if (value.isInstanceOf[String | Int | Double | Boolean])
+      node.setValue(value)
   }
 
   @SuppressWarnings(Array("unchecked"))

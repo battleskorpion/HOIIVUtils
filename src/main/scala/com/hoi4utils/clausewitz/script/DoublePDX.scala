@@ -33,7 +33,7 @@ class DoublePDX extends AbstractPDX[Double](pdxIdentifers) {
     }
   }
 
-  override def nodeEquals(other: PDXScript[_]): Boolean = {
+  override def nodeEquals(other: PDXScript[?]): Boolean = {
     if (other.isInstanceOf[DoublePDX]) return node.$.equals(other.get())
     false
   }
