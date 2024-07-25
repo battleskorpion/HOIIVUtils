@@ -14,10 +14,10 @@ import java.util.stream.Stream
 //  private val boolType: BoolType = null
 //}
 
-class Node(private var identifier: String, private var operator: String, private var value: NodeValue, private var nameToken: Token,
+class Node(private var identifier: String, private var operator: String, private var nodeValue: NodeValue, private var nameToken: Token,
            private var operatorToken: Token) extends NodeStreamable[Node] {
 
-  if (value == null) value = new NodeValue
+  if (nodeValue == null) nodeValue = new NodeValue
   
   def this(value: NodeValue) {
     this(null, null, value, null, null)
@@ -33,10 +33,8 @@ class Node(private var identifier: String, private var operator: String, private
 
   def name: String = identifier
 
-  def getValue: NodeValue = value
-
-  def valueObject: AnyRef = value.valueObject
-
+  def getValue: String | Int | Double | Boolean | util.ArrayList[Node] = nodeValue.getValue
+  
   // no clue
   private[clausewitz_parser] def stream = {
     val nodeStream = new NodeStream[Node](this)
@@ -82,21 +80,21 @@ class Node(private var identifier: String, private var operator: String, private
 
   override def anyMatch(predicate: Predicate[_ >: Node]): Boolean = new NodeStream[Node](this).anyMatch(predicate)
 
-  def getValue(id: String): NodeValue = findFirst(id).value
+  def getValue(id: String): NodeValue = findFirst(id).nodeValue
 
   def setValue(value: String | Int | Double | Boolean | util.ArrayList[Node]): Unit = {
-    this.value.setValue(value)
+    this.nodeValue.setValue(value)
   }
 
-  def isParent: Boolean = value.isList
+  def isParent: Boolean = nodeValue.isList
 
-  def valueIsNull: Boolean = value.isNull
+  def valueIsNull: Boolean = nodeValue.isNull
   
   def isEmpty: Boolean = {
-    value.isNull && identifier == null && operator == null
+    nodeValue.isNull && identifier == null && operator == null
   }
 
-  override def toString: String = identifier + operator + value.asString // todo
+  override def toString: String = identifier + operator + nodeValue.asString // todo
 
   def nameAsInteger: Int = identifier.toInt
 
@@ -105,7 +103,9 @@ class Node(private var identifier: String, private var operator: String, private
     identifier == s
   }
   
-  def setNull(): Unit = value = new NodeValue
+  def setNull(): Unit = nodeValue = new NodeValue
   
+  def valueIsInstanceOf(clazz: Class[_]): Boolean = nodeValue.valueIsInstanceOf(clazz)
   
+  def $ : String | Int | Double | Boolean | util.ArrayList[Node] = getValue
 }

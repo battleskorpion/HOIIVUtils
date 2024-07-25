@@ -3,6 +3,7 @@ package com.hoi4utils.clausewitz.code.scope;
 import com.hoi4utils.clausewitz.code.effect.Effect;
 import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.map.state.State;
+import com.hoi4utils.clausewitz.script.PDXScript;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -17,7 +18,7 @@ public class Scope implements Cloneable {
 //	// usually 'country' or 'any'
 	private final ScopeType targetScopeType;             // 'to'   (targeting)
 	public final ScopeCategory scopeCategory;
-	private List<HOI4Script> content;
+//	private List<HOI4Script> content;
 
 	private Scope withinScope = null;
 	//private Scope targetScope = null;   // null if is the target?
@@ -95,7 +96,7 @@ public class Scope implements Cloneable {
 		if (effect == null || !effect.isScope()) {
 			return null;
 		}
-		String effect_identifier = effect.name();
+		String effect_identifier = effect.identifier();
 		Scope s = getClone(effect_identifier);
 		if (s == null) {
 			return null;
@@ -111,14 +112,14 @@ public class Scope implements Cloneable {
 		withinScope = scope;
 	}
 
-	public void setContains(List<HOI4Script> script) {
-		this.content = script;
-	}
-
-	public void setContains(HOI4Script script) {
-		this.content = new ArrayList<>();
-		content.add(script);
-	}
+//	public void setContains(List<PDXScript<?>> script) {
+//		this.content = script;
+//	}
+//
+//	public void setContains(HOI4Script script) {
+//		this.content = new ArrayList<>();
+//		content.add(script);
+//	}
 
 	private boolean permittedWithinScope(Scope scope) {
 		if (withinScopeAllowed.contains(ScopeType.any)) {
@@ -278,31 +279,12 @@ public class Scope implements Cloneable {
 		return scopeCategory == ScopeCategory.EFFECT || scopeCategory == ScopeCategory.DUAL;
 	}
 
-	@Override
 	public String displayScript() {
 		return displayScript(1);
 	}
 
 	public String displayScript(int tabs) {
-		if (content == null || content.isEmpty()) {
-			return name;
-		} else {
-			StringBuilder s = new StringBuilder();
-
-			s.append("\t".repeat(Math.max(0, tabs - 1)));
-			s.append(name);
-			s.append(" = ");
-
-			s.append("{\n");
-			for (HOI4Script p : content) {
-				s.append("\t".repeat(tabs));
-				s.append(p == null ? "[scope parameter was null]" : p.displayScript());
-				s.append("\n");
-			}
-			s.append("\t".repeat(Math.max(0, tabs - 1)));
-			s.append("}\n");
-			return s.toString();
-		}
+		return null; 
 	}
 
 }

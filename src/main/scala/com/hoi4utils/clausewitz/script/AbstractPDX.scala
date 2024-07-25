@@ -18,7 +18,7 @@ import java.util.List
  * or event.
  * <p>
  */
-abstract class AbstractPDX[T] extends PDXScript[T] {
+trait AbstractPDX[T] extends PDXScript[T] {
   final protected var pdxIdentifiers: util.List[String] = _
   private[script] var activeIdentifier = 0
   protected var node: Node = _
@@ -69,6 +69,8 @@ abstract class AbstractPDX[T] extends PDXScript[T] {
       case _ => null.asInstanceOf[T] // Use a default value for T if necessary
     }
   }
+
+  def getNode: Node = node
 
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
@@ -167,4 +169,17 @@ abstract class AbstractPDX[T] extends PDXScript[T] {
   override def isUndefined: Boolean = node == null || node.valueIsNull
 
   override def getPDXIdentifier: String = pdxIdentifiers.get(activeIdentifier)
+
+  def valueIsInstanceOf(clazz: Class[_]): Boolean = {
+    if (node == null) return false
+    node.$ match {
+      case _: clazz => true
+      case _ => false
+    }
+  }
+
+  def schema(): PDXSchema[T] = {
+    var schema = new PDXSchema[T](pdxIdentifiers)
+  }
+
 }

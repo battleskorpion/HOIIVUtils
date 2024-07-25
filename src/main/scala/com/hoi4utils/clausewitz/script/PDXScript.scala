@@ -11,6 +11,8 @@ trait PDXScript[T] {
   def set(expression: Node): Unit
 
   def get(): T
+  
+  def getNode : Node
 
   @throws[UnexpectedIdentifierException]
   def loadPDX(expression: Node): Unit
@@ -27,7 +29,7 @@ trait PDXScript[T] {
 
   def toScript: String
 
-  def objEquals(other: PDXScript[_]): Boolean
+  def nodeEquals(other: PDXScript[_]): Boolean
 
   def getOrElse(elseValue: T): T
 

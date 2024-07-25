@@ -112,4 +112,8 @@ final class NodeValue {
   def setValue (value: String | Int | Double | Boolean | util.ArrayList[Node] | Null): Unit = {
     this.value = value
   }
+  
+  def valueIsInstanceOf(clazz: Class[_]): Boolean = clazz.isInstance(value)
+  
+//  def $ (clazz: Class[_]): Boolean = valueIsInstanceOf(clazz)
 }

@@ -147,7 +147,7 @@ public class PDXEditorPane extends AnchorPane {
                 });
                 return spinner;
             }
-            case ReferencePDXScript<?> pdx -> {
+            case ReferencePDX<?> pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
                 ComboBox<String> comboBox = new ComboBox<>();
                 comboBox.setPrefWidth(200);
@@ -167,7 +167,7 @@ public class PDXEditorPane extends AnchorPane {
                 if (pdx.getPDXScript() == null && !allowNull) return null;
                 return createEditorNode(pdx.getPDXScript(), allowNull, vbox);
             }
-            case MultiReferencePDXScript<?> pdx -> {
+            case MultiReferencePDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
                 VBox subVBox = new VBox();
                 subVBox.setSpacing(2);
@@ -211,7 +211,7 @@ public class PDXEditorPane extends AnchorPane {
                 }
                 return subVBox;
             }
-            case MultiPDXScript<?> pdx -> {
+            case MultiPDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
                 VBox subVBox = new VBox();
                 subVBox.setSpacing(10);

@@ -164,7 +164,7 @@ public class EffectDatabase {
 			}
 
 			@Override
-			public boolean objEquals(PDXScript<?> other) {
+			public boolean nodeEquals(PDXScript<?> other) {
 				// todo
 				return false;
 			}

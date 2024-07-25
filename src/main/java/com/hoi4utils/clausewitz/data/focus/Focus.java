@@ -31,13 +31,13 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 	/* attributes */
 	protected FocusTree focusTree;
 	@NotNull public final StringPDX id;
-	@NotNull public final MultiPDXScript<Icon> icon;
+	@NotNull public final MultiPDX<Icon> icon;
 	@NotNull public final IntegerPDX x; // if relative, relative x
 	@NotNull public final IntegerPDX y; // if relative, relative y
-	@NotNull public final MultiPDXScript<PrerequisiteSet> prerequisites;
-	@NotNull public final MultiPDXScript<MutuallyExclusiveSet> mutually_exclusive;
+	@NotNull public final MultiPDX<PrerequisiteSet> prerequisites;
+	@NotNull public final MultiPDX<MutuallyExclusiveSet> mutually_exclusive;
 	//public final PDXScript<Trigger> available;
-	@NotNull public final ReferencePDXScript<Focus> relativePosition; // if null, position is not relative
+	@NotNull public final ReferencePDX<Focus> relativePosition; // if null, position is not relative
 	@NotNull public final DoublePDX cost; // cost of focus (typically in weeks unless changed in defines)
 	@NotNull public final BooleanPDX available_if_capitulated;
 	@NotNull public final BooleanPDX cancel_if_invalid;
@@ -59,14 +59,14 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 		super("focus");
 		// todo do not check this here! let this be controlled elsewhere?
 		this.id = new StringPDX("id");
-		this.icon = new MultiPDXScript<>(Icon::new, "icon");
+		this.icon = new MultiPDX<>(Icon::new, "icon");
 		this.x = new IntegerPDX("x");
 		this.y = new IntegerPDX("y");
-		this.prerequisites = new MultiPDXScript<>(PrerequisiteSet::new,
+		this.prerequisites = new MultiPDX<>(PrerequisiteSet::new,
 				"prerequisite");
-		this.mutually_exclusive = new MultiPDXScript<>(() -> new MutuallyExclusiveSet(focusTree::focuses),
+		this.mutually_exclusive = new MultiPDX<>(() -> new MutuallyExclusiveSet(focusTree::focuses),
 				"mutually_exclusive");
-		this.relativePosition = new ReferencePDXScript<>(focusTree::focuses, (f) -> f.id.get(),
+		this.relativePosition = new ReferencePDX<>(focusTree::focuses, (f) -> f.id.get(),
 				"relative_position_id");
 		this.cost = new DoublePDX("cost");
 		this.available_if_capitulated = new BooleanPDX("available_if_capitulated",
@@ -731,11 +731,11 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 	}
 
 	@Override
-	public boolean objEquals(PDXScript<?> other) {
+	public boolean nodeEquals(PDXScript<?> other) {
 		return this.id.nodeEquals(((Focus) other).id);
 	}
 
-	public class PrerequisiteSet extends MultiReferencePDXScript<Focus> {
+	public class PrerequisiteSet extends MultiReferencePDX<Focus> {
 		public PrerequisiteSet() {
 			this(() -> focusTree.focuses());
 		}
@@ -748,7 +748,7 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 	/**
 	 * mutually exclusive is a multi-reference of focuses
 	 */
-	public class MutuallyExclusiveSet extends MultiReferencePDXScript<Focus> {
+	public class MutuallyExclusiveSet extends MultiReferencePDX<Focus> {
 		public MutuallyExclusiveSet(Supplier<Collection<Focus>> referenceFocusesSupplier) {
 			super(referenceFocusesSupplier, (f) -> f.id.get(),"mutually_exclusive", "focus");
 		}
@@ -767,7 +767,7 @@ public class Focus extends StructuredPDX implements Localizable, Comparable<Focu
 						}
 
 						@Override
-						public boolean objEquals(PDXScript<?> other) {
+						public boolean nodeEquals(PDXScript<?> other) {
 							if (other instanceof Icon icon) {
 								return value.objEquals(icon.get());
 							}

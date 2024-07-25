@@ -48,7 +48,7 @@ public final class CountryTag extends AbstractPDX<String> implements Comparable<
     }
 
     @Override
-    public boolean objEquals(PDXScript<?> other) {
+    public boolean nodeEquals(PDXScript<?> other) {
         if (other instanceof CountryTag pdx) {
             return this.nodeEquals(pdx);
         }

@@ -2,7 +2,7 @@ package com.hoi4utils.ui.focus_view;
 
 import com.hoi4utils.Settings;
 import com.hoi4utils.clausewitz.localization.Localizable;
-import com.hoi4utils.clausewitz.script.MultiPDXScript;
+import com.hoi4utils.clausewitz.script.MultiPDX;
 import com.hoi4utils.clausewitz.script.PDXScript;
 import com.hoi4utils.ddsreader.DDSReader;
 import com.hoi4utils.clausewitz.HOIIVFile;
@@ -291,7 +291,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 		for (Focus focus : focuses) {
 			if (focus.isMutuallyExclusive()) {
-				for (Focus mutexFocus : focus.mutually_exclusive.stream().flatMap(MultiPDXScript::stream).toList()) {
+				for (Focus mutexFocus : focus.mutually_exclusive.stream().flatMap(MultiPDX::stream).toList()) {
 					int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
 					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + (int) (FOCUS_Y_SCALE / 1.6) + Y_OFFSET_FIX;
 					int x2 = FOCUS_X_SCALE * (mutexFocus.absoluteX() - minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;

@@ -1,5 +1,12 @@
 package com.hoi4utils.clausewitz.data.focus
 
+import com.hoi4utils.clausewitz.script.{CollectionPDXScript, DynamicPDX, MultiReferencePDX, StringPDX, StructuredPDX}
+import com.hoi4utils.clausewitz_parser.Node
+
+import java.util
+import java.util.{Collection, List}
+import java.util.function.Supplier
+
 class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable with Comparable[Focus] with DataFunctionProvider[Focus] {
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
@@ -27,7 +34,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     loadPDX(node)
   }
 
-  override protected def childScripts(): Seq[PDXScript[_]] = {
+  override protected def childScripts: Seq[PDXScript[_]] = {
     Seq(id, icon, x, y, prerequisites, mutuallyExclusive, relativePosition, cost, availableIfCapitulated, cancelIfInvalid, continueIfInvalid)
   }
 
@@ -115,20 +122,20 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     details.toString()
   }
 
-  def completionReward(): List[Effect] = completionReward
+  def getCompletionReward: util.List[Effect] = completionReward
 
-  def setCompletionReward(completionReward: List[Effect]): Unit = {
-    this.completionReward = completionReward
-  }
+//  def setCompletionReward(completionReward: List[Effect]): Unit = {
+//    this.completionReward = completionReward
+//  }
 
-  def setCompletionReward(completionRewardNode: Node): Unit = {
-    completionReward = ListBuffer()
-    if (completionRewardNode.valueIsNull) {
-      return
-    }
-
-    setCompletionRewardsOfNode(completionRewardNode)
-  }
+//  def setCompletionReward(completionRewardNode: Node): Unit = {
+//    completionReward = ListBuffer()
+//    if (completionRewardNode.valueIsNull) {
+//      return
+//    }
+//
+//    setCompletionRewardsOfNode(completionRewardNode)
+//  }
 
   private def setCompletionRewardsOfNode(completionRewardNode: Node): Unit = {
     setCompletionRewardsOfNode(completionRewardNode, Scope.of(focusTree.country.get()))
@@ -204,6 +211,49 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
       }
     }
   }
+
+  class PrerequisiteSet(referenceFocusesSupplier: Supplier[util.Collection[Focus]]) extends MultiReferencePDX[Focus]
+  (referenceFocusesSupplier, (f: Focus) => f.id.get(), "prerequisite", "focus") {
+    def this() {
+      this(() => focusTree.focuses)
+    }
+  }
+
+  /**
+   * mutually exclusive is a multi-reference of focuses
+   */
+  class MutuallyExclusiveSet(referenceFocusesSupplier: Supplier[util.Collection[Focus]]) extends MultiReferencePDX[Focus]
+  (referenceFocusesSupplier, (f: Focus) => f.id.get(), "mutually_exclusive", "focus") {
+  }
+
+  class Icon extends DynamicPDX[String, StructuredPDX](() =>
+    new StringPDX("icon"),
+    new StructuredPDX("icon") {
+      final private val value: StringPDX = new StringPDX("value")
+
+      override protected def childScripts: util.Collection[_ <: PDXScript[_]] = util.List.of(value)
+
+      override def nodeEquals(other: PDXScript[_]): Boolean = {
+        other match {
+          case icon: Focus.Icon => value.objEquals(icon.get())
+          case _ => false
+        }
+      }
+    },
+    "value")
+    {
+  }
+
+  private class CompletionReward extends CollectionPDXScript[Effect[_]]("completion_reward") {
+    @throws[UnexpectedIdentifierException]
+    override def loadPDX(expression: Node): Unit = {
+      super.loadPDX(expression)
+    }
+
+    override protected def newChildScript(expression: Node): Effect[_] = {
+    }
+  }
+
 }
 
 object Focus {
@@ -214,4 +264,6 @@ object Focus {
     dataFunctions += (focus => focus.localizationText(Property.DESCRIPTION))
     dataFunctions
   }
+
+//  def schema = new PDXSchema()
 }

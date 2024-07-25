@@ -32,8 +32,8 @@ public class FocusTree extends StructuredPDX implements Localizable, Comparable<
 
 	//private final ObservableMap<String, Focus> focuses;
 	// todo fix in future. (block that accepts a modifierblock it seems?)
-	@NotNull public final ReferencePDXScript<CountryTag> country;
-	@NotNull public final MultiPDXScript<Focus> focuses;
+	@NotNull public final ReferencePDX<CountryTag> country;
+	@NotNull public final MultiPDX<Focus> focuses;
 	@NotNull public final AbstractPDX<String> id;
 
 	private ArrayList<String> focusIDList;
@@ -60,8 +60,8 @@ public class FocusTree extends StructuredPDX implements Localizable, Comparable<
 
 		/* pdxscript */
 		id = new StringPDX("id");
-		country = new ReferencePDXScript<>(CountryTagsManager::getCountryTags, CountryTag::get, "country");
-		focuses = new MultiPDXScript<>(() -> new Focus(this), "focus");
+		country = new ReferencePDX<>(CountryTagsManager::getCountryTags, CountryTag::get, "country");
+		focuses = new MultiPDX<>(() -> new Focus(this), "focus");
 		obj.addAll(childScripts());
 		loadPDX(focus_file);
 
@@ -358,7 +358,7 @@ public class FocusTree extends StructuredPDX implements Localizable, Comparable<
 	}
 
 	@Override
-	public boolean objEquals(PDXScript<?> other) {
+	public boolean nodeEquals(PDXScript<?> other) {
 		if (other instanceof FocusTree) {
 			return this.equals(other);
 		}

@@ -7,7 +7,7 @@ import java.util
 import java.util.List
 
 
-class DoublePDX extends AbstractPDX[Double](pdxIdentifers) {
+class StringPDX extends AbstractPDX[String](pdxIdentifiers) {
   def this(pdxIdentifiers: String) {
     this()
   }
@@ -24,13 +24,18 @@ class DoublePDX extends AbstractPDX[Double](pdxIdentifers) {
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.value
-    if (value.valueObject.isInstanceOf[Number]) obj = num.doubleValue
-    else throw new NodeValueTypeException(expression, "Number (as a Double)")
+    this.node = expression
+    if (!this.node.$.isInstanceOf[String]) {
+      throw new NodeValueTypeException(this.node, classOf[String])
+    }
   }
 
   override def nodeEquals(other: PDXScript[_]): Boolean = {
-    if (other.isInstanceOf[DoublePDX]) return obj.equals(pdx.get)
+    other match
+      case x: StringPDX => return node.equals(x.node)
+      case _ =>
     false
   }
+
+  def objEquals(s: String): Boolean = obj.equals(s)
 }

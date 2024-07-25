@@ -105,4 +105,6 @@ public class Effect<T> extends DynamicPDX<T, StructuredPDX> implements ScopedPDX
 //        c.parameters = new ArrayList<>();
 //        return c;
 //    }
+    
+    public boolean isScope() return null; 
 }
