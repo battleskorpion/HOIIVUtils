@@ -66,4 +66,7 @@
 		"editor.insertSpaces": false,
 		"editor.wordWrap": "off"
 	},
+	"files.watcherExclude": {
+		"**/target": true
+	},
 }

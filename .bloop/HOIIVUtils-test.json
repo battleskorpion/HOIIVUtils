@@ -1,0 +1,1790 @@
+{
+    "version": "1.4.0",
+    "project": {
+        "name": "HOIIVUtils-test",
+        "directory": "C:\\Users\\Chris\\Documents\\GitHub\\HOIIVUtils",
+        "workspaceDir": "C:\\Users\\Chris\\Documents\\GitHub\\HOIIVUtils",
+        "sources": [
+            "C:\\Users\\Chris\\Documents\\GitHub\\HOIIVUtils\\src\\test\\java"
+        ],
+        "dependencies": [
+            "HOIIVUtils"
+        ],
+        "classpath": [
+            "C:\\Users\\Chris\\Documents\\GitHub\\HOIIVUtils\\target\\test-classes",
+            "C:\\Users\\Chris\\Documents\\GitHub\\HOIIVUtils\\target\\classes",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-controls\\22.0.1\\javafx-controls-22.0.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-controls\\22.0.1\\javafx-controls-22.0.1-win.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-graphics\\22.0.1\\javafx-graphics-22.0.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-graphics\\22.0.1\\javafx-graphics-22.0.1-win.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-base\\22.0.1\\javafx-base-22.0.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-base\\22.0.1\\javafx-base-22.0.1-win.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-fxml\\22.0.1\\javafx-fxml-22.0.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-fxml\\22.0.1\\javafx-fxml-22.0.1-win.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter\\5.10.2\\junit-jupiter-5.10.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter-api\\5.10.2\\junit-jupiter-api-5.10.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\opentest4j\\opentest4j\\1.3.0\\opentest4j-1.3.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\platform\\junit-platform-commons\\1.10.2\\junit-platform-commons-1.10.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apiguardian\\apiguardian-api\\1.1.2\\apiguardian-api-1.1.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter-params\\5.10.2\\junit-jupiter-params-5.10.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter-engine\\5.10.2\\junit-jupiter-engine-5.10.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\platform\\junit-platform-engine\\1.10.2\\junit-platform-engine-1.10.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\logging\\log4j\\log4j-core\\2.23.1\\log4j-core-2.23.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\logging\\log4j\\log4j-api\\2.23.1\\log4j-api-2.23.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\projectlombok\\lombok\\1.18.32\\lombok-1.18.32.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-plugin-api\\3.9.6\\maven-plugin-api-3.9.6.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-model\\3.9.6\\maven-model-3.9.6.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-artifact\\3.9.6\\maven-artifact-3.9.6.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\eclipse\\sisu\\org.eclipse.sisu.plexus\\0.9.0.M2\\org.eclipse.sisu.plexus-0.9.0.M2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\javax\\annotation\\javax.annotation-api\\1.2\\javax.annotation-api-1.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\eclipse\\sisu\\org.eclipse.sisu.inject\\0.9.0.M2\\org.eclipse.sisu.inject-0.9.0.M2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-component-annotations\\2.1.0\\plexus-component-annotations-2.1.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-utils\\3.5.1\\plexus-utils-3.5.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-classworlds\\2.7.0\\plexus-classworlds-2.7.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\plugins\\maven-jar-plugin\\3.4.1\\maven-jar-plugin-3.4.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\shared\\file-management\\3.1.0\\file-management-3.1.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-archiver\\3.6.2\\maven-archiver-3.6.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-archiver\\4.9.2\\plexus-archiver-4.9.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-io\\3.4.2\\plexus-io-3.4.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-compress\\1.26.1\\commons-compress-1.26.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\iq80\\snappy\\snappy\\0.4\\snappy-0.4.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\tukaani\\xz\\1.9\\xz-1.9.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\com\\github\\luben\\zstd-jni\\1.5.5-11\\zstd-jni-1.5.5-11.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\javax\\inject\\javax.inject\\1\\javax.inject-1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\plugins\\maven-resources-plugin\\3.3.1\\maven-resources-plugin-3.3.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-interpolation\\1.26\\plexus-interpolation-1.26.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\shared\\maven-filtering\\3.3.1\\maven-filtering-3.3.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\sonatype\\plexus\\plexus-build-api\\0.0.7\\plexus-build-api-0.0.7.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\commons-io\\commons-io\\2.11.0\\commons-io-2.11.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-lang3\\3.12.0\\commons-lang3-3.12.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-core\\1.5.2\\jgrapht-core-1.5.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\jheaps\\jheaps\\0.14\\jheaps-0.14.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apfloat\\apfloat\\1.10.1\\apfloat-1.10.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-ext\\1.5.2\\jgrapht-ext-1.5.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\com\\github\\vlsi\\mxgraph\\jgraphx\\4.2.2\\jgraphx-4.2.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-io\\1.5.2\\jgrapht-io-1.5.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\antlr\\antlr4-runtime\\4.12.0\\antlr4-runtime-4.12.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-text\\1.10.0\\commons-text-1.10.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-opt\\1.5.2\\jgrapht-opt-1.5.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\it\\unimi\\dsi\\fastutil\\8.5.12\\fastutil-8.5.12.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\jetbrains\\annotations\\24.1.0\\annotations-24.1.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\poi\\poi\\5.2.5\\poi-5.2.5.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\commons-codec\\commons-codec\\1.16.0\\commons-codec-1.16.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-collections4\\4.4\\commons-collections4-4.4.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-math3\\3.6.1\\commons-math3-3.6.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\com\\zaxxer\\SparseBitSet\\1.3\\SparseBitSet-1.3.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\xerial\\sqlite-jdbc\\3.36.0\\sqlite-jdbc-3.36.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\slf4j\\slf4j-api\\2.0.13\\slf4j-api-2.0.13.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\slf4j\\slf4j-simple\\2.0.13\\slf4j-simple-2.0.13.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\com\\aparapi\\aparapi\\3.0.2\\aparapi-3.0.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\com\\aparapi\\aparapi-jni\\1.4.3\\aparapi-jni-1.4.3.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\bcel\\bcel\\6.5.0\\bcel-6.5.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala-library\\2.13.12\\scala-library-2.13.12.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\testfx\\testfx-junit5\\4.0.18\\testfx-junit5-4.0.18.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\hamcrest\\hamcrest\\2.1\\hamcrest-2.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\testfx\\testfx-core\\4.0.18\\testfx-core-4.0.18.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\osgi\\org.osgi.core\\6.0.0\\org.osgi.core-6.0.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\assertj\\assertj-core\\3.25.3\\assertj-core-3.25.3.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\net\\bytebuddy\\byte-buddy\\1.14.11\\byte-buddy-1.14.11.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\io\\github\\java-diff-utils\\java-diff-utils\\4.12\\java-diff-utils-4.12.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\richtext\\richtextfx\\0.11.2\\richtextfx-0.11.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\reactfx\\reactfx\\2.0-M5\\reactfx-2.0-M5.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\undo\\undofx\\2.1.1\\undofx-2.1.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\flowless\\flowless\\0.7.2\\flowless-0.7.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\wellbehaved\\wellbehavedfx\\0.3.3\\wellbehavedfx-0.3.3.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala3-library_3\\3.4.2\\scala3-library_3-3.4.2.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest_3\\3.3.0-alpha.1\\scalatest_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-core_3\\3.3.0-alpha.1\\scalatest-core_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalactic\\scalactic_3\\3.3.0-alpha.1\\scalactic_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-compatible\\3.3.0-alpha.1\\scalatest-compatible-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\modules\\scala-xml_3\\2.1.0\\scala-xml_3-2.1.0.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-featurespec_3\\3.3.0-alpha.1\\scalatest-featurespec_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-flatspec_3\\3.3.0-alpha.1\\scalatest-flatspec_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-freespec_3\\3.3.0-alpha.1\\scalatest-freespec_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-funsuite_3\\3.3.0-alpha.1\\scalatest-funsuite_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-funspec_3\\3.3.0-alpha.1\\scalatest-funspec_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-propspec_3\\3.3.0-alpha.1\\scalatest-propspec_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-refspec_3\\3.3.0-alpha.1\\scalatest-refspec_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-wordspec_3\\3.3.0-alpha.1\\scalatest-wordspec_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-diagrams_3\\3.3.0-alpha.1\\scalatest-diagrams_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-expectations_3\\3.3.0-alpha.1\\scalatest-expectations_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-matchers-core_3\\3.3.0-alpha.1\\scalatest-matchers-core_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-shouldmatchers_3\\3.3.0-alpha.1\\scalatest-shouldmatchers_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-mustmatchers_3\\3.3.0-alpha.1\\scalatest-mustmatchers_3-3.3.0-alpha.1.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala-library\\2.13.12\\scala-library-2.13.12.jar",
+            "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala3-library_3\\3.4.2\\scala3-library_3-3.4.2.jar"
+        ],
+        "out": "C:\\Users\\Chris\\Documents\\GitHub\\HOIIVUtils\\target",
+        "classesDir": "C:\\Users\\Chris\\Documents\\GitHub\\HOIIVUtils\\target\\test-classes",
+        "resources": [
+            "C:\\Users\\Chris\\Documents\\GitHub\\HOIIVUtils\\src\\test\\resources"
+        ],
+        "scala": {
+            "organization": "org.scala-lang",
+            "name": "scala-compiler",
+            "version": "3.4.2",
+            "options": [
+                "-release",
+                "22"
+            ],
+            "jars": [
+                "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala3-compiler_3\\3.4.2\\scala3-compiler_3-3.4.2.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\org\\jline\\jline-native\\3.25.1\\jline-native-3.25.1.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala-library\\2.13.12\\scala-library-2.13.12.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\modules\\scala-asm\\9.6.0-scala-1\\scala-asm-9.6.0-scala-1.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\org\\jline\\jline-terminal\\3.25.1\\jline-terminal-3.25.1.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\net\\java\\dev\\jna\\jna\\5.14.0\\jna-5.14.0.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\org\\jline\\jline-terminal-jna\\3.25.1\\jline-terminal-jna-3.25.1.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\org\\jline\\jline-reader\\3.25.1\\jline-reader-3.25.1.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\org\\scala-sbt\\compiler-interface\\1.9.6\\compiler-interface-1.9.6.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\org\\scala-sbt\\util-interface\\1.9.8\\util-interface-1.9.8.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala3-library_3\\3.4.2\\scala3-library_3-3.4.2.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\tasty-core_3\\3.4.2\\tasty-core_3-3.4.2.jar",
+                "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala3-interfaces\\3.4.2\\scala3-interfaces-3.4.2.jar"
+            ],
+            "setup": {
+                "order": "mixed",
+                "addLibraryToBootClasspath": true,
+                "addCompilerToClasspath": false,
+                "addExtraJarsToClasspath": false,
+                "manageBootClasspath": true,
+                "filterLibraryFromClasspath": true
+            }
+        },
+        "java": {
+            "options": [
+                "-g",
+                "--release",
+                "22",
+                "-encoding",
+                "UTF-8"
+            ]
+        },
+        "test": {
+            "frameworks": [
+                {
+                    "names": [
+                        "com.novocode.junit.JUnitFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.scalatest.tools.Framework",
+                        "org.scalatest.tools.ScalaTestFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.scalacheck.ScalaCheckFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.specs.runner.SpecsFramework",
+                        "org.specs2.runner.Specs2Framework",
+                        "org.specs2.runner.SpecsFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "utest.runner.Framework"
+                    ]
+                },
+                {
+                    "names": [
+                        "munit.Framework"
+                    ]
+                }
+            ],
+            "options": {
+                "excludes": [
+                    
+                ],
+                "arguments": [
+                    {
+                        "args": [
+                            "-v",
+                            "-a"
+                        ],
+                        "framework": {
+                            "names": [
+                                "com.novocode.junit.JUnitFramework"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "platform": {
+            "name": "jvm",
+            "config": {
+                "home": "C:\\Program Files\\Eclipse Adoptium\\jdk-22.0.2.9-hotspot",
+                "options": [
+                    
+                ]
+            },
+            "mainClass": [
+                
+            ]
+        },
+        "resolution": {
+            "modules": [
+                {
+                    "organization": "commons-io",
+                    "name": "commons-io",
+                    "version": "2.11.0",
+                    "artifacts": [
+                        {
+                            "name": "commons-io",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\commons-io\\commons-io\\2.11.0\\commons-io-2.11.0.jar"
+                        },
+                        {
+                            "name": "commons-io",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\commons-io\\commons-io\\2.11.0\\commons-io-2.11.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.codehaus.plexus",
+                    "name": "plexus-utils",
+                    "version": "3.5.1",
+                    "artifacts": [
+                        {
+                            "name": "plexus-utils",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-utils\\3.5.1\\plexus-utils-3.5.1.jar"
+                        },
+                        {
+                            "name": "plexus-utils",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-utils\\3.5.1\\plexus-utils-3.5.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "net.bytebuddy",
+                    "name": "byte-buddy",
+                    "version": "1.14.11",
+                    "artifacts": [
+                        {
+                            "name": "byte-buddy",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\net\\bytebuddy\\byte-buddy\\1.14.11\\byte-buddy-1.14.11.jar"
+                        },
+                        {
+                            "name": "byte-buddy",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\net\\bytebuddy\\byte-buddy\\1.14.11\\byte-buddy-1.14.11-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-funspec_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-funspec_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-funspec_3\\3.3.0-alpha.1\\scalatest-funspec_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-funspec_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-funspec_3\\3.3.0-alpha.1\\scalatest-funspec_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.codehaus.plexus",
+                    "name": "plexus-archiver",
+                    "version": "4.9.2",
+                    "artifacts": [
+                        {
+                            "name": "plexus-archiver",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-archiver\\4.9.2\\plexus-archiver-4.9.2.jar"
+                        },
+                        {
+                            "name": "plexus-archiver",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-archiver\\4.9.2\\plexus-archiver-4.9.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.maven",
+                    "name": "maven-model",
+                    "version": "3.9.6",
+                    "artifacts": [
+                        {
+                            "name": "maven-model",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-model\\3.9.6\\maven-model-3.9.6.jar"
+                        },
+                        {
+                            "name": "maven-model",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-model\\3.9.6\\maven-model-3.9.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.iq80.snappy",
+                    "name": "snappy",
+                    "version": "0.4",
+                    "artifacts": [
+                        {
+                            "name": "snappy",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\iq80\\snappy\\snappy\\0.4\\snappy-0.4.jar"
+                        },
+                        {
+                            "name": "snappy",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\iq80\\snappy\\snappy\\0.4\\snappy-0.4-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-fxml",
+                    "version": "22.0.1",
+                    "artifacts": [
+                        {
+                            "name": "javafx-fxml",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-fxml\\22.0.1\\javafx-fxml-22.0.1.jar"
+                        },
+                        {
+                            "name": "javafx-fxml",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-fxml\\22.0.1\\javafx-fxml-22.0.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-mustmatchers_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-mustmatchers_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-mustmatchers_3\\3.3.0-alpha.1\\scalatest-mustmatchers_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-mustmatchers_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-mustmatchers_3\\3.3.0-alpha.1\\scalatest-mustmatchers_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.aparapi",
+                    "name": "aparapi",
+                    "version": "3.0.2",
+                    "artifacts": [
+                        {
+                            "name": "aparapi",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\com\\aparapi\\aparapi\\3.0.2\\aparapi-3.0.2.jar"
+                        },
+                        {
+                            "name": "aparapi",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\com\\aparapi\\aparapi\\3.0.2\\aparapi-3.0.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.platform",
+                    "name": "junit-platform-commons",
+                    "version": "1.10.2",
+                    "artifacts": [
+                        {
+                            "name": "junit-platform-commons",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\platform\\junit-platform-commons\\1.10.2\\junit-platform-commons-1.10.2.jar"
+                        },
+                        {
+                            "name": "junit-platform-commons",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\platform\\junit-platform-commons\\1.10.2\\junit-platform-commons-1.10.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-featurespec_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-featurespec_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-featurespec_3\\3.3.0-alpha.1\\scalatest-featurespec_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-featurespec_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-featurespec_3\\3.3.0-alpha.1\\scalatest-featurespec_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-core_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-core_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-core_3\\3.3.0-alpha.1\\scalatest-core_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-core_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-core_3\\3.3.0-alpha.1\\scalatest-core_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.projectlombok",
+                    "name": "lombok",
+                    "version": "1.18.32",
+                    "artifacts": [
+                        {
+                            "name": "lombok",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\projectlombok\\lombok\\1.18.32\\lombok-1.18.32.jar"
+                        },
+                        {
+                            "name": "lombok",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\projectlombok\\lombok\\1.18.32\\lombok-1.18.32-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.fxmisc.wellbehaved",
+                    "name": "wellbehavedfx",
+                    "version": "0.3.3",
+                    "artifacts": [
+                        {
+                            "name": "wellbehavedfx",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\wellbehaved\\wellbehavedfx\\0.3.3\\wellbehavedfx-0.3.3.jar"
+                        },
+                        {
+                            "name": "wellbehavedfx",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\wellbehaved\\wellbehavedfx\\0.3.3\\wellbehavedfx-0.3.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.logging.log4j",
+                    "name": "log4j-api",
+                    "version": "2.23.1",
+                    "artifacts": [
+                        {
+                            "name": "log4j-api",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\logging\\log4j\\log4j-api\\2.23.1\\log4j-api-2.23.1.jar"
+                        },
+                        {
+                            "name": "log4j-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\logging\\log4j\\log4j-api\\2.23.1\\log4j-api-2.23.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.commons",
+                    "name": "commons-collections4",
+                    "version": "4.4",
+                    "artifacts": [
+                        {
+                            "name": "commons-collections4",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-collections4\\4.4\\commons-collections4-4.4.jar"
+                        },
+                        {
+                            "name": "commons-collections4",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-collections4\\4.4\\commons-collections4-4.4-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.zaxxer",
+                    "name": "SparseBitSet",
+                    "version": "1.3",
+                    "artifacts": [
+                        {
+                            "name": "SparseBitSet",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\com\\zaxxer\\SparseBitSet\\1.3\\SparseBitSet-1.3.jar"
+                        },
+                        {
+                            "name": "SparseBitSet",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\com\\zaxxer\\SparseBitSet\\1.3\\SparseBitSet-1.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-expectations_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-expectations_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-expectations_3\\3.3.0-alpha.1\\scalatest-expectations_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-expectations_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-expectations_3\\3.3.0-alpha.1\\scalatest-expectations_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.jgrapht",
+                    "name": "jgrapht-io",
+                    "version": "1.5.2",
+                    "artifacts": [
+                        {
+                            "name": "jgrapht-io",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-io\\1.5.2\\jgrapht-io-1.5.2.jar"
+                        },
+                        {
+                            "name": "jgrapht-io",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-io\\1.5.2\\jgrapht-io-1.5.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.osgi",
+                    "name": "org.osgi.core",
+                    "version": "6.0.0",
+                    "artifacts": [
+                        {
+                            "name": "org.osgi.core",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\osgi\\org.osgi.core\\6.0.0\\org.osgi.core-6.0.0.jar"
+                        },
+                        {
+                            "name": "org.osgi.core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\osgi\\org.osgi.core\\6.0.0\\org.osgi.core-6.0.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.eclipse.sisu",
+                    "name": "org.eclipse.sisu.plexus",
+                    "version": "0.9.0.M2",
+                    "artifacts": [
+                        {
+                            "name": "org.eclipse.sisu.plexus",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\eclipse\\sisu\\org.eclipse.sisu.plexus\\0.9.0.M2\\org.eclipse.sisu.plexus-0.9.0.M2.jar"
+                        },
+                        {
+                            "name": "org.eclipse.sisu.plexus",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\eclipse\\sisu\\org.eclipse.sisu.plexus\\0.9.0.M2\\org.eclipse.sisu.plexus-0.9.0.M2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-funsuite_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-funsuite_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-funsuite_3\\3.3.0-alpha.1\\scalatest-funsuite_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-funsuite_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-funsuite_3\\3.3.0-alpha.1\\scalatest-funsuite_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.jgrapht",
+                    "name": "jgrapht-opt",
+                    "version": "1.5.2",
+                    "artifacts": [
+                        {
+                            "name": "jgrapht-opt",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-opt\\1.5.2\\jgrapht-opt-1.5.2.jar"
+                        },
+                        {
+                            "name": "jgrapht-opt",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-opt\\1.5.2\\jgrapht-opt-1.5.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-flatspec_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-flatspec_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-flatspec_3\\3.3.0-alpha.1\\scalatest-flatspec_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-flatspec_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-flatspec_3\\3.3.0-alpha.1\\scalatest-flatspec_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.jupiter",
+                    "name": "junit-jupiter",
+                    "version": "5.10.2",
+                    "artifacts": [
+                        {
+                            "name": "junit-jupiter",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter\\5.10.2\\junit-jupiter-5.10.2.jar"
+                        },
+                        {
+                            "name": "junit-jupiter",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter\\5.10.2\\junit-jupiter-5.10.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang",
+                    "name": "scala-library",
+                    "version": "2.13.12",
+                    "artifacts": [
+                        {
+                            "name": "scala-library",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala-library\\2.13.12\\scala-library-2.13.12.jar"
+                        },
+                        {
+                            "name": "scala-library",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala-library\\2.13.12\\scala-library-2.13.12-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.github.luben",
+                    "name": "zstd-jni",
+                    "version": "1.5.5-11",
+                    "artifacts": [
+                        {
+                            "name": "zstd-jni",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\com\\github\\luben\\zstd-jni\\1.5.5-11\\zstd-jni-1.5.5-11.jar"
+                        },
+                        {
+                            "name": "zstd-jni",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\com\\github\\luben\\zstd-jni\\1.5.5-11\\zstd-jni-1.5.5-11-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-wordspec_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-wordspec_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-wordspec_3\\3.3.0-alpha.1\\scalatest-wordspec_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-wordspec_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-wordspec_3\\3.3.0-alpha.1\\scalatest-wordspec_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.reactfx",
+                    "name": "reactfx",
+                    "version": "2.0-M5",
+                    "artifacts": [
+                        {
+                            "name": "reactfx",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\reactfx\\reactfx\\2.0-M5\\reactfx-2.0-M5.jar"
+                        },
+                        {
+                            "name": "reactfx",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\reactfx\\reactfx\\2.0-M5\\reactfx-2.0-M5-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang",
+                    "name": "scala3-library_3",
+                    "version": "3.4.2",
+                    "artifacts": [
+                        {
+                            "name": "scala3-library_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala3-library_3\\3.4.2\\scala3-library_3-3.4.2.jar"
+                        },
+                        {
+                            "name": "scala3-library_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\scala3-library_3\\3.4.2\\scala3-library_3-3.4.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-controls",
+                    "version": "22.0.1",
+                    "artifacts": [
+                        {
+                            "name": "javafx-controls",
+                            "classifier": "win",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-controls\\22.0.1\\javafx-controls-22.0.1-win.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.commons",
+                    "name": "commons-math3",
+                    "version": "3.6.1",
+                    "artifacts": [
+                        {
+                            "name": "commons-math3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-math3\\3.6.1\\commons-math3-3.6.1.jar"
+                        },
+                        {
+                            "name": "commons-math3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-math3\\3.6.1\\commons-math3-3.6.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-refspec_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-refspec_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-refspec_3\\3.3.0-alpha.1\\scalatest-refspec_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-refspec_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-refspec_3\\3.3.0-alpha.1\\scalatest-refspec_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "javax.inject",
+                    "name": "javax.inject",
+                    "version": "1",
+                    "artifacts": [
+                        {
+                            "name": "javax.inject",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\javax\\inject\\javax.inject\\1\\javax.inject-1.jar"
+                        },
+                        {
+                            "name": "javax.inject",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\javax\\inject\\javax.inject\\1\\javax.inject-1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.fxmisc.undo",
+                    "name": "undofx",
+                    "version": "2.1.1",
+                    "artifacts": [
+                        {
+                            "name": "undofx",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\undo\\undofx\\2.1.1\\undofx-2.1.1.jar"
+                        },
+                        {
+                            "name": "undofx",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\undo\\undofx\\2.1.1\\undofx-2.1.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest_3\\3.3.0-alpha.1\\scalatest_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest_3\\3.3.0-alpha.1\\scalatest_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.fxmisc.richtext",
+                    "name": "richtextfx",
+                    "version": "0.11.2",
+                    "artifacts": [
+                        {
+                            "name": "richtextfx",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\richtext\\richtextfx\\0.11.2\\richtextfx-0.11.2.jar"
+                        },
+                        {
+                            "name": "richtextfx",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\richtext\\richtextfx\\0.11.2\\richtextfx-0.11.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-base",
+                    "version": "22.0.1",
+                    "artifacts": [
+                        {
+                            "name": "javafx-base",
+                            "classifier": "win",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-base\\22.0.1\\javafx-base-22.0.1-win.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apiguardian",
+                    "name": "apiguardian-api",
+                    "version": "1.1.2",
+                    "artifacts": [
+                        {
+                            "name": "apiguardian-api",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apiguardian\\apiguardian-api\\1.1.2\\apiguardian-api-1.1.2.jar"
+                        },
+                        {
+                            "name": "apiguardian-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apiguardian\\apiguardian-api\\1.1.2\\apiguardian-api-1.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.maven.shared",
+                    "name": "maven-filtering",
+                    "version": "3.3.1",
+                    "artifacts": [
+                        {
+                            "name": "maven-filtering",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\shared\\maven-filtering\\3.3.1\\maven-filtering-3.3.1.jar"
+                        },
+                        {
+                            "name": "maven-filtering",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\shared\\maven-filtering\\3.3.1\\maven-filtering-3.3.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.testfx",
+                    "name": "testfx-junit5",
+                    "version": "4.0.18",
+                    "artifacts": [
+                        {
+                            "name": "testfx-junit5",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\testfx\\testfx-junit5\\4.0.18\\testfx-junit5-4.0.18.jar"
+                        },
+                        {
+                            "name": "testfx-junit5",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\testfx\\testfx-junit5\\4.0.18\\testfx-junit5-4.0.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.jupiter",
+                    "name": "junit-jupiter-engine",
+                    "version": "5.10.2",
+                    "artifacts": [
+                        {
+                            "name": "junit-jupiter-engine",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter-engine\\5.10.2\\junit-jupiter-engine-5.10.2.jar"
+                        },
+                        {
+                            "name": "junit-jupiter-engine",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter-engine\\5.10.2\\junit-jupiter-engine-5.10.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-fxml",
+                    "version": "22.0.1",
+                    "artifacts": [
+                        {
+                            "name": "javafx-fxml",
+                            "classifier": "win",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-fxml\\22.0.1\\javafx-fxml-22.0.1-win.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.commons",
+                    "name": "commons-text",
+                    "version": "1.10.0",
+                    "artifacts": [
+                        {
+                            "name": "commons-text",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-text\\1.10.0\\commons-text-1.10.0.jar"
+                        },
+                        {
+                            "name": "commons-text",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-text\\1.10.0\\commons-text-1.10.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.slf4j",
+                    "name": "slf4j-api",
+                    "version": "2.0.13",
+                    "artifacts": [
+                        {
+                            "name": "slf4j-api",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\slf4j\\slf4j-api\\2.0.13\\slf4j-api-2.0.13.jar"
+                        },
+                        {
+                            "name": "slf4j-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\slf4j\\slf4j-api\\2.0.13\\slf4j-api-2.0.13-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-shouldmatchers_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-shouldmatchers_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-shouldmatchers_3\\3.3.0-alpha.1\\scalatest-shouldmatchers_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-shouldmatchers_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-shouldmatchers_3\\3.3.0-alpha.1\\scalatest-shouldmatchers_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "commons-codec",
+                    "name": "commons-codec",
+                    "version": "1.16.0",
+                    "artifacts": [
+                        {
+                            "name": "commons-codec",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\commons-codec\\commons-codec\\1.16.0\\commons-codec-1.16.0.jar"
+                        },
+                        {
+                            "name": "commons-codec",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\commons-codec\\commons-codec\\1.16.0\\commons-codec-1.16.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-compatible",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-compatible",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-compatible\\3.3.0-alpha.1\\scalatest-compatible-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-compatible",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-compatible\\3.3.0-alpha.1\\scalatest-compatible-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.maven",
+                    "name": "maven-plugin-api",
+                    "version": "3.9.6",
+                    "artifacts": [
+                        {
+                            "name": "maven-plugin-api",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-plugin-api\\3.9.6\\maven-plugin-api-3.9.6.jar"
+                        },
+                        {
+                            "name": "maven-plugin-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-plugin-api\\3.9.6\\maven-plugin-api-3.9.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-propspec_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-propspec_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-propspec_3\\3.3.0-alpha.1\\scalatest-propspec_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-propspec_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-propspec_3\\3.3.0-alpha.1\\scalatest-propspec_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.opentest4j",
+                    "name": "opentest4j",
+                    "version": "1.3.0",
+                    "artifacts": [
+                        {
+                            "name": "opentest4j",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\opentest4j\\opentest4j\\1.3.0\\opentest4j-1.3.0.jar"
+                        },
+                        {
+                            "name": "opentest4j",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\opentest4j\\opentest4j\\1.3.0\\opentest4j-1.3.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.tukaani",
+                    "name": "xz",
+                    "version": "1.9",
+                    "artifacts": [
+                        {
+                            "name": "xz",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\tukaani\\xz\\1.9\\xz-1.9.jar"
+                        },
+                        {
+                            "name": "xz",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\tukaani\\xz\\1.9\\xz-1.9-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.assertj",
+                    "name": "assertj-core",
+                    "version": "3.25.3",
+                    "artifacts": [
+                        {
+                            "name": "assertj-core",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\assertj\\assertj-core\\3.25.3\\assertj-core-3.25.3.jar"
+                        },
+                        {
+                            "name": "assertj-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\assertj\\assertj-core\\3.25.3\\assertj-core-3.25.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.maven",
+                    "name": "maven-artifact",
+                    "version": "3.9.6",
+                    "artifacts": [
+                        {
+                            "name": "maven-artifact",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-artifact\\3.9.6\\maven-artifact-3.9.6.jar"
+                        },
+                        {
+                            "name": "maven-artifact",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-artifact\\3.9.6\\maven-artifact-3.9.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-diagrams_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-diagrams_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-diagrams_3\\3.3.0-alpha.1\\scalatest-diagrams_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-diagrams_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-diagrams_3\\3.3.0-alpha.1\\scalatest-diagrams_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.codehaus.plexus",
+                    "name": "plexus-classworlds",
+                    "version": "2.7.0",
+                    "artifacts": [
+                        {
+                            "name": "plexus-classworlds",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-classworlds\\2.7.0\\plexus-classworlds-2.7.0.jar"
+                        },
+                        {
+                            "name": "plexus-classworlds",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-classworlds\\2.7.0\\plexus-classworlds-2.7.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.poi",
+                    "name": "poi",
+                    "version": "5.2.5",
+                    "artifacts": [
+                        {
+                            "name": "poi",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\poi\\poi\\5.2.5\\poi-5.2.5.jar"
+                        },
+                        {
+                            "name": "poi",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\poi\\poi\\5.2.5\\poi-5.2.5-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.maven.shared",
+                    "name": "file-management",
+                    "version": "3.1.0",
+                    "artifacts": [
+                        {
+                            "name": "file-management",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\shared\\file-management\\3.1.0\\file-management-3.1.0.jar"
+                        },
+                        {
+                            "name": "file-management",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\shared\\file-management\\3.1.0\\file-management-3.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-graphics",
+                    "version": "22.0.1",
+                    "artifacts": [
+                        {
+                            "name": "javafx-graphics",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-graphics\\22.0.1\\javafx-graphics-22.0.1.jar"
+                        },
+                        {
+                            "name": "javafx-graphics",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-graphics\\22.0.1\\javafx-graphics-22.0.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalactic",
+                    "name": "scalactic_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalactic_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalactic\\scalactic_3\\3.3.0-alpha.1\\scalactic_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalactic_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalactic\\scalactic_3\\3.3.0-alpha.1\\scalactic_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.slf4j",
+                    "name": "slf4j-simple",
+                    "version": "2.0.13",
+                    "artifacts": [
+                        {
+                            "name": "slf4j-simple",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\slf4j\\slf4j-simple\\2.0.13\\slf4j-simple-2.0.13.jar"
+                        },
+                        {
+                            "name": "slf4j-simple",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\slf4j\\slf4j-simple\\2.0.13\\slf4j-simple-2.0.13-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-freespec_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-freespec_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-freespec_3\\3.3.0-alpha.1\\scalatest-freespec_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-freespec_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-freespec_3\\3.3.0-alpha.1\\scalatest-freespec_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.maven.plugins",
+                    "name": "maven-resources-plugin",
+                    "version": "3.3.1",
+                    "artifacts": [
+                        {
+                            "name": "maven-resources-plugin",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\plugins\\maven-resources-plugin\\3.3.1\\maven-resources-plugin-3.3.1.jar"
+                        },
+                        {
+                            "name": "maven-resources-plugin",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\plugins\\maven-resources-plugin\\3.3.1\\maven-resources-plugin-3.3.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.jupiter",
+                    "name": "junit-jupiter-api",
+                    "version": "5.10.2",
+                    "artifacts": [
+                        {
+                            "name": "junit-jupiter-api",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter-api\\5.10.2\\junit-jupiter-api-5.10.2.jar"
+                        },
+                        {
+                            "name": "junit-jupiter-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter-api\\5.10.2\\junit-jupiter-api-5.10.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.codehaus.plexus",
+                    "name": "plexus-interpolation",
+                    "version": "1.26",
+                    "artifacts": [
+                        {
+                            "name": "plexus-interpolation",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-interpolation\\1.26\\plexus-interpolation-1.26.jar"
+                        },
+                        {
+                            "name": "plexus-interpolation",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-interpolation\\1.26\\plexus-interpolation-1.26-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-controls",
+                    "version": "22.0.1",
+                    "artifacts": [
+                        {
+                            "name": "javafx-controls",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-controls\\22.0.1\\javafx-controls-22.0.1.jar"
+                        },
+                        {
+                            "name": "javafx-controls",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-controls\\22.0.1\\javafx-controls-22.0.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.eclipse.sisu",
+                    "name": "org.eclipse.sisu.inject",
+                    "version": "0.9.0.M2",
+                    "artifacts": [
+                        {
+                            "name": "org.eclipse.sisu.inject",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\eclipse\\sisu\\org.eclipse.sisu.inject\\0.9.0.M2\\org.eclipse.sisu.inject-0.9.0.M2.jar"
+                        },
+                        {
+                            "name": "org.eclipse.sisu.inject",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\eclipse\\sisu\\org.eclipse.sisu.inject\\0.9.0.M2\\org.eclipse.sisu.inject-0.9.0.M2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apfloat",
+                    "name": "apfloat",
+                    "version": "1.10.1",
+                    "artifacts": [
+                        {
+                            "name": "apfloat",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apfloat\\apfloat\\1.10.1\\apfloat-1.10.1.jar"
+                        },
+                        {
+                            "name": "apfloat",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apfloat\\apfloat\\1.10.1\\apfloat-1.10.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.fxmisc.flowless",
+                    "name": "flowless",
+                    "version": "0.7.2",
+                    "artifacts": [
+                        {
+                            "name": "flowless",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\flowless\\flowless\\0.7.2\\flowless-0.7.2.jar"
+                        },
+                        {
+                            "name": "flowless",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\fxmisc\\flowless\\flowless\\0.7.2\\flowless-0.7.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.bcel",
+                    "name": "bcel",
+                    "version": "6.5.0",
+                    "artifacts": [
+                        {
+                            "name": "bcel",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\bcel\\bcel\\6.5.0\\bcel-6.5.0.jar"
+                        },
+                        {
+                            "name": "bcel",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\bcel\\bcel\\6.5.0\\bcel-6.5.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.jetbrains",
+                    "name": "annotations",
+                    "version": "24.1.0",
+                    "artifacts": [
+                        {
+                            "name": "annotations",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jetbrains\\annotations\\24.1.0\\annotations-24.1.0.jar"
+                        },
+                        {
+                            "name": "annotations",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jetbrains\\annotations\\24.1.0\\annotations-24.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.codehaus.plexus",
+                    "name": "plexus-io",
+                    "version": "3.4.2",
+                    "artifacts": [
+                        {
+                            "name": "plexus-io",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-io\\3.4.2\\plexus-io-3.4.2.jar"
+                        },
+                        {
+                            "name": "plexus-io",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-io\\3.4.2\\plexus-io-3.4.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.commons",
+                    "name": "commons-lang3",
+                    "version": "3.12.0",
+                    "artifacts": [
+                        {
+                            "name": "commons-lang3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-lang3\\3.12.0\\commons-lang3-3.12.0.jar"
+                        },
+                        {
+                            "name": "commons-lang3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-lang3\\3.12.0\\commons-lang3-3.12.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.jupiter",
+                    "name": "junit-jupiter-params",
+                    "version": "5.10.2",
+                    "artifacts": [
+                        {
+                            "name": "junit-jupiter-params",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter-params\\5.10.2\\junit-jupiter-params-5.10.2.jar"
+                        },
+                        {
+                            "name": "junit-jupiter-params",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\jupiter\\junit-jupiter-params\\5.10.2\\junit-jupiter-params-5.10.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-matchers-core_3",
+                    "version": "3.3.0-alpha.1",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-matchers-core_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-matchers-core_3\\3.3.0-alpha.1\\scalatest-matchers-core_3-3.3.0-alpha.1.jar"
+                        },
+                        {
+                            "name": "scalatest-matchers-core_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scalatest\\scalatest-matchers-core_3\\3.3.0-alpha.1\\scalatest-matchers-core_3-3.3.0-alpha.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "it.unimi.dsi",
+                    "name": "fastutil",
+                    "version": "8.5.12",
+                    "artifacts": [
+                        {
+                            "name": "fastutil",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\it\\unimi\\dsi\\fastutil\\8.5.12\\fastutil-8.5.12.jar"
+                        },
+                        {
+                            "name": "fastutil",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\it\\unimi\\dsi\\fastutil\\8.5.12\\fastutil-8.5.12-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-base",
+                    "version": "22.0.1",
+                    "artifacts": [
+                        {
+                            "name": "javafx-base",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-base\\22.0.1\\javafx-base-22.0.1.jar"
+                        },
+                        {
+                            "name": "javafx-base",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-base\\22.0.1\\javafx-base-22.0.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.testfx",
+                    "name": "testfx-core",
+                    "version": "4.0.18",
+                    "artifacts": [
+                        {
+                            "name": "testfx-core",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\testfx\\testfx-core\\4.0.18\\testfx-core-4.0.18.jar"
+                        },
+                        {
+                            "name": "testfx-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\testfx\\testfx-core\\4.0.18\\testfx-core-4.0.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.antlr",
+                    "name": "antlr4-runtime",
+                    "version": "4.12.0",
+                    "artifacts": [
+                        {
+                            "name": "antlr4-runtime",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\antlr\\antlr4-runtime\\4.12.0\\antlr4-runtime-4.12.0.jar"
+                        },
+                        {
+                            "name": "antlr4-runtime",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\antlr\\antlr4-runtime\\4.12.0\\antlr4-runtime-4.12.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.jheaps",
+                    "name": "jheaps",
+                    "version": "0.14",
+                    "artifacts": [
+                        {
+                            "name": "jheaps",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jheaps\\jheaps\\0.14\\jheaps-0.14.jar"
+                        },
+                        {
+                            "name": "jheaps",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jheaps\\jheaps\\0.14\\jheaps-0.14-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.hamcrest",
+                    "name": "hamcrest",
+                    "version": "2.1",
+                    "artifacts": [
+                        {
+                            "name": "hamcrest",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\hamcrest\\hamcrest\\2.1\\hamcrest-2.1.jar"
+                        },
+                        {
+                            "name": "hamcrest",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\hamcrest\\hamcrest\\2.1\\hamcrest-2.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.logging.log4j",
+                    "name": "log4j-core",
+                    "version": "2.23.1",
+                    "artifacts": [
+                        {
+                            "name": "log4j-core",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\logging\\log4j\\log4j-core\\2.23.1\\log4j-core-2.23.1.jar"
+                        },
+                        {
+                            "name": "log4j-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\logging\\log4j\\log4j-core\\2.23.1\\log4j-core-2.23.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.jgrapht",
+                    "name": "jgrapht-ext",
+                    "version": "1.5.2",
+                    "artifacts": [
+                        {
+                            "name": "jgrapht-ext",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-ext\\1.5.2\\jgrapht-ext-1.5.2.jar"
+                        },
+                        {
+                            "name": "jgrapht-ext",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-ext\\1.5.2\\jgrapht-ext-1.5.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.aparapi",
+                    "name": "aparapi-jni",
+                    "version": "1.4.3",
+                    "artifacts": [
+                        {
+                            "name": "aparapi-jni",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\com\\aparapi\\aparapi-jni\\1.4.3\\aparapi-jni-1.4.3.jar"
+                        },
+                        {
+                            "name": "aparapi-jni",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\com\\aparapi\\aparapi-jni\\1.4.3\\aparapi-jni-1.4.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.platform",
+                    "name": "junit-platform-engine",
+                    "version": "1.10.2",
+                    "artifacts": [
+                        {
+                            "name": "junit-platform-engine",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\platform\\junit-platform-engine\\1.10.2\\junit-platform-engine-1.10.2.jar"
+                        },
+                        {
+                            "name": "junit-platform-engine",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\junit\\platform\\junit-platform-engine\\1.10.2\\junit-platform-engine-1.10.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.sonatype.plexus",
+                    "name": "plexus-build-api",
+                    "version": "0.0.7",
+                    "artifacts": [
+                        {
+                            "name": "plexus-build-api",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\sonatype\\plexus\\plexus-build-api\\0.0.7\\plexus-build-api-0.0.7.jar"
+                        },
+                        {
+                            "name": "plexus-build-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\sonatype\\plexus\\plexus-build-api\\0.0.7\\plexus-build-api-0.0.7-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.maven.plugins",
+                    "name": "maven-jar-plugin",
+                    "version": "3.4.1",
+                    "artifacts": [
+                        {
+                            "name": "maven-jar-plugin",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\plugins\\maven-jar-plugin\\3.4.1\\maven-jar-plugin-3.4.1.jar"
+                        },
+                        {
+                            "name": "maven-jar-plugin",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\plugins\\maven-jar-plugin\\3.4.1\\maven-jar-plugin-3.4.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.codehaus.plexus",
+                    "name": "plexus-component-annotations",
+                    "version": "2.1.0",
+                    "artifacts": [
+                        {
+                            "name": "plexus-component-annotations",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-component-annotations\\2.1.0\\plexus-component-annotations-2.1.0.jar"
+                        },
+                        {
+                            "name": "plexus-component-annotations",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\codehaus\\plexus\\plexus-component-annotations\\2.1.0\\plexus-component-annotations-2.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.maven",
+                    "name": "maven-archiver",
+                    "version": "3.6.2",
+                    "artifacts": [
+                        {
+                            "name": "maven-archiver",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-archiver\\3.6.2\\maven-archiver-3.6.2.jar"
+                        },
+                        {
+                            "name": "maven-archiver",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\maven\\maven-archiver\\3.6.2\\maven-archiver-3.6.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-graphics",
+                    "version": "22.0.1",
+                    "artifacts": [
+                        {
+                            "name": "javafx-graphics",
+                            "classifier": "win",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\openjfx\\javafx-graphics\\22.0.1\\javafx-graphics-22.0.1-win.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.commons",
+                    "name": "commons-compress",
+                    "version": "1.26.1",
+                    "artifacts": [
+                        {
+                            "name": "commons-compress",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-compress\\1.26.1\\commons-compress-1.26.1.jar"
+                        },
+                        {
+                            "name": "commons-compress",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\apache\\commons\\commons-compress\\1.26.1\\commons-compress-1.26.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "javax.annotation",
+                    "name": "javax.annotation-api",
+                    "version": "1.2",
+                    "artifacts": [
+                        {
+                            "name": "javax.annotation-api",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\javax\\annotation\\javax.annotation-api\\1.2\\javax.annotation-api-1.2.jar"
+                        },
+                        {
+                            "name": "javax.annotation-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\javax\\annotation\\javax.annotation-api\\1.2\\javax.annotation-api-1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang.modules",
+                    "name": "scala-xml_3",
+                    "version": "2.1.0",
+                    "artifacts": [
+                        {
+                            "name": "scala-xml_3",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\modules\\scala-xml_3\\2.1.0\\scala-xml_3-2.1.0.jar"
+                        },
+                        {
+                            "name": "scala-xml_3",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\scala-lang\\modules\\scala-xml_3\\2.1.0\\scala-xml_3-2.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.github.vlsi.mxgraph",
+                    "name": "jgraphx",
+                    "version": "4.2.2",
+                    "artifacts": [
+                        {
+                            "name": "jgraphx",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\com\\github\\vlsi\\mxgraph\\jgraphx\\4.2.2\\jgraphx-4.2.2.jar"
+                        },
+                        {
+                            "name": "jgraphx",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\com\\github\\vlsi\\mxgraph\\jgraphx\\4.2.2\\jgraphx-4.2.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.jgrapht",
+                    "name": "jgrapht-core",
+                    "version": "1.5.2",
+                    "artifacts": [
+                        {
+                            "name": "jgrapht-core",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-core\\1.5.2\\jgrapht-core-1.5.2.jar"
+                        },
+                        {
+                            "name": "jgrapht-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\jgrapht\\jgrapht-core\\1.5.2\\jgrapht-core-1.5.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.github.java-diff-utils",
+                    "name": "java-diff-utils",
+                    "version": "4.12",
+                    "artifacts": [
+                        {
+                            "name": "java-diff-utils",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\io\\github\\java-diff-utils\\java-diff-utils\\4.12\\java-diff-utils-4.12.jar"
+                        },
+                        {
+                            "name": "java-diff-utils",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\io\\github\\java-diff-utils\\java-diff-utils\\4.12\\java-diff-utils-4.12-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.xerial",
+                    "name": "sqlite-jdbc",
+                    "version": "3.36.0",
+                    "artifacts": [
+                        {
+                            "name": "sqlite-jdbc",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\xerial\\sqlite-jdbc\\3.36.0\\sqlite-jdbc-3.36.0.jar"
+                        },
+                        {
+                            "name": "sqlite-jdbc",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Chris\\.m2\\repository\\org\\xerial\\sqlite-jdbc\\3.36.0\\sqlite-jdbc-3.36.0-sources.jar"
+                        }
+                    ]
+                }
+            ]
+        },
+        "tags": [
+            "test"
+        ]
+    }
+}
