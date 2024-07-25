@@ -14,18 +14,16 @@ object Node {
   private val boolType: BoolType = null
 }
 
-class Node(private var identifier: String, private var operator: String, value: NodeValue, private var nameToken: Token, private var operatorToken: Token)
-  extends NodeStreamable[Node] {
+class Node(private var identifier: String, private var operator: String, private var value: NodeValue, private var nameToken: Token,
+           private var operatorToken: Token) extends NodeStreamable[Node] {
 
-  this.value = if (value == null) new NodeValue
-  else value
-  final private var value: NodeValue = null
-
+  if (value == null) value = new NodeValue
+  
   def this(value: NodeValue) {
     this(null, null, value, null, null)
   }
 
-  def this {
+  def this() {
     this(null.asInstanceOf[NodeValue])
   }
 
@@ -35,7 +33,7 @@ class Node(private var identifier: String, private var operator: String, value: 
 
   def name: String = identifier
 
-  def value: NodeValue = value
+  def getValue: NodeValue = value
 
   def valueObject: AnyRef = value.valueObject
 
@@ -47,11 +45,14 @@ class Node(private var identifier: String, private var operator: String, value: 
 
   override def getStream: Stream[Node] = stream.getStream
 
-  override def filter(predicate: Predicate[_ >: Node]): NodeStreamable[Node] = new NodeStream[Node](this).filter(predicate)
+  override def filter(predicate: Predicate[_ >: Node]): NodeStreamable[Node] = 
+    new NodeStream[Node](this).filter(predicate)
 
-  override def map[R <: Node](mapper: Function[_ >: Node, _ <: R]): NodeStreamable[R] = new NodeStream[Node](this).map(mapper)
+  override def map[R <: Node](mapper: Function[_ >: Node, _ <: R]): NodeStreamable[R] = 
+    new NodeStream[Node](this).map(mapper)
 
-  override def flatMap[R <: Node](mapper: Function[_ >: Node, _ <: NodeStreamable[R]]): NodeStreamable[R] = new NodeStream[Node](this).flatMap(mapper)
+  override def flatMap[R <: Node](mapper: Function[_ >: Node, _ <: NodeStreamable[R]]): NodeStreamable[R] = 
+    new NodeStream[Node](this).flatMap(mapper)
 
   override def toList: util.List[Node] = new NodeStream[Node](this).toList
 
@@ -59,7 +60,8 @@ class Node(private var identifier: String, private var operator: String, value: 
     new NodeStream[Node](this).forEach(action)
   }
 
-  override def findFirst: Node = new NodeStream[Node](this).findFirst
+  override def findFirst: Node = 
+    new NodeStream[Node](this).findFirst
 
   override def findFirst(predicate: Predicate[Node]): Node = {
     val result = new NodeStream[Node](this).findFirst(predicate)

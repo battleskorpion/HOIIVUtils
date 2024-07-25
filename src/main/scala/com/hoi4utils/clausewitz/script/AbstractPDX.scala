@@ -50,8 +50,9 @@ abstract class AbstractPDX[T] extends PDXScript[T] {
     throw new UnexpectedIdentifierException(exp)
   }
 
-  override def set(obj: T): Unit = {
+  override def set(value: T): Unit = {
     // todo
+    node.setValue(value)
   }
 
   @SuppressWarnings(Array("unchecked"))
@@ -155,8 +156,10 @@ abstract class AbstractPDX[T] extends PDXScript[T] {
     obj == other.obj
   }
 
-  override def getOrElse(elseValue: T): T = if (isUndefined) elseValue
-  else obj
+  override def getOrElse(elseValue: T): T = {
+    if (isUndefined) elseValue
+    else obj
+  }
 
   override def toString: String = {
     if (obj == null) return super.toString

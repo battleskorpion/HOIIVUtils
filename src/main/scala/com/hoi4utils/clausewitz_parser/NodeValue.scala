@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull
 
 import java.util
 import java.util.{ArrayList, Arrays}
+import scala.annotation.targetName
 
 
 /**
@@ -79,7 +80,7 @@ final class NodeValue {
 
   def asString: String = value match {
     case s: String => s
-    case i: Integer => Integer.toString(i)
+    case i: Int => Int.toString(i)
     case d: Double => Double.toString(d)
     case n: Number => Long.toString(n.longValue)
     case l: util.ArrayList[AnyVal] => util.Arrays.toString(l.toArray)
@@ -97,4 +98,20 @@ final class NodeValue {
   // return value instanceof Boolean;
   // }
   // todo check allowables
+  
+  @targetName("plus")
+  def +(other: NodeValue): NodeValue = {
+    value match
+      case str: String if other.value.isInstanceOf[String] =>
+        new NodeValue(str + other.value.asInstanceOf[String])
+      case num: Int if other.value.isInstanceOf[Int] =>
+        new NodeValue(value.asInstanceOf[Int].intValue + other.value.asInstanceOf[Int].intValue)
+      case num: Double if other.value.isInstanceOf[Double] =>
+        new NodeValue(value.asInstanceOf[Double].doubleValue + other.value.asInstanceOf[Double].doubleValue)
+      case _ => throw new IllegalStateException("Cannot add NodeValues of types " + value.getClass + " and " + other.value.getClass)
+  }
+  
+  def setValue (value: String | Int | Double | Boolean | util.ArrayList[Node]): Unit = {
+    this.value = value
+  }
 }
