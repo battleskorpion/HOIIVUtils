@@ -5,19 +5,13 @@ import com.hoi4utils.clausewitz_parser.NodeValue
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
-import java.util
-import java.util.{ArrayList, Iterator, List, Spliterator}
 import java.util.function.Consumer
 import java.util.stream.Stream
 
 // todo i do not like this class
-abstract class CollectionPDXScript[T <: PDXScript[_$1]] extends AbstractPDX[util.List[T]](pdxIdentifiers) with Iterable[T] {
-  def this(pdxIdentifiers: String*) = {
-    this()
-  }
-
-  def this(pdxIdentifiers: util.List[String]) = {
-    this()
+abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) extends AbstractPDX[util.List[T]](pdxIdentifiers) with Iterable[T] {
+  def this(pdxIdentifiers: List[String]) = {
+    this(pdxIdentifiers)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -42,9 +36,9 @@ abstract class CollectionPDXScript[T <: PDXScript[_$1]] extends AbstractPDX[util
       })
   }
 
-  override def nodeEquals(other: PDXScript[_]) = false // todo? well.
+  override def nodeEquals(other: PDXScript[?]) = false // todo? well.
 
-  override def get: util.List[T] = super.get
+  override def get(): List[T] = super.get()
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
@@ -54,12 +48,12 @@ abstract class CollectionPDXScript[T <: PDXScript[_$1]] extends AbstractPDX[util
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     node.$ match {
-      case _: util.ArrayList[T] =>
+      case _: List[T] =>
         val childScript = newChildScript(expression)
         childScript.loadPDX(expression)
         childScriptList.add(childScript)
       case _ =>
-        // todo? 
+        // todo?
     }
   }
 
@@ -69,25 +63,25 @@ abstract class CollectionPDXScript[T <: PDXScript[_$1]] extends AbstractPDX[util
     node.$.clear
   }
 
-  def isEmpty: Boolean = get.isEmpty
+  def isEmpty: Boolean = get().isEmpty
 
-  override def iterator: util.Iterator[T] = get.iterator
+  override def iterator: java.util.Iterator[T] = get().iterator
 
-  override def forEach(action: Consumer[_ >: T]): Unit = {
-    get.forEach(action)
+  override def forEach(action: Consumer[? >: T]): Unit = {
+    get().foreach(action)
   }
 
-  override def spliterator: Spliterator[T] = get.spliterator
+  override def spliterator: java.util.Spliterator[T] = get().spliterator
 
-  def size: Int = get.size
+  def size: Int = get().size
 
-  def stream: Stream[T] = get.stream
+  def stream: Stream[T] = get().stream
 
   override def isUndefined: Boolean = obj.isEmpty
 
   override def toScript: String = {
     val sb = new StringBuilder
-    val scripts = get
+    val scripts = get()
     if (scripts == null) return null
     import scala.collection.JavaConversions._
     for (pdxScript <- scripts) {

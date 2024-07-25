@@ -12,7 +12,7 @@ abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
     this()
   }
 
-  protected def childScripts: util.Collection[_ <: PDXScript[_]]
+  protected def childScripts: java.util.Collection[_ <: PDXScript[_]]
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
@@ -61,7 +61,7 @@ abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
    *
    * @param identifiers
    */
-  def getPDXProperty(identifiers: util.List[String]): PDXScript[_] = {
+  def getPDXProperty(identifiers: List[String]): PDXScript[_] = {
     import scala.collection.JavaConversions._
     for (identifier <- identifiers) {
       val pdx = getPDXProperty(identifier)
@@ -90,7 +90,7 @@ abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
    *
    * @param identifiers
    */
-  def getPDXPropertyOfType[R](identifiers: util.List[String]): PDXScript[R] = {
+  def getPDXPropertyOfType[R](identifiers: List[String]): PDXScript[R] = {
     import scala.collection.JavaConversions._
     for (identifier <- identifiers) {
       val pdx = getPDXPropertyOfType(identifier)
@@ -99,7 +99,7 @@ abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
     null
   }
 
-  def pdxProperties: util.Collection[_ <: PDXScript[_]] = {
+  def pdxProperties: Collection[_ <: PDXScript[_]] = {
     val scripts = childScripts
     if (scripts == null) return null
     Collections.unmodifiableCollection(scripts)

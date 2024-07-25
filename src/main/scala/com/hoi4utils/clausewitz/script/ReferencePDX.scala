@@ -8,14 +8,14 @@ import java.util
 import java.util.{Collection, List}
 import java.util.function.Function
 import java.util.function.Supplier
-// todo fix this class 
+// todo fix this class
 
 // the superclass will still be of type T (the type of the referenced pdxscript object)// the superclass will still be of type T (the type of the referenced pdxscript object)
 // but the super obj can be null until the reference is resolved.// but the super obj can be null until the reference is resolved.
 // this class will contain a string identifier that identifies the referenced pdxscript object// this class will contain a string identifier that identifies the referenced pdxscript object
 // (usually by its 'id' PDXScript field)// (usually by its 'id' PDXScript field)
 
-class ReferencePDX[T <: AbstractPDX[_]] extends AbstractPDX[T](pdxIdentifiers) {
+class ReferencePDX[T <: AbstractPDX[?]] extends AbstractPDX[T](pdxIdentifiers) {
   // the collection of potential pdxscript objects that this reference can point to
   final protected var referenceCollectionSupplier: Supplier[util.Collection[T]] = _
   final protected var idExtractor: Function[T, String] = _
@@ -37,18 +37,18 @@ class ReferencePDX[T <: AbstractPDX[_]] extends AbstractPDX[T](pdxIdentifiers) {
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.value
-    if (value.isString) referenceName = value.string
+    val value = expression.$
+    if (value.isString) referenceName = value
     else throw new NodeValueTypeException(expression, "string")
   }
 
   override def get(): T = {
-    if (obj != null) return obj
+    if (node != null) return node
     resolveReference
   }
 
   override def nodeEquals(other: PDXScript[_]): Boolean = {
-    if (other.isInstanceOf[ReferencePDX[_]]) return referenceName == pdx.referenceName && this.referenceCollectionSupplier == pdx.referenceCollectionSupplier && this.idExtractor == pdx.idExtractor
+    if (other.isInstanceOf[ReferencePDX[_]]) return referenceName == other.referenceName && this.referenceCollectionSupplier == other.referenceCollectionSupplier && this.idExtractor == other.idExtractor
     false
   }
 

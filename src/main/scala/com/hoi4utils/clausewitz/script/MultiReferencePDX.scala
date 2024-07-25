@@ -3,36 +3,23 @@ package com.hoi4utils.clausewitz.script
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 import org.jetbrains.annotations.Nullable
-import java.util._
 import java.util.function.Function
 import java.util.function.Supplier
 
 
 // todo uhhhhhhhhhhhhh
-class MultiReferencePDX[T <: AbstractPDX[_]] extends MultiPDX[T](null, pdxIdentifiers) {
-  final protected var referenceCollectionSupplier: Supplier[util.Collection[T]] = _
-  final protected var idExtractor: Function[T, String] = _
-  final protected var referencePDXTokenIdentifiers: util.List[String] = null
-  final protected val referenceNames = new util.ArrayList[String]
+class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSupplier: Supplier[Collection[T]], protected var idExtractor: Function[T, String], DPXIdentifiers: List[String], pdxReferenceIdentifiers: List[String]) extends MultiPDX[T](null, pdxIdentifiers) {
+  final protected var referencePDXTokenIdentifiers: List[String] = _
+  final protected val referenceNames = new ArrayList[String]
 
-  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String, referenceIdentifier: String) = {
-    this()
-    this.referenceCollectionSupplier = referenceCollectionSupplier
-    this.idExtractor = idExtractor
-    this.referencePDXTokenIdentifiers = util.List.of(referenceIdentifier)
-  }
-
-  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: util.List[String], pdxReferenceIdentifier: util.List[String]) = {
-    this()
-    this.referenceCollectionSupplier = referenceCollectionSupplier
-    this.idExtractor = idExtractor
-    this.referencePDXTokenIdentifiers = pdxReferenceIdentifier
+  def this(referenceCollectionSupplier: Supplier[Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String, referenceIdentifier: String) = {
+    this(referenceCollectionSupplier, idExtractor, List.of(PDXIdentifiers), List.of(referenceIdentifier))
   }
 
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
-    if (expression.value.isList) {
-      val list = expression.value.list
+    if (expression.$.isList) {
+      val list = expression.$
       if (list == null) {
         System.out.println("PDX script had empty list: " + expression)
         return
@@ -54,7 +41,7 @@ class MultiReferencePDX[T <: AbstractPDX[_]] extends MultiPDX[T](null, pdxIdenti
     }
   }
 
-  override def get(): util.List[T] = {
+  override def get(): List[T] = {
     if (node != null && !node.isEmpty) return node
     resolveReferences
   }
@@ -63,7 +50,7 @@ class MultiReferencePDX[T <: AbstractPDX[_]] extends MultiPDX[T](null, pdxIdenti
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingReferenceIdentifier(expression)
-    val value = expression.value
+    val value = expression.$
     referenceNames.clear()
     referenceNames.add(value.string)
   }
@@ -78,9 +65,7 @@ class MultiReferencePDX[T <: AbstractPDX[_]] extends MultiPDX[T](null, pdxIdenti
 
   private def resolveReferences = {
     val referenceCollection = referenceCollectionSupplier.get
-    import scala.collection.JavaConversions._
     for (reference <- referenceCollection) {
-      import scala.collection.JavaConversions._
       for (referenceName <- referenceNames) {
         if (idExtractor.apply(reference) == referenceName) node.add(reference)
       }
@@ -90,7 +75,7 @@ class MultiReferencePDX[T <: AbstractPDX[_]] extends MultiPDX[T](null, pdxIdenti
 
   @throws[UnexpectedIdentifierException]
   protected def usingReferenceIdentifier(exp: Node): Unit = {
-    for (i <- 0 until referencePDXTokenIdentifiers.size) {
+    for (i <- referencePDXTokenIdentifiers.indices) {
       if (exp.nameEquals(referencePDXTokenIdentifiers.get(i))) {
         //                activeReferenceIdentifier = i;
         return
@@ -101,7 +86,7 @@ class MultiReferencePDX[T <: AbstractPDX[_]] extends MultiPDX[T](null, pdxIdenti
 
   override def toScript: String = {
     val sb = new StringBuilder
-    val scripts = get
+    val scripts = get()
     if (scripts == null) return null
     import scala.collection.JavaConversions._
     for (identifier <- referenceNames) {
@@ -116,7 +101,7 @@ class MultiReferencePDX[T <: AbstractPDX[_]] extends MultiPDX[T](null, pdxIdenti
 
   def getReferenceName(i: Int): String = referenceNames.get(i)
 
-  def getReferenceCollectionNames: util.List[String] = referenceCollectionSupplier.get.stream.map(idExtractor).toList
+  def getReferenceCollectionNames: List[String] = referenceCollectionSupplier.get.stream.map(idExtractor).toList
 
   def addReferenceName(newValue: String): Unit = {
     referenceNames.add(newValue)

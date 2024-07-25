@@ -10,15 +10,15 @@ import java.util.function.Supplier
 
 
 class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
-  protected var simplePDX: PDXScript[V] = null
-  protected var simplePDXSupplier: Supplier[PDXScript[V]] = null
-  final protected var structuredBlock: U = null
+  protected var simplePDX: PDXScript[V] = uninitialized
+  protected var simplePDXSupplier: Supplier[PDXScript[V]] = uninitialized 
+  final protected var structuredBlock: U = null.asInstanceOf[U]
   /**
    * may be null. the structured block does not always have a single property
    * that is equivalent to the simple value. Or, the structured block has a
    * property that is equivalent to a value and the property is null.
    */
-  private var structuredPDXValueIdentifiers: util.List[String] = null
+  private var structuredPDXValueIdentifiers: util.List[String] = uninitialized 
 
   def this(simplePDXSupplier: Supplier[PDXScript[V]], structuredBlock: U) = {
     this()
@@ -65,21 +65,21 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
   def this(simplePDXSupplier: Supplier[PDXScript[V]]) = {
     this()
     this.simplePDXSupplier = simplePDXSupplier
-    this.structuredBlock = null
+    this.structuredBlock = null.asInstanceOf[U]
     this.structuredPDXValueIdentifiers = null
   }
 
   def this(simplePDXSupplier: Supplier[PDXScript[V]], structuredPDXValueIdentifier: String) = {
     this()
     this.simplePDXSupplier = simplePDXSupplier
-    this.structuredBlock = null
+    this.structuredBlock = null.asInstanceOf[U]
     this.structuredPDXValueIdentifiers = util.List.of(structuredPDXValueIdentifier)
   }
 
   def this(simplePDXSupplier: Supplier[PDXScript[V]], structuredPDXValueIdentifier: util.List[String]) = {
     this()
     this.simplePDXSupplier = simplePDXSupplier
-    this.structuredBlock = null
+    this.structuredBlock = null.asInstanceOf[U]
     this.structuredPDXValueIdentifiers = structuredPDXValueIdentifier
   }
 
@@ -88,7 +88,7 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
     this.setNull(structuredBlock)
   }
 
-  private def setNull(pdx: AbstractPDX[_]): Unit = {
+  private def setNull(pdx: AbstractPDX[?]): Unit = {
     if (pdx != null) pdx.setNull()
   }
 
@@ -125,7 +125,7 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
     if (valueProperty == null) null
     else valueProperty.get
   }
-  else null
+  else null.asInstanceOf[V]
 
   @throws[UnexpectedIdentifierException]
   def loadPDX(expression: Node): Unit = {
@@ -168,7 +168,7 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
   else if (blockAllowed) structuredBlock.toScript
   else "[null DynamicPDX]"
 
-  override def nodeEquals(other: PDXScript[_]): Boolean = if (!isBlock) simplePDX.nodeEquals(other)
+  override def nodeEquals(other: PDXScript[?]): Boolean = if (!isBlock) simplePDX.nodeEquals(other)
   else if (blockAllowed) structuredBlock.nodeEquals(other)
   else false
 
@@ -178,7 +178,7 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
     else get
   }
 
-  override def isUndefined: Boolean = get == null
+  override def isUndefined: Boolean = get() == null
 
   override def toString: String = "DynamicPDX{" + "simpleValue=" + simplePDX + ", structuredValue=" + structuredBlock + '}'
 
@@ -194,6 +194,6 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
   else if (blockAllowed) structuredBlock.getPDXIdentifier
   else null
 
-  def getPDXScript: PDXScript[_] = if (!isBlock) simplePDX
+  def getPDXScript: PDXScript[?] = if (!isBlock) simplePDX
   else structuredBlock
 }

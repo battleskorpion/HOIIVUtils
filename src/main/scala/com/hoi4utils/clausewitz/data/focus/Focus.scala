@@ -4,6 +4,8 @@ import com.hoi4utils.clausewitz.DataFunctionProvider
 import com.hoi4utils.clausewitz.localization.Localizable
 import com.hoi4utils.clausewitz.script._
 import com.hoi4utils.clausewitz_parser.Node
+import com.hoi4utils.clausewitz.BoolType
+import java.awt.Point
 
 import java.util
 import java.util._
@@ -20,12 +22,12 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
   val y: IntegerPDX = new IntegerPDX("y") // if relative, relative y
   val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(() => new PrerequisiteSet(() => focusTree.focuses), "prerequisite")
   val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(() => new MutuallyExclusiveSet(() => focusTree.focuses), "mutually_exclusive")
-  val relativePosition: ReferencePDX[Focus] = new ReferencePDX(() => focusTree.focuses, (f: Focus) => f.id.get(), "relative_position_id")
+  val relativePosition = new ReferencePDX[Focus](() => focusTree.focuses, (f: Focus) => f.id.get(), "relative_position_id")
   val cost: DoublePDX = new DoublePDX("cost")
   val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
   val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
   val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
-  var ddsImage: Image = _
+  var ddsImage: Image = uninitialized
 
   val completionReward: CompletionReward = new CompletionReward()
 
@@ -101,7 +103,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
 
   def preciseCompletionTime(): Double = cost.getOrElse(DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
 
-  override def getLocalizableProperties: Map[Property, String] = {
+  override def getLocalizableProperties: java.util.Map[Property, String] = {
     Map(Property.NAME -> id.get(), Property.DESCRIPTION -> s"${id.get()}_desc")
   }
 
@@ -237,7 +239,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
 
       override def nodeEquals(other: PDXScript[_]): Boolean = {
         other match {
-          case icon: Focus.Icon => value.objEquals(icon.get())
+          case icon: Icon => value.objEquals(icon.get())
           case _ => false
         }
       }
@@ -246,21 +248,21 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     {
   }
 
-  private class CompletionReward extends CollectionPDXScript[Effect[_]]("completion_reward") {
+  class CompletionReward extends CollectionPDXScript[Effect[?]]("completion_reward") {
     @throws[UnexpectedIdentifierException]
     override def loadPDX(expression: Node): Unit = {
       super.loadPDX(expression)
     }
 
-    override protected def newChildScript(expression: Node): Effect[_] = {
+    override protected def newChildScript(expression: Node): Effect[?] = {
     }
   }
 
 }
 
 object Focus {
-  def getDataFunctions: Seq[Function[Focus, _]] = {
-    val dataFunctions = mutable.ListBuffer[Function[Focus, _]]()
+  def getDataFunctions: Seq[Function[Focus, ?]] = {
+    val dataFunctions = mutable.ListBuffer[Function[Focus, ?]]()
     dataFunctions += (focus => focus.id.get())
     dataFunctions += (focus => focus.localizationText(Property.NAME))
     dataFunctions += (focus => focus.localizationText(Property.DESCRIPTION))

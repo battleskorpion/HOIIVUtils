@@ -24,13 +24,17 @@ class DoublePDX extends AbstractPDX[Double](pdxIdentifers) {
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.value
-    if (value.valueObject.isInstanceOf[Number]) obj = num.doubleValue
-    else throw new NodeValueTypeException(expression, "Number (as a Double)")
+//    val value = expression.value
+//    if (value.valueObject.isInstanceOf[Number]) obj = num.doubleValue
+    this.node = expression
+    node.$ match {
+      case _: Double =>
+      case _ => throw new NodeValueTypeException(expression, "Number (as a Double)")
+    }
   }
 
   override def nodeEquals(other: PDXScript[_]): Boolean = {
-    if (other.isInstanceOf[DoublePDX]) return obj.equals(pdx.get)
+    if (other.isInstanceOf[DoublePDX]) return node.$.equals(other.get())
     false
   }
 }
