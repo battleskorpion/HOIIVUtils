@@ -19,7 +19,7 @@ class Parser(file: File) {
   final private var tokens: Tokenizer = _ 
   private var rootNode: Node = _ 
 
-  def this(input: String) {
+  def this(input: String) = {
     this()
 
     /* EOF */

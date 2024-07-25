@@ -8,15 +8,15 @@ import java.util.List
 
 
 class IntegerPDX extends AbstractPDX[Integer](pdxIdentifiers) {
-  def this(pdxIdentifiers: String) {
+  def this(pdxIdentifiers: String) = {
     this()
   }
 
-  def this(PDXIdentifiers: String*) {
+  def this(PDXIdentifiers: String*) = {
     this()
   }
 
-  def this(pdxIdentifiers: util.List[String]) {
+  def this(pdxIdentifiers: util.List[String]) = {
     this()
   }
 

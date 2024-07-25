@@ -2,22 +2,20 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
-import java.util._
 
-
-abstract class StructuredPDX extends AbstractPDX[util.List[Node]](pdxIdentifiers) {
-  def this(pdxIdentifiers: String*) {
+abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
+  def this(pdxIdentifiers: String*) = {
     this()
   }
 
-  def this(pdxIdentifiers: util.List[String]) {
+  def this(pdxIdentifiers: List[String]) = {
     this()
   }
 
   protected def childScripts: util.Collection[_ <: PDXScript[_]]
 
   @throws[UnexpectedIdentifierException]
-  @throws[NodeValueTypeException] 
+  @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
     val value = expression.$
@@ -31,7 +29,7 @@ abstract class StructuredPDX extends AbstractPDX[util.List[Node]](pdxIdentifiers
 
   override def loadPDX(expression: Node): Unit = {
     if (expression.name == null) {
-      // todo check through schema? 
+      // todo check through schema?
       if (expression.value.isList) loadPDX(expression.$)
       else System.out.println("Error loading PDX script: " + expression)
       return

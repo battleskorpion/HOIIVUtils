@@ -2,6 +2,7 @@ package com.hoi4utils.clausewitz.script
 
 import java.util
 import java.util.List
+import com.hoi4utils.clausewitz_parser.Node
 
 trait PDXScript[T] {
   def set(obj: T): Unit

@@ -19,15 +19,15 @@ class Node(private var identifier: String, private var operator: String, private
 
   if (nodeValue == null) nodeValue = new NodeValue
   
-  def this(value: NodeValue) {
+  def this(value: NodeValue) = {
     this(null, null, value, null, null)
   }
 
-  def this() {
+  def this() = {
     this(null.asInstanceOf[NodeValue])
   }
 
-  def this(value: util.ArrayList[Node]) {
+  def this(value: util.ArrayList[Node]) = {
     this(new NodeValue(value))
   }
 

@@ -18,7 +18,7 @@ class NodeStream[T <: Node](var stream: Stream[T]) extends NodeStreamable[T] {
    *
    * @param nodeToStream the node to stream
    */
-  def this(nodeToStream: T) {
+  def this(nodeToStream: T) = {
     this(Stream.of(nodeToStream))
     // todo necessary etc.?
     if (nodeToStream.valueObject.isInstanceOf[util.ArrayList[_]]) stream = stream.flatMap((node: T) => node.valueObject.asInstanceOf[util.ArrayList[T]].stream) // ! Unchecked cast

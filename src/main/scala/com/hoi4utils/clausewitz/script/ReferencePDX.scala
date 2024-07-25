@@ -15,19 +15,19 @@ import java.util.function.Supplier
 // this class will contain a string identifier that identifies the referenced pdxscript object// this class will contain a string identifier that identifies the referenced pdxscript object
 // (usually by its 'id' PDXScript field)// (usually by its 'id' PDXScript field)
 
-class ReferencePDX[T <: AbstractPDX[_$1]] extends AbstractPDX[T](pdxIdentifiers) {
+class ReferencePDX[T <: AbstractPDX[_]] extends AbstractPDX[T](pdxIdentifiers) {
   // the collection of potential pdxscript objects that this reference can point to
   final protected var referenceCollectionSupplier: Supplier[util.Collection[T]] = _
   final protected var idExtractor: Function[T, String] = _
   protected var referenceName: String = _
 
-  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String) {
+  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String) = {
     this()
     this.referenceCollectionSupplier = referenceCollectionSupplier
     this.idExtractor = idExtractor
   }
 
-  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String*) {
+  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String*) = {
     this()
     this.referenceCollectionSupplier = referenceCollectionSupplier
     this.idExtractor = idExtractor

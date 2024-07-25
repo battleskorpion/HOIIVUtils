@@ -9,20 +9,20 @@ import java.util.function.Supplier
 
 
 // todo uhhhhhhhhhhhhh
-class MultiReferencePDX[T <: AbstractPDX[_$1]] extends MultiPDX[T](null, pdxIdentifiers) {
+class MultiReferencePDX[T <: AbstractPDX[_]] extends MultiPDX[T](null, pdxIdentifiers) {
   final protected var referenceCollectionSupplier: Supplier[util.Collection[T]] = _
   final protected var idExtractor: Function[T, String] = _
   final protected var referencePDXTokenIdentifiers: util.List[String] = null
   final protected val referenceNames = new util.ArrayList[String]
 
-  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String, referenceIdentifier: String) {
+  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String, referenceIdentifier: String) = {
     this()
     this.referenceCollectionSupplier = referenceCollectionSupplier
     this.idExtractor = idExtractor
     this.referencePDXTokenIdentifiers = util.List.of(referenceIdentifier)
   }
 
-  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: util.List[String], pdxReferenceIdentifier: util.List[String]) {
+  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: util.List[String], pdxReferenceIdentifier: util.List[String]) = {
     this()
     this.referenceCollectionSupplier = referenceCollectionSupplier
     this.idExtractor = idExtractor

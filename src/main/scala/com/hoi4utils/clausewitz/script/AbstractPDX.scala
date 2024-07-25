@@ -9,9 +9,6 @@ import org.jetbrains.annotations.Nullable
 import scala.jdk.CollectionConverters._
 
 import java.io.File
-import java.util
-import java.util.List
-
 
 /**
  * Any object that can be converted to a PDX script block, such as a focus, national focus tree,
@@ -19,16 +16,16 @@ import java.util.List
  * <p>
  */
 trait AbstractPDX[T] extends PDXScript[T] {
-  final protected var pdxIdentifiers: util.List[String] = _
+  final protected var pdxIdentifiers: List[String] = _
   private[script] var activeIdentifier = 0
   protected var node: Node = _
 
-  def this(pdxIdentifiers: String*) {
+  def this(pdxIdentifiers: String*) = {
     this()
-    this.pdxIdentifiers = util.List.of(pdxIdentifiers)
+    this.pdxIdentifiers = List.of(pdxIdentifiers)
   }
 
-  def this(pdxIdentifiers: util.List[String]) {
+  def this(pdxIdentifiers: List[String]) = {
     this()
     this.pdxIdentifiers = pdxIdentifiers
   }
@@ -54,7 +51,7 @@ trait AbstractPDX[T] extends PDXScript[T] {
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.value
+    val value = expression.$
 //    try obj = value.valueObject.asInstanceOf[T]
 //    catch {
 //      case e: ClassCastException =>
@@ -64,7 +61,7 @@ trait AbstractPDX[T] extends PDXScript[T] {
   }
 
   override def get(): T = {
-    node.valueObject() match {
+    node.$() match {
       case value: T => value
       case _ => null.asInstanceOf[T] // Use a default value for T if necessary
     }
@@ -85,7 +82,7 @@ trait AbstractPDX[T] extends PDXScript[T] {
     }
   }
 
-  override def loadPDX(expressions: util.List[Node]): Unit = {
+  override def loadPDX(expressions: List[Node]): Unit = {
     Option(expressions).foreach { exprs =>
       val scalaExprs = exprs.asScala.toList
       scalaExprs.find(isValidIdentifier) match {

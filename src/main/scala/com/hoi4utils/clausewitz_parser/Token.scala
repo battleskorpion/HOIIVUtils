@@ -33,14 +33,14 @@ class Token {
   var `type`: TokenType = null
   var start = 0
 
-  def this(value: String, start: Int, `type`: TokenType) {
+  def this(value: String, start: Int, `type`: TokenType) = {
     this()
     this.value = value
     this.start = start
     this.`type` = `type`
   }
 
-  def this(value: String, start: Int) {
+  def this(value: String, start: Int) = {
     this()
     this.value = value
     this.start = start

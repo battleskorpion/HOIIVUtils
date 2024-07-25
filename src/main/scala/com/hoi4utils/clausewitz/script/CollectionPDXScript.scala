@@ -12,11 +12,11 @@ import java.util.stream.Stream
 
 // todo i do not like this class
 abstract class CollectionPDXScript[T <: PDXScript[_$1]] extends AbstractPDX[util.List[T]](pdxIdentifiers) with Iterable[T] {
-  def this(pdxIdentifiers: String*) {
+  def this(pdxIdentifiers: String*) = {
     this()
   }
 
-  def this(pdxIdentifiers: util.List[String]) {
+  def this(pdxIdentifiers: util.List[String]) = {
     this()
   }
 

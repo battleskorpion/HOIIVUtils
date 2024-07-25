@@ -19,15 +19,15 @@ import java.util.stream.Stream
  *
  * @param < T>
  */
-class MultiPDX[T <: PDXScript[_$1]] extends AbstractPDX[util.List[T]](pdxIdentifiers) with Iterable[T] {
+class MultiPDX[T <: PDXScript[_]] extends AbstractPDX[util.List[T]](pdxIdentifiers) with Iterable[T] {
   final protected var supplier: Supplier[T] = _
 
-  def this(supplier: Supplier[T], pdxIdentifiers: String*) {
+  def this(supplier: Supplier[T], pdxIdentifiers: String*) = {
     this()
     this.supplier = supplier
   }
 
-  def this(supplier: Supplier[T], pdxIdentifiers: util.List[String]) {
+  def this(supplier: Supplier[T], pdxIdentifiers: util.List[String]) = {
     this()
     this.supplier = supplier
   }

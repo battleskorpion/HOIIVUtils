@@ -1,10 +1,12 @@
 package com.hoi4utils.clausewitz.data.focus
 
-import com.hoi4utils.clausewitz.script.{CollectionPDXScript, DynamicPDX, MultiReferencePDX, StringPDX, StructuredPDX}
+import com.hoi4utils.clausewitz.DataFunctionProvider
+import com.hoi4utils.clausewitz.localization.Localizable
+import com.hoi4utils.clausewitz.script._
 import com.hoi4utils.clausewitz_parser.Node
 
 import java.util
-import java.util.{Collection, List}
+import java.util._
 import java.util.function.Supplier
 
 class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable with Comparable[Focus] with DataFunctionProvider[Focus] {
@@ -13,12 +15,12 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
 
   /* attributes */
   val id: StringPDX = new StringPDX("id")
-  val icon: MultiPDXScript[Icon] = new MultiPDXScript(() => new Icon(), "icon")
+  val icon: MultiPDX[Icon] = new MultiPDX(() => new Icon(), "icon")
   val x: IntegerPDX = new IntegerPDX("x") // if relative, relative x
   val y: IntegerPDX = new IntegerPDX("y") // if relative, relative y
-  val prerequisites: MultiPDXScript[PrerequisiteSet] = new MultiPDXScript(() => new PrerequisiteSet(() => focusTree.focuses), "prerequisite")
-  val mutuallyExclusive: MultiPDXScript[MutuallyExclusiveSet] = new MultiPDXScript(() => new MutuallyExclusiveSet(() => focusTree.focuses), "mutually_exclusive")
-  val relativePosition: ReferencePDXScript[Focus] = new ReferencePDXScript(() => focusTree.focuses, (f: Focus) => f.id.get(), "relative_position_id")
+  val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(() => new PrerequisiteSet(() => focusTree.focuses), "prerequisite")
+  val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(() => new MutuallyExclusiveSet(() => focusTree.focuses), "mutually_exclusive")
+  val relativePosition: ReferencePDX[Focus] = new ReferencePDX(() => focusTree.focuses, (f: Focus) => f.id.get(), "relative_position_id")
   val cost: DoublePDX = new DoublePDX("cost")
   val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
   val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
@@ -214,7 +216,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
 
   class PrerequisiteSet(referenceFocusesSupplier: Supplier[util.Collection[Focus]]) extends MultiReferencePDX[Focus]
   (referenceFocusesSupplier, (f: Focus) => f.id.get(), "prerequisite", "focus") {
-    def this() {
+    def this() = {
       this(() => focusTree.focuses)
     }
   }

@@ -7,11 +7,11 @@ class PDXSchema[T](identifiers: String*) {
     throw new IllegalArgumentException("PDXSchema must have at least one identifier")
   }
   
-  def this(identifiers: List[String]) {
+  def this(identifiers: List[String]) = {
     this(identifiers.toArray: _*)
   }
   
-  def this(identifiers: Array[String]) {
+  def this(identifiers: Array[String]) = {
     this(identifiers: _*)
   }
 }

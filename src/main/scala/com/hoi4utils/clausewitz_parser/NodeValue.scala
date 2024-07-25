@@ -15,7 +15,7 @@ import scala.annotation.targetName
 final class NodeValue {
   private var value: String | Int | Double | Boolean | util.ArrayList[Node] | Null = _
 
-  def this(value: String | Int | Double | Boolean | util.ArrayList[Node] | Null) {
+  def this(value: String | Int | Double | Boolean | util.ArrayList[Node] | Null) = {
     this()
     this.value = value
   }
