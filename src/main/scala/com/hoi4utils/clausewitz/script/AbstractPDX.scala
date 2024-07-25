@@ -51,7 +51,7 @@ abstract class AbstractPDX[T] extends PDXScript[T] {
   }
 
   override def set(obj: T): Unit = {
-    this.obj = obj
+    // todo
   }
 
   @SuppressWarnings(Array("unchecked"))
@@ -68,7 +68,10 @@ abstract class AbstractPDX[T] extends PDXScript[T] {
   }
 
   override def get(): T = {
-    
+    node.valueObject() match {
+      case value: T => value
+      case _ => null.asInstanceOf[T] // Use a default value for T if necessary
+    }
   }
 
   @throws[UnexpectedIdentifierException]
