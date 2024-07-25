@@ -67,9 +67,9 @@ class ReferencePDX[T <: AbstractPDX[?]] extends AbstractPDX[T](pdxIdentifiers) {
   }
 
   override def nodeEquals(other: AbstractPDX[_]): Boolean = {
-    if (obj == null) {
+    if (node == null) {
       resolveReference
-      if (obj == null) return false
+      if (node == null) return false
     }
     obj.objEquals(other)
   }

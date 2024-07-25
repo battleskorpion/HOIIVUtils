@@ -8,9 +8,9 @@ import java.util.function.Supplier
 
 
 // todo uhhhhhhhhhhhhh
-class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSupplier: Supplier[Collection[T]], protected var idExtractor: Function[T, String], DPXIdentifiers: List[String], pdxReferenceIdentifiers: List[String]) extends MultiPDX[T](null, pdxIdentifiers) {
+class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSupplier: Supplier[Collection[T]], protected var idExtractor: Function[T, String], pdxIdentifiers: List[String], pdxReferenceIdentifiers: List[String]) extends MultiPDX[T](null, pdxIdentifiers) {
   final protected var referencePDXTokenIdentifiers: List[String] = _
-  final protected val referenceNames = new ArrayList[String]
+  final protected val referenceNames = new java.util.ArrayList[String]
 
   def this(referenceCollectionSupplier: Supplier[Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String, referenceIdentifier: String) = {
     this(referenceCollectionSupplier, idExtractor, List.of(PDXIdentifiers), List.of(referenceIdentifier))
@@ -25,7 +25,6 @@ class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSu
         return
       }
       usingIdentifier(expression)
-      import scala.collection.JavaConversions._
       for (node <- list) {
         try add(node)
         catch {
@@ -52,15 +51,17 @@ class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSu
     usingReferenceIdentifier(expression)
     val value = expression.$
     referenceNames.clear()
-    referenceNames.add(value.string)
+    if (value.isInstanceOf[String])
+      referenceNames.add(value)
   }
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   override protected def add(expression: Node): Unit = {
     usingReferenceIdentifier(expression)
-    val value = expression.value
-    referenceNames.add(value.string)
+    val value = expression.$
+    if (value.isInstanceOf[String])
+     referenceNames.add(value)
   }
 
   private def resolveReferences = {
@@ -76,7 +77,7 @@ class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSu
   @throws[UnexpectedIdentifierException]
   protected def usingReferenceIdentifier(exp: Node): Unit = {
     for (i <- referencePDXTokenIdentifiers.indices) {
-      if (exp.nameEquals(referencePDXTokenIdentifiers.get(i))) {
+      if (exp.nameEquals(referencePDXTokenIdentifiers[i]) {
         //                activeReferenceIdentifier = i;
         return
       }
@@ -88,7 +89,6 @@ class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSu
     val sb = new StringBuilder
     val scripts = get()
     if (scripts == null) return null
-    import scala.collection.JavaConversions._
     for (identifier <- referenceNames) {
       sb.append(getPDXIdentifier).append(" = ").append(identifier).append("\n")
     }

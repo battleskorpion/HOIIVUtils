@@ -65,25 +65,24 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) e
 
   def isEmpty: Boolean = get().isEmpty
 
-  override def iterator: java.util.Iterator[T] = get().iterator
+  override def iterator: Iterator[T] = get().iterator
 
   override def forEach(action: Consumer[? >: T]): Unit = {
     get().foreach(action)
   }
 
-  override def spliterator: java.util.Spliterator[T] = get().spliterator
+//  override def spliterator: java.util.Spliterator[T] = get().spliterator
 
   def size: Int = get().size
 
-  def stream: Stream[T] = get().stream
+//  def stream: Stream[T] = get().stream
 
-  override def isUndefined: Boolean = obj.isEmpty
+  override def isUndefined: Boolean = node.isEmpty
 
   override def toScript: String = {
     val sb = new StringBuilder
     val scripts = get()
     if (scripts == null) return null
-    import scala.collection.JavaConversions._
     for (pdxScript <- scripts) {
       val str = pdxScript.toScript
       if (str == null) continue //todo: continue is not supported

@@ -43,13 +43,13 @@ class Node(private var identifier: String, private var operator: String, private
 
   override def getStream: Stream[Node] = stream.getStream
 
-  override def filter(predicate: Predicate[_ >: Node]): NodeStreamable[Node] = 
+  override def filter(predicate: Predicate[? >: Node]): NodeStreamable[Node] = 
     new NodeStream[Node](this).filter(predicate)
 
-  override def map[R <: Node](mapper: Function[_ >: Node, _ <: R]): NodeStreamable[R] = 
+  override def map[R <: Node](mapper: Function[? >: Node, ? <: R]): NodeStreamable[R] = 
     new NodeStream[Node](this).map(mapper)
 
-  override def flatMap[R <: Node](mapper: Function[_ >: Node, _ <: NodeStreamable[R]]): NodeStreamable[R] = 
+  override def flatMap[R <: Node](mapper: Function[? >: Node, ? <: NodeStreamable[R]]): NodeStreamable[R] = 
     new NodeStream[Node](this).flatMap(mapper)
 
   override def toList: util.List[Node] = new NodeStream[Node](this).toList

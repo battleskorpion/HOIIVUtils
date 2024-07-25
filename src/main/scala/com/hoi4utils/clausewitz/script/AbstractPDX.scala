@@ -144,7 +144,7 @@ trait AbstractPDX[T] extends PDXScript[T] {
     pdxIdentifiers.get(activeIdentifier) + " = " + node + "\n"
   }
 
-  def nodeEquals(other: AbstractPDX[_]): Boolean = {
+  def nodeEquals(other: AbstractPDX[?]): Boolean = {
     if (node == null) return false
     if (other.node == null) return false
     node.equals(other.node)
@@ -167,7 +167,7 @@ trait AbstractPDX[T] extends PDXScript[T] {
 
   override def getPDXIdentifier: String = pdxIdentifiers.get(activeIdentifier)
 
-  def valueIsInstanceOf(clazz: Class[_]): Boolean = {
+  def valueIsInstanceOf(clazz: Class[?]): Boolean = {
     if (node == null) return false
     node.$ match {
       case _: clazz => true

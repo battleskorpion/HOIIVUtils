@@ -33,20 +33,20 @@ class NodeStream[T <: Node](var stream: Stream[T]) extends NodeStreamable[T] {
 
   private def concat(stream1: NodeStream[T], stream2: Stream[T]) = Stream.concat(stream1.getStream, stream2)
 
-  override def filter(predicate: Predicate[_ >: T]): NodeStreamable[T] = {
+  override def filter(predicate: Predicate[? >: T]): NodeStreamable[T] = {
     stream = stream.filter(predicate)
     this
   }
 
-  override def map[R <: Node](mapper: Function[_ >: T, _ <: R]) = new NodeStream[R](stream.map(mapper))
+  override def map[R <: Node](mapper: Function[? >: T, ? <: R]) = new NodeStream[R](stream.map(mapper))
 
-  override def flatMap[R <: Node](mapper: Function[_ >: T, _ <: NodeStreamable[R]]) = new NodeStream[R](stream.flatMap((item: T) => mapper.apply(item).getStream))
+  override def flatMap[R <: Node](mapper: Function[? >: T, ? <: NodeStreamable[R]]) = new NodeStream[R](stream.flatMap((item: T) => mapper.apply(item).getStream))
 
   override def getStream: Stream[T] = stream
 
   override def toList: util.List[T] = stream.collect(Collectors.toList)
 
-  override def forEach(action: Consumer[_ >: T]): Unit = {
+  override def forEach(action: Consumer[? >: T]): Unit = {
     stream.forEach(action)
   }
 

@@ -10,15 +10,15 @@ import java.util.function.Supplier
 
 
 class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
-  protected var simplePDX: PDXScript[V] = uninitialized
-  protected var simplePDXSupplier: Supplier[PDXScript[V]] = uninitialized 
+  protected var simplePDX: PDXScript[V] = _
+  protected var simplePDXSupplier: Supplier[PDXScript[V]] = _ 
   final protected var structuredBlock: U = null.asInstanceOf[U]
   /**
    * may be null. the structured block does not always have a single property
    * that is equivalent to the simple value. Or, the structured block has a
    * property that is equivalent to a value and the property is null.
    */
-  private var structuredPDXValueIdentifiers: util.List[String] = uninitialized 
+  private var structuredPDXValueIdentifiers: util.List[String] = _ 
 
   def this(simplePDXSupplier: Supplier[PDXScript[V]], structuredBlock: U) = {
     this()
