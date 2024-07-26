@@ -73,7 +73,6 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 
   private def resolveReferences = {
     val referenceCollection = referenceCollectionSupplier.get
-    import scala.jdk.CollectionConverters
     for (reference <- referenceCollection) {
       for (referenceName <- referenceNames) {
         if (idExtractor.apply(reference) == referenceName) node.add(reference)
@@ -97,7 +96,6 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     val sb = new StringBuilder
     val scripts = get()
     if (scripts == null) return null
-    import scala.jdk.CollectionConverters
     for (identifier <- referenceNames) {
       sb.append(getPDXIdentifier).append(" = ").append(identifier).append("\n")
     }

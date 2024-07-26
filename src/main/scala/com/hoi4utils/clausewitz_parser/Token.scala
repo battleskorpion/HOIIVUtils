@@ -3,7 +3,7 @@ package com.hoi4utils.clausewitz_parser
 import java.util
 import java.util.{HashMap, Map}
 import java.util.regex.Pattern
-import com.hoi4utils.clausewitz_parser.TokenType
+import com.hoi4utils.clausewitz_parser.TokenType.TokenType
 
 /**
  * Adapted partially from <a href="https://github.com/herbix/hoi4modutilities/blob/master/src/hoiformat/hoiparser.ts">hoiparser.ts</a>
@@ -29,8 +29,8 @@ object Token {
 }
 
 class Token {
-  var value: String = null
-  var `type`: TokenType = null
+  var value: String = _
+  var `type`: TokenType = _
   var start = 0
 
   def this(value: String, start: Int, `type`: TokenType) = {
@@ -51,7 +51,7 @@ class Token {
    * Determine token type based on token regex map
    */
   private def determineTokenType(value: String): TokenType = {
-    import scala.collection.JavaConversions._
+    import scala.jdk.CollectionConverters
     for (entry <- Token.tokenRegex.entrySet) {
       if (entry.getValue.matcher(value).matches) return entry.getKey
     }

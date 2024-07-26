@@ -16,7 +16,7 @@ abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBu
     usingIdentifier(expression)
     val value = expression.$
     // then load each sub-PDXScript
-    if (!value.isList) throw new NodeValueTypeException(expression, "list") // todo check through schema
+    if (!value.isInstanceOf[ListBuffer]) throw new NodeValueTypeException(expression, "list") // todo check through schema
 //    import scala.collection.JavaConversions._
 //    for (pdxScript <- obj) {
 //      pdxScript.loadPDX(value.list)
@@ -26,9 +26,12 @@ abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBu
   override def loadPDX(expression: Node): Unit = {
     if (expression.name == null) {
       // todo check through schema?
-      if (expression.$.isList) loadPDX(expression.$)
-      else System.out.println("Error loading PDX script: " + expression)
-      return
+      expression.$ match {
+        case l: ListBuffer[Node] => 
+          loadPDX(l)
+        case _ => 
+          System.out.println("Error loading PDX script: " + expression)
+      }
     }
     try set(expression)
     catch {
@@ -44,6 +47,7 @@ abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBu
    * @param identifier
    */
   def getPDXProperty(identifier: String): PDXScript[?] = {
+    import scala.collection.BuildFrom.buildFromString
     for (pdx <- childScripts) {
       if (pdx.getPDXIdentifier == identifier) return pdx
     }
@@ -70,11 +74,16 @@ abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBu
    *
    * @param identifier
    */
-  @SuppressWarnings(Array("unchecked")) def getPDXPropertyOfType[R](identifier: String): PDXScript[R] = {
+  def getPDXPropertyOfType[R](identifier: String): PDXScript[R] = {
+    import scala.collection.BuildFrom.buildFromString
     for (pdx <- childScripts) {
-      if (pdx.getPDXIdentifier == identifier) return pdx.asInstanceOf[PDXScript[R]]
+      pdx match {
+        case pdxScript: PDXScript[R] =>
+          if (pdxScript.getPDXIdentifier == identifier) return pdxScript
+        case _ =>
+      }
     }
-    null
+    null.asInstanceOf[PDXScript[R]]
   }
 
   /**

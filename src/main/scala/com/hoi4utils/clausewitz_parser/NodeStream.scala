@@ -8,6 +8,7 @@ import java.util.function.Predicate
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
+import scala.collection.mutable.ListBuffer
 
 class NodeStream[T <: Node](var stream: Stream[T]) extends NodeStreamable[T] {
   /**

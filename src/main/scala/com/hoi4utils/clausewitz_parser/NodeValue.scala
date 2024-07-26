@@ -65,7 +65,7 @@ final class NodeValue {
       case list: ListBuffer[Node] => list
       case node: Node =>
         val list = new ListBuffer[Node]
-        list.add(node)
+        list.addOne(node)
         list
       case null => null
       case _ => throw new IllegalStateException("Expected NodeValue to be an ArrayList<Node>, value: " + value)

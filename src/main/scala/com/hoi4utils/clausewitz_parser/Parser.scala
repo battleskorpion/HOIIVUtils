@@ -21,6 +21,7 @@ class Parser(file: File) {
     this()
 
     /* EOF */
+    import scala.collection.BuildFrom.buildFromString
     input += Token.EOF_INDICATOR
     tokens = new Tokenizer(input)
   }
@@ -51,7 +52,7 @@ class Parser(file: File) {
         try {
           val n = parseNode(tokens)
           // check if n is a comment node
-          if (n.nameToken.`type` ne TokenType.comment) nodes.add(n)
+          if (n.nameToken.`type` ne TokenType.comment) nodes.addOne(n)
         } catch {
           case e: ParserException =>
             throw e
@@ -104,7 +105,7 @@ class Parser(file: File) {
 
     var parsedValue = parseNodeValue(tokens)
     /* Handle value attachment (e.g., when there's a nested block) */
-    if (parsedValue != null && parsedValue.$.isInstanceOf[Node]) {
+    if (parsedValue != null && parsedValue.valueIsInstanceOf[Node]) {
       val peekedToken = tokens.peek
       if (peekedToken.value == "{") {
         parsedValue = parseNodeValue(tokens)
@@ -128,7 +129,7 @@ class Parser(file: File) {
     node
   }
 
-  private def unescapeCharacters(name: Token, nameValue: String) = {
+  private def unescapeCharacters(name: Token, nameValue: String): String = {
     if (name.`type` eq TokenType.string) nameValue
       .substring(1, nameValue.length - 2)
       .replaceAll(Parser.escape_quote_regex, "\"")

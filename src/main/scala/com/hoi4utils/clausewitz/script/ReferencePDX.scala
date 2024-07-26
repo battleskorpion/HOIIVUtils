@@ -28,8 +28,12 @@ class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionS
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
     val value = expression.$
-    if (value.isString) referenceName = value
-    else throw new NodeValueTypeException(expression, "string")
+    value match {
+      case s: String =>
+        referenceName = s
+      case _ =>
+        throw new NodeValueTypeException(expression, "string")
+    }
   }
 
   override def get(): T = {

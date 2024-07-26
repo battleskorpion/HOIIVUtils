@@ -175,7 +175,8 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
   override def getOrElse(elseValue: V): V = {
     get() match {
       case null => elseValue
-      case f: _ => f
+      case v: V => v
+      case _ => throw new NodeValueTypeException(null, "V")
     }
   }
 

@@ -119,4 +119,8 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
   }
 
   def operator: String = _operator
+
+  def operator_= (operator: String): Unit = {
+    _operator = operator
+  }
 }
