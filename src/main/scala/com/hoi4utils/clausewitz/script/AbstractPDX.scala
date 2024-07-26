@@ -109,7 +109,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T]
   }
 
   override def isValidIdentifier(node: Node): Boolean = {
-    import scala.collection.JavaConversions._
+    import scala.jdk.CollectionConverters
     for (identifier <- pdxIdentifiers) {
       if (node.name == identifier) return true
     }

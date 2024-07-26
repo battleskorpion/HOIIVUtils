@@ -3,7 +3,7 @@ package com.hoi4utils.clausewitz.script
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 
-class IntegerPDX(pdxIdentifiers: String*) extends AbstractPDX[Integer](pdxIdentifiers) {
+class IntPDX(pdxIdentifiers: String*) extends AbstractPDX[Int](pdxIdentifiers) {
   def this(pdxIdentifiers: String) = {
     this(pdxIdentifiers)
   }
@@ -23,7 +23,9 @@ class IntegerPDX(pdxIdentifiers: String*) extends AbstractPDX[Integer](pdxIdenti
   }
 
   override def nodeEquals(other: PDXScript[?]): Boolean = {
-    if (other.isInstanceOf[IntegerPDX]) return node.equals(other.getNode)
-    false
+    other match {
+      case x: IntPDX => node.equals(x.node)
+      case _ => false
+    }
   }
 }

@@ -22,9 +22,9 @@ class NodeStream[T <: Node](var stream: Stream[T]) extends NodeStreamable[T] {
     this(Stream.of(nodeToStream))
     // todo necessary etc.?
     nodeToStream.$ match
-      case _: ListBuffer[?] => stream = stream.flatMap((node: T) => node.valueObject.asInstanceOf[util.ArrayList[T]].stream)
+      case _: ListBuffer[?] => stream = stream.flatMap((node: T) => node.$.asInstanceOf[java.util.ArrayList[T]].stream)
       case _: Node =>
-        stream = Stream.concat(stream, Stream.of(nodeToStream.valueObject.asInstanceOf[T])) 
+        stream = Stream.concat(stream, Stream.of(nodeToStream.$.asInstanceOf[T])) 
       case _ =>
   }
 
@@ -49,7 +49,7 @@ class NodeStream[T <: Node](var stream: Stream[T]) extends NodeStreamable[T] {
     stream.forEach(action)
   }
 
-  override def findFirst: T = stream.findFirst.orElse(null)
+  override def findFirst: T = stream.findFirst.orElse(null.asInstanceOf[T])
 
   override def findFirst(predicate: Predicate[T]): T = stream.filter(predicate) // Apply the predicate.findFirst.orElse(null)
 

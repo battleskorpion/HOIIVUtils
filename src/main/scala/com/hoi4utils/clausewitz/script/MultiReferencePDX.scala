@@ -73,6 +73,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 
   private def resolveReferences = {
     val referenceCollection = referenceCollectionSupplier.get
+    import scala.jdk.CollectionConverters
     for (reference <- referenceCollection) {
       for (referenceName <- referenceNames) {
         if (idExtractor.apply(reference) == referenceName) node.add(reference)
@@ -84,7 +85,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   @throws[UnexpectedIdentifierException]
   protected def usingReferenceIdentifier(exp: Node): Unit = {
     for (i <- referencePDXTokenIdentifiers.indices) {
-      if (exp.nameEquals(referencePDXTokenIdentifiers[i])) {
+      if (exp.nameEquals(referencePDXTokenIdentifiers(i))) {
         //                activeReferenceIdentifier = i;
         return
       }
@@ -96,6 +97,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     val sb = new StringBuilder
     val scripts = get()
     if (scripts == null) return null
+    import scala.jdk.CollectionConverters
     for (identifier <- referenceNames) {
       sb.append(getPDXIdentifier).append(" = ").append(identifier).append("\n")
     }

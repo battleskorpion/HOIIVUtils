@@ -3,6 +3,7 @@ package com.hoi4utils.clausewitz_parser
 import java.util
 import java.util.{HashMap, Map}
 import java.util.regex.Pattern
+import com.hoi4utils.clausewitz_parser.TokenType
 
 /**
  * Adapted partially from <a href="https://github.com/herbix/hoi4modutilities/blob/master/src/hoiformat/hoiparser.ts">hoiparser.ts</a>

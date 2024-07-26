@@ -3,6 +3,7 @@ package com.hoi4utils.clausewitz_parser
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
+import scala.collection.mutable.ListBuffer
 
 /*
  * Parser File new
@@ -40,16 +41,21 @@ class Parser(file: File) {
   @throws[ParserException]
   def parseBlockContent(tokens: Tokenizer): ListBuffer[Node] = {
     val nodes = new ListBuffer[Node]
-    while (true) {
+
+    var cont = true
+    while (cont) {
       val nextToken = tokens.peek
-      if ((nextToken.`type` eq TokenType.eof) || nextToken.value == "}") break //todo: break is not supported
-      try {
-        val n = parseNode(tokens)
-        // check if n is a comment node
-        if (n.nameToken.`type` ne TokenType.comment) nodes.add(n)
-      } catch {
-        case e: ParserException =>
-          throw e
+      if ((nextToken.`type` eq TokenType.eof) || nextToken.value == "}") {
+        cont = false
+      } else {
+        try {
+          val n = parseNode(tokens)
+          // check if n is a comment node
+          if (n.nameToken.`type` ne TokenType.comment) nodes.add(n)
+        } catch {
+          case e: ParserException =>
+            throw e
+        }
       }
     }
     nodes
@@ -82,8 +88,6 @@ class Parser(file: File) {
       node.operator = null
       node.operatorToken = null
       /* node.value = null; */
-      node.valueAttachment = null
-      node.valueAttachmentToken = null
       return node
     }
 
@@ -97,16 +101,12 @@ class Parser(file: File) {
       operator.value = "="
     }
     else operator = tokens.next
-    var valueAttachment: Nothing = null // potential
 
-    val valueAttachmentToken: Token = null
     var parsedValue = parseNodeValue(tokens)
     /* Handle value attachment (e.g., when there's a nested block) */
-    if (parsedValue != null && parsedValue.valueObject.isInstanceOf[Node]) {
+    if (parsedValue != null && parsedValue.$.isInstanceOf[Node]) {
       val peekedToken = tokens.peek
       if (peekedToken.value == "{") {
-        valueAttachment = new Nothing(parsedValue)
-        // valueAttachmentToken = (Token) parsedValue; // todo?
         parsedValue = parseNodeValue(tokens)
       }
     }
@@ -125,8 +125,6 @@ class Parser(file: File) {
     // node.value = parsedValue;
     // node.valueStartToken = (Token) parsedValue[1];
     // node.valueEndToken = (Token) parsedValue[2];
-    node.valueAttachment = valueAttachment
-    node.valueAttachmentToken = valueAttachmentToken
     node
   }
 

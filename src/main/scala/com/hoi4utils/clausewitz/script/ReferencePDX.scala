@@ -39,8 +39,11 @@ class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionS
   }
 
   override def nodeEquals(other: PDXScript[?]): Boolean = {
-    if (other.isInstanceOf[ReferencePDX[?]]) return referenceName == other.referenceName && this.referenceCollectionSupplier == other.referenceCollectionSupplier && this.idExtractor == other.idExtractor
-    false
+    other match {
+      case referencePDX: ReferencePDX[?] =>
+        referenceName == referencePDX.referenceName && this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier && this.idExtractor == referencePDX.idExtractor
+      case _ => false
+    }
   }
 
   private def resolveReference: T = {

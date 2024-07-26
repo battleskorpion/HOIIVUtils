@@ -91,9 +91,9 @@ abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBu
     null
   }
 
-  def pdxProperties: Collection[? <: PDXScript[?]] = {
+  def pdxProperties: java.util.Collection[? <: PDXScript[?]] = {
     val scripts = childScripts
     if (scripts == null) return null
-    Collections.unmodifiableCollection(scripts)
+    java.util.Collections.unmodifiableCollection(scripts)
   }
 }

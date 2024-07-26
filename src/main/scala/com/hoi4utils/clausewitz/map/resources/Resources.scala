@@ -9,7 +9,7 @@ import java.util.{Arrays, HashSet, Set}
  */
 class Resources {
   //todo extens collection or smthing maybe for iteration?
-  private var resources: util.Set[Resource] = uninitialized // now we only need to store resources with nonzero quantities, if desired, otherwise 0 can be implied.
+  private var resources: util.Set[Resource] = _ // now we only need to store resources with nonzero quantities, if desired, otherwise 0 can be implied.
 
   def this(aluminum: Int, chromium: Int, oil: Int, rubber: Int, steel: Int, tungsten: Int) = {
     this()
@@ -42,7 +42,7 @@ class Resources {
 
   def add(addtl: Resources): Unit = {
     // Iterate addtl and update the current resources
-    import scala.collection.JavaConversions._
+    import scala.jdk.CollectionConverters
     for (r <- addtl.resources) {
       if (containsResource(r)) {
         // Resource with the same identifier exists, update amt
@@ -57,7 +57,7 @@ class Resources {
   }
 
   private def containsResource(resource: Resource): Boolean = {
-    import scala.collection.JavaConversions._
+    import scala.jdk.CollectionConverters
     for (r <- resources) {
       if (r.sameResource(resource)) return true
     }
@@ -65,7 +65,7 @@ class Resources {
   }
 
   private def containsResource(identifier: String): Boolean = {
-    import scala.collection.JavaConversions._
+    import scala.jdk.CollectionConverters
     for (r <- resources) {
       if (r.sameResource(identifier)) return true
     }
@@ -84,7 +84,7 @@ class Resources {
     // todo check if valid identifier
     // if resource exists with a quantity,
     // it will be returned. If not, 0 will be returned for zero quantity.
-    import scala.collection.JavaConversions._
+    import scala.jdk.CollectionConverters
     for (r <- resources) {
       if (r.sameResource(identifier)) return r
     }

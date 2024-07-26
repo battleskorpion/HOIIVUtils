@@ -149,7 +149,7 @@ public enum ParameterValueType {
 		} else if (typeClass.equals(Double.class)) {
 			result = (PDXScript<T>) new DoublePDX(identifier());
 		} else if (typeClass.equals(Integer.class)) {
-			result = (PDXScript<T>) new IntegerPDX(identifier());
+			result = (PDXScript<T>) new IntPDX(identifier());
 		} else if (typeClass.equals(String.class)) {
 			result = (PDXScript<T>) new StringPDX(identifier());
 		} else {

@@ -33,7 +33,7 @@ class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*
 
   override def loadPDX(expressions: ListBuffer[Node]): Unit = {
     if (expressions != null)
-      expressions.stream.filter(this.isValidIdentifier).forEach((expression: Node) => {
+      expressions.stream.filter(this.isValidIdentifier).foreach((expression: Node) => {
         try loadPDX(expression)
         catch {
           case e: UnexpectedIdentifierException =>

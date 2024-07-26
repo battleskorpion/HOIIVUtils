@@ -25,6 +25,7 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) e
   }
 
   override def loadPDX(expressions: List[Node]): Unit = {
+    import scala.jdk.CollectionConverters
     if (expressions != null)
       expressions.stream.filter(this.isValidIdentifier).forEach((expression: Node) => {
         try loadPDX(expression)
@@ -45,7 +46,7 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) e
   @throws[NodeValueTypeException]
   protected def add(expression: Node): Unit = {
     //usingIdentifier(expression);  // could be any identifier based on T
-    val value = expression.value
+    val value = expression.$
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     node.$ match {
@@ -86,8 +87,8 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) e
     if (scripts == null) return null
     for (pdxScript <- scripts) {
       val str = pdxScript.toScript
-      if (str == null) continue //todo: continue is not supported
-      sb.append(str)
+      if (str != null)
+        sb.append(str)
     }
     sb.toString
   }

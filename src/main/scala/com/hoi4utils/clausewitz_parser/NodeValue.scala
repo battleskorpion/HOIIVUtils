@@ -35,10 +35,11 @@ final class NodeValue {
   }
 
   def integer: Integer = {
-    if (value.isInstanceOf[Integer]) return value
-
-    throw new IllegalStateException("Expected NodeValue to be a Number or null, value: " + value)
-    // todo better error handling
+    value match {
+      case i: Int => i;
+      case d: Double => d.intValue; 
+      case _ => throw new IllegalStateException("Expected NodeValue to be a Number, value: " + value)
+    }
   }
 
   def rational: Double = {
@@ -83,9 +84,9 @@ final class NodeValue {
     case i: Int => Int.toString()
     case d: Double => Double.toString()
 //    case n: Number => Long.toString(n.longValue)
-    case l: ListBuffer[AnyVal] => util.Arrays.toString(l.toArray)
+    case l: ListBuffer[AnyVal] => l.toString
     case n: Node => n.toString
-    case null: Null => "[null]"
+    case _: Null => "[null]"
     case _ => "[invalid type]"
   }
 

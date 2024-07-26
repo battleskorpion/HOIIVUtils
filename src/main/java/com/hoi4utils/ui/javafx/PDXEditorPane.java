@@ -117,7 +117,7 @@ public class PDXEditorPane extends AnchorPane {
                 });
                 return customCheckBox;
             }
-            case IntegerPDX pdx -> {
+            case IntPDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
                 Spinner<Integer> spinner = new Spinner<>(
                         new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE,

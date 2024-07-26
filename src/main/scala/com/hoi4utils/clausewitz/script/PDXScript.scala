@@ -30,7 +30,7 @@ trait PDXScript[T] {
 
   def toScript: String
 
-  def nodeEquals(other: PDXScript[_]): Boolean
+  def nodeEquals(other: PDXScript[?]): Boolean
 
   def getOrElse(elseValue: T): T
 

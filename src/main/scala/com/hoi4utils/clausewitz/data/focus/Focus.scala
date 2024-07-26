@@ -20,8 +20,8 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
   /* attributes */
   val id: StringPDX = new StringPDX("id")
   val icon: MultiPDX[Icon] = new MultiPDX(() => new Icon(), "icon")
-  val x: IntegerPDX = new IntegerPDX("x") // if relative, relative x
-  val y: IntegerPDX = new IntegerPDX("y") // if relative, relative y
+  val x: IntPDX = new IntPDX("x") // if relative, relative x
+  val y: IntPDX = new IntPDX("y") // if relative, relative y
   val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(() => new PrerequisiteSet(() => focusTree.focuses), "prerequisite")
   val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(() => new MutuallyExclusiveSet(() => focusTree.focuses), "mutually_exclusive")
   val relativePosition = new ReferencePDX[Focus](() => focusTree.focuses, (f: Focus) => f.id.get(), "relative_position_id")

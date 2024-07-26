@@ -9,6 +9,7 @@ import java.util.function.Consumer
 import java.util.function.Function
 import java.util.function.Predicate
 import java.util.stream.Stream
+import scala.collection.mutable.ListBuffer
 
 //object Node {
 //  private val boolType: BoolType = null
@@ -112,6 +113,10 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
   def $ : String | Int | Double | Boolean | ListBuffer[Node] | Null = getValue
 
   def identifier: String = _identifier
+
+  def identifier_= (identifier: String): Unit = {
+    _identifier = identifier
+  }
 
   def operator: String = _operator
 }
