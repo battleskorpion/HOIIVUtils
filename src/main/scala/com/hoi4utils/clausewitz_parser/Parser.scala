@@ -21,9 +21,8 @@ class Parser(file: File) {
     this()
 
     /* EOF */
-    import scala.collection.BuildFrom.buildFromString
-    input += Token.EOF_INDICATOR
-    tokens = new Tokenizer(input)
+    val str = input.concat(Token.EOF_INDICATOR) 
+    tokens = new Tokenizer(str)
   }
 
   @throws[ParserException]
@@ -105,7 +104,7 @@ class Parser(file: File) {
 
     var parsedValue = parseNodeValue(tokens)
     /* Handle value attachment (e.g., when there's a nested block) */
-    if (parsedValue != null && parsedValue.valueIsInstanceOf[Node]) {
+    if (parsedValue != null && parsedValue.getValue.isInstanceOf[Node]) {
       val peekedToken = tokens.peek
       if (peekedToken.value == "{") {
         parsedValue = parseNodeValue(tokens)

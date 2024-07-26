@@ -3,18 +3,20 @@ package com.hoi4utils.clausewitz.script
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 import org.jetbrains.annotations.Nullable
+
 import java.util.function.Function
 import java.util.function.Supplier
-
+import scala.collection.mutable
+import scala.collection.mutable._
 
 // todo uhhhhhhhhhhhhh
-class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: Supplier[java.util.Collection[T]],
+class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: Supplier[mutable.AbstractIterable[T]],
                                              protected var idExtractor: Function[T, String], pdxIdentifiers: List[String],
                                              pdxReferenceIdentifiers: List[String])
   extends MultiPDX[T](null, pdxIdentifiers) {
 
   final protected var referencePDXTokenIdentifiers: List[String] = _
-  final protected val referenceNames = new java.util.ArrayList[String]
+  final protected val referenceNames = new ListBuffer[String]
 
   def this(referenceCollectionSupplier: Supplier[Collection[T]], idExtractor: Function[T, String], pdxIdentifiers: String, referenceIdentifier: String) = {
     this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers), List(referenceIdentifier))

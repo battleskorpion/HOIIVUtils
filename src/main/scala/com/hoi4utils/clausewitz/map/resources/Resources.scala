@@ -1,15 +1,11 @@
 package com.hoi4utils.clausewitz.map.resources
 
-import java.util
-import java.util.{Arrays, HashSet, Set}
-
-
 /*
  * Resources File
  */
 class Resources {
   //todo extens collection or smthing maybe for iteration?
-  private var resources: util.Set[Resource] = _ // now we only need to store resources with nonzero quantities, if desired, otherwise 0 can be implied.
+  private var resources: Set[Resource] = _ // now we only need to store resources with nonzero quantities, if desired, otherwise 0 can be implied.
 
   def this(aluminum: Int, chromium: Int, oil: Int, rubber: Int, steel: Int, tungsten: Int) = {
     this()

@@ -1,9 +1,9 @@
 package com.hoi4utils.clausewitz_parser
 
-import java.util
-import java.util.{HashMap, Map}
 import java.util.regex.Pattern
 import com.hoi4utils.clausewitz_parser.TokenType.TokenType
+
+import scala.collection.mutable._
 
 /**
  * Adapted partially from <a href="https://github.com/herbix/hoi4modutilities/blob/master/src/hoiformat/hoiparser.ts">hoiparser.ts</a>
@@ -11,7 +11,8 @@ import com.hoi4utils.clausewitz_parser.TokenType.TokenType
  *
  */
 object Token {
-  val tokenRegex = new java.util.HashMap[TokenType, Pattern]
+//  val tokenRegex = new java.util.HashMap[TokenType, Pattern]
+  val tokenRegex = new mutable.HashMap[TokenType, Pattern]
   val EOF_INDICATOR = "$"
 
   try tokenRegex.put(TokenType.comment, Pattern.compile("#.*")) // Nullifies Comments  // prev: "#.*(?:[\r\n]|$)"

@@ -15,7 +15,7 @@ import java.util.function.Supplier
 // this class will contain a string identifier that identifies the referenced pdxscript object// this class will contain a string identifier that identifies the referenced pdxscript object
 // (usually by its 'id' PDXScript field)// (usually by its 'id' PDXScript field)
 
-class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionSupplier: Supplier[java.util.Collection[T]], final protected var idExtractor: Function[T, String], pdxIdentifiers: String*) extends AbstractPDX[T](pdxIdentifiers) {
+class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionSupplier: Supplier[scala.collection.mutable.AbstractIterable[T]], final protected var idExtractor: Function[T, String], pdxIdentifiers: String*) extends AbstractPDX[T](pdxIdentifiers) {
   // the collection of potential pdxscript objects that this reference can point to
   protected[script] var referenceName: String = _
 

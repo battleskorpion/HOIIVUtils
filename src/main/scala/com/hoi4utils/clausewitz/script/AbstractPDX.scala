@@ -56,7 +56,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T]
   }
 
   override def get(): T = {
-    node.$() match {
+    node.$ match {
       case value: T => value
       case _ => null.asInstanceOf[T] // Use a default value for T if necessary
     }

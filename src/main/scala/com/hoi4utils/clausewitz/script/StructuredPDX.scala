@@ -9,7 +9,7 @@ abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBu
     this(pdxIdentifiers*)
   }
 
-  protected def childScripts: java.util.Collection[? <: PDXScript[?]]
+  protected def childScripts: ListBuffer[? <: PDXScript[?]]
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
@@ -96,7 +96,11 @@ abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBu
   def getPDXPropertyOfType[R](identifiers: List[String]): PDXScript[R] = {
     for (identifier <- identifiers) {
       val pdx = getPDXPropertyOfType(identifier)
-      if (pdx != null) return pdx
+      pdx match {
+        case pdxScript: PDXScript[R] =>
+          return pdxScript
+        case _ =>
+      }
     }
     null
   }
