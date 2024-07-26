@@ -14,7 +14,7 @@ import java.util.stream.Stream
 //  private val boolType: BoolType = null
 //}
 
-class Node(private var identifier: String, private var operator: String, private var nodeValue: NodeValue, private var nameToken: Token,
+class Node(private var _identifier: String, private var _operator: String, private var nodeValue: NodeValue, private var nameToken: Token,
            private var operatorToken: Token) extends NodeStreamable[Node] {
 
   if (nodeValue == null) nodeValue = new NodeValue
@@ -27,13 +27,13 @@ class Node(private var identifier: String, private var operator: String, private
     this(null.asInstanceOf[NodeValue])
   }
 
-  def this(value: util.ArrayList[Node]) = {
+  def this(value: ListBuffer[Node]) = {
     this(new NodeValue(value))
   }
 
   def name: String = identifier
 
-  def getValue: String | Int | Double | Boolean | util.ArrayList[Node] = nodeValue.getValue
+  def getValue: String | Int | Double | Boolean | ListBuffer[Node] | Null = nodeValue.getValue
   
   // no clue
   private[clausewitz_parser] def stream = {
@@ -54,7 +54,7 @@ class Node(private var identifier: String, private var operator: String, private
 
   override def toList: util.List[Node] = new NodeStream[Node](this).toList
 
-  override def forEach(action: Consumer[_ >: Node]): Unit = {
+  override def forEach(action: Consumer[? >: Node]): Unit = {
     new NodeStream[Node](this).forEach(action)
   }
 
@@ -78,20 +78,20 @@ class Node(private var identifier: String, private var operator: String, private
 
   override def filter(str: String): NodeStreamable[Node] = filterName(str)
 
-  override def anyMatch(predicate: Predicate[_ >: Node]): Boolean = new NodeStream[Node](this).anyMatch(predicate)
+  override def anyMatch(predicate: Predicate[? >: Node]): Boolean = new NodeStream[Node](this).anyMatch(predicate)
 
   def getValue(id: String): NodeValue = findFirst(id).nodeValue
 
-  def setValue(value: String | Int | Double | Boolean | util.ArrayList[Node]): Unit = {
+  def setValue(value: String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
     this.nodeValue.setValue(value)
   }
 
   def isParent: Boolean = nodeValue.isList
 
-  def valueIsNull: Boolean = nodeValue.isNull
+  def valueIsNull: Boolean = this.$ == null
   
   def isEmpty: Boolean = {
-    nodeValue.isNull && identifier == null && operator == null
+    valueIsNull && identifier == null && operator == null
   }
 
   override def toString: String = identifier + operator + nodeValue.asString // todo
@@ -105,7 +105,11 @@ class Node(private var identifier: String, private var operator: String, private
   
   def setNull(): Unit = nodeValue = new NodeValue
   
-  def valueIsInstanceOf(clazz: Class[_]): Boolean = nodeValue.valueIsInstanceOf(clazz)
+  def valueIsInstanceOf(clazz: Class[?]): Boolean = nodeValue.valueIsInstanceOf(clazz)
   
-  def $ : String | Int | Double | Boolean | util.ArrayList[Node] = getValue
+  def $ : String | Int | Double | Boolean | ListBuffer[Node] | Null = getValue
+
+  def identifier: String = _identifier
+
+  def operator: String = _operator
 }

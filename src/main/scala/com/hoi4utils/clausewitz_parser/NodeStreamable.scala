@@ -13,17 +13,17 @@ object NodeStreamable {
 }
 
 trait NodeStreamable[NodeType <: Node] {
-  def filter(predicate: Predicate[_ >: NodeType]): NodeStreamable[NodeType]
+  def filter(predicate: Predicate[? >: NodeType]): NodeStreamable[NodeType]
 
-  def map[R <: Node](mapper: Function[_ >: NodeType, _ <: R]): NodeStreamable[R]
+  def map[R <: Node](mapper: Function[? >: NodeType, ? <: R]): NodeStreamable[R]
 
-  def flatMap[R <: Node](mapper: Function[_ >: NodeType, _ <: NodeStreamable[R]]): NodeStreamable[R]
+  def flatMap[R <: Node](mapper: Function[? >: NodeType, ? <: NodeStreamable[R]]): NodeStreamable[R]
 
   def getStream: Stream[NodeType]
 
   def toList: util.List[NodeType]
 
-  def forEach(action: Consumer[_ >: NodeType]): Unit
+  def forEach(action: Consumer[? >: NodeType]): Unit
 
   def findFirst: NodeType
 
@@ -38,5 +38,5 @@ trait NodeStreamable[NodeType <: Node] {
 
   def contains(str: String): Boolean = !filter(str).toList.isEmpty
 
-  def anyMatch(predicate: Predicate[_ >: NodeType]): Boolean
+  def anyMatch(predicate: Predicate[? >: NodeType]): Boolean
 }

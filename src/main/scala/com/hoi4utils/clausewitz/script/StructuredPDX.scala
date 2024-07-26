@@ -3,16 +3,12 @@ package com.hoi4utils.clausewitz.script
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 
-abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
-  def this(pdxIdentifiers: String*) = {
-    this()
-  }
-
+abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) {
   def this(pdxIdentifiers: List[String]) = {
-    this()
+    this(pdxIdentifiers*)
   }
 
-  protected def childScripts: java.util.Collection[_ <: PDXScript[?]]
+  protected def childScripts: java.util.Collection[? <: PDXScript[?]]
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
@@ -48,7 +44,6 @@ abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
    * @param identifier
    */
   def getPDXProperty(identifier: String): PDXScript[?] = {
-    import scala.collection.JavaConversions._
     for (pdx <- childScripts) {
       if (pdx.getPDXIdentifier == identifier) return pdx
     }
@@ -62,7 +57,6 @@ abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
    * @param identifiers
    */
   def getPDXProperty(identifiers: List[String]): PDXScript[?] = {
-    import scala.collection.JavaConversions._
     for (identifier <- identifiers) {
       val pdx = getPDXProperty(identifier)
       if (pdx != null) return pdx
@@ -77,7 +71,6 @@ abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
    * @param identifier
    */
   @SuppressWarnings(Array("unchecked")) def getPDXPropertyOfType[R](identifier: String): PDXScript[R] = {
-    import scala.collection.JavaConversions._
     for (pdx <- childScripts) {
       if (pdx.getPDXIdentifier == identifier) return pdx.asInstanceOf[PDXScript[R]]
     }
@@ -91,7 +84,6 @@ abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
    * @param identifiers
    */
   def getPDXPropertyOfType[R](identifiers: List[String]): PDXScript[R] = {
-    import scala.collection.JavaConversions._
     for (identifier <- identifiers) {
       val pdx = getPDXPropertyOfType(identifier)
       if (pdx != null) return pdx
@@ -99,7 +91,7 @@ abstract class StructuredPDX extends AbstractPDX[List[Node]](pdxIdentifiers) {
     null
   }
 
-  def pdxProperties: Collection[_ <: PDXScript[?]] = {
+  def pdxProperties: Collection[? <: PDXScript[?]] = {
     val scripts = childScripts
     if (scripts == null) return null
     Collections.unmodifiableCollection(scripts)

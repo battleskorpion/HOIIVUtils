@@ -9,9 +9,9 @@ import java.util.function.Consumer
 import java.util.stream.Stream
 
 // todo i do not like this class
-abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) extends AbstractPDX[util.List[T]](pdxIdentifiers) with Iterable[T] {
+abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
   def this(pdxIdentifiers: List[String]) = {
-    this(pdxIdentifiers)
+    this(pdxIdentifiers*)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -23,7 +23,7 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) e
     }
   }
 
-  override def loadPDX(expressions: util.List[Node]): Unit = {
+  override def loadPDX(expressions: List[Node]): Unit = {
     if (expressions != null)
       expressions.stream.filter(this.isValidIdentifier).forEach((expression: Node) => {
         try loadPDX(expression)
@@ -38,7 +38,7 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) e
 
   override def nodeEquals(other: PDXScript[?]) = false // todo? well.
 
-  override def get(): List[T] = super.get()
+  override def get(): ListBuffer[T] = super.get()
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
@@ -48,7 +48,7 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) e
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     node.$ match {
-      case _: List[T] =>
+      case _: ListBuffer[T] =>
         val childScript = newChildScript(expression)
         childScript.loadPDX(expression)
         childScriptList.add(childScript)

@@ -11,6 +11,8 @@ import java.util
 import java.util._
 import java.util.function.Supplier
 
+import javafx.scene.image.Image
+
 class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable with Comparable[Focus] with DataFunctionProvider[Focus] {
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
@@ -235,7 +237,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     new StructuredPDX("icon") {
       final private val value: StringPDX = new StringPDX("value")
 
-      override protected def childScripts: util.Collection[_ <: PDXScript[_]] = util.List.of(value)
+      override protected def childScripts: util.Collection[? <: PDXScript[?]] = util.List.of(value)
 
       override def nodeEquals(other: PDXScript[_]): Boolean = {
         other match {

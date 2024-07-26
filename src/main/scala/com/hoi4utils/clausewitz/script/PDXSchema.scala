@@ -8,10 +8,10 @@ class PDXSchema[T](identifiers: String*) {
   }
   
   def this(identifiers: List[String]) = {
-    this(identifiers.toArray: _*)
+    this(identifiers*)
   }
   
   def this(identifiers: Array[String]) = {
-    this(identifiers: _*)
+    this(identifiers*)
   }
 }

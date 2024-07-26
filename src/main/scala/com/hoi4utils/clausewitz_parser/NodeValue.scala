@@ -3,19 +3,18 @@ package com.hoi4utils.clausewitz_parser
 import com.hoi4utils.clausewitz.BoolType
 import org.jetbrains.annotations.NotNull
 
-import java.util
-import java.util.{ArrayList, Arrays}
 import scala.annotation.targetName
 
+import scala.collection.mutable.ListBuffer
 
 /**
  * stores string, number, ArrayList<Node>, boolean, or null
  */
 // todo should be subclasseed to impl effect parameter?
 final class NodeValue {
-  private var value: String | Int | Double | Boolean | util.ArrayList[Node] | Null = _
+  private var value: String | Int | Double | Boolean | ListBuffer[Node] | Null = _
 
-  def this(value: String | Int | Double | Boolean | util.ArrayList[Node] | Null) = {
+  def this(value: String | Int | Double | Boolean | ListBuffer[Node] | Null) = {
     this()
     this.value = value
   }
@@ -27,12 +26,11 @@ final class NodeValue {
       case _ => throw new IllegalStateException("Expected NodeValue value to be a string, value: " + value)
   }
 
-  def integerOrElse(i: Int): Int = {
-    if (value == null) return i
+  def integerOrElse(default: Int): Int = {
     value match
-      case number: Number =>
-        if (value.isInstanceOf[Integer]) value
-        else number.intValue
+      case i: Int => i
+      case d: Double => d.intValue
+      case n: Null => default
       case _ => throw new IllegalStateException("Expected NodeValue to be a Number or null, value: " + value)
   }
 
@@ -44,24 +42,28 @@ final class NodeValue {
   }
 
   def rational: Double = {
-    if (value.isInstanceOf[Double]) return value
-    // todo better error handling
-    throw new IllegalStateException("Expected NodeValue to be a Number, value: " + value)
+    value match {
+      case d: Double => d
+      case i: Int => i.doubleValue
+      // todo better error handling
+      case _ => throw new IllegalStateException("Expected NodeValue to be a Number, value: " + value)
+    }
   }
 
   def bool(boolType: BoolType): Boolean = {
-//    if (value.isInstanceOf[String]) return value == boolType.trueResponse
-    if (value.isInstanceOf[Boolean]) return value
-    if (value == null) return false
-    // todo better error handling
-    throw new IllegalStateException("Expected NodeValue to be interpretable as a Boolean, value: " + value)
+    value match {
+      case str: String => str == boolType.trueResponse
+      case bool: Boolean => bool
+      case null => false
+      case _ => throw new IllegalStateException("Expected NodeValue to be interpretable as a Boolean, value: " + value)
+    }
   }
 
-  def list: util.ArrayList[Node] = {
+  def list: ListBuffer[Node] = {
     value match
-      case list: util.ArrayList[Node] => list
+      case list: ListBuffer[Node] => list
       case node: Node =>
-        val list = new util.ArrayList[Node]
+        val list = new ListBuffer[Node]
         list.add(node)
         list
       case null => null
@@ -78,16 +80,16 @@ final class NodeValue {
 
   def asString: String = value match {
     case s: String => s
-    case i: Int => Int.toString(i)
-    case d: Double => Double.toString(d)
-    case n: Number => Long.toString(n.longValue)
-    case l: util.ArrayList[AnyVal] => util.Arrays.toString(l.toArray)
+    case i: Int => Int.toString()
+    case d: Double => Double.toString()
+//    case n: Number => Long.toString(n.longValue)
+    case l: ListBuffer[AnyVal] => util.Arrays.toString(l.toArray)
     case n: Node => n.toString
     case null: Null => "[null]"
     case _ => "[invalid type]"
   }
 
-  def isList: Boolean = value.isInstanceOf[List[_]]
+  def isList: Boolean = value.isInstanceOf[List[?]]
 
   def isString: Boolean = value.isInstanceOf[String]
 
@@ -108,12 +110,16 @@ final class NodeValue {
         new NodeValue(value.asInstanceOf[Double].doubleValue + other.value.asInstanceOf[Double].doubleValue)
       case _ => throw new IllegalStateException("Cannot add NodeValues of types " + value.getClass + " and " + other.value.getClass)
   }
+
+  def getValue: String | Int | Double | Boolean | ListBuffer[Node] | Null = {
+    value
+  }
   
-  def setValue (value: String | Int | Double | Boolean | util.ArrayList[Node] | Null): Unit = {
+  def setValue (value: String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
     this.value = value
   }
   
-  def valueIsInstanceOf(clazz: Class[_]): Boolean = clazz.isInstance(value)
+  def valueIsInstanceOf(clazz: Class[?]): Boolean = clazz.isInstance(value)
   
 //  def $ (clazz: Class[_]): Boolean = valueIsInstanceOf(clazz)
 }

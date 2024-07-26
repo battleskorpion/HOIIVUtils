@@ -8,12 +8,16 @@ import java.util.function.Supplier
 
 
 // todo uhhhhhhhhhhhhh
-class MultiReferencePDX[T <: AbstractPDX[_]](protected var referenceCollectionSupplier: Supplier[Collection[T]], protected var idExtractor: Function[T, String], pdxIdentifiers: List[String], pdxReferenceIdentifiers: List[String]) extends MultiPDX[T](null, pdxIdentifiers) {
+class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: Supplier[java.util.Collection[T]],
+                                             protected var idExtractor: Function[T, String], pdxIdentifiers: List[String],
+                                             pdxReferenceIdentifiers: List[String])
+  extends MultiPDX[T](null, pdxIdentifiers) {
+
   final protected var referencePDXTokenIdentifiers: List[String] = _
   final protected val referenceNames = new java.util.ArrayList[String]
 
-  def this(referenceCollectionSupplier: Supplier[Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String, referenceIdentifier: String) = {
-    this(referenceCollectionSupplier, idExtractor, List.of(PDXIdentifiers), List.of(referenceIdentifier))
+  def this(referenceCollectionSupplier: Supplier[Collection[T]], idExtractor: Function[T, String], pdxIdentifiers: String, referenceIdentifier: String) = {
+    this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers), List(referenceIdentifier))
   }
 
   @throws[UnexpectedIdentifierException]

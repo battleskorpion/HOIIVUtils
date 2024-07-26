@@ -15,22 +15,12 @@ import java.util.function.Supplier
 // this class will contain a string identifier that identifies the referenced pdxscript object// this class will contain a string identifier that identifies the referenced pdxscript object
 // (usually by its 'id' PDXScript field)// (usually by its 'id' PDXScript field)
 
-class ReferencePDX[T <: AbstractPDX[?]] extends AbstractPDX[T](pdxIdentifiers) {
+class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionSupplier: Supplier[java.util.Collection[T]], final protected var idExtractor: Function[T, String], pdxIdentifiers: String*) extends AbstractPDX[T](pdxIdentifiers) {
   // the collection of potential pdxscript objects that this reference can point to
-  final protected var referenceCollectionSupplier: Supplier[util.Collection[T]] = _
-  final protected var idExtractor: Function[T, String] = _
-  protected var referenceName: String = _
+  protected[script] var referenceName: String = _
 
-  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String) = {
-    this()
-    this.referenceCollectionSupplier = referenceCollectionSupplier
-    this.idExtractor = idExtractor
-  }
-
-  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], PDXIdentifiers: String*) = {
-    this()
-    this.referenceCollectionSupplier = referenceCollectionSupplier
-    this.idExtractor = idExtractor
+  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], pdxIdentifiers: String) = {
+    this(referenceCollectionSupplier, idExtractor, pdxIdentifiers*)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -43,7 +33,8 @@ class ReferencePDX[T <: AbstractPDX[?]] extends AbstractPDX[T](pdxIdentifiers) {
   }
 
   override def get(): T = {
-    if (node != null) return node
+    if (node != null)
+      if (node.$.isInstanceOf[T]) node.$
     resolveReference
   }
 
@@ -74,7 +65,7 @@ class ReferencePDX[T <: AbstractPDX[?]] extends AbstractPDX[T](pdxIdentifiers) {
   }
 
   override def toScript: String = {
-    val scripts = get
+    val scripts = get()
     if (scripts == null) return null
     (getPDXIdentifier + " = " + referenceName) + "\n"
   }
@@ -92,6 +83,6 @@ class ReferencePDX[T <: AbstractPDX[?]] extends AbstractPDX[T](pdxIdentifiers) {
 
   override def isUndefined: Boolean = {
     resolveReference
-    obj == null
+    node.$ == null
   }
 }

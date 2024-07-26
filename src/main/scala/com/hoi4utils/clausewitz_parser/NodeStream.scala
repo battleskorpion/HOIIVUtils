@@ -21,12 +21,11 @@ class NodeStream[T <: Node](var stream: Stream[T]) extends NodeStreamable[T] {
   def this(nodeToStream: T) = {
     this(Stream.of(nodeToStream))
     // todo necessary etc.?
-    if (nodeToStream.valueObject.isInstanceOf[util.ArrayList[_]]) stream = stream.flatMap((node: T) => node.valueObject.asInstanceOf[util.ArrayList[T]].stream) // ! Unchecked cast
-    else if (nodeToStream.valueObject.isInstanceOf[Node]) {
-      // stream = concat(stream, ((NodeType) nodeToStream.value()).stream());
-      stream = Stream.concat(stream, Stream.of(nodeToStream.valueObject.asInstanceOf[T])) // ! Unchecked cast
-
-    }
+    nodeToStream.$ match
+      case _: ListBuffer[?] => stream = stream.flatMap((node: T) => node.valueObject.asInstanceOf[util.ArrayList[T]].stream)
+      case _: Node =>
+        stream = Stream.concat(stream, Stream.of(nodeToStream.valueObject.asInstanceOf[T])) 
+      case _ =>
   }
 
   private def concat(stream1: Stream[T], stream2: Stream[T]) = Stream.concat(stream1, stream2)
@@ -60,5 +59,5 @@ class NodeStream[T <: Node](var stream: Stream[T]) extends NodeStreamable[T] {
 
   override def filter(str: String): NodeStreamable[T] = filterName(str)
 
-  override def anyMatch(predicate: Predicate[_ >: T]): Boolean = stream.anyMatch(predicate)
+  override def anyMatch(predicate: Predicate[? >: T]): Boolean = stream.anyMatch(predicate)
 }

@@ -81,7 +81,7 @@ class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*
 
   override def iterator: Iterator[T] = get().iterator
 
-  override def forEach(action: Consumer[_ >: T]): Unit = {
+  override def forEach(action: Consumer[? >: T]): Unit = {
     get().forEach(action)
   }
 
@@ -89,7 +89,7 @@ class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*
 
   def size: Int = get().size
 
-  def stream: Stream[T] = get().stream
+//  def stream: Stream[T] = get().stream
 
   override def isUndefined: Boolean = obj.isEmpty
 
