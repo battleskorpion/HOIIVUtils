@@ -173,9 +173,10 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
   else false
 
   override def getOrElse(elseValue: V): V = {
-    val get = get
-    if (get == null) elseValue
-    else get
+    get() match {
+      case null => elseValue
+      case f: _ => f
+    }
   }
 
   override def isUndefined: Boolean = get() == null

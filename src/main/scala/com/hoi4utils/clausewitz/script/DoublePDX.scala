@@ -7,17 +7,13 @@ import java.util
 import java.util.List
 
 
-class DoublePDX extends AbstractPDX[Double](pdxIdentifers) {
+class DoublePDX(pdxIdentifiers: String*) extends AbstractPDX[Double](pdxIdentifers) {
   def this(pdxIdentifiers: String) = {
-    this()
-  }
-
-  def this(PDXIdentifiers: String*) = {
-    this()
+    this(pdxIdentifiers)
   }
 
   def this(pdxIdentifiers: util.List[String]) = {
-    this()
+    this(pdxIdentifiers*)
   }
 
   @throws[UnexpectedIdentifierException]

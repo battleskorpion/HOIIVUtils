@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable
 
 import java.util.function.Consumer
 import java.util.stream.Stream
+import scala.collection.mutable.ListBuffer
 
 // todo i do not like this class
 abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {

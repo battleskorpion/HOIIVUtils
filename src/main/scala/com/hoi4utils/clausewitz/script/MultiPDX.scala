@@ -19,7 +19,7 @@ import scala.collection.mutable.ListBuffer
 class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
 
   def this(supplier: Supplier[T], pdxIdentifiers: ListBuffer[String]) = {
-    this(supplier, pdxIdentifiers: _*)
+    this(supplier, pdxIdentifiers*)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -44,7 +44,7 @@ class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*
       })
   }
 
-  override def nodeEquals(other: PDXScript[_]) = false // todo? well.
+  override def nodeEquals(other: PDXScript[?]) = false // todo? well.
 
   override def get(): ListBuffer[T] = super.get()
 
@@ -82,7 +82,7 @@ class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*
   override def iterator: Iterator[T] = get().iterator
 
   override def forEach(action: Consumer[? >: T]): Unit = {
-    get().forEach(action)
+    get().foreach(action)
   }
 
 //  override def spliterator: Spliterator[T] = get().spliterator
@@ -91,7 +91,7 @@ class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*
 
 //  def stream: Stream[T] = get().stream
 
-  override def isUndefined: Boolean = obj.isEmpty
+  override def isUndefined: Boolean = node.isEmpty
 
   override def toScript: String = {
     val sb = new StringBuilder
@@ -99,8 +99,9 @@ class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*
     if (scripts == null) return null
     for (pdxScript <- scripts) {
       val str = pdxScript.toScript
-      if (str == null) continue //todo: continue is not supported
-      sb.append(str)
+      if (str != null) {
+        sb.append(str)
+      }
     }
     sb.toString
   }

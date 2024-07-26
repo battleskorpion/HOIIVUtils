@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.data.focus
 
 import com.hoi4utils.clausewitz.DataFunctionProvider
-import com.hoi4utils.clausewitz.localization.Localizable
+import com.hoi4utils.clausewitz.localization._
 import com.hoi4utils.clausewitz.script._
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz.BoolType
@@ -29,11 +29,11 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
   val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
   val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
   val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
-  var ddsImage: Image = uninitialized
+  var ddsImage: Image = _
 
   val completionReward: CompletionReward = new CompletionReward()
 
-  obj.addAll(childScripts)
+//  obj.addAll(childScripts)  // todo: garbage
 
   def this(focusTree: FocusTree, node: Node) = {
     this(focusTree)
@@ -106,7 +106,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
   def preciseCompletionTime(): Double = cost.getOrElse(DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
 
   override def getLocalizableProperties: java.util.Map[Property, String] = {
-    Map(Property.NAME -> id.get(), Property.DESCRIPTION -> s"${id.get()}_desc")
+    java.util.Map.of(Property.NAME -> id.get(), Property.DESCRIPTION -> s"${id.get()}_desc")
   }
 
   override def getLocalizableGroup: Seq[Localizable] = {
