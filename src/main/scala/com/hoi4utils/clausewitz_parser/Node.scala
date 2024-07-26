@@ -14,9 +14,9 @@ import java.util.stream.Stream
 //  private val boolType: BoolType = null
 //}
 
-class Node(private[clausewitz_parser] var _identifier: String, private[clausewitz_parser] var _operator: String,
-           private[clausewitz_parser] var nodeValue: NodeValue, private[clausewitz_parser] var nameToken: Token,
-           private[clausewitz_parser] var operatorToken: Token)
+class Node(protected[clausewitz_parser] var _identifier: String, protected[clausewitz_parser] var _operator: String,
+           protected[clausewitz_parser] var nodeValue: NodeValue, protected[clausewitz_parser] var nameToken: Token,
+           protected[clausewitz_parser] var operatorToken: Token)
   extends NodeStreamable[Node] {
 
   if (nodeValue == null) nodeValue = new NodeValue

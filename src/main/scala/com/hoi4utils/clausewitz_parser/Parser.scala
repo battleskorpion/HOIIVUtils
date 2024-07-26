@@ -3,9 +3,6 @@ package com.hoi4utils.clausewitz_parser
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
-import java.util
-import java.util.ArrayList
-
 
 /*
  * Parser File new
@@ -16,8 +13,8 @@ object Parser {
 }
 
 class Parser(file: File) {
-  final private var tokens: Tokenizer = _ 
-  private var rootNode: Node = _ 
+  final private var tokens: Tokenizer = _
+  private var rootNode: Node = _
 
   def this(input: String) = {
     this()
@@ -26,7 +23,7 @@ class Parser(file: File) {
     input += Token.EOF_INDICATOR
     tokens = new Tokenizer(input)
   }
-  
+
   @throws[ParserException]
   def parse: Node = {
     val value = parseBlockContent(tokens)
@@ -41,8 +38,8 @@ class Parser(file: File) {
   }
 
   @throws[ParserException]
-  def parseBlockContent(tokens: Tokenizer): util.ArrayList[Node] = {
-    val nodes = new util.ArrayList[Node]
+  def parseBlockContent(tokens: Tokenizer): ListBuffer[Node] = {
+    val nodes = new ListBuffer[Node]
     while (true) {
       val nextToken = tokens.peek
       if ((nextToken.`type` eq TokenType.eof) || nextToken.value == "}") break //todo: break is not supported
@@ -89,7 +86,7 @@ class Parser(file: File) {
       node.valueAttachmentToken = null
       return node
     }
-    
+
     /* "= {" */
     var operator: Token = null
     if (nextToken.value == "{") {
