@@ -105,4 +105,6 @@ fabric.properties
 # Scala metals
 .metals/
 .bloop/
+.ammonite/
+metals.sbt
 #--------------------------------------------------------------------------------#
