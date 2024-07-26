@@ -2,6 +2,7 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
+import scala.collection.mutable.ListBuffer
 
 abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) {
   def this(pdxIdentifiers: List[String]) = {
@@ -27,9 +28,9 @@ abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBu
     if (expression.name == null) {
       // todo check through schema?
       expression.$ match {
-        case l: ListBuffer[Node] => 
+        case l: ListBuffer[Node] =>
           loadPDX(l)
-        case _ => 
+        case _ =>
           System.out.println("Error loading PDX script: " + expression)
       }
     }

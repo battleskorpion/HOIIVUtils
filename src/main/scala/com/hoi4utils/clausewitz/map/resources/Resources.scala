@@ -57,7 +57,6 @@ class Resources {
   }
 
   private def containsResource(resource: Resource): Boolean = {
-    import scala.jdk.CollectionConverters
     for (r <- resources) {
       if (r.sameResource(resource)) return true
     }
@@ -65,7 +64,6 @@ class Resources {
   }
 
   private def containsResource(identifier: String): Boolean = {
-    import scala.jdk.CollectionConverters
     for (r <- resources) {
       if (r.sameResource(identifier)) return true
     }

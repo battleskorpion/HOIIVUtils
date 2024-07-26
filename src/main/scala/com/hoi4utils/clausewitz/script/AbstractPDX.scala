@@ -32,8 +32,13 @@ trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T]
 
   override def set(value: T): Unit = {
     // todo?
-    if (value.isInstanceOf[String | Int | Double | Boolean])
-      node.setValue(value)
+    value.match {
+      case s: String => node.setValue(s)
+      case i: Int => node.setValue(i)
+      case d: Double => node.setValue(d)
+      case b: Boolean => node.setValue(b)
+      case _ => throw new RuntimeException("Unsupported type")
+    }
   }
 
   @SuppressWarnings(Array("unchecked"))

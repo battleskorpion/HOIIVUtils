@@ -189,8 +189,10 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
    * that is equivalent to the simple value. Or, the structured block has a
    * property that is equivalent to a value and the property is null.
    */
-  private def getStructuredValueProperty = if (isBlock && blockAllowed && structuredPDXValueIdentifiers != null) structuredBlock.getPDXPropertyOfType[V](structuredPDXValueIdentifiers)
-  else null
+  private def getStructuredValueProperty = {
+    if (isBlock && blockAllowed && structuredPDXValueIdentifiers != null) structuredBlock.getPDXPropertyOfType[V](structuredPDXValueIdentifiers)
+    else null
+  }
 
   override def getPDXIdentifier: String = if (!isBlock) simplePDX.getPDXIdentifier
   else if (blockAllowed) structuredBlock.getPDXIdentifier

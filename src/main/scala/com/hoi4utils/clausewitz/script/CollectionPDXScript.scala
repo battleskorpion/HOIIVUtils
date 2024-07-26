@@ -62,7 +62,11 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) e
   protected def newChildScript(expression: Node): T
 
   def clear(): Unit = {
-    node.$.clear
+    node match {
+      case l: ListBuffer[T] =>
+        l.clear()
+      case _ =>
+    }
   }
 
   def isEmpty: Boolean = get().isEmpty

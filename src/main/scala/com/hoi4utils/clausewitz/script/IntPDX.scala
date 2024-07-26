@@ -5,7 +5,7 @@ import com.hoi4utils.clausewitz_parser.NodeValue
 
 class IntPDX(pdxIdentifiers: String*) extends AbstractPDX[Int](pdxIdentifiers) {
   def this(pdxIdentifiers: String) = {
-    this(pdxIdentifiers)
+    this(pdxIdentifiers*)
   }
 
   def this(pdxIdentifiers: List[String]) = {

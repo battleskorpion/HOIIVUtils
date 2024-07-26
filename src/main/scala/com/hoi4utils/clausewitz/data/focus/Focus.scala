@@ -40,7 +40,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     loadPDX(node)
   }
 
-  override protected def childScripts: Seq[PDXScript[_]] = {
+  override protected def childScripts: Seq[PDXScript[?]] = {
     Seq(id, icon, x, y, prerequisites, mutuallyExclusive, relativePosition, cost, availableIfCapitulated, cancelIfInvalid, continueIfInvalid)
   }
 
@@ -239,7 +239,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
 
       override protected def childScripts: util.Collection[? <: PDXScript[?]] = util.List.of(value)
 
-      override def nodeEquals(other: PDXScript[_]): Boolean = {
+      override def nodeEquals(other: PDXScript[?]): Boolean = {
         other match {
           case icon: Icon => value.nodeEquals(icon.get())
           case _ => false
@@ -264,7 +264,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
 
 object Focus {
   def getDataFunctions: Seq[Function[Focus, ?]] = {
-    val dataFunctions = mutable.ListBuffer[Function[Focus, ?]]()
+    val dataFunctions = ListBuffer[Function[Focus, ?]]()
     dataFunctions += (focus => focus.id.get())
     dataFunctions += (focus => focus.localizationText(Property.NAME))
     dataFunctions += (focus => focus.localizationText(Property.DESCRIPTION))
