@@ -252,11 +252,6 @@
 					<mainClass>com.hoi4utils.clausewitz.HOIIVUtils</mainClass>
 				</configuration>
 			</plugin>
-<!--			<plugin>-->
-<!--				<groupId>org.scala-lang</groupId>-->
-<!--				<artifactId>scala3-library_3</artifactId>-->
-<!--				<version>3.4.2</version>-->
-<!--			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
