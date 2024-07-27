@@ -4,7 +4,7 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 
 
-class StringPDX(pdxIdentifiers: String*) extends AbstractPDX[String](pdxIdentifiers) {
+class StringPDX(pdxIdentifiers: String*) extends AbstractPDX[String](pdxIdentifiers*) {
   def this(pdxIdentifiers: List[String]) = {
     this(pdxIdentifiers*)
   }
@@ -14,16 +14,14 @@ class StringPDX(pdxIdentifiers: String*) extends AbstractPDX[String](pdxIdentifi
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
     this.node = expression
-    if (!this.node.$.isInstanceOf[String]) {
-      throw new NodeValueTypeException(this.node, classOf[String])
-    }
+    if !this.node.$.isInstanceOf[String] then
+      throw new NodeValueTypeException(this.node)
   }
 
   override def nodeEquals(other: PDXScript[?]): Boolean = {
     other match
-      case x: StringPDX => return node.equals(x.node)
-      case _ =>
-    false
+      case x: StringPDX => node.equals(x.node)
+      case _ => false
   }
 
   def nodeEquals(s: String): Boolean = node.$.equals(s)

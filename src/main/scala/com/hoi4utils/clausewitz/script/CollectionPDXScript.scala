@@ -10,7 +10,7 @@ import java.util.stream.Stream
 import scala.collection.mutable.ListBuffer
 
 // todo i do not like this class
-abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers*) with Iterable[T] {
   def this(pdxIdentifiers: List[String]) = {
     this(pdxIdentifiers*)
   }
@@ -27,7 +27,7 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) e
   override def loadPDX(expressions: List[Node]): Unit = {
     import scala.jdk.CollectionConverters
     if (expressions != null)
-      expressions.stream.filter(this.isValidIdentifier).forEach((expression: Node) => {
+      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
         try loadPDX(expression)
         catch {
           case e: UnexpectedIdentifierException =>

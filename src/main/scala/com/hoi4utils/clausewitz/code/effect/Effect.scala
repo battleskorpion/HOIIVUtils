@@ -20,8 +20,8 @@ class Effect[T](private var identifier: String, tSupplier: Supplier[PDXScript[T]
   //
   private var defintionScope: Scope = _
   private var targetScope: Scope = _
-  private var supportedScopes: util.EnumSet[ScopeType] = _
-  private var supportedTargets: util.EnumSet[ScopeType] = _
+  private var supportedScopes: java.util.EnumSet[ScopeType] = _
+  private var supportedTargets: java.util.EnumSet[ScopeType] = _
 
   /**
    * For simple effects that have no block version.

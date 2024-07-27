@@ -4,9 +4,9 @@ import com.hoi4utils.clausewitz_parser.Node
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
-import java.util
-import java.util.List
 import java.util.function.Supplier
+
+import scala.collection.mutable.ListBuffer
 
 
 class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
@@ -31,10 +31,10 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
     this()
     this.simplePDXSupplier = simplePDXSupplier
     this.structuredBlock = structuredBlock
-    this.structuredPDXValueIdentifiers = util.List.of(structuredPDXValueIdentifier)
+    this.structuredPDXValueIdentifiers = List(structuredPDXValueIdentifier)
   }
 
-  def this(simplePDXSupplier: Supplier[PDXScript[V]], structuredBlock: U, structuredPDXValueIdentifier: util.List[String]) = {
+  def this(simplePDXSupplier: Supplier[PDXScript[V]], structuredBlock: U, structuredPDXValueIdentifier: List[String]) = {
     this()
     this.simplePDXSupplier = simplePDXSupplier
     this.structuredBlock = structuredBlock
@@ -52,10 +52,10 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
     this()
     this.simplePDXSupplier = null
     this.structuredBlock = structuredBlock
-    this.structuredPDXValueIdentifiers = util.List.of(structuredPDXValueIdentifier)
+    this.structuredPDXValueIdentifiers = List(structuredPDXValueIdentifier)
   }
 
-  def this(structuredBlock: U, structuredPDXValueIdentifier: util.List[String]) = {
+  def this(structuredBlock: U, structuredPDXValueIdentifier: List[String]) = {
     this()
     this.simplePDXSupplier = null
     this.structuredBlock = structuredBlock
@@ -103,7 +103,12 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
 
   def isBlock: Boolean = simplePDX == null
 
-  private def isBlock(expression: Node) = expression.$.isList
+  private def isBlock(expression: Node) = {
+    expression.$ match {
+      case l: ListBuffer[Node] => true
+      case _ => false
+    }
+  }
 
   override def set(obj: V): Unit = {
     if (!isBlock) setSimplePDX(obj)

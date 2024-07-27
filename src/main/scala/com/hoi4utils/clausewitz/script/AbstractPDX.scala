@@ -22,7 +22,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T]
   @throws[UnexpectedIdentifierException]
   protected def usingIdentifier(exp: Node): Unit = {
     for (i <- pdxIdentifiers.indices) {
-      if (exp.nameEquals(pdxIdentifiers.get(i))) {
+      if (exp.nameEquals(pdxIdentifiers(i))) {
         activeIdentifier = i
         return
       }
@@ -77,10 +77,9 @@ trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T]
     }
   }
 
-  override def loadPDX(expressions: List[Node]): Unit = {
+  override def loadPDX(expressions: Iterable[Node]): Unit = {
     Option(expressions).foreach { exprs =>
-      val scalaExprs = exprs.asScala.toList
-      scalaExprs.find(isValidIdentifier) match {
+      exprs.find(isValidIdentifier) match {
         case Some(expression) =>
           try loadPDX(expression)
           catch {
@@ -160,7 +159,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T]
 
   override def isUndefined: Boolean = node == null || node.valueIsNull
 
-  override def getPDXIdentifier: String = pdxIdentifiers.get(activeIdentifier)
+  override def getPDXIdentifier: String = pdxIdentifiers(activeIdentifier)
 
   def valueIsInstanceOf(clazz: Class[?]): Boolean = {
     if (node == null) return false
@@ -171,7 +170,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T]
   }
 
   def schema(): PDXSchema[T] = {
-    var schema = new PDXSchema[T](pdxIdentifiers)
+    var schema = new PDXSchema[T](pdxIdentifiers*)
   }
 
 }

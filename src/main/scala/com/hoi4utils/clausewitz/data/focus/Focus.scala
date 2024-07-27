@@ -5,13 +5,14 @@ import com.hoi4utils.clausewitz.localization._
 import com.hoi4utils.clausewitz.script._
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz.BoolType
+import com.hoi4utils.clausewitz.code.scope._
 import java.awt.Point
 
-import java.util
-import java.util._
 import java.util.function.Supplier
 
 import javafx.scene.image.Image
+
+import scala.collection.mutable.ListBuffer
 
 class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable with Comparable[Focus] with DataFunctionProvider[Focus] {
   private val FOCUS_COST_FACTOR = 7
@@ -218,7 +219,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     }
   }
 
-  class PrerequisiteSet(referenceFocusesSupplier: Supplier[util.Collection[Focus]]) extends MultiReferencePDX[Focus]
+  class PrerequisiteSet(referenceFocusesSupplier: Supplier[Iterable[Focus]]) extends MultiReferencePDX[Focus]
   (referenceFocusesSupplier, (f: Focus) => f.id.get(), "prerequisite", "focus") {
     def this() = {
       this(() => focusTree.focuses)
@@ -228,7 +229,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
   /**
    * mutually exclusive is a multi-reference of focuses
    */
-  class MutuallyExclusiveSet(referenceFocusesSupplier: Supplier[util.Collection[Focus]]) extends MultiReferencePDX[Focus]
+  class MutuallyExclusiveSet(referenceFocusesSupplier: Supplier[Iterable[Focus]]) extends MultiReferencePDX[Focus]
   (referenceFocusesSupplier, (f: Focus) => f.id.get(), "mutually_exclusive", "focus") {
   }
 

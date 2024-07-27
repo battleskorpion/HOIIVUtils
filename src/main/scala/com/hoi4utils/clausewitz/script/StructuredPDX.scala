@@ -4,7 +4,7 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 import scala.collection.mutable.ListBuffer
 
-abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) {
+abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers*) {
   def this(pdxIdentifiers: List[String]) = {
     this(pdxIdentifiers*)
   }
@@ -105,9 +105,11 @@ abstract class StructuredPDX(pdxIdentifiers: String*) extends AbstractPDX[ListBu
     null
   }
 
-  def pdxProperties: java.util.Collection[? <: PDXScript[?]] = {
+  def pdxProperties: Iterable[? <: PDXScript[?]] = {
     val scripts = childScripts
-    if (scripts == null) return null
-    java.util.Collections.unmodifiableCollection(scripts)
+    scripts match {
+      case null => null
+      case _ => scripts
+    }
   }
 }

@@ -13,7 +13,7 @@ object Parser {
   val escape_quote_regex = "\\\\\""
 }
 
-class Parser(file: File) {
+class Parser() {
   final private var tokens: Tokenizer = _
   private var rootNode: Node = _
 
@@ -23,6 +23,12 @@ class Parser(file: File) {
     /* EOF */
     val str = input.concat(Token.EOF_INDICATOR) 
     tokens = new Tokenizer(str)
+  }
+
+  def this(file: File) = {
+    this({
+      new String(Files.readAllBytes(file.toPath))
+    })
   }
 
   @throws[ParserException]
@@ -133,6 +139,7 @@ class Parser(file: File) {
       .substring(1, nameValue.length - 2)
       .replaceAll(Parser.escape_quote_regex, "\"")
       .replaceAll(Parser.escape_backslash_regex, "\\")
+    else nameValue
   }
 
   @throws[ParserException]

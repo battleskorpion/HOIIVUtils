@@ -4,10 +4,12 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 import org.jetbrains.annotations.Nullable
 
-import java.util
-import java.util.{Collection, List}
 import java.util.function.Function
 import java.util.function.Supplier
+
+import scala.collection.mutable
+import scala.collection.mutable._
+
 // todo fix this class
 
 // the superclass will still be of type T (the type of the referenced pdxscript object)// the superclass will still be of type T (the type of the referenced pdxscript object)
@@ -15,11 +17,14 @@ import java.util.function.Supplier
 // this class will contain a string identifier that identifies the referenced pdxscript object// this class will contain a string identifier that identifies the referenced pdxscript object
 // (usually by its 'id' PDXScript field)// (usually by its 'id' PDXScript field)
 
-class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionSupplier: Supplier[scala.collection.mutable.AbstractIterable[T]], final protected var idExtractor: Function[T, String], pdxIdentifiers: String*) extends AbstractPDX[T](pdxIdentifiers) {
+class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionSupplier: Supplier[mutable.Iterable[T]],
+                                        final protected var idExtractor: Function[T, String], pdxIdentifiers: String*)
+  extends AbstractPDX[T](pdxIdentifiers*) {
+
   // the collection of potential pdxscript objects that this reference can point to
   protected[script] var referenceName: String = _
 
-  def this(referenceCollectionSupplier: Supplier[util.Collection[T]], idExtractor: Function[T, String], pdxIdentifiers: String) = {
+  def this(referenceCollectionSupplier: Supplier[mutable.Iterable[T]], idExtractor: Function[T, String], pdxIdentifiers: String) = {
     this(referenceCollectionSupplier, idExtractor, pdxIdentifiers*)
   }
 
@@ -54,10 +59,11 @@ class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionS
     val referenceCollection = referenceCollectionSupplier.get
     for (reference <- referenceCollection) {
       val referenceID = idExtractor.apply(reference)
-      if (referenceID == null) continue //todo: continue is not supported
-      if (referenceID == referenceName) {
-        obj = reference
-        return reference
+      if (referenceID != null) {
+        if (referenceID == referenceName) {
+          //        obj = reference // todo fix
+          return reference
+        }
       }
     }
     null.asInstanceOf[T]
@@ -84,9 +90,9 @@ class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionS
     node = null
   }
 
-  def getReferenceCollection: util.Collection[T] = referenceCollectionSupplier.get
+  def getReferenceCollection: mutable.Iterable[T] = referenceCollectionSupplier.get()
 
-  def getReferenceCollectionNames: util.List[String] = referenceCollectionSupplier.get.stream.map(idExtractor).toList
+  def getReferenceCollectionNames: List[String] = List(referenceCollectionSupplier.get.map(idExtractor))
 
   override def isUndefined: Boolean = {
     resolveReference

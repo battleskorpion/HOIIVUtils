@@ -3,16 +3,13 @@ package com.hoi4utils.clausewitz.script
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 
-import java.util
-import java.util.List
 
-
-class DoublePDX(pdxIdentifiers: String*) extends AbstractPDX[Double](pdxIdentifiers) {
+class DoublePDX(pdxIdentifiers: String*) extends AbstractPDX[Double](pdxIdentifiers*) {
   def this(pdxIdentifiers: String) = {
     this(pdxIdentifiers)
   }
 
-  def this(pdxIdentifiers: util.List[String]) = {
+  def this(pdxIdentifiers: List[String]) = {
     this(pdxIdentifiers*)
   }
 

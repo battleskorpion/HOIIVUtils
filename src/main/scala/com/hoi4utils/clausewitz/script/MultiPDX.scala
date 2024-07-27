@@ -16,8 +16,7 @@ import scala.collection.mutable.ListBuffer
  *
  * @param < T>
  */
-class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
-
+class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers*) with Iterable[T] {
   def this(supplier: Supplier[T], pdxIdentifiers: ListBuffer[String]) = {
     this(supplier, pdxIdentifiers*)
   }
@@ -33,7 +32,7 @@ class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*
 
   override def loadPDX(expressions: ListBuffer[Node]): Unit = {
     if (expressions != null)
-      expressions.stream.filter(this.isValidIdentifier).foreach((expression: Node) => {
+      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
         try loadPDX(expression)
         catch {
           case e: UnexpectedIdentifierException =>

@@ -13,7 +13,7 @@ import scala.collection.mutable._
 class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: Supplier[mutable.AbstractIterable[T]],
                                              protected var idExtractor: Function[T, String], pdxIdentifiers: List[String],
                                              pdxReferenceIdentifiers: List[String])
-  extends MultiPDX[T](null, pdxIdentifiers) {
+  extends MultiPDX[T](null, pdxIdentifiers*) {
 
   final protected var referencePDXTokenIdentifiers: List[String] = _
   final protected val referenceNames = new ListBuffer[String]
@@ -26,7 +26,6 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   override def loadPDX(expression: Node): Unit = {
     expression.$ match {
       case list: List[Node] =>
-        val list = expression.$
         if (list == null) {
           System.out.println("PDX script had empty list: " + expression)
           return
@@ -48,7 +47,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   }
 
   override def get(): List[T] = {
-    if (node != null && !node.isEmpty) return node
+    if (node != null && !node.isEmpty) return null.asInstanceOf[T]//return node  // todo this made wrong
     resolveReferences
   }
 
@@ -59,7 +58,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     val value = expression.$
     referenceNames.clear()
     value match {
-      case s: String => referenceNames.add(s)
+      case s: String => referenceNames.addOne(s)
     }
   }
 
@@ -69,7 +68,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     usingReferenceIdentifier(expression)
     val value = expression.$
     value match
-      case str: String => referenceNames.add(str)
+      case str: String => referenceNames.addOne(str)
       case _ =>
   }
 
@@ -77,7 +76,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     val referenceCollection = referenceCollectionSupplier.get
     for (reference <- referenceCollection) {
       for (referenceName <- referenceNames) {
-        if (idExtractor.apply(reference) == referenceName) node.add(reference)
+//        if (idExtractor.apply(reference) == referenceName) node.addOne(reference) // todo fix
       }
     }
     node
@@ -105,15 +104,15 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   }
 
   def setReferenceName(index: Int, value: String): Unit = {
-    referenceNames.set(index, value)
+    referenceNames.update(index, value)
   }
 
-  def getReferenceName(i: Int): String = referenceNames.get(i)
+  def getReferenceName(i: Int): String = referenceNames(i)
 
-  def getReferenceCollectionNames: List[String] = referenceCollectionSupplier.get.stream.map(idExtractor).toList
+  def getReferenceCollectionNames: List[String] = List(referenceCollectionSupplier.get.map(idExtractor))
 
   def addReferenceName(newValue: String): Unit = {
-    referenceNames.add(newValue)
+    referenceNames.addOne(newValue)
     resolveReferences
   }
 

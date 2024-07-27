@@ -3,6 +3,7 @@ package com.hoi4utils.clausewitz_parser
 import java.util.regex.Pattern
 import com.hoi4utils.clausewitz_parser.TokenType.TokenType
 
+import scala.collection.mutable
 import scala.collection.mutable._
 
 /**
