@@ -54,8 +54,11 @@ class Token {
    */
   private def determineTokenType(value: String): TokenType = {
     import scala.jdk.CollectionConverters
-    for (entry <- Token.tokenRegex.entrySet) {
-      if (entry.getValue.matcher(value).matches) return entry.getKey
+//    for (entry <- Token.tokenRegex.entrySet) {
+//      if (entry.getValue.matcher(value).matches) return entry.getKey
+//    }
+    for ((key, pattern) <- Token.tokenRegex) {
+      if (pattern.matcher(value).matches) return key
     }
     TokenType.unknown
   }

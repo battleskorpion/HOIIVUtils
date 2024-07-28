@@ -78,7 +78,11 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val input: String) {
     val patternBuilder = new StringBuilder
     for (tokenType <- TokenType.values) {
       val tokenRegex = Token.tokenRegex.get(tokenType)
-      if (tokenRegex != null) patternBuilder.append(String.format("|(?<%s>%s)", tokenType, tokenRegex.pattern))
+      //if (tokenRegex != null) patternBuilder.append(String.format("|(?<%s>%s)", tokenType, tokenRegex.pattern))
+      tokenRegex match {
+        case Some(value) => patternBuilder.append(s"|(?<${tokenType}>${value.pattern})")
+        case None =>
+      }
     }
     if (patternBuilder.nonEmpty) Pattern.compile(patternBuilder.substring(1)) // Skip the leading "|"
     else throw new IllegalStateException("No patterns found for token types.")

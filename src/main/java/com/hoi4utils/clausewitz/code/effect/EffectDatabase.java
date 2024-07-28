@@ -85,8 +85,8 @@ public class EffectDatabase {
 		}
 	}
 
-	public List<Effect<?>> loadEffects() {
-		List<Effect<?>> loadedEffects = new ArrayList<>();
+	public List<Effect> loadEffects() {
+		List<Effect> loadedEffects = new ArrayList<>();
 		String retrieveSQL = "SELECT * FROM effects";
 		try {
 			PreparedStatement retrieveStatement = connection.prepareStatement(retrieveSQL);
@@ -108,9 +108,9 @@ public class EffectDatabase {
 				// Parameter.addValidIdentifier();
 				if (requiredParametersFull_str == null || requiredParametersFull_str.isEmpty()
 						|| requiredParametersFull_str.equals("none")) {
-					Effect<?> effect;
+					Effect effect;
 					// todo not effect<string> necessarily
-					effect = new EffectSchema<>(pdxIdentifier, supportedScopes, supportedTargets,
+					effect = new EffectSchema(pdxIdentifier, supportedScopes, supportedTargets,
 							StringPDX::new, null);
 					loadedEffects.add(effect);
 				} else {
@@ -136,12 +136,12 @@ public class EffectDatabase {
 						}
 						var structuredEffectBlock = newStructuredEffectBlock(pdxIdentifier, childScripts);
 						/* Create a Effect instance and add it to the loaded list */
-						Effect<?> effect;
+						Effect effect;
 						if (supportedTargets == null) {
-							effect = new Effect<>(pdxIdentifier, supportedScopes, null,
+							effect = new Effect(pdxIdentifier, supportedScopes, null,
 									StringPDX::new, structuredEffectBlock);
 						} else {
-							effect = new Effect<>(pdxIdentifier, supportedScopes, supportedTargets,
+							effect = new Effect(pdxIdentifier, supportedScopes, supportedTargets,
 									StringPDX::new, structuredEffectBlock);
 						}
 						loadedEffects.add(effect);

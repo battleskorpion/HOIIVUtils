@@ -18,14 +18,14 @@ import scala.collection.mutable._
 // (usually by its 'id' PDXScript field)// (usually by its 'id' PDXScript field)
 
 class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionSupplier: Supplier[mutable.Iterable[T]],
-                                        final protected var idExtractor: Function[T, String], pdxIdentifiers: String*)
-  extends AbstractPDX[T](pdxIdentifiers*) {
+                                        final protected var idExtractor: Function[T, String], pdxIdentifiers: List[String])
+  extends AbstractPDX[T](pdxIdentifiers) {
 
   // the collection of potential pdxscript objects that this reference can point to
   protected[script] var referenceName: String = _
 
-  def this(referenceCollectionSupplier: Supplier[mutable.Iterable[T]], idExtractor: Function[T, String], pdxIdentifiers: String) = {
-    this(referenceCollectionSupplier, idExtractor, pdxIdentifiers*)
+  def this(referenceCollectionSupplier: Supplier[mutable.Iterable[T]], idExtractor: Function[T, String], pdxIdentifiers: String*) = {
+    this(referenceCollectionSupplier, idExtractor, pdxIdentifiers.toList)
   }
 
   @throws[UnexpectedIdentifierException]

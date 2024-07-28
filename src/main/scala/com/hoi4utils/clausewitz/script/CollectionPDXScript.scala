@@ -10,9 +10,9 @@ import java.util.stream.Stream
 import scala.collection.mutable.ListBuffer
 
 // todo i do not like this class
-abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers*) with Iterable[T] {
-  def this(pdxIdentifiers: List[String]) = {
-    this(pdxIdentifiers*)
+abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+  def this(pdxIdentifiers: String*) = {
+    this(pdxIdentifiers.toList)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -73,9 +73,7 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: String*) e
 
   override def iterator: Iterator[T] = get().iterator
 
-  override def forEach(action: Consumer[? >: T]): Unit = {
-    get().foreach(action)
-  }
+  override def foreach[U](f: T => U): Unit = super.foreach(f)
 
 //  override def spliterator: java.util.Spliterator[T] = get().spliterator
 

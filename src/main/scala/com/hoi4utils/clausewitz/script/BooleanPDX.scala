@@ -5,7 +5,7 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 import org.jetbrains.annotations.NotNull
 
-class BooleanPDX(pxdIdentifiers: List[String], final private var defaultValue: Boolean, final private var boolType: BoolType) extends AbstractPDX[Boolean | Null](pdxIdentifiers) {
+class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: Boolean, final private var boolType: BoolType) extends AbstractPDX[Boolean | Null](pdxIdentifiers) {
 
   def this(pdxIdentifier: String, defaultValue: Boolean, boolType: BoolType) = {
     this(List(pdxIdentifier), defaultValue, boolType)

@@ -1,17 +1,20 @@
 package com.hoi4utils.clausewitz.data.focus
 
 import com.hoi4utils.clausewitz.DataFunctionProvider
-import com.hoi4utils.clausewitz.localization._
-import com.hoi4utils.clausewitz.script._
+import com.hoi4utils.clausewitz.localization.*
+import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz.BoolType
-import com.hoi4utils.clausewitz.code.scope._
+import com.hoi4utils.clausewitz.code.scope.*
+import com.hoi4utils.clausewitz.code.effect.*
+import com.hoi4utils.clausewitz.localization.Localizable.Property
+
 import java.awt.Point
-
 import java.util.function.Supplier
-
 import javafx.scene.image.Image
 
+import java.util
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable with Comparable[Focus] with DataFunctionProvider[Focus] {
@@ -106,13 +109,13 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
 
   def preciseCompletionTime(): Double = cost.getOrElse(DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
 
-  override def getLocalizableProperties: java.util.Map[Property, String] = {
-    java.util.Map.of(Property.NAME -> id.get(), Property.DESCRIPTION -> s"${id.get()}_desc")
+  override def getLocalizableProperties: mutable.Map[Property, String] = {
+    mutable.Map(Property.NAME -> id.get(), Property.DESCRIPTION -> s"${id.get()}_desc")
   }
 
-  override def getLocalizableGroup: Seq[Localizable] = {
+  override def getLocalizableGroup: Iterable[Localizable] = {
     if (focusTree == null) {
-      Seq(this)
+      Iterable(this)
     } else {
       focusTree.getLocalizableGroup
     }
@@ -129,7 +132,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     details.toString()
   }
 
-  def getCompletionReward: util.List[Effect] = completionReward
+  def getCompletionReward: List[Effect] = completionReward
 
 //  def setCompletionReward(completionReward: List[Effect]): Unit = {
 //    this.completionReward = completionReward
@@ -149,88 +152,91 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
   }
 
   private def setCompletionRewardsOfNode(completionRewardNode: Node, scope: Scope): Unit = {
-    for (n <- completionRewardNode.value().list()) {
-      if (n.value().isList) {
-        var s: Scope = null
-        if (CountryTagsManager.exists(n.name())) {
-          s = Scope.of(CountryTagsManager.get(n.name()))
-        } else {
-          try {
-            s = Scope.of(n.name(), scope)
-          } catch {
-            case e: NotPermittedInScopeException =>
-              println(e.getMessage)
-          }
-        }
-
-        if (s == null || s.scopeCategory == ScopeCategory.EFFECT) {
-          var effect: Effect = null
-          try {
-            effect = Effect.of(n.name(), scope, n.value())
-          } catch {
-            case e: InvalidEffectParameterException =>
-              println(e.getMessage)
-            case e: NotPermittedInScopeException =>
-              println(e.getMessage + ", scope: " + scope + ", list? " + n.name())
-          }
-          if (effect != null) {
-            completionReward += effect
-          } else {
-            println("Scope " + n.name() + " unknown.")
-          }
-        } else {
-          setCompletionRewardsOfNode(n, s)
-        }
-      } else if (!n.valueIsNull) {
-        var effect: Effect = null
-        try {
-          effect = Effect.of(n.name(), scope, n.value())
-        } catch {
-          case e: InvalidEffectParameterException =>
-            println(e.getMessage)
-          case e: NotPermittedInScopeException =>
-            println(e.getMessage + ", scope: " + scope)
-        }
-        if (effect == null) {
-          System.err.println("effect not found: " + n.name())
-        } else {
-          if (effect.hasSupportedTargets) {
-            try {
-              effect.setTarget(n.value().string(), scope)
-            } catch {
-              case e: IllegalStateException =>
-                e.printStackTrace()
-            }
-          }
-          completionReward += effect
-        }
-      } else {
-        var effect: Effect = null
-        try {
-          effect = Effect.of(n.name(), scope)
-        } catch {
-          case e: NotPermittedInScopeException =>
-            println(e.getMessage)
-        }
-        if (effect != null) {
-          completionReward += effect
-        }
-      }
-    }
+//    completionRewardNode.$ match {
+//      case l: ListBuffer[Node] => for(n <- l) {
+//        if (n.value().isList) {
+//          var s: Scope = null
+//          if (CountryTagsManager.exists(n.name())) {
+//            s = Scope.of(CountryTagsManager.get(n.name()))
+//          } else {
+//            try {
+//              s = Scope.of(n.name(), scope)
+//            } catch {
+//              case e: NotPermittedInScopeException =>
+//                println(e.getMessage)
+//            }
+//          }
+//
+//          if (s == null || s.scopeCategory == ScopeCategory.EFFECT) {
+//            var effect: Effect = null
+//            try {
+//              effect = Effect.of(n.name(), scope, n.value())
+//            } catch {
+//              case e: InvalidEffectParameterException =>
+//                println(e.getMessage)
+//              case e: NotPermittedInScopeException =>
+//                println(e.getMessage + ", scope: " + scope + ", list? " + n.name())
+//            }
+//            if (effect != null) {
+//              completionReward += effect
+//            } else {
+//              println("Scope " + n.name() + " unknown.")
+//            }
+//          } else {
+//            setCompletionRewardsOfNode(n, s)
+//          }
+//        } else if (!n.valueIsNull) {
+//          var effect: Effect = null
+//          try {
+//            effect = Effect.of(n.name(), scope, n.value())
+//          } catch {
+//            case e: InvalidEffectParameterException =>
+//              println(e.getMessage)
+//            case e: NotPermittedInScopeException =>
+//              println(e.getMessage + ", scope: " + scope)
+//          }
+//          if (effect == null) {
+//            System.err.println("effect not found: " + n.name())
+//          } else {
+//            if (effect.hasSupportedTargets) {
+//              try {
+//                effect.setTarget(n.value().string(), scope)
+//              } catch {
+//                case e: IllegalStateException =>
+//                  e.printStackTrace()
+//              }
+//            }
+//            completionReward += effect
+//          }
+//        } else {
+//          var effect: Effect = null
+//          try {
+//            effect = Effect.of(n.name(), scope)
+//          } catch {
+//            case e: NotPermittedInScopeException =>
+//              println(e.getMessage)
+//          }
+//          if (effect != null) {
+//            completionReward += effect
+//          }
+//        }
+//      }
+//      case _ =>
+//    }
   }
 
-  class PrerequisiteSet(referenceFocusesSupplier: Supplier[Iterable[Focus]]) extends MultiReferencePDX[Focus]
-  (referenceFocusesSupplier, (f: Focus) => f.id.get(), "prerequisite", "focus") {
+  class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus])
+    extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.get(), "prerequisite", "focus") {
+
     def this() = {
       this(() => focusTree.focuses)
     }
   }
-
   /**
    * mutually exclusive is a multi-reference of focuses
    */
-  class MutuallyExclusiveSet(referenceFocusesSupplier: Supplier[Iterable[Focus]]) extends MultiReferencePDX[Focus]
-  (referenceFocusesSupplier, (f: Focus) => f.id.get(), "mutually_exclusive", "focus") {
+  class MutuallyExclusiveSet(referenceFocusesSupplier: Supplier[Iterable[Focus]])
+    extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.get(), "mutually_exclusive", "focus") {
   }
 
   class Icon extends DynamicPDX[String, StructuredPDX](() =>
@@ -238,7 +244,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     new StructuredPDX("icon") {
       final private val value: StringPDX = new StringPDX("value")
 
-      override protected def childScripts: util.Collection[? <: PDXScript[?]] = util.List.of(value)
+      override protected def childScripts: Iterable[? <: PDXScript[?]] = Iterable(value)
 
       override def nodeEquals(other: PDXScript[?]): Boolean = {
         other match {
@@ -251,13 +257,14 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     {
   }
 
-  class CompletionReward extends CollectionPDXScript[Effect[?]]("completion_reward") {
+  class CompletionReward extends CollectionPDXScript[Effect]("completion_reward") {
     @throws[UnexpectedIdentifierException]
     override def loadPDX(expression: Node): Unit = {
       super.loadPDX(expression)
     }
 
-    override protected def newChildScript(expression: Node): Effect[?] = {
+    override protected def newChildScript(expression: Node): Effect = {
+      null.asInstanceOf[Effect] // todo fix
     }
   }
 

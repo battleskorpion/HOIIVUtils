@@ -15,7 +15,7 @@ import java.util.function.Supplier
  * For information: <a href="https://hoi4.paradoxwikis.com/Effect">Effects
  * Wiki</a>
  */
-class Effect[T](private var identifier: String, tSupplier: Supplier[PDXScript[T]], structuredBlock: StructuredPDX) extends DynamicPDX[T, StructuredPDX](tSupplier, structuredBlock) with ScopedPDXScript {
+class Effect(private var identifier: String, tSupplier: Supplier[PDXScript[?]], structuredBlock: StructuredPDX) extends DynamicPDX[?, StructuredPDX](tSupplier, structuredBlock) with ScopedPDXScript {
   //    protected static final SortedMap<String, Effect<?>> effects = new TreeMap<>();
   //
   private var defintionScope: Scope = _
@@ -28,7 +28,7 @@ class Effect[T](private var identifier: String, tSupplier: Supplier[PDXScript[T]
    *
    * @param TSupplier
    */
-  def this(identifier: String, tSupplier: Supplier[PDXScript[T]]) = {
+  def this(identifier: String, tSupplier: Supplier[PDXScript[?]]) = {
     this(identifier, tSupplier, null)
   }
 

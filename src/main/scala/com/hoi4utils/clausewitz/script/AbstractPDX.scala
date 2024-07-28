@@ -6,7 +6,8 @@ import com.hoi4utils.clausewitz_parser.Parser
 import com.hoi4utils.clausewitz_parser.ParserException
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import scala.jdk.CollectionConverters._
+
+import scala.collection.mutable._
 
 import java.io.File
 
@@ -15,9 +16,13 @@ import java.io.File
  * or event.
  * <p>
  */
-trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T] {
+trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScript[T] {
   private[script] var activeIdentifier = 0
   protected[script] var node: Node = _
+
+//  def this(pdxIdentifiers: String*) = {
+//    this(pdxIdentifiers*)
+//  }
 
   @throws[UnexpectedIdentifierException]
   protected def usingIdentifier(exp: Node): Unit = {
@@ -30,13 +35,24 @@ trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T]
     throw new UnexpectedIdentifierException(exp)
   }
 
-  override def set(value: T): Unit = {
-    // todo?
+//  override def set(value: T): Unit = {
+//    // todo?
+//    value.match {
+//      case s: String => node.setValue(s)
+//      case i: Int => node.setValue(i)
+//      case d: Double => node.setValue(d)
+//      case b: Boolean => node.setValue(b)
+//      case _ => throw new RuntimeException("Unsupported type")
+//    }
+//  }
+  override def set(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
+  // todo?
     value.match {
       case s: String => node.setValue(s)
       case i: Int => node.setValue(i)
       case d: Double => node.setValue(d)
       case b: Boolean => node.setValue(b)
+      case n: Null => node.setNull()
       case _ => throw new RuntimeException("Unsupported type")
     }
   }
@@ -135,7 +151,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T]
 
   override def toScript: String = {
     if (node == null || node.isEmpty) return null
-    pdxIdentifiers.get(activeIdentifier) + " = " + node + "\n"
+    pdxIdentifiers(activeIdentifier) + " = " + node + "\n"
   }
 
   def nodeEquals(other: AbstractPDX[?]): Boolean = {
@@ -161,16 +177,16 @@ trait AbstractPDX[T](protected val pdxIdentifiers: String*) extends PDXScript[T]
 
   override def getPDXIdentifier: String = pdxIdentifiers(activeIdentifier)
 
-  def valueIsInstanceOf(clazz: Class[?]): Boolean = {
-    if (node == null) return false
+  def valueIsInstanceOf[A]: Boolean = {
     node.$ match {
-      case _: clazz => true
+      case _: A => true
       case _ => false
     }
   }
 
   def schema(): PDXSchema[T] = {
     var schema = new PDXSchema[T](pdxIdentifiers*)
+    return null.asInstanceOf[PDXSchema[T]]  // todo no
   }
 
 }

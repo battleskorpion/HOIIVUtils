@@ -4,9 +4,9 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 
 
-class StringPDX(pdxIdentifiers: String*) extends AbstractPDX[String](pdxIdentifiers*) {
-  def this(pdxIdentifiers: List[String]) = {
-    this(pdxIdentifiers*)
+class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIdentifiers) {
+  def this(pdxIdentifiers: String*) = {
+    this(pdxIdentifiers.toList)
   }
 
   @throws[UnexpectedIdentifierException]

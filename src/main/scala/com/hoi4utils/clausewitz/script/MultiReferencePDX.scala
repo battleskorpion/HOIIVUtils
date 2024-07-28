@@ -109,7 +109,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 
   def getReferenceName(i: Int): String = referenceNames(i)
 
-  def getReferenceCollectionNames: List[String] = List(referenceCollectionSupplier.get.map(idExtractor))
+  def getReferenceCollectionNames: List[String] = List(referenceCollectionSupplier.get().map(idExtractor))
 
   def addReferenceName(newValue: String): Unit = {
     referenceNames.addOne(newValue)

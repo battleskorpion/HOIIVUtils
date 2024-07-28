@@ -3,9 +3,9 @@ package com.hoi4utils.clausewitz.script
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 
-class IntPDX(pdxIdentifiers: String*) extends AbstractPDX[Int](pdxIdentifiers*) {
-  def this(pdxIdentifiers: List[String]) = {
-    this(pdxIdentifiers*)
+class IntPDX(pdxIdentifiers: List[String]) extends AbstractPDX[Int](pdxIdentifiers) {
+  def this(pdxIdentifiers: String*) = {
+    this(pdxIdentifiers.toList)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -13,7 +13,7 @@ class IntPDX(pdxIdentifiers: String*) extends AbstractPDX[Int](pdxIdentifiers*) 
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
     this.node = expression
-    if (!valueIsInstanceOf(Int)) {
+    if (!valueIsInstanceOf[Int]) {
       throw new NodeValueTypeException(expression, "Number (as an Integer)")
     }
   }

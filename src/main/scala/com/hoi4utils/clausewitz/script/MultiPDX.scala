@@ -16,9 +16,9 @@ import scala.collection.mutable.ListBuffer
  *
  * @param < T>
  */
-class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers*) with Iterable[T] {
-  def this(supplier: Supplier[T], pdxIdentifiers: ListBuffer[String]) = {
-    this(supplier, pdxIdentifiers*)
+class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+  def this(supplier: Supplier[T], pdxIdentifiers: String*) = {
+    this(supplier, pdxIdentifiers.toList)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -80,9 +80,10 @@ class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: String*
 
   override def iterator: Iterator[T] = get().iterator
 
-  override def forEach(action: Consumer[? >: T]): Unit = {
-    get().foreach(action)
-  }
+  //  override def forEach(action: Consumer[? >: T]): Unit = {
+  //    get().foreach(action)
+  //  }
+  override def foreach[U](f: T => U): Unit = super.foreach(f)
 
 //  override def spliterator: Spliterator[T] = get().spliterator
 
