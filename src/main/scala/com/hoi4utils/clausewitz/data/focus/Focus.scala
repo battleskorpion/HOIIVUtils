@@ -132,7 +132,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     details.toString()
   }
 
-  def getCompletionReward: List[Effect] = completionReward
+  def getCompletionReward: CompletionReward = completionReward
 
 //  def setCompletionReward(completionReward: List[Effect]): Unit = {
 //    this.completionReward = completionReward
@@ -235,7 +235,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
   /**
    * mutually exclusive is a multi-reference of focuses
    */
-  class MutuallyExclusiveSet(referenceFocusesSupplier: Supplier[Iterable[Focus]])
+  class MutuallyExclusiveSet(referenceFocusesSupplier: () => Iterable[Focus])
     extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.get(), "mutually_exclusive", "focus") {
   }
 

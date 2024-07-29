@@ -14,7 +14,7 @@ class Resources {
 
   def this(aluminum: Int, chromium: Int, oil: Int, rubber: Int, steel: Int, tungsten: Int) = {
     this()
-    resources = new mutable.HashSet[Resource](6)
+    resources = new mutable.HashSet[Resource]()
     resources.add(new Resource("aluminum", aluminum))
     resources.add(new Resource("chromium", chromium))
     resources.add(new Resource("oil", oil))
@@ -23,20 +23,21 @@ class Resources {
     resources.add(new Resource("tungsten", tungsten))
   }
 
-  def this() = {
-    this(0, 0, 0, 0, 0, 0)
-  }
+//  def this() = {
+//    this(0, 0, 0, 0, 0, 0)
+//  }
 
 //  def this(resourceAmts: Int*): Unit
 
-  def this(resources: Set[Resource]) = {
+  def this(resources: mutable.Set[Resource]) = {
     this()
     this.resources = resources
   }
 
   def this(resources: Resource*) = {
     this()
-    this.resources = new mutable.HashSet[Resource](6) // typically there are 6 resources
+    //this.resources = new mutable.HashSet[Resource](6) // typically there are 6 resources
+    this.resources = new mutable.HashSet[Resource]()
 
     this.resources.addAll(resources)
   }

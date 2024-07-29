@@ -18,7 +18,7 @@ import scala.collection.mutable.ListBuffer
 class Node(protected[clausewitz_parser] var _identifier: String, protected[clausewitz_parser] var _operator: String,
            protected[clausewitz_parser] var nodeValue: NodeValue, protected[clausewitz_parser] var nameToken: Token,
            protected[clausewitz_parser] var operatorToken: Token)
-  extends NodeStreamable[Node] {
+  extends NodeIterable[Node] {
 
   if (nodeValue == null) nodeValue = new NodeValue
   
@@ -37,53 +37,8 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
   def name: String = identifier
 
   def getValue: String | Int | Double | Boolean | ListBuffer[Node] | Null = nodeValue.getValue
-  
-  // no clue
-  private[clausewitz_parser] def stream = {
-    val nodeStream = new NodeStream[Node](this)
-    nodeStream
-  }
 
-  override def getStream: Stream[Node] = stream.getStream
-
-  override def filter(predicate: Predicate[? >: Node]): NodeStreamable[Node] = 
-    new NodeStream[Node](this).filter(predicate)
-
-  override def map[R <: Node](mapper: Function[? >: Node, ? <: R]): NodeStreamable[R] = 
-    new NodeStream[Node](this).map(mapper)
-
-  override def flatMap[R <: Node](mapper: Function[? >: Node, ? <: NodeStreamable[R]]): NodeStreamable[R] = 
-    new NodeStream[Node](this).flatMap(mapper)
-
-  override def toList: util.List[Node] = new NodeStream[Node](this).toList
-
-  override def forEach(action: Consumer[? >: Node]): Unit = {
-    new NodeStream[Node](this).forEach(action)
-  }
-
-  override def findFirst: Node = 
-    new NodeStream[Node](this).findFirst
-
-  override def findFirst(predicate: Predicate[Node]): Node = {
-    val result = new NodeStream[Node](this).findFirst(predicate)
-    if (result != null) result
-    else new Node
-  }
-
-  override // note: was findFirstName, refactored
-  def findFirst(str: String): Node = {
-    val result = new NodeStream[Node](this).findFirst(str)
-    if (result != null) result
-    else new Node
-  }
-
-  override def filterName(str: String): NodeStreamable[Node] = new NodeStream[Node](this).filterName(str)
-
-  override def filter(str: String): NodeStreamable[Node] = filterName(str)
-
-  override def anyMatch(predicate: Predicate[? >: Node]): Boolean = new NodeStream[Node](this).anyMatch(predicate)
-
-  def getValue(id: String): NodeValue = findFirst(id).nodeValue
+  def getValue(id:String): NodeValue = find(id).nodeValue
 
   def setValue(value: String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
     this.nodeValue.setValue(value)

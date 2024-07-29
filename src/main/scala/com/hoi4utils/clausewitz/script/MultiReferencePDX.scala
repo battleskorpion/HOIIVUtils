@@ -4,8 +4,6 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 import org.jetbrains.annotations.Nullable
 
-import java.util.function.Function
-import java.util.function.Supplier
 import scala.collection.mutable
 import scala.collection.mutable._
 
@@ -18,7 +16,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   final protected var referencePDXTokenIdentifiers: List[String] = _
   final protected val referenceNames = new ListBuffer[String]
 
-  def this(referenceCollectionSupplier: Supplier[Collection[T]], idExtractor: Function[T, String], pdxIdentifiers: String, referenceIdentifier: String) = {
+  def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: Function[T, String], pdxIdentifiers: String, referenceIdentifier: String) = {
     this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers), List(referenceIdentifier))
   }
 
@@ -47,8 +45,9 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   }
 
   override def get(): List[T] = {
-    if (node != null && !node.isEmpty) return null.asInstanceOf[T]//return node  // todo this made wrong
-    resolveReferences
+    if (node != null && !node.isEmpty) return List()//return node  // todo this made wrong
+    //resolveReferences
+    return List() // todo no
   }
 
   @throws[UnexpectedIdentifierException]
