@@ -271,7 +271,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
 }
 
 object Focus {
-  def getDataFunctions: Seq[Function[Focus, ?]] = {
+  def getDataFunctions: Iterable[Function[Focus, ?]] = {
     val dataFunctions = ListBuffer[Function[Focus, ?]]()
     dataFunctions += (focus => focus.id.get())
     dataFunctions += (focus => focus.localizationText(Property.NAME))
