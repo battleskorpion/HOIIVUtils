@@ -9,19 +9,21 @@ import java.util.function.Supplier
 
 import scala.collection.mutable.ListBuffer
 
-// todo fix this class
-
-// the superclass will still be of type T (the type of the referenced pdxscript object)// the superclass will still be of type T (the type of the referenced pdxscript object)
-// but the super obj can be null until the reference is resolved.// but the super obj can be null until the reference is resolved.
-// this class will contain a string identifier that identifies the referenced pdxscript object// this class will contain a string identifier that identifies the referenced pdxscript object
-// (usually by its 'id' PDXScript field)// (usually by its 'id' PDXScript field)
-
-class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionSupplier: () => Iterable[T],
+/**
+ * A PDXScript that may reference another PDXScript.
+ *
+ * @param referenceCollectionSupplier
+ * @param idExtractor
+ * @param pdxIdentifiers
+ * @tparam T
+ */
+class ReferencePDX[T <: PDXScript[?]](final protected var referenceCollectionSupplier: () => Iterable[T],
                                         final protected var idExtractor: T => String, pdxIdentifiers: List[String])
   extends AbstractPDX[T](pdxIdentifiers) {
 
-  // the collection of potential pdxscript objects that this reference can point to
+  // the string identifier of the referenced PDXScript
   protected[script] var referenceName: String = _
+  protected[script] var reference: Option[T] = None
 
   def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => String, pdxIdentifiers: String*) = {
     this(referenceCollectionSupplier, idExtractor, pdxIdentifiers.toList)
@@ -40,40 +42,32 @@ class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionS
     }
   }
 
-  override def get(): T = {
-    if (node != null)
-      if (node.$.isInstanceOf[T]) node.$
-    resolveReference
+  override def get(): Option[T] = {
+    if (reference.nonEmpty) return reference
+    resolveReference()
   }
 
-  override def nodeEquals(other: PDXScript[?]): Boolean = {
+  private def resolveReference(): Option[T] = {
+    val referenceCollection = referenceCollectionSupplier()
+    for (reference <- referenceCollection) {
+      val referenceID = idExtractor.apply(reference)
+      referenceID match {
+        case null =>
+        case referenceName =>
+          this.reference = Some(reference)
+          return Some(reference)
+        case _ =>
+      }
+    }
+    None
+  }
+
+  override def equals(other: AbstractPDX[?]): Boolean = {
     other match {
       case referencePDX: ReferencePDX[?] =>
         referenceName == referencePDX.referenceName && this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier && this.idExtractor == referencePDX.idExtractor
       case _ => false
     }
-  }
-
-  private def resolveReference: T = {
-    val referenceCollection = referenceCollectionSupplier()
-    for (reference <- referenceCollection) {
-      val referenceID = idExtractor.apply(reference)
-      if (referenceID != null) {
-        if (referenceID == referenceName) {
-          //        obj = reference // todo fix
-          return reference
-        }
-      }
-    }
-    null.asInstanceOf[T]
-  }
-
-  override def nodeEquals(other: AbstractPDX[?]): Boolean = {
-    if (node == null) {
-      resolveReference
-      if (node == null) return false
-    }
-    node.equals(other.node)
   }
 
   override def toScript: String = {
@@ -94,7 +88,7 @@ class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionS
   def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().map(idExtractor)
 
   override def isUndefined: Boolean = {
-    resolveReference
-    node.$ == null
+    resolveReference()
+    reference.isEmpty
   }
 }

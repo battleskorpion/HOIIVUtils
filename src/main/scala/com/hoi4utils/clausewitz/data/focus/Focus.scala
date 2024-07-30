@@ -58,20 +58,21 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     if (relativePosition.isUndefined) {
       return position
     }
-    if (relativePosition.objEquals(id)) {
+    if (relativePosition.equals(id)) {
       System.err.println("Relative position id same as focus id for " + this)
       return position
     }
 
     val relativePositionFocus = relativePosition.get()
-    if (relativePositionFocus == null) {
-      System.err.println("focus id " + relativePosition.getReferenceName + " not a focus")
-      return position
+    relativePositionFocus match {
+      case Some(f) =>
+        var adjPoint = f.absolutePosition
+        adjPoint = new Point(adjPoint.x + x.getOrElse(0), adjPoint.y + y.getOrElse(0))
+        adjPoint
+      case None =>
+        System.err.println("focus id " + relativePosition.getReferenceName + " not a focus")
+        position
     }
-    var adjPoint = relativePositionFocus.absolutePosition
-    adjPoint = new Point(adjPoint.x + x.getOrElse(0), adjPoint.y + y.getOrElse(0))
-
-    adjPoint
   }
 
   override def toString: String = id.get()
@@ -148,7 +149,12 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
 //  }
 
   private def setCompletionRewardsOfNode(completionRewardNode: Node): Unit = {
-    setCompletionRewardsOfNode(completionRewardNode, Scope.of(focusTree.country.get()))
+    focusTree.country.get() match {
+      case Some(countryTag) =>
+        setCompletionRewardsOfNode(completionRewardNode, Scope.of(countryTag))
+      case None =>
+        setCompletionRewardsOfNode(completionRewardNode, null)
+    }
   }
 
   private def setCompletionRewardsOfNode(completionRewardNode: Node, scope: Scope): Unit = {
@@ -257,7 +263,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     {
   }
 
-  class CompletionReward extends CollectionPDXScript[Effect]("completion_reward") {
+  class CompletionReward extends CollectionPDX[Effect]("completion_reward") {
     @throws[UnexpectedIdentifierException]
     override def loadPDX(expression: Node): Unit = {
       super.loadPDX(expression)

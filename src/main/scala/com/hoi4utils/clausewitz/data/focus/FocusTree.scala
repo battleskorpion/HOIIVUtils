@@ -48,7 +48,7 @@ object FocusTree {
 
   def add(focusTree: FocusTree): mutable.HashMap[File, FocusTree] = {
     focusTrees.put(focusTree.focus_file, focusTree)
-    new mutable.HashMap[File, FocusTree](focusTrees)
+    focusTrees
   }
 
   def listFocusTrees: Iterable[FocusTree] = focusTrees.values
@@ -62,15 +62,7 @@ object FocusTree {
   def get(tag: CountryTag): FocusTree = {
     //focusTrees.values.stream.filter((focusTree: FocusTree) => focusTree.country.nodeEquals(tag)).findFirst.orElse(null)
     for (tree <- listFocusTrees) {
-      if (tree.country.nodeEquals(tag)) return tree
-    }
-    null
-  }
-
-  def getdankwizardisfrench(tag: CountryTag): FocusTree = {
-    for (tree <- listFocusTrees) {
-      assert(tree.country.get() != null)
-      if (tree.country.nodeEquals(tag)) return tree
+      if (tree.country.equals(tag)) return tree
     }
     null
   }
@@ -92,7 +84,7 @@ class FocusTree private(private var focus_file: File)
   /* pdxscript */
   final var country: ReferencePDX[CountryTag] = new ReferencePDX[CountryTag](() => CountryTag.toList, t => t.get(), "country")
   final var focuses: MultiPDX[Focus] = new MultiPDX[Focus](() => new Focus(this), "focus")
-  final var id: AbstractPDX[String] = new StringPDX("id")
+  final var id: StringPDX = new StringPDX("id")
   private val focusIDList: ListBuffer[String] = null
 
   //obj.addAll(childScripts)  // todo
@@ -115,10 +107,11 @@ class FocusTree private(private var focus_file: File)
     focusIDList
   }
 
-  def countryTag: CountryTag = if (country.get() != null) country.get()
-  else {
-    // idk :(
-    null
+  def countryTag: CountryTag = {
+    country.get() match {
+      case Some(t) => t
+      case None => null
+    }
   }
 
   def focusFile: File = focus_file
@@ -145,12 +138,34 @@ class FocusTree private(private var focus_file: File)
   }
 
   override def compareTo(o: FocusTree): Int = {
-    var c = 0
-    if (this.country.get() != null && o.country.get() != null) c = this.country.get().compareTo(o.country.get())
-    var d = 0
-    if (this.id.get() != null && o.id.get() != null) d = this.id.get().compareTo(o.id.get())
-    if (c == 0) d
-    else c
+//    var c = 0
+//    this.country.get() match {
+//      case Some(countryTag) => o.country.get() match {
+//        case Some(otherCountryTag) => c = countryTag.compareTo(otherCountryTag)
+//        case None => _
+//      }
+//      case None => _
+//    }
+//    var d = 0
+//    this.id.get() match {
+//      case Some(id) => o.id.get() match {
+//        case Some(otherId) => d = id.compareTo(otherId)
+//        case None => _
+//      }
+//      case None => _
+//    }
+//    if (c == 0) d
+//    else c
+    (this.country.get(), this.id.get()) match {
+      case (Some(countryTag), id) =>
+        (o.country.get(), o.id.get()) match {
+          case (Some(otherCountryTag), otherID) =>
+            val c = countryTag.compareTo(otherCountryTag)
+            if (c == 0) id.compareTo(otherID) else c
+          case _ => 0
+        }
+      case _ => 0
+    }
   }
 
   override def iterator: Iterator[Focus] = focuses.iterator

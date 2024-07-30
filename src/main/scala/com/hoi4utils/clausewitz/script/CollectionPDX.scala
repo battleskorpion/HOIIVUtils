@@ -10,7 +10,7 @@ import java.util.stream.Stream
 import scala.collection.mutable.ListBuffer
 
 // todo i do not like this class
-abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
   }
@@ -50,16 +50,22 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: List[Strin
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     node.$ match {
-      case _: ListBuffer[T] =>
-        val childScript = newChildScript(expression)
-        childScript.loadPDX(expression)
-        childScriptList.add(childScript)
+      case _: ListBuffer[Node] =>
+//        val childScript = newChildScript(expression)
+//        childScript.loadPDX(expression)
+//        childScriptList.add(childScript)
       case _ =>
         // todo?
     }
   }
 
-  protected def newChildScript(expression: Node): T
+  protected def newChildScript(expression: Node): T = {
+    val pdx = new T()
+    pdx.loadPDX(expression)
+    // todo this may be fine. if theres no runtime errors. leave this. yes the IDE is yelling.
+    //  the IDE thinks pdx is of type T. the compiler does not. ???
+    pdx.asInstanceOf[T]
+  }
 
   def clear(): Unit = {
     node match {
@@ -75,11 +81,7 @@ abstract class CollectionPDXScript[T <: PDXScript[?]](pdxIdentifiers: List[Strin
 
   override def foreach[U](f: T => U): Unit = super.foreach(f)
 
-//  override def spliterator: java.util.Spliterator[T] = get().spliterator
-
   def size: Int = get().size
-
-//  def stream: Stream[T] = get().stream
 
   override def isUndefined: Boolean = node.isEmpty
 

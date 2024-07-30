@@ -28,9 +28,4 @@ final class CountryTag(tag: String) extends AbstractPDX[String](List("tag")) wit
   CountryTag._tagList.addOne(this)
 
   override def compareTo(o: CountryTag): Int = this.get().compareTo(o.get())
-
-  override def nodeEquals(other: PDXScript[_]): Boolean = {
-    if (other.isInstanceOf[CountryTag]) return this.nodeEquals(pdx)
-    false
-  }
 }

@@ -1,81 +1,52 @@
 package com.hoi4utils.clausewitz.code.effect
 
-import com.hoi4utils.clausewitz.code.scope.Scope
-import com.hoi4utils.clausewitz.code.scope.ScopeType
-import com.hoi4utils.clausewitz.script.*
+import com.hoi4utils.clausewitz.code.scope.{Scope, ScopeType}
+import com.hoi4utils.clausewitz.script._
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 
-import java.util
-import java.util.EnumSet
-import java.util.function.Supplier
+import scala.collection.mutable
 
+abstract class Effect(var identifier: String,
+                      protected var tSupplier: () => PDXScript[_],
+                      protected var structuredBlock: StructuredPDX)
+  extends DynamicPDX[ReferencePDX[Effect], StructuredPDX](tSupplier, structuredBlock) with ScopedPDXScript {
 
-/**
- * For information: <a href="https://hoi4.paradoxwikis.com/Effect">Effects
- * Wiki</a>
- */
-class Effect(private var identifier: String, tSupplier: Supplier[PDXScript[?]], structuredBlock: StructuredPDX) extends DynamicPDX[?, StructuredPDX](tSupplier, structuredBlock) with ScopedPDXScript {
-  //    protected static final SortedMap<String, Effect<?>> effects = new TreeMap<>();
-  //
-  private var defintionScope: Scope = _
-  private var targetScope: Scope = _
-  private var supportedScopes: java.util.EnumSet[ScopeType] = _
-  private var supportedTargets: java.util.EnumSet[ScopeType] = _
+  protected var definitionScope: Option[Scope] = None
+  protected var targetScope: Option[Scope] = None
+  protected var supportedScopes: Set[ScopeType] = Set.empty
+  protected var supportedTargets: Set[ScopeType] = Set.empty
 
-  /**
-   * For simple effects that have no block version.
-   *
-   * @param TSupplier
-   */
-  def this(identifier: String, tSupplier: Supplier[PDXScript[?]]) = {
+  def this(identifier: String, tSupplier: () => PDXScript[_]) = {
     this(identifier, tSupplier, null)
   }
 
-  /**
-   * For effects that only have a block definition version.
-   *
-   * @param structuredBlock
-   */
   def this(identifier: String, structuredBlock: StructuredPDX) = {
     this(identifier, null, structuredBlock)
   }
 
-  def getIdentifier: String = identifier
+  override def getIdentifier: String = identifier
 
-  override def getSupportedScopes: util.EnumSet[ScopeType] = supportedScopes
+  override def getSupportedScopes: Set[ScopeType] = supportedScopes
 
-  def getSupportedTargets: util.EnumSet[ScopeType] = supportedTargets
+  override def getSupportedTargets: Set[ScopeType] = supportedTargets
 
-  def hasSupportedTargets: Boolean = supportedTargets != null && !(supportedTargets.isEmpty)
+  override def hasSupportedTargets: Boolean = supportedTargets.nonEmpty
 
-  def setTarget(target: Scope): Unit = {
-    this.targetScope = target
+  override def setTarget(target: Scope): Unit = {
+    this.targetScope = Some(target)
   }
 
-  @throws[Exception]
-  def setTarget(string: String, within: Scope): Unit = {
+  override def setTarget(string: String, within: Scope): Unit = {
     setTarget(Scope.of(string, within))
   }
 
-  def getDefintionScope: Scope = defintionScope
+  override def getDefinitionScope: Option[Scope] = definitionScope
 
-  def getTargetScope: Scope = targetScope
+  override def getTargetScope: Option[Scope] = targetScope
 
-  def target: String = {
-    if (targetScope == null) return "[null target]"
-    targetScope.name
-  }
+  def target: String = targetScope.map(_.name).getOrElse("[null target]")
 
-  def hasTarget: Boolean = targetScope != null
+  override def hasTarget: Boolean = targetScope.isDefined
 
-  override def getDefinitionScope: Scope = this.defintionScope
-
-  //
-  //    @Override protected Object clone() throws CloneNotSupportedException {
-  //        Effect<?> c = (Effect<?>) super.clone();
-  //        c.parameters = new ArrayList<>();
-  //        return c;
-  //    }
   def isScope: Boolean = false
 }

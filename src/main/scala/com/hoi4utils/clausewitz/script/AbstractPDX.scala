@@ -155,7 +155,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     pdxIdentifiers(activeIdentifier) + " = " + node + "\n"
   }
 
-  def nodeEquals(other: AbstractPDX[?]): Boolean = {
+  def equals(other: AbstractPDX[?]): Boolean = {
     if (node == null) return false
     if (other.node == null) return false
     node.equals(other.node)

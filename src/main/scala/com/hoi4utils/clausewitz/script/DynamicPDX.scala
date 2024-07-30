@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 
 class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
   protected var simplePDX: PDXScript[V] = _
-  protected var simplePDXSupplier: Supplier[PDXScript[V]] = _ 
+  protected var simplePDXSupplier: () => PDXScript[V] = _
   final protected var structuredBlock: U = null.asInstanceOf[U]
   /**
    * may be null. the structured block does not always have a single property
@@ -20,21 +20,21 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
    */
   private var structuredPDXValueIdentifiers: List[String] = _
 
-  def this(simplePDXSupplier: Supplier[PDXScript[V]], structuredBlock: U) = {
+  def this(simplePDXSupplier: () => PDXScript[V], structuredBlock: U) = {
     this()
     this.simplePDXSupplier = simplePDXSupplier
     this.structuredBlock = structuredBlock
     this.structuredPDXValueIdentifiers = null
   }
 
-  def this(simplePDXSupplier: Supplier[PDXScript[V]], structuredBlock: U, structuredPDXValueIdentifier: String) = {
+  def this(simplePDXSupplier: () => PDXScript[V], structuredBlock: U, structuredPDXValueIdentifier: String) = {
     this()
     this.simplePDXSupplier = simplePDXSupplier
     this.structuredBlock = structuredBlock
     this.structuredPDXValueIdentifiers = List(structuredPDXValueIdentifier)
   }
 
-  def this(simplePDXSupplier: Supplier[PDXScript[V]], structuredBlock: U, structuredPDXValueIdentifier: List[String]) = {
+  def this(simplePDXSupplier: () => PDXScript[V], structuredBlock: U, structuredPDXValueIdentifier: List[String]) = {
     this()
     this.simplePDXSupplier = simplePDXSupplier
     this.structuredBlock = structuredBlock
@@ -62,21 +62,21 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
     this.structuredPDXValueIdentifiers = structuredPDXValueIdentifier
   }
 
-  def this(simplePDXSupplier: Supplier[PDXScript[V]]) = {
+  def this(simplePDXSupplier: () => PDXScript[V]) = {
     this()
     this.simplePDXSupplier = simplePDXSupplier
     this.structuredBlock = null.asInstanceOf[U]
     this.structuredPDXValueIdentifiers = null
   }
 
-  def this(simplePDXSupplier: Supplier[PDXScript[V]], structuredPDXValueIdentifier: String) = {
+  def this(simplePDXSupplier: () => PDXScript[V], structuredPDXValueIdentifier: String) = {
     this()
     this.simplePDXSupplier = simplePDXSupplier
     this.structuredBlock = null.asInstanceOf[U]
     this.structuredPDXValueIdentifiers = List(structuredPDXValueIdentifier)
   }
 
-  def this(simplePDXSupplier: Supplier[PDXScript[V]], structuredPDXValueIdentifier: List[String]) = {
+  def this(simplePDXSupplier: () => PDXScript[V], structuredPDXValueIdentifier: List[String]) = {
     this()
     this.simplePDXSupplier = simplePDXSupplier
     this.structuredBlock = null.asInstanceOf[U]
@@ -142,7 +142,7 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
   }
 
   private def supplySimplePDX(): Unit = {
-    if (simplePDX == null) simplePDX = simplePDXSupplier.get
+    if (simplePDX == null) simplePDX = simplePDXSupplier()
   }
 
   def loadPDX(expressions: ListBuffer[Node]): Unit = {
@@ -173,9 +173,11 @@ class DynamicPDX[V, U <: StructuredPDX] extends PDXScript[V] {
   else if (blockAllowed) structuredBlock.toScript
   else "[null DynamicPDX]"
 
-  override def nodeEquals(other: PDXScript[?]): Boolean = if (!isBlock) simplePDX.nodeEquals(other)
-  else if (blockAllowed) structuredBlock.nodeEquals(other)
-  else false
+  override def nodeEquals(other: PDXScript[?]): Boolean = {
+    if (!isBlock) simplePDX.equals(other)
+    else if (blockAllowed) structuredBlock.equals(other)
+    else false
+  }
 
   override def getOrElse(elseValue: V): V = {
     get() match {
