@@ -7,8 +7,7 @@ import org.jetbrains.annotations.Nullable
 import java.util.function.Function
 import java.util.function.Supplier
 
-import scala.collection.mutable
-import scala.collection.mutable._
+import scala.collection.mutable.ListBuffer
 
 // todo fix this class
 
@@ -17,14 +16,14 @@ import scala.collection.mutable._
 // this class will contain a string identifier that identifies the referenced pdxscript object// this class will contain a string identifier that identifies the referenced pdxscript object
 // (usually by its 'id' PDXScript field)// (usually by its 'id' PDXScript field)
 
-class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionSupplier: Supplier[mutable.Iterable[T]],
-                                        final protected var idExtractor: Function[T, String], pdxIdentifiers: List[String])
+class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionSupplier: () => Iterable[T],
+                                        final protected var idExtractor: T => String, pdxIdentifiers: List[String])
   extends AbstractPDX[T](pdxIdentifiers) {
 
   // the collection of potential pdxscript objects that this reference can point to
   protected[script] var referenceName: String = _
 
-  def this(referenceCollectionSupplier: Supplier[mutable.Iterable[T]], idExtractor: Function[T, String], pdxIdentifiers: String*) = {
+  def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => String, pdxIdentifiers: String*) = {
     this(referenceCollectionSupplier, idExtractor, pdxIdentifiers.toList)
   }
 
@@ -56,7 +55,7 @@ class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionS
   }
 
   private def resolveReference: T = {
-    val referenceCollection = referenceCollectionSupplier.get
+    val referenceCollection = referenceCollectionSupplier()
     for (reference <- referenceCollection) {
       val referenceID = idExtractor.apply(reference)
       if (referenceID != null) {
@@ -90,9 +89,9 @@ class ReferencePDX[T <: AbstractPDX[?]](final protected var referenceCollectionS
     node = null
   }
 
-  def getReferenceCollection: mutable.Iterable[T] = referenceCollectionSupplier.get()
+  def getReferenceCollection: Iterable[T] = referenceCollectionSupplier()
 
-  def getReferenceCollectionNames: List[String] = List(referenceCollectionSupplier.get.map(idExtractor))
+  def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().map(idExtractor)
 
   override def isUndefined: Boolean = {
     resolveReference

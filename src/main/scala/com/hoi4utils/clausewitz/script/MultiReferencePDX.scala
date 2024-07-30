@@ -4,11 +4,10 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 import org.jetbrains.annotations.Nullable
 
-import scala.collection.mutable
-import scala.collection.mutable._
+import scala.collection.mutable.ListBuffer
 
 // todo uhhhhhhhhhhhhh
-class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: Supplier[mutable.AbstractIterable[T]],
+class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: () => Iterable[T],
                                              protected var idExtractor: Function[T, String], pdxIdentifiers: List[String],
                                              pdxReferenceIdentifiers: List[String])
   extends MultiPDX[T](null, pdxIdentifiers*) {
@@ -72,7 +71,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   }
 
   private def resolveReferences = {
-    val referenceCollection = referenceCollectionSupplier.get
+    val referenceCollection = referenceCollectionSupplier()
     for (reference <- referenceCollection) {
       for (referenceName <- referenceNames) {
 //        if (idExtractor.apply(reference) == referenceName) node.addOne(reference) // todo fix
@@ -108,7 +107,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 
   def getReferenceName(i: Int): String = referenceNames(i)
 
-  def getReferenceCollectionNames: List[String] = List(referenceCollectionSupplier.get().map(idExtractor))
+  def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().map(idExtractor)
 
   def addReferenceName(newValue: String): Unit = {
     referenceNames.addOne(newValue)

@@ -16,8 +16,8 @@ import scala.collection.mutable.ListBuffer
  *
  * @param < T>
  */
-class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
-  def this(supplier: Supplier[T], pdxIdentifiers: String*) = {
+class MultiPDX[T <: PDXScript[?]](supplier: () => T, pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+  def this(supplier: () => T, pdxIdentifiers: String*) = {
     this(supplier, pdxIdentifiers.toList)
   }
 
@@ -61,7 +61,7 @@ class MultiPDX[T <: PDXScript[?]](supplier: Supplier[T], pdxIdentifiers: List[St
 //    }
     node.$ match {
       case l: ListBuffer[T] =>
-        val childScript = supplier.get()
+        val childScript = supplier()
         childScript.loadPDX(expression)
         l.addOne(childScript)
       case _ =>

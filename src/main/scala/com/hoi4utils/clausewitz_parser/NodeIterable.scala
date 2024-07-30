@@ -1,16 +1,8 @@
 package com.hoi4utils.clausewitz_parser
 
-import java.util
-import java.util.List
-import java.util.function.Consumer
-import java.util.function.Function
-import java.util.function.Predicate
-import java.util.stream.Stream
-
-
-object NodeIterable {
-  def of[T <: Node](stream: Stream[T]) = new NodeStream[T](stream)
-}
+//object NodeIterable {
+//  def of[T <: Node](stream: Stream[T]) = new NodeStream[T](stream)
+//}
 
 trait NodeIterable[NodeType <: Node] extends Iterable[NodeType] {
   //def flatMap[R <: Node](mapper: Function[? >: NodeType, ? <: NodeStreamable[R]]): NodeStreamable[R]
@@ -18,16 +10,15 @@ trait NodeIterable[NodeType <: Node] extends Iterable[NodeType] {
 
 //  def getStream: Stream[NodeType]
 
-  def find(str: String): Node = {
-    findFirst((node: NodeType) => node.identifier != null && node.identifier == str)
+  def find(str: String): Option[NodeType] = {
+    find((node: NodeType) => node.identifier != null && node.identifier == str)
   }
 
-  // todo filter name should filter.. a name.
-  def filterName(str: String): NodeIterable[NodeType] = {
+  def filterName(str: String): Iterable[NodeType] = {
     filter((node: NodeType) => node.identifier != null && node.identifier == str)
   }
 
-  def filter(str: String): NodeIterable[NodeType] = {
+  def filter(str: String): Iterable[NodeType] = {
     filterName(str)
   }
 

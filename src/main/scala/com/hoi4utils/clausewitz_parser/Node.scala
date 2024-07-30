@@ -38,7 +38,14 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
 
   def getValue: String | Int | Double | Boolean | ListBuffer[Node] | Null = nodeValue.getValue
 
-  def getValue(id:String): NodeValue = find(id).nodeValue
+  //def getValue(id:String): NodeValue = find(id).nodeValue
+  def getValue(id: String): NodeValue = {
+    val value = find(id)
+    value match {
+      case Some(node) => node.nodeValue
+      case None => null
+    }
+  }
 
   def setValue(value: String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
     this.nodeValue.setValue(value)

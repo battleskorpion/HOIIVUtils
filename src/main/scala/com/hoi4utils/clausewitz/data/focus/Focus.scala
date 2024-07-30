@@ -48,27 +48,27 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     Seq(id, icon, x, y, prerequisites, mutuallyExclusive, relativePosition, cost, availableIfCapitulated, cancelIfInvalid, continueIfInvalid)
   }
 
-  def absoluteX(): Int = absolutePosition().x
+  def absoluteX: Int = absolutePosition.x
 
-  def absoluteY(): Int = absolutePosition().y
+  def absoluteY: Int = absolutePosition.y
 
-  def position(): Point = new Point(x.getOrElse(0), y.getOrElse(0))
+  def position: Point = new Point(x.getOrElse(0), y.getOrElse(0))
 
-  def absolutePosition(): Point = {
+  def absolutePosition: Point = {
     if (relativePosition.isUndefined) {
-      return position()
+      return position
     }
     if (relativePosition.objEquals(id)) {
       System.err.println("Relative position id same as focus id for " + this)
-      return position()
+      return position
     }
 
     val relativePositionFocus = relativePosition.get()
     if (relativePositionFocus == null) {
       System.err.println("focus id " + relativePosition.getReferenceName + " not a focus")
-      return position()
+      return position
     }
-    var adjPoint = relativePositionFocus.absolutePosition()
+    var adjPoint = relativePositionFocus.absolutePosition
     adjPoint = new Point(adjPoint.x + x.getOrElse(0), adjPoint.y + y.getOrElse(0))
 
     adjPoint
