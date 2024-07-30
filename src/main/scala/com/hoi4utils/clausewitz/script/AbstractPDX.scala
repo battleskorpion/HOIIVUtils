@@ -17,6 +17,7 @@ import java.io.File
  * <p>
  */
 trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScript[T] {
+  
   private[script] var activeIdentifier = 0
   protected[script] var node: Node = _
 

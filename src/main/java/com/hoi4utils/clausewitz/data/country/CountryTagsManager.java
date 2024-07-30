@@ -94,18 +94,18 @@ public class CountryTagsManager extends HOIIVUtils implements Iterable<CountryTa
 		return country_tags;
 	}
 
-	public static ArrayList<CountryTag> getCountryTags() {
-		if (country_tags == null) {
-			try {
-				return CountryTagsManager.loadCountryTags();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		else {
-			return country_tags;
-		}
-	}
+//	public static ArrayList<CountryTag> getCountryTags() {
+//		if (country_tags == null) {
+//			try {
+//				return CountryTagsManager.loadCountryTags();
+//			} catch (IOException e) {
+//				throw new RuntimeException(e);
+//			}
+//		}
+//		else {
+//			return country_tags;
+//		}
+//	}
 
 	public static CountryTag get(String tag) {
 		if (exists(tag)) {
