@@ -46,7 +46,7 @@
 	"java.dependency.packagePresentation": "hierarchical",
 	"java.dependency.showMembers": true,
 	"java.project.exportJar.targetPath": "${workspaceFolder}/out/artifacts/${workspaceFolderBasename}_jar/${workspaceFolderBasename}.jar",
-	"java.project.explorer.showNonJavaResources": true,
+	"java.project.explorer.showNonJavaResources": false,
 	"java.completion.filteredTypes": [
 		"com.sun.*",
 		"sun.*",
@@ -69,4 +69,10 @@
 	"files.watcherExclude": {
 		"**/target": true
 	},
+	"java.maven.downloadSources": true,
+	"java.import.maven.offline.enabled": true,
+	"java.eclipse.downloadSources": true,
+	"java.project.sourcePaths": [
+		"src\\main\\scala"
+	],
 }

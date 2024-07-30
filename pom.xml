@@ -275,6 +275,31 @@
 					<configLocation>checkstyle.xml</configLocation>
 				</configuration>
 			</plugin>
+
+			<!-- scala -->
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>4.9.2</version>
+				<executions>
+					<execution>
+						<id>scala-compile-first</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>add-source</goal>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>scala-test-compile</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!--
 				https://www.youtube.com/watch?v=EyYb0GmtEX4
 			https://stackoverflow.com/questions/38548271/difference-between-the-maven-assembly-plugin-maven-jar-plugin-and-maven-shade-p
@@ -336,30 +361,6 @@
 								<language>ENGLISH_US</language>
 							</versionInfo>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<!-- scala -->
-			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>scala-maven-plugin</artifactId>
-				<version>4.9.2</version>
-				<executions>
-					<execution>
-						<id>scala-compile-first</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>add-source</goal>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>scala-test-compile</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>testCompile</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>
