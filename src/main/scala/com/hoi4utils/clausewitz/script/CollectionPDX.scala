@@ -83,7 +83,9 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
 
   override def foreach[U](f: T => U): Unit = super.foreach(f)
 
-  def size: Int = get().size
+//  override def size: Int = {
+//    get().size
+//  }
 
   override def isUndefined: Boolean = node.isEmpty
 

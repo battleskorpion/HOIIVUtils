@@ -43,10 +43,10 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     }
   }
 
-  override def get(): List[T] = {
-    if (node != null && !node.isEmpty) return List()//return node  // todo this made wrong
+  override def get(): Option[ListBuffer[T]] = {
+    if (node != null && !node.isEmpty) return None //return node  // todo this made wrong
     //resolveReferences
-    return List() // todo no
+    return None // todo no
   }
 
   @throws[UnexpectedIdentifierException]

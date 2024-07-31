@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.data.units;
 
-import com.hoi4utils.clausewitz.localization.Localizable;
+import com.hoi4utils.clausewitz.localization.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

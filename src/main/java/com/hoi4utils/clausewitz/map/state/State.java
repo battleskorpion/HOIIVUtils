@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.map.state;
 
 import com.hoi4utils.clausewitz.HOIIVFile;
-import com.hoi4utils.clausewitz.localization.Localizable;
+import com.hoi4utils.clausewitz.localization.*;
 import com.hoi4utils.clausewitz.code.ClausewitzDate;
 import com.hoi4utils.clausewitz.data.country.Country;
 import com.hoi4utils.clausewitz.data.country.CountryTag;

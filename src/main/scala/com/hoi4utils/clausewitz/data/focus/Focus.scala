@@ -7,7 +7,6 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz.BoolType
 import com.hoi4utils.clausewitz.code.scope.*
 import com.hoi4utils.clausewitz.code.effect.*
-import com.hoi4utils.clausewitz.localization.Localizable.Property
 
 import java.awt.Point
 import java.util.function.Supplier

@@ -2,8 +2,7 @@ package com.hoi4utils.clausewitz.data.focus;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.data.country.CountryTagsManager;
-import com.hoi4utils.clausewitz.localization.Localizable;
-import com.hoi4utils.clausewitz.localization.LocalizationManager;
+import com.hoi4utils.clausewitz.localization.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +18,7 @@ public class FixFocus extends HOIIVUtils {
 		var locManager = LocalizationManager.get();
 		File locFile = focusTree.primaryLocalizationFile();
 		if (locFile == null) return;
-		focuses.stream().filter(focus -> focus.localization(Localizable.Property.NAME) == null).forEach(focus -> {
+		focuses.stream().filter(focus -> focus.localization(Property.NAME) == null).forEach(focus -> {
 			String focusName = focus.id.get();
 			// todo improve country tag detection
 			if (CountryTagsManager.exists(focusName.substring(0, 3))) {
@@ -33,9 +32,9 @@ public class FixFocus extends HOIIVUtils {
 			}
 			focusName = locManager.titleCapitalize(focusName.replaceAll("_+", " ").trim());
 			// setting the loc file explicitly is okay as this is for missing loc.
-			focus.setLocalization(Localizable.Property.NAME, focusName, locFile);
+			focus.setLocalization(Property.NAME, focusName, locFile);
 			var descText = "added on " + LocalDateTime.now() + " by hoi4localizer.";
-			focus.setLocalization(Localizable.Property.DESCRIPTION, descText, locFile);
+			focus.setLocalization(Property.DESCRIPTION, descText, locFile);
 		});
 	}
 }

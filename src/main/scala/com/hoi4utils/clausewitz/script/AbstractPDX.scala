@@ -94,7 +94,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     }
   }
 
-  override def loadPDX(expressions: Iterable[Node]): Unit = {
+  def loadPDX(expressions: Iterable[Node]): Unit = {
     Option(expressions).foreach { exprs =>
       exprs.find(isValidIdentifier) match {
         case Some(expression) =>

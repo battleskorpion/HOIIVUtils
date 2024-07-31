@@ -1,11 +1,12 @@
 package com.hoi4utils.clausewitz.data.country;
 
-import com.hoi4utils.clausewitz.localization.Localizable;
+import com.hoi4utils.clausewitz.localization.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 
 public class Character implements Localizable {
     String id;

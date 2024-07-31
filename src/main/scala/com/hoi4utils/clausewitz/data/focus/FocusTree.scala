@@ -3,9 +3,8 @@ package com.hoi4utils.clausewitz.data.focus
 import com.hoi4utils.clausewitz.HOIIVFile
 import com.hoi4utils.clausewitz.data.country.CountryTagsManager
 import com.hoi4utils.clausewitz.script.*
-import com.hoi4utils.clausewitz.localization.Localizable
+import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.data.country.CountryTag
-import com.hoi4utils.clausewitz.localization.Localizable.Property
 import org.jetbrains.annotations.*
 
 import java.io.File
@@ -173,9 +172,9 @@ class FocusTree private(private var focus_file: File)
 
   override def iterator: Iterator[Focus] = focuses.iterator
 
-  override def getLocalizableProperties: mutable.HashMap[Localizable.Property, String] = {
+  override def getLocalizableProperties: mutable.HashMap[Property, String] = {
     // lets us map null if we use hashmap instead of generic of() method
-    val properties = new mutable.HashMap[Localizable.Property, String]
+    val properties = new mutable.HashMap[Property, String]
     id.get() match {
       case Some(id) => properties.put(Property.NAME, id)
       case None => //properties.put(Property.NAME, null)

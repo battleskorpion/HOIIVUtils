@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.data.technology;
 
 import com.hoi4utils.clausewitz.code.ClausewitzDate;
-import com.hoi4utils.clausewitz.localization.Localizable;
+import com.hoi4utils.clausewitz.localization.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

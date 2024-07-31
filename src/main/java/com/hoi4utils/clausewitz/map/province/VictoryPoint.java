@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.map.province;
 
-import com.hoi4utils.clausewitz.localization.Localizable;
+import com.hoi4utils.clausewitz.localization.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

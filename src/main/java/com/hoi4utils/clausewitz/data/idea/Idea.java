@@ -2,9 +2,8 @@ package com.hoi4utils.clausewitz.data.idea;
 
 import com.hoi4utils.clausewitz_parser.Node;
 import com.hoi4utils.clausewitz.code.effect.EffectParameter;
-import com.hoi4utils.clausewitz.localization.Localizable;
 import com.hoi4utils.clausewitz.code.modifier.Modifier;
-import com.hoi4utils.clausewitz.localization.Localization;
+import com.hoi4utils.clausewitz.localization.*;
 import javafx.beans.property.SimpleStringProperty;
 import org.jetbrains.annotations.NotNull;
 

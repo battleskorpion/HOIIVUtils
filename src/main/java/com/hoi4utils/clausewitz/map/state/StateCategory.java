@@ -2,7 +2,7 @@ package com.hoi4utils.clausewitz.map.state;
 
 import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.clausewitz.HOIIVFile;
-import com.hoi4utils.clausewitz.localization.Localizable;
+import com.hoi4utils.clausewitz.localization.*;
 import com.hoi4utils.clausewitz_parser.Node;
 import com.hoi4utils.clausewitz_parser.Parser;
 import org.jetbrains.annotations.NotNull;

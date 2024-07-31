@@ -3,9 +3,7 @@ package com.hoi4utils.ui.hoi4localization;
 import com.hoi4utils.clausewitz.data.focus.FixFocus;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
-import com.hoi4utils.clausewitz.localization.Localizable;
-import com.hoi4utils.clausewitz.localization.Localization;
-import com.hoi4utils.clausewitz.localization.LocalizationManager;
+import com.hoi4utils.clausewitz.localization.*;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,8 +19,8 @@ import java.util.List;
 
 public class AllFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWindow {
 
-	private static final Localizable.Property NAME_PROPERTY = Localizable.Property.NAME;
-	private static final Localizable.Property DESC_PROPERTY = Localizable.Property.DESCRIPTION;
+	private static final Property NAME_PROPERTY = Property.NAME;
+	private static final Property DESC_PROPERTY = Property.DESCRIPTION;
 
 	@FXML
 	private TableView<Focus> focusListTable;

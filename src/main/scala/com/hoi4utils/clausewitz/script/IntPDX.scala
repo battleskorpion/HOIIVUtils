@@ -18,7 +18,11 @@ class IntPDX(pdxIdentifiers: List[String]) extends AbstractPDX[Int](pdxIdentifie
     }
   }
 
-  override def nodeEquals(other: PDXScript[?]): Boolean = {
+  override def set(value: Int): Unit = {
+    this.node.setValue(value)
+  }
+
+  override def equals(other: PDXScript[?]): Boolean = {
     other match {
       case x: IntPDX => node.equals(x.node)
       case _ => false

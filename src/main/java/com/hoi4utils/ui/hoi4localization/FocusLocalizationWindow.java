@@ -4,8 +4,7 @@ import com.hoi4utils.clausewitz.HOIIVFile;
 import com.hoi4utils.Settings;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
-import com.hoi4utils.clausewitz.localization.Localizable;
-import com.hoi4utils.clausewitz.localization.Localization;
+import com.hoi4utils.clausewitz.localization.*;
 
 import com.hoi4utils.ui.FXWindow;
 import javafx.collections.FXCollections;
@@ -199,15 +198,15 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
                 } else {
                     Localization.Status textStatus;
                     Localization.Status descStatus;
-                    if (focus.localization(Localizable.Property.NAME) == null) {
+                    if (focus.localization(Property.NAME) == null) {
                         textStatus = Localization.Status.MISSING;
                     } else {
-                        textStatus = focus.localization(Localizable.Property.NAME).status();
+                        textStatus = focus.localization(Property.NAME).status();
                     }
-                    if (focus.localization(Localizable.Property.DESCRIPTION) == null) {
+                    if (focus.localization(Property.DESCRIPTION) == null) {
                         descStatus = Localization.Status.MISSING;
                     } else {
-                        descStatus = focus.localization(Localizable.Property.DESCRIPTION).status();
+                        descStatus = focus.localization(Property.DESCRIPTION).status();
                     }
 
                     boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
@@ -229,11 +228,11 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
     private void setColumnOnEditCommits() {
         focusNameColumn.setOnEditCommit(event -> {
             Focus focus = event.getRowValue();
-            focus.replaceLocalization(Localizable.Property.NAME, event.getNewValue());
+            focus.replaceLocalization(Property.NAME, event.getNewValue());
         });
         focusDescColumn.setOnEditCommit(event -> {
             Focus focus = event.getRowValue();
-            focus.replaceLocalization(Localizable.Property.DESCRIPTION, event.getNewValue());
+            focus.replaceLocalization(Property.DESCRIPTION, event.getNewValue());
         });
     }
 

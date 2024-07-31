@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.focus_view;
 
 import com.hoi4utils.Settings;
-import com.hoi4utils.clausewitz.localization.Localizable;
+import com.hoi4utils.clausewitz.localization.*;
 import com.hoi4utils.clausewitz.script.MultiPDX;
 import com.hoi4utils.clausewitz.script.PDXScript;
 import com.hoi4utils.ddsreader.DDSReader;
@@ -203,7 +203,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 		gc2D.drawImage(gfxFocusUnavailable, x1 - 32, y1 + yAdj1);
 		gc2D.drawImage(focus.getDDSImage(), x1, y1);
-		String name = focus.localizationText(Localizable.Property.NAME);
+		String name = focus.localizationText(Property.NAME);
 		gc2D.fillText(name, x1 - 20, y1 + yAdj2);
 
 		if (isSelected) {
