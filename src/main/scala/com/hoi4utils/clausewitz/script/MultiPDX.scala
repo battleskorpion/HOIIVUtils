@@ -17,9 +17,9 @@ import scala.language.implicitConversions
  *
  * @param < T>
  */
-class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String]) 
+class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String])
   extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
-  
+
   if (simpleSupplier.isEmpty && blockSupplier.isEmpty) throw new IllegalArgumentException("Both suppliers are null")
 
   def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T], pdxIdentifiers: String*) = {
@@ -100,15 +100,17 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def toScript: String = {
     val sb = new StringBuilder
-    val scripts = get()
-    if (scripts == null) return null
-    for (pdxScript <- scripts) {
-      val str = pdxScript.toScript
-      if (str != null) {
-        sb.append(str)
-      }
+    get() match {
+      case Some(scripts) =>
+        for (pdxScript <- scripts) {
+          val str = pdxScript.toScript
+          if (str != null) {
+            sb.append(str)
+          }
+        }
+        sb.toString()
+      case None => ""
     }
-    sb.toString
   }
 }
 

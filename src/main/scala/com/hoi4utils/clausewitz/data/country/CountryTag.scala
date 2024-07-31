@@ -27,5 +27,11 @@ final class CountryTag(tag: String) extends AbstractPDX[String](List("tag")) wit
   set(tag)
   CountryTag._tagList.addOne(this)
 
-  override def compareTo(o: CountryTag): Int = this.get().compareTo(o.get())
+  override def compareTo(o: CountryTag): Int = {
+    (this.get(), o.get()) match {
+      case (Some(thisTag), Some(otherTag)) => thisTag.compareTo(otherTag)
+      case (Some(thisTag), None) => 1
+      case (None, Some(otherTag)) => -1
+    }
+  }
 }

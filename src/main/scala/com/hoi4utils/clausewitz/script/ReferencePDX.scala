@@ -85,7 +85,7 @@ class ReferencePDX[T <: PDXScript[?]](final protected var referenceCollectionSup
 
   def getReferenceCollection: Iterable[T] = referenceCollectionSupplier()
 
-  def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().map(idExtractor)
+  def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().flatMap(idExtractor)
 
   override def isUndefined: Boolean = {
     resolveReference()

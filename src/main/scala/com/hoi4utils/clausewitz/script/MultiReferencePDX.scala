@@ -8,14 +8,14 @@ import scala.collection.mutable.ListBuffer
 
 // todo uhhhhhhhhhhhhh
 class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: () => Iterable[T],
-                                             protected var idExtractor: Function[T, String], pdxIdentifiers: List[String],
+                                             protected var idExtractor: T => Option[String], pdxIdentifiers: List[String],
                                              pdxReferenceIdentifiers: List[String])
   extends MultiPDX[T](None, None, pdxIdentifiers) {
 
   final protected var referencePDXTokenIdentifiers: List[String] = _
   final protected val referenceNames = new ListBuffer[String]
 
-  def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: Function[T, String], pdxIdentifiers: String, referenceIdentifier: String) = {
+  def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => Option[String], pdxIdentifiers: String, referenceIdentifier: String) = {
     this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers), List(referenceIdentifier))
   }
 
@@ -107,7 +107,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 
   def getReferenceName(i: Int): String = referenceNames(i)
 
-  def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().map(idExtractor)
+  def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().flatMap(idExtractor) //referenceCollectionSupplier().map(idExtractor).filter(_.isDefined).map(_.get)
 
   def addReferenceName(newValue: String): Unit = {
     referenceNames.addOne(newValue)
