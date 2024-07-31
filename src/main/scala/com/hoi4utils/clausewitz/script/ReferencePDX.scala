@@ -62,7 +62,7 @@ class ReferencePDX[T <: PDXScript[?]](final protected var referenceCollectionSup
     None
   }
 
-  override def equals(other: AbstractPDX[?]): Boolean = {
+  override def equals(other: PDXScript[?]): Boolean = {
     other match {
       case referencePDX: ReferencePDX[?] =>
         referenceName == referencePDX.referenceName && this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier && this.idExtractor == referencePDX.idExtractor

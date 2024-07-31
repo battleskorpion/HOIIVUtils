@@ -43,8 +43,8 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     loadPDX(node)
   }
 
-  override protected def childScripts: Seq[PDXScript[?]] = {
-    Seq(id, icon, x, y, prerequisites, mutuallyExclusive, relativePosition, cost, availableIfCapitulated, cancelIfInvalid, continueIfInvalid)
+  override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
+    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePosition, cost, availableIfCapitulated, cancelIfInvalid, continueIfInvalid)
   }
 
   def absoluteX: Int = absolutePosition.x

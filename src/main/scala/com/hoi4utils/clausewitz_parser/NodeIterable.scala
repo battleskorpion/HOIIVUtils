@@ -27,4 +27,5 @@ trait NodeIterable[NodeType <: Node] extends Iterable[NodeType] {
   def anyMatch(predicate: NodeType => Boolean): Boolean = {
     filter(predicate).toList.nonEmpty
   }
+
 }

@@ -9,7 +9,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     this(pdxIdentifiers.toList)
   }
 
-  protected def childScripts: ListBuffer[? <: PDXScript[?]]
+  protected def childScripts: collection.mutable.Iterable[? <: PDXScript[?]]
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]

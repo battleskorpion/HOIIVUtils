@@ -48,7 +48,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
       })
   }
 
-  override def nodeEquals(other: PDXScript[?]) = false // todo? well.
+  override def equals(other: PDXScript[?]) = false // todo? well.
 
   override def get(): Option[ListBuffer[T]] = super.get()
 
@@ -81,7 +81,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     }
   }
 
-  def isEmpty: Boolean = get().isEmpty
+  override def isEmpty: Boolean = get().isEmpty
 
   override def iterator: Iterator[T] = get().iterator.flatten
 
@@ -92,7 +92,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
 //  override def spliterator: Spliterator[T] = get().spliterator
 
-  def size: Int = get().size
+  override def size: Int = get().size
 
 //  def stream: Stream[T] = get().stream
 

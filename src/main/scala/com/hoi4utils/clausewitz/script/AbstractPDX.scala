@@ -7,7 +7,7 @@ import com.hoi4utils.clausewitz_parser.ParserException
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
-import scala.collection.mutable._
+import scala.collection.mutable.ListBuffer
 
 import java.io.File
 

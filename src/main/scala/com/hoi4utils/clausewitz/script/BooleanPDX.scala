@@ -5,7 +5,7 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 import org.jetbrains.annotations.NotNull
 
-class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: Boolean, final private var boolType: BoolType) extends AbstractPDX[Boolean | Null](pdxIdentifiers) {
+class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: Boolean, final private var boolType: BoolType) extends AbstractPDX[Boolean](pdxIdentifiers) {
 
   def this(pdxIdentifier: String, defaultValue: Boolean, boolType: BoolType) = {
     this(List(pdxIdentifier), defaultValue, boolType)
@@ -26,14 +26,16 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
     }
   }
 
-  override def get(): Boolean = {
-    val v = super.get()
+  override def get(): Option[Boolean] = {
+    val v = super.get().get
     v match {
-      case b: Boolean => b
-      case n: Null => defaultValue
+      case b: Boolean => Some(b)
+      case n: Null => Some(defaultValue)
       case _ => throw new RuntimeException("Unexpected type: " + v.getClass)
     }
   }
+
+  def $ : Boolean = get().get
 
   def objEquals(other: PDXScript[?]): Boolean = {
     other match {
@@ -43,7 +45,7 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
   }
 
   def invert: Boolean = {
-    set(!get())
-    get()
+    set(!this.$)
+    this.$
   }
 }

@@ -3,12 +3,6 @@ package com.hoi4utils.clausewitz_parser
 import com.hoi4utils.clausewitz.BoolType
 import org.jetbrains.annotations.NotNull
 
-import java.util
-import java.util.{ArrayList, List}
-import java.util.function.Consumer
-import java.util.function.Function
-import java.util.function.Predicate
-import java.util.stream.Stream
 import scala.collection.mutable.ListBuffer
 
 //object Node {
@@ -84,5 +78,12 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
 
   def operator_= (operator: String): Unit = {
     _operator = operator
+  }
+
+  override def iterator: Iterator[Node] = {
+    this.$ match {
+      case l: ListBuffer[Node] => l.iterator
+      case _ =>List(this).iterator
+    }
   }
 }

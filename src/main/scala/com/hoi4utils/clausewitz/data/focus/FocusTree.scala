@@ -91,7 +91,7 @@ class FocusTree private(private var focus_file: File)
   FocusTree.add(this)
   //private final ObservableMap<String, Focus> focuses;
 
-  override protected def childScripts: Iterable[? <: PDXScript[?]] = List(id, country, focuses)
+  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(id, country, focuses)
 
 //  private def checkPendingFocusReferences(): Unit = {
 //  }
@@ -189,7 +189,7 @@ class FocusTree private(private var focus_file: File)
    */
   override def getLocalizableGroup: Iterable[? <: Localizable] = focuses
 
-  override def nodeEquals(other: PDXScript[?]): Boolean = {
+  override def equals(other: PDXScript[?]): Boolean = {
     if (other.isInstanceOf[FocusTree]) return this == other
     false
   }

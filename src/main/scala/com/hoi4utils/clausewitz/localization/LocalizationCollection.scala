@@ -67,7 +67,9 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
     //this.values.parallelStream.mapToInt(util.List.size).sum
   }
 
-  override def put(key: File, value: Iterable[Localization]) = throw new UnsupportedOperationException("Use add(Localization, File) method instead")
+  override def put(key: File, value: ListBuffer[Localization]): Option[ListBuffer[Localization]] = {
+    throw new UnsupportedOperationException("Use add(Localization, File) method instead")
+  }
 
   override def remove(key: AnyRef) = throw new UnsupportedOperationException("Use remove(Localization) method instead")
 
@@ -110,7 +112,7 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
         val prevLocalization = localizationsList(index)
         localizationsList(index) = localization
         localizationKeyMap.put(localization.ID, localization) // Update index
-        return Some(prevLocalization) 
+        return Some(prevLocalization)
       }
     }
     None
