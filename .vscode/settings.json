@@ -46,7 +46,6 @@
 	"java.dependency.packagePresentation": "hierarchical",
 	"java.dependency.showMembers": true,
 	"java.project.exportJar.targetPath": "${workspaceFolder}/out/artifacts/${workspaceFolderBasename}_jar/${workspaceFolderBasename}.jar",
-	"java.project.explorer.showNonJavaResources": false,
 	"java.completion.filteredTypes": [
 		"com.sun.*",
 		"sun.*",
