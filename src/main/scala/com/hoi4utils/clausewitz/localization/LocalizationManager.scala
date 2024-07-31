@@ -26,7 +26,7 @@ object LocalizationManager {
   def getAll(localizationKeys: Iterable[String]): Iterable[Localization] = get.localizations.getAll(localizationKeys)
 
   @throws[IllegalArgumentException]
-  def find(key: String): Localization = get.getLocalization(key)
+  def find(key: String): Option[Localization] = get.getLocalization(key)
 
   private[localization] def numCapitalLetters(word: String): Int = {
     if (word == null) return 0
@@ -67,18 +67,19 @@ abstract class LocalizationManager {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def setLocalization(key: String, localization: Localization): Localization = {
-    val localizations = localizations
+  def setLocalization(key: String, localization: Localization): Option[Localization] = {
     if (key == null) throw new IllegalArgumentException("Key cannot be null.")
     if (localization == null) throw new IllegalArgumentException("Localization cannot be null.")
-    if (localizations.containsLocalizationKey(key)) {
-      val prevLocalization = localizations.get(key)
-      if (prevLocalization.isReplaceableBy(localization)) return localizations.replace(key, localization)
-      else throw new UnexpectedLocalizationStatusException(prevLocalization, localization)
+    localizations.get(key) match {
+      case Some(prevLocalization) =>
+        if (prevLocalization.isReplaceableBy(localization)) return localizations.replace(key, localization)
+        else throw new UnexpectedLocalizationStatusException(prevLocalization, localization)
+      case None =>
+        if (localization.isNew) {
+          // todo
+        }
+        else throw new IllegalArgumentException("Localization is not new, but there is no existing mod localization for the given key.")
     }
-    else if (localization.isNew) {
-    }
-    else throw new IllegalArgumentException("Localization is not new, but there is no existing mod localization for the given key.")
     null
   }
 
@@ -93,7 +94,9 @@ abstract class LocalizationManager {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def setLocalization(key: String, text: String, file: File): Localization = setLocalization(key, null, text, file)
+  def setLocalization(key: String, text: String, file: File): Option[Localization] = {
+    setLocalization(key, null, text, file)
+  }
 
   /**
    * Sets the localization for the given key, with the given text.
@@ -106,18 +109,16 @@ abstract class LocalizationManager {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def setLocalization(key: String, version: Integer, text: String, file: File): Localization = {
-    val localizations = localizations
+  def setLocalization(key: String, version: Integer, text: String, file: File): Option[Localization] = {
     if (key == null) throw new IllegalArgumentException("Key cannot be null.")
-    if (localizations.containsLocalizationKey(key)) {
-      val prevLocalization = localizations.get(key)
-      val localization = prevLocalization.replaceWith(text, version, file)
-      localizations.replace(key, localization)
-    }
-    else {
-      val localization = new Localization(key, version, text, Localization.Status.NEW)
-      localizations.add(localization, file)
-      null
+    localizations.get(key) match {
+      case Some(prevLocalization) =>
+        val localization = prevLocalization.replaceWith(text, version, file)
+        localizations.replace(key, localization)
+      case None =>
+        val localization = new Localization(key, version, text, Localization.Status.NEW)
+        localizations.add(localization, file)
+        None
     }
   }
 
@@ -130,17 +131,16 @@ abstract class LocalizationManager {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def replaceLocalization(key: String, text: String): Localization = {
-    val localizations = localizations
+  def replaceLocalization(key: String, text: String): Option[Localization] = {
     if (key == null) throw new IllegalArgumentException("Key cannot be null.")
-    if (localizations.containsLocalizationKey(key)) {
-      val prevLocalization = localizations.get(key)
-      val localization = prevLocalization.replaceWith(text)
-      // there are maps that support mapping to null, which is why the null check is necessary.
-      // (read the docs for the replace method)
-      Objects.requireNonNull(localizations.replace(key, localization))
+    localizations.get(key) match {
+      case Some(prevLocalization) =>
+        val localization = prevLocalization.replaceWith(text)
+        // there are maps that support mapping to null, which is why the null check is necessary.
+        // (read the docs for the replace method)
+        localizations.replace(key, localization)
+      case None => throw new IllegalArgumentException("Localization with the given key does not exist.")
     }
-    else throw new IllegalArgumentException("Localization with the given key does not exist.")
   }
 
   def saveLocalization(): Unit
@@ -160,7 +160,7 @@ abstract class LocalizationManager {
    */
   protected def localizations: LocalizationCollection
 
-  def localizationList: util.List[Localization] = localizations.getAll
+  def localizationList: Iterable[Localization] = localizations.getAll
 
   def titleCapitalize(trim: String): String
 

@@ -62,7 +62,7 @@ trait Localizable {
    * @param property the localizable property to get localization for.
    * @return the localization for the given property.
    */
-  def localization(property: Localizable.Property): Option[Localization] = {
+  def localization(property: Property): Option[Localization] = {
     val key = getLocalizableProperties.get(property)
     key match {
       case Some(k) => LocalizationManager.get(k)

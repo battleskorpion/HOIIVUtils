@@ -15,10 +15,11 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
   // Custom method to add a Localization
   def add(localization: Localization, file: File): Unit = {
     if (localization == null || file == null) throw new IllegalArgumentException("Localization and file must not be null")
-    val localizationsList = this.computeIfAbsent(file, (k: File) => new ListBuffer[Localization])
-    localizationsList.add(localization)
-    localizationKeyMap.put(localization.ID, localization) // Indexing for fast retrieval
 
+    val localizationList = this.getOrElseUpdate(file, new ListBuffer[Localization])
+//    val localizationsList = this.computeIfAbsent(file, (k: File) => new ListBuffer[Localization])
+    localizationList.addOne(localization)
+    localizationKeyMap.put(localization.ID, localization) // Indexing for fast retrieval
   }
 
   // Custom method to remove a Localization
@@ -100,7 +101,7 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
 //      .flatten // Remove any None values
   }
 
-  def replace(key: String, localization: Localization): Localization = {
+  def replace(key: String, localization: Localization): Option[Localization] = {
     if (localization == null) throw new IllegalArgumentException("Localization must not be null")
 
     foreach { case (file, localizationsList) =>
@@ -109,10 +110,10 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
         val prevLocalization = localizationsList(index)
         localizationsList(index) = localization
         localizationKeyMap.put(localization.ID, localization) // Update index
-        return prevLocalization
+        return Some(prevLocalization) 
       }
     }
-    null
+    None
 //    for (entry <- this.entrySet) {
 //      val localizationsList = entry.getValue
 //      for (i <- 0 until localizationsList.size) {
