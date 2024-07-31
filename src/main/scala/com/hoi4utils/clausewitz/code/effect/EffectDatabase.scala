@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.code.effect
 
 import com.hoi4utils.clausewitz.code.scope.ScopeType
-import com.hoi4utils.clausewitz.script._
+import com.hoi4utils.clausewitz.script.*
 import org.jetbrains.annotations.NotNull
 
 import java.io.File
@@ -15,9 +15,8 @@ import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
-
 import scala.collection.mutable.ListBuffer
-import scala.util.Using
+import scala.util.{Try, Using}
 
 object EffectDatabase {
   private def newStructuredEffectBlock(pdxIdentifier: String, childScripts: ListBuffer[? <: PDXScript[?]]) = new StructuredPDX(pdxIdentifier) {
@@ -120,7 +119,7 @@ class EffectDatabase(databaseName: String) {
         if (requiredParametersFull_str == null || requiredParametersFull_str.isEmpty || requiredParametersFull_str == "none") {
           var effect: Effect = null
           // todo not effect<string> necessarily
-          effect = new EffectSchema(pdxIdentifier, supportedScopes, supportedTargets, StringPDX.`new`, null)
+          effect = new EffectSchema(pdxIdentifier, supportedScopes, supportedTargets)
           loadedEffects.addOne(effect)
         }
         else {
@@ -159,11 +158,18 @@ class EffectDatabase(databaseName: String) {
     loadedEffects.toList
   }
 
-  private def parseEnumSet(enumSetString: String): EnumSet[ScopeType] = {
-    if (enumSetString == null || enumSetString.isEmpty || enumSetString == "none") null
-    else {
-      val enumValues = enumSetString.split(", ")
-      enumValues.map(ScopeType.valueFromString).collect(Collectors.toCollection(() => util.EnumSet.noneOf(classOf[ScopeType])))
+//  private def parseEnumSet(enumSetString: String): EnumSet[ScopeType] = {
+//    if (enumSetString == null || enumSetString.isEmpty || enumSetString == "none") null
+//    else {
+//      val enumValues = enumSetString.split(", ")
+//      enumValues.map(ScopeType.valueFromString).collect(Collectors.toCollection(() => EnumSet.noneOf(classOf[ScopeType])))
+//    }
+//  }
+  private def parseEnumSet(enumSetString: String): Option[Set[ScopeType]] = {
+    Option(enumSetString).filter(_.nonEmpty).filter(_ != "none").map { str =>
+      str.split(", ").flatMap { enumName =>
+        Try(ScopeType.valueOf(enumName)).toOption
+      }.toSet
     }
   }
 
