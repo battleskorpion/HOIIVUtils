@@ -75,7 +75,7 @@ class EffectDatabase(databaseName: String) {
   // // Close the database connection
   // effectDB.close();
   // }
-  def this() {
+  def this() = {
     this("databases/effects.db")
   }
 
