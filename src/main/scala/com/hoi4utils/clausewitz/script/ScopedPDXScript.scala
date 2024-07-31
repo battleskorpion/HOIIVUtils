@@ -7,8 +7,8 @@ trait ScopedPDXScript {
   def getDefinitionScope: Scope
 
   def isSupportedInScope(scope: Scope): Boolean = {
-    if (supportedScopes.contains(ScopeType.any)) return true
-    supportedScopes.contains(scope.targetScopeType)
+    if (supportedScopes.exists(_ == ScopeType.any)) return true
+    supportedScopes.exists(_ == scope.targetScopeType)
   }
 
   def supportedScopes: Iterable[ScopeType]
