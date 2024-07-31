@@ -17,13 +17,15 @@ import scala.language.implicitConversions
  *
  * @param < T>
  */
-class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
-  if (simpleSupplier.isEmpty && blockSupplier.isEmpty) throw new IllegalArgumentException("Both suppliers are null")
+class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String]) 
+  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
   
+  if (simpleSupplier.isEmpty && blockSupplier.isEmpty) throw new IllegalArgumentException("Both suppliers are null")
+
   def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T], pdxIdentifiers: String*) = {
     this(simpleSupplier, blockSupplier, pdxIdentifiers.toList)
   }
-  
+
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     try add(expression)
@@ -48,7 +50,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def nodeEquals(other: PDXScript[?]) = false // todo? well.
 
-  override def get(): ListBuffer[T] = super.get()
+  override def get(): Option[ListBuffer[T]] = super.get()
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
@@ -81,7 +83,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   def isEmpty: Boolean = get().isEmpty
 
-  override def iterator: Iterator[T] = get().iterator
+  override def iterator: Iterator[T] = get().iterator.flatten
 
   //  override def forEach(action: Consumer[? >: T]): Unit = {
   //    get().foreach(action)

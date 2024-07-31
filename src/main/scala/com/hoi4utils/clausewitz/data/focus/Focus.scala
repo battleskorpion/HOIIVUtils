@@ -75,7 +75,12 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     }
   }
 
-  override def toString: String = id.get()
+  override def toString: String = {
+    id.get() match {
+      case Some(id) => id
+      case None => super.toString
+    }
+  }
 
   def setXY(x: Int, y: Int): Point = {
     val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
@@ -111,7 +116,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
   def preciseCompletionTime(): Double = cost.getOrElse(DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
 
   override def getLocalizableProperties: mutable.Map[Property, String] = {
-    mutable.Map(Property.NAME -> id.get(), Property.DESCRIPTION -> s"${id.get()}_desc")
+    mutable.Map(Property.NAME -> id.get().get, Property.DESCRIPTION -> s"${id.get().get}_desc")
   }
 
   override def getLocalizableGroup: Iterable[Localizable] = {

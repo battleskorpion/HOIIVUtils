@@ -18,14 +18,14 @@ import scala.collection.mutable.ListBuffer
  * @tparam T
  */
 class ReferencePDX[T <: PDXScript[?]](final protected var referenceCollectionSupplier: () => Iterable[T],
-                                        final protected var idExtractor: T => String, pdxIdentifiers: List[String])
+                                        final protected var idExtractor: T => Option[String], pdxIdentifiers: List[String])
   extends AbstractPDX[T](pdxIdentifiers) {
 
   // the string identifier of the referenced PDXScript
   protected[script] var referenceName: String = _
   protected[script] var reference: Option[T] = None
 
-  def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => String, pdxIdentifiers: String*) = {
+  def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => Option[String], pdxIdentifiers: String*) = {
     this(referenceCollectionSupplier, idExtractor, pdxIdentifiers.toList)
   }
 

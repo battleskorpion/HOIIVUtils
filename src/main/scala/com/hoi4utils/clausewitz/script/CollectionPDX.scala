@@ -38,9 +38,9 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
       })
   }
 
-  override def nodeEquals(other: PDXScript[?]) = false // todo? well.
+  override def equals(other: PDXScript[?]) = false // todo? well.
 
-  override def get(): ListBuffer[T] = super.get()
+  override def get(): Option[ListBuffer[T]] = None//super.get() // todo
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
@@ -79,7 +79,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
 
   def isEmpty: Boolean = get().isEmpty
 
-  override def iterator: Iterator[T] = get().iterator
+  override def iterator: Iterator[T] = get().iterator.flatten   // todo idk
 
   override def foreach[U](f: T => U): Unit = super.foreach(f)
 
@@ -89,14 +89,16 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
 
   override def toScript: String = {
     val sb = new StringBuilder
-    val scripts = get()
-    if (scripts == null) return null
-    for (pdxScript <- scripts) {
-      val str = pdxScript.toScript
-      if (str != null)
-        sb.append(str)
+    get() match {
+      case Some(scripts) =>
+        for (pdxScript <- scripts) {
+          val str = pdxScript.toScript
+          if (str != null)
+            sb.append(str)
+        }
+        sb.toString()
+      case None => ""
     }
-    sb.toString
   }
 }
 

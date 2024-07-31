@@ -123,8 +123,11 @@ class FocusTree private(private var focus_file: File)
   }
 
   override def toString: String = {
-    if (id.get() != null) return id.get()
-    if (country.get() != null) return country.get().toString
+    val v = id.get()
+    v match {
+      case Some(id) => return id
+      case None =>if (country.get() != null) return country.get().get.toString
+    }
     super.toString
   }
 
@@ -157,9 +160,9 @@ class FocusTree private(private var focus_file: File)
 //    if (c == 0) d
 //    else c
     (this.country.get(), this.id.get()) match {
-      case (Some(countryTag), id) =>
+      case (Some(countryTag), Some(id)) =>
         (o.country.get(), o.id.get()) match {
-          case (Some(otherCountryTag), otherID) =>
+          case (Some(otherCountryTag), Some(otherID)) =>
             val c = countryTag.compareTo(otherCountryTag)
             if (c == 0) id.compareTo(otherID) else c
           case _ => 0
@@ -173,7 +176,10 @@ class FocusTree private(private var focus_file: File)
   override def getLocalizableProperties: mutable.HashMap[Localizable.Property, String] = {
     // lets us map null if we use hashmap instead of generic of() method
     val properties = new mutable.HashMap[Localizable.Property, String]
-    properties.put(Property.NAME, id.get())
+    id.get() match {
+      case Some(id) => properties.put(Property.NAME, id)
+      case None => //properties.put(Property.NAME, null)
+    }
     properties
   }
 
