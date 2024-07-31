@@ -23,11 +23,11 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
 
   /* attributes */
   val id: StringPDX = new StringPDX("id")
-  val icon: MultiPDX[Icon] = new MultiPDX(() => new Icon(), "icon")
+  val icon: MultiPDX[Icon] = new MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
   val x: IntPDX = new IntPDX("x") // if relative, relative x
   val y: IntPDX = new IntPDX("y") // if relative, relative y
-  val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(() => new PrerequisiteSet(() => focusTree.focuses), "prerequisite")
-  val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(() => new MutuallyExclusiveSet(() => focusTree.focuses), "mutually_exclusive")
+  val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
+  val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
   val relativePosition = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.get(), "relative_position_id")
   val cost: DoublePDX = new DoublePDX("cost")
   val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
@@ -245,22 +245,24 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.get(), "mutually_exclusive", "focus") {
   }
 
-  class Icon extends DynamicPDX[String, StructuredPDX](() =>
-    new StringPDX("icon"),
-    new StructuredPDX("icon") {
-      final private val value: StringPDX = new StringPDX("value")
+  trait Icon extends PDXScript[?] {
+  }
 
-      override protected def childScripts: Iterable[? <: PDXScript[?]] = Iterable(value)
+  class SimpleIcon() extends StringPDX("icon") with Icon {
+  }
 
-      override def nodeEquals(other: PDXScript[?]): Boolean = {
-        other match {
-          case icon: Icon => value.nodeEquals(icon.get())
-          case _ => false
-        }
+  class BlockIcon() extends StructuredPDX("icon") with Icon {
+
+    final private val value: StringPDX = new StringPDX("value")
+
+    override protected def childScripts: Iterable[? <: PDXScript[?]] = Iterable(value)
+
+    override def equals(other: PDXScript[?]): Boolean = {
+      other match {
+        case icon: Icon => value.equals(icon.get())
+        case _ => false
       }
-    },
-    "value")
-    {
+    }
   }
 
   class CompletionReward extends CollectionPDX[Effect]("completion_reward") {

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable
 import java.util.function.Consumer
 import java.util.function.Supplier
 import scala.collection.mutable.ListBuffer
+import scala.language.implicitConversions
 
 /**
  * PDX Script that can have multiple instantiation.
@@ -16,11 +17,13 @@ import scala.collection.mutable.ListBuffer
  *
  * @param < T>
  */
-class MultiPDX[T <: PDXScript[?]](supplier: () => T, pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
-  def this(supplier: () => T, pdxIdentifiers: String*) = {
-    this(supplier, pdxIdentifiers.toList)
+class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+  if (simpleSupplier.isEmpty && blockSupplier.isEmpty) throw new IllegalArgumentException("Both suppliers are null")
+  
+  def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T], pdxIdentifiers: String*) = {
+    this(simpleSupplier, blockSupplier, pdxIdentifiers.toList)
   }
-
+  
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     try add(expression)
@@ -61,7 +64,7 @@ class MultiPDX[T <: PDXScript[?]](supplier: () => T, pdxIdentifiers: List[String
 //    }
     node.$ match {
       case l: ListBuffer[T] =>
-        val childScript = supplier()
+        val childScript = simpleSupplier.get.apply()  // todo fix
         childScript.loadPDX(expression)
         l.addOne(childScript)
       case _ =>

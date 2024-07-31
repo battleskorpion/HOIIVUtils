@@ -83,7 +83,7 @@ class FocusTree private(private var focus_file: File)
   extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] {
   /* pdxscript */
   final var country: ReferencePDX[CountryTag] = new ReferencePDX[CountryTag](() => CountryTag.toList, t => t.get(), "country")
-  final var focuses: MultiPDX[Focus] = new MultiPDX[Focus](() => new Focus(this), "focus")
+  final var focuses: MultiPDX[Focus] = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   final var id: StringPDX = new StringPDX("id")
   private val focusIDList: ListBuffer[String] = null
 

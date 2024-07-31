@@ -60,11 +60,13 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
   }
 
   protected def newChildScript(expression: Node): T = {
-    val pdx = new T()
-    pdx.loadPDX(expression)
-    // todo this may be fine. if theres no runtime errors. leave this. yes the IDE is yelling.
-    //  the IDE thinks pdx is of type T. the compiler does not. ???
-    pdx.asInstanceOf[T]
+    // todo :(
+//    val pdx = new T()
+//    pdx.loadPDX(expression)
+//    // todo this may be fine. if theres no runtime errors. leave this. yes the IDE is yelling.
+//    //  the IDE thinks pdx is of type T. the compiler does not. ???
+//    pdx.asInstanceOf[T]
+    null.asInstanceOf[T]
   }
 
   def clear(): Unit = {

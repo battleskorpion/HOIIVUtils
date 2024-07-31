@@ -17,7 +17,12 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     usingIdentifier(expression)
     val value = expression.$
     // then load each sub-PDXScript
-    if (!value.isInstanceOf[ListBuffer]) throw new NodeValueTypeException(expression, "list") // todo check through schema
+    value match {
+      case l: ListBuffer[Node] =>
+        //loadPDX(l)
+      case _ =>
+        throw new NodeValueTypeException(expression, "list")  // todo check through schema
+    }
 //    import scala.collection.JavaConversions._
 //    for (pdxScript <- obj) {
 //      pdxScript.loadPDX(value.list)

@@ -10,7 +10,7 @@ import scala.collection.mutable.ListBuffer
 class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: () => Iterable[T],
                                              protected var idExtractor: Function[T, String], pdxIdentifiers: List[String],
                                              pdxReferenceIdentifiers: List[String])
-  extends MultiPDX[T](null, pdxIdentifiers*) {
+  extends MultiPDX[T](None, None, pdxIdentifiers) {
 
   final protected var referencePDXTokenIdentifiers: List[String] = _
   final protected val referenceNames = new ListBuffer[String]

@@ -158,12 +158,12 @@ class EffectDatabase(databaseName: String) {
                 }
               }
             }
-            effects.addOne(new BlockEffect(pdxIdentifier,
-              new StructuredPDX(pdxIdentifier) {
-                override protected def childScripts: Iterable[? <: PDXScript[?]] = List.empty
-              })
-            {
-            })
+//            effects.addOne(new BlockEffect(pdxIdentifier,
+//              new StructuredPDX(pdxIdentifier) {
+//                override protected def childScripts: Iterable[? <: PDXScript[?]] = List.empty
+//              })
+//            {
+//            })
           case (None, Some(requiredParameterSimple)) =>
             val alternateParameters = requiredParametersSimple_str.split("\\s+\\|\\s+")
             for (alternateParameter <- alternateParameters) {
@@ -183,8 +183,8 @@ class EffectDatabase(databaseName: String) {
                 }
               }
             }
-            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) {
-            })
+//            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) {
+//            })
           case (None, None) =>
             // todo (bad)
         }

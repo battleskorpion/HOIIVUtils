@@ -163,10 +163,11 @@ public class PDXEditorPane extends AnchorPane {
                 });
                 return comboBox;
             }
-            case DynamicPDX<?, ? extends StructuredPDX> pdx -> {
-                if (pdx.getPDXScript() == null && !allowNull) return null;
-                return createEditorNode(pdx.getPDXScript(), allowNull, vbox);
-            }
+            // todo scala time
+//            case DynamicPDX<?, ? extends StructuredPDX> pdx -> {
+//                if (pdx.getPDXScript() == null && !allowNull) return null;
+//                return createEditorNode(pdx.getPDXScript(), allowNull, vbox);
+//            }
             case MultiReferencePDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
                 VBox subVBox = new VBox();
