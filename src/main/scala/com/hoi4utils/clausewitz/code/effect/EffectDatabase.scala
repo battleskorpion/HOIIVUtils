@@ -110,8 +110,12 @@ class EffectDatabase(databaseName: String) {
         val requiredParametersSimple_str = resultSet.getString("required_parameters_simple")
         val optionalParameters_str = resultSet.getString("optional_parameters")
 
-        val supportedScopes = parseEnumSet(supportedScopes_str)
-        val supportedTargets = parseEnumSet(supportedTargets_str)
+        var supportedScopes = parseEnumSet(supportedScopes_str)
+        var supportedTargets = parseEnumSet(supportedTargets_str)
+        // im just guessing at this code right now, I just want it to work basically.
+        if (supportedScopes.isEmpty) {
+          throw new InvalidParameterException("Invalid scope definition: " + supportedScopes_str)
+        }
 
         /* required parameters */
         val requiredParameters = new ListBuffer[Parameter]

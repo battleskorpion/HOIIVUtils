@@ -189,7 +189,7 @@ class Scope(final val name: String, final val withinScopeAllowed: Set[ScopeType]
   @throws[NotPermittedInScopeException]
   private def setWithin(scope: Scope): Unit = {
     if (!permittedWithinScope(scope)) throw new NotPermittedInScopeException("From scope is not allowed for this scope")
-    withinScope = scope
+    withinScope = Some(scope)
   }
 
   private def permittedWithinScope(scope: Scope) = if (withinScopeAllowed.contains(ScopeType.any)) true

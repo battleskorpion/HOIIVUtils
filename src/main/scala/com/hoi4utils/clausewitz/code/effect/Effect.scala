@@ -7,16 +7,16 @@ import org.jetbrains.annotations.NotNull
 import scala.collection.mutable
 
 abstract class Effect(var identifier: String,
-                      protected var tSupplier: () => PDXScript[_],
+                      protected var tSupplier: () => ReferencePDX[Effect],
                       protected var structuredBlock: StructuredPDX)
-  extends DynamicPDX[ReferencePDX[Effect], StructuredPDX](tSupplier, structuredBlock) with ScopedPDXScript {
+  extends DynamicPDX[Effect, StructuredPDX](tSupplier, structuredBlock) with ScopedPDXScript {
 
   protected var definitionScope: Option[Scope] = None
   protected var targetScope: Option[Scope] = None
   protected var supportedScopes: Set[ScopeType] = Set.empty
   protected var supportedTargets: Set[ScopeType] = Set.empty
 
-  def this(identifier: String, tSupplier: () => PDXScript[_]) = {
+  def this(identifier: String, tSupplier: () => ReferencePDX[Effect]) = {
     this(identifier, tSupplier, null)
   }
 
