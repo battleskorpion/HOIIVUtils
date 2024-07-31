@@ -17,12 +17,13 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.util
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.util.{Try, Using}
 
 object EffectDatabase {
-  private def newStructuredEffectBlock(pdxIdentifier: String, childScripts: ListBuffer[? <: PDXScript[?]]) = new StructuredPDX(pdxIdentifier) {
-    override protected def childScripts: Iterable[? <: PDXScript[?]] = return childScripts
+  private def newStructuredEffectBlock(pdxIdentifier: String, childScriptsList: ListBuffer[? <: PDXScript[?]]) = new StructuredPDX(pdxIdentifier) {
+    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = childScriptsList
 
     def nodeEquals(other: PDXScript[?]): Boolean = {
       // todo

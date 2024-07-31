@@ -25,6 +25,10 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
       case _ => throw new NodeValueTypeException(expression, "Boolean or String")
     }
   }
+  
+  override def set(value: Boolean): Unit = {
+    this.node.setValue(value)
+  }
 
   override def get(): Option[Boolean] = {
     val v = super.get().get

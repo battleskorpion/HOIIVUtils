@@ -91,4 +91,9 @@ class ReferencePDX[T <: PDXScript[?]](final protected var referenceCollectionSup
     resolveReference()
     reference.isEmpty
   }
+
+  override def set(obj: T): Unit = {
+    reference = Some(obj)
+    referenceName = idExtractor.apply(obj).orNull // sure
+  }
 }

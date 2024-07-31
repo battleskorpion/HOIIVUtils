@@ -34,4 +34,8 @@ final class CountryTag(tag: String) extends AbstractPDX[String](List("tag")) wit
       case (None, Some(otherTag)) => -1
     }
   }
+
+  override def set(obj: String): Unit = {
+    setNode(obj)
+  }
 }

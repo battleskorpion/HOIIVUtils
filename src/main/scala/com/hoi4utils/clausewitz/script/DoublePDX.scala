@@ -21,6 +21,10 @@ class DoublePDX(pdxIdentifiers: List[String]) extends AbstractPDX[Double](pdxIde
       case _ => throw new NodeValueTypeException(expression, "Number (as a Double)")
     }
   }
+  
+  override def set(value: Double): Unit = {
+    this.node.setValue(value)
+  }
 
   override def equals(other: PDXScript[?]): Boolean = {
     if (other.isInstanceOf[DoublePDX]) return node.$.equals(other.get())

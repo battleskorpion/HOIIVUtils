@@ -24,7 +24,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
     }
   }
 
-  override def loadPDX(expressions: List[Node]): Unit = {
+  override def loadPDX(expressions: Iterable[Node]): Unit = {
     import scala.jdk.CollectionConverters
     if (expressions != null)
       expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
@@ -101,6 +101,10 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
         sb.toString()
       case None => ""
     }
+  }
+
+  override def set(obj: ListBuffer[T]): Unit = {
+    //
   }
 }
 

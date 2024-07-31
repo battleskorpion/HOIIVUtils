@@ -35,7 +35,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     }
   }
 
-  override def loadPDX(expressions: ListBuffer[Node]): Unit = {
+  override def loadPDX(expressions: Iterable[Node]): Unit = {
     if (expressions != null)
       expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
         try loadPDX(expression)
@@ -111,6 +111,11 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
         sb.toString()
       case None => ""
     }
+  }
+
+  // todo no. in general multi. would be more than one node.
+  override def set(obj: ListBuffer[T]): Unit = {
+    //
   }
 }
 

@@ -21,25 +21,25 @@ trait Effect extends ScopedPDXScript with PDXScript[?] {
 
   override def supportedScopes: Set[ScopeType] = _supportedScopes
 
-  override def supportedTargets: Set[ScopeType] = _supportedTargets
+  def supportedTargets: Set[ScopeType] = _supportedTargets
 
-  override def hasSupportedTargets: Boolean = _supportedTargets.nonEmpty
+  def hasSupportedTargets: Boolean = _supportedTargets.nonEmpty
 
-  override def setTarget(target: Scope): Unit = {
+  def setTarget(target: Scope): Unit = {
     this._targetScope = Some(target)
   }
 
-  override def setTarget(string: String, within: Scope): Unit = {
+  def setTarget(string: String, within: Scope): Unit = {
     setTarget(Scope.of(string, within))
   }
 
   override def definitionScope: Option[Scope] = _definitionScope
 
-  override def targetScope: Option[Scope] = _targetScope
+  def targetScope: Option[Scope] = _targetScope
 
   def target: String = _targetScope.map(_.name).getOrElse("[null target]")
 
-  override def hasTarget: Boolean = _targetScope.isDefined
+  def hasTarget: Boolean = _targetScope.isDefined
 
   def isScope: Boolean = false
 }

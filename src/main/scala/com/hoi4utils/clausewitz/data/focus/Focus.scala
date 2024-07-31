@@ -257,7 +257,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
 
     final private val value: StringPDX = new StringPDX("value")
 
-    override protected def childScripts: Iterable[? <: PDXScript[?]] = Iterable(value)
+    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(value)
 
     override def equals(other: PDXScript[?]): Boolean = {
       other match {
