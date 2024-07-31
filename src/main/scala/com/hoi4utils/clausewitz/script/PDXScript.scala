@@ -1,7 +1,5 @@
 package com.hoi4utils.clausewitz.script
 
-import java.util
-import java.util.List
 import com.hoi4utils.clausewitz_parser.Node
 
 trait PDXScript[T] {
@@ -11,14 +9,14 @@ trait PDXScript[T] {
   @throws[NodeValueTypeException]
   def set(expression: Node): Unit
 
-  def get(): T
+  def get(): Option[T]
   
   def getNode : Node
 
   @throws[UnexpectedIdentifierException]
   def loadPDX(expression: Node): Unit
 
-  def loadPDX(expressions: util.List[Node]): Unit
+  def loadPDX(expressions: Iterable[Node]): Unit
 
   //void loadPDX(@NotNull File file);//void loadPDX(@NotNull File file);
 

@@ -55,7 +55,7 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
 
   def valueIsNull: Boolean = this.$ == null
   
-  def isEmpty: Boolean = {
+  override def isEmpty: Boolean = {
     valueIsNull && identifier == null && operator == null
   }
 

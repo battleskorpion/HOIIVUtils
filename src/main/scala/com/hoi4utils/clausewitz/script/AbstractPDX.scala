@@ -72,10 +72,10 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     set(value)
   }
 
-  override def get(): T = {
+  override def get(): Option[T] = {
     node.$ match {
-      case value: T => value
-      case _ => null.asInstanceOf[T] // Use a default value for T if necessary
+      case value: T => Some(value)
+      case _ => None
     }
   }
 
@@ -155,10 +155,14 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     pdxIdentifiers(activeIdentifier) + " = " + node + "\n"
   }
 
-  def equals(other: AbstractPDX[?]): Boolean = {
-    if (node == null) return false
-    if (other.node == null) return false
-    node.equals(other.node)
+  override def equals(other: PDXScript[?]): Boolean = {
+    other match {
+      case pdx: AbstractPDX[?] =>
+        if (node == null) return false
+        if (pdx.node == null) return false
+        node.equals(pdx.node)
+      case _ => false
+    }
   }
 
   override def getOrElse(elseValue: T): T = {

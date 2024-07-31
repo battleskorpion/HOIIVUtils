@@ -18,7 +18,7 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
       throw new NodeValueTypeException(this.node)
   }
 
-  override def nodeEquals(other: PDXScript[?]): Boolean = {
+  override def equals(other: PDXScript[?]): Boolean = {
     other match
       case x: StringPDX => node.equals(x.node)
       case _ => false
