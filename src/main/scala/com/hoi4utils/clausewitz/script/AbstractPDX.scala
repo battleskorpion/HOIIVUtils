@@ -79,7 +79,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     }
   }
 
-  def getNode: Node = node
+  override def getNode: Node = node
 
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
