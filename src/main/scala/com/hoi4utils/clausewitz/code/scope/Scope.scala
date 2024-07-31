@@ -177,11 +177,11 @@ class Scope(final val name: String, final val withinScopeAllowed: Set[ScopeType]
             private var withinScope: Scope) extends Cloneable {
 
   //private Scope targetScope = null;   // null if is the target?
-  def this(name: String, fromScopeAllowed: ScopeType, targetScopeType: ScopeType, scopeCategory: ScopeCategory) {
+  def this(name: String, fromScopeAllowed: ScopeType, targetScopeType: ScopeType, scopeCategory: ScopeCategory) = {
     this(name, Set(fromScopeAllowed), targetScopeType, scopeCategory)
   }
 
-  def this(name: String, withinScopeAllowed: Set[ScopeType], targetScopeType: ScopeType, scopeCategory: ScopeCategory) {
+  def this(name: String, withinScopeAllowed: Set[ScopeType], targetScopeType: ScopeType, scopeCategory: ScopeCategory) = {
     this(name, withinScopeAllowed, targetScopeType, scopeCategory, null)
     //Scope.scopes.put(name, this)  // todo idfk
   }
