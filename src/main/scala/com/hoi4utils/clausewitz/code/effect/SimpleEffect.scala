@@ -7,8 +7,8 @@ import com.hoi4utils.clausewitz.code.scope.ScopeType
 trait SimpleEffect(private val _identifier: String, private val tSupplier: () => ReferencePDX[Effect]) 
   extends AbstractPDX[Effect] with Effect {
   
-  supportedScopes = Set(ScopeType.country, ScopeType.state) // Example scope types
-  supportedTargets = Set(ScopeType.country) // Example target types
+  _supportedScopes = Set(ScopeType.country, ScopeType.state) // Example scope types
+  _supportedTargets = Set(ScopeType.country) // Example target types
 
   //override def isScope: Boolean = true
 

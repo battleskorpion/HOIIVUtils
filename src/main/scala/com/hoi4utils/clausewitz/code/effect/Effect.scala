@@ -12,34 +12,34 @@ trait Effect extends ScopedPDXScript with PDXScript[?] {
 //  protected var tSupplier: () => ReferencePDX[Effect]
 //  protected var structuredBlock: StructuredPDX
 
-  protected var definitionScope: Option[Scope] = None
-  protected var targetScope: Option[Scope] = None
-  protected var supportedScopes: Set[ScopeType] = Set.empty
-  protected var supportedTargets: Set[ScopeType] = Set.empty
+  protected var _definitionScope: Option[Scope] = None
+  protected var _targetScope: Option[Scope] = None
+  protected var _supportedScopes: Set[ScopeType] = Set.empty
+  protected var _supportedTargets: Set[ScopeType] = Set.empty
 
   def identifier: String
 
-  override def getSupportedScopes: Set[ScopeType] = supportedScopes
+  override def supportedScopes: Set[ScopeType] = _supportedScopes
 
-  override def getSupportedTargets: Set[ScopeType] = supportedTargets
+  override def supportedTargets: Set[ScopeType] = _supportedTargets
 
-  override def hasSupportedTargets: Boolean = supportedTargets.nonEmpty
+  override def hasSupportedTargets: Boolean = _supportedTargets.nonEmpty
 
   override def setTarget(target: Scope): Unit = {
-    this.targetScope = Some(target)
+    this._targetScope = Some(target)
   }
 
   override def setTarget(string: String, within: Scope): Unit = {
     setTarget(Scope.of(string, within))
   }
 
-  override def getDefinitionScope: Option[Scope] = definitionScope
+  override def definitionScope: Option[Scope] = _definitionScope
 
-  override def getTargetScope: Option[Scope] = targetScope
+  override def targetScope: Option[Scope] = _targetScope
 
-  def target: String = targetScope.map(_.name).getOrElse("[null target]")
+  def target: String = _targetScope.map(_.name).getOrElse("[null target]")
 
-  override def hasTarget: Boolean = targetScope.isDefined
+  override def hasTarget: Boolean = _targetScope.isDefined
 
   def isScope: Boolean = false
 }

@@ -45,7 +45,7 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
   }
 
   def invert: Boolean = {
-    set(!this.$)
+    setNode(!this.$)
     this.$
   }
 }

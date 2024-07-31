@@ -77,7 +77,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
     }
   }
 
-  def isEmpty: Boolean = get().isEmpty
+  override def isEmpty: Boolean = get().isEmpty
 
   override def iterator: Iterator[T] = get().iterator.flatten   // todo idk
 

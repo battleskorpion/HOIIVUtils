@@ -35,18 +35,8 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     }
     throw new UnexpectedIdentifierException(exp)
   }
-
-//  override def set(value: T): Unit = {
-//    // todo?
-//    value.match {
-//      case s: String => node.setValue(s)
-//      case i: Int => node.setValue(i)
-//      case d: Double => node.setValue(d)
-//      case b: Boolean => node.setValue(b)
-//      case _ => throw new RuntimeException("Unsupported type")
-//    }
-//  }
-  override def set(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
+  
+  override def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
   // todo?
     value.match {
       case s: String => node.setValue(s)
@@ -69,7 +59,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
 //      case e: ClassCastException =>
 //        throw new NodeValueTypeException(expression, e)
 //    }
-    set(value)
+    setNode(value)
   }
 
   override def get(): Option[T] = {

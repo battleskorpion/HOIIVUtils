@@ -95,7 +95,7 @@ public class PDXEditorPane extends AnchorPane {
                 textField.setPrefWidth(200);
                 textField.setPrefHeight(25);
                 textField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    pdx.set(newValue);
+                    pdx.setNode(newValue);
                     if (!newValue.isEmpty() && nullProperties.contains(property)) {
                         reloadEditor();
                     }
@@ -125,7 +125,7 @@ public class PDXEditorPane extends AnchorPane {
                 spinner.getValueFactory().setValue(pdx.getOrElse(0));
                 spinner.setPrefHeight(25);
                 spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-                    pdx.set(newValue);
+                    pdx.setNode(newValue);
                     if (nullProperties.contains(property)) {
                         reloadEditor();
                     }
@@ -140,7 +140,7 @@ public class PDXEditorPane extends AnchorPane {
                 spinner.getValueFactory().setValue(pdx.getOrElse(0.0));
                 spinner.setPrefHeight(25);
                 spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-                    pdx.set(newValue);
+                    pdx.setNode(newValue);
                     if (nullProperties.contains(property)) {
                         reloadEditor();
                     }

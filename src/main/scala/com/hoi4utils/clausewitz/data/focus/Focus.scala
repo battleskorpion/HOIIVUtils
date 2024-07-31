@@ -9,14 +9,12 @@ import com.hoi4utils.clausewitz.code.scope.*
 import com.hoi4utils.clausewitz.code.effect.*
 
 import java.awt.Point
-import java.util.function.Supplier
 import javafx.scene.image.Image
 
-import java.util
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable with Comparable[Focus] with DataFunctionProvider[Focus] {
+class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable with DataFunctionProvider[Focus] {
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
 
@@ -101,7 +99,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 
   def setCost(cost: Number): Unit = {
-    this.cost.set(cost.doubleValue())
+    this.cost.setNode(cost.doubleValue())
   }
 
   def getDDSImage: Image = ddsImage
@@ -126,7 +124,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     }
   }
 
-  def toScript: String = {
+  override def toScript: String = {
     val details = new StringBuilder()
     for (property <- childScripts) {
       val text = property.toScript

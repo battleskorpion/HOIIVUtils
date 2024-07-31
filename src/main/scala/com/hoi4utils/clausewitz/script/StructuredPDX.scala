@@ -29,6 +29,11 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
 //    }
   }
 
+  override def set(value: ListBuffer[Node]): Unit = {
+    // todo?
+    super.setNode(value)
+  }
+
   override def loadPDX(expression: Node): Unit = {
     if (expression.name == null) {
       // todo check through schema?

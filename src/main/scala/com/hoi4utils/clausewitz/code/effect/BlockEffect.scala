@@ -5,8 +5,8 @@ import com.hoi4utils.clausewitz.script._
 
 trait BlockEffect(private val _identifier: String, private val structuredBlock: StructuredPDX)
   extends StructuredPDX with Effect {
-  supportedScopes = Set(ScopeType.country) // Example scope types
-  supportedTargets = Set(ScopeType.state) // Example target types
+  _supportedScopes = Set(ScopeType.country) // Example scope types
+  _supportedTargets = Set(ScopeType.state) // Example target types
 
   //override def isScope: Boolean = true
   

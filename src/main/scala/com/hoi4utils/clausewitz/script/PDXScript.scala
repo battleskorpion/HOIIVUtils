@@ -2,8 +2,12 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz_parser.Node
 
+import scala.collection.mutable.ListBuffer
+
 trait PDXScript[T] {
   def set(obj: T): Unit
+
+  def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]

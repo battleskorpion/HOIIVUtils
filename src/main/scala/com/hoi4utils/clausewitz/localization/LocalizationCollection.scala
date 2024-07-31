@@ -71,9 +71,9 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
     throw new UnsupportedOperationException("Use add(Localization, File) method instead")
   }
 
-  override def remove(key: AnyRef) = throw new UnsupportedOperationException("Use remove(Localization) method instead")
+  override def remove(key: File): Option[ListBuffer[Localization]] = throw new UnsupportedOperationException("Use remove(Localization) method instead")
 
-  override def containsKey(key: AnyRef) = throw new UnsupportedOperationException("Use containsLocalizationKey(String) method instead")
+  //override def containsKey(key: AnyRef) = throw new UnsupportedOperationException("Use containsLocalizationKey(String) method instead")
 
   def containsLocalizationKey(id: String): Boolean = {
     // Fast lookup from index
