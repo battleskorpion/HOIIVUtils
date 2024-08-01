@@ -5,6 +5,7 @@ import com.hoi4utils.clausewitz_parser.Parser;
 import com.hoi4utils.clausewitz_parser.ParserException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.util.*;
@@ -70,12 +71,12 @@ public class IdeaFile extends File {
 		Node ideaCategoryExps;
 		try {
 			ideaCategoryExps = ideaFileParser.parse();
-			ideaCategoryExps = ideaCategoryExps.findFirst("ideas");
+			ideaCategoryExps = ideaCategoryExps.find("ideas").getOrElse(null);
 		} catch (ParserException e) {
 			throw new RuntimeException(e);
 		}
 
-		List<Node> ideaCategoryNodeList = ideaCategoryExps.value().list();
+		List<Node> ideaCategoryNodeList = ideaCategoryExps.$list().getOrElse(null); //ideaCategoryExps.value().list();
 		/* return null when no ideas */
 		if (ideaCategoryNodeList == null) {
 			return null;
@@ -84,8 +85,8 @@ public class IdeaFile extends File {
 		/* focuses */
 		ArrayList<String> idea_names = new ArrayList<>();
 		for (Node ideaCategoryNode : ideaCategoryNodeList) {
-			List<Node> ideasInCategoryList = ideaCategoryNode
-					.filter(Node::isParent).toList();
+			List<Node> ideasInCategoryList = CollectionConverters.asJava(ideaCategoryNode
+					.filter(Node::isParent).toList());
 			if (ideasInCategoryList == null) {
 				continue;
 			}

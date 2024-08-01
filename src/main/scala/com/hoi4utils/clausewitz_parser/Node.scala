@@ -3,6 +3,7 @@ package com.hoi4utils.clausewitz_parser
 import com.hoi4utils.clausewitz.BoolType
 import org.jetbrains.annotations.NotNull
 
+import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
 //object Node {
@@ -84,6 +85,13 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
     this.$ match {
       case l: ListBuffer[Node] => l.iterator
       case _ =>List(this).iterator
+    }
+  }
+
+  def $list(): Option[ListBuffer[Node]] = {
+    this.$ match {
+      case l: ListBuffer[Node] => Some(l)
+      case _ => None
     }
   }
 }

@@ -313,7 +313,7 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
 
     // todo let user change?
     @Override
-    HashSet<String> capitalizationWhitelist() {
+    public HashSet<String> capitalizationWhitelist() {
         String[] whitelist = {
                 "a",
                 "above",

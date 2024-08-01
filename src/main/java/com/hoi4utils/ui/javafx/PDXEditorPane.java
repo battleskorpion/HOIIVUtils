@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class PDXEditorPane extends AnchorPane {
         vbox.getChildren().clear(); // Clear existing children to reset the editor
 
         if (pdxScript instanceof StructuredPDX pdx) {
-            for (var property : pdx.pdxProperties()) {
+            for (var property : CollectionConverters.asJavaCollection(pdx.pdxProperties())) {
                 HBox hbox = new HBox();
                 hbox.setSpacing(10);
                 Label label = new Label(property.getPDXIdentifier() + " =");
@@ -91,7 +92,8 @@ public class PDXEditorPane extends AnchorPane {
             }
             case StringPDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
-                TextField textField = new TextField(pdx.get() != null ? pdx.get() : "");
+//                TextField textField = new TextField(pdx.get() != null ? pdx.get() : "");
+                TextField textField = new TextField(pdx.getOrElse(""));
                 textField.setPrefWidth(200);
                 textField.setPrefHeight(25);
                 textField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -104,13 +106,13 @@ public class PDXEditorPane extends AnchorPane {
             }
             case BooleanPDX pdx -> {
                 Label customCheckBox = new Label();
-                customCheckBox.setText(pdx.get() ? "yes" : "no");
+                customCheckBox.setText(pdx.$() ? "yes" : "no");
                 customCheckBox.setFont(Font.font("Monospaced"));
                 customCheckBox.setPrefHeight(25);
                 customCheckBox.getStyleClass().add("custom-check-box");
                 customCheckBox.setOnMouseClicked(event -> {
                     pdx.invert();
-                    customCheckBox.setText(pdx.get() ? "yes" : "no");
+                    customCheckBox.setText(pdx.$() ? "yes" : "no");
                     if (nullProperties.contains(property)) {
                         reloadEditor();
                     }

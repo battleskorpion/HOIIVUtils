@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.focus_view;
 
 import com.hoi4utils.Settings;
+import com.hoi4utils.clausewitz.data.focus.FocusTree$;
 import com.hoi4utils.clausewitz.localization.*;
 import com.hoi4utils.clausewitz.script.MultiPDX;
 import com.hoi4utils.clausewitz.script.PDXScript;
@@ -131,14 +132,14 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		gfxFocusUnavailable = loadFocusUnavailableImage();
 
 		// Set up the focus tree
-		focusTree = FocusTree.get(new CountryTag("SMA"));
+		focusTree = FocusTree$.MODULE$.get(new CountryTag("SMA"));
 		if (focusTree == null) {
-			focusTree = FocusTree.listFocusTrees()[0];
+			focusTree = FocusTree.listFocusTrees().head();
 		}
 
 		// If focusTree is still null, assign a new value
 		if (focusTree == null) {
-			focusTree = FocusTree.get(new File(HOIIVFile.mod_focus_folder + "//massachusetts.txt"));
+			focusTree = FocusTree$.MODULE$.get(new File(HOIIVFile.mod_focus_folder + "//massachusetts.txt")).getOrElse(null); 
 		}
 
 		try {
@@ -163,7 +164,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		if (Settings.DEV_MODE.enabled()) {
 			JOptionPane.showMessageDialog(null,
 					"dev @end of initialize() - loaded focuses: " + focusTree.focuses().size()
-							+ "\n" + "loaded tree of country: " + focusTree.country.get()
+							+ "\n" + "loaded tree of country: " + focusTree.country().get()
 							+ "\n" + "draw focus tree: " + Settings.DRAW_FOCUS_TREE.enabled());
 		}
 	}
@@ -223,7 +224,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		if (Settings.DRAW_FOCUS_TREE.disabled()) return;
 		if (focusTree == null) return;
 
-		var focuses = focusTree.focuses();
+		var focuses = CollectionConverters.asJavaCollection(focusTree.focuses());
 		GraphicsContext gc2D = focusTreeCanvas.getGraphicsContext2D();
 
 		// Calculate the maximum/minimum X and Y values
@@ -263,7 +264,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 		for (Focus focus : focuses) {
 			if (focus.hasPrerequisites()) {
-				for (var prereqFocusSet: focus.prerequisites) {
+				for (var prereqFocusSet: focus.prerequisites()) {
 					for (Focus prereqFocus : prereqFocusSet) {
 						int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + X_OFFSET_FIX;
 						int y1 = focusToCanvasY(focus);
@@ -297,7 +298,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 		for (Focus focus : focuses) {
 			if (focus.isMutuallyExclusive()) {
-				for (Focus mutexFocus : focus.mutually_exclusive.stream().flatMap(MultiPDX::stream).toList()) {
+				for (Focus mutexFocus : focus.mutuallyExclusive().stream().flatMap(MultiPDX::stream).toList()) {
 					int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
 					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + (int) (FOCUS_Y_SCALE / 1.6) + Y_OFFSET_FIX;
 					int x2 = FOCUS_X_SCALE * (mutexFocus.absoluteX() - minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
@@ -354,7 +355,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		int x = (int) (p.getX() / FOCUS_X_SCALE) + focusTree.minX();
 		int y = (int) (p.getY() / FOCUS_Y_SCALE);
 
-		for (Focus f : focusTree.focuses()) {
+		for (Focus f : CollectionConverters.asJava(focusTree.focuses())) {
 			if (f.hasAbsolutePosition(x, y)) {
 				return f;
 			}
@@ -385,7 +386,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 			//draggedFocus = getFocusHover(new Point2D(internalX, internalY));
 			// Identify the focus being dragged based on the mouse press position
-			draggedFocus = focusTree.focuses().stream()
+			draggedFocus = CollectionConverters.asJavaCollection(focusTree.focuses()).stream()
 					.filter(f -> f.absoluteX() == internalX && f.absoluteY() == internalY)
 					.findFirst()
 					.orElse(null);
@@ -426,7 +427,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		if (marqueeStartPoint != null && marqueeEndPoint != null) {
 			// Identify the focuses within the marquee selection
 			selectedFocuses.clear(); // Clear previous selections
-			selectedFocuses.addAll(focusTree.focuses().stream()
+			selectedFocuses.addAll(CollectionConverters.asJavaCollection(focusTree.focuses()).stream()
 					.filter(this::isWithinMarquee)
 					.toList());
 

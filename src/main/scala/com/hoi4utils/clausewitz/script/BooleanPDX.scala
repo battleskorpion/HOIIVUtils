@@ -39,7 +39,9 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
     }
   }
 
-  def $ : Boolean = get().get
+  def $ : Boolean = {
+    get().getOrElse(defaultValue)
+  }
 
   def objEquals(other: PDXScript[?]): Boolean = {
     other match {

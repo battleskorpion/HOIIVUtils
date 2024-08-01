@@ -55,7 +55,7 @@ public class CountryTagsManager extends HOIIVUtils implements Iterable<CountryTa
 					if (FileUtils.usefulData(data)) {
 						// takes the defined tag at the beginning of the line
 						CountryTag tag = new CountryTag(data.substring(0, data.indexOf('=')).trim());
-						if (tag.equals(CountryTag.NULL_TAG)) {
+						if (tag.equals(CountryTag.NULL_TAG())) {
 							continue;
 						}
 						country_tags.add(tag);
@@ -79,7 +79,7 @@ public class CountryTagsManager extends HOIIVUtils implements Iterable<CountryTa
 					if (FileUtils.usefulData(data)) {
 						// takes the defined tag at the beginning of the line
 						CountryTag tag = new CountryTag(data.substring(0, data.indexOf('=')).trim());
-						if (tag.equals(CountryTag.NULL_TAG)) {
+						if (tag.equals(CountryTag.NULL_TAG())) {
 							continue;
 						}
 						country_tags.add(tag);
