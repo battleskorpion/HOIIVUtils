@@ -15,6 +15,9 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
+import scala.Function1;
+import scala.collection.Iterable;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.util.Iterator;
@@ -137,7 +140,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
 
     private void updateObservableFocusList() {
         focusObservableList.clear();
-        focusObservableList.addAll(focusTree.listFocuses());
+        focusObservableList.addAll(CollectionConverters.asJava(focusTree.listFocuses()));
     }
 
     @SuppressWarnings("unused")
@@ -151,7 +154,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
         Iterator<Focus> iterator = focusObservableList.iterator();
         while (iterator.hasNext()) {
             Focus f = iterator.next();
-            if (f.id.get().equals(focus.id.get())) {
+            if (f.id().get().equals(focus.id().get())) {
                 iterator.remove(); // Remove the current element using the iterator
                 focusObservableList.add(i, focus);
                 return; // update is done
@@ -198,16 +201,18 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
                 } else {
                     Localization.Status textStatus;
                     Localization.Status descStatus;
-                    if (focus.localization(Property.NAME) == null) {
-                        textStatus = Localization.Status.MISSING;
-                    } else {
-                        textStatus = focus.localization(Property.NAME).status();
-                    }
-                    if (focus.localization(Property.DESCRIPTION) == null) {
-                        descStatus = Localization.Status.MISSING;
-                    } else {
-                        descStatus = focus.localization(Property.DESCRIPTION).status();
-                    }
+//                    if (focus.localization(Property.NAME) == null) {
+//                        textStatus = Localization.Status.MISSING;
+//                    } else {
+//                        textStatus = focus.localization(Property.NAME).status();
+//                    }
+//                    if (focus.localization(Property.DESCRIPTION) == null) {
+//                        descStatus = Localization.Status.MISSING;
+//                    } else {
+//                        descStatus = focus.localization(Property.DESCRIPTION).status();
+//                    }
+                    textStatus = focus.localization(Property.NAME).getOrElse(() -> Localization.Status.MISSING);
+                    descStatus = focus.localization(Property.DESCRIPTION).getOrElse(() -> Localization.Status.MISSING);
 
                     boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
                             || descStatus == Localization.Status.UPDATED;

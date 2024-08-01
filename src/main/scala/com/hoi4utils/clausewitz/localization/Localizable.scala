@@ -9,12 +9,6 @@ import java.io.File
 
 import scala.collection.mutable.{Map, HashMap}
 
-enum Property {
-  case
-  NAME,
-  DESCRIPTION
-}
-
 /**
  * Interface for Clausewitz-localizable objects. This interface is specifically related to
  * Clausewitz-engine localization, and not general localization/i18n

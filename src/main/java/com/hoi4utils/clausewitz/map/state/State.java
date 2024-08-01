@@ -13,6 +13,7 @@ import com.hoi4utils.clausewitz.map.province.VictoryPoint;
 import com.hoi4utils.clausewitz.map.resources.Resources;
 import com.hoi4utils.clausewitz_parser.*;
 import org.jetbrains.annotations.NotNull;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.util.*;
@@ -74,7 +75,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 		// Expression exp = stateParser.expressions();
 		Node stateNode = null;
 		try {
-			stateNode = stateParser.parse().findFirst("state");
+			stateNode = stateParser.parse().find("state").getOrElse(null); 
 		} catch (ParserException e) {
 			throw new RuntimeException(e);
 		}
@@ -83,7 +84,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 		if (stateNode.contains("id")) {
 			stateID = stateNode.getValue("id").integer();
 		} else {
-			System.out.println(stateNode.value().asString());
+			System.out.println(stateNode.$().toString());
 			throw new UndefinedStateIDException(stateFile);
 		}
 		// population (manpower)
@@ -97,10 +98,10 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 
 		/* buildings */
 		if (stateNode.contains("history")) {
-			Node historyNode = stateNode.findFirst("history");
+			Node historyNode = stateNode.find("history").getOrElse(null);
 			Node buildingsNode = null;
 			if (historyNode.contains("buildings")) {
-				buildingsNode = historyNode.findFirst("buildings");
+				buildingsNode = historyNode.find("buildings").getOrElse(null);
 			}
 			// owner
 			if (historyNode.contains("owner")) {
@@ -136,8 +137,8 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 			}
 			/* victory points */
 			if (historyNode.contains("victory_points")) {
-				Node victoryPointsNode = historyNode.findFirst("victory_points");
-				for (Node vpNode : victoryPointsNode.toList()) {
+				Node victoryPointsNode = historyNode.find("victory_points").getOrElse(null);
+				for (Node vpNode : CollectionConverters.asJava(victoryPointsNode.toList())) {
 					if (!vpNode.contains("province") || !vpNode.contains("value")) {
 						System.out.println("Warning: invalid victory point node in state, " + stateFile.getName());
 						continue;
@@ -150,7 +151,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 			}
 		} else {
 			System.out.println("Warning: history not defined in state, " + stateFile.getName());
-			System.out.println(stateNode.value().asString());
+			System.out.println(stateNode.getValue().toString());
 		}
 
 		// resources
@@ -378,7 +379,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 		}
 
 		/* resources */
-		Node resourcesNode = stateNode.findFirst("resources");
+		Node resourcesNode = stateNode.find("resources").getOrElse(null);
 		// aluminum (aluminium bri'ish spelling)
 		if (resourcesNode.contains("aluminium")) {        // ! todo always null
 			aluminum = (int) resourcesNode.getValue("aluminium").rational();

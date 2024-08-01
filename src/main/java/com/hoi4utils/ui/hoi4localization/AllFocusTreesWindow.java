@@ -5,10 +5,12 @@ import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.*;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
+import com.hoi4utils.ui.HOIIVUtilsWindow;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import com.hoi4utils.ui.HOIIVUtilsWindow;
+
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
@@ -16,6 +18,12 @@ import javafx.scene.paint.Color;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+
+import scala.Function1;
+import scala.collection.Iterable;
+import scala.jdk.javaapi.CollectionConverters;
+import scala.jdk.javaapi.FunctionConverters;
 
 public class AllFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWindow {
 
@@ -49,7 +57,6 @@ public class AllFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWi
 		/* table */
 		loadTableView(this, focusListTable, focusObservableList, Focus.getDataFunctions());
 		updateObservableFocusList();
-
 	}
 
 	@Override
@@ -72,16 +79,18 @@ public class AllFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWi
 				} else {
 					Localization.Status textStatus;
 					Localization.Status descStatus;
-					if (focus.localization(NAME_PROPERTY) == null) {
-						textStatus = Localization.Status.MISSING;
-					} else {
-						textStatus = focus.localization(NAME_PROPERTY).status();
-					}
-					if (focus.localization(DESC_PROPERTY) == null) {
-						descStatus = Localization.Status.MISSING;
-					} else {
-						descStatus = focus.localization(DESC_PROPERTY).status();
-					}
+//					if (focus.localization(NAME_PROPERTY).isEmpty()) {
+//						textStatus = Localization.Status.MISSING;
+//					} else {
+//						textStatus = focus.localization(NAME_PROPERTY).get().status();
+//					}
+//					if (focus.localization(DESC_PROPERTY).isEmpty()) {
+//						descStatus = Localization.Status.MISSING;
+//					} else {
+//						descStatus = focus.localization(DESC_PROPERTY).get().status();
+//					}
+					textStatus = focus.localization(NAME_PROPERTY).getOrElse(() -> Localization.Status.MISSING);
+					descStatus = focus.localization(DESC_PROPERTY).getOrElse(() -> Localization.Status.MISSING);
 
 					boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
 							|| descStatus == Localization.Status.UPDATED;
@@ -109,8 +118,8 @@ public class AllFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWi
 
 	private void updateObservableFocusList() {
 		focusObservableList.clear();
-		for (var focusTree : FocusTree.listFocusTrees()) {
-			focusObservableList.addAll(focusTree.focuses());
+		for (var focusTree : CollectionConverters.asJava(FocusTree.listFocusTrees())) {
+			focusObservableList.addAll(CollectionConverters.asJava(focusTree.listFocuses()));
 			try {
 				FixFocus.fixLocalization(focusTree);
 			} catch (IOException e) {
@@ -130,16 +139,16 @@ public class AllFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWi
 
 			PWriter.println("Focus ID; Focus Name; Focus Description; Notes");
 			for (var focus : focusObservableList) {
-				if (focus.localization(DESC_PROPERTY) == null) {
-					Focus.getDataFunctions().forEach(dataFunction -> {
+				if (focus.localization(DESC_PROPERTY).isEmpty()) {
+					CollectionConverters.asJava(Focus.getDataFunctions()).forEach(dataFunction -> {
 						PWriter.print(dataFunction.apply(focus));
 						PWriter.print(";");
 					});
 					PWriter.print("Missing description (no localization key exists);");
 					PWriter.println();
 				}
-				else if (focus.localization(DESC_PROPERTY).text().isEmpty()) {
-					Focus.getDataFunctions().forEach(dataFunction -> {
+				else if (focus.localization(DESC_PROPERTY).get().text().isEmpty()) {
+					CollectionConverters.asJava(Focus.getDataFunctions()).forEach(dataFunction -> {
 						PWriter.print(dataFunction.apply(focus));
 						PWriter.print(";");
 					});

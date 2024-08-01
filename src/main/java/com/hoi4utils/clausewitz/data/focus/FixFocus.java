@@ -3,10 +3,13 @@ package com.hoi4utils.clausewitz.data.focus;
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.data.country.CountryTagsManager;
 import com.hoi4utils.clausewitz.localization.*;
+import scala.collection.View;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
 public class FixFocus extends HOIIVUtils {
 
@@ -14,12 +17,12 @@ public class FixFocus extends HOIIVUtils {
 		if (focusTree == null) throw new IllegalArgumentException("Focus tree cannot be null.");
 		if (focusTree.focuses() == null || focusTree.focuses().isEmpty()) return;
 
-		var focuses = focusTree.focuses();
+		var focuses = CollectionConverters.asJavaCollection(focusTree.focuses());
 		var locManager = LocalizationManager.get();
 		File locFile = focusTree.primaryLocalizationFile();
 		if (locFile == null) return;
-		focuses.stream().filter(focus -> focus.localization(Property.NAME) == null).forEach(focus -> {
-			String focusName = focus.id.get();
+		focuses.parallelStream().filter(focus -> focus.localization(Property.NAME) == null).forEach(focus -> {
+			String focusName = focus.id().getOrElse(null); 
 			// todo improve country tag detection
 			if (CountryTagsManager.exists(focusName.substring(0, 3))) {
 				// next character with typical formatting 'should' be a '_'

@@ -108,14 +108,14 @@ public class Parameter implements EffectParameter, Cloneable {
 		return false;
 	}
 
-	@Override
-	public String displayScript() {
-		// return "[parameter]";
-		if (identifier == null) {
-			return value.toString();
-		}
-		return identifier + " = " + value.toString();
-	}
+//	@Override
+//	public String displayScript() {
+//		// return "[parameter]";
+//		if (identifier == null) {
+//			return value.toString();
+//		}
+//		return identifier + " = " + value.toString();
+//	}
 
 	private static class ParameterValue {
 		public Object value;
@@ -126,7 +126,8 @@ public class Parameter implements EffectParameter, Cloneable {
 
 		public ParameterValue(NodeValue value) {
 			if (!value.isList()) {
-				this.value = value.valueObject();
+				//this.value = value.valueObject();
+				this.value = value.getValue(); 
 			} else {
 				System.err.println("effect value can not be list.");
 			}

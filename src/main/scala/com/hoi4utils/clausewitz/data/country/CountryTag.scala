@@ -21,6 +21,8 @@ object CountryTag extends Iterable[CountryTag] {
   override def iterator: Iterator[CountryTag] = {
     _tagList.iterator
   }
+  
+//  def tagList(): List[CountryTag] = _tagList
 }
 
 final class CountryTag(tag: String) extends AbstractPDX[String](List("tag")) with Comparable[CountryTag] {

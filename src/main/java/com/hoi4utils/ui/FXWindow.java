@@ -2,6 +2,8 @@ package com.hoi4utils.ui;
 
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.Settings;
+import com.hoi4utils.clausewitz.data.focus.Focus;
+import com.hoi4utils.ui.hoi4localization.AllFocusTreesWindow;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -16,9 +18,14 @@ import javafx.util.Callback;
 import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import com.hoi4utils.ui.message.MessageController;
+import scala.Function1;
+import scala.collection.Iterable;
+import scala.jdk.javaapi.CollectionConverters;
+import scala.jdk.javaapi.FunctionConverters;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -176,6 +183,14 @@ public interface FXWindow {
 									// their data from.
 
 		if (Settings.DEV_MODE.enabled()) System.out.println("Loaded data into table: " + table.getId());
+	}
+
+	default <S> void loadTableView(TableViewWindow window, TableView<S> focusListTable, ObservableList<S>
+			focusObservableList, Iterable<Function1<S,?>> dataFunctions) {
+		var fns = CollectionConverters.asJava(dataFunctions);
+		List<Function<S, ?>> fnsJava = new ArrayList<>();
+		fns.forEach((x) -> fnsJava.add(FunctionConverters.asJavaFunction(x)));
+		loadTableView(window, focusListTable, focusObservableList, fnsJava);
 	}
 
 //	default <S> void loadTreeTableView(TableViewWindow window, TreeTableView<S> table, ObservableList<S> data,

@@ -26,6 +26,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import com.hoi4utils.ui.javafx.image.JavaFXImageUtils;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
+import scala.jdk.javaapi.CollectionConverters;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -82,11 +84,15 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	private Image gfxFocusUnavailable;
 
 	int getMaxX() {
-		return focusTree.focuses().stream().mapToInt(Focus::absoluteX).max().orElse(10);
+		return CollectionConverters.asJavaCollection(focusTree.focuses()).stream()
+				.mapToInt(Focus::absoluteX)
+				.max().orElse(10);
 	}
 
 	int getMaxY() {
-		return focusTree.focuses().stream().mapToInt(Focus::absoluteY).max().orElse(10);
+		return CollectionConverters.asJavaCollection(focusTree.focuses()).stream()
+				.mapToInt(Focus::absoluteY)
+				.max().orElse(10);
 	}
 
 	@FXML

@@ -4,6 +4,7 @@ import com.hoi4utils.FileUtils;
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.SettingsManager;
 import org.jetbrains.annotations.NotNull;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,6 +107,10 @@ public class CountryTagsManager extends HOIIVUtils implements Iterable<CountryTa
 //			return country_tags;
 //		}
 //	}
+
+	public static List<CountryTag> getCountryTags() {
+		return CollectionConverters.asJava(CountryTag._tagList());
+	}
 
 	public static CountryTag get(String tag) {
 		if (exists(tag)) {
