@@ -20,17 +20,17 @@ final class NodeValue {
   }
   
   def string: String = {
+    if (value == null) return null
     value match
       case str: String => str
-      case n: Null => null
       case _ => throw new IllegalStateException("Expected NodeValue value to be a string, value: " + value)
   }
 
   def integerOrElse(default: Int): Int = {
+    if (value == null) return default
     value match
       case i: Int => i
       case d: Double => d.intValue
-      case n: Null => default
       case _ => throw new IllegalStateException("Expected NodeValue to be a Number or null, value: " + value)
   }
 
@@ -79,15 +79,17 @@ final class NodeValue {
     throw new IllegalStateException("Expected NodeValue to be a Node, value: " + value)
   }
 
-  def asString: String = value match {
-    case s: String => s
-    case i: Int => Int.toString()
-    case d: Double => Double.toString()
-//    case n: Number => Long.toString(n.longValue)
-    case l: ListBuffer[AnyVal] => l.toString
-    case n: Node => n.toString
-    case _: Null => "[null]"
-    case _ => "[invalid type]"
+  def asString: String = {
+    if (value == null) return "[null]"
+    value match {
+      case s: String => s
+      case i: Int => Int.toString()
+      case d: Double => Double.toString()
+      //    case n: Number => Long.toString(n.longValue)
+      case l: ListBuffer[AnyVal] => l.toString
+      case n: Node => n.toString
+      case _ => "[invalid type]"
+    }
   }
 
   def isList: Boolean = value.isInstanceOf[List[?]]

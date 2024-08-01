@@ -70,7 +70,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
   }
 
   def clear(): Unit = {
-    node match {
+    node.$ match {
       case l: ListBuffer[T] =>
         l.clear()
       case _ =>

@@ -115,11 +115,11 @@ class FocusTree private(private var focus_file: File)
 
   def focusFile: File = focus_file
 
-  override def equals(other: AnyRef): Boolean = {
-    if (other == null) return false
-    if (other.getClass eq this.getClass) return this.focus_file eq other.asInstanceOf[FocusTree].focus_file
-    false
-  }
+//  override def equals(other: AnyRef): Boolean = {
+//    if (other == null) return false
+//    if (other.getClass eq this.getClass) return this.focus_file eq other.asInstanceOf[FocusTree].focus_file
+//    false
+//  }
 
   override def toString: String = {
     val v = id.get()

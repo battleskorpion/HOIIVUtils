@@ -38,12 +38,15 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   
   override def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
   // todo?
+    if (value == null) {
+      setNull()
+      return
+    }
     value.match {
       case s: String => node.setValue(s)
       case i: Int => node.setValue(i)
       case d: Double => node.setValue(d)
       case b: Boolean => node.setValue(b)
-      case n: Null => node.setNull()
       case _ => throw new RuntimeException("Unsupported type")
     }
   }

@@ -32,9 +32,9 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
 
   override def get(): Option[Boolean] = {
     val v = super.get().get
+    //if (v == null) return None
     v match {
       case b: Boolean => Some(b)
-      case n: Null => Some(defaultValue)
       case _ => throw new RuntimeException("Unexpected type: " + v.getClass)
     }
   }
