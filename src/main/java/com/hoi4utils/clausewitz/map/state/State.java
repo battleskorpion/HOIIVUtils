@@ -13,6 +13,7 @@ import com.hoi4utils.clausewitz.map.province.VictoryPoint;
 import com.hoi4utils.clausewitz.map.resources.Resources;
 import com.hoi4utils.clausewitz_parser.*;
 import org.jetbrains.annotations.NotNull;
+import scala.Option;
 import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
@@ -73,11 +74,13 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 		/* parse state data */
 		Parser stateParser = new Parser(stateFile);
 		// Expression exp = stateParser.expressions();
-		Node stateNode = null;
+		Node stateNode;
 		try {
-			stateNode = stateParser.parse().find("state").getOrElse(null);
+			stateNode = stateParser.parse().find("state").get();
 		} catch (ParserException e) {
 			throw new RuntimeException(e);
+		} catch (Exception exc) {
+			return; // todo
 		}
 
 		// id
@@ -98,10 +101,10 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 
 		/* buildings */
 		if (stateNode.contains("history")) {
-			Node historyNode = stateNode.find("history").getOrElse(null);
+			Node historyNode = (Node) stateNode.find("history").getOrElse(null);
 			Node buildingsNode = null;
 			if (historyNode.contains("buildings")) {
-				buildingsNode = historyNode.find("buildings").getOrElse(null);
+				buildingsNode = (Node) historyNode.find("buildings").getOrElse(null);
 			}
 			// owner
 			if (historyNode.contains("owner")) {
@@ -137,7 +140,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 			}
 			/* victory points */
 			if (historyNode.contains("victory_points")) {
-				Node victoryPointsNode = historyNode.find("victory_points").getOrElse(null);
+				Node victoryPointsNode = (Node) historyNode.find("victory_points").getOrElse(null);
 				for (Node vpNode : CollectionConverters.asJava(victoryPointsNode.toList())) {
 					if (!vpNode.contains("province") || !vpNode.contains("value")) {
 						System.out.println("Warning: invalid victory point node in state, " + stateFile.getName());
@@ -174,7 +177,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 
 		for (File stateFile : HOIIVFile.mod_states_folder.listFiles()) {
 			if (stateFile.getName().endsWith(".txt"))
-				new State(stateFile);
+				new 8uuState(stateFile);
 		}
 	}
 
@@ -379,7 +382,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 		}
 
 		/* resources */
-		Node resourcesNode = stateNode.find("resources").getOrElse(null);
+		Node resourcesNode = (Node) stateNode.find("resources").getOrElse(null);
 		// aluminum (aluminium bri'ish spelling)
 		if (resourcesNode.contains("aluminium")) {        // ! todo always null
 			aluminum = (int) resourcesNode.getValue("aluminium").rational();

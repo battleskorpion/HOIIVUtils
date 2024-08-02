@@ -51,6 +51,10 @@ class Parser() {
     var cont = true
     while (cont) {
       val nextToken = tokens.peek
+      if (nextToken == null) {
+        // todo maybe?
+        throw new ParserException("Unexpected null next token")
+      }
       if ((nextToken.`type` eq TokenType.eof) || nextToken.value == "}") {
         cont = false
       } else {
