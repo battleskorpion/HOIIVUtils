@@ -23,11 +23,14 @@ object CountryTag extends Iterable[CountryTag] {
   }
   
 //  def tagList(): List[CountryTag] = _tagList
+  def addTag(tag: CountryTag): Unit = {
+    _tagList.addOne(tag)
+  }
 }
 
 final class CountryTag(tag: String) extends AbstractPDX[String](List("tag")) with Comparable[CountryTag] {
   setNode(tag)
-  CountryTag._tagList.addOne(this)
+  CountryTag.addTag(this)
 
   override def compareTo(o: CountryTag): Int = {
     (this.get(), o.get()) match {

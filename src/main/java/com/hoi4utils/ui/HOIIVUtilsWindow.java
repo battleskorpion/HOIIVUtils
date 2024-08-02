@@ -131,7 +131,8 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 
 	private void addSceneStylesheets(Scene scene) {
 		scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
-		scene.getStylesheets().add(getClass().getResource("../highlight-background.css").toExternalForm());
+		//scene.getStylesheets().add(getClass().getResource("../highlight-background.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("/com/hoi4utils/ui/highlight-background.css").toExternalForm());
 	}
 
 	@Override
