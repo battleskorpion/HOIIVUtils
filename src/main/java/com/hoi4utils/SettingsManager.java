@@ -57,6 +57,10 @@ public class SettingsManager {
 		if (new File(OLD_PROPERTIES_PATH).exists()) {
 			try {
 				Files.createDirectories(Paths.get(NEW_PROPERTIES_PATH).getParent());
+				if (new File(NEW_PROPERTIES_PATH).exists()) {
+					// todo ask??
+//					Files.delete(Paths.get(NEW_PROPERTIES_PATH));
+				}
 				Files.copy(Paths.get(OLD_PROPERTIES_PATH), Paths.get(NEW_PROPERTIES_PATH));
 				Files.walkFileTree(Paths.get(OLD_PROPERTIES_PATH_PARENT), new SimpleFileVisitor<Path>() {
 					@Override
