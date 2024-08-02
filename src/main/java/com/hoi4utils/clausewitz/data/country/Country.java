@@ -35,7 +35,7 @@ public class Country implements InfrastructureData, Comparable<Country> {
 
 
 	public Country() {
-		this(CountryTag.NULL_TAG);
+		this(CountryTag.NULL_TAG());
 	}
 
 	public Country(CountryTag countryTag) {
