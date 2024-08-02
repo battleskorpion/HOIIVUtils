@@ -487,12 +487,12 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 	}
 
 	@Override
-	public @NotNull Map<Property, String> getLocalizableProperties() {
-		return Map.of(Property.NAME, name);
+	public @NotNull scala.collection.mutable.Map<Property, String> getLocalizableProperties() {
+		return CollectionConverters.asScala(Map.of(Property.NAME, name));
 	}
 
 	@Override
-	public @NotNull Collection<? extends Localizable> getLocalizableGroup() {
-		return states;
+	public @NotNull scala.collection.Iterable<? extends Localizable> getLocalizableGroup() {
+		return CollectionConverters.asScala(states);
 	}
 }
