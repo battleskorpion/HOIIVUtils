@@ -159,6 +159,22 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable wit
     }
   }
 
+  def hasAbsolutePosition(x: Int, y: Int): Boolean = {
+    this.x.getOrElse(0) == x && this.y.getOrElse(0) == y
+  }
+
+  def mutuallyExclusiveList(): List[Focus] = {
+    mutuallyExclusive.flatten().toList
+  }
+  
+  def prerequisiteList(): List[Focus] = {
+    prerequisites.flatten().toList
+  }
+  
+  def prerequisiteSets(): List[PrerequisiteSet] = {
+    prerequisites.toList
+  }
+
   private def setCompletionRewardsOfNode(completionRewardNode: Node, scope: Scope): Unit = {
 //    completionRewardNode.$ match {
 //      case l: ListBuffer[Node] => for(n <- l) {

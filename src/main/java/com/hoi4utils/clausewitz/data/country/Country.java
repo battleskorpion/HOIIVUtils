@@ -60,7 +60,7 @@ public class Country implements InfrastructureData, Comparable<Country> {
 			this.infrastructure = country.infrastructure;
 			this.resources = country.resources;
 		} else {
-			this.countryTag = CountryTag.NULL_TAG;
+			this.countryTag = CountryTag.NULL_TAG();
 			this.infrastructure = new Infrastructure();
 			this.resources = new Resources();
 		}

@@ -140,28 +140,21 @@ public enum ParameterValueType {
 
 	public Class<?> type() { return String.class; }
 
-	@SuppressWarnings("unchecked")
-	public <T> PDXScript<T> createPDXScript(Class<T> typeClass) {
-		PDXScript<T> result;
-		if (typeClass.equals(Boolean.class)) {
-			//result = new BooleanPDX(identifier());
-			return null; // todo
-		} else if (typeClass.equals(Double.class)) {
-			result = (PDXScript<T>) new DoublePDX(identifier());
-		} else if (typeClass.equals(Integer.class)) {
-			result = (PDXScript<T>) new IntPDX(identifier());
-		} else if (typeClass.equals(String.class)) {
-			result = (PDXScript<T>) new StringPDX(identifier());
-		} else {
-			throw new IllegalArgumentException("Unsupported type: " + typeClass);
-		}
-//		return typeClass.cast(result);
-	}
-
-	// todo better
-//	public List<String> modifiers() {
-//		return null;
+//	@SuppressWarnings("unchecked")
+//	public <T> PDXScript<T> createPDXScript(Class<T> typeClass) {
+//		PDXScript<T> result;
+//		if (typeClass.equals(Boolean.class)) {
+//			//result = new BooleanPDX(identifier());
+//			return null; // todo
+//		} else if (typeClass.equals(Double.class)) {
+//			result = (PDXScript<T>) new DoublePDX(identifier());
+//		} else if (typeClass.equals(Integer.class)) {
+//			result = (PDXScript<T>) new IntPDX(identifier());
+//		} else if (typeClass.equals(String.class)) {
+//			result = (PDXScript<T>) new StringPDX(identifier());
+//		} else {
+//			throw new IllegalArgumentException("Unsupported type: " + typeClass);
+//		}
+////		return typeClass.cast(result);
 //	}
-
-//	final String range = "@range";
 }

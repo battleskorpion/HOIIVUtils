@@ -114,7 +114,8 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	@FXML
 	void initialize() {
 		// Set up the focus tree dropdown and its listeners
-		focusTreeDropdown.setItems(FocusTree.observeFocusTrees());
+		//focusTreeDropdown.setItems(FocusTree.observeFocusTrees());
+		focusTreeDropdown.setItems(FocusTree$.MODULE$.observeFocusTrees());
 		focusTreeDropdown.setTooltip(new Tooltip("Select a focus tree to view"));
 		focusTreeDropdown.setVisibleRowCount(VISIBLE_DROPDOWN_ROW_COUNT);
 		focusTreeDropdown.getSelectionModel().select(0);
@@ -264,8 +265,8 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 		for (Focus focus : focuses) {
 			if (focus.hasPrerequisites()) {
-				for (var prereqFocusSet: focus.prerequisites()) {
-					for (Focus prereqFocus : prereqFocusSet) {
+				for (var prereqFocusSet: CollectionConverters.asJava(focus.prerequisiteSets())) {
+					prereqFocusSet.foreach(prereqFocus -> {
 						int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + X_OFFSET_FIX;
 						int y1 = focusToCanvasY(focus);
 						int linex1 = x1 + (FOCUS_X_SCALE / 2);
@@ -285,7 +286,8 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 						gc2D.strokeLine(linex2, liney2, linex3, liney3);    // horizonal
 						// gc2D.setStroke(Color.GREEN);
 						gc2D.strokeLine(linex3, liney3, linex4, liney4);    // small vertical
-					}
+                        return null;
+                    });
 				}
 			}
 		}
@@ -298,7 +300,8 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 		for (Focus focus : focuses) {
 			if (focus.isMutuallyExclusive()) {
-				for (Focus mutexFocus : focus.mutuallyExclusive().stream().flatMap(MultiPDX::stream).toList()) {
+				var mutuallyExclusiveFocuses = CollectionConverters.asJava(focus.mutuallyExclusiveList());
+				for (Focus mutexFocus : mutuallyExclusiveFocuses) {
 					int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
 					int y1 = FOCUS_Y_SCALE * focus.absoluteY() + (int) (FOCUS_Y_SCALE / 1.6) + Y_OFFSET_FIX;
 					int x2 = FOCUS_X_SCALE * (mutexFocus.absoluteX() - minX) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;

@@ -30,6 +30,6 @@ public class Technology implements Localizable {
 	// todo this can be more inclusive
 	@Override
 	public @NotNull scala.collection.Iterable<? extends Localizable> getLocalizableGroup() {
-		return List.of(this);
+		return CollectionConverters.asScala(List.of(this));
 	}
 }

@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz.code.modifier.Modifier;
 import com.hoi4utils.clausewitz.localization.*;
 import javafx.beans.property.SimpleStringProperty;
 import org.jetbrains.annotations.NotNull;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -199,13 +200,13 @@ public class Idea implements Localizable, EffectParameter, Comparable<Idea> {
 	}
 
 	@Override
-	public @NotNull Map<Property, String> getLocalizableProperties() {
-		return Map.of(Property.NAME, id());
+	public @NotNull scala.collection.mutable.Map<Property, String> getLocalizableProperties() {
+		return CollectionConverters.asScala(Map.of(Property.NAME, id()));
 	}
 
 	@Override
-	public @NotNull Collection<? extends Localizable> getLocalizableGroup() {
-		return List.of(this);
+	public @NotNull scala.collection.Iterable<? extends Localizable> getLocalizableGroup() {
+		return CollectionConverters.asScala(List.of(this));
 		// in future return list of ideas used in similar files.
 	}
 }

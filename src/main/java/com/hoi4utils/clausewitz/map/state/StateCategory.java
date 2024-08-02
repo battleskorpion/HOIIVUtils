@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz.localization.*;
 import com.hoi4utils.clausewitz_parser.Node;
 import com.hoi4utils.clausewitz_parser.Parser;
 import org.jetbrains.annotations.NotNull;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -60,13 +61,13 @@ public class StateCategory {
 		}
 
 		@Override
-		public @NotNull Map<Property, String> getLocalizableProperties() {
-			return null;
+		public @NotNull scala.collection.mutable.Map<Property, String> getLocalizableProperties() {
+			return CollectionConverters.asScala(Map.of());
 		}
 
 		@Override
-		public @NotNull List<? extends Localizable> getLocalizableGroup() {
-			return stateCategoryTypes;
+		public @NotNull scala.collection.Iterable<? extends Localizable> getLocalizableGroup() {
+			return CollectionConverters.asScala(stateCategoryTypes); 
 		}
 	}
 

@@ -2,6 +2,8 @@ package com.hoi4utils.clausewitz.localization;
 
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.clausewitz.HOIIVFile;
+import scala.Option;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -161,12 +163,12 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
         }
 
         // Separate new and changed localizations
-        var changedLocalizations = localizationCollection.filterByStatus(Localization.Status.UPDATED);
-        var newLocalizations = localizationCollection.filterByStatus(Localization.Status.NEW);
+        var changedLocalizations = CollectionConverters.asJava(localizationCollection.filterByStatus(Localization.Status.UPDATED));
+        var newLocalizations = CollectionConverters.asJava(localizationCollection.filterByStatus(Localization.Status.NEW));
 
         // Save updated and new localizations
-        changedLocalizations.forEach(entry -> writeAllLocalization(entry.getValue(), entry.getKey()));
-        newLocalizations.forEach(entry -> writeAllLocalization(entry.getValue(), entry.getKey()));
+        changedLocalizations.forEach(entry -> writeAllLocalization(CollectionConverters.asJava(entry._2.toList()), entry._1()));
+        newLocalizations.forEach(entry -> writeAllLocalization(CollectionConverters.asJava(entry._2().toList()), entry._1()));
     }
 
     public void writeAllLocalization(List<Localization> list, File file) {
@@ -243,7 +245,7 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
      * @return the localization corresponding to the given ID, or null if not found.
      */
     @Override
-    public Localization getLocalization(String key) throws IllegalArgumentException {
+    public Option<Localization> getLocalization(String key) throws IllegalArgumentException {
         if (key == null) throw new IllegalArgumentException("localization ID cannot be null");
         return localizationCollection.get(key);
     }
@@ -256,12 +258,12 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
      */
     @Override
     public boolean isLocalized(String localizationId) {
-        Localization loc = getLocalization(localizationId);
-        return (loc != null);
+        return getLocalization(localizationId).nonEmpty();
     }
 
     @Override
-    protected LocalizationCollection localizations() {
+    // somehow super is scala protected but protected bad in java to override? why.
+    public LocalizationCollection localizations() {
         return localizationCollection;
     }
 

@@ -5,12 +5,14 @@ import com.hoi4utils.clausewitz.data.country.CountryTagsManager
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.data.country.CountryTag
+import javafx.collections.{FXCollections, ObservableList}
 import org.jetbrains.annotations.*
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.HashMap
 import scala.collection.mutable
+import scala.jdk.javaapi.CollectionConverters
 
 /**
  * ALL of the FocusTree/FocusTrees
@@ -29,7 +31,9 @@ object FocusTree {
     focusTrees.get(focus_file)
   }
 
-  //def observeFocusTrees: ObservableList[FocusTree] = new ObservableList[FocusTree](focusTreesList)
+  def observeFocusTrees: ObservableList[FocusTree] = {
+    FXCollections.observableArrayList(CollectionConverters.asJava(focusTreesList))
+  }
 
   def read(): Unit = {
     if (!HOIIVFile.mod_focus_folder.exists || !HOIIVFile.mod_focus_folder.isDirectory) {

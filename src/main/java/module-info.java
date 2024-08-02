@@ -9,11 +9,10 @@
 //    requires org.jgrapht.core;
 //    requires org.apache.poi.poi;
 //    requires aparapi; // leave aparapi last cause aparapi has terrible config
-//    requires org.xerial.sqlitejdbc;
 //    requires io.github.javadiffutils;
 //    requires org.fxmisc.richtext;
 //    requires reactfx;
-//
+////    requires org.xerial.sqlitejdbc;
 //    opens com.hoi4utils.ui to javafx.fxml;
 //    opens com.hoi4utils.ui.buildings to javafx.fxml;
 //    opens com.hoi4utils.ui.clausewitz_gfx to javafx.fxml;
@@ -77,4 +76,4 @@
 //    exports com.hoi4utils.ui.statistics;
 //    exports com.hoi4utils.ui.units;
 //    exports com.hoi4utils;
-//}
+//} 

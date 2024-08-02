@@ -124,7 +124,8 @@ public class PDXEditorPane extends AnchorPane {
                 Spinner<Integer> spinner = new Spinner<>(
                         new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE,
                                 Integer.MAX_VALUE));
-                spinner.getValueFactory().setValue(pdx.getOrElse(0));
+                // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment 
+                spinner.getValueFactory().setValue((Integer) pdx.getOrElse(0));
                 spinner.setPrefHeight(25);
                 spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
                     pdx.setNode(newValue);
@@ -139,7 +140,8 @@ public class PDXEditorPane extends AnchorPane {
                 Spinner<Double> spinner = new Spinner<>(
                         new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.MIN_VALUE,
                                 Double.MAX_VALUE));
-                spinner.getValueFactory().setValue(pdx.getOrElse(0.0));
+                // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment 
+                spinner.getValueFactory().setValue((Double) pdx.getOrElse(0.0));
                 spinner.setPrefHeight(25);
                 spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
                     pdx.setNode(newValue);
@@ -156,7 +158,7 @@ public class PDXEditorPane extends AnchorPane {
                 comboBox.setPrefHeight(25);
                 comboBox.getSelectionModel().select(pdx.getReferenceName());
                 comboBox.setItems(
-                        FXCollections.observableArrayList(pdx.getReferenceCollectionNames()));
+                        FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())));
                 comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
                     pdx.setReferenceName(newValue);
                     if (nullProperties.contains(property)) {
@@ -182,7 +184,7 @@ public class PDXEditorPane extends AnchorPane {
                     comboBox.setPrefWidth(200);
                     comboBox.setPrefHeight(25);
                     comboBox.getSelectionModel().select(pdx.getReferenceName(i));
-                    comboBox.setItems(FXCollections.observableArrayList(pdx.getReferenceCollectionNames()));
+                    comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())));
                     final int index = i;
                     comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
                         pdx.setReferenceName(index, newValue);
@@ -199,7 +201,7 @@ public class PDXEditorPane extends AnchorPane {
                         ComboBox<String> newComboBox = new ComboBox<>();
                         newComboBox.setPrefWidth(200);
                         newComboBox.setPrefHeight(25);
-                        newComboBox.setItems(FXCollections.observableArrayList(pdx.getReferenceCollectionNames()));
+                        newComboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())));
                         newComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
                             // Assuming MultiReferencePDXScript has a method to add a new reference name
                             pdx.addReferenceName(newValue);
@@ -218,9 +220,10 @@ public class PDXEditorPane extends AnchorPane {
                 if (pdx.isUndefined() && !allowNull) return null;
                 VBox subVBox = new VBox();
                 subVBox.setSpacing(10);
-                for (var pdxScript : pdx) {
-                    subVBox.getChildren().add(createEditorNode(pdxScript, allowNull, subVBox));
-                }
+                pdx.foreach(pdxScript -> subVBox.getChildren().add(createEditorNode((PDXScript<?>) pdxScript, allowNull, subVBox)));
+//                for (var pdxScript : pdx) {
+//                    subVBox.getChildren().add(createEditorNode(pdxScript, allowNull, subVBox));
+//                }
                 return subVBox;
             }
             case null, default ->

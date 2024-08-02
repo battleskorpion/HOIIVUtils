@@ -4,6 +4,7 @@ import com.hoi4utils.clausewitz.HOIIVFile;
 import com.hoi4utils.Settings;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
+import com.hoi4utils.clausewitz.data.focus.FocusTree$;
 import com.hoi4utils.clausewitz.localization.*;
 
 import com.hoi4utils.ui.FXWindow;
@@ -88,7 +89,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
 
         if (selectedFile != null) {
             focusTreeFileTextField.setText(selectedFile.getAbsolutePath());
-            focusTree = FocusTree.get(selectedFile);
+            focusTree = FocusTree$.MODULE$.get(selectedFile).getOrElse(null);
             focusTreeNameLabel.setText(focusTree.toString());
         } else {
             focusTreeNameLabel.setText("[not found]");
