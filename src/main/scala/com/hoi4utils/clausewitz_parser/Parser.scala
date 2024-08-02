@@ -155,6 +155,7 @@ class Parser() {
     // todo eeeh?
     nextToken.`type` match {
       case string =>
+        if (nextToken.length == 1) System.out.println("Parser: ?? " + nextToken.value)
         /* substring from 1 to length() - 2: don't replace "" */
         if (nextToken.value.length == 2) return new NodeValue(nextToken.value)
         return new NodeValue(nextToken.value.substring(1, nextToken.length - 2).replaceAll(Parser.escape_quote_regex, "\"").replaceAll(Parser.escape_backslash_regex, "\\"))

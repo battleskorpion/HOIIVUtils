@@ -15,7 +15,7 @@ trait PDXScript[T] {
 
   def get(): Option[T]
   
-  def getNode : Node
+  def getNode : Option[Node]
 
   @throws[UnexpectedIdentifierException]
   def loadPDX(expression: Node): Unit
@@ -26,8 +26,10 @@ trait PDXScript[T] {
 
   def isValidIdentifier(node: Node): Boolean
 
-  def setNull(): Unit
+  def clearNode(): Unit
 
+  def setNull(): Unit
+    
   def loadOrElse(exp: Node, value: T): Unit
 
   def toScript: String

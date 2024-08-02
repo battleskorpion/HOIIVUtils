@@ -16,18 +16,26 @@ class DoublePDX(pdxIdentifiers: List[String]) extends AbstractPDX[Double](pdxIde
 //    val value = expression.value
 //    if (value.valueObject.isInstanceOf[Number]) obj = num.doubleValue
     this.node = expression
-    node.$ match {
+    expression.$ match {
       case _: Double =>
       case _ => throw new NodeValueTypeException(expression, "Number (as a Double)")
     }
   }
   
   override def set(value: Double): Unit = {
-    this.node.setValue(value)
+    if (this.node.nonEmpty) {
+      this.node.get.setValue(value)
+    }
   }
 
   override def equals(other: PDXScript[?]): Boolean = {
-    if (other.isInstanceOf[DoublePDX]) return node.$.equals(other.get())
-    false
+    other match {
+      case x: DoublePDX =>
+        if (this.node.isEmpty || x.node.isEmpty) {
+          return false
+        }
+        node.get.$.equals(x.node.get.$)
+      case _ => false
+    }
   }
 }

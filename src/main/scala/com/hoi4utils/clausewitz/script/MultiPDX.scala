@@ -64,7 +64,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 //      case e: ClassCastException =>
 //        throw new NodeValueTypeException(expression, e)
 //    }
-    node.$ match {
+    expression.$ match {
       case l: ListBuffer[T] =>
         val childScript = simpleSupplier.get.apply()  // todo fix
         childScript.loadPDX(expression)
@@ -76,8 +76,10 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   }
 
   def clear(): Unit = {
-    node.$ match {
-      case l: ListBuffer[T] => l.clear()
+    if (node.nonEmpty) {
+      node.get.$ match {
+        case l: ListBuffer[T] => l.clear()
+      }
     }
   }
 

@@ -19,7 +19,7 @@ import java.io.File
 trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScript[T] {
   
   private[script] var activeIdentifier = 0
-  protected[script] var node: Node = _
+  protected[script] var node: Option[Node] = None
 
 //  def this(pdxIdentifiers: String*) = {
 //    this(pdxIdentifiers*)
@@ -38,15 +38,18 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   
   override def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
   // todo?
+    if (node.isEmpty) {
+      return
+    }
     if (value == null) {
       setNull()
       return
     }
     value.match {
-      case s: String => node.setValue(s)
-      case i: Int => node.setValue(i)
-      case d: Double => node.setValue(d)
-      case b: Boolean => node.setValue(b)
+      case s: String => node.get.setValue(s)
+      case i: Int => node.get.setValue(i)
+      case d: Double => node.get.setValue(d)
+      case b: Boolean => node.get.setValue(b)
       case _ => throw new RuntimeException("Unsupported type")
     }
   }
@@ -66,13 +69,13 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   }
 
   override def get(): Option[T] = {
-    node.$ match {
+    node.getOrElse(return None).$ match {
       case value: T => Some(value)
       case _ => None
     }
   }
 
-  override def getNode: Node = node
+  override def getNode: Option[Node] = node
 
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
@@ -130,8 +133,12 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     false
   }
 
+  override def clearNode(): Unit = {
+    node = None
+  }
+
   override def setNull(): Unit = {
-    node.setNull()
+    node.foreach(_.setNull())
   }
 
   override def loadOrElse(exp: Node, value: T): Unit = {
@@ -140,11 +147,11 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
       case e: UnexpectedIdentifierException =>
         throw new RuntimeException(e)
     }
-    if (node.valueIsNull) set(value)
+    if (node.get.valueIsNull) set(value)
   }
 
   override def toScript: String = {
-    if (node == null || node.isEmpty) return null
+    if (node.isEmpty || node.get.isEmpty) return null
     pdxIdentifiers(activeIdentifier) + " = " + node + "\n"
   }
 
@@ -159,24 +166,24 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   }
 
   override def getOrElse(elseValue: T): T = {
-    if (isUndefined) return elseValue
-    val value = node.getValue
+    val value = node.getOrElse(return elseValue).getValue
     value match
       case t: T => t
       case _ => elseValue
   }
 
   override def toString: String = {
-    if (node == null || node.isEmpty) return super.toString
+    if (node.isEmpty || node.get.isEmpty) return super.toString
     node.toString
   }
 
-  override def isUndefined: Boolean = node == null || node.valueIsNull
+  override def isUndefined: Boolean = node.isEmpty || node.get.valueIsNull
 
   override def getPDXIdentifier: String = pdxIdentifiers(activeIdentifier)
 
   def valueIsInstanceOf[A]: Boolean = {
-    node.$ match {
+    if (node.isEmpty) return false
+    node.get.$ match {
       case _: A => true
       case _ => false
     }

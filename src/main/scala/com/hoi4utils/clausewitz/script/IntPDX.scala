@@ -19,7 +19,8 @@ class IntPDX(pdxIdentifiers: List[String]) extends AbstractPDX[Int](pdxIdentifie
   }
 
   override def set(value: Int): Unit = {
-    this.node.setValue(value)
+    if (this.node.nonEmpty)
+      this.node.get.setValue(value)
   }
 
   override def equals(other: PDXScript[?]): Boolean = {

@@ -13,20 +13,30 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    this.node = expression
-    if !this.node.$.isInstanceOf[String] then
-      throw new NodeValueTypeException(this.node)
+    this.node = Some(expression)
+    if !this.node.get.$.isInstanceOf[String] then
+      throw new NodeValueTypeException(this.node.get)
   }
   
-  override def set(s: String) = {
-    this.node.setValue(s)
+  override def set(s: String): Unit = {
+    this.node match {
+      case Some(node) => node.setValue(s)
+    }
   }
 
   override def equals(other: PDXScript[?]): Boolean = {
-    other match
-      case x: StringPDX => node.equals(x.node)
+    other match {
+      case other: StringPDX =>
+        if (this.node.isEmpty || other.node.isEmpty) {
+          return false
+        }
+        node.get.equals(other.node.get)
       case _ => false
+    }
   }
 
-  def nodeEquals(s: String): Boolean = node.$.equals(s)
+  def nodeEquals(s: String): Boolean = {
+    if (this.node.isEmpty) false
+    else node.get.$.equals(s)
+  }
 }

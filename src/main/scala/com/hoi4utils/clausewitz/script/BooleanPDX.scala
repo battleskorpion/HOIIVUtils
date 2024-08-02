@@ -15,8 +15,8 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    this.node = expression
-    this.node.$ match {
+    this.node = Some(expression)
+    expression.$ match {
       case _: Boolean =>
 //      case _: String =>
 //        val v = this.node.$.asInstanceOf[String]
