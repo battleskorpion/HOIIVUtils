@@ -177,7 +177,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 
 		for (File stateFile : HOIIVFile.mod_states_folder.listFiles()) {
 			if (stateFile.getName().endsWith(".txt"))
-				new 8uuState(stateFile);
+				new State(stateFile);
 		}
 	}
 
