@@ -349,7 +349,7 @@
 								<minVersion>22</minVersion>
 							</jre>
 							<versionInfo>
-								<fileVersion>11.0.0.0</fileVersion>
+								<fileVersion>12.0.0.0</fileVersion>
 								<txtFileVersion>${project.version}</txtFileVersion>
 								<copyright>Copyright ${project.inceptionYear}
 									${project.organization.name}</copyright>
