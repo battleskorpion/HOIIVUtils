@@ -36,13 +36,12 @@ public class HOIIVUtils {
 
 	/**
 	 * Main method for HOIIVUtils.
-	 * 
+	 * <p> 
 	 * If firstTimeSetup is true, then launch the settings window. If firstTimeSetup is false, then
 	 * create the HOIIVUtils directory and launch the settings window if SKIP_SETTINGS is false,
 	 * otherwise launch the menu window.
-	 * 
-	 * @param args
-	 */
+	 *
+     */
 	public static void main(String[] args) {
 		System.out.println(HOIIVUTILS_NAME + " " + HOIIVUTILS_VERSION + " launched");
 
