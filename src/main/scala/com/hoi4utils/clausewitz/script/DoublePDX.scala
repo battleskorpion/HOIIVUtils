@@ -15,7 +15,7 @@ class DoublePDX(pdxIdentifiers: List[String]) extends AbstractPDX[Double](pdxIde
     usingIdentifier(expression)
 //    val value = expression.value
 //    if (value.valueObject.isInstanceOf[Number]) obj = num.doubleValue
-    this.node = expression
+    this.node = Some(expression)
     expression.$ match {
       case _: Double =>
       case _ => throw new NodeValueTypeException(expression, "Number (as a Double)")

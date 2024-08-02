@@ -27,7 +27,7 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
   }
   
   override def set(value: Boolean): Unit = {
-    this.node.setValue(value)
+    this.node.foreach(_.setValue(value))
   }
 
   override def get(): Option[Boolean] = {

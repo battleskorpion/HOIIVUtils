@@ -49,7 +49,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
     val value = expression.$
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
-    node.$ match {
+    node.get.$ match {
       case _: ListBuffer[Node] =>
 //        val childScript = newChildScript(expression)
 //        childScript.loadPDX(expression)
@@ -70,10 +70,12 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
   }
 
   def clear(): Unit = {
-    node.$ match {
-      case l: ListBuffer[T] =>
-        l.clear()
-      case _ =>
+    if (node.nonEmpty) {
+      node.get.$ match {
+        case l: ListBuffer[T] =>
+          l.clear()
+        case _ =>
+      }
     }
   }
 

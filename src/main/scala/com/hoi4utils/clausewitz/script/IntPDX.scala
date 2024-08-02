@@ -12,7 +12,7 @@ class IntPDX(pdxIdentifiers: List[String]) extends AbstractPDX[Int](pdxIdentifie
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    this.node = expression
+    this.node = Some(expression)
     if (!valueIsInstanceOf[Int]) {
       throw new NodeValueTypeException(expression, "Number (as an Integer)")
     }
