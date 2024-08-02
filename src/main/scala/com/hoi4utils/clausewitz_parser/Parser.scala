@@ -35,11 +35,18 @@ class Parser() {
   def parse: Node = {
     val value = parseBlockContent(tokens)
     /*
-         * need to reach up to eof indicator
-         * if last token is '}' this could indicate there was a
-         * missing '{' in the code
-         */
-    if (tokens.peek.`type` ne TokenType.eof) throw new ParserException("Input not completely parsed by clausewitz-file parser \n" + "\t\tlast token: " + tokens.peek.value)
+     * need to reach up to eof indicator
+     * if last token is '}' this could indicate there was a
+     * missing '{' in the code
+     */
+    tokens.peek match {
+      case Some(token) =>
+        token.`type` match {
+          case TokenType.eof => // good
+          case _ => throw new ParserException("Input not completely parsed by clausewitz-file parser \n" + "\t\tlast token: " + token.value)
+        }
+      case None => throw new ParserException("Input not completely parsed by clausewitz-file parser \n" + "\t\tlast token: null")
+    }
     rootNode = new Node(value)
     rootNode
   }
@@ -50,11 +57,7 @@ class Parser() {
 
     var cont = true
     while (cont) {
-      val nextToken = tokens.peek
-      if (nextToken == null) {
-        // todo maybe?
-        throw new ParserException("Unexpected null next token")
-      }
+      val nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
       if ((nextToken.`type` eq TokenType.eof) || nextToken.value == "}") {
         cont = false
       } else {
@@ -73,7 +76,7 @@ class Parser() {
 
   @throws[ParserException]
   def parseNode(tokens: Tokenizer): Node = {
-    val name = tokens.next
+    val name = tokens.next.getOrElse(throw new ParserException("Unexpected null next token"))
     /* skip comments */
     if (name.`type` eq TokenType.comment) {
       val node = new Node
@@ -83,11 +86,11 @@ class Parser() {
     }
     // System.out.println(name.value);
     if ((name.`type` ne TokenType.string) && (name.`type` ne TokenType.symbol) && (name.`type` ne TokenType.number)) throw new ParserException("Parser: incorrect token type " + name.`type` + ", token: " + name + " at index: " + name.start)
-    var nextToken = tokens.peek
+    var nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
     if ((nextToken.`type` ne TokenType.operator) || nextToken.value.matches("^[,;}]$")) {
       while (nextToken.value.matches("^[,;]$")) {
         tokens.next
-        nextToken = tokens.peek
+        nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
       }
       /* handle escaped characters */
       val nameValue = unescapeCharacters(name, name.value)
@@ -110,21 +113,21 @@ class Parser() {
       nextToken.start = operator.start
       operator.value = "="
     }
-    else operator = tokens.next
+    else operator = tokens.next.get
 
     var parsedValue = parseNodeValue(tokens)
     /* Handle value attachment (e.g., when there's a nested block) */
     if (parsedValue != null && parsedValue.getValue.isInstanceOf[Node]) {
-      val peekedToken = tokens.peek
+      val peekedToken = tokens.peek.get
       if (peekedToken.value == "{") {
         parsedValue = parseNodeValue(tokens)
       }
     }
     // Skip comments before tailComma
-    var tailComma = tokens.peek
+    var tailComma = tokens.peek.get
     while ((tailComma.`type` eq TokenType.comment) || tailComma.value.matches("^[,;]")) {
       tokens.next
-      tailComma = tokens.peek
+      tailComma = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
     }
     // todo
     val node = new Node(parsedValue)
@@ -148,9 +151,7 @@ class Parser() {
 
   @throws[ParserException]
   def parseNodeValue(tokens: Tokenizer): NodeValue = {
-    val nextToken = tokens.next
-    // todo maybe?
-    if (nextToken == null) return null
+    val nextToken = tokens.next.getOrElse(return null)
     // todo eeeh?
     nextToken.`type` match {
       case string =>
@@ -167,7 +168,7 @@ class Parser() {
 
       case operator => if (nextToken.value == "{") {
         val result = parseBlockContent(tokens)
-        val right = tokens.next
+        val right = tokens.next.getOrElse(throw new ParserException("Parser expected a matching \"}\""))
         if (!(right.value == "}")) throw new ParserException("Parser expected a matching \"}\"")
         return new NodeValue(result)
       }
