@@ -87,7 +87,7 @@ public class StateCategory {
 				}
 
 				if (rootExp.contains(file.getName())) {
-					Node categoryExp = rootExp.findFirst(file.getName());
+					Node categoryExp = rootExp.find(file.getName()).getOrElse(null);
 					// ! todo Implement the string
 					//String category_name = categoryExp.getText();
 					if (categoryExp.contains("local_building_slots")) {
