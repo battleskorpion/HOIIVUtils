@@ -2,6 +2,7 @@ package com.hoi4utils.clausewitz.map.province;
 
 import com.hoi4utils.clausewitz.localization.*;
 import org.jetbrains.annotations.NotNull;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,12 +40,12 @@ public class VictoryPoint implements Localizable {
 	}
 
 	@Override
-	public @NotNull Map<Property, String> getLocalizableProperties() {
-		return Map.of(Property.NAME, "VP_NAME");
+	public @NotNull scala.collection.mutable.Map<Property, String> getLocalizableProperties() {
+		return CollectionConverters.asScala(Map.of(Property.NAME, "VP_NAME"));
 	}
 
 	@Override
-	public @NotNull Collection<? extends Localizable> getLocalizableGroup() {
-		return victoryPoints;
+	public @NotNull scala.collection.Iterable<? extends Localizable> getLocalizableGroup() {
+		return CollectionConverters.asScala(victoryPoints);
 	}
 }

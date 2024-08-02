@@ -4,10 +4,12 @@ import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.Settings;
 import com.hoi4utils.clausewitz_parser.Parser;
 import com.hoi4utils.clausewitz_parser.Node;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -109,7 +111,7 @@ public class Interface {
 		} catch (ParserException e) {
 			throw new RuntimeException(e);
 		}
-		Node[] nodes = rootNode.filter("SpriteType={").toList().toArray(new Node[0]);
+		List<Node> nodes = CollectionConverters.asJava(rootNode.filter("SpriteType={").toList());
 		if (nodes == null) {
 			System.err.println("No SpriteTypes in interface .gfx file, " + file);
 			//System.out.println(interfaceParser.expression());
@@ -120,15 +122,15 @@ public class Interface {
 			if (!exp.contains("name=")) {
 				continue;
 			}
-			Node nameExp = exp.findFirst("name=");
+			Node nameExp = exp.find("name=").getOrElse(null);
 			if (!exp.contains("texturefile=")) {
 				continue;
 			}
-			Node fileExp = exp.findFirst("texturefile=");
+			Node fileExp = exp.find("texturefile=").getOrElse(null);
 
-			String name = nameExp.value().string();
+			String name = nameExp.$string(); 
 			name = name.replaceAll("\"", "");		// get rid of quotes from clausewitz code for file pathname
-			String filename = fileExp.value().string();
+			String filename = fileExp.$string();
 			filename = filename.replaceAll("\"", "" );
 
 			SpriteType gfx = new SpriteType(name, filename);

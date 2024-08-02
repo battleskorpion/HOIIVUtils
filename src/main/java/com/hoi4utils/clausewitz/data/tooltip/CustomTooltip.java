@@ -4,6 +4,7 @@ import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.clausewitz.localization.Localization;
 import com.hoi4utils.clausewitz_parser.Node;
 import com.hoi4utils.clausewitz_parser.Parser;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,7 +48,8 @@ public class CustomTooltip {
 		} catch (ParserException e) {
 			throw new RuntimeException(e);
 		}
-		Node[] tooltipExpressions = rootNode.filter("custom_trigger_tooltip").toList().toArray(new Node[0]); // prev2 = prev = parser.expression().getAll("custom_trigger_tooltip");
+		//Node[] tooltipExpressions = rootNode.filter("custom_trigger_tooltip").toList().toArray(new Node[0]); // prev2 = prev = parser.expression().getAll("custom_trigger_tooltip");
+		List<Node> tooltipExpressions = CollectionConverters.asJava(rootNode.filter("custom_trigger_tooltip").toList()); 
 		for (Node exp : tooltipExpressions) {
 			if (!exp.contains("tooltip")) {
 				continue;

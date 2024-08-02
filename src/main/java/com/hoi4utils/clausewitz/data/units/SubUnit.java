@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz_parser.Node;
 import com.hoi4utils.clausewitz_parser.Parser;
 import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.Settings;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public record SubUnit(
 				throw new RuntimeException(e);
 			}
 
-			var l = rootNode.findFirst("sub_units").toList();
+			var l = CollectionConverters.asJava(rootNode.find("sub_units").toList());
 			if (l.isEmpty()) {
 				System.out.println("No sub_units found in " + f.getName());
 				continue;
@@ -69,21 +70,21 @@ public record SubUnit(
 						subUnitNode.getValue("abbreviation").string(),
 						subUnitNode.getValue("sprite").string(),
 						subUnitNode.getValue("map_icon_category").string(),
-						subUnitNode.getValue("priority").intClass(),
-						subUnitNode.getValue("ai_priority").intClass(),
+						subUnitNode.getValue("priority").integer(),
+						subUnitNode.getValue("ai_priority").integer(),
 						subUnitNode.getValue("active").bool(BoolType.YES_NO),
 						//subUnit.type = subUnitNode.getValue("type").string(),
 						subUnitNode.getValue("group").string(),
 						//subUnit.categories
-						subUnitNode.getValue("combat_width").intClass(),
+						subUnitNode.getValue("combat_width").integer(),
 						//subUnit.need
-						subUnitNode.getValue("manpower").intClass(),
-						subUnitNode.getValue("max_organization").intClass(),
-						subUnitNode.getValue("default_morale").intClass(),
-						subUnitNode.getValue("max_strength").intClass(),
-						subUnitNode.getValue("training_time").intClass(),
-						subUnitNode.getValue("weight").doubleClass(),
-						subUnitNode.getValue("supply_consumption").doubleClass()
+						subUnitNode.getValue("manpower").integer(),
+						subUnitNode.getValue("max_organization").integer(),
+						subUnitNode.getValue("default_morale").integer(),
+						subUnitNode.getValue("max_strength").integer(),
+						subUnitNode.getValue("training_time").integer(),
+						subUnitNode.getValue("weight").rational(),
+						subUnitNode.getValue("supply_consumption").rational()
 				);
 
 				subUnits.add(subUnit);

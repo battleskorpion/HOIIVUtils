@@ -75,7 +75,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 		// Expression exp = stateParser.expressions();
 		Node stateNode = null;
 		try {
-			stateNode = stateParser.parse().find("state").getOrElse(null); 
+			stateNode = stateParser.parse().find("state").getOrElse(null);
 		} catch (ParserException e) {
 			throw new RuntimeException(e);
 		}

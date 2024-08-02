@@ -194,11 +194,6 @@ public class Idea implements Localizable, EffectParameter, Comparable<Idea> {
 	}
 
 	@Override
-	public String displayScript() {
-		return "[n/a - idea]";
-	}
-
-	@Override
 	public int compareTo(@NotNull Idea o) {
 		return id().compareTo(o.id());
 	}

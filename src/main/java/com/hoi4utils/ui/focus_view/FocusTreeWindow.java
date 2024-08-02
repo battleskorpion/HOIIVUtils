@@ -139,7 +139,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 		// If focusTree is still null, assign a new value
 		if (focusTree == null) {
-			focusTree = FocusTree$.MODULE$.get(new File(HOIIVFile.mod_focus_folder + "//massachusetts.txt")).getOrElse(null); 
+			focusTree = FocusTree$.MODULE$.get(new File(HOIIVFile.mod_focus_folder + "//massachusetts.txt")).getOrElse(null);
 		}
 
 		try {
@@ -366,7 +366,9 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 	private void selectClosestMatch(ComboBox<FocusTree> comboBox, String typedText) {
 		for (FocusTree item : comboBox.getItems()) {
-			if (item.country.get() != null && item.country.get().get().toLowerCase().startsWith(typedText.toLowerCase())) {
+			//if (item.country().get() != null && item.country().get().get().toLowerCase().startsWith(typedText.toLowerCase())) {
+			var optionalCountry = item.country().get();
+			if (optionalCountry.nonEmpty() && optionalCountry.get().getOrElse("").toLowerCase().startsWith(typedText.toLowerCase())) {
 				comboBox.getSelectionModel().select(item);
 				comboBox.getEditor().setText(String.valueOf(item));
 				return;
