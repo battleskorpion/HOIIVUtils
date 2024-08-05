@@ -9,7 +9,11 @@ import scala.collection.mutable.ListBuffer
 object CountryTag extends Iterable[CountryTag] {
   val NULL_TAG = new CountryTag("###")
   val COUNTRY_TAG_LENGTH = 3 // standard country tag length (for a normal country tag)private final String tag;
-  private[country] val _tagList = new ListBuffer[CountryTag]
+  // scala... (this is null (????????????) if you dont use 'lazy')
+  private lazy val _tagList: ListBuffer[CountryTag] = {
+//    println("Initializing _tagList")
+    ListBuffer[CountryTag]()
+  }
 
   def get(tag: String): CountryTag = {
     for (countryTag <- _tagList) {
@@ -28,7 +32,7 @@ object CountryTag extends Iterable[CountryTag] {
   }
 }
 
-final class CountryTag(tag: String) extends AbstractPDX[String](List("tag")) with Comparable[CountryTag] {
+class CountryTag(tag: String) extends AbstractPDX[String](List("tag")) with Comparable[CountryTag] {
   setNode(tag)
   CountryTag.addTag(this)
 
