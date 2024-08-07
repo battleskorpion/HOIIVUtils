@@ -46,7 +46,7 @@ class EffectDatabase(databaseName: String) {
   private var connection: Connection = _
 
   try {
-    val url = getClass.getClassLoader.getResource(databaseName)
+    val url = getClass.getResource(databaseName)
     if (url == null) throw new SQLException("Unable to find '" + databaseName + "'")
     val tempFile = File.createTempFile("effects", ".db")
     tempFile.deleteOnExit()
@@ -79,7 +79,7 @@ class EffectDatabase(databaseName: String) {
   // effectDB.close();
   // }
   def this() = {
-    this("databases/effects.db")
+    this("/main/resources_binary/databases/effects.db")
   }
 
   private def createTable(): Unit = {

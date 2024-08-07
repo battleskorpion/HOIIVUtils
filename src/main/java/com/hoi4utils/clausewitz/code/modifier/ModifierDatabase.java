@@ -37,7 +37,7 @@ public class ModifierDatabase {
 	}
 
 	public ModifierDatabase() {
-		this("databases/modifiers.db");
+		this("/main/resources_binary/databases/modifiers.db");
 //		for(Modifier modifier : Modifier.modifiers.values()) {
 //			System.out.println("modifier: " + modifier.identifier());
 //		}
