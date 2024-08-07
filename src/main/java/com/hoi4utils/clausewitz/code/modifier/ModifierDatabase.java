@@ -37,13 +37,14 @@ public class ModifierDatabase {
 	}
 
 	public ModifierDatabase() {
-		this("/databases/modifiers.db");
+		this("databases/modifiers.db");
 //		for(Modifier modifier : Modifier.modifiers.values()) {
 //			System.out.println("modifier: " + modifier.identifier());
 //		}
 	}
 
 	private byte[] readDatabaseAsByteArray(String resourcePath) throws IOException {
+		System.out.println(System.getProperty("java.class.path"));
 		try (InputStream inputStream = getClass().getResourceAsStream(resourcePath);
 		     ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
