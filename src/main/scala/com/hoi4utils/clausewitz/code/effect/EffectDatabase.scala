@@ -50,11 +50,6 @@ class EffectDatabase(databaseName: String) {
     if (url == null) throw new SQLException("Unable to find '" + databaseName + "'")
     val tempFile = File.createTempFile("effects", ".db")
     tempFile.deleteOnExit()
-//    try {
-//      val inputStream = url.openStream
-//      try Files.copy(inputStream, tempFile.toPath, StandardCopyOption.REPLACE_EXISTING)
-//      finally if (inputStream != null) inputStream.close()
-//    }
     Using(url.openStream) { inputStream =>
       Files.copy(inputStream, tempFile.toPath, StandardCopyOption.REPLACE_EXISTING)
     }.recover {
