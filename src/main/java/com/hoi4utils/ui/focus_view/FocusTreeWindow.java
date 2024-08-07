@@ -3,7 +3,6 @@ package com.hoi4utils.ui.focus_view;
 import com.hoi4utils.Settings;
 import com.hoi4utils.clausewitz.data.focus.FocusTree$;
 import com.hoi4utils.clausewitz.localization.*;
-import com.hoi4utils.clausewitz.script.MultiPDX;
 import com.hoi4utils.clausewitz.script.PDXScript;
 import com.hoi4utils.ddsreader.DDSReader;
 import com.hoi4utils.clausewitz.HOIIVFile;
@@ -175,14 +174,13 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	}
 
 	private Image loadFocusUnavailableImage() {
-		InputStream fis = null;
-		try {
-			fis = getClass().getClassLoader()
-					.getResourceAsStream(
-                            "com/hoi4utils/clausewitz/hoi4files/gfx/focus_unavailable_bg.dds");
+		String focusUnavailablePath = "/main/resources_binary/hoi4files/gfx/focus_unavailable_bg.dds";
+		final InputStream fis = getClass().getResourceAsStream(focusUnavailablePath);
+		System.out.println("Classpath:");
+		System.out.println(System.getProperty("java.class.path"));
+		try (fis) {
 			if (fis == null) {
-				throw new FileNotFoundException(
-						"Unable to find 'com/HOIIVUtils/hoi4utils/hoi4files/gfx/focus_unavailable_bg.dds'");
+				throw new FileNotFoundException("Unable to find '" + focusUnavailablePath + "'");
 			}
 
 			byte[] buffer = new byte[fis.available()];
@@ -195,7 +193,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 			return JavaFXImageUtils.imageFromDDS(ddspixels, ddswidth, ddsheight);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 			return null;
 		}
 	}

@@ -385,6 +385,10 @@
 					<include>**/*.sql</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>src/main/binary-resources</directory>
+				<filtering>false</filtering>
+			</resource>
 		</resources>
 	</build>
 
