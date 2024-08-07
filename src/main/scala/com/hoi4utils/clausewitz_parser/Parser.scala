@@ -34,6 +34,10 @@ class Parser() {
   @throws[ParserException]
   def parse: Node = {
     val value = parseBlockContent(tokens)
+    if (value.isEmpty) {
+      throw new ParserException("parsed block content was empty")
+    }
+
     /*
      * need to reach up to eof indicator
      * if last token is '}' this could indicate there was a
@@ -57,7 +61,7 @@ class Parser() {
 
     var cont = true
     while (cont) {
-      val nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
+      val nextToken: Token = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
       if ((nextToken.`type` eq TokenType.eof) || nextToken.value == "}") {
         cont = false
       } else {

@@ -23,7 +23,7 @@ object Token {
 
     TokenType.number -> Regex("-?\\d*\\.\\d+|-?\\d+|0x\\d+"),  // Seperates Numbers
 
-    TokenType.eof -> Regex(EOF_INDICATOR),
+    TokenType.eof -> "\\$".r
   )
 }
 
