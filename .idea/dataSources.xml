@@ -8,18 +8,11 @@
       <jdbc-url>jdbc:sqlite:identifier.sqlite</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="." uuid="749b1bb7-382a-41eb-9537-465801f1f841">
+    <data-source source="LOCAL" name="effects" uuid="4f8f661d-6908-4f55-8cd6-7e8c1d9fb699">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/src/main/resources/databases/.</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="effects" uuid="8921d60b-4de2-4680-9ebd-1db69c8fccae">
-      <driver-ref>sqlite.xerial</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\daria\programming\intelliJ\HOIIVUtils\src\main\resources\databases\effects.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\daria\programming\intelliJ\HOIIVUtils\src\main\resources_binary\databases\effects.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>

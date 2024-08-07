@@ -111,78 +111,67 @@ class EffectDatabase(databaseName: String) {
         var supportedScopes = parseEnumSet(supportedScopes_str)
         var supportedTargets = parseEnumSet(supportedTargets_str)
         // im just guessing at this code right now, I just want it to work basically.
-        if (supportedScopes.isEmpty) {
-          throw new InvalidParameterException("Invalid scope definition: " + supportedScopes_str)
-        }
+        if (!(requiredParametersFull_str == null && requiredParametersSimple_str == null)) {
+          if (supportedScopes.isEmpty) {
+            throw new InvalidParameterException("Invalid scope definition: " + supportedScopes_str)
+          }
 
-        /* required parameters */
-        val requiredParametersFull = Option(requiredParametersFull_str)
-        val requiredParameterSimple = Option(requiredParametersSimple_str)
+          /* required parameters */
+          val requiredParametersFull = Option(requiredParametersFull_str)
+          val requiredParameterSimple = Option(requiredParametersSimple_str)
 
-        var effects = new ListBuffer[Effect]
+          var effects = new ListBuffer[Effect]
 
-        (requiredParametersFull, requiredParameterSimple) match {
-          case (Some(requiredParametersFull), Some(requiredParameterSimple)) =>
+          (requiredParametersFull, requiredParameterSimple) match {
+            case (Some(requiredParametersFull), Some(requiredParameterSimple)) =>
             // todo
-//            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) with BlockEffect(pdxIdentifier, new StructuredPDX(pdxIdentifier)) {
-//              // Implement abstract methods from SimpleEffect and BlockEffect here
-//              override def someAbstractMethodFromSimpleEffect(): ReturnType = {
-//                // Implementation
-//              }
-//
-//              override def someAbstractMethodFromBlockEffect(): ReturnType = {
-//                // Implementation
-//              }
-//            })
-          case (Some(requiredParametersFull), None) =>
-            val alternateParameters = requiredParametersFull_str.split("\\s+\\|\\s+")
-            for (alternateParameter <- alternateParameters) {
-              val parametersStrlist = alternateParameter.split("\\s+,\\s+")
-              val childScripts = new ListBuffer[PDXScript[?]]
-              for (i <- parametersStrlist.indices) {
-                val parameterStr = parametersStrlist(i)
-                var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
-                data = data.filter((s: String) => s.nonEmpty)
-                if (data.length >= 2) {
-                  val paramIdentifierStr = data(0).trim
-                  val paramTypeStr = data(1).trim
-                  val paramValueType = ParameterValueType.of(paramTypeStr)
-                }
-                else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
-                if (data.length >= 3) {
-                  // idk
-                }
-              }
-            }
-//            effects.addOne(new BlockEffect(pdxIdentifier,
-//              new StructuredPDX(pdxIdentifier) {
-//                override protected def childScripts: Iterable[? <: PDXScript[?]] = List.empty
-//              })
-//            {
-//            })
-          case (None, Some(requiredParameterSimple)) =>
-            val alternateParameters = requiredParametersSimple_str.split("\\s+\\|\\s+")
-            for (alternateParameter <- alternateParameters) {
-              val parametersStrlist = alternateParameter.split("\\s+,\\s+")
-              for (i <- parametersStrlist.indices) {
-                val parameterStr = parametersStrlist(i)
-                var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
-                data = data.filter((s: String) => s.nonEmpty)
-                if (data.length >= 2) {
-                  val paramIdentifierStr = data(0).trim
-                  val paramTypeStr = data(1).trim
-                  val paramValueType = ParameterValueType.of(paramTypeStr)
-                }
-                else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
-                if (data.length >= 3) {
-                  // idk
+            //            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) with BlockEffect(pdxIdentifier, new StructuredPDX(pdxIdentifier)) {
+            //              // Implement abstract methods from SimpleEffect and BlockEffect here
+            //              override def someAbstractMethodFromSimpleEffect(): ReturnType = {
+            //                // Implementation
+            //              }
+            //
+            //              override def someAbstractMethodFromBlockEffect(): ReturnType = {
+            //                // Implementation
+            //              }
+            //            })
+            case (Some(requiredParametersFull), None) =>
+              val alternateParameters = requiredParametersFull_str.split("\\s+\\|\\s+")
+              for (alternateParameter <- alternateParameters) {
+                val parametersStrlist = alternateParameter.split("\\s+,\\s+")
+                val childScripts = new ListBuffer[PDXScript[?]]
+                for (i <- parametersStrlist.indices) {
+                  val parameterStr = parametersStrlist(i).trim
+                  var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
+                  data = data.filter((s: String) => s.nonEmpty)
+                  if (data.length >= 2) {
+                    val paramIdentifierStr = data(0).trim
+                    val paramTypeStr = data(1).trim
+                    val paramValueType = ParameterValueType.of(paramTypeStr)
+                  } else if (data.length == 1) {
+                    parseSimpleParameter(parameterStr) // really a simple parameter
+                  }
+                  else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
+                  if (data.length >= 3) {
+                    // idk
+                  }
                 }
               }
-            }
-//            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) {
-//            })
-          case (None, None) =>
+            //            effects.addOne(new BlockEffect(pdxIdentifier,
+            //              new StructuredPDX(pdxIdentifier) {
+            //                override protected def childScripts: Iterable[? <: PDXScript[?]] = List.empty
+            //              })
+            //            {
+            //            })
+            case (None, Some(requiredParameterSimple)) =>
+              parseSimpleParameter(requiredParametersSimple_str)
+            //            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) {
+            //            })
+            case (None, None) =>
             // todo (bad)
+          }
+        } else {
+          System.out.println("No parameters for " + pdxIdentifier + " in effects database.")
         }
       }
     } catch {
@@ -192,7 +181,38 @@ class EffectDatabase(databaseName: String) {
     loadedEffects.toList
   }
 
-//  private def parseEnumSet(enumSetString: String): EnumSet[ScopeType] = {
+  private def parseSimpleParameter(requiredParametersSimple_str: String): Unit = {
+    val alternateParameters = requiredParametersSimple_str.split("\\s+\\|\\s+")
+    for (alternateParameter <- alternateParameters) {
+      val parametersStrlist = alternateParameter.split("\\s+,\\s+")
+      for (i <- parametersStrlist.indices) {
+        val parameterStr = parametersStrlist(i).trim
+        var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
+        data = data.filter((s: String) => s.nonEmpty)
+//        if (data.length >= 2) {
+//          val paramIdentifierStr = data(0).trim
+//          val paramTypeStr = data(1).trim
+//          val paramValueType = ParameterValueType.of(paramTypeStr)
+//        }
+        if (data.length == 1) {
+          if (data(0).trim.startsWith("<") && data(0).trim.endsWith(">")) {
+            //
+            val paramTypeStr = data(0).trim.substring(1, data(0).trim.length - 1)
+            val paramValueType = ParameterValueType.of(paramTypeStr)
+          }
+          else {
+            // todo
+          }
+        }
+        else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
+        if (data.length >= 3) {
+          // idk
+        }
+      }
+    }
+  }
+
+  //  private def parseEnumSet(enumSetString: String): EnumSet[ScopeType] = {
 //    if (enumSetString == null || enumSetString.isEmpty || enumSetString == "none") null
 //    else {
 //      val enumValues = enumSetString.split(", ")
