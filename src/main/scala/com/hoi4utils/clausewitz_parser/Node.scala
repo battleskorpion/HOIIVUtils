@@ -54,7 +54,12 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
     valueIsNull && identifier == null && operator == null
   }
 
-  override def toString: String = identifier + operator + nodeValue.asString // todo
+  override def toString: String = {
+    if (!isEmpty)
+      identifier + operator + nodeValue.asString
+    else
+      super.toString()
+  }
 
   def nameAsInteger: Int = identifier.toInt
 

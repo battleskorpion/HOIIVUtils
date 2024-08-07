@@ -158,20 +158,20 @@ class Parser() {
     val nextToken = tokens.next.getOrElse(return null)
     // todo eeeh?
     nextToken.`type` match {
-      case string =>
+      case TokenType.string =>
         if (nextToken.length == 1) System.out.println("Parser: ?? " + nextToken.value)
         /* substring from 1 to length() - 2: don't replace "" */
         if (nextToken.value.length == 2) return new NodeValue(nextToken.value)
         return new NodeValue(nextToken.value.substring(1, nextToken.length - 2).replaceAll(Parser.escape_quote_regex, "\"").replaceAll(Parser.escape_backslash_regex, "\\"))
 
-      case number =>
+      case TokenType.number =>
         /* handles hexadecimal or floating-point/integers */
         return new NodeValue(if (nextToken.value.startsWith("0x")) Integer.parseInt(nextToken.value.substring(2), 16)
         else nextToken.value.toDouble)
 
-      case symbol => return new NodeValue(nextToken.value)
+      case TokenType.symbol => return new NodeValue(nextToken.value)
 
-      case operator => if (nextToken.value == "{") {
+      case TokenType.operator => if (nextToken.value == "{") {
         val result = parseBlockContent(tokens)
         val right = tokens.next.getOrElse(throw new ParserException("Parser expected a matching \"}\""))
         if (!(right.value == "}")) throw new ParserException("Parser expected a matching \"}\"")
