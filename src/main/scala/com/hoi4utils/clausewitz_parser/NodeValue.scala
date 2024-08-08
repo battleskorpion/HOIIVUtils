@@ -83,10 +83,19 @@ final class NodeValue {
     if (value == null) return "[null]"
     value match {
       case s: String => s
-      case i: Int => Int.toString()
-      case d: Double => Double.toString()
+      case i: Int => i.toString
+      case d: Double => d.toString
       //    case n: Number => Long.toString(n.longValue)
-      case l: ListBuffer[AnyVal] => l.toString
+      case l: ListBuffer[AnyVal] => {
+        val sb = new StringBuilder()
+        sb.append("{")
+        for (i <- l.indices) {
+          sb.append(l(i))
+          if (i < l.size - 1) sb.append(", ")
+        }
+        sb.append("}")
+        sb.toString()
+      }
       case n: Node => n.toString
       case _ => "[invalid type]"
     }
