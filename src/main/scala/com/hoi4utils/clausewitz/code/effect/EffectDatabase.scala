@@ -149,7 +149,7 @@ class EffectDatabase(databaseName: String) {
                     val paramTypeStr = data(1).trim
                     val paramValueType = ParameterValueType.of(paramTypeStr)
                   } else if (data.length == 1) {
-                    simpleParameterToEffect(parameterStr) // really a simple parameter
+                    simpleParameterToEffect(pdxIdentifier, parameterStr) // really a simple parameter
                   }
                   else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
                   if (data.length >= 3) {
@@ -164,7 +164,7 @@ class EffectDatabase(databaseName: String) {
             //            {
             //            })
             case (None, Some(requiredParameterSimple)) =>
-              simpleParameterToEffect(requiredParametersSimple_str)
+              simpleParameterToEffect(pdxIdentifier, requiredParametersSimple_str)
             //            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) {
             //            })
             case (None, None) =>
@@ -181,7 +181,7 @@ class EffectDatabase(databaseName: String) {
     loadedEffects.toList
   }
 
-  private def simpleParameterToEffect(requiredParametersSimple_str: String): Unit = {
+  private def simpleParameterToEffect(pdxIdentifier: String, requiredParametersSimple_str: String): Unit = {
     val alternateParameters = requiredParametersSimple_str.split("\\s+\\|\\s+")
     for (alternateParameter <- alternateParameters) {
       val parametersStrlist = alternateParameter.split("\\s+,\\s+")
@@ -210,10 +210,6 @@ class EffectDatabase(databaseName: String) {
         }
       }
     }
-//    new SimpleEffect():
-//      override def set(obj: Effect): Unit = ???
-//
-//      override def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = ???
   }
 
   //  private def parseEnumSet(enumSetString: String): EnumSet[ScopeType] = {
