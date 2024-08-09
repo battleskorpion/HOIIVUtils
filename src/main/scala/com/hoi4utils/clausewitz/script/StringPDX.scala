@@ -23,6 +23,7 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
   override def set(s: String): Unit = {
     this.node match {
       case Some(node) => node.setValue(s)
+      case None =>
     }
   }
 
