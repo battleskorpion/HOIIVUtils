@@ -17,6 +17,10 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
 
   if (nodeValue == null) nodeValue = new NodeValue
   
+  def this(identifier: String, operator: String, value: String | Int | Double | Boolean | ListBuffer[Node] | Null) = {
+    this(identifier, operator, new NodeValue(value), null, null)
+  }
+  
   def this(value: NodeValue) = {
     this(null, null, value, null, null)
   }

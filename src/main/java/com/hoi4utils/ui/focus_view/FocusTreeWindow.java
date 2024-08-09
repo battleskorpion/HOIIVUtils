@@ -1,12 +1,13 @@
 package com.hoi4utils.ui.focus_view;
 
 import com.hoi4utils.Settings;
+import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.data.focus.FocusTree$;
 import com.hoi4utils.clausewitz.localization.*;
 import com.hoi4utils.clausewitz.script.PDXScript;
 import com.hoi4utils.ddsreader.DDSReader;
 import com.hoi4utils.clausewitz.HOIIVFile;
-import com.hoi4utils.clausewitz.data.country.CountryTag;
+import com.hoi4utils.clausewitz.data.country.CountryTagPDX;
 import com.hoi4utils.clausewitz.data.focus.FixFocus;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;

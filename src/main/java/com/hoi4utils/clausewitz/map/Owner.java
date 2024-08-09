@@ -1,12 +1,12 @@
 package com.hoi4utils.clausewitz.map;
 
-import com.hoi4utils.clausewitz.data.country.CountryTag;
+import com.hoi4utils.clausewitz.data.country.CountryTagPDX;
 import org.jetbrains.annotations.NotNull;
 
 /*
  * Owner File
  */
-public record Owner (CountryTag tag) implements Comparable<Owner> {
+public record Owner (CountryTagPDX tag) implements Comparable<Owner> {
 
 	/**
 	 * returns whether the owner country represented by this record is the same country as represented by
@@ -16,7 +16,7 @@ public record Owner (CountryTag tag) implements Comparable<Owner> {
 		if (other instanceof Owner) {
 			return this.tag.equals(((Owner) other).tag);
 		}
-		if (other instanceof CountryTag) {
+		if (other instanceof CountryTagPDX) {
 			return this.tag.equals(other);
 		}
 

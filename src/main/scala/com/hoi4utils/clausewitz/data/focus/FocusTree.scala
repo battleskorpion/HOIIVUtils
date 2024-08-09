@@ -1,10 +1,9 @@
 package com.hoi4utils.clausewitz.data.focus
 
 import com.hoi4utils.clausewitz.HOIIVFile
-import com.hoi4utils.clausewitz.data.country.CountryTagsManager
+import com.hoi4utils.clausewitz.data.country.{CountryTag, CountryTagPDX, CountryTagsManager}
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz.localization.*
-import com.hoi4utils.clausewitz.data.country.CountryTag
 import javafx.collections.{FXCollections, ObservableList}
 import org.jetbrains.annotations.*
 
@@ -63,7 +62,12 @@ object FocusTree {
   def get(tag: CountryTag): FocusTree = {
     //focusTrees.values.stream.filter((focusTree: FocusTree) => focusTree.country.nodeEquals(tag)).findFirst.orElse(null)
     for (tree <- listFocusTrees) {
-      if (tree.country.equals(tag)) return tree
+      //if (tree.country.equals(tag)) return tree
+      var countryTag = tree.country.get()
+      countryTag match {
+        case Some(t) => if (t.tag.equals(tag)) return tree
+        case None => 
+      }
     }
     null
   }
@@ -83,7 +87,7 @@ object FocusTree {
 class FocusTree private(private var focus_file: File)
   extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] {
   /* pdxscript */
-  final var country: ReferencePDX[CountryTag] = new ReferencePDX[CountryTag](() => CountryTag.toList, t => t.get(), "country")
+  final var country: ReferencePDX[CountryTagPDX] = new ReferencePDX[CountryTagPDX](() => CountryTagPDX.toList, t => t.get(), "country")
   final var focuses: MultiPDX[Focus] = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   final var id: StringPDX = new StringPDX("id")
   private val focusIDList: ListBuffer[String] = null
@@ -110,7 +114,7 @@ class FocusTree private(private var focus_file: File)
     focusIDList
   }
 
-  def countryTag: CountryTag = {
+  def countryTag: CountryTagPDX = {
     country.get() match {
       case Some(t) => t
       case None => null

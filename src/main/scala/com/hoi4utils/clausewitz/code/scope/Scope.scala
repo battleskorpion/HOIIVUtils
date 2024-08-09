@@ -1,12 +1,12 @@
 package com.hoi4utils.clausewitz.code.scope
 
 import com.hoi4utils.clausewitz.code.effect.Effect
-import com.hoi4utils.clausewitz.data.country.CountryTag
+import com.hoi4utils.clausewitz.data.country.{CountryTag, CountryTagPDX}
 import com.hoi4utils.clausewitz.map.state.State
 import com.hoi4utils.clausewitz.script.PDXScript
 
 import scala.collection.mutable
-import scala.collection.mutable.{HashMap}
+import scala.collection.mutable.HashMap
 import scala.Cloneable
 
 
@@ -42,7 +42,7 @@ object Scope {
 
   // todo hopefully theres no conflicts here? or refactor necessary here
   // dont think its possible that there would be.
-  def of(countryTag: CountryTag): Scope = {
+  def of(countryTag: CountryTagPDX): Scope = {
     if (countryTag == null) return null
     val tag = countryTag.toString
     val s = getClone(tag)

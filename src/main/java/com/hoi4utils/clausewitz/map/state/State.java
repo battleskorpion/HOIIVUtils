@@ -1,10 +1,11 @@
 package com.hoi4utils.clausewitz.map.state;
 
 import com.hoi4utils.clausewitz.HOIIVFile;
+import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.localization.*;
 import com.hoi4utils.clausewitz.code.ClausewitzDate;
 import com.hoi4utils.clausewitz.data.country.Country;
-import com.hoi4utils.clausewitz.data.country.CountryTag;
+import com.hoi4utils.clausewitz.data.country.CountryTagPDX;
 import com.hoi4utils.clausewitz.data.country.CountryTagsManager;
 import com.hoi4utils.clausewitz.map.Owner;
 import com.hoi4utils.clausewitz.map.UndefinedStateIDException;
@@ -13,7 +14,6 @@ import com.hoi4utils.clausewitz.map.province.VictoryPoint;
 import com.hoi4utils.clausewitz.map.resources.Resources;
 import com.hoi4utils.clausewitz_parser.*;
 import org.jetbrains.annotations.NotNull;
-import scala.Option;
 import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
@@ -109,7 +109,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 			// owner
 			if (historyNode.contains("owner")) {
 				// empty date constructor for default date
-				owner.put(ClausewitzDate.of(), new Owner(new CountryTag(historyNode.getValue("owner").string())));
+				owner.put(ClausewitzDate.of(), new Owner(new CountryTagPDX(historyNode.find("owner").get())));
 			} else {
 				System.err.println("Warning: state owner not defined, " + stateFile.getName());
 			}
@@ -141,15 +141,26 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 			/* victory points */
 			if (historyNode.contains("victory_points")) {
 				Node victoryPointsNode = (Node) historyNode.find("victory_points").getOrElse(null);
-				for (Node vpNode : CollectionConverters.asJava(victoryPointsNode.toList())) {
-					if (!vpNode.contains("province") || !vpNode.contains("value")) {
-						System.out.println("Warning: invalid victory point node in state, " + stateFile.getName());
-						continue;
-					}
-					var vp = VictoryPoint.of(vpNode.getValue("province").integer(),
-							vpNode.getValue("value").integer());
-					victoryPoints.add(vp);
+//				for (Node vpNode : CollectionConverters.asJava(victoryPointsNode.toList())) {
+//					if (!vpNode.contains("province") || !vpNode.contains("value")) {
+//						System.out.println("Warning: invalid victory point node in state, " + stateFile.getName());
+//						continue;
+//					}
+//					var vp = VictoryPoint.of(vpNode.getValue("province").integer(),
+//							vpNode.getValue("value").integer());
+//					victoryPoints.add(vp);
+//				}
+				// todo bad code time
+				var vpl = CollectionConverters.asJava(victoryPointsNode.toList());
+				VictoryPoint vp = null;
+				if (vpl.size() == 2) {
+					vp = VictoryPoint.of((int) Double.parseDouble(vpl.get(0).identifier()),
+                            (int) Double.parseDouble(vpl.get(1).identifier()));
+					victoryPoints.add(vp); 
+				} else {
+					System.out.println("Warning: invalid victory point node in state, " + stateFile.getName());
 				}
+				
 				//locHandler.addLocalization(victoryPoints, "VICTORY_POINTS_\\d+");
 			}
 		} else {

@@ -4,7 +4,6 @@ import com.hoi4utils.FileUtils;
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.SettingsManager;
 import org.jetbrains.annotations.NotNull;
-import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.io.IOException;
