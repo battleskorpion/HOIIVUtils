@@ -7,7 +7,6 @@ import com.hoi4utils.clausewitz.localization.*;
 import com.hoi4utils.clausewitz.script.PDXScript;
 import com.hoi4utils.ddsreader.DDSReader;
 import com.hoi4utils.clausewitz.HOIIVFile;
-import com.hoi4utils.clausewitz.data.country.CountryTagPDX;
 import com.hoi4utils.clausewitz.data.focus.FixFocus;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
@@ -367,8 +366,9 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	private void selectClosestMatch(ComboBox<FocusTree> comboBox, String typedText) {
 		for (FocusTree item : comboBox.getItems()) {
 			//if (item.country().get() != null && item.country().get().get().toLowerCase().startsWith(typedText.toLowerCase())) {
-			var optionalCountry = item.country().get();
-			if (optionalCountry.nonEmpty() && optionalCountry.get().getOrElse("").toLowerCase().startsWith(typedText.toLowerCase())) {
+			scala.Option<CountryTag> optionalCountry = item.country().get();
+//			if (optionalCountry.nonEmpty() && optionalCountry.get().getOrElse("").toLowerCase().startsWith(typedText.toLowerCase())) {
+			if (optionalCountry.nonEmpty() && optionalCountry.getOrElse(() -> "").toLowerCase().startsWith(typedText.toLowerCase())) {
 				comboBox.getSelectionModel().select(item);
 				comboBox.getEditor().setText(String.valueOf(item));
 				return;

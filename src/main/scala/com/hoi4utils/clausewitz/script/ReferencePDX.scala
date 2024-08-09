@@ -17,7 +17,8 @@ import scala.collection.mutable.ListBuffer
  * @param pdxIdentifiers
  * @tparam T
  */
-class ReferencePDX[T <: PDXScript[?]](final protected var referenceCollectionSupplier: () => Iterable[T],
+// removed T <: PDXScript[?]
+class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Iterable[T],
                                         final protected var idExtractor: T => Option[String], pdxIdentifiers: List[String])
   extends AbstractPDX[T](pdxIdentifiers) {
 

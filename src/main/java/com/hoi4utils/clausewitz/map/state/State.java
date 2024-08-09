@@ -5,7 +5,6 @@ import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.localization.*;
 import com.hoi4utils.clausewitz.code.ClausewitzDate;
 import com.hoi4utils.clausewitz.data.country.Country;
-import com.hoi4utils.clausewitz.data.country.CountryTagPDX;
 import com.hoi4utils.clausewitz.data.country.CountryTagsManager;
 import com.hoi4utils.clausewitz.map.Owner;
 import com.hoi4utils.clausewitz.map.UndefinedStateIDException;
@@ -109,7 +108,7 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 			// owner
 			if (historyNode.contains("owner")) {
 				// empty date constructor for default date
-				owner.put(ClausewitzDate.of(), new Owner(new CountryTagPDX(historyNode.find("owner").get())));
+				owner.put(ClausewitzDate.of(), new Owner(new CountryTag(historyNode.find("owner").get().$string())));
 			} else {
 				System.err.println("Warning: state owner not defined, " + stateFile.getName());
 			}

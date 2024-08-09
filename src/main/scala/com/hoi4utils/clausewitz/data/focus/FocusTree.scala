@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.data.focus
 
 import com.hoi4utils.clausewitz.HOIIVFile
-import com.hoi4utils.clausewitz.data.country.{CountryTag, CountryTagPDX, CountryTagsManager}
+import com.hoi4utils.clausewitz.data.country.{CountryTag, CountryTagsManager}
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz.localization.*
 import javafx.collections.{FXCollections, ObservableList}
@@ -87,7 +87,7 @@ object FocusTree {
 class FocusTree private(private var focus_file: File)
   extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] {
   /* pdxscript */
-  final var country: ReferencePDX[CountryTagPDX] = new ReferencePDX[CountryTagPDX](() => CountryTagPDX.toList, t => t.get(), "country")
+  final var country: ReferencePDX[CountryTag] = new ReferencePDX[CountryTag](() => CountryTag.toList, t => Some(t.get), "country")
   final var focuses: MultiPDX[Focus] = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   final var id: StringPDX = new StringPDX("id")
   private val focusIDList: ListBuffer[String] = null
@@ -114,7 +114,7 @@ class FocusTree private(private var focus_file: File)
     focusIDList
   }
 
-  def countryTag: CountryTagPDX = {
+  def countryTag: CountryTag = {
     country.get() match {
       case Some(t) => t
       case None => null
