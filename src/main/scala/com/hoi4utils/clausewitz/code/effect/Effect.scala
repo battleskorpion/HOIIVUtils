@@ -7,8 +7,9 @@ import org.jetbrains.annotations.NotNull
 import scala.collection.mutable
 
 // todo should be sealed? 
+// todo  with AbstractPDX[Effect](identifiers) ????
 trait Effect extends ScopedPDXScript with PDXScript[?] {
-
+  
 //  protected var tSupplier: () => ReferencePDX[Effect]
 //  protected var structuredBlock: StructuredPDX
 
@@ -16,9 +17,7 @@ trait Effect extends ScopedPDXScript with PDXScript[?] {
   protected var _targetScope: Option[Scope] = None
   protected var _supportedScopes: Set[ScopeType] = Set.empty
   protected var _supportedTargets: Set[ScopeType] = Set.empty
-
-  def identifier: String
-
+  
   override def supportedScopes: Set[ScopeType] = _supportedScopes
 
   def supportedTargets: Set[ScopeType] = _supportedTargets
@@ -42,4 +41,5 @@ trait Effect extends ScopedPDXScript with PDXScript[?] {
   def hasTarget: Boolean = _targetScope.isDefined
 
   def isScope: Boolean = false
+  
 }

@@ -130,11 +130,6 @@ class EffectDatabase(databaseName: String) {
             //              override def someAbstractMethodFromSimpleEffect(): ReturnType = {
             //                // Implementation
             //              }
-            //
-            //              override def someAbstractMethodFromBlockEffect(): ReturnType = {
-            //                // Implementation
-            //              }
-            //            })
             case (Some(requiredParametersFull), None) =>
               val alternateParameters = requiredParametersFull_str.split("\\s+\\|\\s+")
               for (alternateParameter <- alternateParameters) {
@@ -149,7 +144,7 @@ class EffectDatabase(databaseName: String) {
                     val paramTypeStr = data(1).trim
                     val paramValueType = ParameterValueType.of(paramTypeStr)
                   } else if (data.length == 1) {
-                    simpleParameterToEffect(pdxIdentifier, parameterStr) // really a simple parameter
+                    effects ++ simpleParameterToEffect(pdxIdentifier, parameterStr)  // really a simple parameter
                   }
                   else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
                   if (data.length >= 3) {
@@ -157,12 +152,6 @@ class EffectDatabase(databaseName: String) {
                   }
                 }
               }
-            //            effects.addOne(new BlockEffect(pdxIdentifier,
-            //              new StructuredPDX(pdxIdentifier) {
-            //                override protected def childScripts: Iterable[? <: PDXScript[?]] = List.empty
-            //              })
-            //            {
-            //            })
             case (None, Some(requiredParameterSimple)) =>
               simpleParameterToEffect(pdxIdentifier, requiredParametersSimple_str)
             //            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) {
@@ -181,8 +170,9 @@ class EffectDatabase(databaseName: String) {
     loadedEffects.toList
   }
 
-  private def simpleParameterToEffect(pdxIdentifier: String, requiredParametersSimple_str: String): Unit = {
+  private def simpleParameterToEffect(pdxIdentifier: String, requiredParametersSimple_str: String): Option[Effect] = {
     val alternateParameters = requiredParametersSimple_str.split("\\s+\\|\\s+")
+    var paramValueType: Option[ParameterValueType] = None
     for (alternateParameter <- alternateParameters) {
       val parametersStrlist = alternateParameter.split("\\s+,\\s+")
       for (i <- parametersStrlist.indices) {
@@ -198,7 +188,7 @@ class EffectDatabase(databaseName: String) {
           if (data(0).trim.startsWith("<") && data(0).trim.endsWith(">")) {
             //
             val paramTypeStr = data(0).trim.substring(1, data(0).trim.length - 1)
-            val paramValueType = ParameterValueType.of(paramTypeStr)
+            paramValueType = Some(ParameterValueType.of(paramTypeStr))
           }
           else {
             // todo
@@ -210,6 +200,14 @@ class EffectDatabase(databaseName: String) {
         }
       }
     }
+    paramValueType.getOrElse(return None) match {
+      case ParameterValueType.cw_int => Some(
+        new IntPDX(pdxIdentifier) with SimpleEffectPDX {
+        })
+      case _ =>
+        None // todo ???
+    }
+
   }
 
   //  private def parseEnumSet(enumSetString: String): EnumSet[ScopeType] = {
