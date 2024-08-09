@@ -20,19 +20,16 @@ import scala.jdk.javaapi.CollectionConverters
  */
 // todo extends file?
 object FocusTree {
-  private val focusTrees = new mutable.HashMap[File, FocusTree]()
-  private val focusTreesList = new mutable.ListBuffer[FocusTree]()
+  private val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
+  private val focusTrees = new mutable.ListBuffer[FocusTree]()
 
-  // private Modifier countryModifier;
-  // private boolean defaultFocus; // ! todo Do This
-  // private Point continuousFocusPosition; // ! todo DO THIS
   def get(focus_file: File): Option[FocusTree] = {
-    if (!focusTrees.contains(focus_file)) new FocusTree(focus_file)
-    focusTrees.get(focus_file)
+    if (!focusTreeFileMap.contains(focus_file)) new FocusTree(focus_file)
+    focusTreeFileMap.get(focus_file)
   }
 
   def observeFocusTrees: ObservableList[FocusTree] = {
-    FXCollections.observableArrayList(CollectionConverters.asJava(focusTreesList))
+    FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
   }
 
   def read(): Unit = {
@@ -49,12 +46,13 @@ object FocusTree {
     }
   }
 
-  def add(focusTree: FocusTree): mutable.HashMap[File, FocusTree] = {
-    focusTrees.put(focusTree.focus_file, focusTree)
+  def add(focusTree: FocusTree): Iterable[FocusTree] = {
+    focusTreeFileMap.put(focusTree.focus_file, focusTree)
+    focusTrees += focusTree
     focusTrees
   }
 
-  def listFocusTrees: Iterable[FocusTree] = focusTrees.values
+  def listFocusTrees: Iterable[FocusTree] = focusTreeFileMap.values
 
   /**
    * Returns focus tree corresponding to the tag, if it exists
@@ -89,6 +87,8 @@ class FocusTree private(private var focus_file: File)
   final var focuses: MultiPDX[Focus] = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   final var id: StringPDX = new StringPDX("id")
   private val focusIDList: ListBuffer[String] = null
+  // private boolean defaultFocus; // ! todo Do This
+  // private Point continuousFocusPosition; // ! todo DO THIS
 
   //obj.addAll(childScripts)  // todo
   loadPDX(focus_file)

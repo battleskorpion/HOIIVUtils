@@ -1,7 +1,6 @@
 package com.hoi4utils.clausewitz.data.country
 
-import com.hoi4utils.clausewitz.script.AbstractPDX
-import com.hoi4utils.clausewitz.script.PDXScript
+import com.hoi4utils.clausewitz.script.{AbstractPDX, PDXScript, StringPDX}
 import org.jetbrains.annotations.NotNull
 
 import scala.collection.mutable.ListBuffer
@@ -32,19 +31,26 @@ object CountryTag extends Iterable[CountryTag] {
   }
 }
 
-class CountryTag(tag: String) extends AbstractPDX[String](List("tag")) with Comparable[CountryTag] {
+class CountryTag(tag: String) extends StringPDX(List("tag")) {
   setNode(tag)
   CountryTag.addTag(this)
 
-  override def compareTo(o: CountryTag): Int = {
-    (this.get(), o.get()) match {
-      case (Some(thisTag), Some(otherTag)) => thisTag.compareTo(otherTag)
-      case (Some(thisTag), None) => 1
-      case (None, Some(otherTag)) => -1
+  override def set(obj: String): Unit = {
+    setNode(obj)
+  }
+
+  override def equals(other: PDXScript[?]): Boolean = {
+    other match {
+      case other: CountryTag =>
+        super.equals(other)
+      case _ => false
     }
   }
 
-  override def set(obj: String): Unit = {
-    setNode(obj)
+  override def toString: String = {
+    get() match {
+      case Some(tag) => tag
+      case None => "[null country tag]"
+    }
   }
 }

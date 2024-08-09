@@ -4,7 +4,9 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 
 
-class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIdentifiers) {
+class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIdentifiers) 
+  with Comparable[StringPDX] {
+  
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
   }
@@ -38,5 +40,13 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
   def nodeEquals(s: String): Boolean = {
     if (this.node.isEmpty) false
     else node.get.$.equals(s)
+  }
+
+  override def compareTo(o: StringPDX): Int = {
+    (this.get(), o.get()) match {
+      case (Some(str), Some(o)) => str.compareTo(o)
+      case (Some(str), None) => 1
+      case (None, Some(o)) => -1
+    }
   }
 }
