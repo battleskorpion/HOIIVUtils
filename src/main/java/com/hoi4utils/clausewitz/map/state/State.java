@@ -18,6 +18,7 @@ import scala.jdk.javaapi.CollectionConverters;
 import java.io.File;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Loads HOI4 State files, each instance represents a state as defined in "history/states"
@@ -202,16 +203,20 @@ public class State implements InfrastructureData, Localizable, Iterable<State>, 
 	public static ArrayList<State> ownedStatesOfCountry(CountryTag tag) {
 		ArrayList<State> countryStates = new ArrayList<>();
 
-		for (State state : states) {
-			Owner owner = state.owner.get(ClausewitzDate.defaulty());
-			if (owner != null) {
-				if (owner.isCountry(tag)) {
-					countryStates.add(state);
-				}
-			} else {
-				System.out.println("Undefined owner for state: " + state);
-			}
-		}
+//		for (State state : states) {
+//			Owner owner = state.owner.get(ClausewitzDate.defaulty());
+//			if (owner != null) {
+//				if (owner.isCountry(tag)) {
+//					countryStates.add(state);
+//				}
+//			}
+//		}
+		countryStates.addAll(states.stream()
+				.filter(state -> {
+					Owner owner = state.owner.get(ClausewitzDate.defaulty());
+					return owner != null && owner.isCountry(tag);
+				}).toList()
+		); 
 
 		return countryStates;
 	}
