@@ -9,6 +9,7 @@ import com.hoi4utils.clausewitz.data.units.OrdersOfBattle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.jetbrains.annotations.NotNull;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -254,7 +255,7 @@ public class Country implements InfrastructureData, Comparable<Country> {
 	}
 
 	public static ObservableList<Country> loadCountries() {
-		return loadCountries(State.infrastructureOfCountries(), State.resourcesOfCountries());
+		return loadCountries(CollectionConverters.asJava(State.infrastructureOfCountries()), CollectionConverters.asJava(State.resourcesOfCountries()));
 	}
 
 	public String name() {

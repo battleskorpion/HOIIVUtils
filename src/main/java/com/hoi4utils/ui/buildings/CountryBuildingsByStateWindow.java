@@ -15,6 +15,7 @@ import javafx.scene.control.*;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
+import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
 import java.awt.*;
@@ -183,7 +184,7 @@ public class CountryBuildingsByStateWindow extends HOIIVUtilsWindow implements T
 		this.country = country;
 
 		setTitle("HOIIVUtils Buildings By State Window, Country: " + country.name());
-		stateList = FXCollections.observableArrayList(State.ownedStatesOfCountry(country));
+		stateList = FXCollections.observableArrayList(CollectionConverters.asJava(State.ownedStatesOfCountry(country)));
 		System.out.println("1 - Country: " + country);
 	}
 
