@@ -270,7 +270,6 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
         throw new RuntimeException(e)
       case exc: Exception =>
         return // todo
-
     }
     // id
     if (stateNode.contains("id")) stateID = stateNode.getValue("id").integer
@@ -285,9 +284,9 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
     }
     /* buildings */
     if (stateNode.contains("history")) {
-      val historyNode = stateNode.find("history").getOrElse(null).asInstanceOf[Node]
+      val historyNode = stateNode.find("history").orNull.asInstanceOf[Node]
       var buildingsNode: Node = null
-      if (historyNode.contains("buildings")) buildingsNode = historyNode.find("buildings").getOrElse(null).asInstanceOf[Node]
+      if (historyNode.contains("buildings")) buildingsNode = historyNode.find("buildings").orNull.asInstanceOf[Node]
       // owner
       if (historyNode.contains("owner")) {
         // empty date constructor for default date
@@ -312,7 +311,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
       }
       /* victory points */
       if (historyNode.contains("victory_points")) {
-        val victoryPointsNode = historyNode.find("victory_points").getOrElse(null).asInstanceOf[Node]
+        val victoryPointsNode = historyNode.find("victory_points").orNull.asInstanceOf[Node]
         //				for (Node vpNode : CollectionConverters.asJava(victoryPointsNode.toList())) {
         //					if (!vpNode.contains("province") || !vpNode.contains("value")) {
         //						System.out.println("Warning: invalid victory point node in state, " + stateFile.getName());
@@ -351,9 +350,9 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
     var tungsten = 0
     if (!stateNode.contains("resources")) return new Resources(aluminum, chromium, oil, rubber, steel, tungsten)
     /* resources */
-    val resourcesNode = stateNode.find("resources").getOrElse(null).asInstanceOf[Node]
+    val resourcesNode = stateNode.find("resources").orNull.asInstanceOf[Node]
     // aluminum (aluminium bri'ish spelling)
-    if (resourcesNode.contains("aluminium")) { // ! todo always null
+    if (resourcesNode.contains("aluminium")) {
       aluminum = resourcesNode.getValue("aluminium").rational.toInt
     }
     // chromium
@@ -387,5 +386,5 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
 
   @NotNull override def getLocalizableProperties: mutable.Map[Property, String] = mutable.Map(Property.NAME -> name)
 
-  @NotNull override def getLocalizableGroup: Iterable[_ <: Localizable] = State.states
+  @NotNull override def getLocalizableGroup: Iterable[? <: Localizable] = State.states
 }
