@@ -1,6 +1,6 @@
 /*
 *
-*   Adapted by HOIIVUtils from:
+*   Adapted from:
 *       Author: Antonio Pelusi
 *       Website: https://www.antoniopelusi.com
 *       Source code: https://github.com/antoniopelusi/JavaFX-Dark-Theme
@@ -20,8 +20,6 @@
     -fx-control-inner-background: derive(-fx-base, 35%);
     -fx-control-inner-background-alt: -fx-control-inner-background ;
 }*/
-
-
 
 /* Label */
 .label{
@@ -523,21 +521,26 @@
 
 
 /* ProgressBar */
-.progress-bar{
+.progress-bar {
     -fx-background-color: transparent;
     background-color: transparent;
 }
-.progress-bar .bar{
-    -fx-background-color: #4e4e4e;
-    background-color: #4e4e4e;
+.progress-bar .bar {
+    -fx-background-color: #3e55a1;
+    background-color: #3e55a1;
     -fx-background-radius: 0;
-    -fx-padding: 3;
-    padding: 3;
-    -fx-background-insets: 0;
 }
+/*.progress-bar .bar{*/
+/*    -fx-background-color: #4e4e4e;*/
+/*    background-color: #4e4e4e;*/
+/*    -fx-background-radius: 0;*/
+/*    -fx-padding: 3;*/
+/*    padding: 3;*/
+/*    -fx-background-insets: 0;*/
+/*}*/
 .progress-bar .track {
-    -fx-background-color: transparent;
-    background-color: transparent;
+    /*-fx-background-color: transparent;*/
+    /*background-color: transparent;*/
     -fx-background-radius: 0;
 }
 

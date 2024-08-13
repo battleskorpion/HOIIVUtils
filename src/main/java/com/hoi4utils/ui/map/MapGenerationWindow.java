@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.province.ProvinceGeneration;
 import com.hoi4utils.clausewitz.map.province.ProvinceMap;
 import com.hoi4utils.ui.FXWindow;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,6 +16,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 
 import java.awt.*;
 import java.io.File;
@@ -37,6 +40,10 @@ public class MapGenerationWindow extends HOIIVUtilsWindow {
 	Button browseHeightmapButton;
 	@FXML
 	Button provinceGenerationButton;
+	@FXML
+	GridPane provinceGridPane;
+	@FXML
+	AnchorPane provinceAnchorPane; 
 	@FXML
 	ProgressBar provinceGenerationProgressBar;
 	Heightmap heightmap;
@@ -148,19 +155,31 @@ public class MapGenerationWindow extends HOIIVUtilsWindow {
 
 	@FXML
 	void onGenerateProvinces() {
-		// todo let ui and do generate on other
 		provinceGenerationButton.setVisible(false);
 		provinceGenerationProgressBar.setVisible(true);
-		provinceGenerationProgressBar.setProgress(0);
 
-		provinceGeneration.generate(heightmap);
+		Task<Void> task = new Task<>() {
+			@Override
+			protected Void call() throws Exception {
+				updateProgress(90, 100);
+				provinceGeneration.generate(heightmap);
 
-		provinceGeneration.writeProvinceMap(); // todo separate save button
-		drawProvinceMap();
+				updateProgress(99, 100);
+				provinceGeneration.writeProvinceMap();
+				drawProvinceMap();
+				updateProgress(100, 100);
+				return null;
+			}
+		};
 
-		provinceGenerationProgressBar.setVisible(false);
-		provinceGenerationButton.setVisible(true);
-		provinceGenerationButton.setText("Generate");
+		task.setOnSucceeded(e -> {
+			provinceGenerationProgressBar.setVisible(false);
+			provinceGenerationButton.setVisible(true);
+//			provinceGenerationButton.setText("Generate");
+		});
+
+		provinceGenerationProgressBar.progressProperty().bind(task.progressProperty());
+		new Thread(task).start();
 	}
 
 	@FXML
