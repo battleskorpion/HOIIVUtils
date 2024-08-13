@@ -19,6 +19,7 @@ import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.{ListBuffer, Map}
 import scala.jdk.CollectionConverters.*
+import scala.util.{Failure, Success, Try}
 
 
 /**
@@ -260,16 +261,14 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
     // ! todo something important
     // int navalPorts = 0; //has a province location
     var airfields = 0
+    
     /* parse state data */
     val stateParser = new Parser(stateFile)
     // Expression exp = stateParser.expressions();
-    var stateNode: Node = null
-    try stateNode = stateParser.parse.find("state").get
-    catch {
-      case e: ParserException =>
-        throw new RuntimeException(e)
-      case exc: Exception =>
-        return // todo
+    val stateNode: Node = Try(stateParser.parse.find("state").get) match {
+      case Success(node) => node
+      case Failure(e: ParserException) => throw new RuntimeException(e)
+      case Failure(_) => return
     }
     // id
     if (stateNode.contains("id")) stateID = stateNode.getValue("id").integer
@@ -312,15 +311,6 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
       /* victory points */
       if (historyNode.contains("victory_points")) {
         val victoryPointsNode = historyNode.find("victory_points").orNull.asInstanceOf[Node]
-        //				for (Node vpNode : CollectionConverters.asJava(victoryPointsNode.toList())) {
-        //					if (!vpNode.contains("province") || !vpNode.contains("value")) {
-        //						System.out.println("Warning: invalid victory point node in state, " + stateFile.getName());
-        //						continue;
-        //					}
-        //					var vp = VictoryPoint.of(vpNode.getValue("province").integer(),
-        //							vpNode.getValue("value").integer());
-        //					victoryPoints.add(vp);
-        //				}
         // todo bad code time
         val vpl = CollectionConverters.asJava(victoryPointsNode.toList)
         var vp: VictoryPoint = null
@@ -342,29 +332,36 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
   }
 
   def findStateResources(stateNode: Node): Resources = {
-    var aluminum = 0
-    var chromium = 0
-    var oil = 0
-    var rubber = 0
-    var steel = 0
-    var tungsten = 0
-    if (!stateNode.contains("resources")) return new Resources(aluminum, chromium, oil, rubber, steel, tungsten)
-    /* resources */
+    if (!stateNode.contains("resources")) return Resources()
+    
     val resourcesNode = stateNode.find("resources").orNull.asInstanceOf[Node]
+
     // aluminum (aluminium bri'ish spelling)
-    if (resourcesNode.contains("aluminium")) {
-      aluminum = resourcesNode.getValue("aluminium").rational.toInt
+    val aluminum: Int = resourcesNode.find("aluminium") match {
+      case Some(al) => al.$integer
+      case None => 0
+    } 
+    val chromium: Int = resourcesNode.find("chromium") match {
+      case Some(ch) => ch.$integer
+      case None => 0
     }
-    // chromium
-    if (resourcesNode.contains("chromium")) chromium = resourcesNode.getValue("chromium").rational.toInt
-    // rubber
-    if (resourcesNode.contains("rubber")) rubber = resourcesNode.getValue("rubber").rational.toInt
-    // oil
-    if (resourcesNode.contains("oil")) oil = resourcesNode.getValue("oil").rational.toInt
-    // steel
-    if (resourcesNode.contains("steel")) steel = resourcesNode.getValue("steel").rational.toInt
-    // tungsten
-    if (resourcesNode.contains("tungsten")) tungsten = resourcesNode.getValue("tungsten").rational.toInt
+    val oil: Int = resourcesNode.find("oil") match {
+      case Some(o) => o.$integer
+      case None => 0
+    }
+    val rubber: Int = resourcesNode.find("rubber") match {
+      case Some(r) => r.$integer
+      case None => 0
+    }
+    val steel: Int = resourcesNode.find("steel") match {
+      case Some(s) => s.$integer
+      case None => 0
+    }
+    val tungsten: Int = resourcesNode.find("tungsten") match {
+      case Some(t) => t.$integer
+      case None => 0
+    }
+    
     new Resources(aluminum, chromium, oil, rubber, steel, tungsten)
   }
 

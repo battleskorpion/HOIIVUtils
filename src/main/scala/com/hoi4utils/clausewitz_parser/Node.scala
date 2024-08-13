@@ -110,4 +110,11 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
       case _ => null
     }
   }
+  
+  def $integer: Integer = {
+    this.$ match {
+      case i: Int => i
+      case _ => null
+    }
+  }
 }

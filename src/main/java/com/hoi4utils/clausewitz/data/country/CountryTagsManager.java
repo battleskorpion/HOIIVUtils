@@ -9,38 +9,45 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static com.hoi4utils.Settings.HOI4_PATH;
 import static com.hoi4utils.Settings.MOD_PATH;
 
 public class CountryTagsManager extends HOIIVUtils implements Iterable<CountryTag> {
 
 	private static ArrayList<CountryTag> country_tags;
 
-	private static File country_tags_folder;
-	private static Collection<File> country_tags_files;
+	private static File mod_country_tags_folder;
+	private static File base_country_tags_folder;
+	private static Collection<File> mod_country_tags_files;
+	private static Collection<File> base_country_tags_files; 
 
 	private static ArrayList<CountryTag> loadCountryTags() throws IOException {
 		country_tags = new ArrayList<>();
-		country_tags_folder = new File(SettingsManager.get(MOD_PATH) + "\\common\\country_tags");
-		if (country_tags_folder.exists() && country_tags_folder.isDirectory() && country_tags_folder.listFiles() != null) {
-			country_tags_files = List.of(Objects.requireNonNull(country_tags_folder.listFiles()));
+		
+		if (SettingsManager.get(MOD_PATH) != null) mod_country_tags_folder = new File(SettingsManager.get(MOD_PATH) + "\\common\\country_tags");
+		else mod_country_tags_folder = null; 
+		if (SettingsManager.get(HOI4_PATH) != null) base_country_tags_folder = new File(SettingsManager.get(HOI4_PATH) + "\\common\\country_tags");
+		else base_country_tags_folder = null; 
+		
+		if (mod_country_tags_folder != null && mod_country_tags_folder.exists() && mod_country_tags_folder.isDirectory() 
+				&& mod_country_tags_folder.listFiles() != null) {
+			mod_country_tags_files = List.of(Objects.requireNonNull(mod_country_tags_folder.listFiles()));
 		} else {
 			//country_tags_files = new ArrayList<>();
-			country_tags_files = null;
+			mod_country_tags_files = null;
 		}
-
-		if(SettingsManager.get(MOD_PATH) == null) {
-			return null;
-		}
-		if (!country_tags_folder.isDirectory()) {
-			return null;
+		if (base_country_tags_folder != null && base_country_tags_folder.exists() && base_country_tags_folder.isDirectory() 
+				&& base_country_tags_folder.listFiles() != null) {
+			base_country_tags_files = List.of(Objects.requireNonNull(base_country_tags_folder.listFiles()));
+		} else {
+			//country_tags_files = new ArrayList<>();
+			base_country_tags_files = null;
 		}
 
 		/* read countries if applicable */
-		/* else load vanilla tags */
-		// TODO this needs to be better fixed (vanilla overwritten or not???)
 		Scanner countryTagsReader = null;
-		if (country_tags_files != null) {
-			for (File f : country_tags_files) {
+		if (mod_country_tags_files != null) {
+			for (File f : mod_country_tags_files) {
 				// don't include dynamic country tags (used for civil wars)
 				if (f.getName().contains("dynamic_countries")) {
 					continue;
@@ -58,19 +65,18 @@ public class CountryTagsManager extends HOIIVUtils implements Iterable<CountryTa
 							continue;
 						}
 						country_tags.add(tag);
-						//System.out.println(data.substring(0, data.indexOf('=')));
 					}
 				}
 			}
-		} else {
-			// TODO this needs! to be fixed
-			System.out.println("loading default country tags because country_tags\\00_countries does not exist");
-			File country_tags_default_folder = new File("hoi4files\\country_tags"); 	// with program
-			if (!country_tags_default_folder.exists()) {
-				throw new IOException("Missing " + country_tags_default_folder);
-			}
-			for (File file: country_tags_default_folder.listFiles()) {
-				countryTagsReader = new Scanner(file);
+		}
+		if (base_country_tags_files != null) {
+			for (File f : base_country_tags_files) {
+				// don't include dynamic country tags (used for civil wars)
+				if (f.getName().contains("dynamic_countries")) {
+					continue;
+				}
+
+				countryTagsReader = new Scanner(f);
 
 				// make a list of country tags
 				while (countryTagsReader.hasNextLine()) {
@@ -81,7 +87,7 @@ public class CountryTagsManager extends HOIIVUtils implements Iterable<CountryTa
 						if (tag.equals(CountryTag.NULL_TAG())) {
 							continue;
 						}
-						country_tags.add(tag);
+						if (!country_tags.contains(tag)) country_tags.add(tag); // dont overwrite mod tags (shouldn't actually matter) 
 					}
 				}
 			}
