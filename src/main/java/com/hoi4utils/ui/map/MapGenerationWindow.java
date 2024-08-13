@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.province.ProvinceGeneration;
 import com.hoi4utils.clausewitz.map.province.ProvinceMap;
 import com.hoi4utils.ui.FXWindow;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -161,7 +162,7 @@ public class MapGenerationWindow extends HOIIVUtilsWindow {
 		Task<Void> task = new Task<>() {
 			@Override
 			protected Void call() throws Exception {
-				updateProgress(90, 100);
+				updateProgress(5, 100);
 				provinceGeneration.generate(heightmap);
 
 				updateProgress(99, 100);

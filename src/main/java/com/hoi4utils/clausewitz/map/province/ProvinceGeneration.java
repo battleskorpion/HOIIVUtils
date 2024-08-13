@@ -5,6 +5,7 @@ import com.hoi4utils.clausewitz.map.gen.AbstractMapGeneration;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
 import com.hoi4utils.clausewitz.map.seed.*;
+import javafx.concurrent.Task;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
