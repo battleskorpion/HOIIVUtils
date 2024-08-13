@@ -85,7 +85,7 @@ public class Country implements InfrastructureData, Comparable<Country> {
 
 		dataFunctions.add(Country::name);
 		dataFunctions.add(c -> c.infrastructure.population());
-		dataFunctions.add(c -> c.infrastructure.civMilRatio());
+		dataFunctions.add(c -> c.infrastructure.civilianFactories());
 		dataFunctions.add(c -> c.infrastructure.militaryFactories());
 		dataFunctions.add(c -> c.infrastructure.navalDockyards());
 		dataFunctions.add(c -> c.infrastructure.airfields());
