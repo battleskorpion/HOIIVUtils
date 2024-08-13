@@ -67,42 +67,6 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		setTitle("Focus Tree View");
 	}
 
-	private void exportFocusTree(FocusTree focusTree, String path) {
-		try (PrintWriter writer = new PrintWriter(new File(path))) {
-			// Write the focus tree to the file
-			// writer.println(focusTree.toHoI4Format());
-		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(null, "Error exporting focus tree: " + e.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
-	}
-
-	private int getMinX() {
-		return focusTree.minX();
-	}
-
-	private Image gfxFocusUnavailable;
-
-	int getMaxX() {
-		return CollectionConverters.asJavaCollection(focusTree.focuses()).stream()
-				.mapToInt(Focus::absoluteX)
-				.max().orElse(10);
-	}
-
-	int getMaxY() {
-		return CollectionConverters.asJavaCollection(focusTree.focuses()).stream()
-				.mapToInt(Focus::absoluteY)
-				.max().orElse(10);
-	}
-
-	@FXML
-	private void handleExportFocusTreeButtonClick() {
-		String path = "focusOutput.txt";
-		exportFocusTree(focusTree, path);
-		JOptionPane.showMessageDialog(null, "Focus tree exported to " + path, "Export Successful",
-				JOptionPane.INFORMATION_MESSAGE);
-	}
-
 	/**
 	 * Called when the application is initialized.
 	 * 
@@ -171,6 +135,42 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 	public Canvas focusTreeCanvas() {
 		return focusTreeCanvas;
+	}
+
+	private void exportFocusTree(FocusTree focusTree, String path) {
+		try (PrintWriter writer = new PrintWriter(new File(path))) {
+			// Write the focus tree to the file
+			// writer.println(focusTree.toHoI4Format());
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "Error exporting focus tree: " + e.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private int getMinX() {
+		return focusTree.minX();
+	}
+
+	private Image gfxFocusUnavailable;
+
+	int getMaxX() {
+		return CollectionConverters.asJavaCollection(focusTree.focuses()).stream()
+				.mapToInt(Focus::absoluteX)
+				.max().orElse(10);
+	}
+
+	int getMaxY() {
+		return CollectionConverters.asJavaCollection(focusTree.focuses()).stream()
+				.mapToInt(Focus::absoluteY)
+				.max().orElse(10);
+	}
+
+	@FXML
+	private void handleExportFocusTreeButtonClick() {
+		String path = "focusOutput.txt";
+		exportFocusTree(focusTree, path);
+		JOptionPane.showMessageDialog(null, "Focus tree exported to " + path, "Export Successful",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private Image loadFocusUnavailableImage() {
