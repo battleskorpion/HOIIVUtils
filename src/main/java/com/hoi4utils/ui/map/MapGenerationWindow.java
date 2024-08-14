@@ -1,12 +1,11 @@
 package com.hoi4utils.ui.map;
 
 import com.hoi4utils.clausewitz.HOIIVFile;
-import com.hoi4utils.clausewitz.map.ProvinceGenProperties;
+import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.province.ProvinceGeneration;
 import com.hoi4utils.clausewitz.map.province.ProvinceMap;
 import com.hoi4utils.ui.FXWindow;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -49,7 +48,7 @@ public class MapGenerationWindow extends HOIIVUtilsWindow {
 	ProgressBar provinceGenerationProgressBar;
 	Heightmap heightmap;
 	public ProvinceGeneration provinceGeneration;
-	public ProvinceGenProperties properties;
+	public ProvinceGenConfig properties;
 
 	/* static initialization */
 	{ // todo temp
@@ -65,7 +64,7 @@ public class MapGenerationWindow extends HOIIVUtilsWindow {
 		setFxmlResource("MapGenerationWindow.fxml");
 		setTitle("Map Generation");
 
-		properties = new ProvinceGenProperties(45, heightmap.width(), heightmap.height(), 4000); // sea level 4? for
+		properties = new ProvinceGenConfig(45, heightmap.width(), heightmap.height(), 4000, 0); // sea level 4? for
 																									// china?
 		provinceGeneration = new ProvinceGeneration(properties);
 	}

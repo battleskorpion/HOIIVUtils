@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.map;
 
-import com.hoi4utils.clausewitz.map.ProvinceGenProperties;
+import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.province.ProvinceDeterminationType;
 import com.hoi4utils.clausewitz.map.seed.SeedGenType;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
@@ -20,7 +20,7 @@ public class MapGenerationSettingsWindow extends HOIIVUtilsWindow {
     @FXML 
     ChoiceBox<ProvinceDeterminationType> provinceDeterminationChoiceBox;
 
-    private ProvinceGenProperties properties = null;
+    private ProvinceGenConfig properties = null;
 
     public MapGenerationSettingsWindow() {
         setFxmlResource("MapGenerationSettingsWindow.fxml");
@@ -35,7 +35,7 @@ public class MapGenerationSettingsWindow extends HOIIVUtilsWindow {
      * @param properties
      */
     @SuppressWarnings("unused")
-    public MapGenerationSettingsWindow(ProvinceGenProperties properties) {
+    public MapGenerationSettingsWindow(ProvinceGenConfig properties) {
         this.properties = properties;
     }
 

@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.map.seed;
 
-import com.hoi4utils.clausewitz.map.ProvinceGenProperties;
+import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
 
@@ -16,7 +16,7 @@ public class GridSeedGeneration extends AbstractSeedGeneration<MapPoint> {
 	private final int gridCenterYFloor;
 	private final int gridCenterXFloor;
 
-	public GridSeedGeneration(ProvinceGenProperties properties, Heightmap heightmap) {
+	public GridSeedGeneration(ProvinceGenConfig properties, Heightmap heightmap) {
 		super(heightmap, properties);
 		gridHeight = (double) heightmap.height() / properties.numSeedsY();
 		gridWidth = (double) heightmap.width() / properties.numSeedsX();

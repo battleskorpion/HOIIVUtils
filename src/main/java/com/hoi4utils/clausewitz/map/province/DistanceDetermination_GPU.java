@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.map.province;
 
-import com.hoi4utils.clausewitz.map.ProvinceGenProperties;
+import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.gen.AbstractMapGeneration;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
@@ -13,12 +13,12 @@ public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGe
     private Heightmap heightmap;
     private ProvinceMap provinceMap;
     private ProvinceMapPointsList points;
-    private ProvinceGenProperties properties;
+    private ProvinceGenConfig properties;
     private BorderMapping<P> stateMapList;
     private BorderMap stateBorderMap;
 
 
-    public DistanceDetermination_GPU(Heightmap heightmap, ProvinceMap provinceMap, ProvinceGenProperties properties) {
+    public DistanceDetermination_GPU(Heightmap heightmap, ProvinceMap provinceMap, ProvinceGenConfig properties) {
         this.heightmap = heightmap;
         this.provinceMap = provinceMap;
         this.properties = properties;
@@ -107,8 +107,7 @@ public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGe
              */
             int xOffset = 0;
             int yOffset = 0;
-            //int nearestColor = ProvinceGenProperties.rgb_white;        // does NOT compile
-            int nearestColor = 16777215;
+            int nearestColor = 16777215;    // has to be hardcoded, = ProvinceGenProperties.rgb_white
             int dist = Integer.MAX_VALUE;
 
             for (int i = 0; i < numSeeds; i++) {

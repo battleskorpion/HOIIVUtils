@@ -2,12 +2,14 @@ package com.hoi4utils.clausewitz.map;
 
 import com.hoi4utils.clausewitz.map.province.ProvinceDeterminationType;
 import com.hoi4utils.clausewitz.map.seed.SeedGenType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class ProvinceGenProperties implements MapGenProperties, SeedGenProperties {
+public class ProvinceGenConfig implements MapGenProperties, SeedGenProperties {
     protected SeedGenType generationType; // dynamic, GRID_SEED, PROBABILISTIC
     protected ProvinceDeterminationType determinationType;
     private byte HEIGHTMAP_SEA_LEVEL; // = 45 //95;
@@ -18,6 +20,12 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
     protected int numSeedsY = 64;
     protected int numSeedsX = 80;
 
+    /**
+     * threadLimit = 0: max/no limit
+     */
+    @Setter @Getter
+    protected int threadLimit = 0;
+
     public static final int rgb_white;
     static {
         int rgb_white_temp = Color.white.getRed();
@@ -25,23 +33,35 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
         rgb_white = (rgb_white_temp << 8) + Color.white.getBlue();
     }
 
-    public ProvinceGenProperties(int seaLevel, int imageWidth, int imageHeight, int numSeedsX, int numSeedsY) {
+    public ProvinceGenConfig(ProvinceGenConfig properties) {
+        this.asCopyOf(properties);
+    }
+
+    public ProvinceGenConfig(int seaLevel, int imageWidth, int imageHeight, int threadLimit) {
+        this((byte) seaLevel, imageWidth, imageHeight, threadLimit);
+    }
+
+    public ProvinceGenConfig(byte sealevel, int imageWidth, int imageHeight, int threadLimit) {
+        this(sealevel, imageWidth, imageHeight, 64, 80, threadLimit);
+    }
+
+    public ProvinceGenConfig(int seaLevel, int imageWidth, int imageHeight, int numSeedsX, int numSeedsY, int threadLimit) {
         this(SeedGenType.GRID, ProvinceDeterminationType.DISTANCE_MULTITHREADED, (byte) seaLevel, imageWidth,
-                imageHeight, numSeedsX, numSeedsY);
+                imageHeight, numSeedsX, numSeedsY, threadLimit);
     }
 
-    public ProvinceGenProperties(int seaLevel, byte imageWidth, int imageHeight, int numSeedsX, int numSeedsY) {
+    public ProvinceGenConfig(int seaLevel, byte imageWidth, int imageHeight, int numSeedsX, int numSeedsY, int threadLimit) {
         this(SeedGenType.GRID, ProvinceDeterminationType.DISTANCE_MULTITHREADED, seaLevel, imageWidth, imageHeight,
-                numSeedsX, numSeedsY);
+                numSeedsX, numSeedsY, threadLimit);
     }
 
-    public ProvinceGenProperties(SeedGenType generationType, ProvinceDeterminationType determinationType, int seaLevel,
-            int imageWidth, int imageHeight, int numSeedsX, int numSeedsY) {
-        this(generationType, determinationType, (byte) seaLevel, imageWidth, imageHeight, numSeedsX, numSeedsY);
+    public ProvinceGenConfig(SeedGenType generationType, ProvinceDeterminationType determinationType, int seaLevel,
+                             int imageWidth, int imageHeight, int numSeedsX, int numSeedsY, int threadLimit) {
+        this(generationType, determinationType, (byte) seaLevel, imageWidth, imageHeight, numSeedsX, numSeedsY, threadLimit);
     }
 
-    public ProvinceGenProperties(SeedGenType generationType, ProvinceDeterminationType determinationType, byte seaLevel,
-            int imageWidth, int imageHeight, int numSeedsX, int numSeedsY) {
+    public ProvinceGenConfig(SeedGenType generationType, ProvinceDeterminationType determinationType, byte seaLevel,
+                             int imageWidth, int imageHeight, int numSeedsX, int numSeedsY, int threadLimit) {
         this.HEIGHTMAP_SEA_LEVEL = seaLevel;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
@@ -49,19 +69,27 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
         this.numSeedsY = numSeedsY;
         this.generationType = generationType;
         this.determinationType = determinationType;
+        this.threadLimit = threadLimit;
     }
 
-    public ProvinceGenProperties(ProvinceGenProperties properties) {
-        this.copy(properties);
+    public ProvinceGenConfig(int seaLevel, int imageWidth, int imageHeight, int numSeeds, int threadLimit) {
+        this(SeedGenType.GRID, ProvinceDeterminationType.DISTANCE_MULTITHREADED, seaLevel,
+                imageWidth, imageHeight, numSeeds, threadLimit);
     }
 
-    public ProvinceGenProperties(int seaLevel, int imageWidth, int imageHeight, int numSeeds) {
-        this(SeedGenType.GRID, ProvinceDeterminationType.DISTANCE_MULTITHREADED, seaLevel, imageWidth, imageHeight,
-                numSeeds);
+    public ProvinceGenConfig(SeedGenType generationType, ProvinceDeterminationType determinationType, int seaLevel,
+                             int imageWidth, int imageHeight, int numSeeds, int threadLimit) {
+        this.generationType = generationType;
+        this.determinationType = determinationType;
+        this.HEIGHTMAP_SEA_LEVEL = (byte) seaLevel;
+        this.imageWidth = imageWidth;
+        this.imageHeight = imageHeight;
+        this.threadLimit = threadLimit;
+
+        setNumSeeds(numSeeds);
     }
 
-    public ProvinceGenProperties(SeedGenType generationType, ProvinceDeterminationType determinationType, int seaLevel,
-            int imageWidth, int imageHeight, int numSeeds) {
+    private static int[] solveNumSeedsXY(double imageWidth, double imageHeight, int numSeeds) {
         /*
          * math
          * numSeeds [s] = numSeedsX * numSeedsY
@@ -100,16 +128,6 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
          * squares aren't linear so you can't just round up or down y for the best
          * approximation.
          */
-        this.generationType = generationType;
-        this.determinationType = determinationType;
-        this.HEIGHTMAP_SEA_LEVEL = (byte) seaLevel;
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
-
-        setNumSeeds(numSeeds);
-    }
-
-    private static int[] solveNumSeedsXY(double imageWidth, double imageHeight, int numSeeds) {
         double r = imageWidth / imageHeight;
         // numSeedsX = r * numSeedsY
         // numSeeds = r * (numSeedsY)^2
@@ -130,14 +148,6 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
                 { y_ceil, x_4, x_4_d } };
         Arrays.sort(solution, Comparator.comparingInt(a -> a[2]));
         return solution[0];
-    }
-
-    public ProvinceGenProperties(int seaLevel, int imageWidth, int imageHeight) {
-        this((byte) seaLevel, imageWidth, imageHeight);
-    }
-
-    public ProvinceGenProperties(byte sealevel, int imageWidth, int imageHeight) {
-        this(sealevel, imageWidth, imageHeight, 64, 80);
     }
 
     public SeedGenType generationType() {
@@ -223,11 +233,25 @@ public class ProvinceGenProperties implements MapGenProperties, SeedGenPropertie
         this.HEIGHTMAP_SEA_LEVEL = (byte) seaLevel.getRed();
     }
 
-    public void copy(ProvinceGenProperties propertiesUpdated) {
+    public void asCopyOf(ProvinceGenConfig propertiesUpdated) {
+        this.generationType = propertiesUpdated.generationType;
+        this.determinationType = propertiesUpdated.determinationType;
         this.HEIGHTMAP_SEA_LEVEL = propertiesUpdated.HEIGHTMAP_SEA_LEVEL;
         this.imageWidth = propertiesUpdated.imageWidth;
         this.imageHeight = propertiesUpdated.imageHeight;
         this.numSeedsX = propertiesUpdated.numSeedsX;
         this.numSeedsY = propertiesUpdated.numSeedsY;
+    }
+
+    /**
+     * Use this when a thread limit of 0 is not interpreted as 'no limit' by some API.
+     * @return the thread limit, or the number of processors available to the JVM if the thread limit is 0
+     */
+    public int getThreadLimitNonzero() {
+        if (threadLimit == 0) {
+            return Runtime.getRuntime().availableProcessors();
+        } else {
+            return threadLimit;
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.map.province;
 
-import com.hoi4utils.clausewitz.map.ProvinceGenProperties;
+import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.gen.AbstractMapGeneration;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
@@ -15,7 +15,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RejectedExecutionException;
 
-import static com.hoi4utils.clausewitz.map.ProvinceGenProperties.rgb_white;
+import static com.hoi4utils.clausewitz.map.ProvinceGenConfig.rgb_white;
 
 public class DistanceDetermination_MT<P extends MapPoint> extends AbstractMapGeneration implements ProvinceDetermination<P>{
     public static final float OFFSET_NOISE_MODIFIER = 1.0f;
@@ -24,18 +24,16 @@ public class DistanceDetermination_MT<P extends MapPoint> extends AbstractMapGen
     private final Heightmap heightmap;
     private final ProvinceMap provinceMap;
     private ProvinceMapPointsList points;
-    private final int threadLimit;
-    private final ProvinceGenProperties properties;
+    private final ProvinceGenConfig config;
     private boolean adjProvinceByGraphConnectivity = false;
     private BorderMapping<P> stateMapList;
     private BorderMap stateBorderMap;
 
 
-    public DistanceDetermination_MT(Heightmap heightmap, ProvinceMap provinceMap, ProvinceGenProperties properties, int threadLimit) {
+    public DistanceDetermination_MT(Heightmap heightmap, ProvinceMap provinceMap, ProvinceGenConfig config) {
         this.heightmap = heightmap;
         this.provinceMap = provinceMap;
-        this.properties = properties;
-        this.threadLimit = threadLimit;
+        this.config = config;
     }
 
     @Override
@@ -48,28 +46,25 @@ public class DistanceDetermination_MT<P extends MapPoint> extends AbstractMapGen
 
     private void executeProvinceDetermination() {
         ForkColorDetermination forkColorDetermination = new ForkColorDetermination(provinceMap, heightmap);
-        ForkJoinPool forkJoinPool;
-        if (threadLimit == 0) {
-            forkJoinPool = new ForkJoinPool();
-        } else {
-            forkJoinPool = new ForkJoinPool(threadLimit);
-        }
-        try {
-            forkJoinPool.invoke(forkColorDetermination);
-        }
-        catch(NullPointerException exc) {
-            exc.printStackTrace();
-        }
-        catch(RejectedExecutionException exc) {
-            exc.printStackTrace();
-        }
-        catch(Exception exc) {
-            exc.printStackTrace();
-        }
-        if (adjProvinceByGraphConnectivity) {
-            ForkProvinceConnectivityDetermination forkProvinceConnectivityDetermination
-                    = new ForkProvinceConnectivityDetermination(points, heightmap);
-            forkJoinPool.invoke(forkProvinceConnectivityDetermination);
+
+        try(ForkJoinPool forkJoinPool = new ForkJoinPool(config.getThreadLimitNonzero())) {
+            try {
+                forkJoinPool.invoke(forkColorDetermination);
+            }
+            catch(NullPointerException exc) {
+                exc.printStackTrace();
+            }
+            catch(RejectedExecutionException exc) {
+                exc.printStackTrace();
+            }
+            catch(Exception exc) {
+                exc.printStackTrace();
+            }
+            if (adjProvinceByGraphConnectivity) {
+                ForkProvinceConnectivityDetermination forkProvinceConnectivityDetermination
+                        = new ForkProvinceConnectivityDetermination(points, heightmap);
+                forkJoinPool.invoke(forkProvinceConnectivityDetermination);
+            }
         }
     }
 
@@ -129,7 +124,6 @@ public class DistanceDetermination_MT<P extends MapPoint> extends AbstractMapGen
         int nearestColor = rgb_white;     // color of nearest seed (int value)
         int dist = Integer.MAX_VALUE;            // select a big number
 
-        // todo stream operation? parallelization?
         for (MapPoint point : seeds) {
             // calculate the difference in x and y direction
             int xdiff = point.x - x;
@@ -229,9 +223,9 @@ public class DistanceDetermination_MT<P extends MapPoint> extends AbstractMapGen
          * Determine color for each point
          */
         protected void computeDirectly() {
-            final int widthPerSeed = heightmap.width()  / properties.numSeedsX();
-            final int heightPerSeed = heightmap.height() / properties.numSeedsY();
-            final int offsetPotential = 4;
+            final int widthPerSeed = heightmap.width()  / config.numSeedsX();
+            final int heightPerSeed = heightmap.height() / config.numSeedsY();
+            final int offsetPotential = 4;  // todo this is magic :( needs to adapt to size of provinces?
             System.out.println("run: " + startY + ", " + endY);
 
             try {
@@ -240,9 +234,9 @@ public class DistanceDetermination_MT<P extends MapPoint> extends AbstractMapGen
                         int rgb;
                         int heightmapHeight = heightmap.height_xy(x, y);
                         int stateBorderValue = stateBorderMap.getRGB(x, y);
-                        int type = provinceType(heightmapHeight, properties.seaLevel());
+                        int type = provinceType(heightmapHeight, config.seaLevel());
 
-                        int xOffset = offsetWithNoise(offsetPotential, seed, x, y);    //TODO work on values
+                        int xOffset = offsetWithNoise(offsetPotential, seed, x, y);
                         int yOffset = offsetWithNoise(offsetPotential, seed, x, y);
                         rgb = determineColor(x, xOffset, y, yOffset, stateMapList.seedsList(stateBorderValue, type));
 

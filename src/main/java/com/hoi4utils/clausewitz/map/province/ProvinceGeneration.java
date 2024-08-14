@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.map.province;
 
-import com.hoi4utils.clausewitz.map.ProvinceGenProperties;
+import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.gen.AbstractMapGeneration;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
@@ -21,15 +21,14 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	private Heightmap heightmap;
 	private SeedGeneration seedGeneration;
 	/** threadLimit = 0: max (use all processors/threads). */
-	private int threadLimit = 0;        // 0 for no limit
-	ProvinceGenProperties properties;
+	ProvinceGenConfig config;
 
 	private ProvinceGeneration() {
-		this.properties = new ProvinceGenProperties(95, 4608, 2816);
+		this.config = new ProvinceGenConfig(95, 4608, 2816, 0);
 	}
 
-	public ProvinceGeneration(ProvinceGenProperties properties) {
-		this.properties = properties;
+	public ProvinceGeneration(ProvinceGenConfig properties) {
+		this.config = properties;
 	}
 
 	public static void main(String[] args) {
@@ -50,7 +49,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		stateBorderMap = loadStateBorderMap("src\\main\\resources\\map\\state_borders_none.bmp"); // ! todo temp!!
 		/* initialize mapping of seeds to states (regions for purposes of province generation) */
 		// TODO: optimization may be possible
-		if (properties.determinationType() == ProvinceDeterminationType.DISTANCE_GPU) {
+		if (config.determinationType() == ProvinceDeterminationType.DISTANCE_GPU) {
 			stateMapList = new BorderMapping_GPU<>();
 		} else {
 			stateMapList = new BorderMapping_CPU<>();
@@ -58,18 +57,21 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 
 		/* seeds generation */
 		SeedGeneration<MapPoint> seedGeneration;
-		if (properties.generationType() == SeedGenType.GRID) {
-			seedGeneration = new GridSeedGeneration(properties, heightmap);
+		if (config.generationType() == SeedGenType.GRID) {
+			seedGeneration = new GridSeedGeneration(config, heightmap);
 		} else {
-			seedGeneration = new ProbabilisticSeedGeneration(heightmap, properties);
+			seedGeneration = new ProbabilisticSeedGeneration(heightmap, config);
 		}
 		seedGeneration.generate(stateMapList, stateBorderMap);
 
 		ProvinceDetermination<MapPoint> provinceDetermination;
-		if (properties.determinationType() == ProvinceDeterminationType.DISTANCE_MULTITHREADED) {
-			provinceDetermination = new DistanceDetermination_MT<>(heightmap, provinceMap, properties, threadLimit);
+		if (config.determinationType() == ProvinceDeterminationType.DISTANCE_MULTITHREADED) {
+			provinceDetermination = new DistanceDetermination_MT<>(heightmap, provinceMap, config);
+		} else if (config.determinationType() == ProvinceDeterminationType.DISTANCE_GPU) {
+			provinceDetermination = new DistanceDetermination_GPU<>(heightmap, provinceMap, config);
 		} else {
-			provinceDetermination = new DistanceDetermination_GPU<>(heightmap, provinceMap, properties);
+			// default for now
+			provinceDetermination = new DistanceDetermination_MT<>(heightmap, provinceMap, config);
 		}
 		//executeProvinceDetermination();
 		provinceDetermination.generate(stateMapList, stateBorderMap);
