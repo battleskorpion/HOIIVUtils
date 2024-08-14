@@ -9,7 +9,7 @@ import com.hoi4utils.clausewitz.map.seed.BorderMapping;
 import com.aparapi.Kernel;
 import com.aparapi.Range;
 
-public class DistanceGPUDetermination<P extends MapPoint> extends AbstractMapGeneration implements ProvinceDetermination<P> {
+public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGeneration implements ProvinceDetermination<P> {
     private Heightmap heightmap;
     private ProvinceMap provinceMap;
     private ProvinceMapPointsList points;
@@ -18,7 +18,7 @@ public class DistanceGPUDetermination<P extends MapPoint> extends AbstractMapGen
     private BorderMap stateBorderMap;
 
 
-    public DistanceGPUDetermination(Heightmap heightmap, ProvinceMap provinceMap, ProvinceGenProperties properties) {
+    public DistanceDetermination_GPU(Heightmap heightmap, ProvinceMap provinceMap, ProvinceGenProperties properties) {
         this.heightmap = heightmap;
         this.provinceMap = provinceMap;
         this.properties = properties;

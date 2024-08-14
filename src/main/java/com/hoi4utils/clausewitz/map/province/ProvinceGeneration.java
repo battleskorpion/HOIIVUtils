@@ -5,7 +5,6 @@ import com.hoi4utils.clausewitz.map.gen.AbstractMapGeneration;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
 import com.hoi4utils.clausewitz.map.seed.*;
-import javafx.concurrent.Task;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -68,9 +67,9 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 
 		ProvinceDetermination<MapPoint> provinceDetermination;
 		if (properties.determinationType() == ProvinceDeterminationType.DISTANCE_MULTITHREADED) {
-			provinceDetermination = new DistanceMTDetermination<>(heightmap, provinceMap, properties, threadLimit);
+			provinceDetermination = new DistanceDetermination_MT<>(heightmap, provinceMap, properties, threadLimit);
 		} else {
-			provinceDetermination = new DistanceGPUDetermination<>(heightmap, provinceMap, properties);
+			provinceDetermination = new DistanceDetermination_GPU<>(heightmap, provinceMap, properties);
 		}
 		//executeProvinceDetermination();
 		provinceDetermination.generate(stateMapList, stateBorderMap);

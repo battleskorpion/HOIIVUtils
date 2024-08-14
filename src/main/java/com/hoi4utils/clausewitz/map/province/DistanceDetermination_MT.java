@@ -17,7 +17,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import static com.hoi4utils.clausewitz.map.ProvinceGenProperties.rgb_white;
 
-public class DistanceMTDetermination<P extends MapPoint> extends AbstractMapGeneration implements ProvinceDetermination<P>{
+public class DistanceDetermination_MT<P extends MapPoint> extends AbstractMapGeneration implements ProvinceDetermination<P>{
     public static final float OFFSET_NOISE_MODIFIER = 1.0f;
     public static final double NOISE_POLLING_FACTOR = 0.025;     // 0.005        // 0.025
 
@@ -31,7 +31,7 @@ public class DistanceMTDetermination<P extends MapPoint> extends AbstractMapGene
     private BorderMap stateBorderMap;
 
 
-    public DistanceMTDetermination(Heightmap heightmap, ProvinceMap provinceMap, ProvinceGenProperties properties, int threadLimit) {
+    public DistanceDetermination_MT(Heightmap heightmap, ProvinceMap provinceMap, ProvinceGenProperties properties, int threadLimit) {
         this.heightmap = heightmap;
         this.provinceMap = provinceMap;
         this.properties = properties;
@@ -129,7 +129,7 @@ public class DistanceMTDetermination<P extends MapPoint> extends AbstractMapGene
         int nearestColor = rgb_white;     // color of nearest seed (int value)
         int dist = Integer.MAX_VALUE;            // select a big number
 
-        // todo stream operation?
+        // todo stream operation? parallelization?
         for (MapPoint point : seeds) {
             // calculate the difference in x and y direction
             int xdiff = point.x - x;
