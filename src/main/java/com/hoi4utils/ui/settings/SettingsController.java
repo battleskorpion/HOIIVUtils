@@ -87,6 +87,9 @@ public class SettingsController extends Application implements FXWindow {
 			if (!"null".equals(HOI4_PATH.getSetting())) {
 				hoi4PathTextField.setText((String) HOI4_PATH.getSetting());
 			}
+			if (!"null".equals(MOD_PATH.getSetting()) && !"null".equals(HOI4_PATH.getSetting())) {
+				enableOkButton();
+			}
 			devModeCheckBox.setSelected(Settings.DEV_MODE.enabled());
 			drawFocusTreesCheckBox.setSelected(Settings.DRAW_FOCUS_TREE.enabled());
 			drawFocusTreesCheckBox.setDisable(!Settings.DEV_MODE.enabled());
