@@ -20,7 +20,7 @@ public class ParserViewerWindow extends HOIIVUtilsWindow {
 	@FXML
 	void initialize() {
 		includeVersion();
-		idWindowName.setText("StatisticsWindow" + " WIP");
+		idWindowName.setText("ParserViewerWindow" + " WIP");
 	}
 
 	private void includeVersion() {
