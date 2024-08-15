@@ -256,32 +256,30 @@
 				<version>3.2.5</version>
 				<configuration>
 					<!-- Tests will be run with scalatest-maven-plugin instead -->
-					<!-- <skipTests>true</skipTests> -->
+<!--					<skipTests>true</skipTests>-->
 					<includes>
 						<include>**/*Test.java</include>
 					</includes>
 				</configuration>
 			</plugin>
-			<!-- <plugin> Unsure if this is needed considering the version being the latest
+			<plugin>
 				<groupId>org.scalatest</groupId>
 				<artifactId>scalatest-maven-plugin</artifactId>
-				<version>2.0.0</version>
+				<version>2.2.0</version>
 				<configuration>
 					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
 					<junitxml>.</junitxml>
-					<filereports>TestSuiteReport.txt</filereports> -->
-					<!-- Comma separated list of JUnit test class names to execute -->
-<!--					<jUnitClasses>samples.AppTest</jUnitClasses>
+					<filereports>WDF TestSuite.txt</filereports>
 				</configuration>
 				<executions>
 					<execution>
 						<id>test</id>
-							<goals>
-								<goal>test</goal>
-							</goals>
+						<goals>
+							<goal>test</goal>
+						</goals>
 					</execution>
 				</executions>
-			</plugin> -->
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

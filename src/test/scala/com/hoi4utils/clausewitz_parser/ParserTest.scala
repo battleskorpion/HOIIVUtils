@@ -51,6 +51,15 @@ class ParserTest extends AnyFunSuiteLike {
     }
   }
 
+  test("the '=' operator should be with an identifier") {
+    withParsedFiles { node =>
+      node.toList.foreach(n => {
+        assert(n.identifier != null, s"Node $n has no identifier")
+        assert(n.identifier.isEmpty, s"Node $n has an empty identifier")
+      })
+    }
+  }
+
   test("specialinfantry.txt should have parsed sub_units") {
     withParsedFile ({ node =>
       val subunits = node.find("sub_units").getOrElse(fail("sub_units not found"))
