@@ -386,7 +386,7 @@
 				</includes>
 			</resource>
 			<resource>
-				<directory>src/main/binary-resources</directory>
+				<directory>src/main/resources_binary</directory>
 				<filtering>false</filtering>
 			</resource>
 		</resources>

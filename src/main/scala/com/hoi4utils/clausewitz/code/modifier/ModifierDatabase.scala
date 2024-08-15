@@ -33,7 +33,7 @@ class ModifierDatabase(databaseName: String) {
 //      e.printStackTrace()
 //  }
   try {
-    val url = getClass.getResource(databaseName)
+    val url = getClass.getClassLoader.getResource(databaseName)
     if (url == null) throw new SQLException("Unable to find '" + databaseName + "'")
     val tempFile = File.createTempFile("effects", ".db")
     tempFile.deleteOnExit()
@@ -52,7 +52,7 @@ class ModifierDatabase(databaseName: String) {
 
 
   def this() = {
-    this("/main/resources_binary/databases/modifiers.db")
+    this("databases/modifiers.db")
     //		for(Modifier modifier : Modifier.modifiers.values()) {
     //			System.out.println("modifier: " + modifier.identifier());
     //		}

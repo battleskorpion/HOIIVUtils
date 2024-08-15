@@ -46,7 +46,7 @@ class EffectDatabase(databaseName: String) {
   private var connection: Connection = _
 
   try {
-    val url = getClass.getResource(databaseName)
+    val url = getClass.getClassLoader.getResource(databaseName) // class loader loads resource consistently it seems
     if (url == null) throw new SQLException("Unable to find '" + databaseName + "'")
     val tempFile = File.createTempFile("effects", ".db")
     tempFile.deleteOnExit()
@@ -74,7 +74,7 @@ class EffectDatabase(databaseName: String) {
   // effectDB.close();
   // }
   def this() = {
-    this("/main/resources_binary/databases/effects.db")
+    this("databases/effects.db")  // should be 'databases/effects.db'.
   }
 
   private def createTable(): Unit = {

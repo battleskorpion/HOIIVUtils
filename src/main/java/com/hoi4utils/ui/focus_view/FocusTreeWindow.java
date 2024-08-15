@@ -174,8 +174,8 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	}
 
 	private Image loadFocusUnavailableImage() {
-		String focusUnavailablePath = "/main/resources_binary/hoi4files/gfx/focus_unavailable_bg.dds";
-		final InputStream fis = getClass().getResourceAsStream(focusUnavailablePath);
+		String focusUnavailablePath = "hoi4files/gfx/focus_unavailable_bg.dds";
+		final InputStream fis = getClass().getClassLoader().getResourceAsStream(focusUnavailablePath);
 		try (fis) {
 			if (fis == null) {
 				throw new FileNotFoundException("Unable to find '" + focusUnavailablePath + "'");
