@@ -117,4 +117,8 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
       case _ => null
     }
   }
+
+  def valueAsString: String = {
+    nodeValue.asString
+  }
 }
