@@ -8,6 +8,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * I believe this is considered a GPU friendly-implementation of BorderMapping, as obviously this is only CPU code.
+ * This was probably due to some optimization for list accesses etc etc.
+ * Use this class when BorderMapping is used in a GPU context.
+ *
+ * @param <P>
+ */
 public class BorderMapping_GPU<P extends MapPoint> implements BorderMapping<P> {
     /** Integer can be int representation of color */
     // private final HashMap<Integer, SeedsSet<P>> borderMapSeeds; // consider

@@ -14,7 +14,7 @@ import javafx.scene.image.Image
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-class Focus(var focusTree: FocusTree) extends StructuredPDX with Localizable with DataFunctionProvider[Focus] {
+@lombok.extern.slf4j.Slf4j class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Localizable with DataFunctionProvider[Focus] {
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
 

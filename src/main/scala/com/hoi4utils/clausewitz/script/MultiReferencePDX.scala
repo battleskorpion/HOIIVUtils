@@ -7,12 +7,23 @@ import org.jetbrains.annotations.Nullable
 import scala.collection.mutable.ListBuffer
 
 // todo uhhhhhhhhhhhhh
+
+/**
+ * (todo)
+ *
+ * MultiPDX's pdx script list will be the list of resolved references
+ *
+ * @param referenceCollectionSupplier
+ * @param idExtractor
+ * @param pdxIdentifiers
+ * @param referencePDXIdentifiers
+ * @tparam T
+ */
 class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: () => Iterable[T],
                                              protected var idExtractor: T => Option[String], pdxIdentifiers: List[String],
-                                             pdxReferenceIdentifiers: List[String])
+                                             referencePDXIdentifiers: List[String])
   extends MultiPDX[T](None, None, pdxIdentifiers) {
 
-  final protected var referencePDXTokenIdentifiers: List[String] = _
   final protected val referenceNames = new ListBuffer[String]
 
   def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => Option[String], pdxIdentifiers: String, referenceIdentifier: String) = {
@@ -22,12 +33,14 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     expression.$ match {
-      case list: List[Node] =>
+      case list: ListBuffer[Node] =>
+        // prolly don't need this check, but it doesn't hurt right now
         if (list == null) {
           System.out.println("PDX script had empty list: " + expression)
           return
         }
         usingIdentifier(expression)
+
         for (node <- list) {
           try add(node)
           catch {
@@ -43,10 +56,19 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     }
   }
 
+  /**
+   * This is an option due to overrides. But it will always return some list.
+   * @return
+   */
   override def get(): Option[ListBuffer[T]] = {
-    if (node != null && !node.isEmpty) return None //return node  // todo this made wrong
-    //resolveReferences
-    return None // todo no
+    // what if name changes etc. im not sure about this
+//    if (resolvedReferences.length.equals(numReferences)) resolvedReferences
+//    else resolveReferences
+    Some(references())
+  }
+
+  def references(): ListBuffer[T] = {
+    resolveReferences()
   }
 
   @throws[UnexpectedIdentifierException]
@@ -70,25 +92,30 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
       case _ =>
   }
 
-  private def resolveReferences = {
+  private def resolveReferences(): ListBuffer[T] = {
     val referenceCollection = referenceCollectionSupplier()
+    // clear previous references (suboptimal but simple)
+    resolvedReferences.clear()
     for (reference <- referenceCollection) {
-      for (referenceName <- referenceNames) {
-//        if (idExtractor.apply(reference) == referenceName) node.addOne(reference) // todo fix
+      val referenceID = idExtractor.apply(reference)
+      referenceID match {
+        case null =>
+        case referenceName =>
+          this.resolvedReferences.addOne(reference)
+        case _ =>
       }
     }
-    node
+
+    resolvedReferences
   }
 
   @throws[UnexpectedIdentifierException]
   protected def usingReferenceIdentifier(exp: Node): Unit = {
-    for (i <- referencePDXTokenIdentifiers.indices) {
-      if (exp.nameEquals(referencePDXTokenIdentifiers(i))) {
-        //                activeReferenceIdentifier = i;
-        return
-      }
+    if(referencePDXIdentifiers.contains(exp.name)) {
+
+    } else {
+      throw new UnexpectedIdentifierException(exp)
     }
-    throw new UnexpectedIdentifierException(exp)
   }
 
   override def toScript: String = {
@@ -111,7 +138,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 
   def addReferenceName(newValue: String): Unit = {
     referenceNames.addOne(newValue)
-    resolveReferences
+    resolveReferences()
   }
 
   /**
@@ -120,10 +147,10 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
    * @return
    */
   override def size: Int = {
-    val list = get()
-    if (list == null) return 0
-    list.size
+    return get().size
   }
 
-  def referenceSize: Int = referenceNames.size
+  def numReferences: Int = referenceNames.size
+
+  def resolvedReferences: ListBuffer[T] = pdxList
 }

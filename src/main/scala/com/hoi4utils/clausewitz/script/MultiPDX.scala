@@ -20,7 +20,7 @@ import scala.language.implicitConversions
 class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String])
   extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
 
-  if (simpleSupplier.isEmpty && blockSupplier.isEmpty) throw new IllegalArgumentException("Both suppliers are null")
+  protected var pdxList: ListBuffer[T] = ListBuffer.empty
 
   def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T], pdxIdentifiers: String*) = {
     this(simpleSupplier, blockSupplier, pdxIdentifiers.toList)
@@ -36,7 +36,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   }
 
   override def loadPDX(expressions: Iterable[Node]): Unit = {
-    if (expressions != null)
+    if (expressions != null) {
       expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
         try loadPDX(expression)
         catch {
@@ -44,8 +44,8 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
             System.err.println(e.getMessage)
           //throw new RuntimeException(e);
         }
-
       })
+    }
   }
 
   override def equals(other: PDXScript[?]) = false // todo? well.
@@ -59,19 +59,17 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     val value = expression.$
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
-//    else try obj.add(value.valueObject.asInstanceOf[T])
-//    catch {
-//      case e: ClassCastException =>
-//        throw new NodeValueTypeException(expression, e)
-//    }
     expression.$ match {
-      case l: ListBuffer[T] =>
-        val childScript = simpleSupplier.get.apply()  // todo fix
+      case l: ListBuffer[Node] =>
+        val childScript = applySupplier(expression) // todo ehhh
         childScript.loadPDX(expression)
-        l.addOne(childScript)
+        pdxList.addOne(childScript)
       case _ =>
         // todo idk
-        throw new NodeValueTypeException(expression, "list")
+        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "list")
+        val childScript = simpleSupplier.get.apply()
+        childScript.loadPDX(expression)
+        pdxList.addOne(childScript)
     }
   }
 
@@ -118,6 +116,20 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   // todo no. in general multi. would be more than one node.
   override def set(obj: ListBuffer[T]): Unit = {
     //
+  }
+
+  protected def applySupplier(expression: Node): T = {
+    (simpleSupplier, blockSupplier) match {
+      case (Some(s), None) => s.apply()
+      case (None, Some(b)) => b.apply()
+      case (Some(s), Some(b)) =>
+        expression.$ match {
+          case l: ListBuffer[Node] =>
+            b.apply()
+          case _ => s.apply()
+        }
+      case (None, None) => throw new RuntimeException("Both suppliers are null")
+    }
   }
 }
 

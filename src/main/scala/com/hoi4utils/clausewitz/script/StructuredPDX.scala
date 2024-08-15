@@ -20,10 +20,12 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     value match {
       case l: ListBuffer[Node] =>
         //loadPDX(l)
+        for (pdxScript <- childScripts) {
+          pdxScript.loadPDX(l)
+        }
       case _ =>
         throw new NodeValueTypeException(expression, "list")  // todo check through schema
     }
-//    import scala.collection.JavaConversions._
 //    for (pdxScript <- obj) {
 //      pdxScript.loadPDX(value.list)
 //    }

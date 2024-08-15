@@ -176,7 +176,7 @@ public class PDXEditorPane extends AnchorPane {
                 if (pdx.isUndefined() && !allowNull) return null;
                 VBox subVBox = new VBox();
                 subVBox.setSpacing(2);
-                for (int i = 0; i < pdx.referenceSize(); i++) {
+                for (int i = 0; i < pdx.numReferences(); i++) {
                     HBox propertyHBox = new HBox();
                     propertyHBox.setSpacing(2);
                     // combo box

@@ -113,7 +113,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     val pdxParser = new Parser(file)
     //var rootNode: Node = null
     try
-      var rootNode = pdxParser.parse
+      val rootNode = pdxParser.parse
       loadPDX(rootNode)
     catch
       case e: ParserException =>
