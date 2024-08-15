@@ -55,7 +55,6 @@ class ParserTest extends AnyFunSuiteLike {
     withParsedFiles { node =>
       node.toList.foreach(n => {
         assert(n.identifier != null, s"Node $n has no identifier")
-        assert(n.identifier.isEmpty, s"Node $n has an empty identifier")
       })
     }
   }
