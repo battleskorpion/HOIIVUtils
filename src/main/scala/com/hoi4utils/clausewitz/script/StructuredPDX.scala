@@ -19,16 +19,12 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     // then load each sub-PDXScript
     value match {
       case l: ListBuffer[Node] =>
-        //loadPDX(l)
         for (pdxScript <- childScripts) {
           pdxScript.loadPDX(l)
         }
       case _ =>
         throw new NodeValueTypeException(expression, "list")  // todo check through schema
     }
-//    for (pdxScript <- obj) {
-//      pdxScript.loadPDX(value.list)
-//    }
   }
 
   override def set(value: ListBuffer[Node]): Unit = {

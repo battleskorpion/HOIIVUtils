@@ -23,7 +23,7 @@ public record SubUnit(
 		String mapIconCategory,
 		Integer priority,
 		Integer aiPriority,
-		boolean active,
+		Boolean active,
 		String group,
 		Integer combatWidth,
 		Integer manpower,
@@ -83,24 +83,24 @@ public record SubUnit(
 		for (Node subUnitNode : list) {
 			SubUnit subUnit = new SubUnit(
 				subUnitNode.name(),
-				subUnitNode.getValue("abbreviation").string(),
-				subUnitNode.getValue("sprite").string(),
-				subUnitNode.getValue("map_icon_category").string(),
-				subUnitNode.getValue("priority").integer(),
-				subUnitNode.getValue("ai_priority").integer(),
-				subUnitNode.getValue("active").bool(BoolType.YES_NO),
-				//subUnit.type = subUnitNode.getValue("type").string(),
-				subUnitNode.getValue("group").string(),
+				subUnitNode.contains("abbreviation") ? subUnitNode.getValue("abbreviation").string() : null,
+				subUnitNode.contains("sprite") ? subUnitNode.getValue("sprite").string() : null,
+				subUnitNode.contains("map_icon_category") ? subUnitNode.getValue("map_icon_category").string() : null,
+				subUnitNode.contains("priority") ? subUnitNode.getValue("priority").integer() : null,
+				subUnitNode.contains("ai_priority") ? subUnitNode.getValue("ai_priority").integer() : null,
+				subUnitNode.contains("active") ? subUnitNode.getValue("active").bool(BoolType.YES_NO) : null,
+				//subUnit.type
+				subUnitNode.contains("group") ? subUnitNode.getValue("group").string() : null,
 				//subUnit.categories
-				subUnitNode.getValue("combat_width").integer(),
+				subUnitNode.contains("combat_width") ? subUnitNode.getValue("combat_width").integer() : null,
 				//subUnit.need
-				subUnitNode.getValue("manpower").integer(),
-				subUnitNode.getValue("max_organization").integer(),
-				subUnitNode.getValue("default_morale").integer(),
-				subUnitNode.getValue("max_strength").integer(),
-				subUnitNode.getValue("training_time").integer(),
-				subUnitNode.getValue("weight").rational(),
-				subUnitNode.getValue("supply_consumption").rational()
+				subUnitNode.contains("manpower") ? subUnitNode.getValue("manpower").integer() : null,
+				subUnitNode.contains("max_organization") ? subUnitNode.getValue("max_organization").integer() : null,
+				subUnitNode.contains("default_morale") ? subUnitNode.getValue("default_morale").integer() : null,
+				subUnitNode.contains("max_strength") ? subUnitNode.getValue("max_strength").integer() : null,
+				subUnitNode.contains("training_time") ? subUnitNode.getValue("training_time").integer() : null,
+				subUnitNode.contains("weight") ? subUnitNode.getValue("weight").rational() : null,
+				subUnitNode.contains("supply_consumption") ? subUnitNode.getValue("supply_consumption").rational() : null
 			);
 	
 			subUnits.add(subUnit);
