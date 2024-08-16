@@ -3,9 +3,9 @@ package com.hoi4utils.clausewitz_parser
 import scala.util.matching.Regex
 import scala.collection.BufferedIterator
 
-class Tokenizer(@SuppressWarnings(Array("unused")) private val input: String) {
+class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
   private val pattern: Regex = createPattern
-  private val matcher: BufferedIterator[Regex.Match] = pattern.findAllMatchIn(input).buffered
+  private val matcher: BufferedIterator[Regex.Match] = pattern.findAllMatchIn(_input).buffered
   //private var currentMatch: Option[Regex.Match] = None
 
   /**
@@ -45,6 +45,7 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val input: String) {
     if (patternBuilder.nonEmpty) new Regex(patternBuilder.substring(1)) // Skip the leading "|"
     else throw new IllegalStateException("No patterns found for token types.")
   }
+
 //  final private var pattern: Pattern = createPattern
 //  final private var matcher: Matcher = this.pattern.matcher(input)
 //  private var findStartIndex = 0
