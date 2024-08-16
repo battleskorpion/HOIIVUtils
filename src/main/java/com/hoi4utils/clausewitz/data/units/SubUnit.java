@@ -43,9 +43,9 @@ public record SubUnit(
 		}
 
 		List<SubUnit> subUnits = new ArrayList<>();
-		for (File f : dir.listFiles()) {
-			if (f.isDirectory()) continue;
-			Parser parser = new Parser(f);
+		for (File file : dir.listFiles()) {
+			if (file.isDirectory()) continue;
+			Parser parser = new Parser(file);
 			Node rootNode;
 			try {
 				rootNode = parser.parse();
@@ -53,46 +53,61 @@ public record SubUnit(
 				throw new RuntimeException(e);
 			}
 
-			var l = CollectionConverters.asJava(rootNode.find("sub_units").toList());
-			if (l.isEmpty()) {
-				System.out.println("No sub_units found in " + f.getName());
+			var list = CollectionConverters.asJava(rootNode.find("sub_units").toList());
+			if (list.isEmpty()) {
+				System.out.println("No sub_units found in " + file.getName());
 				continue;
 			}
 			if (Settings.DEV_MODE.enabled()) {
-				System.out.println("File: " + f.getName() + ", subunits: " + l.size());
+				System.out.println("File: " + file.getName() + ", subunits: " + list.size());
 			}
 
-			// loop through each sub unit definition in this file
-			for (Node subUnitNode : l) {
-//				System.out.println("subUnitNode: " + subUnitNode.name());
-				SubUnit subUnit = new SubUnit(
-						subUnitNode.name(),
-						subUnitNode.getValue("abbreviation").string(),
-						subUnitNode.getValue("sprite").string(),
-						subUnitNode.getValue("map_icon_category").string(),
-						subUnitNode.getValue("priority").integer(),
-						subUnitNode.getValue("ai_priority").integer(),
-						subUnitNode.getValue("active").bool(BoolType.YES_NO),
-						//subUnit.type = subUnitNode.getValue("type").string(),
-						subUnitNode.getValue("group").string(),
-						//subUnit.categories
-						subUnitNode.getValue("combat_width").integer(),
-						//subUnit.need
-						subUnitNode.getValue("manpower").integer(),
-						subUnitNode.getValue("max_organization").integer(),
-						subUnitNode.getValue("default_morale").integer(),
-						subUnitNode.getValue("max_strength").integer(),
-						subUnitNode.getValue("training_time").integer(),
-						subUnitNode.getValue("weight").rational(),
-						subUnitNode.getValue("supply_consumption").rational()
-				);
-
-				subUnits.add(subUnit);
+			try {
+				subUnits.addAll(createSubUnits(list));
+			} catch (NullPointerException e) {
+				throw new RuntimeException(e);
 			}
+			
 		}
 		return subUnits;
 	}
-
+	
+	/**
+	 * Creates a list of SubUnit objects from a list of Node objects.
+	 *
+	 * @param list	a list of Node objects representing subunits
+	 * @return      a list of SubUnit objects
+	 */
+	private static List<SubUnit> createSubUnits(List<Node> list) throws NullPointerException {
+		List<SubUnit> subUnits = new ArrayList<>();
+		for (Node subUnitNode : list) {
+			SubUnit subUnit = new SubUnit(
+				subUnitNode.name(),
+				subUnitNode.getValue("abbreviation").string(),
+				subUnitNode.getValue("sprite").string(),
+				subUnitNode.getValue("map_icon_category").string(),
+				subUnitNode.getValue("priority").integer(),
+				subUnitNode.getValue("ai_priority").integer(),
+				subUnitNode.getValue("active").bool(BoolType.YES_NO),
+				//subUnit.type = subUnitNode.getValue("type").string(),
+				subUnitNode.getValue("group").string(),
+				//subUnit.categories
+				subUnitNode.getValue("combat_width").integer(),
+				//subUnit.need
+				subUnitNode.getValue("manpower").integer(),
+				subUnitNode.getValue("max_organization").integer(),
+				subUnitNode.getValue("default_morale").integer(),
+				subUnitNode.getValue("max_strength").integer(),
+				subUnitNode.getValue("training_time").integer(),
+				subUnitNode.getValue("weight").rational(),
+				subUnitNode.getValue("supply_consumption").rational()
+			);
+	
+			subUnits.add(subUnit);
+		}
+		return subUnits;
+	}
+	
 	public static List<Function<SubUnit, ?>> getDataFunctions() {
 		List<Function<SubUnit, ?>> dataFunctions = new ArrayList<>(16);
 
