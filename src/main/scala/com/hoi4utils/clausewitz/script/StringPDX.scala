@@ -50,4 +50,15 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
       case (None, Some(o)) => -1
     }
   }
+
+  def str: String = {
+    get().getOrElse("")
+  }
+
+  override def toString: String = {
+    this.node match {
+      case Some(node) => node.toString
+      case None => "StringPDX[identifiers: " + pdxIdentifiers.mkString(", ") + "]"
+    }
+  }
 }

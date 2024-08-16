@@ -58,6 +58,10 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
     valueIsNull && identifier == null && operator == null
   }
 
+  /**
+   * Returns a string representation of the individual node.
+   * @return
+   */
   override def toString: String = {
     if (!isEmpty)
       identifier + operator + nodeValue.asString

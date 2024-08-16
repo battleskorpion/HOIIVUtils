@@ -50,7 +50,10 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
-  override def get(): Option[ListBuffer[T]] = super.get()
+  override def get(): Option[ListBuffer[T]] = {
+    if (pdxList.isEmpty) None
+    else Some(pdxList)
+  }
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]

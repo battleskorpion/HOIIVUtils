@@ -19,13 +19,13 @@ import scala.collection.mutable.ListBuffer
   private val DEFAULT_FOCUS_COST = 10.0
 
   /* attributes */
-  val id: StringPDX = new StringPDX("id")
+  val id: StringPDX = new StringPDX("id")   // todo don't allow id to be null that feels wrong
   val icon: MultiPDX[Icon] = new MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
   val x: IntPDX = new IntPDX("x") // if relative, relative x
   val y: IntPDX = new IntPDX("y") // if relative, relative y
   val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
   val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
-  val relativePosition = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.get(), "relative_position_id")
+  val relativePositionFocus = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.get(), "relative_position_id")
   val cost: DoublePDX = new DoublePDX("cost")
   val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
   val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
@@ -42,32 +42,39 @@ import scala.collection.mutable.ListBuffer
   }
 
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
-    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePosition, cost, availableIfCapitulated, cancelIfInvalid, continueIfInvalid)
+    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost, availableIfCapitulated, cancelIfInvalid, continueIfInvalid)
   }
 
-  def absoluteX: Int = absolutePosition.x
+  def absoluteX: Int = absolutePosition().x
 
-  def absoluteY: Int = absolutePosition.y
+  def absoluteY: Int = absolutePosition().y
 
   def position: Point = new Point(x.getOrElse(0), y.getOrElse(0))
 
-  def absolutePosition: Point = {
-    if (relativePosition.isUndefined) {
+  def absolutePosition(visited: Set[String] = Set.empty): Point = {
+    if (relativePositionFocus.isUndefined) {
       return position
     }
-    if (relativePosition.equals(id)) {
-      System.err.println("Relative position id same as focus id for " + this)
+    // Check for self-reference
+    if (relativePositionFocus.getReferenceName == id.str) {
+      System.err.println(s"Relative position id same as focus id for $this")
+      return position
+    }
+    // Check for circular references
+    if (visited.contains(id.str)) {
+      System.err.println(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
       return position
     }
 
-    val relativePositionFocus = relativePosition.get()
-    relativePositionFocus match {
+    relativePositionFocus.get() match {
       case Some(f) =>
-        var adjPoint = f.absolutePosition
-        adjPoint = new Point(adjPoint.x + x.getOrElse(0), adjPoint.y + y.getOrElse(0))
-        adjPoint
+        // Call absolutePosition on the focus, adding the current focus id to the visited set
+        // Add our relative coordinates to the relative focus absolute position to obtain our absolute position
+        val adjPoint = f.absolutePosition(visited + id.str)
+        val absolutePoint = new Point(adjPoint.x + x.getOrElse(0), adjPoint.y + y.getOrElse(0))
+        absolutePoint
       case None =>
-        System.err.println("focus id " + relativePosition.getReferenceName + " not a focus")
+        System.err.println(s"Focus id ${relativePositionFocus.getReferenceName} not a valid focus")
         position
     }
   }
@@ -90,7 +97,7 @@ import scala.collection.mutable.ListBuffer
     val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
     this.x.set(x)
     this.y.set(y)
-    this.relativePosition.setNull()
+    this.relativePositionFocus.setNull()
     prev
   }
 

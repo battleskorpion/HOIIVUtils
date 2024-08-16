@@ -29,4 +29,19 @@ class IntPDX(pdxIdentifiers: List[String]) extends AbstractPDX[Int](pdxIdentifie
       case _ => false
     }
   }
+
+  override def get(): Option[Int] = {
+    node.getOrElse(return None).$ match {
+      case value: Int => Some(value)
+      case value: Double => Some(value.toInt)
+      case _ => None
+    }
+  }
+
+  override def getOrElse(default: Int): Int = {
+    val value = node.getOrElse(return default).getValue
+    value match
+      case i: Int => i
+      case d: Double => d.toInt
+  }
 }
