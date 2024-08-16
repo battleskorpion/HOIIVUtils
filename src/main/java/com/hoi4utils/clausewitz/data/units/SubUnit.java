@@ -8,6 +8,7 @@ import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.Settings;
 import scala.jdk.javaapi.CollectionConverters;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,8 @@ public record SubUnit(
 			try {
 				rootNode = parser.parse();
 			} catch (ParserException e) {
-				throw new RuntimeException(e);
+				JOptionPane.showMessageDialog(null, "[SubUnit] Error parsing " + file.getName() + ": " + e.getMessage());
+				continue;
 			}
 
 			var list = CollectionConverters.asJava(rootNode.find("sub_units").toList());
