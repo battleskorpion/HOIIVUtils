@@ -51,7 +51,7 @@ public class HOIIVUtils {
 		// TODO Redo all of logging to fit with new save location
 		// TODO make all the logs go to a console window that can be opened or closed
 		// (including stack traces)
-		HOIIVUtilsLog.startLog();
+		// HOIIVUtilsLog.startLog();
 
 		// Load modifiers and effects
 		/* preprocessing which doesn't require settings */

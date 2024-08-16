@@ -11,6 +11,7 @@ import com.hoi4utils.ui.hoi4localization.FocusLocalizationWindow;
 import com.hoi4utils.ui.hoi4localization.IdeaLocalizationWindow;
 import com.hoi4utils.ui.hoi4localization.AllFocusTreesWindow;
 import com.hoi4utils.ui.statistics.StatisticsController;
+import com.hoi4utils.ui.province_colors.ProvinceColorsController;
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.ui.units.CompareUnitsWindow;
@@ -54,6 +55,8 @@ public class MenuController extends Application implements FXWindow {
 	public Button viewBuilding;
 	@FXML
 	public Button viewGFX;
+	@FXML
+	public Button viewProvinceColors;
 	@FXML
 	public Button focusTreeViewButton;
 	@FXML
@@ -146,33 +149,31 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openBuildingsByCountry() {
-		BuildingsByCountryWindow window = new BuildingsByCountryWindow();
-		window.open();
+		openUtilsWindow(new BuildingsByCountryWindow());
 	}
 
 	public void openInterfaceFileList() {
-		InterfaceFileListWindow window = new InterfaceFileListWindow();
-		window.open();
+		openUtilsWindow(new InterfaceFileListWindow());
 	}
 
 	public void openFocusTreeViewer() {
-		FocusTreeWindow window = new FocusTreeWindow();
-		window.open();
+		openUtilsWindow(new FocusTreeWindow());
 	}
 
 	public void openUnitComparisonView() {
-		CompareUnitsWindow window = new CompareUnitsWindow();
-		window.open();
+		openUtilsWindow(new CompareUnitsWindow());
+	}
+
+	public void openProvinceColors() {
+		openUtilsWindow(new ProvinceColorsController());
 	}
 
 	public void openMapGeneration() {
-		MapGenerationWindow window = new MapGenerationWindow();
-		window.open();
+		openUtilsWindow(new MapGenerationWindow());
 	}
 
 	public void openParserView() {
-		ParserViewerWindow window = new ParserViewerWindow();
-		window.open();
+		openUtilsWindow(new ParserViewerWindow());
 	}
 
 	/* from HOIIVUtilsStageLoader but can only extend one class */
