@@ -5,11 +5,14 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"type": "java",
-			"name": "HOIIVUtils",
+			"type": "scala",
 			"request": "launch",
-			"mainClass": "com.HOIIVUtils/com.HOIIVUtils.clauzewitz.HOIIVUtils",
-			"projectName": "HOIIVUtils"
+			"name": "HOIIVUtils",
+			"mainClass": "com.hoi4utils.clausewitz.HOIIVUtils",
+			"args": [],
+			"jvmOptions": [],
+			"env": {}
 		}
+		
 	]
 }

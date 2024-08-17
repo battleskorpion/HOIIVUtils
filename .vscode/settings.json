@@ -64,6 +64,7 @@
 		"editor.indentSize": "tabSize",
 		"editor.insertSpaces": false,
 		"editor.wordWrap": "off"
+
 	},
 	"files.watcherExclude": {
 		"**/target": true
@@ -73,5 +74,8 @@
 	"java.eclipse.downloadSources": true,
 	"java.project.sourcePaths": [
 		"src\\main\\scala"
-	],
-}
+		],
+	"[scala]": {
+	"editor.defaultFormatter": "scalameta.metals",
+	},
+	}
