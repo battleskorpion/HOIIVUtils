@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.HOIIVUtils</groupId>
+	<groupId>com.hoi4utils</groupId>
 	<artifactId>HOIIVUtils</artifactId>
-	<version>11.0.1-SNAPSHOT</version>
+	<version>12.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>HOIIVUtils</name>
@@ -65,6 +65,7 @@
 		<JUnit.version>5.10.2</JUnit.version>
 		<log4j.version>2.23.1</log4j.version>
 		<lombok.version>1.18.32</lombok.version>
+		<scala.version>3.4.2</scala.version>
 	</properties>
 
 	<dependencyManagement>
@@ -202,14 +203,87 @@
 			<version>0.11.2</version>
 		</dependency>
 
+		<!-- scala -->
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala3-library_3</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_3</artifactId>
+			<version>3.3.0-alpha.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<version>0.0.8</version>
+				<configuration>
+					<mainClass>com.hoi4utils.clausewitz.HOIIVUtils</mainClass>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- see http://davidb.github.com/scala-maven-plugin -->
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>4.9.2</version>
+				<executions>
+					<execution>
+						<id>scala-compile-first</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>add-source</goal>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>scala-test-compile</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version>
+				<configuration>
+					<!-- Tests will be run with scalatest-maven-plugin instead -->
+<!--					<skipTests>true</skipTests>-->
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.scalatest</groupId>
+				<artifactId>scalatest-maven-plugin</artifactId>
+				<version>2.2.0</version>
+				<configuration>
+					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+					<junitxml>.</junitxml>
+					<filereports>WDF TestSuite.txt</filereports>
+				</configuration>
+				<executions>
+					<execution>
+						<id>test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.12.1</version>
+				<version>3.13.0</version>
 				<configuration>
 					<annotationProcessorPaths>
 						<path>
@@ -222,44 +296,19 @@
 					<target>${maven.compiler.target}</target>
 					<release>${maven.compiler.release}</release>
 				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.openjfx</groupId>
-				<artifactId>javafx-maven-plugin</artifactId>
-				<version>0.0.8</version>
-				<configuration>
-					<mainClass>com.HOIIVUtils.clauzewitz.HOIIVUtils</mainClass>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.2.5</version>
-				<configuration>
-					<includes>
-						<include>**/*Test.java</include>
-					</includes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>3.2.5</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.3.1</version>
-				<configuration>
-					<configLocation>checkstyle.xml</configLocation>
-				</configuration>
-			</plugin>
-			<!--
-				https://www.youtube.com/watch?v=EyYb0GmtEX4
-			https://stackoverflow.com/questions/38548271/difference-between-the-maven-assembly-plugin-maven-jar-plugin-and-maven-shade-p
+			<!--https://www.youtube.com/watch?v=EyYb0GmtEX4
+				https://stackoverflow.com/questions/38548271/difference-between-the-maven-assembly-plugin-maven-jar-plugin-and-maven-shade-p
 				https://gist.github.com/simonwoo/04b133cb0745e1a0f1d6
-				I think we're doing something wrong but I have no idea.
-			-->
+				I think we're doing something wrong but I have no idea.-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -270,7 +319,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.HOIIVUtils.clauzewitz.HOIIVUtils</mainClass>
+							<mainClass>com.hoi4utils.clausewitz.HOIIVUtils</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -303,7 +352,7 @@
 								<minVersion>22</minVersion>
 							</jre>
 							<versionInfo>
-								<fileVersion>11.0.0.0</fileVersion>
+								<fileVersion>12.0.0.0</fileVersion>
 								<txtFileVersion>${project.version}</txtFileVersion>
 								<copyright>Copyright ${project.inceptionYear}
 									${project.organization.name}</copyright>
@@ -334,7 +383,13 @@
 					<include>**/*.sql</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>src/main/resources_binary</directory>
+				<filtering>false</filtering>
+			</resource>
 		</resources>
+
+		<finalName>${project.artifactId}</finalName>
 	</build>
 
 </project>

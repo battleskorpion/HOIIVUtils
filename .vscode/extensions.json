@@ -2,8 +2,6 @@
 	"recommendations": [
 		"michaelcurrin.auto-commit-msg",
 		"aaron-bond.better-comments",
-		"shengchen.vscode-checkstyle",
-		"usernamehw.errorlens",
 		"vscjava.vscode-java-pack",
 		"mhutchie.git-graph",
 		"eamodio.gitlens",
@@ -16,6 +14,7 @@
 		"sonarsource.sonarlint-vscode",
 		"gruntfuggly.todo-tree",
 		"vscode-icons-team.vscode-icons",
-		"ms-vscode-remote.remote-wsl"
+		"ms-vscode-remote.remote-wsl",
+		"scalameta.metals"
 	]
 }

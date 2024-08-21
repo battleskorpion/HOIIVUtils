@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22-ea+16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.colorgen.ColorGeneratorWindowController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="80.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="80.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="225.0" minHeight="10.0" prefHeight="225.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+   <children>
+      <Slider fx:id="redMinSlider" />
+      <Slider fx:id="greenMinSlider" GridPane.columnIndex="1" />
+      <Slider fx:id="blueMinSlider" GridPane.columnIndex="2" />
+      <Slider fx:id="redMaxSlider" GridPane.rowIndex="1" />
+      <Slider fx:id="greenMaxSlider" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Slider fx:id="blueMaxSlider" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+   </children>
+</GridPane>
