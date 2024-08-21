@@ -25,7 +25,7 @@ public enum Settings {
 
 		@Override
 		public String defaultProperty() {
-			return "true";
+			return "false";
 		}
 	},
 	DARK_MODE {
@@ -90,18 +90,6 @@ public enum Settings {
 			return "0";
 		}
 	},
-	LOAD_TO_MENU {
-		// to skip settings (if not first time user) and load direct to main menu
-		@Override
-		public Object getSetting() {
-			return enabled();
-		}
-
-		@Override
-		public String defaultProperty() {
-			return "true";
-		}
-	},
 
 	LOAD_LOCALIZATION {
 		@Override
@@ -122,7 +110,7 @@ public enum Settings {
 
 		@Override
 		public String defaultProperty() {
-			return "true";
+			return "false";
 		}
 	},;
 
@@ -142,18 +130,6 @@ public enum Settings {
 	 */
 	public boolean disabled() {
 		return !enabled();
-	}
-
-	/**
-	 * Sets the value of the setting
-	 *
-	 * @param value
-	 * @throws SettingsWriteException
-	 */
-	void setValue(Object value) {
-		SettingsManager.settingValues.put(this, String.valueOf(value));
-		SettingsManager.writeSettings();
-		System.out.println("Updated setting " + this.name() + ": " + SettingsManager.settingValues.get(this));
 	}
 
 	public String defaultProperty() {
