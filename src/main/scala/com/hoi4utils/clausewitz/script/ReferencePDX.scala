@@ -52,12 +52,9 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     val referenceCollection = referenceCollectionSupplier()
     for (reference <- referenceCollection) {
       val referenceID = idExtractor.apply(reference)
-      referenceID match {
-        case null =>
-        case referenceName =>
-          this.reference = Some(reference)
-          return Some(reference)
-        case _ =>
+      if (referenceID != null && referenceID.equals(referenceName)) {
+        this.reference = Some(reference)
+        return this.reference
       }
     }
     None
