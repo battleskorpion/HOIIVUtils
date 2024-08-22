@@ -475,8 +475,9 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 	@FXML
 	private void openEditorWindow(Focus focus) {
+		if (focus == null) throw new IllegalArgumentException("Focus cannot be null");
 		PDXEditorWindow pdxEditorWindow = new PDXEditorWindow();
-		pdxEditorWindow.open((PDXScript<?>) focus);
+		pdxEditorWindow.open((PDXScript<?>) focus); // this is not necessarily redundant.
 	}
 
 	private int focusToCanvasX(Focus f) {

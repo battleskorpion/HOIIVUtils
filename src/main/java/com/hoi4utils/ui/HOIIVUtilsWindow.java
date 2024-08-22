@@ -72,18 +72,19 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 			try {
 				FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
 				launchLoader.setControllerFactory(c -> {
-					List<List<Class<?>>> classHierarchies = new ArrayList<>(initargs.length);
+					List<List<Class<?>>> ArgsClassHierarchies = new ArrayList<>(initargs.length);
 					for (int i = 0; i < initargs.length; i++) {
-						Set<Class<?>> hierarchyAndInterfaces = new HashSet<>();
+						Set<Class<?>> superclassesAndInterfaces = new HashSet<>();
 						Class<?> currentClass = initargs[i].getClass();
 						while (currentClass != null) {
-							hierarchyAndInterfaces.add(currentClass);
-							hierarchyAndInterfaces.addAll(Arrays.asList(currentClass.getInterfaces()));
+							superclassesAndInterfaces.add(currentClass);
+							superclassesAndInterfaces.addAll(Arrays.asList(currentClass.getInterfaces()));
 							currentClass = currentClass.getSuperclass();
 						}
-						classHierarchies.add(new ArrayList<>(hierarchyAndInterfaces));
+						findSuperinterfacesRecursively(superclassesAndInterfaces);
+						ArgsClassHierarchies.add(new ArrayList<>(superclassesAndInterfaces));
 					}
-					for (List<Class<?>> combination : generateCombinations(classHierarchies, 0)) {
+					for (List<Class<?>> combination : generateCombinations(ArgsClassHierarchies, 0)) {
 						try {
 							return getClass().getConstructor(combination.toArray(new Class[0])).newInstance(initargs);
 						} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
@@ -101,6 +102,30 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	private static void findSuperinterfacesRecursively(Set<Class<?>> hierarchyAndInterfaces) {
+		/* necessary due to how scala trait/class structure works */
+		// get interfaces of any interfaces, until there is no new interfaces to add
+		// 'interface' is also to be equivalent to a Scala trait
+		// todo improve this. can be optimized via recursion on new interfaces
+		int prevSize = hierarchyAndInterfaces.size();
+		while (true) {
+			Set<Class<?>> newInterfaces = new HashSet<>();
+			for (Class<?> interf : hierarchyAndInterfaces) {
+				if (interf.isInterface()) {
+					newInterfaces.addAll(Arrays.asList(interf.getInterfaces()));
+				}
+			}
+			if (newInterfaces.isEmpty()) {
+				break;
+			}
+			hierarchyAndInterfaces.addAll(newInterfaces);
+			if (prevSize == hierarchyAndInterfaces.size()) {
+				break;
+			}
+			prevSize = hierarchyAndInterfaces.size();
 		}
 	}
 

@@ -51,8 +51,8 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
   private def resolveReference(): Option[T] = {
     val referenceCollection = referenceCollectionSupplier()
     for (reference <- referenceCollection) {
-      val referenceID = idExtractor.apply(reference)
-      if (referenceID != null && referenceID.equals(referenceName)) {
+      val referenceID: Option[String] = idExtractor.apply(reference)
+      if (referenceID.nonEmpty && referenceID.get.equals(referenceName)) {
         this.reference = Some(reference)
         return this.reference
       }
