@@ -15,7 +15,9 @@ import scala.language.implicitConversions
  * Example: multiple icon definitions in a focus.
  * The super PDXScript object will be a list of T objects.
  *
- * @param < T>
+ * @param simpleSupplier the supplier for simple PDXScript objects
+ * @param blockSupplier  the supplier for block PDXScript objects
+ * @param pdxIdentifiers the identifiers for the PDXScript objects
  */
 class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String])
   extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
