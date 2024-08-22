@@ -3,9 +3,13 @@ package com.hoi4utils.clausewitz.script
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 
-class IntPDX(pdxIdentifiers: List[String]) extends AbstractPDX[Int](pdxIdentifiers) {
+class IntPDX(pdxIdentifiers: List[String], range: Range = Range.Int) extends AbstractPDX[Int](pdxIdentifiers) {
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
+  }
+
+  def this(pdxIdentifier: String, range: Range = Range.Int) = {
+    this(List(pdxIdentifier), range)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -44,4 +48,10 @@ class IntPDX(pdxIdentifiers: List[String]) extends AbstractPDX[Int](pdxIdentifie
       case i: Int => i
       case d: Double => d.toInt
   }
+
+  def defaultRange: Boolean = range == Range.Int
+
+  def minValue: Int = range.min
+
+  def maxValue: Int = range.max
 }

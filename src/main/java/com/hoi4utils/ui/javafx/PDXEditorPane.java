@@ -121,9 +121,10 @@ public class PDXEditorPane extends AnchorPane {
             }
             case IntPDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
+                int minValue = pdx.defaultRange() ? Integer.MIN_VALUE : pdx.minValue();
+                int maxValue = pdx.defaultRange() ? Integer.MAX_VALUE : pdx.maxValue();
                 Spinner<Integer> spinner = new Spinner<>(
-                        new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE,
-                                Integer.MAX_VALUE));
+                        new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue));
                 // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment 
                 spinner.getValueFactory().setValue((Integer) pdx.getOrElse(0));
                 spinner.setPrefHeight(25);
@@ -137,9 +138,10 @@ public class PDXEditorPane extends AnchorPane {
             }
             case DoublePDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
+                double minValue = pdx.defaultRange() ? Double.MIN_VALUE : pdx.minValue();
+                double maxValue = pdx.defaultRange() ? Double.MAX_VALUE : pdx.maxValue();
                 Spinner<Double> spinner = new Spinner<>(
-                        new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.MIN_VALUE,
-                                Double.MAX_VALUE));
+                        new SpinnerValueFactory.DoubleSpinnerValueFactory(minValue, maxValue));
                 // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment 
                 spinner.getValueFactory().setValue((Double) pdx.getOrElse(0.0));
                 spinner.setPrefHeight(25);
