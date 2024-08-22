@@ -53,16 +53,20 @@ public class HOIIVFile implements FileUtils {
 	private static final PublicFieldChangeNotifier changeNotifier = new PublicFieldChangeNotifier(HOIIVFile.class);
 
     public static void createHOIIVFilePaths() {
-		// get hash map from hoi4utils.properties
-		new SettingsManager(null);
-		System.out.println("new SettingsManager(null)");
+		SettingsManager.initializeAndSaveSettings(null);
+
+		if (Settings.DEMO_MODE.enabled()) {
+			System.out.println("Demo mode is on which means there is no modpath");
+			return;
+		}
+
 		String modPath = SettingsManager.get(Settings.MOD_PATH);
 		String hoi4Path = SettingsManager.get(Settings.HOI4_PATH);
 		System.out.println("modPath: " + modPath);
+		System.out.println("hoi4Path: " + hoi4Path);
 
 		if (modPath == null) {
-			MessageController window = new MessageController();
-			window.open("Error: modPath was null and we can't create any files");
+			System.err.println("modPath is null, please set it in hoi4utils.properties");
 			return;
 		}
 
@@ -79,7 +83,7 @@ public class HOIIVFile implements FileUtils {
 		mod_units_folder = new File(modPath + "\\common\\units");
 		hoi4_units_folder = new File(hoi4Path + "\\common\\units");
 		hoi4mods_folder = modPathFile.getParentFile();
-		System.out.println("HOIIVFile created paths");
+		System.out.println("HOIIVFile created path objects");
 
 		// Check for changes after setting the fields
 		changeNotifier.checkAndNotifyChanges();

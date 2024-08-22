@@ -31,10 +31,14 @@ public class SettingsManager {
 	private static FileWriter settingsWriter;
 	private static BufferedWriter settingsBWriter;
 	private static PrintWriter settingsPWriter;// = new PrintWriter(settingsBWriter); // for println syntax
-	static HashMap<Settings, String> settingValues = new HashMap<>();
-	public static SettingsManager settings;
+	public static HashMap<Settings, String> settingValues = new HashMap<>(); // entire settings during runtime
 
-	public SettingsManager(HashMap<Settings, String> settingsHash) {
+	/**
+	 * Creates or updates the settings files based on the provided settings hash.
+	 *
+	 * @param settingsHash	a HashMap containing settings and their corresponding values
+	 */
+	public static void initializeAndSaveSettings(HashMap<Settings, String> settingsHash) {
 		try {
 			Files.createDirectories(Paths.get(NEW_PROPERTIES_PATH).getParent());
 			settingsFile = new File(NEW_PROPERTIES_PATH);
@@ -128,36 +132,11 @@ public class SettingsManager {
 		}
 	}
 
-
-	/**
-	 * Writes the specified setting with the given value to the settings file.
-	 *
-	 * @param setting the setting to be written
-	 * @param settingValue the value of the setting
-	 * @throws SettingsWriteException if there is an error writing the settings
-	 */
-	public static void writeSetting(Settings setting, String settingValue) {
-		try {
-			settingsWriter = new FileWriter(settingsFile, false);
-		} catch (IOException e) {
-			throw new SettingsWriteException("Error writing settings", e);
-		}
-		settingsBWriter = new BufferedWriter(settingsWriter);
-		settingsPWriter = new PrintWriter(settingsBWriter);
-		settingValues.put(setting, settingValue);
-		for (Settings s : Settings.values()) {
-			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
-		}
-		settingsPWriter.close();
-	}
-
 	/**
 	 * Writes a list of HOIIVUtils Settings to the hoi4utils.properties file, all other HOIIVUtils
 	 * Settings remain the same.
 	 *
-	 * @param newSettings a HashMap containing the updated HOIIVUtils Settings to save. If null, the
-	 *        function returns without doing anything.
-	 * @throws SettingsWriteException if there is an error writing the settings
+	 * @param newSettings a HashMap containing the updated HOIIVUtils Settings to save. If null, the function returns without doing anything.
 	 */
 	public static void writeSettings(HashMap<Settings, String> newSettings) {
 		if (newSettings == null) {
@@ -173,26 +152,6 @@ public class SettingsManager {
 		settingsBWriter = new BufferedWriter(settingsWriter);
 		settingsPWriter = new PrintWriter(settingsBWriter);
 		settingValues.putAll(newSettings);
-		for (Settings s : Settings.values()) {
-			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
-		}
-		settingsPWriter.close();
-	}
-
-
-	/**
-	 * Saves all HOIIVUtils Settings to hoi4utils.properties file.
-	 *
-	 * @throws SettingsWriteException if there is an error saving the settings
-	 */
-	public static void writeSettings() {
-		try {
-			settingsWriter = new FileWriter(settingsFile, false);
-		} catch (IOException e) {
-			throw new SettingsWriteException("Error writing settings", e);
-		}
-		settingsBWriter = new BufferedWriter(settingsWriter);
-		settingsPWriter = new PrintWriter(settingsBWriter);
 		for (Settings s : Settings.values()) {
 			settingsPWriter.println(s.name() + ";" + settingValues.get(s));
 		}

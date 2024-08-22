@@ -5,7 +5,7 @@
 
 	<groupId>com.hoi4utils</groupId>
 	<artifactId>HOIIVUtils</artifactId>
-	<version>12.0.0-SNAPSHOT</version>
+	<version>13.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>HOIIVUtils</name>
@@ -352,7 +352,7 @@
 								<minVersion>22</minVersion>
 							</jre>
 							<versionInfo>
-								<fileVersion>12.0.0.0</fileVersion>
+								<fileVersion>13.0.0.0</fileVersion>
 								<txtFileVersion>${project.version}</txtFileVersion>
 								<copyright>Copyright ${project.inceptionYear}
 									${project.organization.name}</copyright>

@@ -35,7 +35,7 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 		} else {
 			try {
 				FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
-				System.out.println("HOIIVUtilsStageLoader creating stage with fxml" + fxmlResource);
+				System.out.println("HOIIVUtilsStageLoader creating stage with fxml: " + fxmlResource);
 				Parent root = launchLoader.load();
 				Scene scene = new Scene(root);
 
