@@ -99,7 +99,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
 //  def stream: Stream[T] = get().stream
 
-  override def isUndefined: Boolean = node.isEmpty
+  override def isUndefined: Boolean = get().isEmpty //node.isEmpty
 
   override def toScript: String = {
     val sb = new StringBuilder
