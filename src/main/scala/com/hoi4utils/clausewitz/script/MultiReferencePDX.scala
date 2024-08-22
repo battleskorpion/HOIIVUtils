@@ -98,7 +98,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     resolvedReferences.clear()
     for (reference <- referenceCollection) {
       val referenceID = idExtractor.apply(reference)
-      if (referenceID.isDefined && referenceNames.contains(referenceID)) {
+      if (referenceID.isDefined && referenceNames.contains(referenceID.get)) {
         resolvedReferences.addOne(reference)
       }
     }
