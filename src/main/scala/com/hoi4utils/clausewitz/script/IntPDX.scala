@@ -2,13 +2,18 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
+import com.hoi4utils.ExpectedRange
 
-class IntPDX(pdxIdentifiers: List[String], range: Range = Range.Int) extends AbstractPDX[Int](pdxIdentifiers) {
+class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedRange.ofInt) extends AbstractPDX[Int](pdxIdentifiers) {
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
   }
 
-  def this(pdxIdentifier: String, range: Range = Range.Int) = {
+  def this(pdxIdentifier: String) = {
+    this(List(pdxIdentifier))
+  }
+
+  def this(pdxIdentifier: String, range: ExpectedRange[Int]) = {
     this(List(pdxIdentifier), range)
   }
 
@@ -49,7 +54,7 @@ class IntPDX(pdxIdentifiers: List[String], range: Range = Range.Int) extends Abs
       case d: Double => d.toInt
   }
 
-  def defaultRange: Boolean = range == Range.Int
+  def defaultRange: Boolean = range == ExpectedRange.ofInt
 
   def minValue: Int = range.min
 

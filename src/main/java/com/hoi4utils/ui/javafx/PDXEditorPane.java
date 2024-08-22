@@ -138,12 +138,12 @@ public class PDXEditorPane extends AnchorPane {
             }
             case DoublePDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
-                double minValue = pdx.defaultRange() ? Double.MIN_VALUE : pdx.minValue();
-                double maxValue = pdx.defaultRange() ? Double.MAX_VALUE : pdx.maxValue();
+                double minValue = pdx.defaultRange() ? -Double.MAX_VALUE : pdx.minValueNonInfinite();
+                double maxValue = pdx.defaultRange() ? Double.MAX_VALUE : pdx.maxValueNonInfinite();
+                // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment
+                double defaultValue = pdx.getOrElse(0.0);
                 Spinner<Double> spinner = new Spinner<>(
-                        new SpinnerValueFactory.DoubleSpinnerValueFactory(minValue, maxValue));
-                // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment 
-                spinner.getValueFactory().setValue((Double) pdx.getOrElse(0.0));
+                        new SpinnerValueFactory.DoubleSpinnerValueFactory(minValue, maxValue, defaultValue, 1));
                 spinner.setPrefHeight(25);
                 spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
                     pdx.setNode(newValue);
