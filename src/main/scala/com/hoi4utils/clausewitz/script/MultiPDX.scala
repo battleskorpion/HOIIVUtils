@@ -86,6 +86,8 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def isEmpty: Boolean = get().isEmpty
 
+  override def nonEmpty: Boolean = get().nonEmpty
+
   override def iterator: Iterator[T] = get().iterator.flatten
 
   //  override def forEach(action: Consumer[? >: T]): Unit = {
@@ -99,7 +101,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
 //  def stream: Stream[T] = get().stream
 
-  override def isUndefined: Boolean = get().isEmpty //node.isEmpty
+  override def isUndefined: Boolean = super.isUndefined //node.isEmpty
 
   override def toScript: String = {
     val sb = new StringBuilder

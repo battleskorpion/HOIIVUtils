@@ -112,7 +112,7 @@ import scala.collection.mutable.ListBuffer
 
   def getDDSImage: Image = ddsImage
 
-  def hasPrerequisites: Boolean = !(prerequisites.isUndefined || prerequisites.isEmpty)
+  def hasPrerequisites: Boolean = prerequisites.nonEmpty
 
   def isMutuallyExclusive: Boolean = !(mutuallyExclusive.isUndefined || mutuallyExclusive.isEmpty)
 
