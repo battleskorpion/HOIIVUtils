@@ -133,7 +133,7 @@ class FocusTree private(private var focus_file: File)
     val v = id.get()
     v match {
       case Some(id) => return id
-      case None =>if (country.get() != null) return country.get().get.toString
+      case None => if (country.get() != null && country.get().isDefined) return country.get().get.toString
     }
     super.toString
   }
