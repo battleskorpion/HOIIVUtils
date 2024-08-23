@@ -359,9 +359,9 @@ public class SettingsController extends Application implements FXWindow {
 	public void updateSettings() {
 		if (Boolean.TRUE.equals(!new File(SettingsManager.NEW_PROPERTIES_PATH).exists())) {
 			SettingsManager.initializeAndSaveSettings(tempSettings);
-			if (HOIIVFile.mod_folder == null) {
+			// if (HOIIVFile.mod_folder == null) {
 				HOIIVFile.createHOIIVFilePaths();
-			}
+			// }
 		} else {
 			SettingsManager.initializeAndSaveSettings(tempSettings);
 		}

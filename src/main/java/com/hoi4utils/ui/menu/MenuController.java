@@ -73,6 +73,11 @@ public class MenuController extends Application implements FXWindow {
 		launch(args);
 	}
 
+	@FXML
+	void initialize() {
+		System.out.println("Menu Controller initialized");
+	}
+
 	@Override
 	public void start(Stage stage) {
 		try {
