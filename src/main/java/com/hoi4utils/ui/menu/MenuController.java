@@ -75,6 +75,11 @@ public class MenuController extends Application implements FXWindow {
 
 	@FXML
 	void initialize() {
+		if (Settings.DEMO_MODE.enabled()) {
+			focusTreeViewButton.setDisable(true);
+		} else {
+			focusTreeViewButton.setDisable(false);
+		}
 		System.out.println("Menu Controller initialized");
 	}
 
