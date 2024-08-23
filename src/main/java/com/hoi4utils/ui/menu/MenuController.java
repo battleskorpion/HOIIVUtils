@@ -99,10 +99,8 @@ public class MenuController extends Application implements FXWindow {
 				LocalizationManager LocalizationManager = new EnglishLocalizationManager();
 				LocalizationManager.reload();
 			}
-			if (Settings.DEV_MODE.enabled()) {
-				State.read();
-				FocusTree.read();
-			}
+			State.read();
+			FocusTree.read();
 		}
 	}
 
