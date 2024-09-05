@@ -169,7 +169,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   }
 
   def hasAbsolutePosition(x: Int, y: Int): Boolean = {
-    this.x.getOrElse(0) == x && this.y.getOrElse(0) == y
+    this.absoluteX == x && this.absoluteY == y
   }
 
   def mutuallyExclusiveList(): List[Focus] = {
