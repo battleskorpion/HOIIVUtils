@@ -44,7 +44,8 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   }
 
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
-    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost, availableIfCapitulated, cancelIfInvalid, continueIfInvalid)
+    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost, availableIfCapitulated,
+      cancelIfInvalid, continueIfInvalid) // completion_reward
   }
 
   def absoluteX: Int = absolutePosition().x

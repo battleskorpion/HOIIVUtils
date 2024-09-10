@@ -10,7 +10,11 @@ import java.util.stream.Stream
 import scala.collection.mutable.ListBuffer
 
 // todo i do not like this class
-abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String])
+  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+
+  protected var pdxList: ListBuffer[T] = ListBuffer.empty
+
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
   }
@@ -25,8 +29,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
   }
 
   override def loadPDX(expressions: Iterable[Node]): Unit = {
-    import scala.jdk.CollectionConverters
-    if (expressions != null)
+    if (expressions != null) {
       expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
         try loadPDX(expression)
         catch {
@@ -34,13 +37,16 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
             System.err.println(e.getMessage)
           //throw new RuntimeException(e);
         }
-
       })
+    }
   }
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
-  override def get(): Option[ListBuffer[T]] = None//super.get() // todo
+  override def get(): Option[ListBuffer[T]] = {
+    if (pdxList.isEmpty) None
+    else Some(pdxList)
+  }
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
@@ -49,32 +55,28 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
     val value = expression.$
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
-    node.get.$ match {
+    expression.$ match {
       case _: ListBuffer[Node] =>
-//        val childScript = newChildScript(expression)
-//        childScript.loadPDX(expression)
-//        childScriptList.add(childScript)
+        val childScript = newChildScript(expression)
+        childScript.loadPDX(expression)
+        pdxList += childScript
       case _ =>
-        // todo?
+        // todo idk
+        val childScript = newChildScript(expression)
+        childScript.loadPDX(expression)
+        pdxList += childScript
     }
   }
 
   protected def newChildScript(expression: Node): T = {
-    // todo :(
-//    val pdx = new T()
-//    pdx.loadPDX(expression)
-//    // todo this may be fine. if theres no runtime errors. leave this. yes the IDE is yelling.
-//    //  the IDE thinks pdx is of type T. the compiler does not. ???
-//    pdx.asInstanceOf[T]
-    null.asInstanceOf[T]
+    // todo :D
+    // what if instead of this class, we saw the effects and then declared them
   }
 
   def clear(): Unit = {
     if (node.nonEmpty) {
       node.get.$ match {
-        case l: ListBuffer[T] =>
-          l.clear()
-        case _ =>
+        case l: ListBuffer[T] => l.clear()
       }
     }
   }
@@ -85,11 +87,9 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
 
   override def foreach[U](f: T => U): Unit = super.foreach(f)
 
-//  override def size: Int = {
-//    get().size
-//  }
+  override def size: Int = get().size
 
-  override def isUndefined: Boolean = node.isEmpty
+  override def isUndefined: Boolean = super.isUndefined
 
   override def toScript: String = {
     val sb = new StringBuilder

@@ -88,8 +88,6 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def isEmpty: Boolean = get().isEmpty
 
-  override def nonEmpty: Boolean = get().nonEmpty
-
   override def iterator: Iterator[T] = get().iterator.flatten
 
   //  override def forEach(action: Consumer[? >: T]): Unit = {
