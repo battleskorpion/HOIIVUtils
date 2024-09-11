@@ -33,7 +33,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
   val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
   var ddsImage: Image = _
-
+  /* completion reward */
   val completionReward: CompletionReward = new CompletionReward()
 
 //  obj.addAll(childScripts)  // todo: garbage
@@ -45,7 +45,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
     ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost, availableIfCapitulated,
-      cancelIfInvalid, continueIfInvalid) // completion_reward
+      cancelIfInvalid, continueIfInvalid, completionReward)
   }
 
   def absoluteX: Int = absolutePosition().x
@@ -297,10 +297,6 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     @throws[UnexpectedIdentifierException]
     override def loadPDX(expression: Node): Unit = {
       super.loadPDX(expression)
-    }
-
-    override protected def newChildScript(expression: Node): Effect = {
-      null.asInstanceOf[Effect] // todo fix
     }
   }
 

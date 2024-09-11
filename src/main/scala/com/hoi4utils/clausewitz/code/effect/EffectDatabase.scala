@@ -22,7 +22,7 @@ import scala.collection.mutable.ListBuffer
 import scala.util.{Try, Using}
 
 object EffectDatabase {
-  protected def effects: ListBuffer[Effect] = new ListBuffer[Effect]
+  private var effects: List[Effect] = List()
 
   private def newStructuredEffectBlock(pdxIdentifier: String, childScriptsList: ListBuffer[? <: PDXScript[?]]) = new StructuredPDX(pdxIdentifier) {
     override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = childScriptsList
@@ -44,12 +44,20 @@ object EffectDatabase {
 
   def apply(): PDXSupplier[Effect] = {
     new PDXSupplier[Effect] {
-      override def simplePDXSupplier(expression: Node): Option[Node => Option[Effect]] = {
-        effects.filter(_.isInstanceOf[SimpleEffect]).find(_.identifier == expression.identifier)
+      override def simplePDXSupplier(): Option[Node => Option[SimpleEffect]] = {
+        Some((expr: Node) => {
+          effects.filter(_.isInstanceOf[SimpleEffect])
+            .find(_.getPDXIdentifier == expr.identifier)
+            .map(_.clone().asInstanceOf[SimpleEffect])
+        })
       }
 
-      override def blockPDXSupplier(expression: Node): Option[Node => Option[Effect]] = {
-        effects.filter(_.isInstanceOf[BlockEffect]).find(_.identifier == expression.identifier)
+      override def blockPDXSupplier(): Option[Node => Option[BlockEffect]] = {
+        Some((expr: Node) => {
+          effects.filter(_.isInstanceOf[BlockEffect])
+            .find(_.getPDXIdentifier == expr.identifier)
+            .map(_.clone().asInstanceOf[BlockEffect])
+        })
       }
     }
   }

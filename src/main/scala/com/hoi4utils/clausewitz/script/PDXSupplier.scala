@@ -2,6 +2,8 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz_parser.Node
 
+import scala.collection.mutable.ListBuffer
+
 trait PDXSupplier[T <: PDXScript[?]] {
   def apply(expression: Node): Option[T] = {
     (simplePDXSupplier(), blockPDXSupplier()) match {
@@ -17,7 +19,7 @@ trait PDXSupplier[T <: PDXScript[?]] {
     }
   }
 
-  override def simplePDXSupplier(expression: Node): Option[Node => Option[T]] = None
+  def simplePDXSupplier(): Option[Node => Option[T]] = None
 
-  override def blockPDXSupplier(expression: Node): Option[Node => Option[T]] = None
+  def blockPDXSupplier(): Option[Node => Option[T]] = None
 }

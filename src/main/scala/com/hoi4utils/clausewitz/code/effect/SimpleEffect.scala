@@ -11,4 +11,7 @@ trait SimpleEffect extends Effect {
   _supportedScopes = Set(ScopeType.country, ScopeType.state) // Example scope types
   _supportedTargets = Set(ScopeType.country) // Example target types
 
+  override def clone(): AnyRef = {
+    super.clone().asInstanceOf[SimpleEffect]
+  }
 }

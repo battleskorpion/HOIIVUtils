@@ -15,8 +15,8 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
 
-  def this(pdxIdentifiers: String*) = {
-    this(pdxIdentifiers.toList)
+  def this(pdxSupplier: PDXSupplier[T], pdxIdentifiers: String*) = {
+    this(pdxSupplier, pdxIdentifiers.toList)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -56,12 +56,14 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     expression.$ match {
-      case _: ListBuffer[Node] =>
-        val childScript = useSupplierFunction(expression)
-        childScript.loadPDX(expression)
-        pdxList += childScript
+      case l: ListBuffer[Node] =>
+        for (childExpr <- l) {
+          val childScript = useSupplierFunction(childExpr)
+          childScript.loadPDX(childExpr)
+          pdxList += childScript
+        }
       case _ =>
-        // todo idk
+        // todo idk   // double todo
         val childScript = useSupplierFunction(expression)
         childScript.loadPDX(expression)
         pdxList += childScript
@@ -69,8 +71,8 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
   }
 
   protected def useSupplierFunction(expression: Node): T = {
-    pdxSupplier() match {
-      case Some(s) => s.get()
+    pdxSupplier(expression) match {
+      case Some(s) => s
       case None => throw new UnexpectedIdentifierException(expression)
     }
   }
