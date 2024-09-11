@@ -10,7 +10,7 @@ import java.util.stream.Stream
 import scala.collection.mutable.ListBuffer
 
 // todo i do not like this class
-abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String])
+abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: List[String])
   extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
@@ -57,20 +57,22 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String])
     // then load each sub-PDXScript
     expression.$ match {
       case _: ListBuffer[Node] =>
-        val childScript = newChildScript(expression)
+        val childScript = useSupplierFunction(expression)
         childScript.loadPDX(expression)
         pdxList += childScript
       case _ =>
         // todo idk
-        val childScript = newChildScript(expression)
+        val childScript = useSupplierFunction(expression)
         childScript.loadPDX(expression)
         pdxList += childScript
     }
   }
 
-  protected def newChildScript(expression: Node): T = {
-    // todo :D
-    // what if instead of this class, we saw the effects and then declared them
+  protected def useSupplierFunction(expression: Node): T = {
+    pdxSupplier() match {
+      case Some(s) => s.get()
+      case None => throw new UnexpectedIdentifierException(expression)
+    }
   }
 
   def clear(): Unit = {

@@ -293,7 +293,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     }
   }
 
-  class CompletionReward extends CollectionPDX[Effect]("completion_reward") {
+  class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward") {
     @throws[UnexpectedIdentifierException]
     override def loadPDX(expression: Node): Unit = {
       super.loadPDX(expression)

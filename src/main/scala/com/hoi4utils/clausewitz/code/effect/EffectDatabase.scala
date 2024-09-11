@@ -22,6 +22,8 @@ import scala.collection.mutable.ListBuffer
 import scala.util.{Try, Using}
 
 object EffectDatabase {
+  protected def effects: ListBuffer[Effect] = new ListBuffer[Effect]
+
   private def newStructuredEffectBlock(pdxIdentifier: String, childScriptsList: ListBuffer[? <: PDXScript[?]]) = new StructuredPDX(pdxIdentifier) {
     override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = childScriptsList
 
@@ -38,6 +40,18 @@ object EffectDatabase {
   catch {
     case e: ClassNotFoundException =>
       throw new RuntimeException(e)
+  }
+
+  def apply(): PDXSupplier[Effect] = {
+    new PDXSupplier[Effect] {
+      override def simplePDXSupplier(expression: Node): Option[Node => Option[Effect]] = {
+        effects.filter(_.isInstanceOf[SimpleEffect]).find(_.identifier == expression.identifier)
+      }
+
+      override def blockPDXSupplier(expression: Node): Option[Node => Option[Effect]] = {
+        effects.filter(_.isInstanceOf[BlockEffect]).find(_.identifier == expression.identifier)
+      }
+    }
   }
 
 }
@@ -57,7 +71,7 @@ class EffectDatabase(databaseName: String) {
         println(s"An error occurred: ${e.getMessage}")
     }
     connection = DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath)
-    loadEffects
+    EffectDatabase.effects = loadEffects
   } catch {
     case e@(_: IOException | _: SQLException) =>
       e.printStackTrace()
@@ -202,7 +216,7 @@ class EffectDatabase(databaseName: String) {
     }
     paramValueType.getOrElse(return None) match {
       case ParameterValueType.cw_int => Some(
-        new IntPDX(pdxIdentifier) with SimpleEffectPDX {
+        new IntPDX(pdxIdentifier) with SimpleEffect {
         })
       case _ =>
         None // todo ???
