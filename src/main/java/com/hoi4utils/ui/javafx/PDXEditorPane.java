@@ -53,7 +53,7 @@ public class PDXEditorPane extends AnchorPane {
                 label.setMinWidth(10);
                 label.setPrefHeight(25);
 
-                Node editorNode = createEditorNode(property, false, vbox);
+                Node editorNode = createEditorNode(property, false, false);
                 if (editorNode != null) {
                     hbox.getChildren().addAll(label, editorNode);
                     vbox.getChildren().add(hbox);
@@ -78,7 +78,7 @@ public class PDXEditorPane extends AnchorPane {
         }
     }
 
-    private Node createEditorNode(PDXScript<?> property, boolean allowNull, VBox vbox) {
+    private Node createEditorNode(PDXScript<?> property, boolean allowNull, boolean withLabel) {
         switch (property) {
             case StructuredPDX pdx -> {
                 VBox subVBox = new VBox();
@@ -92,6 +92,8 @@ public class PDXEditorPane extends AnchorPane {
             }
             case StringPDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
+
+                HBox hbox = new HBox();
 //                TextField textField = new TextField(pdx.get() != null ? pdx.get() : "");
                 TextField textField = new TextField(pdx.getOrElse(""));
                 textField.setPrefWidth(200);
@@ -102,9 +104,12 @@ public class PDXEditorPane extends AnchorPane {
                         reloadEditor();
                     }
                 });
-                return textField;
+                if (withLabel) addLabelToHBox(pdx, hbox);
+                hbox.getChildren().add(textField);
+                return hbox;
             }
             case BooleanPDX pdx -> {
+                HBox hbox = new HBox();
                 Label customCheckBox = new Label();
                 customCheckBox.setText(pdx.$() ? "yes" : "no");
                 customCheckBox.setFont(Font.font("Monospaced"));
@@ -117,10 +122,14 @@ public class PDXEditorPane extends AnchorPane {
                         reloadEditor();
                     }
                 });
-                return customCheckBox;
+                if (withLabel) addLabelToHBox(pdx, hbox);
+                hbox.getChildren().add(customCheckBox);
+                return hbox;
             }
             case IntPDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
+
+                HBox hbox = new HBox();
                 int minValue = pdx.defaultRange() ? Integer.MIN_VALUE : pdx.minValue();
                 int maxValue = pdx.defaultRange() ? Integer.MAX_VALUE : pdx.maxValue();
                 Spinner<Integer> spinner = new Spinner<>(
@@ -134,10 +143,14 @@ public class PDXEditorPane extends AnchorPane {
                         reloadEditor();
                     }
                 });
-                return spinner;
+                if (withLabel) addLabelToHBox(pdx, hbox);
+                hbox.getChildren().add(spinner);
+                return hbox;
             }
             case DoublePDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
+
+                HBox hbox = new HBox();
                 double minValue = pdx.defaultRange() ? -Double.MAX_VALUE : pdx.minValueNonInfinite();
                 double maxValue = pdx.defaultRange() ? Double.MAX_VALUE : pdx.maxValueNonInfinite();
                 // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment
@@ -151,10 +164,13 @@ public class PDXEditorPane extends AnchorPane {
                         reloadEditor();
                     }
                 });
+                if (withLabel) addLabelToHBox(pdx, hbox);
+                hbox.getChildren().add(spinner);
                 return spinner;
             }
             case ReferencePDX<?> pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
+
                 ComboBox<String> comboBox = new ComboBox<>();
                 comboBox.setPrefWidth(200);
                 comboBox.setPrefHeight(25);
@@ -176,6 +192,7 @@ public class PDXEditorPane extends AnchorPane {
 //            }
             case MultiReferencePDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
+
                 VBox subVBox = new VBox();
                 subVBox.setSpacing(2);
                 for (int i = 0; i < pdx.numReferences(); i++) {
@@ -220,18 +237,45 @@ public class PDXEditorPane extends AnchorPane {
             }
             case MultiPDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
+
                 VBox subVBox = new VBox();
                 subVBox.setSpacing(10);
-                pdx.foreach(pdxScript -> subVBox.getChildren().add(createEditorNode((PDXScript<?>) pdxScript, allowNull, subVBox)));
-//                for (var pdxScript : pdx) {
-//                    subVBox.getChildren().add(createEditorNode(pdxScript, allowNull, subVBox));
-//                }
+                pdx.foreach(pdxScript -> {
+                    var subNode = createSubNode(allowNull, (PDXScript<?>) pdxScript);
+                    if (subNode != null) subVBox.getChildren().add(subNode);
+                    return null;
+                });
+                return subVBox;
+            }
+            case CollectionPDX<?> pdx -> {
+                if (pdx.isUndefined() && !allowNull) return null;
+
+                VBox subVBox = new VBox();
+                subVBox.setSpacing(10);
+                pdx.foreach(pdxScript -> {
+                    var subNode = createEditorNode((PDXScript<?>) pdxScript, allowNull, true);
+                    if (subNode != null) subVBox.getChildren().add(subNode);
+                    return null;
+                });
                 return subVBox;
             }
             case null, default ->
-                    System.out.println("Ui node unknown for property type: " + property.getClass());
+                    System.out.println("Ui node unknown for property type: " + (property == null ? "[null]" : property.getClass()));
         }
         return null;
+    }
+
+    private static void addLabelToHBox(PDXScript<?> pdx, HBox hbox) {
+        Label label = new Label(pdx.getPDXIdentifier() + " =");
+        label.setFont(Font.font("Monospaced"));
+        label.setMinWidth(10);
+        label.setPrefHeight(25);
+        hbox.getChildren().add(label);
+    }
+
+    private Node createSubNode(boolean allowNull, PDXScript<?> pdxScript) {
+        Node editorNode = createEditorNode(pdxScript, allowNull, false);
+        return editorNode;
     }
 
     /**
@@ -254,7 +298,7 @@ public class PDXEditorPane extends AnchorPane {
             label.setPrefHeight(25);
             label.setStyle("-fx-text-fill: grey;");
 
-            Node editorNode = createEditorNode(property, true, rootVBox);
+            Node editorNode = createEditorNode(property, true, false);
             if (editorNode != null) {
                 hbox.getChildren().addAll(label, editorNode);
                 rootVBox.getChildren().add(rootVBox.getChildren().size() - 1, hbox); // Add before the add button
