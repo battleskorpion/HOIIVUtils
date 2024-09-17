@@ -104,7 +104,7 @@ object State {
 
   def get(state_name: String): State = {
     for (state <- states) {
-      if (state.name == state_name.trim) return state
+      if (state._name == state_name.trim) return state
     }
     null
   }
@@ -234,7 +234,7 @@ object State {
 
 class State(private var stateFile: File, addToStatesList: Boolean) extends InfrastructureData with Localizable with Iterable[State] with Comparable[State] {
   private var stateID = 0
-  private var name: String = stateFile.getName.replace(".txt", "")
+  private var _name: String = stateFile.getName.replace(".txt", "")
   final private var owner: mutable.Map[ClausewitzDate, Owner] =  new mutable.HashMap[ClausewitzDate, Owner]
   //! todo Finish state Category
   // private StateCategory stateCategory; 
@@ -369,7 +369,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
 
   def getResources: Resources = resourcesData
 
-  override def toString: String = name
+  override def toString: String = _name
 
   def getFile: File = stateFile
 
@@ -381,7 +381,9 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
 
   override def compareTo(@NotNull o: State): Int = Integer.compare(stateID, o.stateID)
 
-  @NotNull override def getLocalizableProperties: mutable.Map[Property, String] = mutable.Map(Property.NAME -> name)
+  @NotNull override def getLocalizableProperties: mutable.Map[Property, String] = mutable.Map(Property.NAME -> _name)
 
   @NotNull override def getLocalizableGroup: Iterable[? <: Localizable] = State.states
+
+  def name: String = _name
 }

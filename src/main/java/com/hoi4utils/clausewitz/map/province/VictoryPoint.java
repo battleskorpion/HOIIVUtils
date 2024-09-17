@@ -24,7 +24,7 @@ public class VictoryPoint implements Localizable {
 
 	public static VictoryPoint of(int province, int value) {
 		for (VictoryPoint vp : victoryPoints) {
-			if (vp.province.id == province) {
+			if (vp.province.id() == province) {
 				return vp;
 			}
 		}

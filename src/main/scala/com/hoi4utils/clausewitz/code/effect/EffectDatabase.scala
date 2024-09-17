@@ -2,8 +2,11 @@ package com.hoi4utils.clausewitz.code.effect
 
 import com.hoi4utils.clausewitz.BoolType
 import com.hoi4utils.clausewitz.code.scope.ScopeType
-import com.hoi4utils.clausewitz.script.*
+import com.hoi4utils.clausewitz.data.country.CountryTag
+import com.hoi4utils.clausewitz.map.province.Province
+import com.hoi4utils.clausewitz.script.{ReferencePDX, *}
 import com.hoi4utils.clausewitz_parser.Node
+import com.hoi4utils.clausewitz.map.state.*
 import org.jetbrains.annotations.NotNull
 
 import java.io.File
@@ -20,6 +23,7 @@ import java.sql.SQLException
 import java.util
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.jdk.javaapi.CollectionConverters
 import scala.util.{Try, Using}
 
 object EffectDatabase {
@@ -189,8 +193,10 @@ class EffectDatabase(databaseName: String) {
         data = data.filter((s: String) => s.nonEmpty)
         if (data.length >= 2) {
           val paramIdentifierStr = data(0).trim
-          val paramTypeStr = data(1).trim
-          val paramValueType = ParameterValueType.of(paramTypeStr)
+          if (data(1).trim.startsWith("<") && data(1).trim.endsWith(">")) {
+            val paramTypeStr = data(1).trim
+            val paramValueType: Option[ParameterValueType] = ParameterValueType.of(paramTypeStr)
+          }
         } else if (data.length == 1) {
           effects ++= simpleParameterToEffect(pdxIdentifier, parameterStr) // really a simple parameter
         }
@@ -209,6 +215,7 @@ class EffectDatabase(databaseName: String) {
     for (alternateParameter <- alternateParameters) {
       val parametersStrlist = alternateParameter.split("\\s+,\\s+")
       for (i <- parametersStrlist.indices) {
+        paramValueType = None
         val parameterStr = parametersStrlist(i).trim
         var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
         data = data.filter((s: String) => s.nonEmpty)
@@ -246,6 +253,15 @@ class EffectDatabase(databaseName: String) {
       // todo update default value/bool type
       case ParameterValueType.cw_bool => Some(
         new BooleanPDX(pdxIdentifier, false, BoolType.TRUE_FALSE) with SimpleEffect {
+        })
+      case ParameterValueType.state => Some(
+        new ReferencePDX[State](() => State.list, s => Some(s.name), pdxIdentifier) with SimpleEffect {
+        })
+      case ParameterValueType.province => Some(
+        new ReferencePDX[Province](() => CollectionConverters.asScala(Province.list), p => Some(p.idStr()), pdxIdentifier) with SimpleEffect {
+        })
+      case ParameterValueType.country => Some(
+        new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country") with SimpleEffect {
         })
       case _ =>
         None // todo ??? !!!
