@@ -4,4 +4,5 @@ package com.hoi4utils.clausewitz.map.seed;
 public enum SeedGenType {
     GRID,
     PROBABILISTIC_GPU,
+    RANDOM,
 }
