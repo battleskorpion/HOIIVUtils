@@ -208,7 +208,8 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 		gc2D.drawImage(gfxFocusUnavailable, x1 - 32, y1 + yAdj1);
 		gc2D.drawImage(focus.getDDSImage(), x1, y1);
-		String name = focus.localizationText(Property.NAME);
+		var locName = focus.localizationText(Property.NAME);
+		String name = locName.equals("[null]") && !focus.id().str().isBlank() ? focus.id().str() : locName;
 		gc2D.fillText(name, x1 - 20, y1 + yAdj2);
 
 		if (isSelected) {
