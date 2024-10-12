@@ -404,8 +404,10 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 				if (Settings.DEV_MODE.enabled()) System.out.println("Adding focus via context menu");
 				// open add focus menu to side of focus tree view
 				Focus newFocus = new Focus(focusTree);
+				focusTree.addNewFocus(newFocus);
 				newFocus.setAbsoluteXY(canvasToFocusX(e.getX()), canvasToFocusY(e.getY()));
-				openEditorWindow(newFocus);
+				newFocus.setID(focusTree.nextTempFocusID());
+				openEditorWindow(newFocus, this::drawFocusTree);
 			});
 			contextMenu.getItems().add(addFocusItem);
 			contextMenu.show(focusTreeCanvas, e.getScreenX(), e.getScreenY());
@@ -492,6 +494,13 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		if (focus == null) throw new IllegalArgumentException("Focus cannot be null");
 		PDXEditorWindow pdxEditorWindow = new PDXEditorWindow();
 		pdxEditorWindow.open((PDXScript<?>) focus); // this is not necessarily redundant.
+	}
+
+	@FXML
+	private void openEditorWindow(Focus focus, Runnable onUpdate) {
+		if (focus == null) throw new IllegalArgumentException("Focus cannot be null");
+		PDXEditorWindow pdxEditorWindow = new PDXEditorWindow();
+		pdxEditorWindow.open((PDXScript<?>) focus, onUpdate);
 	}
 
 	private int focusToCanvasX(Focus f) {

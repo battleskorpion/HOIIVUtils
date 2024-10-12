@@ -12,6 +12,7 @@ public class PDXEditorWindow extends HOIIVUtilsWindow {
     @FXML
     private PDXEditorPane editorPane;
     private PDXScript<?> pdxScript;
+    private Runnable onUpdate = null;
 
     public PDXEditorWindow() {
         setFxmlResource("PDXEditorWindow.fxml");
@@ -30,9 +31,26 @@ public class PDXEditorWindow extends HOIIVUtilsWindow {
         this.pdxScript = pdxScript;
     }
 
+    /**
+     * This constructor is used internally by javafx.
+     * Use {@link #PDXEditorWindow()} to create a new instance.
+     * Then call {@link #open(Object...)} to set the properties.
+     *
+     * @param pdxScript
+     */
+    @SuppressWarnings("unused")
+    public PDXEditorWindow(PDXScript<?> pdxScript, Runnable onUpdate) {
+        this.pdxScript = pdxScript;
+        this.onUpdate = onUpdate;
+    }
+
     @FXML
     void initialize() {
-        editorPane = new PDXEditorPane(pdxScript);
+        if (onUpdate == null) {
+            editorPane = new PDXEditorPane(pdxScript);
+        } else {
+            editorPane = new PDXEditorPane(pdxScript, onUpdate);
+        }
         rootAnchorPane.getChildren().add(editorPane);
         AnchorPane.setTopAnchor(editorPane, 30.0);
         AnchorPane.setBottomAnchor(editorPane, 0.0);

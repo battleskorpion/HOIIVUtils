@@ -21,6 +21,7 @@ public class PDXEditorPane extends AnchorPane {
     private final List<PDXScript<?>> nullProperties = new ArrayList<>();
     private final List<Node> nullPropertyNodes = new ArrayList<>();
     private boolean displayNullProperties = false;
+    private Runnable onUpdate = null;
 
     public PDXEditorPane(PDXScript<?> pdxScript) {
         this.pdxScript = pdxScript;
@@ -39,6 +40,11 @@ public class PDXEditorPane extends AnchorPane {
 
         // Initialize the editor with the properties of the PDXScript
         drawEditor(pdxScript, rootVBox);
+    }
+
+    public PDXEditorPane(PDXScript<?> pdxScript, Runnable onUpdate) {
+        this(pdxScript);
+        this.onUpdate = onUpdate;
     }
 
     private void drawEditor(PDXScript<?> pdxScript, VBox vbox) {
@@ -103,6 +109,7 @@ public class PDXEditorPane extends AnchorPane {
                     if (!newValue.isEmpty() && nullProperties.contains(property)) {
                         reloadEditor();
                     }
+                    onPropertyUpdate();
                 });
                 if (withLabel) addLabelToHBox(pdx, hbox);
                 hbox.getChildren().add(textField);
@@ -121,6 +128,7 @@ public class PDXEditorPane extends AnchorPane {
                     if (nullProperties.contains(property)) {
                         reloadEditor();
                     }
+                    onPropertyUpdate();
                 });
                 if (withLabel) addLabelToHBox(pdx, hbox);
                 hbox.getChildren().add(customCheckBox);
@@ -142,6 +150,7 @@ public class PDXEditorPane extends AnchorPane {
                     if (nullProperties.contains(property)) {
                         reloadEditor();
                     }
+                    onPropertyUpdate();
                 });
                 if (withLabel) addLabelToHBox(pdx, hbox);
                 hbox.getChildren().add(spinner);
@@ -163,6 +172,7 @@ public class PDXEditorPane extends AnchorPane {
                     if (nullProperties.contains(property)) {
                         reloadEditor();
                     }
+                    onPropertyUpdate();
                 });
                 if (withLabel) addLabelToHBox(pdx, hbox);
                 hbox.getChildren().add(spinner);
@@ -182,6 +192,7 @@ public class PDXEditorPane extends AnchorPane {
                     if (nullProperties.contains(property)) {
                         reloadEditor();
                     }
+                    onPropertyUpdate();
                 });
                 return comboBox;
             }
@@ -210,6 +221,7 @@ public class PDXEditorPane extends AnchorPane {
                         if (nullProperties.contains(property)) {
                             reloadEditor();
                         }
+                        onPropertyUpdate();
                     });
                     // plus button
                     Button plusButton = new Button("+");
@@ -263,6 +275,12 @@ public class PDXEditorPane extends AnchorPane {
                     System.out.println("Ui node unknown for property type: " + (property == null ? "[null]" : property.getClass()));
         }
         return null;
+    }
+
+    private void onPropertyUpdate() {
+        if (onUpdate != null) {
+            onUpdate.run();
+        }
     }
 
     private static void addLabelToHBox(PDXScript<?> pdx, HBox hbox) {

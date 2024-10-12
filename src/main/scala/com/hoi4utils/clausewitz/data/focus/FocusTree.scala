@@ -147,25 +147,22 @@ class FocusTree private(private var focus_file: File)
     focuses.toList
   }
 
+  def addNewFocus(f: Focus): Unit = {
+    focuses.+(f)
+  }
+
+  // for Java compatibility -_-
+  def nextTempFocusID(): String = {
+    nextTempFocusID(focuses.size)
+  }
+
+  def nextTempFocusID(lastIntID: Int): String = {
+    val id = "focus_" + (lastIntID + 1)
+    if (focuses.exists(_.id.get().contains(id))) return nextTempFocusID(lastIntID)
+    id
+  }
+
   override def compareTo(o: FocusTree): Int = {
-//    var c = 0
-//    this.country.get() match {
-//      case Some(countryTag) => o.country.get() match {
-//        case Some(otherCountryTag) => c = countryTag.compareTo(otherCountryTag)
-//        case None => _
-//      }
-//      case None => _
-//    }
-//    var d = 0
-//    this.id.get() match {
-//      case Some(id) => o.id.get() match {
-//        case Some(otherId) => d = id.compareTo(otherId)
-//        case None => _
-//      }
-//      case None => _
-//    }
-//    if (c == 0) d
-//    else c
     (this.country.get(), this.id.get()) match {
       case (Some(countryTag), Some(id)) =>
         (o.country.get(), o.id.get()) match {

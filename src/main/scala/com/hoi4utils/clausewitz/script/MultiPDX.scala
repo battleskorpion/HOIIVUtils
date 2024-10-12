@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable
 
 import java.util.function.Consumer
 import java.util.function.Supplier
+import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 
@@ -78,6 +79,15 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     }
   }
 
+  /**
+   * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.
+   * @param pdxScript
+   */
+  @targetName ("add")
+  def +(pdxScript: T): Unit = {
+    pdxList += pdxScript
+  }
+
   def clear(): Unit = {
     if (node.nonEmpty) {
       node.get.$ match {
@@ -97,7 +107,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
 //  override def spliterator: Spliterator[T] = get().spliterator
 
-  override def size: Int = get().size
+  override def size: Int = get().getOrElse(ListBuffer.empty).size
 
 //  def stream: Stream[T] = get().stream
 
