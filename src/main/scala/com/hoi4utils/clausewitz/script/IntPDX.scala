@@ -30,6 +30,8 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
   override def set(value: Int): Unit = {
     if (this.node.nonEmpty)
       this.node.get.setValue(value)
+    else
+      this.node = Some(Node(NodeValue(value)))
   }
 
   override def equals(other: PDXScript[?]): Boolean = {

@@ -2,10 +2,33 @@ package com.hoi4utils.clausewitz.code.effect
 
 import com.hoi4utils.clausewitz.data.technology.TechCategory
 import com.hoi4utils.clausewitz.map.state.State
-import com.hoi4utils.clausewitz.script._
+import com.hoi4utils.clausewitz.script.*
+import org.sqlite.SQLiteConfig.Pragma
+
 import java.util
 
-enum ParameterValueType(val identifiers: List[String]) {
+object ParameterValueType {
+  def of(s: String): Option[ParameterValueType] = {
+    var str = if (s.startsWith("<") && s.endsWith(">")) {
+      s.substring(1, s.length - 1)
+    } else {
+      s
+    }
+    str = str.replaceAll("([^\\s])(<)", "$1 $2")
+    val args = str.split(" ")
+
+    // 1st arg should be identifier of parameter value type
+    // other args should be @<modifier name> .... <optional modifier arguments>
+    ParameterValueType.values.find(_.identifiers.contains(args(0))) match {
+      case Some(p) =>
+        p.setIdentifier(args(0))
+        Some(p)
+      case None => None
+    }
+  }
+}
+
+enum ParameterValueType(val identifiers: List[String]) extends Enum[ParameterValueType] {
   case ace_type           extends ParameterValueType(List())
   case ai_strategy        extends ParameterValueType(List())
   case character          extends ParameterValueType(List("character"))
@@ -37,5 +60,13 @@ enum ParameterValueType(val identifiers: List[String]) {
   case advisor_slot       extends ParameterValueType(List())
   case event              extends ParameterValueType(List())
   case wargoal            extends ParameterValueType(List("wargoal", "war_goal"))
+
+  private var _activeIdentifier: String = ""
+
+  private def setIdentifier(identifier: String): Unit = {
+    _activeIdentifier = identifier
+  }
+
+  def activeIdentifier: String = _activeIdentifier
 
 }

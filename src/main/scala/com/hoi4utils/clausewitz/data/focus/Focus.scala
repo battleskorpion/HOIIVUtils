@@ -96,6 +96,13 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     prev
   }
 
+  /**
+   * Set the absolute x and y coordinates of the focus.
+   *
+   * @param x absolute x-coordinate
+   * @param y absolute y-coordinate
+   * @return the previous position.
+   */
   def setAbsoluteXY(x: Int, y: Int): Point = {
     val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
     this.x.set(x)

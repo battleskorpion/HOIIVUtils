@@ -23,6 +23,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import com.hoi4utils.ui.javafx.image.JavaFXImageUtils;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
@@ -395,6 +396,19 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 			if (Settings.DEV_MODE.enabled() && draggedFocus != null) {
 				System.out.println("Focus " + draggedFocus + " selected");
 			}
+		} else if (e.isSecondaryButtonDown()) {
+			// if secondary click -> add focus menu
+			ContextMenu contextMenu = new ContextMenu();
+			MenuItem addFocusItem = new MenuItem("Add Focus");
+			addFocusItem.setOnAction(event -> {
+				if (Settings.DEV_MODE.enabled()) System.out.println("Adding focus via context menu");
+				// open add focus menu to side of focus tree view
+				Focus newFocus = new Focus(focusTree);
+				newFocus.setAbsoluteXY(canvasToFocusX(e.getX()), canvasToFocusY(e.getY()));
+				openEditorWindow(newFocus);
+			});
+			contextMenu.getItems().add(addFocusItem);
+			contextMenu.show(focusTreeCanvas, e.getScreenX(), e.getScreenY());
 		}
 	}
 
@@ -486,6 +500,14 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 	private int focusToCanvasY(Focus f) {
 		return FOCUS_Y_SCALE * f.absoluteY() + Y_OFFSET_FIX;
+	}
+
+	private int canvasToFocusX(double canvasX) {
+		return ((int) canvasX - X_OFFSET_FIX) / FOCUS_X_SCALE + getMinX();
+	}
+
+	private int canvasToFocusY(double canvasY) {
+		return ((int) canvasY - Y_OFFSET_FIX) / FOCUS_Y_SCALE;
 	}
 
 	private boolean isWithinMarquee(Focus f) {

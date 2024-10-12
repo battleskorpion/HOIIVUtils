@@ -30,9 +30,10 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
   }
   
   override def set(value: Double): Unit = {
-    if (this.node.nonEmpty) {
+    if (this.node.nonEmpty)
       this.node.get.setValue(value)
-    }
+    else
+      this.node = Some(Node(NodeValue(value)))
   }
 
   override def equals(other: PDXScript[?]): Boolean = {

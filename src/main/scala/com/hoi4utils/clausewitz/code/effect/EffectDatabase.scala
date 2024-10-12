@@ -228,7 +228,7 @@ class EffectDatabase(databaseName: String) {
           if (data(0).trim.startsWith("<") && data(0).trim.endsWith(">")) {
             //
             val paramTypeStr = data(0).trim
-            paramValueType = Some(ParameterValueType.of(paramTypeStr))
+            paramValueType = ParameterValueType.of(paramTypeStr)
           }
           else {
             // todo

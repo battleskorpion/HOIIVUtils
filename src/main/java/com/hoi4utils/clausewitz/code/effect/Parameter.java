@@ -69,7 +69,8 @@ public class Parameter implements EffectParameter, Cloneable {
 
 	public static boolean containsScopeParameter(List<Parameter> requiredParameters) {
 		for (Parameter p : requiredParameters) {
-			if (p.allowedParameterValueTypes.contains((ParameterValueType.scope))) {
+			/* crazy workaround because can't reference ParameterValueType.scope directly */
+			if (p.allowedParameterValueTypes.stream().map(Enum::toString).toList().contains(ParameterValueType.scope.toString())) {
 				return true;
 			}
 		}

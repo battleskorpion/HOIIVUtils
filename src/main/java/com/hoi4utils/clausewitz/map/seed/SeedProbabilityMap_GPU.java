@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
 import com.aparapi.Kernel;
 import com.aparapi.Range;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -77,8 +78,14 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		normalize(); // will calc cumulative probabilities
 	}
 
+	/**
+	 * Controls the normalization of the probability map. The probability map is considered normalized
+	 * when the sum of all probabilities is equal to 1.0.
+	 * The probability map is normalized by dividing all probabilities by the sum of all probabilities.
+	 */
 	public void normalize() {
 		double sum;
+		// todo this is hard to read
 		if (probabilitySum == 0) {
 			System.out.println("t1");
 			sum = mapReduce2D(seedProbabilityMap);
@@ -295,10 +302,11 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 	}
 
 	public MapPoint getPoint(Random random) {
-		normalize();
+		normalize();                        // probability sum will be 1.0
 
-		double p = random.nextDouble();
+		double p = random.nextDouble();     // Random number between 0.0 and 1.0
 		// Find the first index where cumulative probability >= p
+		// This semi-randomly chooses a point since we have normalized the probability space to sum to 1.0
 		Point cumulativeP = findCumulativeProbabilityIndex(p);
 		if (cumulativeP == null) {
 			System.err.println("Cumulative probability index null " + this);
@@ -311,9 +319,7 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		System.out.println("cumulative:" + cumulativeP + ", " + cumulativeProbabilities[cumulativeP.y][cumulativeP.x]);
 		// System.out.println("cumulative1:" +
 		// Arrays.deepToString(cumulativeProbabilities));
-		MapPoint mp = new MapPoint(cumulativeP.x, cumulativeP.y,
-				provinceType(heightmap.height_xy(cumulativeP.x, cumulativeP.y),
-						properties.seaLevel()));
+		MapPoint mp = getMapPoint(cumulativeP);
 		// if (mp == null) {
 		// System.out.println("bad probability? " + p); // todo
 		// return getPoint(random);
@@ -321,11 +327,17 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 		System.out.println(++pointNumber);
 		/* adjust probabilities */
 		// adjustProbabilitiesInRadius(mp, 9); instead, ? ->
-		setSeedProbabilityMapYX(mp.y, mp.x, 0.0);
+		setSeedProbabilityMap_YX(mp.y, mp.x, 0.0);
 		return mp;
 	}
 
-	private void setSeedProbabilityMapYX(int y, int x, double v) {
+	private @NotNull MapPoint getMapPoint(Point cumulativeP) {
+		return new MapPoint(cumulativeP.x, cumulativeP.y,
+				provinceType(heightmap.height_xy(cumulativeP.x, cumulativeP.y),
+						properties.seaLevel()));
+	}
+
+	private void setSeedProbabilityMap_YX(int y, int x, double v) {
 		// todo optimize?
 		System.out.println("psum " + probabilitySum);
 		probabilitySum -= seedProbabilityMap[y][x];
@@ -354,21 +366,13 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 				if (distance <= r) {
 					// Adjust the probability at position (y, x)
 					// todo optimize??
-					setSeedProbabilityMapYX(y, x, seedProbabilityMap[y][x] *= distanceModifiers[(int) distance]);
+					setSeedProbabilityMap_YX(y, x, seedProbabilityMap[y][x] *= distanceModifiers[(int) distance]);
 				}
 			}
 		}
 	}
 
 	public Point findCumulativeProbabilityIndex(double p) {
-		// Optional<Point> result = IntStream.range(0, cumulativeProbabilities.length)
-		// .boxed()
-		// .flatMap(i -> IntStream.range(0, cumulativeProbabilities[i].length)
-		// .filter(j -> Double.compare(cumulativeProbabilities[i][j], p) >= 0)
-		// .mapToObj(j -> new Point(i, j)))
-		// .findFirst();
-		//
-		// return result.orElse(null);
 		for (int y = 0; y < cumulativeProbabilities.length; y++) {
 			for (int x = 0; x < cumulativeProbabilities[y].length; x++) {
 				if (Double.compare(cumulativeProbabilities[y][x], p) >= 0) {
