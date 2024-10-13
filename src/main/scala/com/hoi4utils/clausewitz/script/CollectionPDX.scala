@@ -96,17 +96,24 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
   override def isUndefined: Boolean = super.isUndefined
 
   override def toScript: String = {
-    val sb = new StringBuilder
-    get() match {
-      case Some(scripts) =>
-        for (pdxScript <- scripts) {
-          val str = pdxScript.toScript
-          if (str != null)
-            sb.append(str)
-        }
-        sb.toString()
-      case None => ""
-    }
+    if (node.isEmpty || node.get.isEmpty) return null
+
+//    val sb = new StringBuilder()
+//    sb.append(node.get.identifier)
+//    sb.append(" = {\n")
+//    for (pdx <- get().get) {
+//      sb.append('\t')
+//      sb.append(pdx.toScript)
+//    }
+//    sb.toString
+    null  // todo
+  }
+
+  override def set(expression: Node): Unit = {
+    usingIdentifier(expression)
+    this.node = Some(expression)
+    val value = expression.$
+    setNode(value)
   }
 
   override def set(obj: ListBuffer[T]): Unit = {

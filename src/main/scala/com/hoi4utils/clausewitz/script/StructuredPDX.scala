@@ -15,10 +15,10 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.$
-    // then load each sub-PDXScript
-    value match {
+    this.node = Some(expression)
+    expression.$ match {
       case l: ListBuffer[Node] =>
+        // then load each sub-PDXScript
         for (pdxScript <- childScripts) {
           pdxScript.loadPDX(l)
         }
@@ -122,5 +122,18 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     }
   }
 
-  
+  override def toScript: String = {
+    if (node.isEmpty || node.get.isEmpty) return null
+
+//    val sb = new StringBuilder()
+//    sb.append(node.get.identifier)
+//    sb.append(" = {\n")
+//    for (pdx <- childScripts) {
+//      sb.append('\t')
+//      sb.append(pdx.toScript)
+//    }
+//    sb.toString
+    // favorable. more in-order as wanted/as was originally.
+    node.get.toScript
+  }
 }

@@ -69,6 +69,32 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
       super.toString()
   }
 
+  def toScript: String = {
+    if (!isEmpty && !valueIsNull) {
+      val sb = new StringBuilder()
+      sb.append(identifier).append(' ')
+      sb.append(operator).append(' ')
+      $.match {
+        case l: ListBuffer[Node] =>
+          sb.append("{").append('\n')
+          for (node <- l) {
+            var sScript = node.toScript
+            if (sScript != null && sScript.nonEmpty) {
+              // add extra tab to any secondary lines
+              sScript = sScript.replace("\n", "\n\t")
+              sb.append('\t').append(sScript)
+            }
+          }
+          sb.append("}").append('\n')
+        case _ =>
+          sb.append(nodeValue.asString).append('\n')
+      }
+      sb.toString
+    } else {
+      null
+    }
+  }
+
   def nameAsInteger: Int = identifier.toInt
 
   def nameEquals(s: String): Boolean = {

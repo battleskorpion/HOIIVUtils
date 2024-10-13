@@ -20,8 +20,6 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-//    val value = expression.value
-//    if (value.valueObject.isInstanceOf[Number]) obj = num.doubleValue
     this.node = Some(expression)
     expression.$ match {
       case _: Double =>

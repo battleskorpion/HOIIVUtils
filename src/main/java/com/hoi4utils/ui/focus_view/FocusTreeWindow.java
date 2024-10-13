@@ -142,7 +142,10 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		try (PrintWriter writer = new PrintWriter(path)) {
 			// Write the focus tree to the file
 			// writer.println(focusTree.toHoI4Format());
-			// todo
+			writer.print(focusTree.toScript());
+			if (Settings.DEV_MODE.enabled()) {
+				System.out.println("Exported focus tree " + focusTree + " to " + path);
+			}
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(null, "Error exporting focus tree: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);

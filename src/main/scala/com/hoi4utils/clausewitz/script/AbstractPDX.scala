@@ -149,7 +149,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
 
   override def toScript: String = {
     if (node.isEmpty || node.get.isEmpty) return null
-    pdxIdentifiers(activeIdentifier) + " = " + node + "\n"
+    node.get.identifier + node.get.operator + node.get.$ + "\n"
   }
 
   override def equals(other: PDXScript[?]): Boolean = {

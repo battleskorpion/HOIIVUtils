@@ -114,18 +114,16 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   override def isUndefined: Boolean = super.isUndefined //node.isEmpty
 
   override def toScript: String = {
-    val sb = new StringBuilder
-    get() match {
-      case Some(scripts) =>
-        for (pdxScript <- scripts) {
-          val str = pdxScript.toScript
-          if (str != null) {
-            sb.append(str)
-          }
-        }
-        sb.toString()
-      case None => ""
+    if (node.isEmpty || node.get.isEmpty) return null
+
+    val sb = new StringBuilder()
+    sb.append(node.get.identifier)
+    sb.append(" = {\n")
+    for (pdx <- pdxList) {
+      sb.append('\t')
+      sb.append(pdx.toScript)
     }
+    sb.toString
   }
 
   // todo no. in general multi. would be more than one node.
