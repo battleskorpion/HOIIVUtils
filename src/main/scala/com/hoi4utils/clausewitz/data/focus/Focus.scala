@@ -36,8 +36,6 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   /* completion reward */
   val completionReward: CompletionReward = new CompletionReward()
 
-//  obj.addAll(childScripts)  // todo: garbage
-
   def this(focusTree: FocusTree, node: Node) = {
     this(focusTree)
     loadPDX(node)

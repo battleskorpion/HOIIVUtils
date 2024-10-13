@@ -10,6 +10,7 @@ import com.hoi4utils.clausewitz.HOIIVFile;
 import com.hoi4utils.clausewitz.data.focus.FixFocus;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
+import com.hoi4utils.ui.pdxscript.NewFocusTreeWindow;
 import com.hoi4utils.ui.pdxscript.PDXEditorWindow;
 import javafx.fxml.FXML;
 
@@ -23,7 +24,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import com.hoi4utils.ui.javafx.image.JavaFXImageUtils;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
@@ -139,9 +139,10 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	}
 
 	private void exportFocusTree(FocusTree focusTree, String path) {
-		try (PrintWriter writer = new PrintWriter(new File(path))) {
+		try (PrintWriter writer = new PrintWriter(path)) {
 			// Write the focus tree to the file
 			// writer.println(focusTree.toHoI4Format());
+			// todo
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(null, "Error exporting focus tree: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
@@ -401,6 +402,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 			// if secondary click -> add focus menu
 			ContextMenu contextMenu = new ContextMenu();
 			MenuItem addFocusItem = new MenuItem("Add Focus");
+			MenuItem newFocusTreeItem = new MenuItem("New Focus Tree");
 			addFocusItem.setOnAction(event -> {
 				if (Settings.DEV_MODE.enabled()) System.out.println("Adding focus via context menu");
 				// open add focus menu to side of focus tree view
@@ -410,7 +412,13 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 				newFocus.setID(focusTree.nextTempFocusID());
 				openEditorWindow(newFocus, this::drawFocusTree);
 			});
+			newFocusTreeItem.setOnAction(event -> {
+				if (Settings.DEV_MODE.enabled()) System.out.println("Creating new focus tree via context menu");
+				// open new focus tree menu to side of focus tree view
+				openNewFocusTreeWindow();
+			});
 			contextMenu.getItems().add(addFocusItem);
+			contextMenu.getItems().add(newFocusTreeItem);
 			contextMenu.show(focusTreeCanvas, e.getScreenX(), e.getScreenY());
 		}
 	}
@@ -471,7 +479,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 				Point2D clickedPoint = new Point2D(event.getX(), event.getY());
 				Focus clickedFocus = getFocusHover(clickedPoint);
 				if (clickedFocus != null) {
-					openEditorWindow(clickedFocus);
+					openEditorWindow(clickedFocus, this::drawFocusTree);
 				}
 			}
 		} else if (event.getButton() == MouseButton.SECONDARY) {
@@ -502,6 +510,26 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		if (focus == null) throw new IllegalArgumentException("Focus cannot be null");
 		PDXEditorWindow pdxEditorWindow = new PDXEditorWindow();
 		pdxEditorWindow.open((PDXScript<?>) focus, onUpdate);
+	}
+
+	@FXML
+	private void openNewFocusTreeWindow() {
+		NewFocusTreeWindow newFocusTreeWindow = new NewFocusTreeWindow();
+		newFocusTreeWindow.setOnCreateConsumerAction((FocusTree f) -> {
+			addFocusTree(f);
+			viewFocusTree(f);
+		});
+		newFocusTreeWindow.open();
+	}
+
+	private void addFocusTree(FocusTree focusTree) {
+		focusTreeDropdown.getItems().add(focusTree);
+		focusTreeDropdown.getItems().sort(Comparator.comparing(FocusTree::toString));
+	}
+
+	private void viewFocusTree(FocusTree focusTree) {
+		// manually change the selected focus tree
+		focusTreeDropdown.getSelectionModel().select(focusTree);
 	}
 
 	private int focusToCanvasX(Focus f) {
