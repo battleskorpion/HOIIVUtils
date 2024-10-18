@@ -37,6 +37,19 @@ public class NewFocusTreeWindow extends HOIIVUtilsWindow {
         setTitle("New Focus Tree");
     }
 
+    /**
+     * This constructor is used internally by javafx.
+     * Use {@link #NewFocusTreeWindow()} to create a new instance.
+     * Then call {@link #open(Object...)} to set the properties.
+     *
+     * @param onCreate
+     */
+    @SuppressWarnings("unused")
+    public NewFocusTreeWindow(Consumer<FocusTree> onCreate) {
+        this();
+        setOnCreateConsumerAction(onCreate);
+    }
+
     @FXML
     void initialize() {
         countryTagComboBox.getItems().addAll(CollectionConverters.asJava(CountryTag$.MODULE$.toList()));
@@ -69,5 +82,6 @@ public class NewFocusTreeWindow extends HOIIVUtilsWindow {
 
     public void setOnCreateConsumerAction(Consumer<FocusTree> onCreate) {
        this.onCreate = onCreate;
+       System.out.println(this.onCreate == null);
     }
 }

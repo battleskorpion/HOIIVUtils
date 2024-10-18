@@ -166,9 +166,7 @@ public class MenuController extends Application implements FXWindow {
 		openUtilsWindow(new InterfaceFileListWindow());
 	}
 
-	public void openFocusTreeViewer() {
-		openUtilsWindow(new FocusTreeWindow());
-	}
+	public void openFocusTreeViewer() { openUtilsWindow(new FocusTreeWindow()); }
 
 	public void openUnitComparisonView() {
 		openUtilsWindow(new CompareUnitsWindow());

@@ -35,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.function.Consumer;
 
 public class FocusTreeWindow extends HOIIVUtilsWindow {
 	public static final int FOCUS_X_SCALE = 90; // ~2x per 1 y
@@ -61,7 +62,6 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	private Point2D marqueeStartPoint;
 	private Point2D marqueeEndPoint;
 	private final List<Focus> selectedFocuses = new ArrayList<>();
-
 
 	public FocusTreeWindow() {
 		setFxmlResource("FocusTreeWindow.fxml");
@@ -518,11 +518,10 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	@FXML
 	private void openNewFocusTreeWindow() {
 		NewFocusTreeWindow newFocusTreeWindow = new NewFocusTreeWindow();
-		newFocusTreeWindow.setOnCreateConsumerAction((FocusTree f) -> {
+		newFocusTreeWindow.open((Consumer<FocusTree>) ((FocusTree f) -> {
 			addFocusTree(f);
 			viewFocusTree(f);
-		});
-		newFocusTreeWindow.open();
+		}));
 	}
 
 	private void addFocusTree(FocusTree focusTree) {
@@ -532,6 +531,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 	private void viewFocusTree(FocusTree focusTree) {
 		// manually change the selected focus tree
+		System.out.println("change selection");
 		focusTreeDropdown.getSelectionModel().select(focusTree);
 	}
 
