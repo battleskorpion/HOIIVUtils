@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import org.jetbrains.annotations.NotNull;
 import scala.jdk.javaapi.CollectionConverters;
 
 import java.util.ArrayList;
@@ -136,47 +137,11 @@ public class PDXEditorPane extends AnchorPane {
             }
             case IntPDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
-
-                HBox hbox = new HBox();
-                int minValue = pdx.defaultRange() ? Integer.MIN_VALUE : pdx.minValue();
-                int maxValue = pdx.defaultRange() ? Integer.MAX_VALUE : pdx.maxValue();
-                Spinner<Integer> spinner = new Spinner<>(
-                        new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue));
-                // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment 
-                spinner.getValueFactory().setValue((Integer) pdx.getOrElse(0));
-                spinner.setPrefHeight(25);
-                spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-                    pdx.setNode(newValue);
-                    if (nullProperties.contains(property)) {
-                        reloadEditor();
-                    }
-                    onPropertyUpdate();
-                });
-                if (withLabel) addLabelToHBox(pdx, hbox);
-                hbox.getChildren().add(spinner);
-                return hbox;
+                return visualizeIntPDX(pdx, withLabel);
             }
             case DoublePDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
-
-                HBox hbox = new HBox();
-                double minValue = pdx.defaultRange() ? -Double.MAX_VALUE : pdx.minValueNonInfinite();
-                double maxValue = pdx.defaultRange() ? Double.MAX_VALUE : pdx.maxValueNonInfinite();
-                // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment
-                double defaultValue = pdx.getOrElse(0.0);
-                Spinner<Double> spinner = new Spinner<>(
-                        new SpinnerValueFactory.DoubleSpinnerValueFactory(minValue, maxValue, defaultValue, 1));
-                spinner.setPrefHeight(25);
-                spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-                    pdx.setNode(newValue);
-                    if (nullProperties.contains(property)) {
-                        reloadEditor();
-                    }
-                    onPropertyUpdate();
-                });
-                if (withLabel) addLabelToHBox(pdx, hbox);
-                hbox.getChildren().add(spinner);
-                return spinner;
+                return visualizeDoublePDX(pdx, withLabel);
             }
             case ReferencePDX<?> pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
@@ -196,54 +161,29 @@ public class PDXEditorPane extends AnchorPane {
                 });
                 return comboBox;
             }
-            // todo scala time
-//            case DynamicPDX<?, ? extends StructuredPDX> pdx -> {
-//                if (pdx.getPDXScript() == null && !allowNull) return null;
-//                return createEditorNode(pdx.getPDXScript(), allowNull, vbox);
-//            }
             case MultiReferencePDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
 
                 VBox subVBox = new VBox();
                 subVBox.setSpacing(2);
-                for (int i = 0; i < pdx.numReferences(); i++) {
-                    HBox propertyHBox = new HBox();
-                    propertyHBox.setSpacing(2);
-                    // combo box
-                    ComboBox<String> comboBox = new ComboBox<>();
-                    comboBox.setPrefWidth(200);
-                    comboBox.setPrefHeight(25);
-                    comboBox.getSelectionModel().select(pdx.getReferenceName(i));
-                    comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())));
-                    final int index = i;
-                    comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-                        pdx.setReferenceName(index, newValue);
-                        if (nullProperties.contains(property)) {
-                            reloadEditor();
-                        }
-                        onPropertyUpdate();
-                    });
-                    // plus button
+                if (pdx.numReferences() > 0) {
+                    for (int i = 0; i < pdx.numReferences(); i++) {
+                        HBox propertyHBox = visualizeReference(pdx, i, subVBox);
+                        subVBox.getChildren().add(propertyHBox);
+                    }
+                } else {
+                    // No references, so just show a "+" button to add one
                     Button plusButton = new Button("+");
                     plusButton.setOnAction(event -> {
-                        HBox newPropertyHBox = new HBox();
-                        propertyHBox.setSpacing(2);
-                        // combo box
-                        ComboBox<String> newComboBox = new ComboBox<>();
-                        newComboBox.setPrefWidth(200);
-                        newComboBox.setPrefHeight(25);
-                        newComboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())));
-                        newComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-                            // Assuming MultiReferencePDXScript has a method to add a new reference name
-                            pdx.addReferenceName(newValue);
-                            reloadEditor();
-                        });
-                        newPropertyHBox.getChildren().add(newComboBox);
+                        HBox newPropertyHBox = visualizeReference(pdx, -1, subVBox);
                         subVBox.getChildren().add(newPropertyHBox);
+
+                        // Remove the initial "+" button
+                        subVBox.getChildren().remove(plusButton);
                     });
-                    propertyHBox.getChildren().add(comboBox);
-                    propertyHBox.getChildren().add(plusButton);
-                    subVBox.getChildren().add(propertyHBox);
+
+                    // Add the standalone "+" button
+                    subVBox.getChildren().add(plusButton);
                 }
                 return subVBox;
             }
@@ -252,12 +192,18 @@ public class PDXEditorPane extends AnchorPane {
 
                 VBox subVBox = new VBox();
                 subVBox.setSpacing(10);
-                pdx.foreach(pdxScript -> {
-                    var subNode = createSubNode(allowNull, (PDXScript<?>) pdxScript);
-                    if (subNode != null) subVBox.getChildren().add(subNode);
+                if (pdx.size() > 0) {
+                    pdx.foreach(pdxScript -> {
+                        var subNode = createSubNode(allowNull, (PDXScript<?>) pdxScript);
+                        if (subNode != null) subVBox.getChildren().add(subNode);
+                        return null;
+                    });
+                    return subVBox;
+                } else if (allowNull) {
+                    return createEditorNode((PDXScript<?>) pdx.applySomeSupplier(), allowNull, false);
+                } else {
                     return null;
-                });
-                return subVBox;
+                }
             }
             case CollectionPDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
@@ -277,6 +223,55 @@ public class PDXEditorPane extends AnchorPane {
         return null;
     }
 
+    private @NotNull HBox visualizeReference(MultiReferencePDX<?> pdx, int i, VBox subVBox) {
+        HBox propertyHBox = new HBox();
+        propertyHBox.setSpacing(2);
+        // combo box
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.setPrefWidth(200);
+        comboBox.setPrefHeight(25);
+        if (i >= 0) {
+            comboBox.getSelectionModel().select(pdx.getReferenceName(i));
+        }
+        comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(
+                pdx.getReferenceCollectionNames())));
+        final int index = i;
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (index < 0 || index >= pdx.numReferences()) {
+                pdx.addReferenceName(newValue);
+            }
+            else {
+                pdx.setReferenceName(index, newValue);
+            }
+            if (nullProperties.contains(pdx)) {
+                reloadEditor();
+            }
+            onPropertyUpdate();
+        });
+        // plus button
+        Button plusButton = new Button("+");
+        plusButton.setOnAction(event -> {
+            HBox newPropertyHBox = new HBox();
+            propertyHBox.setSpacing(2);
+            // combo box
+            ComboBox<String> newComboBox = new ComboBox<>();
+            newComboBox.setPrefWidth(200);
+            newComboBox.setPrefHeight(25);
+            newComboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(
+                    pdx.getReferenceCollectionNames())));
+            newComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                // Assuming MultiReferencePDXScript has a method to add a new reference name
+                pdx.addReferenceName(newValue);
+                reloadEditor();
+            });
+            newPropertyHBox.getChildren().add(newComboBox);
+            subVBox.getChildren().add(newPropertyHBox);
+        });
+        propertyHBox.getChildren().add(comboBox);
+        propertyHBox.getChildren().add(plusButton);
+        return propertyHBox;
+    }
+
     private void onPropertyUpdate() {
         if (onUpdate != null) {
             onUpdate.run();
@@ -292,8 +287,7 @@ public class PDXEditorPane extends AnchorPane {
     }
 
     private Node createSubNode(boolean allowNull, PDXScript<?> pdxScript) {
-        Node editorNode = createEditorNode(pdxScript, allowNull, false);
-        return editorNode;
+        return createEditorNode(pdxScript, allowNull, false);
     }
 
     /**
@@ -330,5 +324,40 @@ public class PDXEditorPane extends AnchorPane {
             rootVBox.getChildren().remove(node);
         }
         nullPropertyNodes.clear();
+    }
+
+    private <T> @NotNull HBox newSpinnerHBox(RangedPDXScript<?> pdx, boolean withLabel, Spinner<T> spinner) {
+        HBox hbox = new HBox();
+        spinner.setPrefHeight(25);
+        spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            pdx.setNode(newValue);
+            if (nullProperties.contains(pdx)) {
+                reloadEditor();
+            }
+            onPropertyUpdate();
+        });
+        if (withLabel) addLabelToHBox(pdx, hbox);
+        hbox.getChildren().add(spinner);
+        return hbox;
+    }
+
+    private HBox visualizeDoublePDX(DoublePDX pdx, boolean withLabel) {
+        double minValue = pdx.isDefaultRange() ? pdx.minValue() : pdx.minValueNonInfinite();
+        double maxValue = pdx.isDefaultRange() ? pdx.maxValue() : pdx.maxValueNonInfinite();
+        double value = pdx.getOrElse(pdx.defaultValue());
+        Spinner<Double> spinner = new Spinner<>(
+                new SpinnerValueFactory.DoubleSpinnerValueFactory(minValue, maxValue, value, 1));
+        return newSpinnerHBox(pdx, withLabel, spinner);
+    }
+
+    private  HBox visualizeIntPDX(IntPDX pdx, boolean withLabel) {
+        int minValue = pdx.isDefaultRange() ? Integer.MIN_VALUE : pdx.minValue();
+        int maxValue = pdx.isDefaultRange() ? Integer.MAX_VALUE : pdx.maxValue();
+        Spinner<Integer> spinner = new Spinner<>(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue));
+        // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment
+        spinner.getValueFactory().setValue((Integer) pdx.getOrElse(0));
+
+        return newSpinnerHBox(pdx, withLabel, spinner);
     }
 }

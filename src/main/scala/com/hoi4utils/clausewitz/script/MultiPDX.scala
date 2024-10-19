@@ -144,6 +144,15 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
       case (None, None) => throw new RuntimeException("Both suppliers are null")
     }
   }
+
+  def applySomeSupplier(): T = {
+    (simpleSupplier, blockSupplier) match {
+      case (Some(s), None) => s.apply()
+      case (None, Some(b)) => b.apply()
+      case (Some(s), Some(b)) => s.apply()
+      case (None, None) => throw new RuntimeException("Both suppliers are null")
+    }
+  }
 }
 
 
