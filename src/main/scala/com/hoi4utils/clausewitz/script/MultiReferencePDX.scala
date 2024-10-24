@@ -144,7 +144,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
    * @return
    */
   override def size: Int = {
-    return get().size
+    get().size
   }
 
   def numReferences: Int = referenceNames.size

@@ -88,52 +88,14 @@ public class PDXEditorPane extends AnchorPane {
     private Node createEditorNode(PDXScript<?> property, boolean allowNull, boolean withLabel) {
         switch (property) {
             case StructuredPDX pdx -> {
-                VBox subVBox = new VBox();
-                subVBox.setPadding(new Insets(10));
-                subVBox.setSpacing(10);
-                Label subLabel = new Label(property.getPDXIdentifier() + " Sub-Properties:");
-                subLabel.setFont(Font.font("Monospaced"));
-                subVBox.getChildren().add(subLabel);
-                drawEditor(property, subVBox);
-                return subVBox;
+                return visualizeStructuredPDX(pdx);
             }
             case StringPDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
-
-                HBox hbox = new HBox();
-//                TextField textField = new TextField(pdx.get() != null ? pdx.get() : "");
-                TextField textField = new TextField(pdx.getOrElse(""));
-                textField.setPrefWidth(200);
-                textField.setPrefHeight(25);
-                textField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    pdx.setNode(newValue);
-                    if (!newValue.isEmpty() && nullProperties.contains(property)) {
-                        reloadEditor();
-                    }
-                    onPropertyUpdate();
-                });
-                if (withLabel) addLabelToHBox(pdx, hbox);
-                hbox.getChildren().add(textField);
-                return hbox;
+                return visualizeStringPDX(property, withLabel, pdx);
             }
             case BooleanPDX pdx -> {
-                HBox hbox = new HBox();
-                Label customCheckBox = new Label();
-                customCheckBox.setText(pdx.$() ? "yes" : "no");
-                customCheckBox.setFont(Font.font("Monospaced"));
-                customCheckBox.setPrefHeight(25);
-                customCheckBox.getStyleClass().add("custom-check-box");
-                customCheckBox.setOnMouseClicked(event -> {
-                    pdx.invert();
-                    customCheckBox.setText(pdx.$() ? "yes" : "no");
-                    if (nullProperties.contains(property)) {
-                        reloadEditor();
-                    }
-                    onPropertyUpdate();
-                });
-                if (withLabel) addLabelToHBox(pdx, hbox);
-                hbox.getChildren().add(customCheckBox);
-                return hbox;
+                return visualizeBooleanPDX(pdx, withLabel);
             }
             case IntPDX pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
@@ -145,47 +107,11 @@ public class PDXEditorPane extends AnchorPane {
             }
             case ReferencePDX<?> pdx -> {
                 if (pdx.get() == null && !allowNull) return null;
-
-                ComboBox<String> comboBox = new ComboBox<>();
-                comboBox.setPrefWidth(200);
-                comboBox.setPrefHeight(25);
-                comboBox.getSelectionModel().select(pdx.getReferenceName());
-                comboBox.setItems(
-                        FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())));
-                comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-                    pdx.setReferenceName(newValue);
-                    if (nullProperties.contains(property)) {
-                        reloadEditor();
-                    }
-                    onPropertyUpdate();
-                });
-                return comboBox;
+                return visualizeReferencePDX(pdx);
             }
             case MultiReferencePDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
-
-                VBox subVBox = new VBox();
-                subVBox.setSpacing(2);
-                if (pdx.numReferences() > 0) {
-                    for (int i = 0; i < pdx.numReferences(); i++) {
-                        HBox propertyHBox = visualizeReference(pdx, i, subVBox);
-                        subVBox.getChildren().add(propertyHBox);
-                    }
-                } else {
-                    // No references, so just show a "+" button to add one
-                    Button plusButton = new Button("+");
-                    plusButton.setOnAction(event -> {
-                        HBox newPropertyHBox = visualizeReference(pdx, -1, subVBox);
-                        subVBox.getChildren().add(newPropertyHBox);
-
-                        // Remove the initial "+" button
-                        subVBox.getChildren().remove(plusButton);
-                    });
-
-                    // Add the standalone "+" button
-                    subVBox.getChildren().add(plusButton);
-                }
-                return subVBox;
+                return visualizeMultiReferencePDX(pdx);
             }
             case MultiPDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
@@ -200,22 +126,15 @@ public class PDXEditorPane extends AnchorPane {
                     });
                     return subVBox;
                 } else if (allowNull) {
-                    return createEditorNode((PDXScript<?>) pdx.applySomeSupplier(), allowNull, false);
+                    var newPDX = pdx.applySomeSupplier();
+                    return createEditorNode((PDXScript<?>) newPDX, allowNull, false);
                 } else {
                     return null;
                 }
             }
             case CollectionPDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
-
-                VBox subVBox = new VBox();
-                subVBox.setSpacing(10);
-                pdx.foreach(pdxScript -> {
-                    var subNode = createEditorNode((PDXScript<?>) pdxScript, allowNull, true);
-                    if (subNode != null) subVBox.getChildren().add(subNode);
-                    return null;
-                });
-                return subVBox;
+                return visualizeCollectionPDX(pdx, allowNull);
             }
             case null, default ->
                     System.out.println("Ui node unknown for property type: " + (property == null ? "[null]" : property.getClass()));
@@ -223,18 +142,118 @@ public class PDXEditorPane extends AnchorPane {
         return null;
     }
 
-    private @NotNull HBox visualizeReference(MultiReferencePDX<?> pdx, int i, VBox subVBox) {
+    private @NotNull VBox visualizeCollectionPDX(CollectionPDX<?> pdx, boolean allowNull) {
+        VBox subVBox = new VBox();
+        subVBox.setSpacing(10);
+        pdx.foreach(pdxScript -> {
+            var subNode = createEditorNode((PDXScript<?>) pdxScript, allowNull, true);
+            if (subNode != null) subVBox.getChildren().add(subNode);
+            return null;
+        });
+        return subVBox;
+    }
+
+    private @NotNull VBox visualizeStructuredPDX(StructuredPDX pdx) {
+        VBox subVBox = new VBox();
+        subVBox.setPadding(new Insets(10));
+        subVBox.setSpacing(10);
+        Label subLabel = new Label(pdx.getPDXIdentifier() + " Sub-Properties:");
+        subLabel.setFont(Font.font("Monospaced"));
+        subVBox.getChildren().add(subLabel);
+        drawEditor(pdx, subVBox);
+        return subVBox;
+    }
+
+    private @NotNull HBox visualizeStringPDX(PDXScript<?> property, boolean withLabel, StringPDX pdx) {
+        HBox hbox = new HBox();
+//                TextField textField = new TextField(pdx.get() != null ? pdx.get() : "");
+        TextField textField = new TextField(pdx.getOrElse(""));
+        textField.setPrefWidth(200);
+        textField.setPrefHeight(25);
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            pdx.setNode(newValue);
+            if (!newValue.isEmpty() && nullProperties.contains(property)) {
+                reloadEditor();
+            }
+            onPropertyUpdate();
+        });
+        if (withLabel) addLabelToHBox(pdx, hbox);
+        hbox.getChildren().add(textField);
+        return hbox;
+    }
+
+    private @NotNull ComboBox<String> visualizeReferencePDX(ReferencePDX<?> pdx) {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.setPrefWidth(200);
+        comboBox.setPrefHeight(25);
+        comboBox.getSelectionModel().select(pdx.getReferenceName());
+        comboBox.setItems(
+                FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())));
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            pdx.setReferenceName(newValue);
+            if (nullProperties.contains(pdx)) {
+                reloadEditor();
+            }
+            onPropertyUpdate();
+        });
+        return comboBox;
+    }
+
+    private @NotNull VBox visualizeMultiReferencePDX(MultiReferencePDX<?> pdx) {
+        VBox subVBox = new VBox();
+        subVBox.setSpacing(2);
+        if (pdx.numReferences() > 0) {
+            for (int i = 0; i < pdx.numReferences(); i++) {
+                HBox propertyHBox = visualizeReferenceElement(pdx, i, subVBox);
+                subVBox.getChildren().add(propertyHBox);
+            }
+        } else {
+            // No references, so just show a "+" button to add one
+            Button plusButton = new Button("+");
+            plusButton.setOnAction(event -> {
+                HBox newPropertyHBox = visualizeReferenceElement(pdx, -1, subVBox);
+                subVBox.getChildren().add(newPropertyHBox);
+                // Remove the initial "+" button
+                subVBox.getChildren().remove(plusButton);
+            });
+            // Add the standalone "+" button
+            subVBox.getChildren().add(plusButton);
+        }
+        return subVBox;
+    }
+
+    private @NotNull HBox visualizeBooleanPDX(BooleanPDX pdx, boolean withLabel) {
+        HBox hbox = new HBox();
+        Label customCheckBox = new Label();
+        customCheckBox.setText(pdx.$() ? "yes" : "no");
+        customCheckBox.setFont(Font.font("Monospaced"));
+        customCheckBox.setPrefHeight(25);
+        customCheckBox.getStyleClass().add("custom-check-box");
+        customCheckBox.setOnMouseClicked(event -> {
+            pdx.invert();
+            customCheckBox.setText(pdx.$() ? "yes" : "no");
+            if (nullProperties.contains(pdx)) {
+                reloadEditor();
+            }
+            onPropertyUpdate();
+        });
+        if (withLabel) addLabelToHBox(pdx, hbox);
+        hbox.getChildren().add(customCheckBox);
+        return hbox;
+    }
+
+    private @NotNull HBox visualizeReferenceElement(MultiReferencePDX<?> pdx, int i, VBox subVBox) {
         HBox propertyHBox = new HBox();
         propertyHBox.setSpacing(2);
         // combo box
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setPrefWidth(200);
         comboBox.setPrefHeight(25);
+        comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(
+                pdx.getReferenceCollectionNames())));
         if (i >= 0) {
             comboBox.getSelectionModel().select(pdx.getReferenceName(i));
         }
-        comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(
-                pdx.getReferenceCollectionNames())));
         final int index = i;
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (index < 0 || index >= pdx.numReferences()) {
@@ -243,11 +262,10 @@ public class PDXEditorPane extends AnchorPane {
             else {
                 pdx.setReferenceName(index, newValue);
             }
-            if (nullProperties.contains(pdx)) {
-                reloadEditor();
-            }
+            reloadEditor();
             onPropertyUpdate();
         });
+
         // plus button
         Button plusButton = new Button("+");
         plusButton.setOnAction(event -> {
@@ -260,8 +278,8 @@ public class PDXEditorPane extends AnchorPane {
             newComboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(
                     pdx.getReferenceCollectionNames())));
             newComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-                // Assuming MultiReferencePDXScript has a method to add a new reference name
                 pdx.addReferenceName(newValue);
+                nullProperties.remove(pdx);
                 reloadEditor();
             });
             newPropertyHBox.getChildren().add(newComboBox);
