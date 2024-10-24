@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import scala.jdk.javaapi.CollectionConverters;
 
 import java.util.ArrayList;
@@ -115,22 +116,7 @@ public class PDXEditorPane extends AnchorPane {
             }
             case MultiPDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
-
-                VBox subVBox = new VBox();
-                subVBox.setSpacing(10);
-                if (pdx.size() > 0) {
-                    pdx.foreach(pdxScript -> {
-                        var subNode = createSubNode(allowNull, (PDXScript<?>) pdxScript);
-                        if (subNode != null) subVBox.getChildren().add(subNode);
-                        return null;
-                    });
-                    return subVBox;
-                } else if (allowNull) {
-                    var newPDX = pdx.applySomeSupplier();
-                    return createEditorNode((PDXScript<?>) newPDX, allowNull, false);
-                } else {
-                    return null;
-                }
+                return visualizeMultiPDX(pdx, allowNull);
             }
             case CollectionPDX<?> pdx -> {
                 if (pdx.isUndefined() && !allowNull) return null;
@@ -140,6 +126,24 @@ public class PDXEditorPane extends AnchorPane {
                     System.out.println("Ui node unknown for property type: " + (property == null ? "[null]" : property.getClass()));
         }
         return null;
+    }
+
+    private @Nullable Node visualizeMultiPDX(MultiPDX<?> pdx, boolean allowNull) {
+        VBox subVBox = new VBox();
+        subVBox.setSpacing(10);
+        if (!pdx.isEmpty()) {
+            pdx.foreach(pdxScript -> {
+                var subNode = createSubNode(allowNull, (PDXScript<?>) pdxScript);
+                if (subNode != null) subVBox.getChildren().add(subNode);
+                return null;
+            });
+            return subVBox;
+        } else if (allowNull) {
+            var newPDX = pdx.applySomeSupplier();
+            return createEditorNode((PDXScript<?>) newPDX, allowNull, false);
+        } else {
+            return null;
+        }
     }
 
     private @NotNull VBox visualizeCollectionPDX(CollectionPDX<?> pdx, boolean allowNull) {
@@ -175,7 +179,7 @@ public class PDXEditorPane extends AnchorPane {
             if (!newValue.isEmpty() && nullProperties.contains(property)) {
                 reloadEditor();
             }
-            onPropertyUpdate();
+            else onPropertyUpdate();
         });
         if (withLabel) addLabelToHBox(pdx, hbox);
         hbox.getChildren().add(textField);
@@ -194,7 +198,7 @@ public class PDXEditorPane extends AnchorPane {
             if (nullProperties.contains(pdx)) {
                 reloadEditor();
             }
-            onPropertyUpdate();
+            else onPropertyUpdate();
         });
         return comboBox;
     }
@@ -211,7 +215,7 @@ public class PDXEditorPane extends AnchorPane {
             // No references, so just show a "+" button to add one
             Button plusButton = new Button("+");
             plusButton.setOnAction(event -> {
-                HBox newPropertyHBox = visualizeReferenceElement(pdx, -1, subVBox);
+                HBox newPropertyHBox = visualizeNewReferenceElement(pdx, subVBox);
                 subVBox.getChildren().add(newPropertyHBox);
                 // Remove the initial "+" button
                 subVBox.getChildren().remove(plusButton);
@@ -235,7 +239,7 @@ public class PDXEditorPane extends AnchorPane {
             if (nullProperties.contains(pdx)) {
                 reloadEditor();
             }
-            onPropertyUpdate();
+            else onPropertyUpdate();
         });
         if (withLabel) addLabelToHBox(pdx, hbox);
         hbox.getChildren().add(customCheckBox);
@@ -258,12 +262,12 @@ public class PDXEditorPane extends AnchorPane {
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (index < 0 || index >= pdx.numReferences()) {
                 pdx.addReferenceName(newValue);
+                nullProperties.remove(pdx);
             }
             else {
                 pdx.setReferenceName(index, newValue);
             }
             reloadEditor();
-            onPropertyUpdate();
         });
 
         // plus button
@@ -290,6 +294,13 @@ public class PDXEditorPane extends AnchorPane {
         return propertyHBox;
     }
 
+    private @NotNull HBox visualizeNewReferenceElement(MultiReferencePDX<?> pdx, VBox subVBox) {
+        visualizeReferenceElement(pdx, -1, subVBox);
+    }
+
+    /**
+     * Perform some onUpdate action when the properties may have been updated
+     */
     private void onPropertyUpdate() {
         if (onUpdate != null) {
             onUpdate.run();
@@ -314,6 +325,7 @@ public class PDXEditorPane extends AnchorPane {
     private void reloadEditor() {
         nullProperties.clear();
         nullPropertyNodes.clear();
+        onPropertyUpdate();     // Properties may have been updated
         drawEditor(pdxScript, rootVBox);
     }
 
@@ -352,7 +364,7 @@ public class PDXEditorPane extends AnchorPane {
             if (nullProperties.contains(pdx)) {
                 reloadEditor();
             }
-            onPropertyUpdate();
+            else onPropertyUpdate();
         });
         if (withLabel) addLabelToHBox(pdx, hbox);
         hbox.getChildren().add(spinner);
