@@ -2,7 +2,6 @@ package com.hoi4utils.ui.pdxscript;
 
 import com.hoi4utils.clausewitz.script.PDXScript;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
-import com.hoi4utils.ui.javafx.PDXEditorPane;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 

@@ -11,11 +11,12 @@ import scala.collection.mutable.ListBuffer
  *
  * The parent MultiPDX pdx script list will be the list of resolved references
  *
- * @param referenceCollectionSupplier
- * @param idExtractor
- * @param pdxIdentifiers
- * @param referencePDXIdentifiers
- * @tparam T
+ * @param referenceCollectionSupplier the supplier for the reference collection (the reference collection being
+ *                                    the collection of PDXScript objects that could be referenced)
+ * @param idExtractor the function to extract the identifier from a referenced PDXScript
+ * @param pdxIdentifiers the identifiers for the PDXScript
+ * @param referencePDXIdentifiers  the identifiers for the reference PDXScript
+ * @tparam T the PDXScript type of the reference PDXScript objects
  */
 class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: () => Iterable[T],
                                              protected var idExtractor: T => Option[String], pdxIdentifiers: List[String],
@@ -132,6 +133,61 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     referenceNames.addOne(newValue)
     resolveReferences()
   }
+
+  def addReference(reference: T, index: Int): Unit = {
+    val id = idExtractor(reference)
+    if (id.isDefined) {
+      referenceNames.insert(index, id.get)
+      resolveReferences()
+    }
+  }
+
+  def addReference(reference: T): Unit = {
+    val id = idExtractor(reference)
+    if (id.isDefined) {
+      referenceNames.addOne(id.get)
+      resolveReferences()
+    }
+  }
+
+  def removeReference(index: Int): Unit = {
+    referenceNames.remove(index)
+    resolveReferences()
+  }
+
+  def removeReference(reference: T): Unit = {
+    val id = idExtractor(reference)
+    if (id.isDefined) {
+      referenceNames.remove(referenceNames.indexOf(id.get))
+      resolveReferences()
+    }
+  }
+
+  def removeReference(referenceName: String): Unit = {
+    referenceNames.remove(referenceNames.indexOf(referenceName))
+    resolveReferences()
+  }
+
+  def containsReference(reference: T): Boolean = {
+    val id = idExtractor(reference)
+    id match {
+      case Some(value) => referenceNames.contains(value)
+      case None => false
+    }
+  }
+
+  def containsReferenceName(referenceName: String): Boolean = {
+    referenceNames.contains(referenceName)
+  }
+
+  def changeReference(oldName: String, newName: String): Unit = {
+    val index = referenceNames.indexOf(oldName)
+    if (index != -1) {
+      referenceNames.update(index, newName)
+      resolveReferences()
+    }
+  }
+
 
   /**
    * Size of actively valid references (resolved PDXScript object references)

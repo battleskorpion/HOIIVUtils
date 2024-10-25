@@ -1,4 +1,4 @@
-package com.hoi4utils.ui.javafx;
+package com.hoi4utils.ui.pdxscript;
 
 import com.hoi4utils.clausewitz.script.*;
 import javafx.collections.FXCollections;
@@ -83,6 +83,10 @@ public class PDXEditorPane extends AnchorPane {
                 displayNullProperties = !displayNullProperties;
             });
             vbox.getChildren().add(addButton);
+            // initial
+            if (displayNullProperties) {
+                showNullProperties();
+            }
         }
     }
 
@@ -204,25 +208,8 @@ public class PDXEditorPane extends AnchorPane {
     }
 
     private @NotNull VBox visualizeMultiReferencePDX(MultiReferencePDX<?> pdx) {
-        VBox subVBox = new VBox();
+        VBox subVBox = new MultiReferencePDXVBox(pdx, this::reloadEditor);
         subVBox.setSpacing(2);
-        if (pdx.numReferences() > 0) {
-            for (int i = 0; i < pdx.numReferences(); i++) {
-                HBox propertyHBox = visualizeReferenceElement(pdx, i, subVBox);
-                subVBox.getChildren().add(propertyHBox);
-            }
-        } else {
-            // No references, so just show a "+" button to add one
-            Button plusButton = new Button("+");
-            plusButton.setOnAction(event -> {
-                HBox newPropertyHBox = visualizeNewReferenceElement(pdx, subVBox);
-                subVBox.getChildren().add(newPropertyHBox);
-                // Remove the initial "+" button
-                subVBox.getChildren().remove(plusButton);
-            });
-            // Add the standalone "+" button
-            subVBox.getChildren().add(plusButton);
-        }
         return subVBox;
     }
 
@@ -244,58 +231,6 @@ public class PDXEditorPane extends AnchorPane {
         if (withLabel) addLabelToHBox(pdx, hbox);
         hbox.getChildren().add(customCheckBox);
         return hbox;
-    }
-
-    private @NotNull HBox visualizeReferenceElement(MultiReferencePDX<?> pdx, int i, VBox subVBox) {
-        HBox propertyHBox = new HBox();
-        propertyHBox.setSpacing(2);
-        // combo box
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.setPrefWidth(200);
-        comboBox.setPrefHeight(25);
-        comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(
-                pdx.getReferenceCollectionNames())));
-        if (i >= 0) {
-            comboBox.getSelectionModel().select(pdx.getReferenceName(i));
-        }
-        final int index = i;
-        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (index < 0 || index >= pdx.numReferences()) {
-                pdx.addReferenceName(newValue);
-                nullProperties.remove(pdx);
-            }
-            else {
-                pdx.setReferenceName(index, newValue);
-            }
-            reloadEditor();
-        });
-
-        // plus button
-        Button plusButton = new Button("+");
-        plusButton.setOnAction(event -> {
-            HBox newPropertyHBox = new HBox();
-            propertyHBox.setSpacing(2);
-            // combo box
-            ComboBox<String> newComboBox = new ComboBox<>();
-            newComboBox.setPrefWidth(200);
-            newComboBox.setPrefHeight(25);
-            newComboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(
-                    pdx.getReferenceCollectionNames())));
-            newComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-                pdx.addReferenceName(newValue);
-                nullProperties.remove(pdx);
-                reloadEditor();
-            });
-            newPropertyHBox.getChildren().add(newComboBox);
-            subVBox.getChildren().add(newPropertyHBox);
-        });
-        propertyHBox.getChildren().add(comboBox);
-        propertyHBox.getChildren().add(plusButton);
-        return propertyHBox;
-    }
-
-    private @NotNull HBox visualizeNewReferenceElement(MultiReferencePDX<?> pdx, VBox subVBox) {
-        return visualizeReferenceElement(pdx, -1, subVBox);
     }
 
     /**
