@@ -105,7 +105,7 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
   def setNull(): Unit = nodeValue = new NodeValue
   
   def valueIsInstanceOf(clazz: Class[?]): Boolean = nodeValue.valueIsInstanceOf(clazz)
-  
+
   def $ : String | Int | Double | Boolean | ListBuffer[Node] | Null = getValue
 
   def identifier: String = _identifier
@@ -144,6 +144,13 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
   def $integer: Integer = {
     this.$ match {
       case i: Int => i
+      case _ => null
+    }
+  }
+
+  def $double: java.lang.Double = {
+    this.$ match {
+      case d: Double => d
       case _ => null
     }
   }

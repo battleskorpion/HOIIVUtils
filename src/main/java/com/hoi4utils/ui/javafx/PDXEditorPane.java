@@ -295,7 +295,7 @@ public class PDXEditorPane extends AnchorPane {
     }
 
     private @NotNull HBox visualizeNewReferenceElement(MultiReferencePDX<?> pdx, VBox subVBox) {
-        visualizeReferenceElement(pdx, -1, subVBox);
+        return visualizeReferenceElement(pdx, -1, subVBox);
     }
 
     /**

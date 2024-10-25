@@ -25,7 +25,6 @@ public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
     final int width;
     final int height;
     int pointNumber = 0;
-    // ForkJoinPool fjpool;
     double probabilitySum = 0;
     SeedGenProperties properties;
 
@@ -36,7 +35,6 @@ public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
         seedProbabilityMap = new double[height][width]; // y, x
         cumulativeProbabilities = new double[height][width];
         this.properties = properties;
-        // fjpool = new ForkJoinPool();
 
         initializeProbabilityMap();
     }
@@ -330,8 +328,8 @@ public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
         // todo idea:
         // generate numPoints random numbers
         double[] pList = nRandomDoubles(numPoints, random);
-        // combine mapReduce2D, multiplyAll, and/or cumulativeReduce2D. We want to iteratively find the first index where cumulative probability >= p,
-        // but without having to re-load the kernel/gpu memory each time for each matrix operation.
+        // combine mapReduce2D, multiplyAll, and/or cumulativeReduce2D. We want to iteratively find the first index where
+        // cumulative probability >= p, but without having to re-load the kernel/gpu memory each time for each matrix operation.
         iterativeProbabilsticMap2D(seedProbabilityMap, pList);
         return null;
     }

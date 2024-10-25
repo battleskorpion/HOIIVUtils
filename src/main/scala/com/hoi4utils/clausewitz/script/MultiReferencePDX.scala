@@ -6,12 +6,10 @@ import org.jetbrains.annotations.Nullable
 
 import scala.collection.mutable.ListBuffer
 
-// todo uhhhhhhhhhhhhh
-
 /**
  * (todo)
  *
- * MultiPDX's pdx script list will be the list of resolved references
+ * The parent MultiPDX pdx script list will be the list of resolved references
  *
  * @param referenceCollectionSupplier
  * @param idExtractor
@@ -61,9 +59,6 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
    * @return
    */
   override def get(): Option[ListBuffer[T]] = {
-    // what if name changes etc. im not sure about this
-//    if (resolvedReferences.length.equals(numReferences)) resolvedReferences
-//    else resolveReferences
     Some(references())
   }
 

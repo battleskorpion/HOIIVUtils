@@ -55,12 +55,6 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 					// int type = provinceType(xyheight, seaLevel); // is this bad here? probably.
 					int type = xyheight < seaLevel ? 0 : 1;
 					_seedMap[y][x] = type == 0 ? 1.15 : 0.85; // todo magic numbers :(
-					// _seedMap[y][x] = 1.0;
-					// result[i] = inA[i] + inB[i];
-					// if (x == 0) {
-					// /* once per row */
-					// _cumulativeProbabilities[y] = 0.0;
-					// }
 				}
 			}
 		};
@@ -229,17 +223,13 @@ public class SeedProbabilityMap_GPU extends AbstractMapGeneration {
 				int gid = getGlobalId();
 				for (int i = 0; i < maxIterations; i++) {
 					int pow_2_i = 1 << i;
-					// int gid = getGlobalId();
 					if (gid % (pow_2_i << 1) >= pow_2_i)
 						cumulativeTotals[gid] += cumulativeTotals[gid - (gid % pow_2_i + 1)];
 					else
 						cumulativeTotals[gid] += 0;
 
-					//// cumulativeTotals = nextTotals;
 					// System.out.println("reducing iteration: " + i);
 					// System.out.println("reducing arr: " + cumulativeTotals[0] + ", " +
-					//// cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
-
 					this.localBarrier(); // todo needed?
 				}
 			}
