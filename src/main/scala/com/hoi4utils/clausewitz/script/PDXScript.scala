@@ -46,5 +46,7 @@ trait PDXScript[T] {
 
   def isUndefined: Boolean
 
+  def isDefined: Boolean
+
   def getPDXIdentifier: String
 }

@@ -176,6 +176,8 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
 
   override def isUndefined: Boolean = node.isEmpty || node.get.valueIsNull
 
+  override def isDefined: Boolean = !isUndefined
+
   override def getPDXIdentifier: String = pdxIdentifiers(activeIdentifier)
 
   def valueIsInstanceOf[A]: Boolean = {
