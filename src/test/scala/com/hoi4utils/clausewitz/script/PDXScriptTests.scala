@@ -1,6 +1,12 @@
 package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.data.focus.FocusTree
+import com.hoi4utils.clausewitz_parser.Node
+import com.hoi4utils.clausewitz_parser.Parser
+
+import org.scalatest.funsuite.AnyFunSuiteLike
+
+import java.io.File
 
 class PDXScriptTests extends AnyFunSuiteLike {
 
@@ -42,7 +48,8 @@ class PDXScriptTests extends AnyFunSuiteLike {
       val parser = new Parser(file)
       val node = parser.parse
       assert(node != null, s"Failed to parse $file")
-      val focusTree = new FocusTree(node)
+      val focusTree = new FocusTree()
+      focusTree.loadPDX(node)
       testFunction(focusTree)
     })
   }
@@ -76,4 +83,5 @@ class PDXScriptTests extends AnyFunSuiteLike {
       assert(focusTree.id.get().nonEmpty)
     }
   }
+  
 }

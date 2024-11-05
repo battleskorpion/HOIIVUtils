@@ -1,7 +1,5 @@
 package com.hoi4utils.clausewitz_parser
 
-// this actually seems to work. error highlighting may be scala plugin issue
-// update: finally not error highlighting incorrectly??? cool ! cool :) cool.
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File
