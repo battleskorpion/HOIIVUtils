@@ -10,10 +10,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
+
+import java.util.List;
 
 /**
  * SeedProbabilityMap, designed for GPU efficiency.
@@ -24,7 +25,6 @@ public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
     final Heightmap heightmap;
     final int width;
     final int height;
-    int pointNumber = 0;
     double probabilitySum = 0;
     SeedGenProperties properties;
 
@@ -52,7 +52,7 @@ public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
                     int xyheight = _heightmap[y][x] & 0xFF;
                     // int type = provinceType(xyheight, seaLevel); // is this bad here? probably.
                     int type = xyheight < seaLevel ? 0 : 1;
-                    _seedMap[y][x] = type == 0 ? 1.15 : 0.85; // todo magic numbers :(
+                    _seedMap[y][x] = type == 0 ? 1.15 : 0.85; // todo very magic numbers :(
                 }
             }
         };
@@ -299,8 +299,136 @@ public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
      * @param randProbabilities
      * @return
      */
-    private double[][] iterativeProbabilsticMap2D(double[][] matrix, double[] randProbabilities) {
-        return null;
+    private double[][] iterativeProbabilisticMap2D(double[][] matrix, double[] randProbabilities) {
+        // iteratively find the first index(x, y) in the matrix where cumulativeProbability(x, y) >= p
+        // we need as much as possible in *one* kernel
+        /* if a cell has been selected (by the probability), it should not be selectable again
+           (but this could be handled if necessary for some optimization).
+           This cell should be set to have a probability of 1.0 to represent being selected.
+         */
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        int size = rows * cols;
+        final int count = 3;
+        final double maxProbability = 1.0;
+        final int cReduceIterations = (int) Math.ceil(Math.log(size) / Math.log(2));
+
+        final double[] _data = new double[size];
+        final double[][] _mapForReduce = new double[count][size];
+        final double[] _cumulativeP = new double[size];
+        // atomic-esques
+        final double[] _probabilitySum = { 0 };
+        final double[] _sumRecip = { 0 };
+
+        // Flatten the matrix into a 1D array
+        System.arraycopy(Stream.of(matrix)
+                        .parallel()
+                        .flatMapToDouble(Arrays::stream)
+                        .toArray(),
+                0, _data, 0, size);
+        // secondary matrices for operations
+        System.arraycopy(Stream.of(matrix)
+                        .parallel()
+                        .flatMapToDouble(Arrays::stream)
+                        .toArray(),
+                0, _cumulativeP, 0, size);
+
+        Kernel ipmKernel = new Kernel() {
+            @Override
+            public void run() {
+                int gid = getGlobalId();
+                for (int i = 0; i < size; i++) {
+                    /*
+                     * Find the sum of the probabilities in the matrix. This is the initial probability sum, found
+                     * by performing the map-reduce operation on the matrix data.
+                     */
+                    // map phase
+                    double value = _data[gid];
+                    for (int index = 0; index < count; index++) {
+                        if (value >= (double) index / count && value < (double) (index + 1) / count)
+                            _mapForReduce[index][gid] = value;
+                    }
+
+                    // reduce phase
+                    int stepSize = size / 2;
+                    while (stepSize > 0) {
+                        if (gid < stepSize) {
+                            // Perform reduction summing elements per data bin.
+                            for (int index = 0; index < count; index++) {
+                                _mapForReduce[index][gid] += _mapForReduce[index][gid + stepSize];
+                            }
+                        }
+                        stepSize /= 2;
+                        // Sync after each reduction step.
+                        this.localBarrier();
+                    }
+
+                    // After reduction, the total sum for each bin will be in _mapForReduce[index][0]
+                    // Find the final sum of probabilities.
+                    if (gid == 0) {
+                        _probabilitySum[0] = 0;
+                        for (int index = 0; index < count; index++) {
+                            _probabilitySum[0] += _mapForReduce[index][0];
+                        }
+                        _sumRecip[0] = 1 / _probabilitySum[0];
+                    }
+                    // Sync for final probabilitySum value.
+                    localBarrier();
+
+                    /*
+                     * Normalize the matrix to a sum of 1.0. That is, the sum of all probabilities in the matrix should be 1.0.
+                     * The matrix (now, represented by the array _data), can be normalized by dividing each probability by
+                     * the sum of all probabilities. This is equivalent to multiplying by the reciprocal of the probability sum,
+                     * which may be more efficient.
+                     */
+                    // if cell has been selected, maintain probability as maxProbability
+                    if (_data[gid] == maxProbability) _sumRecip[0] = 1;
+                    _data[gid] = _data[gid] * _sumRecip[0];     // todo does it support /= ?
+                    // wait for all data to be normalized.
+                    localBarrier();
+
+                    /*
+                     * Apply cumulative reduce operation to the matrix.
+                     * Special case: if data[gid] == maxProbability, do not accumulate the probability.
+                     * reduce phase:
+                     * if gid % 2^(index + 1) >= 2^(index)
+                     * add data[gid - ([gid % 2^(index)] + 1)] to data[gid]
+                     * ~12.8m array -> 24 iterations
+                     */
+                    for (int ii = 0; ii < cReduceIterations; ii++) {
+                        int pow_2_i = 1 << ii;
+                        if (gid % (pow_2_i << 1) >= pow_2_i && _data[gid] != maxProbability)
+                            _cumulativeP[gid] += _cumulativeP[gid - (gid % pow_2_i + 1)];
+                        else
+                            _cumulativeP[gid] += 0;
+                        // wait for all applicable data to be accumulated in this iteration.
+                        this.localBarrier();
+                    }
+
+                    /*
+                     * Find the first index where the cumulative probability >= p. At this index, set the probability to maxProbability.
+                     * How to do this in a matrix operation: the exact index where cumulative probability >= p, is precisely the
+                     * index where data[index - 1] < p and data[index] >= p. If index == 0, the previous probability is zero.
+                     */
+                    double prevP = gid == 0 ? 0 : _cumulativeP[gid - 1];
+                    if (_cumulativeP[gid] >= randProbabilities[i] && prevP < randProbabilities[i]) {
+                        _data[gid] = maxProbability;
+                    }
+                }
+            }
+        };
+        ipmKernel.execute(Range.create(size));
+        ipmKernel.dispose();
+
+        /*
+         * Reconstruct a result matrix
+         */
+        double[][] result = new double[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            System.arraycopy(_data, i * cols, result[i], 0, cols);
+        }
+
+        return result;
     }
 
     public MapPoint[] getPoints(Random random, int numPoints) {
@@ -325,13 +453,25 @@ public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
 //        // adjustProbabilitiesInRadius(mp, 9); instead, ? ->
 //        setSeedProbabilityMap_YX(mp.y, mp.x, 0.0);
 //        return mp;
-        // todo idea:
+        MapPoint[] points = new MapPoint[numPoints];
         // generate numPoints random numbers
         double[] pList = nRandomDoubles(numPoints, random);
         // combine mapReduce2D, multiplyAll, and/or cumulativeReduce2D. We want to iteratively find the first index where
         // cumulative probability >= p, but without having to re-load the kernel/gpu memory each time for each matrix operation.
-        iterativeProbabilsticMap2D(seedProbabilityMap, pList);
-        return null;
+        seedProbabilityMap = iterativeProbabilisticMap2D(seedProbabilityMap, pList);
+        // todo can be optimized:
+        int mpCounter = 0;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (seedProbabilityMap[y][x] == 1.0) {  // again, todo.
+                    MapPoint mp = getMapPoint(new Point(x, y));
+                    points[mpCounter++] = mp;
+                    //adjustProbabilitiesInRadius(mp, 9);
+                }
+            }
+        }
+
+        return points;
     }
 
     private double[] nRandomDoubles(int n, Random random) {
