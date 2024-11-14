@@ -14,13 +14,14 @@ import java.util.Random;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
-import java.util.List;
-
 /**
  * SeedProbabilityMap, designed for GPU efficiency.
  */
 public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
-    double[][] seedProbabilityMap; // y, x
+    /**
+     * [y, x] since the rows are the y values and the columns are the x values, corresponding to the map.
+     */
+    double[][] seedProbabilityMap;
     double[][] cumulativeProbabilities; // per x, inclusive of previous maps // todo this comment makes no sense
     final Heightmap heightmap;
     final int width;
@@ -66,259 +67,38 @@ public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
         kernel.dispose();
         seedProbabilityMap = _seedMap;
 
-        normalize(); // initial normalization of probabilities to sum of 1.0    // todo may not be necessary
-    }
-
-    /**
-     * Controls the normalization of the probability map. The probability map is considered normalized
-     * when the sum of all probabilities is equal to 1.0.
-     * The probability map is normalized by dividing all probabilities by the sum of all probabilities.
-     */
-    public void normalize() {
-        double sum;
-        // todo this is hard to read
-        if (probabilitySum == 0) {
-            System.out.println("t1");
-            sum = mapReduce2D(seedProbabilityMap);
-        } else {
-            System.out.println("t2");
-            sum = probabilitySum;
-        }
-        if (sum == 0) {
-            System.out.println("t3");
-            probabilitySum = sum;
-            return;
-        } else if (sum == 1) {
-            System.out.println("t4");
-            cumulativeProbabilities = cumulativeReduce2D(seedProbabilityMap);
-            probabilitySum = sum;
-            return;
-        }
-
-        double sumRecip = 1 / sum;
-        System.out.println("Sum recip: " + sumRecip);
-        seedProbabilityMap = multiplyAll(seedProbabilityMap, sumRecip);
-        probabilitySum = 1.0;
-        cumulativeProbabilities = cumulativeReduce2D(seedProbabilityMap);
-    }
-
-    /**
-     * Based on example in aparapi examples
-     *
-     * @return
-     */
-    private double mapReduce2D(double[][] matrix) {
-        int rows = matrix.length;
-        int cols = matrix[0].length;
-        int size = rows * cols;
-        final double[] _sdata = new double[size];
-        final int count = 3;
-        System.out.println("map reduce array size: " + size);
-
-        System.arraycopy(Stream.of(matrix)
-                        .parallel()
-                        .flatMapToDouble(DoubleStream::of)
-                        .toArray(),
-                0, _sdata, 0, size);
-
-        // this will hold our values between the phases.
-        double[][] totals = new double[count][size];
-
-        /*
-         * map phase
-         */
-        final double[][] kernelTotals = totals;
-        Kernel mapKernel = new Kernel() {
-            @Override
-            public void run() {
-                int gid = getGlobalId();
-                double value = _sdata[gid];
-                for (int index = 0; index < count; index++) {
-                    if (value >= (double) index / count && value < (double) (index + 1) / count)
-                        kernelTotals[index][gid] = 1.0;
-                }
-            }
-        };
-        mapKernel.execute(Range.create(size));
-        System.out.println("map reduce array size: " + size);
-        mapKernel.dispose();
-        totals = kernelTotals;
-
-        /*
-         * reduce phase
-         */
-        while (size > 1) {
-            int nextSize = size / 2;
-            final double[][] currentTotals = totals;
-            final double[][] nextTotals = new double[count][nextSize];
-            Kernel reduceKernel = new Kernel() {
-                @Override
-                public void run() {
-                    int gid = getGlobalId();
-                    for (int index = 0; index < count; index++) {
-                        nextTotals[index][gid] = currentTotals[index][gid * 2] + currentTotals[index][gid * 2 + 1];
-                    }
-                }
-            };
-            reduceKernel.execute(Range.create(nextSize));
-            reduceKernel.dispose();
-
-            totals = nextTotals;
-            size = nextSize;
-        }
-        assert size == 1;
-
-        double[] result = Arrays.stream(totals)
-                .parallel()
-                .mapToDouble(row -> row[0])
-                .toArray();
-
-        // System.out.println(Arrays.toString(result));
-        return result[0] + result[1] + result[2];
-    }
-
-    /**
-     * Apply cumulative reduce operation to a 2D matrix.
-     *
-     * @param matrix The input 2D matrix.
-     * @return The result of the cumulative reduce operation.
-     */
-    private double[][] cumulativeReduce2D(double[][] matrix) {
-        int rows = matrix.length;
-        int cols = matrix[0].length;
-        int size = rows * cols;
-        final double[] _sdata = new double[size];
-        // final int count = 3; // todo 3? no.
-
-        // Flatten the matrix into a 1D array
-        System.arraycopy(Stream.of(matrix)
-                        .parallel()
-                        .flatMapToDouble(Arrays::stream)
-                        .toArray(),
-                0, _sdata, 0, size);
-        System.out.println("cumulative reduce array size: " + size);
-        System.out.println("arr:" + _sdata[0] + ", " + _sdata[1]);
-
-        // Initialize totals array
-        double[][] values = new double[rows][cols];
-
-        /*
-         * reduce phase
-         * if gid % 2^(index + 1) >= 2^(index)
-         * add value[gid - ([gid % 2^(index)] + 1)] to value[gid]
-         * ~12.8m array -> 24 iterations
-         */
-        final double[] cumulativeTotals = _sdata;
-        final int maxIterations = (int) Math.ceil(Math.log(size) / Math.log(2));
-        System.out.println("reducing arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. "
-                + cumulativeTotals[size - 1]);
-        // this is not neccessarily the most efficient algo, but.
-        // todo uHhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh (weird output? or somewhere else?)
-        Kernel reduceKernel = new Kernel() {
-            @Override
-            public void run() {
-                int gid = getGlobalId();
-                for (int i = 0; i < maxIterations; i++) {
-                    int pow_2_i = 1 << i;
-                    // int gid = getGlobalId();
-                    if (gid % (pow_2_i << 1) >= pow_2_i)
-                        cumulativeTotals[gid] += cumulativeTotals[gid - (gid % pow_2_i + 1)];
-                    else
-                        cumulativeTotals[gid] += 0;
-
-                    //// cumulativeTotals = nextTotals;
-                    // System.out.println("reducing iteration: " + i);
-                    // System.out.println("reducing arr: " + cumulativeTotals[0] + ", " +
-                    //// cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
-
-                    this.localBarrier(); // todo needed?
-                }
-            }
-        };
-        reduceKernel.execute(Range.create(size));
-        reduceKernel.dispose();
-        System.out.println("reduced arr: " + cumulativeTotals[0] + ", " + cumulativeTotals[1] + ",.. "
-                + cumulativeTotals[size - 1]);
-        // for (int i = 0;; i++) {
-        // final double[] currentTotals = cumulativeTotals;
-        // final double[] nextTotals = currentTotals.clone();
-        // final int pow_2_i = 1 << i;
-        //
-        // Kernel reduceKernel = new Kernel() {
-        // @Override
-        // public void run() {
-        // int gid = getGlobalId();
-        // if (gid % (pow_2_i << 1) >= pow_2_i)
-        // nextTotals[gid] += currentTotals[gid - (gid % pow_2_i + 1)];
-        // else nextTotals[gid] += 0;
-        // }
-        // };
-        // reduceKernel.execute(Range.create(size));
-        // reduceKernel.dispose();
-        // cumulativeTotals = nextTotals;
-        // System.out.println("reducing iteration: " + i);
-        // System.out.println("reducing arr: " + cumulativeTotals[0] + ", " +
-        // cumulativeTotals[1] + ",.. " + cumulativeTotals[size - 1]);
-        // if (pow_2_i >= size) break;
-        // }
-
-        // // Reconstruct the result matrix
-        double[][] result = new double[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            System.arraycopy(cumulativeTotals, i * cols, result[i], 0, cols);
-        }
-
-        // Uncomment the next line if you want to print the result
-        // System.out.println(Arrays.deepToString(result));
-        System.out.println("arr res:" + result[0][0] + ", " + result[0][1]);
-        return result;
-    }
-
-    private double[][] multiplyAll(double[][] matrix, final double value) {
-        final int width = matrix.length;
-        final int height = matrix[0].length;
-        final double[][] in = matrix.clone();
-        final double[][] out = new double[width][height];
-        Kernel multKernal = new Kernel() {
-            @Override
-            public void run() {
-                int x = getGlobalId(0);
-                int y = getGlobalId(1);
-                out[x][y] = in[x][y] * value;
-            }
-        };
-        multKernal.execute(Range.create2D(width, height));
-        multKernal.dispose();
-        return out;
+        //normalize(); // initial normalization of probabilities to sum of 1.0    // todo may not be necessary
     }
 
     /**
      * Iteratively generate a final seed probability map using random probabilities and the current seed probability map.
      *
-     * @param matrix
-     * @param randProbabilities
-     * @return
+     * @param matrix            the base seed probability map
+     * @param randProbabilities the random probabilities to use
+     * @return the final seed probability map
      */
     private double[][] iterativeProbabilisticMap2D(double[][] matrix, double[] randProbabilities) {
         // iteratively find the first index(x, y) in the matrix where cumulativeProbability(x, y) >= p
         // we need as much as possible in *one* kernel
         /* if a cell has been selected (by the probability), it should not be selectable again
            (but this could be handled if necessary for some optimization).
-           This cell should be set to have a probability of 1.0 to represent being selected.
+           This cell should be set to have a probability of 0.0 (zeroProbability) to represent being selected.
+           This may seem counter-intuitive, but consider it representing not being able to be selected again,
+           which in this case only previously selected points can not be selected in the future. Additionally,
+           setting the probability to 0.0 instead of maxProbability [1.0], means no special case checks are
+           required between iterations to ignore selected points. They are inconsequential algorithmically.
          */
         int rows = matrix.length;
         int cols = matrix[0].length;
         int size = rows * cols;
         final int count = 3;
+        final int numProbabilities = randProbabilities.length;
+        final double zeroProbability = 0.0;
         final double maxProbability = 1.0;
         final int cReduceIterations = (int) Math.ceil(Math.log(size) / Math.log(2));
 
         final double[] _data = new double[size];
-        final double[][] _mapForReduce = new double[count][size];
-        final double[] _cumulativeP = new double[size];
-        // atomic-esques
-        final double[] _probabilitySum = { 0 };
-        final double[] _sumRecip = { 0 };
+        final double[] _cProbabilityData = new double[size];
 
         // Flatten the matrix into a 1D array
         System.arraycopy(Stream.of(matrix)
@@ -326,99 +106,141 @@ public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
                         .flatMapToDouble(Arrays::stream)
                         .toArray(),
                 0, _data, 0, size);
-        // secondary matrices for operations
-        System.arraycopy(Stream.of(matrix)
-                        .parallel()
-                        .flatMapToDouble(Arrays::stream)
-                        .toArray(),
-                0, _cumulativeP, 0, size);
+//        // secondary matrices for operations
+//        System.arraycopy(Stream.of(matrix)
+//                        .parallel()
+//                        .flatMapToDouble(Arrays::stream)
+//                        .toArray(),
+//                0, reducedData, 0, size);
 
-        Kernel ipmKernel = new Kernel() {
-            @Override
-            public void run() {
-                int gid = getGlobalId();
-                for (int i = 0; i < size; i++) {
-                    /*
-                     * Find the sum of the probabilities in the matrix. This is the initial probability sum, found
-                     * by performing the map-reduce operation on the matrix data.
-                     */
-                    // map phase
-                    double value = _data[gid];
-                    for (int index = 0; index < count; index++) {
-                        if (value >= (double) index / count && value < (double) (index + 1) / count)
-                            _mapForReduce[index][gid] = value;
-                    }
+        for (int i = 0; i < numProbabilities; i++) {
+            DoubleReduceKernel reduceKernel = new DoubleReduceKernel();
+            reduceKernel.reduce(_data);
+            reduceKernel.reduce();
+            double[] reducedData = reduceKernel.results();
+            double probabilitySum = DoubleStream.of(reducedData).sum();
+            double sumRecip = 1.0 / probabilitySum;
+            DoubleNormalizeKernel normalizeKernel = new DoubleNormalizeKernel();
+            normalizeKernel.normalize(_data, sumRecip);
+            //        CumulativeReduceKernel cumulativeReduceKernel = new CumulativeReduceKernel();
+            //        cumulativeReduceKernel.cumulativeReduce(_data);
+            //        double[] cumulativeP = cumulativeReduceKernel.results();
+            _cProbabilityData[0] = _data[0];
+            for (int ii = 1; ii < size; ii++) {
+                _cProbabilityData[ii] = _data[ii];
+                _cProbabilityData[ii] += _cProbabilityData[ii - 1];
+            }
 
-                    // reduce phase
-                    int stepSize = size / 2;
-                    while (stepSize > 0) {
-                        if (gid < stepSize) {
-                            // Perform reduction summing elements per data bin.
-                            for (int index = 0; index < count; index++) {
-                                _mapForReduce[index][gid] += _mapForReduce[index][gid + stepSize];
-                            }
-                        }
-                        stepSize /= 2;
-                        // Sync after each reduction step.
-                        this.localBarrier();
-                    }
-
-                    // After reduction, the total sum for each bin will be in _mapForReduce[index][0]
-                    // Find the final sum of probabilities.
-                    if (gid == 0) {
-                        _probabilitySum[0] = 0;
-                        for (int index = 0; index < count; index++) {
-                            _probabilitySum[0] += _mapForReduce[index][0];
-                        }
-                        _sumRecip[0] = 1 / _probabilitySum[0];
-                    }
-                    // Sync for final probabilitySum value.
-                    localBarrier();
-
-                    /*
-                     * Normalize the matrix to a sum of 1.0. That is, the sum of all probabilities in the matrix should be 1.0.
-                     * The matrix (now, represented by the array _data), can be normalized by dividing each probability by
-                     * the sum of all probabilities. This is equivalent to multiplying by the reciprocal of the probability sum,
-                     * which may be more efficient.
-                     */
-                    // if cell has been selected, maintain probability as maxProbability
-                    if (_data[gid] == maxProbability) _sumRecip[0] = 1;
-                    _data[gid] = _data[gid] * _sumRecip[0];     // todo does it support /= ?
-                    // wait for all data to be normalized.
-                    localBarrier();
-
-                    /*
-                     * Apply cumulative reduce operation to the matrix.
-                     * Special case: if data[gid] == maxProbability, do not accumulate the probability.
-                     * reduce phase:
-                     * if gid % 2^(index + 1) >= 2^(index)
-                     * add data[gid - ([gid % 2^(index)] + 1)] to data[gid]
-                     * ~12.8m array -> 24 iterations
-                     */
-                    for (int ii = 0; ii < cReduceIterations; ii++) {
-                        int pow_2_i = 1 << ii;
-                        if (gid % (pow_2_i << 1) >= pow_2_i && _data[gid] != maxProbability)
-                            _cumulativeP[gid] += _cumulativeP[gid - (gid % pow_2_i + 1)];
-                        else
-                            _cumulativeP[gid] += 0;
-                        // wait for all applicable data to be accumulated in this iteration.
-                        this.localBarrier();
-                    }
-
-                    /*
-                     * Find the first index where the cumulative probability >= p. At this index, set the probability to maxProbability.
-                     * How to do this in a matrix operation: the exact index where cumulative probability >= p, is precisely the
-                     * index where data[index - 1] < p and data[index] >= p. If index == 0, the previous probability is zero.
-                     */
-                    double prevP = gid == 0 ? 0 : _cumulativeP[gid - 1];
-                    if (_cumulativeP[gid] >= randProbabilities[i] && prevP < randProbabilities[i]) {
-                        _data[gid] = maxProbability;
+            // todo this isnt working?
+            Kernel pKernel = new Kernel() {
+                @Override
+                public void run() {
+                    int gid = getGlobalId();
+                    double prevP = gid == 0 ? 0 : _cProbabilityData[gid - 1];
+                    // fix prevP 0. todo. mutliple handlings necessary.
+                    if (_cProbabilityData[gid] >= randProbabilities[0] && prevP < randProbabilities[0]) {
+                        _data[gid] = zeroProbability;
                     }
                 }
-            }
-        };
-        ipmKernel.execute(Range.create(size));
-        ipmKernel.dispose();
+            };
+            Range range = Range.create(size);
+            pKernel.execute(range);
+            pKernel.dispose();
+        }
+
+//        Kernel ipmKernel = new Kernel() {
+//            @Local
+//            double[] _sReduceData = new double[range.getLocalSize(0)];   // OpenCL does not support dynamic size.
+//            @Local
+//            double[] _sSumRecip = { 0.0 };
+//
+//            @Override
+//            public void run() {
+//                int gid = getGlobalId();
+//                int localId = getLocalId(0);
+//                int blockId = getGroupId(0);
+//                int localBlockSize = getLocalSize(0);
+//                for (int i = 0; i < numProbabilities && i < 1; i++) {
+//                    _sReduceData[localId] = _data[gid];
+//                    this.localBarrier();
+//                    for (int stride = 1; stride < localBlockSize; stride *= 2) {
+//                        if (localId % (2 * stride) == 0) {
+//                            _sReduceData[localId] += _sReduceData[localId + stride];
+//                        }
+//                        this.localBarrier();
+//                    }
+//                    // write result for this block to global memory
+//                    if (localId == 0) {
+//                        _reducedData[blockId] = _sReduceData[0];
+//                    }
+//                    this.globalBarrier();
+////                    _data[gid] = _sReduceData[localId];   // todo test
+//
+////                    // After reduction, the total sum for each bin will be in _reducedData.
+////                    // Find the final sum of probabilities.
+////                    if (gid == 0) {
+////                        _probabilitySum[0] = _reducedData[0];
+////                        for (int j = 1; j < _reducedData.length; j++) {
+////                            _probabilitySum[0] += _reducedData[j];
+////                        }
+////                        _sumRecip[0] = 1.0 / _probabilitySum[0];
+////                    }
+////                    // Sync for final probabilitySum value.
+////                    this.globalBarrier();
+////                    _data[gid] = _sumRecip[0];
+//
+////                    /*
+////                     * Normalize the matrix to a sum of 1.0. That is, the sum of all probabilities in the matrix should be
+////                     * maxProbability (1.0).
+////                     * The matrix (now, represented by the array _data), can be normalized by dividing each probability by
+////                     * the sum of all probabilities. This is equivalent to multiplying by the reciprocal of the probability
+////                     * sum, which may be more efficient.
+////                     */
+////                    // if cell has been selected, maintain probability as minProbability
+////                    if (_data[gid] != zeroProbability)
+////                        _data[gid] *= _sumRecip[0];
+////                    // wait for all data to be normalized.
+////                    this.globalBarrier();
+//
+////                    /*
+////                     * Apply cumulative reduce operation to the matrix.
+////                     * reduce phase:
+////                     * if gid % 2^(index + 1) >= 2^(index)
+////                     * add data[gid - ([gid % 2^(index)] + 1)] to data[gid]
+////                     * ~12.8m array -> 24 iterations
+////                     */
+////                    for (int ii = 0; ii < cReduceIterations; ii++) {
+////                        int pow_2_i = 1 << ii;
+////                        if (gid % (pow_2_i << 1) >= pow_2_i)
+////                            _cumulativeP[gid] += _cumulativeP[gid - (gid % pow_2_i + 1)];
+////                        else
+////                            _cumulativeP[gid] += 0;
+////                        // wait for all applicable data to be accumulated in this iteration.
+////                        this.localBarrier();
+////                    }
+////
+////                    /*
+////                     * Find the first index where the cumulative probability >= p. At this index, set the probability to zeroProbability.
+////                     * How to do this in a matrix operation: the exact index where cumulative probability >= p, is precisely the
+////                     * index where data[index - 1] < p and data[index] >= p. If index == 0, the previous probability is zero.
+////                     */
+////                    double prevP = gid == 0 ? 0 : _cumulativeP[gid - 1];
+////                    if (_cumulativeP[gid] >= randProbabilities[i] && prevP < randProbabilities[i]) {
+////                        _data[gid] = zeroProbability;
+////                    }
+//                }
+//            }
+//        };
+//        ipmKernel.execute(range);
+//        System.out.println("Disposing ipm kernel.");
+//        ipmKernel.dispose();
+//        System.out.println("Disposed ipm kernel.");
+        System.out.println("thread 256 data: " + _data[256]);
+        System.out.println("...last thread data: " + _data[size - 1]);
+        System.out.println("...last thread cumulativeP: " + _cProbabilityData[size - 1]);
+        //System.out.println("Reduced: " + Arrays.toString(reducedData));
+        System.out.println("Probability sum: " + probabilitySum);
+        //System.out.println("Sum recip: " + sumRecip);
 
         /*
          * Reconstruct a result matrix
@@ -428,31 +250,11 @@ public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
             System.arraycopy(_data, i * cols, result[i], 0, cols);
         }
 
+        System.out.println("Finished calculating iterative probabilitistic map.");
         return result;
     }
 
     public MapPoint[] getPoints(Random random, int numPoints) {
-//        normalize();                        // probability sum will be 1.0
-//
-//        double p = random.nextDouble();     // Random number between 0.0 and 1.0
-//        // Find the first index where cumulative probability >= p
-//        // This semi-randomly chooses a point since we have normalized the probability space to sum to 1.0
-//        Point cumulativeP = findCumulativeProbabilityIndex(p);
-//        if (cumulativeP == null) {
-//            System.err.println("Cumulative probability index null " + this);
-//            System.out.println("bad probability? " + p);
-//            // Arrays.stream(cumulativeProbabilities).forEach(System.out::println);
-//            return null;
-//        }
-//
-//        // Find the first MapPoint where cumulative probability >= p
-//        System.out.println("cumulative:" + cumulativeP + ", " + cumulativeProbabilities[cumulativeP.y][cumulativeP.x]);
-//        MapPoint mp = getMapPoint(cumulativeP);
-//        System.out.println(++pointNumber);
-//        /* adjust probabilities */
-//        // adjustProbabilitiesInRadius(mp, 9); instead, ? ->
-//        setSeedProbabilityMap_YX(mp.y, mp.x, 0.0);
-//        return mp;
         MapPoint[] points = new MapPoint[numPoints];
         // generate numPoints random numbers
         double[] pList = nRandomDoubles(numPoints, random);
@@ -462,10 +264,12 @@ public class SeedProbabilityMap_GPU_2 extends AbstractMapGeneration {
         // todo can be optimized:
         int mpCounter = 0;
         for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+//            System.out.println("x: " + x);
+            for (int y = 0; y < height && mpCounter < numPoints; y++) {
                 if (seedProbabilityMap[y][x] == 1.0) {  // again, todo.
                     MapPoint mp = getMapPoint(new Point(x, y));
                     points[mpCounter++] = mp;
+                    System.out.println("added mapPoint of x: " + x + ", y: " + y);
                     //adjustProbabilitiesInRadius(mp, 9);
                 }
             }

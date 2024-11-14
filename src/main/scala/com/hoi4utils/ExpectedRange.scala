@@ -22,10 +22,11 @@ class ExpectedRange[T <: AnyVal](val min: T, val max: T) {
 }
 
 object ExpectedRange {
-  def ofInt: ExpectedRange[Int] = new ExpectedRange[Int](Int.MinValue, Int.MaxValue)
+  def ofInt:
+    ExpectedRange[Int] = new ExpectedRange[Int](Int.MinValue, Int.MaxValue)
+    System.out.println("ccp")
 
   def ofDouble: ExpectedRange[Double] = new ExpectedRange[Double](Double.MinValue, Double.MaxValue)
 
   def infinite: ExpectedRange[Double] = new ExpectedRange[Double](Double.NegativeInfinity, Double.PositiveInfinity)
 }
-
