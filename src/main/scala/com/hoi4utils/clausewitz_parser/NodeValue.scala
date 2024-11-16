@@ -85,7 +85,6 @@ final class NodeValue {
       case s: String => s
       case i: Int => i.toString
       case d: Double => d.toString
-      //    case n: Number => Long.toString(n.longValue)
       case l: ListBuffer[AnyVal] => {
         val sb = new StringBuilder()
         sb.append("{")
@@ -110,17 +109,17 @@ final class NodeValue {
   // return value instanceof Boolean;
   // }
   // todo check allowables
-  
+
   @targetName("plus")
-  def +(other: NodeValue): NodeValue = {
-    value match
-      case str: String if other.value.isInstanceOf[String] =>
-        new NodeValue(str + other.value.asInstanceOf[String])
-      case num: Int if other.value.isInstanceOf[Int] =>
-        new NodeValue(value.asInstanceOf[Int].intValue + other.value.asInstanceOf[Int].intValue)
-      case num: Double if other.value.isInstanceOf[Double] =>
-        new NodeValue(value.asInstanceOf[Double].doubleValue + other.value.asInstanceOf[Double].doubleValue)
-      case _ => throw new IllegalStateException("Cannot add NodeValues of types " + value.getClass + " and " + other.value.getClass)
+  def +(other: NodeValue): NodeValue = (value, other.value) match {
+    case (str1: String, str2: String) =>
+      new NodeValue(str1 + str2)
+    case (num1: Int, num2: Int) =>
+      new NodeValue(num1 + num2)
+    case (num1: Double, num2: Double) =>
+      new NodeValue(num1 + num2)
+    case _ =>
+      throw new IllegalStateException(s"Cannot add NodeValues of types ${value.getClass} and ${other.value.getClass}")
   }
 
   def getValue: String | Int | Double | Boolean | ListBuffer[Node] | Null = {
@@ -130,6 +129,10 @@ final class NodeValue {
   def setValue (value: String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
     this.value = value
   }
+
+//  def value_=(value: String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
+//    setValue(value)
+//  }
   
   def valueIsInstanceOf(clazz: Class[?]): Boolean = clazz.isInstance(value)
   

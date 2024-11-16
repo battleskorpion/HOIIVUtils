@@ -65,7 +65,7 @@
 		<JUnit.version>5.10.2</JUnit.version>
 		<log4j.version>2.23.1</log4j.version>
 		<lombok.version>1.18.32</lombok.version>
-		<scala.version>3.4.2</scala.version>
+		<scala.version>3.5.2</scala.version>
 	</properties>
 
 	<dependencyManagement>

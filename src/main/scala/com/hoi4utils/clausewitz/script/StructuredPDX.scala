@@ -70,12 +70,12 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    *
    * @param identifiers
    */
-  def getPDXProperty(identifiers: List[String]): PDXScript[?] = {
+  def getPDXProperty(identifiers: List[String]): Option[PDXScript[?]] = {
     for (identifier <- identifiers) {
       val pdx = getPDXProperty(identifier)
-      if (pdx != null) return pdx
+      if (pdx != null) return Some(pdx)
     }
-    null
+    None
   }
 
   /**
@@ -84,16 +84,15 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    *
    * @param identifier
    */
-  def getPDXPropertyOfType[R](identifier: String): PDXScript[R] = {
-    import scala.collection.BuildFrom.buildFromString
+  def getPDXPropertyOfType[R](identifier: String): Option[PDXScript[R]] = {
     for (pdx <- childScripts) {
       pdx match {
         case pdxScript: PDXScript[R] =>
-          if (pdxScript.getPDXIdentifier == identifier) return pdxScript
+          if (pdxScript.getPDXIdentifier == identifier) return Some(pdxScript)
         case _ =>
       }
     }
-    null.asInstanceOf[PDXScript[R]]
+    None
   }
 
   /**
@@ -102,16 +101,12 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    *
    * @param identifiers
    */
-  def getPDXPropertyOfType[R](identifiers: List[String]): PDXScript[R] = {
+  def getPDXPropertyOfType[R](identifiers: List[String]): Option[PDXScript[R]] = {
     for (identifier <- identifiers) {
-      val pdx = getPDXPropertyOfType(identifier)
-      pdx match {
-        case pdxScript: PDXScript[R] =>
-          return pdxScript
-        case _ =>
-      }
+      val pdx = getPDXPropertyOfType[R](identifier)
+      if (pdx.isDefined) return pdx
     }
-    null
+    None
   }
 
   def pdxProperties: Iterable[? <: PDXScript[?]] = {

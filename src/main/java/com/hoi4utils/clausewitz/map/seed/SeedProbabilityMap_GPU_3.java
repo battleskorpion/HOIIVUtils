@@ -92,14 +92,19 @@ public class SeedProbabilityMap_GPU_3 extends AbstractMapGeneration {
         int rows = matrix.length;
         int cols = matrix[0].length;
         int size = rows * cols;
-        final int count = 3;
         final int numProbabilities = randProbabilities.length;
         final int zeroProbability = 0;
 //        final double maxProbability = 1.0;
         final int cReduceIterations = (int) Math.ceil(Math.log(size) / Math.log(2));
+        int pp = 0;
+        final int r = 25;
+        double[] distanceModifiers = new double[r + 1]; // 0 to r
+        distanceModifiers[0] = 0.0;
+        for (int i = 1; i <= r; i++) {
+            distanceModifiers[i] = (double) (i - 0.2) / r; // Normalize the value to be between 0 and 1
+        }
 
         final int[] _data = new int[size];
-        final int[] _cProbabilityData = new int[size];
 
         // Flatten the matrix into a 1D array
         System.arraycopy(Stream.of(matrix)
@@ -107,61 +112,76 @@ public class SeedProbabilityMap_GPU_3 extends AbstractMapGeneration {
                         .flatMapToInt(Arrays::stream)
                         .toArray(),
                 0, _data, 0, size);
-//        // secondary matrices for operations
-//        System.arraycopy(Stream.of(matrix)
-//                        .parallel()
-//                        .flatMapToDouble(Arrays::stream)
-//                        .toArray(),
-//                0, reducedData, 0, size);
 
         for (int i = 0; i < numProbabilities; i++) {
             IntReduceKernel reduceKernel = new IntReduceKernel();
             reduceKernel.reduce(_data);
             reduceKernel.reduce();
             int[] reducedData = reduceKernel.results();
+            reduceKernel.dispose();
             int probabilitySum = IntStream.of(reducedData).sum();
-            //        CumulativeReduceKernel cumulativeReduceKernel = new CumulativeReduceKernel();
-            //        cumulativeReduceKernel.cumulativeReduce(_data);
-            //        double[] cumulativeP = cumulativeReduceKernel.results();
             IntCumulativeReduceKernel cReduceKernel = new IntCumulativeReduceKernel();
             cReduceKernel.cumulativeReduce(_data);    // just once
             int[][] cReducedData = cReduceKernel.results(); // again results are per workgroup
-//            _cProbabilityData[0] = _data[0];
-//            // todo. can probabily get multiple passes working.
-//            for (int ii = 1; ii < size; ii++) {
-//                _cProbabilityData[ii] = _data[ii];
-//                _cProbabilityData[ii] += _cProbabilityData[ii - 1];
-//            }
-            int p = (int) Math.ceil(randProbabilities[i] * probabilitySum);
+            cReduceKernel.dispose();
 
-            // todo this isnt working?
+            int p = (int) Math.ceil(randProbabilities[i] * probabilitySum);
+            pp = p;
+
+            int[] pointX = { 0 };
+            int[] pointY = { 0 };
             Kernel pKernel = new Kernel() {
                 @Override
                 public void run() {
                     int gid = getGlobalId();
+                    int localID = getLocalId();
                     int groupID = getGroupId();
-                    double prevP = gid == 0 ? 0 : _cProbabilityData[gid - 1];
+                    int prevWkgsCProbability = 0;    // previous workgroup cumulative property
                     // find previous workgroups' cumulative probability
                     for (int i = 0; i < groupID; i++) {
-
+                        prevWkgsCProbability += cReducedData[i][cReducedData[i].length - 1];
                     }
-                    // fix prevP 0. todo. mutliple handlings necessary.
-                    if (_cProbabilityData[gid] >= randProbabilities[0] && prevP < randProbabilities[0]) {
+                    int prevP = ((gid == 0 || localID == 0) ? 0 : cReducedData[groupID][localID - 1]) + prevWkgsCProbability;
+                    // todo do i have to fix the calcs?
+                    if ((cReducedData[groupID][localID] + prevWkgsCProbability) >= p && prevP < p) {
                         _data[gid] = zeroProbability;
+                        pointX[0] = gid % cols;
+                        pointY[0] = gid / cols;
                     }
+//                    _data[gid] = cReducedData[groupID][localID];
                 }
             };
             Range range = Range.create(size);
             pKernel.execute(range);
             pKernel.dispose();
+
+//            int minY = Math.max(pointY[0] - r, 0);
+//            int maxY = Math.min(pointY[0] + r, seedProbabilityMap.length - 1);
+//            int minX = Math.max(pointX[0] - r, 0);
+//            int maxX = Math.min(pointX[0] + r, seedProbabilityMap[0].length - 1);
+            Kernel adjKernel = new Kernel() {
+                @Override
+                public void run() {
+                    int gid = getGlobalId();
+                    int localID = getLocalId();
+                    int groupID = getGroupId();
+                    int x = gid % cols - pointX[0];
+                    int y = gid / cols - pointY[0];
+                    double distance = Math.sqrt(x * x + y * y);
+                    if (distance <= r) {
+                        _data[gid] = (int) Math.ceil(_data[gid] * distanceModifiers[(int) distance]);
+                    }
+                }
+            };
+            adjKernel.execute(range);
+            adjKernel.dispose();
         }
 
         System.out.println("thread 256 data: " + _data[256]);
+        System.out.println("probability: " + pp);
         System.out.println("...last thread data: " + _data[size - 1]);
-        System.out.println("...last thread cumulativeP: " + _cProbabilityData[size - 1]);
-        //System.out.println("Reduced: " + Arrays.toString(reducedData));
+//        System.out.println("...last thread cumulativeP: " + _cProbabilityData[size - 1]);
         System.out.println("Probability sum: " + probabilitySum);
-        //System.out.println("Sum recip: " + sumRecip);
 
         /*
          * Reconstruct a result matrix
@@ -187,7 +207,7 @@ public class SeedProbabilityMap_GPU_3 extends AbstractMapGeneration {
         for (int x = 0; x < width; x++) {
 //            System.out.println("x: " + x);
             for (int y = 0; y < height && mpCounter < numPoints; y++) {
-                if (seedProbabilityMap[y][x] == 1.0) {  // again, todo.
+                if (seedProbabilityMap[y][x] == 0) {  // again, todo.
                     MapPoint mp = getMapPoint(new Point(x, y));
                     points[mpCounter++] = mp;
                     System.out.println("added mapPoint of x: " + x + ", y: " + y);
@@ -248,14 +268,14 @@ public class SeedProbabilityMap_GPU_3 extends AbstractMapGeneration {
         }
     }
 
-    public Point findCumulativeProbabilityIndex(double p) {
-        for (int y = 0; y < cumulativeProbabilities.length; y++) {
-            for (int x = 0; x < cumulativeProbabilities[y].length; x++) {
-                if (Double.compare(cumulativeProbabilities[y][x], p) >= 0) {
-                    return new Point(x, y);
-                }
-            }
-        }
-        return null;
-    }
+//    public Point findCumulativeProbabilityIndex(double p) {
+//        for (int y = 0; y < cumulativeProbabilities.length; y++) {
+//            for (int x = 0; x < cumulativeProbabilities[y].length; x++) {
+//                if (Double.compare(cumulativeProbabilities[y][x], p) >= 0) {
+//                    return new Point(x, y);
+//                }
+//            }
+//        }
+//        return null;
+//    }
 }

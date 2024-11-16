@@ -152,12 +152,6 @@ class EffectDatabase(databaseName: String) {
 
           (requiredParametersFull, requiredParameterSimple) match {
             case (Some(requiredParametersFull), Some(requiredParameterSimple)) =>
-            // todo
-            //            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) with BlockEffect(pdxIdentifier, new StructuredPDX(pdxIdentifier)) {
-            //              // Implement abstract methods from SimpleEffect and BlockEffect here
-            //              override def someAbstractMethodFromSimpleEffect(): ReturnType = {
-            //                // Implementation
-            //              }
               effects ++= parametersToEffect(pdxIdentifier, requiredParametersFull_str)
             case (Some(requiredParametersFull), None) =>
               effects ++= parametersToEffect(pdxIdentifier, requiredParametersFull_str)

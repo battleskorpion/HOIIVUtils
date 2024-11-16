@@ -63,7 +63,8 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
   override def equals(other: PDXScript[?]): Boolean = {
     other match {
       case referencePDX: ReferencePDX[?] =>
-        referenceName == referencePDX.referenceName && this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier && this.idExtractor == referencePDX.idExtractor
+        referenceName == referencePDX.referenceName && this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier
+        && this.idExtractor == referencePDX.idExtractor
       case _ => false
     }
   }
