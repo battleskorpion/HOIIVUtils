@@ -174,7 +174,6 @@ public class PDXEditorPane extends AnchorPane {
 
     private @NotNull HBox visualizeStringPDX(PDXScript<?> property, boolean withLabel, StringPDX pdx) {
         HBox hbox = new HBox();
-//                TextField textField = new TextField(pdx.get() != null ? pdx.get() : "");
         TextField textField = new TextField(pdx.getOrElse(""));
         textField.setPrefWidth(200);
         textField.setPrefHeight(25);
@@ -307,7 +306,7 @@ public class PDXEditorPane extends AnchorPane {
     }
 
     private HBox visualizeDoublePDX(DoublePDX pdx, boolean withLabel) {
-        double minValue = pdx.isDefaultRange() ? pdx.minValue() : pdx.minValueNonInfinite();
+        double minValue = pdx.isDefaultRange() ? pdx.minValue() : pdx.minValueNonInfinite();    // todo simplify?
         double maxValue = pdx.isDefaultRange() ? pdx.maxValue() : pdx.maxValueNonInfinite();
         double value = pdx.getOrElse(pdx.defaultValue());
         Spinner<Double> spinner = new Spinner<>(

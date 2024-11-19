@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable
 
 import java.util.function.Function
 import java.util.function.Supplier
-
+import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -85,6 +85,12 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
   def getReferenceCollection: Iterable[T] = referenceCollectionSupplier()
 
   def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().flatMap(idExtractor)
+
+  @targetName("referenceNameEquals")
+  def @= (newValue: String): Unit = setReferenceName(newValue)
+
+  @targetName("referenceEquals")
+  def @== (other: T): Boolean = idExtractor.apply(other).contains(referenceName)
 
   override def isUndefined: Boolean = {
     resolveReference()

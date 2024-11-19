@@ -103,17 +103,36 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
    *
    * @param x absolute x-coordinate
    * @param y absolute y-coordinate
+   * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
+   *                                   in the same position even though the position of this focus changes.
    * @return the previous position.
    */
-  def setAbsoluteXY(x: Int, y: Int): Point = {
+  def setAbsoluteXY(x: Int, y: Int, updateChildRelativeOffsets: Boolean): Point = {
     val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
     this.x.set(x)
     this.y.set(y)
     this.relativePositionFocus.setNull()
+    if (updateChildRelativeOffsets) {
+      val offset = new Point(x - prev.x, y - prev.y)
+      for (focus <- focusTree.focuses) {
+        if (focus.relativePositionFocus @== this) {
+          focus.offsetXY(prev.x - x, prev.y - y)
+        }
+      }
+    }
     prev
   }
 
   def setXY(xy: Point): Point = setXY(xy.x, xy.y)
+
+  def offsetXY(x: Int, y: Int): Point = {
+    val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
+    this.x.set(this.x.getOrElse(0) + x)
+    this.y.set(this.y.getOrElse(0) + y)
+    prev
+  }
+
+  def samePosition(x: Int, y: Int): Boolean = this.x.getOrElse(0) == x && this.y.getOrElse(0) == y
 
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 

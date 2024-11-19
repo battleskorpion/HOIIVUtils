@@ -411,7 +411,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 				// open add focus menu to side of focus tree view
 				Focus newFocus = new Focus(focusTree);
 				focusTree.addNewFocus(newFocus);
-				newFocus.setAbsoluteXY(canvasToFocusX(e.getX()), canvasToFocusY(e.getY()));
+				newFocus.setAbsoluteXY(canvasToFocusX(e.getX()), canvasToFocusY(e.getY()), false);
 				newFocus.setID(focusTree.nextTempFocusID());
 				openEditorWindow(newFocus, this::drawFocusTree);
 			});
@@ -430,16 +430,32 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	public void handleFocusTreeViewMouseDragged(MouseEvent e) {
 		if (e.isPrimaryButtonDown() && draggedFocus != null) {
 			// Calculate internal grid position from mouse position
-			int internalX = (int) ((e.getX() - X_OFFSET_FIX) / FOCUS_X_SCALE) + focusTree.minX();
-			int internalY = (int) ((e.getY() - Y_OFFSET_FIX) / FOCUS_Y_SCALE);
+//			int internalX = (int) ((e.getX() - X_OFFSET_FIX) / FOCUS_X_SCALE) + focusTree.minX();
+//			int internalY = (int) ((e.getY() - Y_OFFSET_FIX) / FOCUS_Y_SCALE);
+			int newX = this.canvasToFocusX(e.getX());
+			int newY = this.canvasToFocusY(e.getY());
+			if (draggedFocus.samePosition(newX, newY)) return;
+			if (e.isShiftDown()) {
+				// Update the focus position
+				draggedFocus.setAbsoluteXY(newX, newY, true);
+				if (Settings.DEV_MODE.enabled())
+					System.out.println(
+							"Focus " + draggedFocus + " moved to " + newX + ", " + newY
+							+ ", Referential focuses locked in position."
+					);
 
-			// Update the focus position
-			draggedFocus.setAbsoluteXY(internalX, internalY);
-			if (Settings.DEV_MODE.enabled())
-				System.out.println("Focus " + draggedFocus + " moved to " + internalX + ", " + internalY);
+				// Redraw the focus tree to reflect the change
+				drawFocusTree();
+			} else {
+				// Update the focus position
+				draggedFocus.setAbsoluteXY(newX, newY, false);
+				if (Settings.DEV_MODE.enabled())
+					System.out.println(
+							"Focus " + draggedFocus + " moved to " + newX + ", " + newY);
 
-			// Redraw the focus tree to reflect the change
-			drawFocusTree();
+				// Redraw the focus tree to reflect the change
+				drawFocusTree();
+			}
 		} else if (e.isSecondaryButtonDown()) {
 			if (marqueeStartPoint == null)
 				marqueeStartPoint = new Point2D(e.getX(), e.getY());

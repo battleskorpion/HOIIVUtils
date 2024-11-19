@@ -35,8 +35,8 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
 
   override def get(): Option[Boolean] = {
     val v = super.get()
-    v match {
-      case Some(b: Boolean) => Some(b)
+    v.get match {
+      case b: Boolean => Some(b)
       case _ => None
     }
   }
