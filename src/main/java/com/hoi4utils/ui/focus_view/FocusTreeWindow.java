@@ -62,6 +62,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	private Point2D marqueeStartPoint;
 	private Point2D marqueeEndPoint;
 	private final List<Focus> selectedFocuses = new ArrayList<>();
+	private boolean gridLines = false;
 
 	public FocusTreeWindow() {
 		setFxmlResource("FocusTreeWindow.fxml");
@@ -90,29 +91,6 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 				drawFocusTree();
 			}
 		});
-
-		exportFocusTreeButton.setOnAction(event -> handleExportFocusTreeButtonClick());
-
-		// Load the focus unavailable image
-		gfxFocusUnavailable = loadFocusUnavailableImage();
-
-		// Set up the focus tree
-		focusTree = FocusTree$.MODULE$.get(new CountryTag("SMA"));
-		if (focusTree == null) {
-			focusTree = FocusTree.listFocusTrees().head();
-		}
-
-		// If focusTree is still null, assign a new value
-		if (focusTree == null) {
-			focusTree = FocusTree$.MODULE$.get(new File(HOIIVFile.mod_focus_folder + "//massachusetts.txt")).getOrElse(null);
-		}
-
-		try {
-			FixFocus.fixLocalization(focusTree);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 		// Set up the focus tree canvas's scroll pane
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.MIDDLE)
@@ -122,13 +100,32 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 			if (e.getButton() == MouseButton.MIDDLE)
 				focusTreeCanvasScrollPane.setPannable(false);
 		});
+		exportFocusTreeButton.setOnAction(event -> handleExportFocusTreeButtonClick());
+
+		// Load the focus unavailable image
+		gfxFocusUnavailable = loadFocusUnavailableImage();
+
+		// Set up the focus tree
+		focusTree = FocusTree$.MODULE$.get(new CountryTag("SMA"));  // TODO
+		if (focusTree == null) {
+			focusTree = FocusTree.listFocusTrees().head();
+		}
+		// If focusTree is still null, assign a new value
+		if (focusTree == null) {
+			focusTree = FocusTree$.MODULE$.get(new File(HOIIVFile.mod_focus_folder + "//massachusetts.txt")).getOrElse(null);
+		}
+		try {
+			FixFocus.fixLocalization(focusTree);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		// Draw the focus tree
 		drawFocusTree();
 
 		if (Settings.DEV_MODE.enabled()) {
 			JOptionPane.showMessageDialog(null,
-					"dev @end of initialize() - loaded focuses: " + focusTree.focuses().size()
+					"dev @end of initialize() [FocusTreeWindow] - loaded focuses: " + focusTree.focuses().size()
 							+ "\n" + "loaded tree of country: " + focusTree.country().get()
 							+ "\n" + "draw focus tree: " + Settings.DRAW_FOCUS_TREE.enabled());
 		}
@@ -156,6 +153,8 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		return focusTree.minX();
 	}
 
+	private int getMinY() { return 0; }
+
 	private Image gfxFocusUnavailable;
 
 	int getMaxX() {
@@ -168,14 +167,6 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		return CollectionConverters.asJavaCollection(focusTree.focuses()).stream()
 				.mapToInt(Focus::absoluteY)
 				.max().orElse(10);
-	}
-
-	@FXML
-	private void handleExportFocusTreeButtonClick() {
-		String path = "focusOutput.txt";
-		exportFocusTree(focusTree, path);
-		JOptionPane.showMessageDialog(null, "Focus tree exported to " + path, "Export Successful",
-				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private Image loadFocusUnavailableImage() {
@@ -244,6 +235,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		// Clear the canvas with a dark gray color
 		gc2D.setFill(Color.DARKGRAY);
 		gc2D.fillRect(0, 0, width, height);
+		if (gridLines) drawGridLines(gc2D);
 
 		if (focuses.isEmpty()) return;
 
@@ -324,6 +316,127 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		}
 	}
 
+	public void drawGridLines(GraphicsContext gc) {
+		int minX = getMinX();
+		int maxX = getMaxX();
+		int maxY = getMaxY();
+		gc.setStroke(Color.GRAY);
+		gc.setLineWidth(1);
+		/* vertical lines */
+		for (int x = minX; x <= maxX; x++) {
+			int x1 = focusToCanvasX(x);
+			int y1 = 0, y2 = focusToCanvasY(maxY);
+			gc.strokeLine(x1, y1, x1, y2);
+		}
+		/* horizontal lines */
+		for (int y = 1; y <= maxY; y++) {
+			int x1 = focusToCanvasX(minX);
+			int x2 = focusToCanvasX(maxX);
+			int y1 = focusToCanvasY(y);
+			gc.strokeLine(x1, y1, x2, y1);
+		}
+		/* write coordinates */
+		var font = gc.getFont();
+		for (int x = minX; x <= maxX; x++) {
+			int x1 = focusToCanvasX(x) - 8;
+			for (int y = 1; y <= maxY; y++) {
+				int y1 = focusToCanvasY(y) - 5;
+				gc.setFont(new javafx.scene.text.Font("Arial", 8));
+				gc.fillText(x + ", " + y, x1, y1);
+			}
+		}
+		// reset font
+		gc.setFont(font);
+	}
+
+	private Focus getFocusHover(Point2D p) {
+		int x = (int) (p.getX() / FOCUS_X_SCALE) + focusTree.minX();
+		int y = (int) (p.getY() / FOCUS_Y_SCALE);
+
+		for (Focus f : CollectionConverters.asJava(focusTree.focuses())) {
+			if (f.hasAbsolutePosition(x, y)) {
+				return f;
+			}
+		}
+
+		return null;
+	}
+
+	private void selectClosestMatch(ComboBox<FocusTree> comboBox, String typedText) {
+		for (FocusTree item : comboBox.getItems()) {
+			scala.Option<CountryTag> optionalCountry = item.country().get();
+			if (optionalCountry.nonEmpty() && optionalCountry.getOrElse(() -> "").toLowerCase().startsWith(typedText.toLowerCase())) {
+				comboBox.getSelectionModel().select(item);
+				comboBox.getEditor().setText(String.valueOf(item));
+				return;
+			}
+		}
+	}
+
+	private void addFocusTree(FocusTree focusTree) {
+		focusTreeDropdown.getItems().add(focusTree);
+		focusTreeDropdown.getItems().sort(Comparator.comparing(FocusTree::toString));
+	}
+
+	private void viewFocusTree(FocusTree focusTree) {
+		// manually change the selected focus tree
+		System.out.println("change selection");
+		focusTreeDropdown.getSelectionModel().select(focusTree);
+	}
+
+	private int focusToCanvasX(Focus f) {
+		return focusToCanvasX(f.absoluteX());
+	}
+
+	private int focusToCanvasX(int focusAbsX) {
+		return FOCUS_X_SCALE * (focusAbsX - getMinX()) + X_OFFSET_FIX;
+	}
+
+	private int focusToCanvasY(Focus f) {
+		return focusToCanvasY(f.absoluteY());
+	}
+
+	private int focusToCanvasY(int focusAbsY) {
+		return FOCUS_Y_SCALE * (focusAbsY - getMinY()) + Y_OFFSET_FIX;
+	}
+
+
+	private int canvasToFocusX(double canvasX) {
+		return (int) ((canvasX - X_OFFSET_FIX) / FOCUS_X_SCALE + getMinX());
+	}
+
+	private int canvasToFocusY(double canvasY) {
+		return (int) ((canvasY - Y_OFFSET_FIX) / FOCUS_Y_SCALE);
+	}
+
+	private boolean isWithinMarquee(Focus f) {
+		double focusX = focusToCanvasX(f);
+		double focusY = focusToCanvasY(f);
+		// Check if the focus is within the marquee selection
+		return focusMarqueeRectangle().contains(focusX, focusY);
+	}
+
+	/**
+	 * Returns the rectangle representing the marquee selection. This is an enlarged version of the
+	 * theoretical marquee selection rectangle to account for the focus size.
+	 */
+	private Rectangle2D focusMarqueeRectangle() {
+		return new Rectangle2D(
+				Math.min(marqueeStartPoint.getX(), marqueeEndPoint.getX()) - (CENTER_FOCUS_X / 2.0),
+				Math.min(marqueeStartPoint.getY(), marqueeEndPoint.getY()) - (CENTER_FOCUS_Y / 2.0),
+				Math.abs(marqueeEndPoint.getX() - marqueeStartPoint.getX()) + CENTER_FOCUS_X,
+				Math.abs(marqueeEndPoint.getY() - marqueeStartPoint.getY()) + CENTER_FOCUS_X
+		);
+	}
+
+	@FXML
+	private void toggleGridLines() {
+		gridLines = !gridLines;
+		drawFocusTree();
+	}
+
+	/* event handlers */
+
 	@FXML
 	public void handleFocusTreeViewMouseMoved(MouseEvent e) {
 		/* get focus being hovered over */
@@ -354,32 +467,6 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		String details = focusDetailsFocus.toScript();
 		focusTooltipView = new Tooltip(details);
 		focusTooltipView.show(focusTreeCanvas, e.getScreenX() + 10, e.getScreenY() + 10);
-	}
-
-	private Focus getFocusHover(Point2D p) {
-		int x = (int) (p.getX() / FOCUS_X_SCALE) + focusTree.minX();
-		int y = (int) (p.getY() / FOCUS_Y_SCALE);
-
-		for (Focus f : CollectionConverters.asJava(focusTree.focuses())) {
-			if (f.hasAbsolutePosition(x, y)) {
-				return f;
-			}
-		}
-
-		return null;
-	}
-
-	private void selectClosestMatch(ComboBox<FocusTree> comboBox, String typedText) {
-		for (FocusTree item : comboBox.getItems()) {
-			//if (item.country().get() != null && item.country().get().get().toLowerCase().startsWith(typedText.toLowerCase())) {
-			scala.Option<CountryTag> optionalCountry = item.country().get();
-//			if (optionalCountry.nonEmpty() && optionalCountry.get().getOrElse("").toLowerCase().startsWith(typedText.toLowerCase())) {
-			if (optionalCountry.nonEmpty() && optionalCountry.getOrElse(() -> "").toLowerCase().startsWith(typedText.toLowerCase())) {
-				comboBox.getSelectionModel().select(item);
-				comboBox.getEditor().setText(String.valueOf(item));
-				return;
-			}
-		}
 	}
 
 	@FXML
@@ -518,6 +605,14 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	}
 
 	@FXML
+	private void handleExportFocusTreeButtonClick() {
+		String path = "focusOutput.txt";
+		exportFocusTree(focusTree, path);
+		JOptionPane.showMessageDialog(null, "Focus tree exported to " + path, "Export Successful",
+				JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	@FXML
 	private void openEditorWindow(Focus focus) {
 		if (focus == null) throw new IllegalArgumentException("Focus cannot be null");
 		PDXEditorWindow pdxEditorWindow = new PDXEditorWindow();
@@ -538,52 +633,5 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 			addFocusTree(f);
 			viewFocusTree(f);
 		}));
-	}
-
-	private void addFocusTree(FocusTree focusTree) {
-		focusTreeDropdown.getItems().add(focusTree);
-		focusTreeDropdown.getItems().sort(Comparator.comparing(FocusTree::toString));
-	}
-
-	private void viewFocusTree(FocusTree focusTree) {
-		// manually change the selected focus tree
-		System.out.println("change selection");
-		focusTreeDropdown.getSelectionModel().select(focusTree);
-	}
-
-	private int focusToCanvasX(Focus f) {
-		return FOCUS_X_SCALE * (f.absoluteX() - getMinX()) + X_OFFSET_FIX;
-	}
-
-	private int focusToCanvasY(Focus f) {
-		return FOCUS_Y_SCALE * f.absoluteY() + Y_OFFSET_FIX;
-	}
-
-	private int canvasToFocusX(double canvasX) {
-		return ((int) canvasX - X_OFFSET_FIX) / FOCUS_X_SCALE + getMinX();
-	}
-
-	private int canvasToFocusY(double canvasY) {
-		return ((int) canvasY - Y_OFFSET_FIX) / FOCUS_Y_SCALE;
-	}
-
-	private boolean isWithinMarquee(Focus f) {
-		double focusX = focusToCanvasX(f);
-		double focusY = focusToCanvasY(f);
-		// Check if the focus is within the marquee selection
-		return focusMarqueeRectangle().contains(focusX, focusY);
-	}
-
-	/**
-	 * Returns the rectangle representing the marquee selection. This is an enlarged version of the
-	 * theoretical marquee selection rectangle to account for the focus size.
-	 */
-	private Rectangle2D focusMarqueeRectangle() {
-		return new Rectangle2D(
-				Math.min(marqueeStartPoint.getX(), marqueeEndPoint.getX()) - (CENTER_FOCUS_X / 2.0),
-				Math.min(marqueeStartPoint.getY(), marqueeEndPoint.getY()) - (CENTER_FOCUS_Y / 2.0),
-				Math.abs(marqueeEndPoint.getX() - marqueeStartPoint.getX()) + CENTER_FOCUS_X,
-				Math.abs(marqueeEndPoint.getY() - marqueeStartPoint.getY()) + CENTER_FOCUS_X
-		);
 	}
 }

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable
 
 import java.util.function.Consumer
 import java.util.stream.Stream
+import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
 // todo i do not like this class
@@ -116,8 +117,9 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     setNode(value)
   }
 
-  override def set(obj: ListBuffer[T]): Unit = {
+  override def set(obj: ListBuffer[T]): ListBuffer[T] = {
     //
+    obj
   }
 }
 

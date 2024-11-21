@@ -290,7 +290,7 @@ public class PDXEditorPane extends AnchorPane {
         nullPropertyNodes.clear();
     }
 
-    private <T> @NotNull HBox newSpinnerHBox(RangedPDXScript<?> pdx, boolean withLabel, Spinner<T> spinner) {
+    private <T> @NotNull HBox newSpinnerHBox(ValPDXScript<?> pdx, boolean withLabel, Spinner<T> spinner) {
         HBox hbox = new HBox();
         spinner.setPrefHeight(25);
         spinner.valueProperty().addListener((observable, oldValue, newValue) -> {

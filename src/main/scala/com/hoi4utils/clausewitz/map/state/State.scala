@@ -289,7 +289,10 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
       // owner
       if (historyNode.contains("owner")) {
         // empty date constructor for default date
-        owner.put(ClausewitzDate.of, new Owner(new CountryTag(historyNode.find("owner").get.$string)))
+        historyNode.find("owner").get.$string match {
+          case Some(ownerTag) => owner.put(ClausewitzDate.of, new Owner(new CountryTag(ownerTag)))
+          case None => System.err.println("Warning: state owner not defined, " + stateFile.getName)
+        }
       }
       else System.err.println("Warning: state owner not defined, " + stateFile.getName)
       if (buildingsNode == null) {
@@ -338,27 +341,27 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
 
     // aluminum (aluminium bri'ish spelling)
     val aluminum: Int = resourcesNode.find("aluminium") match {
-      case Some(al) => al.$integer
+      case Some(al) => al.$intOrElse(0)
       case None => 0
     } 
     val chromium: Int = resourcesNode.find("chromium") match {
-      case Some(ch) => ch.$integer
+      case Some(ch) => ch.$intOrElse(0)
       case None => 0
     }
     val oil: Int = resourcesNode.find("oil") match {
-      case Some(o) => o.$integer
+      case Some(o) => o.$intOrElse(0)
       case None => 0
     }
     val rubber: Int = resourcesNode.find("rubber") match {
-      case Some(r) => r.$integer
+      case Some(r) => r.$intOrElse(0)
       case None => 0
     }
     val steel: Int = resourcesNode.find("steel") match {
-      case Some(s) => s.$integer
+      case Some(s) => s.$intOrElse(0)
       case None => 0
     }
     val tungsten: Int = resourcesNode.find("tungsten") match {
-      case Some(t) => t.$integer
+      case Some(t) => t.$intOrElse(0)
       case None => 0
     }
     

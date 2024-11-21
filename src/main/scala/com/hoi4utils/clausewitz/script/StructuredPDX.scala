@@ -27,9 +27,10 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     }
   }
 
-  override def set(value: ListBuffer[Node]): Unit = {
+  override def set(value: ListBuffer[Node]): ListBuffer[Node] = {
     // todo?
     super.setNode(value)
+    value
   }
 
   override def loadPDX(expression: Node): Unit = {

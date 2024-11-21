@@ -12,6 +12,7 @@ import com.hoi4utils.ExpectedRange
 import java.awt.Point
 import javafx.scene.image.Image
 
+import scala.annotation.targetName
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
@@ -57,12 +58,12 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
       return position
     }
     // Check for self-reference
-    if (relativePositionFocus.getReferenceName == id.str) {
+    if (relativePositionFocus @== id) {
       System.err.println(s"Relative position id same as focus id for $this")
       return position
     }
     // Check for circular references
-    if (visited.contains(id.str)) {
+    if (visited(id.str)) {
       System.err.println(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
       return position
     }
@@ -93,8 +94,8 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
   def setXY(x: Int, y: Int): Point = {
     val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
-    this.x.set(x)
-    this.y.set(y)
+    this.x @= x
+    this.y @= y
     prev
   }
 
@@ -108,9 +109,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
    * @return the previous position.
    */
   def setAbsoluteXY(x: Int, y: Int, updateChildRelativeOffsets: Boolean): Point = {
-    val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
-    this.x.set(x)
-    this.y.set(y)
+    val prev = setXY(x, y)
     this.relativePositionFocus.setNull()
     if (updateChildRelativeOffsets) {
       val offset = new Point(x - prev.x, y - prev.y)
@@ -127,12 +126,12 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
   def offsetXY(x: Int, y: Int): Point = {
     val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
-    this.x.set(this.x.getOrElse(0) + x)
-    this.y.set(this.y.getOrElse(0) + y)
+    this.x @= (this.x.getOrElse(0) + x)
+    this.y @= (this.y.getOrElse(0) + y)
     prev
   }
 
-  def samePosition(x: Int, y: Int): Boolean = this.x.getOrElse(0) == x && this.y.getOrElse(0) == y
+  def samePosition(x: Int, y: Int): Boolean = this.x @== x && this.y @== y
 
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 
@@ -152,7 +151,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
   override def getLocalizableProperties: mutable.Map[Property, String] = {
     //mutable.Map(Property.NAME -> id.get().get, Property.DESCRIPTION -> s"${id.get().get}_desc")
-    val id = this.id.get().getOrElse("")  // todo?
+    val id = this.id.getOrElse("")
     mutable.Map(Property.NAME -> id, Property.DESCRIPTION -> s"${id}_desc")
   }
 
@@ -317,7 +316,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
     override def equals(other: PDXScript[?]): Boolean = {
       other match {
-        case icon: Icon => value.equals(icon.get())
+        case icon: Icon => value.equals(icon.get()) // todo :(
         case _ => false
       }
     }

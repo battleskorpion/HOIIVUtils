@@ -127,8 +127,9 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   }
 
   // todo no. in general multi. would be more than one node.
-  override def set(obj: ListBuffer[T]): Unit = {
+  override def set(obj: ListBuffer[T]): ListBuffer[T] = {
     //
+    obj
   }
 
   protected def applySupplier(expression: Node): T = {

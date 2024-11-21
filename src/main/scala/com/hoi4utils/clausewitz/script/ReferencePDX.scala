@@ -18,6 +18,7 @@ import scala.collection.mutable.ListBuffer
  * @tparam T
  */
 // removed T <: PDXScript[?]
+// but todo disallow string (and maybe other val types), and StringPDX, other primitive pdx
 class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Iterable[T],
                                         final protected var idExtractor: T => Option[String], pdxIdentifiers: List[String])
   extends AbstractPDX[T](pdxIdentifiers) {
@@ -63,7 +64,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
   override def equals(other: PDXScript[?]): Boolean = {
     other match {
       case referencePDX: ReferencePDX[?] =>
-        referenceName == referencePDX.referenceName && this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier
+        (referencePDX @== referenceName) && this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier
         && this.idExtractor == referencePDX.idExtractor
       case _ => false
     }
@@ -77,8 +78,8 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
 
   def getReferenceName: String = referenceName
 
-  def setReferenceName(newValue: String): Unit = {
-    referenceName = newValue
+  def setReferenceName(str: String): Unit = {
+    referenceName = str
     node = null
   }
 
@@ -86,8 +87,22 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
 
   def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().flatMap(idExtractor)
 
-  @targetName("referenceNameEquals")
-  def @= (newValue: String): Unit = setReferenceName(newValue)
+  @targetName("setReference")
+  def @= (str: String): Unit = {
+    setReferenceName(str)
+  }
+
+  @targetName("setReference")
+  def @= (other: T): Unit = {
+    referenceName = idExtractor.apply(other).orNull
+    reference = Some(other)
+  }
+
+  @targetName("referenceEquals")
+  def @== (other: String): Boolean = referenceName == other
+
+  @targetName("referenceEquals")
+  def @==(other: StringPDX): Boolean = referenceName == other.str
 
   @targetName("referenceEquals")
   def @== (other: T): Boolean = idExtractor.apply(other).contains(referenceName)
@@ -97,8 +112,9 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     reference.isEmpty
   }
 
-  override def set(obj: T): Unit = {
+  override def set(obj: T): T = {
     reference = Some(obj)
     referenceName = idExtractor.apply(obj).orNull // sure
+    obj
   }
 }

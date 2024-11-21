@@ -4,7 +4,9 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 import com.hoi4utils.ExpectedRange
 
-class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = ExpectedRange.ofDouble) extends AbstractPDX[Double](pdxIdentifiers) with RangedPDXScript[Double] {
+import scala.annotation.targetName
+
+class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = ExpectedRange.ofDouble) extends AbstractPDX[Double](pdxIdentifiers) with ValPDXScript[Double] {
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
   }
@@ -27,11 +29,12 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
     }
   }
   
-  override def set(value: Double): Unit = {
+  override def set(value: Double): Double = {
     if (this.node.nonEmpty)
       this.node.get.setValue(value)
     else
       this.node = Some(Node(NodeValue(value)))
+   value
   }
 
   override def equals(other: PDXScript[?]): Boolean = {
@@ -73,5 +76,26 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
   override def maxValueNonInfinite: Double = range.maxNonInfinite
 
   override def defaultValue: Double = 0.0
+
+  @targetName("plus")
+  def +(other: Double): Double = this.get() match {
+    case Some(value) => value + other
+    case None => other
+  }
+
+  @targetName("minus")
+  def -(other: Double): Double = this + (-other)
+
+  @targetName("multiply")
+  def *(other: Double): Double = this.get() match {
+    case Some(value) => value * other
+    case None => 0
+  }
+
+  @targetName("divide")
+  def /(other: Double): Double = this.get() match {
+    case Some(value) => value / other
+    case None => 0
+  }
 
 }

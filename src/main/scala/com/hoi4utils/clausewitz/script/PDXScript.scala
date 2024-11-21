@@ -2,10 +2,11 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz_parser.Node
 
+import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
 trait PDXScript[T] {
-  def set(obj: T): Unit
+  def set(obj: T): T
 
   /**
    * Set the node value to the given value. Obviously, if T != to the type of the value,
@@ -39,6 +40,16 @@ trait PDXScript[T] {
   def loadOrElse(exp: Node, value: T): Unit
 
   def toScript: String
+
+  /**
+   *
+   * @param other
+   * @return
+   *
+   * @note This method can not have a targetName annotation because, equals has to be a separate method, this
+   *       method can't be overridden
+   */
+  final def ==(other: PDXScript[?]): Boolean = this equals other
 
   def equals(other: PDXScript[?]): Boolean
 

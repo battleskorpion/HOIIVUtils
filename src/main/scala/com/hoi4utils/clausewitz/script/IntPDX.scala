@@ -4,7 +4,9 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 import com.hoi4utils.ExpectedRange
 
-class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedRange.ofInt) extends AbstractPDX[Int](pdxIdentifiers) with RangedPDXScript[Int] {
+import scala.annotation.targetName
+
+class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedRange.ofInt) extends AbstractPDX[Int](pdxIdentifiers) with ValPDXScript[Int] {
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
   }
@@ -27,11 +29,19 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
     }
   }
 
-  override def set(value: Int): Unit = {
+  def set(value: Int): Int = {
     if (this.node.nonEmpty)
       this.node.get.setValue(value)
     else
       this.node = Some(Node(NodeValue(value)))
+    value
+  }
+
+  def set(other: IntPDX): Unit = {
+    other.get() match {
+      case Some(value) => this @= value
+      case None => this.node = None
+    }
   }
 
   override def equals(other: PDXScript[?]): Boolean = {
@@ -69,4 +79,25 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
   override def maxValueNonInfinite: Int = range.maxNonInfinite
 
   override def defaultValue: Int = 0
+
+  @targetName("plus")
+  def +(other: Int): Int = this.get() match {
+    case Some(value) => value + other
+    case None => other
+  }
+
+  @targetName("minus")
+  def -(other: Int): Int = this + (-other)
+
+  @targetName("multiply")
+  def *(other: Int): Int = this.get() match {
+    case Some(value) => value * other
+    case None => 0
+  }
+
+  @targetName("divide")
+  def /(other: Int): Int = this.get() match {
+    case Some(value) => value / other
+    case None => 0
+  }
 }

@@ -128,10 +128,12 @@ public class Interface {
 			}
 			Node fileExp = exp.find("texturefile=").getOrElse(null);
 
-			String name = nameExp.$string(); 
+			String name = nameExp.$stringOrElse("");
 			name = name.replaceAll("\"", "");		// get rid of quotes from clausewitz code for file pathname
-			String filename = fileExp.$string();
+			if (name.isEmpty()) continue;
+			String filename = fileExp.$stringOrElse("");
 			filename = filename.replaceAll("\"", "" );
+			if (filename.isEmpty()) continue;
 
 			SpriteType gfx = new SpriteType(name, filename);
 			spriteTypes.add(gfx);

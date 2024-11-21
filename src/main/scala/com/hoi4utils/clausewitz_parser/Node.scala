@@ -134,24 +134,59 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
     }
   }
 
-  def $string: String = {
+  def $string: Option[String] = {
     this.$ match {
-      case s: String => s
-      case _ => null
-    }
-  }
-  
-  def $integer: Integer = {
-    this.$ match {
-      case i: Int => i
+      case s: String => Some(s)
       case _ => null
     }
   }
 
-  def $double: java.lang.Double = {
+  def $stringOrElse(x: String): String = {
     this.$ match {
-      case d: Double => d
-      case _ => null
+      case i: String => i
+      case _ => x
+    }
+  }
+  
+  def $int: Option[Int] = {
+    this.$ match {
+      case i: Int => Some(i)
+      case _ => None
+    }
+  }
+
+  def $intOrElse(x: Int): Int = {
+    this.$ match {
+      case i: Int => i
+      case _ => x
+    }
+  }
+
+  def $double: Option[Double] = {
+    this.$ match {
+      case d: Double => Some(d)
+      case _ => None
+    }
+  }
+
+  def $doubleOrElse(x: Double): Double = {
+    this.$ match {
+      case i: Double => i
+      case _ => x
+    }
+  }
+
+  def $boolean: Option[Boolean] = {
+    this.$ match {
+      case b: Boolean => Some(b)
+      case _ => None
+    }
+  }
+
+  def $booleanOrElse(x: Boolean): Boolean = {
+    this.$ match {
+      case i: Boolean => i
+      case _ => x
     }
   }
 

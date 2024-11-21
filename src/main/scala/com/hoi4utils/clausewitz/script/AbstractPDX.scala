@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
 import scala.collection.mutable.ListBuffer
-
 import java.io.File
+import scala.annotation.targetName
 
 /**
  * Any object that can be converted to a PDX script block, such as a focus, national focus tree,
