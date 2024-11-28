@@ -77,6 +77,18 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
 
   override def defaultValue: Double = 0.0
 
+  @targetName("unaryPlus")
+  def unary_+ : Double = this.get() match {
+    case Some(value) => +value
+    case None => 0.0
+  }
+
+  @targetName("unaryMinus")
+  def unary_- : Double = this.get() match {
+    case Some(value) => -value
+    case None => -0.0
+  }
+
   @targetName("plus")
   def +(other: Double): Double = this.get() match {
     case Some(value) => value + other
