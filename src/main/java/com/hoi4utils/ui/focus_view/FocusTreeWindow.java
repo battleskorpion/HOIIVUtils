@@ -435,6 +435,28 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		drawFocusTree();
 	}
 
+	private int limitFocusMoveX(int newFocusX) {
+		int minX = getMinX();
+		int maxX = getMaxX();
+		if (newFocusX < minX) {
+			return minX;
+		} else if (newFocusX > maxX) {
+			return maxX;
+		}
+		return newFocusX;
+	}
+
+	private int limitFocusMoveY(int newFocusY) {
+		int minY = getMinY();
+		int maxY = getMaxY();
+		if (newFocusY < minY) {
+			return minY;
+		} else if (newFocusY > maxY) {
+			return maxY;
+		}
+		return newFocusY;
+	}
+
 	/* event handlers */
 
 	@FXML
@@ -519,8 +541,8 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 			// Calculate internal grid position from mouse position
 //			int internalX = (int) ((e.getX() - X_OFFSET_FIX) / FOCUS_X_SCALE) + focusTree.minX();
 //			int internalY = (int) ((e.getY() - Y_OFFSET_FIX) / FOCUS_Y_SCALE);
-			int newX = this.canvasToFocusX(e.getX());
-			int newY = this.canvasToFocusY(e.getY());
+			int newX = limitFocusMoveX(this.canvasToFocusX(e.getX()));
+			int newY = limitFocusMoveY(this.canvasToFocusY(e.getY()));
 			if (draggedFocus.samePosition(newX, newY)) return;
 			if (e.isShiftDown()) {
 				// Update the focus position

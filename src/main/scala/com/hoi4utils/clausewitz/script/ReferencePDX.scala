@@ -80,7 +80,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
 
   def setReferenceName(str: String): Unit = {
     referenceName = str
-    node = null
+    node.foreach(_.setValue(str))
   }
 
   def getReferenceCollection: Iterable[T] = referenceCollectionSupplier()
@@ -116,5 +116,11 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     reference = Some(obj)
     referenceName = idExtractor.apply(obj).orNull // sure
     obj
+  }
+
+  override def setNull(): Unit = {
+    super.setNull()
+    reference = None
+    referenceName = null
   }
 }
