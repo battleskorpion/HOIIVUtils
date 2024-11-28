@@ -8,13 +8,10 @@ This application provides a user-friendly interface to interact with your Hearts
 
 **WIP!** we are working on several things including:
 
-- providing the jdk/jre along with the program, so in the meantime!  
+- providing the jdk/jre along with the program.
 - making an installer
-- Changing where the settings save
-- Several Util Windows that are already listed in the main window  
-- A proper log and console
-- Learn how to use containers and test on linux
-
+- Several features that are already listed in the main window  
+  
 Install java openjdk 22: [https://adoptium.net/temurin/releases/?arch=x64&package=jdk&version=22](https://adoptium.net/temurin/releases/?arch=x64&package=jdk&version=22)  
 
 For Windows: Download the the latest release (jar with dependecies.jar) or (.exe) and run it  
