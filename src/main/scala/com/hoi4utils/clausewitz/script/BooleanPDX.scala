@@ -26,16 +26,19 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
     }
   }
   
-  override def set(value: Boolean): Unit = {
-    this.node.foreach(_.setValue(value))
+  override def set(value: Boolean): Boolean = {
+    if (this.node.nonEmpty)
+      this.node.foreach(_.setValue(value))
+    else
+      this.node = Some(Node(NodeValue(value)))
+    value
   }
 
   override def get(): Option[Boolean] = {
-    val v = super.get().get
-    //if (v == null) return None
-    v match {
+    val v = super.get()
+    v.get match {
       case b: Boolean => Some(b)
-      case _ => throw new RuntimeException("Unexpected type: " + v.getClass)
+      case _ => None
     }
   }
 

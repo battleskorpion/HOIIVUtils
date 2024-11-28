@@ -7,34 +7,35 @@ import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz.BoolType
 import com.hoi4utils.clausewitz.code.scope.*
 import com.hoi4utils.clausewitz.code.effect.*
+import com.hoi4utils.ExpectedRange
 
 import java.awt.Point
 import javafx.scene.image.Image
 
+import scala.annotation.targetName
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-@lombok.extern.slf4j.Slf4j class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Localizable with DataFunctionProvider[Focus] {
+@lombok.extern.slf4j.Slf4j
+class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Localizable with DataFunctionProvider[Focus] {
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
 
   /* attributes */
-  val id: StringPDX = new StringPDX("id")   // todo don't allow id to be null that feels wrong
-  val icon: MultiPDX[Icon] = new MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
-  val x: IntPDX = new IntPDX("x") // if relative, relative x
-  val y: IntPDX = new IntPDX("y") // if relative, relative y
-  val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
-  val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
-  val relativePositionFocus = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.get(), "relative_position_id")
-  val cost: DoublePDX = new DoublePDX("cost")
-  val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
-  val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
-  val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
+  final val id: StringPDX = new StringPDX("id")   // todo don't allow id to be null that feels wrong
+  final val icon: MultiPDX[Icon] = new MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
+  final val x: IntPDX = new IntPDX("x") // if relative, relative x
+  final val y: IntPDX = new IntPDX("y") // if relative, relative y
+  final val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
+  final val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
+  final val relativePositionFocus = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.get(), "relative_position_id")
+  final val cost: DoublePDX = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
+  final val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
+  final val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
+  final val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
   var ddsImage: Image = _
-
+  /* completion reward */
   val completionReward: CompletionReward = new CompletionReward()
-
-//  obj.addAll(childScripts)  // todo: garbage
 
   def this(focusTree: FocusTree, node: Node) = {
     this(focusTree)
@@ -42,7 +43,8 @@ import scala.collection.mutable.ListBuffer
   }
 
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
-    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost, availableIfCapitulated, cancelIfInvalid, continueIfInvalid)
+    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost, availableIfCapitulated,
+      cancelIfInvalid, continueIfInvalid, completionReward)
   }
 
   def absoluteX: Int = absolutePosition().x
@@ -56,12 +58,12 @@ import scala.collection.mutable.ListBuffer
       return position
     }
     // Check for self-reference
-    if (relativePositionFocus.getReferenceName == id.str) {
+    if (relativePositionFocus @== id) {
       System.err.println(s"Relative position id same as focus id for $this")
       return position
     }
     // Check for circular references
-    if (visited.contains(id.str)) {
+    if (visited(id.str)) {
       System.err.println(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
       return position
     }
@@ -86,22 +88,50 @@ import scala.collection.mutable.ListBuffer
     }
   }
 
+  def setID(s: String): Unit = {
+    this.id.set(s)
+  }
+
   def setXY(x: Int, y: Int): Point = {
     val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
-    this.x.set(x)
-    this.y.set(y)
+    this.x @= x
+    this.y @= y
     prev
   }
 
-  def setAbsoluteXY(x: Int, y: Int): Point = {
-    val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
-    this.x.set(x)
-    this.y.set(y)
+  /**
+   * Set the absolute x and y coordinates of the focus.
+   *
+   * @param x absolute x-coordinate
+   * @param y absolute y-coordinate
+   * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
+   *                                   in the same position even though the position of this focus changes.
+   * @return the previous position.
+   */
+  def setAbsoluteXY(x: Int, y: Int, updateChildRelativeOffsets: Boolean): Point = {
+    val prev = setXY(x, y)
     this.relativePositionFocus.setNull()
+    if (updateChildRelativeOffsets) {
+      val offset = new Point(x - prev.x, y - prev.y)
+      for (focus <- focusTree.focuses) {
+        if (focus.relativePositionFocus @== this) {
+          focus.offsetXY(prev.x - x, prev.y - y)
+        }
+      }
+    }
     prev
   }
 
   def setXY(xy: Point): Point = setXY(xy.x, xy.y)
+
+  def offsetXY(x: Int, y: Int): Point = {
+    val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
+    this.x @= (this.x.getOrElse(0) + x)
+    this.y @= (this.y.getOrElse(0) + y)
+    prev
+  }
+
+  def samePosition(x: Int, y: Int): Boolean = (this.x @== x) && (this.y @== y)
 
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 
@@ -111,7 +141,7 @@ import scala.collection.mutable.ListBuffer
 
   def getDDSImage: Image = ddsImage
 
-  def hasPrerequisites: Boolean = !(prerequisites.isUndefined || prerequisites.isEmpty)
+  def hasPrerequisites: Boolean = prerequisites.nonEmpty
 
   def isMutuallyExclusive: Boolean = !(mutuallyExclusive.isUndefined || mutuallyExclusive.isEmpty)
 
@@ -120,7 +150,9 @@ import scala.collection.mutable.ListBuffer
   def preciseCompletionTime(): Double = cost.getOrElse(DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
 
   override def getLocalizableProperties: mutable.Map[Property, String] = {
-    mutable.Map(Property.NAME -> id.get().get, Property.DESCRIPTION -> s"${id.get().get}_desc")
+    //mutable.Map(Property.NAME -> id.get().get, Property.DESCRIPTION -> s"${id.get().get}_desc")
+    val id = this.id.getOrElse("")
+    mutable.Map(Property.NAME -> id, Property.DESCRIPTION -> s"${id}_desc")
   }
 
   override def getLocalizableGroup: Iterable[Localizable] = {
@@ -167,7 +199,7 @@ import scala.collection.mutable.ListBuffer
   }
 
   def hasAbsolutePosition(x: Int, y: Int): Boolean = {
-    this.x.getOrElse(0) == x && this.y.getOrElse(0) == y
+    this.absoluteX == x && this.absoluteY == y
   }
 
   def mutuallyExclusiveList(): List[Focus] = {
@@ -284,28 +316,24 @@ import scala.collection.mutable.ListBuffer
 
     override def equals(other: PDXScript[?]): Boolean = {
       other match {
-        case icon: Icon => value.equals(icon.get())
+        case icon: Icon => value.equals(icon.get()) // todo :(
         case _ => false
       }
     }
   }
 
-  class CompletionReward extends CollectionPDX[Effect]("completion_reward") {
+  class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward") {
     @throws[UnexpectedIdentifierException]
     override def loadPDX(expression: Node): Unit = {
       super.loadPDX(expression)
-    }
-
-    override protected def newChildScript(expression: Node): Effect = {
-      null.asInstanceOf[Effect] // todo fix
     }
   }
 
 }
 
 object Focus {
-  def getDataFunctions: Iterable[Function[Focus, ?]] = {
-    val dataFunctions = ListBuffer[Function[Focus, ?]]()
+  def getDataFunctions: Iterable[Focus => ?] = {
+    val dataFunctions = ListBuffer[Focus => ?]()
     dataFunctions += (focus => focus.id.get())
     dataFunctions += (focus => focus.localizationText(Property.NAME))
     dataFunctions += (focus => focus.localizationText(Property.DESCRIPTION))

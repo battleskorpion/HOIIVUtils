@@ -52,6 +52,10 @@ public class Heightmap {
 		return heightmap[y][x] & 0xFF;
 	}
 
+	/**
+	 * Returns a snapshot of the heightmap. Why is this snapshot, and not just clone? I don't know!!
+	 * @return
+	 */
 	public final byte[][] snapshot() {
 		return heightmap.clone();
 	}

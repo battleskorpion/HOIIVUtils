@@ -2,19 +2,26 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
+import com.hoi4utils.ExpectedRange
 
+import scala.annotation.targetName
 
-class DoublePDX(pdxIdentifiers: List[String]) extends AbstractPDX[Double](pdxIdentifiers) {
+class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = ExpectedRange.ofDouble) extends AbstractPDX[Double](pdxIdentifiers) with ValPDXScript[Double] {
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
   }
 
+  def this(pdxIdentifier: String) = {
+    this(List(pdxIdentifier))
+  }
+
+  def this(pdxIdentifier: String, range: ExpectedRange[Double]) = {
+    this(List(pdxIdentifier), range)
+  }
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-//    val value = expression.value
-//    if (value.valueObject.isInstanceOf[Number]) obj = num.doubleValue
     this.node = Some(expression)
     expression.$ match {
       case _: Double =>
@@ -22,10 +29,12 @@ class DoublePDX(pdxIdentifiers: List[String]) extends AbstractPDX[Double](pdxIde
     }
   }
   
-  override def set(value: Double): Unit = {
-    if (this.node.nonEmpty) {
+  override def set(value: Double): Double = {
+    if (this.node.nonEmpty)
       this.node.get.setValue(value)
-    }
+    else
+      this.node = Some(Node(NodeValue(value)))
+   value
   }
 
   override def equals(other: PDXScript[?]): Boolean = {
@@ -53,4 +62,52 @@ class DoublePDX(pdxIdentifiers: List[String]) extends AbstractPDX[Double](pdxIde
       case d: Double => d
       case i: Int => i.toDouble
   }
+
+  override def isDefaultRange: Boolean = range == ExpectedRange.ofDouble
+
+  override def defaultRange: ExpectedRange[Double] = ExpectedRange.ofDouble
+
+  override def minValue: Double = range.min
+
+  override def maxValue: Double = range.max
+
+  override def minValueNonInfinite: Double = range.minNonInfinite
+
+  override def maxValueNonInfinite: Double = range.maxNonInfinite
+
+  override def defaultValue: Double = 0.0
+
+  @targetName("unaryPlus")
+  def unary_+ : Double = this.get() match {
+    case Some(value) => +value
+    case None => 0.0
+  }
+
+  @targetName("unaryMinus")
+  def unary_- : Double = this.get() match {
+    case Some(value) => -value
+    case None => -0.0
+  }
+
+  @targetName("plus")
+  def +(other: Double): Double = this.get() match {
+    case Some(value) => value + other
+    case None => other
+  }
+
+  @targetName("minus")
+  def -(other: Double): Double = this + (-other)
+
+  @targetName("multiply")
+  def *(other: Double): Double = this.get() match {
+    case Some(value) => value * other
+    case None => 0
+  }
+
+  @targetName("divide")
+  def /(other: Double): Double = this.get() match {
+    case Some(value) => value / other
+    case None => 0
+  }
+
 }

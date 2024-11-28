@@ -1,8 +1,12 @@
 package com.hoi4utils.clausewitz.code.effect
 
+import com.hoi4utils.clausewitz.BoolType
 import com.hoi4utils.clausewitz.code.scope.ScopeType
-import com.hoi4utils.clausewitz.script.*
+import com.hoi4utils.clausewitz.data.country.CountryTag
+import com.hoi4utils.clausewitz.map.province.Province
+import com.hoi4utils.clausewitz.script.{ReferencePDX, *}
 import com.hoi4utils.clausewitz_parser.Node
+import com.hoi4utils.clausewitz.map.state.*
 import org.jetbrains.annotations.NotNull
 
 import java.io.File
@@ -19,9 +23,12 @@ import java.sql.SQLException
 import java.util
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.jdk.javaapi.CollectionConverters
 import scala.util.{Try, Using}
 
 object EffectDatabase {
+  private var _effects: List[Effect] = List()
+
   private def newStructuredEffectBlock(pdxIdentifier: String, childScriptsList: ListBuffer[? <: PDXScript[?]]) = new StructuredPDX(pdxIdentifier) {
     override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = childScriptsList
 
@@ -40,6 +47,27 @@ object EffectDatabase {
       throw new RuntimeException(e)
   }
 
+  def apply(): PDXSupplier[Effect] = {
+    new PDXSupplier[Effect] {
+      override def simplePDXSupplier(): Option[Node => Option[SimpleEffect]] = {
+        Some((expr: Node) => {
+          _effects.filter(_.isInstanceOf[SimpleEffect])
+            .find(_.getPDXIdentifier == expr.identifier)
+            .map(_.clone().asInstanceOf[SimpleEffect])
+        })
+      }
+
+      override def blockPDXSupplier(): Option[Node => Option[BlockEffect]] = {
+        Some((expr: Node) => {
+          _effects.filter(_.isInstanceOf[BlockEffect])
+            .find(_.getPDXIdentifier == expr.identifier)
+            .map(_.clone().asInstanceOf[BlockEffect])
+        })
+      }
+    }
+  }
+
+  def effects: List[Effect] = _effects
 }
 
 class EffectDatabase(databaseName: String) {
@@ -57,7 +85,7 @@ class EffectDatabase(databaseName: String) {
         println(s"An error occurred: ${e.getMessage}")
     }
     connection = DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath)
-    loadEffects
+    EffectDatabase._effects = loadEffects
   } catch {
     case e@(_: IOException | _: SQLException) =>
       e.printStackTrace()
@@ -124,41 +152,18 @@ class EffectDatabase(databaseName: String) {
 
           (requiredParametersFull, requiredParameterSimple) match {
             case (Some(requiredParametersFull), Some(requiredParameterSimple)) =>
-            // todo
-            //            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) with BlockEffect(pdxIdentifier, new StructuredPDX(pdxIdentifier)) {
-            //              // Implement abstract methods from SimpleEffect and BlockEffect here
-            //              override def someAbstractMethodFromSimpleEffect(): ReturnType = {
-            //                // Implementation
-            //              }
+              effects ++= parametersToEffect(pdxIdentifier, requiredParametersFull_str)
             case (Some(requiredParametersFull), None) =>
-              val alternateParameters = requiredParametersFull_str.split("\\s+\\|\\s+")
-              for (alternateParameter <- alternateParameters) {
-                val parametersStrlist = alternateParameter.split("\\s+,\\s+")
-                val childScripts = new ListBuffer[PDXScript[?]]
-                for (i <- parametersStrlist.indices) {
-                  val parameterStr = parametersStrlist(i).trim
-                  var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
-                  data = data.filter((s: String) => s.nonEmpty)
-                  if (data.length >= 2) {
-                    val paramIdentifierStr = data(0).trim
-                    val paramTypeStr = data(1).trim
-                    val paramValueType = ParameterValueType.of(paramTypeStr)
-                  } else if (data.length == 1) {
-                    effects ++ simpleParameterToEffect(pdxIdentifier, parameterStr)  // really a simple parameter
-                  }
-                  else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
-                  if (data.length >= 3) {
-                    // idk
-                  }
-                }
-              }
+              effects ++= parametersToEffect(pdxIdentifier, requiredParametersFull_str)
             case (None, Some(requiredParameterSimple)) =>
-              simpleParameterToEffect(pdxIdentifier, requiredParametersSimple_str)
+              effects ++= simpleParameterToEffect(pdxIdentifier, requiredParametersSimple_str)
             //            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) {
             //            })
             case (None, None) =>
             // todo (bad)
           }
+
+          loadedEffects ++= effects
         } else {
           System.out.println("No parameters for " + pdxIdentifier + " in effects database.")
         }
@@ -170,12 +175,41 @@ class EffectDatabase(databaseName: String) {
     loadedEffects.toList
   }
 
+  private def parametersToEffect(pdxIdentifier: String, requiredParametersFull_str: String): ListBuffer[Effect] = {
+    val effects: ListBuffer[Effect] = new ListBuffer[Effect]
+    val alternateParameters = requiredParametersFull_str.split("\\s+\\|\\s+")
+    for (alternateParameter <- alternateParameters) {
+      val parametersStrlist = alternateParameter.split("\\s+,\\s+")
+      val childScripts = new ListBuffer[PDXScript[?]]
+      for (i <- parametersStrlist.indices) {
+        val parameterStr = parametersStrlist(i).trim
+        var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
+        data = data.filter((s: String) => s.nonEmpty)
+        if (data.length >= 2) {
+          val paramIdentifierStr = data(0).trim
+          if (data(1).trim.startsWith("<") && data(1).trim.endsWith(">")) {
+            val paramTypeStr = data(1).trim
+            val paramValueType: Option[ParameterValueType] = ParameterValueType.of(paramTypeStr)
+          }
+        } else if (data.length == 1) {
+          effects ++= simpleParameterToEffect(pdxIdentifier, parameterStr) // really a simple parameter
+        }
+        else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
+        if (data.length >= 3) {
+          // idk
+        }
+      }
+    }
+    effects
+  }
+
   private def simpleParameterToEffect(pdxIdentifier: String, requiredParametersSimple_str: String): Option[Effect] = {
     val alternateParameters = requiredParametersSimple_str.split("\\s+\\|\\s+")
     var paramValueType: Option[ParameterValueType] = None
     for (alternateParameter <- alternateParameters) {
       val parametersStrlist = alternateParameter.split("\\s+,\\s+")
       for (i <- parametersStrlist.indices) {
+        paramValueType = None
         val parameterStr = parametersStrlist(i).trim
         var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
         data = data.filter((s: String) => s.nonEmpty)
@@ -187,8 +221,8 @@ class EffectDatabase(databaseName: String) {
         if (data.length == 1) {
           if (data(0).trim.startsWith("<") && data(0).trim.endsWith(">")) {
             //
-            val paramTypeStr = data(0).trim.substring(1, data(0).trim.length - 1)
-            paramValueType = Some(ParameterValueType.of(paramTypeStr))
+            val paramTypeStr = data(0).trim
+            paramValueType = ParameterValueType.of(paramTypeStr)
           }
           else {
             // todo
@@ -202,10 +236,29 @@ class EffectDatabase(databaseName: String) {
     }
     paramValueType.getOrElse(return None) match {
       case ParameterValueType.cw_int => Some(
-        new IntPDX(pdxIdentifier) with SimpleEffectPDX {
+        new IntPDX(pdxIdentifier) with SimpleEffect {
+        })
+      case ParameterValueType.cw_float => Some(
+        new DoublePDX(pdxIdentifier) with SimpleEffect {
+        })
+      case ParameterValueType.cw_string => Some(
+        new StringPDX(pdxIdentifier) with SimpleEffect {
+        })
+      // todo update default value/bool type
+      case ParameterValueType.cw_bool => Some(
+        new BooleanPDX(pdxIdentifier, false, BoolType.TRUE_FALSE) with SimpleEffect {
+        })
+      case ParameterValueType.state => Some(
+        new ReferencePDX[State](() => State.list, s => Some(s.name), pdxIdentifier) with SimpleEffect {
+        })
+      case ParameterValueType.province => Some(
+        new ReferencePDX[Province](() => CollectionConverters.asScala(Province.list), p => Some(p.idStr()), pdxIdentifier) with SimpleEffect {
+        })
+      case ParameterValueType.country => Some(
+        new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country") with SimpleEffect {
         })
       case _ =>
-        None // todo ???
+        None // todo ??? !!!
     }
 
   }

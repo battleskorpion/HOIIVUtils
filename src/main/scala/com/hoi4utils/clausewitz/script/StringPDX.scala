@@ -3,6 +3,8 @@ package com.hoi4utils.clausewitz.script
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 
+import scala.annotation.targetName
+
 
 class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIdentifiers) 
   with Comparable[StringPDX] {
@@ -20,11 +22,12 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
       throw new NodeValueTypeException(this.node.get)
   }
   
-  override def set(s: String): Unit = {
+  override def set(s: String): String = {
     this.node match {
       case Some(node) => node.setValue(s)
-      case None =>
+      case None => this.node = Some(Node(pdxIdentifiers.head, "=", s))
     }
+    s
   }
 
   override def equals(other: PDXScript[?]): Boolean = {

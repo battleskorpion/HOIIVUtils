@@ -46,7 +46,7 @@ object FocusTree {
   }
 
   def add(focusTree: FocusTree): Iterable[FocusTree] = {
-    focusTreeFileMap.put(focusTree.focus_file, focusTree)
+    focusTreeFileMap.put(focusTree.focusFile, focusTree)
     focusTrees += focusTree
     focusTrees
   }
@@ -84,25 +84,36 @@ object FocusTree {
 
 }
 
-class FocusTree private(private var focus_file: File)
+/**
+ * Represents a focus tree, which is a collection of focuses.
+ *
+ * @param focus_file The file that contains the focus tree/which the focus tree is saved to.
+ *
+ * @note Do not create instances of this class directly, unless a few focus tree is being created or loaded.
+ *       Use FocusTree.get(File) instead.
+ */
+class FocusTree()
   extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] {
   /* pdxscript */
   final var country: ReferencePDX[CountryTag] = new ReferencePDX[CountryTag](() => CountryTag.toList, t => Some(t.get), "country")
   final var focuses: MultiPDX[Focus] = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   final var id: StringPDX = new StringPDX("id")
-  private val focusIDList: ListBuffer[String] = null
+  private val focusIDList: ListBuffer[String] = null  // todo not set anywhere lmao? not needed?
   // private boolean defaultFocus; // ! todo Do This
   // private Point continuousFocusPosition; // ! todo DO THIS
 
-  //obj.addAll(childScripts)  // todo
-  loadPDX(focus_file)
+  private var _focusFile: File = _
+
+  /* default */
   FocusTree.add(this)
-  //private final ObservableMap<String, Focus> focuses;
+
+  def this(focus_file: File) = {
+    this()
+    loadPDX(focus_file)
+    setFile(focus_file)
+  }
 
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(id, country, focuses)
-
-//  private def checkPendingFocusReferences(): Unit = {
-//  }
 
   /**
    * Lists last set of focuses
@@ -121,7 +132,7 @@ class FocusTree private(private var focus_file: File)
     }
   }
 
-  def focusFile: File = focus_file
+  def focusFile: File = _focusFile
 
 //  override def equals(other: AnyRef): Boolean = {
 //    if (other == null) return false
@@ -133,7 +144,7 @@ class FocusTree private(private var focus_file: File)
     val v = id.get()
     v match {
       case Some(id) => return id
-      case None =>if (country.get() != null) return country.get().get.toString
+      case None => if (country.get() != null && country.get().isDefined) return country.get().get.toString
     }
     super.toString
   }
@@ -147,25 +158,34 @@ class FocusTree private(private var focus_file: File)
     focuses.toList
   }
 
+  def addNewFocus(f: Focus): Unit = {
+    focuses.+(f)
+  }
+
+  // for Java compatibility -_-
+  def nextTempFocusID(): String = {
+    nextTempFocusID(focuses.size)
+  }
+
+  def nextTempFocusID(lastIntID: Int): String = {
+    val id = "focus_" + (lastIntID + 1)
+    if (focuses.exists(_.id.get().contains(id))) return nextTempFocusID(lastIntID)
+    id
+  }
+
+  def setID(s: String): Unit = {
+    this.id.set(s)
+  }
+
+  def setCountryTag(tag: CountryTag): Unit = {
+    this.country.set(tag)
+  }
+
+  def setFile(file: File): Unit = {
+    this._focusFile = file
+  }
+
   override def compareTo(o: FocusTree): Int = {
-//    var c = 0
-//    this.country.get() match {
-//      case Some(countryTag) => o.country.get() match {
-//        case Some(otherCountryTag) => c = countryTag.compareTo(otherCountryTag)
-//        case None => _
-//      }
-//      case None => _
-//    }
-//    var d = 0
-//    this.id.get() match {
-//      case Some(id) => o.id.get() match {
-//        case Some(otherId) => d = id.compareTo(otherId)
-//        case None => _
-//      }
-//      case None => _
-//    }
-//    if (c == 0) d
-//    else c
     (this.country.get(), this.id.get()) match {
       case (Some(countryTag), Some(id)) =>
         (o.country.get(), o.id.get()) match {

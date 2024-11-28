@@ -73,6 +73,16 @@ public class MenuController extends Application implements FXWindow {
 		launch(args);
 	}
 
+	@FXML
+	void initialize() {
+		if (Settings.DEMO_MODE.enabled()) {
+			focusTreeViewButton.setDisable(true);
+		} else {
+			focusTreeViewButton.setDisable(false);
+		}
+		System.out.println("Menu Controller initialized");
+	}
+
 	@Override
 	public void start(Stage stage) {
 		try {
@@ -156,9 +166,7 @@ public class MenuController extends Application implements FXWindow {
 		openUtilsWindow(new InterfaceFileListWindow());
 	}
 
-	public void openFocusTreeViewer() {
-		openUtilsWindow(new FocusTreeWindow());
-	}
+	public void openFocusTreeViewer() { openUtilsWindow(new FocusTreeWindow()); }
 
 	public void openUnitComparisonView() {
 		openUtilsWindow(new CompareUnitsWindow());

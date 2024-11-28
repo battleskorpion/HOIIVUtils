@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
 import scala.collection.mutable.ListBuffer
-
 import java.io.File
+import scala.annotation.targetName
 
 /**
  * Any object that can be converted to a PDX script block, such as a focus, national focus tree,
@@ -149,7 +149,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
 
   override def toScript: String = {
     if (node.isEmpty || node.get.isEmpty) return null
-    pdxIdentifiers(activeIdentifier) + " = " + node + "\n"
+    node.get.identifier + node.get.operator + node.get.$ + "\n"
   }
 
   override def equals(other: PDXScript[?]): Boolean = {
@@ -175,6 +175,8 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   }
 
   override def isUndefined: Boolean = node.isEmpty || node.get.valueIsNull
+
+  override def isDefined: Boolean = !isUndefined
 
   override def getPDXIdentifier: String = pdxIdentifiers(activeIdentifier)
 

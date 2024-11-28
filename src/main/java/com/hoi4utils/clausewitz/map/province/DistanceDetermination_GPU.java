@@ -30,12 +30,10 @@ public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGe
         this.stateBorderMap = stateBorderMap;
         points = new ProvinceMapPointsList(heightmap.width(), heightmap.height());
 
-        /* gpu calculation time */
+        /* gpu calculation time! */
         final int offsetPotential = 4;
-
         final int[] rgb_values = new int[heightmap.width() * heightmap.height()];
         DistanceKernel kernel = new DistanceKernel(rgb_values);
-//        DistanceKernel kernel = new DistanceKernel();
         kernel.execute(Range.create2D(heightmap.width(), heightmap.height()));
         for (int y = 0; y < heightmap.height(); y++) {
             for (int x = 0; x < heightmap.width(); x++) {

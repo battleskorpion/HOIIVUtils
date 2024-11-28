@@ -15,10 +15,10 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.$
-    // then load each sub-PDXScript
-    value match {
+    this.node = Some(expression)
+    expression.$ match {
       case l: ListBuffer[Node] =>
+        // then load each sub-PDXScript
         for (pdxScript <- childScripts) {
           pdxScript.loadPDX(l)
         }
@@ -27,9 +27,10 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     }
   }
 
-  override def set(value: ListBuffer[Node]): Unit = {
+  override def set(value: ListBuffer[Node]): ListBuffer[Node] = {
     // todo?
     super.setNode(value)
+    value
   }
 
   override def loadPDX(expression: Node): Unit = {
@@ -45,7 +46,8 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     try set(expression)
     catch {
       case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        System.out.println("Error loading PDX script:" + e.getMessage + "\n\t" + expression)
+        // System.out.println("Error loading PDX script:" + e.getMessage + "\n\t" + expression) // todo expression prints entire focus node
+        System.out.println("Error loading PDX script:" + e.getMessage)
     }
   }
 
@@ -69,12 +71,12 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    *
    * @param identifiers
    */
-  def getPDXProperty(identifiers: List[String]): PDXScript[?] = {
+  def getPDXProperty(identifiers: List[String]): Option[PDXScript[?]] = {
     for (identifier <- identifiers) {
       val pdx = getPDXProperty(identifier)
-      if (pdx != null) return pdx
+      if (pdx != null) return Some(pdx)
     }
-    null
+    None
   }
 
   /**
@@ -83,16 +85,15 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    *
    * @param identifier
    */
-  def getPDXPropertyOfType[R](identifier: String): PDXScript[R] = {
-    import scala.collection.BuildFrom.buildFromString
+  def getPDXPropertyOfType[R](identifier: String): Option[PDXScript[R]] = {
     for (pdx <- childScripts) {
       pdx match {
         case pdxScript: PDXScript[R] =>
-          if (pdxScript.getPDXIdentifier == identifier) return pdxScript
+          if (pdxScript.getPDXIdentifier == identifier) return Some(pdxScript)
         case _ =>
       }
     }
-    null.asInstanceOf[PDXScript[R]]
+    None
   }
 
   /**
@@ -101,16 +102,12 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    *
    * @param identifiers
    */
-  def getPDXPropertyOfType[R](identifiers: List[String]): PDXScript[R] = {
+  def getPDXPropertyOfType[R](identifiers: List[String]): Option[PDXScript[R]] = {
     for (identifier <- identifiers) {
-      val pdx = getPDXPropertyOfType(identifier)
-      pdx match {
-        case pdxScript: PDXScript[R] =>
-          return pdxScript
-        case _ =>
-      }
+      val pdx = getPDXPropertyOfType[R](identifier)
+      if (pdx.isDefined) return pdx
     }
-    null
+    None
   }
 
   def pdxProperties: Iterable[? <: PDXScript[?]] = {
@@ -119,5 +116,20 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
       case null => null
       case _ => scripts
     }
+  }
+
+  override def toScript: String = {
+    if (node.isEmpty || node.get.isEmpty) return null
+
+//    val sb = new StringBuilder()
+//    sb.append(node.get.identifier)
+//    sb.append(" = {\n")
+//    for (pdx <- childScripts) {
+//      sb.append('\t')
+//      sb.append(pdx.toScript)
+//    }
+//    sb.toString
+    // favorable. more in-order as wanted/as was originally.
+    node.get.toScript
   }
 }

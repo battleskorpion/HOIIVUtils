@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable
 
 import java.util.function.Consumer
 import java.util.function.Supplier
+import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 
@@ -15,7 +16,9 @@ import scala.language.implicitConversions
  * Example: multiple icon definitions in a focus.
  * The super PDXScript object will be a list of T objects.
  *
- * @param < T>
+ * @param simpleSupplier the supplier for simple PDXScript objects
+ * @param blockSupplier  the supplier for block PDXScript objects
+ * @param pdxIdentifiers the identifiers for the PDXScript objects
  */
 class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String])
   extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
@@ -76,6 +79,15 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     }
   }
 
+  /**
+   * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.
+   * @param pdxScript
+   */
+  @targetName ("add")
+  def +(pdxScript: T): Unit = {
+    pdxList += pdxScript
+  }
+
   def clear(): Unit = {
     if (node.nonEmpty) {
       node.get.$ match {
@@ -95,42 +107,50 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
 //  override def spliterator: Spliterator[T] = get().spliterator
 
-  override def size: Int = get().size
+  override def size: Int = get().getOrElse(ListBuffer.empty).size
 
 //  def stream: Stream[T] = get().stream
 
-  override def isUndefined: Boolean = node.isEmpty
+  override def isUndefined: Boolean = super.isUndefined //node.isEmpty
 
   override def toScript: String = {
-    val sb = new StringBuilder
-    get() match {
-      case Some(scripts) =>
-        for (pdxScript <- scripts) {
-          val str = pdxScript.toScript
-          if (str != null) {
-            sb.append(str)
-          }
-        }
-        sb.toString()
-      case None => ""
+    if (node.isEmpty || node.get.isEmpty) return null
+
+    val sb = new StringBuilder()
+    sb.append(node.get.identifier)
+    sb.append(" = {\n")
+    for (pdx <- pdxList) {
+      sb.append('\t')
+      sb.append(pdx.toScript)
     }
+    sb.toString
   }
 
   // todo no. in general multi. would be more than one node.
-  override def set(obj: ListBuffer[T]): Unit = {
+  override def set(obj: ListBuffer[T]): ListBuffer[T] = {
     //
+    obj
   }
 
   protected def applySupplier(expression: Node): T = {
     (simpleSupplier, blockSupplier) match {
-      case (Some(s), None) => s.apply()
-      case (None, Some(b)) => b.apply()
+      case (Some(s), None) => s()
+      case (None, Some(b)) => b()
       case (Some(s), Some(b)) =>
         expression.$ match {
           case l: ListBuffer[Node] =>
-            b.apply()
-          case _ => s.apply()
+            b()
+          case _ => s()
         }
+      case (None, None) => throw new RuntimeException("Both suppliers are null")
+    }
+  }
+
+  def applySomeSupplier(): T = {
+    (simpleSupplier, blockSupplier) match {
+      case (Some(s), None) => s()
+      case (None, Some(b)) => b()
+      case (Some(s), Some(b)) => s()
       case (None, None) => throw new RuntimeException("Both suppliers are null")
     }
   }

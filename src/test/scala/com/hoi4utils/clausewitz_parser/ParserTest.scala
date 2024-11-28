@@ -1,7 +1,5 @@
 package com.hoi4utils.clausewitz_parser
 
-// this actually seems to work. error highlighting may be scala plugin issue
-// update: finally not error highlighting incorrectly??? cool ! cool :) cool.
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File
@@ -59,7 +57,7 @@ class ParserTest extends AnyFunSuiteLike {
     }
   }
 
-  test("specialinfantry.txt should have parsed sub_units") {
+  test("sub node using find(): specialinfantry.txt should have parsed sub_units") {
     withParsedFile ({ node =>
       val subunits = node.find("sub_units").getOrElse(fail("sub_units not found"))
       assert(subunits.find("mobenforcer").isDefined)

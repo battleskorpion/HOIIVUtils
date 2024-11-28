@@ -30,7 +30,6 @@ public class HOIIVUtils {
 	}
 	public static final String HOIIVUTILS_VERSION = "Version " + VERSION;
 	public static final String DARK_MODE_STYLESHEETURL = "com/hoi4utils/ui/javafx_dark.css";
-	public static Boolean firstTimeSetup;
 	public static SettingsController settingsController;
 	public static MenuController menuController;
 
@@ -63,23 +62,17 @@ public class HOIIVUtils {
 
 		// Check if this is the first time the program is run
 		if (Boolean.TRUE.equals(!new File(SettingsManager.NEW_PROPERTIES_PATH).exists())) {
-			System.out.println("HOIIVUtils launched stage settings cuz it was first time setup");
-			// Launch settings window
+			System.out.println("HOIIVUtils launched the settings window");
 			settingsController = new SettingsController();
 			settingsController.launchSettingsWindow(args);
 		} else {
-			// Create the HOIIVUtils directory
 			HOIIVFile.createHOIIVFilePaths();
-
-			// Check if the settings should be skipped
 			if (Settings.SKIP_SETTINGS.enabled()) {
-				System.out.println("HOIIVUtils launched stage menu cuz settings was set to be skipped");
-				// Launch menu window
+				System.out.println("HOIIVUtils launched the menu window");
 				menuController = new MenuController();
 				menuController.launchMenuWindow(args);
 			} else {
-				System.out.println("HOIIVUtils created launched settings cuz it was NOT first time and settings was NOT skipped");
-				// Launch settings window
+				System.out.println("HOIIVUtils launched the settings window and properties files exists");
 				settingsController = new SettingsController();
 				settingsController.launchSettingsWindow(args);
 			}

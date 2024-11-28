@@ -6,7 +6,7 @@ import scala.collection.concurrent.TrieMap
 import scala.collection.mutable
 
 class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localization]] {
-
+1
   /**
    * very important for lookup by key optimization.
    */

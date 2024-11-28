@@ -104,7 +104,7 @@ object State {
 
   def get(state_name: String): State = {
     for (state <- states) {
-      if (state.name == state_name.trim) return state
+      if (state._name == state_name.trim) return state
     }
     null
   }
@@ -234,7 +234,7 @@ object State {
 
 class State(private var stateFile: File, addToStatesList: Boolean) extends InfrastructureData with Localizable with Iterable[State] with Comparable[State] {
   private var stateID = 0
-  private var name: String = stateFile.getName.replace(".txt", "")
+  private var _name: String = stateFile.getName.replace(".txt", "")
   final private var owner: mutable.Map[ClausewitzDate, Owner] =  new mutable.HashMap[ClausewitzDate, Owner]
   //! todo Finish state Category
   // private StateCategory stateCategory; 
@@ -289,7 +289,10 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
       // owner
       if (historyNode.contains("owner")) {
         // empty date constructor for default date
-        owner.put(ClausewitzDate.of, new Owner(new CountryTag(historyNode.find("owner").get.$string)))
+        historyNode.find("owner").get.$string match {
+          case Some(ownerTag) => owner.put(ClausewitzDate.of, new Owner(new CountryTag(ownerTag)))
+          case None => System.err.println("Warning: state owner not defined, " + stateFile.getName)
+        }
       }
       else System.err.println("Warning: state owner not defined, " + stateFile.getName)
       if (buildingsNode == null) {
@@ -338,27 +341,27 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
 
     // aluminum (aluminium bri'ish spelling)
     val aluminum: Int = resourcesNode.find("aluminium") match {
-      case Some(al) => al.$integer
+      case Some(al) => al.$intOrElse(0)
       case None => 0
     } 
     val chromium: Int = resourcesNode.find("chromium") match {
-      case Some(ch) => ch.$integer
+      case Some(ch) => ch.$intOrElse(0)
       case None => 0
     }
     val oil: Int = resourcesNode.find("oil") match {
-      case Some(o) => o.$integer
+      case Some(o) => o.$intOrElse(0)
       case None => 0
     }
     val rubber: Int = resourcesNode.find("rubber") match {
-      case Some(r) => r.$integer
+      case Some(r) => r.$intOrElse(0)
       case None => 0
     }
     val steel: Int = resourcesNode.find("steel") match {
-      case Some(s) => s.$integer
+      case Some(s) => s.$intOrElse(0)
       case None => 0
     }
     val tungsten: Int = resourcesNode.find("tungsten") match {
-      case Some(t) => t.$integer
+      case Some(t) => t.$intOrElse(0)
       case None => 0
     }
     
@@ -369,7 +372,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
 
   def getResources: Resources = resourcesData
 
-  override def toString: String = name
+  override def toString: String = _name
 
   def getFile: File = stateFile
 
@@ -381,7 +384,9 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
 
   override def compareTo(@NotNull o: State): Int = Integer.compare(stateID, o.stateID)
 
-  @NotNull override def getLocalizableProperties: mutable.Map[Property, String] = mutable.Map(Property.NAME -> name)
+  @NotNull override def getLocalizableProperties: mutable.Map[Property, String] = mutable.Map(Property.NAME -> _name)
 
   @NotNull override def getLocalizableGroup: Iterable[? <: Localizable] = State.states
+
+  def name: String = _name
 }

@@ -6,18 +6,17 @@ import org.jetbrains.annotations.Nullable
 
 import scala.collection.mutable.ListBuffer
 
-// todo uhhhhhhhhhhhhh
-
 /**
  * (todo)
  *
- * MultiPDX's pdx script list will be the list of resolved references
+ * The parent MultiPDX pdx script list will be the list of resolved references
  *
- * @param referenceCollectionSupplier
- * @param idExtractor
- * @param pdxIdentifiers
- * @param referencePDXIdentifiers
- * @tparam T
+ * @param referenceCollectionSupplier the supplier for the reference collection (the reference collection being
+ *                                    the collection of PDXScript objects that could be referenced)
+ * @param idExtractor the function to extract the identifier from a referenced PDXScript
+ * @param pdxIdentifiers the identifiers for the PDXScript
+ * @param referencePDXIdentifiers  the identifiers for the reference PDXScript
+ * @tparam T the PDXScript type of the reference PDXScript objects
  */
 class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: () => Iterable[T],
                                              protected var idExtractor: T => Option[String], pdxIdentifiers: List[String],
@@ -61,9 +60,6 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
    * @return
    */
   override def get(): Option[ListBuffer[T]] = {
-    // what if name changes etc. im not sure about this
-//    if (resolvedReferences.length.equals(numReferences)) resolvedReferences
-//    else resolveReferences
     Some(references())
   }
 
@@ -98,11 +94,8 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     resolvedReferences.clear()
     for (reference <- referenceCollection) {
       val referenceID = idExtractor.apply(reference)
-      referenceID match {
-        case null =>
-        case referenceName =>
-          this.resolvedReferences.addOne(reference)
-        case _ =>
+      if (referenceID.isDefined && referenceNames.contains(referenceID.get)) {
+        resolvedReferences.addOne(reference)
       }
     }
 
@@ -141,13 +134,68 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     resolveReferences()
   }
 
+  def addReference(reference: T, index: Int): Unit = {
+    val id = idExtractor(reference)
+    if (id.isDefined) {
+      referenceNames.insert(index, id.get)
+      resolveReferences()
+    }
+  }
+
+  def addReference(reference: T): Unit = {
+    val id = idExtractor(reference)
+    if (id.isDefined) {
+      referenceNames.addOne(id.get)
+      resolveReferences()
+    }
+  }
+
+  def removeReference(index: Int): Unit = {
+    referenceNames.remove(index)
+    resolveReferences()
+  }
+
+  def removeReference(reference: T): Unit = {
+    val id = idExtractor(reference)
+    if (id.isDefined) {
+      referenceNames.remove(referenceNames.indexOf(id.get))
+      resolveReferences()
+    }
+  }
+
+  def removeReference(referenceName: String): Unit = {
+    referenceNames.remove(referenceNames.indexOf(referenceName))
+    resolveReferences()
+  }
+
+  def containsReference(reference: T): Boolean = {
+    val id = idExtractor(reference)
+    id match {
+      case Some(value) => referenceNames.contains(value)
+      case None => false
+    }
+  }
+
+  def containsReferenceName(referenceName: String): Boolean = {
+    referenceNames.contains(referenceName)
+  }
+
+  def changeReference(oldName: String, newName: String): Unit = {
+    val index = referenceNames.indexOf(oldName)
+    if (index != -1) {
+      referenceNames.update(index, newName)
+      resolveReferences()
+    }
+  }
+
+
   /**
    * Size of actively valid references (resolved PDXScript object references)
    *
    * @return
    */
   override def size: Int = {
-    return get().size
+    get().size
   }
 
   def numReferences: Int = referenceNames.size

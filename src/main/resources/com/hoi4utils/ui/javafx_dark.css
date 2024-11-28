@@ -296,7 +296,6 @@
     -fx-text-fill: #AFB1B3;
     -fx-min-height: 25;
     min-height: 25;
-    -fx-pref-height: 25;
 }
 .check-box > .box{
     -fx-background-radius: 0;

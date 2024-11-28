@@ -2,11 +2,18 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz_parser.Node
 
+import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
 trait PDXScript[T] {
-  def set(obj: T): Unit
+  def set(obj: T): T
 
+  /**
+   * Set the node value to the given value. Obviously, if T != to the type of the value,
+   * the new value may not be semantically correct. However, we need to allow this for
+   * flexibility ie. setting a PDX of type double with an int value, and this also matches
+   * the underlying node class functionality.
+   */
   def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit
 
   @throws[UnexpectedIdentifierException]
@@ -34,11 +41,23 @@ trait PDXScript[T] {
 
   def toScript: String
 
+  /**
+   *
+   * @param other
+   * @return
+   *
+   * @note This method can not have a targetName annotation because, equals has to be a separate method, this
+   *       method can't be overridden
+   */
+  final def ==(other: PDXScript[?]): Boolean = this equals other
+
   def equals(other: PDXScript[?]): Boolean
 
   def getOrElse(elseValue: T): T
 
   def isUndefined: Boolean
+
+  def isDefined: Boolean
 
   def getPDXIdentifier: String
 }

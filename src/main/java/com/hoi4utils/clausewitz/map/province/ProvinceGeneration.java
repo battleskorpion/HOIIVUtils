@@ -63,14 +63,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		provinceDetermination.generate(stateBorderMapping, stateBorderMap);
 	}
 
-	private BorderMapping<MapPoint> borderMappingFactory() {
-		if (config.determinationType() == ProvinceDeterminationType.DISTANCE_GPU) {
-			return new BorderMapping_GPU<>();
-		} else {
-			return new BorderMapping_CPU<>();
-		}
-	}
-
 	public void generate(Heightmap heightmap) {
 		this.heightmap = heightmap;
 		generate();
@@ -101,27 +93,28 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		}
 	}
 
+	private BorderMapping<MapPoint> borderMappingFactory() {
+		return switch (config.determinationType()) {
+			case DISTANCE_MULTITHREADED -> new BorderMapping_CPU<>();
+			case DISTANCE_GPU -> new BorderMapping_GPU<>();
+			case DISTANCE -> new BorderMapping_CPU<>();
+		};
+	}
+
     private @NotNull ProvinceDetermination<MapPoint> provinceDeterminationFactory() {
-		ProvinceDetermination<MapPoint> provinceDetermination;
-		if (config.determinationType() == ProvinceDeterminationType.DISTANCE_MULTITHREADED) {
-			provinceDetermination = new DistanceDetermination_MT<>(heightmap, provinceMap, config);
-		} else if (config.determinationType() == ProvinceDeterminationType.DISTANCE_GPU) {
-			provinceDetermination = new DistanceDetermination_GPU<>(heightmap, provinceMap, config);
-		} else {
-			// default for now
-			provinceDetermination = new DistanceDetermination_MT<>(heightmap, provinceMap, config);
-		}
-		return provinceDetermination;
+		return switch (config.determinationType()) {
+            case DISTANCE_MULTITHREADED -> new DistanceDetermination_MT<>(heightmap, provinceMap, config);
+            case DISTANCE_GPU -> new DistanceDetermination_GPU<>(heightmap, provinceMap, config);
+			case DISTANCE -> new DistanceDetermination_MT<>(heightmap, provinceMap, config);
+        };
 	}
 
 	private @NotNull SeedGeneration<MapPoint> seedGenerationFactory() {
-		SeedGeneration<MapPoint> seedGeneration;
-		if (config.generationType() == SeedGenType.GRID) {
-			seedGeneration = new GridSeedGeneration(config, heightmap);
-		} else {
-			seedGeneration = new ProbabilisticSeedGeneration(heightmap, config);
-		}
-		return seedGeneration;
+		return switch (config.generationType()) {
+			case GRID -> new GridSeedGeneration(config, heightmap);
+			case PROBABILISTIC_GPU -> new ProbabilisticSeedGeneration(heightmap, config);
+			case RANDOM -> new RandomSeedGeneration(config, heightmap);
+		};
 	}
 }
 

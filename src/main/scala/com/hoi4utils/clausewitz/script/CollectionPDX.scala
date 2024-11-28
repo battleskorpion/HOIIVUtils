@@ -7,12 +7,17 @@ import org.jetbrains.annotations.Nullable
 
 import java.util.function.Consumer
 import java.util.stream.Stream
+import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
 // todo i do not like this class
-abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
-  def this(pdxIdentifiers: String*) = {
-    this(pdxIdentifiers.toList)
+abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: List[String])
+  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+
+  protected var pdxList: ListBuffer[T] = ListBuffer.empty
+
+  def this(pdxSupplier: PDXSupplier[T], pdxIdentifiers: String*) = {
+    this(pdxSupplier, pdxIdentifiers.toList)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -25,8 +30,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
   }
 
   override def loadPDX(expressions: Iterable[Node]): Unit = {
-    import scala.jdk.CollectionConverters
-    if (expressions != null)
+    if (expressions != null) {
       expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
         try loadPDX(expression)
         catch {
@@ -34,13 +38,16 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
             System.err.println(e.getMessage)
           //throw new RuntimeException(e);
         }
-
       })
+    }
   }
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
-  override def get(): Option[ListBuffer[T]] = None//super.get() // todo
+  override def get(): Option[ListBuffer[T]] = {
+    if (pdxList.isEmpty) None
+    else Some(pdxList)
+  }
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
@@ -49,32 +56,32 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
     val value = expression.$
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
-    node.get.$ match {
-      case _: ListBuffer[Node] =>
-//        val childScript = newChildScript(expression)
-//        childScript.loadPDX(expression)
-//        childScriptList.add(childScript)
+    expression.$ match {
+      case l: ListBuffer[Node] =>
+        for (childExpr <- l) {
+          val childScript = useSupplierFunction(childExpr)
+          childScript.loadPDX(childExpr)
+          pdxList += childScript
+        }
       case _ =>
-        // todo?
+        // todo idk   // double todo
+        val childScript = useSupplierFunction(expression)
+        childScript.loadPDX(expression)
+        pdxList += childScript
     }
   }
 
-  protected def newChildScript(expression: Node): T = {
-    // todo :(
-//    val pdx = new T()
-//    pdx.loadPDX(expression)
-//    // todo this may be fine. if theres no runtime errors. leave this. yes the IDE is yelling.
-//    //  the IDE thinks pdx is of type T. the compiler does not. ???
-//    pdx.asInstanceOf[T]
-    null.asInstanceOf[T]
+  protected def useSupplierFunction(expression: Node): T = {
+    pdxSupplier(expression) match {
+      case Some(s) => s
+      case None => throw new UnexpectedIdentifierException(expression)
+    }
   }
 
   def clear(): Unit = {
     if (node.nonEmpty) {
       node.get.$ match {
-        case l: ListBuffer[T] =>
-          l.clear()
-        case _ =>
+        case l: ListBuffer[T] => l.clear()
       }
     }
   }
@@ -85,28 +92,34 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxIdentifiers: List[String]) ex
 
   override def foreach[U](f: T => U): Unit = super.foreach(f)
 
-//  override def size: Int = {
-//    get().size
-//  }
+  override def size: Int = get().size
 
-  override def isUndefined: Boolean = node.isEmpty
+  override def isUndefined: Boolean = super.isUndefined
 
   override def toScript: String = {
-    val sb = new StringBuilder
-    get() match {
-      case Some(scripts) =>
-        for (pdxScript <- scripts) {
-          val str = pdxScript.toScript
-          if (str != null)
-            sb.append(str)
-        }
-        sb.toString()
-      case None => ""
-    }
+    if (node.isEmpty || node.get.isEmpty) return null
+
+//    val sb = new StringBuilder()
+//    sb.append(node.get.identifier)
+//    sb.append(" = {\n")
+//    for (pdx <- get().get) {
+//      sb.append('\t')
+//      sb.append(pdx.toScript)
+//    }
+//    sb.toString
+    null  // todo
   }
 
-  override def set(obj: ListBuffer[T]): Unit = {
+  override def set(expression: Node): Unit = {
+    usingIdentifier(expression)
+    this.node = Some(expression)
+    val value = expression.$
+    setNode(value)
+  }
+
+  override def set(obj: ListBuffer[T]): ListBuffer[T] = {
     //
+    obj
   }
 }
 

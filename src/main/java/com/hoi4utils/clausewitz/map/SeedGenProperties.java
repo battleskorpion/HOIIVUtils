@@ -5,5 +5,7 @@ public interface SeedGenProperties {
 
     int numSeedsX();
 
+    int numSeeds();
+
     int seaLevel();
 }

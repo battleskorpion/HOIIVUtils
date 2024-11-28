@@ -69,6 +69,32 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
       super.toString()
   }
 
+  def toScript: String = {
+    if (!isEmpty && !valueIsNull) {
+      val sb = new StringBuilder()
+      sb.append(identifier).append(' ')
+      sb.append(operator).append(' ')
+      $.match {
+        case l: ListBuffer[Node] =>
+          sb.append("{").append('\n')
+          for (node <- l) {
+            var sScript = node.toScript
+            if (sScript != null && sScript.nonEmpty) {
+              // add extra tab to any secondary lines
+              sScript = sScript.replace("\n", "\n\t")
+              sb.append('\t').append(sScript)
+            }
+          }
+          sb.append("}").append('\n')
+        case _ =>
+          sb.append(nodeValue.asString).append('\n')
+      }
+      sb.toString
+    } else {
+      null
+    }
+  }
+
   def nameAsInteger: Int = identifier.toInt
 
   def nameEquals(s: String): Boolean = {
@@ -79,7 +105,7 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
   def setNull(): Unit = nodeValue = new NodeValue
   
   def valueIsInstanceOf(clazz: Class[?]): Boolean = nodeValue.valueIsInstanceOf(clazz)
-  
+
   def $ : String | Int | Double | Boolean | ListBuffer[Node] | Null = getValue
 
   def identifier: String = _identifier
@@ -108,17 +134,59 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
     }
   }
 
-  def $string: String = {
+  def $string: Option[String] = {
     this.$ match {
-      case s: String => s
+      case s: String => Some(s)
       case _ => null
     }
   }
+
+  def $stringOrElse(x: String): String = {
+    this.$ match {
+      case i: String => i
+      case _ => x
+    }
+  }
   
-  def $integer: Integer = {
+  def $int: Option[Int] = {
+    this.$ match {
+      case i: Int => Some(i)
+      case _ => None
+    }
+  }
+
+  def $intOrElse(x: Int): Int = {
     this.$ match {
       case i: Int => i
-      case _ => null
+      case _ => x
+    }
+  }
+
+  def $double: Option[Double] = {
+    this.$ match {
+      case d: Double => Some(d)
+      case _ => None
+    }
+  }
+
+  def $doubleOrElse(x: Double): Double = {
+    this.$ match {
+      case i: Double => i
+      case _ => x
+    }
+  }
+
+  def $boolean: Option[Boolean] = {
+    this.$ match {
+      case b: Boolean => Some(b)
+      case _ => None
+    }
+  }
+
+  def $booleanOrElse(x: Boolean): Boolean = {
+    this.$ match {
+      case i: Boolean => i
+      case _ => x
     }
   }
 

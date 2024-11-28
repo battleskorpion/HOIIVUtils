@@ -27,6 +27,7 @@ public class GridSeedGeneration extends AbstractSeedGeneration<MapPoint> {
 		gridCenterYFloor = (int) Math.floor(gridCenterY);
 		gridCenterXFloor = (int) Math.floor(gridCenterX);
 	}
+
 	/**
 	 * Generates seeds in a grid-like manner, but with a random offset which adds some variance
 	 * while keeping provinces sizes/distances/density roughly even while still looking
@@ -53,8 +54,7 @@ public class GridSeedGeneration extends AbstractSeedGeneration<MapPoint> {
 
 				/* add point to points array */
 				MapPoint mapPoint;
-				int type = provinceType(heightmapHeight, properties.seaLevel()); 	// 0: land
-															// 1: sea
+				int type = provinceType(heightmapHeight, properties.seaLevel());
 				mapPoint = new MapPoint(seedX, seedY, type);
 
 				/* add point to seeds array */

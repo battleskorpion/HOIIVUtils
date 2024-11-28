@@ -7,11 +7,11 @@ import com.hoi4utils.clausewitz.map.gen.MapPoint;
 import java.util.*;
 
 public class ProbabilisticSeedGeneration extends AbstractSeedGeneration<MapPoint> {
-	private final SeedProbabilityMap_GPU seedProbabilityMap;
+	private final SeedProbabilityMap_GPU_3 seedProbabilityMap;
 
 	public ProbabilisticSeedGeneration(Heightmap heightmap, SeedGenProperties properties) {
 		super(heightmap, properties);
-		seedProbabilityMap = new SeedProbabilityMap_GPU(heightmap, properties);
+		seedProbabilityMap = new SeedProbabilityMap_GPU_3(heightmap, properties);
 	}
 
 	/**
@@ -25,15 +25,18 @@ public class ProbabilisticSeedGeneration extends AbstractSeedGeneration<MapPoint
 		create regions/islands
 		 */
 		long seed = random.nextLong();
+		MapPoint[] mapPoints = seedProbabilityMap.getPoints(random, properties.numSeeds());
+		int mpCounter = 0;
 
 		for (int sy = 0; sy < properties.numSeedsY(); sy++) {
-			for (int sx = 0; sx < properties.numSeedsX(); sx++) {
+			for (int sx = 0; sx < properties.numSeedsX() && mpCounter < properties.numSeeds(); sx++) {
 				MapPoint dynP;
 				int heightmapHeight = 0;
 				do {
 //					int px = random.nextInt(heightmap.getWidth());
 //					int py = random.nextInt(heightmap.getHeight());
-					dynP = weightedRandomPoint(random);
+					// weighted random point
+					dynP = mapPoints[mpCounter++];
 					heightmapHeight = heightmap.height_xy(dynP.x, dynP.y);
 					int type = provinceType(heightmapHeight, properties.seaLevel());
 //					p = new MapPoint(dynP, type);
@@ -43,16 +46,6 @@ public class ProbabilisticSeedGeneration extends AbstractSeedGeneration<MapPoint
 				seeds.add(dynP);
 			}
 		}
-	}
-
-	/**
-	 *
-	 * @param random Pseudorandom number generator for generating probabilities
-	 * @return
-	 */
-	private MapPoint weightedRandomPoint(Random random) {
-		MapPoint mp = seedProbabilityMap.getPoint(random);
-		return mp;
 	}
 
 }
