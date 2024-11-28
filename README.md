@@ -4,9 +4,6 @@
 
 This application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.  
 
-Started this to help with our Hearts of Iron 4 mod where you can find the discord link below.  
-North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59BcbM)  
-
 ## Installation
 
 **WIP!** we are working on several things including:
@@ -28,13 +25,16 @@ You can also download and compile it with the mvnw
 ## Usage
 
 Please keep in mind how **WIP** this is!  
-This is in pre-pre-alpha and we constinetly push commits that break the program (on the dev branch now at least(hopefuly))  
+We constinetly push commits that break the program 
 Run the jar or exe  
 Select your prefered settings  
 Select your SOURCE mod folder (required)  
 Click Ok  
 
 ## Credits and Contributors
+
+Started this to help with our Hearts of Iron 4 mod where you can find the discord link below.  
+North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59BcbM)  
 
 battleskorpion  
 thiccchris  
