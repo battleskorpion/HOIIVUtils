@@ -80,6 +80,18 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
 
   override def defaultValue: Int = 0
 
+  @targetName("unaryPlus")
+  def unary_+ : Int = this.get() match {
+    case Some(value) => +value
+    case None => 0
+  }
+
+  @targetName("unaryMinus")
+  def unary_- : Int = this.get() match {
+    case Some(value) => -value
+    case None => 0
+  }
+
   @targetName("plus")
   def +(other: Int): Int = this.get() match {
     case Some(value) => value + other

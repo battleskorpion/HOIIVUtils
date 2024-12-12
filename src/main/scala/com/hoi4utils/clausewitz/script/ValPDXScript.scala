@@ -35,6 +35,12 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] {
     case None => setNull()
   }
 
+  @targetName("unaryPlus")
+  def unary_+ : T
+
+  @targetName("unaryMinus")
+  def unary_- : T
+
   @targetName("plus")
   def +(other: T): T
 
