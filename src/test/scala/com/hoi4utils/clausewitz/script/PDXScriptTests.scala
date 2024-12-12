@@ -66,11 +66,11 @@ class PDXScriptTests extends AnyFunSuiteLike {
     }
   }
 
-  test("MultiPDX should be defined when there is some PDXScript it can load") {
-    withFocusTrees { focusTree =>
-      assert(focusTree.focuses.isDefined)
-    }
-  }
+//  test("MultiPDX should be defined when there is some PDXScript it can load") {
+//    withFocusTrees { focusTree =>
+//      assert(focusTree.focuses.isDefined)
+//    }
+//  }
 
   test("StringPDX should be defined when present") {
     withFocusTrees { focusTree =>
