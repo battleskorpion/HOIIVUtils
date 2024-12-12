@@ -40,6 +40,7 @@
 	"java.compile.nullAnalysis.mode": "automatic",
 	// Java Project HOIIVUtils Settings 
 	"java.project.referencedLibraries": [
+		"target/classes",
 		"lib/**/*.jar"
 	],
 	"java.configuration.runtimes": [],
@@ -70,7 +71,7 @@
 		"**/target": true
 	},
 	"java.maven.downloadSources": true,
-	"java.import.maven.offline.enabled": true,
+	"java.import.maven.offline.enabled": false,
 	"java.eclipse.downloadSources": true,
 	"java.project.sourcePaths": [
 		"src\\main\\scala"
