@@ -10,8 +10,9 @@ import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
 /**
- * A PDXScript that may reference another PDXScript.
- *
+ * A PDXObject that may reference another PDXObject.
+ * TODO: change PDXScript to PDXObject
+ * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
  * @param referenceCollectionSupplier
  * @param idExtractor
  * @param pdxIdentifiers

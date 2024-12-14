@@ -14,6 +14,7 @@ import scala.annotation.targetName
 /**
  * Any object that can be converted to a PDX script block, such as a focus, national focus tree,
  * or event.
+ * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
  * <p>
  */
 trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScript[T] {

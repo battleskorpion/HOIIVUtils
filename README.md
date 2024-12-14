@@ -4,10 +4,11 @@
 
 This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.  
 
-Started this to help with our Hearts of Iron 4 mod where you can find the discord link below.  
+We created HOIIVUtils to help with our
+["North America Divided"](https://steamcommunity.com/sharedfiles/filedetails/?id=2780506619)
+Heats of Iron 4 mod.  
 North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59BcbM)  
-
-## Installation
+HOIIVUtils: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
 
 **WIP!** we are working on several things including:
 
@@ -17,28 +18,15 @@ North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59
 - Several Util Windows that are already listed in the main window  
 - A proper log and console
 - Learn how to use containers and test on linux
+- Not require a hoi4 mod source directories to see what the app can do.
 
-Install java openjdk 22: [https://adoptium.net/temurin/releases/?arch=x64&package=jdk&version=22](https://adoptium.net/temurin/releases/?arch=x64&package=jdk&version=22)  
-
-For Windows: Download the the latest release (jar with dependecies.jar) or (.exe) and run it  
-For Linux: Download the latest release (jar with dependecies.jar) and run it
-
-You can also download and compile it with the mvnw
+![image](./Menu.png)
 
 ## Usage
-
 Please keep in mind how **WIP** this is!  
-This is in pre-pre-alpha and we constinetly push commits that break the program (on the dev branch now at least(hopefuly))  
-Run the jar or exe  
-Select your prefered settings  
-Select your SOURCE mod folder (required)  
-Click Ok  
-
-## Credits and Contributors
-
-battleskorpion  
-thiccchris  
-SlothMcShain  
-Fullcord  
-Juddur
-Gro0mp  
+This is in pre-pre-alpha, and we consistently push commits that break the program.   
+1. Install java openjdk 22: [https://adoptium.net/temurin/releases/?arch=x64&package=jdk&version=22](https://adoptium.net/temurin/releases/?arch=x64&package=jdk&version=22)  
+2. Go to [releases](https://github.com/battleskorpion/HOIIVUtils/releases) and download the jar-with-dependencies.jar   
+3. Select your hoi4 mod source directories (required!)  
+4. Select your preferred settings  
+5. Click Ok
