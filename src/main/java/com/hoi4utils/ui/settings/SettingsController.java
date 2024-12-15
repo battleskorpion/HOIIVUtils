@@ -26,9 +26,9 @@ import java.util.Objects;
  * @author thiccchris
  */
 public class SettingsController extends Application implements FXWindow {
-	protected String fxmlResource = "Settings.fxml";
-	protected String title = "Settings";
-	protected Stage stage;
+	private String fxmlResource = "Settings.fxml";
+	private String title = "HOIIVUtils Settings " + HOIIVUtils.HOIIVUTILS_VERSION;
+	private Stage stage;
 
 	@FXML
 	public Pane idPane;
@@ -55,18 +55,13 @@ public class SettingsController extends Application implements FXWindow {
 	@FXML
 	public ComboBox<Screen> preferredMonitorComboBox;
 
-	public SettingsController() {
-	}
-
 	@FXML
 	void initialize() {
-		System.out.println("Initializing SettingsController...");
 		idVersionLabel.setText(HOIIVUtils.HOIIVUTILS_VERSION);
-
 		setDefault();
 
+		// TODO: Extract this and clean it up
 		preferredMonitorComboBox.setItems(Screen.getScreens());
-
 		preferredMonitorComboBox.setCellFactory(_ -> new ListCell<>() {
 			/**
 			 * Updates the item in the list view to the given value. The text of the item is set to "Screen
@@ -88,7 +83,6 @@ public class SettingsController extends Application implements FXWindow {
 		});
 
 		loadUIWithSavedSettings();
-
 	}
 
 	/**
