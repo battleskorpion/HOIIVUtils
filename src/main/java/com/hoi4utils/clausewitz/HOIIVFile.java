@@ -6,15 +6,14 @@ import com.hoi4utils.fileIO.FileListener.FileAdapter;
 import com.hoi4utils.fileIO.FileListener.FileEvent;
 import com.hoi4utils.fileIO.FileListener.FileWatcher;
 import com.hoi4utils.clausewitz.map.state.State;
-import com.hoi4utils.ui.message.MessageController;
 
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 
 /**
- * HOIIV File A Everything to do with the files that are found in a HOI 4 mod - Paths - Creating
+ * HOIIVFile
+ * Holds onto static object files.
  * Files and Directories ? <insert about whatever the file watchers do> chris learning what is a
  * file watcher - Future things
  */
@@ -125,7 +124,6 @@ public class HOIIVFile implements FileUtils {
 	 * Watch the state files in the given directory.
 	 *
 	 * @param stateFiles The directory containing state files.
-	 * @throws IOException If an I/O error occurs.
 	 */
 	public static void watchStateFiles(File stateFiles) {
 		if (stateFiles == null || !stateFiles.exists() || !stateFiles.isDirectory()) {
