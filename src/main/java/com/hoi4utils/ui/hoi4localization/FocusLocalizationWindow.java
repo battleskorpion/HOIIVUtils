@@ -1,7 +1,8 @@
 package com.hoi4utils.ui.hoi4localization;
 
 import com.hoi4utils.clausewitz.HOIIVFile;
-import com.hoi4utils.Settings;
+
+import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.focus.FocusTree$;
@@ -83,7 +84,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
     public void handleFocusTreeFileBrowseButtonAction() {
         File initialFocusDirectory = HOIIVFile.mod_focus_folder;
         File selectedFile = FXWindow.openChooser(focusTreeFileBrowseButton, initialFocusDirectory, false);
-        if (Settings.DEV_MODE.enabled()) {
+        if (HOIIVUtils.getBoolean("dev.mode")) {
             System.out.println(selectedFile);
         }
 
@@ -99,7 +100,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
     public void handleFocusLocFileBrowseButtonAction() {
 //        File initialFocusLocDirectory = HOIIVFile.mod_localization_folder;
 //        File selectedFile = openChooser(focusLocFileBrowseButton, initialFocusLocDirectory, false);
-//        if (Settings.DEV_MODE.enabled()) {
+//        if (HOIIVUtils.getBoolean("dev.mode")) {
 //            System.out.println(selectedFile);
 //        }
 //        if (selectedFile != null) {

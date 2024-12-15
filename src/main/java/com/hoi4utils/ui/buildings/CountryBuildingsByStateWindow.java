@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.buildings;
 
-import com.hoi4utils.Settings;
+
+import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.data.country.Country;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.ui.FXWindow;
@@ -93,7 +94,7 @@ public class CountryBuildingsByStateWindow extends HOIIVUtilsWindow implements T
 		// includeVersion();
 		loadTableView(this, stateDataTable, stateList, State.getStateDataFunctions(false));
 
-		if (Settings.DEV_MODE.enabled()) {
+		if (HOIIVUtils.getBoolean("dev.mode")) {
 			JOptionPane.showMessageDialog(null, "dev - loaded rows: " + stateDataTable.getItems().size());
 		}
 

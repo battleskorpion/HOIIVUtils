@@ -2,10 +2,11 @@
 package com.hoi4utils.clausewitz.data.units;
 
 import com.hoi4utils.clausewitz.BoolType;
+import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz_parser.Node;
 import com.hoi4utils.clausewitz_parser.Parser;
 import com.hoi4utils.clausewitz_parser.ParserException;
-import com.hoi4utils.Settings;
+
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
@@ -60,7 +61,7 @@ public record SubUnit(
 				System.out.println("No sub_units found in " + file.getName());
 				continue;
 			}
-			if (Settings.DEV_MODE.enabled()) {
+			if (HOIIVUtils.getBoolean("dev.mode")) {
 				System.out.println("File: " + file.getName() + ", subunits: " + list.size());
 			}
 

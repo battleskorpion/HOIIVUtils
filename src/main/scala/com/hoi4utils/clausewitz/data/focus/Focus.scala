@@ -53,7 +53,9 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
   def position: Point = new Point(x.getOrElse(0), y.getOrElse(0))
 
-  def absolutePosition(visited: Set[String] = Set.empty): Point = {
+  def absolutePosition: Point = absolutePosition(Set.empty)
+
+  private def absolutePosition(visited: Set[String] = Set.empty): Point = {
     if (relativePositionFocus.isUndefined) {
       return position
     }
@@ -100,26 +102,32 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   }
 
   /**
-   * Set the absolute x and y coordinates of the focus.
+   * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
+   * that position, but its absolute coordinates are always the same.
    *
    * @param x absolute x-coordinate
    * @param y absolute y-coordinate
    * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
    *                                   in the same position even though the position of this focus changes.
-   * @return the previous position.
+   * @return the previous absolute position.
    */
   def setAbsoluteXY(x: Int, y: Int, updateChildRelativeOffsets: Boolean): Point = {
-    val prev = setXY(x, y)
-    this.relativePositionFocus.setNull()
+    val prevAbsolute = absolutePosition
+    relativePositionFocus.get() match {
+      case Some(f) =>
+        // keep relative to the focus, but absolute coordinates are always the same
+        val rp = f.absolutePosition()
+        setXY(x - rp.x, y - rp.y)
+      case None => setXY(x, y)
+    }
     if (updateChildRelativeOffsets) {
-      val offset = new Point(x - prev.x, y - prev.y)
       for (focus <- focusTree.focuses) {
         if (focus.relativePositionFocus @== this) {
-          focus.offsetXY(prev.x - x, prev.y - y)
+          focus.offsetXY(prevAbsolute.x - x, prevAbsolute.y - y)
         }
       }
     }
-    prev
+    prevAbsolute
   }
 
   def setXY(xy: Point): Point = setXY(xy.x, xy.y)

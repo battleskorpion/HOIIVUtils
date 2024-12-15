@@ -2,21 +2,18 @@ package com.hoi4utils.clausewitz;
 
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.PublicFieldChangeNotifier;
-import com.hoi4utils.Settings;
-import com.hoi4utils.SettingsManager;
 import com.hoi4utils.fileIO.FileListener.FileAdapter;
 import com.hoi4utils.fileIO.FileListener.FileEvent;
 import com.hoi4utils.fileIO.FileListener.FileWatcher;
 import com.hoi4utils.clausewitz.map.state.State;
-import com.hoi4utils.ui.message.MessageController;
 
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 
 /**
- * HOIIV File A Everything to do with the files that are found in a HOI 4 mod - Paths - Creating
+ * HOIIVFile
+ * Holds onto static object files.
  * Files and Directories ? <insert about whatever the file watchers do> chris learning what is a
  * file watcher - Future things
  */
@@ -52,27 +49,61 @@ public class HOIIVFile implements FileUtils {
 
 	private static final PublicFieldChangeNotifier changeNotifier = new PublicFieldChangeNotifier(HOIIVFile.class);
 
+	/**
+	 * TODO: Make Demo
+	 */
     public static void createHOIIVFilePaths() {
-		SettingsManager.initializeAndSaveSettings(null);
+		String modPath = HOIIVUtils.get("mod.path");
+		String hoi4Path = HOIIVUtils.get("hoi4.path");
 
-		if (Settings.DEMO_MODE.enabled()) {
-			System.out.println("Demo mode is on which means there is no modpath");
+		if (modPath == null || modPath.isEmpty()) {
+			System.err.println("Error: mod.path is null or empty!");
 			return;
 		}
-
-		String modPath = SettingsManager.get(Settings.MOD_PATH);
-		String hoi4Path = SettingsManager.get(Settings.HOI4_PATH);
-		System.out.println("modPath: " + modPath);
-		System.out.println("hoi4Path: " + hoi4Path);
-
-		if (modPath == null) {
-			System.err.println("modPath is null, please set it in hoi4utils.properties");
+		if (hoi4Path == null || hoi4Path.isEmpty()) {
+			System.err.println("Error: hoi4.path is null or empty!");
 			return;
 		}
 
 		File modPathFile = new File(modPath);
+		File hoi4PathFile = new File(hoi4Path);
 
-		mod_folder = new File(modPath);
+		if (!modPathFile.exists() || !modPathFile.isDirectory()) {
+			System.err.println("Error: mod.path does not point to a valid directory: " + modPath);
+			return;
+		}
+		if (!hoi4PathFile.exists() || !hoi4PathFile.isDirectory()) {
+			System.err.println("Error: hoi4.path does not point to a valid directory: " + hoi4Path);
+			return;
+		}
+
+		// Verify required subdirectories under modPath
+		String[] requiredSubDirs = {
+				"common",
+				"history/states",
+				"map/strategicregions",
+				"localisation/english",
+				"common/national_focus",
+				"common/ideas",
+				"common/units"
+		};
+
+		for (String subDir : requiredSubDirs) {
+			File dir = new File(modPath, subDir);
+			if (!dir.exists() || !dir.isDirectory()) {
+				System.err.println("Error: Missing required subdirectory: " + dir.getAbsolutePath());
+				return;
+			}
+		}
+		
+		// Ensure this function doesn't reinitialize files unnecessarily
+		if (mod_folder != null && mod_folder.equals(modPathFile)) {
+			System.out.println("Paths are already initialized. Skipping reinitialization.");
+			return;
+		}
+
+		// Initialize file objects
+		mod_folder = modPathFile;
 		mod_common_folder = new File(modPath + "\\common");
 		mod_states_folder = new File(modPath + "\\history\\states");
 		mod_strat_region_dir = new File(modPath + "\\map\\strategicregions");
@@ -83,7 +114,7 @@ public class HOIIVFile implements FileUtils {
 		mod_units_folder = new File(modPath + "\\common\\units");
 		hoi4_units_folder = new File(hoi4Path + "\\common\\units");
 		hoi4mods_folder = modPathFile.getParentFile();
-		System.out.println("HOIIVFile created path objects");
+
 
 		// Check for changes after setting the fields
 		changeNotifier.checkAndNotifyChanges();
@@ -93,7 +124,6 @@ public class HOIIVFile implements FileUtils {
 	 * Watch the state files in the given directory.
 	 *
 	 * @param stateFiles The directory containing state files.
-	 * @throws IOException If an I/O error occurs.
 	 */
 	public static void watchStateFiles(File stateFiles) {
 		if (stateFiles == null || !stateFiles.exists() || !stateFiles.isDirectory()) {
@@ -111,7 +141,7 @@ public class HOIIVFile implements FileUtils {
 					File file = event.getFile();
 					State.readState(file);
 					stateFilesWatcher.listenerPerformAction--;
-					if (Settings.DEV_MODE.enabled()) {
+					if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
 						State state = State.get(file);
 						System.out.println("State was created/loaded: " + state);
 					}
@@ -124,7 +154,7 @@ public class HOIIVFile implements FileUtils {
 					stateFilesWatcher.listenerPerformAction++;
 					File file = event.getFile();
 					State.readState(file);
-					if (Settings.DEV_MODE.enabled()) {
+					if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
 						State state = State.get(file);
 						System.out.println("State was modified: " + state);
 					}
@@ -139,7 +169,7 @@ public class HOIIVFile implements FileUtils {
 					File file = event.getFile();
 					State.deleteState(file);
 					stateFilesWatcher.listenerPerformAction--;
-					if (Settings.DEV_MODE.enabled()) {
+					if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
 						State state = State.get(file);
 						System.out.println("State was deleted: " + state);
 					}

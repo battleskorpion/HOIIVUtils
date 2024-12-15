@@ -2,7 +2,7 @@ package com.hoi4utils.ui.hoi4localization;
 
 import com.hoi4utils.clausewitz.HOIIVFile;
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.Settings;
+
 import com.hoi4utils.clausewitz.data.tooltip.CustomTooltip;
 
 import com.hoi4utils.ui.FXWindow;
@@ -100,7 +100,7 @@ public class CustomTooltipWindow extends HOIIVUtilsWindow implements TableViewWi
 	public void handleTooltipFileBrowseAction() {
 		File initialFocusDirectory = HOIIVFile.mod_common_folder;
 		File selectedFile = FXWindow.openChooser(tooltipFileBrowseButton, initialFocusDirectory, false);
-		if (Settings.DEV_MODE.enabled()) {
+		if (HOIIVUtils.getBoolean("dev.mode")) {
 			System.out.println(selectedFile);
 		}
 		if (selectedFile != null) {
@@ -121,7 +121,7 @@ public class CustomTooltipWindow extends HOIIVUtilsWindow implements TableViewWi
 	public void handleTooltipLocalizationFileBrowseAction() {
 //		File initialFocusLocDirectory = HOIIVFile.mod_localization_folder;
 //		File selectedFile = openChooser(tooltipLocalizationFileBrowseButton, initialFocusLocDirectory, false);
-//		if (Settings.DEV_MODE.enabled()) {
+//		if (HOIIVUtils.getBoolean("dev.mode")) {
 //			System.out.println(selectedFile);
 //		}
 //		if (selectedFile != null) {

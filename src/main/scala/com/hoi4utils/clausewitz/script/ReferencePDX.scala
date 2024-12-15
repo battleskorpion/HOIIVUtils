@@ -10,8 +10,9 @@ import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
 /**
- * A PDXScript that may reference another PDXScript.
- *
+ * A PDXObject that may reference another PDXObject.
+ * TODO: change PDXScript to PDXObject
+ * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
  * @param referenceCollectionSupplier
  * @param idExtractor
  * @param pdxIdentifiers
@@ -80,7 +81,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
 
   def setReferenceName(str: String): Unit = {
     referenceName = str
-    node = null
+    node.foreach(_.setValue(str))
   }
 
   def getReferenceCollection: Iterable[T] = referenceCollectionSupplier()
@@ -116,5 +117,11 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     reference = Some(obj)
     referenceName = idExtractor.apply(obj).orNull // sure
     obj
+  }
+
+  override def setNull(): Unit = {
+    super.setNull()
+    reference = None
+    referenceName = null
   }
 }

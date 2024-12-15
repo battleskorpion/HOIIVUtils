@@ -1,7 +1,8 @@
 package com.hoi4utils.clausewitz.data.gfx;
 
+import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz_parser.ParserException;
-import com.hoi4utils.Settings;
+
 import com.hoi4utils.clausewitz_parser.Parser;
 import com.hoi4utils.clausewitz_parser.Node;
 import scala.jdk.javaapi.CollectionConverters;
@@ -142,7 +143,7 @@ public class Interface {
 	}
 
 	public static void loadGFXFiles() {
-		File dir = new File(Settings.MOD_PATH + "\\interface");
+		File dir = new File(HOIIVUtils.get("mod.path") + "\\interface");
 		if (!dir.exists() || !dir.isDirectory()) {
 			System.err.println("interface directory does not exist");
 		}

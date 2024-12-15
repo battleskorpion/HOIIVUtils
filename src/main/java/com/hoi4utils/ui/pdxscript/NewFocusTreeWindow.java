@@ -1,5 +1,6 @@
 package com.hoi4utils.ui.pdxscript;
 
+import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.data.country.CountryTag$;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
@@ -14,8 +15,6 @@ import scala.jdk.javaapi.CollectionConverters;
 import javax.swing.*;
 import java.io.File;
 import java.util.function.Consumer;
-
-import static com.hoi4utils.Settings.MOD_PATH;
 
 public class NewFocusTreeWindow extends HOIIVUtilsWindow {
 
@@ -64,7 +63,7 @@ public class NewFocusTreeWindow extends HOIIVUtilsWindow {
                     JOptionPane.ERROR_MESSAGE);
         }
 
-        File focusFile = new File(MOD_PATH + "/common/national_focus/" + id + "_" + "temp_HOIIVUtils"+ ".txt");
+        File focusFile = new File(HOIIVUtils.get("mod.path") + "/common/national_focus/" + id + "_" + "temp_HOIIVUtils"+ ".txt");
         FocusTree focusTree = new FocusTree();
         focusTree.setID(id);
         focusTree.setCountryTag(countryTag);
