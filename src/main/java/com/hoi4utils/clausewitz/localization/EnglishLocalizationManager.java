@@ -37,15 +37,24 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
     }
 
     protected void loadLocalization() {
-        if (HOIIVFile.mod_localization_folder == null) {
-            System.err.println("Localization folder unknown.");
-            return;
-        }
         /*
         load mod localization after vanilla to give mod localizations priority
          */
-        loadLocalization(HOIIVFile.hoi4_localization_folder, Localization.Status.VANILLA);
-        loadLocalization(HOIIVFile.mod_localization_folder, Localization.Status.EXISTS);
+        if (HOIIVFile.hoi4_localization_folder == null) {
+            System.out.println("'HOI4 localization folder' unknown.");
+        } else if (!HOIIVFile.hoi4_localization_folder.exists() || !HOIIVFile.hoi4_localization_folder.isDirectory()) {
+            System.out.println("'HOI4 localization folder' does not exist or is not a directory.");
+        } else {
+            loadLocalization(HOIIVFile.mod_localization_folder, Localization.Status.EXISTS);
+        }
+
+        if (HOIIVFile.mod_localization_folder == null) {
+            System.out.println("'Mod localization folder' unknown.");
+        } else if (!HOIIVFile.mod_localization_folder.exists() || !HOIIVFile.mod_localization_folder.isDirectory()) {
+            System.out.println("'Mod localization folder' does not exist or is not a directory.");
+        } else {
+            loadLocalization(HOIIVFile.hoi4_localization_folder, Localization.Status.VANILLA);
+        }
     }
 
     protected void loadLocalization(File localizationFolder, Localization.Status status) {
