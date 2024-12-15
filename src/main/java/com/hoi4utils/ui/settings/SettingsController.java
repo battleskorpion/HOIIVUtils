@@ -223,7 +223,7 @@ public class SettingsController extends Application implements FXWindow {
 	}
 	
 	public void handleLoadLocalizationCheckBoxAction() {
-		HOIIVUtils.set("load.localization.enabled", String.valueOf(drawFocusTreesCheckBox.isSelected()));
+		HOIIVUtils.set("load.localization.enabled", String.valueOf(loadLocalizationCheckBox.isSelected()));
 	}
 
 	/**
