@@ -26,7 +26,9 @@ HOIIVUtils: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
 Please keep in mind how **WIP** this is!  
 This is in pre-pre-alpha, and we consistently push commits that break the program.   
 1. Install java openjdk 22: [https://adoptium.net/temurin/releases/?arch=x64&package=jdk&version=22](https://adoptium.net/temurin/releases/?arch=x64&package=jdk&version=22)  
-2. Go to [releases](https://github.com/battleskorpion/HOIIVUtils/releases) and download the jar-with-dependencies.jar   
-3. Select your hoi4 mod source directories (required!)  
-4. Select your preferred settings  
-5. Click Ok
+2. Go to [releases](https://github.com/battleskorpion/HOIIVUtils/releases) and download HOIIVUtils.zip
+3. Extract the zip
+4. run  .bat or .sh
+5. Select your hoi4 mod source directories (required!)  
+6. Select your preferred settings  
+7. Click Ok
