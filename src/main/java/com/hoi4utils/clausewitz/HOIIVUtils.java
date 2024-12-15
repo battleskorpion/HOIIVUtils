@@ -19,12 +19,13 @@ public class HOIIVUtils {
 	private static Properties properties = new Properties();
 	static {
 		// Attempt to load external properties
-		loadExternalProperties();
-		try {
-			loadDefaultProperties();
-			loadExternalProperties();
-		} catch (IOException ex) {
-			throw new RuntimeException("Failed to initialize configuration: " + ex.getMessage(), ex);
+		if (loadExternalProperties()) {
+			try {
+				loadDefaultProperties(); // Warning, this overites saves!!!!
+				loadExternalProperties();
+			} catch (IOException ex) {
+				throw new RuntimeException("Failed to initialize configuration: " + ex.getMessage(), ex);
+			}
 		}
 	}
 	public static final String HOIIVUTILS_VERSION = get("version");
@@ -42,20 +43,10 @@ public class HOIIVUtils {
 		ModifierDatabase mdb = new ModifierDatabase();
 		EffectDatabase edb = new EffectDatabase();
 
-		demoMode();
+		HOIIVFile.createHOIIVFilePaths();
+		save();
 		menuController = new MenuController();
 		menuController.launchMenuWindow(args); // Program starts!
-	}
-
-	public static void demoMode() {
-
-		if (get("mod.path") == null || get("hoi4.path") == null) {
-			set("demo.mode.enabled", "true");
-			System.out.println("DemoModeFunctionOn");
-		} else {
-			set("demo.mode.enabled", "false");
-			System.out.println("DemoModeFunctionOff");
-		}
 	}
 
 	public static String get(String key) {
@@ -92,7 +83,7 @@ public class HOIIVUtils {
 		}
 	}
 
-	private static void loadExternalProperties() {
+	private static Boolean loadExternalProperties() {
 		File externalFile = new File(PROPERTIES_FILE);
 		if (externalFile.exists()) {
 			try (FileInputStream input = new FileInputStream(externalFile)) {
@@ -103,9 +94,10 @@ public class HOIIVUtils {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+			return false;
         } else {
 			System.out.println("External configuration file not found");
-			return;
+			return true;
 		}
 	}
 

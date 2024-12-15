@@ -129,8 +129,7 @@ public class MenuController extends Application implements FXWindow {
 
 	public void openSettings() {
 		closeWindow(settingsButton); // closes the menu window
-		SettingsController window = new SettingsController();
-		window.open();
+		new SettingsController().open();
 	}
 
 	private void openUtilsWindow(HOIIVUtilsWindow utilsWindow) {

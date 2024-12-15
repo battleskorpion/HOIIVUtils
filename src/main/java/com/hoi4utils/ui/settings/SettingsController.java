@@ -48,19 +48,11 @@ public class SettingsController extends Application implements FXWindow {
 	@FXML
 	public CheckBox devModeCheckBox;
 	@FXML
-	public CheckBox idOpenConsoleOnLaunchCheckBox;
-	@FXML
-	public CheckBox idSkipSettingsCheckBox;
-	@FXML
 	public Button idOkButton;
-	@FXML
-	public Button idDelSettingsButton;
 	@FXML
 	public CheckBox drawFocusTreesCheckBox;
 	@FXML
 	public ComboBox<Screen> preferredMonitorComboBox;
-	@FXML
-	public CheckBox idDemoModeCheckBox;
 
 	public SettingsController() {
 	}
@@ -94,6 +86,8 @@ public class SettingsController extends Application implements FXWindow {
 			}
 		});
 
+		loadUIWithSavedSettings();
+
 	}
 
 	/**
@@ -122,7 +116,7 @@ public class SettingsController extends Application implements FXWindow {
 		if (!"null".equals(HOIIVUtils.get("hoi4.path"))) {
 			hoi4PathTextField.setText((String) HOIIVUtils.get("hoi4.path"));
 		}
-		devModeCheckBox.setSelected(HOIIVUtils.getBoolean("dev.mode"));
+		devModeCheckBox.setSelected(HOIIVUtils.getBoolean("dev.mode.enabled"));
 		drawFocusTreesCheckBox.setSelected(HOIIVUtils.getBoolean("draw.focus.tree.enabled"));
 //		preferredMonitorComboBox.setCellFactory(HOIIVUtils.getInt("preferred.screen")); TODO: HOIIVUtils.getInt("preferred.screen" returns ant int of the save prefered screen and I don't know how to make that show on the combo box with your factory @Battleskorp
 //		TODO: Themes
@@ -153,7 +147,7 @@ public class SettingsController extends Application implements FXWindow {
 			stage.maxHeightProperty().bind(stage.heightProperty());
 			System.out.println("The SettingsController instantiated its own Stage and displayed it.");
 		} catch (Exception e) {
-			System.out.println("Failed to load fxml file!!!!!");
+			System.err.println("Failed to load fxml file!!!!!");
 			e.printStackTrace();
 		}
 	}
@@ -220,27 +214,19 @@ public class SettingsController extends Application implements FXWindow {
 
 	public void handleDevModeCheckBoxAction() {
 		HOIIVUtils.set("dev.mode.enabled", String.valueOf(devModeCheckBox.isSelected()));
-		drawFocusTreesCheckBox.setDisable(!devModeCheckBox.isSelected());
-		drawFocusTreesCheckBox.setSelected(false);
-		handleDrawFocusTreesCheckBoxAction();
 	}
 
 	public void handleDrawFocusTreesCheckBoxAction() {
 		HOIIVUtils.set("draw.focus.tree.enabled", String.valueOf(drawFocusTreesCheckBox.isSelected()));
 	}
 
-	private void setDisablePathSelection(boolean value) {
-		modFolderBrowseButton.setDisable(value);
-		modPathTextField.setDisable(value);
-		hoi4FolderBrowseButton.setDisable(value);
-		hoi4PathTextField.setDisable(value);
-	}
-
+	/**
+	 * change preferred monitor setting. // todo future: change settings window
+	 * location upon decision/etc?
+	 * monitors are labeled with ints, default being 0
+	 * interpret index of selection as monitor selection
+ 	 */
 	public void handlePreferredMonitorSelection() {
-		// change preferred monitor setting. // todo future: change settings window
-		// location upon decision/etc?
-		// monitors are labeled with ints, default being 0
-		// interpret index of selection as monitor selection
 		HOIIVUtils.set("preferred.screen", String.valueOf(preferredMonitorComboBox.getSelectionModel().getSelectedIndex()));
 	}
 
@@ -248,7 +234,6 @@ public class SettingsController extends Application implements FXWindow {
 	 * User Interactive Button in Settings Window Closes Settings Window Opens Menu Window
 	 */
 	public void handleOkButtonAction() {
-		HOIIVUtils.demoMode();
 		hideWindow(idOkButton);
 		new MenuController().open();
 	}

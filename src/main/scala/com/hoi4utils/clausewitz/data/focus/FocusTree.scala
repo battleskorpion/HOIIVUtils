@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.data.focus
 
-import com.hoi4utils.clausewitz.HOIIVFile
+import com.hoi4utils.clausewitz.{HOIIVFile, HOIIVUtils}
 import com.hoi4utils.clausewitz.data.country.{CountryTag, CountryTagsManager}
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz.localization.*
@@ -32,6 +32,10 @@ object FocusTree {
   }
 
   def read(): Unit = {
+    if (HOIIVUtils.get("mod.path") == null) {
+      System.err.println("Skipped FocusTree Reading")
+      return
+    }
     if (!HOIIVFile.mod_focus_folder.exists || !HOIIVFile.mod_focus_folder.isDirectory) {
       System.err.println("Focus folder does not exist or is not a directory.")
       return

@@ -50,12 +50,10 @@ public class HOIIVFile implements FileUtils {
 
 	private static final PublicFieldChangeNotifier changeNotifier = new PublicFieldChangeNotifier(HOIIVFile.class);
 
+	/**
+	 * TODO: Make Demo
+	 */
     public static void createHOIIVFilePaths() {
-
-		if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
-			System.out.println("Demo mode is on which means there is no modpath");
-			return;
-		}
 
 		String modPath = HOIIVUtils.get("mod.path");
 		String hoi4Path = HOIIVUtils.get("hoi4.path");
@@ -63,7 +61,7 @@ public class HOIIVFile implements FileUtils {
 		System.out.println("hoi4Path: " + hoi4Path);
 
 		if (modPath == null) {
-			System.err.println("modPath is null, please set it in settings");
+			System.err.println("mod path is null!!!!!!!!");
 			return;
 		}
 
