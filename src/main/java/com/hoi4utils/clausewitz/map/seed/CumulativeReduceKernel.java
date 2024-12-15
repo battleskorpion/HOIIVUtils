@@ -11,6 +11,7 @@ public class CumulativeReduceKernel extends Kernel {
     public void cumulativeReduce(double[] reduceInput) {
         _reduceInput = reduceInput.clone();
         final Range range = Range.create(_reduceInput.length);
+        range.setMaxWorkGroupSize(256); // rudimentary AMD/OpenGL fix
         _reduceOutput = new double[range.getNumGroups(0)][range.getLocalSize(0)];
         _cReduceIterations = (int) Math.ceil(Math.log(_reduceInput.length) / Math.log(2));
         execute(range, 2);

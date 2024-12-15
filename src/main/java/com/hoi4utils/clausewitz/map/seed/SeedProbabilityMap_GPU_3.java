@@ -64,7 +64,6 @@ public class SeedProbabilityMap_GPU_3 extends AbstractMapGeneration {
         // [prime numbers run bad with this impl, but that's fine bc we use specific
         // multiples of 2, 4, 8 for the maps]
         Range range = Range.create2D(width, height, 16, 16); 
-        range.setMaxWorkGroupSize(256);
         kernel.execute(range);
         kernel.dispose();
         System.out.println("Ran initialize probability map Kernel");
