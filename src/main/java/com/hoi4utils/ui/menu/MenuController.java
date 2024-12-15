@@ -31,14 +31,15 @@ import com.hoi4utils.ui.parser.ParserViewerWindow;
 import com.hoi4utils.ui.settings.SettingsController;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MenuController extends Application implements FXWindow {
-	private Stage stage;
 	private String fxmlResource = "Menu.fxml";
-	private String title;
+	private String title = "HOIIVUtils Menu " + HOIIVUtils.HOIIVUTILS_VERSION;
+	private Stage stage;
 
 	@FXML
 	public Button settingsButton;
@@ -63,45 +64,37 @@ public class MenuController extends Application implements FXWindow {
 	@FXML
 	public Button viewUnitComparison;
 
-	/* Constructor */
-	public MenuController() {
-		fxmlResource = "Menu.fxml";
-		title = "Menu";
-	}
-
 	public void launchMenuWindow(String[] args) {
-		System.out.println("Menu Controller ran launchMenuWindow");
 		launch(args);
-	}
-
-	@FXML
-	void initialize() {
-		System.out.println("Menu Controller initialized");
 	}
 
 	@Override
 	public void start(Stage stage) {
-		try {
-			Locale currentLocale = Locale.getDefault();
+		Locale currentLocale = Locale.getDefault();
 
-			ResourceBundle bundle = ResourceBundle.getBundle("menu", currentLocale);
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource), bundle);
-			Parent root = loader.load();
-			Scene scene = new Scene(root);
-			if (Objects.equals(HOIIVUtils.get("theme"), "dark")) {
-				scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
-			}
+		ResourceBundle bundle = ResourceBundle.getBundle("menu", currentLocale);
+		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource), bundle);
 
-			this.stage = stage;
-			stage.setScene(scene);
-
-			stage.setTitle(title);
-			stage.show();
-			System.out.println("Menu Controller created it's own stage and showed it");
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Error menu controller!");
-			e.printStackTrace();
+        Parent root;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Scene scene = new Scene(root);
+		if (Objects.equals(HOIIVUtils.get("theme"), "dark")) {
+			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 		}
+		this.stage = stage;
+		stage.setScene(scene);
+		stage.setTitle(title);
+		stage.show();
+		extracted();
+		System.out.println("Menu Controller created it's own stage and showed it");
+	}
+
+	// TODO: Rename function based on what it does.
+	private static void extracted() {
 		if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
 			if (HOIIVUtils.getBoolean("load.localization.enabled")) {
 				LocalizationManager LocalizationManager = new EnglishLocalizationManager();

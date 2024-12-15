@@ -48,6 +48,7 @@ object State {
       System.out.println("No states found in " + HOIIVFile.mod_states_folder)
       return
     }
+    // TODO: Good description of what this loop does
     for (stateFile <- HOIIVFile.mod_states_folder.listFiles) {
       if (stateFile.getName.endsWith(".txt")) new State(stateFile)
     }
