@@ -7,6 +7,8 @@ import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
 import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
 import com.hoi4utils.ui.menu.MenuController;
 
+import javax.swing.*;
+
 /**
  * HOIIVUtils.java main method is here
  */
@@ -44,6 +46,14 @@ public class HOIIVUtils {
 		EffectDatabase edb = new EffectDatabase();
 
 		HOIIVFile.createHOIIVFilePaths();
+//		if (new File("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Hearts of Iron IV").exists()) {
+//			set("hoi4.mod", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Hearts of Iron IV");
+//		} else if (new File("~/.steam/steam/steamapps/common").exists()) {
+//			set("hoi4.path", "~/.steam/steam/steamapps/common");
+//		} else {
+//			JOptionPane.showMessageDialog(null, "Couldn't find hoi4 install folder, please go to settings and add it (REQUIRED)", "Error Message", JOptionPane.WARNING_MESSAGE);
+//			save();
+//		}
 		save();
 		menuController = new MenuController();
 		menuController.launchMenuWindow(args); // Program starts!

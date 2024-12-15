@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -29,25 +30,24 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 			stage.show();
 			System.out.println("HOIIVUtilsStageLoader showed stage with open cuz stage was NOT null. fxml: " + fxmlResource + " title: " + title);
 		} else if (fxmlResource == null) {
-			System.out.println(
-					"HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. fxmlResource: " + fxmlResource + " title: " + title);
+			System.out.println(	"HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. title: " + title);
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
-			try {
-				FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
-				System.out.println("HOIIVUtilsStageLoader creating stage with fxml: " + fxmlResource);
-				Parent root = launchLoader.load();
-				Scene scene = new Scene(root);
+			FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
+			System.out.println("HOIIVUtilsStageLoader creating stage with fxml: " + fxmlResource);
+            Parent root;
+            try {
+                root = launchLoader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Scene scene = new Scene(root);
 
-				addSceneStylesheets(scene);
+			addSceneStylesheets(scene);
 
-				this.loader = launchLoader;
-				this.stage = createLaunchStage(scene);
-				System.out.println("HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource
-						+ " title: " + title);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			this.loader = launchLoader;
+			this.stage = createLaunchStage(scene);
+			System.out.println("HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource + " title: " + title);
 		}
 	}
 

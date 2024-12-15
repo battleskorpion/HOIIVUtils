@@ -76,25 +76,6 @@ public class HOIIVFile implements FileUtils {
 			System.err.println("Error: hoi4.path does not point to a valid directory: " + hoi4Path);
 			return;
 		}
-
-		// Verify required subdirectories under modPath
-		String[] requiredSubDirs = {
-				"common",
-				"history/states",
-				"map/strategicregions",
-				"localisation/english",
-				"common/national_focus",
-				"common/ideas",
-				"common/units"
-		};
-
-		for (String subDir : requiredSubDirs) {
-			File dir = new File(modPath, subDir);
-			if (!dir.exists() || !dir.isDirectory()) {
-				System.err.println("Error: Missing required subdirectory: " + dir.getAbsolutePath());
-				return;
-			}
-		}
 		
 		// Ensure this function doesn't reinitialize files unnecessarily
 		if (mod_folder != null && mod_folder.equals(modPathFile)) {
