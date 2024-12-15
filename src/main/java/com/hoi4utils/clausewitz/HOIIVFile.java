@@ -86,7 +86,7 @@ public class HOIIVFile implements FileUtils {
 		mod_common_folder = new File(modPath + "\\common");
 		mod_states_folder = new File(modPath + "\\history\\states");
 		mod_strat_region_dir = new File(modPath + "\\map\\strategicregions");
-		mod_localization_folder = new File(modPath + "\\localisation\\english");
+		mod_localization_folder = new File(modPath + "\\localisation\\english"); // Excepted that the dir has an 's' but the variable has a 'z'
 		mod_focus_folder = new File(modPath + "\\common\\national_focus");
 		mod_ideas_folder = new File(modPath + "\\common\\ideas");
 		mod_units_folder = new File(modPath + "\\common\\units");

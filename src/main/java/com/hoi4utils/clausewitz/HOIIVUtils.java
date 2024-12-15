@@ -1,6 +1,8 @@
 package com.hoi4utils.clausewitz;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
@@ -13,12 +15,26 @@ import javax.swing.*;
  * HOIIVUtils.java main method is here
  */
 public class HOIIVUtils {
-	// TODO: consider making a portable app where the save path is in the same directory with the jar
-	public static final String DEFAULT_PROPERTIES = "HOIIVUtils.properties"; // In JAR
-	public static final String PROPERTIES_FILE = System.getProperty("os.name").startsWith("Windows") // Outside JAR
-			? System.getenv("APPDATA") + File.separator + "HOIIVUtils" + File.separator + "hoi4utils.properties"
-			: System.getProperty("user.home") + File.separator + ".hoi4utils" + File.separator + "hoi4utils.properties";
-	private static Properties properties = new Properties();
+	/**
+	 * HOIIVUTILS Directory
+	 * Layout:
+	 * HOIIVUtils\\target\\HOIIVUtils-jar-with-dependencies.jar
+	 * HOIIVUtils\\demo_mod*
+	 * HOIIVUtils\\HOIIVUtils.bat
+	 * HOIIVUtils\\HOIIVUtils.properties
+	 * HOIIVUtils\\HOIIVUtils.sh
+	 */
+	public static String HOIIVUTILS_DIR;
+    static {
+        try {
+            HOIIVUTILS_DIR = new File(new File(HOIIVUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent()).getParent();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+	public static final String DEFAULT_PROPERTIES = "HOIIVUtils.properties"; // In JAR // Outside JAR
+	public static final String PROPERTIES_FILE = HOIIVUTILS_DIR + File.separator + "HOIIVUtils.properties";
+    private static Properties properties = new Properties();
 	static {
 		// Attempt to load external properties
 		if (loadExternalProperties()) {
@@ -29,14 +45,20 @@ public class HOIIVUtils {
 				throw new RuntimeException("Failed to initialize configuration: " + ex.getMessage(), ex);
 			}
 		}
-	}
+        try {
+            autoSetPaths();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 	public static final String HOIIVUTILS_VERSION = get("version");
+	static {
+		System.out.println("HOIIVUtils" + " " + HOIIVUTILS_VERSION + " launched");
+	}
 	public static final String DARK_MODE_STYLESHEETURL = "com/hoi4utils/ui/javafx_dark.css";
 	public static MenuController menuController;
 
 	public static void main(String[] args) {
-		System.out.println("HOIIVUtils" + " " + HOIIVUTILS_VERSION + " launched");
-
 		/**
 		 * Load modifiers and effects
 		 * preprocessing which doesn't require settings
@@ -46,15 +68,6 @@ public class HOIIVUtils {
 		EffectDatabase edb = new EffectDatabase();
 
 		HOIIVFile.createHOIIVFilePaths();
-		if (new File("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Hearts of Iron IV").exists()) {
-			set("hoi4.mod", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Hearts of Iron IV");
-		} else if (new File("~/.steam/steam/steamapps/common").exists()) {
-			set("hoi4.path", "~/.steam/steam/steamapps/common");
-		} else {
-			JOptionPane.showMessageDialog(null, "Couldn't find hoi4 install folder, please go to settings and add it (REQUIRED)", "Error Message", JOptionPane.WARNING_MESSAGE);
-			save();
-		}
-		save();
 		menuController = new MenuController();
 		menuController.launchMenuWindow(args); // Program starts!
 	}
@@ -133,10 +146,6 @@ public class HOIIVUtils {
 	private static void loadDefaultProperties() throws IOException {
 		File externalFile = new File(PROPERTIES_FILE);
 
-		if (externalFile.getParentFile() != null) {
-			externalFile.getParentFile().mkdirs();
-		}
-
 		if (!externalFile.exists()) {
 			externalFile.createNewFile();
 		}
@@ -159,5 +168,50 @@ public class HOIIVUtils {
 
 			System.out.println("Default properties copied to: " + externalFile.getAbsolutePath());
 		}
+	}
+
+	private static void autoSetPaths() throws URISyntaxException {
+		autoSetDemoModPath();
+		autoSetHOIIVPath();
+	}
+
+	private static void autoSetDemoModPath() throws URISyntaxException {
+		if (get("mod.path") == null) {
+			set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
+			System.out.println("auto set mod path to demo mod");
+		} else if (Paths.get(get("mod.path")).getFileName().toString() == "demo_mod") { // If mod path directory is named demo mod it will reset it incase entire directory moved
+			set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
+			System.out.println("auto set mod path to demo mod");
+		}
+	}
+
+	private static void autoSetHOIIVPath() {
+		// If the HOI4 path is already set, do nothing
+		String hoi4Path = get("hoi4.path");
+		if (hoi4Path != null) {
+			return;
+		}
+
+		// List of potential default paths to check
+		String[] possiblePaths = {
+				"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Hearts of Iron IV",
+				"~/.steam/steam/steamapps/common"
+		};
+
+		// Loop through potential paths and set the first valid one
+		for (String path : possiblePaths) {
+			String expandedPath = path.replace("~", System.getProperty("user.home"));
+			if (new File(expandedPath).exists()) {
+				set("hoi4.path", expandedPath);
+				System.out.println("Auto-set HOI4 path: " + expandedPath);
+				return;
+			}
+		}
+
+		// If no valid path found, show a message
+		JOptionPane.showMessageDialog(null,
+				"Couldn't find HOI4 install folder, please go to settings and add it (REQUIRED)",
+				"Error Message", JOptionPane.WARNING_MESSAGE);
+		save();
 	}
 }

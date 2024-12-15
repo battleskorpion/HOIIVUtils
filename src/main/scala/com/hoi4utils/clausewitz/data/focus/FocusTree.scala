@@ -41,7 +41,7 @@ object FocusTree {
       return
     }
     if (HOIIVFile.mod_focus_folder.listFiles == null || HOIIVFile.mod_focus_folder.listFiles.length == 0) {
-      System.err.println("No focuses found in " + HOIIVFile.mod_focus_folder)
+      System.out.println("No focuses found in " + HOIIVFile.mod_focus_folder)
       return
     }
     for (f <- HOIIVFile.mod_focus_folder.listFiles) {
