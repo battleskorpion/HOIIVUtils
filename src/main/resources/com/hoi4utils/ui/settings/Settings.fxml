@@ -82,6 +82,7 @@
                               <Label text="Hearts of Iron IV Folder:" GridPane.rowIndex="3" />
                               <TextField fx:id="hoi4PathTextField" onAction="#handleHOIIVPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/HeartsOfIron4/directory" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
                               <Button fx:id="hoi4FolderBrowseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHOIIVFileBrowseAction" prefHeight="25.0" prefWidth="70.0" text="Browse" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+                              <CheckBox fx:id="loadLocalizationCheckBox" mnemonicParsing="false" onAction="#handleLoadLocalizationCheckBoxAction" text="Load Localization" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

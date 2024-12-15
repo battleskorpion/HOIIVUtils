@@ -16,7 +16,6 @@ import com.hoi4utils.ui.menu.MenuController;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -52,6 +51,8 @@ public class SettingsController extends Application implements FXWindow {
 	@FXML
 	public CheckBox drawFocusTreesCheckBox;
 	@FXML
+	public CheckBox loadLocalizationCheckBox;
+	@FXML
 	public ComboBox<Screen> preferredMonitorComboBox;
 
 	public SettingsController() {
@@ -66,7 +67,7 @@ public class SettingsController extends Application implements FXWindow {
 
 		preferredMonitorComboBox.setItems(Screen.getScreens());
 
-		preferredMonitorComboBox.setCellFactory(cell -> new ListCell<>() {
+		preferredMonitorComboBox.setCellFactory(_ -> new ListCell<>() {
 			/**
 			 * Updates the item in the list view to the given value. The text of the item is set to "Screen
 			 * <number>: <width>x<height>" if the item is not empty, and null if the item is empty.
@@ -104,6 +105,7 @@ public class SettingsController extends Application implements FXWindow {
 		// Set the checkboxes to their default values
 		devModeCheckBox.setSelected(false);
 		drawFocusTreesCheckBox.setSelected(false);
+		loadLocalizationCheckBox.setSelected(false);
 //		preferredMonitorComboBox.setItems(); TODO:
 //		TODO: Themes box
 		System.out.println("SettingsController: UI Settings have been reset.");
@@ -111,14 +113,17 @@ public class SettingsController extends Application implements FXWindow {
 
 	private void loadUIWithSavedSettings() {
 		if (!"null".equals(HOIIVUtils.get("mod.path"))) {
-			modPathTextField.setText((String) HOIIVUtils.get("mod.path"));
+			modPathTextField.setText(HOIIVUtils.get("mod.path"));
 		}
 		if (!"null".equals(HOIIVUtils.get("hoi4.path"))) {
-			hoi4PathTextField.setText((String) HOIIVUtils.get("hoi4.path"));
+			hoi4PathTextField.setText(HOIIVUtils.get("hoi4.path"));
 		}
 		devModeCheckBox.setSelected(HOIIVUtils.getBoolean("dev.mode.enabled"));
 		drawFocusTreesCheckBox.setSelected(HOIIVUtils.getBoolean("draw.focus.tree.enabled"));
-//		preferredMonitorComboBox.setCellFactory(HOIIVUtils.getInt("preferred.screen")); TODO: HOIIVUtils.getInt("preferred.screen" returns ant int of the save prefered screen and I don't know how to make that show on the combo box with your factory @Battleskorp
+		
+//		TODO: HOIIVUtils.getInt("preferred.screen" returns ant int of the save preferred screen and
+//		I don't know how to make that show on the combo box with your factory @Battleskorp
+// 		preferredMonitorComboBox.setCellFactory(HOIIVUtils.getInt("preferred.screen")); 
 //		TODO: Themes
 		System.out.println("SettingsController: UI Settings have been updated with saved settings.");
 	}
@@ -133,23 +138,25 @@ public class SettingsController extends Application implements FXWindow {
 	public void start(Stage stage) {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
 
-		try {
-			Parent rootFXML = loader.load();
-			Scene scene = new Scene(rootFXML);
-			if (Objects.equals(HOIIVUtils.get("theme"), "dark")) {
-				scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
-			}
-			this.stage = stage;
-			stage.setScene(scene);
-			stage.setTitle(title);
-			stage.show();
-			stage.maxWidthProperty().bind(stage.widthProperty());
-			stage.maxHeightProperty().bind(stage.heightProperty());
-			System.out.println("The SettingsController instantiated its own Stage and displayed it.");
-		} catch (Exception e) {
-			System.err.println("Failed to load fxml file!!!!!");
-			e.printStackTrace();
+
+        Parent rootFXML;
+        try {
+            rootFXML = loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Scene scene = new Scene(rootFXML);
+		if (Objects.equals(HOIIVUtils.get("theme"), "dark")) {
+			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 		}
+		this.stage = stage;
+		stage.setScene(scene);
+		stage.setTitle(title);
+		stage.show();
+		stage.maxWidthProperty().bind(stage.widthProperty());
+		stage.maxHeightProperty().bind(stage.heightProperty());
+		System.out.println("The SettingsController instantiated its own Stage and displayed it.");
+		
 	}
 
 	/**
@@ -218,6 +225,10 @@ public class SettingsController extends Application implements FXWindow {
 
 	public void handleDrawFocusTreesCheckBoxAction() {
 		HOIIVUtils.set("draw.focus.tree.enabled", String.valueOf(drawFocusTreesCheckBox.isSelected()));
+	}
+	
+	public void handleLoadLocalizationCheckBoxAction() {
+		HOIIVUtils.set("load.localization.enabled", String.valueOf(drawFocusTreesCheckBox.isSelected()));
 	}
 
 	/**
