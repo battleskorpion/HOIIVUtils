@@ -54,14 +54,14 @@ public class HOIIVFile implements FileUtils {
 	 */
     public static void createHOIIVFilePaths() {
 	    // Initialize file objects
-	    createHOI4ModPaths();
-	    createHOI4BasePaths();
+	    createModPaths();
+	    createHOIIVPaths();
 
 		// Check for changes after setting the fields
 		changeNotifier.checkAndNotifyChanges();
 	}
 	
-	private static boolean createHOI4ModPaths() {
+	private static boolean createModPaths() {
 		String modPath = HOIIVUtils.get("mod.path");
 
 		if (modPath == null || modPath.isEmpty()) {
@@ -95,7 +95,7 @@ public class HOIIVFile implements FileUtils {
 		return true; 
 	}
 
-	private static boolean createHOI4BasePaths() {
+	private static boolean createHOIIVPaths() {
 		String hoi4Path = HOIIVUtils.get("hoi4.path");
 
 		if (hoi4Path == null || hoi4Path.isEmpty()) {
