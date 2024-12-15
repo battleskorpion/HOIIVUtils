@@ -1,10 +1,8 @@
 package com.hoi4utils.clausewitz.data.gfx;
 
-import com.hoi4utils.SettingsManager;
+import com.hoi4utils.clausewitz.HOIIVUtils;
 
 import java.io.File;
-
-import static com.hoi4utils.Settings.MOD_PATH;
 
 /**
  * This is the SpriteType file.
@@ -40,7 +38,7 @@ public class SpriteType {
 	 * @return absolute path texturefile for the gfx
 	 */
 	public File getTexturefileAbsolute() {
-		return new File(SettingsManager.get(MOD_PATH) + "\\" + texturefile.getPath());
+		return new File(HOIIVUtils.get("mod.path") + "\\" + texturefile.getPath());
 	}
 
 	/**
@@ -49,7 +47,7 @@ public class SpriteType {
 	 * @return absolute filepath of texturefile for this gfx
 	 */
 	public String getGFX() {
-		return SettingsManager.get(MOD_PATH) + "\\" + texturefile.getPath();
+		return HOIIVUtils.get("mod.path") + "\\" + texturefile.getPath();
 	}
 
 	public String getName() {

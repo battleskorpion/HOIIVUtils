@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.buildings;
 
-import com.hoi4utils.Settings;
+
 import com.hoi4utils.clausewitz.code.ClausewitzDate;
 import com.hoi4utils.ui.javafx.export.ExcelExport;
 import com.hoi4utils.ui.javafx.table.DoubleTableCell;
@@ -91,7 +91,7 @@ public class BuildingsByCountryWindow extends HOIIVUtilsWindow implements TableV
 			}
 		});
 
-		if (Settings.DEV_MODE.enabled()) {
+		if (HOIIVUtils.getBoolean("dev.mode")) {
 			JOptionPane.showMessageDialog(null, "dev - loaded rows: " + countryDataTable.getItems().size());
 		}
 	}

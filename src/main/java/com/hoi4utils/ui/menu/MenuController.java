@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.menu;
 
-import com.hoi4utils.Settings;
+
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
@@ -32,6 +32,7 @@ import com.hoi4utils.ui.settings.SettingsController;
 
 import javax.swing.*;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MenuController extends Application implements FXWindow {
@@ -75,7 +76,7 @@ public class MenuController extends Application implements FXWindow {
 
 	@FXML
 	void initialize() {
-		if (Settings.DEMO_MODE.enabled()) {
+		if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
 			focusTreeViewButton.setDisable(true);
 		} else {
 			focusTreeViewButton.setDisable(false);
@@ -92,7 +93,9 @@ public class MenuController extends Application implements FXWindow {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource), bundle);
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
-			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
+			if (Objects.equals(HOIIVUtils.get("theme"), "dark")) {
+				scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
+			}
 
 			this.stage = stage;
 			stage.setScene(scene);
@@ -104,8 +107,8 @@ public class MenuController extends Application implements FXWindow {
 			JOptionPane.showMessageDialog(null, "Error menu controller!");
 			e.printStackTrace();
 		}
-		if (!Settings.DEMO_MODE.enabled()) {
-			if (Settings.LOAD_LOCALIZATION.enabled()) {
+		if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
+			if (HOIIVUtils.getBoolean("load.localization.enabled")) {
 				LocalizationManager LocalizationManager = new EnglishLocalizationManager();
 				LocalizationManager.reload();
 			}

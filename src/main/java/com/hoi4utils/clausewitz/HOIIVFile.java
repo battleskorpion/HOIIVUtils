@@ -2,8 +2,6 @@ package com.hoi4utils.clausewitz;
 
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.PublicFieldChangeNotifier;
-import com.hoi4utils.Settings;
-import com.hoi4utils.SettingsManager;
 import com.hoi4utils.fileIO.FileListener.FileAdapter;
 import com.hoi4utils.fileIO.FileListener.FileEvent;
 import com.hoi4utils.fileIO.FileListener.FileWatcher;
@@ -53,20 +51,19 @@ public class HOIIVFile implements FileUtils {
 	private static final PublicFieldChangeNotifier changeNotifier = new PublicFieldChangeNotifier(HOIIVFile.class);
 
     public static void createHOIIVFilePaths() {
-		SettingsManager.initializeAndSaveSettings(null);
 
-		if (Settings.DEMO_MODE.enabled()) {
+		if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
 			System.out.println("Demo mode is on which means there is no modpath");
 			return;
 		}
 
-		String modPath = SettingsManager.get(Settings.MOD_PATH);
-		String hoi4Path = SettingsManager.get(Settings.HOI4_PATH);
+		String modPath = HOIIVUtils.get("mod.path");
+		String hoi4Path = HOIIVUtils.get("hoi4.path");
 		System.out.println("modPath: " + modPath);
 		System.out.println("hoi4Path: " + hoi4Path);
 
 		if (modPath == null) {
-			System.err.println("modPath is null, please set it in hoi4utils.properties");
+			System.err.println("modPath is null, please set it in settings");
 			return;
 		}
 
@@ -111,7 +108,7 @@ public class HOIIVFile implements FileUtils {
 					File file = event.getFile();
 					State.readState(file);
 					stateFilesWatcher.listenerPerformAction--;
-					if (Settings.DEV_MODE.enabled()) {
+					if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
 						State state = State.get(file);
 						System.out.println("State was created/loaded: " + state);
 					}
@@ -124,7 +121,7 @@ public class HOIIVFile implements FileUtils {
 					stateFilesWatcher.listenerPerformAction++;
 					File file = event.getFile();
 					State.readState(file);
-					if (Settings.DEV_MODE.enabled()) {
+					if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
 						State state = State.get(file);
 						System.out.println("State was modified: " + state);
 					}
@@ -139,7 +136,7 @@ public class HOIIVFile implements FileUtils {
 					File file = event.getFile();
 					State.deleteState(file);
 					stateFilesWatcher.listenerPerformAction--;
-					if (Settings.DEV_MODE.enabled()) {
+					if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
 						State state = State.get(file);
 						System.out.println("State was deleted: " + state);
 					}

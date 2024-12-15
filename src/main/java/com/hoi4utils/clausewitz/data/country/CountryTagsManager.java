@@ -2,15 +2,11 @@ package com.hoi4utils.clausewitz.data.country;
 
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.SettingsManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-
-import static com.hoi4utils.Settings.HOI4_PATH;
-import static com.hoi4utils.Settings.MOD_PATH;
 
 public class CountryTagsManager extends HOIIVUtils implements Iterable<CountryTag> {
 
@@ -24,9 +20,9 @@ public class CountryTagsManager extends HOIIVUtils implements Iterable<CountryTa
 	private static ArrayList<CountryTag> loadCountryTags() throws IOException {
 		country_tags = new ArrayList<>();
 		
-		if (SettingsManager.get(MOD_PATH) != null) mod_country_tags_folder = new File(SettingsManager.get(MOD_PATH) + "\\common\\country_tags");
+		if (HOIIVUtils.get("mod.path") != null) mod_country_tags_folder = new File(HOIIVUtils.get("mod.path") + "\\common\\country_tags");
 		else mod_country_tags_folder = null; 
-		if (SettingsManager.get(HOI4_PATH) != null) base_country_tags_folder = new File(SettingsManager.get(HOI4_PATH) + "\\common\\country_tags");
+		if (HOIIVUtils.get("hoi4.path") != null) base_country_tags_folder = new File(HOIIVUtils.get("hoi4.path") + "\\common\\country_tags");
 		else base_country_tags_folder = null; 
 		
 		if (mod_country_tags_folder != null && mod_country_tags_folder.exists() && mod_country_tags_folder.isDirectory() 
@@ -113,12 +109,13 @@ public class CountryTagsManager extends HOIIVUtils implements Iterable<CountryTa
 		}
 	}
 
-	public static CountryTag get(String tag) {
-		if (exists(tag)) {
-			return country_tags.stream().filter(ct -> ct.get().equals(tag)).findFirst().orElse(null);
-		}
-		return null;
-	}
+	//unused and causing conflict @battleskorp fix this cause the solution depends on what you want
+//	public static CountryTag get(String tag) {
+//		if (exists(tag)) {
+//			return country_tags.stream().filter(ct -> ct.get().equals(tag)).findFirst().orElse(null);
+//		}
+//		return null;
+//	}
 
 	public static boolean exists(String tag) {
 		if (country_tags == null) {

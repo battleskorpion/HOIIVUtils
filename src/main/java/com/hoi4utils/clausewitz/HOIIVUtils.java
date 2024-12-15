@@ -1,82 +1,150 @@
 package com.hoi4utils.clausewitz;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 
-import com.hoi4utils.Settings;
-import com.hoi4utils.SettingsManager;
 import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
 import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
 import com.hoi4utils.ui.menu.MenuController;
-import com.hoi4utils.ui.settings.SettingsController;
 
 /**
  * HOIIVUtils.java main method is here
  */
 public class HOIIVUtils {
-
-	public static final String HOIIVUTILS_NAME = "HOIIVUtils";
-	public static final String VERSION;
+	// TODO: consider making a portable app where the save path is in the same directory with the jar
+	public static final String DEFAULT_PROPERTIES = "HOIIVUtils.properties"; // In JAR
+	public static final String PROPERTIES_FILE = System.getProperty("os.name").startsWith("Windows") // Outside JAR
+			? System.getenv("APPDATA") + File.separator + "HOIIVUtils" + File.separator + "hoi4utils.properties"
+			: System.getProperty("user.home") + File.separator + ".hoi4utils" + File.separator + "hoi4utils.properties";
+	private static Properties properties = new Properties();
 	static {
-		Properties properties = new Properties();
-		try (InputStream inputStream = HOIIVUtils.class.getResourceAsStream("/HOIIVUtils.properties")) {
-			properties.load(inputStream);
-			VERSION = properties.getProperty("version");
-		} catch (IOException e) {
-			throw new ExceptionInInitializerError(e);
+		// Attempt to load external properties
+		loadExternalProperties();
+		try {
+			loadDefaultProperties();
+			loadExternalProperties();
+		} catch (IOException ex) {
+			throw new RuntimeException("Failed to initialize configuration: " + ex.getMessage(), ex);
 		}
 	}
-	public static final String HOIIVUTILS_VERSION = "Version " + VERSION;
+	public static final String HOIIVUTILS_VERSION = get("version");
 	public static final String DARK_MODE_STYLESHEETURL = "com/hoi4utils/ui/javafx_dark.css";
-	public static SettingsController settingsController;
 	public static MenuController menuController;
 
-	/**
-	 * Main method for HOIIVUtils.
-	 * <p> 
-	 * If firstTimeSetup is true, then launch the settings window. If firstTimeSetup is false, then
-	 * create the HOIIVUtils directory and launch the settings window if SKIP_SETTINGS is false,
-	 * otherwise launch the menu window.
-	 *
-     */
 	public static void main(String[] args) {
-		System.out.println(HOIIVUTILS_NAME + " " + HOIIVUTILS_VERSION + " launched");
+		System.out.println("HOIIVUtils" + " " + HOIIVUTILS_VERSION + " launched");
 
-		SettingsManager.convertOldPropertiesFile();
+		/**
+		 * Load modifiers and effects
+		 * preprocessing which doesn't require settings
+		 * TODO Fix module or pom.xml to compile the code with the database (.db) files
+		 */
+		ModifierDatabase mdb = new ModifierDatabase();
+		EffectDatabase edb = new EffectDatabase();
 
-		// Start log
-		// TODO Redo all of logging to fit with new save location
-		// TODO make all the logs go to a console window that can be opened or closed
-		// (including stack traces)
-		// HOIIVUtilsLog.startLog();
+		demoMode();
+		menuController = new MenuController();
+		menuController.launchMenuWindow(args); // Program starts!
+	}
 
-		// Load modifiers and effects
-		/* preprocessing which doesn't require settings */
-		// TODO Fix module or pom.xml to compile the code with the database (.db) files
-		@SuppressWarnings("unused")
-		ModifierDatabase mdb = new ModifierDatabase(); // load modifiers
-		@SuppressWarnings("unused")
-		EffectDatabase edb = new EffectDatabase(); // load effects
+	public static void demoMode() {
 
-		// Check if this is the first time the program is run
-		if (Boolean.TRUE.equals(!new File(SettingsManager.NEW_PROPERTIES_PATH).exists())) {
-			System.out.println("HOIIVUtils launched the settings window");
-			settingsController = new SettingsController();
-			settingsController.launchSettingsWindow(args);
+		if (get("mod.path") == null || get("hoi4.path") == null) {
+			set("demo.mode.enabled", "true");
+			System.out.println("DemoModeFunctionOn");
 		} else {
-			HOIIVFile.createHOIIVFilePaths();
-			if (Settings.SKIP_SETTINGS.enabled()) {
-				System.out.println("HOIIVUtils launched the menu window");
-				menuController = new MenuController();
-				menuController.launchMenuWindow(args);
-			} else {
-				System.out.println("HOIIVUtils launched the settings window and properties files exists");
-				settingsController = new SettingsController();
-				settingsController.launchSettingsWindow(args);
-			}
+			set("demo.mode.enabled", "false");
+			System.out.println("DemoModeFunctionOff");
 		}
 	}
 
+	public static String get(String key) {
+		return properties.getProperty(key);
+	}
+
+	public static int getInt(String key) {
+		return Integer.parseInt(properties.getProperty(key, "0"));
+	}
+
+	public static boolean getBoolean(String key) {
+		return Boolean.parseBoolean(properties.getProperty(key, "false"));
+	}
+
+	public static void set(String key, String value) {
+		properties.setProperty(key, value);
+		save();
+	}
+
+	public static void save() {
+		File externalFile = new File(PROPERTIES_FILE);
+		if (!externalFile.exists()) {
+			try {
+				loadDefaultProperties();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		try (OutputStream output = new FileOutputStream(externalFile)) {
+			properties.store(output, "HOIIVUtils Configuration");
+			System.out.println("Configuration saved to: " + externalFile.getAbsolutePath());
+		} catch (IOException e) {
+			System.err.println("Failed to save configuration: " + e.getMessage());
+		}
+	}
+
+	private static void loadExternalProperties() {
+		File externalFile = new File(PROPERTIES_FILE);
+		if (externalFile.exists()) {
+			try (FileInputStream input = new FileInputStream(externalFile)) {
+				properties.load(input);
+				System.out.println("External configuration loaded from: " + PROPERTIES_FILE);
+			} catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+			System.out.println("External configuration file not found");
+			return;
+		}
+	}
+
+	/**
+	 * Loads the default properties file from within the JAR and copies it to an external location.
+	 * If the external properties file does not exist, this method creates it along with the necessary directories.
+	 * The external file serves as the application's configurable settings file.
+	 *
+	 * @throws IOException if an I/O error occurs during file creation or copying.
+	 * @throws FileNotFoundException if the default properties file cannot be found in the JAR.
+	 */
+	private static void loadDefaultProperties() throws IOException {
+		File externalFile = new File(PROPERTIES_FILE);
+
+		if (externalFile.getParentFile() != null) {
+			externalFile.getParentFile().mkdirs();
+		}
+
+		if (!externalFile.exists()) {
+			externalFile.createNewFile();
+		}
+
+		try (InputStream defaultConfig = HOIIVUtils.class.getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES);
+			 OutputStream externalOut = new FileOutputStream(externalFile)) {
+
+			System.out.println("Default Config" + defaultConfig);
+
+			if (defaultConfig == null) {
+				throw new FileNotFoundException("Default properties file not found in JAR: " + DEFAULT_PROPERTIES);
+			}
+
+			byte[] buffer = new byte[1024];
+			int bytesRead;
+			while ((bytesRead = defaultConfig.read(buffer)) != -1) {
+				externalOut.write(buffer, 0, bytesRead);
+				System.out.println("bytesRead:" + bytesRead);
+			}
+
+			System.out.println("Default properties copied to: " + externalFile.getAbsolutePath());
+		}
+	}
 }
