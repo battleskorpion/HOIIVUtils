@@ -114,6 +114,7 @@ public class SettingsController extends Application implements FXWindow {
 		}
 		devModeCheckBox.setSelected(HOIIVUtils.getBoolean("dev.mode.enabled"));
 		drawFocusTreesCheckBox.setSelected(HOIIVUtils.getBoolean("draw.focus.tree.enabled"));
+		loadLocalizationCheckBox.setSelected(HOIIVUtils.getBoolean("load.localization.enabled"));
 		
 //		TODO: HOIIVUtils.getInt("preferred.screen" returns ant int of the save preferred screen and
 //		I don't know how to make that show on the combo box with your factory @Battleskorp
