@@ -9,6 +9,7 @@ import com.hoi4utils.clausewitz.map.seed.BorderMapping;
 import com.aparapi.Kernel;
 import com.aparapi.Range;
 
+///  todo what is that distance kernel
 public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGeneration implements ProvinceDetermination<P> {
     private Heightmap heightmap;
     private ProvinceMap provinceMap;
@@ -33,8 +34,11 @@ public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGe
         /* gpu calculation time! */
         final int offsetPotential = 4;
         final int[] rgb_values = new int[heightmap.width() * heightmap.height()];
+        System.out.println("Initializing distance kernel...");
         DistanceKernel kernel = new DistanceKernel(rgb_values);
-        kernel.execute(Range.create2D(heightmap.width(), heightmap.height()));
+        Range range = Range.create2D(heightmap.width(), heightmap.height(), 16, 16);
+        kernel.execute(range);
+        System.out.println("Distance kernel executed.");
         for (int y = 0; y < heightmap.height(); y++) {
             for (int x = 0; x < heightmap.width(); x++) {
                 points.setRGB(x, y, rgb_values[y * heightmap.width() + x]);
