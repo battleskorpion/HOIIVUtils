@@ -219,7 +219,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	}
 
 	public void drawFocusTree() {
-		if (HOIIVUtils.getBoolean("draw.focus.tree.enabled")) return;
+		if (!HOIIVUtils.getBoolean("draw.focus.tree.enabled")) return;
 		if (focusTree == null) return;
 
 		var focuses = CollectionConverters.asJavaCollection(focusTree.focuses());
