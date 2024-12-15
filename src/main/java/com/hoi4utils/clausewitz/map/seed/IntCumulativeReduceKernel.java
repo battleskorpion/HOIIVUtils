@@ -10,7 +10,7 @@ public class IntCumulativeReduceKernel extends Kernel {
 
     public void cumulativeReduce(int[] reduceInput) {
         _reduceInput = reduceInput.clone();
-        final Range range = Range.create(_reduceInput.length);
+        final Range range = Range.create(_reduceInput.length, 256);
         _reduceOutput = new int[range.getNumGroups(0)][range.getLocalSize(0)];
         _cReduceIterations = (int) Math.ceil(Math.log(_reduceInput.length) / Math.log(2));
         this.execute(range);

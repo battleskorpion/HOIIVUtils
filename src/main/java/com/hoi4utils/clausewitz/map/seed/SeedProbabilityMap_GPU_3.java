@@ -63,9 +63,11 @@ public class SeedProbabilityMap_GPU_3 extends AbstractMapGeneration {
         // % groupSize == 0
         // [prime numbers run bad with this impl, but that's fine bc we use specific
         // multiples of 2, 4, 8 for the maps]
-        Range range = Range.create2D(width, height);
+        Range range = Range.create2D(width, height, 16, 16); 
+        range.setMaxWorkGroupSize(256);
         kernel.execute(range);
         kernel.dispose();
+        System.out.println("Ran initialize probability map Kernel");
         seedProbabilityMap = _seedMap;
 
         //normalize(); // initial normalization of probabilities to sum of 1.0    // todo may not be necessary
@@ -119,11 +121,13 @@ public class SeedProbabilityMap_GPU_3 extends AbstractMapGeneration {
             reduceKernel.reduce();
             int[] reducedData = reduceKernel.results();
             reduceKernel.dispose();
+            System.out.println("Ran reduceKernel");
             int probabilitySum = IntStream.of(reducedData).sum();
             IntCumulativeReduceKernel cReduceKernel = new IntCumulativeReduceKernel();
             cReduceKernel.cumulativeReduce(_data);    // just once
             int[][] cReducedData = cReduceKernel.results(); // again results are per workgroup
             cReduceKernel.dispose();
+            System.out.println("Ran cReduceKernel");
 
             int p = (int) Math.ceil(randProbabilities[i] * probabilitySum);
             pp = p;
@@ -151,9 +155,12 @@ public class SeedProbabilityMap_GPU_3 extends AbstractMapGeneration {
 //                    _data[gid] = cReducedData[groupID][localID];
                 }
             };
-            Range range = Range.create(size);
+            Range range = Range.create(size, 256);
+            range.setLocalIsDerived(true);
+            range.setMaxWorkGroupSize(256);
             pKernel.execute(range);
             pKernel.dispose();
+            System.out.println("Ran pKernel");
 
 //            int minY = Math.max(pointY[0] - r, 0);
 //            int maxY = Math.min(pointY[0] + r, seedProbabilityMap.length - 1);
@@ -175,6 +182,7 @@ public class SeedProbabilityMap_GPU_3 extends AbstractMapGeneration {
             };
             adjKernel.execute(range);
             adjKernel.dispose();
+            System.out.println("Ran adjKernel");
         }
 
         System.out.println("thread 256 data: " + _data[256]);

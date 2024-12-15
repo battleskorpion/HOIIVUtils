@@ -12,7 +12,7 @@ public class IntReduceKernel extends Kernel {
 
     public void reduce(int[] reduceInput) {
         _reduceInput = reduceInput.clone();
-        final Range range = Range.create(_reduceInput.length);
+        final Range range = Range.create(_reduceInput.length, 256);
         _reduceOutput = new int[range.getNumGroups(0)];
         _sReduceData = new int[range.getLocalSize(0)];
         execute(range);
@@ -20,7 +20,7 @@ public class IntReduceKernel extends Kernel {
 
     public void reduce() {
         _reduceInput = _reduceOutput;
-        final Range range = Range.create(_reduceInput.length);
+        final Range range = Range.create(_reduceInput.length, 256);
         _reduceOutput = new int[range.getNumGroups(0)];
         _sReduceData = new int[range.getLocalSize(0)];
         execute(range);
