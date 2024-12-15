@@ -179,7 +179,7 @@ public class SettingsController extends Application implements FXWindow {
 		if (pathText.isEmpty()) return;
 
 		File modFile = new File(pathText);
-		if (modFile.exists() && modFile.isDirectory()) {HOIIVUtils.set("hoi4.path", String.valueOf(modFile));}
+		if (modFile.exists() && modFile.isDirectory()) {HOIIVUtils.set("mod.path", String.valueOf(modFile));}
 	}
 
 	public void handleHOIIVPathTextField() {
@@ -196,7 +196,7 @@ public class SettingsController extends Application implements FXWindow {
 		modFile = FXWindow.openChooser(modFolderBrowseButton, modFile, true);
 
 		if (modFile == null) return;
-		if (modFile.exists() && modFile.isDirectory()) {HOIIVUtils.set("hoi4.path", String.valueOf(modFile));}
+		if (modFile.exists() && modFile.isDirectory()) {HOIIVUtils.set("mod.path", String.valueOf(modFile));}
 
 		modPathTextField.setText(modFile.getAbsolutePath());
 	}
