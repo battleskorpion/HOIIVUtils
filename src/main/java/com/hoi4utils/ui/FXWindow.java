@@ -1,7 +1,8 @@
 package com.hoi4utils.ui;
 
 import com.hoi4utils.FileUtils;
-import com.hoi4utils.Settings;
+
+import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.ui.hoi4localization.AllFocusTreesWindow;
 import javafx.beans.property.SimpleObjectProperty;
@@ -107,7 +108,7 @@ public interface FXWindow {
 	 * @param stage
 	 */
 	default void decideScreen(Stage stage) {
-		Integer preferredScreen = (Integer) Settings.PREFERRED_SCREEN.getSetting();
+		Integer preferredScreen = (Integer) HOIIVUtils.getInt("preferred.screen");
 		ObservableList<Screen> screens = Screen.getScreens();
 		if (preferredScreen > screens.size() - 1) {
 			System.err.println("Preferred screen does not exist, resorting to defaults.");
@@ -147,7 +148,7 @@ public interface FXWindow {
 	}
 
 	default void openError(Exception exception) {
-		if (Settings.DEV_MODE.enabled()) {
+		if (HOIIVUtils.getBoolean("dev.mode")) {
 			exception.printStackTrace();
 		}
 		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(),
@@ -155,7 +156,7 @@ public interface FXWindow {
 	}
 
 	default void openError(String s) {
-		if (Settings.DEV_MODE.enabled()) {
+		if (HOIIVUtils.getBoolean("dev.mode")) {
 			System.err.println("open error window for error message: " + s);
 		}
 		JOptionPane.showMessageDialog(null, s, "Error Message", JOptionPane.WARNING_MESSAGE);
@@ -182,7 +183,7 @@ public interface FXWindow {
 		table.setItems(data);       // this is giving the factories the list of objects to collect
 									// their data from.
 
-		if (Settings.DEV_MODE.enabled()) System.out.println("Loaded data into table: " + table.getId());
+		if (HOIIVUtils.getBoolean("dev.mode")) System.out.println("Loaded data into table: " + table.getId());
 	}
 
 	default <S> void loadTableView(TableViewWindow window, TableView<S> focusListTable, ObservableList<S>
@@ -258,7 +259,7 @@ public interface FXWindow {
 	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> tableCellDataCallback(
 			Function<S, ?> propertyGetter) {
 		return cellData -> {
-			if (Settings.DEV_MODE.enabled()) {
+			if (HOIIVUtils.getBoolean("dev.mode")) {
 				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
 			}
 			// unchecked cast is necessary because the compiler doesn't know that the given
@@ -283,7 +284,7 @@ public interface FXWindow {
 	static <S, T> Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> treeTableCellDataCallback(
 			Function<S, ?> propertyGetter) {
 		return cellData -> {
-			if (Settings.DEV_MODE.enabled()) {
+			if (HOIIVUtils.getBoolean("dev.mode")) {
 				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue().getValue()));
 			}
 			// unchecked cast is necessary because the compiler doesn't know that the given

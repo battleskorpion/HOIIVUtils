@@ -1,5 +1,6 @@
 package com.hoi4utils.clausewitz.code.effect
 
+import com.hoi4utils.clausewitz.HOIIVUtils
 import com.hoi4utils.clausewitz.BoolType
 import com.hoi4utils.clausewitz.code.scope.ScopeType
 import com.hoi4utils.clausewitz.data.country.CountryTag
@@ -165,7 +166,9 @@ class EffectDatabase(databaseName: String) {
 
           loadedEffects ++= effects
         } else {
-          System.out.println("No parameters for " + pdxIdentifier + " in effects database.")
+          if (HOIIVUtils.getBoolean("dev.mode")) {
+            System.out.println("No parameters for " + pdxIdentifier + " in effects database.")
+          }
         }
       }
     } catch {
@@ -213,11 +216,11 @@ class EffectDatabase(databaseName: String) {
         val parameterStr = parametersStrlist(i).trim
         var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
         data = data.filter((s: String) => s.nonEmpty)
-//        if (data.length >= 2) {
-//          val paramIdentifierStr = data(0).trim
-//          val paramTypeStr = data(1).trim
-//          val paramValueType = ParameterValueType.of(paramTypeStr)
-//        }
+        //        if (data.length >= 2) {
+        //          val paramIdentifierStr = data(0).trim
+        //          val paramTypeStr = data(1).trim
+        //          val paramValueType = ParameterValueType.of(paramTypeStr)
+        //        }
         if (data.length == 1) {
           if (data(0).trim.startsWith("<") && data(0).trim.endsWith(">")) {
             //
@@ -264,12 +267,12 @@ class EffectDatabase(databaseName: String) {
   }
 
   //  private def parseEnumSet(enumSetString: String): EnumSet[ScopeType] = {
-//    if (enumSetString == null || enumSetString.isEmpty || enumSetString == "none") null
-//    else {
-//      val enumValues = enumSetString.split(", ")
-//      enumValues.map(ScopeType.valueFromString).collect(Collectors.toCollection(() => EnumSet.noneOf(classOf[ScopeType])))
-//    }
-//  }
+  //    if (enumSetString == null || enumSetString.isEmpty || enumSetString == "none") null
+  //    else {
+  //      val enumValues = enumSetString.split(", ")
+  //      enumValues.map(ScopeType.valueFromString).collect(Collectors.toCollection(() => EnumSet.noneOf(classOf[ScopeType])))
+  //    }
+  //  }
   private def parseEnumSet(enumSetString: String): Option[Set[ScopeType]] = {
     Option(enumSetString).filter(_.nonEmpty).filter(_ != "none").map { str =>
       str.split(", ").flatMap { enumName =>

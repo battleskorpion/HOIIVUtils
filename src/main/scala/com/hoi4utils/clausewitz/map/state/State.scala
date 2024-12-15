@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.map.state
 
-import com.hoi4utils.clausewitz.HOIIVFile
+import com.hoi4utils.clausewitz.{HOIIVFile, HOIIVUtils}
 import com.hoi4utils.clausewitz.data.country.CountryTag
 import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.code.ClausewitzDate
@@ -32,7 +32,14 @@ object State {
   /* static */
   private val states = new ListBuffer[State]
 
+  /**
+   * TODO: Make Demo
+   */
   def read(): Unit = {
+    if (HOIIVUtils.get("mod.path") == null) {
+      System.err.println("Skipped State Reading")
+      return
+    }
     if (!HOIIVFile.mod_states_folder.exists || !HOIIVFile.mod_states_folder.isDirectory) {
       System.err.println("In State.java - " + HOIIVFile.mod_states_folder + " is not a directory, or etc.")
       return

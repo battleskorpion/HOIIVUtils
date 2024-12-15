@@ -38,8 +38,9 @@
         "**/*.map"
 	],
 	"java.compile.nullAnalysis.mode": "automatic",
-	// Java Project HOIIVUtils Settings 
+
 	"java.project.referencedLibraries": [
+		"target/classes",
 		"lib/**/*.jar"
 	],
 	"java.configuration.runtimes": [],
@@ -57,7 +58,7 @@
 	"java.configuration.updateBuildConfiguration": "automatic",
 	"terminal.integrated.scrollback": 1e+69,
 	"maven.view": "hierarchical",
-	// formatting
+
 	"java.format.settings.url": ".vscode\\custom-eclipse-java-google-style.xml",
 	"[java]": {
 		"editor.defaultFormatter": "redhat.java",
@@ -70,12 +71,12 @@
 		"**/target": true
 	},
 	"java.maven.downloadSources": true,
-	"java.import.maven.offline.enabled": true,
+	"java.import.maven.offline.enabled": false,
 	"java.eclipse.downloadSources": true,
 	"java.project.sourcePaths": [
 		"src\\main\\scala"
 		],
 	"[scala]": {
-	"editor.defaultFormatter": "scalameta.metals",
-	},
+	"editor.defaultFormatter": "scalameta.metals"
+	}
 	}
