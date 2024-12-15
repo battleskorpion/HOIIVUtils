@@ -118,13 +118,15 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		if (focusTree == null) {
 			focusTree = FocusTree$.MODULE$.get(new File(HOIIVFile.mod_focus_folder + "//massachusetts.txt")).getOrElse(null);
 		}
-		try {
-			FixFocus.fixLocalization(focusTree);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
-		// Draw the focus tree
+        try {
+            FixFocus.fixLocalization(focusTree);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        // Draw the focus tree
 		drawFocusTree();
 
 		if (HOIIVUtils.getBoolean("dev.mode")) {

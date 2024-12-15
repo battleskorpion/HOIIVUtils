@@ -40,6 +40,7 @@ public record SubUnit(
 		if (!dir.isDirectory()) {
 			throw new IllegalArgumentException(dir + " is not a directory");
 		}
+		// TODO: account for null, causes Unit window not to load 
 		if (dir.listFiles().length == 0) {
 			throw new IllegalArgumentException(dir + " is empty");
 		}
