@@ -234,6 +234,7 @@ public class SettingsController extends Application implements FXWindow {
 	 * User Interactive Button in Settings Window Closes Settings Window Opens Menu Window
 	 */
 	public void handleOkButtonAction() {
+		HOIIVFile.createHOIIVFilePaths();
 		hideWindow(idOkButton);
 		new MenuController().open();
 	}
