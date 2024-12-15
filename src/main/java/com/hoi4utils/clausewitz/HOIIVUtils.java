@@ -54,11 +54,22 @@ public class HOIIVUtils {
 	}
 
 	public static int getInt(String key) {
-		return Integer.parseInt(properties.getProperty(key, "0"));
+		try {
+			return Integer.parseInt(properties.getProperty(key, "0"));
+		} catch (NumberFormatException e) {
+			// log this todo
+			return 0;
+		}
 	}
 
+	// todo do we want null for a unset setting?
 	public static boolean getBoolean(String key) {
-		return Boolean.parseBoolean(properties.getProperty(key, "false"));
+		try {
+			return Boolean.parseBoolean(properties.getProperty(key, "false"));
+		} catch (NumberFormatException e) {
+			// log this todo
+			return false;
+		}
 	}
 
 	public static void set(String key, String value) {
