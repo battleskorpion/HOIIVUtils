@@ -53,14 +53,20 @@ public class SettingsController extends Application implements FXWindow {
 	@FXML
 	public CheckBox loadLocalizationCheckBox;
 	@FXML
+	public RadioButton darkTheme;
+	@FXML
+	public RadioButton lightTheme;
+	@FXML
 	public ComboBox<Screen> preferredMonitorComboBox;
 
 	@FXML
 	void initialize() {
 		idVersionLabel.setText(HOIIVUtils.HOIIVUTILS_VERSION);
-		setDefault();
+		loadUIWithSavedSettings();
+		loadMonitor();
+	}
 
-		// TODO: Extract this and clean it up
+	private void loadMonitor() {
 		preferredMonitorComboBox.setItems(Screen.getScreens());
 		preferredMonitorComboBox.setCellFactory(_ -> new ListCell<>() {
 			/**
@@ -81,46 +87,21 @@ public class SettingsController extends Application implements FXWindow {
 				}
 			}
 		});
-
-		loadUIWithSavedSettings();
-	}
-
-	/**
-	 * Resets the settings to their default values. This involves clearing the mod path text field and
-	 * setting all the checkboxes to their default values. It also disables the OK button and the delete
-	 * settings button.
-	 */
-	private void setDefault() {
-		// Clear the mod path text field
-		modPathTextField.clear();
-		hoi4PathTextField.clear();
-		modPathTextField.setDisable(false);
-		hoi4PathTextField.setDisable(false);
-		// Set the checkboxes to their default values
-		devModeCheckBox.setSelected(false);
-		drawFocusTreesCheckBox.setSelected(false);
-		loadLocalizationCheckBox.setSelected(false);
-//		preferredMonitorComboBox.setItems(); TODO:
-//		TODO: Themes box
-		System.out.println("SettingsController: UI Settings have been reset.");
 	}
 
 	private void loadUIWithSavedSettings() {
+		modPathTextField.clear();
 		if (!"null".equals(HOIIVUtils.get("mod.path"))) {
 			modPathTextField.setText(HOIIVUtils.get("mod.path"));
 		}
+		hoi4PathTextField.clear();
 		if (!"null".equals(HOIIVUtils.get("hoi4.path"))) {
 			hoi4PathTextField.setText(HOIIVUtils.get("hoi4.path"));
 		}
 		devModeCheckBox.setSelected(HOIIVUtils.getBoolean("dev.mode.enabled"));
 		drawFocusTreesCheckBox.setSelected(HOIIVUtils.getBoolean("draw.focus.tree.enabled"));
 		loadLocalizationCheckBox.setSelected(HOIIVUtils.getBoolean("load.localization.enabled"));
-		
-//		TODO: HOIIVUtils.getInt("preferred.screen" returns ant int of the save preferred screen and
-//		I don't know how to make that show on the combo box with your factory @Battleskorp
-// 		preferredMonitorComboBox.setCellFactory(HOIIVUtils.getInt("preferred.screen")); 
-//		TODO: Themes
-		System.out.println("SettingsController: UI Settings have been updated with saved settings.");
+		darkTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "dark"));
 	}
 
 	/**
@@ -150,7 +131,6 @@ public class SettingsController extends Application implements FXWindow {
 		stage.show();
 		stage.maxWidthProperty().bind(stage.widthProperty());
 		stage.maxHeightProperty().bind(stage.heightProperty());
-		System.out.println("The SettingsController instantiated its own Stage and displayed it.");
 		
 	}
 
@@ -163,7 +143,6 @@ public class SettingsController extends Application implements FXWindow {
 			stage.show();
 			stage.maxWidthProperty().bind(stage.widthProperty());
 			stage.minWidthProperty().bind(stage.widthProperty());
-
 		} else {
 			start(new Stage());
 		}
@@ -224,6 +203,18 @@ public class SettingsController extends Application implements FXWindow {
 	
 	public void handleLoadLocalizationCheckBoxAction() {
 		HOIIVUtils.set("load.localization.enabled", String.valueOf(loadLocalizationCheckBox.isSelected()));
+	}
+
+	public void handleDarkThemeRadioAction() {
+		if (darkTheme.isSelected()) {
+			HOIIVUtils.set("theme", "dark");
+		}
+	}
+
+	public void handleLightThemeRadioAction() {
+		if (lightTheme.isSelected()) {
+			HOIIVUtils.set("theme", "light");
+		}
 	}
 
 	/**

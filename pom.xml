@@ -59,13 +59,9 @@
 		<maven.compiler.target>22</maven.compiler.target>
 		<maven.compiler.testSource>22</maven.compiler.testSource>
 		<maven.compiler.testTarget>22</maven.compiler.testTarget>
-		<project.organization.name>battleskorpian</project.organization.name>
+		<project.organization.name>battleskorpion</project.organization.name>
 		<project.inceptionYear>2022</project.inceptionYear>
-		<JavaFX.version>22.0.1</JavaFX.version>
 		<JUnit.version>5.10.2</JUnit.version>
-		<log4j.version>2.23.1</log4j.version>
-		<lombok.version>1.18.32</lombok.version>
-		<scala.version>3.5.2</scala.version>
 	</properties>
 
 	<dependencyManagement>
@@ -84,48 +80,48 @@
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
-			<version>${JavaFX.version}</version>
+			<version>22.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-fxml</artifactId>
-			<version>${JavaFX.version}</version>
+			<version>22.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<scope>test</scope>
+			<groupId>org.testfx</groupId>
+			<artifactId>testfx-core</artifactId>
+			<version>4.0.18</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>${log4j.version}</version>
+			<groupId>org.testfx</groupId>
+			<artifactId>testfx-junit5</artifactId>
+			<version>4.0.18</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>${lombok.version}</version>
+			<version>1.18.32</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<version>3.9.6</version>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.47.1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-jar-plugin</artifactId>
-			<version>3.4.1</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>5.2.5</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-resources-plugin</artifactId>
-			<version>3.3.1</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.24.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.24.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jgrapht</groupId>
@@ -147,51 +143,17 @@
 			<artifactId>jgrapht-opt</artifactId>
 			<version>1.5.2</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jetbrains</groupId>
-			<artifactId>annotations</artifactId>
-			<version>24.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>5.2.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.xerial</groupId>
-			<artifactId>sqlite-jdbc</artifactId>
-			<version>3.36.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>2.0.13</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>2.0.13</version>
-		</dependency>
+		<!-- gpu coding -->
 		<dependency>
 			<groupId>com.aparapi</groupId>
 			<artifactId>aparapi</artifactId>
 			<version>3.0.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.testfx</groupId>
-			<artifactId>testfx-junit5</artifactId>
-			<version>4.0.18</version>
-		</dependency>
-		<dependency>
-			<groupId>org.testfx</groupId>
-			<artifactId>testfx-core</artifactId>
-			<version>4.0.18</version>
-		</dependency>
-		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
 			<version>3.25.3</version>
-        </dependency>
+		</dependency>
 		<dependency>
 			<groupId>io.github.java-diff-utils</groupId>
 			<artifactId>java-diff-utils</artifactId>
@@ -202,12 +164,17 @@
 			<artifactId>richtextfx</artifactId>
 			<version>0.11.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>24.1.0</version>
+		</dependency>
 
 		<!-- scala -->
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala3-library_3</artifactId>
-			<version>${scala.version}</version>
+			<version>3.6.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.scalatest</groupId>
@@ -219,6 +186,7 @@
 
 	<build>
 		<plugins>
+			<!-- JavaFX Plugin -->
 			<plugin>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
@@ -227,6 +195,7 @@
 					<mainClass>com.hoi4utils.clausewitz.HOIIVUtils</mainClass>
 				</configuration>
 			</plugin>
+			<!-- Scala Integration -->
 			<plugin>
 				<!-- see http://davidb.github.com/scala-maven-plugin -->
 				<groupId>net.alchim31.maven</groupId>
@@ -250,18 +219,17 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- disable surefire -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.2.5</version>
-				<configuration>
-					<!-- Tests will be run with scalatest-maven-plugin instead -->
-<!--					<skipTests>true</skipTests>-->
-					<includes>
-						<include>**/*Test.java</include>
-					</includes>
-				</configuration>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-surefire-plugin</artifactId>
+			  <version>3.2.5</version>
+			  <configuration>
+				<skipTests>true</skipTests>
+			  </configuration>
 			</plugin>
+			<!-- Scala Testing Support -->
+			<!-- enable scalatest -->
 			<plugin>
 				<groupId>org.scalatest</groupId>
 				<artifactId>scalatest-maven-plugin</artifactId>
@@ -280,6 +248,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Lombok Integration -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -289,11 +258,9 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>${lombok.version}</version>
+							<version>1.18.32</version>
 						</path>
 					</annotationProcessorPaths>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
 					<release>${maven.compiler.release}</release>
 				</configuration>
 				<executions>
@@ -305,10 +272,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--https://www.youtube.com/watch?v=EyYb0GmtEX4
-				https://stackoverflow.com/questions/38548271/difference-between-the-maven-assembly-plugin-maven-jar-plugin-and-maven-shade-p
-				https://gist.github.com/simonwoo/04b133cb0745e1a0f1d6
-				I think we're doing something wrong but I have no idea.-->
+			<!-- Executable JAR Creation-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -330,40 +294,6 @@
 						<goals>
 							<goal>single</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.akathist.maven.plugins.launch4j</groupId>
-				<artifactId>launch4j-maven-plugin</artifactId>
-				<version>2.4.1</version>
-				<executions>
-					<execution>
-						<id>l4j-clui</id>
-						<phase>package</phase>
-						<goals>
-							<goal>launch4j</goal>
-						</goals>
-						<configuration>
-							<headerType>console</headerType>
-							<outfile>HOIIVUtils.exe</outfile>
-							<jre>
-								<path>%JAVA_HOME%</path>
-								<minVersion>22</minVersion>
-							</jre>
-							<versionInfo>
-								<fileVersion>13.0.0.0</fileVersion>
-								<txtFileVersion>${project.version}</txtFileVersion>
-								<copyright>Copyright ${project.inceptionYear}
-									${project.organization.name}</copyright>
-								<fileDescription>HOIIVUtils</fileDescription>
-								<productName>${project.name}</productName>
-								<companyName>${project.organization.name}</companyName>
-								<internalName>${project.artifactId}</internalName>
-								<originalFilename>${project.artifactId}.exe</originalFilename>
-								<language>ENGLISH_US</language>
-							</versionInfo>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>

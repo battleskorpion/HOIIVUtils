@@ -90,7 +90,6 @@ public class MenuController extends Application implements FXWindow {
 		stage.setTitle(title);
 		stage.show();
 		extracted();
-		System.out.println("Menu Controller created it's own stage and showed it");
 	}
 
 	// TODO: Rename function based on what it does.
@@ -108,10 +107,8 @@ public class MenuController extends Application implements FXWindow {
 	public void open() {
 		if (stage != null) {
 			stage.show();
-			System.out.println("Menu controller showed stage with open");
 		} else {
 			start(new Stage());
-			System.out.println("Menu controller started a new stage with open cuz stage was null");
 		}
 	}
 
