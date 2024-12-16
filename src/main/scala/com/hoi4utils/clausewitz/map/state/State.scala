@@ -33,24 +33,20 @@ object State {
   private val states = new ListBuffer[State]
 
   /**
-   * TODO: Make Demo
+   * Creates States from reading files
    */
   def read(): Unit = {
     if (HOIIVUtils.get("mod.path") == null) {
-      System.err.println("Skipped State Reading")
-      return
-    }
-    if (!HOIIVFile.mod_states_folder.exists || !HOIIVFile.mod_states_folder.isDirectory) {
+      System.err.println("mod path is null, Skipped State Creation")
+    } else if (!HOIIVFile.mod_states_folder.exists || !HOIIVFile.mod_states_folder.isDirectory) {
       System.err.println("In State.java - " + HOIIVFile.mod_states_folder + " is not a directory, or etc.")
-      return
-    }
-    if (HOIIVFile.mod_states_folder.listFiles == null || HOIIVFile.mod_states_folder.listFiles.length == 0) {
+    } else if (HOIIVFile.mod_states_folder.listFiles == null || HOIIVFile.mod_states_folder.listFiles.length == 0) {
       System.out.println("No states found in " + HOIIVFile.mod_states_folder)
-      return
-    }
-    // TODO: Good description of what this loop does
-    for (stateFile <- HOIIVFile.mod_states_folder.listFiles) {
-      if (stateFile.getName.endsWith(".txt")) new State(stateFile)
+    } else {
+      System.out.println("Creating States")
+      for (stateFile <- HOIIVFile.mod_states_folder.listFiles) {
+        if (stateFile.getName.endsWith(".txt")) new State(stateFile)
+      }
     }
   }
 
@@ -102,7 +98,7 @@ object State {
       resourcesOfStates.add(resources)
     }
     //return new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
-    System.out.println(resourcesOfStates.get("aluminum").amt)
+    if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println(resourcesOfStates.get("aluminum").amt)}
     resourcesOfStates
   }
 
@@ -134,20 +130,20 @@ object State {
   def readState(file: File): Unit = {
     val tempState = new State(file, false)
     if (tempState.stateID < 1) {
-      System.err.println("Error: Invalid state id for state " + tempState)
+      if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.err.println("Error: Invalid state id for state " + tempState)}
       return
     }
     for (state <- states) {
       if (state.stateID == tempState.stateID) {
         states -= (state)
         states.addOne(tempState)
-        System.out.println("Modified state " + tempState)
+        if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Modified state " + tempState)}
         return
       }
     }
     // if state did not exist already in states
     states.addOne(tempState)
-    System.out.println("Added state " + tempState)
+    if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Added state " + tempState)}
   }
 
   /**
@@ -159,17 +155,17 @@ object State {
   def deleteState(file: File): Unit = {
     val tempState = new State(file, false)
     if (tempState.stateID < 1) {
-      System.err.println("Error: Invalid state id for state " + tempState)
+      if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.err.println("Error: Invalid state id for state " + tempState)}
       return
     }
     for (state <- states) {
       if (state.stateID == tempState.stateID) {
         states -= (state)
-        System.out.println("Removed state " + tempState)
+        if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Removed state " + tempState)}
         return
       }
     }
-    System.out.println("Tried to delete state represented by file: " + "\n\t" + file + "\n\t" + "but state not found in states list")
+    if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Tried to delete state represented by file: " + "\n\t" + file + "\n\t" + "but state not found in states list")}
   }
 
   def get(id: Int): State = {
@@ -281,7 +277,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
     // id
     if (stateNode.contains("id")) stateID = stateNode.getValue("id").integer
     else {
-      System.out.println(stateNode.$.toString)
+      if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println(stateNode.$.toString)}
       throw new UndefinedStateIDException(stateFile)
     }
     // population (manpower)
@@ -299,12 +295,12 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
         // empty date constructor for default date
         historyNode.find("owner").get.$string match {
           case Some(ownerTag) => owner.put(ClausewitzDate.of, new Owner(new CountryTag(ownerTag)))
-          case None => System.err.println("Warning: state owner not defined, " + stateFile.getName)
+          case None => if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.err.println("Warning: state owner not defined, " + stateFile.getName)}
         }
       }
-      else System.err.println("Warning: state owner not defined, " + stateFile.getName)
+      else if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.err.println("Warning: state owner not defined, " + stateFile.getName)}
       if (buildingsNode == null) {
-        System.err.println("Warning: buildings (incl. infrastructure) not defined in state, " + stateFile.getName)
+        if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.err.println("Warning: buildings (incl. infrastructure) not defined in state, " + stateFile.getName)}
         stateInfrastructure = null
       }
       else {
@@ -329,12 +325,12 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
           vp = VictoryPoint.of(vpl.get(0).identifier.toDouble.toInt, vpl.get(1).identifier.toDouble.toInt)
           victoryPoints.addOne(vp)
         }
-        else System.out.println("Warning: invalid victory point node in state, " + stateFile.getName)
+        else if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Warning: invalid victory point node in state, " + stateFile.getName)}
       }
     }
     else {
-      System.out.println("Warning: history not defined in state, " + stateFile.getName)
-      System.out.println(stateNode.getValue.toString)
+      if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Warning: history not defined in state, " + stateFile.getName)}
+      if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println(stateNode.getValue.toString)}
     }
     // resources
     resourcesData = findStateResources(stateNode)
@@ -342,7 +338,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
     stateInfrastructure = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories, dockyards, 0, airfields)
   }
 
-  def findStateResources(stateNode: Node): Resources = {
+  private def findStateResources(stateNode: Node): Resources = {
     if (!stateNode.contains("resources")) return Resources()
     
     val resourcesNode = stateNode.find("resources").orNull.asInstanceOf[Node]

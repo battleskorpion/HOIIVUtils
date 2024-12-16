@@ -1,6 +1,6 @@
 #!/bin/bash
 # Get the path to the JAR file
-JAR_PATH="target/HOIIVUtils-jar-with-dependencies.jar"
+JAR_PATH="target/HOIIVUtils.jar"
 
 # Open a new terminal and run the JAR
 if command -v gnome-terminal >/dev/null 2>&1; then

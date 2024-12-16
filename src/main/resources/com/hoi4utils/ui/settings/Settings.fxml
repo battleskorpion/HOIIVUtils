@@ -62,6 +62,7 @@
                               <RowConstraints maxHeight="291.0" minHeight="30.0" prefHeight="35.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="291.0" minHeight="25.0" prefHeight="35.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="128.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="128.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
@@ -69,7 +70,7 @@
                               <Button fx:id="modFolderBrowseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleModFileBrowseAction" prefHeight="25.0" prefWidth="70.0" text="Browse" GridPane.columnIndex="5" GridPane.rowIndex="2" />
                               <TextField fx:id="modPathTextField" onAction="#handleModPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/mod/directory" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
                               <Label fx:id="idHOIIVModFolderLabel" text="Mod Folder:" GridPane.rowIndex="2" />
-                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="26.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="693.0" GridPane.rowIndex="10" />
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="26.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="693.0" GridPane.rowIndex="11" />
                               <Label fx:id="idVersionLabel" text="Label" GridPane.rowIndex="1" />
                               <Label alignment="CENTER" prefHeight="17.0" prefWidth="141.0" text="Preferred Monitor: " GridPane.rowIndex="6" />
                               <Label alignment="CENTER" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" text="Theme" GridPane.rowIndex="5">

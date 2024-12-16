@@ -1,5 +1,6 @@
 package com.hoi4utils.clausewitz.script
 
+import com.hoi4utils.clausewitz.HOIIVUtils
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
 import com.hoi4utils.clausewitz_parser.Parser
@@ -34,6 +35,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
         return
       }
     }
+    // TODO: Do something so that this doesn't clog up the console
     throw new UnexpectedIdentifierException(exp)
   }
   
@@ -81,13 +83,13 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     if (expression.name == null) {
-      System.out.println("Error loading PDX script: " + expression)
+      if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Error loading PDX script: " + expression)}
       return
     }
     try set(expression)
     catch {
       case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        System.out.println("Error loading PDX script:" + e.getMessage + "\n\t" + expression)
+        if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Error loading PDX script:" + e.getMessage + "\n\t" + expression)}
     }
   }
 

@@ -37,21 +37,23 @@ public class EnglishLocalizationManager extends LocalizationManager implements F
     }
 
     protected void loadLocalization() {
-        /*
-        load mod localization after vanilla to give mod localizations priority
-         */
+//      load mod localization after vanilla to give mod localizations priority
         if (HOIIVFile.hoi4_localization_folder == null) {
-            System.out.println("'HOI4 localization folder' unknown.");
-        } else if (!HOIIVFile.hoi4_localization_folder.exists() || !HOIIVFile.hoi4_localization_folder.isDirectory()) {
-            System.out.println("'HOI4 localization folder' does not exist or is not a directory.");
+            System.out.println("'HOI4 localization folder' null.");
+        } else if (!HOIIVFile.hoi4_localization_folder.exists()) {
+            System.out.println("'HOI4 localization folder' does not exist.");
+        } else if (!HOIIVFile.hoi4_localization_folder.isDirectory()) {
+            System.out.println("'HOI4 localization folder' is not a directory.");
         } else {
             loadLocalization(HOIIVFile.mod_localization_folder, Localization.Status.EXISTS);
         }
 
         if (HOIIVFile.mod_localization_folder == null) {
-            System.out.println("'Mod localization folder' unknown.");
-        } else if (!HOIIVFile.mod_localization_folder.exists() || !HOIIVFile.mod_localization_folder.isDirectory()) {
-            System.out.println("'Mod localization folder' does not exist or is not a directory.");
+            System.out.println("'Mod localization folder' null.");
+        } else if (!HOIIVFile.mod_localization_folder.exists()) {
+            System.out.println("'Mod localization folder' does not exist.");
+        } else if (!HOIIVFile.mod_localization_folder.isDirectory()) {
+            System.out.println("'Mod localization folder' is not a directory.");
         } else {
             loadLocalization(HOIIVFile.hoi4_localization_folder, Localization.Status.VANILLA);
         }

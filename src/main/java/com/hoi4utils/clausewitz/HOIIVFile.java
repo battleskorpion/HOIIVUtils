@@ -79,7 +79,6 @@ public class HOIIVFile implements FileUtils {
 
 		// Ensure this function doesn't reinitialize files unnecessarily
 		if (mod_folder != null && mod_folder.equals(modPathFile)) {
-			System.out.println("Paths are already initialized. Skipping reinitialization.");
 			return;
 		}
 		
@@ -110,7 +109,6 @@ public class HOIIVFile implements FileUtils {
 
 		// Ensure this function doesn't reinitialize files unnecessarily
 		if (hoi4_folder != null && hoi4_folder.equals(hoi4PathFile)) {
-			System.out.println("Paths are already initialized. Skipping reinitialization.");
 			return;
 		}
 

@@ -41,17 +41,34 @@ object LocalizationManager {
   private[localization] def isAcronym(word: String) = numCapitalLetters(word) == word.length
 }
 
+/**
+ * Abstract class that manages localizations for a system.
+ * This class provides functionality to set, get, replace, and manage localizations by key.
+ * It also allows reloading and saving localizations.
+ */
 abstract class LocalizationManager {
+  /**
+   * Sets the primary manager for localization management.
+   *
+   * @param manager the LocalizationManager to set as the primary manager
+   */
   final def setManager(manager: LocalizationManager): Unit = {
     LocalizationManager.primaryManager = Some(manager)
   }
 
+  /**
+   * Reloads the localizations. The specific behavior of this method
+   * depends on the implementation.
+   */
   def reload(): Unit
 
   /**
-   * @param key
-   * @return the localization for the given key.
-   * @throws IllegalArgumentException
+   * Retrieves the localization for the given key.
+   *
+   * @param key the key for the localization to retrieve
+   * @return an Option containing the Localization for the given key, 
+   *         or None if the localization does not exist
+   * @throws IllegalArgumentException if the key is null
    */
   @throws[IllegalArgumentException]
   def getLocalization(key: String): Option[Localization]

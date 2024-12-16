@@ -7,6 +7,9 @@ import java.util.Properties;
 
 import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
 import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
+import com.hoi4utils.clausewitz.data.focus.FocusTree;
+import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
+import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.ui.menu.MenuController;
 
 import javax.swing.*;
@@ -67,9 +70,17 @@ public class HOIIVUtils {
 		ModifierDatabase mdb = new ModifierDatabase();
 		EffectDatabase edb = new EffectDatabase();
 
-		HOIIVFile.createHOIIVFilePaths();
+		loadMod();
+
 		menuController = new MenuController();
 		menuController.launchMenuWindow(args); // Program starts!
+	}
+
+	public static void loadMod() {
+		HOIIVFile.createHOIIVFilePaths();
+		new EnglishLocalizationManager().reload();
+		State.read();
+		FocusTree.read();
 	}
 
 	public static String get(String key) {

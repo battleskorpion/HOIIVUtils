@@ -1,7 +1,9 @@
 package com.hoi4utils.clausewitz.script
 
+import com.hoi4utils.clausewitz.HOIIVUtils
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.NodeValue
+
 import scala.collection.mutable.ListBuffer
 
 abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) {
@@ -11,6 +13,15 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
 
   protected def childScripts: collection.mutable.Iterable[? <: PDXScript[?]]
 
+  /**
+   * Sets the current node to the provided expression and processes it based on its type.
+   * If the expression is a ListBuffer of nodes, it will load each sub-PDXScript for processing.
+   * Otherwise, an exception will be thrown indicating the mismatch in expected node value type.
+   *
+   * @param expression the node expression to set.
+   * @throws UnexpectedIdentifierException if the identifier used in the expression is unexpected.
+   * @throws NodeValueTypeException        if the expression is not of type ListBuffer[Node], but was expected to be.
+   */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
@@ -40,14 +51,14 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
         case l: ListBuffer[Node] =>
           loadPDX(l)
         case _ =>
-          System.out.println("Error loading PDX script: " + expression)
+          if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Error loading PDX script: " + expression)}
       }
     }
     try set(expression)
     catch {
       case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
         // System.out.println("Error loading PDX script:" + e.getMessage + "\n\t" + expression) // todo expression prints entire focus node
-        System.out.println("Error loading PDX script:" + e.getMessage)
+        if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Error loading PDX script:" + e.getMessage)}
     }
   }
 

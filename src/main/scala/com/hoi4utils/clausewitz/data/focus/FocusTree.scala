@@ -31,21 +31,21 @@ object FocusTree {
     FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
   }
 
+  /**
+   * Creates Focus Trees from reading files
+   */
   def read(): Unit = {
     if (HOIIVUtils.get("mod.path") == null) {
       System.err.println("Skipped FocusTree Reading")
-      return
-    }
-    if (!HOIIVFile.mod_focus_folder.exists || !HOIIVFile.mod_focus_folder.isDirectory) {
+    } else if (!HOIIVFile.mod_focus_folder.exists || !HOIIVFile.mod_focus_folder.isDirectory) {
       System.err.println("Focus folder does not exist or is not a directory.")
-      return
-    }
-    if (HOIIVFile.mod_focus_folder.listFiles == null || HOIIVFile.mod_focus_folder.listFiles.length == 0) {
+    } else if (HOIIVFile.mod_focus_folder.listFiles == null || HOIIVFile.mod_focus_folder.listFiles.length == 0) {
       System.out.println("No focuses found in " + HOIIVFile.mod_focus_folder)
-      return
-    }
-    for (f <- HOIIVFile.mod_focus_folder.listFiles) {
-      if (f.getName.endsWith(".txt")) new FocusTree(f)
+    } else {
+      System.out.println("Creating Focus Trees")
+      for (f <- HOIIVFile.mod_focus_folder.listFiles) {
+        if (f.getName.endsWith(".txt")) new FocusTree(f)
+      }
     }
   }
 

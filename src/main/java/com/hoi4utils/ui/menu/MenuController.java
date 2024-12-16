@@ -89,19 +89,6 @@ public class MenuController extends Application implements FXWindow {
 		stage.setScene(scene);
 		stage.setTitle(title);
 		stage.show();
-		extracted();
-	}
-
-	// TODO: Rename function based on what it does.
-	private static void extracted() {
-		if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
-			if (HOIIVUtils.getBoolean("load.localization.enabled")) {
-				LocalizationManager LocalizationManager = new EnglishLocalizationManager();
-				LocalizationManager.reload();
-			}
-			State.read();
-			FocusTree.read();
-		}
 	}
 
 	public void open() {

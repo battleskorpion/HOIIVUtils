@@ -102,6 +102,7 @@ public class SettingsController extends Application implements FXWindow {
 		drawFocusTreesCheckBox.setSelected(HOIIVUtils.getBoolean("draw.focus.tree.enabled"));
 		loadLocalizationCheckBox.setSelected(HOIIVUtils.getBoolean("load.localization.enabled"));
 		darkTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "dark"));
+		lightTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "light"));
 	}
 
 	/**
@@ -231,7 +232,7 @@ public class SettingsController extends Application implements FXWindow {
 	 * User Interactive Button in Settings Window Closes Settings Window Opens Menu Window
 	 */
 	public void handleOkButtonAction() {
-		HOIIVFile.createHOIIVFilePaths();
+		HOIIVUtils.loadMod();
 		hideWindow(idOkButton);
 		new MenuController().open();
 	}
