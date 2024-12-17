@@ -21,7 +21,7 @@ public class HOIIVUtils {
 	/**
 	 * HOIIVUTILS Directory
 	 * Layout:
-	 * HOIIVUtils\\target\\HOIIVUtils-jar-with-dependencies.jar
+	 * HOIIVUtils\\target\\HOIIVUtils.jar
 	 * HOIIVUtils\\demo_mod*
 	 * HOIIVUtils\\HOIIVUtils.bat
 	 * HOIIVUtils\\HOIIVUtils.properties
@@ -166,7 +166,7 @@ public class HOIIVUtils {
 
 			System.out.println("Default Config" + defaultConfig);
 
-			if (defaultConfig == null) {
+			if (defaultConfig.equals(null)) {
 				throw new FileNotFoundException("Default properties file not found in JAR: " + DEFAULT_PROPERTIES);
 			}
 
@@ -187,10 +187,10 @@ public class HOIIVUtils {
 	}
 
 	private static void autoSetDemoModPath() throws URISyntaxException {
-		if (get("mod.path") == null) {
+		if (get("mod.path").equals(null)) {
 			set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
 			System.out.println("auto set mod path to demo mod");
-		} else if (Paths.get(get("mod.path")).getFileName().toString() == "demo_mod") { // If mod path directory is named demo mod it will reset it incase entire directory moved
+		} else if (Paths.get(get("mod.path")).getFileName().toString().equals("demo_mod")) { // If mod path directory is named demo mod it will reset it incase entire directory moved
 			set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
 			System.out.println("auto set mod path to demo mod");
 		}
@@ -199,7 +199,7 @@ public class HOIIVUtils {
 	private static void autoSetHOIIVPath() {
 		// If the HOI4 path is already set, do nothing
 		String hoi4Path = get("hoi4.path");
-		if (hoi4Path != null) {
+		if (!hoi4Path.equals(null)) {
 			return;
 		}
 
