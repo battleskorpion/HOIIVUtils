@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.menu.MenuController">
+<GridPane minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/22.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.menu.MenuController">
 	<columnConstraints>
 		<ColumnConstraints />
 		<ColumnConstraints hgrow="SOMETIMES" maxWidth="355.0" minWidth="40.0" prefWidth="99.0" />
@@ -56,6 +56,7 @@
 		<Button fx:id="viewProvinceColors" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openProvinceColors" prefWidth="400.0" text="%map.gen.province.colors" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
 		<Button maxWidth="-Infinity" mnemonicParsing="false" onAction="#openMapGeneration" prefWidth="400.0" text="%map.gen" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
 		<Button maxWidth="-Infinity" mnemonicParsing="false" onAction="#openParserView" prefWidth="400.0" text="%parser.view" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+      <Button fx:id="buttonTest" mnemonicParsing="false" text="ButtonTest" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 	</children>
 	<padding>
 		<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
