@@ -63,8 +63,6 @@ public class MenuController extends Application implements FXWindow {
 	public Button focusTreeViewButton;
 	@FXML
 	public Button viewUnitComparison;
-	@FXML
-	public Button buttonTest;
 
 	public void launchMenuWindow(String[] args) {
 		launch(args);
