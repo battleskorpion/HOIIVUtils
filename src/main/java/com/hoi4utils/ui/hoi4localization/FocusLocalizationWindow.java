@@ -90,7 +90,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
 
         if (selectedFile != null) {
             focusTreeFileTextField.setText(selectedFile.getAbsolutePath());
-            focusTree = FocusTree$.MODULE$.get(selectedFile).getOrElse(null);
+            focusTree = FocusTree$.MODULE$.get(selectedFile).getOrElse(() -> null);
             focusTreeNameLabel.setText(focusTree.toString());
         } else {
             focusTreeNameLabel.setText("[not found]");
