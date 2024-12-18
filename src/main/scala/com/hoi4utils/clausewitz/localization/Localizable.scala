@@ -95,9 +95,12 @@ trait Localizable {
   //		setLocalization(property, text, primaryLocalizationFile());
   //	}
 
-  def primaryLocalizationFile: File = {
+  def primaryLocalizationFile: Option[File] = {
     val localizableGroup = getLocalizableGroup
-    localizableGroup.flatMap(ll => ll.getLocalizationKeys).map(LocalizationManager.getLocalizationFile).filter(_ != null).head
+    localizableGroup.flatMap(ll => ll.getLocalizationKeys).map(LocalizationManager.getLocalizationFile).filter(_ != null).headOption match {
+      case Some(f) => Some(f)
+      case None => None
+    }
   }
 
   /**
