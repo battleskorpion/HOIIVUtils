@@ -51,6 +51,7 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
       case (Some(str), Some(o)) => str.compareTo(o)
       case (Some(str), None) => 1
       case (None, Some(o)) => -1
+      case (None, None) => 0
     }
   }
 
