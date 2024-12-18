@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.menu;
 
 
+import com.hoi4utils.clausewitz.HOIIVFile;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
@@ -145,6 +146,14 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openUnitComparisonView() {
+		if (HOIIVFile.hoi4_units_folder == null || !HOIIVFile.hoi4_units_folder.exists()) {
+			JOptionPane.showMessageDialog(null, "Base units folder not found"); 
+			return;
+		}
+		if (HOIIVFile.mod_units_folder == null || !HOIIVFile.mod_units_folder.exists()) {
+			JOptionPane.showMessageDialog(null, "Mod units folder not found");
+			return;
+		}
 		openUtilsWindow(new CompareUnitsWindow());
 	}
 

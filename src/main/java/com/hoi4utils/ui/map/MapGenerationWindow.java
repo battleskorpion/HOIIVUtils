@@ -115,8 +115,8 @@ public class MapGenerationWindow extends HOIIVUtilsWindow {
 		System.err.println("CALLED FUNCTION drawProvinceMap IN MapGenerationWindow.java LINE 114 which does nothing. Stopping program.");
 		System.exit(1);
 		// TODO: implement getProvinceMap() in ProvinceMap Class
-//		ProvinceMap map = provinceGeneration.getProvinceMap();
-//		drawImageOnCanvas(provinceCanvas, map.width(), map.height(), map::getRGB);
+		ProvinceMap map = provinceGeneration.getProvinceMap();
+		drawImageOnCanvas(provinceCanvas, map.width(), map.height(), map::getRGB);
 	}
 
 	@FXML
