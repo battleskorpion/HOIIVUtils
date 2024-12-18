@@ -19,8 +19,9 @@ public class FixFocus extends HOIIVUtils {
 
 		var focuses = CollectionConverters.asJavaCollection(focusTree.focuses());
 		var locManager = LocalizationManager.get();
-		File locFile = focusTree.primaryLocalizationFile();
-		if (locFile == null) return;
+		File locFile; 
+		if (focusTree.primaryLocalizationFile().isEmpty()) return; 
+		else locFile = focusTree.primaryLocalizationFile().get();
 		focuses.parallelStream().filter(focus -> focus.localization(Property.NAME) == null).forEach(focus -> {
 			String focusName = focus.id().getOrElse(null); 
 			// todo improve country tag detection
