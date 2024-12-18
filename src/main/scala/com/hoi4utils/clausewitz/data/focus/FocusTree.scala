@@ -2,6 +2,7 @@ package com.hoi4utils.clausewitz.data.focus
 
 import com.hoi4utils.clausewitz.{HOIIVFile, HOIIVUtils}
 import com.hoi4utils.clausewitz.data.country.{CountryTag, CountryTagsManager}
+import com.hoi4utils.clausewitz.data.focus.FocusTree.focusTreeFileMap
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz.localization.*
 import javafx.collections.{FXCollections, ObservableList}
@@ -50,7 +51,6 @@ object FocusTree {
   }
 
   def add(focusTree: FocusTree): Iterable[FocusTree] = {
-    focusTreeFileMap.put(focusTree.focusFile, focusTree)
     focusTrees += focusTree
     focusTrees
   }
@@ -111,8 +111,9 @@ class FocusTree
 
   def this(focus_file: File) = {
     this()
-    setFile(focus_file)
     loadPDX(focus_file)
+    setFile(focus_file)
+    focusTreeFileMap.put(this.focusFile, this)
   }
 
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(id, country, focuses)
