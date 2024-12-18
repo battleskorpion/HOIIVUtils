@@ -21,6 +21,7 @@ import scala.Function1;
 import scala.collection.Iterable;
 import scala.jdk.javaapi.CollectionConverters;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.Iterator;
 
@@ -91,6 +92,10 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
         if (selectedFile != null) {
             focusTreeFileTextField.setText(selectedFile.getAbsolutePath());
             focusTree = FocusTree$.MODULE$.get(selectedFile).getOrElse(() -> null);
+            if (focusTree == null) {
+                JOptionPane.showMessageDialog(null, "Error: Selected focus tree not found in loaded focus trees.");
+                return; 
+            }
             focusTreeNameLabel.setText(focusTree.toString());
         } else {
             focusTreeNameLabel.setText("[not found]");
