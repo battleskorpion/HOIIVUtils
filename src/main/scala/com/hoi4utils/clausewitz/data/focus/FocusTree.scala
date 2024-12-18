@@ -111,8 +111,8 @@ class FocusTree
 
   def this(focus_file: File) = {
     this()
-    loadPDX(focus_file)
     setFile(focus_file)
+    loadPDX(focus_file)
   }
 
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(id, country, focuses)
