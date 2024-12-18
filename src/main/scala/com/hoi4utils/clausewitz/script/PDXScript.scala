@@ -18,7 +18,7 @@ trait PDXScript[T] {
    *
    * Obviously, if T != to the type of the value,
    * the new value may not be semantically correct. However, we need to allow this for
-   * flexibility ie. setting a PDX of type double with an int value, and this also matches
+   * flexibility i.e. setting a PDX of type double with an int value, and this also matches
    * the underlying node class functionality.
    */
   def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit
@@ -56,7 +56,7 @@ trait PDXScript[T] {
    * @note This method can not have a targetName annotation because, equals has to be a separate method, this
    *       method can't be overridden
    */
-  final def ==(other: PDXScript[?]): Boolean = this equals other
+  final def == (other: PDXScript[?]): Boolean = this.equals(other)
 
   def equals(other: PDXScript[?]): Boolean
 

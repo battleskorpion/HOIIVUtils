@@ -193,7 +193,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
 
   def schema(): PDXSchema[T] = {
     var schema = new PDXSchema[T](pdxIdentifiers*)
-    return null.asInstanceOf[PDXSchema[T]]  // todo no
+    null.asInstanceOf[PDXSchema[T]]  // todo no
   }
 
 }

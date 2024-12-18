@@ -313,10 +313,10 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   trait Icon extends PDXScript[?] {
   }
 
-  class SimpleIcon() extends StringPDX("icon") with Icon {
+  class SimpleIcon extends StringPDX("icon") with Icon {
   }
 
-  class BlockIcon() extends StructuredPDX("icon") with Icon {
+  class BlockIcon extends StructuredPDX("icon") with Icon {
 
     final private val value: StringPDX = new StringPDX("value")
 

@@ -1,13 +1,13 @@
 package com.hoi4utils.clausewitz.localization
 
 import com.hoi4utils.clausewitz.localization.*
-
 import com.hoi4utils.clausewitz.HOIIVFile
 import com.hoi4utils.ui.FXWindow
 import org.jetbrains.annotations.NotNull
-import java.io.File
 
-import scala.collection.mutable.{Map, HashMap}
+import java.io.File
+import scala.collection.mutable
+import scala.collection.mutable.{HashMap, Map}
 
 /**
  * Interface for Clausewitz-localizable objects. This interface is specifically related to
@@ -27,7 +27,7 @@ trait Localizable {
    *
    * @return a map of localizable property identifiers and keys.
    */
-  def getLocalizableProperties: Map[Property, String]
+  def getLocalizableProperties: mutable.Map[Property, String]
 
   def getLocalizationKeys: Iterable[String] = getLocalizableProperties.values
 

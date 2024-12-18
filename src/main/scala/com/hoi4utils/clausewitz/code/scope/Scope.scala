@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.code.scope
 
 import com.hoi4utils.clausewitz.code.effect.Effect
-import com.hoi4utils.clausewitz.data.country.{CountryTag}
+import com.hoi4utils.clausewitz.data.country.CountryTag
 import com.hoi4utils.clausewitz.map.state.State
 import com.hoi4utils.clausewitz.script.PDXScript
 
@@ -68,11 +68,12 @@ object Scope {
 
   def getClone(str: String): Scope = {
     scopes.find(_._1 == str) match {
-      case Some((_, scope)) => scope.clone().asInstanceOf[Scope]
+      case Some((_, scope)) => scope.clone()
       case None => null
     }
   }
 
+  // TODO: add catch?
   try
     new Scope("all_unit_leader", ScopeType.country, ScopeType.leader, ScopeCategory.TRIGGER)
     new Scope("any_unit_leader", ScopeType.country, ScopeType.leader, ScopeCategory.TRIGGER)

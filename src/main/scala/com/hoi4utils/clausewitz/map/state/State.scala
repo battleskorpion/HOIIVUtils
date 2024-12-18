@@ -135,7 +135,7 @@ object State {
     }
     for (state <- states) {
       if (state.stateID == tempState.stateID) {
-        states -= (state)
+        states -= state
         states.addOne(tempState)
         if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Modified state " + tempState)}
         return
@@ -160,7 +160,7 @@ object State {
     }
     for (state <- states) {
       if (state.stateID == tempState.stateID) {
-        states -= (state)
+        states -= state
         if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Removed state " + tempState)}
         return
       }
@@ -238,13 +238,13 @@ object State {
 
 class State(private var stateFile: File, addToStatesList: Boolean) extends InfrastructureData with Localizable with Iterable[State] with Comparable[State] {
   private var stateID = 0
-  private var _name: String = stateFile.getName.replace(".txt", "")
-  final private var owner: mutable.Map[ClausewitzDate, Owner] =  new mutable.HashMap[ClausewitzDate, Owner]
+  private val _name: String = stateFile.getName.replace(".txt", "")
+  final private val owner: mutable.Map[ClausewitzDate, Owner] = new mutable.HashMap[ClausewitzDate, Owner]
   //! todo Finish state Category
   // private StateCategory stateCategory; 
-  private var stateInfrastructure: Infrastructure = null
-  private var resourcesData: Resources = null
-  private var victoryPoints: ListBuffer[VictoryPoint] = new ListBuffer[VictoryPoint]
+  private var stateInfrastructure: Infrastructure = null // TODO: null -> _
+  private var resourcesData: Resources = null // TODO: null -> _
+  private val victoryPoints: ListBuffer[VictoryPoint] = new ListBuffer[VictoryPoint]
 
   /* init */
   readStateFile(stateFile)
@@ -287,9 +287,9 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
     }
     /* buildings */
     if (stateNode.contains("history")) {
-      val historyNode = stateNode.find("history").orNull.asInstanceOf[Node]
+      val historyNode = stateNode.find("history").orNull
       var buildingsNode: Node = null
-      if (historyNode.contains("buildings")) buildingsNode = historyNode.find("buildings").orNull.asInstanceOf[Node]
+      if (historyNode.contains("buildings")) buildingsNode = historyNode.find("buildings").orNull
       // owner
       if (historyNode.contains("owner")) {
         // empty date constructor for default date
@@ -317,7 +317,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
       }
       /* victory points */
       if (historyNode.contains("victory_points")) {
-        val victoryPointsNode = historyNode.find("victory_points").orNull.asInstanceOf[Node]
+        val victoryPointsNode = historyNode.find("victory_points").orNull
         // todo bad code time
         val vpl = CollectionConverters.asJava(victoryPointsNode.toList)
         var vp: VictoryPoint = null
@@ -341,7 +341,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
   private def findStateResources(stateNode: Node): Resources = {
     if (!stateNode.contains("resources")) return Resources()
     
-    val resourcesNode = stateNode.find("resources").orNull.asInstanceOf[Node]
+    val resourcesNode = stateNode.find("resources").orNull
 
     // aluminum (aluminium bri'ish spelling)
     val aluminum: Int = resourcesNode.find("aluminium") match {

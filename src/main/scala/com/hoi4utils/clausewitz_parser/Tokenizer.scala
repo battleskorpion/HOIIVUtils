@@ -37,7 +37,7 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
     for (tokenType <- TokenType.values) {
       val tokenRegex = Token.tokenRegex.get(tokenType)
       tokenRegex match {
-        case Some(value) => patternBuilder.append(s"|(?<${tokenType}>${value.pattern})")
+        case Some(value) => patternBuilder.append(s"|(?<$tokenType>${value.pattern})")
         case None =>
       }
     }

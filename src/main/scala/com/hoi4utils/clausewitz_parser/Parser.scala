@@ -13,7 +13,7 @@ object Parser {
   val escape_quote_regex = "\\\\\""
 }
 
-class Parser() {
+class Parser {
   final private var tokens: Tokenizer = _
   private var rootNode: Node = _
 

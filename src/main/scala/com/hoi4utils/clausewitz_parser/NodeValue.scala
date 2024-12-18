@@ -85,7 +85,7 @@ final class NodeValue {
       case s: String => s
       case i: Int => i.toString
       case d: Double => d.toString
-      case l: ListBuffer[AnyVal] => {
+      case l: ListBuffer[AnyVal] =>
         val sb = new StringBuilder()
         sb.append("{")
         for (i <- l.indices) {
@@ -94,7 +94,6 @@ final class NodeValue {
         }
         sb.append("}")
         sb.toString()
-      }
       case n: Node => n.toString
       case _ => "[invalid type]"
     }

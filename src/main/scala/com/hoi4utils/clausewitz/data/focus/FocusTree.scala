@@ -67,7 +67,7 @@ object FocusTree {
     //focusTrees.values.stream.filter((focusTree: FocusTree) => focusTree.country.nodeEquals(tag)).findFirst.orElse(null)
     for (tree <- listFocusTrees) {
       //if (tree.country.equals(tag)) return tree
-      var countryTag = tree.country.get()
+      val countryTag = tree.country.get()
       countryTag match {
         case Some(t) => if (t.tag.equals(tag)) return tree
         case None => 
@@ -91,12 +91,10 @@ object FocusTree {
 /**
  * Represents a focus tree, which is a collection of focuses.
  *
- * @param focus_file The file that contains the focus tree/which the focus tree is saved to.
- *
  * @note Do not create instances of this class directly, unless a few focus tree is being created or loaded.
  *       Use FocusTree.get(File) instead.
  */
-class FocusTree()
+class FocusTree
   extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] {
   /* pdxscript */
   final var country: ReferencePDX[CountryTag] = new ReferencePDX[CountryTag](() => CountryTag.toList, t => Some(t.get), "country")

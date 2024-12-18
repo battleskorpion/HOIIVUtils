@@ -6,7 +6,7 @@ import java.awt.image.IndexColorModel;
 public class StateBorderMap extends BufferedImage {
 
 	/**
-	 * Constructs a {@code BufferedImage} of one of the predefined
+	 * Constructs a {@code BufferedImage} of one of the predefined+
 	 * image types.  The {@code ColorSpace} for the image is the
 	 * default sRGB space.
 	 *

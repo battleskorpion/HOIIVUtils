@@ -5,8 +5,9 @@
 
 	<groupId>com.hoi4utils</groupId>
 	<artifactId>HOIIVUtils</artifactId>
-	<version>13.1.1-SNAPSHOT</version>
+	<version>14.0.0</version>
 	<packaging>jar</packaging>
+
 
 	<name>HOIIVUtils</name>
 	<description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
@@ -52,16 +53,13 @@
 	</developers>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.release>22</maven.compiler.release>
-		<maven.compiler.source>22</maven.compiler.source>
-		<maven.compiler.target>22</maven.compiler.target>
-		<maven.compiler.testSource>22</maven.compiler.testSource>
-		<maven.compiler.testTarget>22</maven.compiler.testTarget>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.organization.name>battleskorpion</project.organization.name>
 		<project.inceptionYear>2022</project.inceptionYear>
-		<JUnit.version>5.10.2</JUnit.version>
+		<java.version>23</java.version>
+		<javafx.version>23.0.1</javafx.version>
+		<lombok.version>1.18.36</lombok.version>
 	</properties>
 
 	<dependencyManagement>
@@ -69,7 +67,7 @@
 			<dependency>
 				<groupId>org.junit</groupId>
 				<artifactId>junit-bom</artifactId>
-				<version>${JUnit.version}</version>
+				<version>5.10.2</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -78,14 +76,20 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
-			<version>23.0.1</version>
+			<version>${javafx.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-fxml</artifactId>
-			<version>23.0.1</version>
+			<version>${javafx.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.testfx</groupId>
@@ -96,12 +100,6 @@
 			<groupId>org.testfx</groupId>
 			<artifactId>testfx-junit5</artifactId>
 			<version>4.0.18</version>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.32</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.xerial</groupId>
@@ -223,7 +221,7 @@
 			<plugin>
 			  <groupId>org.apache.maven.plugins</groupId>
 			  <artifactId>maven-surefire-plugin</artifactId>
-			  <version>3.2.5</version>
+			  <version>3.5.2</version>
 			  <configuration>
 				<skipTests>true</skipTests>
 			  </configuration>
@@ -254,14 +252,16 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.13.0</version>
 				<configuration>
+					<!-- Lombok Integration -->
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.32</version>
+							<version>${lombok.version}</version>
 						</path>
 					</annotationProcessorPaths>
-					<release>${maven.compiler.release}</release>
+					<!-- Java Version -->
+					<release>${java.version}</release>
 				</configuration>
 				<executions>
 					<execution>

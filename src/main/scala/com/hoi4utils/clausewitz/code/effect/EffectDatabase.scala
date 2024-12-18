@@ -137,7 +137,7 @@ class EffectDatabase(databaseName: String) {
         val requiredParametersSimple_str = resultSet.getString("required_parameters_simple")
         val optionalParameters_str = resultSet.getString("optional_parameters")
 
-        var supportedScopes = parseEnumSet(supportedScopes_str)
+        val supportedScopes = parseEnumSet(supportedScopes_str)
         var supportedTargets = parseEnumSet(supportedTargets_str)
         // im just guessing at this code right now, I just want it to work basically.
         if (!(requiredParametersFull_str == null && requiredParametersSimple_str == null)) {
@@ -149,7 +149,7 @@ class EffectDatabase(databaseName: String) {
           val requiredParametersFull = Option(requiredParametersFull_str)
           val requiredParameterSimple = Option(requiredParametersSimple_str)
 
-          var effects = new ListBuffer[Effect]
+          val effects = new ListBuffer[Effect]
 
           (requiredParametersFull, requiredParameterSimple) match {
             case (Some(requiredParametersFull), Some(requiredParameterSimple)) =>

@@ -46,25 +46,25 @@ public class IdeaFile extends File {
 	}
 
 	/**
-	 *  <p>format of an idea file:
-			ideas = {
-				idea_category_1 = {
-					idea_1 = {
-					}
-					idea_2 = {
-					}
-				}
-				idea_category_2 = {
-					idea_3 = {
-					}
-				}
-			}
-	    </p>
+	 * <p>format of an idea file:
+	 * ideas = {
+	 * idea_category_1 = {
+	 * idea_1 = {
+	 * }
+	 * idea_2 = {
+	 * }
+	 * }
+	 * idea_category_2 = {
+	 * idea_3 = {
+	 * }
+	 * }
+	 * }
+	 * </p>
 	 */
-	private ArrayList<String> parse() {
+	private void parse() {
 		if (!this.exists()) {
 			System.err.println(this + "Idea file does not exist.");
-			return null;
+			return;
 		}
 
 		/* parser */
@@ -76,42 +76,37 @@ public class IdeaFile extends File {
 			throw new RuntimeException(e);
 		}
 
-		List<Node> ideaCategoryNodeList = ideaCategoryExps.$list().getOrElse(null); //ideaCategoryExps.value().list();
-		/* return null when no ideas */
-		if (ideaCategoryNodeList == null) {
-			return null;
-		}
-
-		/* focuses */
-		ArrayList<String> idea_names = new ArrayList<>();
-		for (Node ideaCategoryNode : ideaCategoryNodeList) {
-			List<Node> ideasInCategoryList = CollectionConverters.asJava(ideaCategoryNode
+	List<Node> ideaCategoryNodeList = ideaCategoryExps != null ? ideaCategoryExps.$list().getOrElse(null) : null;
+	/* return null when no ideas */
+	if (ideaCategoryNodeList == null) {
+		return;
+	}
+	
+	/* focuses */
+	ArrayList<String> idea_names = new ArrayList<>();
+	for (Node ideaCategoryNode : ideaCategoryNodeList) {
+		List<Node> ideasInCategoryList = null;
+		try {
+			ideasInCategoryList = CollectionConverters.asJava(ideaCategoryNode
 					.filter(Node::isParent).toList());
-			if (ideasInCategoryList == null) {
-				continue;
-			}
-			String ideaCategory = ideaCategoryNode.name();
-			for (Node ideaExp : ideasInCategoryList) {
-				Idea idea;
-
-				/* idea id */
-				String idea_id = ideaExp.name();
-				idea = Idea.loadIdea(idea_id, ideaExp, ideaCategory);
-				idea_names.add(idea_id);
-				ideas.put(idea_id, idea);
-			}
+		} catch (NullPointerException e) {
+			System.err.println("Error converting Scala collection to Java: " + e.getMessage());
 		}
-
-		System.out.println("Num ideas loaded: " + idea_names.size());
-		return idea_names;
+		if (ideasInCategoryList == null) {
+			continue;
+		}
+		String ideaCategory = ideaCategoryNode.name();
+		for (Node ideaExp : ideasInCategoryList) {
+			Idea idea;
+	
+			/* idea id */
+			String idea_id = ideaExp.name();
+			idea = Idea.loadIdea(idea_id, ideaExp, ideaCategory);
+			idea_names.add(idea_id);
+			ideas.put(idea_id, idea);
+		}
 	}
 
-//	public static boolean isValidIdeaIdentifierExpression(Expression exp) {
-//		if (exp.expression().matches("\\s*[[A-Z][a-z]_]*=\\{\\s*")) {
-//			return true;
-//		}
-//
-//		return false;
-//	}
-
+		System.out.println("Num ideas loaded: " + idea_names.size());
+	}
 }

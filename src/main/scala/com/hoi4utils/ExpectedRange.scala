@@ -5,18 +5,16 @@ class ExpectedRange[T <: AnyVal](val min: T, val max: T) {
   def apply(start: T, end: T): ExpectedRange[T] = new ExpectedRange[T](start, end)
 
   def minNonInfinite: T = min match {
-    case min: Double => {
+    case min: Double =>
       if (min.isInfinite) Double.MinValue.asInstanceOf[T]
       else min
-    }
     case _ => min
   }
 
   def maxNonInfinite: T = max match {
-    case max: Double => {
+    case max: Double =>
       if (max.isInfinite) Double.MaxValue.asInstanceOf[T]
       else max
-    }
     case _ => max
   }
 }

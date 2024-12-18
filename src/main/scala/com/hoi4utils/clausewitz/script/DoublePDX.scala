@@ -34,7 +34,7 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
       this.node.get.setValue(value)
     else
       this.node = Some(Node(NodeValue(value)))
-   value
+    value
   }
 
   override def equals(other: PDXScript[?]): Boolean = {
@@ -61,6 +61,10 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
     value match
       case d: Double => d
       case i: Int => i.toDouble
+      case _: String => ???
+      case true => ???
+      case false => ???
+      case _: scala.collection.mutable.ListBuffer[com.hoi4utils.clausewitz_parser.Node] => ???
   }
 
   override def isDefaultRange: Boolean = range == ExpectedRange.ofDouble
