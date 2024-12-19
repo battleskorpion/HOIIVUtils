@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Properties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
 import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
@@ -27,6 +29,7 @@ public class HOIIVUtils {
 	 * HOIIVUtils\\HOIIVUtils.properties
 	 * HOIIVUtils\\HOIIVUtils.sh
 	 */
+	public static final Logger LOGGER = LogManager.getLogger(HOIIVUtils.class);
 	public static String HOIIVUTILS_DIR;
     static {
         try {

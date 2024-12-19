@@ -102,6 +102,7 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 				javafx.application.Platform.runLater(() -> {
 					progressIndicator.setVisible(false);
 					statusLabel.setText("BMP generated successfully: " + outputPath);
+					HOIIVUtils.LOGGER.info("Generated BMP with " + numColors + " unique colors: " + outputPath);
 				});
 			} catch (Exception e) {
 				e.printStackTrace();

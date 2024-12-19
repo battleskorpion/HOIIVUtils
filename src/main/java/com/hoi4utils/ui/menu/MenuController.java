@@ -6,11 +6,11 @@ import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
-import com.hoi4utils.ui.console.ConsoleController;
 import com.hoi4utils.ui.hoi4localization.CustomTooltipWindow;
 import com.hoi4utils.ui.hoi4localization.FocusLocalizationWindow;
 import com.hoi4utils.ui.hoi4localization.IdeaLocalizationWindow;
 import com.hoi4utils.ui.hoi4localization.AllFocusTreesWindow;
+import com.hoi4utils.ui.log_viewer.LogViewerController;
 import com.hoi4utils.ui.statistics.StatisticsController;
 import com.hoi4utils.ui.province_colors.ProvinceColorsController;
 import com.hoi4utils.clausewitz.HOIIVUtils;
@@ -45,13 +45,7 @@ public class MenuController extends Application implements FXWindow {
 	@FXML
 	public Button settingsButton;
 	@FXML
-	public Button statisticsButton;
-	@FXML
-	public Button consoleButton;
-	@FXML
 	public Button focusLocalizButton;
-	@FXML
-	public Button findFocusesWithoutLocalization;
 	@FXML
 	public Button customTooltipLocalizationButton;
 	@FXML
@@ -109,12 +103,8 @@ public class MenuController extends Application implements FXWindow {
 		utilsWindow.open();
 	}
 
-	public void openStatistics() {
-		openUtilsWindow(new StatisticsController());
-	}
-
-	public void openConsole() {
-		openUtilsWindow(new ConsoleController());
+	public void openLogViewer() {
+		new LogViewerController().openRunLater();
 	}
 
 	public void openLocalizeFocusTree() {

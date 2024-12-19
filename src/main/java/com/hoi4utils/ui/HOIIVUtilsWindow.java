@@ -1,6 +1,8 @@
 package com.hoi4utils.ui;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -141,6 +143,16 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 		this.title = title;
 		System.out.println("open(String fxmlResource, String title)" + "fxmlResource: " + fxmlResource + " title: " + title);
 		open();
+	}
+
+	/**
+	 * Opens stage in thread and runLater javafx thingy
+	 */
+	@FXML
+    public void openRunLater() {
+		new Thread(() -> {
+			Platform.runLater(this::open);
+		}).start();
 	}
 
 	@NotNull
