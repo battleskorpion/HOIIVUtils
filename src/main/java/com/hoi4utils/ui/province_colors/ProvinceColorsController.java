@@ -166,10 +166,10 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 	private void updateColorPreview(int numColors) {
 		colorPreviewGrid.getChildren().clear(); // Clear previous preview
 
-		int columns = 10; // Number of columns in the preview grid
-		int boxSize = 20; // Size of each color box (in pixels)
+		int columns = (int) Math.ceil(Math.sqrt(numColors)); // Number of columns in the preview grid
+		int boxSize = 8; // Size of each color box (in pixels)
 
-		for (int i = 0; i < Math.min(numColors, 100); i++) { // Limit preview to 100 colors
+		for (int i = 0; i < Math.min(numColors, 1000000); i++) { // Limit preview to 1000000 colors
 			// Generate unique color
 			Color color = generateUniqueColor(i, numColors);
 
