@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 public class MapGenerationWindow extends HOIIVUtilsWindow {
@@ -111,9 +112,13 @@ public class MapGenerationWindow extends HOIIVUtilsWindow {
 		gc.drawImage(wImage, 0, 0);
 	}
 
-	private void drawProvinceMap() {
-		ProvinceMap map = provinceGeneration.getProvinceMap();
-		drawImageOnCanvas(provinceCanvas, map.width(), map.height(), map::getRGB);
+	void drawProvinceMap() {
+		ProvinceMap map = this.provinceGeneration.getProvinceMap(); // fuck maven
+		Canvas var10001 = this.provinceCanvas;
+		int var10002 = map.width();
+		int var10003 = map.height();
+		Objects.requireNonNull(map);
+		this.drawImageOnCanvas(var10001, var10002, var10003, map::getRGB);
 	}
 
 	@FXML

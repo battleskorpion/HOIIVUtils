@@ -34,6 +34,7 @@ public class HOIIVUtils {
     static {
         try {
             HOIIVUTILS_DIR = new File(new File(HOIIVUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent()).getParent();
+			System.out.println("HOIIVUtils Directory: " + HOIIVUTILS_DIR);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -125,7 +126,7 @@ public class HOIIVUtils {
 		}
 		try (OutputStream output = new FileOutputStream(externalFile)) {
 			properties.store(output, "HOIIVUtils Configuration");
-			System.out.println("Configuration saved to: " + externalFile.getAbsolutePath());
+//			System.out.println("Configuration saved to: " + externalFile.getAbsolutePath());
 		} catch (IOException e) {
 			System.err.println("Failed to save configuration: " + e.getMessage());
 		}
@@ -136,7 +137,7 @@ public class HOIIVUtils {
 		if (externalFile.exists()) {
 			try (FileInputStream input = new FileInputStream(externalFile)) {
 				properties.load(input);
-				System.out.println("External configuration loaded from: " + PROPERTIES_FILE);
+//				System.out.println("External configuration loaded from: " + PROPERTIES_FILE);
 			} catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
@@ -195,7 +196,7 @@ public class HOIIVUtils {
 			System.out.println("auto set mod path to demo mod");
 		} else if (Paths.get(get("mod.path")).getFileName().toString().equals("demo_mod")) { // If mod path directory is named demo mod it will reset it incase entire directory moved
 			set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
-			System.out.println("auto set mod path to demo mod");
+//			System.out.println("auto set mod path to demo mod");
 		}
 	}
 

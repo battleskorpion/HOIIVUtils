@@ -36,7 +36,7 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
 			FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
-			System.out.println("HOIIVUtilsStageLoader creating stage with fxml: " + fxmlResource);
+//			System.out.println("HOIIVUtilsStageLoader creating stage with fxml: " + fxmlResource);
             Parent root;
             try {
                 root = launchLoader.load();
@@ -49,7 +49,7 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 
 			this.loader = launchLoader;
 			this.stage = createLaunchStage(scene);
-			System.out.println("HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource + " title: " + title);
+//			System.out.println("HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource + " title: " + title);
 		}
 	}
 
@@ -100,7 +100,7 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 				Stage launchStage = createLaunchStage(scene);
 				this.loader = launchLoader;
 				this.stage = launchStage;
-				System.out.println("HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource + " title: " + title);
+//				System.out.println("HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource + " title: " + title);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
