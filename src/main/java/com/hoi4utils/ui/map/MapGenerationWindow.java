@@ -113,7 +113,7 @@ public class MapGenerationWindow extends HOIIVUtilsWindow {
 	}
 
 	void drawProvinceMap() {
-		ProvinceMap map = this.provinceGeneration.getProvinceMap(); // fuck maven
+		ProvinceMap map = this.provinceGeneration.getProvinceMap();
 		Canvas var10001 = this.provinceCanvas;
 		int var10002 = map.width();
 		int var10003 = map.height();

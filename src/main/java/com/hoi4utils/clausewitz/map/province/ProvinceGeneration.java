@@ -15,8 +15,8 @@ import java.io.IOException;
 
 public class ProvinceGeneration extends AbstractMapGeneration {
 	public BorderMap stateBorderMap; 		// heightmap of preferred borders
-	@Getter
-    private ProvinceMap provinceMap;
+
+	private ProvinceMap provinceMap;
 //	private ProvinceMapPointsList points;
 	private SeedsSet<MapPoint> seeds;
 
@@ -115,6 +115,10 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 			case PROBABILISTIC_GPU -> new ProbabilisticSeedGeneration(heightmap, config);
 			case RANDOM -> new RandomSeedGeneration(config, heightmap);
 		};
+	}
+
+	public ProvinceMap getProvinceMap() {
+		return provinceMap;
 	}
 }
 
