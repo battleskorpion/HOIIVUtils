@@ -26,7 +26,7 @@ HOIIVUtils: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
 - Province Colors (75%)
 - Map Generation (90%)
 - Parser View (0%)
-- Everything (Your.Mom's.Body.Count.Over.10.000.%)
+- Everything :D
 
 ![image](./images/Menu.png)
 ![image](./images/Settings.png)
