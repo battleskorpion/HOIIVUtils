@@ -38,7 +38,7 @@ object LocalizationManager {
     num_cap_letters
   }
 
-  def isAcronym(word: String) = numCapitalLetters(word) == word.length
+  def isAcronym(word: String): Boolean = numCapitalLetters(word) == word.length
 }
 
 /**
