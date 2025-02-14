@@ -9,7 +9,6 @@ import java.io.*
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.Scanner
-import scala.collection.mutable.ListBuffer
 
 object EnglishLocalizationManager {
   protected val l_english = "l_english:"
