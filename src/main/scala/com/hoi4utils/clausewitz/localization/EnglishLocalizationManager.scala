@@ -8,6 +8,7 @@ import scala.jdk.javaapi.CollectionConverters
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.Scanner
 import scala.collection.mutable.ListBuffer
 
 object EnglishLocalizationManager {
@@ -68,87 +69,88 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
     }
   }
 
+  // todo wow :(
   protected def loadLocalizationFile(file: File, Status: Localization.Status): Unit = {
+    val scanner = new Scanner(file)
     try {
-      val scanner = new Scanner(file)
-      try {
-        // check language
-        var languageFound = false
-        while (scanner.hasNextLine && !languageFound) {
-          var line = scanner.nextLine
-          /* ignore BOM */
-          if (line.startsWith("\uFEFF")) line = line.substring(1)
-          if (!FileUtils.usefulData(line)) continue //todo: continue is not supported
+      // check language
+      var languageFound = false
+      while (scanner.hasNextLine && !languageFound) {
+        var line = scanner.nextLine
+        /* ignore BOM */
+        if (line.startsWith("\uFEFF")) line = line.substring(1)
+        if (FileUtils.usefulData(line)) {
           if (!line.trim.startsWith(EnglishLocalizationManager.language_def)) {
-            // todo we would have optional logging
             System.out.println("Localization file is not in English: " + file.getAbsolutePath)
             return
           }
           else languageFound = true
-        }
-        if (!languageFound) {
-          System.out.println("Localization file does not have a language definition: " + file.getAbsolutePath)
-          return
-        }
-        while (scanner.hasNextLine) {
-          val line = scanner.nextLine
-          if (!FileUtils.usefulData(line)) continue //todo: continue is not supported
+        } 
+      }
+      if (!languageFound) {
+        System.out.println("Localization file does not have a language definition: " + file.getAbsolutePath)
+        return
+      }
+      while (scanner.hasNextLine) {
+        val line = scanner.nextLine
+        if (FileUtils.usefulData(line)) {
           val data = line.splitWithDelimiters(EnglishLocalizationManager.versionNumberRegex, 2)
           if (data.length != 3) {
             System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
-            continue //todo: continue is not supported
-
+          } else {
+            // trim whitespace
+            for (i <- 0 until data.length) {
+              data(i) = data(i).trim
+            }
+            // ignore ":" before version number
+            data(1) = data(1).substring(1)
+            // ignore escaped quotes
+            data(2) = data(2).replaceAll("//\"", "\u0000")
+            val startQuote = data(2).indexOf("\"")
+            val endQuote = data(2).lastIndexOf("\"")
+            val extra = data(2).substring(endQuote + 1).trim
+            var invalid = false
+            if (extra.nonEmpty && !extra.startsWith("#")) {
+              System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: extraneous non-comment data after localization entry: " + extra)
+              invalid = true
+            }
+            if (startQuote != 0 || endQuote == -1 || startQuote == endQuote) {
+              System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: localization value is not correctly enclosed in quotes")
+              invalid = true
+            }
+            if (!invalid) {
+              // remove leading/trailing quotes (and any comments)
+              data(2) = data(2).substring(startQuote + 1, endQuote)
+              /*
+              .yml example format:
+              CONTROLS_GREECE: "Controls all states in the §Y$strategic_region_greece$§! strategic region"
+              CONTROLS_ASIA_MINOR:1 "Controls all states in the §Y$strategic_region_asia_minor$§! strategic region"
+              */
+              var key: String = null
+              var version: Integer = null
+              var value: String = null
+              if (data(1).isBlank) {
+                key = data(0)
+                version = null
+                value = data(2)
+              }
+              else {
+                key = data(0)
+                version = data(1).toInt
+                value = data(2)
+              }
+              // fix file format issues (as it is a UTF-8 BOM file)
+              value = value.replaceAll("(Â§)", "§")
+              val localization = new Localization(key, version, value, Status)
+              localizationCollection.add(localization, file)
+            }
           }
-          // trim whitespace
-          for (i <- 0 until data.length) {
-            data(i) = data(i).trim
-          }
-          // ignore ":" before version number
-          data(1) = data(1).substring(1)
-          // ignore escaped quotes
-          data(2) = data(2).replaceAll("//\"", "\u0000")
-          val startQuote = data(2).indexOf("\"")
-          val endQuote = data(2).lastIndexOf("\"")
-          val extra = data(2).substring(endQuote + 1).trim
-          if (extra.nonEmpty && !extra.startsWith("#")) {
-            System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: extraneous non-comment data after localization entry: " + extra)
-            continue //todo: continue is not supported
-          }
-          if (startQuote != 0 || endQuote == -1 || startQuote == endQuote) {
-            System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: localization value is not correctly enclosed in quotes")
-            continue //todo: continue is not supported
-
-          }
-          // remove leading/trailing quotes (and any comments)
-          data(2) = data(2).substring(startQuote + 1, endQuote)
-          /*
-          .yml example format:
-          CONTROLS_GREECE: "Controls all states in the §Y$strategic_region_greece$§! strategic region"
-          CONTROLS_ASIA_MINOR:1 "Controls all states in the §Y$strategic_region_asia_minor$§! strategic region"
-          */
-          var key: String = null
-          var version: Integer = null
-          var value: String = null
-          if (data(1).isBlank) {
-            key = data(0)
-            version = null
-            value = data(2)
-          }
-          else {
-            key = data(0)
-            version = data(1).toInt
-            value = data(2)
-          }
-          // fix file format issues (as it is a UTF-8 BOM file)
-          value = value.replaceAll("(Â§)", "§")
-          val localization = new Localization(key, version, value, Status)
-          localizationCollection.add(localization, file)
-        }
-      } catch {
-        case exc: IOException =>
-          exc.printStackTrace()
-      } finally if (scanner != null) scanner.close()
-    }
+        } 
+      }
+    } catch {
+      case exc: IOException =>
+        exc.printStackTrace()
+    } finally if (scanner != null) scanner.close()
   }
 
   override def saveLocalization(): Unit = {
@@ -159,8 +161,8 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
     val changedLocalizations = CollectionConverters.asJava(localizationCollection.filterByStatus(Localization.Status.UPDATED))
     val newLocalizations = CollectionConverters.asJava(localizationCollection.filterByStatus(Localization.Status.NEW))
     // Save updated and new localizations
-    changedLocalizations.forEach(entry => writeAllLocalization(CollectionConverters.asJava(entry._2.toList), entry._1))
-    newLocalizations.forEach(entry => writeAllLocalization(CollectionConverters.asJava(entry._2.toList), entry._1))
+    changedLocalizations.forEach(entry => writeAllLocalization(entry._2.toList, entry._1))
+    newLocalizations.forEach(entry => writeAllLocalization(entry._2.toList, entry._1))
   }
 
   def writeAllLocalization(list: List[Localization], file: File): Unit = {
@@ -173,8 +175,8 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
       val value = localization.text
       
       localization.status match {
-        case UPDATED => writeLocalization(file, key, version, value, false)
-        case NEW => writeLocalization(file, key, version, value, true)
+        case Localization.Status.UPDATED => writeLocalization(file, key, version, value, false)
+        case Localization.Status.NEW => writeLocalization(file, key, version, value, true)
         case _ => throw new IllegalStateException("Unexpected value: " + localization.status)
       }
     }
@@ -278,7 +280,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
     
     System.out.println("num words: " + words.size)
     for (i <- 1 until words.size) {
-      if (!isAcronym(words(i)) && !whitelist.contains(words.get(i))) {
+      if (!LocalizationManager.isAcronym(words(i)) && !whitelist.contains(words(i))) {
         if (words(i).length == 1) {
           words(i) = Character.toUpperCase(words(i).charAt(0)) + ""
         }
@@ -294,14 +296,10 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
   }
 
   // todo let user change?
-  override def capitalizationWhitelist: util.HashSet[String] = {
-    val whitelist = Array("a", "above", "after", "among", // among us
+  override def capitalizationWhitelist: Set[String] = {
+    Set("a", "above", "after", "among", // among us
       "an", "and", "around", "as", "at", "below", "beneath", "beside", "between", "but", "by", "for", "from", "if", "in", "into", "nor", "of", "off", "on", "onto", "or", "over", "since", "the", "through", "throughout", "to", "under", "underneath", "until", "up", "with")
-    // create the whitelist
-    new util.HashSet[String](util.List.of(whitelist))
   }
 
   override def toString: String = "EnglishLocalizationManager{" + "localizations=" + localizationCollection + "}"
-
-  override def hashCode: Int = Objects.hash(localizationCollection)
 }

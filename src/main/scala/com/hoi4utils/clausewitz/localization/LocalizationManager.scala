@@ -38,7 +38,7 @@ object LocalizationManager {
     num_cap_letters
   }
 
-  private[localization] def isAcronym(word: String) = numCapitalLetters(word) == word.length
+  def isAcronym(word: String) = numCapitalLetters(word) == word.length
 }
 
 /**
@@ -182,5 +182,5 @@ abstract class LocalizationManager {
   def titleCapitalize(trim: String): String
 
   // todo let user change?
-  private[localization] def capitalizationWhitelist: util.HashSet[String]
+  private[localization] def capitalizationWhitelist: Set[String]
 }
