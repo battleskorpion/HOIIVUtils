@@ -2,6 +2,7 @@ package com.hoi4utils.clausewitz.localization
 
 import com.hoi4utils.FileUtils
 import com.hoi4utils.clausewitz.HOIIVFile
+import com.hoi4utils.clausewitz.exceptions.LocalizationExistsException
 
 import scala.Option
 import scala.jdk.javaapi.CollectionConverters

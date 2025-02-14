@@ -1,4 +1,4 @@
-package com.hoi4utils.clausewitz.localization;
+package com.hoi4utils.clausewitz.exceptions;
 
 public class NoLocalizationManagerException extends RuntimeException {
     public NoLocalizationManagerException() {

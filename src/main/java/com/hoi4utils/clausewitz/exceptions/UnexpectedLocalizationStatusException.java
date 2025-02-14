@@ -1,4 +1,6 @@
-package com.hoi4utils.clausewitz.localization;
+package com.hoi4utils.clausewitz.exceptions;
+
+import com.hoi4utils.clausewitz.localization.Localization;
 
 public class UnexpectedLocalizationStatusException extends RuntimeException {
     public UnexpectedLocalizationStatusException(Localization localization, Localization other) {

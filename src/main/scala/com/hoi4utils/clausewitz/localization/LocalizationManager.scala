@@ -1,5 +1,6 @@
 package com.hoi4utils.clausewitz.localization
 
+import com.hoi4utils.clausewitz.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
 import org.jetbrains.annotations.NotNull
 
 import java.io.File
