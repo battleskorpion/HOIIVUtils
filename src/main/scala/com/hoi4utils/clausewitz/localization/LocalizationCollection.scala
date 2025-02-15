@@ -75,7 +75,12 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
 
   //override def containsKey(key: AnyRef) = throw new UnsupportedOperationException("Use containsLocalizationKey(String) method instead")
 
-  def containsLocalizationKey(id: String): Boolean = {
+  /**
+   * Checks if the given localization ID is localized (has a localization entry).
+   * @param id the ID of the localization to check
+   * @return true if the localization is localized, false otherwise
+   */
+  def containsLocKey(id: String): Boolean = {
     // Fast lookup from index
     localizationKeyMap.keySet.contains(id)
     // localizationKeyMap.containsKey(id)

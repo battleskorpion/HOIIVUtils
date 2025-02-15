@@ -21,10 +21,9 @@ object EnglishLocalizationManager {
 class EnglishLocalizationManager extends LocalizationManager with FileUtils {
   /* */ 
   setManager(this)
-  
+
   /**
-   * a record is final, so this is fine. The key will always be the same as the localization key
-   * from when it is initially put in the map.
+   * Localization collection for all English localization. 
    */
   final protected val localizationCollection = new LocalizationCollection
 
@@ -85,7 +84,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
             return
           }
           else languageFound = true
-        } 
+        }
       }
       if (!languageFound) {
         System.out.println("Localization file does not have a language definition: " + file.getAbsolutePath)
@@ -145,7 +144,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
               localizationCollection.add(localization, file)
             }
           }
-        } 
+        }
       }
     } catch {
       case exc: IOException =>
@@ -232,9 +231,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
    */
   @throws[LocalizationExistsException]
   override def addLocalization(localization: Localization, file: File): Unit = {
-    if (localization == null) return
-    if (localizationCollection.containsLocalizationKey(localization.ID)) throw new LocalizationExistsException(localization)
-    localizationCollection.add(localization, file)
+    addLocalization(localization, localizationCollection, file)
   }
 
   /**
@@ -247,14 +244,6 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
     if (key == null) throw new IllegalArgumentException("localization ID cannot be null")
     localizationCollection.get(key)
   }
-
-  /**
-   * Checks if the given localization ID is localized (has a localization entry).
-   *
-   * @param localizationId the ID of the localization to check
-   * @return true if the localization is localized, false otherwise
-   */
-  override def isLocalized(localizationId: String): Boolean = getLocalization(localizationId).nonEmpty
   
   override def localizations: LocalizationCollection = localizationCollection
 

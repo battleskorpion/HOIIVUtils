@@ -169,9 +169,21 @@ abstract class LocalizationManager {
    * @param localization the localization to add
    */
   @throws[LocalizationExistsException]
+  def addLocalization(localization: Localization, localizationCollection: LocalizationCollection, file: File): Unit = {
+    if (localization == null) return
+    if (localizationCollection.containsLocKey(localization.ID)) throw new LocalizationExistsException(localization)
+    localizationCollection.add(localization, file)
+  }
+
   def addLocalization(localization: Localization, file: File): Unit
 
-  def isLocalized(localizationId: String): Boolean
+  /**
+   * Checks if the given localization ID is localized (has a localization entry).
+   *
+   * @param localizationId the ID of the localization to check
+   * @return true if the localization is localized, false otherwise
+   */
+  def isLocalized(localizationId: String): Boolean = getLocalization(localizationId).nonEmpty
 
   /**
    * @return map of localizations and their keys.
