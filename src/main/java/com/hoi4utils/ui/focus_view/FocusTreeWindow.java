@@ -15,6 +15,7 @@ import com.hoi4utils.ui.pdxscript.NewFocusTreeWindow;
 import com.hoi4utils.ui.pdxscript.PDXEditorWindow;
 import javafx.fxml.FXML;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -25,6 +26,9 @@ import javafx.scene.control.*;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -39,6 +43,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class FocusTreeWindow extends HOIIVUtilsWindow {
@@ -160,6 +165,18 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	}
 
 	private int getMinY() { return 0; }
+
+	private int focusTreeViewLength() {
+		return getMaxX() - getMinX();
+	}
+
+	private int focusTreeViewHeight() {
+		return getMaxY() - getMinY();
+	}
+
+	private Dimension focusTreeViewDimension() {
+		return new Dimension(focusTreeViewLength(), focusTreeViewHeight());
+	}
 
 	private Image gfxFocusUnavailable;
 
@@ -551,6 +568,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 			int newY = limitFocusMoveY(this.canvasToFocusY(e.getY()));
 			if (draggedFocus.samePosition(newX, newY)) return;
 			if (e.isShiftDown()) {
+				Dimension prevDim = focusTreeViewDimension();
 				// Update the focus position
 				draggedFocus.setAbsoluteXY(newX, newY, true);
 				if (HOIIVUtils.getBoolean("dev.mode"))
@@ -561,7 +579,10 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 				// Redraw the focus tree to reflect the change
 				drawFocusTree();
+				// fix for bad behavior when the pane is resized
+				adjustFocusTreeViewport(prevDim);
 			} else {
+				Dimension prevDim = focusTreeViewDimension();
 				// Update the focus position
 				draggedFocus.setAbsoluteXY(newX, newY, false);
 				if (HOIIVUtils.getBoolean("dev.mode"))
@@ -570,12 +591,33 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 				// Redraw the focus tree to reflect the change
 				drawFocusTree();
+				// fix for bad behavior when the pane is resized
+				adjustFocusTreeViewport(prevDim);
 			}
 		} else if (e.isSecondaryButtonDown()) {
 			if (marqueeStartPoint == null)
 				marqueeStartPoint = new Point2D(e.getX(), e.getY());
 			else
 				marqueeEndPoint = new Point2D(e.getX(), e.getY());
+		}
+	}
+
+	/**
+	 * Fix for unwanted behavior when the focus tree pane is resized
+	 * @param prevDim the previous dimensions of the focus tree view
+	 */
+	private void adjustFocusTreeViewport(Dimension prevDim) {
+		var dim = focusTreeViewDimension();
+		System.out.println("test1"); 
+		if (!dim.equals(prevDim)) {
+			System.out.println("test2");
+			// adjust the viewport to maintain its position
+			double x = focusTreeCanvasScrollPane.getHvalue();
+			double y = focusTreeCanvasScrollPane.getVvalue();
+			double xRatio = x * prevDim.width / dim.width;
+			double yRatio = y * prevDim.height / dim.height;
+			focusTreeCanvasScrollPane.setHvalue(xRatio);
+			focusTreeCanvasScrollPane.setVvalue(yRatio);
 		}
 	}
 
