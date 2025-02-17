@@ -94,7 +94,7 @@ public class CountryBuildingsByStateWindow extends HOIIVUtilsWindow implements T
 		// includeVersion();
 		loadTableView(this, stateDataTable, stateList, State.getStateDataFunctions(false));
 
-		if (HOIIVUtils.getBoolean("dev.mode")) {
+		if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
 			JOptionPane.showMessageDialog(null, "dev - loaded rows: " + stateDataTable.getItems().size());
 		}
 

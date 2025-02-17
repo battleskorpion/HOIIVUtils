@@ -91,7 +91,7 @@ public class BuildingsByCountryWindow extends HOIIVUtilsWindow implements TableV
 			}
 		});
 
-		if (HOIIVUtils.getBoolean("dev.mode")) {
+		if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
 			JOptionPane.showMessageDialog(null, "dev - loaded rows: " + countryDataTable.getItems().size());
 		}
 	}

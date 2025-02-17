@@ -83,13 +83,13 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     if (expression.name == null) {
-      if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Error loading PDX script: " + expression)}
+      if (HOIIVUtils.getBoolean("dev_mode.enabled")) {System.out.println("Error loading PDX script: " + expression)}
       return
     }
     try set(expression)
     catch {
       case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        if (HOIIVUtils.getBoolean("dev.mode.enabled")) {System.out.println("Error loading PDX script:" + e.getMessage + "\n\t" + expression)}
+        if (HOIIVUtils.getBoolean("dev_mode.enabled")) {System.out.println("Error loading PDX script:" + e.getMessage + "\n\t" + expression)}
     }
   }
 

@@ -138,7 +138,7 @@ public class HOIIVFile implements FileUtils {
 					File file = event.getFile();
 					State.readState(file);
 					stateFilesWatcher.listenerPerformAction--;
-					if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
+					if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
 						State state = State.get(file);
 						System.out.println("State was created/loaded: " + state);
 					}
@@ -151,7 +151,7 @@ public class HOIIVFile implements FileUtils {
 					stateFilesWatcher.listenerPerformAction++;
 					File file = event.getFile();
 					State.readState(file);
-					if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
+					if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
 						State state = State.get(file);
 						System.out.println("State was modified: " + state);
 					}
@@ -166,7 +166,7 @@ public class HOIIVFile implements FileUtils {
 					File file = event.getFile();
 					State.deleteState(file);
 					stateFilesWatcher.listenerPerformAction--;
-					if (HOIIVUtils.getBoolean("dev.mode.enabled")) {
+					if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
 						State state = State.get(file);
 						System.out.println("State was deleted: " + state);
 					}

@@ -85,7 +85,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
     public void handleFocusTreeFileBrowseButtonAction() {
         File initialFocusDirectory = HOIIVFile.mod_focus_folder;
         File selectedFile = FXWindow.openChooser(focusTreeFileBrowseButton, initialFocusDirectory, false);
-        if (HOIIVUtils.getBoolean("dev.mode")) {
+        if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
             System.out.println(selectedFile);
         }
 
@@ -105,7 +105,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
     public void handleFocusLocFileBrowseButtonAction() {
 //        File initialFocusLocDirectory = HOIIVFile.mod_localization_folder;
 //        File selectedFile = openChooser(focusLocFileBrowseButton, initialFocusLocDirectory, false);
-//        if (HOIIVUtils.getBoolean("dev.mode")) {
+//        if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
 //            System.out.println(selectedFile);
 //        }
 //        if (selectedFile != null) {

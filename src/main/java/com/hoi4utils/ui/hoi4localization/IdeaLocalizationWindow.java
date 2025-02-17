@@ -76,7 +76,7 @@ public class IdeaLocalizationWindow extends HOIIVUtilsWindow implements TableVie
     public void handleIdeaFileBrowseButtonAction() {
         File initialIdeaDirectory = HOIIVFile.mod_ideas_folder;
         File selectedFile = FXWindow.openChooser(ideaFileBrowseButton, initialIdeaDirectory, false);
-        if (HOIIVUtils.getBoolean("dev.mode")) {
+        if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
             System.out.println(selectedFile);
         }
 
@@ -92,7 +92,7 @@ public class IdeaLocalizationWindow extends HOIIVUtilsWindow implements TableVie
     public void handleIdeaLocFileBrowseButtonAction() {
 //        File initialIdeaLocDirectory = HOIIVFile.mod_localization_folder;
 //        File selectedFile = openChooser(ideaLocFileBrowseButton, initialIdeaLocDirectory, false);
-//        if (HOIIVUtils.getBoolean("dev.mode")) {
+//        if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
 //            System.out.println(selectedFile);
 //        }
 //        if (selectedFile != null) {
