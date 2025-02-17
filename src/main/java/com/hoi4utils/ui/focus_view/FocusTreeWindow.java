@@ -608,9 +608,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	 */
 	private void adjustFocusTreeViewport(Dimension prevDim) {
 		var dim = focusTreeViewDimension();
-		System.out.println("test1"); 
 		if (!dim.equals(prevDim)) {
-			System.out.println("test2");
 			// adjust the viewport to maintain its position
 			double x = focusTreeCanvasScrollPane.getHvalue();
 			double y = focusTreeCanvasScrollPane.getVvalue();
