@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 public class Province implements Iterable<Province> {
 	static final List<Province> provinces = new ArrayList<>();
-	private int _id;
+	private final int _id;
 
 	protected Province(int provinceid) throws IllegalArgumentException {
 		if (provinceid < 0) {

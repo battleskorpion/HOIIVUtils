@@ -21,8 +21,8 @@ import com.hoi4utils.ui.HOIIVUtilsWindow;
  * initialized.");
  */
 public class MessageController extends HOIIVUtilsWindow {
-	private String fxmlResource = "/com/hoi4utils/ui/message/Message.fxml";
-	private String title = "Message";
+	private final String fxmlResource = "/com/hoi4utils/ui/message/Message.fxml";
+	private final String title = "Message";
 
 	@FXML
 	Label messageLabel;

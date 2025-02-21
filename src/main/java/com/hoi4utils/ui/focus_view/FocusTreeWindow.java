@@ -682,14 +682,14 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	private void openEditorWindow(Focus focus) {
 		if (focus == null) throw new IllegalArgumentException("Focus cannot be null");
 		PDXEditorWindow pdxEditorWindow = new PDXEditorWindow();
-		pdxEditorWindow.open((PDXScript<?>) focus); // this is not necessarily redundant.
+		pdxEditorWindow.open(focus); // this is not necessarily redundant.
 	}
 
 	@FXML
 	private void openEditorWindow(Focus focus, Runnable onUpdate) {
 		if (focus == null) throw new IllegalArgumentException("Focus cannot be null");
 		PDXEditorWindow pdxEditorWindow = new PDXEditorWindow();
-		pdxEditorWindow.open((PDXScript<?>) focus, onUpdate);
+		pdxEditorWindow.open(focus, onUpdate);
 	}
 
 	@FXML

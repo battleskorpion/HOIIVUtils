@@ -68,7 +68,7 @@ public class BuildingsByCountryWindow extends HOIIVUtilsWindow implements TableV
 	TableColumn<Country, Double> countryDataTableTungstenColumn;
 
 	private Boolean resourcesPercent;
-	private ClausewitzDate date = ClausewitzDate.defaulty();
+	private final ClausewitzDate date = ClausewitzDate.defaulty();
 
 	private final ObservableList<Country> countryList;
 

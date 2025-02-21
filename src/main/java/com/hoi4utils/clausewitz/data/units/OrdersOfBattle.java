@@ -27,7 +27,7 @@ public class OrdersOfBattle extends HOIIVFile {
     private double stability;                       // stability percentage defined from 0.0-1.0
     private double warSupport;                      // war support percentage defined from 0.0-1.0
     private Set<Technology> startingTech;           // starting technology defined in history/countries file
-    private int convoys = 0;
+    private final int convoys = 0;
     private Set<Idea> ideas;
     private Politics politics;
     private Popularities popularities;

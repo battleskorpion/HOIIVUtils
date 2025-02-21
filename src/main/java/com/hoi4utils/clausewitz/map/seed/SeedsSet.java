@@ -8,7 +8,7 @@ import java.util.List;
 
 public class SeedsSet<P extends MapPoint> extends AbstractSet<P> implements Iterable<P>, Set<P> {
 	public static final int SEEDS_LIST_SIZE = 3;
-	private ArrayList<Set<P>> seedsList;    // note: more mem-efficient to use one set, with tradeoffs, but then would really be a more generic MapPoint set
+	private final ArrayList<Set<P>> seedsList;    // note: more mem-efficient to use one set, with tradeoffs, but then would really be a more generic MapPoint set
 //	private HashSet<MapPoint> seedsRGBList;
 
 	public SeedsSet() {

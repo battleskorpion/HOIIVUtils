@@ -11,10 +11,10 @@ import com.aparapi.Range;
 
 ///  todo what is that distance kernel
 public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGeneration implements ProvinceDetermination<P> {
-    private Heightmap heightmap;
-    private ProvinceMap provinceMap;
+    private final Heightmap heightmap;
+    private final ProvinceMap provinceMap;
     private ProvinceMapPointsList points;
-    private ProvinceGenConfig properties;
+    private final ProvinceGenConfig properties;
     private BorderMapping<P> stateMapList;
     private BorderMap stateBorderMap;
 

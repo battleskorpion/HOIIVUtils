@@ -101,13 +101,9 @@ public class Parameter implements EffectParameter, Cloneable {
 		if (v.isNumber()) {
 			return true;
 		}
-		if (v.isList()) {
-			// todo not sure
-			return true; // maybe? hm..
-		}
-
-		return false;
-	}
+        // todo not sure
+        return v.isList(); // maybe? hm..
+    }
 
 //	@Override
 //	public String displayScript() {
@@ -153,7 +149,7 @@ public class Parameter implements EffectParameter, Cloneable {
 				// s.append("}\n");
 				s.append("[parameter -> list]");
 			} else {
-				s.append(value.toString());
+				s.append(value);
 			}
 			return s.toString();
 		}

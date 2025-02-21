@@ -117,7 +117,7 @@ public class SeedProbabilityMap extends AbstractMapGeneration {
 		double[] distanceModifiers = new double[r + 1]; // 0 to r
 		distanceModifiers[0] = 0.0;
 		for (int i = 1; i <= r; i++) {
-			distanceModifiers[i] = (double) (i - 0.2) / r; // Normalize the value to be between 0 and 1
+			distanceModifiers[i] = (i - 0.2) / r; // Normalize the value to be between 0 and 1
 		}
 
 		//int rSquared = r * r;

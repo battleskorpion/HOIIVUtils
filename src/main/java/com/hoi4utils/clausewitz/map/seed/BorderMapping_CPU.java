@@ -10,8 +10,8 @@ public class BorderMapping_CPU<P extends MapPoint> implements BorderMapping<P> {
     private final HashMap<Integer, SeedsSet<P>> borderMapSeeds;      // consider allowing non-hashset instead, for sake of lower-memory use
 
     /* cache */
-    private Map<Integer, Map<Integer, Set<P>>> seedSetCache = new HashMap<>();
-    private Map<Integer, Map<Integer, List<P>>> seedListCache = new HashMap<>();
+    private final Map<Integer, Map<Integer, Set<P>>> seedSetCache = new HashMap<>();
+    private final Map<Integer, Map<Integer, List<P>>> seedListCache = new HashMap<>();
 
     public BorderMapping_CPU() {
         borderMapSeeds = new HashMap<>();

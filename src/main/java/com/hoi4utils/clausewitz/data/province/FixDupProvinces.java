@@ -75,7 +75,7 @@ public class FixDupProvinces {
 			fContents = fContents.replace(old_provs_dec, "provinces={" + "\n\t\t" + new_provinces + "\n\t" + "}"); 
 			
 			FileWriter writer = new FileWriter(f);
-			System.out.println("");
+			System.out.println();
 			System.out.println("new data: " + fContents);
 			//fixing crlf to lf (did not work lol) 
 			//fContents = fContents.replaceAll("\r\n", "\n");

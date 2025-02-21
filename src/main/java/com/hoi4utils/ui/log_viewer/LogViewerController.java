@@ -14,7 +14,7 @@ public class LogViewerController extends HOIIVUtilsWindow {
     @FXML
     private CheckBox startupCheck;
 
-    private static ObservableList<String> logList = FXCollections.observableArrayList();
+    private static final ObservableList<String> logList = FXCollections.observableArrayList();
 
     public LogViewerController() {
         setFxmlResource("LogViewer.fxml");

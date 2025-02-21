@@ -6,10 +6,10 @@ import java.util.EventListener;
  */
 public interface FileListener extends EventListener {
 
-	public void onCreated(FileEvent event);
+	void onCreated(FileEvent event);
 
-	public void onModified(FileEvent event);
+	void onModified(FileEvent event);
 
-	public void onDeleted(FileEvent event);
+	void onDeleted(FileEvent event);
 		
 }

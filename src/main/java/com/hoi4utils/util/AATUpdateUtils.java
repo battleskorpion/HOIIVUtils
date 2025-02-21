@@ -8,7 +8,7 @@ import com.hoi4utils.clausewitz.HOIIVUtils;
 
 public class AATUpdateUtils {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         // test for juddr
 
         HOIIVUtils.main(null);
@@ -39,7 +39,7 @@ public class AATUpdateUtils {
                 throw new RuntimeException(e);
             }
 
-            StringBuilder fileBuffer = new StringBuilder();
+            String fileBuffer = "";
             // todo was old deprecated parser
             // while (s.hasNextLine()) {
             // String line = s.nextLine();
