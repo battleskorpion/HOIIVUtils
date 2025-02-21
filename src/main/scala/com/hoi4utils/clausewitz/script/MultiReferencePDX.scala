@@ -164,8 +164,11 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   }
 
   def removeReference(referenceName: String): Unit = {
-    referenceNames.remove(referenceNames.indexOf(referenceName))
-    resolveReferences()
+    val i = referenceNames.indexOf(referenceName)
+    if (i >= 0) {
+      referenceNames.remove(i)
+      resolveReferences()
+    } 
   }
 
   def containsReference(reference: T): Boolean = {
@@ -197,6 +200,8 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   override def size: Int = {
     get().size
   }
+
+  override def isUndefined: Boolean = referenceNames.isEmpty
 
   def numReferences: Int = referenceNames.size
 

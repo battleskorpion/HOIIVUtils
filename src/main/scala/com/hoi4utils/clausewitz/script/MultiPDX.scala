@@ -111,7 +111,9 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
 //  def stream: Stream[T] = get().stream
 
-  override def isUndefined: Boolean = super.isUndefined //node.isEmpty
+  override def isUndefined: Boolean = {
+    pdxList.forall(_.isUndefined)
+  }
 
   override def toScript: String = {
     if (node.isEmpty || node.get.isEmpty) return null

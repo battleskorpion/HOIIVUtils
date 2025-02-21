@@ -39,7 +39,7 @@ public class MultiReferencePDXVBox extends VBox {
         plusButton.setOnAction(event -> {
             HBox newPropertyHBox = visualizeEmptyReference();
             // Add the new property before the "+" button
-            this.getChildren().add(this.getChildren().size() - 2, newPropertyHBox);
+            this.getChildren().add(this.getChildren().size() - 1, newPropertyHBox);
             // Remove the initial "+" button
             //this.getChildren().remove(plusHBox);
         });
