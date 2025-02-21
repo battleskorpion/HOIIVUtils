@@ -199,7 +199,7 @@ public class PDXEditorPane extends AnchorPane {
         comboBox.setPrefHeight(25);
         comboBox.getSelectionModel().select(pdx.getReferenceName());
         comboBox.setItems(
-                FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())));
+                FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())).sorted());
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             pdx.setReferenceName(newValue);
             if (nullProperties.contains(pdx)) {

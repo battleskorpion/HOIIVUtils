@@ -62,7 +62,7 @@ public class MultiReferencePDXVBox extends VBox {
         comboBox.setPrefWidth(200);
         comboBox.setPrefHeight(25);
         comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(
-                pdx.getReferenceCollectionNames())));
+                pdx.getReferenceCollectionNames())).sorted());
         if (i >= 0) {
             comboBox.getSelectionModel().select(pdx.getReferenceName(i));
         }
@@ -94,7 +94,7 @@ public class MultiReferencePDXVBox extends VBox {
         comboBox.setPrefWidth(200);
         comboBox.setPrefHeight(25);
         comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(
-                pdx.getReferenceCollectionNames())));
+                pdx.getReferenceCollectionNames())).sorted());
 
         /* listeners / on actions */
         addReferenceHBoxEventHandlers(propertyHBox, minusButton, plusButton, comboBox);
