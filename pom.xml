@@ -71,6 +71,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-bom</artifactId>
+				<version>2.24.3</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -113,13 +120,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.24.3</version>
+			<artifactId>log4j-api</artifactId>
+			<version>RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>2.24.3</version>
+			<artifactId>log4j-core</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-layout-template-json</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jgrapht</groupId>
@@ -145,7 +157,7 @@
 		<dependency>
 			<groupId>com.aparapi</groupId>
 			<artifactId>aparapi</artifactId>
-			<version>3.0.2</version>
+			<version>RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.assertj</groupId>

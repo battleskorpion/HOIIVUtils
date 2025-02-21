@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xmlns="https://logging.apache.org/xml/ns"
+			   xsi:schemaLocation="
+                       https://logging.apache.org/xml/ns
+                       https://logging.apache.org/xml/ns/log4j-config-2.xsd">
+
 	<Appenders>
-		<!-- Console Appender -->
-		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout pattern="[%d{HH:mm:ss}] [%p] %c - %m%n"/>
+		<Console name="CONSOLE">
+			<JsonTemplateLayout/>
 		</Console>
-
-		<!-- File Appender -->
-		<File name="FileLogger" fileName="HOIIVUtils.log">
-			<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%p] %c - %m%n"/>
-		</File>
-
-		<!-- Custom Appender for UI -->
-		<List name="GuiAppender">
-			<PatternLayout pattern="[%d{HH:mm:ss}] [%p] - %m%n"/>
-		</List>
 	</Appenders>
 
 	<Loggers>
-		<Root level="info">
-			<AppenderRef ref="Console"/>
-			<AppenderRef ref="FileLogger"/>
-			<AppenderRef ref="GuiAppender"/>
+		<Logger name="com.hoi4utils" level="INFO"/>
+		<Root level="WARN">
+			<AppenderRef ref="CONSOLE"/>
 		</Root>
 	</Loggers>
+
 </Configuration>

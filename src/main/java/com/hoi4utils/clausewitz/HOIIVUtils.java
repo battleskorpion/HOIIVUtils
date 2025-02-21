@@ -6,8 +6,8 @@ import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.ui.menu.MenuController;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -74,6 +74,12 @@ public class HOIIVUtils {
 		 */
 		ModifierDatabase mdb = new ModifierDatabase();
 		EffectDatabase edb = new EffectDatabase();
+
+		LOGGER.debug("This is a debug message");
+		LOGGER.info("This is an info message");
+		LOGGER.warn("This is a warn message");
+		LOGGER.error("This is an error message");
+		LOGGER.fatal("This is a fatal message");
 
 		loadMod();
 
