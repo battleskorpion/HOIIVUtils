@@ -1,11 +1,15 @@
 package com.hoi4utils.ui.pdxscript;
 
+import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.script.MultiReferencePDX;
+import com.sun.scenario.Settings;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import org.jetbrains.annotations.NotNull;
 import scala.jdk.javaapi.CollectionConverters;
 
@@ -20,6 +24,8 @@ public class MultiReferencePDXVBox extends VBox {
         this.reloadAction = reloadAction;
 
         generateFromPDX();
+        // todo? 
+        super.setBackground(Background.fill(Paint.valueOf("gray")));
     }
 
     private void generateFromPDX() {
@@ -27,7 +33,7 @@ public class MultiReferencePDXVBox extends VBox {
             HBox propertyHBox = visualizeReferenceElement(i);
             this.getChildren().add(propertyHBox);
         }
-        // addtl plus button
+        // addtl standalone plus button
         HBox plusHBox = new HBox();
         Button plusButton = new Button("+");
         plusButton.setOnAction(event -> {
@@ -37,9 +43,13 @@ public class MultiReferencePDXVBox extends VBox {
             // Remove the initial "+" button
             //this.getChildren().remove(plusHBox);
         });
-        // Add the standalone "+" button
         plusHBox.getChildren().add(plusButton);
         this.getChildren().add(plusHBox);
+        if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
+            System.out.println("MultiReferencePDXVBox generated");
+//            System.out.println(pdx);
+        }
+
     }
 
     private @NotNull HBox visualizeReferenceElement(int i) {

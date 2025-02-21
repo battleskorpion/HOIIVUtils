@@ -1,5 +1,6 @@
 package com.hoi4utils.ui.pdxscript;
 
+import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.script.*;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import scala.jdk.javaapi.CollectionConverters;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -53,7 +55,9 @@ public class PDXEditorPane extends AnchorPane {
         vbox.getChildren().clear(); // Clear existing children to reset the editor
 
         if (pdxScript instanceof StructuredPDX pdx) {
-            for (var property : CollectionConverters.asJavaCollection(pdx.pdxProperties())) {
+            Collection<? extends PDXScript<?>> pdxProperties = CollectionConverters.asJavaCollection(
+                    pdx.pdxProperties());
+            for (var property : pdxProperties) {
                 HBox hbox = new HBox();
                 hbox.setSpacing(10);
                 Label label = new Label(property.getPDXIdentifier() + " =");
