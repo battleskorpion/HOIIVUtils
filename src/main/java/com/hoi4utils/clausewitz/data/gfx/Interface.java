@@ -18,9 +18,9 @@ import java.util.Objects;
  * Contains a set of SpriteTypes
  */
 public class Interface {
-	private File file;
+	private final File file;
 	private HashSet<SpriteType> spriteTypes;
-	private static HashMap<String, SpriteType> gfxHashMap = new HashMap<>();
+	private static final HashMap<String, SpriteType> gfxHashMap = new HashMap<>();
 	private static HashMap<File, Interface> interfaceFiles;
 
 	/*

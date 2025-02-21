@@ -1,20 +1,21 @@
 package com.hoi4utils.clausewitz;
 
-import java.io.*;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
-import java.util.Properties;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
 import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.ui.menu.MenuController;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.Properties;
+
 
 /**
  * HOIIVUtils.java main method is here
@@ -41,7 +42,7 @@ public class HOIIVUtils {
     }
 	public static final String DEFAULT_PROPERTIES = "HOIIVUtils.properties"; // In JAR // Outside JAR
 	public static final String PROPERTIES_FILE = HOIIVUTILS_DIR + File.separator + "HOIIVUtils.properties";
-    private static Properties properties = new Properties();
+    private static final Properties properties = new Properties();
 	static {
 		// Attempt to load external properties
 		if (loadExternalProperties()) {
@@ -132,7 +133,7 @@ public class HOIIVUtils {
 		}
 	}
 
-	private static Boolean loadExternalProperties() {
+	private static @NotNull Boolean loadExternalProperties() {
 		File externalFile = new File(PROPERTIES_FILE);
 		if (externalFile.exists()) {
 			try (FileInputStream input = new FileInputStream(externalFile)) {

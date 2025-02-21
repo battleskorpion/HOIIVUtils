@@ -481,9 +481,9 @@ public class OpenSimplex2 {
      * gradients
      */
 
-    private static float[] GRADIENTS_2D;
-    private static float[] GRADIENTS_3D;
-    private static float[] GRADIENTS_4D;
+    private static final float[] GRADIENTS_2D;
+    private static final float[] GRADIENTS_3D;
+    private static final float[] GRADIENTS_4D;
     static {
 
         GRADIENTS_2D = new float[N_GRADS_2D * 2];

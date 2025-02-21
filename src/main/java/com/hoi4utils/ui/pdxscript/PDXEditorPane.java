@@ -324,7 +324,7 @@ public class PDXEditorPane extends AnchorPane {
         Spinner<Integer> spinner = new Spinner<>(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue));
         // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment
-        spinner.getValueFactory().setValue((Integer) pdx.getOrElse(0));
+        spinner.getValueFactory().setValue(pdx.getOrElse(0));
 
         return newSpinnerHBox(pdx, withLabel, spinner);
     }

@@ -1,7 +1,10 @@
 package com.hoi4utils.ui.settings;
 
 import com.hoi4utils.FileUtils;
-import com.hoi4utils.clausewitz.*;
+import com.hoi4utils.clausewitz.HOIIVFile;
+import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.ui.FXWindow;
+import com.hoi4utils.ui.menu.MenuController;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,8 +14,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import com.hoi4utils.ui.FXWindow;
-import com.hoi4utils.ui.menu.MenuController;
 
 import java.io.File;
 import java.io.IOException;
@@ -116,13 +117,13 @@ public class SettingsController extends Application implements FXWindow {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
 
 
-        Parent rootFXML;
-        try {
-            rootFXML = loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        Scene scene = new Scene(rootFXML);
+		Parent rootFXML;
+		try {
+			rootFXML = loader.load();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		Scene scene = new Scene(rootFXML);
 		if (Objects.equals(HOIIVUtils.get("theme"), "dark")) {
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 		}
@@ -132,7 +133,7 @@ public class SettingsController extends Application implements FXWindow {
 		stage.show();
 		stage.maxWidthProperty().bind(stage.widthProperty());
 		stage.maxHeightProperty().bind(stage.heightProperty());
-		
+
 	}
 
 	/**
@@ -201,7 +202,7 @@ public class SettingsController extends Application implements FXWindow {
 	public void handleDrawFocusTreesCheckBoxAction() {
 		HOIIVUtils.set("draw_focus_tree.enabled", String.valueOf(drawFocusTreesCheckBox.isSelected()));
 	}
-	
+
 	public void handleLoadLocalizationCheckBoxAction() {
 		HOIIVUtils.set("load_localization", String.valueOf(loadLocalizationCheckBox.isSelected()));
 	}
@@ -223,7 +224,7 @@ public class SettingsController extends Application implements FXWindow {
 	 * location upon decision/etc?
 	 * monitors are labeled with ints, default being 0
 	 * interpret index of selection as monitor selection
- 	 */
+	 */
 	public void handlePreferredMonitorSelection() {
 		HOIIVUtils.set("preferred_screen", String.valueOf(preferredMonitorComboBox.getSelectionModel().getSelectedIndex()));
 	}

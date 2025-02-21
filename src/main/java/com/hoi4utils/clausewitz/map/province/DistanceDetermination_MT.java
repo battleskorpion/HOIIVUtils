@@ -25,7 +25,7 @@ public class DistanceDetermination_MT<P extends MapPoint> extends AbstractMapGen
     private final ProvinceMap provinceMap;
     private ProvinceMapPointsList points;
     private final ProvinceGenConfig config;
-    private boolean adjProvinceByGraphConnectivity = false;
+    private final boolean adjProvinceByGraphConnectivity = false;
     private BorderMapping<P> stateMapList;
     private BorderMap stateBorderMap;
 

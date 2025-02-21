@@ -19,7 +19,7 @@ public class CompareUnitsWindow extends HOIIVUtilsWindow {
     AnchorPane rootAnchorPane = new AnchorPane();
     @FXML
     private DiffViewPane unitsDiffViewPane;
-    private boolean skipNullProperties = true;
+    private final boolean skipNullProperties = true;
 
     public CompareUnitsWindow() {
         /* window */

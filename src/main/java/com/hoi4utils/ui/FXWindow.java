@@ -106,7 +106,7 @@ public interface FXWindow {
 	 * @param stage
 	 */
 	default void decideScreen(Stage stage) {
-		Integer preferredScreen = (Integer) HOIIVUtils.getInt("preferred_screen");
+		Integer preferredScreen = HOIIVUtils.getInt("preferred_screen");
 		ObservableList<Screen> screens = Screen.getScreens();
 		if (preferredScreen > screens.size() - 1) {
 			System.err.println("Preferred screen does not exist, resorting to defaults.");
@@ -139,7 +139,7 @@ public interface FXWindow {
 	 */
 	default void hideWindow(Node fxcomponent) {
 		try {
-			((Stage) (fxcomponent.getScene().getWindow())).hide();
+			fxcomponent.getScene().getWindow().hide();
 		} catch (Exception exception) {
 			openError(exception);
 		}

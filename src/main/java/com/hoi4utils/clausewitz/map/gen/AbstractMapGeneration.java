@@ -22,27 +22,25 @@ public abstract class AbstractMapGeneration {
 //			System.err.println("x: " + seedX + ", y: " + seedY);
 //		}
 
-		aa:
-		do {
-			/* prov color */
-			if (heightmapHeight < seaLevel) {
-				// generate new color until unique color generated (color does not exist already)
-				color = new Color(random.nextInt(64), random.nextInt(64), random.nextInt(64));
-			}
-			else {
-				// generate new color until unique color generated (color does not exist already)
-				color = new Color(random.nextInt(192) + 64, random.nextInt(192) + 64, random.nextInt(192) + 64);
-			}
-			rgb = colorToInt(color);
+        do {
+            /* prov color */
+            if (heightmapHeight < seaLevel) {
+                // generate new color until unique color generated (color does not exist already)
+                color = new Color(random.nextInt(64), random.nextInt(64), random.nextInt(64));
+            } else {
+                // generate new color until unique color generated (color does not exist already)
+                color = new Color(random.nextInt(192) + 64, random.nextInt(192) + 64, random.nextInt(192) + 64);
+            }
+            rgb = colorToInt(color);
 
-			/**
-			 * check if color already exists
-			 */
+            /**
+             * check if color already exists
+             */
 //			if (values.seedsRGBValues.containsValue(rgb)) {		// TODO should reimplement!!!!
 //				continue aa;
 //			}
-		}
-		while(false);
+        }
+        while (false);
 
 		return rgb;
 	}
