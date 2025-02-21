@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.menu.MenuController">
+<GridPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.menu.MenuController">
 	<columnConstraints>
 		<ColumnConstraints />
 		<ColumnConstraints hgrow="SOMETIMES" />

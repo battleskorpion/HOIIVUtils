@@ -58,7 +58,7 @@
 		<project.organization.name>battleskorpion</project.organization.name>
 		<project.inceptionYear>2022</project.inceptionYear>
 		<java.version>23</java.version>
-		<javafx.version>23.0.1</javafx.version>
+		<javafx.version>23.0.2</javafx.version>
 		<lombok.version>1.18.36</lombok.version>
 	</properties>
 
