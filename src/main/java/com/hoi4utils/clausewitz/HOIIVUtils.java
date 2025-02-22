@@ -13,10 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.Properties;
-
-
+import java.util.ArrayList;
+import java.util.List;
 /**
  * HOIIVUtils.java main method is here
  */
@@ -35,7 +36,7 @@ public class HOIIVUtils {
     static {
         try {
             HOIIVUTILS_DIR = new File(new File(HOIIVUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent()).getParent();
-			System.out.println("HOIIVUtils Directory: " + HOIIVUTILS_DIR);
+			LOGGER.info("HOIIVUtils Directory: {}", HOIIVUTILS_DIR);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -124,36 +125,40 @@ public class HOIIVUtils {
 
 	public static void save() {
 		File externalFile = new File(PROPERTIES_FILE);
-		if (!externalFile.exists()) {
+
+		// Ensure external file exists before saving
+		if (!externalFile.exists() && HOIIVUtils.class.getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES) != null) {
 			try {
 				loadDefaultProperties();
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				LOGGER.error("Failed to load default properties before saving", e);
+				return;
 			}
 		}
+
 		try (OutputStream output = new FileOutputStream(externalFile)) {
 			properties.store(output, "HOIIVUtils Configuration");
-//			System.out.println("Configuration saved to: " + externalFile.getAbsolutePath());
+			LOGGER.info("Configuration saved to: {}", externalFile.getAbsolutePath());
 		} catch (IOException e) {
-			System.err.println("Failed to save configuration: " + e.getMessage());
+			LOGGER.error("Failed to save configuration", e);
 		}
 	}
 
-	private static @NotNull Boolean loadExternalProperties() {
+	private static boolean loadExternalProperties() {
 		File externalFile = new File(PROPERTIES_FILE);
-		if (externalFile.exists()) {
-			try (FileInputStream input = new FileInputStream(externalFile)) {
-				properties.load(input);
-//				System.out.println("External configuration loaded from: " + PROPERTIES_FILE);
-			} catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+
+		if (!externalFile.exists()) {
+			LOGGER.warn("External configuration file not found: {}", PROPERTIES_FILE);
 			return false;
-        } else {
-			System.out.println("External configuration file not found");
+		}
+
+		try (FileInputStream input = new FileInputStream(externalFile)) {
+			properties.load(input);
+			LOGGER.info("External configuration loaded from: {}", PROPERTIES_FILE);
 			return true;
+		} catch (IOException e) {
+			LOGGER.error("Error loading external properties from: {}", PROPERTIES_FILE, e);
+			return false;
 		}
 	}
 
@@ -168,27 +173,24 @@ public class HOIIVUtils {
 	private static void loadDefaultProperties() throws IOException {
 		File externalFile = new File(PROPERTIES_FILE);
 
-		if (!externalFile.exists()) {
-			externalFile.createNewFile();
-		}
-
-		try (InputStream defaultConfig = HOIIVUtils.class.getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES);
-			 OutputStream externalOut = new FileOutputStream(externalFile)) {
-
-			System.out.println("Default Config" + defaultConfig);
+		try (InputStream defaultConfig = HOIIVUtils.class.getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES)) {
 
 			if (defaultConfig == null) {
 				throw new FileNotFoundException("Default properties file not found in JAR: " + DEFAULT_PROPERTIES);
 			}
 
-			byte[] buffer = new byte[1024];
-			int bytesRead;
-			while ((bytesRead = defaultConfig.read(buffer)) != -1) {
-				externalOut.write(buffer, 0, bytesRead);
-				System.out.println("bytesRead:" + bytesRead);
+			try (OutputStream externalOut = new FileOutputStream(externalFile)) {
+				byte[] buffer = new byte[8192]; // 8KB buffer for better performance
+				int bytesRead;
+				while ((bytesRead = defaultConfig.read(buffer)) != -1) {
+					externalOut.write(buffer, 0, bytesRead);
+				}
+				LOGGER.info("Default properties copied to: {}", externalFile.getAbsolutePath());
 			}
 
-			System.out.println("Default properties copied to: " + externalFile.getAbsolutePath());
+		} catch (IOException e) {
+			LOGGER.error("Failed to copy default properties to: {}", externalFile.getAbsolutePath(), e);
+			throw e;
 		}
 	}
 
@@ -197,42 +199,63 @@ public class HOIIVUtils {
 		autoSetHOIIVPath();
 	}
 
-	private static void autoSetDemoModPath() throws URISyntaxException {
-		if (get("mod.path") == null) {
+	private static void autoSetDemoModPath() {
+		if (HOIIVUTILS_DIR == null || HOIIVUTILS_DIR.isBlank()) {
+			LOGGER.warn("HOIIVUTILS_DIR is not set. Cannot auto-set mod.path.");
+			return;
+		}
+
+		String modPath = get("mod.path");
+
+		if (modPath == null || modPath.isBlank()) {
 			set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
-			System.out.println("auto set mod path to demo mod");
-		} else if (Paths.get(get("mod.path")).getFileName().toString().equals("demo_mod")) { // If mod path directory is named demo mod it will reset it incase entire directory moved
-			set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
-//			System.out.println("auto set mod path to demo mod");
+			LOGGER.info("Auto-set mod path to demo_mod");
+		} else {
+			try {
+				if (Paths.get(modPath).getFileName().toString().equals("demo_mod")) {
+					set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
+					LOGGER.info("Auto-reset mod path to demo_mod (directory was moved)");
+				}
+			} catch (InvalidPathException e) {
+				LOGGER.error("Invalid mod.path: {}. Resetting to default.", modPath, e);
+				set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
+			}
 		}
 	}
 
+
 	private static void autoSetHOIIVPath() {
-		// If the HOI4 path is already set, do nothing
 		if (get("hoi4.path") != null) {
 			return;
 		}
 
-		// List of potential default paths to check
-		String[] possiblePaths = {
-				"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Hearts of Iron IV",
-				"~/.steam/steam/steamapps/common"
-		};
+		String os = System.getProperty("os.name").toLowerCase();
+		List<String> possiblePaths = new ArrayList<>();
 
-		// Loop through potential paths and set the first valid one
+		if (os.contains("win")) {
+			possiblePaths.add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Hearts of Iron IV");
+			possiblePaths.add(System.getenv("ProgramFiles") + "\\Steam\\steamapps\\common\\Hearts of Iron IV");
+		} else if (os.contains("nix") || os.contains("nux")) {
+			possiblePaths.add(System.getProperty("user.home") + "/.steam/steam/steamapps/common/Hearts of Iron IV");
+			possiblePaths.add(System.getProperty("user.home") + "/.local/share/Steam/steamapps/common/Hearts of Iron IV");
+		} else if (os.contains("mac")) {
+			possiblePaths.add(System.getProperty("user.home") + "/Library/Application Support/Steam/steamapps/common/Hearts of Iron IV");
+		}
+
 		for (String path : possiblePaths) {
-			String expandedPath = path.replace("~", System.getProperty("user.home"));
-			if (new File(expandedPath).exists()) {
-				set("hoi4.path", expandedPath);
-				System.out.println("Auto-set HOI4 path: " + expandedPath);
+			File hoi4Dir = Paths.get(path).toAbsolutePath().toFile();
+			if (hoi4Dir.exists()) {
+				set("hoi4.path", hoi4Dir.getAbsolutePath());
+				LOGGER.info("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath());
 				return;
 			}
 		}
 
-		// If no valid path found, show a message
+		LOGGER.warn("Couldn't find HOI4 install folder. User must set it manually.");
 		JOptionPane.showMessageDialog(null,
 				"Couldn't find HOI4 install folder, please go to settings and add it (REQUIRED)",
 				"Error Message", JOptionPane.WARNING_MESSAGE);
+
 		save();
 	}
 }
