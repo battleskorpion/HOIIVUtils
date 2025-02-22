@@ -182,4 +182,13 @@ public class HOIIVFile implements FileUtils {
 	public static void removePropertyChangeListener(PropertyChangeListener listener) {
 		changeNotifier.removePropertyChangeListener(listener);
 	}
+
+    public static boolean isUnitsFolderValid() {	
+		return mod_units_folder != null 
+				&& mod_units_folder.exists() 
+				&& mod_units_folder.isDirectory()
+				&& hoi4_units_folder != null
+				&& hoi4_units_folder.exists()
+				&& hoi4_units_folder.isDirectory();
+    }
 }

@@ -2,21 +2,17 @@ package com.hoi4utils.ui.menu;
 
 
 import com.hoi4utils.clausewitz.HOIIVFile;
-import com.hoi4utils.clausewitz.data.focus.FocusTree;
-import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
-import com.hoi4utils.clausewitz.localization.LocalizationManager;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
 import com.hoi4utils.ui.hoi4localization.CustomTooltipWindow;
 import com.hoi4utils.ui.hoi4localization.FocusLocalizationWindow;
 import com.hoi4utils.ui.hoi4localization.IdeaLocalizationWindow;
 import com.hoi4utils.ui.hoi4localization.AllFocusTreesWindow;
 import com.hoi4utils.ui.log_viewer.LogViewerController;
-import com.hoi4utils.ui.statistics.StatisticsController;
 import com.hoi4utils.ui.province_colors.ProvinceColorsController;
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.ui.units.CompareUnitsWindow;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -34,8 +30,10 @@ import com.hoi4utils.ui.settings.SettingsController;
 import javax.swing.*;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import static com.hoi4utils.clausewitz.HOIIVUtils.LOGGER;
 
 public class MenuController extends Application implements FXWindow {
 	private String fxmlResource = "Menu.fxml";
@@ -66,33 +64,46 @@ public class MenuController extends Application implements FXWindow {
 	@Override
 	public void start(Stage stage) {
 		Locale currentLocale = Locale.getDefault();
+		ResourceBundle bundle;
 
-		ResourceBundle bundle = ResourceBundle.getBundle("menu", currentLocale);
+		try {
+			bundle = ResourceBundle.getBundle("menu", currentLocale);
+		} catch (MissingResourceException e) {
+			LOGGER.warn("Could not find ResourceBundle for locale {}. Falling back to English.", currentLocale);
+			bundle = ResourceBundle.getBundle("menu", Locale.ENGLISH);
+		}
+
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource), bundle);
+		Parent root;
+		try {
+			root = loader.load();
+		} catch (IOException e) {
+			LOGGER.error("Failed to load FXML resource: {}", fxmlResource, e);
+			return;
+		}
 
-        Parent root;
-        try {
-            root = loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        Scene scene = new Scene(root);
-		if (Objects.equals(HOIIVUtils.get("theme"), "dark")) {
+		Scene scene = new Scene(root);
+		if ("dark".equals(HOIIVUtils.get("theme"))) {
 			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 		}
+
 		this.stage = stage;
 		stage.setScene(scene);
 		stage.setTitle(title);
 		stage.show();
 	}
 
+
 	public void open() {
-		if (stage != null) {
-			stage.show();
-		} else {
-			start(new Stage());
-		}
+		Platform.runLater(() -> {
+			if (stage == null) {
+				start(new Stage());
+			} else {
+				stage.show();
+			}
+		});
 	}
+
 
 	public void openSettings() {
 		closeWindow(settingsButton); // closes the menu window
@@ -136,12 +147,9 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openUnitComparisonView() {
-		if (HOIIVFile.hoi4_units_folder == null || !HOIIVFile.hoi4_units_folder.exists()) {
-			JOptionPane.showMessageDialog(null, "Base units folder not found"); 
-			return;
-		}
-		if (HOIIVFile.mod_units_folder == null || !HOIIVFile.mod_units_folder.exists()) {
-			JOptionPane.showMessageDialog(null, "Mod units folder not found");
+		if (!HOIIVFile.isUnitsFolderValid()) {
+			LOGGER.warn("Unit comparison view cannot open: missing base or mod units folder.");
+			showErrorDialog("Unit folders not found. Please check your HOI4 installation or the chosen mod directory.");
 			return;
 		}
 		openUtilsWindow(new CompareUnitsWindow());
@@ -170,6 +178,20 @@ public class MenuController extends Application implements FXWindow {
 	public void open(String fxmlResource, String title) {
 		this.fxmlResource = fxmlResource;
 		this.title = title;
+
+		if (stage != null) {
+			Platform.runLater(() -> {
+				try {
+					FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
+					Parent root = loader.load();
+					stage.setScene(new Scene(root));
+					stage.setTitle(title);
+					stage.show();
+				} catch (IOException e) {
+					LOGGER.error("Failed to reload FXML resource: {}", fxmlResource, e);
+				}
+			});
+		}
 	}
 
 	@Override
@@ -190,5 +212,9 @@ public class MenuController extends Application implements FXWindow {
 	@Override
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	private void showErrorDialog(String message) {
+		Platform.runLater(() -> JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.WARNING_MESSAGE));
 	}
 }
