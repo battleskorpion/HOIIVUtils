@@ -2,24 +2,9 @@
 
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.text.TextFlow?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextArea?>
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.hoi4utils.ui.log_viewer.LogViewerController">
-    <TextFlow fx:id="logTextFlow"/>
-
-    <HBox spacing="10" alignment="CENTER">
-        <CheckBox fx:id="infoCheckbox" text="INFO" selected="true"/>
-        <CheckBox fx:id="debugCheckbox" text="DEBUG" selected="true"/>
-        <CheckBox fx:id="warnCheckbox" text="WARN" selected="true"/>
-        <CheckBox fx:id="errorCheckbox" text="ERROR" selected="true"/>
-        <CheckBox fx:id="fatalCheckbox" text="FATAL" selected="true"/>
-    </HBox>
-
-    <HBox spacing="10" alignment="CENTER">
-        <CheckBox fx:id="openOnStartupCheckbox" text="Open on Startup"/>
-    </HBox>
+    <TextArea fx:id="logTextArea" editable="false" wrapText="true"/>
 </VBox>
-
 
