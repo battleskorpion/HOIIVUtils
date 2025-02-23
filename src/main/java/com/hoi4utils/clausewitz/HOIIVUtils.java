@@ -36,13 +36,13 @@ public class HOIIVUtils {
     static {
         try {
             HOIIVUTILS_DIR = new File(new File(HOIIVUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent()).getParent();
-			LOGGER.info("HOIIVUtils Directory: {}", HOIIVUTILS_DIR);
+			LOGGER.debug("HOIIVUtils Directory: {}", HOIIVUTILS_DIR);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
-	public static final String DEFAULT_PROPERTIES = "HOIIVUtils.properties"; // In JAR // Outside JAR
-	public static final String PROPERTIES_FILE = HOIIVUTILS_DIR + File.separator + "HOIIVUtils.properties";
+	public static final String DEFAULT_PROPERTIES = "HOIIVUtils.properties"; // In JAR
+	public static final String PROPERTIES_FILE = HOIIVUTILS_DIR + File.separator + "HOIIVUtils.properties"; // Outside JAR
     private static final Properties properties = new Properties();
 	static {
 		// Attempt to load external properties
@@ -60,9 +60,11 @@ public class HOIIVUtils {
             throw new RuntimeException(e);
         }
     }
+	// Version has to be below properties or it will fail to compile
 	public static final String HOIIVUTILS_VERSION = get("version");
 	static {
 		System.out.println("HOIIVUtils" + " " + HOIIVUTILS_VERSION + " launched");
+		LOGGER.info("HOIIVUtils" + " " + HOIIVUTILS_VERSION + " launched");
 	}
 	public static final String DARK_MODE_STYLESHEETURL = "com/hoi4utils/ui/javafx_dark.css";
 	public static MenuController menuController;
@@ -138,7 +140,7 @@ public class HOIIVUtils {
 
 		try (OutputStream output = new FileOutputStream(externalFile)) {
 			properties.store(output, "HOIIVUtils Configuration");
-			LOGGER.info("Configuration saved to: {}", externalFile.getAbsolutePath());
+			LOGGER.debug("Configuration saved to: {}", externalFile.getAbsolutePath());
 		} catch (IOException e) {
 			LOGGER.error("Failed to save configuration", e);
 		}
@@ -154,10 +156,10 @@ public class HOIIVUtils {
 
 		try (FileInputStream input = new FileInputStream(externalFile)) {
 			properties.load(input);
-			LOGGER.info("External configuration loaded from: {}", PROPERTIES_FILE);
+			LOGGER.debug("External configuration loaded from: {}", PROPERTIES_FILE);
 			return true;
 		} catch (IOException e) {
-			LOGGER.error("Error loading external properties from: {}", PROPERTIES_FILE, e);
+			LOGGER.warn("Error loading external properties from: {}", PROPERTIES_FILE, e);
 			return false;
 		}
 	}
@@ -185,7 +187,7 @@ public class HOIIVUtils {
 				while ((bytesRead = defaultConfig.read(buffer)) != -1) {
 					externalOut.write(buffer, 0, bytesRead);
 				}
-				LOGGER.info("Default properties copied to: {}", externalFile.getAbsolutePath());
+				LOGGER.debug("Default properties copied to: {}", externalFile.getAbsolutePath());
 			}
 
 		} catch (IOException e) {
@@ -209,12 +211,12 @@ public class HOIIVUtils {
 
 		if (modPath == null || modPath.isBlank()) {
 			set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
-			LOGGER.info("Auto-set mod path to demo_mod");
+			LOGGER.debug("Auto-set mod path to demo_mod");
 		} else {
 			try {
 				if (Paths.get(modPath).getFileName().toString().equals("demo_mod")) {
 					set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
-					LOGGER.info("Auto-reset mod path to demo_mod (directory was moved)");
+					LOGGER.debug("Auto-reset mod path to demo_mod (directory was possible moved)");
 				}
 			} catch (InvalidPathException e) {
 				LOGGER.error("Invalid mod.path: {}. Resetting to default.", modPath, e);
@@ -246,7 +248,7 @@ public class HOIIVUtils {
 			File hoi4Dir = Paths.get(path).toAbsolutePath().toFile();
 			if (hoi4Dir.exists()) {
 				set("hoi4.path", hoi4Dir.getAbsolutePath());
-				LOGGER.info("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath());
+				LOGGER.debug("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath());
 				return;
 			}
 		}

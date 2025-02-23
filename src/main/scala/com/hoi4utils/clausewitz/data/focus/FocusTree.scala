@@ -37,13 +37,13 @@ object FocusTree {
    */
   def read(): Unit = {
     if (HOIIVUtils.get("mod.path") == null) {
-      System.err.println("Skipped FocusTree Reading")
+      HOIIVUtils.LOGGER.fatal("mod path is null, Skipped FocusTree Creation")
     } else if (!HOIIVFile.mod_focus_folder.exists || !HOIIVFile.mod_focus_folder.isDirectory) {
-      System.err.println("Focus folder does not exist or is not a directory.")
+      HOIIVUtils.LOGGER.fatal(s"In State.java - ${HOIIVFile.mod_focus_folder} is not a directory, or it does not exist.")
     } else if (HOIIVFile.mod_focus_folder.listFiles == null || HOIIVFile.mod_focus_folder.listFiles.length == 0) {
-      System.out.println("No focuses found in " + HOIIVFile.mod_focus_folder)
+      HOIIVUtils.LOGGER.fatal(s"No focuses found in ${HOIIVFile.mod_states_folder}")
     } else {
-      System.out.println("Creating Focus Trees")
+      HOIIVUtils.LOGGER.info("Reading focus trees from " + HOIIVFile.mod_focus_folder)
       for (f <- HOIIVFile.mod_focus_folder.listFiles) {
         if (f.getName.endsWith(".txt")) new FocusTree(f)
       }

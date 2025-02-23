@@ -1,8 +1,10 @@
 package com.hoi4utils.clausewitz.localization
 
 import com.hoi4utils.FileUtils
-import com.hoi4utils.clausewitz.HOIIVFile
+import com.hoi4utils.clausewitz.{HOIIVFile, HOIIVUtils}
 import com.hoi4utils.clausewitz.exceptions.LocalizationExistsException
+import com.hoi4utils.ui.HOIIVUtilsWindow
+import org.apache.logging.log4j.{LogManager, Logger}
 
 import scala.Option
 import scala.jdk.javaapi.CollectionConverters
@@ -38,25 +40,26 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
   }
 
   protected def loadLocalization(): Unit = {
-    // load mod localization after vanilla to give mod localizations priority
-    if (HOIIVFile.hoi4_localization_folder == null) 
-      System.out.println("'HOI4 localization folder' null.")
-    else if (!HOIIVFile.hoi4_localization_folder.exists) 
-      System.out.println("'HOI4 localization folder' does not exist.")
-    else if (!HOIIVFile.hoi4_localization_folder.isDirectory) 
-      System.out.println("'HOI4 localization folder' is not a directory.")
-    else 
+    // Load mod localization after vanilla to give mod localizations priority
+    if (HOIIVFile.hoi4_localization_folder == null)
+      HOIIVUtils.LOGGER.warn("'HOI4 localization folder' is null.")
+    else if (!HOIIVFile.hoi4_localization_folder.exists)
+      HOIIVUtils.LOGGER.warn("'HOI4 localization folder' does not exist.")
+    else if (!HOIIVFile.hoi4_localization_folder.isDirectory)
+      HOIIVUtils.LOGGER.warn("'HOI4 localization folder' is not a directory.")
+    else
       loadLocalization(HOIIVFile.mod_localization_folder, Localization.Status.EXISTS)
-    
-    if (HOIIVFile.mod_localization_folder == null) 
-      System.out.println("'Mod localization folder' null.")
-    else if (!HOIIVFile.mod_localization_folder.exists) 
-      System.out.println("'Mod localization folder' does not exist.")
-    else if (!HOIIVFile.mod_localization_folder.isDirectory) 
-      System.out.println("'Mod localization folder' is not a directory.")
-    else 
+
+    if (HOIIVFile.mod_localization_folder == null)
+      HOIIVUtils.LOGGER.warn("'Mod localization folder' is null.")
+    else if (!HOIIVFile.mod_localization_folder.exists)
+      HOIIVUtils.LOGGER.warn("'Mod localization folder' does not exist.")
+    else if (!HOIIVFile.mod_localization_folder.isDirectory)
+      HOIIVUtils.LOGGER.warn("'Mod localization folder' is not a directory.")
+    else
       loadLocalization(HOIIVFile.hoi4_localization_folder, Localization.Status.VANILLA)
   }
+
 
   protected def loadLocalization(localizationFolder: File, status: Localization.Status): Unit = {
     val files = localizationFolder.listFiles
@@ -64,7 +67,8 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
     for (file <- files) {
       if (file.isDirectory) loadLocalization(file, status)
       else if (file.getName.endsWith(".yml")) loadLocalizationFile(file, status)
-      else System.out.println("Localization files can only be of type .yml. File: " + file.getAbsolutePath)
+      else HOIIVUtils.LOGGER.info("Localization files can only be of type .yml. File: {}", file.getAbsolutePath)
+      HOIIVUtils.LOGGER.debug("Loaded localization file: {}", file.getAbsolutePath)
     }
   }
 

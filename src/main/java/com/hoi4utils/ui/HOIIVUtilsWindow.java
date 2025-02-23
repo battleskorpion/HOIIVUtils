@@ -1,8 +1,6 @@
 package com.hoi4utils.ui;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -30,9 +28,9 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 	public void open() {
 		if (stage != null) {
 			stage.show();
-			System.out.println("HOIIVUtilsStageLoader showed stage with open cuz stage was NOT null. fxml: " + fxmlResource + " title: " + title);
+			HOIIVUtils.LOGGER.info("Stage already exists, showing: {}", title);
 		} else if (fxmlResource == null) {
-			System.out.println(	"HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. title: " + title);
+			HOIIVUtils.LOGGER.error("Cannot create stage, FXML resource is null. Title: {}", title);
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
 			FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
@@ -41,6 +39,7 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
             try {
                 root = launchLoader.load();
             } catch (IOException e) {
+				HOIIVUtils.LOGGER.error("Error loading FXML: {}", fxmlResource, e);
                 throw new RuntimeException(e);
             }
             Scene scene = new Scene(root);
@@ -59,11 +58,6 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 	 * @param initargs the initialization arguments for the controller
 	 */
 	public void open(Object... initargs) {
-		Class<?>[] initargs_classes = new Class[initargs.length];
-		for (int i = 0; i < initargs.length; i++) {
-			initargs_classes[i] = initargs[i].getClass();
-		}
-
 		if (stage != null) {
 			stage.show();
 			System.out.println("HOIIVUtilsStageLoader showed stage with open cuz stage was NOT null. fxml: " + fxmlResource + " title: " + title);
@@ -145,21 +139,14 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 		open();
 	}
 
-	/**
-	 * Opens stage in thread and runLater javafx thingy
-	 */
-	@FXML
-    public void openRunLater() {
-		new Thread(() -> {
-			Platform.runLater(this::open);
-		}).start();
-	}
-
 	@NotNull
 	private Stage createLaunchStage(Scene scene) {
+		if (stage != null) {
+			stage.close();
+		}
+
 		Stage launchStage = new Stage();
 		launchStage.setScene(scene);
-
 		launchStage.setTitle(title);
 		decideScreen(launchStage);
 		launchStage.show();
@@ -167,10 +154,17 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 	}
 
 	private void addSceneStylesheets(Scene scene) {
-		scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
-		//scene.getStylesheets().add(getClass().getResource("../highlight-background.css").toExternalForm());
-		scene.getStylesheets().add(getClass().getResource("/com/hoi4utils/ui/highlight-background.css").toExternalForm());
+		if (HOIIVUtils.DARK_MODE_STYLESHEETURL != null) {
+			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
+		}
+
+		try {
+			scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/hoi4utils/ui/highlight-background.css")).toExternalForm());
+		} catch (NullPointerException e) {
+			System.err.println("Warning: Stylesheet 'highlight-background.css' not found!");
+		}
 	}
+
 
 	@Override
 	public String getFxmlResource() {

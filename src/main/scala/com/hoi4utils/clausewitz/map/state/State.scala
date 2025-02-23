@@ -12,6 +12,7 @@ import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.province.VictoryPoint
 import com.hoi4utils.clausewitz.map.resources.Resources
 import com.hoi4utils.clausewitz_parser.*
+import org.apache.logging.log4j.{LogManager, Logger}
 import org.jetbrains.annotations.NotNull
 
 import scala.jdk.javaapi.CollectionConverters
@@ -37,15 +38,15 @@ object State {
    */
   def read(): Unit = {
     if (HOIIVUtils.get("mod.path") == null) {
-      System.err.println("mod path is null, Skipped State Creation")
+      HOIIVUtils.LOGGER.fatal("mod path is null, Skipped State Creation")
     } else if (!HOIIVFile.mod_states_folder.exists || !HOIIVFile.mod_states_folder.isDirectory) {
-      System.err.println("In State.java - " + HOIIVFile.mod_states_folder + " is not a directory, or etc.")
-    } else if (HOIIVFile.mod_states_folder.listFiles == null || HOIIVFile.mod_states_folder.listFiles.length == 0) {
-      System.out.println("No states found in " + HOIIVFile.mod_states_folder)
+      HOIIVUtils.LOGGER.fatal(s"In State.java - ${HOIIVFile.mod_states_folder} is not a directory, or it does not exist.")
+    } else if (HOIIVFile.mod_states_folder.listFiles == null || HOIIVFile.mod_states_folder.listFiles.isEmpty) {
+      HOIIVUtils.LOGGER.fatal(s"No states found in ${HOIIVFile.mod_states_folder}")
     } else {
-      System.out.println("Creating States")
-      for (stateFile <- HOIIVFile.mod_states_folder.listFiles) {
-        if (stateFile.getName.endsWith(".txt")) new State(stateFile)
+      HOIIVUtils.LOGGER.info(s"Reading states from ${HOIIVFile.mod_states_folder}")
+      for (stateFile <- HOIIVFile.mod_states_folder.listFiles if stateFile.getName.endsWith(".txt")) {
+        new State(stateFile)
       }
     }
   }
