@@ -55,6 +55,8 @@
           <include>**/*.png</include>
           <include>**/*.bmp</include>
           <include>**/*.sql</include>
+          <include>**/*.json</include>
+          <include>**/*.xml</include>
         </includes>
       </resource>
       <resource>
@@ -120,7 +122,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.13.0</version>
+        <version>3.14.0</version>
         <executions>
           <execution>
             <phase>compile</phase>
