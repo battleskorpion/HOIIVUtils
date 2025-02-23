@@ -115,7 +115,7 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openLogViewer() {
-		new LogViewerController().openRunLater();
+		openUtilsWindow(new LogViewerController());
 	}
 
 	public void openLocalizeFocusTree() {

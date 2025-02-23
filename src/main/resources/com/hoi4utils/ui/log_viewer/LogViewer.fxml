@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.CheckBox?>
-<VBox alignment="CENTER" spacing="10" xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.log_viewer.LogViewerController">
-    <ListView fx:id="logListView" prefHeight="400.0" prefWidth="600.0" />
-    <Button text="Clear Logs" onAction="#clearLogs" />
-    <CheckBox fx:id="startupCheck" text="Open this window on startup?" onAction="#startupCheck" />
+<?import javafx.scene.control.TextArea?>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.hoi4utils.ui.log_viewer.LogViewerController">
+    <TextArea fx:id="logTextArea" editable="false" wrapText="true"/>
 </VBox>
+

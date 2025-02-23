@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			   xmlns="https://logging.apache.org/xml/ns"
-			   xsi:schemaLocation="
-                       https://logging.apache.org/xml/ns
-                       https://logging.apache.org/xml/ns/log4j-config-2.xsd">
-
+<Configuration status="WARN">
 	<Appenders>
-		<Console name="CONSOLE">
-			<JsonTemplateLayout/>
+		<!-- Console Appender -->
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
 		</Console>
+
+		<!-- File Appender (Overwrites on Startup) -->
+		<RollingFile name="File" fileName="latest.log"
+					 filePattern="logs/archive-%d{yyyy-MM-dd-HH-mm-ss}.log">
+			<PatternLayout>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy/> <!-- Overwrites the log on every launch -->
+			</Policies>
+		</RollingFile>
 	</Appenders>
 
 	<Loggers>
-		<Logger name="com.hoi4utils" level="INFO"/>
-		<Root level="WARN">
-			<AppenderRef ref="CONSOLE"/>
+		<Root level="INFO">
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="File"/>
 		</Root>
 	</Loggers>
-
 </Configuration>

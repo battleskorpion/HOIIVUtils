@@ -1,42 +1,60 @@
 package com.hoi4utils.ui.log_viewer;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
-import javafx.scene.control.CheckBox;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.scene.control.TextArea;
+
+import java.io.IOException;
+import java.nio.file.*;
 
 public class LogViewerController extends HOIIVUtilsWindow {
+    private static final String LOG_FILE_PATH = "latest.log";
 
     @FXML
-    private ListView<String> logListView;
-    @FXML
-    private CheckBox startupCheck;
-
-    private static final ObservableList<String> logList = FXCollections.observableArrayList();
+    private TextArea logTextArea;
 
     public LogViewerController() {
         setFxmlResource("LogViewer.fxml");
         setTitle("Log Viewer");
     }
 
-    @FXML
     public void initialize() {
-        logListView.setItems(logList);
+        loadLogFile();
+        watchLogFile();
     }
 
-    public static void addLog(String log) {
-        logList.add(log);
+    private void loadLogFile() {
+        try {
+            String content = Files.readString(Paths.get(LOG_FILE_PATH));
+            logTextArea.setText(content);
+        } catch (IOException e) {
+            logTextArea.setText("Log file not found.");
+        }
     }
 
-    @FXML
-    private void clearLogs() {
-        logList.clear();
-    }
+    private void watchLogFile() {
+        Thread logWatcher = new Thread(() -> {
+            try {
+                WatchService watchService = FileSystems.getDefault().newWatchService();
+                Path logDir = Paths.get("logs");
+                logDir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
 
-    @FXML
-    private void startupCheck() {
-        System.out.println("Startup check: " + startupCheck.isSelected());
+                while (true) {
+                    WatchKey key = watchService.take();
+                    for (WatchEvent<?> event : key.pollEvents()) {
+                        if (event.context().toString().equals("latest.log")) {
+                            Platform.runLater(this::loadLogFile);
+                        }
+                    }
+                    key.reset();
+                }
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        logWatcher.setDaemon(true);
+        logWatcher.start();
     }
 }
