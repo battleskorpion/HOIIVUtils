@@ -46,13 +46,7 @@ public class SettingsController extends Application implements FXWindow {
 	@FXML
 	public Button hoi4FolderBrowseButton;
 	@FXML
-	public CheckBox devModeCheckBox;
-	@FXML
 	public Button idOkButton;
-	@FXML
-	public CheckBox drawFocusTreesCheckBox;
-	@FXML
-	public CheckBox loadLocalizationCheckBox;
 	@FXML
 	public RadioButton darkTheme;
 	@FXML
@@ -99,9 +93,6 @@ public class SettingsController extends Application implements FXWindow {
 		if (!"null".equals(HOIIVUtils.get("hoi4.path"))) {
 			hoi4PathTextField.setText(HOIIVUtils.get("hoi4.path"));
 		}
-		devModeCheckBox.setSelected(HOIIVUtils.getBoolean("dev_mode.enabled"));
-		drawFocusTreesCheckBox.setSelected(HOIIVUtils.getBoolean("draw_focus_tree.enabled"));
-		loadLocalizationCheckBox.setSelected(HOIIVUtils.getBoolean("load_localization"));
 		darkTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "dark"));
 		lightTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "light"));
 	}
@@ -194,19 +185,6 @@ public class SettingsController extends Application implements FXWindow {
 		hoi4PathTextField.setText(hoi4File.getAbsolutePath());
 	}
 
-
-	public void handleDevModeCheckBoxAction() {
-		HOIIVUtils.set("dev_mode.enabled", String.valueOf(devModeCheckBox.isSelected()));
-	}
-
-	public void handleDrawFocusTreesCheckBoxAction() {
-		HOIIVUtils.set("draw_focus_tree.enabled", String.valueOf(drawFocusTreesCheckBox.isSelected()));
-	}
-
-	public void handleLoadLocalizationCheckBoxAction() {
-		HOIIVUtils.set("load_localization", String.valueOf(loadLocalizationCheckBox.isSelected()));
-	}
-
 	public void handleDarkThemeRadioAction() {
 		if (darkTheme.isSelected()) {
 			HOIIVUtils.set("theme", "dark");
@@ -220,13 +198,17 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	/**
-	 * change preferred monitor setting. // todo future: change settings window
+	 * change preferred monitor setting.
 	 * location upon decision/etc?
 	 * monitors are labeled with ints, default being 0
 	 * interpret index of selection as monitor selection
 	 */
 	public void handlePreferredMonitorSelection() {
 		HOIIVUtils.set("preferred_screen", String.valueOf(preferredMonitorComboBox.getSelectionModel().getSelectedIndex()));
+	}
+	
+	public void handleLogLevel() {
+		
 	}
 
 	/**

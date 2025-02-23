@@ -9,6 +9,8 @@ import javafx.scene.control.ProgressIndicator;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -17,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class ProvinceColorsController extends HOIIVUtilsWindow {
+	public static final Logger LOGGER = LogManager.getLogger(ProvinceColorsController.class);
 	@FXML
 	public Label idWindowName;
 	@FXML
@@ -102,7 +105,7 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 				javafx.application.Platform.runLater(() -> {
 					progressIndicator.setVisible(false);
 					statusLabel.setText("BMP generated successfully: " + outputPath);
-					HOIIVUtils.LOGGER.info("Generated BMP with " + numColors + " unique colors: " + outputPath);
+					LOGGER.info("Generated BMP with " + numColors + " unique colors: " + outputPath);
 				});
 			} catch (Exception e) {
 				e.printStackTrace();

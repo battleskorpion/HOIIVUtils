@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz.data.focus.FocusTree.focusTreeFileMap
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz.localization.*
 import javafx.collections.{FXCollections, ObservableList}
+import org.apache.logging.log4j.{LogManager, Logger}
 import org.jetbrains.annotations.*
 
 import java.io.File
@@ -15,11 +16,12 @@ import scala.collection.mutable
 import scala.jdk.javaapi.CollectionConverters
 
 /**
- * ALL of the FocusTree/FocusTrees
+ * ALL the FocusTree/FocusTrees
  * Localizable data: focus tree name. Each focus is its own localizable data.
  */
 // todo extends file?
 object FocusTree {
+  val LOGGER: Logger = LogManager.getLogger(classOf[FocusTree])
   private val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
   private val focusTrees = new mutable.ListBuffer[FocusTree]()
 
@@ -37,13 +39,13 @@ object FocusTree {
    */
   def read(): Unit = {
     if (HOIIVUtils.get("mod.path") == null) {
-      HOIIVUtils.LOGGER.fatal("mod path is null, Skipped FocusTree Creation")
+      LOGGER.fatal("mod path is null, Skipped FocusTree Creation")
     } else if (!HOIIVFile.mod_focus_folder.exists || !HOIIVFile.mod_focus_folder.isDirectory) {
-      HOIIVUtils.LOGGER.fatal(s"In State.java - ${HOIIVFile.mod_focus_folder} is not a directory, or it does not exist.")
+      LOGGER.fatal(s"In State.java - ${HOIIVFile.mod_focus_folder} is not a directory, or it does not exist.")
     } else if (HOIIVFile.mod_focus_folder.listFiles == null || HOIIVFile.mod_focus_folder.listFiles.length == 0) {
-      HOIIVUtils.LOGGER.fatal(s"No focuses found in ${HOIIVFile.mod_states_folder}")
+      LOGGER.fatal(s"No focuses found in ${HOIIVFile.mod_states_folder}")
     } else {
-      HOIIVUtils.LOGGER.info("Reading focus trees from " + HOIIVFile.mod_focus_folder)
+      LOGGER.info("Reading focus trees from " + HOIIVFile.mod_focus_folder)
       for (f <- HOIIVFile.mod_focus_folder.listFiles) {
         if (f.getName.endsWith(".txt")) new FocusTree(f)
       }

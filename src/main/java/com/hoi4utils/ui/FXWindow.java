@@ -146,9 +146,7 @@ public interface FXWindow {
 	}
 
 	default void openError(Exception exception) {
-		if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
-			exception.printStackTrace();
-		}
+		exception.printStackTrace();
 		JOptionPane.showMessageDialog(null, exception, "ln: " + exception.getStackTrace()[0].getLineNumber(),
 				JOptionPane.WARNING_MESSAGE);
 	}

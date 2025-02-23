@@ -21,6 +21,7 @@ object EnglishLocalizationManager {
 }
 
 class EnglishLocalizationManager extends LocalizationManager with FileUtils {
+  val LOGGER: Logger = LogManager.getLogger(classOf[EnglishLocalizationManager])
   /* */ 
   setManager(this)
 
@@ -42,20 +43,20 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
   protected def loadLocalization(): Unit = {
     // Load mod localization after vanilla to give mod localizations priority
     if (HOIIVFile.hoi4_localization_folder == null)
-      HOIIVUtils.LOGGER.warn("'HOI4 localization folder' is null.")
+      LOGGER.warn("'HOI4 localization folder' is null.")
     else if (!HOIIVFile.hoi4_localization_folder.exists)
-      HOIIVUtils.LOGGER.warn("'HOI4 localization folder' does not exist.")
+      LOGGER.warn("'HOI4 localization folder' does not exist.")
     else if (!HOIIVFile.hoi4_localization_folder.isDirectory)
-      HOIIVUtils.LOGGER.warn("'HOI4 localization folder' is not a directory.")
+      LOGGER.warn("'HOI4 localization folder' is not a directory.")
     else
       loadLocalization(HOIIVFile.mod_localization_folder, Localization.Status.EXISTS)
 
     if (HOIIVFile.mod_localization_folder == null)
-      HOIIVUtils.LOGGER.warn("'Mod localization folder' is null.")
+      LOGGER.warn("'Mod localization folder' is null.")
     else if (!HOIIVFile.mod_localization_folder.exists)
-      HOIIVUtils.LOGGER.warn("'Mod localization folder' does not exist.")
+      LOGGER.warn("'Mod localization folder' does not exist.")
     else if (!HOIIVFile.mod_localization_folder.isDirectory)
-      HOIIVUtils.LOGGER.warn("'Mod localization folder' is not a directory.")
+      LOGGER.warn("'Mod localization folder' is not a directory.")
     else
       loadLocalization(HOIIVFile.hoi4_localization_folder, Localization.Status.VANILLA)
   }
@@ -67,8 +68,8 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
     for (file <- files) {
       if (file.isDirectory) loadLocalization(file, status)
       else if (file.getName.endsWith(".yml")) loadLocalizationFile(file, status)
-      else HOIIVUtils.LOGGER.info("Localization files can only be of type .yml. File: {}", file.getAbsolutePath)
-      HOIIVUtils.LOGGER.debug("Loaded localization file: {}", file.getAbsolutePath)
+      else LOGGER.info("Localization files can only be of type .yml. File: {}", file.getAbsolutePath)
+      LOGGER.debug("Loaded localization file: {}", file.getAbsolutePath)
     }
   }
 

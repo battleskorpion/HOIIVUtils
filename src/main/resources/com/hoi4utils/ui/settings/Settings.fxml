@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
@@ -19,7 +18,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Rectangle?>
 
-<GridPane prefHeight="425.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/${javafx.version}>" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.settings.SettingsController">
+<GridPane prefHeight="425.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.settings.SettingsController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
@@ -56,35 +55,44 @@
                               <RowConstraints maxHeight="30.0" minHeight="26.0" prefHeight="26.0" />
                               <RowConstraints maxHeight="30.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="30.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="296.0" minHeight="30.0" prefHeight="37.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="296.0" minHeight="30.0" prefHeight="37.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="291.0" minHeight="30.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="291.0" minHeight="30.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="291.0" minHeight="25.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="128.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="128.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="50.0" prefHeight="50.0" />
+                              <RowConstraints maxHeight="50.0" prefHeight="50.0" />
+                              <RowConstraints maxHeight="50.0" prefHeight="50.0" />
+                              <RowConstraints maxHeight="50.0" prefHeight="50.0" />
+                              <RowConstraints maxHeight="50.0" prefHeight="50.0" />
+                              <RowConstraints maxHeight="50.0" prefHeight="50.0" />
+                              <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="91.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <CheckBox fx:id="devModeCheckBox" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#handleDevModeCheckBoxAction" text="Developer Mode" GridPane.rowIndex="4" />
                               <Button fx:id="modFolderBrowseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleModFileBrowseAction" prefHeight="25.0" prefWidth="70.0" text="Browse" GridPane.columnIndex="5" GridPane.rowIndex="2" />
                               <TextField fx:id="modPathTextField" onAction="#handleModPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/mod/directory" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                              <Label fx:id="idHOIIVModFolderLabel" text="Mod Folder:" GridPane.rowIndex="2" />
+                              <Label fx:id="idHOIIVModFolderLabel" alignment="CENTER_RIGHT" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Mod Folder:" GridPane.rowIndex="2">
+                                 <padding>
+                                    <Insets right="4.0" />
+                                 </padding></Label>
                               <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="26.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="693.0" GridPane.rowIndex="11" />
                               <Label fx:id="idVersionLabel" text="Label" GridPane.rowIndex="1" />
-                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="141.0" text="Preferred Monitor: " GridPane.rowIndex="6" />
-                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" text="Theme" GridPane.rowIndex="5">
+                              <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Preferred Monitor?" GridPane.rowIndex="4">
+                                 <padding>
+                                    <Insets right="4.0" />
+                                 </padding></Label>
+                              <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" text="Theme?" textAlignment="RIGHT" GridPane.rowIndex="5">
                                  <GridPane.margin>
                                     <Insets />
                                  </GridPane.margin>
+                                 <padding>
+                                    <Insets right="4.0" />
+                                 </padding>
                               </Label>
-                              <ComboBox fx:id="preferredMonitorComboBox" maxWidth="-Infinity" onAction="#handlePreferredMonitorSelection" prefHeight="25.0" prefWidth="190.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+                              <ComboBox fx:id="preferredMonitorComboBox" maxWidth="-Infinity" onAction="#handlePreferredMonitorSelection" prefHeight="25.0" prefWidth="190.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
                               <Label alignment="CENTER_RIGHT" layoutX="275.0" layoutY="107.0" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" GridPane.rowIndex="1" />
-                              <CheckBox fx:id="drawFocusTreesCheckBox" mnemonicParsing="false" onAction="#handleDrawFocusTreesCheckBoxAction" text="Draw Focus Trees" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Label text="Hearts of Iron IV Folder:" GridPane.rowIndex="3" />
+                              <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Hearts of Iron IV Folder:" GridPane.rowIndex="3">
+                                 <padding>
+                                    <Insets right="4.0" />
+                                 </padding></Label>
                               <TextField fx:id="hoi4PathTextField" onAction="#handleHOIIVPathTextField" prefHeight="25.0" prefWidth="414.0" promptText="C:/path/to/HeartsOfIron4/directory" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
                               <Button fx:id="hoi4FolderBrowseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHOIIVFileBrowseAction" prefHeight="25.0" prefWidth="70.0" text="Browse" GridPane.columnIndex="5" GridPane.rowIndex="3" />
-                              <CheckBox fx:id="loadLocalizationCheckBox" mnemonicParsing="false" onAction="#handleLoadLocalizationCheckBoxAction" text="Load Localization" GridPane.columnIndex="2" GridPane.rowIndex="4" />
                               <RadioButton fx:id="darkTheme" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#handleDarkThemeRadioAction" text="Dark" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="Theme" />
@@ -94,6 +102,11 @@
                                     <Insets left="66.0" />
                                  </GridPane.margin>
                               </RadioButton>
+                              <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="5">
+                                 <padding>
+                                    <Insets right="4.0" />
+                                 </padding>
+                              </Label>
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

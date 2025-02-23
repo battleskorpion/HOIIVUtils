@@ -26,6 +26,8 @@ import com.hoi4utils.ui.focus_view.FocusTreeWindow;
 import com.hoi4utils.ui.map.MapGenerationWindow;
 import com.hoi4utils.ui.parser.ParserViewerWindow;
 import com.hoi4utils.ui.settings.SettingsController;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -33,9 +35,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import static com.hoi4utils.clausewitz.HOIIVUtils.LOGGER;
-
 public class MenuController extends Application implements FXWindow {
+	public static final Logger LOGGER = LogManager.getLogger(MenuController.class);
 	private String fxmlResource = "Menu.fxml";
 	private String title = "HOIIVUtils Menu " + HOIIVUtils.HOIIVUTILS_VERSION;
 	private Stage stage;

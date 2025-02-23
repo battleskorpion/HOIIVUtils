@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public abstract class HOIIVUtilsWindow implements FXWindow {
+	public static final Logger LOGGER = LogManager.getLogger(HOIIVUtilsWindow.class);
 	private String fxmlResource;
 	private String title;
 	protected Stage stage;
@@ -28,9 +31,9 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 	public void open() {
 		if (stage != null) {
 			stage.show();
-			HOIIVUtils.LOGGER.info("Stage already exists, showing: {}", title);
+			LOGGER.info("Stage already exists, showing: {}", title);
 		} else if (fxmlResource == null) {
-			HOIIVUtils.LOGGER.error("Cannot create stage, FXML resource is null. Title: {}", title);
+			LOGGER.error("Cannot create stage, FXML resource is null. Title: {}", title);
 			openError("FXML Resource does not exist, Window Title: " + title);
 		} else {
 			FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
@@ -39,7 +42,7 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
             try {
                 root = launchLoader.load();
             } catch (IOException e) {
-				HOIIVUtils.LOGGER.error("Error loading FXML: {}", fxmlResource, e);
+				LOGGER.error("Error loading FXML: {}", fxmlResource, e);
                 throw new RuntimeException(e);
             }
             Scene scene = new Scene(root);

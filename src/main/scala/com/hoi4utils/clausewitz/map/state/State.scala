@@ -30,6 +30,7 @@ import scala.util.{Failure, Success, Try}
  * I apologize in advance.
  */
 object State {
+  val LOGGER: Logger = LogManager.getLogger(classOf[State])
   /* static */
   private val states = new ListBuffer[State]
 
@@ -38,13 +39,13 @@ object State {
    */
   def read(): Unit = {
     if (HOIIVUtils.get("mod.path") == null) {
-      HOIIVUtils.LOGGER.fatal("mod path is null, Skipped State Creation")
+      LOGGER.fatal("mod path is null, Skipped State Creation")
     } else if (!HOIIVFile.mod_states_folder.exists || !HOIIVFile.mod_states_folder.isDirectory) {
-      HOIIVUtils.LOGGER.fatal(s"In State.java - ${HOIIVFile.mod_states_folder} is not a directory, or it does not exist.")
+      LOGGER.fatal(s"In State.java - ${HOIIVFile.mod_states_folder} is not a directory, or it does not exist.")
     } else if (HOIIVFile.mod_states_folder.listFiles == null || HOIIVFile.mod_states_folder.listFiles.isEmpty) {
-      HOIIVUtils.LOGGER.fatal(s"No states found in ${HOIIVFile.mod_states_folder}")
+      LOGGER.fatal(s"No states found in ${HOIIVFile.mod_states_folder}")
     } else {
-      HOIIVUtils.LOGGER.info(s"Reading states from ${HOIIVFile.mod_states_folder}")
+      LOGGER.info(s"Reading states from ${HOIIVFile.mod_states_folder}")
       for (stateFile <- HOIIVFile.mod_states_folder.listFiles if stateFile.getName.endsWith(".txt")) {
         new State(stateFile)
       }
