@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -42,8 +43,9 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
             try {
                 root = launchLoader.load();
             } catch (IOException e) {
-				LOGGER.error("Error loading FXML: {}", fxmlResource, e);
-                throw new RuntimeException(e);
+				JOptionPane.showMessageDialog(null, "Failed to open window\nError loading FXML: " + fxmlResource, "Error", JOptionPane.ERROR_MESSAGE);
+				LOGGER.fatal("Error loading FXML: {}", fxmlResource, e);
+                throw new RuntimeException("Failed to load FXML: " + fxmlResource, e);
             }
             Scene scene = new Scene(root);
 

@@ -3,7 +3,7 @@
 	<Appenders>
 		<!-- Console Appender -->
 		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level - %msg%n" />
+			<PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
 		</Console>
 
 		<!-- File Appender (Overwrites on Startup) -->
@@ -19,7 +19,7 @@
 	</Appenders>
 
 	<Loggers>
-		<Root level="INFO">
+		<Root level="DEBUG">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
 		</Root>
