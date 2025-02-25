@@ -151,13 +151,6 @@ public interface FXWindow {
 				JOptionPane.WARNING_MESSAGE);
 	}
 
-	default void openError(String s) {
-		if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
-			System.err.println("open error window for error message: " + s);
-		}
-		JOptionPane.showMessageDialog(null, s, "Error Message", JOptionPane.WARNING_MESSAGE);
-	}
-
 	void open();
 
 	void open(String fxmlResource, String title);

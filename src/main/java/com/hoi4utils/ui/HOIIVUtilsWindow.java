@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class HOIIVUtilsWindow implements FXWindow {
 	public static final Logger LOGGER = LogManager.getLogger(HOIIVUtilsWindow.class);
@@ -31,29 +32,20 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 	@Override
 	public void open() {
 		if (stage != null) {
-			stage.show();
-			LOGGER.info("Stage already exists, showing: {}", title);
-		} else if (fxmlResource == null) {
-			LOGGER.error("Cannot create stage, FXML resource is null. Title: {}", title);
-			openError("FXML Resource does not exist, Window Title: " + title);
-		} else {
-			FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
-//			System.out.println("HOIIVUtilsStageLoader creating stage with fxml: " + fxmlResource);
-            Parent root;
-            try {
-                root = launchLoader.load();
-            } catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Failed to open window\nError loading FXML: " + fxmlResource, "Error", JOptionPane.ERROR_MESSAGE);
-				LOGGER.fatal("Error loading FXML: {}", fxmlResource, e);
-                throw new RuntimeException("Failed to load FXML: " + fxmlResource, e);
-            }
-            Scene scene = new Scene(root);
+			showExistingStage();
+			return;
+		}
 
-			addSceneStylesheets(scene);
+		if (fxmlResource == null) {
+			handleMissingFXMLResource();
+			return;
+		}
 
-			this.loader = launchLoader;
-			this.stage = createLaunchStage(scene);
-//			System.out.println("HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource + " title: " + title);
+		try {
+			Parent root = loadFXML();
+			setupAndShowStage(root);
+		} catch (IOException e) {
+			handleFXMLLoadError(e);
 		}
 	}
 
@@ -64,75 +56,27 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 	 */
 	public void open(Object... initargs) {
 		if (stage != null) {
-			stage.show();
-			System.out.println("HOIIVUtilsStageLoader showed stage with open cuz stage was NOT null. fxml: " + fxmlResource + " title: " + title);
-		} else if (fxmlResource == null) {
-			System.out.println("HOIIVUtilsStageLoader couldn't create a new scene cause the fxml was null. fxmlResource: " + fxmlResource + " title: " + title);
-			openError("FXML Resource does not exist, Window Title: " + title);
-		} else {
-			try {
-				FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
-				launchLoader.setControllerFactory(c -> {
-					List<List<Class<?>>> ArgsClassHierarchies = new ArrayList<>(initargs.length);
-					for (int i = 0; i < initargs.length; i++) {
-						Set<Class<?>> superclassesAndInterfaces = new HashSet<>();
-						Class<?> currentClass = initargs[i].getClass();
-						while (currentClass != null) {
-							superclassesAndInterfaces.add(currentClass);
-							superclassesAndInterfaces.addAll(Arrays.asList(currentClass.getInterfaces()));
-							currentClass = currentClass.getSuperclass();
-						}
-						findSuperinterfacesRecursively(superclassesAndInterfaces);
-						ArgsClassHierarchies.add(new ArrayList<>(superclassesAndInterfaces));
-					}
-					for (List<Class<?>> combination : generateCombinations(ArgsClassHierarchies, 0)) {
-						try {
-							return getClass().getConstructor(combination.toArray(new Class[0])).newInstance(initargs);
-						} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
-						}
-					}
-					throw new RuntimeException("No suitable constructor found");
-				});
-				Parent root = launchLoader.load();
-				Scene scene = new Scene(root);
-				addSceneStylesheets(scene);
-				Stage launchStage = createLaunchStage(scene);
-				this.loader = launchLoader;
-				this.stage = launchStage;
-//				System.out.println("HOIIVUtilsStageLoader created and showed stage with open cuz stage was null and fxml resource is: " + fxmlResource + " title: " + title);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			showExistingStage();
+			return;
 		}
-	}
 
-	private static void findSuperinterfacesRecursively(Set<Class<?>> hierarchyAndInterfaces) {
-		/* necessary due to how scala trait/class structure works */
-		// get interfaces of any interfaces, until there is no new interfaces to add
-		// 'interface' is also to be equivalent to a Scala trait
-		// todo improve this. can be optimized via recursion on new interfaces
-		int prevSize = hierarchyAndInterfaces.size();
-		while (true) {
-			Set<Class<?>> newInterfaces = new HashSet<>();
-			for (Class<?> interf : hierarchyAndInterfaces) {
-				if (interf.isInterface()) {
-					newInterfaces.addAll(Arrays.asList(interf.getInterfaces()));
-				}
-			}
-			if (newInterfaces.isEmpty()) {
-				break;
-			}
-			hierarchyAndInterfaces.addAll(newInterfaces);
-			if (prevSize == hierarchyAndInterfaces.size()) {
-				break;
-			}
-			prevSize = hierarchyAndInterfaces.size();
+		if (fxmlResource == null) {
+			handleMissingFXMLResource();
+			return;
+		}
+
+		try {
+			FXMLLoader launchLoader = createFXMLLoaderWithArgs(initargs);
+			Parent root = loadFXML(launchLoader);
+			setupAndShowStage(root, launchLoader);
+		} catch (IOException e) {
+			handleFXMLLoadError(e);
 		}
 	}
 
 	/**
 	 * Opens stage and updates fxmlResource and title
-	 * 
+	 *
 	 * @param fxmlResource stage .fxml resource
 	 * @param title stage title
 	 */
@@ -140,37 +84,150 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 	public void open(String fxmlResource, String title) {
 		this.fxmlResource = fxmlResource;
 		this.title = title;
-		System.out.println("open(String fxmlResource, String title)" + "fxmlResource: " + fxmlResource + " title: " + title);
+		LOGGER.debug("Opening stage: {}", title);
 		open();
+	}
+
+	private void showExistingStage() {
+		stage.show();
+		LOGGER.info("Stage already exists, showing: {}", title);
+	}
+
+	private void handleMissingFXMLResource() {
+		String errorMessage = "Failed to open window\nError: FXML resource is null.";
+		LOGGER.error(errorMessage);
+		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	private Parent loadFXML() throws IOException {
+		FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
+		try {
+			return launchLoader.load();
+		} catch (IOException e) {
+			throw new IOException("Failed to load FXML: " + fxmlResource, e);
+		}
+	}
+	
+	private Parent loadFXML(FXMLLoader loader) throws IOException {
+		return loader.load();
+	}
+
+	private void setupAndShowStage(Parent root) {
+		Scene scene = new Scene(root);
+		addSceneStylesheets(scene);
+		this.stage = createLaunchStage(scene);
+		LOGGER.debug("Stage created and shown: {}", title);
+	}
+	
+	private void setupAndShowStage(Parent root, FXMLLoader loader) {
+		Scene scene = new Scene(root);
+		addSceneStylesheets(scene);
+		this.loader = loader;
+		this.stage = createLaunchStage(scene);
+		LOGGER.debug("Stage created and shown: {}", title);
+	}
+
+	private void handleFXMLLoadError(IOException e) {
+		String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource;
+		LOGGER.fatal("Error loading FXML: {}", fxmlResource, e);
+		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+		throw new RuntimeException(errorMessage, e);
+	}
+
+	private FXMLLoader createFXMLLoaderWithArgs(Object... initargs) {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
+		loader.setControllerFactory(c -> findMatchingConstructor(initargs));
+		return loader;
+	}
+
+	private Object findMatchingConstructor(Object... initargs) {
+		List<List<Class<?>>> ArgsClassHierarchies = new ArrayList<>(initargs.length);
+
+		for (Object arg : initargs) {
+			Set<Class<?>> superclassesAndInterfaces = new HashSet<>();
+			Class<?> currentClass = arg.getClass();
+
+			while (currentClass != null) {
+				superclassesAndInterfaces.add(currentClass);
+				superclassesAndInterfaces.addAll(Arrays.asList(currentClass.getInterfaces()));
+				currentClass = currentClass.getSuperclass();
+			}
+
+			findSuperinterfacesRecursively(superclassesAndInterfaces);
+			ArgsClassHierarchies.add(new ArrayList<>(superclassesAndInterfaces));
+		}
+
+		for (List<Class<?>> combination : generateCombinations(ArgsClassHierarchies, 0)) {
+			try {
+				return getClass().getConstructor(combination.toArray(new Class[0])).newInstance(initargs);
+			} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
+			}
+		}
+
+		throw new RuntimeException("No suitable constructor found for arguments: " + Arrays.toString(initargs));
+	}
+
+	/**
+	 * Recursively find all superinterfaces of the given classes and add them to the set.
+	 *
+	 * @param hierarchyAndInterfaces the set to add the superinterfaces to
+	 */
+	private static void findSuperinterfacesRecursively(Set<Class<?>> hierarchyAndInterfaces) {
+		int prevSize;
+		do {
+			prevSize = hierarchyAndInterfaces.size();
+
+			// Collect new interfaces from existing ones
+			Set<Class<?>> newInterfaces = hierarchyAndInterfaces.stream()
+					.filter(Class::isInterface)
+					.flatMap(interf -> Arrays.stream(interf.getInterfaces()))
+					.collect(Collectors.toSet());
+
+			// Add only if new interfaces exist
+			hierarchyAndInterfaces.addAll(newInterfaces);
+		} while (hierarchyAndInterfaces.size() > prevSize); // Stop when no new interfaces are added
+	}
+	
+	private List<List<Class<?>>> generateCombinations(List<List<Class<?>>> classHierarchies, int index) {
+		if (index == classHierarchies.size()) {
+			return List.of(new ArrayList<>()); // Base case: return a list with an empty list
+		}
+
+		List<List<Class<?>>> nextCombinations = generateCombinations(classHierarchies, index + 1);
+
+		return classHierarchies.get(index).stream()
+				.flatMap(clazz -> nextCombinations.stream()
+						.map(combination -> {
+							List<Class<?>> newCombination = new ArrayList<>(combination);
+							newCombination.add(0, clazz);
+							return newCombination;
+						}))
+				.toList();
 	}
 
 	@NotNull
 	private Stage createLaunchStage(Scene scene) {
-		if (stage != null) {
-			stage.close();
-		}
+		Optional.ofNullable(stage).ifPresent(Stage::close);
 
 		Stage launchStage = new Stage();
 		launchStage.setScene(scene);
 		launchStage.setTitle(title);
 		decideScreen(launchStage);
 		launchStage.show();
+
 		return launchStage;
 	}
 
 	private void addSceneStylesheets(Scene scene) {
-		if (HOIIVUtils.DARK_MODE_STYLESHEETURL != null) {
-			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
-		}
+        scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
 
-		try {
+        try {
 			scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/hoi4utils/ui/highlight-background.css")).toExternalForm());
 		} catch (NullPointerException e) {
 			System.err.println("Warning: Stylesheet 'highlight-background.css' not found!");
 		}
 	}
-
-
+	
 	@Override
 	public String getFxmlResource() {
 		return fxmlResource;
@@ -191,27 +248,13 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 		this.title = title;
 	}
 
-	private List<Class<?>> getClassHierarchy(Class<?> clazz) {
-		List<Class<?>> hierarchy = new ArrayList<>();
-		while (clazz != null) {
-			hierarchy.add(clazz);
-			clazz = clazz.getSuperclass();
-		}
-		return hierarchy;
-	}
-
-	private List<List<Class<?>>> generateCombinations(List<List<Class<?>>> classHierarchies, int index) {
-		List<List<Class<?>>> combinations = new ArrayList<>();
-		if (index == classHierarchies.size()) {
-			combinations.add(new ArrayList<>());
-		} else {
-			for (Class<?> clazz : classHierarchies.get(index)) {
-				for (List<Class<?>> combination : generateCombinations(classHierarchies, index + 1)) {
-					combination.add(0, clazz);
-					combinations.add(new ArrayList<>(combination));
-				}
-			}
-		}
-		return combinations;
-	}
+	// TODO move to a more appropriate class or delete
+//	private List<Class<?>> getClassHierarchy(Class<?> clazz) {
+//		List<Class<?>> hierarchy = new ArrayList<>();
+//		while (clazz != null) {
+//			hierarchy.add(clazz);
+//			clazz = clazz.getSuperclass();
+//		}
+//		return hierarchy;
+//	}
 }
