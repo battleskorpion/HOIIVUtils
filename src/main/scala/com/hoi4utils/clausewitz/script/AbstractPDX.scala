@@ -2,6 +2,8 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.HOIIVUtils
 import com.hoi4utils.clausewitz_parser.{Node, NodeValue, Parser, ParserException}
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.jetbrains.annotations.{NotNull, Nullable}
 
 import java.io.File
@@ -15,6 +17,7 @@ import scala.collection.mutable.ListBuffer
  * <p>
  */
 trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScript[T] {
+  val LOGGER: Logger = LogManager.getLogger(classOf[AbstractPDX[T]])
   
   private[script] var activeIdentifier = 0
   protected[script] var node: Option[Node] = None
@@ -32,6 +35,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
       }
     }
     // TODO: Do something so that this doesn't clog up the console
+    LOGGER.error("Unexpected identifier: " + exp)
     throw new UnexpectedIdentifierException(exp)
   }
   
