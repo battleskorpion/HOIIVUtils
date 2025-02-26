@@ -15,6 +15,7 @@ import com.hoi4utils.ui.HOIIVUtilsWindow;
 import com.hoi4utils.ui.javafx.image.JavaFXImageUtils;
 import com.hoi4utils.ui.pdxscript.NewFocusTreeWindow;
 import com.hoi4utils.ui.pdxscript.PDXEditorWindow;
+import com.sun.javafx.geom.Dimension;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -34,7 +35,6 @@ import org.apache.logging.log4j.Logger;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
