@@ -2,47 +2,34 @@ package com.hoi4utils.ui.javafx.table;
 
 import javafx.scene.control.TableCell;
 import javafx.util.StringConverter;
-
 import java.text.DecimalFormat;
 
+/**
+ * A custom TableCell for displaying Double values with a specific decimal format.
+ *
+ * @param <S> The type of the TableView generic type
+ */
 public class DoubleTableCell<S> extends TableCell<S, Double> {
 
-	private final StringConverter<Double> converter;
+	private static final String DEFAULT_FORMAT = "#,##0.0#";
+	private final DecimalFormat decimalFormat = new DecimalFormat(DEFAULT_FORMAT);
 
-	private String decimalStringFormat;
+	private final StringConverter<Double> converter = new StringConverter<>() {
+		@Override
+		public String toString(Double object) {
+			return object == null ? "" : decimalFormat.format(object);
+		}
 
-	public DoubleTableCell() {
-		this.converter = new StringConverter<Double>() {
-			@Override
-			public String toString(Double object) {
-				if (object == null) {
-					return "";
-				} else {
-					/**
-					 * exactly 1 decimal place, and allow for an optional zero in the decimal part
-					 * Format the double value with commas in the thousands places,
-					 */
-					decimalStringFormat = "#,##0.0#";
-					DecimalFormat decimalFormat = new DecimalFormat(decimalStringFormat);
-					return decimalFormat.format(object);
-				}
-			}
-
-			@Override
-			public Double fromString(String string) {
-				return null;
-			}
-		};
-	}
+		@Override
+		public Double fromString(String string) {
+			// This cell is read-only; conversion from string is not supported.
+			return null;
+		}
+	};
 
 	@Override
 	protected void updateItem(Double item, boolean empty) {
 		super.updateItem(item, empty);
-
-		if (empty || item == null) {
-			setText(null);
-		} else {
-			setText(converter.toString(item));
-		}
+		setText(empty || item == null ? null : converter.toString(item));
 	}
 }
