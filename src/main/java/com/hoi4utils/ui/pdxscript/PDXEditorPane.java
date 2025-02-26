@@ -1,12 +1,13 @@
 package com.hoi4utils.ui.pdxscript;
 
-import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.script.*;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

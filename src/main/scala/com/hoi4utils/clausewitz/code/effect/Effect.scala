@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.code.effect
 
 import com.hoi4utils.clausewitz.code.scope.{Scope, ScopeType}
-import com.hoi4utils.clausewitz.script._
+import com.hoi4utils.clausewitz.script.*
 import org.jetbrains.annotations.NotNull
 
 import scala.collection.mutable

@@ -1,26 +1,18 @@
 package com.hoi4utils.clausewitz.code.effect
 
-import com.hoi4utils.clausewitz.HOIIVUtils
-import com.hoi4utils.clausewitz.BoolType
+import com.hoi4utils.clausewitz.{BoolType, HOIIVUtils}
 import com.hoi4utils.clausewitz.code.scope.ScopeType
 import com.hoi4utils.clausewitz.data.country.CountryTag
 import com.hoi4utils.clausewitz.map.province.Province
-import com.hoi4utils.clausewitz.script.{ReferencePDX, *}
-import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz.map.state.*
+import com.hoi4utils.clausewitz.script.*
+import com.hoi4utils.clausewitz_parser.Node
 import org.jetbrains.annotations.NotNull
 
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
+import java.io.{File, IOException, InputStream}
 import java.net.URL
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.SQLException
+import java.nio.file.{Files, StandardCopyOption}
+import java.sql.*
 import java.util
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

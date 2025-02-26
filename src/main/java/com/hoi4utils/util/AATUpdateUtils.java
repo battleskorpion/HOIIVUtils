@@ -1,10 +1,10 @@
 package com.hoi4utils.util;
 
-import java.io.*;
-import java.util.Scanner;
-
 import com.hoi4utils.clausewitz.HOIIVFile;
 import com.hoi4utils.clausewitz.HOIIVUtils;
+
+import java.io.*;
+import java.util.Scanner;
 
 public class AATUpdateUtils {
 

@@ -1,12 +1,12 @@
 package com.hoi4utils.ui.province_colors;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.ui.HOIIVUtilsWindow;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ProgressIndicator;
-import com.hoi4utils.ui.HOIIVUtilsWindow;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 import org.apache.logging.log4j.LogManager;

@@ -1,16 +1,16 @@
 package com.hoi4utils.clausewitz.map.state;
 
-import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.clausewitz.HOIIVFile;
-import com.hoi4utils.clausewitz.localization.*;
+import com.hoi4utils.clausewitz.localization.Localizable;
+import com.hoi4utils.clausewitz.localization.Property;
 import com.hoi4utils.clausewitz_parser.Node;
 import com.hoi4utils.clausewitz_parser.Parser;
+import com.hoi4utils.clausewitz_parser.ParserException;
 import org.jetbrains.annotations.NotNull;
 import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /*

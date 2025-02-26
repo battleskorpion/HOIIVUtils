@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.localization
 
-import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.HOIIVFile
+import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.ui.FXWindow
 import org.jetbrains.annotations.NotNull
 

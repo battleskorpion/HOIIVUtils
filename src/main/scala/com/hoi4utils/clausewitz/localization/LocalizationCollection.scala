@@ -1,9 +1,9 @@
 package com.hoi4utils.clausewitz.localization
 
 import java.io.File
-import scala.collection.mutable.{HashMap, ListBuffer}
 import scala.collection.concurrent.TrieMap
 import scala.collection.mutable
+import scala.collection.mutable.{HashMap, ListBuffer}
 
 class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localization]] {
 

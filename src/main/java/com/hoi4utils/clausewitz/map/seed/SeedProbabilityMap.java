@@ -5,7 +5,8 @@ import com.hoi4utils.clausewitz.map.gen.AbstractMapGeneration;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.IntStream;

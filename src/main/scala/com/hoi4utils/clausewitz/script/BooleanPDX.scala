@@ -1,8 +1,7 @@
 package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.BoolType
-import com.hoi4utils.clausewitz_parser.Node
-import com.hoi4utils.clausewitz_parser.NodeValue
+import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
 import org.jetbrains.annotations.NotNull
 
 class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: Boolean, final private var boolType: BoolType) extends AbstractPDX[Boolean](pdxIdentifiers) {

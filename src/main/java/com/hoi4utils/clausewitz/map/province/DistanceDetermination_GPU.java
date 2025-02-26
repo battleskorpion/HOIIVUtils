@@ -1,13 +1,13 @@
 package com.hoi4utils.clausewitz.map.province;
 
+import com.aparapi.Kernel;
+import com.aparapi.Range;
 import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.gen.AbstractMapGeneration;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
 import com.hoi4utils.clausewitz.map.seed.BorderMap;
 import com.hoi4utils.clausewitz.map.seed.BorderMapping;
-import com.aparapi.Kernel;
-import com.aparapi.Range;
 
 ///  todo what is that distance kernel
 public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGeneration implements ProvinceDetermination<P> {

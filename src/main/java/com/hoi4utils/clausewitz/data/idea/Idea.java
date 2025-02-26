@@ -1,16 +1,17 @@
 package com.hoi4utils.clausewitz.data.idea;
 
-import com.hoi4utils.clausewitz_parser.Node;
 import com.hoi4utils.clausewitz.code.effect.EffectParameter;
 import com.hoi4utils.clausewitz.code.modifier.Modifier;
-import com.hoi4utils.clausewitz.localization.*;
+import com.hoi4utils.clausewitz.localization.Localizable;
+import com.hoi4utils.clausewitz.localization.Localization;
+import com.hoi4utils.clausewitz.localization.Property;
+import com.hoi4utils.clausewitz_parser.Node;
 import javafx.beans.property.SimpleStringProperty;
 import org.jetbrains.annotations.NotNull;
 import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;

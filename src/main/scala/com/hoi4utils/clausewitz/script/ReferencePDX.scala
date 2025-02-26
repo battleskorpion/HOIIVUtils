@@ -1,11 +1,9 @@
 package com.hoi4utils.clausewitz.script
 
-import com.hoi4utils.clausewitz_parser.Node
-import com.hoi4utils.clausewitz_parser.NodeValue
+import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
 import org.jetbrains.annotations.Nullable
 
-import java.util.function.Function
-import java.util.function.Supplier
+import java.util.function.{Function, Supplier}
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 

@@ -1,17 +1,15 @@
 package com.hoi4utils.clausewitz.data.focus
 
-import com.hoi4utils.clausewitz.DataFunctionProvider
+import com.hoi4utils.ExpectedRange
+import com.hoi4utils.clausewitz.{BoolType, DataFunctionProvider}
+import com.hoi4utils.clausewitz.code.effect.*
+import com.hoi4utils.clausewitz.code.scope.*
 import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz_parser.Node
-import com.hoi4utils.clausewitz.BoolType
-import com.hoi4utils.clausewitz.code.scope.*
-import com.hoi4utils.clausewitz.code.effect.*
-import com.hoi4utils.ExpectedRange
-
-import java.awt.Point
 import javafx.scene.image.Image
 
+import java.awt.Point
 import scala.annotation.targetName
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

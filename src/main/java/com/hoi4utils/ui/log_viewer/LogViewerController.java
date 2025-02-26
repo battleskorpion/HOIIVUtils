@@ -1,6 +1,5 @@
 package com.hoi4utils.ui.log_viewer;
 
-import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
 import javafx.application.Platform;
 import javafx.fxml.FXML;

@@ -1,17 +1,16 @@
 package com.hoi4utils.clausewitz.map.seed;
 
+import com.aparapi.Kernel;
+import com.aparapi.Range;
 import com.hoi4utils.clausewitz.map.SeedGenProperties;
 import com.hoi4utils.clausewitz.map.gen.AbstractMapGeneration;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
-import com.aparapi.Kernel;
-import com.aparapi.Range;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 

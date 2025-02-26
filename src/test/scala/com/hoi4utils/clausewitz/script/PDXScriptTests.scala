@@ -1,9 +1,7 @@
 package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.data.focus.FocusTree
-import com.hoi4utils.clausewitz_parser.Node
-import com.hoi4utils.clausewitz_parser.Parser
-
+import com.hoi4utils.clausewitz_parser.{Node, Parser}
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File

@@ -1,25 +1,22 @@
 package com.hoi4utils.clausewitz.map.state
 
-import com.hoi4utils.clausewitz.{HOIIVFile, HOIIVUtils}
-import com.hoi4utils.clausewitz.data.country.CountryTag
-import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.code.ClausewitzDate
-import com.hoi4utils.clausewitz.data.country.Country
-import com.hoi4utils.clausewitz.data.country.CountryTagsManager
-import com.hoi4utils.clausewitz.map.Owner
-import com.hoi4utils.clausewitz.map.UndefinedStateIDException
+import com.hoi4utils.clausewitz.data.country.{Country, CountryTag, CountryTagsManager}
+import com.hoi4utils.clausewitz.localization.*
+import com.hoi4utils.clausewitz.map.{Owner, UndefinedStateIDException}
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.province.VictoryPoint
 import com.hoi4utils.clausewitz.map.resources.Resources
+import com.hoi4utils.clausewitz.{HOIIVFile, HOIIVUtils}
 import com.hoi4utils.clausewitz_parser.*
 import org.apache.logging.log4j.{LogManager, Logger}
 import org.jetbrains.annotations.NotNull
 
-import scala.jdk.javaapi.CollectionConverters
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.{ListBuffer, Map}
 import scala.jdk.CollectionConverters.*
+import scala.jdk.javaapi.CollectionConverters
 import scala.util.{Failure, Success, Try}
 
 

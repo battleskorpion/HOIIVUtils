@@ -1,10 +1,10 @@
 package com.hoi4utils.clausewitz.data.units;
 
 import com.hoi4utils.clausewitz.HOIIVFile;
+import com.hoi4utils.clausewitz.data.country.Character;
 import com.hoi4utils.clausewitz.data.country.CountryFlag;
 import com.hoi4utils.clausewitz.data.idea.Idea;
 import com.hoi4utils.clausewitz.data.technology.Technology;
-import com.hoi4utils.clausewitz.data.country.Character;
 
 import java.util.Set;
 

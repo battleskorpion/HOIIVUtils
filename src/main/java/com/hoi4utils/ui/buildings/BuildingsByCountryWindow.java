@@ -1,21 +1,21 @@
 package com.hoi4utils.ui.buildings;
 
 
+import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.code.ClausewitzDate;
+import com.hoi4utils.clausewitz.data.country.Country;
+import com.hoi4utils.ui.FXWindow;
+import com.hoi4utils.ui.HOIIVUtilsWindow;
 import com.hoi4utils.ui.javafx.export.ExcelExport;
 import com.hoi4utils.ui.javafx.table.DoubleTableCell;
-import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.clausewitz.data.country.Country;
+import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
+import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import com.hoi4utils.ui.FXWindow;
-import com.hoi4utils.ui.HOIIVUtilsWindow;
-import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
-import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import javafx.scene.input.MouseButton;
 
 import javax.swing.*;

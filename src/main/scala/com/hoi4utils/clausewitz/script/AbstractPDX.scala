@@ -1,16 +1,12 @@
 package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.HOIIVUtils
-import com.hoi4utils.clausewitz_parser.Node
-import com.hoi4utils.clausewitz_parser.NodeValue
-import com.hoi4utils.clausewitz_parser.Parser
-import com.hoi4utils.clausewitz_parser.ParserException
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
+import com.hoi4utils.clausewitz_parser.{Node, NodeValue, Parser, ParserException}
+import org.jetbrains.annotations.{NotNull, Nullable}
 
-import scala.collection.mutable.ListBuffer
 import java.io.File
 import scala.annotation.targetName
+import scala.collection.mutable.ListBuffer
 
 /**
  * Any object that can be converted to a PDX script block, such as a focus, national focus tree,

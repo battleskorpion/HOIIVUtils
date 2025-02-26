@@ -5,7 +5,6 @@ import com.hoi4utils.clausewitz.map.gen.AbstractMapGeneration;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
 import com.hoi4utils.clausewitz.map.seed.*;
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;

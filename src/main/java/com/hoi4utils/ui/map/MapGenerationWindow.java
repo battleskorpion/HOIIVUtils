@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.province.ProvinceGeneration;
 import com.hoi4utils.clausewitz.map.province.ProvinceMap;
 import com.hoi4utils.ui.FXWindow;
+import com.hoi4utils.ui.HOIIVUtilsWindow;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -15,7 +16,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import com.hoi4utils.ui.HOIIVUtilsWindow;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 

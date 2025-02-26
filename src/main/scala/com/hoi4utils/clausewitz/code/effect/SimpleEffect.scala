@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.code.effect
 
-import com.hoi4utils.clausewitz.script._
 import com.hoi4utils.clausewitz.code.scope.ScopeType
+import com.hoi4utils.clausewitz.script.*
 
 // private val tSupplier: () => Effect  // todo
 // extends AbstractPDX[T](identifiers)  todo? 

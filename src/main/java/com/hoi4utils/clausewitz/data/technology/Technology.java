@@ -1,11 +1,11 @@
 package com.hoi4utils.clausewitz.data.technology;
 
 import com.hoi4utils.clausewitz.code.ClausewitzDate;
-import com.hoi4utils.clausewitz.localization.*;
+import com.hoi4utils.clausewitz.localization.Localizable;
+import com.hoi4utils.clausewitz.localization.Property;
 import org.jetbrains.annotations.NotNull;
 import scala.jdk.javaapi.CollectionConverters;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 

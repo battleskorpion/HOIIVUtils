@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.AnchorPane?>
-
 <AnchorPane fx:id="rootAnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.pdxscript.PDXEditorWindow" />

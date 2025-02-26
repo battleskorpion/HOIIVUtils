@@ -1,7 +1,6 @@
 package com.hoi4utils.clausewitz_parser
 
-import java.io.File
-import java.io.IOException
+import java.io.{File, IOException}
 import java.nio.file.Files
 import scala.collection.mutable.ListBuffer
 

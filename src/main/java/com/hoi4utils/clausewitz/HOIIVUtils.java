@@ -6,18 +6,17 @@ import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.ui.menu.MenuController;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
-import java.util.Properties;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 /**
  * HOIIVUtils.java main method is here
  */

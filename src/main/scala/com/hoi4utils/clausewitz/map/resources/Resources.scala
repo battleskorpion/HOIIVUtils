@@ -1,9 +1,8 @@
 package com.hoi4utils.clausewitz.map.resources
 
-import scala.collection.mutable
-import scala.collection.mutable._
-
 import scala.collection.immutable.Set
+import scala.collection.mutable
+import scala.collection.mutable.*
 
 /*
  * Resources File

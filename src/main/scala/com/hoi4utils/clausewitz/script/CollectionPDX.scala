@@ -1,9 +1,7 @@
 package com.hoi4utils.clausewitz.script
 
-import com.hoi4utils.clausewitz_parser.Node
-import com.hoi4utils.clausewitz_parser.NodeValue
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
+import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
+import org.jetbrains.annotations.{NotNull, Nullable}
 
 import java.util.function.Consumer
 import java.util.stream.Stream

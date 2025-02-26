@@ -2,10 +2,10 @@ package com.hoi4utils.clausewitz;
 
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.PublicFieldChangeNotifier;
+import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.fileIO.FileListener.FileAdapter;
 import com.hoi4utils.fileIO.FileListener.FileEvent;
 import com.hoi4utils.fileIO.FileListener.FileWatcher;
-import com.hoi4utils.clausewitz.map.state.State;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

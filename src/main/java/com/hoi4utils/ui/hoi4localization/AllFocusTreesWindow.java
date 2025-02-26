@@ -3,27 +3,24 @@ package com.hoi4utils.ui.hoi4localization;
 import com.hoi4utils.clausewitz.data.focus.FixFocus;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
-import com.hoi4utils.clausewitz.localization.*;
-import com.hoi4utils.ui.javafx.table.TableViewWindow;
+import com.hoi4utils.clausewitz.localization.Localization;
+import com.hoi4utils.clausewitz.localization.LocalizationManager;
+import com.hoi4utils.clausewitz.localization.Property;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
-
+import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-
-import javafx.scene.control.*;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-
-import scala.Function1;
-import scala.collection.Iterable;
-import scala.jdk.javaapi.CollectionConverters;
-import scala.jdk.javaapi.FunctionConverters;
 
 public class AllFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWindow {
 

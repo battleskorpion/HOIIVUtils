@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz_parser
 
-import scala.util.matching.Regex
 import scala.collection.BufferedIterator
+import scala.util.matching.Regex
 
 class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
   private val pattern: Regex = createPattern

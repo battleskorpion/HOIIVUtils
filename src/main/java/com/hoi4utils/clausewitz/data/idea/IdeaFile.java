@@ -8,7 +8,10 @@ import javafx.collections.ObservableList;
 import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public class IdeaFile extends File {
 

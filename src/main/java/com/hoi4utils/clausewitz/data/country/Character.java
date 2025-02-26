@@ -1,6 +1,7 @@
 package com.hoi4utils.clausewitz.data.country;
 
-import com.hoi4utils.clausewitz.localization.*;
+import com.hoi4utils.clausewitz.localization.Localizable;
+import com.hoi4utils.clausewitz.localization.Property;
 import scala.collection.Iterable;
 import scala.jdk.javaapi.CollectionConverters;
 

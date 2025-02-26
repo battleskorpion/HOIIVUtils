@@ -1,9 +1,10 @@
 package com.hoi4utils.clausewitz.code.effect;
 
-import com.hoi4utils.clausewitz_parser.NodeValue;
 import com.hoi4utils.clausewitz.exceptions.NullParameterTypeException;
+import com.hoi4utils.clausewitz_parser.NodeValue;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
 public class Parameter implements EffectParameter, Cloneable {
 	private static final HashMap<String, Parameter> allParameters = new HashMap<>();

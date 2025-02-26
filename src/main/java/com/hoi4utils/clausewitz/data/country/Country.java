@@ -1,11 +1,11 @@
 package com.hoi4utils.clausewitz.data.country;
 
-import com.hoi4utils.clausewitz.map.state.InfrastructureData;
-import com.hoi4utils.clausewitz.map.state.State;
-import com.hoi4utils.clausewitz.map.buildings.Infrastructure;
-import com.hoi4utils.clausewitz.map.resources.Resources;
 import com.hoi4utils.clausewitz.data.technology.Technology;
 import com.hoi4utils.clausewitz.data.units.OrdersOfBattle;
+import com.hoi4utils.clausewitz.map.buildings.Infrastructure;
+import com.hoi4utils.clausewitz.map.resources.Resources;
+import com.hoi4utils.clausewitz.map.state.InfrastructureData;
+import com.hoi4utils.clausewitz.map.state.State;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.jetbrains.annotations.NotNull;

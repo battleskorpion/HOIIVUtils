@@ -4,7 +4,7 @@ import com.hoi4utils.clausewitz.map.SeedGenProperties;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.gen.MapPoint;
 
-import java.util.*;
+import java.util.Random;
 
 public class ProbabilisticSeedGeneration extends AbstractSeedGeneration<MapPoint> {
 	private final SeedProbabilityMap_GPU_3 seedProbabilityMap;

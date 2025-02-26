@@ -1,18 +1,17 @@
 package com.hoi4utils.clausewitz.data.focus
 
-import com.hoi4utils.clausewitz.{HOIIVFile, HOIIVUtils}
 import com.hoi4utils.clausewitz.data.country.{CountryTag, CountryTagsManager}
 import com.hoi4utils.clausewitz.data.focus.FocusTree.focusTreeFileMap
-import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz.localization.*
+import com.hoi4utils.clausewitz.script.*
+import com.hoi4utils.clausewitz.{HOIIVFile, HOIIVUtils}
 import javafx.collections.{FXCollections, ObservableList}
 import org.apache.logging.log4j.{LogManager, Logger}
 import org.jetbrains.annotations.*
 
 import java.io.File
-import scala.collection.mutable.ListBuffer
-import scala.collection.mutable.HashMap
 import scala.collection.mutable
+import scala.collection.mutable.{HashMap, ListBuffer}
 import scala.jdk.javaapi.CollectionConverters
 
 /**

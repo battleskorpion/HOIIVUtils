@@ -1,8 +1,9 @@
 package com.hoi4utils.ui;
 
 import com.hoi4utils.FileUtils;
-
 import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
+import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -14,8 +15,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
-import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import scala.Function1;
 import scala.collection.Iterable;
 import scala.jdk.javaapi.CollectionConverters;

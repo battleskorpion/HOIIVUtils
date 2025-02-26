@@ -1,21 +1,11 @@
 package com.hoi4utils.clausewitz.code.modifier
 
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
+import java.io.{File, IOException, InputStream}
 import java.net.URL
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.SQLException
+import java.nio.file.{Files, StandardCopyOption}
+import java.sql.*
 import java.util
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
-import scala.util.{Try, Using}
-
 import scala.collection.mutable.ListBuffer
 import scala.util.{Try, Using}
 

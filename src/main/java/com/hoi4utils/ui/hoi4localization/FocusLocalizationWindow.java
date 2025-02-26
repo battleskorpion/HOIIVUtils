@@ -1,24 +1,21 @@
 package com.hoi4utils.ui.hoi4localization;
 
 import com.hoi4utils.clausewitz.HOIIVFile;
-
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.focus.FocusTree$;
-import com.hoi4utils.clausewitz.localization.*;
-
+import com.hoi4utils.clausewitz.localization.Localization;
+import com.hoi4utils.clausewitz.localization.Property;
 import com.hoi4utils.ui.FXWindow;
+import com.hoi4utils.ui.HOIIVUtilsWindow;
+import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
-import com.hoi4utils.ui.HOIIVUtilsWindow;
-import com.hoi4utils.ui.javafx.table.TableViewWindow;
-import scala.Function1;
-import scala.collection.Iterable;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;

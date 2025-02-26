@@ -5,9 +5,9 @@ import com.hoi4utils.clausewitz.data.country.CountryTag
 import com.hoi4utils.clausewitz.map.state.State
 import com.hoi4utils.clausewitz.script.PDXScript
 
+import scala.Cloneable
 import scala.collection.mutable
 import scala.collection.mutable.HashMap
-import scala.Cloneable
 
 
 object Scope {

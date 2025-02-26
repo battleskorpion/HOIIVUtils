@@ -1,17 +1,16 @@
 package com.hoi4utils.clausewitz.localization
 
 import com.hoi4utils.FileUtils
-import com.hoi4utils.clausewitz.{HOIIVFile, HOIIVUtils}
 import com.hoi4utils.clausewitz.exceptions.LocalizationExistsException
+import com.hoi4utils.clausewitz.{HOIIVFile, HOIIVUtils}
 import com.hoi4utils.ui.HOIIVUtilsWindow
 import org.apache.logging.log4j.{LogManager, Logger}
 
+import java.io.*
+import java.nio.file.{Files, Paths}
+import java.util.Scanner
 import scala.Option
 import scala.jdk.javaapi.CollectionConverters
-import java.io.*
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.util.Scanner
 
 object EnglishLocalizationManager {
   protected val l_english = "l_english:"

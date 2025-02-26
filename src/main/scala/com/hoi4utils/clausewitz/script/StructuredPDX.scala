@@ -1,8 +1,7 @@
 package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.HOIIVUtils
-import com.hoi4utils.clausewitz_parser.Node
-import com.hoi4utils.clausewitz_parser.NodeValue
+import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
 
 import scala.collection.mutable.ListBuffer
 

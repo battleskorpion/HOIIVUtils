@@ -2,7 +2,6 @@ package com.hoi4utils.ui.pdxscript;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.script.MultiReferencePDX;
-import com.sun.scenario.Settings;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;

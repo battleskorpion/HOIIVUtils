@@ -1,10 +1,9 @@
 package com.hoi4utils.clausewitz.data.gfx;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.clausewitz_parser.ParserException;
-
-import com.hoi4utils.clausewitz_parser.Parser;
 import com.hoi4utils.clausewitz_parser.Node;
+import com.hoi4utils.clausewitz_parser.Parser;
+import com.hoi4utils.clausewitz_parser.ParserException;
 import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;

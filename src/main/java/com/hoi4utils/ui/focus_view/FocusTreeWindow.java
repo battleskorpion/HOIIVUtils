@@ -1,49 +1,45 @@
 package com.hoi4utils.ui.focus_view;
 
 
+import com.hoi4utils.clausewitz.HOIIVFile;
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.data.country.CountryTag;
-import com.hoi4utils.clausewitz.data.focus.FocusTree$;
-import com.hoi4utils.clausewitz.localization.*;
-import com.hoi4utils.clausewitz.script.PDXScript;
-import com.hoi4utils.ddsreader.DDSReader;
-import com.hoi4utils.clausewitz.HOIIVFile;
 import com.hoi4utils.clausewitz.data.focus.FixFocus;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
+import com.hoi4utils.clausewitz.data.focus.FocusTree$;
+import com.hoi4utils.clausewitz.localization.Property;
+import com.hoi4utils.clausewitz.script.PDXScript;
+import com.hoi4utils.ddsreader.DDSReader;
+import com.hoi4utils.ui.HOIIVUtilsWindow;
+import com.hoi4utils.ui.javafx.image.JavaFXImageUtils;
 import com.hoi4utils.ui.pdxscript.NewFocusTreeWindow;
 import com.hoi4utils.ui.pdxscript.PDXEditorWindow;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-
-import java.awt.*;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import javafx.geometry.Rectangle2D;
-import javafx.scene.control.*;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import com.hoi4utils.ui.javafx.image.JavaFXImageUtils;
-import com.hoi4utils.ui.HOIIVUtilsWindow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.awt.*;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 

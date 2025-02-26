@@ -4,7 +4,9 @@ package com.hoi4utils.clausewitz.code.modifier;
 
 //import java.util.ArrayList;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * For information: <a href="https://hoi4.paradoxwikis.com/Modifiers">Modifiers

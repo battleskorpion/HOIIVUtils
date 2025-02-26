@@ -4,7 +4,6 @@ import com.hoi4utils.clausewitz.BoolType
 import org.jetbrains.annotations.NotNull
 
 import scala.annotation.targetName
-
 import scala.collection.mutable.ListBuffer
 
 /**

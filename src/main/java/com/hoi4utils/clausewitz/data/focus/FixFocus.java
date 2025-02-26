@@ -2,14 +2,13 @@ package com.hoi4utils.clausewitz.data.focus;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.data.country.CountryTagsManager;
-import com.hoi4utils.clausewitz.localization.*;
-import scala.collection.View;
+import com.hoi4utils.clausewitz.localization.LocalizationManager;
+import com.hoi4utils.clausewitz.localization.Property;
 import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.stream.Stream;
 
 public class FixFocus extends HOIIVUtils {
 
