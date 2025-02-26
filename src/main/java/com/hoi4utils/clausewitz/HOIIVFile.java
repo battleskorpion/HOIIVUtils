@@ -6,125 +6,92 @@ import com.hoi4utils.fileIO.FileListener.FileAdapter;
 import com.hoi4utils.fileIO.FileListener.FileEvent;
 import com.hoi4utils.fileIO.FileListener.FileWatcher;
 import com.hoi4utils.clausewitz.map.state.State;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.Optional;
 
 /**
  * HOIIVFile
  * Holds onto static object files.
- * Files and Directories ? <insert about whatever the file watchers do> chris learning what is a
- * file watcher - Future things
  */
 public class HOIIVFile implements FileUtils {
+	private static final Logger LOGGER = LogManager.getLogger(HOIIVFile.class);
+
 	public static final File usersParadoxHOIIVModFolder =
 			new File(File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
 
 	@SuppressWarnings("exports")
 	public static FileWatcher stateFilesWatcher;
 
-	public static File mod_folder;
-	public static File mod_focus_folder;
-	public static File mod_ideas_folder;
-	public static File mod_states_folder;
-	public static File mod_strat_region_dir;
-	public static File mod_localization_folder;
-	public static File mod_common_folder;
-	public static File mod_units_folder;
-	public static final String mod_folder_field_name = "mod_folder";
-	public static final String mod_focus_folder_field_name = "mod_focus_folder";
-	public static final String mod_ideas_folder_field_name = "mod_ideas_folder";
-	public static final String mod_states_folder_field_name = "mod_states_folder";
-	public static final String mod_strat_region_dir_field_name = "mod_strat_region_dir";
-	public static final String mod_localization_folder_field_name = "mod_localization_folder";
-	public static final String mod_common_folder_field_name = "mod_common_folder";
-	public static final String mod_units_folder_field_name = "mod_units_folder";
-
-	public static File hoi4_folder;
-	public static File hoi4_localization_folder;
-	public static File hoi4_units_folder;
-	public static final String hoi4_localization_folder_field_name = "hoi4_localization_folder";
-	public static final String hoi4mods_folder_field_name = "hoi4mods_folder";
-	public static final String hoi4_units_folder_field_name = "hoi4_units_folder";
+	public static File mod_folder, mod_focus_folder, mod_ideas_folder, mod_states_folder;
+	public static File mod_strat_region_dir, mod_localization_folder, mod_common_folder, mod_units_folder;
+	public static File hoi4_folder, hoi4_localization_folder, hoi4_units_folder;
 
 	private static final PublicFieldChangeNotifier changeNotifier = new PublicFieldChangeNotifier(HOIIVFile.class);
 
-	/**
-	 * TODO: Make Demo
-	 */
-    public static void createHOIIVFilePaths() {
-	    // Initialize file objects
-	    createModPaths();
-	    createHOIIVPaths();
-
-		// Check for changes after setting the fields
+	/** Initializes file paths for the mod and HOI4 directories */
+	public static void createHOIIVFilePaths() {
+		createModPaths();
+		createHOIIVPaths();
 		changeNotifier.checkAndNotifyChanges();
 	}
-	
+
 	private static void createModPaths() {
 		String modPath = HOIIVUtils.get("mod.path");
 
-		if (modPath == null || modPath.isEmpty()) {
-			System.err.println("Error: mod.path is null or empty!");
+		if (!validateDirectoryPath(modPath, "mod.path")) {
 			return;
 		}
 
-		File modPathFile = new File(modPath);
-
-		if (!modPathFile.exists() || !modPathFile.isDirectory()) {
-			System.err.println("Error: mod.path does not point to a valid directory: " + modPath);
-			return;
-		}
-
-		// Ensure this function doesn't reinitialize files unnecessarily
-		if (mod_folder != null && mod_folder.equals(modPathFile)) {
-			return;
-		}
-		
-		mod_folder = modPathFile;
-		mod_common_folder = new File(modPath + "\\common");
-		mod_focus_folder = new File(modPath + "\\common\\national_focus");
-		mod_ideas_folder = new File(modPath + "\\common\\ideas");
-		mod_units_folder = new File(modPath + "\\common\\units");
-		mod_states_folder = new File(modPath + "\\history\\states");
-		mod_localization_folder = new File(modPath + "\\localisation\\english"); // Excepted that the dir has an 's' but the variable has a 'z'
-		mod_strat_region_dir = new File(modPath + "\\map\\strategicregions");
+		mod_folder = new File(modPath);
+		mod_common_folder = new File(modPath, "common");
+		mod_focus_folder = new File(mod_common_folder, "national_focus");
+		mod_ideas_folder = new File(mod_common_folder, "ideas");
+		mod_units_folder = new File(mod_common_folder, "units");
+		mod_states_folder = new File(modPath, "history/states");
+		mod_localization_folder = new File(modPath, "localisation/english"); // 's' vs 'z' note in the original comment
+		mod_strat_region_dir = new File(modPath, "map/strategicregions");
 	}
 
 	private static void createHOIIVPaths() {
 		String hoi4Path = HOIIVUtils.get("hoi4.path");
 
-		if (hoi4Path == null || hoi4Path.isEmpty()) {
-			System.err.println("Error: hoi4.path is null or empty!");
+		if (!validateDirectoryPath(hoi4Path, "hoi4.path")) {
 			return;
 		}
 
-		File hoi4PathFile = new File(hoi4Path);
+		hoi4_folder = new File(hoi4Path);
+		hoi4_localization_folder = new File(hoi4Path, "localisation/english");
+		hoi4_units_folder = new File(hoi4Path, "common/units");
+	}
 
-		if (!hoi4PathFile.exists() || !hoi4PathFile.isDirectory()) {
-			System.err.println("Error: hoi4.path does not point to a valid directory: " + hoi4Path);
-			return;
+	/** Validates whether the provided directory path is valid */
+	private static boolean validateDirectoryPath(String path, String keyName) {
+		if (path == null || path.isEmpty()) {
+			LOGGER.error("{} is null or empty!", keyName);
+			return false;
 		}
 
-		// Ensure this function doesn't reinitialize files unnecessarily
-		if (hoi4_folder != null && hoi4_folder.equals(hoi4PathFile)) {
-			return;
+		File directory = new File(path);
+
+		if (!directory.exists() || !directory.isDirectory()) {
+			LOGGER.error("{} does not point to a valid directory: {}", keyName, path);
+			return false;
 		}
 
-		hoi4_folder = hoi4PathFile;
-		hoi4_localization_folder = new File(hoi4Path + "\\localisation\\english");
-		hoi4_units_folder = new File(hoi4Path + "\\common\\units");
+		return true;
 	}
 
 	/**
-	 * Watch the state files in the given directory.
-	 *
+	 * Watches the state files in the given directory.
 	 * @param stateFiles The directory containing state files.
 	 */
 	public static void watchStateFiles(File stateFiles) {
-		if (stateFiles == null || !stateFiles.exists() || !stateFiles.isDirectory()) {
-			System.err.println("State dir does not exist or is not a directory: " + stateFiles);
+		if (!validateDirectoryPath(Optional.ofNullable(stateFiles).map(File::getPath).orElse(null), "State files directory")) {
 			return;
 		}
 
@@ -133,46 +100,38 @@ public class HOIIVFile implements FileUtils {
 		stateFilesWatcher.addListener(new FileAdapter() {
 			@Override
 			public void onCreated(FileEvent event) {
-				EventQueue.invokeLater(() -> {
-					stateFilesWatcher.listenerPerformAction++;
-					File file = event.getFile();
-					State.readState(file);
-					stateFilesWatcher.listenerPerformAction--;
-					if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
-						State state = State.get(file);
-						System.out.println("State was created/loaded: " + state);
-					}
-				});
+				handleStateFileEvent(event, "created/loaded", State::readState);
 			}
 
 			@Override
 			public void onModified(FileEvent event) {
-				EventQueue.invokeLater(() -> {
-					stateFilesWatcher.listenerPerformAction++;
-					File file = event.getFile();
-					State.readState(file);
-					if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
-						State state = State.get(file);
-						System.out.println("State was modified: " + state);
-					}
-					stateFilesWatcher.listenerPerformAction--;
-				});
+				handleStateFileEvent(event, "modified", State::readState);
 			}
 
 			@Override
 			public void onDeleted(FileEvent event) {
-				EventQueue.invokeLater(() -> {
-					stateFilesWatcher.listenerPerformAction++;
-					File file = event.getFile();
-					State.deleteState(file);
-					stateFilesWatcher.listenerPerformAction--;
-					if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
-						State state = State.get(file);
-						System.out.println("State was deleted: " + state);
-					}
-				});
+				handleStateFileEvent(event, "deleted", State::deleteState);
 			}
 		}).watch();
+	}
+
+	/**
+	 * Handles state file events.
+	 * @param event File event that occurred.
+	 * @param actionName Name of the action performed.
+	 * @param stateAction Function to apply to the file.
+	 */
+	private static void handleStateFileEvent(FileEvent event, String actionName, java.util.function.Consumer<File> stateAction) {
+		EventQueue.invokeLater(() -> {
+			stateFilesWatcher.listenerPerformAction++;
+			File file = event.getFile();
+			stateAction.accept(file);
+			stateFilesWatcher.listenerPerformAction--;
+
+			if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
+				LOGGER.debug("State was {}: {}", actionName, State.get(file));
+			}
+		});
 	}
 
 	public static void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -183,12 +142,12 @@ public class HOIIVFile implements FileUtils {
 		changeNotifier.removePropertyChangeListener(listener);
 	}
 
-    public static boolean isUnitsFolderValid() {	
-		return mod_units_folder != null 
-				&& mod_units_folder.exists() 
-				&& mod_units_folder.isDirectory()
-				&& hoi4_units_folder != null
-				&& hoi4_units_folder.exists()
-				&& hoi4_units_folder.isDirectory();
-    }
+	public static boolean isUnitsFolderValid() {
+		return isValidDirectory(mod_units_folder) && isValidDirectory(hoi4_units_folder);
+	}
+
+	/** Checks if a directory is valid */
+	private static boolean isValidDirectory(File folder) {
+		return folder != null && folder.exists() && folder.isDirectory();
+	}
 }
