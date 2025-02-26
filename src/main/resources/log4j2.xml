@@ -19,7 +19,7 @@
 	</Appenders>
 
 	<Loggers>
-		<Root level="DEBUG">
+		<Root level="ERROR"> <!-- Find a way to personalize this setting -->
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
 		</Root>

@@ -72,7 +72,7 @@
                                     <Insets right="4.0" />
                                  </padding></Label>
                               <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="26.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="693.0" GridPane.rowIndex="11" />
-                              <Label fx:id="idVersionLabel" text="Label" GridPane.rowIndex="1" />
+                              <Label fx:id="versionLabel" text="Label" GridPane.rowIndex="1" />
                               <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Preferred Monitor?" GridPane.rowIndex="4">
                                  <padding>
                                     <Insets right="4.0" />

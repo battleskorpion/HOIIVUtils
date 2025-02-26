@@ -74,20 +74,6 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 		}
 	}
 
-	/**
-	 * Opens stage and updates fxmlResource and title
-	 *
-	 * @param fxmlResource stage .fxml resource
-	 * @param title stage title
-	 */
-	@Override
-	public void open(String fxmlResource, String title) {
-		this.fxmlResource = fxmlResource;
-		this.title = title;
-		LOGGER.debug("Opening stage: {}", title);
-		open();
-	}
-
 	private void showExistingStage() {
 		stage.show();
 		LOGGER.info("Stage already exists, showing: {}", title);
@@ -125,6 +111,29 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 		this.loader = loader;
 		this.stage = createLaunchStage(scene);
 		LOGGER.debug("Stage created and shown: {}", title);
+	}
+
+	private void addSceneStylesheets(Scene scene) {
+		scene.getStylesheets().add("com/hoi4utils/ui/javafx_dark.css");
+
+		try {
+			scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/hoi4utils/ui/highlight-background.css")).toExternalForm());
+		} catch (NullPointerException e) {
+			System.err.println("Warning: Stylesheet 'highlight-background.css' not found!");
+		}
+	}
+	
+	@NotNull
+	private Stage createLaunchStage(Scene scene) {
+		Optional.ofNullable(stage).ifPresent(Stage::close);
+
+		Stage launchStage = new Stage();
+		launchStage.setScene(scene);
+		launchStage.setTitle(title);
+		decideScreen(launchStage);
+		launchStage.show();
+
+		return launchStage;
 	}
 
 	private void handleFXMLLoadError(IOException e) {
@@ -203,39 +212,6 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 							return newCombination;
 						}))
 				.toList();
-	}
-
-	@NotNull
-	private Stage createLaunchStage(Scene scene) {
-		Optional.ofNullable(stage).ifPresent(Stage::close);
-
-		Stage launchStage = new Stage();
-		launchStage.setScene(scene);
-		launchStage.setTitle(title);
-		decideScreen(launchStage);
-		launchStage.show();
-
-		return launchStage;
-	}
-
-	private void addSceneStylesheets(Scene scene) {
-        scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
-
-        try {
-			scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/hoi4utils/ui/highlight-background.css")).toExternalForm());
-		} catch (NullPointerException e) {
-			System.err.println("Warning: Stylesheet 'highlight-background.css' not found!");
-		}
-	}
-	
-	@Override
-	public String getFxmlResource() {
-		return fxmlResource;
-	}
-
-	@Override
-	public String getTitle() {
-		return title;
 	}
 
 	@Override

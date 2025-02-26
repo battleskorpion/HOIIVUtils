@@ -14,10 +14,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The SettingsController class is responsible for handling the program settings window and its
@@ -27,20 +31,17 @@ import java.util.Objects;
  * @author thiccchris
  */
 public class SettingsController extends Application implements FXWindow {
+	public static final Logger LOGGER = LogManager.getLogger(SettingsController.class);
 	private String fxmlResource = "Settings.fxml";
 	private String title = "HOIIVUtils Settings " + HOIIVUtils.HOIIVUTILS_VERSION;
 	private Stage stage;
 
 	@FXML
-	public Pane idPane;
-	@FXML
-	public Label idVersionLabel;
+	public Label versionLabel;
 	@FXML
 	public TextField modPathTextField;
 	@FXML
 	public TextField hoi4PathTextField;
-	@FXML
-	public Label idHOIIVModFolderLabel;
 	@FXML
 	public Button modFolderBrowseButton;
 	@FXML
@@ -56,7 +57,7 @@ public class SettingsController extends Application implements FXWindow {
 
 	@FXML
 	void initialize() {
-		idVersionLabel.setText(HOIIVUtils.HOIIVUTILS_VERSION);
+		versionLabel.setText(HOIIVUtils.HOIIVUTILS_VERSION);
 		loadUIWithSavedSettings();
 		loadMonitor();
 	}
@@ -105,46 +106,82 @@ public class SettingsController extends Application implements FXWindow {
 	 */
 	@Override
 	public void start(Stage stage) {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
-
-
-		Parent rootFXML;
 		try {
-			rootFXML = loader.load();
+			Parent root = loadFXML();
+			setupAndShowStage(root);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			handleFXMLLoadError(e);
 		}
-		Scene scene = new Scene(rootFXML);
-		if (Objects.equals(HOIIVUtils.get("theme"), "dark")) {
-			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
-		}
-		this.stage = stage;
-		stage.setScene(scene);
-		stage.setTitle(title);
-		stage.show();
-		stage.maxWidthProperty().bind(stage.widthProperty());
-		stage.maxHeightProperty().bind(stage.heightProperty());
-
 	}
 
-	/**
-	 * Shows the settings window. If the window is already open, it is simply shown again. If the window
-	 * is not open, it is created and shown.
-	 */
 	public void open() {
 		if (stage != null) {
-			stage.show();
-			stage.maxWidthProperty().bind(stage.widthProperty());
-			stage.minWidthProperty().bind(stage.widthProperty());
-		} else {
-			start(new Stage());
+			showExistingStage();
+			return;
+		}
+
+		if (fxmlResource == null) {
+			handleMissingFXMLResource();
+			return;
+		}
+		
+		start(new Stage());
+	}
+
+	private void showExistingStage() {
+		stage.show();
+		LOGGER.info("Stage already exists, showing: {}", title);
+	}
+
+	private void handleMissingFXMLResource() {
+		String errorMessage = "Failed to open window\nError: FXML resource is null.";
+		LOGGER.error(errorMessage);
+		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	private Parent loadFXML() throws IOException {
+		FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
+		try {
+			return launchLoader.load();
+		} catch (IOException e) {
+			throw new IOException("Failed to load FXML: " + fxmlResource, e);
 		}
 	}
 
-	@Override
-	public void open(String fxmlResource, String title) {
-		this.fxmlResource = fxmlResource;
-		this.title = title;
+	private void setupAndShowStage(Parent root) {
+		Scene scene = new Scene(root);
+		addSceneStylesheets(scene);
+		this.stage = createLaunchStage(scene);
+		LOGGER.debug("Stage created and shown: {}", title);
+	}
+
+	private void addSceneStylesheets(Scene scene) {
+		scene.getStylesheets().add("com/hoi4utils/ui/javafx_dark.css");
+
+		try {
+			scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/hoi4utils/ui/highlight-background.css")).toExternalForm());
+		} catch (NullPointerException e) {
+			System.err.println("Warning: Stylesheet 'highlight-background.css' not found!");
+		}
+	}
+
+	private Stage createLaunchStage(Scene scene) {
+		Optional.ofNullable(stage).ifPresent(Stage::close);
+
+		Stage launchStage = new Stage();
+		launchStage.setScene(scene);
+		launchStage.setTitle(title);
+		decideScreen(launchStage);
+		launchStage.show();
+
+		return launchStage;
+	}
+
+	private void handleFXMLLoadError(IOException e) {
+		String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource;
+		LOGGER.fatal("Error loading FXML: {}", fxmlResource, e);
+		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+		throw new RuntimeException(errorMessage, e);
 	}
 
 	public void handleModPathTextField() {
@@ -206,10 +243,6 @@ public class SettingsController extends Application implements FXWindow {
 	public void handlePreferredMonitorSelection() {
 		HOIIVUtils.set("preferred_screen", String.valueOf(preferredMonitorComboBox.getSelectionModel().getSelectedIndex()));
 	}
-	
-	public void handleLogLevel() {
-		
-	}
 
 	/**
 	 * User Interactive Button in Settings Window Closes Settings Window Opens Menu Window
@@ -218,16 +251,6 @@ public class SettingsController extends Application implements FXWindow {
 		HOIIVUtils.loadMod();
 		hideWindow(idOkButton);
 		new MenuController().open();
-	}
-
-	@Override
-	public String getFxmlResource() {
-		return fxmlResource;
-	}
-
-	@Override
-	public String getTitle() {
-		return title;
 	}
 
 	@Override

@@ -153,12 +153,6 @@ public interface FXWindow {
 
 	void open();
 
-	void open(String fxmlResource, String title);
-
-	String getFxmlResource();
-
-	String getTitle();
-
 	void setFxmlResource(String fxmlResource);
 
 	void setTitle(String title);

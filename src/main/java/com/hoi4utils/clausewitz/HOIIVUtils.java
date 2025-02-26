@@ -66,7 +66,6 @@ public class HOIIVUtils {
 		System.out.println("HOIIVUtils" + " " + HOIIVUTILS_VERSION + " launched");
 		LOGGER.info("HOIIVUtils" + " " + HOIIVUTILS_VERSION + " launched");
 	}
-	public static final String DARK_MODE_STYLESHEETURL = "com/hoi4utils/ui/javafx_dark.css";
 	public static MenuController menuController;
 
 	public static void main(String[] args) {
@@ -77,12 +76,6 @@ public class HOIIVUtils {
 		 */
 		ModifierDatabase mdb = new ModifierDatabase();
 		EffectDatabase edb = new EffectDatabase();
-
-		LOGGER.debug("This is a debug message");
-		LOGGER.info("This is an info message");
-		LOGGER.warn("This is a warn message");
-		LOGGER.error("This is an error message");
-		LOGGER.fatal("This is a fatal message");
 
 		loadMod();
 

@@ -31,9 +31,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class MenuController extends Application implements FXWindow {
 	public static final Logger LOGGER = LogManager.getLogger(MenuController.class);
@@ -43,20 +41,6 @@ public class MenuController extends Application implements FXWindow {
 
 	@FXML
 	public Button settingsButton;
-	@FXML
-	public Button focusLocalizButton;
-	@FXML
-	public Button customTooltipLocalizationButton;
-	@FXML
-	public Button viewBuilding;
-	@FXML
-	public Button viewGFX;
-	@FXML
-	public Button viewProvinceColors;
-	@FXML
-	public Button focusTreeViewButton;
-	@FXML
-	public Button viewUnitComparison;
 
 	public void launchMenuWindow(String[] args) {
 		launch(args);
@@ -64,55 +48,100 @@ public class MenuController extends Application implements FXWindow {
 
 	@Override
 	public void start(Stage stage) {
+		try {
+			Parent root = loadFXML();
+			setupAndShowStage(root);
+		} catch (IOException e) {
+			handleFXMLLoadError(e);
+		}
+	}
+
+
+	public void open() {
+		if (stage != null) {
+			showExistingStage();
+			return;
+		}
+
+		if (fxmlResource == null) {
+			handleMissingFXMLResource();
+			return;
+		}
+
+		start(new Stage());
+	}
+
+	private void showExistingStage() {
+		stage.show();
+		LOGGER.info("Stage already exists, showing: {}", title);
+	}
+
+	private void handleMissingFXMLResource() {
+		String errorMessage = "Failed to open window\nError: FXML resource is null.";
+		LOGGER.error(errorMessage);
+		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	private Parent loadFXML() throws IOException {
+		FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource), getResourceBundle());
+		try {
+			return launchLoader.load();
+		} catch (IOException e) {
+			throw new IOException("Failed to load FXML: " + fxmlResource, e);
+		}
+	}
+
+	private static ResourceBundle getResourceBundle() {
 		Locale currentLocale = Locale.getDefault();
 		ResourceBundle bundle;
-
 		try {
 			bundle = ResourceBundle.getBundle("menu", currentLocale);
 		} catch (MissingResourceException e) {
 			LOGGER.warn("Could not find ResourceBundle for locale {}. Falling back to English.", currentLocale);
 			bundle = ResourceBundle.getBundle("menu", Locale.ENGLISH);
 		}
+		return bundle;
+	}
 
-		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource), bundle);
-		Parent root;
-		try {
-			root = loader.load();
-		} catch (IOException e) {
-			LOGGER.error("Failed to load FXML resource: {}", fxmlResource, e);
-			return;
-		}
-
+	private void setupAndShowStage(Parent root) {
 		Scene scene = new Scene(root);
-		if ("dark".equals(HOIIVUtils.get("theme"))) {
-			scene.getStylesheets().add(HOIIVUtils.DARK_MODE_STYLESHEETURL);
+		addSceneStylesheets(scene);
+		this.stage = createLaunchStage(scene);
+		LOGGER.debug("Stage created and shown: {}", title);
+	}
+
+	private void addSceneStylesheets(Scene scene) {
+		scene.getStylesheets().add("com/hoi4utils/ui/javafx_dark.css");
+
+		try {
+			scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/hoi4utils/ui/highlight-background.css")).toExternalForm());
+		} catch (NullPointerException e) {
+			System.err.println("Warning: Stylesheet 'highlight-background.css' not found!");
 		}
-
-		this.stage = stage;
-		stage.setScene(scene);
-		stage.setTitle(title);
-		stage.show();
 	}
 
+	private Stage createLaunchStage(Scene scene) {
+		Optional.ofNullable(stage).ifPresent(Stage::close);
 
-	public void open() {
-		Platform.runLater(() -> {
-			if (stage == null) {
-				start(new Stage());
-			} else {
-				stage.show();
-			}
-		});
+		Stage launchStage = new Stage();
+		launchStage.setScene(scene);
+		launchStage.setTitle(title);
+		decideScreen(launchStage);
+		launchStage.show();
+
+		return launchStage;
 	}
 
+	private void handleFXMLLoadError(IOException e) {
+		String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource;
+		LOGGER.fatal("Error loading FXML: {}", fxmlResource, e);
+		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+		throw new RuntimeException(errorMessage, e);
+	}
 
 	public void openSettings() {
 		closeWindow(settingsButton); // closes the menu window
 		new SettingsController().open();
-	}
-
-	private void openUtilsWindow(HOIIVUtilsWindow utilsWindow) {
-		utilsWindow.open();
 	}
 
 	public void openLogViewer() {
@@ -150,7 +179,7 @@ public class MenuController extends Application implements FXWindow {
 	public void openUnitComparisonView() {
 		if (!HOIIVFile.isUnitsFolderValid()) {
 			LOGGER.warn("Unit comparison view cannot open: missing base or mod units folder.");
-			showErrorDialog("Unit folders not found. Please check your HOI4 installation or the chosen mod directory.");
+			JOptionPane.showMessageDialog(null, "Unit folders not found. Please check your HOI4 installation or the chosen mod directory.", "Error", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		openUtilsWindow(new CompareUnitsWindow());
@@ -168,41 +197,8 @@ public class MenuController extends Application implements FXWindow {
 		openUtilsWindow(new ParserViewerWindow());
 	}
 
-	/* from HOIIVUtilsStageLoader but can only extend one class */
-	/**
-	 * Opens window and updates fxmlResource and title
-	 * 
-	 * @param fxmlResource window .fxml resource
-	 * @param title        window title
-	 */
-	@Override
-	public void open(String fxmlResource, String title) {
-		this.fxmlResource = fxmlResource;
-		this.title = title;
-
-		if (stage != null) {
-			Platform.runLater(() -> {
-				try {
-					FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
-					Parent root = loader.load();
-					stage.setScene(new Scene(root));
-					stage.setTitle(title);
-					stage.show();
-				} catch (IOException e) {
-					LOGGER.error("Failed to reload FXML resource: {}", fxmlResource, e);
-				}
-			});
-		}
-	}
-
-	@Override
-	public String getFxmlResource() {
-		return fxmlResource;
-	}
-
-	@Override
-	public String getTitle() {
-		return title;
+	private void openUtilsWindow(HOIIVUtilsWindow utilsWindow) {
+		utilsWindow.open();
 	}
 
 	@Override
@@ -213,9 +209,5 @@ public class MenuController extends Application implements FXWindow {
 	@Override
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	private void showErrorDialog(String message) {
-		Platform.runLater(() -> JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.WARNING_MESSAGE));
 	}
 }
