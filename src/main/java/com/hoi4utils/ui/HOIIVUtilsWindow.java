@@ -23,11 +23,7 @@ public abstract class HOIIVUtilsWindow implements FXWindow {
 	protected FXMLLoader loader;
 
 	/**
-	 * Opens the stage. If the stage is not null, it shows the stage. If the fxmlResource is null, it
-	 * prints an error message and calls the openError method. Otherwise, it creates a new FXMLLoader,
-	 * loads the fxml file, creates a new Scene, sets the stylesheets, creates a new Stage, sets the
-	 * scene and title, calls the decideScreen method, shows the stage, sets the loader and stage
-	 * variables, and prints a success message.
+	 * Opens the stage with the specified FXML resource and title.
 	 */
 	@Override
 	public void open() {

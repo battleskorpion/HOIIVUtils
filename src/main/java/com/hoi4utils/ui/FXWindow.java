@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
-import com.hoi4utils.ui.message.MessageController;
 import scala.Function1;
 import scala.collection.Iterable;
 import scala.jdk.javaapi.CollectionConverters;
@@ -29,10 +28,14 @@ import java.util.List;
 import java.util.function.Function;
 
 public interface FXWindow {
-	static void openGlobalErrorWindow(Exception exception) {
-		openGlobalErrorWindow(exception.getLocalizedMessage());
-	}
 
+	/**
+	 * Opens Windows file and directory chooser
+	 * @param stage
+	 * @param initialDirectory
+	 * @param ford // File or directory
+	 * @return
+	 */
 	static File openChooser(Stage stage, File initialDirectory, boolean ford) {
 		File theChosenOne;
 		if (ford) {
@@ -56,7 +59,7 @@ public interface FXWindow {
 	}
 
 	/**
-	 * Opens windows file and directory chooser
+	 * Opens Windows file and directory chooser
 	 *
 	 * @param fxcomponent      The node (javafx component) that was pressed to open
 	 *                         the chooser, must belong to a scene
@@ -66,7 +69,7 @@ public interface FXWindow {
 	 * @param ford             A quirky boolean that specifies whether you want to
 	 *                         return a directory or file: true = return directory,
 	 *                         false = return file
-	 * @return theChosenOne, It is up to the the page to handle what you do if the
+	 * @return theChosenOne, It is up to the page to handle what you do if the
 	 * user returns a null
 	 * @see File
 	 * @see Node
@@ -95,11 +98,6 @@ public interface FXWindow {
 
 	static File openChooser(File initialDirectory, boolean ford) {
 		return openChooser(new Stage(), initialDirectory, ford);
-	}
-
-	static void openGlobalErrorWindow(String s) {
-		MessageController errWindow = new MessageController();
-		errWindow.open(s);
 	}
 
 	/**
