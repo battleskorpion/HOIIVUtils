@@ -27,7 +27,7 @@ import scala.util.{Failure, Success, Try}
  * I apologize in advance.
  */
 object State {
-  val LOGGER: Logger = LogManager.getLogger(classOf[State])
+  private val LOGGER: Logger = LogManager.getLogger(getClass)
   /* static */
   private val states = new ListBuffer[State]
 
@@ -235,7 +235,13 @@ object State {
   else false
 }
 
+/**
+ * Represents a state in HOI4
+ * @param stateFile state file
+ * @param addToStatesList if true, adds the state to the list of states
+ */
 class State(private var stateFile: File, addToStatesList: Boolean) extends InfrastructureData with Localizable with Iterable[State] with Comparable[State] {
+  private val LOGGER: Logger = LogManager.getLogger(getClass)
   private var stateID = 0
   private val _name: String = stateFile.getName.replace(".txt", "")
   final private val owner: mutable.Map[ClausewitzDate, Owner] = new mutable.HashMap[ClausewitzDate, Owner]
@@ -247,6 +253,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
 
   /* init */
   readStateFile(stateFile)
+  
   // add to states list
   if (addToStatesList) State.states.addOne(this)
 
@@ -254,52 +261,68 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
     this(stateFile, true)
   }
 
-  // todo simplify
+  /**
+   * Reads the state file and parses the data
+   * TODO: CLEAN THIS UP
+   * @param stateFile state file
+   */
   private def readStateFile(stateFile: File): Unit = {
     var infrastructure = 0
     var population = 0
     var civilianFactories = 0
     var militaryFactories = 0
     var dockyards = 0
-    // ! todo something important
-    // int navalPorts = 0; //has a province location
+    var navalPorts = 0; //has a province location TODO
     var airfields = 0
-    
+
     /* parse state data */
     val stateParser = new Parser(stateFile)
+    
     // Expression exp = stateParser.expressions();
     val stateNode: Node = Try(stateParser.parse.find("state").get) match {
       case Success(node) => node
       case Failure(e: ParserException) => throw new RuntimeException(e)
       case Failure(_) => return
     }
+    
     // id
     if (stateNode.contains("id")) stateID = stateNode.getValue("id").integer
     else {
-      if (HOIIVUtils.getBoolean("dev_mode.enabled")) {System.out.println(stateNode.$.toString)}
+      LOGGER.error("State ID not found in state file: " + stateFile.getName + ", " + stateNode.$)
       throw new UndefinedStateIDException(stateFile)
     }
+    
     // population (manpower)
     if (stateNode.contains("manpower")) population = stateNode.getValue("manpower").integer // todo after here etc.
+    
     // state category
     if (stateNode.contains("state_category")) {
+      // TODO: implement state category
     }
+    
     /* buildings */
     if (stateNode.contains("history")) {
       val historyNode = stateNode.find("history").orNull
       var buildingsNode: Node = null
+      
       if (historyNode.contains("buildings")) buildingsNode = historyNode.find("buildings").orNull
+      
       // owner
       if (historyNode.contains("owner")) {
         // empty date constructor for default date
         historyNode.find("owner").get.$string match {
           case Some(ownerTag) => owner.put(ClausewitzDate.of, new Owner(new CountryTag(ownerTag)))
-          case None => if (HOIIVUtils.getBoolean("dev_mode.enabled")) {System.err.println("Warning: state owner not defined, " + stateFile.getName)}
+          case None => if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
+            LOGGER.error("Warning: state owner not defined, " + stateFile.getName)
+          }
         }
       }
-      else if (HOIIVUtils.getBoolean("dev_mode.enabled")) {System.err.println("Warning: state owner not defined, " + stateFile.getName)}
+      else{
+        LOGGER.error("Warning: state owner not defined, " + stateFile.getName)
+      }
+      
       if (buildingsNode == null) {
-        if (HOIIVUtils.getBoolean("dev_mode.enabled")) {System.err.println("Warning: buildings (incl. infrastructure) not defined in state, " + stateFile.getName)}
+        LOGGER.warn("Warning: buildings (incl. infrastructure) not defined in state, " + stateFile.getName)
         stateInfrastructure = null
       }
       else {
@@ -314,6 +337,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
         // airfields
         if (buildingsNode.contains("air_base")) airfields = buildingsNode.getValue("air_base").integer // todo after here etc.
       }
+      
       /* victory points */
       if (historyNode.contains("victory_points")) {
         val victoryPointsNode = historyNode.find("victory_points").orNull
@@ -324,15 +348,22 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
           vp = VictoryPoint.of(vpl.get(0).identifier.toDouble.toInt, vpl.get(1).identifier.toDouble.toInt)
           victoryPoints.addOne(vp)
         }
-        else if (HOIIVUtils.getBoolean("dev_mode.enabled")) {System.out.println("Warning: invalid victory point node in state, " + stateFile.getName)}
+        else {
+          LOGGER.warn("Warning: invalid victory point node in state, " + stateFile.getName)
+        }
+      }
+      else {
+        LOGGER.warn("Warning: victory points not defined in state, " + stateFile.getName)
       }
     }
     else {
-      if (HOIIVUtils.getBoolean("dev_mode.enabled")) {System.out.println("Warning: history not defined in state, " + stateFile.getName)}
-      if (HOIIVUtils.getBoolean("dev_mode.enabled")) {System.out.println(stateNode.getValue.toString)}
+      LOGGER.warn("Warning: history not defined in state, " + stateFile.getName)
+      LOGGER.warn("stateNode: " + stateNode.$ + stateNode.getValue)
     }
+    
     // resources
     resourcesData = findStateResources(stateNode)
+    
     // data record
     stateInfrastructure = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories, dockyards, 0, airfields)
   }
