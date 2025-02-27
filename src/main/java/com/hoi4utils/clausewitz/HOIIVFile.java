@@ -127,10 +127,7 @@ public class HOIIVFile implements FileUtils {
 			File file = event.getFile();
 			stateAction.accept(file);
 			stateFilesWatcher.listenerPerformAction--;
-
-			if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
-				LOGGER.debug("State was {}: {}", actionName, State.get(file));
-			}
+			LOGGER.debug("State was {}: {}", actionName, State.get(file));
 		});
 	}
 

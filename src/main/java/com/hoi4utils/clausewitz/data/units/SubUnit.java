@@ -61,9 +61,7 @@ public record SubUnit(
 				System.out.println("No sub_units found in " + file.getName());
 				continue;
 			}
-			if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
-				System.out.println("File: " + file.getName() + ", subunits: " + list.size());
-			}
+			System.out.println("File: " + file.getName() + ", subunits: " + list.size());
 
 			try {
 				subUnits.addAll(createSubUnits(list));

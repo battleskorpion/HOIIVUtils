@@ -163,7 +163,7 @@ public interface FXWindow {
 		table.setItems(data);       // this is giving the factories the list of objects to collect
 									// their data from.
 
-		if (HOIIVUtils.getBoolean("dev_mode.enabled")) System.out.println("Loaded data into table: " + table.getId());
+		System.out.println("Loaded data into table: " + table.getId());
 	}
 
 	default <S> void loadTableView(TableViewWindow window, TableView<S> focusListTable, ObservableList<S>
@@ -239,9 +239,7 @@ public interface FXWindow {
 	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> tableCellDataCallback(
 			Function<S, ?> propertyGetter) {
 		return cellData -> {
-			if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
 				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
-			}
 			// unchecked cast is necessary because the compiler doesn't know that the given
 			// function will return a value of type T
 			@SuppressWarnings("unchecked")
@@ -264,9 +262,7 @@ public interface FXWindow {
 	static <S, T> Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> treeTableCellDataCallback(
 			Function<S, ?> propertyGetter) {
 		return cellData -> {
-			if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
 				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue().getValue()));
-			}
 			// unchecked cast is necessary because the compiler doesn't know that the given
 			// function will return a value of type T
 			@SuppressWarnings("unchecked")

@@ -44,10 +44,8 @@ public class MultiReferencePDXVBox extends VBox {
         });
         plusHBox.getChildren().add(plusButton);
         this.getChildren().add(plusHBox);
-        if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
-            System.out.println("MultiReferencePDXVBox generated");
-//            System.out.println(pdx);
-        }
+        System.out.println("MultiReferencePDXVBox generated");
+        System.out.println(pdx);
 
     }
 

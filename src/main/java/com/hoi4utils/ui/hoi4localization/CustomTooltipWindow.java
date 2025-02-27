@@ -98,9 +98,7 @@ public class CustomTooltipWindow extends HOIIVUtilsWindow implements TableViewWi
 	public void handleTooltipFileBrowseAction() {
 		File initialFocusDirectory = HOIIVFile.mod_common_folder;
 		File selectedFile = FXWindow.openChooser(tooltipFileBrowseButton, initialFocusDirectory, false);
-		if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
-			System.out.println(selectedFile);
-		}
+		System.out.println(selectedFile);
 		if (selectedFile != null) {
 			tooltipFileComboBox.setValue(selectedFile); // selectedFile.getAbsolutePath()
 			tooltipFile = selectedFile;
@@ -119,9 +117,9 @@ public class CustomTooltipWindow extends HOIIVUtilsWindow implements TableViewWi
 	public void handleTooltipLocalizationFileBrowseAction() {
 //		File initialFocusLocDirectory = HOIIVFile.mod_localization_folder;
 //		File selectedFile = openChooser(tooltipLocalizationFileBrowseButton, initialFocusLocDirectory, false);
-//		if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
-//			System.out.println(selectedFile);
-//		}
+//		
+//		System.out.println(selectedFile);
+//		
 //		if (selectedFile != null) {
 //			tooltipLocalizationFileComboBox.setValue(selectedFile); // selectedFile.getAbsolutePath()
 //			try {

@@ -50,14 +50,14 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
         case l: ListBuffer[Node] =>
           loadPDX(l)
         case _ =>
-          if (HOIIVUtils.getBoolean("dev_mode.enabled")) {System.out.println("Error loading PDX script: " + expression)}
+          System.out.println("Error loading PDX script: " + expression)
       }
     }
     try set(expression)
     catch {
       case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
         // System.out.println("Error loading PDX script:" + e.getMessage + "\n\t" + expression) // todo expression prints entire focus node
-        if (HOIIVUtils.getBoolean("dev_mode.enabled")) {System.out.println("Error loading PDX script:" + e.getMessage)}
+        System.out.println("Error loading PDX script:" + e.getMessage)
     }
   }
 

@@ -158,9 +158,7 @@ class EffectDatabase(databaseName: String) {
 
           loadedEffects ++= effects
         } else {
-          if (HOIIVUtils.getBoolean("dev_mode.enabled")) {
-            System.out.println("No parameters for " + pdxIdentifier + " in effects database.")
-          }
+          System.out.println("No parameters for " + pdxIdentifier + " in effects database.")
         }
       }
     } catch {
