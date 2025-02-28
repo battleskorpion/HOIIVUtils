@@ -135,6 +135,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		}
 
 		try {
+			LOGGER.debug("Fixing localization for focus tree: {}", focusTree);
 			FixFocus.fixLocalization(focusTree);
 		} catch (IOException e) {
 			LOGGER.error("Failed to fix localization for focus tree: {}", focusTree, e);
@@ -248,33 +249,9 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 			return null;
 		}
 	}
-
-	private void drawFocus(GraphicsContext gc2D, Focus focus, int minX) {
-		boolean isSelected = selectedFocuses.contains(focus);
-
-		gc2D.setFill(Color.WHITE);
-		int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + X_OFFSET_FIX;
-		int y1 = focusToCanvasY(focus);
-		int yAdj1 = (int) (FOCUS_Y_SCALE / 2.2);
-		int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
-
-		gc2D.drawImage(gfxFocusUnavailable, x1 - 32, y1 + yAdj1);
-		gc2D.drawImage(focus.getDDSImage(), x1, y1);
-		var locName = focus.localizationText(Property.NAME);
-		String name = locName.equals("[null]") && !focus.id().str().isBlank() ? focus.id().str() : locName;
-		gc2D.fillText(name, x1 - 20, y1 + yAdj2);
-
-		if (isSelected) {
-			gc2D.setStroke(Color.YELLOW);
-			gc2D.setLineWidth(2);
-			gc2D.strokeRect(x1 - FOCUS_X_SCALE / 2.3, y1 + yAdj1, FOCUS_X_SCALE * 2, FOCUS_Y_SCALE / 2.3);
-		}
-	}
-
+	
 	public void drawFocusTree() {
-		if (!HOIIVUtils.getBoolean("draw_focus_tree.enabled")) return;
-		if (focusTree == null) return;
-
+		LOGGER.debug("Drawing focus tree...");
 		var focuses = CollectionConverters.asJavaCollection(focusTree.focuses());
 		GraphicsContext gc2D = focusTreeCanvas.getGraphicsContext2D();
 
@@ -309,6 +286,38 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		}
 	}
 
+	public void drawGridLines(GraphicsContext gc) {
+		int minX = getMinX();
+		int maxX = getMaxX();
+		int maxY = getMaxY();
+		gc.setStroke(Color.GRAY);
+		gc.setLineWidth(1);
+		/* vertical lines */
+		for (int x = minX; x <= maxX; x++) {
+			int x1 = focusToCanvasX(x);
+			int y1 = 0, y2 = focusToCanvasY(maxY);
+			gc.strokeLine(x1, y1, x1, y2);
+		}
+		/* horizontal lines */
+		for (int y = 1; y <= maxY; y++) {
+			int x1 = focusToCanvasX(minX);
+			int x2 = focusToCanvasX(maxX);
+			int y1 = focusToCanvasY(y);
+			gc.strokeLine(x1, y1, x2, y1);
+		}
+		/* write coordinates */
+		var font = gc.getFont();
+		for (int x = minX; x <= maxX; x++) {
+			int x1 = focusToCanvasX(x) - 8;
+			for (int y = 1; y <= maxY; y++) {
+				int y1 = focusToCanvasY(y) - 5;
+				gc.setFont(new javafx.scene.text.Font("Arial", 8));
+				gc.fillText(x + ", " + y, x1, y1);
+			}
+		}
+		// reset font
+		gc.setFont(font);
+	}
 
 	private void drawPrerequisites(GraphicsContext gc2D, Collection<Focus> focuses, int minX) {
 		gc2D.setStroke(Color.BLACK);
@@ -373,37 +382,26 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		}
 	}
 
-	public void drawGridLines(GraphicsContext gc) {
-		int minX = getMinX();
-		int maxX = getMaxX();
-		int maxY = getMaxY();
-		gc.setStroke(Color.GRAY);
-		gc.setLineWidth(1);
-		/* vertical lines */
-		for (int x = minX; x <= maxX; x++) {
-			int x1 = focusToCanvasX(x);
-			int y1 = 0, y2 = focusToCanvasY(maxY);
-			gc.strokeLine(x1, y1, x1, y2);
+	private void drawFocus(GraphicsContext gc2D, Focus focus, int minX) {
+		boolean isSelected = selectedFocuses.contains(focus);
+
+		gc2D.setFill(Color.WHITE);
+		int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + X_OFFSET_FIX;
+		int y1 = focusToCanvasY(focus);
+		int yAdj1 = (int) (FOCUS_Y_SCALE / 2.2);
+		int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
+
+		gc2D.drawImage(gfxFocusUnavailable, x1 - 32, y1 + yAdj1);
+		gc2D.drawImage(focus.getDDSImage(), x1, y1);
+		var locName = focus.localizationText(Property.NAME);
+		String name = locName.equals("[null]") && !focus.id().str().isBlank() ? focus.id().str() : locName;
+		gc2D.fillText(name, x1 - 20, y1 + yAdj2);
+
+		if (isSelected) {
+			gc2D.setStroke(Color.YELLOW);
+			gc2D.setLineWidth(2);
+			gc2D.strokeRect(x1 - FOCUS_X_SCALE / 2.3, y1 + yAdj1, FOCUS_X_SCALE * 2, FOCUS_Y_SCALE / 2.3);
 		}
-		/* horizontal lines */
-		for (int y = 1; y <= maxY; y++) {
-			int x1 = focusToCanvasX(minX);
-			int x2 = focusToCanvasX(maxX);
-			int y1 = focusToCanvasY(y);
-			gc.strokeLine(x1, y1, x2, y1);
-		}
-		/* write coordinates */
-		var font = gc.getFont();
-		for (int x = minX; x <= maxX; x++) {
-			int x1 = focusToCanvasX(x) - 8;
-			for (int y = 1; y <= maxY; y++) {
-				int y1 = focusToCanvasY(y) - 5;
-				gc.setFont(new javafx.scene.text.Font("Arial", 8));
-				gc.fillText(x + ", " + y, x1, y1);
-			}
-		}
-		// reset font
-		gc.setFont(font);
 	}
 
 	private Focus getFocusHover(Point2D p) {

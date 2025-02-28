@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import scala.jdk.javaapi.CollectionConverters;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ public class FixFocus extends HOIIVUtils {
 		
 		File locFile = focusTree.primaryLocalizationFile().get();
 
+		LOGGER.debug("Fixing focus localization for {}", locFile.getName());
 		Collection<Focus> focuses = CollectionConverters.asJavaCollection(focusTree.focuses());
 		
 		focuses.parallelStream()
@@ -39,6 +41,8 @@ public class FixFocus extends HOIIVUtils {
 			throw new IllegalArgumentException("Focus tree cannot be null.");
 		}
 		if (focusTree.focuses() == null || focusTree.focuses().isEmpty()) {
+			LOGGER.fatal("Focus tree has no focuses");
+			JOptionPane.showMessageDialog(null, "Focus tree has no focuses.", "Error", JOptionPane.ERROR_MESSAGE);
 			throw new IllegalStateException("Focus tree has no focuses.");
 		}
 	}
@@ -69,6 +73,6 @@ public class FixFocus extends HOIIVUtils {
 	}
 
 	private static String generateDescription() {
-		return "Added on " + LocalDateTime.now() + " by hoi4localizer.";
+		return "Added on " + LocalDateTime.now() + " by hoi4localize.";
 	}
 }
