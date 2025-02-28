@@ -143,16 +143,16 @@ public class HOIIVUtils {
 
 		if (!externalFile.exists()) {
 			LOGGER.warn("External configuration file not found: {}", PROPERTIES_FILE);
-			return false;
+			return true;
 		}
 
 		try (FileInputStream input = new FileInputStream(externalFile)) {
 			properties.load(input);
 			LOGGER.debug("External configuration loaded from: {}", PROPERTIES_FILE);
-			return true;
+			return false;
 		} catch (IOException e) {
 			LOGGER.warn("Error loading external properties from: {}", PROPERTIES_FILE, e);
-			return false;
+			return true;
 		}
 	}
 

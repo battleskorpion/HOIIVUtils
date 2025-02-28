@@ -85,69 +85,97 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	 */
 	@FXML
 	void initialize() {
-		
+		LOGGER.info("Initializing FocusTreeWindow...");
+
 		// Set up the focus tree dropdown and its listeners
 		ObservableList<FocusTree> trees = FocusTree$.MODULE$.observeFocusTrees();
-		if (trees != null && !trees.isEmpty()) {
-			focusTreeDropdown.setItems(trees);
+		if (trees == null || trees.isEmpty()) {
+			LOGGER.warn("No focus trees found. Ensure mod files are loaded correctly.");
 		} else {
-			LOGGER.warn("No focus trees found.");
+			focusTreeDropdown.setItems(trees);
 		}
 
 		focusTreeDropdown.setTooltip(new Tooltip("Select a focus tree to view"));
-		
 		focusTreeDropdown.setVisibleRowCount(VISIBLE_DROPDOWN_ROW_COUNT);
-		
-		focusTreeDropdown.getSelectionModel().select(0);
-		
+
+		// Select first available item if list is not empty
+		if (trees != null && !trees.isEmpty()) {
+			focusTreeDropdown.getSelectionModel().select(0);
+		}
+
 		focusTreeDropdown.getItems().sort(Comparator.comparing(FocusTree::toString));
-		
+
 		focusTreeDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				focusTree = newValue;
 				drawFocusTree();
 			}
 		});
-		
+
 		// Set up the focus tree canvas's scroll pane
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
-			if (e.getButton() == MouseButton.MIDDLE)
-				focusTreeCanvasScrollPane.setPannable(true);
+			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(true);
 		});
 		focusTreeCanvasScrollPane.setOnMouseReleased(e -> {
-			if (e.getButton() == MouseButton.MIDDLE)
-				focusTreeCanvasScrollPane.setPannable(false);
+			if (e.getButton() == MouseButton.MIDDLE) focusTreeCanvasScrollPane.setPannable(false);
 		});
+
 		exportFocusTreeButton.setOnAction(event -> handleExportFocusTreeButtonClick());
 
 		// Load the focus unavailable image
 		gfxFocusUnavailable = loadFocusUnavailableImage();
 
-		// Set up the focus tree
-		focusTree = FocusTree$.MODULE$.get(new CountryTag("SMA"));  // TODO
+		// Try loading the focus tree from multiple sources
+		focusTree = getFocusTree();
+
 		if (focusTree == null) {
-			focusTree = FocusTree.listFocusTrees().head();
-		}
-		// If focusTree is still null, assign a new value
-		if (focusTree == null) {
-			focusTree = FocusTree$.MODULE$.get(new File(HOIIVFile.mod_focus_folder + "//massachusetts.txt")).getOrElse(null);
+			LOGGER.error("Failed to load a valid focus tree. This may indicate an issue with mod loading.");
+			JOptionPane.showMessageDialog(null, "Error: No valid Focus Tree found!", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 
-        try {
-            FixFocus.fixLocalization(focusTree);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		try {
+			FixFocus.fixLocalization(focusTree);
+		} catch (IOException e) {
+			LOGGER.error("Failed to fix localization for focus tree: {}", focusTree, e);
+			JOptionPane.showMessageDialog(null, "Error fixing localization: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 
-
-        // Draw the focus tree
+		// Draw the focus tree
 		drawFocusTree();
 
+		LOGGER.info("FocusTreeWindow initialized successfully.");
 		JOptionPane.showMessageDialog(null,
-				"dev @end of initialize() [FocusTreeWindow] - loaded focuses: " + focusTree.focuses().size()
+				"dev @end of initialize() [FocusTreeWindow] "
+						+ "\n" + "loaded focuses: " + focusTree.focuses().size()
 						+ "\n" + "loaded tree of country: " + focusTree.country().get()
-						+ "\n" + "draw focus tree: " + HOIIVUtils.getBoolean("draw_focus_tree.enabled"));
+						+ "\n" + "draw focus tree: " + focusTree.toString());
 	}
+
+	/**
+	 * Attempts to load a valid FocusTree from different sources.
+	 */
+	private FocusTree getFocusTree() {
+		// Try getting a default tree by country tag
+		FocusTree focusTree = FocusTree$.MODULE$.get(new CountryTag("SMA"));
+
+		// If still null, get the first available focus tree from the list
+		if (focusTree == null) {
+			var list = FocusTree.listFocusTrees();
+			if (!list.isEmpty()) {
+				focusTree = list.head();
+			}
+		}
+
+		// If still null, try getting from a file
+		if (focusTree == null) {
+			focusTree = FocusTree$.MODULE$.get(new File(HOIIVFile.mod_focus_folder + "/massachusetts.txt"))
+					.getOrElse(null);
+		}
+
+		return focusTree;
+	}
+
 
 	public Canvas focusTreeCanvas() {
 		return focusTreeCanvas;

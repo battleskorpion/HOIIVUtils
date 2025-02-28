@@ -64,7 +64,7 @@ object State {
     countryStates
   }
 
-  def infrastructureOfStates(states: ListBuffer[State]): Infrastructure = {
+  private def infrastructureOfStates(states: ListBuffer[State]): Infrastructure = {
     var infrastructure = 0
     var population = 0
     var civilianFactories = 0
@@ -267,104 +267,109 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
    * @param stateFile state file
    */
   private def readStateFile(stateFile: File): Unit = {
-    var infrastructure = 0
-    var population = 0
-    var civilianFactories = 0
-    var militaryFactories = 0
-    var dockyards = 0
-    var navalPorts = 0; //has a province location TODO
-    var airfields = 0
+    var (infrastructure, population, civilianFactories, militaryFactories, dockyards, airfields) = (0, 0, 0, 0, 0, 0)
 
-    /* parse state data */
-    val stateParser = new Parser(stateFile)
-    
-    // Expression exp = stateParser.expressions();
-    val stateNode: Node = Try(stateParser.parse.find("state").get) match {
-      case Success(node) => node
-      case Failure(e: ParserException) => throw new RuntimeException(e)
-      case Failure(_) => return
+    val stateNode = parseStateNode(stateFile) match {
+      case Some(node) => node
+      case None       => return
     }
-    
-    // id
-    if (stateNode.contains("id")) stateID = stateNode.getValue("id").integer
-    else {
-      LOGGER.error("State ID not found in state file: " + stateFile.getName + ", " + stateNode.$)
-      throw new UndefinedStateIDException(stateFile)
+
+    stateID = extractStateID(stateNode, stateFile)
+    population = extractPopulation(stateNode)
+    extractStateCategory(stateNode)
+
+    val historyNode = stateNode.find("history").orNull
+    if (historyNode == null) {
+      LOGGER.warn(s"History not defined in state: ${stateFile.getName}, ${stateNode.$}${stateNode.getValue}")
+      return
     }
-    
-    // population (manpower)
-    if (stateNode.contains("manpower")) population = stateNode.getValue("manpower").integer // todo after here etc.
-    
-    // state category
-    if (stateNode.contains("state_category")) {
-      // TODO: implement state category
+
+    val buildingsNode = historyNode.find("buildings").orNull
+    extractOwner(historyNode, stateFile)
+
+    if (buildingsNode == null) {
+      LOGGER.warn(s"Buildings (incl. infrastructure) not defined in state: ${stateFile.getName}")
+      stateInfrastructure = null
+    } else {
+      infrastructure = extractBuildingValue(buildingsNode, "infrastructure")
+      civilianFactories = extractBuildingValue(buildingsNode, "industrial_complex")
+      militaryFactories = extractBuildingValue(buildingsNode, "arms_factory")
+      dockyards = extractBuildingValue(buildingsNode, "dockyard")
+      airfields = extractBuildingValue(buildingsNode, "air_base")
     }
-    
-    /* buildings */
-    if (stateNode.contains("history")) {
-      val historyNode = stateNode.find("history").orNull
-      var buildingsNode: Node = null
-      
-      if (historyNode.contains("buildings")) buildingsNode = historyNode.find("buildings").orNull
-      
-      // owner
-      if (historyNode.contains("owner")) {
-        // empty date constructor for default date
-        historyNode.find("owner").get.$string match {
-          case Some(ownerTag) => owner.put(ClausewitzDate.of, new Owner(new CountryTag(ownerTag)))
-          case None => LOGGER.error("Warning: state owner not defined, " + stateFile.getName)
-        }
-      }
-      else{
-        LOGGER.error("Warning: state owner not defined, " + stateFile.getName)
-      }
-      
-      if (buildingsNode == null) {
-        LOGGER.warn("Warning: buildings (incl. infrastructure) not defined in state, " + stateFile.getName)
-        stateInfrastructure = null
-      }
-      else {
-        // infrastructure
-        if (buildingsNode.contains("infrastructure")) infrastructure = buildingsNode.getValue("infrastructure").integer // todo after here etc.
-        // civilian factories
-        if (buildingsNode.contains("industrial_complex")) civilianFactories = buildingsNode.getValue("industrial_complex").integer // todo after here etc.
-        // military factories
-        if (buildingsNode.contains("arms_factory")) militaryFactories = buildingsNode.getValue("arms_factory").integer // todo after here etc.
-        // dockyards
-        if (buildingsNode.contains("dockyard")) dockyards = buildingsNode.getValue("dockyard").integer // todo after here etc.
-        // airfields
-        if (buildingsNode.contains("air_base")) airfields = buildingsNode.getValue("air_base").integer // todo after here etc.
-      }
-      
-      /* victory points */
-      if (historyNode.contains("victory_points")) {
-        val victoryPointsNode = historyNode.find("victory_points").orNull
-        // todo bad code time
-        val vpl = CollectionConverters.asJava(victoryPointsNode.toList)
-        var vp: VictoryPoint = null
-        if (vpl.size == 2) {
-          vp = VictoryPoint.of(vpl.get(0).identifier.toDouble.toInt, vpl.get(1).identifier.toDouble.toInt)
-          victoryPoints.addOne(vp)
-        }
-        else {
-          LOGGER.warn("Warning: invalid victory point node in state, " + stateFile.getName)
-        }
-      }
-      else {
-        LOGGER.warn("Warning: victory points not defined in state, " + stateFile.getName)
-      }
-    }
-    else {
-      LOGGER.warn("Warning: history not defined in state, " + stateFile.getName)
-      LOGGER.warn("stateNode: " + stateNode.$ + stateNode.getValue)
-    }
-    
-    // resources
+
+    extractVictoryPoints(historyNode, stateFile)
+
     resourcesData = findStateResources(stateNode)
-    
-    // data record
     stateInfrastructure = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories, dockyards, 0, airfields)
   }
+
+  private def parseStateNode(stateFile: File): Option[Node] = {
+    val stateParser = new Parser(stateFile)
+    Try(stateParser.parse.find("state").get) match {
+      case Success(node) => Some(node)
+      case Failure(e: ParserException) => throw new RuntimeException(e)
+      case Failure(_) => None
+    }
+  }
+
+  private def extractStateID(stateNode: Node, stateFile: File): Int = {
+    if (stateNode.contains("id")) {
+      stateNode.getValue("id").integer
+    } else {
+      LOGGER.error(s"State ID not found in file: ${stateFile.getName}, ${stateNode.$}")
+      throw new UndefinedStateIDException(stateFile)
+    }
+  }
+
+  private def extractPopulation(stateNode: Node): Int = {
+    stateNode.find("manpower").map(_.getValue match {
+      case i: Int => i
+      case s: String => s.toIntOption.getOrElse(0) // Convert string to Int safely
+      case _ => 0
+    }).getOrElse(0)
+  }
+
+
+  private def extractStateCategory(stateNode: Node): Unit = {
+    if (stateNode.contains("state_category")) {
+      // TODO: Implement state category logic
+    }
+  }
+
+  private def extractOwner(historyNode: Node, stateFile: File): Unit = {
+    if (historyNode.contains("owner")) {
+      historyNode.find("owner").get.$string match {
+        case Some(ownerTag) => owner.put(ClausewitzDate.of, new Owner(new CountryTag(ownerTag)))
+        case None => LOGGER.error(s"Warning: state owner not defined in ${stateFile.getName}")
+      }
+    } else {
+      LOGGER.error(s"Warning: state owner not defined in ${stateFile.getName}")
+    }
+  }
+
+  private def extractBuildingValue(buildingsNode: Node, key: String): Int = {
+    buildingsNode.find(key).map(_.getValue match {
+      case i: Int => i
+      case s: String => s.toIntOption.getOrElse(0) // Convert string safely
+      case _ => 0
+    }).getOrElse(0)
+  }
+  
+  private def extractVictoryPoints(historyNode: Node, stateFile: File): Unit = {
+    val victoryPointsNode = historyNode.find("victory_points").orNull
+    if (victoryPointsNode != null) {
+      val vpl = CollectionConverters.asJava(victoryPointsNode.toList)
+      if (vpl.size == 2) {
+        victoryPoints.addOne(VictoryPoint.of(vpl.get(0).identifier.toInt, vpl.get(1).identifier.toInt))
+      } else {
+        LOGGER.warn(s"Invalid victory point node in state: ${stateFile.getName}")
+      }
+    } else {
+      LOGGER.warn(s"Victory points not defined in state: ${stateFile.getName}")
+    }
+  }
+
 
   private def findStateResources(stateNode: Node): Resources = {
     if (!stateNode.contains("resources")) return Resources()
