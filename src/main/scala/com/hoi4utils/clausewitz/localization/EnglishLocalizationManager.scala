@@ -48,7 +48,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
     else if (!HOIIVFile.hoi4_localization_folder.isDirectory)
       LOGGER.warn("'HOI4 localization folder' is not a directory.")
     else
-      loadLocalization(HOIIVFile.mod_localization_folder, Localization.Status.EXISTS)
+      loadLocalization(HOIIVFile.hoi4_localization_folder, Localization.Status.EXISTS)
 
     if (HOIIVFile.mod_localization_folder == null)
       LOGGER.warn("'Mod localization folder' is null.")
@@ -57,7 +57,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
     else if (!HOIIVFile.mod_localization_folder.isDirectory)
       LOGGER.warn("'Mod localization folder' is not a directory.")
     else
-      loadLocalization(HOIIVFile.hoi4_localization_folder, Localization.Status.VANILLA)
+      loadLocalization(HOIIVFile.mod_localization_folder, Localization.Status.VANILLA)
   }
 
 

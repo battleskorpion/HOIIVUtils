@@ -72,9 +72,9 @@ public class HOIIVFile implements FileUtils {
 		mod_focus_folder = new File(mod_common_folder, "national_focus");
 		mod_ideas_folder = new File(mod_common_folder, "ideas");
 		mod_units_folder = new File(mod_common_folder, "units");
-		mod_states_folder = new File(modPath, "history/states");
-		mod_localization_folder = new File(modPath, "localisation/english"); // 's' vs 'z' note in the original comment
-		mod_strat_region_dir = new File(modPath, "map/strategicregions");
+		mod_states_folder = new File(modPath, "history\\states");
+		mod_localization_folder = new File(modPath, "localisation\\english"); // 's' vs 'z' note in the original comment
+		mod_strat_region_dir = new File(modPath, "map\\strategicregions");
 	}
 
 	private static void createHOIIVPaths() {
@@ -85,8 +85,8 @@ public class HOIIVFile implements FileUtils {
 		}
 
 		hoi4_folder = new File(hoi4Path);
-		hoi4_localization_folder = new File(hoi4Path, "localisation/english");
-		hoi4_units_folder = new File(hoi4Path, "common/units");
+		hoi4_localization_folder = new File(hoi4Path, "localisation\\english");
+		hoi4_units_folder = new File(hoi4Path, "common\\units");
 	}
 
 	/** Validates whether the provided directory path is valid */

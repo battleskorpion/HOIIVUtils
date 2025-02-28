@@ -21,6 +21,7 @@ import java.util.Collection;
 public class FixFocus extends HOIIVUtils {
 	private static final Logger LOGGER = LogManager.getLogger(FixFocus.class);
 
+	// TODO improve
 	public static void fixLocalization(FocusTree focusTree) throws IOException {
 		LOGGER.debug("Starting fixLocalization for FocusTree: {}", focusTree);
 
@@ -56,7 +57,7 @@ public class FixFocus extends HOIIVUtils {
 			JOptionPane.showMessageDialog(null, "Focus tree cannot be null.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		
+
 		if (focusTree.focuses() == null || focusTree.focuses().isEmpty()) {
 			LOGGER.fatal("Focus tree has NO focuses! Stopping initialization.");
 			JOptionPane.showMessageDialog(null, "Error: Focus tree has no focuses.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -65,10 +66,10 @@ public class FixFocus extends HOIIVUtils {
 		if (focusTree.primaryLocalizationFile().isEmpty()) {
 			LOGGER.info("Focus tree has no localization file."); // todo say which focus tree
 			JOptionPane.showMessageDialog(null, "Warning: Focus tree has no localization file.", "Warning", JOptionPane.WARNING_MESSAGE);
-			return false; 
+			return false;
 		}
 		LOGGER.debug("Focus tree is valid: {}", focusTree);
-		return true; 
+		return true;
 	}
 
 
