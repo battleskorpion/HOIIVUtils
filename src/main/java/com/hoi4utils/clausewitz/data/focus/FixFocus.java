@@ -24,7 +24,7 @@ public class FixFocus extends HOIIVUtils {
 	public static void fixLocalization(FocusTree focusTree) throws IOException {
 		LOGGER.debug("Starting fixLocalization for FocusTree: {}", focusTree);
 
-		validateFocusTree(focusTree);
+		if (!validateFocusTree(focusTree)) return;
 
 		var locManager = LocalizationManager.get();
 		LOGGER.debug("LocalizationManager loaded");
@@ -48,13 +48,13 @@ public class FixFocus extends HOIIVUtils {
 		LOGGER.debug("Finished fixing focus localization.");
 	}
 
-	private static void validateFocusTree(FocusTree focusTree) {
+	private static boolean validateFocusTree(FocusTree focusTree) {
 		LOGGER.debug("Validating FocusTree: {}", focusTree);
 
 		if (focusTree == null) {
 			LOGGER.fatal("Focus tree is null.");
 			JOptionPane.showMessageDialog(null, "Focus tree cannot be null.", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
 		
 		if (focusTree.focuses() == null || focusTree.focuses().isEmpty()) {
@@ -63,11 +63,12 @@ public class FixFocus extends HOIIVUtils {
 			throw new IllegalStateException("Focus tree has no focuses.");
 		}
 		if (focusTree.primaryLocalizationFile().isEmpty()) {
-			LOGGER.fatal("Focus tree has NO localization file! Stopping initialization.");
-			JOptionPane.showMessageDialog(null, "Error: Focus tree has no localization file.", "Error", JOptionPane.ERROR_MESSAGE);
-			throw new IllegalStateException("Focus tree has no localization file.");
+			LOGGER.info("Focus tree has no localization file."); // todo say which focus tree
+			JOptionPane.showMessageDialog(null, "Warning: Focus tree has no localization file.", "Warning", JOptionPane.WARNING_MESSAGE);
+			return false; 
 		}
 		LOGGER.debug("Focus tree is valid: {}", focusTree);
+		return true; 
 	}
 
 

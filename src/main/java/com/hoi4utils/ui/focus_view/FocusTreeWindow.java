@@ -186,7 +186,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 			if (!list.isEmpty()) {
 				LOGGER.debug("First focus tree in list (raw Scala output): {}", list);
-				focusTree = list.head(); // Ensure this actually returns a FocusTree
+				focusTree = list.find(FocusTree::nonEmpty).getOrElse(null); // Ensure this actually returns a FocusTree
 				LOGGER.debug("Loaded first available focus tree: {}", focusTree);
 			} else {
 				LOGGER.error("No focus trees found in list!");
@@ -440,6 +440,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	}
 
 	private Focus getFocusHover(Point2D p) {
+		if (focusTree == null) return null; 
 		int x = (int) (p.getX() / FOCUS_X_SCALE) + focusTree.minX();
 		int y = (int) (p.getY() / FOCUS_Y_SCALE);
 
