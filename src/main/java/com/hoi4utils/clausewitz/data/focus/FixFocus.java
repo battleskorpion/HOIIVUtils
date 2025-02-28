@@ -22,30 +22,54 @@ public class FixFocus extends HOIIVUtils {
 	private static final Logger LOGGER = LogManager.getLogger(FixFocus.class);
 
 	public static void fixLocalization(FocusTree focusTree) throws IOException {
+		LOGGER.debug("Starting fixLocalization for FocusTree: {}", focusTree);
+
 		validateFocusTree(focusTree);
 
 		var locManager = LocalizationManager.get();
-		
-		File locFile = focusTree.primaryLocalizationFile().get();
+		LOGGER.debug("LocalizationManager loaded");
 
-		LOGGER.debug("Fixing focus localization for {}", locFile.getName());
+		File locFile = focusTree.primaryLocalizationFile().get();
+		LOGGER.debug("Primary localization file: {}", locFile.getAbsolutePath());
+
 		Collection<Focus> focuses = CollectionConverters.asJavaCollection(focusTree.focuses());
-		
+		LOGGER.debug("Total focuses in tree: {}", focuses.size());
+
 		focuses.parallelStream()
-				.filter(focus -> focus.localization(Property.NAME) == null)
+				.filter(focus -> {
+					boolean missingLocalization = focus.localization(Property.NAME) == null;
+					if (missingLocalization) {
+						LOGGER.debug("Missing localization for focus: {}", focus.id().str());
+					}
+					return missingLocalization;
+				})
 				.forEach(focus -> processFocusLocalization(focus, locManager, locFile));
+
+		LOGGER.debug("Finished fixing focus localization.");
 	}
 
 	private static void validateFocusTree(FocusTree focusTree) {
+		LOGGER.debug("Validating FocusTree: {}", focusTree);
+
 		if (focusTree == null) {
-			throw new IllegalArgumentException("Focus tree cannot be null.");
+			LOGGER.fatal("Focus tree is null.");
+			JOptionPane.showMessageDialog(null, "Focus tree cannot be null.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
+		
 		if (focusTree.focuses() == null || focusTree.focuses().isEmpty()) {
-			LOGGER.fatal("Focus tree has no focuses");
-			JOptionPane.showMessageDialog(null, "Focus tree has no focuses.", "Error", JOptionPane.ERROR_MESSAGE);
+			LOGGER.fatal("Focus tree has NO focuses! Stopping initialization.");
+			JOptionPane.showMessageDialog(null, "Error: Focus tree has no focuses.", "Error", JOptionPane.ERROR_MESSAGE);
 			throw new IllegalStateException("Focus tree has no focuses.");
 		}
+		if (focusTree.primaryLocalizationFile().isEmpty()) {
+			LOGGER.fatal("Focus tree has NO localization file! Stopping initialization.");
+			JOptionPane.showMessageDialog(null, "Error: Focus tree has no localization file.", "Error", JOptionPane.ERROR_MESSAGE);
+			throw new IllegalStateException("Focus tree has no localization file.");
+		}
+		LOGGER.debug("Focus tree is valid: {}", focusTree);
 	}
+
 
 	private static void processFocusLocalization(Focus focus, LocalizationManager locManager, File locFile) {
 		String focusName = extractFocusName(focus.id().getOrElse(null));
