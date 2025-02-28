@@ -18,6 +18,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ProvinceColorsController extends HOIIVUtilsWindow {
 	public static final Logger LOGGER = LogManager.getLogger(ProvinceColorsController.class);
@@ -71,7 +73,10 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 	@FXML
 	private Label maxBlueAmtLabel;
 
-	private String input = "1000";
+	private String input = "10";
+
+	// Set to track generated colors for uniqueness check
+	private Set<Integer> generatedColors = new HashSet<>();
 
 	public ProvinceColorsController() {
 		setFxmlResource("ProvinceColors.fxml");
@@ -159,11 +164,24 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 				return 0;
 			}
 
-			// Check if exceeding maximum possible unique colors
+			// Calculate the maximum possible colors within the RGB constraints
+			int redRange = Math.max(1, redMax - redMin + 1);
+			int greenRange = Math.max(1, greenMax - greenMin + 1);
+			int blueRange = Math.max(1, blueMax - blueMin + 1);
+			long maxPossibleColors = (long) redRange * greenRange * blueRange;
+
+			// Check if exceeding maximum possible unique colors based on constraints
+			if (numColors > maxPossibleColors) {
+				numColors = (int) Math.min(Integer.MAX_VALUE, maxPossibleColors);
+				statusLabel.setText("Warning: Limited to " + numColors + " colors based on RGB ranges.");
+				LOGGER.warn("Requested more colors than possible with current RGB ranges. Limited to " + numColors);
+			}
+
+			// Also check the absolute maximum (16.7 million)
 			if (numColors > (1 << 24) - 1) {
 				numColors = (1 << 24) - 1;
-				statusLabel.setText("Warning: Attempting to generate more unique colors than possible. Limited to " + numColors);
-				LOGGER.warn("Attempting to generate more unique colors than is possible. Limited to " + numColors);
+				statusLabel.setText("Warning: Limited to maximum of " + numColors + " unique colors.");
+				LOGGER.warn("Requested more colors than possible (24-bit RGB). Limited to " + numColors);
 			}
 
 			return numColors;
@@ -196,8 +214,8 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 			return; // Error already displayed in getNumColorsGenerate
 		}
 
-		// Update the color preview
-		updateColorPreview(numColors);
+		// Clear the set of generated colors
+		generatedColors.clear();
 
 		// Show progress indicator
 		statusLabel.setText("Generating BMP with " + numColors + " unique colors...");
@@ -222,7 +240,8 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 				javafx.application.Platform.runLater(() -> {
 					progressIndicator.setVisible(false);
 					generateButton.setDisable(false);
-					statusLabel.setText("Error: Failed to generate BMP.");
+					statusLabel.setText("Error: Failed to generate BMP - " + e.getMessage());
+					LOGGER.error("Failed to generate BMP", e);
 				});
 			}
 		}).start();
@@ -240,21 +259,56 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 		BufferedImage image = new BufferedImage(dimension, dimension, BufferedImage.TYPE_INT_RGB);
 
 		// Generate unique colors and fill the image
-		int colorIndex = 0;
-		for (int y = 0; y < dimension; y++) {
-			for (int x = 0; x < dimension; x++) {
-				if (colorIndex < numColors) {
-					Color color = generateUniqueColor(colorIndex, numColors);
-					image.setRGB(x, y, color.getRGB());
-					colorIndex++;
+		int colorCount = 0;
+		int attemptCount = 0;
+		final int MAX_ATTEMPTS = 1000000; // Avoid infinite loops
 
-					// Update progress indicator
-					final int currentIndex = colorIndex;
+		while (colorCount < numColors && attemptCount < MAX_ATTEMPTS) {
+			Color color = generateUniqueColor(colorCount, numColors);
+			int rgb = color.getRGB() & 0xFFFFFF; // Mask to just RGB values (no alpha)
+
+			// Check if this color is already used
+			if (!generatedColors.contains(rgb)) {
+				generatedColors.add(rgb);
+
+				// Calculate position in the image
+				int x = colorCount % dimension;
+				int y = colorCount / dimension;
+
+				// Set the color in the image
+				image.setRGB(x, y, color.getRGB());
+				colorCount++;
+
+				// Update progress indicator periodically
+				if (colorCount % 100 == 0 || colorCount == numColors) {
+					final int currentCount = colorCount;
 					javafx.application.Platform.runLater(() -> {
-						progressIndicator.setProgress((double) currentIndex / numColors);
+						progressIndicator.setProgress((double) currentCount / numColors);
 					});
-				} else {
-					image.setRGB(x, y, Color.BLACK.getRGB()); // Fill remaining pixels with black
+				}
+			}
+
+			attemptCount++;
+
+			// If we're having trouble finding unique colors, log a warning
+			if (attemptCount >= MAX_ATTEMPTS) {
+				LOGGER.warn("Reached maximum attempt limit while generating unique colors");
+
+				int finalColorCount = colorCount;
+				javafx.application.Platform.runLater(() -> {
+					statusLabel.setText("Warning: Difficulty finding unique colors. Generated " + finalColorCount + " colors.");
+				});
+			}
+		}
+
+		// Fill any remaining pixels with black
+		if (colorCount < numColors) {
+			for (int y = 0; y < dimension; y++) {
+				for (int x = 0; x < dimension; x++) {
+					int index = y * dimension + x;
+					if (index >= colorCount && index < dimension * dimension) {
+						image.setRGB(x, y, Color.BLACK.getRGB());
+					}
 				}
 			}
 		}
@@ -272,15 +326,35 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 	 * @return A unique Color object.
 	 */
 	private Color generateUniqueColor(int index, int totalColors) {
-		// Using the improved color generation logic with customizable ranges
-		int range = Math.max(1, redMax - redMin);
-		int r = redMin + ((index * 53) % range);
+		// Calculate the number of possible colors within the constraints
+		int redRange = redMax - redMin + 1;
+		int greenRange = greenMax - greenMin + 1;
+		int blueRange = blueMax - blueMin + 1;
 
-		range = Math.max(1, greenMax - greenMin);
-		int g = greenMin + ((index * 97) % range);
+		// Use prime number multiplication and large constants to create a more random distribution
+		// The goal is to visit as many unique RGB combinations as possible
+		long multiplier = 2862933555777941757L; // Large prime
+		long addend = 3037000493L; // Another prime
 
-		range = Math.max(1, blueMax - blueMin);
-		int b = blueMin + ((index * 193) % range);
+		// Generate a pseudo-random number based on the index
+		long randomValue = (index * multiplier + addend) & 0x7FFFFFFFFFFFFFFFL;
+
+		// Extract RGB components from the random value, respecting the min/max constraints
+		int r = redMin + (int)(randomValue % redRange);
+		randomValue /= redRange;
+
+		int g = greenMin + (int)(randomValue % greenRange);
+		randomValue /= greenRange;
+
+		int b = blueMin + (int)(randomValue % blueRange);
+
+		// Use deterministic but well-distributed hash if we're getting colors that are too similar
+		if (index > totalColors / 2) {
+			// Alternative algorithm to maximize distance between colors
+			r = redMin + (int)(((index * 7621) + 1) % redRange);
+			g = greenMin + (int)(((index * 4567) + 5) % greenRange);
+			b = blueMin + (int)(((index * 3571) + 7) % blueRange);
+		}
 
 		return new Color(r, g, b);
 	}
@@ -294,23 +368,40 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 		if (numColors <= 0) return;
 
 		colorPreviewGrid.getChildren().clear(); // Clear previous preview
+		generatedColors.clear(); // Reset the set of generated colors
 
 		int columns = (int) Math.ceil(Math.sqrt(numColors)); // Number of columns in the preview grid
 		int boxSize = 8; // Size of each color box (in pixels)
+		int previewLimit = Math.min(numColors, 1000); // Limit preview to 1000 colors for performance
 
-		for (int i = 0; i < Math.min(numColors, 1000); i++) { // Limit preview to 1000 colors for performance
+		for (int i = 0; i < previewLimit; i++) {
 			// Generate unique color
 			Color color = generateUniqueColor(i, numColors);
+			int rgb = color.getRGB() & 0xFFFFFF;
 
-			// Create a rectangle with the color
-			Rectangle rect = new Rectangle(boxSize, boxSize);
-			rect.setFill(javafx.scene.paint.Color.rgb(color.getRed(), color.getGreen(), color.getBlue()));
-			rect.setStroke(javafx.scene.paint.Color.BLACK); // Border for visibility
+			// Check if this color is already used
+			if (!generatedColors.contains(rgb)) {
+				generatedColors.add(rgb);
 
-			// Add the rectangle to the GridPane
-			int row = i / columns;
-			int col = i % columns;
-			colorPreviewGrid.add(rect, col, row);
+				// Create a rectangle with the color
+				Rectangle rect = new Rectangle(boxSize, boxSize);
+				rect.setFill(javafx.scene.paint.Color.rgb(color.getRed(), color.getGreen(), color.getBlue()));
+				rect.setStroke(javafx.scene.paint.Color.BLACK); // Border for visibility
+
+				// Add the rectangle to the GridPane
+				int row = i / columns;
+				int col = i % columns;
+				colorPreviewGrid.add(rect, col, row);
+			} else {
+				// If we found a duplicate, try to generate a different color
+				i--; // Retry this index
+
+				// Avoid infinite loops
+				if (generatedColors.size() >= (redMax - redMin + 1) * (greenMax - greenMin + 1) * (blueMax - blueMin + 1)) {
+					LOGGER.warn("Cannot generate more unique colors within the current RGB range constraints");
+					break;
+				}
+			}
 		}
 	}
 
