@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +21,15 @@ import java.io.IOException;
 
 public class ProvinceColorsController extends HOIIVUtilsWindow {
 	public static final Logger LOGGER = LogManager.getLogger(ProvinceColorsController.class);
+
+	// Color constraints from old code
+	private static int redMin = 0;
+	private static int redMax = 255;
+	private static int greenMin = 0;
+	private static int greenMax = 255;
+	private static int blueMin = 0;
+	private static int blueMax = 255;
+
 	@FXML
 	public Label idWindowName;
 	@FXML
@@ -32,6 +42,35 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 	private ProgressIndicator progressIndicator; // Indicates ongoing generation process
 	@FXML
 	private GridPane colorPreviewGrid; // GridPane for color preview
+
+	// Sliders for color ranges
+	@FXML
+	private Slider redMinSlider;
+	@FXML
+	private Slider redMaxSlider;
+	@FXML
+	private Slider greenMinSlider;
+	@FXML
+	private Slider greenMaxSlider;
+	@FXML
+	private Slider blueMinSlider;
+	@FXML
+	private Slider blueMaxSlider;
+
+	// Labels for slider values
+	@FXML
+	private Label minRedAmtLabel;
+	@FXML
+	private Label maxRedAmtLabel;
+	@FXML
+	private Label minGreenAmtLabel;
+	@FXML
+	private Label maxGreenAmtLabel;
+	@FXML
+	private Label minBlueAmtLabel;
+	@FXML
+	private Label maxBlueAmtLabel;
+
 	private String input = "1000";
 
 	public ProvinceColorsController() {
@@ -44,28 +83,106 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 		idWindowName.setText("Province Colors - Unique Color Generator");
 		colorInputField.setText(input); // Set default input value
 		progressIndicator.setVisible(false); // Hide progress indicator initially
+
+		// Initialize sliders
+		setupSliders();
 	}
+
+	/**
+	 * Sets up the sliders with listeners and initial values
+	 */
+	private void setupSliders() {
+		// Initialize sliders with default values
+		redMinSlider.setValue(redMin);
+		redMaxSlider.setValue(redMax);
+		greenMinSlider.setValue(greenMin);
+		greenMaxSlider.setValue(greenMax);
+		blueMinSlider.setValue(blueMin);
+		blueMaxSlider.setValue(blueMax);
+
+		// Initialize labels
+		minRedAmtLabel.setText(Integer.toString(redMin));
+		maxRedAmtLabel.setText(Integer.toString(redMax));
+		minGreenAmtLabel.setText(Integer.toString(greenMin));
+		maxGreenAmtLabel.setText(Integer.toString(greenMax));
+		minBlueAmtLabel.setText(Integer.toString(blueMin));
+		maxBlueAmtLabel.setText(Integer.toString(blueMax));
+
+		// Add listeners to sliders
+		redMinSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			redMin = newValue.intValue();
+			minRedAmtLabel.setText(Integer.toString(redMin));
+			updateColorPreview(getNumColorsGenerate());
+		});
+
+		redMaxSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			redMax = newValue.intValue();
+			maxRedAmtLabel.setText(Integer.toString(redMax));
+			updateColorPreview(getNumColorsGenerate());
+		});
+
+		greenMinSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			greenMin = newValue.intValue();
+			minGreenAmtLabel.setText(Integer.toString(greenMin));
+			updateColorPreview(getNumColorsGenerate());
+		});
+
+		greenMaxSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			greenMax = newValue.intValue();
+			maxGreenAmtLabel.setText(Integer.toString(greenMax));
+			updateColorPreview(getNumColorsGenerate());
+		});
+
+		blueMinSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			blueMin = newValue.intValue();
+			minBlueAmtLabel.setText(Integer.toString(blueMin));
+			updateColorPreview(getNumColorsGenerate());
+		});
+
+		blueMaxSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			blueMax = newValue.intValue();
+			maxBlueAmtLabel.setText(Integer.toString(blueMax));
+			updateColorPreview(getNumColorsGenerate());
+		});
+	}
+
+	/**
+	 * Gets the number of colors to generate from the input field
+	 * @return The number of colors to generate
+	 */
+	private int getNumColorsGenerate() {
+		try {
+			int numColors = Integer.parseInt(colorInputField.getText());
+
+			if (numColors <= 0) {
+				statusLabel.setText("Error: Number of colors must be positive.");
+				return 0;
+			}
+
+			// Check if exceeding maximum possible unique colors
+			if (numColors > (1 << 24) - 1) {
+				numColors = (1 << 24) - 1;
+				statusLabel.setText("Warning: Attempting to generate more unique colors than possible. Limited to " + numColors);
+				LOGGER.warn("Attempting to generate more unique colors than is possible. Limited to " + numColors);
+			}
+
+			return numColors;
+		} catch (NumberFormatException e) {
+			statusLabel.setText("Error: Please enter a valid number.");
+			return 0;
+		}
+	}
+
 	@FXML
 	private void handleColorInputField() {
 		input = colorInputField.getText();
+		int numColors = getNumColorsGenerate();
 
-		// Validate input
-		if (input.isEmpty() || !input.matches("\\d+")) {
-			statusLabel.setText("Error: Please enter a valid number.");
-			return;
+		if (numColors > 0) {
+			// Update the color preview
+			updateColorPreview(numColors);
+			statusLabel.setText("Ready to generate BMP with " + numColors + " unique colors.");
 		}
-
-		int numColors = Integer.parseInt(input);
-
-		if (numColors <= 0) {
-			statusLabel.setText("Error: Number of colors must be positive.");
-			return;
-		}
-
-		// Update the color preview
-		updateColorPreview(numColors);
-
-		statusLabel.setText("Ready to generate BMP with " + numColors + " unique colors.");
 	}
 
 	/**
@@ -73,19 +190,10 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 	 */
 	@FXML
 	private void handleGenerateButton() {
-		input = colorInputField.getText();
-
-		// Validate input
-		if (input.isEmpty() || !input.matches("\\d+")) {
-			statusLabel.setText("Error: Please enter a valid number.");
-			return;
-		}
-
-		int numColors = Integer.parseInt(input);
+		int numColors = getNumColorsGenerate();
 
 		if (numColors <= 0) {
-			statusLabel.setText("Error: Number of colors must be positive.");
-			return;
+			return; // Error already displayed in getNumColorsGenerate
 		}
 
 		// Update the color preview
@@ -94,6 +202,7 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 		// Show progress indicator
 		statusLabel.setText("Generating BMP with " + numColors + " unique colors...");
 		progressIndicator.setVisible(true);
+		generateButton.setDisable(true);
 
 		// Run BMP generation on a background thread
 		new Thread(() -> {
@@ -104,6 +213,7 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 				// Update UI on completion
 				javafx.application.Platform.runLater(() -> {
 					progressIndicator.setVisible(false);
+					generateButton.setDisable(false);
 					statusLabel.setText("BMP generated successfully: " + outputPath);
 					LOGGER.info("Generated BMP with " + numColors + " unique colors: " + outputPath);
 				});
@@ -111,6 +221,7 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 				e.printStackTrace();
 				javafx.application.Platform.runLater(() -> {
 					progressIndicator.setVisible(false);
+					generateButton.setDisable(false);
 					statusLabel.setText("Error: Failed to generate BMP.");
 				});
 			}
@@ -136,6 +247,12 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 					Color color = generateUniqueColor(colorIndex, numColors);
 					image.setRGB(x, y, color.getRGB());
 					colorIndex++;
+
+					// Update progress indicator
+					final int currentIndex = colorIndex;
+					javafx.application.Platform.runLater(() -> {
+						progressIndicator.setProgress((double) currentIndex / numColors);
+					});
 				} else {
 					image.setRGB(x, y, Color.BLACK.getRGB()); // Fill remaining pixels with black
 				}
@@ -155,10 +272,16 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 	 * @return A unique Color object.
 	 */
 	private Color generateUniqueColor(int index, int totalColors) {
-		// Simple RGB color distribution logic
-		int r = (index * 53) % 256;  // Red channel
-		int g = (index * 97) % 256;  // Green channel
-		int b = (index * 193) % 256; // Blue channel
+		// Using the improved color generation logic with customizable ranges
+		int range = Math.max(1, redMax - redMin);
+		int r = redMin + ((index * 53) % range);
+
+		range = Math.max(1, greenMax - greenMin);
+		int g = greenMin + ((index * 97) % range);
+
+		range = Math.max(1, blueMax - blueMin);
+		int b = blueMin + ((index * 193) % range);
+
 		return new Color(r, g, b);
 	}
 
@@ -168,12 +291,14 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 	 * @param numColors Number of unique colors to display.
 	 */
 	private void updateColorPreview(int numColors) {
+		if (numColors <= 0) return;
+
 		colorPreviewGrid.getChildren().clear(); // Clear previous preview
 
 		int columns = (int) Math.ceil(Math.sqrt(numColors)); // Number of columns in the preview grid
 		int boxSize = 8; // Size of each color box (in pixels)
 
-		for (int i = 0; i < Math.min(numColors, 1000000); i++) { // Limit preview to 1000000 colors
+		for (int i = 0; i < Math.min(numColors, 1000); i++) { // Limit preview to 1000 colors for performance
 			// Generate unique color
 			Color color = generateUniqueColor(i, numColors);
 
@@ -187,6 +312,31 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 			int col = i % columns;
 			colorPreviewGrid.add(rect, col, row);
 		}
+	}
+
+	// Getters and setters for color ranges
+	public static void setRedMin(int value) {
+		redMin = value;
+	}
+
+	public static void setRedMax(int value) {
+		redMax = value;
+	}
+
+	public static void setGreenMin(int value) {
+		greenMin = value;
+	}
+
+	public static void setGreenMax(int value) {
+		greenMax = value;
+	}
+
+	public static void setBlueMin(int value) {
+		blueMin = value;
+	}
+
+	public static void setBlueMax(int value) {
+		blueMax = value;
 	}
 }
 
