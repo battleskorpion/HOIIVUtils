@@ -56,14 +56,18 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
   }
 
   override def getOrElse(default: Double): Double = {
-    val value = node.getOrElse(return default).getValue
-    value match
-      case d: Double => d
-      case i: Int => i.toDouble
-      case _: String => ???
-      case true => ???
-      case false => ???
-      case _: scala.collection.mutable.ListBuffer[com.hoi4utils.clausewitz_parser.Node] => ???
+    val value = node.getOrElse(return default).value
+    value match {
+      case Some(v) => v.match {
+        case d: Double => d
+        case i: Int => i.toDouble
+        case _: String => ???
+        case true => ???
+        case false => ???
+        case _: scala.collection.mutable.ListBuffer[com.hoi4utils.clausewitz_parser.Node] => ???
+      }
+      case None => default
+    }
   }
 
   override def isDefaultRange: Boolean = range == ExpectedRange.ofDouble

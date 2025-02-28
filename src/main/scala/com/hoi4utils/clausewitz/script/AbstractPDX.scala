@@ -166,7 +166,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   }
 
   override def getOrElse(elseValue: T): T = {
-    val value = node.getOrElse(return elseValue).getValue
+    val value = node.getOrElse(return elseValue).value
     value match
       case t: T => t
       case _ => elseValue

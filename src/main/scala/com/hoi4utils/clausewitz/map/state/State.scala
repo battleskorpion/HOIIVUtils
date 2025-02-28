@@ -280,7 +280,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
 
     val historyNode = stateNode.find("history").orNull
     if (historyNode == null) {
-      LOGGER.warn(s"History not defined in state: ${stateFile.getName}, ${stateNode.$}${stateNode.getValue}")
+      LOGGER.warn(s"History not defined in state: ${stateFile.getName}, ${stateNode.$}${stateNode.value}")
       return
     }
 
@@ -291,11 +291,11 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
       LOGGER.warn(s"Buildings (incl. infrastructure) not defined in state: ${stateFile.getName}")
       stateInfrastructure = null
     } else {
-      infrastructure =  buildingsNode.getValue("infrastructure").integerOrElse(0)
-      civilianFactories = buildingsNode.getValue("industrial_complex").integerOrElse(0)
-      militaryFactories = buildingsNode.getValue("arms_factory").integerOrElse(0)
-      dockyards = buildingsNode.getValue("dockyard").integerOrElse(0)
-      airfields = buildingsNode.getValue("air_base").integerOrElse(0)
+      infrastructure = buildingsNode.valueOrElse[Int]("infrastructure", 0)
+      civilianFactories = buildingsNode.valueOrElse[Int]("industrial_complex", 0)
+      militaryFactories = buildingsNode.valueOrElse[Int]("arms_factory", 0)
+      dockyards = buildingsNode.valueOrElse[Int]("dockyard", 0)
+      airfields = buildingsNode.valueOrElse[Int]("air_base", 0)
     }
 
     extractVictoryPoints(historyNode, stateFile)
@@ -322,11 +322,15 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
     }
   }
 
+  // todo breh nah
   private def extractPopulation(stateNode: Node): Int = {
-    stateNode.find("manpower").map(_.getValue match {
-      case i: Int => i
-      case s: String => s.toIntOption.getOrElse(0) // Convert string to Int safely
-      case _ => 0
+    stateNode.find("manpower").map(_.value match {
+      case Some(v) => v match {
+        case i: Int => i
+        case s: String => s.toIntOption.getOrElse(0) // Convert string to Int safely
+        case _ => 0
+      }
+      case None => 0
     }).getOrElse(0)
   }
 

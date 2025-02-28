@@ -125,7 +125,7 @@ public class Parameter implements EffectParameter, Cloneable {
 		public ParameterValue(NodeValue value) {
 			if (!value.isList()) {
 				//this.value = value.valueObject();
-				this.value = value.getValue(); 
+				this.value = value.value(); 
 			} else {
 				System.err.println("effect value can not be list.");
 			}

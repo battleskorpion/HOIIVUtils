@@ -59,10 +59,14 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
   }
 
   override def getOrElse(default: Int): Int = {
-    val value = node.getOrElse(return default).getValue
+    val value = node.getOrElse(return default).value
     value match
-      case i: Int => i
-      case d: Double => d.toInt
+      case Some(v) => v match {
+        case i: Int => i
+        case d: Double => d.toInt
+        case _ => default
+      }
+      case None => default
   }
 
   override def isDefaultRange: Boolean = range == ExpectedRange.ofInt

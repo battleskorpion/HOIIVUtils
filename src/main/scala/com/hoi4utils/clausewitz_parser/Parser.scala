@@ -120,7 +120,7 @@ class Parser {
 
     var parsedValue = parseNodeValue(tokens)
     /* Handle value attachment (e.g., when there's a nested block) */
-    if (parsedValue != null && parsedValue.getValue.isInstanceOf[Node]) {
+    if (parsedValue != null && parsedValue.value.isInstanceOf[Node]) {
       val peekedToken = tokens.peek.get
       if (peekedToken.value == "{") {
         parsedValue = parseNodeValue(tokens)

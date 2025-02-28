@@ -35,7 +35,7 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
 
   def name: String = identifier
 
-  def getValue: String | Int | Double | Boolean | ListBuffer[Node] | Null = nodeValue.getValue
+  def value: Option[String | Int | Double | Boolean | ListBuffer[Node]] = nodeValue.value
 
   //def getValue(id:String): NodeValue = find(id).nodeValue
   def getValue(id: String): NodeValue = {
@@ -106,7 +106,10 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
   
   def valueIsInstanceOf(clazz: Class[?]): Boolean = nodeValue.valueIsInstanceOf(clazz)
 
-  def $ : String | Int | Double | Boolean | ListBuffer[Node] | Null = getValue
+  def $ : String | Int | Double | Boolean | ListBuffer[Node] | Null = value match {
+    case None => null
+    case Some(v) => v
+  }
 
   def identifier: String = _identifier
 
