@@ -64,7 +64,7 @@ object State {
     countryStates
   }
 
-  private def infrastructureOfStates(states: ListBuffer[State]): Infrastructure = {
+  def infrastructureOfStates(states: ListBuffer[State]): Infrastructure = {
     var infrastructure = 0
     var population = 0
     var civilianFactories = 0
@@ -267,7 +267,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
    * @param stateFile state file
    */
   private def readStateFile(stateFile: File): Unit = {
-    var (infrastructure, population, civilianFactories, militaryFactories, dockyards, airfields) = (0, 0, 0, 0, 0, 0)
+    var (infrastructure, population, civilianFactories, militaryFactories, dockyards, navalPorts, airfields) = (0, 0, 0, 0, 0, 0, 0)
 
     val stateNode = parseStateNode(stateFile) match {
       case Some(node) => node
@@ -291,11 +291,11 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
       LOGGER.warn(s"Buildings (incl. infrastructure) not defined in state: ${stateFile.getName}")
       stateInfrastructure = null
     } else {
-      infrastructure = extractBuildingValue(buildingsNode, "infrastructure")
-      civilianFactories = extractBuildingValue(buildingsNode, "industrial_complex")
-      militaryFactories = extractBuildingValue(buildingsNode, "arms_factory")
-      dockyards = extractBuildingValue(buildingsNode, "dockyard")
-      airfields = extractBuildingValue(buildingsNode, "air_base")
+      infrastructure =  buildingsNode.getValue("infrastructure").integerOrElse(0)
+      civilianFactories = buildingsNode.getValue("industrial_complex").integerOrElse(0)
+      militaryFactories = buildingsNode.getValue("arms_factory").integerOrElse(0)
+      dockyards = buildingsNode.getValue("dockyard").integerOrElse(0)
+      airfields = buildingsNode.getValue("air_base").integerOrElse(0)
     }
 
     extractVictoryPoints(historyNode, stateFile)
@@ -348,26 +348,23 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
     }
   }
 
-  private def extractBuildingValue(buildingsNode: Node, key: String): Int = {
-    buildingsNode.find(key).map(_.getValue match {
-      case i: Int => i
-      case s: String => s.toIntOption.getOrElse(0) // Convert string safely
-      case _ => 0
-    }).getOrElse(0)
-  }
+//  private def extractBuildingValue(buildingsNode: Node, key: String): Int = {
+//    buildingsNode.find(key).map(_.getValue match {
+//      case i: Int => i
+//      case s: String => s.toIntOption.getOrElse(0) // Convert string safely
+//      case _ => 0
+//    }).getOrElse(0)
+//  }
   
-  private def extractVictoryPoints(historyNode: Node, stateFile: File): Unit = {
-    val victoryPointsNode = historyNode.find("victory_points").orNull
-    if (victoryPointsNode != null) {
+  private def extractVictoryPoints(historyNode: Node, stateFile: File): Unit = historyNode.find("victory_points") match {
+    case Some(victoryPointsNode) =>
       val vpl = CollectionConverters.asJava(victoryPointsNode.toList)
       if (vpl.size == 2) {
         victoryPoints.addOne(VictoryPoint.of(vpl.get(0).identifier.toInt, vpl.get(1).identifier.toInt))
       } else {
         LOGGER.warn(s"Invalid victory point node in state: ${stateFile.getName}")
       }
-    } else {
-      LOGGER.warn(s"Victory points not defined in state: ${stateFile.getName}")
-    }
+    case None =>  LOGGER.info(s"Victory points not defined in state: ${stateFile.getName}")
   }
 
 

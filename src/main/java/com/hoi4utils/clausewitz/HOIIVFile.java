@@ -27,9 +27,29 @@ public class HOIIVFile implements FileUtils {
 	@SuppressWarnings("exports")
 	public static FileWatcher stateFilesWatcher;
 
-	public static File mod_folder, mod_focus_folder, mod_ideas_folder, mod_states_folder;
-	public static File mod_strat_region_dir, mod_localization_folder, mod_common_folder, mod_units_folder;
-	public static File hoi4_folder, hoi4_localization_folder, hoi4_units_folder;
+	public static File mod_folder;
+	public static File mod_focus_folder;
+	public static File mod_ideas_folder;
+	public static File mod_states_folder;
+	public static File mod_strat_region_dir;
+	public static File mod_localization_folder;
+	public static File mod_common_folder;
+	public static File mod_units_folder;
+	public static final String mod_folder_field_name = "mod_folder";
+	public static final String mod_focus_folder_field_name = "mod_focus_folder";
+	public static final String mod_ideas_folder_field_name = "mod_ideas_folder";
+	public static final String mod_states_folder_field_name = "mod_states_folder";
+	public static final String mod_strat_region_dir_field_name = "mod_strat_region_dir";
+	public static final String mod_localization_folder_field_name = "mod_localization_folder";
+	public static final String mod_common_folder_field_name = "mod_common_folder";
+	public static final String mod_units_folder_field_name = "mod_units_folder";
+
+	public static File hoi4_folder;
+	public static File hoi4_localization_folder;
+	public static File hoi4_units_folder;
+	public static final String hoi4_localization_folder_field_name = "hoi4_localization_folder";
+	public static final String hoi4mods_folder_field_name = "hoi4mods_folder";
+	public static final String hoi4_units_folder_field_name = "hoi4_units_folder";
 
 	private static final PublicFieldChangeNotifier changeNotifier = new PublicFieldChangeNotifier(HOIIVFile.class);
 
