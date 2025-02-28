@@ -367,40 +367,52 @@ public class ProvinceColorsController extends HOIIVUtilsWindow {
 	private void updateColorPreview(int numColors) {
 		if (numColors <= 0) return;
 
-		colorPreviewGrid.getChildren().clear(); // Clear previous preview
-		generatedColors.clear(); // Reset the set of generated colors
+		colorPreviewGrid.getChildren().clear();
+		generatedColors.clear();
 
-		int columns = (int) Math.ceil(Math.sqrt(numColors)); // Number of columns in the preview grid
-		int boxSize = 8; // Size of each color box (in pixels)
-		int previewLimit = Math.min(numColors, 1000); // Limit preview to 1000 colors for performance
+		int columns = (int) Math.ceil(Math.sqrt(numColors));
+		int boxSize = 8;
+		int previewLimit = Math.min(numColors, 1000);
+
+		int maxRetries = 100; // Prevent infinite loops with a max retry count
 
 		for (int i = 0; i < previewLimit; i++) {
 			// Generate unique color
 			Color color = generateUniqueColor(i, numColors);
 			int rgb = color.getRGB() & 0xFFFFFF;
 
+			int retryCount = 0;
 			// Check if this color is already used
-			if (!generatedColors.contains(rgb)) {
-				generatedColors.add(rgb);
+			while (generatedColors.contains(rgb) && retryCount < maxRetries) {
+				// Try a slightly different approach on retries
+				color = generateUniqueColor(i + retryCount * previewLimit, numColors * 2);
+				rgb = color.getRGB() & 0xFFFFFF;
+				retryCount++;
+			}
 
-				// Create a rectangle with the color
-				Rectangle rect = new Rectangle(boxSize, boxSize);
-				rect.setFill(javafx.scene.paint.Color.rgb(color.getRed(), color.getGreen(), color.getBlue()));
-				rect.setStroke(javafx.scene.paint.Color.BLACK); // Border for visibility
+			if (retryCount >= maxRetries) {
+				LOGGER.warn("Too many retries to generate unique color at index " + i);
+				// Use a fallback color or break
+				color = new Color(i % 256, (i / 256) % 256, (i / 65536) % 256);
+				rgb = color.getRGB() & 0xFFFFFF;
+			}
 
-				// Add the rectangle to the GridPane
-				int row = i / columns;
-				int col = i % columns;
-				colorPreviewGrid.add(rect, col, row);
-			} else {
-				// If we found a duplicate, try to generate a different color
-				i--; // Retry this index
+			generatedColors.add(rgb);
 
-				// Avoid infinite loops
-				if (generatedColors.size() >= (redMax - redMin + 1) * (greenMax - greenMin + 1) * (blueMax - blueMin + 1)) {
-					LOGGER.warn("Cannot generate more unique colors within the current RGB range constraints");
-					break;
-				}
+			// Create a rectangle with the color
+			Rectangle rect = new Rectangle(boxSize, boxSize);
+			rect.setFill(javafx.scene.paint.Color.rgb(color.getRed(), color.getGreen(), color.getBlue()));
+			rect.setStroke(javafx.scene.paint.Color.BLACK);
+
+			// Add the rectangle to the GridPane
+			int row = i / columns;
+			int col = i % columns;
+			colorPreviewGrid.add(rect, col, row);
+
+			// Safety check for RGB space exhaustion
+			if (generatedColors.size() >= (redMax - redMin + 1) * (greenMax - greenMin + 1) * (blueMax - blueMin + 1)) {
+				LOGGER.warn("Cannot generate more unique colors within the current RGB range constraints");
+				break;
 			}
 		}
 	}
