@@ -117,6 +117,9 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     obj
   }
 
+  /**
+   * @inheritdoc
+   */
   override def setNull(): Unit = {
     super.setNull()
     reference = None

@@ -18,7 +18,7 @@ import scala.language.implicitConversions
  * @param pdxIdentifiers the identifiers for the PDXScript objects
  */
 class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String])
-  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
 
@@ -26,6 +26,9 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     this(simpleSupplier, blockSupplier, pdxIdentifiers.toList)
   }
 
+  /**
+   * @inheritdoc
+   */
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     try add(expression)
@@ -81,7 +84,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    * @param pdxScript
    */
   @targetName ("add")
-  def +(pdxScript: T): Unit = {
+  def +=(pdxScript: T): Unit = {
     pdxList += pdxScript
   }
 
@@ -95,7 +98,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def isEmpty: Boolean = get().isEmpty
 
-  override def iterator: Iterator[T] = get().iterator.flatten
+  override def iterator: Iterator[T] = pdxList.iterator
 
   //  override def forEach(action: Consumer[? >: T]): Unit = {
   //    get().foreach(action)
@@ -104,9 +107,11 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
 //  override def spliterator: Spliterator[T] = get().spliterator
 
-  override def size: Int = get().getOrElse(ListBuffer.empty).size
+//  override def size: Int = get().getOrElse(ListBuffer.empty).size
 
-//  def stream: Stream[T] = get().stream
+  override def length: Int = pdxList.length
+
+  override def apply(idx: Int): T = pdxList(idx)
 
   override def isUndefined: Boolean = {
     pdxList.forall(_.isUndefined)

@@ -17,8 +17,10 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
     this.node = Some(expression)
-    if !this.node.get.$.isInstanceOf[String] then
-      throw new NodeValueTypeException(this.node.get)
+    this.node.get.$ match {
+      case _: String =>
+      case _ => throw new NodeValueTypeException(this.node.get)
+    }
   }
   
   override def set(s: String): String = {
@@ -41,8 +43,7 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
   }
 
   def nodeEquals(s: String): Boolean = {
-    if (this.node.isEmpty) false
-    else node.get.$.equals(s)
+    this.node.nonEmpty && node.get.$.equals(s)
   }
 
   override def compareTo(o: StringPDX): Int = {

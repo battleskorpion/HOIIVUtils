@@ -54,17 +54,25 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
     node.getOrElse(return None).$ match {
       case value: Int => Some(value)
       case value: Double => Some(value.toInt)
-      case _ => None
+      case null => None
+      case _ => 
+        LOGGER.warn(s"Expected integer value for pdx int")
+        None
     }
   }
 
+  /**
+   * @inheritdoc
+   */
   override def getOrElse(default: Int): Int = {
     val value = node.getOrElse(return default).value
     value match
       case Some(v) => v match {
         case i: Int => i
         case d: Double => d.toInt
-        case _ => default
+        case _ => 
+          LOGGER.warn(s"Expected integer value for pdx int, got $value")
+          default
       }
       case None => default
   }

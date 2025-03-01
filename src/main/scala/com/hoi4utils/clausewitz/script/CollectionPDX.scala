@@ -18,6 +18,9 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     this(pdxSupplier, pdxIdentifiers.toList)
   }
 
+  /**
+   * @inheritdoc
+   */
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     try add(expression)

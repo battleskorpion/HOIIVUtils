@@ -34,7 +34,7 @@ object FocusTree {
   }
 
   /**
-   * Creates Focus Trees from reading files
+   * Reads all focus trees from the focus trees folder, creating FocusTree instances for each.
    */
   def read(): Unit = {
     if (HOIIVUtils.get("mod.path") == null) {
@@ -45,8 +45,10 @@ object FocusTree {
       LOGGER.fatal(s"No focuses found in ${HOIIVFile.mod_states_folder}")
     } else {
       LOGGER.info("Reading focus trees from " + HOIIVFile.mod_focus_folder)
-      for (focusTreeFile <- HOIIVFile.mod_focus_folder.listFiles) {
-        if (focusTreeFile.getName.endsWith(".txt")) new FocusTree(focusTreeFile)
+
+      // create focus trees from files
+      for (f <- HOIIVFile.mod_focus_folder.listFiles) {
+        if (f.getName.endsWith(".txt")) new FocusTree(f)
       }
     }
   }
@@ -77,16 +79,6 @@ object FocusTree {
     null
   }
 
-//  private def updateObservableValues(): Unit = {
-//    //focusTreesList.setAll(focusTrees.values)
-//  }
-
-//  try focusTrees.addListener((change: MapChangeListener.Change[_ <: File, _ <: FocusTree]) => {
-//    updateObservableValues()
-//    focusTreesList.sort(Comparator.naturalOrder)
-//
-//  }.asInstanceOf[MapChangeListener[File, FocusTree]])
-
 }
 
 /**
@@ -101,7 +93,6 @@ class FocusTree
   final var country: ReferencePDX[CountryTag] = new ReferencePDX[CountryTag](() => CountryTag.toList, t => Some(t.get), "country")
   final var focuses: MultiPDX[Focus] = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   final var id: StringPDX = new StringPDX("id")
-  private val focusIDList: ListBuffer[String] = null  // todo not set anywhere lmao? not needed?
   // private boolean defaultFocus; // ! todo Do This
   // private Point continuousFocusPosition; // ! todo DO THIS
 
@@ -124,29 +115,18 @@ class FocusTree
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(id, country, focuses)
 
   /**
-   * Lists last set of focuses
+   * List of all focus IDs in this focus tree.
    *
-   * @return
+   * @return list containing each focus ID
    */
-  def listFocusIDs: ListBuffer[String] = {
-    if (focusIDList == null) return null // bad :(
-    focusIDList
-  }
+  def listFocusIDs: Seq[String] = Seq.from(focuses.flatMap(_.id.get()))
 
-  def countryTag: CountryTag = {
-    country.get() match {
-      case Some(t) => t
-      case None => null
-    }
+  def countryTag: CountryTag = country.get() match {
+    case Some(t) => t
+    case None => null
   }
 
   def focusFile: File = _focusFile
-
-//  override def equals(other: AnyRef): Boolean = {
-//    if (other == null) return false
-//    if (other.getClass eq this.getClass) return this.focus_file eq other.asInstanceOf[FocusTree].focus_file
-//    false
-//  }
 
   override def toString: String = {
     val v = id.get()
@@ -157,25 +137,31 @@ class FocusTree
     super.toString
   }
 
-  def minX: Int = {
-    if (focuses.isEmpty) return 0
-    focuses.minBy(_.absoluteX).absoluteX
-  }
+  def minX: Int =
+    focuses.map(_.absoluteX).minOption.getOrElse(0)
 
-  def listFocuses: List[Focus] = {
-    focuses.toList
-  }
+  def listFocuses: List[Focus] = focuses.toList
 
   def addNewFocus(f: Focus): Unit = {
-    focuses.+(f)
+    focuses += f
   }
 
-  // for Java compatibility -_-
+  /**
+   * Get the next temporary focus ID.
+   * @return the next temporary focus ID
+   *
+   * @note for Java compatibility -_- (as opposed to being able to just use Scala's default parameter)
+   */
   def nextTempFocusID(): String = {
     nextTempFocusID(focuses.size)
   }
 
-  def nextTempFocusID(lastIntID: Int): String = {
+  /**
+   * Get the next temporary focus ID.
+   * @param lastIntID the last integer ID (should default to size of the focus tree)
+   * @return the next temporary focus ID
+   */
+  private def nextTempFocusID(lastIntID: Int): String = {
     val id = "focus_" + (lastIntID + 1)
     if (focuses.exists(_.id.get().contains(id))) return nextTempFocusID(lastIntID)
     id

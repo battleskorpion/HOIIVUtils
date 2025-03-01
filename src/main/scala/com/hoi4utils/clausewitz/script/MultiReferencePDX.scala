@@ -28,6 +28,12 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers), List(referenceIdentifier))
   }
 
+  /**
+   * Load the PDX script from the given expression. If the expression is a list, then each element of the list will be
+   * loaded as a separate PDX script, if applicable.
+   * @param expression
+   * @throws UnexpectedIdentifierException
+   */
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     expression.$ match {
@@ -55,11 +61,12 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   }
 
   /**
-   * This is an option due to overrides. But it will always return some list.
+   *
    * @return
    */
-  override def get(): Option[ListBuffer[T]] = {
-    Some(references())
+  override def get(): Option[ListBuffer[T]] = references() match {
+    case list if list.isEmpty => None
+    case list => Some(list)
   }
 
   def references(): ListBuffer[T] = {
@@ -70,10 +77,12 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingReferenceIdentifier(expression)
-    val value = expression.$
     referenceNames.clear()
-    value match {
+    expression.$ match {
       case s: String => referenceNames.addOne(s)
+      case _ =>
+        LOGGER.warn(s"Expected string value for pdx reference identifier, got ${expression.$}")
+        throw new NodeValueTypeException(expression, "string")
     }
   }
 
@@ -81,23 +90,23 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   @throws[NodeValueTypeException]
   override protected def add(expression: Node): Unit = {
     usingReferenceIdentifier(expression)
-    val value = expression.$
-    value match
+    expression.$ match {
       case str: String => referenceNames.addOne(str)
       case _ =>
+        LOGGER.warn(s"Expected string value for pdx reference identifier, got ${expression.$}")
+        throw new NodeValueTypeException(expression, "string")
+    }
   }
 
   private def resolveReferences(): ListBuffer[T] = {
-    val referenceCollection = referenceCollectionSupplier()
     // clear previous references (suboptimal but simple)
     resolvedReferences.clear()
-    for (reference <- referenceCollection) {
-      val referenceID = idExtractor.apply(reference)
-      if (referenceID.isDefined && referenceNames.contains(referenceID.get)) {
-        resolvedReferences.addOne(reference)
-      }
-    }
 
+    resolvedReferences ++= referenceCollectionSupplier().filter { reference =>
+      // idExtractor(reference) is an Option[String], so .exists(...) will be true only
+      // if it's Some(...) *and* that string is in referenceNames
+      idExtractor(reference).exists(referenceNames.contains)
+    }
     resolvedReferences
   }
 
@@ -112,10 +121,12 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 
   override def toScript: String = {
     val sb = new StringBuilder
-    val scripts = get()
-    if (scripts == null) return null
-    for (identifier <- referenceNames) {
-      sb.append(getPDXIdentifier).append(" = ").append(identifier).append("\n")
+    get() match {
+      case Some(scripts) =>
+        for (identifier <- referenceNames) {
+          sb.append(getPDXIdentifier).append(" = ").append(identifier).append("\n")
+        }
+      case None => return null
     }
     sb.toString
   }
@@ -190,14 +201,19 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     }
   }
 
-
   /**
    * Size of actively valid references (resolved PDXScript object references)
    *
    * @return
    */
-  override def size: Int = {
-    get().size
+  override def length: Int = get() match {
+    case Some(list) => list.size
+    case None => 0
+  }
+
+  override def apply(idx: Int): T = get() match {
+    case Some(list) => list(idx)
+    case None => throw new IndexOutOfBoundsException
   }
 
   override def isUndefined: Boolean = referenceNames.isEmpty

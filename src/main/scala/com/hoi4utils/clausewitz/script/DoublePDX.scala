@@ -24,6 +24,7 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
     this.node = Some(expression)
     expression.$ match {
       case _: Double =>
+      case _: Int =>
       case _ => throw new NodeValueTypeException(expression, "Number (as a Double)")
     }
   }
@@ -51,20 +52,25 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
     node.getOrElse(return None).$ match {
       case value: Double => Some(value)
       case value: Int => Some(value.toDouble)
-      case _ => None
+      case null => None
+      case _ => 
+        LOGGER.warn(s"Expected double value for pdx double")
+        None
     }
   }
 
+  /**
+   * @inheritdoc
+   */
   override def getOrElse(default: Double): Double = {
     val value = node.getOrElse(return default).value
     value match {
       case Some(v) => v.match {
         case d: Double => d
         case i: Int => i.toDouble
-        case _: String => ???
-        case true => ???
-        case false => ???
-        case _: scala.collection.mutable.ListBuffer[com.hoi4utils.clausewitz_parser.Node] => ???
+        case _ =>
+          LOGGER.warn(s"Expected double value for pdx double, got ${value}")
+          default
       }
       case None => default
     }

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.{NotNull, Nullable}
 import java.io.File
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
+import scala.reflect.ClassTag
 
 /**
  * Any object that can be converted to a PDX script block, such as a focus, national focus tree,
@@ -22,10 +23,11 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   private[script] var activeIdentifier = 0
   protected[script] var node: Option[Node] = None
 
-//  def this(pdxIdentifiers: String*) = {
-//    this(pdxIdentifiers*)
-//  }
-
+  /**
+   * Sets the active identifier to match the given expression, if applicable.
+   * @param exp
+   * @throws UnexpectedIdentifierException
+   */
   @throws[UnexpectedIdentifierException]
   protected def usingIdentifier(exp: Node): Unit = {
     for (i <- pdxIdentifiers.indices) {
@@ -38,7 +40,10 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     LOGGER.error("Unexpected identifier: " + exp)
     throw new UnexpectedIdentifierException(exp)
   }
-  
+
+  /**
+   * @inheritdoc
+   */
   override def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
   // todo?
     if (node.isEmpty) {
@@ -57,20 +62,19 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     }
   }
 
-  @SuppressWarnings(Array("unchecked"))
+  /**
+   * @inheritdoc
+   */
   @throws[UnexpectedIdentifierException]
-  @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
     val value = expression.$
-//    try obj = value.valueObject.asInstanceOf[T]
-//    catch {
-//      case e: ClassCastException =>
-//        throw new NodeValueTypeException(expression, e)
-//    }
     setNode(value)
   }
 
+  /**
+   * @inheritdoc
+   */
   override def get(): Option[T] = {
     node.getOrElse(return None).$ match {
       case value: T => Some(value)
@@ -78,8 +82,14 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     }
   }
 
+  /**
+   * @inheritdoc
+   */
   override def getNode: Option[Node] = node
 
+  /**
+   * @inheritdoc
+   */
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     if (expression.name == null) {
@@ -108,6 +118,11 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   }
   
   protected def loadPDX(file: File): Unit = {
+    if (!file.exists) {
+      LOGGER.error(s"Focus tree file does not exist: $file")
+      return
+    }
+
     try {
       val pdxParser = new Parser(file)
       val rootNode = pdxParser.parse
@@ -119,18 +134,23 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     }
   }
 
+  /**
+   * @inheritdoc
+   */
   override def isValidIdentifier(node: Node): Boolean = {
-    import scala.jdk.CollectionConverters
-    for (identifier <- pdxIdentifiers) {
-      if (node.name == identifier) return true
-    }
-    false
+    pdxIdentifiers.contains(node.name)
   }
 
+  /**
+   * @inheritdoc
+   */
   override def clearNode(): Unit = {
     node = None
   }
 
+  /**
+   * @inheritdoc
+   */
   override def setNull(): Unit = {
     node.foreach(_.setNull())
   }
@@ -159,6 +179,9 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     }
   }
 
+  /**
+   * @inheritdoc
+   */
   override def getOrElse(elseValue: T): T = {
     val value = node.getOrElse(return elseValue).value
     value match
@@ -177,12 +200,16 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
 
   override def getPDXIdentifier: String = pdxIdentifiers(activeIdentifier)
 
-  def valueIsInstanceOf[A]: Boolean = {
-    if (node.isEmpty) return false
-    node.get.$ match {
-      case _: A => true
-      case _ => false
-    }
+  /**
+   * Returns true if the value of the node is an instance of the specified class.
+   * The implicit class tag is necessary to get around type erasure (preserve A's class at runtime).
+   * @param ct
+   * @tparam A
+   * @return
+   */
+  def valueIsInstanceOf[A](implicit ct: ClassTag[A]): Boolean = {
+    if (node.isEmpty) false
+    else ct.runtimeClass.isInstance(node.get.$)
   }
 
   def schema(): PDXSchema[T] = {
