@@ -106,23 +106,17 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
       }
     }
   }
-
+  
   protected def loadPDX(file: File): Unit = {
-    if (!file.exists) {
-      System.err.println("Focus tree file does not exist: " + file)
-      return
-    }
-    /* parser */
-    val pdxParser = new Parser(file)
-    //var rootNode: Node = null
-    try
+    try {
+      val pdxParser = new Parser(file)
       val rootNode = pdxParser.parse
       loadPDX(rootNode)
-    catch
+    } catch {
       case e: ParserException =>
-        System.err.println("Error parsing focus tree file: " + file + "\n\t" + e.getMessage)
-      case e: UnexpectedIdentifierException =>
-        throw new RuntimeException(e)
+        LOGGER.error(s"Error parsing focus tree file: $file\n\t${e.getMessage}")
+      case e: UnexpectedIdentifierException => throw new RuntimeException(e)
+    }
   }
 
   override def isValidIdentifier(node: Node): Boolean = {

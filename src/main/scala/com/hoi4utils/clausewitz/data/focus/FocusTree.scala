@@ -45,8 +45,8 @@ object FocusTree {
       LOGGER.fatal(s"No focuses found in ${HOIIVFile.mod_states_folder}")
     } else {
       LOGGER.info("Reading focus trees from " + HOIIVFile.mod_focus_folder)
-      for (f <- HOIIVFile.mod_focus_folder.listFiles) {
-        if (f.getName.endsWith(".txt")) new FocusTree(f)
+      for (focusTreeFile <- HOIIVFile.mod_focus_folder.listFiles) {
+        if (focusTreeFile.getName.endsWith(".txt")) new FocusTree(focusTreeFile)
       }
     }
   }
@@ -112,6 +112,10 @@ class FocusTree
 
   def this(focus_file: File) = {
     this()
+    if (!focus_file.exists) {
+      LOGGER.fatal(s"Focus tree file does not exist: $focus_file")
+      return
+    }
     loadPDX(focus_file)
     setFile(focus_file)
     focusTreeFileMap.put(this.focusFile, this)
