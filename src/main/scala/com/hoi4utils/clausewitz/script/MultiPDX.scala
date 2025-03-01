@@ -92,8 +92,10 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     if (node.nonEmpty) {
       node.get.$ match {
         case l: ListBuffer[T] => l.clear()
+        case _ => 
       }
     }
+    pdxList.clear()
   }
 
   override def isEmpty: Boolean = get().isEmpty
