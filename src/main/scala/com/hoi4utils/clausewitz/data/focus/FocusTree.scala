@@ -101,12 +101,14 @@ class FocusTree
   /* default */
   FocusTree.add(this)
 
+  @throws[IllegalArgumentException]
   def this(focus_file: File) = {
     this()
     if (!focus_file.exists) {
       LOGGER.fatal(s"Focus tree file does not exist: $focus_file")
-      return
+      throw new IllegalArgumentException(s"File does not exist: $focus_file")
     }
+
     loadPDX(focus_file)
     setFile(focus_file)
     focusTreeFileMap.put(this.focusFile, this)
