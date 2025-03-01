@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 
@@ -40,6 +41,89 @@ public class MenuController extends Application implements FXWindow {
 
 	@FXML
 	public Button settingsButton;
+	
+	@FXML
+	void initialize() {
+		LOGGER.debug("MenuController initialized");
+		
+		// Check for invalid folder paths and show appropriate warnings
+		boolean hasInvalidPaths = false;
+		StringBuilder warningMessage = new StringBuilder("The following settings need to be configured:\n\n");
+		
+		if (HOIIVUtils.get("valid.HOIIVFilePaths").equals("false")) {
+			LOGGER.warn("Invalid HOI IV file paths detected");
+			warningMessage.append("• Hearts of Iron IV file paths\n");
+			hasInvalidPaths = true;
+		}
+		
+		if (HOIIVUtils.get("valid.State").equals("false")) {
+			LOGGER.warn("Invalid State paths detected");
+			warningMessage.append("• State file paths\n");
+			hasInvalidPaths = true;
+		}
+		
+		if (HOIIVUtils.get("valid.FocusTree").equals("false")) {
+			LOGGER.warn("Invalid Focus Tree paths detected");
+			warningMessage.append("• Focus Tree file paths\n");
+			hasInvalidPaths = true;
+		}
+		
+		// Show a single consolidated warning if any paths are invalid
+		if (hasInvalidPaths) {
+			warningMessage.append("\nPlease go to Settings to configure these paths.");
+			
+			// Create a custom dialog for better visual appearance
+			JDialog dialog = new JDialog();
+			dialog.setTitle("Configuration Required");
+			dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+			dialog.setLayout(new BorderLayout());
+			
+			// Create panel with icon and message
+			JPanel panel = new JPanel(new BorderLayout(15, 15));
+			panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+			
+			// Add warning icon
+			JLabel iconLabel = new JLabel(UIManager.getIcon("OptionPane.warningIcon"));
+			panel.add(iconLabel, BorderLayout.WEST);
+			
+			// Add message
+			JTextArea messageArea = new JTextArea(warningMessage.toString());
+			messageArea.setEditable(false);
+			messageArea.setBackground(panel.getBackground());
+			messageArea.setLineWrap(true);
+			messageArea.setWrapStyleWord(true);
+			messageArea.setFont(new Font("Dialog", Font.PLAIN, 14));
+			panel.add(messageArea, BorderLayout.CENTER);
+			
+			// Add button panel
+			JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+			JButton settingsButton = new JButton("Open Settings");
+			JButton closeButton = new JButton("Close");
+			
+			settingsButton.addActionListener(e -> {
+				dialog.dispose();
+				// TODO: Add code to open settings page
+				// openSettingsPage();
+			});
+			
+			closeButton.addActionListener(e -> dialog.dispose());
+			
+			buttonPanel.add(settingsButton);
+			buttonPanel.add(closeButton);
+			
+			// Add panels to dialog
+			dialog.add(panel, BorderLayout.CENTER);
+			dialog.add(buttonPanel, BorderLayout.SOUTH);
+			
+			// Size and display the dialog
+			dialog.pack();
+			dialog.setSize(450, 300);
+			dialog.setLocationRelativeTo(null);
+			dialog.setVisible(true);
+			
+			// TODO: disable the buttons that require valid paths
+		}
+	}
 
 	public void launchMenuWindow(String[] args) {
 		launch(args);

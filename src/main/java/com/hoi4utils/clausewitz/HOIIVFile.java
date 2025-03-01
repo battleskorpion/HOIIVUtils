@@ -9,6 +9,7 @@ import com.hoi4utils.fileIO.FileListener.FileWatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -54,17 +55,22 @@ public class HOIIVFile implements FileUtils {
 	private static final PublicFieldChangeNotifier changeNotifier = new PublicFieldChangeNotifier(HOIIVFile.class);
 
 	/** Initializes file paths for the mod and HOI4 directories */
-	public static void createHOIIVFilePaths() {
-		createModPaths();
-		createHOIIVPaths();
+	public static boolean createHOIIVFilePaths() {
+		if (!createHOIIVPaths()) {
+			return false;
+		}
+		if (!createModPaths()) {
+			return false;
+		}
 		changeNotifier.checkAndNotifyChanges();
+		return true;
 	}
 
-	private static void createModPaths() {
+	private static boolean createModPaths() {
 		String modPath = HOIIVUtils.get("mod.path");
 
 		if (!validateDirectoryPath(modPath, "mod.path")) {
-			return;
+			return false;
 		}
 
 		mod_folder = new File(modPath);
@@ -75,24 +81,27 @@ public class HOIIVFile implements FileUtils {
 		mod_states_folder = new File(modPath, "history\\states");
 		mod_localization_folder = new File(modPath, "localisation\\english"); // 's' vs 'z' note in the original comment
 		mod_strat_region_dir = new File(modPath, "map\\strategicregions");
+		return true;
 	}
 
-	private static void createHOIIVPaths() {
+	private static boolean createHOIIVPaths() {
 		String hoi4Path = HOIIVUtils.get("hoi4.path");
 
 		if (!validateDirectoryPath(hoi4Path, "hoi4.path")) {
-			return;
+			return false;
 		}
 
 		hoi4_folder = new File(hoi4Path);
 		hoi4_localization_folder = new File(hoi4Path, "localisation\\english");
 		hoi4_units_folder = new File(hoi4Path, "common\\units");
+		return true;
 	}
 
 	/** Validates whether the provided directory path is valid */
 	private static boolean validateDirectoryPath(String path, String keyName) {
 		if (path == null || path.isEmpty()) {
 			LOGGER.error("{} is null or empty!", keyName);
+			JOptionPane.showMessageDialog(null, keyName + " is null or empty!", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 
@@ -100,6 +109,7 @@ public class HOIIVFile implements FileUtils {
 
 		if (!directory.exists() || !directory.isDirectory()) {
 			LOGGER.error("{} does not point to a valid directory: {}", keyName, path);
+			JOptionPane.showMessageDialog(null, keyName + " does not point to a valid directory: " + path, "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 

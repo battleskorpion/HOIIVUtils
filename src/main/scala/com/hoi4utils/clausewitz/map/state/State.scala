@@ -34,18 +34,22 @@ object State {
   /**
    * Creates States from reading files
    */
-  def read(): Unit = {
+  def read(): Boolean = {
     if (HOIIVUtils.get("mod.path") == null) {
       LOGGER.fatal("mod path is null, Skipped State Creation")
+      false
     } else if (!HOIIVFile.mod_states_folder.exists || !HOIIVFile.mod_states_folder.isDirectory) {
       LOGGER.fatal(s"In State.java - ${HOIIVFile.mod_states_folder} is not a directory, or it does not exist.")
+      false
     } else if (HOIIVFile.mod_states_folder.listFiles == null || HOIIVFile.mod_states_folder.listFiles.isEmpty) {
       LOGGER.fatal(s"No states found in ${HOIIVFile.mod_states_folder}")
+      false
     } else {
       LOGGER.info(s"Reading states from ${HOIIVFile.mod_states_folder}")
       for (stateFile <- HOIIVFile.mod_states_folder.listFiles if stateFile.getName.endsWith(".txt")) {
         new State(stateFile)
       }
+      true
     }
   }
 

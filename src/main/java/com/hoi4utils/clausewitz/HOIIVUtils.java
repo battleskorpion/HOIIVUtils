@@ -83,10 +83,26 @@ public class HOIIVUtils {
 	}
 
 	public static void loadMod() {
-		HOIIVFile.createHOIIVFilePaths();
+		if (!HOIIVFile.createHOIIVFilePaths()) {
+			LOGGER.error("Failed to create HOIIV file paths");
+			set("valid.HOIIVFilePaths", "false");
+		} else {
+			set("valid.HOIIVFilePaths", "true");
+		}
 		new EnglishLocalizationManager().reload();
-		State.read();
-		FocusTree.read();
+		if (!State.read()) {
+			LOGGER.error("Failed to read states");
+			set("valid.State", "false");
+		} else {
+			set("valid.State", "true");
+		}
+		if (!FocusTree.read()) {
+			LOGGER.error("Failed to read focus trees");
+			set("valid.FocusTree", "false");
+		} else {
+			set("valid.FocusTree", "true");
+		}
+		save();
 	}
 
 	public static String get(String key) {
@@ -208,7 +224,7 @@ public class HOIIVUtils {
 			try {
 				if (Paths.get(modPath).getFileName().toString().equals("demo_mod")) {
 					set("mod.path", HOIIVUTILS_DIR + File.separator + "demo_mod");
-					LOGGER.debug("Auto-reset mod path to demo_mod (directory was possible moved)");
+					LOGGER.debug("Auto-reset mod path to demo_mod (directory was possibly moved)");
 				}
 			} catch (InvalidPathException e) {
 				LOGGER.error("Invalid mod.path: {}. Resetting to default.", modPath, e);
@@ -220,6 +236,7 @@ public class HOIIVUtils {
 
 	private static void autoSetHOIIVPath() {
 		if (get("hoi4.path") != null) {
+			LOGGER.debug("HOI4 path already set. Skipping auto-set.");
 			return;
 		}
 
