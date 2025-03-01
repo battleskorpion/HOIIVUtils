@@ -139,6 +139,10 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
   def samePosition(x: Int, y: Int): Boolean = (this.x @== x) && (this.y @== y)
 
+  def hasAbsolutePosition(x: Int, y: Int): Boolean = {
+    this.absoluteX == x && this.absoluteY == y
+  }
+
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 
   def setCost(cost: Number): Unit = {
@@ -204,21 +208,11 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     }
   }
 
-  def hasAbsolutePosition(x: Int, y: Int): Boolean = {
-    this.absoluteX == x && this.absoluteY == y
-  }
-
-  def mutuallyExclusiveList(): List[Focus] = {
-    mutuallyExclusive.flatten().toList
-  }
+  def mutuallyExclusiveList: List[Focus] = mutuallyExclusive.flatten().toList
   
-  def prerequisiteList(): List[Focus] = {
-    prerequisites.flatten().toList
-  }
+  def prerequisiteList: List[Focus] = prerequisites.flatten().toList
   
-  def prerequisiteSets(): List[PrerequisiteSet] = {
-    prerequisites.toList
-  }
+  def prerequisiteSets: List[PrerequisiteSet] = prerequisites.toList
 
   private def setCompletionRewardsOfNode(completionRewardNode: Node, scope: Scope): Unit = {
 //    completionRewardNode.$ match {
