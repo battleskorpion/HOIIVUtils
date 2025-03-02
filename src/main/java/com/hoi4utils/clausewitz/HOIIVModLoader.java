@@ -26,7 +26,7 @@ public class HOIIVModLoader {
 
 		new EnglishLocalizationManager().reload();
 		LOGGER.info("List of states: {}", State.list());
-		State.delete();
+		State.clear();
 		if (!State.read()) {
 			LOGGER.error("Failed to read states");
 			config.setProperty("valid.State", "false");

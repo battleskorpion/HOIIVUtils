@@ -366,7 +366,7 @@ public class HOIIVUtilsInitializer {
 
 			@Override
 			public void onDeleted(FileEvent event) {
-				handleStateFileEvent(event, "deleted", State::deleteState);
+				handleStateFileEvent(event, "deleted", State::removeState);
 			}
 		}).watch();
 	}

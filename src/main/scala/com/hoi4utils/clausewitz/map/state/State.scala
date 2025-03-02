@@ -50,7 +50,7 @@ object State {
     }
   }
   
-  def delete(): Boolean = {
+  def clear(): Boolean = {
     if (!HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory) {
       LOGGER.fatal(s"In State.java - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
       false
@@ -59,10 +59,7 @@ object State {
       false
     } else {
       LOGGER.info(s"Deleting states from ${HOIIVFiles.Mod.states_folder}")
-      // TODO: Delete states
-//      for (stateFile <- State.states) {
-//       deleteState(stateFile)
-//      }
+      removeAllStates
       true
     }
   }
@@ -169,7 +166,7 @@ object State {
    *
    * @param file state file
    */
-  def deleteState(file: File): Unit = {
+  def removeState(file: File): Unit = {
     val tempState = new State(file, false)
     if (tempState.stateID < 1) {
       System.err.println("Error: Invalid state id for state " + tempState)
@@ -183,6 +180,10 @@ object State {
       }
     }
     System.out.println("Tried to delete state represented by file: " + "\n\t" + file + "\n\t" + "but state not found in states list")
+  }
+
+  def removeAllStates: Unit = {
+    states.clear()
   }
 
   def get(id: Int): State = {
