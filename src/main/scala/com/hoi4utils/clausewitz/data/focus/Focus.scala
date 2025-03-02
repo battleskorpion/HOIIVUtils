@@ -183,6 +183,8 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
       focusTree.getLocalizableGroup
     }
   }
+  
+  def isLocalized: Boolean = localizationStatus(Property.NAME) != Localization.Status.MISSING
 
   override def toScript: String = {
     val details = new StringBuilder()
