@@ -1,6 +1,5 @@
 package com.hoi4utils.ui.hoi4localization;
 
-import com.hoi4utils.clausewitz.data.focus.FixFocus;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.Localization;
@@ -22,7 +21,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManageFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWindow {
+public class ManageFocusTreesController extends HOIIVUtilsWindow implements TableViewWindow {
 
 	private static final Property NAME_PROPERTY = Property.NAME;
 	private static final Property DESC_PROPERTY = Property.DESCRIPTION;
@@ -38,9 +37,9 @@ public class ManageFocusTreesWindow extends HOIIVUtilsWindow implements TableVie
 	private final ObservableList<Focus> focusObservableList;
 	private final List<Runnable> onSaveActions = new ArrayList<>();
 
-	public ManageFocusTreesWindow() {
+	public ManageFocusTreesController() {
 		/* window */
-		setFxmlResource("AllFocusTreesWindow.fxml");
+		setFxmlResource("ManageFocusTrees.fxml");
 		setTitle("HOIIVUtils Manage Focus Trees");
 
 		focusObservableList = FXCollections.observableArrayList();
@@ -71,29 +70,18 @@ public class ManageFocusTreesWindow extends HOIIVUtilsWindow implements TableVie
 				super.updateItem(focus, empty);
 
 				if (focus == null || empty) {
-					setGraphic(null); // Clear any previous content
+					setGraphic(null);
 					setEditable(true);
 				} else {
-					Localization.Status textStatus;
-					Localization.Status descStatus;
-//					if (focus.localization(NAME_PROPERTY).isEmpty()) {
-//						textStatus = Localization.Status.MISSING;
-//					} else {
-//						textStatus = focus.localization(NAME_PROPERTY).get().status();
-//					}
-//					if (focus.localization(DESC_PROPERTY).isEmpty()) {
-//						descStatus = Localization.Status.MISSING;
-//					} else {
-//						descStatus = focus.localization(DESC_PROPERTY).get().status();
-//					}
-					textStatus = focus.localization(NAME_PROPERTY).getOrElse(() -> Localization.Status.MISSING);
-					descStatus = focus.localization(DESC_PROPERTY).getOrElse(() -> Localization.Status.MISSING);
+					Localization.Status textStatus = focus.localization(NAME_PROPERTY).getOrElse(() -> Localization.Status.MISSING);
+					Localization.Status descStatus = focus.localization(DESC_PROPERTY).getOrElse(() -> Localization.Status.MISSING);
 
 					boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
 							|| descStatus == Localization.Status.UPDATED;
 					boolean hasStatusNew = descStatus == Localization.Status.NEW
 							|| textStatus == Localization.Status.NEW;
 					boolean isVanilla = textStatus == Localization.Status.VANILLA;
+					
 					if (hasStatusUpdated || hasStatusNew) {
 						setTextFill(Color.BLACK); // Set text color to black
 						setStyle("-fx-font-weight: bold; -fx-background-color: #328fa8;"); // Apply bold text using CSS
@@ -115,14 +103,34 @@ public class ManageFocusTreesWindow extends HOIIVUtilsWindow implements TableVie
 
 	private void updateObservableFocusList() {
 		focusObservableList.clear();
-		for (var focusTree : CollectionConverters.asJava(FocusTree.listFocusTrees())) {
-			focusObservableList.addAll(CollectionConverters.asJava(focusTree.listFocuses()));
-			try {
-				FixFocus.fixLocalization(focusTree);
-			} catch (IOException e) {
-				e.printStackTrace();
+		Iterable<FocusTree> focuses = CollectionConverters.asJava(FocusTree.listFocusTrees());
+		for (FocusTree focusTree : focuses) {
+			if (focusTree != null) {
+				focusObservableList.addAll(CollectionConverters.asJava(focusTree.listFocuses()));
 			}
 		}
+		
+//		var list = FocusTree.listFocusTrees();
+//		if (!list.isEmpty()) {
+//			list.find(FocusTree::nonEmpty).getOrElse(null)
+//					.ifPresentOrElse(focusTree -> {
+//						focusObservableList.addAll(CollectionConverters.asJava(focusTree.listFocuses()));
+//						try {
+//							FixFocus.fixLocalization(focusTree);
+//						} catch (IOException e) {
+//							e.printStackTrace();
+//						}
+//					});
+//		}
+//		for (var focusTree : list) {
+//			if (focusTree != null) {
+//				try {
+//					FixFocus.fixLocalization(focusTree);
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 	}
 
 	@FXML
