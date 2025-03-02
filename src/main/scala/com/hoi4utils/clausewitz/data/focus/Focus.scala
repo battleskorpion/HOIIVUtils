@@ -23,7 +23,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   final val id: StringPDX = new StringPDX("id")   // todo don't allow id to be null that feels wrong
   final val icon: MultiPDX[Icon] = new MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
   final val x: IntPDX = new IntPDX("x") // if relative, relative x
-  final val y: IntPDX = new IntPDX("y") // if relative, relative y
+  final val y: IntPDX = new IntPDX("y", ExpectedRange.ofPositiveInt) // if relative, relative y
   final val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
   final val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
   final val relativePositionFocus = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.get(), "relative_position_id")

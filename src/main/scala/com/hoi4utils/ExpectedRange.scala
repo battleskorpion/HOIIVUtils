@@ -21,8 +21,16 @@ class ExpectedRange[T <: AnyVal](val min: T, val max: T) {
 
 object ExpectedRange {
   def ofInt: ExpectedRange[Int] = new ExpectedRange[Int](Int.MinValue, Int.MaxValue)
+  
+  def ofPositiveInt: ExpectedRange[Int] = new ExpectedRange[Int](0, Int.MaxValue)
 
   def ofDouble: ExpectedRange[Double] = new ExpectedRange[Double](Double.MinValue, Double.MaxValue)
+  
+  def ofPositiveDouble: ExpectedRange[Double] = new ExpectedRange[Double](0, Double.MaxValue)
 
   def infinite: ExpectedRange[Double] = new ExpectedRange[Double](Double.NegativeInfinity, Double.PositiveInfinity)
+  
+  def infinitePositive: ExpectedRange[Double] = new ExpectedRange[Double](0, Double.PositiveInfinity)
+  
+  def infiniteNegative: ExpectedRange[Double] = new ExpectedRange[Double](Double.NegativeInfinity, 0)
 }
