@@ -183,8 +183,8 @@ object State {
     states.find(_ => _.stateID == id).orNull
   }
 
-  def getStateDataFunctions(resourcePercentages: Boolean): ListBuffer[Function[State, ?]] = {
-    val dataFunctions = new ListBuffer[Function[State, ?]]
+  def getStateDataFunctions(resourcePercentages: Boolean): ListBuffer[State => ?] = {
+    val dataFunctions = new ListBuffer[State => ?]
 
     dataFunctions += ((c: State) => c.id)
     dataFunctions += ((c: State) => c.stateInfrastructure.population)
