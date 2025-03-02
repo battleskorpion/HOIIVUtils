@@ -1,8 +1,6 @@
 package com.hoi4utils.ui.focus_view;
 
-
-import com.hoi4utils.clausewitz.HOIIVFile;
-import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
 import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.data.focus.FixFocus;
 import com.hoi4utils.clausewitz.data.focus.Focus;
@@ -22,9 +20,6 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
@@ -195,7 +190,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 		// If still null, try loading from a file
 		if (focusTree == null) {
-			File focusFile = new File(HOIIVFile.mod_focus_folder, "massachusetts.txt");
+			File focusFile = new File(HOIIVUtilsFiles.mod_focus_folder, "massachusetts.txt");
 			LOGGER.debug("Trying to load focus tree from file: {}", focusFile.getAbsolutePath());
 
 			focusTree = FocusTree$.MODULE$.get(focusFile).getOrElse(null);

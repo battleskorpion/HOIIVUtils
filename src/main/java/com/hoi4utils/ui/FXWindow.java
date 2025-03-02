@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.hoi4utils.ui.HOIIVUtilsWindow.LOGGER;
+
 public interface FXWindow {
 
 	/**
@@ -103,21 +105,32 @@ public interface FXWindow {
 	 * @param stage
 	 */
 	default void decideScreen(Stage stage) {
-		Integer preferredScreen = HOIIVUtils.getInt("preferred_screen");
-		ObservableList<Screen> screens = Screen.getScreens();
-		if (preferredScreen > screens.size() - 1) {
-			System.err.println("Preferred screen does not exist, resorting to defaults.");
-			return;
-		}
-		Screen screen = screens.get(preferredScreen);
+		Screen screen = validateAndGetPreferredScreen();
 		if (screen == null) {
-			System.err.println("Preferred screen is null error, resorting to defaults.");
 			return;
 		}
-
+		
 		Rectangle2D bounds = screen.getVisualBounds();
 		stage.setX(bounds.getMinX() + 200);
 		stage.setY(bounds.getMinY() + 200);
+	}
+	
+	default Screen validateAndGetPreferredScreen() {
+		int preferredScreen = Integer.parseInt(HOIIVUtils.get("preferred.screen"));
+		ObservableList<Screen> screens = Screen.getScreens();
+		
+		if (preferredScreen > screens.size() - 1) {
+			LOGGER.warn("Preferred screen does not exist, resorting to defaults.");
+			return null;
+		}
+		
+		Screen screen = screens.get(preferredScreen);
+		if (screen == null) {
+			LOGGER.warn("Preferred screen is null error, resorting to defaults.");
+			return null;
+		}
+		
+		return screen;
 	}
 
 	default void closeWindow(Button button) {

@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.data.units;
 
-import com.hoi4utils.clausewitz.HOIIVFile;
+import com.hoi4utils.clausewitz.HOIIVUtilsInitializer;
 import com.hoi4utils.clausewitz.data.country.Character;
 import com.hoi4utils.clausewitz.data.country.CountryFlag;
 import com.hoi4utils.clausewitz.data.idea.Idea;
@@ -12,7 +12,7 @@ import java.util.Set;
  * Refer to <url> <a href="https://hoi4.paradoxwikis.com/Division_modding">HOI4 Division Modding Wiki</a> </url>
  * todo
  */
-public class OrdersOfBattle extends HOIIVFile {
+public class OrdersOfBattle extends HOIIVUtilsInitializer {
 	// private Set<DivisionTemplate> divisionTemplates
 	// set of division templates defined in oob
 	// Set<effect> instantEffects

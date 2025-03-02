@@ -78,16 +78,16 @@
 //	}
 //
 //	public static void read() {
-//		if (!HOIIVFile.mod_focus_folder.exists() || !HOIIVFile.mod_focus_folder.isDirectory()) {
+//		if (!HOIIVUtilsFiles.mod_focus_folder.exists() || !HOIIVUtilsFiles.mod_focus_folder.isDirectory()) {
 //			System.err.println("Focus folder does not exist or is not a directory.");
 //			return;
 //		}
-//		if (HOIIVFile.mod_focus_folder.listFiles() == null || HOIIVFile.mod_focus_folder.listFiles().length == 0) {
-//			System.err.println("No focuses found in " + HOIIVFile.mod_focus_folder);
+//		if (HOIIVUtilsFiles.mod_focus_folder.listFiles() == null || HOIIVUtilsFiles.mod_focus_folder.listFiles().length == 0) {
+//			System.err.println("No focuses found in " + HOIIVUtilsFiles.mod_focus_folder);
 //			return;
 //		}
 //
-//		for (File f : HOIIVFile.mod_focus_folder.listFiles()) {
+//		for (File f : HOIIVUtilsFiles.mod_focus_folder.listFiles()) {
 //			if (f.getName().endsWith(".txt")) {
 //				new FocusTree(f);
 //			}

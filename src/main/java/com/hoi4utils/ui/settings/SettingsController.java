@@ -1,13 +1,14 @@
 package com.hoi4utils.ui.settings;
 
 import com.hoi4utils.FileUtils;
-import com.hoi4utils.clausewitz.HOIIVFile;
+import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.ui.FXWindow;
 import com.hoi4utils.ui.menu.MenuController;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -184,41 +185,50 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	public void handleModPathTextField() {
-		String pathText = modPathTextField.getText();
-
-		if (pathText.isEmpty()) return;
-
-		File modFile = new File(pathText);
-		if (modFile.exists() && modFile.isDirectory()) {HOIIVUtils.set("mod.path", String.valueOf(modFile));}
+		validateAndSetPath(modPathTextField.getText(), "mod.path");
 	}
 
 	public void handleHOIIVPathTextField() {
-		String pathText = hoi4PathTextField.getText();
-
-		if (pathText.isEmpty()) return;
-
-		File hoi4File = new File(pathText);
-		if (hoi4File.exists() && hoi4File.isDirectory()) {HOIIVUtils.set("hoi4.path", String.valueOf(hoi4File));}
+		validateAndSetPath(hoi4PathTextField.getText(), "hoi4.path");
 	}
 
 	public void handleModFileBrowseAction() {
-		File modFile = new File(FileUtils.usersDocuments + File.separator + HOIIVFile.usersParadoxHOIIVModFolder);
-		modFile = FXWindow.openChooser(modFolderBrowseButton, modFile, true);
-
-		if (modFile == null) return;
-		if (modFile.exists() && modFile.isDirectory()) {HOIIVUtils.set("mod.path", String.valueOf(modFile));}
-
-		modPathTextField.setText(modFile.getAbsolutePath());
+		File initialModDir = new File(FileUtils.usersDocuments + File.separator + HOIIVUtilsFiles.usersParadoxHOIIVModFolder);
+		handleFileBrowseAction(modPathTextField, modFolderBrowseButton, initialModDir, "mod.path");
 	}
 
 	public void handleHOIIVFileBrowseAction() {
-		File hoi4File =	FileUtils.ProgramFilesX86 == null ? null : new File(FileUtils.ProgramFilesX86 + File.separator + FileUtils.steamHOI4LocalPath);
-		hoi4File = FXWindow.openChooser(hoi4FolderBrowseButton, hoi4File, true);
-
-		if (hoi4File == null) return;
-		if (hoi4File.exists() && hoi4File.isDirectory()) {HOIIVUtils.set("hoi4.path", String.valueOf(hoi4File));}
-
-		hoi4PathTextField.setText(hoi4File.getAbsolutePath());
+		File initialHoi4Dir = FileUtils.ProgramFilesX86 == null ? null :
+			new File(FileUtils.ProgramFilesX86 + File.separator + FileUtils.steamHOI4LocalPath);
+		handleFileBrowseAction(hoi4PathTextField, hoi4FolderBrowseButton, initialHoi4Dir, "hoi4.path");
+	}
+	
+	// Generic method to validate a directory path and set it to settings
+	private void validateAndSetPath(String path, String settingKey) {
+		if (path.isEmpty()) return;
+		
+		File file = new File(path);
+		
+		boolean isValidFile = file.exists() && file.isDirectory();
+		
+		if (isValidFile) {
+			HOIIVUtils.set(settingKey, String.valueOf(file));
+		}
+	}
+	
+	// Generic method to handle file browser actions
+	private void handleFileBrowseAction(TextField textField, Node browseButton,	File initialDirectory, String settingKey) {
+		File selectedFile = FXWindow.openChooser(browseButton, initialDirectory, true);
+		
+		if (selectedFile == null) return;
+		
+		boolean isValidFile = selectedFile.exists() && selectedFile.isDirectory();
+		
+		if (isValidFile) {
+			HOIIVUtils.set(settingKey, String.valueOf(selectedFile));
+		}
+		
+		textField.setText(selectedFile.getAbsolutePath());
 	}
 
 	public void handleDarkThemeRadioAction() {
@@ -240,7 +250,7 @@ public class SettingsController extends Application implements FXWindow {
 	 * interpret index of selection as monitor selection
 	 */
 	public void handlePreferredMonitorSelection() {
-		HOIIVUtils.set("preferred_screen", String.valueOf(preferredMonitorComboBox.getSelectionModel().getSelectedIndex()));
+		HOIIVUtils.set("preferred.screen", String.valueOf(preferredMonitorComboBox.getSelectionModel().getSelectedIndex()));
 	}
 
 	/**
@@ -248,6 +258,7 @@ public class SettingsController extends Application implements FXWindow {
 	 */
 	public void handleOkButtonAction() {
 		HOIIVUtils.loadMod();
+		HOIIVUtils.save();
 		hideWindow(idOkButton);
 		new MenuController().open();
 	}

@@ -4,9 +4,9 @@ import com.hoi4utils.clausewitz.data.country.{CountryTag, CountryTagsManager}
 import com.hoi4utils.clausewitz.data.focus.FocusTree.focusTreeFileMap
 import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.script.*
-import com.hoi4utils.clausewitz.{HOIIVFile, HOIIVUtils}
 import javafx.collections.{FXCollections, ObservableList}
 import org.apache.logging.log4j.{LogManager, Logger}
+import com.hoi4utils.clausewitz.{HOIIVUtils, HOIIVUtilsFiles}
 import org.jetbrains.annotations.*
 
 import java.io.File
@@ -37,20 +37,17 @@ object FocusTree {
    * Reads all focus trees from the focus trees folder, creating FocusTree instances for each.
    */
   def read(): Boolean = {
-    if (HOIIVUtils.get("mod.path") == null) {
-      LOGGER.fatal("mod path is null")
+    if (!HOIIVUtilsFiles.mod_focus_folder.exists || !HOIIVUtilsFiles.mod_focus_folder.isDirectory) {
+      LOGGER.fatal(s"In State.java - ${HOIIVUtilsFiles.mod_focus_folder} is not a directory, or it does not exist.")
       false
-    } else if (!HOIIVFile.mod_focus_folder.exists || !HOIIVFile.mod_focus_folder.isDirectory) {
-      LOGGER.fatal(s"In State.java - ${HOIIVFile.mod_focus_folder} is not a directory, or it does not exist.")
-      false
-    } else if (HOIIVFile.mod_focus_folder.listFiles == null || HOIIVFile.mod_focus_folder.listFiles.length == 0) {
-      LOGGER.fatal(s"No focuses found in ${HOIIVFile.mod_states_folder}")
+    } else if (HOIIVUtilsFiles.mod_focus_folder.listFiles == null || HOIIVUtilsFiles.mod_focus_folder.listFiles.length == 0) {
+      LOGGER.fatal(s"No focuses found in ${HOIIVUtilsFiles.mod_states_folder}")
       false
     } else {
-      LOGGER.info("Reading focus trees from " + HOIIVFile.mod_focus_folder)
+      LOGGER.info("Reading focus trees from " + HOIIVUtilsFiles.mod_focus_folder)
 
       // create focus trees from files
-      for (f <- HOIIVFile.mod_focus_folder.listFiles) {
+      for (f <- HOIIVUtilsFiles.mod_focus_folder.listFiles) {
         if (f.getName.endsWith(".txt")) new FocusTree(f)
       }
       true
