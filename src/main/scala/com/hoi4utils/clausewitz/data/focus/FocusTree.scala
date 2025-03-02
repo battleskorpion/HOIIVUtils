@@ -6,7 +6,7 @@ import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.script.*
 import javafx.collections.{FXCollections, ObservableList}
 import org.apache.logging.log4j.{LogManager, Logger}
-import com.hoi4utils.clausewitz.{HOIIVUtils, HOIIVUtilsFiles}
+import com.hoi4utils.clausewitz.{HOIIVUtils, HOIIVFiles}
 import org.jetbrains.annotations.*
 
 import java.io.File
@@ -37,17 +37,17 @@ object FocusTree {
    * Reads all focus trees from the focus trees folder, creating FocusTree instances for each.
    */
   def read(): Boolean = {
-    if (!HOIIVUtilsFiles.mod_focus_folder.exists || !HOIIVUtilsFiles.mod_focus_folder.isDirectory) {
-      LOGGER.fatal(s"In State.java - ${HOIIVUtilsFiles.mod_focus_folder} is not a directory, or it does not exist.")
+    if (!HOIIVFiles.Mod.focus_folder.exists || !HOIIVFiles.Mod.focus_folder.isDirectory) {
+      LOGGER.fatal(s"In State.java - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
       false
-    } else if (HOIIVUtilsFiles.mod_focus_folder.listFiles == null || HOIIVUtilsFiles.mod_focus_folder.listFiles.length == 0) {
-      LOGGER.fatal(s"No focuses found in ${HOIIVUtilsFiles.mod_states_folder}")
+    } else if (HOIIVFiles.Mod.focus_folder.listFiles == null || HOIIVFiles.Mod.focus_folder.listFiles.length == 0) {
+      LOGGER.fatal(s"No focuses found in ${HOIIVFiles.Mod.states_folder}")
       false
     } else {
-      LOGGER.info("Reading focus trees from " + HOIIVUtilsFiles.mod_focus_folder)
+      LOGGER.info("Reading focus trees from " + HOIIVFiles.Mod.focus_folder)
 
       // create focus trees from files
-      for (f <- HOIIVUtilsFiles.mod_focus_folder.listFiles) {
+      for (f <- HOIIVFiles.Mod.focus_folder.listFiles) {
         if (f.getName.endsWith(".txt")) new FocusTree(f)
       }
       true

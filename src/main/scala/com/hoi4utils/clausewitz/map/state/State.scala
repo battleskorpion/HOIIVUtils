@@ -7,7 +7,7 @@ import com.hoi4utils.clausewitz.map.{Owner, UndefinedStateIDException}
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.province.VictoryPoint
 import com.hoi4utils.clausewitz.map.resources.Resources
-import com.hoi4utils.clausewitz.{HOIIVUtils, HOIIVUtilsFiles}
+import com.hoi4utils.clausewitz.{HOIIVUtils, HOIIVFiles}
 import com.hoi4utils.clausewitz_parser.*
 import org.apache.logging.log4j.{LogManager, Logger}
 import org.jetbrains.annotations.NotNull
@@ -35,15 +35,15 @@ object State {
    * Creates States from reading files
    */
   def read(): Boolean = {
-    if (!HOIIVUtilsFiles.mod_states_folder.exists || !HOIIVUtilsFiles.mod_states_folder.isDirectory) {
-      LOGGER.fatal(s"In State.java - ${HOIIVUtilsFiles.mod_states_folder} is not a directory, or it does not exist.")
+    if (!HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory) {
+      LOGGER.fatal(s"In State.java - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
       false
-    } else if (HOIIVUtilsFiles.mod_states_folder.listFiles == null || HOIIVUtilsFiles.mod_states_folder.listFiles.isEmpty) {
-      LOGGER.fatal(s"No states found in ${HOIIVUtilsFiles.mod_states_folder}")
+    } else if (HOIIVFiles.Mod.states_folder.listFiles == null || HOIIVFiles.Mod.states_folder.listFiles.isEmpty) {
+      LOGGER.fatal(s"No states found in ${HOIIVFiles.Mod.states_folder}")
       false
     } else {
-      LOGGER.info(s"Reading states from ${HOIIVUtilsFiles.mod_states_folder}")
-      for (stateFile <- HOIIVUtilsFiles.mod_states_folder.listFiles if stateFile.getName.endsWith(".txt")) {
+      LOGGER.info(s"Reading states from ${HOIIVFiles.Mod.states_folder}")
+      for (stateFile <- HOIIVFiles.Mod.states_folder.listFiles if stateFile.getName.endsWith(".txt")) {
         new State(stateFile)
       }
       true
@@ -51,14 +51,14 @@ object State {
   }
   
   def delete(): Boolean = {
-    if (!HOIIVUtilsFiles.mod_states_folder.exists || !HOIIVUtilsFiles.mod_states_folder.isDirectory) {
-      LOGGER.fatal(s"In State.java - ${HOIIVUtilsFiles.mod_states_folder} is not a directory, or it does not exist.")
+    if (!HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory) {
+      LOGGER.fatal(s"In State.java - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
       false
-    } else if (HOIIVUtilsFiles.mod_states_folder.listFiles == null || HOIIVUtilsFiles.mod_states_folder.listFiles.isEmpty) {
-      LOGGER.fatal(s"No states found in ${HOIIVUtilsFiles.mod_states_folder}")
+    } else if (HOIIVFiles.Mod.states_folder.listFiles == null || HOIIVFiles.Mod.states_folder.listFiles.isEmpty) {
+      LOGGER.fatal(s"No states found in ${HOIIVFiles.Mod.states_folder}")
       false
     } else {
-      LOGGER.info(s"Deleting states from ${HOIIVUtilsFiles.mod_states_folder}")
+      LOGGER.info(s"Deleting states from ${HOIIVFiles.Mod.states_folder}")
       // TODO: Delete states
 //      for (stateFile <- State.states) {
 //       deleteState(stateFile)

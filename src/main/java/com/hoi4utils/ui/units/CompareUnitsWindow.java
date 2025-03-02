@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.units;
 
-import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
+import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.data.units.SubUnit;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
 import com.hoi4utils.ui.javafx.DiffViewPane;
@@ -32,8 +32,8 @@ public class CompareUnitsWindow extends HOIIVUtilsWindow {
      */
     @FXML
     void initialize() {
-        List<SubUnit> customUnits = SubUnit.read(HOIIVUtilsFiles.mod_units_folder); // TODO: account for null, causes Unit window not to load
-        List<SubUnit> baseUnits = SubUnit.read(HOIIVUtilsFiles.hoi4_units_folder);
+        List<SubUnit> customUnits = SubUnit.read(HOIIVFiles.Mod.units_folder); // TODO: account for null, causes Unit window not to load
+        List<SubUnit> baseUnits = SubUnit.read(HOIIVFiles.HOI4.units_folder);
 
         unitsDiffViewPane = new DiffViewPane("Base Unit Details", "Custom Unit Details");
         rootAnchorPane.getChildren().add(unitsDiffViewPane);

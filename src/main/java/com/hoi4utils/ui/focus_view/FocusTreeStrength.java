@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.focus_view;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
+import com.hoi4utils.clausewitz.HOIIVFiles;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -20,7 +20,7 @@ public class FocusTreeStrength extends JFrame {
 				super.mouseClicked(e);
 				/* focus file */
 				{
-					JFileChooser j = new JFileChooser(HOIIVUtils.get("mod.path") + HOIIVUtilsFiles.mod_focus_folder);
+					JFileChooser j = new JFileChooser(HOIIVUtils.get("mod.path") + HOIIVFiles.Mod.focus_folder);
 					j.setFileSelectionMode(JFileChooser.FILES_ONLY);
 					j.setDialogTitle("Select Focus File");
 //					int opt = j.showOpenDialog(null);

@@ -2,7 +2,7 @@ package com.hoi4utils.clausewitz.localization
 
 import com.hoi4utils.FileUtils
 import com.hoi4utils.clausewitz.exceptions.LocalizationExistsException
-import com.hoi4utils.clausewitz.{HOIIVUtils, HOIIVUtilsFiles}
+import com.hoi4utils.clausewitz.{HOIIVUtils, HOIIVFiles}
 import com.hoi4utils.ui.HOIIVUtilsWindow
 import org.apache.logging.log4j.{LogManager, Logger}
 
@@ -41,23 +41,23 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
 
   protected def loadLocalization(): Unit = {
     // Load mod localization after vanilla to give mod localizations priority
-    if (HOIIVUtilsFiles.hoi4_localization_folder == null)
+    if (HOIIVFiles.HOI4.localization_folder == null)
       LOGGER.warn("'HOI4 localization folder' is null.")
-    else if (!HOIIVUtilsFiles.hoi4_localization_folder.exists)
+    else if (!HOIIVFiles.HOI4.localization_folder.exists)
       LOGGER.warn("'HOI4 localization folder' does not exist.")
-    else if (!HOIIVUtilsFiles.hoi4_localization_folder.isDirectory)
+    else if (!HOIIVFiles.HOI4.localization_folder.isDirectory)
       LOGGER.warn("'HOI4 localization folder' is not a directory.")
     else
-      loadLocalization(HOIIVUtilsFiles.hoi4_localization_folder, Localization.Status.EXISTS)
+      loadLocalization(HOIIVFiles.HOI4.localization_folder, Localization.Status.EXISTS)
 
-    if (HOIIVUtilsFiles.mod_localization_folder == null)
+    if (HOIIVFiles.Mod.localization_folder == null)
       LOGGER.warn("'Mod localization folder' is null.")
-    else if (!HOIIVUtilsFiles.mod_localization_folder.exists)
+    else if (!HOIIVFiles.Mod.localization_folder.exists)
       LOGGER.warn("'Mod localization folder' does not exist.")
-    else if (!HOIIVUtilsFiles.mod_localization_folder.isDirectory)
+    else if (!HOIIVFiles.Mod.localization_folder.isDirectory)
       LOGGER.warn("'Mod localization folder' is not a directory.")
     else
-      loadLocalization(HOIIVUtilsFiles.mod_localization_folder, Localization.Status.VANILLA)
+      loadLocalization(HOIIVFiles.Mod.localization_folder, Localization.Status.VANILLA)
   }
 
 
@@ -157,7 +157,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
   }
 
   override def saveLocalization(): Unit = {
-    val localizationFolder = HOIIVUtilsFiles.mod_localization_folder
+    val localizationFolder = HOIIVFiles.Mod.localization_folder
     val files = localizationFolder.listFiles
     if (files == null) return
     // Separate new and changed localizations

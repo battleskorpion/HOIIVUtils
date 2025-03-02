@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.hoi4localization;
 
-import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
+import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.data.idea.Idea;
 import com.hoi4utils.clausewitz.data.idea.IdeaFile;
 import com.hoi4utils.clausewitz.localization.Localization;
@@ -71,7 +71,7 @@ public class IdeaLocalizationWindow extends HOIIVUtilsWindow implements TableVie
     }
 
     public void handleIdeaFileBrowseButtonAction() {
-        File initialIdeaDirectory = HOIIVUtilsFiles.mod_ideas_folder;
+        File initialIdeaDirectory = HOIIVFiles.Mod.ideas_folder;
         File selectedFile = FXWindow.openChooser(ideaFileBrowseButton, initialIdeaDirectory, false);
         
             System.out.println(selectedFile);

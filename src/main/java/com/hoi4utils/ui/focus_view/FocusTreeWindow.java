@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.focus_view;
 
-import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
+import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.data.focus.FixFocus;
 import com.hoi4utils.clausewitz.data.focus.Focus;
@@ -190,7 +190,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 		// If still null, try loading from a file
 		if (focusTree == null) {
-			File focusFile = new File(HOIIVUtilsFiles.mod_focus_folder, "massachusetts.txt");
+			File focusFile = new File(HOIIVFiles.Mod.focus_folder, "massachusetts.txt");
 			LOGGER.debug("Trying to load focus tree from file: {}", focusFile.getAbsolutePath());
 
 			focusTree = FocusTree$.MODULE$.get(focusFile).getOrElse(null);

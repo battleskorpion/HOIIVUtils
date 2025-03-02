@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.localization
 
-import com.hoi4utils.clausewitz.HOIIVUtilsFiles
+import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.ui.FXWindow
 import org.jetbrains.annotations.NotNull
@@ -116,9 +116,9 @@ trait Localizable {
    * @return the localization file to use.
    */
   def askUserForLocalizationFile: File = {
-    val initialDirectory = HOIIVUtilsFiles.mod_localization_folder
+    val initialDirectory = HOIIVFiles.Mod.localization_folder
     var file = FXWindow.openChooser(initialDirectory, false)
-    if (file == null) file = new File(HOIIVUtilsFiles.mod_localization_folder, "HOIUtils_extra_localization.yml")
+    if (file == null) file = new File(HOIIVFiles.Mod.localization_folder, "HOIUtils_extra_localization.yml")
     file
   }
 

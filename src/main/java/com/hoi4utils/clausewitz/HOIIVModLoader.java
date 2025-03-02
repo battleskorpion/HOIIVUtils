@@ -59,23 +59,23 @@ public class HOIIVModLoader {
 		if (!validateDirectoryPath(modPath, "mod.path")) {
 			return false;
 		}
-		HOIIVUtilsFiles.mod_folder = null;
-		HOIIVUtilsFiles.mod_common_folder = null;
-		HOIIVUtilsFiles.mod_focus_folder = null;
-		HOIIVUtilsFiles.mod_ideas_folder = null;
-		HOIIVUtilsFiles.mod_units_folder = null;
-		HOIIVUtilsFiles.mod_states_folder = null;
-		HOIIVUtilsFiles.mod_localization_folder = null;
-		HOIIVUtilsFiles.mod_strat_region_dir = null;
+		HOIIVFiles.Mod.folder = null;
+		HOIIVFiles.Mod.common_folder = null;
+		HOIIVFiles.Mod.focus_folder = null;
+		HOIIVFiles.Mod.ideas_folder = null;
+		HOIIVFiles.Mod.units_folder = null;
+		HOIIVFiles.Mod.states_folder = null;
+		HOIIVFiles.Mod.localization_folder = null;
+		HOIIVFiles.Mod.strat_region_dir = null;
 
-		HOIIVUtilsFiles.mod_folder = new File(modPath);
-		HOIIVUtilsFiles.mod_common_folder = new File(modPath, "common");
-		HOIIVUtilsFiles.mod_focus_folder = new File(HOIIVUtilsFiles.mod_common_folder, "national_focus");
-		HOIIVUtilsFiles.mod_ideas_folder = new File(HOIIVUtilsFiles.mod_common_folder, "ideas");
-		HOIIVUtilsFiles.mod_units_folder = new File(HOIIVUtilsFiles.mod_common_folder, "units");
-		HOIIVUtilsFiles.mod_states_folder = new File(modPath, "history\\states");
-		HOIIVUtilsFiles.mod_localization_folder = new File(modPath, "localisation\\english"); // 's' vs 'z' note in the original comment
-		HOIIVUtilsFiles.mod_strat_region_dir = new File(modPath, "map\\strategicregions");
+		HOIIVFiles.Mod.folder = new File(modPath);
+		HOIIVFiles.Mod.common_folder = new File(modPath, "common");
+		HOIIVFiles.Mod.focus_folder = new File(HOIIVFiles.Mod.common_folder, "national_focus");
+		HOIIVFiles.Mod.ideas_folder = new File(HOIIVFiles.Mod.common_folder, "ideas");
+		HOIIVFiles.Mod.units_folder = new File(HOIIVFiles.Mod.common_folder, "units");
+		HOIIVFiles.Mod.states_folder = new File(modPath, "history\\states");
+		HOIIVFiles.Mod.localization_folder = new File(modPath, "localisation\\english"); // 's' vs 'z' note in the original comment
+		HOIIVFiles.Mod.strat_region_dir = new File(modPath, "map\\strategicregions");
 		return true;
 	}
 
@@ -86,9 +86,9 @@ public class HOIIVModLoader {
 			return false;
 		}
 
-		HOIIVUtilsFiles.hoi4_folder = new File(hoi4Path);
-		HOIIVUtilsFiles.hoi4_localization_folder = new File(hoi4Path, "localisation\\english");
-		HOIIVUtilsFiles.hoi4_units_folder = new File(hoi4Path, "common\\units");
+		HOIIVFiles.HOI4.folder = new File(hoi4Path);
+		HOIIVFiles.HOI4.localization_folder = new File(hoi4Path, "localisation\\english");
+		HOIIVFiles.HOI4.units_folder = new File(hoi4Path, "common\\units");
 		return true;
 	}
 

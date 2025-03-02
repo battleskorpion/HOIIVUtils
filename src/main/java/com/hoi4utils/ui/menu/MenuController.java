@@ -2,7 +2,7 @@ package com.hoi4utils.ui.menu;
 
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
+import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.ui.FXWindow;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
 import com.hoi4utils.ui.buildings.BuildingsByCountryWindow;
@@ -260,7 +260,7 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openUnitComparisonView() {
-		if (!HOIIVUtilsFiles.isUnitsFolderValid()) {
+		if (!HOIIVFiles.isUnitsFolderValid()) {
 			LOGGER.warn("Unit comparison view cannot open: missing base or mod units folder.");
 			JOptionPane.showMessageDialog(null, "Unit folders not found. Please check your HOI4 installation or the chosen mod directory.", "Error", JOptionPane.WARNING_MESSAGE);
 			return;

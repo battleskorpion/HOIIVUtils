@@ -8,11 +8,12 @@ import com.hoi4utils.clausewitz.data.technology.Technology;
 
 import java.util.Set;
 
+// todo convert to scala code
 /**
  * Refer to <url> <a href="https://hoi4.paradoxwikis.com/Division_modding">HOI4 Division Modding Wiki</a> </url>
  * todo
  */
-public class OrdersOfBattle extends HOIIVUtilsInitializer {
+public class OrdersOfBattle {
 	// private Set<DivisionTemplate> divisionTemplates
 	// set of division templates defined in oob
 	// Set<effect> instantEffects

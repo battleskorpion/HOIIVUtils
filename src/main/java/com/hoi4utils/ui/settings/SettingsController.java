@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.settings;
 
 import com.hoi4utils.FileUtils;
-import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
+import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.ui.FXWindow;
 import com.hoi4utils.ui.menu.MenuController;
@@ -193,7 +193,7 @@ public class SettingsController extends Application implements FXWindow {
 	}
 
 	public void handleModFileBrowseAction() {
-		File initialModDir = new File(FileUtils.usersDocuments + File.separator + HOIIVUtilsFiles.usersParadoxHOIIVModFolder);
+		File initialModDir = new File(FileUtils.usersDocuments + File.separator + HOIIVFiles.usersParadoxHOIIVModFolder);
 		handleFileBrowseAction(modPathTextField, modFolderBrowseButton, initialModDir, "mod.path");
 	}
 

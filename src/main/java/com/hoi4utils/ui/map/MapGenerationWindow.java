@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.map;
 
-import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
+import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.province.ProvinceGeneration;
@@ -125,7 +125,7 @@ public class MapGenerationWindow extends HOIIVUtilsWindow {
 	void OnBrowseHeightmap() {
 		File f;
 		try {
-			f = FXWindow.openChooser(browseHeightmapButton, HOIIVUtilsFiles.mod_folder, false);
+			f = FXWindow.openChooser(browseHeightmapButton, HOIIVFiles.Mod.folder, false);
 			heightmap = new Heightmap(f);
 		} catch (IOException exc) {
 			heightmap = null; // deselect any heightmap

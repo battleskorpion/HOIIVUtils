@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.hoi4localization;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
+import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.data.tooltip.CustomTooltip;
 import com.hoi4utils.ui.FXWindow;
 import com.hoi4utils.ui.HOIIVUtilsWindow;
@@ -96,7 +96,7 @@ public class CustomTooltipWindow extends HOIIVUtilsWindow implements TableViewWi
 
 	/* action handlers */
 	public void handleTooltipFileBrowseAction() {
-		File initialFocusDirectory = HOIIVUtilsFiles.mod_common_folder;
+		File initialFocusDirectory = HOIIVFiles.Mod.common_folder;
 		File selectedFile = FXWindow.openChooser(tooltipFileBrowseButton, initialFocusDirectory, false);
 		System.out.println(selectedFile);
 		if (selectedFile != null) {

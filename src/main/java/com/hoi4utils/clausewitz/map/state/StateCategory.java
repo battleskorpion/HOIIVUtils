@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.map.state;
 
-import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
+import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.localization.Localizable;
 import com.hoi4utils.clausewitz.localization.Property;
 import com.hoi4utils.clausewitz_parser.Node;
@@ -72,7 +72,7 @@ public class StateCategory {
 	}
 
 	public static void loadStateCategories() {
-		File dir = new File(HOIIVUtilsFiles.mod_common_folder + "\\state_category");
+		File dir = new File(HOIIVFiles.Mod.common_folder + "\\state_category");
 
 		if (dir.exists() && dir.isDirectory() && dir.listFiles().length > 0) {
 			state_category_folder = dir;

@@ -1,7 +1,7 @@
 package com.hoi4utils.util;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.clausewitz.HOIIVUtilsFiles;
+import com.hoi4utils.clausewitz.HOIIVFiles;
 
 import java.io.*;
 import java.util.Scanner;
@@ -18,7 +18,7 @@ public class AATUpdateUtils {
     static double MULTIPLIER = 3.00;
 
     public static void fixconsumergoodsfactor() {
-        File ideadirectory = HOIIVUtilsFiles.mod_ideas_folder;
+        File ideadirectory = HOIIVFiles.Mod.ideas_folder;
         for (File ideaFile : ideadirectory.listFiles()) {
             if (ideaFile.isDirectory()) {
                 continue;
