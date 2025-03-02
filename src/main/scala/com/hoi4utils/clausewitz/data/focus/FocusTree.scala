@@ -55,7 +55,7 @@ object FocusTree {
   }
 
   /**
-   * Clears all focus trees and any other relevant values. 
+   * Clears all focus trees and any other relevant values.
    */
   def clear(): Unit = {
     focusTrees.clear()
@@ -139,13 +139,14 @@ class FocusTree
 
   def focusFile: File = _focusFile
 
-  override def toString: String = {
-    val v = id.get()
-    v match {
-      case Some(id) => return id
-      case None => if (country.get() != null && country.get().isDefined) return country.get().get.toString
+  override def toString: String = id.get() match {
+    case Some(id) => id
+    case None => country.get() match {
+      case Some(tag) => tag.toString
+      case None =>
+        if (focusFile != null && focusFile.exists) s"[Unknown ID: ${focusFile.getName}]"
+        else "[Unknown]"
     }
-    super.toString
   }
 
   def minX: Int =
