@@ -180,7 +180,7 @@ object State {
   }
 
   def get(id: Int): State = {
-    states.find((state: State) => state.stateID == id).orNull
+    states.find(_ => _.stateID == id).orNull
   }
 
   def getStateDataFunctions(resourcePercentages: Boolean): ListBuffer[Function[State, ?]] = {

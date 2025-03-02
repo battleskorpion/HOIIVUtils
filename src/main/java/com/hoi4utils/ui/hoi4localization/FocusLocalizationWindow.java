@@ -128,7 +128,7 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
         /* load focus loc */
         try {
             FixFocus.fixLocalization(focusTree);
-            updateNumLocalizedFocuses(focusTree.listFocuses().filter(f -> f.isLocalized()));
+            updateNumLocalizedFocuses(focusTree.listFocuses().count(Focus::isLocalized)); 
         } catch (IOException e) {
             openError(e);
             return;
