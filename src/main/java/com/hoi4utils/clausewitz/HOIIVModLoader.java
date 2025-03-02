@@ -23,10 +23,11 @@ public class HOIIVModLoader {
 		} else {
 			config.setProperty("valid.HOIIVFilePaths", "true");
 		}
+		State.clear();
+//		FocusTree.clear();
 
 		new EnglishLocalizationManager().reload();
-		LOGGER.info("List of states: {}", State.list());
-		State.clear();
+		
 		if (!State.read()) {
 			LOGGER.error("Failed to read states");
 			config.setProperty("valid.State", "false");
