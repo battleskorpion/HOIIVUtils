@@ -144,13 +144,15 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		LOGGER.info("Loaded focus tree: {}", focusTree);
 
 		// Fix localization
-		try {
-			LOGGER.debug("Fixing localization for focus tree: {}", focusTree);
-			FixFocus.fixLocalization(focusTree);
-			LOGGER.debug("Localization fix completed.");
-		} catch (IOException e) {
-			LOGGER.error("Failed to fix localization for focus tree: {}", focusTree, e);
-			JOptionPane.showMessageDialog(null, "Error fixing localization: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		if (focusTree != null) {
+			try {
+				LOGGER.debug("Fixing localization for focus tree: {}", focusTree);
+				FixFocus.fixLocalization(focusTree);
+				LOGGER.debug("Localization fix completed.");
+			} catch (IOException e) {
+				LOGGER.error("Failed to fix localization for focus tree: {}", focusTree, e);
+				JOptionPane.showMessageDialog(null, "Error fixing localization: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 
 		// Draw the focus tree
@@ -282,7 +284,9 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 	
 	public void drawFocusTree() {
 		LOGGER.debug("Drawing focus tree...");
-		var focuses = CollectionConverters.asJavaCollection(focusTree.focuses());
+        List<Focus> focuses; 
+		if (focusTree == null) focuses = null; 
+		else focuses = CollectionConverters.asJava(focusTree.focuses()); 
 		GraphicsContext gc2D = focusTreeCanvas.getGraphicsContext2D();
 
 		// Calculate the maximum/minimum X and Y values
@@ -301,7 +305,8 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		gc2D.fillRect(0, 0, width, height);
 		if (gridLines) drawGridLines(gc2D);
 
-		if (focuses.isEmpty()) return;
+		/* specifically focus drawing stuff */ 
+		if (focuses == null || focuses.isEmpty()) return;
 
 		// Load the focus unavailable image
 		Image GFX_focus_unavailable = loadFocusUnavailableImage();
