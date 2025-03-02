@@ -14,6 +14,7 @@ public class HOIIVFiles {
 		public static File localization_folder;
 		public static File common_folder;
 		public static File units_folder;
+		public static File interface_folder; 
 
 		public static final String folder_field_name = "mod_folder";
 		public static final String focus_folder_field_name = "mod_focus_folder";
@@ -23,6 +24,7 @@ public class HOIIVFiles {
 		public static final String localization_folder_field_name = "mod_localization_folder";
 		public static final String common_folder_field_name = "mod_common_folder";
 		public static final String units_folder_field_name = "mod_units_folder";
+		public static final String interface_folder_field_name = "mod_interface_folder";
 	}
 
 	// Nested class for base (HOIIV) files

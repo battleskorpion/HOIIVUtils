@@ -287,6 +287,7 @@ public class HOIIVUtilsInitializer {
 		HOIIVFiles.Mod.states_folder = new File(modPath, "history\\states");
 		HOIIVFiles.Mod.localization_folder = new File(modPath, "localisation\\english"); // 's' vs 'z' note in the original comment
 		HOIIVFiles.Mod.strat_region_dir = new File(modPath, "map\\strategicregions");
+		HOIIVFiles.Mod.interface_folder = new File(modPath, "interface");
 		return true;
 	}
 
