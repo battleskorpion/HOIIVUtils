@@ -8,7 +8,7 @@ import com.hoi4utils.ui.HOIIVUtilsWindow;
 import com.hoi4utils.ui.buildings.BuildingsByCountryWindow;
 import com.hoi4utils.ui.clausewitz_gfx.InterfaceFileListWindow;
 import com.hoi4utils.ui.focus_view.FocusTreeWindow;
-import com.hoi4utils.ui.hoi4localization.AllFocusTreesWindow;
+import com.hoi4utils.ui.hoi4localization.ManageFocusTreesWindow;
 import com.hoi4utils.ui.hoi4localization.CustomTooltipWindow;
 import com.hoi4utils.ui.hoi4localization.FocusLocalizationWindow;
 import com.hoi4utils.ui.hoi4localization.IdeaLocalizationWindow;
@@ -240,7 +240,7 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openAllFocusesWindow() {
-		openUtilsWindow(new AllFocusTreesWindow());
+		openUtilsWindow(new ManageFocusTreesWindow());
 	}
 
 	public void openCustomTooltip() {

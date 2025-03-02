@@ -22,7 +22,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWindow {
+public class ManageFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWindow {
 
 	private static final Property NAME_PROPERTY = Property.NAME;
 	private static final Property DESC_PROPERTY = Property.DESCRIPTION;
@@ -38,10 +38,10 @@ public class AllFocusTreesWindow extends HOIIVUtilsWindow implements TableViewWi
 	private final ObservableList<Focus> focusObservableList;
 	private final List<Runnable> onSaveActions = new ArrayList<>();
 
-	public AllFocusTreesWindow() {
+	public ManageFocusTreesWindow() {
 		/* window */
 		setFxmlResource("AllFocusTreesWindow.fxml");
-		setTitle("HOIIVUtils Unlocalized Focus Window");
+		setTitle("HOIIVUtils Manage Focus Trees");
 
 		focusObservableList = FXCollections.observableArrayList();
 	}
