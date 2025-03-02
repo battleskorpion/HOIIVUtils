@@ -193,10 +193,13 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		// If still null, try loading from a file
 		if (focusTree == null) {
 			File focusFile = new File(HOIIVFiles.Mod.focus_folder, "massachusetts.txt");
-			LOGGER.debug("Trying to load focus tree from file: {}", focusFile.getAbsolutePath());
+			if (focusFile.exists()) {
+				LOGGER.debug("Trying to load focus tree from file: {}",
+						focusFile.getAbsolutePath());
 
-			focusTree = FocusTree$.MODULE$.get(focusFile).getOrElse(null);
-			LOGGER.debug("Loaded focus tree from file: {}", focusTree);
+				focusTree = FocusTree$.MODULE$.get(focusFile).getOrElse(null);
+				LOGGER.debug("Loaded focus tree from file: {}", focusTree);
+			} 
 		}
 
 		// Final validation
