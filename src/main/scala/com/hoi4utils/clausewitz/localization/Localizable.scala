@@ -78,10 +78,10 @@ trait Localizable {
     }
   }
 
-  def localizationStatus(property: Property): String = {
+  def localizationStatus(property: Property): Localization.Status = {
     localization(property) match {
-      case Some(l) => l.status.toString
-      case None => "[null]"
+      case Some(l) => l.status
+      case None => Localization.Status.MISSING
     }
   }
 

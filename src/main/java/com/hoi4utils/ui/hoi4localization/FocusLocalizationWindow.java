@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.hoi4localization;
 
 import com.hoi4utils.clausewitz.HOIIVFiles;
+import com.hoi4utils.clausewitz.data.focus.FixFocus;
 import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.focus.FocusTree$;
@@ -19,6 +20,7 @@ import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 
 
@@ -118,27 +120,23 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
     }
 
     public void handleLoadButtonAction() {
-//        if (focusLocFile == null || focusTree == null) {
-//            // Handle the case where focusLocFile or focusTree is not properly initialized
-//            MessageController window = new MessageController();
-//            window.open("Error: Focus localization or focus tree not properly initialized.");
-//            return;
-//        }
-//
-//        /* load focus loc */
-//        try {
-//            int numLocalizedFocuses = FixFocus.addFocusLoc(focusTree, focusLocFile);
-//            // todo didnt happe?
-//            updateNumLocalizedFocuses(numLocalizedFocuses);
-//        } catch (IOException e) {
-//            openError(e);
-//            return;
-//        }
-//
-//        updateObservableFocusList();
-//
-//        /* enable saving of localization */
-//        saveButton.setDisable(false);
+        if (focusTree == null) {
+            JOptionPane.showMessageDialog(null, "Error: Focus tree not properly initialized.");
+            return;
+        }
+        
+        /* load focus loc */
+        try {
+            FixFocus.fixLocalization(focusTree);
+            updateNumLocalizedFocuses(focusTree.listFocuses().filter(f -> f.isLocalized()));
+        } catch (IOException e) {
+            openError(e);
+            return;
+        }
+        
+        updateObservableFocusList();
+        /* enable saving of localization */
+        saveButton.setDisable(false);
     }
 
     private void updateObservableFocusList() {
