@@ -4,6 +4,11 @@ import com.hoi4utils.ExpectedRange
 
 import scala.annotation.targetName
 
+/**
+ * A PDX script that holds a value of type T.
+ * Allows shi**y clausewitz engine numbers to be used in a more sane way.
+ * @tparam T
+ */
 trait ValPDXScript[T <: AnyVal] extends PDXScript[T] {
   def isDefaultRange: Boolean
 
@@ -19,17 +24,35 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] {
 
   def defaultValue: T
 
+  /**
+   * Checks the value of the script is equal to the given value.
+   * @param other
+   * @return
+   */
   @targetName("getEquals")
   def @==(other: T): Boolean = get() match {
     case Some(value) => value == other
     case None => false
   }
 
+  /**
+   * Checks if the value of the script is not equal to the given value.
+   * @param other
+   * @return
+   */
   @targetName("getNotEquals")
   def @!=(other: T): Boolean = !(this @== other)
 
+  /**
+   * Sets the value of the script to the given value.
+   * @param other
+   */
   def @=(other: T): Unit = set(other)
 
+  /**
+   * Sets the value of the script to the value of the given script.
+   * @param other
+   */
   def @=(other: PDXScript[T]): Unit = other.get() match {
     case Some(value) => set(value)
     case None => setNull()

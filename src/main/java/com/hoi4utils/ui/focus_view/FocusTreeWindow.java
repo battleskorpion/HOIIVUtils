@@ -635,23 +635,16 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 //			int internalY = (int) ((e.getY() - Y_OFFSET_FIX) / FOCUS_Y_SCALE);
 			int newX = limitFocusMoveX(this.canvasToFocusX(e.getX()));
 			int newY = limitFocusMoveY(this.canvasToFocusY(e.getY()));
-			if (draggedFocus.samePosition(newX, newY)) return;
+			if (draggedFocus.hasRelativePosition(newX, newY)) return;
             Dimension prevDim = focusTreeViewDimension();
-            if (e.isShiftDown()) {
-                // Update the focus position with SHIFT key pressed
-				draggedFocus.setAbsoluteXY(newX, newY, true);
+    
+			var prev = draggedFocus.setAbsoluteXY(newX, newY, e.isShiftDown());
+			if (!prev.equals(draggedFocus.position())) {
 				LOGGER.info("Focus {} moved to {}, {}", draggedFocus, newX, newY);
-
-				// TODO: Redraw the focus tree to reflect the change
-                // TODO: fix for bad behavior when the pane is resized
-            } else {
-                // Update the focus position with SHIFT key not pressed
-				draggedFocus.setAbsoluteXY(newX, newY, false);
-				LOGGER.info("Focus {} moved to {}, {}", draggedFocus, newX, newY);
-
-				// TODO: Redraw the focus tree to reflect the change
-                // TODO: fix for bad behavior when the pane is resized
-            }
+				
+				// TODO: fix for bad behavior when the pane is resized
+			}
+			
             drawFocusTree();
             adjustFocusTreeViewport(prevDim);
         } else if (e.isSecondaryButtonDown()) {

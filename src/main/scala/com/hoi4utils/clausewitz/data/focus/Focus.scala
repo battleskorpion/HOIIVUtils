@@ -137,11 +137,22 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     prev
   }
 
-  def samePosition(x: Int, y: Int): Boolean = (this.x @== x) && (this.y @== y)
+  /**
+   * Check if the focus is at the given relative position.
+   * @param x relative x coordinate
+   * @param y relative y coordinate
+   * @return
+   */
+  def hasRelativePosition(x: Int, y: Int): Boolean = (this.x @== x) && (this.y @== y) 
 
-  def hasAbsolutePosition(x: Int, y: Int): Boolean = {
-    this.absoluteX == x && this.absoluteY == y
-  }
+  /**
+   * Check if the focus is at the given absolute position.
+   *
+   * @param x absolute x-coordinate
+   * @param y absolute y-coordinate
+   * @return
+   */
+  def hasAbsolutePosition(x: Int, y: Int): Boolean = this.absoluteX == x && this.absoluteY == y
 
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 

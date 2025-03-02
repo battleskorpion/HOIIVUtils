@@ -149,8 +149,11 @@ class FocusTree
     }
   }
 
-  def minX: Int =
-    focuses.map(_.absoluteX).minOption.getOrElse(0)
+  /**
+   * Get the minimum X coordinate of all focuses in this focus tree.
+   * @return the minimum absolute X coordinate of all focuses
+   */
+  def minX: Int = focuses.map(_.absoluteX).minOption.getOrElse(0)
 
   def listFocuses: List[Focus] = focuses.toList
 
