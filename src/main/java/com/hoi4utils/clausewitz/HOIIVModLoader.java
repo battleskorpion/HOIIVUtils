@@ -2,6 +2,9 @@ package com.hoi4utils.clausewitz;
 
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
+import com.hoi4utils.clausewitz.localization.Localization;
+import com.hoi4utils.clausewitz.localization.LocalizationManager;
+import com.hoi4utils.clausewitz.localization.LocalizationManager$;
 import com.hoi4utils.clausewitz.map.state.State;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,9 +27,8 @@ public class HOIIVModLoader {
 			config.setProperty("valid.HOIIVFilePaths", "true");
 		}
 		State.clear();
-//		FocusTree.clear();
-
-		new EnglishLocalizationManager().reload();
+		FocusTree.clear();
+		LocalizationManager.get().reload();
 		
 		if (!State.read()) {
 			LOGGER.error("Failed to read states");

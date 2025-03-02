@@ -41,7 +41,7 @@ object FocusTree {
       LOGGER.fatal(s"In State.java - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
       false
     } else if (HOIIVFiles.Mod.focus_folder.listFiles == null || HOIIVFiles.Mod.focus_folder.listFiles.length == 0) {
-      LOGGER.fatal(s"No focuses found in ${HOIIVFiles.Mod.states_folder}")
+      LOGGER.warn(s"No focuses found in ${HOIIVFiles.Mod.states_folder}")
       false
     } else {
       LOGGER.info("Reading focus trees from " + HOIIVFiles.Mod.focus_folder)
@@ -52,6 +52,14 @@ object FocusTree {
       }
       true
     }
+  }
+
+  /**
+   * Clears all focus trees and any other relevant values. 
+   */
+  def clear(): Unit = {
+    focusTrees.clear()
+    focusTreeFileMap.clear()
   }
 
   def add(focusTree: FocusTree): Iterable[FocusTree] = {
