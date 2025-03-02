@@ -73,8 +73,8 @@ public class ManageFocusTreesController extends HOIIVUtilsWindow implements Tabl
 					setGraphic(null);
 					setEditable(true);
 				} else {
-					Localization.Status textStatus = focus.localization(NAME_PROPERTY).getOrElse(() -> Localization.Status.MISSING);
-					Localization.Status descStatus = focus.localization(DESC_PROPERTY).getOrElse(() -> Localization.Status.MISSING);
+					Localization.Status textStatus = focus.localizationStatus(NAME_PROPERTY);
+					Localization.Status descStatus = focus.localizationStatus(DESC_PROPERTY);
 
 					boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
 							|| descStatus == Localization.Status.UPDATED;

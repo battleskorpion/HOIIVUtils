@@ -200,20 +200,8 @@ public class FocusLocalizationWindow extends HOIIVUtilsWindow implements TableVi
                 if (focus == null || empty) {
                     setGraphic(null); // Clear any previous content
                 } else {
-                    Localization.Status textStatus;
-                    Localization.Status descStatus;
-//                    if (focus.localization(Property.NAME) == null) {
-//                        textStatus = Localization.Status.MISSING;
-//                    } else {
-//                        textStatus = focus.localization(Property.NAME).status();
-//                    }
-//                    if (focus.localization(Property.DESCRIPTION) == null) {
-//                        descStatus = Localization.Status.MISSING;
-//                    } else {
-//                        descStatus = focus.localization(Property.DESCRIPTION).status();
-//                    }
-                    textStatus = focus.localizationStatus(Property.NAME); 
-                    descStatus = focus.localizationStatus(Property.DESCRIPTION); 
+                    Localization.Status textStatus = focus.localizationStatus(Property.NAME); 
+                    Localization.Status descStatus = focus.localizationStatus(Property.DESCRIPTION); 
 
                     boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
                             || descStatus == Localization.Status.UPDATED;
