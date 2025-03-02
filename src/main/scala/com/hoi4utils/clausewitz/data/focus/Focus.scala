@@ -84,7 +84,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   override def toString: String = {
     id.get() match {
       case Some(id) => id
-      case None => super.toString
+      case None => "[Unknown]"
     }
   }
 

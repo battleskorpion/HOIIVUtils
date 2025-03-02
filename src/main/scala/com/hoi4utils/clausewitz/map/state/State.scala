@@ -69,14 +69,7 @@ object State {
   def ownedStatesOfCountry(country: Country): ListBuffer[State] = ownedStatesOfCountry(country.countryTag)
 
   def ownedStatesOfCountry(tag: CountryTag): ListBuffer[State] = {
-    val countryStates = new ListBuffer[State]
-    countryStates.addAll(states.flatMap { state =>
-      state.owner.get(ClausewitzDate.defaulty) match {
-        case Some(owner) if owner.isCountry(tag) => Some(state)
-        case _ => None
-      }
-    })
-    countryStates
+    states filter(state => state.owner.get(ClausewitzDate.defaulty).exists(_.isCountry(tag)))
   }
 
   def infrastructureOfStates(states: ListBuffer[State]): Infrastructure = {
