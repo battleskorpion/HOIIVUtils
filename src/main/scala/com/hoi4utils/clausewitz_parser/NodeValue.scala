@@ -26,34 +26,34 @@ final class NodeValue {
   def string: String = _value match {
     case None => null
     case Some(str: String) => str
-    case _ => throw new IllegalStateException("Expected NodeValue value to be a string, value: " + _value)
+    case _ => throw new ParserException("Expected NodeValue value to be a string, value: " + _value)
   } 
 
   def integerOrElse(default: Int): Int = _value match {
     case None => default
     case Some(i: Int) => i
     case Some(d: Double) => d.intValue
-    case _ => throw new IllegalStateException("Expected NodeValue to be a Number or null, value: " + _value)
+    case _ => throw new ParserException("Expected NodeValue to be a Number or null, value: " + _value)
   } 
 
   def integer: Integer = _value match {
     case Some(i: Int) => i;
     case Some(d: Double) => d.intValue; 
-    case _ => throw new IllegalStateException("Expected NodeValue to be a Number, value: " + _value)
+    case _ => throw new ParserException("Expected NodeValue to be a Number, value: " + _value)
   }
 
   def rational: Double = _value match {
     case Some(d: Double) => d
     case Some(i: Int) => i.doubleValue
     // todo better error handling
-    case _ => throw new IllegalStateException("Expected NodeValue to be a Number, value: " + _value)
+    case _ => throw new ParserException("Expected NodeValue to be a Number, value: " + _value)
   }
 
   def bool(boolType: BoolType): Boolean = _value match {
     case Some(str: String) => str == boolType.trueResponse
     case Some(bool: Boolean) => bool
     case None => false
-    case _ => throw new IllegalStateException("Expected NodeValue to be interpretable as a Boolean, value: " + _value)
+    case _ => throw new ParserException("Expected NodeValue to be interpretable as a Boolean, value: " + _value)
   }
 
   def list: ListBuffer[Node] = _value match {
@@ -63,13 +63,13 @@ final class NodeValue {
       list.addOne(node)
       list
     case None => null
-    case _ => throw new IllegalStateException("Expected NodeValue to be an ArrayList<Node>, value: " + _value)
+    case _ => throw new ParserException("Expected NodeValue to be an ArrayList<Node>, value: " + _value)
   } 
 
   def node: Node = _value match {
     case Some(n: Node) => n
     case None => null
-    case _ => throw new IllegalStateException("Expected NodeValue to be a Node, value: " + _value)
+    case _ => throw new ParserException("Expected NodeValue to be a Node, value: " + _value)
   } 
 
   def asString: String = _value match {
@@ -109,7 +109,7 @@ final class NodeValue {
     case (num1: Double, num2: Double) =>
       new NodeValue(num1 + num2)
     case _ =>
-      throw new IllegalStateException(s"Cannot add NodeValues of types ${_value.get.getClass} and ${other._value.get.getClass}")
+      throw new ParserException(s"Cannot add NodeValues of types ${_value.get.getClass} and ${other._value.get.getClass}")
   }
 
   def value: Option[String | Int | Double | Boolean | ListBuffer[Node]] = {

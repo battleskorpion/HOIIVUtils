@@ -31,7 +31,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   final val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
   final val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
   final val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
-  var ddsImage: Image = _
+  //var ddsImage: Image = _
   /* completion reward */
   val completionReward: CompletionReward = new CompletionReward()
 
@@ -160,7 +160,26 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     this.cost.setNode(cost.doubleValue())
   }
 
-  def getDDSImage: Image = ddsImage
+  def getDDSImage: Option[Image] = {
+    if (icon.isDefined) {
+      for (i <- icon) i match {
+        case simpleIcon: SimpleIcon => simpleIcon.get() match {
+          case Some(iconName) =>
+            // todo load using Interface to find gfx
+            None
+          case None => None
+        }
+        case blockIcon: BlockIcon => blockIcon.iconName match {
+          case Some(iconName) =>
+            // todo load using Interface to find gfx
+            None
+          case None => None
+        }
+        case _ => None
+      }
+    }
+    None
+  }
 
   def hasPrerequisites: Boolean = prerequisites.nonEmpty
 
@@ -333,6 +352,8 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
         case _ => false
       }
     }
+
+    def iconName: Option[String] = value.get()
   }
 
   class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward") {

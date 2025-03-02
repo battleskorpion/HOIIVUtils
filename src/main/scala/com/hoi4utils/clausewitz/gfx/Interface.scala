@@ -4,6 +4,8 @@ import com.hoi4utils.clausewitz.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.clausewitz_parser.Node
 import com.hoi4utils.clausewitz_parser.Parser
 import com.hoi4utils.clausewitz_parser.ParserException
+import org.apache.logging.log4j.{LogManager, Logger}
+
 
 import scala.jdk.javaapi.CollectionConverters
 import java.io.File
@@ -99,43 +101,35 @@ object Interface {
 class Interface(private val file: File)
 {
   readGFXFile(file)
+  private val LOGGER: Logger = LogManager.getLogger(getClass)
   private var spriteTypes: mutable.Set[SpriteType] = new mutable.HashSet
 
   private def readGFXFile(file: File): Unit = {
     spriteTypes.clear()
-    // read listed sprites
-    
-//    val interfaceParser = new Parser(file)
-//    //Expression[] exps = interfaceParser.findAll("SpriteType={", false);
-//    var rootNode: Node = null
-//    try rootNode = interfaceParser.parse
-//    catch {
-//      case e: ParserException =>
-//        throw new RuntimeException(e)
-//    }
-//    val nodes = CollectionConverters.asJava(rootNode.filter("SpriteType={").toList)
-//    if (nodes == null) {
-//      System.err.println("No SpriteTypes in interface .gfx file, " + file)
-//      //System.out.println(interfaceParser.expression());
-//      return
-//    }
-//    import scala.collection.JavaConversions._
-//    for (exp <- nodes) {
-//      if (!exp.contains("name=")) continue //todo: continue is not supported
-//      val nameExp = exp.find("name=").getOrElse(null)
-//      if (!exp.contains("texturefile=")) continue //todo: continue is not supported
-//      val fileExp = exp.find("texturefile=").getOrElse(null)
-//      var name = nameExp.$stringOrElse("")
-//      name = name.replaceAll("\"", "") // get rid of quotes from clausewitz code for file pathname
-//
-//      if (name.isEmpty) continue //todo: continue is not supported
-//      var filename = fileExp.$stringOrElse("")
-//      filename = filename.replaceAll("\"", "")
-//      if (filename.isEmpty) continue //todo: continue is not supported
-//      val gfx = new SpriteType(name, filename)
-//      spriteTypes.add(gfx)
-//      Interface.gfxMap.put(name, gfx)
-//    }
+
+    val parser = new Parser(file)
+    parser.parse
+
+    /* load listed sprites */
+    val spriteTypeNodes = parser.rootNode.filter("SpriteType={").toList
+    if (spriteTypeNodes == null) {
+      LOGGER.warn(s"No SpriteTypes defined in interface .gfx file, $file")
+      return
+    }
+
+    val validSpriteTypes = spriteTypeNodes.filter(_.containsAll("name", "texturefile"))
+    for (spriteType <- validSpriteTypes) {
+      try {
+        val name = spriteType.getValue("name").string
+        val filename = spriteType.getValue("texturefile").string.replace("\"", "")
+        val gfx = new SpriteType(name, filename)
+        spriteTypes.add(gfx)
+        Interface.gfxMap.put(name, gfx)
+      } catch {
+        case e: ParserException =>
+          LOGGER.error(s"Error parsing SpriteType in interface .gfx file, $file")
+      }
+    }
   }
 
   /**

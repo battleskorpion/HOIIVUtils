@@ -14,7 +14,7 @@ object Parser {
 
 class Parser {
   final private var tokens: Tokenizer = _
-  private var rootNode: Node = _
+  private var _rootNode: Node = _
 
   def this(input: String) = {
     this()
@@ -50,8 +50,8 @@ class Parser {
         }
       case None => throw new ParserException("Input not completely parsed by clausewitz-file parser \n" + "\t\tlast token: null")
     }
-    rootNode = new Node(value)
-    rootNode
+    _rootNode = new Node(value)
+    _rootNode
   }
 
   @throws[ParserException]
@@ -184,5 +184,5 @@ class Parser {
     throw new ParserException("Parser expected a string, number, symbol, or {")
   }
 
-  def getRootNode: Node = this.rootNode
+  def rootNode: Node = this._rootNode
 }

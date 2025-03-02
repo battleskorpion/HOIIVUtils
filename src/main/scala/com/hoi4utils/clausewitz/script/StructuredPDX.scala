@@ -67,12 +67,11 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    *
    * @param identifier
    */
-  def getPDXProperty(identifier: String): PDXScript[?] = {
-    import scala.collection.BuildFrom.buildFromString
+  def getPDXProperty(identifier: String): Option[PDXScript[?]] = {
     for (pdx <- childScripts) {
-      if (pdx.getPDXIdentifier == identifier) return pdx
+      if (pdx.getPDXIdentifier == identifier) return Some(pdx)
     }
-    null
+    None
   }
 
   /**
@@ -84,7 +83,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
   def getPDXProperty(identifiers: List[String]): Option[PDXScript[?]] = {
     for (identifier <- identifiers) {
       val pdx = getPDXProperty(identifier)
-      if (pdx != null) return Some(pdx)
+      if (pdx.isDefined) return pdx
     }
     None
   }

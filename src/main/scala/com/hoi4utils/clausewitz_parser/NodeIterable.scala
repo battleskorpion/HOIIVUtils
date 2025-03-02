@@ -26,6 +26,8 @@ trait NodeIterable[NodeType <: Node] extends Iterable[NodeType] {
 
   def contains(str: String): Boolean = filter(str).toList.nonEmpty
 
+  def containsAll(strings: String*): Boolean = strings.forall(contains)
+
   def anyMatch(predicate: NodeType => Boolean): Boolean = {
     filter(predicate).toList.nonEmpty
   }
