@@ -1,4 +1,4 @@
-package com.hoi4utils.clausewitz.data.focus;
+package com.hoi4utils.clausewitz.exceptions;
 
 public class DuplicateFocusException extends Exception {
     public DuplicateFocusException(String message) {

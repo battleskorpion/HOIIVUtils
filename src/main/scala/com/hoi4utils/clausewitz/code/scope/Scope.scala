@@ -2,6 +2,7 @@ package com.hoi4utils.clausewitz.code.scope
 
 import com.hoi4utils.clausewitz.code.effect.Effect
 import com.hoi4utils.clausewitz.data.country.CountryTag
+import com.hoi4utils.clausewitz.exceptions.NotPermittedInScopeException
 import com.hoi4utils.clausewitz.map.state.State
 import com.hoi4utils.clausewitz.script.PDXScript
 

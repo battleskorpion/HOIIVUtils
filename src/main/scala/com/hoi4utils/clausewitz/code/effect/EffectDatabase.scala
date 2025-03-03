@@ -83,17 +83,7 @@ class EffectDatabase(databaseName: String) {
     case e@(_: IOException | _: SQLException) =>
       e.printStackTrace()
   }
-
-  // public static void main(String[] args) {
-  // EffectDatabase effectDB = new EffectDatabase("effects.db");
-  //
-  // // Retrieve and use modifiers
-  //// effectDatabase.loadEffects();
-  // effectDB.createTable();
-  //
-  // // Close the database connection
-  // effectDB.close();
-  // }
+  
   def this() = {
     this("databases/effects.db")  // should be 'databases/effects.db'.
   }
@@ -197,20 +187,20 @@ class EffectDatabase(databaseName: String) {
   }
 
   private def simpleParameterToEffect(pdxIdentifier: String, requiredParametersSimple_str: String): Option[Effect] = {
-    val alternateParameters = requiredParametersSimple_str.split("\\s+\\|\\s+")
     var paramValueType: Option[ParameterValueType] = None
-    for (alternateParameter <- alternateParameters) {
+    
+    for (alternateParameter <- requiredParametersSimple_str.split("\\s+\\|\\s+")) {
       val parametersStrlist = alternateParameter.split("\\s+,\\s+")
       for (i <- parametersStrlist.indices) {
         paramValueType = None
         val parameterStr = parametersStrlist(i).trim
         var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
         data = data.filter((s: String) => s.nonEmpty)
-        //        if (data.length >= 2) {
-        //          val paramIdentifierStr = data(0).trim
-        //          val paramTypeStr = data(1).trim
-        //          val paramValueType = ParameterValueType.of(paramTypeStr)
-        //        }
+//                if (data.length >= 2) {
+//                  val paramIdentifierStr = data(0).trim
+//                  val paramTypeStr = data(1).trim
+//                  val paramValueType = ParameterValueType.of(paramTypeStr)
+//                }
         if (data.length == 1) {
           if (data(0).trim.startsWith("<") && data(0).trim.endsWith(">")) {
             //
@@ -227,6 +217,7 @@ class EffectDatabase(databaseName: String) {
         }
       }
     }
+    
     paramValueType.getOrElse(return None) match {
       case ParameterValueType.cw_int => Some(
         new IntPDX(pdxIdentifier) with SimpleEffect {
@@ -253,16 +244,8 @@ class EffectDatabase(databaseName: String) {
       case _ =>
         None // todo ??? !!!
     }
-
   }
-
-  //  private def parseEnumSet(enumSetString: String): EnumSet[ScopeType] = {
-  //    if (enumSetString == null || enumSetString.isEmpty || enumSetString == "none") null
-  //    else {
-  //      val enumValues = enumSetString.split(", ")
-  //      enumValues.map(ScopeType.valueFromString).collect(Collectors.toCollection(() => EnumSet.noneOf(classOf[ScopeType])))
-  //    }
-  //  }
+  
   private def parseEnumSet(enumSetString: String): Option[Set[ScopeType]] = {
     Option(enumSetString).filter(_.nonEmpty).filter(_ != "none").map { str =>
       str.split(", ").flatMap { enumName =>
