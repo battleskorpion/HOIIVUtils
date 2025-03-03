@@ -110,3 +110,4 @@ metals.sbt
 #--------------------------------------------------------------------------------#
 output.bmp
 /HOIIVUtils.properties
+focuses_missing_descriptions.csv
