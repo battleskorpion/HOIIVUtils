@@ -5,6 +5,7 @@ import com.hoi4utils.clausewitz.{BoolType, DataFunctionProvider}
 import com.hoi4utils.clausewitz.code.effect.*
 import com.hoi4utils.clausewitz.code.scope.*
 import com.hoi4utils.clausewitz.data.gfx.Interface
+import com.hoi4utils.clausewitz.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz_parser.Node

@@ -1,6 +1,7 @@
 package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.BoolType
+import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
 import org.jetbrains.annotations.NotNull
 

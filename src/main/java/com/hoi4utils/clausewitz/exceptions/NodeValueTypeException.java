@@ -1,4 +1,4 @@
-package com.hoi4utils.clausewitz.script;
+package com.hoi4utils.clausewitz.exceptions;
 
 import com.hoi4utils.clausewitz_parser.Node;
 
