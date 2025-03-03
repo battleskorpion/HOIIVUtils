@@ -96,7 +96,9 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
 
   override def size: Int = get().size
 
-  override def isUndefined: Boolean = super.isUndefined
+  override def isUndefined: Boolean = {
+    pdxList.forall(_.isUndefined) || pdxList.isEmpty
+  }
 
   override def toScript: String = {
     if (node.isEmpty || node.get.isEmpty) return null

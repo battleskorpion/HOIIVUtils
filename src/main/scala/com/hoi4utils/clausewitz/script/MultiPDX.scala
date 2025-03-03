@@ -117,7 +117,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   override def apply(idx: Int): T = pdxList(idx)
 
   override def isUndefined: Boolean = {
-    pdxList.forall(_.isUndefined)
+    pdxList.forall(_.isUndefined) || pdxList.isEmpty
   }
 
   override def toScript: String = {
