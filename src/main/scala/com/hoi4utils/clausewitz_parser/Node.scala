@@ -45,6 +45,14 @@ class Node(protected[clausewitz_parser] var _identifier: String, protected[claus
       case None => null
     }
   }
+  
+  def getValueCaseInsensitive(id: String): NodeValue = {
+    val value = findCaseInsensitive(id)
+    value match {
+      case Some(node) => node.nodeValue
+      case None => null
+    }
+  }
 
   def setValue(value: String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
     this.nodeValue.setValue(value)

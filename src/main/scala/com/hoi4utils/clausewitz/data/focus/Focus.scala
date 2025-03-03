@@ -163,26 +163,31 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   }
 
   def getDDSImage: Option[Image] = {
+    // bad code. it's fine for now.
     if (icon.isDefined) {
+      var img: Option[Image] = None
       for (i <- icon) i match {
         case simpleIcon: SimpleIcon => simpleIcon.get() match {
           case Some(iconName) =>
             Interface.getGFX(iconName) match {
-              case Some(gfx) => Some(DDSReader.readDDSImage(gfx))
+              case Some(gfx) => img = Some(DDSReader.readDDSImage(gfx))
               case None => None
             }
           case None => None
         }
         case blockIcon: BlockIcon => blockIcon.iconName match {
           case Some(iconName) =>
-            // todo load using Interface to find gfx
-            None
+            Interface.getGFX(iconName) match {
+              case Some(gfx) => img = Some(DDSReader.readDDSImage(gfx))
+              case None => None
+            }
           case None => None
         }
         case _ => None
       }
+      img
     }
-    None
+    else None
   }
 
   def hasPrerequisites: Boolean = prerequisites.nonEmpty

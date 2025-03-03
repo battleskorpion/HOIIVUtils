@@ -32,10 +32,12 @@ public class HOIIVFiles {
 		public static File folder;
 		public static File localization_folder;
 		public static File units_folder;
+		public static File interface_folder;
 
 		public static final String localization_folder_field_name = "hoi4_localization_folder";
 		public static final String mods_folder_field_name = "hoi4mods_folder";
 		public static final String units_folder_field_name = "hoi4_units_folder";
+		public static final String interface_folder_field_name = "hoi4_interface_folder";
 	}
 
 	// Example of a file that might be shared or used as a default mod folder

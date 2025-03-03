@@ -10,14 +10,15 @@ import java.io.File
  * @param _name ex: "GFX_focus_SVA_virginia_officers"
  * @param _textureFile ex: "gfx/interface/goals/focus_SVA_virginia_officers.dds"
  */
-class SpriteType(private[gfx] var _name: String, private[gfx] var _textureFile: File) {
+class SpriteType(private[gfx] var _name: String, private[gfx] var _textureFile: File, basepath: File) {
   /**
    *
    * @param name
    * @param texturefile abstract file name for texture location of gfx
+   * @param basepath  basepath for texturefile (mod or base game)
    */
-  def this(name: String, texturefile: String) = {
-    this(name, new File(texturefile))
+  def this(name: String, texturefile: String, basepath: File) = {
+    this(name, new File(texturefile), basepath)
   }
 
   /**
@@ -39,7 +40,7 @@ class SpriteType(private[gfx] var _name: String, private[gfx] var _textureFile: 
    *
    * @return absolute filepath of texturefile for this gfx
    */
-  def gfx: String = HOIIVFiles.Mod.folder.getPath + "\\" + _textureFile.getPath
+  def gfx: String = basepath.getPath + "\\" + _textureFile.getPath
 
   def name: String = _name
 }

@@ -244,7 +244,7 @@ public class HOIIVUtilsInitializer {
 		} else {
 			setProperty("valid.HOIIVFilePaths", "true");
 		}
-		
+
 		LocalizationManager.getOrCreate(EnglishLocalizationManager::new).reload();
 		com.hoi4utils.clausewitz.data.gfx.Interface.reloadGFXFiles();
 
@@ -294,7 +294,7 @@ public class HOIIVUtilsInitializer {
 	}
 
 	private boolean createHOIIVPaths() {
-		String hoi4Path = getProperty("mod.path");
+		String hoi4Path = getProperty("hoi4.path");
 
 		if (!validateDirectoryPath(hoi4Path, "hoi4.path")) {
 			return false;
@@ -303,6 +303,7 @@ public class HOIIVUtilsInitializer {
 		HOIIVFiles.HOI4.folder = new File(hoi4Path);
 		HOIIVFiles.HOI4.localization_folder = new File(hoi4Path, "localisation\\english");
 		HOIIVFiles.HOI4.units_folder = new File(hoi4Path, "common\\units");
+		HOIIVFiles.HOI4.interface_folder = new File(hoi4Path, "interface");
 		return true;
 	}
 

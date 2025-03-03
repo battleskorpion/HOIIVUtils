@@ -63,13 +63,21 @@ object Interface {
   def numFiles: Int = interfaceFiles.size
 
   def reloadGFXFiles(): Unit = {
-    val dir = HOIIVFiles.Mod.interface_folder
-    if (!dir.exists || !dir.isDirectory) System.err.println("interface directory does not exist")
-    val files = dir.listFiles
-    if (files == null || files.isEmpty) System.err.println("interface directory is empty")
+    val mod_dir = HOIIVFiles.Mod.interface_folder
+    if (!mod_dir.exists || !mod_dir.isDirectory) System.out.println("Warning: mod interface directory does not exist")
+    val mod_files = mod_dir.listFiles
+    if (mod_files == null || mod_files.isEmpty) System.out.println("Warning: mod interface directory is empty")
+
+    val base_dir = HOIIVFiles.HOI4.interface_folder
+    if (!base_dir.exists || !base_dir.isDirectory) System.err.println("HOI4 interface directory does not exist")
+    val base_files = base_dir.listFiles
+    if (base_files == null || base_files.isEmpty) System.err.println("HOI4 interface directory is empty")
 
     gfxMap.clear()
-    for (file <- files.filter(_.getName.endsWith(".gfx"))) {
+    for (file <- mod_files.filter(_.getName.endsWith(".gfx"))) {
+      interfaceFiles.put(file, new Interface(file))
+    }
+    for (file <- base_files.filter(_.getName.endsWith(".gfx"))) {
       interfaceFiles.put(file, new Interface(file))
     }
   }
@@ -120,21 +128,26 @@ class Interface(private val file: File)
 
     /* load listed sprites */
     val spriteTypeNodes = {
-      parser.rootNode.filter("spriteTypes").subFilter("spriteType")
+      parser.rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
     }
     if (spriteTypeNodes == null) {
       LOGGER.warn(s"No SpriteTypes defined in interface .gfx file, $file")
       return
     }
 
-    val validSpriteTypes = spriteTypeNodes.filter(_.containsAll("name", "texturefile"))
+    val validSpriteTypes = spriteTypeNodes.filter(_.containsAllCaseInsensitive("name", "texturefile"))
     for (spriteType <- validSpriteTypes) {
       try {
-        val name = spriteType.getValue("name").string
-        val filename = spriteType.getValue("texturefile").string
-        val gfx = new SpriteType(name, filename)
-        spriteTypes.add(gfx)
-        Interface.gfxMap.put(name, gfx)
+        val name = spriteType.getValueCaseInsensitive("name").stringOrElse("").replace("\"", "")
+        val filename = spriteType.getValueCaseInsensitive("texturefile").stringOrElse("").replace("\"", "")
+        if (name.isEmpty || filename.isEmpty) {
+          LOGGER.warn(s"SpriteType in interface .gfx file, $file, has empty name or texturefile.")
+        }
+        else {
+          val gfx = new SpriteType(name, filename, basepath = file.getParentFile.getParentFile)
+          spriteTypes.add(gfx)
+          Interface.gfxMap.put(name, gfx)
+        }
       } catch {
         case e: ParserException =>
           LOGGER.error(s"Error parsing SpriteType in interface .gfx file, $file")

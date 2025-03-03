@@ -28,6 +28,12 @@ final class NodeValue {
     case Some(str: String) => str
     case _ => throw new ParserException("Expected NodeValue value to be a string, value: " + _value)
   } 
+  
+  def stringOrElse(default: String): String = _value match {
+    case None => default
+    case Some(str: String) => str
+    case _ => throw new ParserException("Expected NodeValue value to be a string, value: " + _value)
+  }
 
   def integerOrElse(default: Int): Int = _value match {
     case None => default

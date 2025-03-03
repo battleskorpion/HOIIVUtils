@@ -85,7 +85,7 @@ public class HOIIVModLoader {
 	}
 
 	private boolean createHOIIVPaths() {
-		String hoi4Path = config.getProperty("mod.path");
+		String hoi4Path = config.getProperty("hoi4.path");
 
 		if (!validateDirectoryPath(hoi4Path, "hoi4.path")) {
 			return false;
@@ -94,6 +94,7 @@ public class HOIIVModLoader {
 		HOIIVFiles.HOI4.folder = new File(hoi4Path);
 		HOIIVFiles.HOI4.localization_folder = new File(hoi4Path, "localisation\\english");
 		HOIIVFiles.HOI4.units_folder = new File(hoi4Path, "common\\units");
+		HOIIVFiles.HOI4.interface_folder = new File(hoi4Path, "interface");
 		return true;
 	}
 
