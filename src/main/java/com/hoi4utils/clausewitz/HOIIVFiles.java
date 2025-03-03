@@ -44,6 +44,39 @@ public class HOIIVFiles {
 	public static final File usersParadoxHOIIVModFolder =
 			new File(File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
 
+	public static void setModPathChildDirs(String modPath) {
+		Mod.folder = null;
+		Mod.common_folder = null;
+		Mod.focus_folder = null;
+		Mod.ideas_folder = null;
+		Mod.units_folder = null;
+		Mod.states_folder = null;
+		Mod.localization_folder = null;
+		Mod.strat_region_dir = null;
+		
+		Mod.folder = new File(modPath);
+		Mod.common_folder = new File(modPath, "common");
+		Mod.focus_folder = new File(HOIIVFiles.Mod.common_folder, "national_focus");
+		Mod.ideas_folder = new File(HOIIVFiles.Mod.common_folder, "ideas");
+		Mod.units_folder = new File(HOIIVFiles.Mod.common_folder, "units");
+		Mod.states_folder = new File(modPath, "history\\states");
+		Mod.localization_folder = new File(modPath, "localisation\\english"); // 's' vs 'z' note in the original comment
+		Mod.strat_region_dir = new File(modPath, "map\\strategicregions");
+		Mod.interface_folder = new File(modPath, "interface");
+	}
+
+	public static void setHoi4PathChildDirs(String hoi4Path) {
+		HOI4.folder = null;
+		HOI4.localization_folder = null;
+		HOI4.units_folder = null;
+		HOI4.interface_folder = null;
+		
+		HOI4.folder = new File(hoi4Path);
+		HOI4.localization_folder = new File(hoi4Path, "localisation\\english");
+		HOI4.units_folder = new File(hoi4Path, "common\\units");
+		HOI4.interface_folder = new File(hoi4Path, "interface");
+	}
+
 	// A sample validation method that uses both mod and base files
 	public static boolean isUnitsFolderValid() {
 		return isValidDirectory(Mod.units_folder) && isValidDirectory(HOI4.units_folder);

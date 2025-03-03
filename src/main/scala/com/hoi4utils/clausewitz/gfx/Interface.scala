@@ -62,24 +62,40 @@ object Interface {
    */
   def numFiles: Int = interfaceFiles.size
 
-  def reloadGFXFiles(): Unit = {
-    val mod_dir = HOIIVFiles.Mod.interface_folder
-    if (!mod_dir.exists || !mod_dir.isDirectory) System.out.println("Warning: mod interface directory does not exist")
-    val mod_files = mod_dir.listFiles
-    if (mod_files == null || mod_files.isEmpty) System.out.println("Warning: mod interface directory is empty")
+  def readMod(): Boolean = {
+    if (!HOIIVFiles.Mod.interface_folder.exists || !HOIIVFiles.Mod.interface_folder.isDirectory) {
+      System.out.println("Warning: mod interface directory does not exist")
+      false
+    } else if (HOIIVFiles.Mod.interface_folder.listFiles == null || HOIIVFiles.Mod.interface_folder.listFiles.isEmpty) {
+      System.out.println("Warning: mod interface directory is empty")
+      false
+    } else {
+      for (file <- HOIIVFiles.Mod.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))) {
+        interfaceFiles.put(file, new Interface(file))
+      }
+      true
+    }
+  }
 
-    val base_dir = HOIIVFiles.HOI4.interface_folder
-    if (!base_dir.exists || !base_dir.isDirectory) System.err.println("HOI4 interface directory does not exist")
-    val base_files = base_dir.listFiles
-    if (base_files == null || base_files.isEmpty) System.err.println("HOI4 interface directory is empty")
-
+  def readHoi4(): Boolean = {
+    if (!HOIIVFiles.HOI4.interface_folder.exists || !HOIIVFiles.HOI4.interface_folder.isDirectory) {
+      System.err.println("HOI4 interface directory does not exist")
+      false
+    } else if (HOIIVFiles.HOI4.interface_folder.listFiles == null || HOIIVFiles.HOI4.interface_folder.listFiles.isEmpty) {
+      System.err.println("HOI4 interface directory is empty")
+      false
+    } else {
+      for (file <- HOIIVFiles.HOI4.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))) {
+        interfaceFiles.put(file, new Interface(file))
+      }
+      true
+    }
+  }
+  
+  def clear(): Boolean = {
     gfxMap.clear()
-    for (file <- mod_files.filter(_.getName.endsWith(".gfx"))) {
-      interfaceFiles.put(file, new Interface(file))
-    }
-    for (file <- base_files.filter(_.getName.endsWith(".gfx"))) {
-      interfaceFiles.put(file, new Interface(file))
-    }
+    interfaceFiles.clear()
+    true
   }
 }
 
@@ -168,4 +184,6 @@ class Interface(private val file: File)
    * @return filepath for this Interface file
    */
   def getPath = file.getPath
+  
+  def getGFXMAP: mutable.Map[String, SpriteType] = Interface.gfxMap
 }

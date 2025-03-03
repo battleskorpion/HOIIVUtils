@@ -7,6 +7,7 @@ import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
 import com.hoi4utils.clausewitz.map.state.State;
+import com.hoi4utils.clausewitz.data.gfx.Interface;
 import com.hoi4utils.fileIO.FileListener.FileAdapter;
 import com.hoi4utils.fileIO.FileListener.FileEvent;
 import com.hoi4utils.fileIO.FileListener.FileWatcher;
@@ -246,7 +247,13 @@ public class HOIIVUtilsInitializer {
 		}
 
 		LocalizationManager.getOrCreate(EnglishLocalizationManager::new).reload();
-		com.hoi4utils.clausewitz.data.gfx.Interface.reloadGFXFiles();
+		
+		if (!Interface.readMod() && !Interface.readHoi4()) {
+			LOGGER.error("Failed to read gfx interface files");
+			setProperty("valid.Interface", "false");
+		} else {
+			setProperty("valid.Interface", "true");
+		}
 
 		if (!State.read()) {
 			LOGGER.error("Failed to read states");
@@ -281,15 +288,7 @@ public class HOIIVUtilsInitializer {
 			return false;
 		}
 
-		HOIIVFiles.Mod.folder = new File(modPath);
-		HOIIVFiles.Mod.common_folder = new File(modPath, "common");
-		HOIIVFiles.Mod.focus_folder = new File(HOIIVFiles.Mod.common_folder, "national_focus");
-		HOIIVFiles.Mod.ideas_folder = new File(HOIIVFiles.Mod.common_folder, "ideas");
-		HOIIVFiles.Mod.units_folder = new File(HOIIVFiles.Mod.common_folder, "units");
-		HOIIVFiles.Mod.states_folder = new File(modPath, "history\\states");
-		HOIIVFiles.Mod.localization_folder = new File(modPath, "localisation\\english"); // 's' vs 'z' note in the original comment
-		HOIIVFiles.Mod.strat_region_dir = new File(modPath, "map\\strategicregions");
-		HOIIVFiles.Mod.interface_folder = new File(modPath, "interface");
+		HOIIVFiles.setModPathChildDirs(modPath);
 		return true;
 	}
 
@@ -300,10 +299,7 @@ public class HOIIVUtilsInitializer {
 			return false;
 		}
 
-		HOIIVFiles.HOI4.folder = new File(hoi4Path);
-		HOIIVFiles.HOI4.localization_folder = new File(hoi4Path, "localisation\\english");
-		HOIIVFiles.HOI4.units_folder = new File(hoi4Path, "common\\units");
-		HOIIVFiles.HOI4.interface_folder = new File(hoi4Path, "interface");
+		HOIIVFiles.setHoi4PathChildDirs(hoi4Path);
 		return true;
 	}
 

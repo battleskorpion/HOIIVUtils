@@ -1,11 +1,9 @@
 package com.hoi4utils.clausewitz;
 
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
-import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
-import com.hoi4utils.clausewitz.localization.Localization;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
-import com.hoi4utils.clausewitz.localization.LocalizationManager$;
 import com.hoi4utils.clausewitz.map.state.State;
+import com.hoi4utils.clausewitz.data.gfx.Interface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,10 +24,18 @@ public class HOIIVModLoader {
 		} else {
 			config.setProperty("valid.HOIIVFilePaths", "true");
 		}
+		Interface.clear();
 		State.clear();
 		FocusTree.clear();
+		
 		LocalizationManager.get().reload();
-		com.hoi4utils.clausewitz.data.gfx.Interface.reloadGFXFiles();
+		
+		if (!Interface.readMod() && !Interface.readHoi4()) {
+			LOGGER.error("Failed to read gfx interface files");
+			config.setProperty("valid.Interface", "false");
+		} else {
+			config.setProperty("valid.Interface", "true");
+		}
 		
 		if (!State.read()) {
 			LOGGER.error("Failed to read states");
@@ -63,24 +69,9 @@ public class HOIIVModLoader {
 		if (!validateDirectoryPath(modPath, "mod.path")) {
 			return false;
 		}
-		HOIIVFiles.Mod.folder = null;
-		HOIIVFiles.Mod.common_folder = null;
-		HOIIVFiles.Mod.focus_folder = null;
-		HOIIVFiles.Mod.ideas_folder = null;
-		HOIIVFiles.Mod.units_folder = null;
-		HOIIVFiles.Mod.states_folder = null;
-		HOIIVFiles.Mod.localization_folder = null;
-		HOIIVFiles.Mod.strat_region_dir = null;
+		
 
-		HOIIVFiles.Mod.folder = new File(modPath);
-		HOIIVFiles.Mod.common_folder = new File(modPath, "common");
-		HOIIVFiles.Mod.focus_folder = new File(HOIIVFiles.Mod.common_folder, "national_focus");
-		HOIIVFiles.Mod.ideas_folder = new File(HOIIVFiles.Mod.common_folder, "ideas");
-		HOIIVFiles.Mod.units_folder = new File(HOIIVFiles.Mod.common_folder, "units");
-		HOIIVFiles.Mod.states_folder = new File(modPath, "history\\states");
-		HOIIVFiles.Mod.localization_folder = new File(modPath, "localisation\\english"); // 's' vs 'z' note in the original comment
-		HOIIVFiles.Mod.strat_region_dir = new File(modPath, "map\\strategicregions");
-		HOIIVFiles.Mod.interface_folder = new File(modPath, "interface");
+		HOIIVFiles.setModPathChildDirs(modPath);
 		return true;
 	}
 
@@ -91,10 +82,7 @@ public class HOIIVModLoader {
 			return false;
 		}
 
-		HOIIVFiles.HOI4.folder = new File(hoi4Path);
-		HOIIVFiles.HOI4.localization_folder = new File(hoi4Path, "localisation\\english");
-		HOIIVFiles.HOI4.units_folder = new File(hoi4Path, "common\\units");
-		HOIIVFiles.HOI4.interface_folder = new File(hoi4Path, "interface");
+		HOIIVFiles.setHoi4PathChildDirs(hoi4Path);
 		return true;
 	}
 

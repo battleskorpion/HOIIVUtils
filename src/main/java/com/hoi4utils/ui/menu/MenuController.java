@@ -55,6 +55,12 @@ public class MenuController extends Application implements FXWindow {
 			warningMessage.append("• Hearts of Iron IV file paths\n");
 			hasInvalidPaths = true;
 		}
+
+		if (HOIIVUtils.get("valid.Interface").equals("false")) {
+			LOGGER.warn("Invalid GFX Interface file paths detected");
+			warningMessage.append("• Interface file paths\n");
+			hasInvalidPaths = true;
+		}
 		
 		if (HOIIVUtils.get("valid.State").equals("false")) {
 			LOGGER.warn("Invalid State paths detected");
