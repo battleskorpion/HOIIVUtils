@@ -4,9 +4,11 @@ import com.hoi4utils.ExpectedRange
 import com.hoi4utils.clausewitz.{BoolType, DataFunctionProvider}
 import com.hoi4utils.clausewitz.code.effect.*
 import com.hoi4utils.clausewitz.code.scope.*
+import com.hoi4utils.clausewitz.data.gfx.Interface
 import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz_parser.Node
+import com.hoi4utils.ddsreader.DDSReader
 import javafx.scene.image.Image
 
 import java.awt.Point
@@ -165,8 +167,10 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
       for (i <- icon) i match {
         case simpleIcon: SimpleIcon => simpleIcon.get() match {
           case Some(iconName) =>
-            // todo load using Interface to find gfx
-            None
+            Interface.getGFX(iconName) match {
+              case Some(gfx) => Some(DDSReader.readDDSImage(gfx))
+              case None => None
+            }
           case None => None
         }
         case blockIcon: BlockIcon => blockIcon.iconName match {

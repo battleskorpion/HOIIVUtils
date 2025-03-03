@@ -429,8 +429,13 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		int yAdj1 = (int) (FOCUS_Y_SCALE / 2.2);
 		int yAdj2 = (FOCUS_Y_SCALE / 2) + 20;
 
+		/* focus name plate gfx (focus unavailable version) */
 		gc2D.drawImage(gfxFocusUnavailable, x1 - 32, y1 + yAdj1);
-		gc2D.drawImage(focus.getDDSImage(), x1, y1);
+		/* focus icon */ 
+		var ddsImage = focus.getDDSImage(); 
+		if (ddsImage.isDefined())
+			gc2D.drawImage(ddsImage.get(), x1, y1);
+		/* focus name text */ 
 		var locName = focus.localizationText(Property.NAME);
 		String name = locName.equals("[null]") && !focus.id().str().isBlank() ? focus.id().str() : locName;
 		gc2D.fillText(name, x1 - 20, y1 + yAdj2);

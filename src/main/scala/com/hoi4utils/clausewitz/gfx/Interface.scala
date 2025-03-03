@@ -22,10 +22,10 @@ object Interface {
   private val gfxMap: mutable.Map[String, SpriteType] = new mutable.HashMap
   private var interfaceFiles: mutable.Map[File, Interface] = new mutable.HashMap
 
-  def getGFX(icon: String): String = {
+  def getGFX(icon: String): Option[String] = {
     getSpriteType(icon) match {
-      case Some(spriteType) => spriteType.gfx
-      case None => null
+      case Some(spriteType) => Some(spriteType.gfx)
+      case None => None
     }
   }
 
@@ -62,7 +62,7 @@ object Interface {
    */
   def numFiles: Int = interfaceFiles.size
 
-  def loadGFXFiles(): Unit = {
+  def reloadGFXFiles(): Unit = {
     val dir = HOIIVFiles.Mod.interface_folder
     if (!dir.exists || !dir.isDirectory) System.err.println("interface directory does not exist")
     val files = dir.listFiles
@@ -100,18 +100,28 @@ object Interface {
 */
 class Interface(private val file: File)
 {
-  readGFXFile(file)
   private val LOGGER: Logger = LogManager.getLogger(getClass)
   private var spriteTypes: mutable.Set[SpriteType] = new mutable.HashSet
+
+  /* init */
+  readGFXFile(file)
 
   private def readGFXFile(file: File): Unit = {
     spriteTypes.clear()
 
     val parser = new Parser(file)
-    parser.parse
+    try {
+      parser.parse
+    } catch {
+      case e: ParserException =>
+        LOGGER.error(s"Error parsing interface .gfx file, $file.\nException: $e")
+        return
+    }
 
     /* load listed sprites */
-    val spriteTypeNodes = parser.rootNode.filter("SpriteType={").toList
+    val spriteTypeNodes = {
+      parser.rootNode.filter("spriteTypes").subFilter("spriteType")
+    }
     if (spriteTypeNodes == null) {
       LOGGER.warn(s"No SpriteTypes defined in interface .gfx file, $file")
       return
@@ -121,7 +131,7 @@ class Interface(private val file: File)
     for (spriteType <- validSpriteTypes) {
       try {
         val name = spriteType.getValue("name").string
-        val filename = spriteType.getValue("texturefile").string.replace("\"", "")
+        val filename = spriteType.getValue("texturefile").string
         val gfx = new SpriteType(name, filename)
         spriteTypes.add(gfx)
         Interface.gfxMap.put(name, gfx)

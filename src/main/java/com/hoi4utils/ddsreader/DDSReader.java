@@ -16,6 +16,16 @@
 
 package com.hoi4utils.ddsreader;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelFormat;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 /*
  * hoi4utils.ddsreader File
  */
@@ -554,6 +564,46 @@ public final class DDSReader {
 	private static final int [] BIT6 = {0,4,8,12,16,20,24,28,32,36,40,45,49,53,57,61,65,69,73,77,81,85,89,93,97,101,105,109,113,117,121,125,130,134,138,142,146,150,154,158,162,166,170,174,178,182,186,190,194,198,202,206,210,215,219,223,227,231,235,239,243,247,251,255};
 
 	private DDSReader() {}
+
+	/**
+	 * Reads a DDS image using the given filepath and returns it as a JavaFX Image.
+	 *
+	 * @param path the DDS filepath
+	 * @return the image
+	 * @throws IOException if reading the file fails or decoding fails
+	 */
+	public static Image readDDSImage(String path) throws IOException {
+		return readDDSImage(new File(path)); 
+	} 
+
+	/**
+     * Reads a DDS image file and returns it as a JavaFX Image.
+     *
+     * @param file the DDS file
+     * @return the image
+     * @throws IOException if reading the file fails or decoding fails
+     */
+	public static Image readDDSImage(File file) throws IOException {
+		// Read the entire file into a byte array.
+		byte[] buffer = Files.readAllBytes(file.toPath());
+
+		// Extract the image dimensions from the DDS header.
+		int width = DDSReader.getWidth(buffer);
+		int height = DDSReader.getHeight(buffer);
+
+		// Decode the pixel data (using mipmap level 0 for full resolution).
+		int[] pixels = DDSReader.read(buffer, DDSReader.ARGB, 0);
+		if (pixels == null) {
+			throw new IOException("Failed to decode DDS image: " + file);
+		}
+
+		// Create a WritableImage and set its pixel data.
+		WritableImage image = new WritableImage(width, height);
+		PixelWriter writer = image.getPixelWriter();
+		writer.setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixels, 0, width);
+
+		return image;
+	}
 	
 	private static final class Order {
 		Order(int redShift, int greenShift, int blueShift, int alphaShift) {

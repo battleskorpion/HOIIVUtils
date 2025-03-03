@@ -21,6 +21,13 @@ object LocalizationManager {
       case None => throw new NoLocalizationManagerException
     }
   }
+  
+  def getOrCreate(createManager: () => LocalizationManager): LocalizationManager = {
+    primaryManager match {
+      case Some(mgr) => mgr
+      case None => createManager()
+    }
+  }
 
   def get(key: String): Option[Localization] = get.getLocalization(key)
 

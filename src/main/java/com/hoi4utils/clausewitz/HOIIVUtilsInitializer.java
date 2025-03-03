@@ -5,6 +5,7 @@ import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
 import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
+import com.hoi4utils.clausewitz.localization.LocalizationManager;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.fileIO.FileListener.FileAdapter;
 import com.hoi4utils.fileIO.FileListener.FileEvent;
@@ -243,8 +244,9 @@ public class HOIIVUtilsInitializer {
 		} else {
 			setProperty("valid.HOIIVFilePaths", "true");
 		}
-
-		new EnglishLocalizationManager().reload();
+		
+		LocalizationManager.getOrCreate(EnglishLocalizationManager::new).reload();
+		com.hoi4utils.clausewitz.data.gfx.Interface.reloadGFXFiles();
 
 		if (!State.read()) {
 			LOGGER.error("Failed to read states");

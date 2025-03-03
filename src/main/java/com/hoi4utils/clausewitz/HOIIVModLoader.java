@@ -29,6 +29,7 @@ public class HOIIVModLoader {
 		State.clear();
 		FocusTree.clear();
 		LocalizationManager.get().reload();
+		com.hoi4utils.clausewitz.data.gfx.Interface.reloadGFXFiles();
 		
 		if (!State.read()) {
 			LOGGER.error("Failed to read states");
