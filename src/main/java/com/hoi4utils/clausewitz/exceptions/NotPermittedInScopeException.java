@@ -1,4 +1,4 @@
-package com.hoi4utils.clausewitz.code.scope;
+package com.hoi4utils.clausewitz.exceptions;
 
 public class NotPermittedInScopeException extends Exception {
 	public NotPermittedInScopeException() {
