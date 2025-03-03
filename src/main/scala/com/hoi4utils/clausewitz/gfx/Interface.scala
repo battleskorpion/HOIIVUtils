@@ -62,7 +62,7 @@ object Interface {
    */
   def numFiles: Int = interfaceFiles.size
 
-  def readMod(): Boolean = {
+  private def readMod(): Boolean = {
     if (!HOIIVFiles.Mod.interface_folder.exists || !HOIIVFiles.Mod.interface_folder.isDirectory) {
       System.out.println("Warning: mod interface directory does not exist")
       false
@@ -77,7 +77,7 @@ object Interface {
     }
   }
 
-  def readHoi4(): Boolean = {
+  private def readHoi4(): Boolean = {
     if (!HOIIVFiles.HOI4.interface_folder.exists || !HOIIVFiles.HOI4.interface_folder.isDirectory) {
       System.err.println("HOI4 interface directory does not exist")
       false
@@ -91,11 +91,16 @@ object Interface {
       true
     }
   }
+
+  def read(): Boolean = {
+    val modSuccess = readMod()
+    val hoi4Success = readHoi4()
+    modSuccess && hoi4Success
+  }
   
-  def clear(): Boolean = {
+  def clear(): Unit = {
     gfxMap.clear()
     interfaceFiles.clear()
-    true
   }
 }
 

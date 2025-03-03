@@ -248,7 +248,7 @@ public class HOIIVUtilsInitializer {
 
 		LocalizationManager.getOrCreate(EnglishLocalizationManager::new).reload();
 		
-		if (!Interface.readMod() && !Interface.readHoi4()) {
+		if (!Interface.read()) {
 			LOGGER.error("Failed to read gfx interface files");
 			setProperty("valid.Interface", "false");
 		} else {
