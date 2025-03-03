@@ -1,19 +1,17 @@
 package com.hoi4utils.clausewitz.code.effect
 
-import com.hoi4utils.clausewitz.{BoolType, HOIIVUtils}
+import com.hoi4utils.clausewitz.BoolType
 import com.hoi4utils.clausewitz.code.scope.ScopeType
 import com.hoi4utils.clausewitz.data.country.CountryTag
+import com.hoi4utils.clausewitz.exceptions.InvalidParameterException
 import com.hoi4utils.clausewitz.map.province.Province
 import com.hoi4utils.clausewitz.map.state.*
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz_parser.Node
-import org.jetbrains.annotations.NotNull
 
-import java.io.{File, IOException, InputStream}
-import java.net.URL
+import java.io.{File, IOException}
 import java.nio.file.{Files, StandardCopyOption}
 import java.sql.*
-import java.util
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
