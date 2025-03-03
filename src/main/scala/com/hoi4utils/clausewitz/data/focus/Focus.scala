@@ -385,5 +385,11 @@ object Focus {
     dataFunctions
   }
 
+  def focusesWithPrerequisites(focuses: Iterable[Focus]): List[(Focus, List[Focus])] = {
+    focuses.filter(_.hasPrerequisites).map { f =>
+      (f, f.prerequisiteSets.flatten)
+    }.toList
+  }
+
 //  def schema = new PDXSchema()
 }

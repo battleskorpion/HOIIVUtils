@@ -68,6 +68,11 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     case list if list.isEmpty => None
     case list => Some(list)
   }
+  
+  override def iterator: Iterator[T] = {
+    resolveReferences()
+    super.iterator
+  }
 
   def references(): ListBuffer[T] = {
     resolveReferences()
@@ -220,5 +225,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 
   def numReferences: Int = referenceNames.size
 
-  def resolvedReferences: ListBuffer[T] = pdxList
+  protected def resolvedReferences: ListBuffer[T] = {
+    pdxList
+  }
 }

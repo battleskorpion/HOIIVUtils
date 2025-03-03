@@ -73,7 +73,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 	/**
 	 * Called when the application is initialized.
-	 * <p> 
+	 * <p>
 	 * Sets up the focus tree dropdown and its listeners, sets the focus tree
 	 * canvas's width and height, draws the focus tree, and sets up the
 	 * focus tree canvas's scroll pane.
@@ -199,7 +199,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 
 				focusTree = FocusTree$.MODULE$.get(focusFile).getOrElse(null);
 				LOGGER.debug("Loaded focus tree from file: {}", focusTree);
-			} 
+			}
 		}
 
 		// Final validation
@@ -284,12 +284,12 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 			return null;
 		}
 	}
-	
+
 	public void drawFocusTree() {
 		LOGGER.debug("Drawing focus tree...");
-        List<Focus> focuses; 
-		if (focusTree == null) focuses = null; 
-		else focuses = CollectionConverters.asJava(focusTree.focuses()); 
+        List<Focus> focuses;
+		if (focusTree == null) focuses = null;
+		else focuses = CollectionConverters.asJava(focusTree.focuses());
 		GraphicsContext gc2D = focusTreeCanvas.getGraphicsContext2D();
 
 		// Calculate the maximum/minimum X and Y values
@@ -308,7 +308,7 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		gc2D.fillRect(0, 0, width, height);
 		if (gridLines) drawGridLines(gc2D);
 
-		/* specifically focus drawing stuff */ 
+		/* specifically focus drawing stuff */
 		if (focuses == null || focuses.isEmpty()) return;
 
 		// Load the focus unavailable image
@@ -361,32 +361,42 @@ public class FocusTreeWindow extends HOIIVUtilsWindow {
 		gc2D.setStroke(Color.BLACK);
 		gc2D.setLineWidth(3);
 
-		for (Focus focus : focuses) {
-			if (focus.hasPrerequisites()) {
-				for (var prereqFocusSet: CollectionConverters.asJava(focus.prerequisiteSets())) {
-					prereqFocusSet.foreach(prereqFocus -> {
-						int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + X_OFFSET_FIX;
-						int y1 = focusToCanvasY(focus);
-						int linex1 = x1 + (FOCUS_X_SCALE / 2);
-						int liney1 = y1 + (FOCUS_Y_SCALE / 2);
-						int linex2 = linex1;
-						int liney2 = y1 - 12;
-						int liney4 = (FOCUS_Y_SCALE * prereqFocus.absoluteY()) + (FOCUS_Y_SCALE / 2)
-								+ Y_OFFSET_FIX;
-						int linex4 = (FOCUS_X_SCALE * (prereqFocus.absoluteX() - minX)) + (FOCUS_X_SCALE / 2)
-								+ X_OFFSET_FIX;
-						int linex3 = linex4;
-						int liney3 = liney2;
+		// Convert the input focuses (a Java collection) into a Scala Iterable:
+		var focusesWithPrereqs = focuses.stream().filter(f -> f.hasPrerequisites()).toList();
 
-						// gc2D.setStroke(Color.BLACK);
-						gc2D.strokeLine(linex1, liney1, linex2, liney2);    // large vertical
-						// gc2D.setStroke(Color.RED);
-						gc2D.strokeLine(linex2, liney2, linex3, liney3);    // horizonal
-						// gc2D.setStroke(Color.GREEN);
-						gc2D.strokeLine(linex3, liney3, linex4, liney4);    // small vertical
-                        return null;
-                    });
-				}
+		int numFocuses = focusesWithPrereqs.size();
+		LOGGER.debug("Drawing prerequisites for {} focuses...", numFocuses);
+
+		// Iterate over each tuple: the first element is the main focus,
+		// and the second element is the list of its prerequisite focuses.
+		for (var focus: focusesWithPrereqs) {
+			LOGGER.debug("Drawing {} prerequisite focus connections", focusesWithPrereqs.size());
+			var prereqFocuses = focus.prerequisiteList();  
+
+			// Calculate the main focus coordinates
+			int x1 = FOCUS_X_SCALE * (focus.absoluteX() - minX) + X_OFFSET_FIX;
+			int y1 = focusToCanvasY(focus);
+			int linex1 = x1 + (FOCUS_X_SCALE / 2);
+			int liney1 = y1 + (FOCUS_Y_SCALE / 2);
+			int linex2 = linex1;
+			int liney2 = y1 - 12; // For example, an upward offset
+
+			// For each prerequisite focus, draw the connecting lines.
+			for (int i = 0; i < prereqFocuses.size(); i++) {
+				// Compute coordinates for the prerequisite focus.
+				int linex4 = (FOCUS_X_SCALE * (prereqFocuses.apply(i).absoluteX() - minX)) + (FOCUS_X_SCALE / 2) + X_OFFSET_FIX;
+				int liney4 = (FOCUS_Y_SCALE * prereqFocuses.apply(i).absoluteY()) + (FOCUS_Y_SCALE / 2) + Y_OFFSET_FIX;
+				// We'll use linex2 as the start of the horizontal segment
+				int linex3 = linex4;
+				int liney3 = liney2; // horizontal line at same y as liney2
+
+				// Draw the three segments:
+				// 1. Vertical line from main focus center upward.
+				gc2D.strokeLine(linex1, liney1, linex2, liney2);
+				// 2. Horizontal line to the x coordinate of the prerequisite focus.
+				gc2D.strokeLine(linex2, liney2, linex3, liney3);
+				// 3. Vertical line downward to the prerequisite focus.
+				gc2D.strokeLine(linex3, liney3, linex4, liney4);
 			}
 		}
 	}
