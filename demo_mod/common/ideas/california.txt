@@ -1,0 +1,1750 @@
+ideas = {
+	country = {
+		SCA_political_focus = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = great_depression
+			modifier = {
+				political_power_gain = -0.05
+			}
+		} 
+		SCA_union_support = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = unionsupport
+			modifier = {
+			industrial_capacity_factory = 0.05
+			}
+		}
+		SCA_farming_coops = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = SID_aid_for_farmers
+			modifier = {
+			consumer_goods_factor=-0.18
+			
+			}
+		}
+		SCA_second_longshoreman_strike = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = chi_war_of_resistance3
+			modifier = {
+			stability_factor = -0.10
+			war_support_factor = -0.10
+			army_speed_factor = -0.10
+			army_morale = -0.1
+			}
+		}
+		SCA_californian_migration_nevada = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = MEX_rapid_population
+			modifier = {
+				MONTHLY_POPULATION = 0.75
+                consumer_goods_factor=0.15
+			
+			}
+		}
+		SCA_californian_migration_california = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = MEX_rapid_population
+			modifier = {
+				MONTHLY_POPULATION = -0.40
+			
+			}
+		}
+		SCA_everybody_hates_sinclair = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = SID_idaoan_influence
+			modifier = {
+			stability_factor = -0.20
+			war_support_factor = -0.10
+			
+			}
+		}
+		SCA_everybody_hates_sinclair2 = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = SID_idaoan_influence
+			modifier = {
+			stability_factor = -0.15
+			war_support_factor = -0.05
+			
+			}
+		}
+		SCA_leftist_infighting = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = Communist_worker_fire_big
+			modifier = {
+			communism_drift = 0.04
+			political_power_gain = -0.20
+			}
+		}
+		SCA_patton_figurehead = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = pattonfig
+			modifier = {
+				political_power_gain = 0.05
+				command_power_gain = 31
+			}
+		}
+		SCA_epic_opposition = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = Communist_worker_fire_big
+			modifier = {
+			stability_factor = -0.15
+			political_power_factor = -0.30
+			}
+		}
+		SCA_merriams_movies = {
+			picture = generic_reserve_divisions
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			modifier = {
+			war_support_factor = 0.10
+			army_core_defence_factor = 0.10
+			}
+		}
+		SCA_epic_opposition2 = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = Communist_worker_fire_big
+			modifier = {
+			stability_factor = -0.10
+			political_power_factor = -0.15
+			}
+		}
+		SCA_california_state_police = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = generic_secret_police
+			modifier = {
+			compliance_growth_on_our_occupied_states = -0.1
+			compliance_growth = 0.06
+			foreign_subversive_activites = -0.1
+			}
+		}
+		SCA_farmers_strikes_violent = {
+            picture = GFX_unionists_march
+
+            allowed_civil_war = {
+                always = yes
+            }
+
+            removal_cost = -1
+
+            modifier = {
+			communism_drift = 0.05
+			stability_weekly = -0.1
+			political_power_gain = -0.15
+			}
+		}
+		SCA_banned_unions = {
+			picture = banned_unions
+			allowed = {
+				tag = SCA
+			}
+			available = {
+
+			}
+			cancel = {
+
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				production_factory_max_efficiency_factor = 0.06
+				political_Power_factor = -0.15
+				war_support_factor = 0.1
+			}
+		}
+		SCA_farmers_strikes_less = {
+            picture = GFX_unionists_march
+
+            allowed_civil_war = {
+                always = yes
+            }
+
+            removal_cost = -1
+
+            modifier = {
+			war_support_weekly = 0.01
+			political_power_gain = -0.25
+			progressivism_drift = 0.10
+			}
+		}
+		SCA_great_depression_null = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = great_depression
+			modifier = {
+				production_speed_arms_factory_factor = -0.20
+			}
+		}
+		SCA_cult_of_Merriam = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = merriam_cult
+			
+			modifier = {
+				political_power_gain = 0.05
+			}
+		}
+		SCA_autoindustry = {
+			picture = bonusof_trucks
+			
+			allowed_civil_war = {
+				always = yes
+            }
+			
+			removal_cost = -1
+			
+			equipment_bonus = {
+				motorized_equipment = {
+					build_cost_ic = -0.10 instant = yes
+				}
+			}
+		}
+		SCA_to_live_and_die_in_cali_idea = {
+            picture = california_identity
+			
+			allowed = {
+				tag = SCA
+			}
+			
+			available = {
+
+			}
+			
+			cancel = {
+
+			}
+
+            allowed_civil_war = {
+                always = yes
+            }
+
+            removal_cost = -1
+
+		
+			targeted_modifier = {
+				tag = IJA
+				army_core_defence_factor = 0.15
+				army_core_attack_factor = 0.05
+			}
+		}
+		SCA_EPIC_production = {
+            picture = generic_production_bonus
+			
+			allowed = {
+				tag = SCA
+			}
+			
+			available = {
+
+			}
+			
+			cancel = {
+
+			}
+
+            allowed_civil_war = {
+                always = yes
+            }
+
+            removal_cost = -1
+
+		
+			modifier = {
+			industrial_capacity_factory = 0.1
+			}
+		}
+		SCA_loyal_workers = {
+            picture = advanced_production_centers
+			
+			allowed = {
+				tag = SCA
+			}
+			
+			available = {
+
+			}
+			
+			cancel = {
+
+			}
+
+            allowed_civil_war = {
+                always = yes
+            }
+
+            removal_cost = -1
+
+		
+			modifier = {
+			production_factory_max_efficiency_factor = 0.08
+			}
+		}
+		SCA_public_works_idea = {
+            picture = MSH_efficient_production_methods
+			
+			allowed = {
+				tag = SCA
+			}
+			
+			available = {
+
+			}
+			
+			cancel = {
+
+			}
+
+            allowed_civil_war = {
+                always = yes
+            }
+
+            removal_cost = -1
+
+		
+			modifier = {
+			production_speed_infrastructure_factor = 0.15 
+			}
+		}
+		SCA_japanese_code_crackers = {
+            picture = CAN_french_resistance3
+			
+			allowed = {
+				tag = SCA
+			}
+			
+			available = {
+
+			}
+			
+			cancel = {
+
+			}
+
+            allowed_civil_war = {
+                always = yes
+            }
+
+            removal_cost = -1
+
+		
+			targeted_modifier = {
+				tag = IJA
+				encryption_factor = 0.30
+				army_intel_factor = 0.15
+			}
+            
+		}
+		SCA_dustbowl_crisis = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = Racial_divides
+			modifier = {  	
+                consumer_goods_factor=0.15
+			}
+		}
+		SCA_corporate_nat_guard = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = generic_manpower_bonus
+			modifier = {
+			army_attack_against_major_factor = 0.1
+			dig_in_speed_factor = 0.1
+			
+			}
+		}
+		SCA_cali_militias = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = armyrangers
+			modifier = {
+			army_core_defence_factor = 0.1
+			army_morale = 0.03
+			
+			}
+		}
+		SCA_corporate_nat_guard2 = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = generic_manpower_bonus
+			modifier = {
+			army_attack_against_major_factor = 0.1
+			dig_in_speed_factor = 0.1
+			army_org_factor = 0.10
+			
+			}
+		}
+		SCA_racial_divides = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = Racial_divides
+			modifier = {
+				stability_factor = -0.40    	
+                consumer_goods_factor=0.24
+				drift_defence_factor = -0.75
+			}
+		}
+		SCA_racial_divides2 = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = Racial_divides
+			modifier = {
+				stability_factor = -0.20  	
+				drift_defence_factor = -0.20
+			}
+		}
+		SCA_racial_divides_mod = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = Racial_divides
+			modifier = {
+				stability_factor = -0.20   	
+                consumer_goods_factor=-0.15
+				drift_defence_factor = -0.25
+			}
+		}
+		SCA_racial_divides_heavy = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = Racial_divides
+			modifier = {
+				stability_factor = -0.30  
+				war_support_factor = -0.15 	
+				drift_defence_factor = -0.75
+				political_power_gain = -0.25
+			}
+		}
+		SCA_racial_divides_equal = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = Racial_divides
+			modifier = {
+				stability_factor = 0.10
+				war_support_factor = 0.15
+                consumer_goods_factor=-0.15
+				drift_defence_factor = 0.25
+			}
+		}
+		SCA_californian_identity = {	
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = california_identity
+			modifier = {
+				stability_factor = 0.15
+				war_support_factor = 0.05
+			}
+		}
+		SCA_Fleet_command = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = generic_navy_carrier_bonus
+			modifier = {
+					sortie_efficiency = 0.2
+					naval_torpedo_screen_penetration_factor = 0.2
+					navy_max_range_factor = 0.15
+					naval_coordination = 0.1
+			}
+		}
+		SCA_migration_crisis = {
+			allowed = { always = no }
+			name = SCA_migration_crisis
+			picture = SCA_legislation
+			modifier = {
+			monthly_population = 0.25
+			stability_factor = -0.03
+			}
+		}
+		SCA_Power_Struggles = {
+			allowed = { always = no }
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = generic_disjointed_gov
+			modifier = {
+				political_power_gain = -0.25
+			}
+		}
+		SCA_cavalry_army = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = mulearmycali
+			modifier = {
+                army_speed_factor = -0.25
+                planning_speed = -0.5
+			}
+		}
+        SCA_motorised_army = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = truck
+			modifier = {
+                land_reinforce_rate = 0.01
+                army_speed_factor = -0.10
+                planning_speed = -0.25
+			}
+		}
+        SCA_mechanized_army = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = mech_truck
+			
+			modifier = {
+                land_reinforce_rate = 0.02
+                army_speed_factor = -0.05
+                planning_speed = 0.05
+			}
+		}
+        SCA_combined_arms = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = Gold_Tire
+			modifier = {
+                land_reinforce_rate = 0.03
+                army_speed_factor = 0.10
+                planning_speed = 0.15
+			}
+		}
+		SCA_extend_age_conscription = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = generic_manpower_bonus
+			modifier = {
+				conscription = 0.02
+			}
+		}
+        SCA_unlawful_country = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = generic_disjointed_gov
+			modifier = {
+				consumer_goods_factor=0.09
+				required_garrison_factor = 0.5
+			}
+		}
+        SCA_tight_sphere = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = WDC_stacked_cabinent
+			modifier = {
+                political_power_cost = 0.3
+                drift_defence_factor = 0.3
+                stability_factor = 0.3
+			}
+		}
+        SCA_open_sphere = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = MEX_a_fight_of_our_own
+			modifier = {
+                political_power_cost = -0.1
+                drift_defence_factor = -0.3
+                stability_factor = -0.1             
+			}
+		}
+        SCA_southern_spirit = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = Southern_Spirit
+			modifier = {
+				army_speed_factor = 0.05
+			}
+		}
+        SCA_cult_of_patton = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = SCA_patton_figurehead
+			modifier = {
+				army_attack_factor = 0.05
+				army_morale = 0.10
+				breakthrough_factor = 0.04
+				training_time_factor = -0.10
+			}
+		}
+		SCA_californians_love_war = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = generic_intel_bonus
+			modifier = {
+				offensive_war_stability_factor = 0.20
+			}
+		}
+		SCA_war_economy = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = generic_war_preparation
+			modifier = {
+				production_speed_arms_factory_factor = 0.20
+				repair_speed_arms_factory_factor = 0.20
+			}
+		}
+		SCA_disney_radio = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = radio
+			modifier = {
+				political_power_gain = 0.15
+				local_non_core_manpower = 0.15
+				fascism_drift = 0.03
+			}
+		}
+		SCA_carolwood_pacific_railroad  = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = nationalized_railroad
+			modifier = {
+				production_speed_buildings_factor = 0.08
+			}
+		}
+		SCA_nevada_occupation = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = SCA_nevada_occupy
+			modifier = {
+                political_power_cost = 0.05
+                stability_factor = -0.03
+				resistance_damage_to_garrison = 0.10
+			}
+		}
+		SCA_history_of_segregation = { 
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = SCA_history_of_segregation
+			modifier = {
+				conscription_factor = -0.30
+			}
+		}
+		SCA_war_propaganda = { 
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			picture = dynamic_idaho_industry
+			modifier = {
+				production_factory_max_efficiency_factor = 0.2
+				conversion_cost_civ_to_mil_factor = -0.4
+			}
+		}
+		SCA_delayed_election = {
+			picture = arrests_police
+			
+			allowed_civil_war = {
+				always = yes
+            }
+			
+			removal_cost = -1
+			
+			modifier = {
+			political_power_gain = -0.35
+			war_support_weekly_factor = -0.01
+            }
+		}
+		SCA_end_the_chaos  = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = generic_victors_of_ww1
+			modifier = {
+				stability_weekly = 0.005
+				drift_defence_factor = 0.3
+				research_speed_factor = 0.10
+				resistance_damage_to_garrison = -0.15
+			}
+		}
+		SCA_green_hornet_legion  = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = greenhornetarmy
+			modifier = {
+				special_forces_cap = 0.01
+				conscription = 0.02
+			}
+		}
+        SCA_mosby_rangers = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = sok_rangers
+			modifier = {
+				cavalry_attack_factor = 0.10
+				cavalry_defence_factor = 0.10  
+			}
+		}
+        SCA_support_farmers = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = dynamic_idaho_farming
+			modifier = {
+				monthly_population = 0.05
+				local_resources_factor = 0.05
+			}
+		}
+        SCA_mickey_mouse_club_recuritment = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			picture = california_armymickey
+			modifier = {
+                conscription = 0.01				
+				mobilization_speed = 0.05
+			}
+		}
+		great_depression = {
+			picture = usa_great_depression_3
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				political_power_cost = 0.65
+				consumer_goods_factor=0.42
+				conscription_factor = -0.25
+				join_faction_tension = 0.20
+				local_resources_factor = -0.2
+				production_speed_buildings_factor = -0.1
+			}
+		}
+		great_depression_2 = {
+			picture = usa_great_depression_2
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				political_power_cost = 0.45
+				consumer_goods_factor=0.3
+				conscription_factor = -0.2
+				join_faction_tension = 0.20
+				local_resources_factor = -0.1
+			}
+		}
+		great_depression_3 = {
+			picture = usa_great_depression
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				political_power_cost = 0.15
+				consumer_goods_factor=0.15
+				conscription_factor = -0.1
+				join_faction_tension = 0.20
+				local_resources_factor = -0.05
+			}
+		}
+		USA_war_department = {	
+			picture = usa_war_department
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				offensive_war_stability_factor = 0.20
+				max_command_power = 20
+			}
+		}
+		SCA_assault_division = {	
+			picture = assault_div
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			equipment_bonus = {			#TODO: FIX THIS MY WESTENERS
+				#light_tank_equipment = {
+				#	breakthrough = 0.05 instant = yes
+				#}
+				#medium_tank_equipment = {
+				#	breakthrough = 0.05 instant = yes
+				#}
+				#heavy_tank_equipment = {
+				#	breakthrough = 0.05 instant = yes
+				#}
+			}			
+			modifier = {
+				conscription_factor = 0.01
+			}	
+		}	
+		SCA_overwelming_firepower = {	
+			picture = firepower
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			equipment_bonus = {
+				artillery_equipment = {
+					soft_attack = 0.1 instant = yes
+					build_cost_ic = -0.1 instant = yes
+				}
+				anti_tank_equipment = {
+					ap_attack = 0.1 instant = yes
+					build_cost_ic = -0.1 instant = yes	
+				}	
+				anti_air_equipment = {
+					air_attack = 0.1 instant = yes
+					build_cost_ic = -0.1 instant = yes
+				}
+			}
+		}
+		SCA_legacy_war = {	
+			picture = legacy_war
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			equipment_bonus = {
+				infantry_equipment = {
+					build_cost_ic = -0.2 instant = yes
+					reliability = -0.20
+				}	
+			}
+			modifier = {
+				conscription_factor = 0.01
+			}
+		}
+		USA_gold_standard = {
+			picture = generic_goods_red_bonus
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				consumer_goods_factor=-0.12
+				stability_factor = 0.1
+			}
+		}
+#newdisney
+		SCA_Cartoon_propaganda = {
+			picture = SID_anti_californian_propaganda
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				fascism_drift = 0.05
+			}
+		}
+		SCA_Youth_and_woman_labour_corps = {
+			picture = generic_production_bonus
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				industrial_capacity_factory = 0.05
+			}
+		}
+		SCA_GMO = {
+			picture = dynamic_idaho_farming
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				consumer_goods_factor=-0.06
+				monthly_population = 0.05				
+			}
+		}
+		SCA_Disneyland_park_profits = {
+			picture = SRI_stabilized_profit_system
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				consumer_goods_factor=-0.09
+			}
+		}
+		SCA_Tiki_room = {
+			picture = tiki_room
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				consumer_goods_factor=-0.06
+			}
+		}
+		SCA_Early_robotics = {
+			picture = generic_research_bonus
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				line_change_production_efficiency_factor = -0.1
+				production_factory_max_efficiency_factor = 0.02
+			}
+		}
+		SCA_Secret_research = {
+			picture = disney_research
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				research_speed_factor = 0.05
+			}
+		}
+		SCA_Disney_Super_Soldiers = {
+			picture = super_soldiers
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				army_org_factor = 0.05
+				breakthrough_factor = 0.02
+				army_infantry_attack_factor = 0.05
+			}
+		}
+		SCA_Trooper_training_park = {
+			picture = boyscouts
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				training_time_factor = -0.2
+				experience_gain_army_unit_factor = 0.2
+			}
+		}
+		SCA_Constructing_Disney_World = {
+			picture = machine_crane
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				consumer_goods_factor=0.3
+			}
+		}
+		SCA_Frozen_walt_double = {
+			picture = PON_highly_stable_government
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				stability_factor = 0.10    				
+			}
+		}
+		SCA_destroyer_sale = {
+			picture = destroyers
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				consumer_goods_factor=-0.15    				
+			}
+		}
+
+		SCA_full_executive_powers = {
+			picture = generic_morale_bonus
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				offensive_war_stability_factor = 0.2
+				political_power_gain = 0.30
+				party_popularity_stability_factor = 0.2
+				
+			}
+		}
+
+		SCA_rally_the_north_idea = {
+			picture = SID_an_empire_for_all
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				weekly_manpower = 500
+			}
+		}
+
+		SCA_nationalize_sierra_pacifica_idea = {
+			picture = SID_worlds_warehouse
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				consumer_goods_factor=-0.06
+				production_factory_efficiency_gain_factor = 0.05
+			}
+		}
+
+		SCA_civilian_wartime_measurements_idea = {
+			picture = SID_mining_based_economy
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				production_speed_buildings_factor = 0.07
+			}
+		}
+
+
+		SCA_civilian_backed_war_effort = {
+			picture = MEX_booming_economy
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				mobilization_speed = 0.5
+				conscription = 0.01
+				industrial_capacity_dockyard = 0.05
+				industrial_capacity_factory = 0.05
+			}
+		}
+
+		SCA_officer_School_idea = {
+			picture = army_high_command_idea
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				max_command_power = 20
+			}
+		}
+
+		SCA_California_Superiority_ideas = {
+			picture = california_identity
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				compliance_gain = 0.07
+			}
+		}
+
+		SCA_Selling_Our_Research_idea = {
+			picture = army_research
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				research_sharing_per_country_bonus = 0.3
+			}
+		}
+
+		SCA_San_Diego_Automotive_Plants_idea = {
+			picture = SMI_automotive_capital
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			equipment_bonus = {
+				motorized_equipment = {
+					build_cost_ic = -0.1 instant = yes
+				}
+			}
+		}
+		SCA_worker_brigades_idea = {
+			picture = forced_laborers
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				production_speed_buildings_factor = 0.15
+			}
+		}
+		SCA_a_20thcentury_ceasar_idea = {
+			picture = generic_reserve_divisions
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				weekly_manpower = 1000 
+				stability_weekly = 0.002
+			}
+		}
+		SCA_prepare_offensive_plans_idea = {
+			picture = Army_of_infiltration
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				offence = 0.10
+			}
+		}
+		SCA_the_new_national_guard_idea = {
+			picture = capitalists_hat
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				conscription = 0.03
+			}
+		}
+		SCA_get_rid_of_trustbusting_idea = {
+			picture = army_offence
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				production_speed_buildings_factor = 0.15 
+			}
+		}
+		SCA_california_state_militia_idea = {
+			picture = militas3
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				conscription = 0.04
+			}
+		}
+		SCA_cut_nat_guard_budget_idea = {
+			picture = CAN_traditional_values
+			allowed = {
+			always = no
+				}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				training_time_factor = -0.2
+				experience_gain_army_factor = 0.2
+				army_org_factor = -0.1
+			}
+		}
+
+		SCA_Militarization_Of_The_Unions_idea = {
+			picture = Militarization_Of_The_Unions
+			allowed = {
+			always = no
+				}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				land_reinforce_rate = 0.02
+				conscription = 0.02
+				weekly_manpower = 200 
+				industrial_capacity_factory = 0.05
+			}
+		}
+		SCA_Union_Officers_In_Army_idea = {
+			picture = union_officers
+			allowed = {
+			always = no
+				}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				command_power_gain = 0.15
+				max_planning_factor = 0.15
+			}
+		}
+		SCA_Female_Militas_idea = {
+			picture = femalesoldiers
+			allowed = {
+			always = no
+				}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			modifier = {
+				conscription = 0.02
+				mobilization_speed = 0.06
+				
+			}
+		}
+	
+		
+	}#end of coutnry ideas 
+	tank_manufacturer = { 
+		designer = yes
+		SCA_cali_tank_manu = {
+			picture = SCA_tank_destroyer_board
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				armor = 0.15
+			}
+			traits = { fast_tank_manufacturer }
+			modifier = {
+			}
+		}
+		SCA_tank_destroyer_board = {
+			picture = SCA_tank_destroyer_board
+			allowed = {
+				original_tag = SCA
+			}
+			#available = {
+			#	has_completed_focus = SCA_Italian_SPG_investments	#FOCUS DOESNT EXIST!!!!!!
+			#}
+			research_bonus = {
+				armor = 0.15
+			}
+			traits = { }
+			equipment_bonus = {		#TODO FIX!!!!!!!!!!!!!!!!1
+				#light_tank_destroyer_equipment = {
+				#	build_cost_ic = -0.1
+				#	ap_attack = 0.1
+				#	hard_attack = 0.25
+				#}
+				#medium_tank_destroyer_equipment = {
+				#	build_cost_ic = -0.1
+				#	ap_attack = 0.1
+				#	hard_attack = 0.25
+				#}
+				#heavy_tank_destroyer_equipment = {
+				#	build_cost_ic = -0.1
+				#	ap_attack = 0.1
+				#	hard_attack = 0.25
+				#}
+			}
+			modifier = {
+
+			}
+		}
+		SCA_army_ordnance_department = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				armor = 0.15
+			}
+			traits = { heavy_tank_manufacturer }
+			modifier = {
+			}
+		}	
+	}
+	naval_manufacturer = { 
+		designer = yes
+		norfolk_naval_yard = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				naval_equipment = 0.15
+			}
+			traits = { coastal_defence_naval_manufacturer }
+			modifier = {
+			}
+		}
+		electric_boat_company = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				naval_equipment = 0.15
+			}
+			traits = { raiding_fleet_naval_manufacturer }
+			modifier = {
+			}
+		}
+		brooklyn_naval_yard = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				naval_equipment = 0.15
+			}
+			traits = { atlantic_fleet_naval_manufacturer }
+			modifier = {
+			}
+		}
+		newport_news_shipbuilding = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				naval_equipment = 0.15
+			}
+			traits = { pacific_fleet_naval_manufacturer }
+			modifier = {
+			}
+		}
+	}
+	aircraft_manufacturer = { 
+		designer = yes
+		north_american_aviation = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				air_equipment = 0.15
+			}
+			traits = { light_aircraft_manufacturer }
+			modifier = {
+			}
+		}
+		#bell = {
+		#	allowed = {
+		#		original_tag = SCA
+		#	}
+		#	research_bonus = {
+		#		air_equipment = 0.15
+		#	}
+		#	traits = { light_aircraft_manufacturer }	#TODO, make different from north american
+		#	modifier = {
+		#	}
+		#}	
+		lockheed = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				air_equipment = 0.15
+			}
+			traits = { medium_aircraft_manufacturer }
+			modifier = {
+			}
+		}
+		douglas_aircraft_company = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				air_equipment = 0.15
+			}
+			traits = { CAS_manufacturer }
+			modifier = {
+			}
+		}
+		SCA_boeing = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				air_equipment = 0.15
+			}
+			traits = { heavy_aircraft_manufacturer }
+			modifier = {
+			}
+		}
+		#consolidated_aircraft = {
+		#	allowed = {
+		#		original_tag = SCA
+		#	}
+		#	research_bonus = {
+		#		air_equipment = 0.15
+		#	}
+		#	traits = { heavy_aircraft_manufacturer } #TODO remove?
+		#	modifier = {
+		#	}
+		#}
+		grumman = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				air_equipment = 0.15
+			}
+			traits = { naval_aircraft_manufacturer }
+			modifier = {
+			}
+		}		
+	}
+	materiel_manufacturer = {
+		designer = yes
+		springfield_armory = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				infantry_weapons = 0.15
+			}
+			traits = { infantry_equipment_manufacturer }
+			modifier = {
+			}
+		}
+		SCA_motor_company = {
+			picture = GFX_
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				motorized_equipment = 0.15
+			}
+			traits = { motorized_equipment_manufacturer }
+			modifier = {
+			}
+		}
+		SCA_island_arsenal = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				artillery = 0.15
+			}
+			traits = { artillery_manufacturer }
+			modifier = {
+			}
+		}
+	}
+	industrial_concern = {
+		standard_oil_california = {
+			allowed = {
+				original_tag = SCA
+			}
+			available = {
+				or = {
+					has_completed_focus = SCA_bail_out_california_standard_oil
+					has_completed_focus = SCA_work_with_standard_oil
+				}
+			}
+			research_bonus = {
+				industry = 0.05
+				synth_resources = 0.15
+			}
+			traits = { refinery_concern }
+			modifier = {
+			}
+		}
+		general_electric = {
+			allowed = {
+				original_tag = SCA
+			}
+			research_bonus = {
+				electronics = 0.15
+			}
+			traits = { electronics_concern }
+			modifier = {
+			}
+		}
+		SCA_general_motors = {
+			picture = USA_general_motors
+			allowed = {
+				original_tag = SCA
+			}
+			available = {
+			}
+			research_bonus = {
+				industry = 0.15
+			}
+			traits = { industrial_concern }
+			modifier = {
+				industrial_capacity_factory = 0.05
+			}
+		}
+	}
+}#actaul end
