@@ -5,7 +5,7 @@ import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.localization.Localization;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
 import com.hoi4utils.clausewitz.localization.Property;
-import com.hoi4utils.ui.HOIIVUtilsWindow;
+import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,7 +21,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManageFocusTreesController extends HOIIVUtilsWindow implements TableViewWindow {
+public class ManageFocusTreesController extends HOIIVUtilsAbstractController implements TableViewWindow {
 
 	private static final Property NAME_PROPERTY = Property.NAME;
 	private static final Property DESC_PROPERTY = Property.DESCRIPTION;

@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.province_colors;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.ui.HOIIVUtilsWindow;
+import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ProvinceColorsController extends HOIIVUtilsWindow {
+public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 	public static final Logger LOGGER = LogManager.getLogger(ProvinceColorsController.class);
 
 	// Color constraints from old code

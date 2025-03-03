@@ -3,7 +3,7 @@ package com.hoi4utils.clausewitz.localization
 import com.hoi4utils.FileUtils
 import com.hoi4utils.clausewitz.exceptions.LocalizationExistsException
 import com.hoi4utils.clausewitz.{HOIIVUtils, HOIIVFiles}
-import com.hoi4utils.ui.HOIIVUtilsWindow
+import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.*

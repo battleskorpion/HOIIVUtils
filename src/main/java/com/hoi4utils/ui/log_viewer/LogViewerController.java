@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.log_viewer;
 
-import com.hoi4utils.ui.HOIIVUtilsWindow;
+import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -8,7 +8,7 @@ import javafx.scene.control.TextArea;
 import java.io.IOException;
 import java.nio.file.*;
 
-public class LogViewerController extends HOIIVUtilsWindow {
+public class LogViewerController extends HOIIVUtilsAbstractController {
     private static final String LOG_FILE_PATH = "latest.log";
 
     @FXML

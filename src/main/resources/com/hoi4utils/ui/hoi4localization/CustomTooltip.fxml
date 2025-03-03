@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane maxWidth="-Infinity" prefHeight="530.0" prefWidth="639.0" xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.hoi4localization.CustomTooltipController">
+   <children>
+      <TableView fx:id="customTooltipTableView" layoutY="117.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="130.0">
+        <columns>
+          <TableColumn fx:id="TooltipIDTableColumn" prefWidth="123.0" text="ID" />
+          <TableColumn fx:id="tooltipTextTableColumn" prefWidth="520.0" text="Text" />
+        </columns>
+      </TableView>
+      <Label fx:id="idVersion" layoutX="543.0" layoutY="6.0" text="Version Number" AnchorPane.topAnchor="6.0" />
+      <MenuBar layoutY="10.0" prefHeight="25.0" prefWidth="518.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <Label layoutX="14.0" layoutY="59.0" prefHeight="17.0" prefWidth="109.0" text="Localization file:" />
+      <Label layoutX="14.0" layoutY="34.0" prefHeight="17.0" prefWidth="109.0" text="Tooltip file:" />
+      <Button fx:id="tooltipFileBrowseButton" layoutX="328.0" layoutY="26.0" mnemonicParsing="false" onAction="#handleTooltipFileBrowseAction" prefHeight="25.0" prefWidth="77.0" text="Browse" />
+      <Button fx:id="tooltipLocalizationFileBrowseButton" layoutX="328.0" layoutY="51.0" mnemonicParsing="false" onAction="#handleTooltipLocalizationFileBrowseAction" prefHeight="25.0" prefWidth="77.0" text="Browse" />
+      <RadioButton layoutX="412.0" layoutY="30.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="224.0" text="Check all applicable files" />
+      <RadioButton layoutX="412.0" layoutY="55.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="224.0" text="Check all localization files" />
+      <ComboBox fx:id="tooltipFileComboBox" layoutX="123.0" layoutY="26.0" prefHeight="25.0" prefWidth="205.0" />
+      <ComboBox fx:id="tooltipLocalizationFileComboBox" layoutX="123.0" layoutY="51.0" prefHeight="25.0" prefWidth="205.0" />
+   </children>
+</AnchorPane>

@@ -3,21 +3,21 @@ package com.hoi4utils.ui.menu;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.HOIIVFiles;
-import com.hoi4utils.ui.FXWindow;
-import com.hoi4utils.ui.HOIIVUtilsWindow;
-import com.hoi4utils.ui.buildings.BuildingsByCountryWindow;
-import com.hoi4utils.ui.clausewitz_gfx.InterfaceFileListWindow;
-import com.hoi4utils.ui.focus_view.FocusTreeWindow;
+import com.hoi4utils.ui.JavaFXUIManager;
+import com.hoi4utils.ui.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.buildings.BuildingsByCountryController;
+import com.hoi4utils.ui.clausewitz_gfx.InterfaceFileListController;
+import com.hoi4utils.ui.focus_view.FocusTreeController;
 import com.hoi4utils.ui.hoi4localization.ManageFocusTreesController;
-import com.hoi4utils.ui.hoi4localization.CustomTooltipWindow;
-import com.hoi4utils.ui.hoi4localization.FocusLocalizationWindow;
-import com.hoi4utils.ui.hoi4localization.IdeaLocalizationWindow;
+import com.hoi4utils.ui.hoi4localization.CustomTooltipController;
+import com.hoi4utils.ui.hoi4localization.FocusLocalizationController;
+import com.hoi4utils.ui.hoi4localization.IdeaLocalizationController;
 import com.hoi4utils.ui.log_viewer.LogViewerController;
-import com.hoi4utils.ui.map.MapGenerationWindow;
-import com.hoi4utils.ui.parser.ParserViewerWindow;
+import com.hoi4utils.ui.map.MapGenerationController;
+import com.hoi4utils.ui.parser.ParserViewerController;
 import com.hoi4utils.ui.province_colors.ProvinceColorsController;
 import com.hoi4utils.ui.settings.SettingsController;
-import com.hoi4utils.ui.units.CompareUnitsWindow;
+import com.hoi4utils.ui.units.CompareUnitsController;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,7 +33,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 
-public class MenuController extends Application implements FXWindow {
+public class MenuController extends Application implements JavaFXUIManager {
 	public static final Logger LOGGER = LogManager.getLogger(MenuController.class);
 	private String fxmlResource = "Menu.fxml";
 	private String title = "HOIIVUtils Menu " + HOIIVUtils.HOIIVUTILS_VERSION;
@@ -238,11 +238,11 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openLocalizeFocusTree() {
-		openUtilsWindow(new FocusLocalizationWindow());
+		openUtilsWindow(new FocusLocalizationController());
 	}
 
 	public void openLocalizeIdeaFile() {
-		openUtilsWindow(new IdeaLocalizationWindow());
+		openUtilsWindow(new IdeaLocalizationController());
 	}
 
 	public void openAllFocusesWindow() {
@@ -250,19 +250,19 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openCustomTooltip() {
-		openUtilsWindow(new CustomTooltipWindow());
+		openUtilsWindow(new CustomTooltipController());
 	}
 
 	public void openBuildingsByCountry() {
-		openUtilsWindow(new BuildingsByCountryWindow());
+		openUtilsWindow(new BuildingsByCountryController());
 	}
 
 	public void openInterfaceFileList() {
-		openUtilsWindow(new InterfaceFileListWindow());
+		openUtilsWindow(new InterfaceFileListController());
 	}
 
 	public void openFocusTreeViewer() {
-		openUtilsWindow(new FocusTreeWindow());
+		openUtilsWindow(new FocusTreeController());
 	}
 
 	public void openUnitComparisonView() {
@@ -271,7 +271,7 @@ public class MenuController extends Application implements FXWindow {
 			JOptionPane.showMessageDialog(null, "Unit folders not found. Please check your HOI4 installation or the chosen mod directory.", "Error", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		openUtilsWindow(new CompareUnitsWindow());
+		openUtilsWindow(new CompareUnitsController());
 	}
 
 	public void openProvinceColors() {
@@ -279,14 +279,14 @@ public class MenuController extends Application implements FXWindow {
 	}
 
 	public void openMapGeneration() {
-		openUtilsWindow(new MapGenerationWindow());
+		openUtilsWindow(new MapGenerationController());
 	}
 
 	public void openParserView() {
-		openUtilsWindow(new ParserViewerWindow());
+		openUtilsWindow(new ParserViewerController());
 	}
 
-	private void openUtilsWindow(HOIIVUtilsWindow utilsWindow) {
+	private void openUtilsWindow(HOIIVUtilsAbstractController utilsWindow) {
 		utilsWindow.open();
 	}
 

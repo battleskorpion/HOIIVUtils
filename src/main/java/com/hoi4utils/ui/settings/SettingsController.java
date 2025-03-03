@@ -3,7 +3,7 @@ package com.hoi4utils.ui.settings;
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.ui.FXWindow;
+import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.menu.MenuController;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -30,7 +30,7 @@ import java.util.Optional;
  *
  * @author thiccchris
  */
-public class SettingsController extends Application implements FXWindow {
+public class SettingsController extends Application implements JavaFXUIManager {
 	public static final Logger LOGGER = LogManager.getLogger(SettingsController.class);
 	private String fxmlResource = "Settings.fxml";
 	private String title = "HOIIVUtils Settings " + HOIIVUtils.HOIIVUTILS_VERSION;
@@ -218,7 +218,7 @@ public class SettingsController extends Application implements FXWindow {
 	
 	// Generic method to handle file browser actions
 	private void handleFileBrowseAction(TextField textField, Node browseButton,	File initialDirectory, String settingKey) {
-		File selectedFile = FXWindow.openChooser(browseButton, initialDirectory, true);
+		File selectedFile = JavaFXUIManager.openChooser(browseButton, initialDirectory, true);
 		
 		if (selectedFile == null) return;
 		
