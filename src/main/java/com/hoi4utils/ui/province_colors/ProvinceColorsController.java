@@ -225,7 +225,7 @@ public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 		// Run BMP generation on a background thread
 		new Thread(() -> {
 			try {
-				String outputPath = HOIIVUtils.HOIIVUTILS_DIR + File.separator + "output.bmp";
+				String outputPath = HOIIVUtils.HOIIVUTILS_DIR + File.separator + "Generated Province Colors.bmp";
 				generateBMP(numColors, outputPath);
 
 				// Update UI on completion

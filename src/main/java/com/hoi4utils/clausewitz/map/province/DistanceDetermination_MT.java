@@ -226,7 +226,6 @@ public class DistanceDetermination_MT<P extends MapPoint> extends AbstractMapGen
             final int widthPerSeed = heightmap.width()  / config.numSeedsX();
             final int heightPerSeed = heightmap.height() / config.numSeedsY();
             final int offsetPotential = 4;  // todo this is magic :( needs to adapt to size of provinces?
-            System.out.println("run: " + startY + ", " + endY);
 
             try {
                 for (int y = startY; y < endY; y++) {

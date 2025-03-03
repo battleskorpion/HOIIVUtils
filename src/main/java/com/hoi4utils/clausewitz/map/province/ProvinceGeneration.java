@@ -11,9 +11,11 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ProvinceGeneration extends AbstractMapGeneration {
 	public BorderMap stateBorderMap; 		// heightmap of preferred borders
+	public String defaultStateBoarderMap = "map/state_borders_none.bmp";
 
 	private ProvinceMap provinceMap;
 //	private ProvinceMapPointsList points;
@@ -23,32 +25,38 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	private Heightmap heightmap;
 	private SeedGeneration<MapPoint> seedGeneration;
 	/** threadLimit = 0: max (use all processors/threads). */
-	ProvinceGenConfig config;
+	private ProvinceGenConfig config;
 
 	private ProvinceGeneration() {
 		this.config = new ProvinceGenConfig(95, 4608, 2816, 0);
 	}
 
-	public ProvinceGeneration(ProvinceGenConfig properties) {
-		this.config = properties;
+	public ProvinceGeneration(ProvinceGenConfig config) {
+		this.config = config;
 	}
 
-	public static void main(String[] args) {
+	/**
+	 * Main method for province generation.
+	 * TODO: what is this for?
+	 * @param args
+	 */
+	public static void main(String[] args) {		
 		ProvinceGeneration provinceGeneration = new ProvinceGeneration();
-		provinceGeneration.generate("src\\main\\resources\\map\\heightmap.bmp");
+		
+		provinceGeneration.generate(Heightmap.DEFAULT);
 
 		provinceGeneration.writeProvinceMap();
 	}
 
-	public void writeProvinceMap() {
-		provinceMap.write();
-	}
-
+	/**
+	 * Main method for province generation.
+	 */
 	private void generate() {
 		/* create new image (map) */
 		provinceMap = new ProvinceMap(heightmap);
-		// todo still temp!!!
-		stateBorderMap = loadStateBorderMap("src\\main\\resources\\map\\state_borders_none.bmp"); // ! todo temp!!
+		
+		stateBorderMap = loadStateBorderMap(defaultStateBoarderMap);
+		
 		/* initialize mapping of seeds to states (regions for purposes of province generation) */
 		// TODO: optimization may be possible
 		stateBorderMapping = borderMappingFactory();
@@ -72,6 +80,10 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		generate();
 	}
 
+	public void writeProvinceMap() {
+		provinceMap.write();
+	}
+
 	/**
 	 * values - load heightmap, states map
 	 */
@@ -85,12 +97,16 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	}
 
 	private BorderMap loadStateBorderMap(String stateBorderMapName) {
-		try {
-			return stateBorderMap = new BorderMap(ImageIO.read(new File(stateBorderMapName)));
+		try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(stateBorderMapName)) {
+			if (inputStream == null) {
+				throw new RuntimeException("Resource not found: " + stateBorderMapName);
+			}
+			return stateBorderMap = new BorderMap(ImageIO.read(inputStream));
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("Failed to load state border map", e);
 		}
 	}
+
 
 	private BorderMapping<MapPoint> borderMappingFactory() {
 		return switch (config.determinationType()) {

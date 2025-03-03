@@ -1,165 +1,84 @@
 # CreatePortableApp.ps1
-
-
-# Copies this script from other this and freinkensteining it because I'm lazy
-
-
-# WARNING DO NOT RUN THIS UNLESS YOUR ME!
-# This is a homemade script to copy specific files, config and custom, from team fortress 2 game folder to the git(hub) repo.
-# This is just for me as an easy auto of a particulary not obnoxious but not quick task that could be done manual in less time it took to write this script.
-# FlAW 1: This will only copy files by the name, if I rename, delete, or create files this will become OUTDATED IMIDIATLY!
-# FLAW 2: Only works on windows, specificly the windows main drive "C:\". THIS WON'T WORK IF YOU TF2 IS INSTALLED ON A DIFFERENT DRIVE!
-# FLAW 3: Will only copy to expected folder ".\Documents\GitHub\ChrissCustomTF2Config"
+# Creates a portable version of HOIIVUtils with demo mod and maps included
+# Copies necessary files from the project to a desktop folder and optionally creates a zip archive for distribution
 
 # Stops the script if it runs into any issue
 $ErrorActionPreference = "Stop"
 
-#Make sure the folder exists
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\target"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\target"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\demo_mod"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\demo_mod"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\demo_mod\common"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\demo_mod\common"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\demo_mod\common\ideas"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\demo_mod\common\ideas"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\demo_mod\common\national_focus"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\demo_mod\common\national_focus"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\demo_mod\common\units"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\demo_mod\common\units"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\demo_mod\history"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\demo_mod\history"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\demo_mod\history\states"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\demo_mod\history\states"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\demo_mod\localisation"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\demo_mod\localisation"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\demo_mod\localisation\english"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\demo_mod\localisation\english"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\demo_mod\map"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\demo_mod\map"
-}
-if (-not (Test-Path "$HOME\Desktop\HOIIVUtils\demo_mod\map\strategicregions"))
-{
-    mkdir "$HOME\Desktop\HOIIVUtils\demo_mod\map\strategicregions"
+# Configuration variables
+$createZipFile = $false  # Set to $true if you want to create a zip archive
+
+# Define paths
+$sourceDir = "$HOME\Documents\Github\HOIIVUtils"
+$targetDir = "$HOME\Desktop\HOIIVUtils"
+$demoModSource = "$sourceDir\demo_mod"
+$demoModTarget = "$targetDir\demo_mod"
+$mapsSource = "$sourceDir\maps"
+$mapsTarget = "$targetDir\maps"
+$zipPath = "$HOME\Desktop\HOIIVUtils-Portable.zip"
+
+# Create the main directory if it doesn't exist
+if (-not (Test-Path $targetDir)) {
+    New-Item -Path $targetDir -ItemType Directory -Force
+    Write-Output "Created target directory: $targetDir"
 }
 
-Copy-Item -Path "$HOME\Documents\Github\HOIIVUtils\target\HOIIVUtils.jar" -Destination "$HOME\Desktop\HOIIVUtils\target\HOIIVUtils.jar" -Force
-Copy-Item -Path "$HOME\Documents\Github\HOIIVUtils\HOIIVUtils.bat" -Destination "$HOME\Desktop\HOIIVUtils\HOIIVUtils.bat" -Force
-Copy-Item -Path "$HOME\Documents\Github\HOIIVUtils\HOIIVUtils.sh" -Destination "$HOME\Desktop\HOIIVUtils\HOIIVUtils.sh" -Force
+# Create the target directory if it doesn't exist
+if (-not (Test-Path "$targetDir\target")) {
+    New-Item -Path "$targetDir\target" -ItemType Directory -Force
+    Write-Output "Created target directory: $targetDir\target"
+}
 
+# Copy the main JAR file and scripts
+Copy-Item -Path "$sourceDir\target\HOIIVUtils.jar" -Destination "$targetDir\target\HOIIVUtils.jar" -Force
+Write-Output "Copied HOIIVUtils.jar"
 
+Copy-Item -Path "$sourceDir\HOIIVUtils.bat" -Destination "$targetDir\HOIIVUtils.bat" -Force
+Write-Output "Copied HOIIVUtils.bat"
 
-# # Username (yes I know there is a way to get this with env but I'm lazy)
-# $CopyGameToGithubUser = $HOME
-#
-# # Set true to copy cfg files from tf2 to github
-# $cfgtf2togithub = $true
-#
-# # Set true to copy custom files from tf2 to github
-# $customtf2togithub = $true
-#
-#
-#
-# # Set true to copy cfg files from github to tf2
-# $cfggithubtocfg = $false
-#
-# # Set true to copy custom files from github to tf2
-# $customgithubtocfg = $false
-#
-# if ( $cfgtf2togithub -eq $cfggithubtocfg )
-# {
-# 	Write-Output "STOPPED! Don't copy loop cfg"
-# 	exit
-# }
-# if ( $customtf2togithub -eq $customgithubtocfg )
-# {
-# 	Write-Output "STOPPED! Don't copy loop custom"
-# 	exit
-# }
-#
-#
-# if ( $cfgtf2togithub )
-# {
-# 	Write-Output "Copying Files cfg tf2 to github"
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\autoexec.cfg"						 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\autoexec.cfg"						-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomAdvanceSettings.cfg"		 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomAdvanceSettings.cfg"			-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomCloseCaptionSettings.cfg"	 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomCloseCaptionSettings.cfg"		-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomGeneralBindsSettings.cfg"	 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomGeneralBindsSettings.cfg"		-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomMVMSettings.cfg"			 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomMVMSettings.cfg"				-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomNetworkingSettings.cfg"		 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomNetworkingSettings.cfg"		-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomNoTutorialSettings.cfg"		 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomNoTutorialSettings.cfg"		-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomNullMovementSettings.cfg"	 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomNullMovementSettings.cfg"		-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomShounicSpraysSettings.cfg"	 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomShounicSpraysSettings.cfg"	-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\scout.cfg"						 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\scout.cfg"							-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\soldier.cfg"						 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\soldier.cfg"						-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\pyro.cfg"							 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\pyro.cfg"							-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\demoman.cfg"						 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\demoman.cfg"						-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\heavyweapons.cfg"					 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\heavyweapons.cfg"					-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\engineer.cfg"						 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\engineer.cfg"						-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\medic.cfg"						 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\medic.cfg"							-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\sniper.cfg"						 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\sniper.cfg"							-Force
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\spy.cfg"							 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\spy.cfg"							-Force
-#     Write-Output "Copied Files cfg tf2 to github"
-# }
-# if ( $customtf2togithub )
-# {
-# 	Write-Output "Copying Files custom tf2 to github"
-# 	Copy-Item -Path "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\custom\*"				 -Destination "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\custom\"	 -Recurse -Force
-#     Write-Output "Copied Files custom tf2 to github"
-# }
-# if ( $customgithubtocfg )
-# {
-# 	Write-Output "Copying Files custom github to tf2"
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\custom\*"		 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\custom\"			 -Recurse -Force
-#     Write-Output "Copied Files custom github to tf2"
-# }
-# if ( $cfggithubtocfg )
-# {
-# 	Write-Output "Copying Files cfg github to tf2"
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\autoexec.cfg"						 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\autoexec.cfg"						-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomAdvanceSettings.cfg"		 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomAdvanceSettings.cfg"			-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomCloseCaptionSettings.cfg"	 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomCloseCaptionSettings.cfg"		-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomGeneralBindsSettings.cfg"	 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomGeneralBindsSettings.cfg"		-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomMVMSettings.cfg"			 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomMVMSettings.cfg"				-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomNetworkingSettings.cfg"		 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomNetworkingSettings.cfg"		-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomNoTutorialSettings.cfg"		 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomNoTutorialSettings.cfg"		-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomNullMovementSettings.cfg"	 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomNullMovementSettings.cfg"		-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\CustomShounicSpraysSettings.cfg"	 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\CustomShounicSpraysSettings.cfg"	-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\scout.cfg"						 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\scout.cfg"							-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\soldier.cfg"						 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\soldier.cfg"						-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\pyro.cfg"							 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\pyro.cfg"							-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\demoman.cfg"						 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\demoman.cfg"						-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\heavyweapons.cfg"					 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\heavyweapons.cfg"					-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\engineer.cfg"						 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\engineer.cfg"						-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\medic.cfg"						 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\medic.cfg"							-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\sniper.cfg"						 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\sniper.cfg"							-Force
-# 	Copy-Item -Path "$CopyGameToGithubUser\Documents\GitHub\ChrissCustomTF2Config\tf\cfg\spy.cfg"							 -Destination "C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\cfg\spy.cfg"							-Force
-#     Write-Output "Copied Files cfg github to tf2"
-# }
+Copy-Item -Path "$sourceDir\HOIIVUtils.sh" -Destination "$targetDir\HOIIVUtils.sh" -Force
+Write-Output "Copied HOIIVUtils.sh"
 
-Write-Output "DONE!"
+# Handle the demo_mod directory recursively
+if (Test-Path $demoModSource) {
+    # Remove existing demo_mod directory if it exists to avoid stale files
+    if (Test-Path $demoModTarget) {
+        Remove-Item -Path $demoModTarget -Recurse -Force
+        Write-Output "Removed existing demo_mod directory"
+    }
+
+    # Copy the entire demo_mod directory recursively
+    Copy-Item -Path $demoModSource -Destination $targetDir -Recurse -Force
+    Write-Output "Copied demo_mod directory recursively"
+} else {
+    Write-Output "Warning: Source demo_mod directory not found at $demoModSource"
+}
+
+# Handle the maps directory recursively
+if (Test-Path $mapsSource) {
+    # Remove existing maps directory if it exists to avoid stale files
+    if (Test-Path $mapsTarget) {
+        Remove-Item -Path $mapsTarget -Recurse -Force
+        Write-Output "Removed existing maps directory"
+    }
+
+    # Copy the entire maps directory recursively
+    Copy-Item -Path $mapsSource -Destination $targetDir -Recurse -Force
+    Write-Output "Copied maps directory recursively"
+} else {
+    Write-Output "Warning: Source maps directory not found at $mapsSource"
+}
+
+# Create a ZIP file for distribution if enabled
+if ($createZipFile) {
+    if (Test-Path $zipPath) {
+        Remove-Item -Path $zipPath -Force
+        Write-Output "Removed existing ZIP file"
+    }
+
+    # Create the zip file using Compress-Archive (PowerShell 5.0+)
+    Compress-Archive -Path $targetDir\* -DestinationPath $zipPath
+    Write-Output "Created portable ZIP file at: $zipPath"
+}
+
+Write-Output "DONE! Portable app created successfully."

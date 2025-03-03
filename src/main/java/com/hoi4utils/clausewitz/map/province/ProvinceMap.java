@@ -130,7 +130,7 @@ public class ProvinceMap extends BufferedImage {
 
     public void write() {
 	    try {
-		    ImageIO.write(this, "bmp", new File("output.bmp"));
+		    ImageIO.write(this, "bmp", new File("Generated Province Map.bmp"));
 	    } catch (IOException e) {
 		    throw new RuntimeException(e);
 	    }
