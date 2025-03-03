@@ -247,26 +247,26 @@ public class HOIIVUtilsInitializer {
 		}
 
 		LocalizationManager.getOrCreate(EnglishLocalizationManager::new).reload();
-		
-		if (!Interface.read()) {
-			LOGGER.error("Failed to read gfx interface files");
-			setProperty("valid.Interface", "false");
-		} else {
+
+		if (Interface.read()) {
 			setProperty("valid.Interface", "true");
+		} else {
+			setProperty("valid.Interface", "false");
+			LOGGER.error("Failed to read gfx interface files");
 		}
 
-		if (!State.read()) {
-			LOGGER.error("Failed to read states");
-			setProperty("valid.State", "false");
-		} else {
+		if (State.read()) {
 			setProperty("valid.State", "true");
+		} else {
+			setProperty("valid.State", "false");
+			LOGGER.error("Failed to read states");
 		}
 
-		if (!FocusTree.read()) {
-			LOGGER.error("Failed to read focus trees");
-			setProperty("valid.FocusTree", "false");
-		} else {
+		if (FocusTree.read()) {
 			setProperty("valid.FocusTree", "true");
+		} else {
+			setProperty("valid.FocusTree", "false");
+			LOGGER.error("Failed to read focus trees");
 		}
 	}
 

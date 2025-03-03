@@ -18,11 +18,11 @@ public class HOIIVModLoader {
 	}
 
 	void loadMod() {
-		if (!createHOIIVFilePaths()) {
+		if (createHOIIVFilePaths()) {
+			config.setProperty("valid.HOIIVFilePaths", "true");
+		} else {
 			LOGGER.error("Failed to create HOIIV file paths");
 			config.setProperty("valid.HOIIVFilePaths", "false");
-		} else {
-			config.setProperty("valid.HOIIVFilePaths", "true");
 		}
 		Interface.clear();
 		State.clear();
@@ -30,25 +30,25 @@ public class HOIIVModLoader {
 		
 		LocalizationManager.get().reload();
 		
-		if (!Interface.read()) {
-			LOGGER.error("Failed to read gfx interface files");
-			config.setProperty("valid.Interface", "false");
-		} else {
+		if (Interface.read()) {
 			config.setProperty("valid.Interface", "true");
+		} else {
+			config.setProperty("valid.Interface", "false");
+			LOGGER.error("Failed to read gfx interface files");
 		}
 		
-		if (!State.read()) {
-			LOGGER.error("Failed to read states");
-			config.setProperty("valid.State", "false");
-		} else {
+		if (State.read()) {
 			config.setProperty("valid.State", "true");
+		} else {
+			config.setProperty("valid.State", "false");
+			LOGGER.error("Failed to read states");
 		}
 
-		if (!FocusTree.read()) {
-			LOGGER.error("Failed to read focus trees");
-			config.setProperty("valid.FocusTree", "false");
-		} else {
+		if (FocusTree.read()) {
 			config.setProperty("valid.FocusTree", "true");
+		} else {
+			config.setProperty("valid.FocusTree", "false");
+			LOGGER.error("Failed to read focus trees");
 		}
 	}
 
