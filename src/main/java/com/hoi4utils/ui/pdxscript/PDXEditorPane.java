@@ -53,22 +53,28 @@ public class PDXEditorPane extends AnchorPane {
         this.onUpdate = onUpdate;
     }
 
-    private void drawEditor(PDXScript<?> pdxScript, VBox vbox) {
+    private void drawEditor(PDXScript<?> pdxScript, Pane pane) {
         if (pdxScript instanceof StructuredPDX pdx) {
             Collection<? extends PDXScript<?>> pdxProperties = CollectionConverters.asJavaCollection(
                     pdx.pdxProperties());
             for (var property : pdxProperties) {
-                HBox hbox = new HBox();
-                hbox.setSpacing(10);
-                Label label = new Label(property.getPDXIdentifier() + " =");
-                label.setFont(Font.font("Monospaced"));
-                label.setMinWidth(10);
-                label.setPrefHeight(25);
-
-                Node editorNode = createEditorNode(property, false, false);
-                if (editorNode != null) {
-                    hbox.getChildren().addAll(label, editorNode);
-                    vbox.getChildren().add(hbox);
+//                HBox hbox = new HBox();
+//                hbox.setSpacing(10);
+//                Label label = new Label(property.getPDXIdentifier() + " =");
+//                label.setFont(Font.font("Monospaced"));
+//                label.setMinWidth(10);
+//                label.setPrefHeight(25);
+//
+//                Node editorNode = createEditorNode(property, false, false);
+//                if (editorNode != null) {
+//                    hbox.getChildren().addAll(label, editorNode);
+//                    pane.getChildren().add(hbox);
+//                } else {
+//                    nullProperties.add(property);
+//                }
+                Node editorPDXNode = createEditorPDXNode(property, false, true);
+                if (editorPDXNode != null) {
+                    pane.getChildren().add(editorPDXNode);
                 } else {
                     nullProperties.add(property);
                 }
@@ -86,7 +92,7 @@ public class PDXEditorPane extends AnchorPane {
                 }
                 displayNullProperties = !displayNullProperties;
             });
-            vbox.getChildren().add(addButton);
+            pane.getChildren().add(addButton);
             // initial
             if (displayNullProperties) {
                 showNullProperties();
@@ -94,50 +100,125 @@ public class PDXEditorPane extends AnchorPane {
         }
 
         /* post ui construction */ 
-        if (showDebugBorders) applyDebugBorders(vbox);
-        else applyDebugBorders(vbox);
+        if (showDebugBorders) applyDebugBorders(pane);
+        else applyDebugBorders(pane);
     }
 
-    private Node createEditorNode(PDXScript<?> property, boolean allowNull, boolean withLabel) {
-        switch (property) {
-            case StructuredPDX pdx -> {
-                return visualizeStructuredPDX(pdx);
-            }
-            case StringPDX pdx -> {
-                if (pdx.get() == null && !allowNull) return null;
-                return visualizeStringPDX(property, withLabel, pdx);
-            }
-            case BooleanPDX pdx -> {
-                return visualizeBooleanPDX(pdx, withLabel);
-            }
-            case IntPDX pdx -> {
-                if (pdx.get() == null && !allowNull) return null;
-                return visualizeIntPDX(pdx, withLabel);
-            }
-            case DoublePDX pdx -> {
-                if (pdx.get() == null && !allowNull) return null;
-                return visualizeDoublePDX(pdx, withLabel);
-            }
-            case ReferencePDX<?> pdx -> {
-                if (pdx.get() == null && !allowNull) return null;
-                return visualizeReferencePDX(pdx);
-            }
-            case MultiReferencePDX<?> pdx -> {
-                if (pdx.isUndefined() && !allowNull) return null;
-                return visualizeMultiReferencePDX(pdx);
-            }
-            case MultiPDX<?> pdx -> {
-                if (pdx.isUndefined() && !allowNull) return null;
-                return visualizeMultiPDX(pdx, allowNull);
-            }
+    // todo remove allowNull? since now have separate
+    private Node createEditorPDXNode(PDXScript<?> property, boolean allowNull, boolean withLabel) {
+        Pane editorPropertyPane = switch(property) {
             case CollectionPDX<?> pdx -> {
-                if (pdx.isUndefined() && !allowNull) return null;
-                return visualizeCollectionPDX(pdx, allowNull);
+                var vbox = new VBox();
+                vbox.setSpacing(4);
+                yield vbox;
             }
-            case null, default ->
-                    System.out.println("Ui node unknown for property type: " + (property == null ? "[null]" : property.getClass()));
+            default -> {
+                var hbox = new HBox();
+                hbox.setSpacing(10);
+                yield hbox;
+            }
+        };
+        Label label = null;
+        if (withLabel) {
+            label = new Label(property.getPDXIdentifier() + " =");
+            label.setFont(Font.font("Monospaced"));
+            label.setMinWidth(10);
+            label.setPrefHeight(25);
+            // todo try changing padding (on sides)? or something
         }
-        return null;
+
+        Node editorNode = switch (property) {
+            case StructuredPDX pdx ->
+                visualizeStructuredPDX(pdx);
+            case StringPDX pdx -> (pdx.get() == null && !allowNull)
+                        ? null
+                        : visualizeStringPDX(property, pdx);
+            case BooleanPDX pdx ->
+                    visualizeBooleanPDX(pdx);
+            case IntPDX pdx -> (pdx.get() == null && !allowNull)
+                            ? null
+                            : visualizeIntPDX(pdx);
+            case DoublePDX pdx -> (pdx.get() == null && !allowNull)
+                    ? null
+                    : visualizeDoublePDX(pdx);
+            case ReferencePDX<?> pdx -> (pdx.get() == null && !allowNull)
+                    ? null
+                    : visualizeReferencePDX(pdx);
+            case MultiReferencePDX<?> pdx -> (pdx.isUndefined() && !allowNull)
+                    ? null
+                    : visualizeMultiReferencePDX(pdx);
+            case MultiPDX<?> pdx -> (pdx.isUndefined() && !allowNull)
+                    ? null
+                    : visualizeMultiPDX(pdx, allowNull);
+            case CollectionPDX<?> pdx -> (pdx.isUndefined() && !allowNull)
+                    ? null
+                    : visualizeCollectionPDX(pdx, allowNull);
+            default -> {
+                System.out.println("Ui node unknown for property type: " + (property == null ? "[null]" : property.getClass()));
+                yield null;
+            }
+        };
+
+        if (editorNode != null) {
+            if (withLabel) editorPropertyPane.getChildren().add(label);
+            editorPropertyPane.getChildren().add(editorNode);
+            return editorPropertyPane;
+        }
+        else return null;
+    }
+
+    private Node createEditorNullPDXNode(PDXScript<?> property, boolean withLabel) {
+        HBox editorNullPropertyHBox = new HBox();
+        editorNullPropertyHBox.setSpacing(10);
+        editorNullPropertyHBox.setPadding(new Insets(0, 0, 0, 20)); // Indent the null properties
+        Label label = null;
+        if (withLabel) {
+            label = new Label(property.getPDXIdentifier() + " =");
+            label.setFont(Font.font("Monospaced"));
+            label.setMinWidth(10);
+            label.setPrefHeight(25);
+            label.setStyle("-fx-text-fill: grey;");
+        }
+        var allowNull = true;
+
+        Node editorNode = switch (property) {
+            case StructuredPDX pdx ->
+                    visualizeStructuredPDX(pdx);
+            case StringPDX pdx -> (pdx.get() == null && !allowNull)
+                    ? null
+                    : visualizeStringPDX(property, pdx);
+            case BooleanPDX pdx ->
+                    visualizeBooleanPDX(pdx);
+            case IntPDX pdx -> (pdx.get() == null && !allowNull)
+                    ? null
+                    : visualizeIntPDX(pdx);
+            case DoublePDX pdx -> (pdx.get() == null && !allowNull)
+                    ? null
+                    : visualizeDoublePDX(pdx);
+            case ReferencePDX<?> pdx -> (pdx.get() == null && !allowNull)
+                    ? null
+                    : visualizeReferencePDX(pdx);
+            case MultiReferencePDX<?> pdx -> (pdx.isUndefined() && !allowNull)
+                    ? null
+                    : visualizeMultiReferencePDX(pdx);
+            case MultiPDX<?> pdx -> (pdx.isUndefined() && !allowNull)
+                    ? null
+                    : visualizeMultiPDX(pdx, allowNull);
+            case CollectionPDX<?> pdx -> (pdx.isUndefined() && !allowNull)
+                    ? null
+                    : visualizeCollectionPDX(pdx, allowNull);
+            default -> {
+                System.out.println("Ui node unknown for property type: " + (property == null ? "[null]" : property.getClass()));
+                yield null;
+            }
+        };
+
+        if (editorNode != null) {
+            if (withLabel) editorNullPropertyHBox.getChildren().add(label);
+            editorNullPropertyHBox.getChildren().add(editorNode);
+            return editorNullPropertyHBox;
+        }
+        else return null;
     }
 
     private @Nullable Node visualizeMultiPDX(MultiPDX<?> pdx, boolean allowNull) {
@@ -152,7 +233,7 @@ public class PDXEditorPane extends AnchorPane {
             return subVBox;
         } else if (allowNull) {
             var newPDX = pdx.applySomeSupplier();
-            return createEditorNode((PDXScript<?>) newPDX, allowNull, false);
+            return createEditorPDXNode((PDXScript<?>) newPDX, allowNull, false);
         } else {
             return null;
         }
@@ -162,10 +243,14 @@ public class PDXEditorPane extends AnchorPane {
         VBox subVBox = new VBox();
         subVBox.setSpacing(10);
         pdx.foreach(pdxScript -> {
-            var subNode = createEditorNode((PDXScript<?>) pdxScript, allowNull, true);
+            var subNode = createEditorPDXNode((PDXScript<?>) pdxScript, allowNull, true);
             if (subNode != null) subVBox.getChildren().add(subNode);
             return null;
         });
+        // indent children (this is the child of collectionPDX which needs to be indented)
+        // this way, by indenting *here* and not indenting all children we don't indent the label of the
+        // collectionPDX itself. 
+        subVBox.setPadding(new Insets(0, 0, 0, 20));
         return subVBox;
     }
 
@@ -180,7 +265,7 @@ public class PDXEditorPane extends AnchorPane {
         return subVBox;
     }
 
-    private @NotNull HBox visualizeStringPDX(PDXScript<?> property, boolean withLabel, StringPDX pdx) {
+    private @NotNull HBox visualizeStringPDX(PDXScript<?> property,StringPDX pdx) {
         HBox hbox = new HBox();
         TextField textField = new TextField(pdx.getOrElse(""));
         textField.setPrefWidth(200);
@@ -192,7 +277,7 @@ public class PDXEditorPane extends AnchorPane {
             }
             else onPropertyUpdate();
         });
-        if (withLabel) addLabelToHBox(pdx, hbox);
+//        if (withLabel) addLabelToHBox(pdx, hbox);
         hbox.getChildren().add(textField);
         return hbox;
     }
@@ -220,7 +305,7 @@ public class PDXEditorPane extends AnchorPane {
         return subVBox;
     }
 
-    private @NotNull HBox visualizeBooleanPDX(BooleanPDX pdx, boolean withLabel) {
+    private @NotNull HBox visualizeBooleanPDX(BooleanPDX pdx) {
         HBox hbox = new HBox();
         Label customCheckBox = new Label();
         customCheckBox.setText(pdx.$() ? "yes" : "no");
@@ -235,7 +320,7 @@ public class PDXEditorPane extends AnchorPane {
             }
             else onPropertyUpdate();
         });
-        if (withLabel) addLabelToHBox(pdx, hbox);
+//        if (withLabel) addLabelToHBox(pdx, hbox);
         hbox.getChildren().add(customCheckBox);
         return hbox;
     }
@@ -258,7 +343,7 @@ public class PDXEditorPane extends AnchorPane {
     }
 
     private Node createSubNode(boolean allowNull, PDXScript<?> pdxScript) {
-        return createEditorNode(pdxScript, allowNull, false);
+        return createEditorPDXNode(pdxScript, allowNull, false);
     }
 
     /**
@@ -274,20 +359,20 @@ public class PDXEditorPane extends AnchorPane {
 
     private void showNullProperties() {
         for (var property : nullProperties) {
-            HBox hbox = new HBox();
-            hbox.setSpacing(10);
-            hbox.setPadding(new Insets(0, 0, 0, 20)); // Indent the null properties
-            Label label = new Label(property.getPDXIdentifier() + " =");
-            label.setFont(Font.font("Monospaced"));
-            label.setMinWidth(10);
-            label.setPrefHeight(25);
-            label.setStyle("-fx-text-fill: grey;");
+//            HBox hbox = new HBox();
+//            hbox.setSpacing(10);
+//            hbox.setPadding(new Insets(0, 0, 0, 20)); // Indent the null properties
+//            Label label = new Label(property.getPDXIdentifier() + " =");
+//            label.setFont(Font.font("Monospaced"));
+//            label.setMinWidth(10);
+//            label.setPrefHeight(25);
+//            label.setStyle("-fx-text-fill: grey;");
 
-            Node editorNode = createEditorNode(property, true, false);
-            if (editorNode != null) {
-                hbox.getChildren().addAll(label, editorNode);
-                rootVBox.getChildren().add(rootVBox.getChildren().size() - 1, hbox); // Add before the add button
-                nullPropertyNodes.add(hbox);
+            Node editorPDXNode = createEditorNullPDXNode(property, true);
+            if (editorPDXNode != null) {
+//                hbox.getChildren().addAll(label, editorPDXNode);
+                rootVBox.getChildren().add(rootVBox.getChildren().size() - 1, editorPDXNode); // Add before the add button
+                nullPropertyNodes.add(editorPDXNode);
             }
         }
     }
@@ -299,7 +384,7 @@ public class PDXEditorPane extends AnchorPane {
         nullPropertyNodes.clear();
     }
 
-    private <T> @NotNull HBox newSpinnerHBox(ValPDXScript<?> pdx, boolean withLabel, Spinner<T> spinner) {
+    private <T> @NotNull HBox newSpinnerHBox(ValPDXScript<?> pdx, Spinner<T> spinner) {
         HBox hbox = new HBox();
         spinner.setPrefHeight(25);
         spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -309,21 +394,21 @@ public class PDXEditorPane extends AnchorPane {
             }
             else onPropertyUpdate();
         });
-        if (withLabel) addLabelToHBox(pdx, hbox);
+//        if (withLabel) addLabelToHBox(pdx, hbox);
         hbox.getChildren().add(spinner);
         return hbox;
     }
 
-    private HBox visualizeDoublePDX(DoublePDX pdx, boolean withLabel) {
+    private HBox visualizeDoublePDX(DoublePDX pdx) {
         double minValue = pdx.isDefaultRange() ? pdx.minValue() : pdx.minValueNonInfinite();    // todo simplify?
         double maxValue = pdx.isDefaultRange() ? pdx.maxValue() : pdx.maxValueNonInfinite();
         double value = pdx.getOrElse(pdx.defaultValue());
         Spinner<Double> spinner = new Spinner<>(
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(minValue, maxValue, value, 1));
-        return newSpinnerHBox(pdx, withLabel, spinner);
+        return newSpinnerHBox(pdx, spinner);
     }
 
-    private  HBox visualizeIntPDX(IntPDX pdx, boolean withLabel) {
+    private  HBox visualizeIntPDX(IntPDX pdx) {
         int minValue = pdx.isDefaultRange() ? Integer.MIN_VALUE : pdx.minValue();
         int maxValue = pdx.isDefaultRange() ? Integer.MAX_VALUE : pdx.maxValue();
         Spinner<Integer> spinner = new Spinner<>(
@@ -331,7 +416,7 @@ public class PDXEditorPane extends AnchorPane {
         // DO NOT GET RID OF 'REDUNDANT' CAST, COMPILER moment
         spinner.getValueFactory().setValue(pdx.getOrElse(0));
 
-        return newSpinnerHBox(pdx, withLabel, spinner);
+        return newSpinnerHBox(pdx, spinner);
     }
 
     private void applyDebugBorders(Parent parent) {
