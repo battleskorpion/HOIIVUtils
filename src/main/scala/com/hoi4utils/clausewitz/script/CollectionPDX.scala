@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 
 // todo i do not like this class
 abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: List[String])
-  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
 
@@ -93,8 +93,10 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
   override def iterator: Iterator[T] = get().iterator.flatten   // todo idk
 
   override def foreach[U](f: T => U): Unit = super.foreach(f)
+  
+  override def length: Int = size
 
-  override def size: Int = get().size
+  override def apply(i: Int): T = pdxList(i)
 
   override def isUndefined: Boolean = super.isUndefined
 
