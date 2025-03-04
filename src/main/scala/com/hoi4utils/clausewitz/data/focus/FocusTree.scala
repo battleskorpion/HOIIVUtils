@@ -123,6 +123,7 @@ class FocusTree
     focusTreeFileMap.put(this.focusFile, this)
   }
 
+  // todo: add default, continuous focus position
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(id, country, focuses)
 
   /**

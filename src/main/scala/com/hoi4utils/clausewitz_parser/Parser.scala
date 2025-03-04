@@ -66,7 +66,7 @@ class Parser {
       } else {
         try {
           val n = parseNode(tokens)
-          // check if n is a comment node
+          // check if n is a comment node // todo maybe should be optional?
           if (n.nameToken.`type` ne TokenType.comment) nodes.addOne(n)
         } catch {
           case e: ParserException =>
@@ -88,9 +88,19 @@ class Parser {
       return node
     }
     // System.out.println(name.value);
-    if ((name.`type` ne TokenType.string) && (name.`type` ne TokenType.symbol) && (name.`type` ne TokenType.number)) throw new ParserException("Parser: incorrect token type " + name.`type` + ", token: " + name + " at index: " + name.start)
+    // todo case
+    if ((name.`type` ne TokenType.string) && (name.`type` ne TokenType.symbol) && (name.`type` ne TokenType.number))
+      throw new ParserException("Parser: incorrect token type " + name.`type` + ", token: " + name + " at index: " + name.start)
     var nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
+    // 'if the next token is not an operator or a [special character]'
+    // '^[]': means must contain exactly *one* of the characters within the brackets
     if ((nextToken.`type` ne TokenType.operator) || nextToken.value.matches("^[,;}]$")) {
+      /*
+      example where you would make it inside here:
+        color = { 1.0 1.0 1.0 }
+        colortwo = { 1.0 1.0 1.0 }
+      each 1.0 will be a node which makes it within here
+       */
       while (nextToken.value.matches("^[,;]$")) {
         tokens.next
         nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
@@ -108,15 +118,16 @@ class Parser {
     }
 
     /* "= {" */
-    var operator: Token = null
-    if (nextToken.value == "{") {
-      operator = new Token("=", nextToken.start, TokenType.operator) // Create a new Token with the '=' value
-
-      nextToken = new Token("=", operator.start, TokenType.operator)
-      nextToken.start = operator.start
-      operator.value = "="
+    val operator: Token = {
+      if (nextToken.value == "{") {
+        // Create a new Token with the '=' value
+        val op = new Token("=", nextToken.start, TokenType.operator)
+        nextToken = new Token("=", op.start, TokenType.operator)
+        op
+      } else {
+        tokens.next.get
+      }
     }
-    else operator = tokens.next.get
 
     var parsedValue = parseNodeValue(tokens)
     /* Handle value attachment (e.g., when there's a nested block) */

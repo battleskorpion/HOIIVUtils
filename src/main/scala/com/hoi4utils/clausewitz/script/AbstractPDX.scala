@@ -25,21 +25,18 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   protected[script] var node: Option[Node] = None
 
   /**
-   * Sets the active identifier to match the given expression, if applicable.
-   * @param exp
-   * @throws UnexpectedIdentifierException
+   * Sets the active identifier to match the given expression, 
+   * if it is a valid identifier. Otherwise, throws exception. 
+   * @param exp the expression to check, and set the active identifier to the identifier of the expression
+   * @throws UnexpectedIdentifierException if the expression is not a valid identifier
    */
   @throws[UnexpectedIdentifierException]
   protected def usingIdentifier(exp: Node): Unit = {
-    for (i <- pdxIdentifiers.indices) {
-      if (exp.nameEquals(pdxIdentifiers(i))) {
-        activeIdentifier = i
-        return
-      }
-    }
-    // TODO: Do something so that this doesn't clog up the console
-    LOGGER.error("Unexpected identifier: " + exp)
-    throw new UnexpectedIdentifierException(exp)
+    if (pdxIdentifiers.indexWhere(exp.nameEquals) == -1) {
+      // TODO: Do something so that this doesn't clog up the console
+      LOGGER.error("Unexpected identifier: " + exp)
+      throw new UnexpectedIdentifierException(exp)
+    } 
   }
 
   /**
@@ -69,8 +66,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   @throws[UnexpectedIdentifierException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.$
-    setNode(value)
+    setNode(expression.$)
   }
 
   /**

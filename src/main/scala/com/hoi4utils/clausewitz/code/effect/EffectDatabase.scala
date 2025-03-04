@@ -17,6 +17,7 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 import scala.util.{Try, Using}
 
+// todo make singleton instance and have like load? or something
 object EffectDatabase {
   private var _effects: List[Effect] = List()
 

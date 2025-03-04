@@ -44,6 +44,8 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     value
   }
   
+  // 
+  
   override def loadPDX(expression: Node): Unit = {
     if (expression.name == null) {
       // todo check through schema?
