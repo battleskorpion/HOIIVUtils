@@ -249,7 +249,7 @@ public class PDXEditorPane extends AnchorPane {
         });
         // indent children (this is the child of collectionPDX which needs to be indented)
         // this way, by indenting *here* and not indenting all children we don't indent the label of the
-        // collectionPDX itself. 
+        // collectionPDX itself.
         subVBox.setPadding(new Insets(0, 0, 0, 20));
         return subVBox;
     }
