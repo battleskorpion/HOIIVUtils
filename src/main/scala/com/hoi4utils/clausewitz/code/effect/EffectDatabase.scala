@@ -167,17 +167,22 @@ class EffectDatabase(databaseName: String) {
         var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
         data = data.filter((s: String) => s.nonEmpty)
         if (data.length >= 2) {
-          val paramIdentifierStr = data(0).trim
-          if (data(1).trim.startsWith("<") && data(1).trim.endsWith(">")) {
-            val paramTypeStr = data(1).trim
-            val paramValueType: Option[ParameterValueType] = ParameterValueType.of(paramTypeStr)
-          }
+//          val paramIdentifierStr = data(0).trim
+//          if (data(1).trim.startsWith("<") && data(1).trim.endsWith(">")) {
+//            val paramTypeStr = data(1).trim
+//            val paramValueType: Option[ParameterValueType] = ParameterValueType.of(paramTypeStr)
+//          }
+          // replace with this: ? if it works!
+          effects ++= parametersToBlockEffect(pdxIdentifier, parameterStr)
         } else if (data.length == 1) {
           effects ++= simpleParameterToEffect(pdxIdentifier, parameterStr) // really a simple parameter
         }
         else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
         if (data.length >= 3) {
+          // todo !!!!!! do something with the complex effects (block effects) right here!!!
+          var f = 0
           // idk
+          effects ++= parametersToBlockEffect(pdxIdentifier, parameterStr)
         }
       }
     }
@@ -212,6 +217,7 @@ class EffectDatabase(databaseName: String) {
         else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
         if (data.length >= 3) {
           // idk
+          // todo handled by parametersToBlockEffect??? or
         }
       }
     }
@@ -241,6 +247,80 @@ class EffectDatabase(databaseName: String) {
         })
       case _ =>
         None // todo ??? !!!
+    }
+  }
+
+  private def parametersToBlockEffect(pdxIdentifier: String, requiredParameters_str: String): Option[Effect] = {
+    var effectParameters: ListBuffer[(String, ParameterValueType)] = new ListBuffer[(String, ParameterValueType)]
+
+    for (alternateParameter <- requiredParameters_str.split("\\s+\\|\\s+")) {
+      val parametersStrlist = alternateParameter.split("\\s+,\\s+")
+      for (i <- parametersStrlist.indices) {
+        val parameterStr = parametersStrlist(i).trim
+        val parameters = parameterStr.split(",", -1).map(s => s.trim).filter(_.nonEmpty)
+          .map(s => s.splitWithDelimiters("(<[a-zA-Z0-9@_\\- ;:+]+>|\\|)", -1).map(s => s.trim).filter(s => s.nonEmpty))
+        if (parameters.length >= 1) {
+          for (parameter <- parameters) {
+            var paramValueType: Option[ParameterValueType] = None
+            var paramIdentifier = parameter(0).trim
+
+            if (parameter.length == 2) {
+              if (parameter(1).trim.startsWith("<") && parameter(1).trim.endsWith(">")) {
+                val paramTypeStr = parameter(1).trim
+                paramValueType = ParameterValueType.of(paramTypeStr)
+              }
+              else {
+                // todo
+              }
+            }
+            if (parameter.length >= 2) {
+              // todo (i think this would mean weird stuff like optional?)
+            }
+            else if (parameter.length == 1) {
+              if (parameters.length <= 1)
+                throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
+              else {
+                // todo (means theres a simple parameter option)
+              }
+            }
+
+            if (paramValueType.isDefined)
+              effectParameters += (paramIdentifier -> paramValueType.get)
+            else {
+              // TODO just log. bad log but just log. is debug log maybe. or more.
+//              throw new InvalidParameterException(
+//                "Invalid parameter definition (parameter value type unknown): " + parameterStr)
+            }
+          }
+        }
+        else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
+      }
+    }
+
+    if (effectParameters.isEmpty) {
+      None
+    }
+    else {
+//      val blockEffect = newStructuredEffectBlock(pdxIdentifier, new ListBuffer[? <: PDXScript[?]]) with BlockEffect {
+//        override def getPDXIdentifier: String = pdxIdentifier
+//      }
+//      Some(blockEffect)
+      val effectPDXParameters: ListBuffer[PDXScript[?]] = effectParameters.collect {
+        case (id, ParameterValueType.cw_int) => new IntPDX(id)
+        case (id, ParameterValueType.cw_float) => new DoublePDX(id)
+        case (id, ParameterValueType.cw_string) => new StringPDX(id)
+        case (id, ParameterValueType.cw_bool) => new BooleanPDX(id, false, BoolType.TRUE_FALSE)
+        case (id, ParameterValueType.state) => new ReferencePDX[State](() => State.list, s => Some(s.name), id)
+        case (id, ParameterValueType.province) => new ReferencePDX[Province](() => CollectionConverters.asScala(Province.list), p => Some(p.idStr()), id)
+        case (id, ParameterValueType.country) => new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country")
+        case (id, ParameterValueType.building) => new StringPDX(id) // todo can improve (type = industrial_complex is example of a building)
+      }.to(ListBuffer)
+      val structuredEffectBlock = new StructuredPDX(pdxIdentifier) with BlockEffect {
+        override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
+          effectPDXParameters
+        }
+      }
+      Some(structuredEffectBlock)
     }
   }
   
