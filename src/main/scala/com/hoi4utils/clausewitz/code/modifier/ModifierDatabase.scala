@@ -1,93 +1,64 @@
 package com.hoi4utils.clausewitz.code.modifier
 
-import java.io.{File, IOException, InputStream}
-import java.net.URL
+import java.io.{File, IOException}
 import java.nio.file.{Files, StandardCopyOption}
 import java.sql.*
-import java.util
-import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.util.{Try, Using}
+import scala.util.Using
 
-class ModifierDatabase(databaseName: String) {
-  private var connection: Connection = _
-
-//  try {
-//    val dbBytes = readDatabaseAsByteArray(databaseName)
-//    connection = DriverManager.getConnection("jdbc:sqlite::memory:")
-//    loadDatabase(dbBytes)
-//    createTable()
-//    loadModifiers
-//  } catch {
-//    case e@(_: SQLException | _: IOException) =>
-//      e.printStackTrace()
-//  }
+object ModifierDatabase {
   try {
-    val url = getClass.getClassLoader.getResource(databaseName)
-    if (url == null) throw new SQLException("Unable to find '" + databaseName + "'")
-    val tempFile = File.createTempFile("effects", ".db")
-    tempFile.deleteOnExit()
-    Using(url.openStream) { inputStream =>
-      Files.copy(inputStream, tempFile.toPath, StandardCopyOption.REPLACE_EXISTING)
-    }.recover {
-      case e: Exception =>
-        println(s"An error occurred: ${e.getMessage}")
-    }
-    connection = DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath)
-    loadModifiers
+    Class.forName("org.sqlite.JDBC")
   } catch {
-    case e@(_: IOException | _: SQLException) =>
-      e.printStackTrace()
+    case e: ClassNotFoundException =>
+      throw new RuntimeException(e)
   }
 
+  private val mdb: String = "databases/modifiers.db"
+  private var _connection: Connection = _
+  private var _modifiers: List[Modifier] = List()
 
-  def this() = {
-    this("databases/modifiers.db")
-    //		for(Modifier modifier : Modifier.modifiers.values()) {
-    //			System.out.println("modifier: " + modifier.identifier());
-    //		}
+  // Initialize the database
+  def init(): Unit = {
+    try {
+      val url = getClass.getClassLoader.getResource(mdb)
+      if (url == null) throw new SQLException(s"Unable to find '$mdb'")
+
+      val tempFile = File.createTempFile("modifiers", ".db")
+      tempFile.deleteOnExit()
+
+      Using(url.openStream) { inputStream =>
+        Files.copy(inputStream, tempFile.toPath, StandardCopyOption.REPLACE_EXISTING)
+      }.recover {
+        case e: Exception =>
+          println(s"An error occurred: ${e.getMessage}")
+      }
+
+      _connection = DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath)
+
+      createTable()
+
+      _modifiers = loadModifiers
+    } catch {
+      case e@(_: IOException | _: SQLException) =>
+        e.printStackTrace()
+    }
   }
 
-//  @throws[IOException]
-//  private def readDatabaseAsByteArray(resourcePath: String) = {
-//    System.out.println(System.getProperty("java.class.path"))
-//    try {
-//      val inputStream = getClass.getResourceAsStream(resourcePath)
-//      val outputStream = new ByteArrayOutputStream
-//      try {
-//        if (inputStream == null) throw new IOException("Resource not found: " + resourcePath)
-//        val buffer = new Array[Byte](1024)
-//        var bytesRead = 0
-//        while ((bytesRead = inputStream.read(buffer)) != -1) outputStream.write(buffer, 0, bytesRead)
-//        outputStream.toByteArray
-//      } finally {
-//        if (inputStream != null) inputStream.close()
-//        if (outputStream != null) outputStream.close()
-//      }
-//    }
-//  }
-
-//  @throws[SQLException]
-//  private def loadDatabase(dbBytes: Array[Byte]): Unit = {
-//    val sql = "RESTORE FROM MEMORY"
-//    try {
-//      val statement = connection.prepareStatement(sql)
-//      try {
-//        statement.setBytes(1, dbBytes)
-//        statement.executeUpdate
-//      } finally if (statement != null) statement.close()
-//    }
-//  }
+  def modifiers: List[Modifier] = _modifiers
 
   private def createTable(): Unit = {
-    val createTableSQL = "CREATE TABLE IF NOT EXISTS modifiers ("
-      + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-      + "identifier TEXT," + "color_type TEXT,"
-      + "value_type TEXT," + "precision INTEGER,"
-      + "postfix TEXT," + "category TEXT"
-      + ")"
+    val createTableSQL = "CREATE TABLE IF NOT EXISTS modifiers (" +
+        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+        "identifier TEXT," +
+        "color_type TEXT," +
+        "value_type TEXT," +
+        "precision INTEGER," +
+        "postfix TEXT," +
+        "category TEXT" +
+        ")"
     try {
-      val createTable = connection.prepareStatement(createTableSQL)
+      val createTable = _connection.prepareStatement(createTableSQL)
       createTable.executeUpdate
     } catch {
       case e: SQLException =>
@@ -95,10 +66,18 @@ class ModifierDatabase(databaseName: String) {
     }
   }
 
-  def insertModifier(identifier: String, colorType: String, valueType: String, precision: Int, postfix: String, category: String): Unit = {
-    val insertSQL = "INSERT INTO modifiers " + "(identifier, color_type, value_type, precision, postfix, category) VALUES (?, ?, ?, ?, ?, ?)"
+  def insertModifier(
+                        identifier: String,
+                        colorType: String,
+                        valueType: String,
+                        precision: Int,
+                        postfix: String,
+                        category: String
+                    ): Unit = {
+    val insertSQL = "INSERT INTO modifiers " +
+        "(identifier, color_type, value_type, precision, postfix, category) VALUES (?, ?, ?, ?, ?, ?)"
     try {
-      val insertStatement = connection.prepareStatement(insertSQL)
+      val insertStatement = _connection.prepareStatement(insertSQL)
       insertStatement.setString(1, identifier)
       insertStatement.setString(2, colorType)
       insertStatement.setString(3, valueType)
@@ -113,14 +92,21 @@ class ModifierDatabase(databaseName: String) {
   }
 
   def insertModifier(modifier: Modifier): Unit = {
-    insertModifier(modifier.identifier, modifier.colorType.name, modifier.valueType.name, modifier.precision, modifier.postfix.name, modifier.category.stream.toList.get(0).toString)
+    insertModifier(
+      modifier.identifier,
+      modifier.colorType.name,
+      modifier.valueType.name,
+      modifier.precision,
+      modifier.postfix.name,
+      modifier.category.toString
+    )
   }
 
-  def loadModifiers: List[Modifier] = {
+  private def loadModifiers: List[Modifier] = {
     val loadedModifiers = new ListBuffer[Modifier]
     val retrieveSQL = "SELECT * FROM modifiers"
     try {
-      val retrieveStatement = connection.prepareStatement(retrieveSQL)
+      val retrieveStatement = _connection.prepareStatement(retrieveSQL)
       val resultSet = retrieveStatement.executeQuery
       while (resultSet.next) {
         val identifier = resultSet.getString("identifier")
@@ -129,8 +115,15 @@ class ModifierDatabase(databaseName: String) {
         val precision = resultSet.getInt("precision")
         val postfix = resultSet.getString("postfix")
         val category = resultSet.getString("category")
-        // Create a Modifier instance and add it to the loaded list
-        val modifier = new Modifier(identifier, Modifier.ColorType.valueOf(colorType), Modifier.ValueType.valueOf(valueType), precision, Modifier.ValuePostfix.valueOf(postfix), ModifierCategory.valueOf(category))
+
+        val modifier = new Modifier(
+          identifier,
+          Modifier.ColorType.valueOf(colorType),
+          Modifier.ValueType.valueOf(valueType),
+          precision,
+          Modifier.ValuePostfix.valueOf(postfix),
+          ModifierCategory.valueOf(category)
+        )
         loadedModifiers.addOne(modifier)
       }
     } catch {
@@ -141,8 +134,9 @@ class ModifierDatabase(databaseName: String) {
   }
 
   def close(): Unit = {
-    try connection.close()
-    catch {
+    try {
+      if (_connection != null) _connection.close()
+    } catch {
       case e: SQLException =>
         e.printStackTrace()
     }

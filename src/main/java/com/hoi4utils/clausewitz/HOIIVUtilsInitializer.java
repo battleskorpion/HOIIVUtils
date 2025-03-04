@@ -42,7 +42,6 @@ public class HOIIVUtilsInitializer {
 	private String propertiesFile;
 	private InputStream defaultProperties;
 	private String version;
-	private ModifierDatabase mdb;
 
 	
 
@@ -54,7 +53,7 @@ public class HOIIVUtilsInitializer {
 	public HOIIVUtilsConfig initialize() {
 		LOGGER.info("Initializing HOIIVUtils");
 		// Load databases first
-		initializeDatabases();
+		ModifierDatabase.init();
 		EffectDatabase.init();
 
 		// Configure application directories
@@ -79,10 +78,6 @@ public class HOIIVUtilsInitializer {
 
 		// Return configuration for use by application
 		return createConfig();
-	}
-
-	private void initializeDatabases() {
-		mdb = new ModifierDatabase();
 	}
 
 	private void resolveApplicationDirectory() {
@@ -327,8 +322,7 @@ public class HOIIVUtilsInitializer {
 			propertiesFile,
 			defaultProperties,
 			version,
-			properties,
-			mdb
+			properties
 		);
 	}
 

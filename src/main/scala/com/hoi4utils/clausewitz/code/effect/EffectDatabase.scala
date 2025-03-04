@@ -17,47 +17,6 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 import scala.util.{Try, Using}
 
-/**
- * # EffectDatabase
- * 
- * SCALA
- * // Initialize with default database
- * EffectDatabase.init()
- *
- * // Initialize with custom database path
- * EffectDatabase.init("path/to/custom/effects.db")
- * 
- * // Get all loaded effects
- * val effects = EffectDatabase.effects
- *
- * // Use PDX supplier for effect resolution
- * val pdxSupplier = EffectDatabase()
- *
- * // Access simple effects
- * val simpleEffects = EffectDatabase.effects.filter(_.isInstanceOf[SimpleEffect])
- *
- * // Access block effects
- * val blockEffects = EffectDatabase.effects.filter(_.isInstanceOf[BlockEffect])
- * 
- * JAVA
- * // Initialize with default database
- * EffectDatabase.init();
- *
- * // Initialize with custom database path
- * EffectDatabase.init("path/to/custom/effects.db");
- * 
- * // Get all loaded effects
- * List<Effect> effects = EffectDatabase.effects();
- *
- * // Use PDX supplier
- * PDXSupplier<Effect> pdxSupplier = EffectDatabase.apply();
- *
- * // Filter effects (Java 8+)
- * List<SimpleEffect> simpleEffects = effects.stream()
- * .filter(effect -> effect instanceof SimpleEffect)
- * .map(effect -> (SimpleEffect) effect)
- * .collect(Collectors.toList());
- */
 object EffectDatabase {
   try {
     Class.forName("org.sqlite.JDBC")
