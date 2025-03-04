@@ -17,26 +17,80 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 import scala.util.{Try, Using}
 
-// todo make singleton instance and have like load? or something
+/**
+ * # EffectDatabase
+ * 
+ * SCALA
+ * // Initialize with default database
+ * EffectDatabase.init()
+ *
+ * // Initialize with custom database path
+ * EffectDatabase.init("path/to/custom/effects.db")
+ * 
+ * // Get all loaded effects
+ * val effects = EffectDatabase.effects
+ *
+ * // Use PDX supplier for effect resolution
+ * val pdxSupplier = EffectDatabase()
+ *
+ * // Access simple effects
+ * val simpleEffects = EffectDatabase.effects.filter(_.isInstanceOf[SimpleEffect])
+ *
+ * // Access block effects
+ * val blockEffects = EffectDatabase.effects.filter(_.isInstanceOf[BlockEffect])
+ * 
+ * JAVA
+ * // Initialize with default database
+ * EffectDatabase.init();
+ *
+ * // Initialize with custom database path
+ * EffectDatabase.init("path/to/custom/effects.db");
+ * 
+ * // Get all loaded effects
+ * List<Effect> effects = EffectDatabase.effects();
+ *
+ * // Use PDX supplier
+ * PDXSupplier<Effect> pdxSupplier = EffectDatabase.apply();
+ *
+ * // Filter effects (Java 8+)
+ * List<SimpleEffect> simpleEffects = effects.stream()
+ * .filter(effect -> effect instanceof SimpleEffect)
+ * .map(effect -> (SimpleEffect) effect)
+ * .collect(Collectors.toList());
+ */
 object EffectDatabase {
-  private var _effects: List[Effect] = List()
-
-  private def newStructuredEffectBlock(pdxIdentifier: String, childScriptsList: ListBuffer[? <: PDXScript[?]]) = new StructuredPDX(pdxIdentifier) {
-    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = childScriptsList
-
-    def nodeEquals(other: PDXScript[?]): Boolean = {
-      // todo
-      false
-    }
-  }
-
-  // todo idk
   try {
     Class.forName("org.sqlite.JDBC")
-  }
-  catch {
+  } catch {
     case e: ClassNotFoundException =>
       throw new RuntimeException(e)
+  }
+
+  private val edb: String = "databases/effects.db"
+  private var _connection: Connection = _
+  private var _effects: List[Effect] = List()
+
+  def init(): Unit = {
+    try {
+      val url = getClass.getClassLoader.getResource(edb)
+      if (url == null) throw new SQLException(s"Unable to find '$edb'")
+
+      val tempFile = File.createTempFile("effects", ".db")
+      tempFile.deleteOnExit()
+
+      Using(url.openStream) { inputStream =>
+        Files.copy(inputStream, tempFile.toPath, StandardCopyOption.REPLACE_EXISTING)
+      }.recover {
+        case e: Exception =>
+          println(s"An error occurred: ${e.getMessage}")
+      }
+
+      _connection = DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath)
+      _effects = loadEffects()
+    } catch {
+      case e@(_: IOException | _: SQLException) =>
+        e.printStackTrace()
+    }
   }
 
   def apply(): PDXSupplier[Effect] = {
@@ -44,89 +98,52 @@ object EffectDatabase {
       override def simplePDXSupplier(): Option[Node => Option[SimpleEffect]] = {
         Some((expr: Node) => {
           _effects.filter(_.isInstanceOf[SimpleEffect])
-            .find(_.getPDXIdentifier == expr.identifier)
-            .map(_.clone().asInstanceOf[SimpleEffect])
+              .find(_.getPDXIdentifier == expr.identifier)
+              .map(_.clone().asInstanceOf[SimpleEffect])
         })
       }
 
       override def blockPDXSupplier(): Option[Node => Option[BlockEffect]] = {
         Some((expr: Node) => {
           _effects.filter(_.isInstanceOf[BlockEffect])
-            .find(_.getPDXIdentifier == expr.identifier)
-            .map(_.clone().asInstanceOf[BlockEffect])
+              .find(_.getPDXIdentifier == expr.identifier)
+              .map(_.clone().asInstanceOf[BlockEffect])
         })
       }
     }
   }
 
   def effects: List[Effect] = _effects
-}
 
-class EffectDatabase(databaseName: String) {
-  private var connection: Connection = _
-
-  try {
-    val url = getClass.getClassLoader.getResource(databaseName) // class loader loads resource consistently it seems
-    if (url == null) throw new SQLException("Unable to find '" + databaseName + "'")
-    val tempFile = File.createTempFile("effects", ".db")
-    tempFile.deleteOnExit()
-    Using(url.openStream) { inputStream =>
-      Files.copy(inputStream, tempFile.toPath, StandardCopyOption.REPLACE_EXISTING)
-    }.recover {
-      case e: Exception =>
-        println(s"An error occurred: ${e.getMessage}")
-    }
-    connection = DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath)
-    EffectDatabase._effects = loadEffects
-  } catch {
-    case e@(_: IOException | _: SQLException) =>
-      e.printStackTrace()
-  }
-  
-  def this() = {
-    this("databases/effects.db")  // should be 'databases/effects.db'.
-  }
-
-  private def createTable(): Unit = {
-    val createTableSQL = "CREATE TABLE IF NOT EXISTS effects ("
-      + "id INTEGER PRIMARY KEY AUTOINCREMENT," + "identifier TEXT,"
-      + "supported_scopes TEXT," // Add this column for supported scopes
-      + "supported_targets TEXT" // Add this column for supported targets
-      + ")"
-
+  def close(): Unit = {
     try {
-      val createTable = connection.prepareStatement(createTableSQL)
-      createTable.executeUpdate
+      if (_connection != null) _connection.close()
     } catch {
       case e: SQLException =>
         e.printStackTrace()
     }
   }
 
-  def loadEffects: List[Effect] = {
+  private def loadEffects(): List[Effect] = {
     val loadedEffects = new ListBuffer[Effect]
     val retrieveSQL = "SELECT * FROM effects"
     try {
-      val retrieveStatement = connection.prepareStatement(retrieveSQL)
+      val retrieveStatement = _connection.prepareStatement(retrieveSQL)
       val resultSet = retrieveStatement.executeQuery
       while (resultSet.next) {
         val pdxIdentifier = resultSet.getString("identifier")
-        // System.out.println("id " + identifier);
         val supportedScopes_str = resultSet.getString("supported_scopes")
         val supportedTargets_str = resultSet.getString("supported_targets")
         val requiredParametersFull_str = resultSet.getString("required_parameters_full")
         val requiredParametersSimple_str = resultSet.getString("required_parameters_simple")
-        val optionalParameters_str = resultSet.getString("optional_parameters")
 
         val supportedScopes = parseEnumSet(supportedScopes_str)
-        var supportedTargets = parseEnumSet(supportedTargets_str)
-        // im just guessing at this code right now, I just want it to work basically.
+
         if (!(requiredParametersFull_str == null && requiredParametersSimple_str == null)) {
           if (supportedScopes.isEmpty) {
             throw new InvalidParameterException("Invalid scope definition: " + supportedScopes_str)
           }
 
-          /* required parameters */
           val requiredParametersFull = Option(requiredParametersFull_str)
           val requiredParameterSimple = Option(requiredParametersSimple_str)
 
@@ -139,8 +156,6 @@ class EffectDatabase(databaseName: String) {
               effects ++= parametersToEffect(pdxIdentifier, requiredParametersFull_str)
             case (None, Some(requiredParameterSimple)) =>
               effects ++= simpleParameterToEffect(pdxIdentifier, requiredParametersSimple_str)
-            //            effects.addOne(new SimpleEffect(pdxIdentifier, () => new ReferencePDX[Effect](loadedEffects, _.identifier, pdxIdentifier)) {
-            //            })
             case (None, None) =>
             // todo (bad)
           }
@@ -157,32 +172,30 @@ class EffectDatabase(databaseName: String) {
     loadedEffects.toList
   }
 
+  private def parseEnumSet(enumSetString: String): Option[Set[ScopeType]] = {
+    Option(enumSetString).filter(_.nonEmpty).filter(_ != "none").map { str =>
+      str.split(", ").flatMap { enumName =>
+        Try(ScopeType.valueOf(enumName)).toOption
+      }.toSet
+    }
+  }
+
   private def parametersToEffect(pdxIdentifier: String, requiredParametersFull_str: String): ListBuffer[Effect] = {
     val effects: ListBuffer[Effect] = new ListBuffer[Effect]
     val alternateParameters = requiredParametersFull_str.split("\\s+\\|\\s+")
     for (alternateParameter <- alternateParameters) {
       val parametersStrlist = alternateParameter.split("\\s+,\\s+")
-      val childScripts = new ListBuffer[PDXScript[?]]
       for (i <- parametersStrlist.indices) {
         val parameterStr = parametersStrlist(i).trim
         var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
         data = data.filter((s: String) => s.nonEmpty)
         if (data.length >= 2) {
-//          val paramIdentifierStr = data(0).trim
-//          if (data(1).trim.startsWith("<") && data(1).trim.endsWith(">")) {
-//            val paramTypeStr = data(1).trim
-//            val paramValueType: Option[ParameterValueType] = ParameterValueType.of(paramTypeStr)
-//          }
-          // replace with this: ? if it works!
           effects ++= parametersToBlockEffect(pdxIdentifier, parameterStr)
         } else if (data.length == 1) {
-          effects ++= simpleParameterToEffect(pdxIdentifier, parameterStr) // really a simple parameter
+          effects ++= simpleParameterToEffect(pdxIdentifier, parameterStr)
         }
         else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
         if (data.length >= 3) {
-          // todo !!!!!! do something with the complex effects (block effects) right here!!!
-          var f = 0
-          // idk
           effects ++= parametersToBlockEffect(pdxIdentifier, parameterStr)
         }
       }
@@ -192,7 +205,7 @@ class EffectDatabase(databaseName: String) {
 
   private def simpleParameterToEffect(pdxIdentifier: String, requiredParametersSimple_str: String): Option[Effect] = {
     var paramValueType: Option[ParameterValueType] = None
-    
+
     for (alternateParameter <- requiredParametersSimple_str.split("\\s+\\|\\s+")) {
       val parametersStrlist = alternateParameter.split("\\s+,\\s+")
       for (i <- parametersStrlist.indices) {
@@ -200,29 +213,17 @@ class EffectDatabase(databaseName: String) {
         val parameterStr = parametersStrlist(i).trim
         var data = parameterStr.splitWithDelimiters("(<[a-z_-]+>|\\|)", -1)
         data = data.filter((s: String) => s.nonEmpty)
-//                if (data.length >= 2) {
-//                  val paramIdentifierStr = data(0).trim
-//                  val paramTypeStr = data(1).trim
-//                  val paramValueType = ParameterValueType.of(paramTypeStr)
-//                }
+
         if (data.length == 1) {
           if (data(0).trim.startsWith("<") && data(0).trim.endsWith(">")) {
-            //
             val paramTypeStr = data(0).trim
             paramValueType = ParameterValueType.of(paramTypeStr)
           }
-          else {
-            // todo
-          }
         }
         else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
-        if (data.length >= 3) {
-          // idk
-          // todo handled by parametersToBlockEffect??? or
-        }
       }
     }
-    
+
     paramValueType.getOrElse(return None) match {
       case ParameterValueType.cw_int => Some(
         new IntPDX(pdxIdentifier) with SimpleEffect {
@@ -233,7 +234,6 @@ class EffectDatabase(databaseName: String) {
       case ParameterValueType.cw_string => Some(
         new StringPDX(pdxIdentifier) with SimpleEffect {
         })
-      // todo update default value/bool type
       case ParameterValueType.cw_bool => Some(
         new BooleanPDX(pdxIdentifier, false, BoolType.TRUE_FALSE) with SimpleEffect {
         })
@@ -247,12 +247,12 @@ class EffectDatabase(databaseName: String) {
         new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country") with SimpleEffect {
         })
       case _ =>
-        None // todo ??? !!!
+        None
     }
   }
 
   private def parametersToBlockEffect(pdxIdentifier: String, requiredParameters_str: String): Option[Effect] = {
-    var effectParameters: ListBuffer[(String, ParameterValueType)] = new ListBuffer[(String, ParameterValueType)]
+    val effectParameters: ListBuffer[(String, ParameterValueType)] = new ListBuffer[(String, ParameterValueType)]
 
     for (alternateParameter <- requiredParameters_str.split("\\s+\\|\\s+")) {
       val parametersStrlist = alternateParameter.split("\\s+,\\s+")
@@ -263,7 +263,7 @@ class EffectDatabase(databaseName: String) {
         if (parameters.length >= 1) {
           for (parameter <- parameters) {
             var paramValueType: Option[ParameterValueType] = None
-            var paramIdentifier = parameter(0).trim
+            val paramIdentifier = parameter(0).trim
 
             if (parameter.length == 2) {
               if (parameter(1).trim.startsWith("<") && parameter(1).trim.endsWith(">")) {
@@ -322,22 +322,6 @@ class EffectDatabase(databaseName: String) {
         }
       }
       Some(structuredEffectBlock)
-    }
-  }
-  
-  private def parseEnumSet(enumSetString: String): Option[Set[ScopeType]] = {
-    Option(enumSetString).filter(_.nonEmpty).filter(_ != "none").map { str =>
-      str.split(", ").flatMap { enumName =>
-        Try(ScopeType.valueOf(enumName)).toOption
-      }.toSet
-    }
-  }
-
-  def close(): Unit = {
-    try connection.close()
-    catch {
-      case e: SQLException =>
-        e.printStackTrace()
     }
   }
 }

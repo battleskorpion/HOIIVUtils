@@ -1,6 +1,5 @@
 package com.hoi4utils.clausewitz;
 
-import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
 import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
 
 import java.io.*;
@@ -17,7 +16,6 @@ public class HOIIVUtilsConfig {
 	private final String version;
 	private final Properties properties;
 	private final ModifierDatabase modifierDatabase;
-	private final EffectDatabase effectDatabase;
 
 	public HOIIVUtilsConfig(
 		File hoi4UtilsDir, 
@@ -25,15 +23,13 @@ public class HOIIVUtilsConfig {
 		InputStream defaultProperties,
 		String version,
 		Properties properties,
-		ModifierDatabase modifierDatabase,
-		EffectDatabase effectDatabase) {
+		ModifierDatabase modifierDatabase) {
 		this.hoi4UtilsDir = hoi4UtilsDir;
 		this.propertiesFile = propertiesFile;
 		this.defaultProperties = defaultProperties;
 		this.version = version;
 		this.properties = properties;
 		this.modifierDatabase = modifierDatabase;
-		this.effectDatabase = effectDatabase;
 	}
 
 	public File getHoi4UtilsDir() {
@@ -54,10 +50,6 @@ public class HOIIVUtilsConfig {
 
 	public ModifierDatabase getModifierDatabase() {
 		return modifierDatabase;
-	}
-
-	public EffectDatabase getEffectDatabase() {
-		return effectDatabase;
 	}
 
 	public String getProperty(String key) {
