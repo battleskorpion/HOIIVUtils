@@ -88,9 +88,9 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     }
   }
 
-  override def isEmpty: Boolean = get().isEmpty
+  override def isEmpty: Boolean = pdxList.isEmpty
 
-  override def iterator: Iterator[T] = get().iterator.flatten   // todo idk
+  override def iterator: Iterator[T] = pdxList.iterator // todo idk
 
   override def foreach[U](f: T => U): Unit = super.foreach(f)
 

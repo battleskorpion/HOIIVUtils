@@ -4,10 +4,10 @@ import com.hoi4utils.clausewitz.script.*;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +27,7 @@ public class PDXEditorPane extends AnchorPane {
     private final List<Node> nullPropertyNodes = new ArrayList<>();
     private boolean displayNullProperties = false;
     private Runnable onUpdate = null;
+    private boolean showDebugBorders = true;    // todo
 
     public PDXEditorPane(PDXScript<?> pdxScript) {
         this.pdxScript = pdxScript;
@@ -53,8 +54,6 @@ public class PDXEditorPane extends AnchorPane {
     }
 
     private void drawEditor(PDXScript<?> pdxScript, VBox vbox) {
-        vbox.getChildren().clear(); // Clear existing children to reset the editor
-
         if (pdxScript instanceof StructuredPDX pdx) {
             Collection<? extends PDXScript<?>> pdxProperties = CollectionConverters.asJavaCollection(
                     pdx.pdxProperties());
@@ -93,6 +92,10 @@ public class PDXEditorPane extends AnchorPane {
                 showNullProperties();
             }
         }
+
+        /* post ui construction */ 
+        if (showDebugBorders) applyBorderRecursively(vbox, Border.stroke(Paint.valueOf("blue")));
+        else applyBorderRecursively(vbox, Border.EMPTY);
     }
 
     private Node createEditorNode(PDXScript<?> property, boolean allowNull, boolean withLabel) {
@@ -264,6 +267,7 @@ public class PDXEditorPane extends AnchorPane {
     private void reloadEditor() {
         nullProperties.clear();
         nullPropertyNodes.clear();
+        rootVBox.getChildren().clear();     // Clear existing children to reset the editor
         onPropertyUpdate();     // Properties may have been updated
         drawEditor(pdxScript, rootVBox);
     }
@@ -328,5 +332,16 @@ public class PDXEditorPane extends AnchorPane {
         spinner.getValueFactory().setValue(pdx.getOrElse(0));
 
         return newSpinnerHBox(pdx, withLabel, spinner);
+    }
+
+    private void applyBorderRecursively(Parent parent, Border border) {
+        for (Node node : parent.getChildrenUnmodifiable()) {
+            if (node instanceof Region region) {
+                region.setBorder(border);
+            }
+            if (node instanceof Parent childParent) {
+                applyBorderRecursively(childParent, border); // Recursively apply to children
+            }
+        }
     }
 }
