@@ -358,7 +358,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
     override def equals(other: PDXScript[?]): Boolean = {
       other match {
-        case icon: Icon => value.equals(icon.get()) // todo :(
+        case icon: Focus#Icon => value.equals(icon.get()) // todo :(
         case _ => false
       }
     }
