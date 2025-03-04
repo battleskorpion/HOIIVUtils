@@ -94,8 +94,8 @@ public class PDXEditorPane extends AnchorPane {
         }
 
         /* post ui construction */ 
-        if (showDebugBorders) applyBorderRecursively(vbox, Border.stroke(Paint.valueOf("blue")));
-        else applyBorderRecursively(vbox, Border.EMPTY);
+        if (showDebugBorders) applyDebugBorders(vbox);
+        else applyDebugBorders(vbox);
     }
 
     private Node createEditorNode(PDXScript<?> property, boolean allowNull, boolean withLabel) {
@@ -334,13 +334,18 @@ public class PDXEditorPane extends AnchorPane {
         return newSpinnerHBox(pdx, withLabel, spinner);
     }
 
-    private void applyBorderRecursively(Parent parent, Border border) {
+    private void applyDebugBorders(Parent parent) {
         for (Node node : parent.getChildrenUnmodifiable()) {
             if (node instanceof Region region) {
-                region.setBorder(border);
+                switch (node) {
+                    case VBox vbox -> vbox.setBorder(Border.stroke(Paint.valueOf("blue")));
+                    case HBox hbox -> hbox.setBorder(Border.stroke(Paint.valueOf("lightblue")));
+                    case Label label -> label.setBorder(Border.stroke(Paint.valueOf("orange")));
+                    default -> region.setBorder(Border.stroke(Paint.valueOf("green")));
+                }
             }
             if (node instanceof Parent childParent) {
-                applyBorderRecursively(childParent, border); // Recursively apply to children
+                applyDebugBorders(childParent); // Recursively apply to children
             }
         }
     }
