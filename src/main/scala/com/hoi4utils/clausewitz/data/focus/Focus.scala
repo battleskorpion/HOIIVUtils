@@ -371,6 +371,8 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     override def loadPDX(expression: Node): Unit = {
       super.loadPDX(expression)
     }
+
+    override def getPDXTypeName: String = "Completion Reward"
   }
 
 }

@@ -209,6 +209,10 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     else ct.runtimeClass.isInstance(node.get.$)
   }
 
+  def getPDXTypeName: String = {
+    getPDXIdentifier
+  }
+
   def schema(): PDXSchema[T] = {
     var schema = new PDXSchema[T](pdxIdentifiers*)
     null.asInstanceOf[PDXSchema[T]]  // todo no

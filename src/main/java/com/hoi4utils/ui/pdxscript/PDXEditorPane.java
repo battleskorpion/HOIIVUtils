@@ -27,7 +27,7 @@ public class PDXEditorPane extends AnchorPane {
     private final List<Node> nullPropertyNodes = new ArrayList<>();
     private boolean displayNullProperties = false;
     private Runnable onUpdate = null;
-    private boolean showDebugBorders = true;    // todo
+    private boolean showDebugBorders = false;    // todo
 
     public PDXEditorPane(PDXScript<?> pdxScript) {
         this.pdxScript = pdxScript;
@@ -236,6 +236,19 @@ public class PDXEditorPane extends AnchorPane {
             if (subNode != null) subVBox.getChildren().add(subNode);
             return null;
         });
+        /* Add [new collection pdx child pdx] button */
+        Button addPDXButton = new Button("Add " + pdx.getPDXTypeName());
+        addPDXButton.setPrefWidth(280);
+        addPDXButton.setOnAction(event -> {
+//            var newPDX = pdx.applySomeSupplier();
+//            var newPDXNode = createEditorPDXNode((PDXScript<?>) newPDX, allowNull, false);
+//            if (newPDXNode != null) {
+//                subVBox.getChildren().add(subVBox.getChildren().size() - 1, newPDXNode); // Add before the add button
+//            }
+        });
+        //addPDXButton.setMaxWidth(Double.MAX_VALUE); // Make it stretch horizontally
+        subVBox.getChildren().add(addPDXButton);
+
         // indent children
         // this way, by indenting *here* we don't indent the label of the collectionPDX itself.
         subVBox.setPadding(new Insets(6, 6, 6, 20));

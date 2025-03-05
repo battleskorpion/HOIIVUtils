@@ -125,6 +125,8 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     //
     obj
   }
+
+  override def getPDXTypeName: String 
 }
 
 
