@@ -41,6 +41,7 @@ public class MenuController extends Application implements JavaFXUIManager {
 
 	@FXML
 	public Button settingsButton;
+
 	
 	@FXML
 	void initialize() {
@@ -51,6 +52,7 @@ public class MenuController extends Application implements JavaFXUIManager {
 	}
 
 	private static void checkForInvalidSettingsAndShowWarnings() {
+		Button button;
 		boolean hasInvalidPaths = false;
 		StringBuilder warningMessage = new StringBuilder("The following settings need to be configured:\n\n");
 
@@ -110,6 +112,11 @@ public class MenuController extends Application implements JavaFXUIManager {
 			JButton settingsButton = new JButton("Open Settings");
 
 			settingsButton.addActionListener(e -> {
+//				try {
+//					((Stage) (button.getScene().getWindow())).close();
+//				} catch (Exception exception) {
+//					LOGGER.error("Failed to close menu window", exception);
+//				}
 				new SettingsController().open();
 				dialog.dispose();
 			});
