@@ -239,14 +239,18 @@ public class PDXEditorPane extends AnchorPane {
         /* Add [new collection pdx child pdx] button */
         Button addPDXButton = new Button("Add " + pdx.getPDXTypeName());
         addPDXButton.setPrefWidth(280);
+        final var finalPDX = pdx;
         addPDXButton.setOnAction(event -> {
 //            var newPDX = pdx.applySomeSupplier();
 //            var newPDXNode = createEditorPDXNode((PDXScript<?>) newPDX, allowNull, false);
 //            if (newPDXNode != null) {
 //                subVBox.getChildren().add(subVBox.getChildren().size() - 1, newPDXNode); // Add before the add button
 //            }
+            CollectionPDXNewPDXController newPDXController = new CollectionPDXNewPDXController();
+            newPDXController.open(finalPDX);
+//            var newPDX =
+//            finalPDX.add(newPDX)
         });
-        //addPDXButton.setMaxWidth(Double.MAX_VALUE); // Make it stretch horizontally
         subVBox.getChildren().add(addPDXButton);
 
         // indent children

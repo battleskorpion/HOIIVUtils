@@ -73,6 +73,16 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     }
   }
 
+  /**
+   * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.
+   *
+   * @param pdxScript the PDXScript to add
+   */
+  @targetName("add")
+  def +=(pdxScript: T): Unit = {
+    pdxList += pdxScript
+  }
+
   protected def useSupplierFunction(expression: Node): T = {
     pdxSupplier(expression) match {
       case Some(s) => s
