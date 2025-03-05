@@ -81,7 +81,6 @@ public class PDXEditorPane extends AnchorPane {
 
         /* post ui construction */ 
         if (showDebugBorders) applyDebugBorders(pane);
-        else applyDebugBorders(pane);
     }
 
     // todo remove allowNull? since now have separate
@@ -99,17 +98,21 @@ public class PDXEditorPane extends AnchorPane {
             }
             default -> {
                 var hbox = new HBox();
-                hbox.setSpacing(10);
+                hbox.setSpacing(6);
                 yield hbox;
             }
         };
         Label label = null;
         if (withLabel) {
-            label = new Label(property.getPDXIdentifier() + " =");
+            var labelText = switch (property) {
+                case StructuredPDX pdx -> pdx.getPDXIdentifier() + " :=";
+                case CollectionPDX<?> pdx -> pdx.getPDXIdentifier() + " :=";
+                default -> property.getPDXIdentifier() + " =";
+            }; 
+            label = new Label(labelText);
             label.setFont(Font.font("Monospaced"));
             label.setMinWidth(10);
             label.setPrefHeight(25);
-            // todo try changing padding (on sides)? or something
         }
 
         Node editorNode = switch (property) {
@@ -155,7 +158,7 @@ public class PDXEditorPane extends AnchorPane {
     private Node createEditorNullPDXNode(PDXScript<?> property, boolean withLabel) {
         HBox editorNullPropertyHBox = new HBox();
         editorNullPropertyHBox.setSpacing(10);
-        editorNullPropertyHBox.setPadding(new Insets(0, 0, 0, 20)); // Indent the null properties
+        editorNullPropertyHBox.setPadding(new Insets(6, 6, 6, 20)); // Indent the null properties
         Label label = null;
         if (withLabel) {
             label = new Label(property.getPDXIdentifier() + " =");
@@ -232,17 +235,16 @@ public class PDXEditorPane extends AnchorPane {
             if (subNode != null) subVBox.getChildren().add(subNode);
             return null;
         });
-        // indent children (this is the child of collectionPDX which needs to be indented)
-        // this way, by indenting *here* and not indenting all children we don't indent the label of the
-        // collectionPDX itself.
-        subVBox.setPadding(new Insets(0, 0, 0, 20));
+        // indent children
+        // this way, by indenting *here* we don't indent the label of the collectionPDX itself.
+        subVBox.setPadding(new Insets(6, 6, 6, 20));
         return subVBox;
     }
 
     private @NotNull VBox visualizeStructuredPDX(StructuredPDX pdx) {
         VBox subVBox = new VBox();
-        subVBox.setPadding(new Insets(10));
-        subVBox.setSpacing(10);
+        subVBox.setPadding(new Insets(6));
+        subVBox.setSpacing(6);
         Collection<? extends PDXScript<?>> pdxProperties = CollectionConverters.asJavaCollection(
                 pdx.pdxProperties());
         for (var property : pdxProperties) {
@@ -253,6 +255,9 @@ public class PDXEditorPane extends AnchorPane {
                 nullProperties.add(property);
             }
         }
+        // indent children
+        // this way, by indenting *here* we don't indent the label of the structuredPDX itself.
+        subVBox.setPadding(new Insets(6, 6, 6, 14));
         return subVBox;
     }
 

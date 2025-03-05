@@ -222,19 +222,30 @@ object EffectDatabase {
         if (parameters.length >= 1) {
           for (parameter <- parameters) {
             var paramValueType: Option[ParameterValueType] = None
-            val paramIdentifier = parameter(0).trim
+            val paramIdentifier = parameter(0)
 
             if (parameter.length == 2) {
-              if (parameter(1).trim.startsWith("<") && parameter(1).trim.endsWith(">")) {
-                val paramTypeStr = parameter(1).trim
+              if (parameter(1).startsWith("<") && parameter(1).endsWith(">")) {
+                val paramTypeStr = parameter(1)
                 paramValueType = ParameterValueType.of(paramTypeStr)
               }
               else {
                 // todo
               }
             }
-            if (parameter.length >= 2) {
-              // todo (i think this would mean weird stuff like optional?)
+            if (parameter.length > 2) {
+              /* special cases like @multiple */
+              if (parameter(2).startsWith("@")) {
+                // todo handle flags and stuff
+              }
+
+              if (parameter(1).startsWith("<") && parameter(1).endsWith(">")) {
+                val paramTypeStr = parameter(1)
+                paramValueType = ParameterValueType.of(paramTypeStr)
+              }
+              else {
+                // todo
+              }
             }
             else if (parameter.length == 1) {
               if (parameters.length <= 1)
