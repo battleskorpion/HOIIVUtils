@@ -219,13 +219,12 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 		this.title = title;
 	}
 
-	// TODO move to a more appropriate class or delete
-//	private List<Class<?>> getClassHierarchy(Class<?> clazz) {
-//		List<Class<?>> hierarchy = new ArrayList<>();
-//		while (clazz != null) {
-//			hierarchy.add(clazz);
-//			clazz = clazz.getSuperclass();
-//		}
-//		return hierarchy;
-//	}
+	private List<Class<?>> getClassHierarchy(Class<?> clazz) {
+		List<Class<?>> hierarchy = new ArrayList<>();
+		while (clazz != null) {
+			hierarchy.add(clazz);
+			clazz = clazz.getSuperclass();
+		}
+		return hierarchy;
+	}
 }
