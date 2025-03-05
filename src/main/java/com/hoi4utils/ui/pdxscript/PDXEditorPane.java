@@ -54,31 +54,11 @@ public class PDXEditorPane extends AnchorPane {
     }
 
     private void drawEditor(PDXScript<?> pdxScript, Pane pane) {
-        if (pdxScript instanceof StructuredPDX pdx) {
-            Collection<? extends PDXScript<?>> pdxProperties = CollectionConverters.asJavaCollection(
-                    pdx.pdxProperties());
-            for (var property : pdxProperties) {
-//                HBox hbox = new HBox();
-//                hbox.setSpacing(10);
-//                Label label = new Label(property.getPDXIdentifier() + " =");
-//                label.setFont(Font.font("Monospaced"));
-//                label.setMinWidth(10);
-//                label.setPrefHeight(25);
-//
-//                Node editorNode = createEditorNode(property, false, false);
-//                if (editorNode != null) {
-//                    hbox.getChildren().addAll(label, editorNode);
-//                    pane.getChildren().add(hbox);
-//                } else {
-//                    nullProperties.add(property);
-//                }
-                Node editorPDXNode = createEditorPDXNode(property, false, true);
-                if (editorPDXNode != null) {
-                    pane.getChildren().add(editorPDXNode);
-                } else {
-                    nullProperties.add(property);
-                }
-            }
+        var editorPDXNode = createEditorPDXNode(pdxScript, false, true);
+        if (editorPDXNode != null) {
+            pane.getChildren().add(editorPDXNode);
+        } else {
+            nullProperties.add(pdxScript);
         }
 
         // Add a plus sign button to add new properties
@@ -108,6 +88,11 @@ public class PDXEditorPane extends AnchorPane {
     private Node createEditorPDXNode(PDXScript<?> property, boolean allowNull, boolean withLabel) {
         Pane editorPropertyPane = switch(property) {
             case CollectionPDX<?> pdx -> {
+                var vbox = new VBox();
+                vbox.setSpacing(4);
+                yield vbox;
+            }
+            case StructuredPDX pdx -> {
                 var vbox = new VBox();
                 vbox.setSpacing(4);
                 yield vbox;
@@ -258,10 +243,16 @@ public class PDXEditorPane extends AnchorPane {
         VBox subVBox = new VBox();
         subVBox.setPadding(new Insets(10));
         subVBox.setSpacing(10);
-        Label subLabel = new Label(pdx.getPDXIdentifier() + " Sub-Properties:");
-        subLabel.setFont(Font.font("Monospaced"));
-        subVBox.getChildren().add(subLabel);
-        drawEditor(pdx, subVBox);
+        Collection<? extends PDXScript<?>> pdxProperties = CollectionConverters.asJavaCollection(
+                pdx.pdxProperties());
+        for (var property : pdxProperties) {
+            Node editorPDXNode = createEditorPDXNode(property, false, true);
+            if (editorPDXNode != null) {
+                subVBox.getChildren().add(editorPDXNode);
+            } else {
+                nullProperties.add(property);
+            }
+        }
         return subVBox;
     }
 
