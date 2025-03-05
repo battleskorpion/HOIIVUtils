@@ -1,5 +1,6 @@
 package com.hoi4utils.ui.pdxscript;
 
+import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.script.*;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -27,7 +28,6 @@ public class PDXEditorPane extends AnchorPane {
     private final List<Node> nullPropertyNodes = new ArrayList<>();
     private boolean displayNullProperties = false;
     private Runnable onUpdate = null;
-    private boolean showDebugBorders = false;    // todo
 
     public PDXEditorPane(PDXScript<?> pdxScript) {
         this.pdxScript = pdxScript;
@@ -80,8 +80,8 @@ public class PDXEditorPane extends AnchorPane {
             }
         }
 
-        /* post ui construction */ 
-        if (showDebugBorders) applyDebugBorders(pane);
+        /* post ui construction */
+        if (HOIIVUtils.get("debug.colors").equals("true")) applyDebugBorders(pane);
     }
 
     // todo remove allowNull? since now have separate

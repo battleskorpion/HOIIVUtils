@@ -37,23 +37,25 @@ public class SettingsController extends Application implements JavaFXUIManager {
 	private Stage stage;
 
 	@FXML
-	public Label versionLabel;
+	Label versionLabel;
 	@FXML
-	public TextField modPathTextField;
+	TextField modPathTextField;
 	@FXML
-	public TextField hoi4PathTextField;
+	TextField hoi4PathTextField;
 	@FXML
-	public Button modFolderBrowseButton;
+	Button modFolderBrowseButton;
 	@FXML
-	public Button hoi4FolderBrowseButton;
+	Button hoi4FolderBrowseButton;
 	@FXML
-	public Button idOkButton;
+	Button idOkButton;
 	@FXML
-	public RadioButton darkTheme;
+	RadioButton darkTheme;
 	@FXML
-	public RadioButton lightTheme;
+	RadioButton lightTheme;
 	@FXML
-	public ComboBox<Screen> preferredMonitorComboBox;
+	ComboBox<Screen> preferredMonitorComboBox;
+	@FXML
+	ToggleButton debugColorsTButton;
 
 	@FXML
 	void initialize() {
@@ -96,6 +98,13 @@ public class SettingsController extends Application implements JavaFXUIManager {
 		}
 		darkTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "dark"));
 		lightTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "light"));
+		preferredMonitorComboBox.getSelectionModel().select(Integer.parseInt(HOIIVUtils.get("preferred.screen")));
+		debugColorsTButton.setSelected(Boolean.parseBoolean(HOIIVUtils.get("debug.colors")));
+		if (debugColorsTButton.isSelected()) {
+			debugColorsTButton.setText("ON");
+		} else {
+			debugColorsTButton.setText("OFF");
+		}
 	}
 
 	/**
@@ -251,6 +260,16 @@ public class SettingsController extends Application implements JavaFXUIManager {
 	 */
 	public void handlePreferredMonitorSelection() {
 		HOIIVUtils.set("preferred.screen", String.valueOf(preferredMonitorComboBox.getSelectionModel().getSelectedIndex()));
+	}
+
+	public void handleDebugColorsTButton() {
+		if (debugColorsTButton.isSelected()) {
+			HOIIVUtils.set("debug.colors", "true");
+			debugColorsTButton.setText("ON");
+		} else {
+			HOIIVUtils.set("debug.colors", "false");
+			debugColorsTButton.setText("OFF");
+		}
 	}
 
 	/**
