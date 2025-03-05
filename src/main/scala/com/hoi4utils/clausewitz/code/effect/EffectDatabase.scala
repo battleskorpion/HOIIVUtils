@@ -285,6 +285,7 @@ object EffectDatabase {
         case (id, ParameterValueType.province) => new ReferencePDX[Province](() => CollectionConverters.asScala(Province.list), p => Some(p.idStr()), id)
         case (id, ParameterValueType.country) => new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country")
         case (id, ParameterValueType.building) => new StringPDX(id) // todo can improve (type = industrial_complex is example of a building)
+        case (id, ParameterValueType.tech_category) => new StringPDX(id)
       }.to(ListBuffer)
       val structuredEffectBlock = new StructuredPDX(pdxIdentifier) with BlockEffect {
         override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
