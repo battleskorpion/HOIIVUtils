@@ -128,11 +128,13 @@ public class MenuController extends Application implements JavaFXUIManager {
 			JButton settingsButton = new JButton("Open Settings");
 
 			settingsButton.addActionListener(e -> {
-				try {
-					((Stage) (button.getScene().getWindow())).close();
-				} catch (Exception exception) {
-					LOGGER.error("Failed to close menu window", exception);
-				}
+				Platform.runLater(() -> { 
+					try {
+						((Stage) (button.getScene().getWindow())).close();
+					} catch (Exception ex) {
+						LOGGER.error("Failed to close menu window", ex);
+					}
+				}); 
 				Platform.runLater(() -> new SettingsController().open());
 				dialog.dispose();
 			});
