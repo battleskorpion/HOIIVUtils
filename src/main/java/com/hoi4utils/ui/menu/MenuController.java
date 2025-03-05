@@ -56,14 +56,7 @@ public class MenuController extends Application implements JavaFXUIManager {
 				MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton);
 				return null;
 			}
-		}; 
-		
-		task.setOnFailed(e -> {
-		});
-		
-		task.setOnSucceeded(e -> {
-			System.out.println("Task completed");
-		});
+		};
 		
 		new Thread(task).start();
 	}
