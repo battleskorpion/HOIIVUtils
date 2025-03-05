@@ -19,6 +19,8 @@ import com.hoi4utils.ui.province_colors.ProvinceColorsController;
 import com.hoi4utils.ui.settings.SettingsController;
 import com.hoi4utils.ui.units.CompareUnitsController;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -48,11 +50,25 @@ public class MenuController extends Application implements JavaFXUIManager {
 		LOGGER.debug("MenuController initialized");
 		
 		// Check for invalid folder paths and show appropriate warnings
-		new Thread(MenuController::checkForInvalidSettingsAndShowWarnings).start();
+		Task<Void> task = new Task<>() {
+			@Override
+			protected Void call() throws Exception {
+				MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton);
+				return null;
+			}
+		}; 
+		
+		task.setOnFailed(e -> {
+		});
+		
+		task.setOnSucceeded(e -> {
+			System.out.println("Task completed");
+		});
+		
+		new Thread(task).start();
 	}
 
-	private static void checkForInvalidSettingsAndShowWarnings() {
-		Button button;
+	private static boolean checkForInvalidSettingsAndShowWarnings(Button button) {
 		boolean hasInvalidPaths = false;
 		StringBuilder warningMessage = new StringBuilder("The following settings need to be configured:\n\n");
 
@@ -112,15 +128,15 @@ public class MenuController extends Application implements JavaFXUIManager {
 			JButton settingsButton = new JButton("Open Settings");
 
 			settingsButton.addActionListener(e -> {
-//				try {
-//					((Stage) (button.getScene().getWindow())).close();
-//				} catch (Exception exception) {
-//					LOGGER.error("Failed to close menu window", exception);
-//				}
-				new SettingsController().open();
+				try {
+					((Stage) (button.getScene().getWindow())).close();
+				} catch (Exception exception) {
+					LOGGER.error("Failed to close menu window", exception);
+				}
+				Platform.runLater(() -> new SettingsController().open());
 				dialog.dispose();
 			});
-
+			
 			buttonPanel.add(settingsButton);
 
 			// Add panels to dialog
@@ -133,6 +149,8 @@ public class MenuController extends Application implements JavaFXUIManager {
 			dialog.setLocationRelativeTo(null);
 			dialog.setVisible(true);
 		}
+		
+		return hasInvalidPaths;
 	}
 
 	public void launchMenuWindow(String[] args) {
