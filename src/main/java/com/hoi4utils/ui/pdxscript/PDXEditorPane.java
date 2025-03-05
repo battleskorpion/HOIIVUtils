@@ -55,6 +55,7 @@ public class PDXEditorPane extends AnchorPane {
 
     private void drawEditor(PDXScript<?> pdxScript, Pane pane) {
         var editorPDXNode = createEditorPDXNode(pdxScript, false, true);
+        
         if (editorPDXNode != null) {
             pane.getChildren().add(editorPDXNode);
         } else {
