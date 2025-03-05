@@ -242,21 +242,21 @@ public class HOIIVUtilsInitializer {
 
 		LocalizationManager.getOrCreate(EnglishLocalizationManager::new).reload();
 
-		if (!Interface.read()) {
+		if (Interface.read()) {
 			setProperty("valid.Interface", "true");
 		} else {
 			setProperty("valid.Interface", "false");
 			LOGGER.error("Failed to read gfx interface files");
 		}
 
-		if (!State.read()) {
+		if (State.read()) {
 			setProperty("valid.State", "true");
 		} else {
 			setProperty("valid.State", "false");
 			LOGGER.error("Failed to read states");
 		}
 
-		if (!FocusTree.read()) {
+		if (FocusTree.read()) {
 			setProperty("valid.FocusTree", "true");
 		} else {
 			setProperty("valid.FocusTree", "false");
