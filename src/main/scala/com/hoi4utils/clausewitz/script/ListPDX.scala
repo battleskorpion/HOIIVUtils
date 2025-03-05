@@ -1,0 +1,132 @@
+package com.hoi4utils.clausewitz.script
+
+import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
+import com.hoi4utils.clausewitz_parser.Node
+
+import scala.collection.mutable.ListBuffer
+
+/**
+ *  where this is specifically USEFUL:
+ *  ex:
+ *  remove ideas can be a list of ideas where: 
+ *  remove_ideas = {
+ *      <idea_1>
+ *      <idea_2>
+ *      ...
+ *  }
+ *  
+ *  where each <idea> is an idea string.
+ */
+class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
+
+  protected var pdxList: ListBuffer[T] = ListBuffer.empty
+
+  def this(simpleSupplier: () => T, pdxIdentifiers: String*) = {
+    this(simpleSupplier, pdxIdentifiers.toList)
+  }
+
+  /**
+   * @inheritdoc
+   */
+  @throws[UnexpectedIdentifierException]
+  override def loadPDX(expression: Node): Unit = {
+    try add(expression)
+    catch {
+      case e: NodeValueTypeException =>
+        throw new RuntimeException(e)
+    }
+  }
+
+  override def loadPDX(expressions: Iterable[Node]): Unit = {
+    if (expressions != null) {
+      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
+        try loadPDX(expression)
+        catch {
+          case e: UnexpectedIdentifierException =>
+            System.err.println(e.getMessage)
+        }
+      })
+    }
+  }
+
+  override def equals(other: PDXScript[?]) = false // todo? well.
+
+  override def get(): Option[ListBuffer[T]] = {
+    if (pdxList.isEmpty) None
+    else Some(pdxList)
+  }
+
+  @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
+  protected def add(expression: Node): Unit = {
+    val value = expression.$
+    // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
+    // then load each sub-PDXScript
+    expression.$ match {
+      case l: ListBuffer[Node] =>
+        for (childExpr <- l) {
+          val childScript = useSupplierFunction(childExpr)
+          childScript.loadPDX(childExpr)
+          pdxList += childScript
+        }
+      case _ =>
+        // todo idk   // double todo
+        val childScript = useSupplierFunction(expression)
+        childScript.loadPDX(expression)
+        pdxList += childScript
+    }
+  }
+
+  protected def useSupplierFunction(expression: Node): T = {
+    simpleSupplier()
+  }
+
+  def clear(): Unit = {
+    if (node.nonEmpty) {
+      node.get.$ match {
+        case l: ListBuffer[T] => l.clear()
+      }
+    }
+  }
+
+  override def isEmpty: Boolean = pdxList.isEmpty
+
+  override def iterator: Iterator[T] = pdxList.iterator // todo idk
+
+  override def foreach[U](f: T => U): Unit = super.foreach(f)
+
+  override def length: Int = pdxList.length
+
+  override def apply(i: Int): T = pdxList(i)
+
+  override def isUndefined: Boolean = {
+    pdxList.forall(_.isUndefined) || pdxList.isEmpty
+  }
+
+  override def toScript: String = {
+    if (node.isEmpty || node.get.isEmpty) return null
+
+//    val sb = new StringBuilder()
+//    sb.append(node.get.identifier)
+//    sb.append(" = {\n")
+//    for (pdx <- get().get) {
+//      sb.append('\t')
+//      sb.append(pdx.toScript)
+//    }
+//    sb.toString
+    null
+  }
+
+  override def set(expression: Node): Unit = {
+    usingIdentifier(expression)
+    this.node = Some(expression)
+    val value = expression.$
+    setNode(value)
+  }
+
+  override def set(obj: ListBuffer[T]): ListBuffer[T] = {
+    //
+    obj
+  }
+
+}

@@ -1,5 +1,6 @@
 package com.hoi4utils.clausewitz.code.effect
 
+import com.hoi4utils.ExpectedRange
 import com.hoi4utils.clausewitz.BoolType
 import com.hoi4utils.clausewitz.code.scope.ScopeType
 import com.hoi4utils.clausewitz.data.country.CountryTag
@@ -111,6 +112,7 @@ object EffectDatabase {
           (requiredParametersFull, requiredParameterSimple) match {
             case (Some(requiredParametersFull), Some(requiredParameterSimple)) =>
               effects ++= parametersToEffect(pdxIdentifier, requiredParametersFull_str)
+              effects ++= simpleParameterToEffect(pdxIdentifier, requiredParametersSimple_str)
             case (Some(requiredParametersFull), None) =>
               effects ++= parametersToEffect(pdxIdentifier, requiredParametersFull_str)
             case (None, Some(requiredParameterSimple)) =>
@@ -151,7 +153,16 @@ object EffectDatabase {
         if (data.length >= 2) {
           effects ++= parametersToBlockEffect(pdxIdentifier, parameterStr)
         } else if (data.length == 1) {
-          effects ++= simpleParameterToEffect(pdxIdentifier, parameterStr)
+          /* handle as simple parameter, *unless* is list */
+          if (data(0).trim.startsWith("<") && data(0).trim.endsWith(">")) {
+            /* if <list[<type>]>, handle as list */
+            val paramTypeStr = data(0).trim
+            if (paramTypeStr.startsWith("<list[")) {
+              effects ++= parametersToBlockEffect(pdxIdentifier, parameterStr)
+            } else {
+              effects ++= simpleParameterToEffect(pdxIdentifier, parameterStr)
+            }
+          }
         }
         else throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
         if (data.length >= 3) {
@@ -184,17 +195,23 @@ object EffectDatabase {
     }
 
     paramValueType.getOrElse(return None) match {
-      case ParameterValueType.cw_int => Some(
-        new IntPDX(pdxIdentifier) with SimpleEffect {
+      case ParameterValueType.country => Some(
+        new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country") with SimpleEffect {
+        })
+      case ParameterValueType.cw_bool => Some(
+        new BooleanPDX(pdxIdentifier, false, BoolType.TRUE_FALSE) with SimpleEffect {
         })
       case ParameterValueType.cw_float => Some(
         new DoublePDX(pdxIdentifier) with SimpleEffect {
         })
+      case ParameterValueType.cw_int => Some(
+        new IntPDX(pdxIdentifier) with SimpleEffect {
+        })
       case ParameterValueType.cw_string => Some(
         new StringPDX(pdxIdentifier) with SimpleEffect {
         })
-      case ParameterValueType.cw_bool => Some(
-        new BooleanPDX(pdxIdentifier, false, BoolType.TRUE_FALSE) with SimpleEffect {
+      case ParameterValueType.idea => Some(
+        new StringPDX(pdxIdentifier) with SimpleEffect {  // in future: ReferencePDX[Idea]
         })
       case ParameterValueType.state => Some(
         new ReferencePDX[State](() => State.list, s => Some(s.name), pdxIdentifier) with SimpleEffect {
@@ -202,26 +219,25 @@ object EffectDatabase {
       case ParameterValueType.province => Some(
         new ReferencePDX[Province](() => CollectionConverters.asScala(Province.list), p => Some(p.idStr()), pdxIdentifier) with SimpleEffect {
         })
-      case ParameterValueType.country => Some(
-        new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country") with SimpleEffect {
-        })
       case _ =>
         None
     }
   }
 
   private def parametersToBlockEffect(pdxIdentifier: String, requiredParameters_str: String): Option[Effect] = {
-    val effectParameters: ListBuffer[(String, ParameterValueType)] = new ListBuffer[(String, ParameterValueType)]
+    val effectParameters: ListBuffer[(String, ParameterValueType, Boolean)]
+      = new ListBuffer[(String, ParameterValueType, Boolean)]
 
     for (alternateParameter <- requiredParameters_str.split("\\s+\\|\\s+")) {
       val parametersStrlist = alternateParameter.split("\\s+,\\s+")
       for (i <- parametersStrlist.indices) {
         val parameterStr = parametersStrlist(i).trim
         val parameters = parameterStr.split(",", -1).map(s => s.trim).filter(_.nonEmpty)
-          .map(s => s.splitWithDelimiters("(<[a-zA-Z0-9@_\\- ;:+]+>|\\|)", -1).map(s => s.trim).filter(s => s.nonEmpty))
+          .map(s => s.splitWithDelimiters("(<[a-zA-Z0-9@_\\- ;:+\\[\\]]+>|\\|)", -1).map(s => s.trim).filter(s => s.nonEmpty))
         if (parameters.length >= 1) {
           for (parameter <- parameters) {
             var paramValueType: Option[ParameterValueType] = None
+            var isListType = false
             val paramIdentifier = parameter(0)
 
             if (parameter.length == 2) {
@@ -248,15 +264,25 @@ object EffectDatabase {
               }
             }
             else if (parameter.length == 1) {
-              if (parameters.length <= 1)
-                throw new InvalidParameterException("Invalid parameter definition: " + parameterStr)
-              else {
-                // todo (means theres a simple parameter option)
+              if (parameter(0).startsWith("<") && parameter(0).endsWith(">")) {
+                /* better not be simple effect */
+                if (parameter(0).startsWith("<list[")) {
+                  /* find type within list[] */
+                  val paramTypeStr = parameter(0).split("\\[|\\]")(1)
+                  paramValueType = ParameterValueType.of(paramTypeStr)
+                  isListType = true
+                }
+                else throw new InvalidParameterException("Invalid parameter definition: " + pdxIdentifier)
               }
+              else if (parameter(0).startsWith("@")) {
+                // todo handle initial flags and stuff
+                // such as @limit
+              }
+              else throw new InvalidParameterException("Invalid parameter definition: " + pdxIdentifier)
             }
 
             if (paramValueType.isDefined)
-              effectParameters += (paramIdentifier -> paramValueType.get)
+              effectParameters += ((paramIdentifier, paramValueType.get, isListType))
             else {
               // TODO just log. bad log but just log. is debug log maybe. or more.
 //              throw new InvalidParameterException(
@@ -277,15 +303,37 @@ object EffectDatabase {
 //      }
 //      Some(blockEffect)
       val effectPDXParameters: ListBuffer[PDXScript[?]] = effectParameters.collect {
-        case (id, ParameterValueType.cw_int) => new IntPDX(id)
-        case (id, ParameterValueType.cw_float) => new DoublePDX(id)
-        case (id, ParameterValueType.cw_string) => new StringPDX(id)
-        case (id, ParameterValueType.cw_bool) => new BooleanPDX(id, false, BoolType.TRUE_FALSE)
-        case (id, ParameterValueType.state) => new ReferencePDX[State](() => State.list, s => Some(s.name), id)
-        case (id, ParameterValueType.province) => new ReferencePDX[Province](() => CollectionConverters.asScala(Province.list), p => Some(p.idStr()), id)
-        case (id, ParameterValueType.country) => new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country")
-        case (id, ParameterValueType.building) => new StringPDX(id) // todo can improve (type = industrial_complex is example of a building)
-        case (id, ParameterValueType.tech_category) => new StringPDX(id)
+        case (id, ParameterValueType.ace_type, false) => new StringPDX(id)     // ex: type = fighter_genius
+        case (id, ParameterValueType.ai_strategy, false) => new StringPDX(id)  // ex: type = alliance
+        case (id, ParameterValueType.character, false) => new StringPDX(id)    // ex: character = OMA_sultan. in future: ReferencePDX[Character]
+        case (id, ParameterValueType.country, false) => new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country")
+        case (id, ParameterValueType.cw_bool, false) => new BooleanPDX(id, false, BoolType.TRUE_FALSE)
+        case (id, ParameterValueType.cw_float, false) => new DoublePDX(id)
+        case (id, ParameterValueType.cw_int, false) => new IntPDX(id)
+        //case (id, ParameterValueType.cw_list) => new CollectionPDX[]()
+        case (id, ParameterValueType.cw_string, false) => new StringPDX(id)
+        case (id, ParameterValueType.cw_trait, false) => new StringPDX(id)     // ex: trait = really_good_boss
+        case (id, ParameterValueType.decision, false) => new StringPDX(id)     // ex: activate_decision = my_decision. in future: ReferencePDX[Decision]
+        case (id, ParameterValueType.doctrine_category, false) => new StringPDX(id) // ex: category = land_doctrine
+        case (id, ParameterValueType.flag, false) => new StringPDX(id)         // ex: set_state_flag = my_flag. boolean flag.
+        case (id, ParameterValueType.idea, false) => new StringPDX(id)//new ReferencePDX[Idea]        // ex: idea = my_idea
+        case (id, ParameterValueType.idea, true) => new ListPDX[StringPDX](() => new StringPDX, id)   // ex: idea = my_idea
+        case (id, ParameterValueType.mission, false) => new StringPDX(id)      // ex: activate_mission = my_mission (in future: ReferencePDX[Mission])
+        //case (id, ParameterValueType.modifier) => new ReferencePDX[Modifier]
+        case (id, ParameterValueType.scope, false) => new StringPDX(id)        // ex: scope = my_scope
+        case (id, ParameterValueType.state, false) => new ReferencePDX[State](() => State.list, s => Some(s.name), id)
+        case (id, ParameterValueType.equipment, false) => new StringPDX(id)    // ex: type = fighter_equipment_0. in future: ReferencePDX[Equipment]
+        case (id, ParameterValueType.strategic_region, false) => new IntPDX(id, ExpectedRange.ofPositiveInt) // ex: region = 5. in future: ReferencePDX[StratRegion]
+        case (id, ParameterValueType.building, false) => new StringPDX(id) // todo can improve (type = industrial_complex is example of a building)
+        case (id, ParameterValueType.operation_token, false) => new StringPDX(id)  // ex: token = token_test. in future: ReferencePDX[OperationToken]
+        case (id, ParameterValueType.ideology, false) => new StringPDX(id)         // ex: ruling_party = democratic
+        case (id, ParameterValueType.sub_ideology, false) => new StringPDX(id)     // ex: ideology = liberalism
+        case (id, ParameterValueType.province, false) => new ReferencePDX[Province](() => CollectionConverters.asScala(Province.list), p => Some(p.idStr()), id)
+        case (id, ParameterValueType.resource, false) => new StringPDX(id)         // ex: type = oil. in future: limited to known resources (reference pdx?)
+        case (id, ParameterValueType.tech_category, false) => new StringPDX(id)    // ex: category = radar_tech. in future: ReferencePDX[TechCategory]
+        case (id, ParameterValueType.advisor_slot, false) => new StringPDX(id)     // ex: slot = political_advisor. in future: limited to known slots
+        case (id, ParameterValueType.event, false) => new StringPDX(id)            // ex: id = my_event.1 in future: ReferencePDX[Event]
+        case (id, ParameterValueType.wargoal, false) => new StringPDX(id)          // ex: type = annex_everything in future: ReferencePDX[WarGoal]. Wargoals are found in /Hearts of Iron IV/common/wargoals/*.txt.
       }.to(ListBuffer)
       val structuredEffectBlock = new StructuredPDX(pdxIdentifier) with BlockEffect {
         override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
