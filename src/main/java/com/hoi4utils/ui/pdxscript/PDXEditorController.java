@@ -6,12 +6,11 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 
 public class PDXEditorController extends HOIIVUtilsAbstractController {
-    @FXML
-    AnchorPane rootAnchorPane;// = new AnchorPane();
-    @FXML
-    private PDXEditorPane editorPane;
     private PDXScript<?> pdxScript;
     private Runnable onUpdate = null;
+
+    @FXML
+    AnchorPane rootSkorpPane;
 
     public PDXEditorController() {
         setFxmlResource("PDXEditor.fxml");
@@ -45,12 +44,15 @@ public class PDXEditorController extends HOIIVUtilsAbstractController {
 
     @FXML
     void initialize() {
+        PDXEditorPane editorPane;
+
         if (onUpdate == null) {
             editorPane = new PDXEditorPane(pdxScript);
         } else {
             editorPane = new PDXEditorPane(pdxScript, onUpdate);
         }
-        rootAnchorPane.getChildren().add(editorPane);
+        rootSkorpPane.getChildren().add(editorPane);
+
         AnchorPane.setTopAnchor(editorPane, 30.0);
         AnchorPane.setBottomAnchor(editorPane, 0.0);
         AnchorPane.setLeftAnchor(editorPane, 0.0);
