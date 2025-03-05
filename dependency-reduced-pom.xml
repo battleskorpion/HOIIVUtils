@@ -254,12 +254,12 @@
     </dependencies>
   </dependencyManagement>
   <properties>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.organization.name>battleskorpion</project.organization.name>
-    <project.inceptionYear>2022</project.inceptionYear>
-    <java.version>23</java.version>
-    <javafx.version>23.0.2</javafx.version>
     <lombok.version>1.18.36</lombok.version>
+    <java.version>23</java.version>
+    <project.organization.name>battleskorpion</project.organization.name>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <javafx.version>23.0.2</javafx.version>
+    <project.inceptionYear>2022</project.inceptionYear>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 </project>
