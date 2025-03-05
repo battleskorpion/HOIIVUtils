@@ -60,7 +60,9 @@ public class HOIIVUtils {
 	 * @return Property value or null if not found
 	 */
 	public static String get(String key) {
-		return config.getProperty(key);
+		var property = config.getProperty(key);
+		if (property != null) return property;
+		else return ""; 
 	}
 
 	/**

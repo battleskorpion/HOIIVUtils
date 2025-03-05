@@ -9,12 +9,13 @@ import java.io.File
 class PDXScriptTests extends AnyFunSuiteLike {
 
   private val testPath = "src/test/resources/clausewitz_parser/"
-  private val focusTreeTestFiles = List(
+  private val validFocusTreeTestFiles = List(
     new File(testPath + "minimichigantest.txt"),
     new File(testPath + "minimichigantest2.txt"),
     new File(testPath + "minimichigantest3.txt"),
+    new File(testPath + "texas_tree.txt"),
   )
-  private val focusTestFiles = List(
+  private val validFocusTestFiles = List(
     new File(testPath + "focus_with_search_filter_test1.txt"),
     new File(testPath + "focus_with_search_filter_test2.txt"),
     new File(testPath + "carriage_return.txt"),
@@ -22,8 +23,8 @@ class PDXScriptTests extends AnyFunSuiteLike {
   private val filesToTest = List(
     new File(testPath + "specialinfantry.txt")
   )
-    .appendedAll(focusTreeTestFiles)
-    .appendedAll(focusTestFiles)
+    .appendedAll(validFocusTreeTestFiles)
+    .appendedAll(validFocusTestFiles)
 
   def withParsedFiles(testFunction: Node => Unit): Unit = {
     filesToTest.foreach { file =>
@@ -41,8 +42,8 @@ class PDXScriptTests extends AnyFunSuiteLike {
     testFunction(node)
   }
 
-  def withFocusTrees(testFunction: FocusTree => Unit): Unit = {
-    focusTreeTestFiles.foreach(file => {
+  def withValidFocusTrees(testFunction: FocusTree => Unit): Unit = {
+    validFocusTreeTestFiles.foreach(file => {
       val parser = new Parser(file)
       val node = parser.parse
       assert(node != null, s"Failed to parse $file")
@@ -53,13 +54,13 @@ class PDXScriptTests extends AnyFunSuiteLike {
   }
 
   test("Some PDXScript objects should be loaded through loadPDX() when present") {
-    withFocusTrees { focusTree =>
+    withValidFocusTrees { focusTree =>
       assert(focusTree.pdxProperties.nonEmpty)
     }
   }
 
   test("MultiPDX should load PDXScript objects") {
-    withFocusTrees { focusTree =>
+    withValidFocusTrees { focusTree =>
       assert(focusTree.focuses.nonEmpty)
     }
   }
@@ -71,14 +72,27 @@ class PDXScriptTests extends AnyFunSuiteLike {
 //  }
 
   test("StringPDX should be defined when present") {
-    withFocusTrees { focusTree =>
+    withValidFocusTrees { focusTree =>
       assert(focusTree.id.isDefined)
     }
   }
 
   test("StringPDX should have an obtainable value when applicable") {
-    withFocusTrees { focusTree =>
+    withValidFocusTrees { focusTree =>
       assert(focusTree.id.get().nonEmpty)
+    }
+  }
+
+  test("") {
+    withValidFocusTrees { focusTree =>
+      assert(focusTree.focuses
+        .flatMap(_.pdxProperties)
+        .forall(_ match {
+          case s: StringPDX =>
+            s.getOrElse("").isInstanceOf[String]
+          case _ => true
+        })
+      )
     }
   }
   
