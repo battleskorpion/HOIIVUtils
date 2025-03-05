@@ -1,9 +1,11 @@
 package com.hoi4utils.ui.pdxscript;
 
+import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.script.PDXScript;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.TextField;
 
 public class PDXEditorController extends HOIIVUtilsAbstractController {
     private PDXScript<?> pdxScript;
@@ -11,6 +13,10 @@ public class PDXEditorController extends HOIIVUtilsAbstractController {
 
     @FXML
     AnchorPane rootSkorpPane;
+    @FXML
+    TextField idField;
+    @FXML
+    TextField iconField;
 
     public PDXEditorController() {
         setFxmlResource("PDXEditor.fxml");
@@ -57,6 +63,50 @@ public class PDXEditorController extends HOIIVUtilsAbstractController {
         AnchorPane.setBottomAnchor(editorPane, 0.0);
         AnchorPane.setLeftAnchor(editorPane, 0.0);
         AnchorPane.setRightAnchor(editorPane, 0.0);
-
+        drawEditor();
     }
+
+    private void drawEditor() {
+        switch (pdxScript) {
+            case Focus pdx:
+                idField.setText(pdx.id().getOrElse("NO ID"));
+
+                break;
+            default:
+        }
+    }
+
+    public void handleFocusID() {
+        String input = idField.getText();
+        Focus pdx = (Focus) pdxScript;
+        pdx.setID(input);
+        if (input.isEmpty()) {
+            onPropertyUpdate();
+        } else {
+            reloadEditor();
+        }
+    }
+
+    public void handleFocusIcon() {
+        String input = iconField.getText();
+        Focus pdx = (Focus) pdxScript;
+//        pdx.setIcon(input);
+        if (input.isEmpty()) {
+            onPropertyUpdate();
+        } else {
+            reloadEditor();
+        }
+    }
+
+    private void reloadEditor() {
+        drawEditor();
+    }
+
+    private void onPropertyUpdate() {
+        if (onUpdate != null) {
+            onUpdate.run();
+        }
+    }
+
+
 }
