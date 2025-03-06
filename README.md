@@ -35,12 +35,13 @@ HOIIVUtils: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
 ## Usage
 Please keep in mind how **WIP** this is!  
 This is in pre-pre-alpha, and we consistently push commits that break the program.   
-1. Install [Java 23...](https://adoptium.net/temurin/releases/?version=23&os=any)  (Use either Eclipse Temurin, OpenJDK, etc., the standard Oracle Java JDK or JRE will not work due to dropped support for JavaFX.)
-2. Go to [releases...](https://github.com/battleskorpion/HOIIVUtils/releases) and download HOIIVUtils.zip
-3. Extract the zip
-4. run  .bat or .sh
-5. Go to Settings
-6. Select your preferred settings  
+1. Install [Java 23...](https://adoptium.net/temurin/releases/?version=23&os=any)
+     (Use either Eclipse Temurin, OpenJDK, etc., the standard Oracle Java JDK or JRE will not work due to dropped support for JavaFX)
+3. Go to [releases...](https://github.com/battleskorpion/HOIIVUtils/releases) and download HOIIVUtils.zip
+4. Extract the zip
+5. run  .bat or .sh
+6. Go to Settings
+7. Select your preferred settings  
 6. Click Ok
 
 
