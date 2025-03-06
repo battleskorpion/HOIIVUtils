@@ -40,10 +40,10 @@ object FocusTree {
    */
   def read(): Boolean = {
     if (!HOIIVFiles.Mod.focus_folder.exists || !HOIIVFiles.Mod.focus_folder.isDirectory) {
-      LOGGER.fatal(s"In State.java - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
+      LOGGER.fatal(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
       false
     } else if (HOIIVFiles.Mod.focus_folder.listFiles == null || HOIIVFiles.Mod.focus_folder.listFiles.length == 0) {
-      LOGGER.warn(s"No focuses found in ${HOIIVFiles.Mod.states_folder}")
+      LOGGER.warn(s"No focuses found in ${HOIIVFiles.Mod.focus_folder}")
       false
     } else {
       LOGGER.info("Reading focus trees from " + HOIIVFiles.Mod.focus_folder)
@@ -64,6 +64,11 @@ object FocusTree {
     focusTreeFileMap.clear()
   }
 
+  /**
+   * Adds a focus tree to the list of focus trees.
+   * @param focusTree the focus tree to add
+   * @return the updated list of focus trees
+   */
   def add(focusTree: FocusTree): Iterable[FocusTree] = {
     focusTrees += focusTree
     focusTrees
@@ -125,7 +130,9 @@ class FocusTree
   }
 
   // todo: add default, continuous focus position
-  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(id, country, focuses)
+  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
+    ListBuffer(id, country, focuses)
+  }
 
   /**
    * List of all focus IDs in this focus tree.

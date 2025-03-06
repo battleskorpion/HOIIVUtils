@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
+import scala.jdk.javaapi.CollectionConverters;
 
 import java.io.File;
 import java.util.Iterator;
@@ -80,7 +81,7 @@ public class IdeaLocalizationController extends HOIIVUtilsAbstractController imp
 
         if (selectedFile != null) {
             ideaFileTextField.setText(selectedFile.getAbsolutePath());
-            ideaFile = new IdeaFile(selectedFile.getAbsolutePath()); // todo?
+            ideaFile = new IdeaFile(selectedFile); // todo?
             ideaFileNameLabel.setText(ideaFile.toString());
         } else {
             ideaFileNameLabel.setText("[not found]");
@@ -150,7 +151,7 @@ public class IdeaLocalizationController extends HOIIVUtilsAbstractController imp
         ideaObservableList.clear();
 
         // Add all ideas from the idea file to the list
-        ideaObservableList.addAll(ideaFile.listIdeas());
+        ideaObservableList.addAll(CollectionConverters.asJava(ideaFile.listIdeas()));
     }
 
     /**

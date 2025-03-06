@@ -45,6 +45,9 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     loadPDX(node)
   }
 
+  /**
+   * @inheritdoc
+   */
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
     ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost, availableIfCapitulated,
       cancelIfInvalid, continueIfInvalid, completionReward)

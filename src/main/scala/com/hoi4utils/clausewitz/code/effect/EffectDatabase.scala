@@ -213,7 +213,7 @@ object EffectDatabase {
         new StringPDX(pdxIdentifier) with SimpleEffect {
         })
       case ParameterValueType.idea => Some(
-        new ReferencePDX[Idea](() => Idea.getIdeas, idea => idea.id.get(), pdxIdentifier) with SimpleEffect {  // in future: ReferencePDX[Idea]
+        new ReferencePDX[Idea](() => Idea.listAllIdeas, idea => idea.id.get(), pdxIdentifier) with SimpleEffect {  // in future: ReferencePDX[Idea]
         })
       case ParameterValueType.state => Some(
         new ReferencePDX[State](() => State.list, s => Some(s.name), pdxIdentifier) with SimpleEffect {
@@ -318,8 +318,8 @@ object EffectDatabase {
         case (name = id, `type` = ParameterValueType.decision) => new StringPDX(id)     // ex: activate_decision = my_decision. in future: ReferencePDX[Decision]
         case (name = id, `type` = ParameterValueType.doctrine_category) => new StringPDX(id) // ex: category = land_doctrine
         case (name = id, `type` = ParameterValueType.flag) => new StringPDX(id)         // ex: set_state_flag = my_flag. boolean flag.
-        case (id, ParameterValueType.idea, false) => new ReferencePDX[Idea](() => Idea.getIdeas, idea => idea.id.get(), id)//new ReferencePDX[Idea]        // ex: idea = my_idea
-        case (id, ParameterValueType.idea, true) => new ListPDX[ReferencePDX[Idea]](() => new ReferencePDX[Idea](() => Idea.getIdeas, idea => idea.id.get(), id), id)   // ex: idea = my_idea // todo fix (id)
+        case (id, ParameterValueType.idea, false) => new ReferencePDX[Idea](() => Idea.listAllIdeas, idea => idea.id.get(), id)//new ReferencePDX[Idea]        // ex: idea = my_idea
+        case (id, ParameterValueType.idea, true) => new ListPDX[ReferencePDX[Idea]](() => new ReferencePDX[Idea](() => Idea.listAllIdeas, idea => idea.id.get(), id), id)   // ex: idea = my_idea // todo fix (id)
         case (name = id, `type` = ParameterValueType.mission, isList = false) => new StringPDX(id)      // ex: activate_mission = my_mission (in future: ReferencePDX[Mission])
         //case (id, ParameterValueType.modifier) => new ReferencePDX[Modifier]
         case (name = id, `type` = ParameterValueType.scope) => new StringPDX(id)        // ex: scope = my_scope
