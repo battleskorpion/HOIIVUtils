@@ -1,5 +1,7 @@
 package com.hoi4utils.clausewitz.script
 
+import language.experimental.namedTuples
+
 import com.hoi4utils.clausewitz.data.focus.FocusTree
 import com.hoi4utils.clausewitz_parser.{Node, Parser}
 import org.scalatest.funsuite.AnyFunSuiteLike
