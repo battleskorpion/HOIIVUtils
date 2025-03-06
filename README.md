@@ -12,20 +12,18 @@ HOIIVUtils: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
 
 **WIP!** we are working on several things including:
 
-- Demo Mod (50%)
-- Keybindings? (0%)
-- Open Logs (90%)
-- Focus Localization (90%)
-- Manage Focus Trees (50%)
-- Idea Localization (75%)
-- Custom Tooltip Localization (75%)
-- View Country Data (90%)
-- View GFX (15%)
-- Focus Tree View (99%)
-- Unit Comparison (75%)
-- Province Colors (75%)
-- Map Generation (90%)
-- Parser View (0%)
+- Demo Mod
+- Keybindings? 
+- Open Logs
+- Focus, Idea, Custom Tooltip, and more: Localization
+- Manage Focus Trees
+- View Country Data
+- View GFX
+- Focus Tree View
+- Unit Comparison
+- Province Colors
+- Map Generation
+- Parser View
 - Everything :D
 
 ![image](./images/menu.png)
