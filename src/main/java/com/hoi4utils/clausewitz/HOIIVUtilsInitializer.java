@@ -4,6 +4,7 @@ import com.hoi4utils.PublicFieldChangeNotifier;
 import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
 import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
+import com.hoi4utils.clausewitz.data.idea.IdeaFile;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
 import com.hoi4utils.clausewitz.map.state.State;
@@ -261,6 +262,13 @@ public class HOIIVUtilsInitializer {
 		} else {
 			setProperty("valid.FocusTree", "false");
 			LOGGER.error("Failed to read focus trees");
+		}
+
+		if (IdeaFile.read()) {
+			setProperty("valid.IdeaFiles", "true");
+		} else {
+			setProperty("valid.IdeaFiles", "false");
+			LOGGER.error("Failed to read idea files");
 		}
 	}
 

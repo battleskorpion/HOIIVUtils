@@ -1,6 +1,7 @@
 package com.hoi4utils.clausewitz;
 
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
+import com.hoi4utils.clausewitz.data.idea.IdeaFile;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.clausewitz.data.gfx.Interface;
@@ -49,6 +50,13 @@ public class HOIIVModLoader {
 		} else {
 			config.setProperty("valid.FocusTree", "false");
 			LOGGER.error("Failed to read focus trees");
+		}
+
+		if (IdeaFile.read()) {
+			config.setProperty("valid.IdeaFiles", "true");
+		} else {
+			config.setProperty("valid.IdeaFiles", "false");
+			LOGGER.error("Failed to read idea files");
 		}
 	}
 
