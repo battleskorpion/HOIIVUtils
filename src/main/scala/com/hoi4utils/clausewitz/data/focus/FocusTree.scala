@@ -47,8 +47,8 @@ object FocusTree {
       LOGGER.info("Reading focus trees from " + HOIIVFiles.Mod.focus_folder)
 
       // create focus trees from files
-      for (f <- HOIIVFiles.Mod.focus_folder.listFiles) {
-        if (f.getName.endsWith(".txt")) new FocusTree(f)
+      HOIIVFiles.Mod.focus_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
+        new FocusTree(f)
       }
       true
     }
@@ -72,7 +72,7 @@ object FocusTree {
   /**
    * Returns focus tree corresponding to the tag, if it exists
    *
-   * @param tag
+   * @param tag The country tag
    * @return The focus tree, or null if could not be found/not yet created.
    */
   def get(tag: CountryTag): FocusTree = {
@@ -87,7 +87,6 @@ object FocusTree {
     }
     null
   }
-
 }
 
 /**
@@ -105,7 +104,7 @@ class FocusTree
   // private boolean defaultFocus; // ! todo Do This
   // private Point continuousFocusPosition; // ! todo DO THIS
 
-  private var _focusFile: File = _
+  private var _focusFile: Option[File] = None
 
   /* default */
   FocusTree.add(this)
@@ -120,7 +119,7 @@ class FocusTree
 
     loadPDX(focus_file)
     setFile(focus_file)
-    focusTreeFileMap.put(this.focusFile, this)
+    _focusFile.foreach(file => focusTreeFileMap.put(file, this))
   }
 
   // todo: add default, continuous focus position
@@ -137,16 +136,14 @@ class FocusTree
     case Some(t) => t
     case None => null
   }
+  def focusFile: Option[File] = _focusFile
 
-  def focusFile: File = _focusFile
-
-  override def toString: String = id.get() match {
-    case Some(id) => id
-    case None => country.get() match {
-      case Some(tag) => tag.toString
-      case None =>
-        if (focusFile != null && focusFile.exists) s"[Unknown ID: ${focusFile.getName}]"
-        else "[Unknown]"
+  override def toString: String = {
+    id.get().orElse(country.get().map(_.toString)).getOrElse {
+      _focusFile match {
+        case Some(file) if file.exists() => s"[Unknown ID: ${file.getName}]"
+        case _ => "[Unknown]"
+      }
     }
   }
 
@@ -192,7 +189,7 @@ class FocusTree
   }
 
   def setFile(file: File): Unit = {
-    this._focusFile = file
+    _focusFile = Some(file)
   }
 
   override def compareTo(o: FocusTree): Int = {
