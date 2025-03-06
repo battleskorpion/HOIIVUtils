@@ -57,4 +57,6 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
     setNode(!this.$)
     this.$
   }
+
+  override def toString: String = this.get().map(_.toString).getOrElse("")
 }

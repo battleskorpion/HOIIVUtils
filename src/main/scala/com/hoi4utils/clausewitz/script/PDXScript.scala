@@ -107,5 +107,5 @@ trait PDXScript[T] {
 
   def isDefined: Boolean
 
-  def getPDXIdentifier: String
+  def pdxIdentifier: String
 }

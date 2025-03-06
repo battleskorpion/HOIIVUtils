@@ -72,7 +72,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    */
   def getPDXProperty(identifier: String): Option[PDXScript[?]] = {
     for (pdx <- childScripts) {
-      if (pdx.getPDXIdentifier == identifier) return Some(pdx)
+      if (pdx.pdxIdentifier == identifier) return Some(pdx)
     }
     None
   }
@@ -101,7 +101,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     for (pdx <- childScripts) {
       pdx match {
         case pdxScript: PDXScript[R] =>
-          if (pdxScript.getPDXIdentifier == identifier) return Some(pdxScript)
+          if (pdxScript.pdxIdentifier == identifier) return Some(pdxScript)
         case _ =>
       }
     }

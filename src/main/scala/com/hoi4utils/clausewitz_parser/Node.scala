@@ -10,7 +10,7 @@ import scala.collection.mutable.ListBuffer
 //  private val boolType: BoolType = null
 //}
 
-class Node(protected[clausewitz_parser] var _identifier: String, protected[clausewitz_parser] var _operator: String,
+class Node(private var _identifier: String, private var _operator: String,
            protected[clausewitz_parser] var nodeValue: NodeValue, protected[clausewitz_parser] var nameToken: Token,
            protected[clausewitz_parser] var operatorToken: Token)
   extends NodeIterable[Node] {

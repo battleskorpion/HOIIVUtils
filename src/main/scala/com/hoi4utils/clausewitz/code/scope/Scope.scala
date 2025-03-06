@@ -61,7 +61,7 @@ object Scope {
 
   def of(effect: Effect): Scope = {
     if (effect == null || !effect.isScope) return null
-    val effect_identifier = effect.getPDXIdentifier
+    val effect_identifier = effect.pdxIdentifier
     val s = getClone(effect_identifier)
     if (s == null) null
     else s

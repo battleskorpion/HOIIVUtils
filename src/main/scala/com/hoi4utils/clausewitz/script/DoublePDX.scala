@@ -124,4 +124,5 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
     case None => 0
   }
 
+  override def toString: String = this.get().map(_.toString).getOrElse("")
 }

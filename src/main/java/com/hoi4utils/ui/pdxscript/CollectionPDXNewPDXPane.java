@@ -12,15 +12,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
-import org.apache.poi.ss.formula.functions.T;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import scala.jdk.javaapi.CollectionConverters;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * A Pane that displays an editor for a PDXScript.
@@ -93,7 +86,7 @@ public class CollectionPDXNewPDXPane extends AnchorPane {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    setText(effect.getPDXIdentifier());
+                    setText(effect.pdxIdentifier());
                     //setFont(Font.font("Monospaced"));
                 }
             }
@@ -151,7 +144,7 @@ public class CollectionPDXNewPDXPane extends AnchorPane {
                 return true; // No search text => all pass
             }
             // You can filter by name, ID, or anything else in effectItem
-            return effectItem.getPDXIdentifier().toLowerCase().contains(searchText);
+            return effectItem.pdxIdentifier().toLowerCase().contains(searchText);
         });
     }
 

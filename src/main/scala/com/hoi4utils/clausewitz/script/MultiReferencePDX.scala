@@ -130,7 +130,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     get() match {
       case Some(scripts) =>
         for (identifier <- referenceNames) {
-          sb.append(getPDXIdentifier).append(" = ").append(identifier).append("\n")
+          sb.append(pdxIdentifier).append(" = ").append(identifier).append("\n")
         }
       case None => return null
     }

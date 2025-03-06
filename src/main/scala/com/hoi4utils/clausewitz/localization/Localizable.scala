@@ -28,6 +28,8 @@ trait Localizable {
    * @return a map of localizable property identifiers and keys.
    */
   def getLocalizableProperties: mutable.Map[Property, String]
+  
+  def localizableProperty(property: Property): Option[String] = getLocalizableProperties.get(property)
 
   def getLocalizationKeys: Iterable[String] = getLocalizableProperties.values
 

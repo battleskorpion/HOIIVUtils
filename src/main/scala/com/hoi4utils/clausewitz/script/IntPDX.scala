@@ -124,4 +124,6 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
     case Some(value) => value / other
     case None => 0
   }
+  
+  override def toString: String = this.get().map(_.toString).getOrElse("")
 }

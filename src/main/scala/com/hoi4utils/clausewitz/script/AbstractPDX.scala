@@ -195,7 +195,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
 
   override def isDefined: Boolean = !isUndefined
 
-  override def getPDXIdentifier: String = pdxIdentifiers(activeIdentifier)
+  override def pdxIdentifier: String = pdxIdentifiers(activeIdentifier)
 
   /**
    * Returns true if the value of the node is an instance of the specified class.
@@ -210,7 +210,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   }
 
   def getPDXTypeName: String = {
-    getPDXIdentifier
+    pdxIdentifier
   }
 
   def schema(): PDXSchema[T] = {

@@ -96,7 +96,7 @@ final class NodeValue {
     case _ => "[invalid type]"
   } 
 
-  def isList: Boolean = _value.get.isInstanceOf[List[?]]
+  def isList: Boolean = _value.get.isInstanceOf[ListBuffer[?]]
 
   def isString: Boolean = _value.get.isInstanceOf[String]
 

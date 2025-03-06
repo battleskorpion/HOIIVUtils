@@ -106,7 +106,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   //  override def forEach(action: Consumer[? >: T]): Unit = {
   //    get().foreach(action)
   //  }
-  override def foreach[U](f: T => U): Unit = super.foreach(f)
+  override def foreach[U](f: T => U): Unit = pdxList.foreach(f)
 
 //  override def spliterator: Spliterator[T] = get().spliterator
 

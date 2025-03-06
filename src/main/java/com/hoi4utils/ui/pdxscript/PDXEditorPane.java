@@ -106,9 +106,9 @@ public class PDXEditorPane extends AnchorPane {
         Label label = null;
         if (withLabel) {
             var labelText = switch (property) {
-                case StructuredPDX pdx -> pdx.getPDXIdentifier() + " :=";
-                case CollectionPDX<?> pdx -> pdx.getPDXIdentifier() + " :=";
-                default -> property.getPDXIdentifier() + " =";
+                case StructuredPDX pdx -> pdx.pdxIdentifier() + " :=";
+                case CollectionPDX<?> pdx -> pdx.pdxIdentifier() + " :=";
+                default -> property.pdxIdentifier() + " =";
             }; 
             label = new Label(labelText);
             label.setFont(Font.font("Monospaced"));
@@ -162,7 +162,7 @@ public class PDXEditorPane extends AnchorPane {
         editorNullPropertyHBox.setPadding(new Insets(6, 6, 6, 20)); // Indent the null properties
         Label label = null;
         if (withLabel) {
-            label = new Label(property.getPDXIdentifier() + " =");
+            label = new Label(property.pdxIdentifier() + " =");
             label.setFont(Font.font("Monospaced"));
             label.setMinWidth(10);
             label.setPrefHeight(25);
@@ -349,7 +349,7 @@ public class PDXEditorPane extends AnchorPane {
     }
 
     private static void addLabelToHBox(PDXScript<?> pdx, HBox hbox) {
-        Label label = new Label(pdx.getPDXIdentifier() + " =");
+        Label label = new Label(pdx.pdxIdentifier() + " =");
         label.setFont(Font.font("Monospaced"));
         label.setMinWidth(10);
         label.setPrefHeight(25);

@@ -1,16 +1,42 @@
 package com.hoi4utils.ui.parser;
 
+import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.clausewitz.data.focus.FocusTree;
+import com.hoi4utils.clausewitz.data.focus.FocusTree$;
+import com.hoi4utils.clausewitz.script.PDXScript;
+import com.hoi4utils.clausewitz.script.StructuredPDX;
+import com.hoi4utils.clausewitz_parser.Parser;
+import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.JavaFXUIManager;
+import com.hoi4utils.ui.pdxscript.PDXTreeViewFactory;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import scala.jdk.javaapi.CollectionConverters;
+
+import javax.swing.*;
+import java.io.File;
 
 public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 	@FXML
 	public Label idVersion;
 	@FXML
-	public Label idWindowName;
+	public TextField parsePDXFileTextField;
+	@FXML
+	public Button browseButton;
+	@FXML
+	public Label pdxIdentifierLabel;
+	@FXML
+	public AnchorPane pdxTreeViewPane;
 	
 	public ParserViewerController() {
 		setFxmlResource("ParserViewer.fxml");
@@ -20,10 +46,60 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	@FXML
 	void initialize() {
 		includeVersion();
-		idWindowName.setText("ParserViewerWindow" + " WIP");
 	}
 
 	private void includeVersion() {
 		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION);
+	}
+
+	public void handlePDXFileBrowseButtonAction() {
+		File initialDirectory = HOIIVFiles.Mod.folder;
+		File selectedFile = JavaFXUIManager.openChooser(browseButton, initialDirectory, false);
+
+		System.out.println(selectedFile);
+
+		if (selectedFile != null) {
+			parsePDXFileTextField.setText(selectedFile.getAbsolutePath());
+			//focusTree = FocusTree$.MODULE$.get(selectedFile).getOrElse(() -> null);
+			Parser pdxParser = new Parser(selectedFile);
+            try {
+                var rootNode = pdxParser.parse();
+	            if (rootNode == null) {
+		            JOptionPane.showMessageDialog(null, "Error: Selected focus tree not found in loaded focus trees.");
+		            return;
+	            }
+
+				var rootNodeValue = rootNode.nodeValue();
+				if (!rootNodeValue.isList()) {
+					pdxIdentifierLabel.setText("[empty]");
+					return;
+				}
+
+				var childPDXNode = rootNodeValue.list().apply(0);
+				var pdxIdentifier = childPDXNode.identifier();
+	            pdxIdentifierLabel.setText(pdxIdentifier);
+
+	            StructuredPDX pdx = null;
+				if (pdxIdentifier.equals("focus_tree")) {
+					pdx = new FocusTree(selectedFile);
+				}
+
+				if (pdx == null || pdx.isUndefined()) return;
+
+	            // Build a TreeView out of the rootScript
+	            TreeView<PDXScript<?>> pdxTreeView = PDXTreeViewFactory.createPDXTreeView(pdx);
+
+	            pdxTreeViewPane.getChildren().clear();
+	            pdxTreeViewPane.getChildren().add(pdxTreeView);
+				AnchorPane.setTopAnchor(pdxTreeView, 0.0);
+				AnchorPane.setBottomAnchor(pdxTreeView, 0.0);
+				AnchorPane.setLeftAnchor(pdxTreeView, 0.0);
+				AnchorPane.setRightAnchor(pdxTreeView, 0.0);
+            } catch (ParserException e) {
+                throw new RuntimeException(e);
+            }
+		} else {
+			pdxIdentifierLabel.setText("[not found]");
+		}
 	}
 }
