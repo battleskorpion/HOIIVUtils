@@ -37,6 +37,9 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	public Label pdxIdentifierLabel;
 	@FXML
 	public AnchorPane pdxTreeViewPane;
+
+	@FXML
+	private TextField searchTextField;  // user enters search text here
 	
 	public ParserViewerController() {
 		setFxmlResource("ParserViewer.fxml");
@@ -89,12 +92,17 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	            // Build a TreeView out of the rootScript
 	            TreeView<PDXScript<?>> pdxTreeView = PDXTreeViewFactory.createPDXTreeView(pdx);
 
-	            pdxTreeViewPane.getChildren().clear();
+	            pdxTreeViewPane.getChildren().removeIf(node -> node instanceof TreeView);
 	            pdxTreeViewPane.getChildren().add(pdxTreeView);
-				AnchorPane.setTopAnchor(pdxTreeView, 0.0);
+				AnchorPane.setTopAnchor(pdxTreeView, 25.0);
 				AnchorPane.setBottomAnchor(pdxTreeView, 0.0);
 				AnchorPane.setLeftAnchor(pdxTreeView, 0.0);
 				AnchorPane.setRightAnchor(pdxTreeView, 0.0);
+
+	            searchTextField.setOnAction(event -> {
+		            String searchTerm = searchTextField.getText();
+		            PDXTreeViewFactory.searchAndSelect(pdxTreeView, searchTerm);
+	            });
             } catch (ParserException e) {
                 throw new RuntimeException(e);
             }

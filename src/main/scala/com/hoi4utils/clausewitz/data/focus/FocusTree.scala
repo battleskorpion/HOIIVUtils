@@ -1,5 +1,7 @@
 package com.hoi4utils.clausewitz.data.focus
 
+import language.experimental.namedTuples
+
 import com.hoi4utils.clausewitz.data.country.{CountryTag, CountryTagsManager}
 import com.hoi4utils.clausewitz.data.focus.FocusTree.focusTreeFileMap
 import com.hoi4utils.clausewitz.localization.*
@@ -99,9 +101,9 @@ object FocusTree {
 class FocusTree
   extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] {
   /* pdxscript */
-  final var country: ReferencePDX[CountryTag] = new ReferencePDX[CountryTag](() => CountryTag.toList, t => Some(t.get), "country")
-  final var focuses: MultiPDX[Focus] = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
-  final var id: StringPDX = new StringPDX("id")
+  final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
+  final var focuses = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
+  final var id = new StringPDX("id")
   // private boolean defaultFocus; // ! todo Do This
   // private Point continuousFocusPosition; // ! todo DO THIS
 

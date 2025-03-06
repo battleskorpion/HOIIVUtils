@@ -104,9 +104,9 @@ public class IdeaFile extends File {
 	
 			/* idea id */
 			String idea_id = ideaExp.name();
-			idea = Idea.loadIdea(idea_id, ideaExp, ideaCategory);
-			idea_names.add(idea_id);
-			ideas.put(idea_id, idea);
+			//idea = Idea.loadIdea(idea_id, ideaExp, ideaCategory); // TODO?
+//			idea_names.add(idea_id);
+//			ideas.put(idea_id, idea);
 		}
 	}
 

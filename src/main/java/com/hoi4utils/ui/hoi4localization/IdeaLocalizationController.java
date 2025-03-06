@@ -4,6 +4,7 @@ import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.data.idea.Idea;
 import com.hoi4utils.clausewitz.data.idea.IdeaFile;
 import com.hoi4utils.clausewitz.localization.Localization;
+import com.hoi4utils.clausewitz.localization.Property;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
@@ -230,7 +231,8 @@ public class IdeaLocalizationController extends HOIIVUtilsAbstractController imp
                 if (idea == null || empty) {
                     setGraphic(null); // Clear any previous content
                 } else {
-                    Localization.Status textStatus = idea.localization().status(); // todo
+//                    Localization.Status textStatus = idea.localization().status(); // todo
+                    Localization.Status textStatus = idea.localizationStatus(Property.NAME); 
                     boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED;
                     boolean hasStatusNew = textStatus == Localization.Status.NEW;
 

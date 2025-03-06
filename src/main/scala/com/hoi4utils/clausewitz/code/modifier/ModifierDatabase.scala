@@ -1,5 +1,12 @@
 package com.hoi4utils.clausewitz.code.modifier
 
+import language.experimental.namedTuples
+
+import com.hoi4utils.clausewitz.code.effect.EffectDatabase._effects
+import com.hoi4utils.clausewitz.code.effect.{BlockEffect, SimpleEffect}
+import com.hoi4utils.clausewitz.script.PDXSupplier
+import com.hoi4utils.clausewitz_parser.Node
+
 import java.io.{File, IOException}
 import java.nio.file.{Files, StandardCopyOption}
 import java.sql.*
@@ -42,6 +49,26 @@ object ModifierDatabase {
     } catch {
       case e@(_: IOException | _: SQLException) =>
         e.printStackTrace()
+    }
+  }
+
+  def apply(): PDXSupplier[Modifier] = {
+    new PDXSupplier[Modifier] {
+      override def simplePDXSupplier(): Option[Node => Option[Modifier]] = {
+        Some((expr: Node) => {
+          _modifiers.filter(_.isInstanceOf[Modifier]) // todo? 
+            .find(_.pdxIdentifier == expr.identifier)
+            .map(_.clone().asInstanceOf[Modifier])
+        })
+      }
+
+      override def blockPDXSupplier(): Option[Node => Option[Modifier]] = {
+        Some((expr: Node) => {
+          _modifiers.filter(_.isInstanceOf[Modifier])
+            .find(_.pdxIdentifier == expr.identifier)
+            .map(_.clone().asInstanceOf[Modifier])
+        })
+      }
     }
   }
 
@@ -91,16 +118,16 @@ object ModifierDatabase {
     }
   }
 
-  def insertModifier(modifier: Modifier): Unit = {
-    insertModifier(
-      modifier.identifier,
-      modifier.colorType.name,
-      modifier.valueType.name,
-      modifier.precision,
-      modifier.postfix.name,
-      modifier.category.toString
-    )
-  }
+//  def insertModifier(modifier: Modifier): Unit = {
+//    insertModifier(
+//      modifier.identifier,
+//      modifier.colorType.name,
+//      modifier.valueType.name,
+//      modifier._precision,
+//      modifier.postfix.name,
+//      modifier.category.toString
+//    )
+//  }
 
   private def loadModifiers: List[Modifier] = {
     val loadedModifiers = new ListBuffer[Modifier]
@@ -116,15 +143,15 @@ object ModifierDatabase {
         val postfix = resultSet.getString("postfix")
         val category = resultSet.getString("category")
 
-        val modifier = new Modifier(
-          identifier,
-          Modifier.ColorType.valueOf(colorType),
-          Modifier.ValueType.valueOf(valueType),
-          precision,
-          Modifier.ValuePostfix.valueOf(postfix),
-          ModifierCategory.valueOf(category)
-        )
-        loadedModifiers.addOne(modifier)
+        // TODO
+//        val modifier = new Modifier(
+//          Modifier.ColorType.valueOf(colorType),
+//          Modifier.ValueType.valueOf(valueType),
+//          precision,
+//          Modifier.ValuePostfix.valueOf(postfix),
+//          Set(ModifierCategory.valueOf(category))
+//        )
+//        loadedModifiers.addOne(modifier)
       }
     } catch {
       case e: SQLException =>

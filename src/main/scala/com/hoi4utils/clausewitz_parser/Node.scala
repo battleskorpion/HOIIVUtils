@@ -204,4 +204,6 @@ class Node(private var _identifier: String, private var _operator: String,
   def valueAsString: String = {
     nodeValue.asString
   }
+  
+  def start: Int = nameToken.start
 }

@@ -13,9 +13,11 @@ import com.hoi4utils.ddsreader.DDSReader
 import javafx.scene.image.Image
 
 import java.awt.Point
-import scala.annotation.targetName
+import scala.annotation.{experimental, targetName}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+
+import language.experimental.namedTuples
 
 @lombok.extern.slf4j.Slf4j
 class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Localizable with DataFunctionProvider[Focus] {
@@ -36,7 +38,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   final val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
   //var ddsImage: Image = _
   /* completion reward */
-  val completionReward: CompletionReward = new CompletionReward()
+  final val completionReward: CompletionReward = new CompletionReward()
 
   def this(focusTree: FocusTree, node: Node) = {
     this(focusTree)
