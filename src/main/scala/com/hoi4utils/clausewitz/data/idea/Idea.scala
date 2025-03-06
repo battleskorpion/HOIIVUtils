@@ -55,12 +55,17 @@ object Idea {
   }
 }
 
-class Idea extends StructuredPDX with Localizable with Iterable[Modifier] {
+/**
+ *
+ * @param name
+ *
+ * @note Since name is not declared val or var, it will not become a field of Idea.
+ */
+class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Localizable with Iterable[Modifier] {
   private var _ideaFile: Option[IdeaFile] = None
 
   /* idea */
-  final val id = new StringPDX("id")
-  final val modifiers = new CollectionPDX[Modifier](ModifierDatabase(), "country") {
+  final val modifiers = new CollectionPDX[Modifier](ModifierDatabase(), "modifier") {
     override def loadPDX(expr: Node): Unit = {
       super.loadPDX(expr)
     }
@@ -70,12 +75,12 @@ class Idea extends StructuredPDX with Localizable with Iterable[Modifier] {
   final val removalCost = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
 
   def this(node: Node) = {
-    this()
+    this(node.identifier)
     loadPDX(node)
   }
 
-  def this(ideaFile: IdeaFile) = {
-    this()
+  def this(ideaFile: IdeaFile, identifier: String) = {
+    this(identifier)
     this._ideaFile = Some(ideaFile)
   }
 
@@ -88,7 +93,7 @@ class Idea extends StructuredPDX with Localizable with Iterable[Modifier] {
    * @inheritdoc
    */
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
-    ListBuffer(id, modifiers, removalCost)
+    ListBuffer(removalCost, modifiers)
   }
 
 //  protected def addModifier(modifier: Modifier): Unit = {
@@ -103,11 +108,14 @@ class Idea extends StructuredPDX with Localizable with Iterable[Modifier] {
 //  }
 //
 
-  private def name: String = null // todo
-
-  def setID(id: String): Unit = {
-    this.id.set(id)
+  def id: Option[String] = this.pdxIdentifier match {
+    case null => None
+    case _ => Some(this.pdxIdentifier)
   }
+
+//  def setID(id: String): Unit = {
+//    this.id.set(id)
+//  }
 
   def setIdeaFile(ideaFile: IdeaFile): Unit = {
     this._ideaFile = Some(ideaFile)
@@ -120,7 +128,7 @@ class Idea extends StructuredPDX with Localizable with Iterable[Modifier] {
   override def iterator: Iterator[Modifier] = modifiers.iterator
 
   override def toString: String = {
-    id.get() match {
+    id match {
       case Some(id) => id
       case None => "[Unknown]"
     }
