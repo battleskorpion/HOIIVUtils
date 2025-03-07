@@ -59,32 +59,37 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   def position: Point = new Point(x.getOrElse(0), y.getOrElse(0))
 
   def absolutePosition: Point = {
+    /**
+     * Recursively calculate the absolute position of a focus, taking into account relative positions.
+     * @param focus the focus to calculate the absolute position of
+     * @param visited set of focus ids that have been visited to detect circular references
+     * @param offsetAcc accumulated point adjustment
+     * @return the absolute position of the focus
+     */
     @tailrec
-    def absolutePosition(focus: Focus, visited: Set[String] = Set.empty): Point = {
+    def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: Point = new Point(0, 0)): Point = {
       if (focus.relativePositionFocus.isUndefined) {
-        return position
+        return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
       }
       // Check for self-reference
       if (focus.relativePositionFocus @== focus.id) {
         System.err.println(s"Relative position id same as focus id for $this")
-        return position
+        return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
       }
       // Check for circular references
       if (visited(focus.id.str)) {
-        System.err.println(s"Circular reference detected involving focus id: ${focus.id.str} in file ${focus.focusTree.focusFile}")
-        return position
+        System.err.println(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
+        return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
       }
 
       focus.relativePositionFocus.get() match {
-        case Some(f) =>
-          // Call absolutePosition on the focus, adding the current focus id to the visited set
-          // Add our relative coordinates to the relative focus absolute position to obtain our absolute position
-          val adjPoint = absolutePosition(f, visited + id.str)
-          val absolutePoint = new Point(adjPoint.x + focus.x.getOrElse(0), adjPoint.y + focus.y.getOrElse(0))
-          absolutePoint
+        case Some(relativeFocus) =>
+          val newAcc = new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+          // Tail call: pass nextFocus, the updated visited set, and the new accumulated offset.
+          absolutePosition(relativeFocus, visited + focus.id.str, newAcc)
         case None =>
-          System.err.println(s"Focus id ${relativePositionFocus.getReferenceName} not a valid focus")
-          position
+          System.err.println(s"Focus id ${focus.relativePositionFocus.getReferenceName} not a valid focus")
+          new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
       }
     }
 

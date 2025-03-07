@@ -219,7 +219,7 @@ object EffectDatabase {
         new ReferencePDX[State](() => State.list, s => Some(s.name), pdxIdentifier) with SimpleEffect {
         })
       case ParameterValueType.province => Some(
-        new ReferencePDX[Province](() => Province.list, p => Some(p.idStr()), pdxIdentifier) with SimpleEffect {
+        new ReferencePDX[Province](() => Province.list, p => Some(p.id.toString), pdxIdentifier) with SimpleEffect {
         })
       case _ =>
         None
@@ -330,7 +330,7 @@ object EffectDatabase {
         case (name = id, `type` = ParameterValueType.operation_token) => new StringPDX(id)  // ex: token = token_test. in future: ReferencePDX[OperationToken]
         case (name = id, `type` = ParameterValueType.ideology) => new StringPDX(id)         // ex: ruling_party = democratic
         case (name = id, `type` = ParameterValueType.sub_ideology) => new StringPDX(id)     // ex: ideology = liberalism
-        case (name = id, `type` = ParameterValueType.province) => new ReferencePDX[Province](() => CollectionConverters.asScala(Province.list), p => Some(p.idStr()), id)
+        case (name = id, `type` = ParameterValueType.province) => new ReferencePDX[Province](() => Province.list, p => Some(p.id.toString), id)
         case (name = id, `type` = ParameterValueType.resource) => new StringPDX(id)         // ex: type = oil. in future: limited to known resources (reference pdx?)
         case (name = id, `type` = ParameterValueType.tech_category) => new StringPDX(id)    // ex: category = radar_tech. in future: ReferencePDX[TechCategory]
         case (name = id, `type` = ParameterValueType.advisor_slot) => new StringPDX(id)     // ex: slot = political_advisor. in future: limited to known slots

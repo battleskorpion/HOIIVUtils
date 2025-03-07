@@ -5,7 +5,6 @@ import com.hoi4utils.clausewitz.data.country.{Country, CountryTag, CountryTagsMa
 import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.map.{Owner, UndefinedStateIDException}
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
-import com.hoi4utils.clausewitz.map.province.VictoryPoint
 import com.hoi4utils.clausewitz.map.resources.Resources
 import com.hoi4utils.clausewitz.{HOIIVUtils, HOIIVFiles}
 import com.hoi4utils.clausewitz_parser.*
@@ -33,7 +32,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
   // private StateCategory stateCategory; 
   private var stateInfrastructure: Infrastructure = null // TODO: null -> _
   private var resourcesData: Resources = null // TODO: null -> _
-  private val victoryPoints: ListBuffer[VictoryPoint] = new ListBuffer[VictoryPoint]
+//  private val victoryPoints: ListBuffer[VictoryPoint] = new ListBuffer[VictoryPoint]
 
   /* init */
   readStateFile(stateFile)
@@ -148,7 +147,7 @@ class State(private var stateFile: File, addToStatesList: Boolean) extends Infra
     case Some(victoryPointsNode) =>
       val vpl = CollectionConverters.asJava(victoryPointsNode.toList)
       if (vpl.size == 2) {
-        victoryPoints.addOne(VictoryPoint.of(vpl.get(0).identifier.toInt, vpl.get(1).identifier.toInt))
+//        victoryPoints.addOne(VictoryPoint.of(vpl.get(0).identifier.toInt, vpl.get(1).identifier.toInt)) //TODO
       } else {
         LOGGER.warn(s"Invalid victory point node in state: ${stateFile.getName}")
       }
