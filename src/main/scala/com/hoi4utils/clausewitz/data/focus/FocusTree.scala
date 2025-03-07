@@ -24,7 +24,7 @@ import scala.jdk.javaapi.CollectionConverters
 object FocusTree {
   val LOGGER: Logger = LogManager.getLogger(classOf[FocusTree])
   private val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
-  private val focusTrees = new mutable.ListBuffer[FocusTree]()
+  private val focusTrees = new ListBuffer[FocusTree]()
 
   def get(focus_file: File): Option[FocusTree] = {
     if (!focusTreeFileMap.contains(focus_file)) new FocusTree(focus_file)

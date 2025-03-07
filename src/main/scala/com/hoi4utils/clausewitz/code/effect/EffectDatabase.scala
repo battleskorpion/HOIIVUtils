@@ -219,7 +219,7 @@ object EffectDatabase {
         new ReferencePDX[State](() => State.list, s => Some(s.name), pdxIdentifier) with SimpleEffect {
         })
       case ParameterValueType.province => Some(
-        new ReferencePDX[Province](() => CollectionConverters.asScala(Province.list), p => Some(p.idStr()), pdxIdentifier) with SimpleEffect {
+        new ReferencePDX[Province](() => Province.list, p => Some(p.idStr()), pdxIdentifier) with SimpleEffect {
         })
       case _ =>
         None

@@ -19,6 +19,199 @@ import scala.jdk.CollectionConverters.*
 import scala.jdk.javaapi.CollectionConverters
 import scala.util.{Failure, Success, Try}
 
+/**
+ * Represents a state in HOI4
+ * @param stateFile state file
+ * @param addToStatesList if true, adds the state to the list of states
+ */
+class State(private var stateFile: File, addToStatesList: Boolean) extends InfrastructureData with Localizable with Iterable[State] with Comparable[State] {
+  private val LOGGER: Logger = LogManager.getLogger(getClass)
+  private var stateID = 0
+  private val _name: String = stateFile.getName.replace(".txt", "")
+  final private val owner: mutable.Map[ClausewitzDate, Owner] = new mutable.HashMap[ClausewitzDate, Owner]
+  //! todo Finish state Category
+  // private StateCategory stateCategory; 
+  private var stateInfrastructure: Infrastructure = null // TODO: null -> _
+  private var resourcesData: Resources = null // TODO: null -> _
+  private val victoryPoints: ListBuffer[VictoryPoint] = new ListBuffer[VictoryPoint]
+
+  /* init */
+  readStateFile(stateFile)
+  
+  // add to states list
+  if (addToStatesList) State.states.addOne(this)
+
+  def this(stateFile: File) = {
+    this(stateFile, true)
+  }
+
+  /**
+   * Reads the state file and parses the data
+   * TODO: CLEAN THIS UP
+   * @param stateFile state file
+   */
+  private def readStateFile(stateFile: File): Unit = {
+    var (infrastructure, population, civilianFactories, militaryFactories, dockyards, navalPorts, airfields) = (0, 0, 0, 0, 0, 0, 0)
+
+    val stateNode = parseStateNode(stateFile) match {
+      case Some(node) => node
+      case None       => return
+    }
+
+    stateID = extractStateID(stateNode, stateFile)
+    population = extractPopulation(stateNode)
+    extractStateCategory(stateNode)
+
+    val historyNode = stateNode.find("history").orNull
+    if (historyNode == null) {
+      LOGGER.warn(s"History not defined in state: ${stateFile.getName}, ${stateNode.$}${stateNode.value}")
+      return
+    }
+
+    val buildingsNode = historyNode.find("buildings").orNull
+    extractOwner(historyNode, stateFile)
+
+    if (buildingsNode == null) {
+      LOGGER.warn(s"Buildings (incl. infrastructure) not defined in state: ${stateFile.getName}")
+      stateInfrastructure = null
+    } else {
+      infrastructure = buildingsNode.valueOrElse[Int]("infrastructure", 0)
+      civilianFactories = buildingsNode.valueOrElse[Int]("industrial_complex", 0)
+      militaryFactories = buildingsNode.valueOrElse[Int]("arms_factory", 0)
+      dockyards = buildingsNode.valueOrElse[Int]("dockyard", 0)
+      airfields = buildingsNode.valueOrElse[Int]("air_base", 0)
+    }
+
+    extractVictoryPoints(historyNode, stateFile)
+
+    resourcesData = findStateResources(stateNode)
+    stateInfrastructure = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories, dockyards, 0, airfields)
+  }
+
+  private def parseStateNode(stateFile: File): Option[Node] = {
+    val stateParser = new Parser(stateFile)
+    Try(stateParser.parse.find("state").get) match {
+      case Success(node) => Some(node)
+      case Failure(e: ParserException) => throw new RuntimeException(e)
+      case Failure(_) => None
+    }
+  }
+
+  private def extractStateID(stateNode: Node, stateFile: File): Int = {
+    if (stateNode.contains("id")) {
+      stateNode.getValue("id").integer
+    } else {
+      LOGGER.error(s"State ID not found in file: ${stateFile.getName}, ${stateNode.$}")
+      throw new UndefinedStateIDException(stateFile)
+    }
+  }
+
+  // todo breh nah
+  private def extractPopulation(stateNode: Node): Int = {
+    stateNode.find("manpower").map(_.value match {
+      case Some(v) => v match {
+        case i: Int => i
+        case s: String => s.toIntOption.getOrElse(0) // Convert string to Int safely
+        case _ => 0
+      }
+      case None => 0
+    }).getOrElse(0)
+  }
+
+
+  private def extractStateCategory(stateNode: Node): Unit = {
+    if (stateNode.contains("state_category")) {
+      // TODO: Implement state category logic
+    }
+  }
+
+  private def extractOwner(historyNode: Node, stateFile: File): Unit = {
+    if (historyNode.contains("owner")) {
+      historyNode.find("owner").get.$string match {
+        case Some(ownerTag) => owner.put(ClausewitzDate.of, new Owner(new CountryTag(ownerTag)))
+        case None => LOGGER.error(s"Warning: state owner not defined in ${stateFile.getName}")
+      }
+    } else {
+      LOGGER.error(s"Warning: state owner not defined in ${stateFile.getName}")
+    }
+  }
+
+//  private def extractBuildingValue(buildingsNode: Node, key: String): Int = {
+//    buildingsNode.find(key).map(_.getValue match {
+//      case i: Int => i
+//      case s: String => s.toIntOption.getOrElse(0) // Convert string safely
+//      case _ => 0
+//    }).getOrElse(0)
+//  }
+  
+  private def extractVictoryPoints(historyNode: Node, stateFile: File): Unit = historyNode.find("victory_points") match {
+    case Some(victoryPointsNode) =>
+      val vpl = CollectionConverters.asJava(victoryPointsNode.toList)
+      if (vpl.size == 2) {
+        victoryPoints.addOne(VictoryPoint.of(vpl.get(0).identifier.toInt, vpl.get(1).identifier.toInt))
+      } else {
+        LOGGER.warn(s"Invalid victory point node in state: ${stateFile.getName}")
+      }
+    case None =>  LOGGER.info(s"Victory points not defined in state: ${stateFile.getName}")
+  }
+
+
+  private def findStateResources(stateNode: Node): Resources = {
+    if (!stateNode.contains("resources")) return Resources()
+    
+    val resourcesNode = stateNode.find("resources").orNull
+
+    // aluminum (aluminium bri'ish spelling)
+    val aluminum: Int = resourcesNode.find("aluminium") match {
+      case Some(al) => al.$intOrElse(0)
+      case None => 0
+    } 
+    val chromium: Int = resourcesNode.find("chromium") match {
+      case Some(ch) => ch.$intOrElse(0)
+      case None => 0
+    }
+    val oil: Int = resourcesNode.find("oil") match {
+      case Some(o) => o.$intOrElse(0)
+      case None => 0
+    }
+    val rubber: Int = resourcesNode.find("rubber") match {
+      case Some(r) => r.$intOrElse(0)
+      case None => 0
+    }
+    val steel: Int = resourcesNode.find("steel") match {
+      case Some(s) => s.$intOrElse(0)
+      case None => 0
+    }
+    val tungsten: Int = resourcesNode.find("tungsten") match {
+      case Some(t) => t.$intOrElse(0)
+      case None => 0
+    }
+    
+    new Resources(aluminum, chromium, oil, rubber, steel, tungsten)
+  }
+
+  def getStateInfrastructure: Infrastructure = stateInfrastructure
+
+  def getResources: Resources = resourcesData
+
+  override def toString: String = _name
+
+  def getFile: File = stateFile
+
+  override def getInfrastructureRecord: Infrastructure = stateInfrastructure
+
+  def id: Int = stateID
+
+  @NotNull override def iterator: Iterator[State] = State.states.iterator
+
+  override def compareTo(@NotNull o: State): Int = Integer.compare(stateID, o.stateID)
+
+  @NotNull override def getLocalizableProperties: mutable.Map[Property, String] = mutable.Map(Property.NAME -> _name)
+
+  @NotNull override def getLocalizableGroup: Iterable[? <: Localizable] = State.states
+
+  def name: String = _name
+}
 
 /**
  * Loads HOI4 State files, each instance represents a state as defined in "history/states"
@@ -49,7 +242,7 @@ object State {
       true
     }
   }
-  
+
   def clear(): Boolean = {
     if (!HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory) {
       LOGGER.fatal(s"In State.java - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
@@ -245,198 +438,4 @@ object State {
   protected def usefulData(data: String): Boolean = if (data.nonEmpty) if (data.trim.charAt(0) == '#') false
   else true
   else false
-}
-
-/**
- * Represents a state in HOI4
- * @param stateFile state file
- * @param addToStatesList if true, adds the state to the list of states
- */
-class State(private var stateFile: File, addToStatesList: Boolean) extends InfrastructureData with Localizable with Iterable[State] with Comparable[State] {
-  private val LOGGER: Logger = LogManager.getLogger(getClass)
-  private var stateID = 0
-  private val _name: String = stateFile.getName.replace(".txt", "")
-  final private val owner: mutable.Map[ClausewitzDate, Owner] = new mutable.HashMap[ClausewitzDate, Owner]
-  //! todo Finish state Category
-  // private StateCategory stateCategory; 
-  private var stateInfrastructure: Infrastructure = null // TODO: null -> _
-  private var resourcesData: Resources = null // TODO: null -> _
-  private val victoryPoints: ListBuffer[VictoryPoint] = new ListBuffer[VictoryPoint]
-
-  /* init */
-  readStateFile(stateFile)
-  
-  // add to states list
-  if (addToStatesList) State.states.addOne(this)
-
-  def this(stateFile: File) = {
-    this(stateFile, true)
-  }
-
-  /**
-   * Reads the state file and parses the data
-   * TODO: CLEAN THIS UP
-   * @param stateFile state file
-   */
-  private def readStateFile(stateFile: File): Unit = {
-    var (infrastructure, population, civilianFactories, militaryFactories, dockyards, navalPorts, airfields) = (0, 0, 0, 0, 0, 0, 0)
-
-    val stateNode = parseStateNode(stateFile) match {
-      case Some(node) => node
-      case None       => return
-    }
-
-    stateID = extractStateID(stateNode, stateFile)
-    population = extractPopulation(stateNode)
-    extractStateCategory(stateNode)
-
-    val historyNode = stateNode.find("history").orNull
-    if (historyNode == null) {
-      LOGGER.warn(s"History not defined in state: ${stateFile.getName}, ${stateNode.$}${stateNode.value}")
-      return
-    }
-
-    val buildingsNode = historyNode.find("buildings").orNull
-    extractOwner(historyNode, stateFile)
-
-    if (buildingsNode == null) {
-      LOGGER.warn(s"Buildings (incl. infrastructure) not defined in state: ${stateFile.getName}")
-      stateInfrastructure = null
-    } else {
-      infrastructure = buildingsNode.valueOrElse[Int]("infrastructure", 0)
-      civilianFactories = buildingsNode.valueOrElse[Int]("industrial_complex", 0)
-      militaryFactories = buildingsNode.valueOrElse[Int]("arms_factory", 0)
-      dockyards = buildingsNode.valueOrElse[Int]("dockyard", 0)
-      airfields = buildingsNode.valueOrElse[Int]("air_base", 0)
-    }
-
-    extractVictoryPoints(historyNode, stateFile)
-
-    resourcesData = findStateResources(stateNode)
-    stateInfrastructure = new Infrastructure(population, infrastructure, civilianFactories, militaryFactories, dockyards, 0, airfields)
-  }
-
-  private def parseStateNode(stateFile: File): Option[Node] = {
-    val stateParser = new Parser(stateFile)
-    Try(stateParser.parse.find("state").get) match {
-      case Success(node) => Some(node)
-      case Failure(e: ParserException) => throw new RuntimeException(e)
-      case Failure(_) => None
-    }
-  }
-
-  private def extractStateID(stateNode: Node, stateFile: File): Int = {
-    if (stateNode.contains("id")) {
-      stateNode.getValue("id").integer
-    } else {
-      LOGGER.error(s"State ID not found in file: ${stateFile.getName}, ${stateNode.$}")
-      throw new UndefinedStateIDException(stateFile)
-    }
-  }
-
-  // todo breh nah
-  private def extractPopulation(stateNode: Node): Int = {
-    stateNode.find("manpower").map(_.value match {
-      case Some(v) => v match {
-        case i: Int => i
-        case s: String => s.toIntOption.getOrElse(0) // Convert string to Int safely
-        case _ => 0
-      }
-      case None => 0
-    }).getOrElse(0)
-  }
-
-
-  private def extractStateCategory(stateNode: Node): Unit = {
-    if (stateNode.contains("state_category")) {
-      // TODO: Implement state category logic
-    }
-  }
-
-  private def extractOwner(historyNode: Node, stateFile: File): Unit = {
-    if (historyNode.contains("owner")) {
-      historyNode.find("owner").get.$string match {
-        case Some(ownerTag) => owner.put(ClausewitzDate.of, new Owner(new CountryTag(ownerTag)))
-        case None => LOGGER.error(s"Warning: state owner not defined in ${stateFile.getName}")
-      }
-    } else {
-      LOGGER.error(s"Warning: state owner not defined in ${stateFile.getName}")
-    }
-  }
-
-//  private def extractBuildingValue(buildingsNode: Node, key: String): Int = {
-//    buildingsNode.find(key).map(_.getValue match {
-//      case i: Int => i
-//      case s: String => s.toIntOption.getOrElse(0) // Convert string safely
-//      case _ => 0
-//    }).getOrElse(0)
-//  }
-  
-  private def extractVictoryPoints(historyNode: Node, stateFile: File): Unit = historyNode.find("victory_points") match {
-    case Some(victoryPointsNode) =>
-      val vpl = CollectionConverters.asJava(victoryPointsNode.toList)
-      if (vpl.size == 2) {
-        victoryPoints.addOne(VictoryPoint.of(vpl.get(0).identifier.toInt, vpl.get(1).identifier.toInt))
-      } else {
-        LOGGER.warn(s"Invalid victory point node in state: ${stateFile.getName}")
-      }
-    case None =>  LOGGER.info(s"Victory points not defined in state: ${stateFile.getName}")
-  }
-
-
-  private def findStateResources(stateNode: Node): Resources = {
-    if (!stateNode.contains("resources")) return Resources()
-    
-    val resourcesNode = stateNode.find("resources").orNull
-
-    // aluminum (aluminium bri'ish spelling)
-    val aluminum: Int = resourcesNode.find("aluminium") match {
-      case Some(al) => al.$intOrElse(0)
-      case None => 0
-    } 
-    val chromium: Int = resourcesNode.find("chromium") match {
-      case Some(ch) => ch.$intOrElse(0)
-      case None => 0
-    }
-    val oil: Int = resourcesNode.find("oil") match {
-      case Some(o) => o.$intOrElse(0)
-      case None => 0
-    }
-    val rubber: Int = resourcesNode.find("rubber") match {
-      case Some(r) => r.$intOrElse(0)
-      case None => 0
-    }
-    val steel: Int = resourcesNode.find("steel") match {
-      case Some(s) => s.$intOrElse(0)
-      case None => 0
-    }
-    val tungsten: Int = resourcesNode.find("tungsten") match {
-      case Some(t) => t.$intOrElse(0)
-      case None => 0
-    }
-    
-    new Resources(aluminum, chromium, oil, rubber, steel, tungsten)
-  }
-
-  def getStateInfrastructure: Infrastructure = stateInfrastructure
-
-  def getResources: Resources = resourcesData
-
-  override def toString: String = _name
-
-  def getFile: File = stateFile
-
-  override def getInfrastructureRecord: Infrastructure = stateInfrastructure
-
-  def id: Int = stateID
-
-  @NotNull override def iterator: Iterator[State] = State.states.iterator
-
-  override def compareTo(@NotNull o: State): Int = Integer.compare(stateID, o.stateID)
-
-  @NotNull override def getLocalizableProperties: mutable.Map[Property, String] = mutable.Map(Property.NAME -> _name)
-
-  @NotNull override def getLocalizableGroup: Iterable[? <: Localizable] = State.states
-
-  def name: String = _name
 }

@@ -13,10 +13,9 @@ import com.hoi4utils.ddsreader.DDSReader
 import javafx.scene.image.Image
 
 import java.awt.Point
-import scala.annotation.{experimental, targetName}
+import scala.annotation.{experimental, tailrec, targetName}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-
 import language.experimental.namedTuples
 
 @lombok.extern.slf4j.Slf4j
@@ -53,40 +52,43 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
       cancelIfInvalid, continueIfInvalid, completionReward)
   }
 
-  def absoluteX: Int = absolutePosition().x
+  def absoluteX: Int = absolutePosition.x
 
-  def absoluteY: Int = absolutePosition().y
+  def absoluteY: Int = absolutePosition.y
 
   def position: Point = new Point(x.getOrElse(0), y.getOrElse(0))
 
-  def absolutePosition: Point = absolutePosition(Set.empty)
+  def absolutePosition: Point = {
+    @tailrec
+    def absolutePosition(focus: Focus, visited: Set[String] = Set.empty): Point = {
+      if (focus.relativePositionFocus.isUndefined) {
+        return position
+      }
+      // Check for self-reference
+      if (focus.relativePositionFocus @== focus.id) {
+        System.err.println(s"Relative position id same as focus id for $this")
+        return position
+      }
+      // Check for circular references
+      if (visited(focus.id.str)) {
+        System.err.println(s"Circular reference detected involving focus id: ${focus.id.str} in file ${focus.focusTree.focusFile}")
+        return position
+      }
 
-  private def absolutePosition(visited: Set[String] = Set.empty): Point = {
-    if (relativePositionFocus.isUndefined) {
-      return position
-    }
-    // Check for self-reference
-    if (relativePositionFocus @== id) {
-      System.err.println(s"Relative position id same as focus id for $this")
-      return position
-    }
-    // Check for circular references
-    if (visited(id.str)) {
-      System.err.println(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
-      return position
+      focus.relativePositionFocus.get() match {
+        case Some(f) =>
+          // Call absolutePosition on the focus, adding the current focus id to the visited set
+          // Add our relative coordinates to the relative focus absolute position to obtain our absolute position
+          val adjPoint = absolutePosition(f, visited + id.str)
+          val absolutePoint = new Point(adjPoint.x + focus.x.getOrElse(0), adjPoint.y + focus.y.getOrElse(0))
+          absolutePoint
+        case None =>
+          System.err.println(s"Focus id ${relativePositionFocus.getReferenceName} not a valid focus")
+          position
+      }
     }
 
-    relativePositionFocus.get() match {
-      case Some(f) =>
-        // Call absolutePosition on the focus, adding the current focus id to the visited set
-        // Add our relative coordinates to the relative focus absolute position to obtain our absolute position
-        val adjPoint = f.absolutePosition(visited + id.str)
-        val absolutePoint = new Point(adjPoint.x + x.getOrElse(0), adjPoint.y + y.getOrElse(0))
-        absolutePoint
-      case None =>
-        System.err.println(s"Focus id ${relativePositionFocus.getReferenceName} not a valid focus")
-        position
-    }
+    absolutePosition(this)
   }
 
   override def toString: String = {
@@ -122,7 +124,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     relativePositionFocus.get() match {
       case Some(f) =>
         // keep relative to the focus, but absolute coordinates are always the same
-        val rp = f.absolutePosition()
+        val rp = f.absolutePosition
         setXY(x - rp.x, y - rp.y)
       case None => setXY(x, y)
     }
