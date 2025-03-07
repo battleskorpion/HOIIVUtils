@@ -192,6 +192,13 @@
 			<version>3.3.0-alpha.1</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
+		<dependency>
+			<groupId>org.controlsfx</groupId>
+			<artifactId>controlsfx</artifactId>
+			<version>11.2.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

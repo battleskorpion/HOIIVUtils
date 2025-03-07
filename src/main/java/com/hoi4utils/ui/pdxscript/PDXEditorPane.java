@@ -10,9 +10,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import org.apache.poi.ss.formula.functions.T;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import scala.jdk.javaapi.CollectionConverters;
+
+import org.controlsfx.control.SearchableComboBox;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -297,12 +300,13 @@ public class PDXEditorPane extends AnchorPane {
     }
 
     private @NotNull ComboBox<String> visualizeReferencePDX(ReferencePDX<?> pdx) {
-        ComboBox<String> comboBox = new ComboBox<>();
+        var comboBox = new SearchableComboBox<String>();
         comboBox.setPrefWidth(200);
         comboBox.setPrefHeight(25);
         comboBox.getSelectionModel().select(pdx.getReferenceName());
-        comboBox.setItems(
-                FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())).sorted());
+//        comboBox.setItems(
+//                FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())).sorted());
+        comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())));
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             pdx.setReferenceName(newValue);
             if (nullProperties.contains(pdx)) {
