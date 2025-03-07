@@ -213,7 +213,7 @@ object EffectDatabase {
         new StringPDX(pdxIdentifier) with SimpleEffect {
         })
       case ParameterValueType.idea => Some(
-        new ReferencePDX[Idea](() => Idea.listAllIdeas, idea => idea.id, pdxIdentifier) with SimpleEffect {  // in future: ReferencePDX[Idea]
+        new ReferencePDX[Idea](() => Idea.listAllIdeas, _.id, pdxIdentifier) with SimpleEffect {  // in future: ReferencePDX[Idea]
         })
       case ParameterValueType.state => Some(
         new ReferencePDX[State](() => State.list, s => Some(s.name), pdxIdentifier) with SimpleEffect {
