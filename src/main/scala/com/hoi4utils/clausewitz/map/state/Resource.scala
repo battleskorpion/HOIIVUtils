@@ -88,7 +88,7 @@ object ResourcesFile {
   //  private var _resources: List[Resource] = List()
   private var _resourcesPDX: Option[ResourcesFile] = None
 
-  def read(): Unit = {
+  def read(): Boolean = {
     var resourcesFile: Option[File] = None
     if (!HOIIVFiles.Mod.resources_file.exists || HOIIVFiles.Mod.resources_file.isDirectory) {
       if (HOIIVFiles.HOI4.resources_file.exists && HOIIVFiles.HOI4.resources_file.isFile) {
@@ -102,9 +102,11 @@ object ResourcesFile {
       case Some(file) =>
         LOGGER.info(s"Reading resources from ${file.getAbsolutePath}")
         _resourcesPDX = Some(new ResourcesFile(file))
+        true
       case None =>
         LOGGER.fatal(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.HOI4.resources_file} is not a directory, " +
           s"or it does not exist (No resources file found).")
+        false 
     }
   }
 

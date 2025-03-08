@@ -4,6 +4,7 @@ import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.focus.FocusTree$;
+import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.clausewitz.script.PDXScript;
 import com.hoi4utils.clausewitz.script.StructuredPDX;
 import com.hoi4utils.clausewitz_parser.Parser;
@@ -85,6 +86,8 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	            StructuredPDX pdx = null;
 				if (pdxIdentifier.equals("focus_tree")) {
 					pdx = new FocusTree(selectedFile);
+				} else if (pdxIdentifier.equals("state")) {
+					pdx = new State(false, selectedFile);
 				}
 
 				if (pdx == null || pdx.isUndefined()) return;

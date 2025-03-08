@@ -7,6 +7,7 @@ import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.idea.IdeaFile;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
+import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.clausewitz.data.gfx.Interface;
 import com.hoi4utils.fileIO.FileListener.FileAdapter;
@@ -255,6 +256,13 @@ public class HOIIVUtilsInitializer {
 		} else {
 			setProperty("valid.State", "false");
 			LOGGER.error("Failed to read states");
+		}
+
+		if (ResourcesFile.read()) {
+			setProperty("valid.Resources", "true");
+		} else {
+			setProperty("valid.Resources", "false");
+			LOGGER.error("Failed to read resources");
 		}
 
 		if (FocusTree.read()) {

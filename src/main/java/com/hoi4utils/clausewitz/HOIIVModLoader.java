@@ -3,6 +3,7 @@ package com.hoi4utils.clausewitz;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.idea.IdeaFile;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
+import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.clausewitz.data.gfx.Interface;
 import org.apache.logging.log4j.LogManager;
@@ -43,6 +44,13 @@ public class HOIIVModLoader {
 		} else {
 			config.setProperty("valid.State", "false");
 			LOGGER.error("Failed to read states");
+		}
+		
+		if (ResourcesFile.read()) {
+			config.setProperty("valid.Resources", "true");
+		} else {
+			config.setProperty("valid.Resources", "false");
+			LOGGER.error("Failed to read resources");
 		}
 
 		if (FocusTree.read()) {
