@@ -155,7 +155,7 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
         Iterator<Focus> iterator = focusObservableList.iterator();
         while (iterator.hasNext()) {
             Focus f = iterator.next();
-            if (f.id().get().equals(focus.id().get())) {
+            if (f.id().value().equals(focus.id().value())) {
                 iterator.remove(); // Remove the current element using the iterator
                 focusObservableList.add(i, focus);
                 return; // update is done

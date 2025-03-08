@@ -49,7 +49,7 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
     }
   }
 
-  override def get(): Option[Double] = {
+  override def value: Option[Double] = {
     node.getOrElse(return None).$ match {
       case value: Double => Some(value)
       case value: Int => Some(value.toDouble)
@@ -92,19 +92,19 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
   override def defaultValue: Double = 0.0
 
   @targetName("unaryPlus")
-  def unary_+ : Double = this.get() match {
+  def unary_+ : Double = this.value match {
     case Some(value) => +value
     case None => 0.0
   }
 
   @targetName("unaryMinus")
-  def unary_- : Double = this.get() match {
+  def unary_- : Double = this.value match {
     case Some(value) => -value
     case None => -0.0
   }
 
   @targetName("plus")
-  def +(other: Double): Double = this.get() match {
+  def +(other: Double): Double = this.value match {
     case Some(value) => value + other
     case None => other
   }
@@ -113,16 +113,16 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
   def -(other: Double): Double = this + (-other)
 
   @targetName("multiply")
-  def *(other: Double): Double = this.get() match {
+  def *(other: Double): Double = this.value match {
     case Some(value) => value * other
     case None => 0
   }
 
   @targetName("divide")
-  def /(other: Double): Double = this.get() match {
+  def /(other: Double): Double = this.value match {
     case Some(value) => value / other
     case None => 0
   }
 
-  override def toString: String = this.get().map(_.toString).getOrElse("")
+  override def toString: String = this.value.map(_.toString).getOrElse("")
 }

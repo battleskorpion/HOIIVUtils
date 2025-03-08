@@ -6,7 +6,9 @@ import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
 
 import scala.annotation.targetName
 
-class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedRange.ofInt) extends AbstractPDX[Int](pdxIdentifiers) with ValPDXScript[Int] {
+class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedRange.ofInt) extends AbstractPDX[Int](pdxIdentifiers) 
+  with ValPDXScript[Int] {
+  
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
   }
@@ -38,7 +40,7 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
   }
 
   def set(other: IntPDX): Unit = {
-    other.get() match {
+    other.value match {
       case Some(value) => this @= value
       case None => this.node = None
     }
@@ -51,7 +53,7 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
     }
   }
 
-  override def get(): Option[Int] = {
+  override def value: Option[Int] = {
     node.getOrElse(return None).$ match {
       case value: Int => Some(value)
       case value: Double => Some(value.toInt)
@@ -93,37 +95,37 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
   override def defaultValue: Int = 0
 
   @targetName("unaryPlus")
-  def unary_+ : Int = this.get() match {
-    case Some(value) => +value
+  override def unary_+ : Int = this.value match {
+    case Some(v) => +v
     case None => 0
   }
 
   @targetName("unaryMinus")
-  def unary_- : Int = this.get() match {
-    case Some(value) => -value
+  override def unary_- : Int = this.value match {
+    case Some(v) => -v
     case None => 0
   }
 
   @targetName("plus")
-  def +(other: Int): Int = this.get() match {
-    case Some(value) => value + other
+  override def +(other: Int): Int = this.value match {
+    case Some(v) => v + other
     case None => other
   }
 
   @targetName("minus")
-  def -(other: Int): Int = this + (-other)
+  override def -(other: Int): Int = this + (-other)
 
   @targetName("multiply")
-  def *(other: Int): Int = this.get() match {
-    case Some(value) => value * other
+  override def *(other: Int): Int = this.value match {
+    case Some(v) => v * other
     case None => 0
   }
 
   @targetName("divide")
-  def /(other: Int): Int = this.get() match {
-    case Some(value) => value / other
+  override def /(other: Int): Int = this.value match {
+    case Some(v) => v / other
     case None => 0
   }
   
-  override def toString: String = this.get().map(_.toString).getOrElse("")
+  override def toString: String = this.value.map(_.toString).getOrElse("")
 }

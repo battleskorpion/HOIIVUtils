@@ -93,7 +93,7 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	void initialize() {
 		System.out.println("Country: " + country);
 		// includeVersion();
-		loadTableView(this, stateDataTable, stateList, State.getStateDataFunctions(false));
+		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(false));
 
 		JOptionPane.showMessageDialog(null, "dev - loaded rows: " + stateDataTable.getItems().size());
 
@@ -113,7 +113,9 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 		}
 
 		try {
-			Desktop.getDesktop().edit(state.getFile());
+			if (state.stateFile().isDefined()) {
+				Desktop.getDesktop().edit(state.stateFile().get());
+			}
 		} catch (IOException exc) {
 			System.err.println("Unable to open state file: " + state);
 			throw new RuntimeException(exc);

@@ -10,6 +10,7 @@ import com.hoi4utils.ui.javafx.export.ExcelExport;
 import com.hoi4utils.ui.javafx.table.DoubleTableCell;
 import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
@@ -17,6 +18,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
+import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
 
@@ -76,13 +78,13 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 		setFxmlResource("BuildingsByCountry.fxml");
 		setTitle("HOIIVUtils Buildings By Country Window");
 
-		countryList = Country.loadCountries();
+		countryList = FXCollections.observableArrayList(CollectionConverters.asJava(Country.list())); 
 	}
 
 	@FXML
 	void initialize() {
 		includeVersion();
-		loadTableView(this, countryDataTable, countryList, Country.getCountryDataFunctions(false));
+		loadTableView(this, countryDataTable, countryList, Country.getDataFunctions(false));
 
 		/* action listeners */
 		countryDataTable.setOnMouseClicked(event -> {

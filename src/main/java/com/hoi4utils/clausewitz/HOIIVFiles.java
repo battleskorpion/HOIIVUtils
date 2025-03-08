@@ -15,7 +15,8 @@ public class HOIIVFiles {
 		public static File common_folder;
 		public static File units_folder;
 		public static File interface_folder; 
-		public static File resources_folder;
+		public static File resources_file;
+		public static File state_category_dir;
 
 		public static final String folder_field_name = "mod_folder";
 		public static final String focus_folder_field_name = "mod_focus_folder";
@@ -27,6 +28,7 @@ public class HOIIVFiles {
 		public static final String units_folder_field_name = "mod_units_folder";
 		public static final String interface_folder_field_name = "mod_interface_folder";
 		public static final String resources_folder_field_name = "mod_resources_folder";
+		public static final String state_category_dir_field_name = "mod_state_category_dir";
 	}
 
 	// Nested class for base (HOIIV) files
@@ -35,13 +37,15 @@ public class HOIIVFiles {
 		public static File localization_folder;
 		public static File units_folder;
 		public static File interface_folder;
-		public static File resources_folder; 
+		public static File resources_file;
+		public static File state_category_dir;
 
 		public static final String localization_folder_field_name = "hoi4_localization_folder";
 		public static final String mods_folder_field_name = "hoi4mods_folder";
 		public static final String units_folder_field_name = "hoi4_units_folder";
 		public static final String interface_folder_field_name = "hoi4_interface_folder";
 		public static final String resources_folder_field_name = "hoi4_resources_folder";
+		public static final String state_category_dir_field_name = "hoi4_state_category_dir";
 	}
 
 	// Example of a file that might be shared or used as a default mod folder
@@ -58,7 +62,8 @@ public class HOIIVFiles {
 		Mod.localization_folder = new File(modPath, "localisation\\english"); // 's' vs 'z' note in the original comment
 		Mod.strat_region_dir = new File(modPath, "map\\strategicregions");
 		Mod.interface_folder = new File(modPath, "interface");
-		Mod.resources_folder = new File(modPath, "common\\resources");
+		Mod.resources_file = new File(modPath, "common\\resources\\00_resources.txt");
+		Mod.state_category_dir = new File(modPath, "common\\state_category");
 	}
 
 	public static void setHoi4PathChildDirs(String hoi4Path) {
@@ -66,7 +71,8 @@ public class HOIIVFiles {
 		HOI4.localization_folder = new File(hoi4Path, "localisation\\english");
 		HOI4.units_folder = new File(hoi4Path, "common\\units");
 		HOI4.interface_folder = new File(hoi4Path, "interface");
-		HOI4.resources_folder = new File(hoi4Path, "common\\resources");
+		HOI4.resources_file = new File(hoi4Path, "common\\resources\\00_resources.txt");
+		HOI4.state_category_dir = new File(hoi4Path, "common\\state_category");
 	}
 
 	// A sample validation method that uses both mod and base files

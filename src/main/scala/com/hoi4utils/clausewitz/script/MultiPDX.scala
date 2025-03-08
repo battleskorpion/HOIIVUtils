@@ -54,7 +54,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
-  override def get(): Option[ListBuffer[T]] = {
+  override def value: Option[ListBuffer[T]] = {
     if (pdxList.isEmpty) None
     else Some(pdxList)
   }
@@ -99,7 +99,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     pdxList.clear()
   }
 
-  override def isEmpty: Boolean = get().isEmpty
+  override def isEmpty: Boolean = value.isEmpty
 
   override def iterator: Iterator[T] = pdxList.iterator
 

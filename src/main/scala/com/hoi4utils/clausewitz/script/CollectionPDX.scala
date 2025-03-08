@@ -46,7 +46,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
-  override def get(): Option[ListBuffer[T]] = {
+  override def value: Option[ListBuffer[T]] = {
     if (pdxList.isEmpty) None
     else Some(pdxList)
   }
@@ -104,7 +104,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
 
   override def foreach[U](f: T => U): Unit = super.foreach(f)
 
-  override def size: Int = get().size
+  override def size: Int = value.size
 
   override def isUndefined: Boolean = {
     pdxList.forall(_.isUndefined) || pdxList.isEmpty

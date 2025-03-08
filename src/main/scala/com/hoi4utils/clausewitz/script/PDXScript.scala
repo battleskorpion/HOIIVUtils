@@ -36,7 +36,7 @@ trait PDXScript[T] {
    * Get the value of the PDX script.
    * @return
    */
-  def get(): Option[T]
+  def value: Option[T]
 
   /**
    * Get the node of the PDX script.
@@ -67,6 +67,16 @@ trait PDXScript[T] {
    * @return True if the node matches a valid identifier, false otherwise.
    */
   def isValidIdentifier(node: Node): Boolean
+
+  /**
+   * Checks if the given identifier matches any valid identifier for this PDX script.
+   * 
+   * @param identifier The identifier to validate.
+   * @return True if the identifier matches a valid identifier, false otherwise.
+   */
+  def isValidID(identifier: String): Boolean = {
+    pdxIdentifier.equals(identifier)
+  }
 
   def clearNode(): Unit
 

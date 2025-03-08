@@ -51,7 +51,7 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
-  override def get(): Option[ListBuffer[T]] = {
+  override def value: Option[ListBuffer[T]] = {
     if (pdxList.isEmpty) None
     else Some(pdxList)
   }

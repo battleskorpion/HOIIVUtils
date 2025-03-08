@@ -10,7 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import org.apache.poi.ss.formula.functions.T;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import scala.jdk.javaapi.CollectionConverters;
@@ -122,18 +121,18 @@ public class PDXEditorPane extends AnchorPane {
         Node editorNode = switch (property) {
             case StructuredPDX pdx ->
                 visualizeStructuredPDX(pdx);
-            case StringPDX pdx -> (pdx.get() == null && !allowNull)
+            case StringPDX pdx -> (pdx.value() == null && !allowNull)
                         ? null
                         : visualizeStringPDX(property, pdx);
             case BooleanPDX pdx ->
                     visualizeBooleanPDX(pdx);
-            case IntPDX pdx -> (pdx.get() == null && !allowNull)
+            case IntPDX pdx -> (pdx.value() == null && !allowNull)
                             ? null
                             : visualizeIntPDX(pdx);
-            case DoublePDX pdx -> (pdx.get() == null && !allowNull)
+            case DoublePDX pdx -> (pdx.value() == null && !allowNull)
                     ? null
                     : visualizeDoublePDX(pdx);
-            case ReferencePDX<?> pdx -> (pdx.get() == null && !allowNull)
+            case ReferencePDX<?> pdx -> (pdx.value() == null && !allowNull)
                     ? null
                     : visualizeReferencePDX(pdx);
             case MultiReferencePDX<?> pdx -> (pdx.isUndefined() && !allowNull)
@@ -176,18 +175,18 @@ public class PDXEditorPane extends AnchorPane {
         Node editorNode = switch (property) {
             case StructuredPDX pdx ->
                     visualizeStructuredPDX(pdx);
-            case StringPDX pdx -> (pdx.get() == null && !allowNull)
+            case StringPDX pdx -> (pdx.value() == null && !allowNull)
                     ? null
                     : visualizeStringPDX(property, pdx);
             case BooleanPDX pdx ->
                     visualizeBooleanPDX(pdx);
-            case IntPDX pdx -> (pdx.get() == null && !allowNull)
+            case IntPDX pdx -> (pdx.value() == null && !allowNull)
                     ? null
                     : visualizeIntPDX(pdx);
-            case DoublePDX pdx -> (pdx.get() == null && !allowNull)
+            case DoublePDX pdx -> (pdx.value() == null && !allowNull)
                     ? null
                     : visualizeDoublePDX(pdx);
-            case ReferencePDX<?> pdx -> (pdx.get() == null && !allowNull)
+            case ReferencePDX<?> pdx -> (pdx.value() == null && !allowNull)
                     ? null
                     : visualizeReferencePDX(pdx);
             case MultiReferencePDX<?> pdx -> (pdx.isUndefined() && !allowNull)

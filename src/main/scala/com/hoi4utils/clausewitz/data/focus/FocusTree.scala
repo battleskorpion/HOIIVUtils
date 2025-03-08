@@ -27,6 +27,7 @@ object FocusTree {
   private val focusTrees = new ListBuffer[FocusTree]()
 
   def get(focus_file: File): Option[FocusTree] = {
+    if (focus_file == null) return None
     if (!focusTreeFileMap.contains(focus_file)) new FocusTree(focus_file)
     focusTreeFileMap.get(focus_file)
   }
@@ -86,7 +87,7 @@ object FocusTree {
     //focusTrees.values.stream.filter((focusTree: FocusTree) => focusTree.country.nodeEquals(tag)).findFirst.orElse(null)
     for (tree <- listFocusTrees) {
       //if (tree.country.equals(tag)) return tree
-      val countryTag = tree.country.get()
+      val countryTag = tree.country.value
       countryTag match {
         case Some(t) => if (t.tag.equals(tag)) return tree
         case None => 
@@ -139,16 +140,16 @@ class FocusTree
    *
    * @return list containing each focus ID
    */
-  def listFocusIDs: Seq[String] = Seq.from(focuses.flatMap(_.id.get()))
+  def listFocusIDs: Seq[String] = Seq.from(focuses.flatMap(_.id.value))
 
-  def countryTag: CountryTag = country.get() match {
+  def countryTag: CountryTag = country.value match {
     case Some(t) => t
     case None => null
   }
   def focusFile: Option[File] = _focusFile
 
   override def toString: String = {
-    id.get().orElse(country.get().map(_.toString)).getOrElse {
+    id.value.orElse(country.value.map(_.toString)).getOrElse {
       _focusFile match {
         case Some(file) if file.exists() => s"[Unknown ID: ${file.getName}]"
         case _ => "[Unknown]"
@@ -185,7 +186,7 @@ class FocusTree
    */
   private def nextTempFocusID(lastIntID: Int): String = {
     val id = "focus_" + (lastIntID + 1)
-    if (focuses.exists(_.id.get().contains(id))) return nextTempFocusID(lastIntID)
+    if (focuses.exists(_.id.value.contains(id))) return nextTempFocusID(lastIntID)
     id
   }
 
@@ -202,9 +203,9 @@ class FocusTree
   }
 
   override def compareTo(o: FocusTree): Int = {
-    (this.country.get(), this.id.get()) match {
+    (this.country.value, this.id.value) match {
       case (Some(countryTag), Some(id)) =>
-        (o.country.get(), o.id.get()) match {
+        (o.country.value, o.id.value) match {
           case (Some(otherCountryTag), Some(otherID)) =>
             val c = countryTag.compareTo(otherCountryTag)
             if (c == 0) id.compareTo(otherID) else c
@@ -219,7 +220,7 @@ class FocusTree
   override def getLocalizableProperties: mutable.HashMap[Property, String] = {
     // lets us map null if we use hashmap instead of generic of() method
     val properties = new mutable.HashMap[Property, String]
-    id.get() match {
+    id.value match {
       case Some(id) => properties.put(Property.NAME, id)
       case None => //properties.put(Property.NAME, null)
     }

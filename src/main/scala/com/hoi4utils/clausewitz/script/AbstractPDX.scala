@@ -72,7 +72,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  override def get(): Option[T] = {
+  override def value: Option[T] = {
     node.getOrElse(return None).$ match {
       case value: T => Some(value)
       case _ => None
@@ -136,6 +136,10 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
    */
   override def isValidIdentifier(node: Node): Boolean = {
     pdxIdentifiers.contains(node.name)
+  }
+  
+  override def isValidID(identifier: String): Boolean = {
+    pdxIdentifiers.contains(identifier)
   }
 
   /**

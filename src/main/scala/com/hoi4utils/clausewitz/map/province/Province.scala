@@ -1,19 +1,26 @@
 package com.hoi4utils.clausewitz.map.province
 
+import com.hoi4utils.clausewitz.script.IntPDX
+import com.hoi4utils.clausewitz_parser.Node
 import org.jetbrains.annotations.NotNull
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import scala.collection.mutable.ListBuffer
 
-class Province private(private val _id: Int) extends Comparable[Province] {
-  /* init */
-  require(_id >= 0, "Province id must be non-negative")
+class Province extends IntPDX {
+  override def set(expression: Node): Unit = {
+    super.set(expression)
+  }
+  
+  override def set(value: Int): Int = {
+    super.set(value)
+  }
 
-  Province.add(this)
-
-  def id = _id
-
-  override def compareTo(o: Province): Int = this.id.compareTo(o.id)
+  override def set(other: IntPDX): Unit = {
+    throw new UnsupportedOperationException("Cannot set a Province to another IntPDX")
+  }
+  
+  def id: Option[Int] = value
 }
 
 object Province {
@@ -26,8 +33,8 @@ object Province {
   def clear(): Unit = {
     provinces.clear()
   }
-
-  def add(province: Province): List[Province] = {
+  
+  private[map] def add(province: Province): List[Province] = {
     provinces += province
     provinces.toList
   }
@@ -36,15 +43,17 @@ object Province {
 
   def apply(id: Int): Province = {
     require(id >= 0, "Province id must be non-negative")
-    provinces.find(_.id == id) match {
-      case Some(existing) =>
-        // Return the already-created instance
-        existing
-      case None =>
-        // Create, cache, and return a new Province
-        val newProvince = new Province(id)
-        provinces += newProvince
-        newProvince
-    }
+    val newProvince = new Province()
+    newProvince.set(id)
+    //        provinces += newProvince
+    newProvince
+//    provinces.find(_ @== id) match {
+//      case Some(existing) =>
+//        // Return the already-created instance
+//        existing
+//      case None =>
+//        // Create and return a new Province
+//        
+//    }
   }
 }

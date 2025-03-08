@@ -81,7 +81,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
 
   test("StringPDX should have an obtainable value when applicable") {
     withValidFocusTrees { focusTree =>
-      assert(focusTree.id.get().nonEmpty)
+      assert(focusTree.id.value.nonEmpty)
     }
   }
 

@@ -44,7 +44,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     }
   }
 
-  override def get(): Option[T] = {
+  override def value: Option[T] = {
     if (reference.nonEmpty) return reference
     resolveReference()
   }
@@ -71,7 +71,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
   }
 
   override def toScript: String = {
-    val scripts = get()
+    val scripts = value
     if (scripts == null) return null
     (pdxIdentifier + " = " + referenceName) + "\n"
   }
