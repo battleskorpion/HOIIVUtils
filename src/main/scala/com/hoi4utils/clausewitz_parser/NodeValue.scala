@@ -134,6 +134,12 @@ final class NodeValue {
   }
   
   def valueIsInstanceOf(clazz: Class[?]): Boolean = clazz.isInstance(_value.get)
-  
-//  def $ (clazz: Class[_]): Boolean = valueIsInstanceOf(clazz)
+
+  //  def $ (clazz: Class[_]): Boolean = valueIsInstanceOf(clazz)
+  override def toString: String = {
+    _value match {
+      case Some(v) => v.toString
+      case None => "[null]"
+    }
+  }
 }

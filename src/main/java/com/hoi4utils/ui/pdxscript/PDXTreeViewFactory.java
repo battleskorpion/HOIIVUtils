@@ -117,15 +117,18 @@ public class PDXTreeViewFactory {
             return pdx.pdxIdentifier() + "  (CollectionPDX, children=" + pdx.pdxList().size() + ")"
                     + (pdx.node().isDefined() ? "  index: " + pdx.getNode().get().start(): "");
         } else if (script instanceof StructuredPDX pdx) {
+            var headlessText = script instanceof HeadlessPDX ? " [Headless]" : "";
+            
             if (pdx instanceof Localizable localizablePDX) {
                 var id = localizablePDX.localizableProperty(Property.NAME);
                 if (id.isDefined()) {
                     return pdx.pdxIdentifier() + " <" + id.get() + ">" 
-                            + "  (StructuredPDX, children=" + pdx.childScripts().size() + ")"
+                            + "  (StructuredPDX" + headlessText + ", children=" + pdx.childScripts().size() + ")"
                             + (pdx.node().isDefined() ? "  index: " + pdx.getNode().get().start(): "");
                 } 
             }
-            return pdx.pdxIdentifier() + "  (StructuredPDX, children=" + pdx.childScripts().size() + ")";
+            else return pdx.pdxIdentifier() 
+                    + "  (StructuredPDX" + headlessText + ", children=" + pdx.childScripts().size() + ")";
         } else if (script instanceof MultiPDX<?> multiPDX) {
             return multiPDX.pdxIdentifier() + "  (MultiPDX, children=" + multiPDX.size() + ")";
         }

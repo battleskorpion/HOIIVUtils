@@ -1,17 +1,22 @@
 package com.hoi4utils.clausewitz.data.country
 
+import com.hoi4utils.clausewitz.HOIIVFiles
+import com.hoi4utils.clausewitz.data.focus.FocusTree
 import com.hoi4utils.clausewitz.data.technology.Technology
 import com.hoi4utils.clausewitz.data.units.OrdersOfBattle
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.{InfrastructureData, Resource, State}
-import com.hoi4utils.clausewitz.script.ReferencePDX
+import com.hoi4utils.clausewitz.script.{CollectionPDX, HeadlessPDX, PDXScript, ReferencePDX, StructuredPDX}
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import org.apache.logging.log4j.{LogManager, Logger}
 import org.jetbrains.annotations.NotNull
 
+import java.io.File
 import scala.jdk.javaapi.CollectionConverters
 import java.util
 import java.util.function.Function
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 
@@ -19,13 +24,29 @@ import scala.collection.mutable.ListBuffer
 // todo consider... implements infrastructure, resources?????
 // todo localizable data?
 object Country {
+  val LOGGER: Logger = LogManager.getLogger(classOf[Country])
+
   private val countries = new ListBuffer[Country]()
 
   def list: List[Country] = countries.toList
   
   def read(): Boolean = {
-    // todo
-    false
+    if (!HOIIVFiles.Mod.country_folder.exists || !HOIIVFiles.Mod.country_folder.isDirectory) {
+      LOGGER.fatal(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_folder} is not a directory, or it does not exist.")
+      false
+    } else if (HOIIVFiles.Mod.country_folder.listFiles == null || HOIIVFiles.Mod.country_folder.listFiles.length == 0) {
+      LOGGER.warn(s"No focuses found in ${HOIIVFiles.Mod.country_folder}")
+      false
+    } else {
+      LOGGER.info("Reading focus trees from " + HOIIVFiles.Mod.country_folder)
+
+      // create focus trees from files
+      HOIIVFiles.Mod.country_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
+        var tag = CountryTag.get(f.getName.split(" ")(0))
+        new Country(f, tag)
+      }
+      true
+    }
   }
 
   /**
@@ -110,24 +131,22 @@ object Country {
 //  def loadCountries: ObservableList[Country] = loadCountries(CollectionConverters.asJava(State.infrastructureOfCountries), CollectionConverters.asJava(State.resourcesOfCountries))
 }
 
-class Country extends InfrastructureData with Comparable[Country] {
+class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] with InfrastructureData {
+  /* data */
   private var _countryTag: Option[CountryTag] = None
-  private var _infrastructure: Infrastructure = null // infrastructure of all owned states
 
-  private var _resources: List[Resource] = List.empty // resources of all owned states
-
-  private val oob_list: Set[OrdersOfBattle] = null // set of potential orders of battles defined in history/countries file (oob)
-
+  private val oob = new ReferencePDX[OrdersOfBattle](() => OrdersOfBattle.list, oob => oob.id.value, "oob")
   private val defaultResearchSlots = 0 // default research slots as defined in history/countries file or similar
-
   private val countryFlags: Set[CountryFlag] = null
-  private val capital = 0 // country capital as defined by applicable oob or unknown
-
-  private val stability = .0 // stability percentage defined from 0.0-1.0
-
-  private val warSupport = .0 // war support percentage defined from 0.0-1.0
-
+  private val capital = new ReferencePDX[State](() => State.list, state => state.stateID.asSomeString, "capital")
+  private val stability = 0.0 // stability percentage defined from 0.0-1.0
+  private val warSupport = 0.0 // war support percentage defined from 0.0-1.0
   private val startingTech: Set[Technology] = null // starting technology defined in history/countries file
+
+  private var _file: Option[File] = None
+
+  private var _infrastructure: Infrastructure = null // infrastructure of all owned states
+  private var _resources: List[Resource] = List.empty // resources of all owned states
 
   def this(countryTag: CountryTag, infrastructure: Infrastructure, resources: List[Resource]) = {
     this()
@@ -138,6 +157,22 @@ class Country extends InfrastructureData with Comparable[Country] {
 
   def this(countryTag: CountryTag) = {
     this(countryTag, new Infrastructure, List[Resource]())
+  }
+
+  def this(file: File, countryTag: CountryTag) = {
+    this(countryTag)
+    if (!file.exists) {
+      LOGGER.fatal(s"Country file does not exist: $file")
+      throw new IllegalArgumentException(s"File does not exist: $file")
+    }
+
+    loadPDX(file)
+    setFile(file)
+    _countryTag = Some(countryTag)
+  }
+
+  def setFile(file: File): Unit = {
+    _file = Some(file)
   }
 
   def countryTag: CountryTag = _countryTag.getOrElse(CountryTag.NULL_TAG)
@@ -199,4 +234,8 @@ class Country extends InfrastructureData with Comparable[Country] {
   }
 
   override def toString: String = _countryTag.toString + " " + "[country tag]"
+
+  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
+    ListBuffer(oob, capital)
+  }
 }

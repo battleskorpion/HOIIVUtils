@@ -34,7 +34,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
           pdxScript.loadPDX(l)
         }
       case _ =>
-        throw new NodeValueTypeException(expression, "list")  // todo check through schema
+        throw new NodeValueTypeException(expression, "list")  
     }
   }
 
@@ -59,7 +59,6 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     try set(expression)
     catch {
       case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        // System.out.println("Error loading PDX script:" + e.getMessage + "\n\t" + expression) // todo expression prints entire focus node
         System.out.println("Error loading PDX script:" + e.getMessage)
     }
   }

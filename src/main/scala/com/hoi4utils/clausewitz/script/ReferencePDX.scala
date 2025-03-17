@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable
 import java.util.function.{Function, Supplier}
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
+import scala.language.implicitConversions
 
 /**
  * A PDXObject that may reference another PDXObject.
@@ -39,8 +40,10 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     value match {
       case s: String =>
         referenceName = s
+      case s: Int =>
+        referenceName = s.toString
       case _ =>
-        throw new NodeValueTypeException(expression, "string")
+        throw new NodeValueTypeException(expression, "string | int")
     }
   }
 

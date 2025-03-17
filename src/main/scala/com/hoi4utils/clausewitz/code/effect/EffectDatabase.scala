@@ -323,7 +323,7 @@ object EffectDatabase {
         case (name = id, `type` = ParameterValueType.mission, isList = false) => new StringPDX(id)      // ex: activate_mission = my_mission (in future: ReferencePDX[Mission])
         //case (id, ParameterValueType.modifier) => new ReferencePDX[Modifier]
         case (name = id, `type` = ParameterValueType.scope) => new StringPDX(id)        // ex: scope = my_scope
-        case (name = id, `type` = ParameterValueType.state) => new ReferencePDX[State](() => State.list, s => s.name.value, id)
+        case (name = id, `type` = ParameterValueType.state) => new ReferencePDX[State](() => State.list, s => s.stateID.asSomeString, id)
         case (name = id, `type` = ParameterValueType.equipment) => new StringPDX(id)    // ex: type = fighter_equipment_0. in future: ReferencePDX[Equipment]
         case (name = id, `type` = ParameterValueType.strategic_region) => new IntPDX(id, ExpectedRange.ofPositiveInt) // ex: region = 5. in future: ReferencePDX[StratRegion]
         case (name = id, `type` = ParameterValueType.building) => new StringPDX(id) // todo can improve (type = industrial_complex is example of a building)

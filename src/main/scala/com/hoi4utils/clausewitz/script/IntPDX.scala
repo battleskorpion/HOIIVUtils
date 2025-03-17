@@ -127,5 +127,5 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
     case None => 0
   }
   
-  override def toString: String = this.value.map(_.toString).getOrElse("")
+  def asSomeString: Option[String] = Some(asString)
 }

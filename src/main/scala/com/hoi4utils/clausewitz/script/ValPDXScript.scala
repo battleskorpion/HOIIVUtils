@@ -119,4 +119,6 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] with Comparable[T] {
     }
   }
 
+  def asString: String = this.value.map(_.toString).getOrElse("")
+
 }

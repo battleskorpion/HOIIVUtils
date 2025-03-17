@@ -2,6 +2,8 @@ package com.hoi4utils.ui.parser;
 
 import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.clausewitz.data.country.Country;
+import com.hoi4utils.clausewitz.data.country.CountryTag$;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.focus.FocusTree$;
 import com.hoi4utils.clausewitz.map.state.State;
@@ -78,16 +80,22 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 					pdxIdentifierLabel.setText("[empty]");
 					return;
 				}
-
+				
 				var childPDXNode = rootNodeValue.list().apply(0);
 				var pdxIdentifier = childPDXNode.identifier();
-	            pdxIdentifierLabel.setText(pdxIdentifier);
+	            if (rootNodeValue.list().length() == 1) {
+					pdxIdentifierLabel.setText(pdxIdentifier);
+	            } else {
+					pdxIdentifierLabel.setText(selectedFile.getName()); 
+	            }
 
 	            StructuredPDX pdx = null;
 				if (pdxIdentifier.equals("focus_tree")) {
 					pdx = new FocusTree(selectedFile);
 				} else if (pdxIdentifier.equals("state")) {
 					pdx = new State(false, selectedFile);
+				} else if (selectedFile.getParent().endsWith("countries") && selectedFile.getParentFile().getParent().endsWith("history")) {
+					pdx = new Country(selectedFile, CountryTag$.MODULE$.get(selectedFile.getName().substring(0, 3)));
 				}
 
 				if (pdx == null || pdx.isUndefined()) return;

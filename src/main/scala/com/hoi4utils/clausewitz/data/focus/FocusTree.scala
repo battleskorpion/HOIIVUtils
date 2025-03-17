@@ -127,7 +127,6 @@ class FocusTree
 
     loadPDX(focus_file)
     setFile(focus_file)
-    _focusFile.foreach(file => focusTreeFileMap.put(file, this))
   }
 
   // todo: add default, continuous focus position
@@ -200,6 +199,7 @@ class FocusTree
 
   def setFile(file: File): Unit = {
     _focusFile = Some(file)
+    _focusFile.foreach(file => focusTreeFileMap.put(file, this))
   }
 
   override def compareTo(o: FocusTree): Int = {
