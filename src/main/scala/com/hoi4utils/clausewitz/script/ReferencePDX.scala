@@ -26,7 +26,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
 
   // the string identifier of the referenced PDXScript
   protected[script] var referenceName: String = _
-  protected[script] var reference: Option[T] = None
+  private var reference: Option[T] = None
 
   def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => Option[String], pdxIdentifiers: String*) = {
     this(referenceCollectionSupplier, idExtractor, pdxIdentifiers.toList)

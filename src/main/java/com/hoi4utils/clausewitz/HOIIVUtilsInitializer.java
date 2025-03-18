@@ -3,6 +3,8 @@ package com.hoi4utils.clausewitz;
 import com.hoi4utils.PublicFieldChangeNotifier;
 import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
 import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
+import com.hoi4utils.clausewitz.data.country.Country;
+import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.idea.IdeaFile;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
@@ -249,6 +251,20 @@ public class HOIIVUtilsInitializer {
 		} else {
 			setProperty("valid.Interface", "false");
 			LOGGER.error("Failed to read gfx interface files");
+		}
+
+		if (CountryTag.read()) {
+			setProperty("valid.CountryTag", "true");
+		} else {
+			setProperty("valid.CountryTag", "false");
+			LOGGER.error("Failed to read country tags");
+		}
+
+		if (Country.read()) {
+			setProperty("valid.Country", "true");
+		} else {
+			setProperty("valid.Country", "false");
+			LOGGER.error("Failed to read countries");
 		}
 
 		if (State.read()) {

@@ -101,6 +101,8 @@ final class NodeValue {
   def isString: Boolean = _value.get.isInstanceOf[String]
 
   def isNumber: Boolean = _value.get.isInstanceOf[Number]
+
+  def isInt: Boolean = _value.get.isInstanceOf[Int]
   // public boolean isBoolean() {
   // return value instanceof Boolean;
   // }

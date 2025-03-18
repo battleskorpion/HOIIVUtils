@@ -1,5 +1,7 @@
 package com.hoi4utils.clausewitz;
 
+import com.hoi4utils.clausewitz.data.country.Country;
+import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.idea.IdeaFile;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
@@ -37,6 +39,20 @@ public class HOIIVModLoader {
 		} else {
 			config.setProperty("valid.Interface", "false");
 			LOGGER.error("Failed to read gfx interface files");
+		}
+		
+		if (CountryTag.read()) {
+			config.setProperty("valid.CountryTag", "true");
+		} else {
+			config.setProperty("valid.CountryTag", "false");
+			LOGGER.error("Failed to read country tags");
+		}
+		
+		if (Country.read()) {
+			config.setProperty("valid.Country", "true");
+		} else {
+			config.setProperty("valid.Country", "false");
+			LOGGER.error("Failed to read countries");
 		}
 		
 		if (State.read()) {

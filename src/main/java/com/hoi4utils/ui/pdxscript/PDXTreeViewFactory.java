@@ -7,6 +7,7 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.util.Callback;
+import lombok.val;
 
 /**
  * Utility class that creates a TreeView to display any PDXScript hierarchy.
@@ -131,6 +132,9 @@ public class PDXTreeViewFactory {
                     + "  (StructuredPDX" + headlessText + ", children=" + pdx.childScripts().size() + ")";
         } else if (script instanceof MultiPDX<?> multiPDX) {
             return multiPDX.pdxIdentifier() + "  (MultiPDX, children=" + multiPDX.size() + ")";
+        } else if (script instanceof ReferencePDX pdx) {
+            var ref = pdx.referenceName(); 
+            return pdx.pdxIdentifier() + "  (ReferencePDX), reference=" + ref + ", isRefDefined=" + pdx.value().isDefined() + ")";
         }
         // Fallback
         return script.pdxIdentifier() + "  (" + script.getClass().getSimpleName() + ")";

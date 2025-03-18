@@ -89,7 +89,7 @@ class Parser {
     }
     // System.out.println(name.value);
     // todo case
-    if ((name.`type` ne TokenType.string) && (name.`type` ne TokenType.symbol) && (name.`type` ne TokenType.number))
+    if ((name.`type` ne TokenType.string) && (name.`type` ne TokenType.symbol) && (!name.isNumber))
       throw new ParserException("Parser: incorrect token type " + name.`type` + ", token: " + name + " at index: " + name.start)
     var nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
     // 'if the next token is not an operator or a [special character]'
@@ -174,10 +174,12 @@ class Parser {
         if (nextToken.value.length == 2) return new NodeValue(nextToken.value)
         return new NodeValue(nextToken.value.substring(1, nextToken.length - 2).replaceAll(Parser.escape_quote_regex, "\"").replaceAll(Parser.escape_backslash_regex, "\\"))
 
-      case TokenType.number =>
-        /* handles hexadecimal or floating-point/integers */
-        return new NodeValue(if (nextToken.value.startsWith("0x")) Integer.parseInt(nextToken.value.substring(2), 16)
-        else nextToken.value.toDouble)
+      case TokenType.`float` => return new NodeValue(nextToken.value.toDouble)
+
+      case TokenType.`int` => return new NodeValue(
+        if (nextToken.value.startsWith("0x")) Integer.parseInt(nextToken.value.substring(2), 16)
+        else nextToken.value.toInt
+      )
 
       case TokenType.symbol => return new NodeValue(nextToken.value)
 

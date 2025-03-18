@@ -148,6 +148,9 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
   private var _infrastructure: Infrastructure = null // infrastructure of all owned states
   private var _resources: List[Resource] = List.empty // resources of all owned states
 
+  /* default */
+  Country.add(this)
+
   def this(countryTag: CountryTag, infrastructure: Infrastructure, resources: List[Resource]) = {
     this()
     this._countryTag = Some(countryTag)
@@ -224,7 +227,10 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
 
   private def aluminumPercentOfGlobal = tungsten / State.resourcesOfStates.filter(_.isValidID("aluminum")).map(_.amt).sum
 
-  def name: String = _countryTag.toString
+  def name: String = _countryTag match {
+    case Some(tag) => tag.toString
+    case None => CountryTag.NULL_TAG.toString
+  }
 
   private def numOwnedStates = 1 // todo;
 

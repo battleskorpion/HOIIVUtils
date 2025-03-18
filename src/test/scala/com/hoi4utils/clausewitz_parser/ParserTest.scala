@@ -64,5 +64,12 @@ class ParserTest extends AnyFunSuiteLike {
       assert(subunits.find("mobenforcer").get.find("sprite").nonEmpty)
     }, new File(testPath + "specialinfantry.txt"))
   }
+  
+  test("Ints should be read as ints and not as type double") {
+    withParsedFile ({ node => 
+        val capital = node.find("capital").getOrElse(fail("focus not found"))
+        assert(capital.nodeValue.isInt)
+    }, new File(testPath + "SMD_Maryland.txt"))
+  }
 
 }
