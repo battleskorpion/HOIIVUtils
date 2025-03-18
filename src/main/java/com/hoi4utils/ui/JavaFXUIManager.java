@@ -2,7 +2,7 @@ package com.hoi4utils.ui;
 
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
+import com.hoi4utils.ui.javafx.table.DoubleOrPercentTableCell;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -294,7 +294,7 @@ public interface JavaFXUIManager {
 	 * @param column        the table column to update
 	 * @param displayPercentages whether to display the values as percentages or not
 	 * 
-	 * @see IntegerOrPercentTableCell
+	 * @see DoubleOrPercentTableCell
 	 */
 	static <S> void updateColumnPercentBehavior(TableColumn<S, Double> column,
 	                                            boolean displayPercentages) {
@@ -302,8 +302,8 @@ public interface JavaFXUIManager {
 		// either integers or percentages
 		column.setCellFactory(col -> {
 			// Create a new cell instance that can display either integers or percentages
-			IntegerOrPercentTableCell<S> cell = new IntegerOrPercentTableCell<>();
-			cell.setInteger(!displayPercentages);
+			DoubleOrPercentTableCell<S> cell = new DoubleOrPercentTableCell<>();
+			cell.setDouble(!displayPercentages);
 			cell.setPercent(displayPercentages);
 			return cell;
 		});

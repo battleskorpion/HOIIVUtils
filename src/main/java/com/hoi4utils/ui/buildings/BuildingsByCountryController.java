@@ -8,7 +8,7 @@ import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.export.ExcelExport;
 import com.hoi4utils.ui.javafx.table.DoubleTableCell;
-import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
+import com.hoi4utils.ui.javafx.table.DoubleOrPercentTableCell;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -84,7 +84,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	@FXML
 	void initialize() {
 		includeVersion();
-		loadTableView(this, countryDataTable, countryList, Country.getDataFunctions(false));
+		loadTableView(this, countryDataTable, countryList, Country.getDataFunctions(resourcesPercent));
 
 		/* action listeners */
 		countryDataTable.setOnMouseClicked(event -> {
@@ -108,6 +108,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableRubberColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableSteelColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableTungstenColumn, resourcesPercent);
+		loadTableView(this, countryDataTable, countryList, Country.getDataFunctions(resourcesPercent));
 	}
 
 	public void setDataTableCellFactories() {
@@ -118,12 +119,12 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 		countryDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		countryDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		countryDataTablePopNumStatesRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		countryDataTableAluminiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		countryDataTableChromiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		countryDataTableOilColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		countryDataTableRubberColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		countryDataTableSteelColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		countryDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		countryDataTableAluminiumColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		countryDataTableChromiumColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		countryDataTableOilColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		countryDataTableRubberColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		countryDataTableSteelColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		countryDataTableTungstenColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
 	}
 
 	@FXML

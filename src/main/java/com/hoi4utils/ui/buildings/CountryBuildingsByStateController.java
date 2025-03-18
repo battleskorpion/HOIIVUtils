@@ -7,7 +7,7 @@ import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.export.ExcelExport;
 import com.hoi4utils.ui.javafx.table.DoubleTableCell;
-import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
+import com.hoi4utils.ui.javafx.table.DoubleOrPercentTableCell;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -143,12 +143,12 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 		stateDataTablePopCivRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		stateDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		stateDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTableAluminiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableChromiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableOilColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableRubberColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableSteelColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableAluminiumColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		stateDataTableChromiumColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		stateDataTableOilColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		stateDataTableRubberColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		stateDataTableSteelColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		stateDataTableTungstenColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
 	}
 
 	@FXML
