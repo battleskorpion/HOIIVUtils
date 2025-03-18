@@ -252,6 +252,13 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
   }
 
   override def getInfrastructureRecord: Infrastructure = getStateInfrastructure
+  
+  def id: String = {
+    stateID.value match {
+      case Some(i) => i.toString
+      case None => "[Unknown]"
+    }
+  }
 
   override def compareTo(@NotNull o: State): Int = stateID.compareTo(o.stateID) match {
     case Some(v) => v
@@ -418,7 +425,7 @@ object State extends Iterable[State] {
   def getDataFunctions(resourcePercentages: Boolean): Iterable[State => ?] = {
     val dataFunctions = ListBuffer[State => ?]()
 
-    dataFunctions += (s => s.stateID)
+    dataFunctions += (s => s.id)
     dataFunctions += (s => s.population)
     dataFunctions += (s => s.civMilRatio)
     dataFunctions += (s => s.militaryFactories)

@@ -72,7 +72,7 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, (
 
   def name: String = id
   
-  def percentOfGlobal(globalResources: ListBuffer[Resource]): Unit = {
+  def percentOfGlobal(globalResources: ListBuffer[Resource]): Double = {
     globalResources
       .filter(r => r.isValidID(name))
       .map(_.getOrElse(0))
