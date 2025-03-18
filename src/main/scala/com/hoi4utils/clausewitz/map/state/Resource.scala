@@ -13,7 +13,7 @@ import scala.collection.mutable.ListBuffer
 
 
 object Resource {
-  private var resourceIdentifiers = Array("aluminum", "chromium", "oil", "rubber", "steel", "tungsten") // default: aluminum, chromium, oil, rubber, steel, tungsten todo load in resources if modified.
+  private var resourceIdentifiers = Array("aluminium", "chromium", "oil", "rubber", "steel", "tungsten") // default: aluminium, chromium, oil, rubber, steel, tungsten todo load in resources if modified.
 
   private def setResourceIdentifiers(identifiers: Array[String]): Unit = {
     Resource.resourceIdentifiers = identifiers
@@ -52,7 +52,7 @@ object Resource {
  */
 class Resource(id: String) extends DoublePDX with PDXType[ResourceDef](id, () => ResourcesFile.list) {
   /* init */
-  require(isValidID(id), s"Invalid resource identifier: $id")
+  require(isValidID(id), s"Invalid resource identifier: $id. Expected one of: ${Resource.resourceIdentifiers.mkString(", ")}")
   
   def this(node: Node) = {
     this(node.identifier)

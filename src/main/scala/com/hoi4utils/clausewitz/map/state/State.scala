@@ -461,7 +461,9 @@ object State extends Iterable[State] {
     countriesInfrastructureList
   }
 
-  private def infrastructureOfCountry(tag: CountryTag) = infrastructureOfStates(ownedStatesOfCountry(tag))
+  def infrastructureOfCountry(tag: CountryTag) = infrastructureOfStates(ownedStatesOfCountry(tag))
+  
+  def infrastructureOfCountry(country: Country) = infrastructureOfStates(ownedStatesOfCountry(country))
 
   // ! todo test if working
   def resourcesOfCountries: List[List[Resource]] = {
@@ -474,6 +476,8 @@ object State extends Iterable[State] {
   }
 
   def resourcesOfCountry(tag: CountryTag): List[Resource] = resourcesOfStates(ownedStatesOfCountry(tag))
+  
+  def resourcesOfCountry(country: Country): List[Resource] = resourcesOfStates(ownedStatesOfCountry(country))
 
   protected def usefulData(data: String): Boolean = if (data.nonEmpty) if (data.trim.charAt(0) == '#') false
   else true

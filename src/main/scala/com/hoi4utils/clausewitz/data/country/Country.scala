@@ -71,17 +71,17 @@ object Country {
     val dataFunctions = ListBuffer[Country => ?]()
 
     dataFunctions += (c => c.name)
-    dataFunctions += (c => c._infrastructure.population)
-    dataFunctions += (c => c._infrastructure.civilianFactories)
-    dataFunctions += (c => c._infrastructure.militaryFactories)
-    dataFunctions += (c => c._infrastructure.navalDockyards)
-    dataFunctions += (c => c._infrastructure.airfields)
-    dataFunctions += (c => c._infrastructure.civMilRatio)
-    dataFunctions += (c => c._infrastructure.popPerFactoryRatio)
-    dataFunctions += (c => c._infrastructure.popPerCivRatio)
-    dataFunctions += (c => c._infrastructure.popPerMilRatio)
-    dataFunctions += (c => c._infrastructure.popAirportCapacityRatio)
-    dataFunctions += (c => c._infrastructure.popPerStateRatio(c.numOwnedStates))
+    dataFunctions += (c => c.infrastructure.population)
+    dataFunctions += (c => c.infrastructure.civilianFactories)
+    dataFunctions += (c => c.infrastructure.militaryFactories)
+    dataFunctions += (c => c.infrastructure.navalDockyards)
+    dataFunctions += (c => c.infrastructure.airfields)
+    dataFunctions += (c => c.infrastructure.civMilRatio)
+    dataFunctions += (c => c.infrastructure.popPerFactoryRatio)
+    dataFunctions += (c => c.infrastructure.popPerCivRatio)
+    dataFunctions += (c => c.infrastructure.popPerMilRatio)
+    dataFunctions += (c => c.infrastructure.popAirportCapacityRatio)
+    dataFunctions += (c => c.infrastructure.popPerStateRatio(c.numOwnedStates))
     // again, this resource code is not expandable. fix sometime :(
     if (resourcePercentages) {
       dataFunctions += (c => c.aluminum)
@@ -145,8 +145,8 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
 
   private var _file: Option[File] = None
 
-  private var _infrastructure: Infrastructure = null // infrastructure of all owned states
-  private var _resources: List[Resource] = List.empty // resources of all owned states
+  //private var _infrastructure: Infrastructure = null // infrastructure of all owned states
+  //private var _resources: List[Resource] = List.empty // resources of all owned states
 
   /* default */
   Country.add(this)
@@ -154,8 +154,8 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
   def this(countryTag: CountryTag, infrastructure: Infrastructure, resources: List[Resource]) = {
     this()
     this._countryTag = Some(countryTag)
-    this._infrastructure = infrastructure
-    this._resources = resources
+//    this._infrastructure = infrastructure
+//    this._resources = resources
   }
 
   def this(countryTag: CountryTag) = {
@@ -184,29 +184,31 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
     this._countryTag = Some(countryTag)
   }
 
-  override def getInfrastructureRecord: Infrastructure = _infrastructure
+  override def getInfrastructureRecord: Infrastructure = infrastructure
 
-  def setInfrastructure(infrastructure: Infrastructure): Unit = {
-    this._infrastructure = infrastructure
-  }
+//  def setInfrastructure(infrastructure: Infrastructure): Unit = {
+//    this._infrastructure = infrastructure
+//  }
 
-  def resources: List[Resource] = _resources
+  def infrastructure: Infrastructure = State.infrastructureOfCountry(this)
 
-  def setResources(resources: Nothing): Unit = {
-    this._resources = resources
-  }
+  def resources: List[Resource] = State.resourcesOfCountry(this)
 
-  def aluminum: Double = _resources.filter(_.isValidID("aluminum")).map(_.amt).sum
+//  def setResources(resources: Nothing): Unit = {
+//    this._resources = resources
+//  }
 
-  def chromium: Double = _resources.filter(_.isValidID("chromium")).map(_.amt).sum
+  def aluminum: Double = resources.filter(_.isValidID("aluminium")).map(_.amt).sum
 
-  def oil: Double = _resources.filter(_.isValidID("oil")).map(_.amt).sum
+  def chromium: Double = resources.filter(_.isValidID("chromium")).map(_.amt).sum
 
-  def rubber: Double = _resources.filter(_.isValidID("rubber")).map(_.amt).sum
+  def oil: Double = resources.filter(_.isValidID("oil")).map(_.amt).sum
 
-  def steel: Double = _resources.filter(_.isValidID("steel")).map(_.amt).sum
+  def rubber: Double = resources.filter(_.isValidID("rubber")).map(_.amt).sum
 
-  def tungsten: Double = _resources.filter(_.isValidID("tungsten")).map(_.amt).sum
+  def steel: Double = resources.filter(_.isValidID("steel")).map(_.amt).sum
+
+  def tungsten: Double = resources.filter(_.isValidID("tungsten")).map(_.amt).sum
 
   private def tungstenPercentOfGlobal = {
     tungsten / State.resourcesOfStates.filter(_.isValidID("tungsten")).map(_.amt).sum
@@ -225,7 +227,7 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
 
   private def chromiumPercentOfGlobal = tungsten / State.resourcesOfStates.filter(_.isValidID("chromium")).map(_.amt).sum
 
-  private def aluminumPercentOfGlobal = tungsten / State.resourcesOfStates.filter(_.isValidID("aluminum")).map(_.amt).sum
+  private def aluminumPercentOfGlobal = tungsten / State.resourcesOfStates.filter(_.isValidID("aluminium")).map(_.amt).sum
 
   def name: String = _countryTag match {
     case Some(tag) => tag.toString
@@ -244,4 +246,6 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
     ListBuffer(oob, capital)
   }
+
+
 }
