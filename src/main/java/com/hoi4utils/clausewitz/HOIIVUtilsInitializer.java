@@ -253,6 +253,13 @@ public class HOIIVUtilsInitializer {
 			LOGGER.error("Failed to read gfx interface files");
 		}
 
+		if (ResourcesFile.read()) {
+			setProperty("valid.Resources", "true");
+		} else {
+			setProperty("valid.Resources", "false");
+			LOGGER.error("Failed to read resources");
+		}
+
 		if (CountryTag.read()) {
 			setProperty("valid.CountryTag", "true");
 		} else {
@@ -272,13 +279,6 @@ public class HOIIVUtilsInitializer {
 		} else {
 			setProperty("valid.State", "false");
 			LOGGER.error("Failed to read states");
-		}
-
-		if (ResourcesFile.read()) {
-			setProperty("valid.Resources", "true");
-		} else {
-			setProperty("valid.Resources", "false");
-			LOGGER.error("Failed to read resources");
 		}
 
 		if (FocusTree.read()) {

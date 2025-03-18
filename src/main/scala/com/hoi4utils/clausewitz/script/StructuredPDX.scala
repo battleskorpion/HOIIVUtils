@@ -34,7 +34,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
           pdxScript.loadPDX(l)
         }
       case _ =>
-        throw new NodeValueTypeException(expression, "list")  
+        throw new NodeValueTypeException(expression, "list")
     }
   }
 
@@ -48,7 +48,6 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
   
   override def loadPDX(expression: Node): Unit = {
     if (expression.name == null) {
-      // todo check through schema?
       expression.$ match {
         case l: ListBuffer[Node] =>
           loadPDX(l)

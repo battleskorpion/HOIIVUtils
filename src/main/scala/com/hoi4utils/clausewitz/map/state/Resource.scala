@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.map.state
 
 import com.hoi4utils.clausewitz.HOIIVFiles
-import com.hoi4utils.clausewitz.exceptions.UnexpectedIdentifierException
+import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.clausewitz.map.state.State
 import com.hoi4utils.clausewitz.script.{CollectionPDX, DoublePDX, IntPDX, PDXScript, PDXSupplier, PDXType, ReferencePDX, StructuredPDX}
 import com.hoi4utils.clausewitz_parser.Node
@@ -50,9 +50,9 @@ object Resource {
  * @param id 
  * @param amt  // quantity of resource being represented
  */
-class Resource(id: String) extends DoublePDX with PDXType[ResourceDef](id, () => ResourcesFile.list) {
+class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, () => ResourcesFile.list) {
   /* init */
-  require(isValidID(id), s"Invalid resource identifier: $id. Expected one of: ${Resource.resourceIdentifiers.mkString(", ")}")
+  require(isValidPDXTypeIdentifier(id), s"Invalid resource identifier: $id. Expected one of: ${Resource.resourceIdentifiers.mkString(", ")}")
   
   def this(node: Node) = {
     this(node.identifier)
@@ -136,7 +136,7 @@ object ResourcesFile {
   }
 }
 
-class ResourcesFile extends CollectionPDX[ResourceDef](ResourcesFile.pdxSupplier(), "resource") {
+class ResourcesFile extends CollectionPDX[ResourceDef](ResourcesFile.pdxSupplier(), "resources") {
   private var _resourcesFile: Option[File] = None
 
   /* init */
@@ -157,6 +157,14 @@ class ResourcesFile extends CollectionPDX[ResourceDef](ResourcesFile.pdxSupplier
 
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
+    if (expression.name == null) {
+      expression.$ match {
+        case l: ListBuffer[Node] =>
+          loadPDX(l)
+        case _ =>
+          System.out.println("Error loading PDX script: " + expression)
+      }
+    }
     super.loadPDX(expression)
   }
 

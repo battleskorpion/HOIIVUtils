@@ -6,7 +6,9 @@ import com.hoi4utils.clausewitz.data.country.Country;
 import com.hoi4utils.clausewitz.data.country.CountryTag$;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.focus.FocusTree$;
+import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
+import com.hoi4utils.clausewitz.script.AbstractPDX;
 import com.hoi4utils.clausewitz.script.PDXScript;
 import com.hoi4utils.clausewitz.script.StructuredPDX;
 import com.hoi4utils.clausewitz_parser.Parser;
@@ -89,13 +91,15 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 					pdxIdentifierLabel.setText(selectedFile.getName()); 
 	            }
 
-	            StructuredPDX pdx = null;
+	            AbstractPDX<?> pdx = null;
 				if (pdxIdentifier.equals("focus_tree")) {
 					pdx = new FocusTree(selectedFile);
 				} else if (pdxIdentifier.equals("state")) {
 					pdx = new State(false, selectedFile);
 				} else if (selectedFile.getParent().endsWith("countries") && selectedFile.getParentFile().getParent().endsWith("history")) {
 					pdx = new Country(selectedFile, CountryTag$.MODULE$.get(selectedFile.getName().substring(0, 3)));
+				} else if (pdxIdentifier.equals("resources")) {
+					pdx = new ResourcesFile(selectedFile);
 				}
 
 				if (pdx == null || pdx.isUndefined()) return;

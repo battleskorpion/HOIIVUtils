@@ -40,7 +40,14 @@ public class HOIIVModLoader {
 			config.setProperty("valid.Interface", "false");
 			LOGGER.error("Failed to read gfx interface files");
 		}
-		
+
+		if (ResourcesFile.read()) {
+			config.setProperty("valid.Resources", "true");
+		} else {
+			config.setProperty("valid.Resources", "false");
+			LOGGER.error("Failed to read resources");
+		}
+
 		if (CountryTag.read()) {
 			config.setProperty("valid.CountryTag", "true");
 		} else {
@@ -60,13 +67,6 @@ public class HOIIVModLoader {
 		} else {
 			config.setProperty("valid.State", "false");
 			LOGGER.error("Failed to read states");
-		}
-		
-		if (ResourcesFile.read()) {
-			config.setProperty("valid.Resources", "true");
-		} else {
-			config.setProperty("valid.Resources", "false");
-			LOGGER.error("Failed to read resources");
 		}
 
 		if (FocusTree.read()) {

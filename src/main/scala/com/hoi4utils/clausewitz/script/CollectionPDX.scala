@@ -106,6 +106,8 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
 
   override def size: Int = value.size
 
+  override def toList: List[T] = pdxList.toList
+
   override def isUndefined: Boolean = {
     pdxList.forall(_.isUndefined) || pdxList.isEmpty
   }
@@ -136,7 +138,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     obj
   }
 
-  override def getPDXTypeName: String 
+  override def getPDXTypeName: String
 }
 
 

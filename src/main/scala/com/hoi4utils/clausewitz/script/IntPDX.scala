@@ -26,7 +26,7 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
     this.node = Some(expression)
-    if (!valueIsInstanceOf[Int]) {
+    if (!valueIsInstanceOf[Int | Integer]) {
       throw new NodeValueTypeException(expression, "Number (as an Integer)")
     }
   }

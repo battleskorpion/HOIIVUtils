@@ -33,8 +33,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   @throws[UnexpectedIdentifierException]
   protected def usingIdentifier(exp: Node): Unit = {
     if (pdxIdentifiers.indexWhere(exp.nameEquals) == -1) {
-      // TODO: Do something so that this doesn't clog up the console
-      LOGGER.error("Unexpected identifier: " + exp)
+      LOGGER.error("Unexpected identifier: " + exp.name)
       throw new UnexpectedIdentifierException(exp)
     } 
   }
