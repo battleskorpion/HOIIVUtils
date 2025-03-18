@@ -6,7 +6,7 @@ import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.map.{Owner, UndefinedStateIDException}
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.province.Province
-import com.hoi4utils.clausewitz.map.state.State.History
+import com.hoi4utils.clausewitz.map.state.State.{History, globalResources}
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.clausewitz_parser.*
@@ -252,7 +252,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
   }
 
   override def getInfrastructureRecord: Infrastructure = getStateInfrastructure
-  
+
   def id: String = {
     stateID.value match {
       case Some(i) => i.toString
@@ -386,6 +386,8 @@ object State extends Iterable[State] {
 
   def numStates(country: CountryTag): Int = ownedStatesOfCountry(country).size
 
+  implicit def globalResources: List[Resource] = states.flatMap(_.listResources).toList
+
   /**
    * If the state represented by file is not in the list of states, creates the
    * new state.
@@ -448,13 +450,12 @@ object State extends Iterable[State] {
       dataFunctions += (s => s.resourceAmount("tungsten"))
     }
     else {
-      val globalResources = states.flatMap(_.listResources)
-      dataFunctions += (s => s.resource("aluminium").percentOfGlobal(globalResources))
-      dataFunctions += (s => s.resource("chromium").percentOfGlobal(globalResources))
-      dataFunctions += (s => s.resource("oil").percentOfGlobal(globalResources))
-      dataFunctions += (s => s.resource("rubber").percentOfGlobal(globalResources))
-      dataFunctions += (s => s.resource("steel").percentOfGlobal(globalResources))
-      dataFunctions += (s => s.resource("tungsten").percentOfGlobal(globalResources))
+      dataFunctions += (s => s.resource("aluminium").percentOfGlobal)
+      dataFunctions += (s => s.resource("chromium").percentOfGlobal)
+      dataFunctions += (s => s.resource("oil").percentOfGlobal)
+      dataFunctions += (s => s.resource("rubber").percentOfGlobal)
+      dataFunctions += (s => s.resource("steel").percentOfGlobal)
+      dataFunctions += (s => s.resource("tungsten").percentOfGlobal)
     }
     dataFunctions
   }
