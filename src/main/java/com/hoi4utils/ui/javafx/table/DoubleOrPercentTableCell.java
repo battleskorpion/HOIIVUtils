@@ -5,6 +5,7 @@ import javafx.util.StringConverter;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Locale;
 
 public class DoubleOrPercentTableCell<S> extends TableCell<S, Double> {
 
@@ -14,6 +15,10 @@ public class DoubleOrPercentTableCell<S> extends TableCell<S, Double> {
 	private static final String PERCENT_FORMAT = "#,##0";
 	private final NumberFormat decimalFormat = new DecimalFormat(DEFAULT_FORMAT);
 	private final NumberFormat percentFormat = NumberFormat.getPercentInstance();
+
+	public DoubleOrPercentTableCell() {
+		percentFormat.setMinimumFractionDigits(1);
+	}
 
 	private final StringConverter<Double> converter = new StringConverter<>() {
 		@Override
@@ -32,7 +37,7 @@ public class DoubleOrPercentTableCell<S> extends TableCell<S, Double> {
 		public Double fromString(String string) {
 			return null;
 		}
-	}; 
+	};
 	
 	public boolean getInteger() {
 		return _double;

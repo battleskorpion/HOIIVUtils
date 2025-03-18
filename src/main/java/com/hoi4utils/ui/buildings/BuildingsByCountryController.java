@@ -78,7 +78,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 		setFxmlResource("BuildingsByCountry.fxml");
 		setTitle("HOIIVUtils Buildings By Country Window");
 
-		countryList = FXCollections.observableArrayList(CollectionConverters.asJava(Country.list())); 
+		countryList = FXCollections.observableArrayList(CollectionConverters.asJava(Country.list()));
 	}
 
 	@FXML
@@ -102,17 +102,18 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	// todo put this in hoi4window parent class or whatever
 
 	private void updateResourcesColumnsPercentBehavior() {
+		loadTableView(this, countryDataTable, countryList, Country.getDataFunctions(resourcesPercent));
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableAluminiumColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableChromiumColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableOilColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableRubberColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableSteelColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableTungstenColumn, resourcesPercent);
-		loadTableView(this, countryDataTable, countryList, Country.getDataFunctions(resourcesPercent));
 	}
 
 	public void setDataTableCellFactories() {
 		// table cell factories
+		// todo these should also consider column percent behavior (percenttablecell)
 		countryDataTableCivMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		countryDataTablePopFactoryRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		countryDataTablePopCivRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
@@ -147,7 +148,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 		return resourcesPercent;
 	}
 
-	public void setResourcesPercent(Boolean resourcesPercent) {
+	public void setResourcesPercent(boolean resourcesPercent) {
 		this.resourcesPercent = resourcesPercent;
 		updateResourcesColumnsPercentBehavior();
 	}

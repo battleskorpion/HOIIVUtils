@@ -433,7 +433,7 @@ object State extends Iterable[State] {
         with (wrapper function that returns either or depndent on resourcesPerfcentages boolean value ofc */
     // also if we're gonna have different resources able to load in down the line... it'll break this.
     if (resourcePercentages) {
-      dataFunctions += (s => s.resourceAmount("aluminum"))
+      dataFunctions += (s => s.resourceAmount("aluminium"))
       dataFunctions += (s => s.resourceAmount("chromium"))
       dataFunctions += (s => s.resourceAmount("oil"))
       dataFunctions += (s => s.resourceAmount("rubber"))
@@ -442,7 +442,7 @@ object State extends Iterable[State] {
     }
     else {
       val globalResources = states.flatMap(_.listResources)
-      dataFunctions += (s => s.resource("aluminum").percentOfGlobal(globalResources))
+      dataFunctions += (s => s.resource("aluminium").percentOfGlobal(globalResources))
       dataFunctions += (s => s.resource("chromium").percentOfGlobal(globalResources))
       dataFunctions += (s => s.resource("oil").percentOfGlobal(globalResources))
       dataFunctions += (s => s.resource("rubber").percentOfGlobal(globalResources))
