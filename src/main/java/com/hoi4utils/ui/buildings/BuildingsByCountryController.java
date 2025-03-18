@@ -69,7 +69,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	@FXML
 	TableColumn<Country, Double> countryDataTableTungstenColumn;
 
-	private Boolean resourcesPercent;
+	private boolean resourcesPercent = false;
 	private final ClausewitzDate date = ClausewitzDate.defaulty();
 
 	private final ObservableList<Country> countryList;
