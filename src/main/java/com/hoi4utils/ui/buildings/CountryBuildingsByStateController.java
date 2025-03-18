@@ -69,7 +69,7 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	@FXML
 	TableColumn<State, Double> stateDataTableTungstenColumn;
 
-	private Boolean resourcesPercent;
+	private boolean resourcesPercent;
 	private Country country;
 	private ObservableList<State> stateList;
 
@@ -93,7 +93,7 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	void initialize() {
 		System.out.println("Country: " + country);
 		// includeVersion();
-		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(false));
+		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent));
 
 		JOptionPane.showMessageDialog(null, "dev - loaded rows: " + stateDataTable.getItems().size());
 
@@ -127,6 +127,7 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	// }
 
 	private void updateResourcesColumnsPercentBehavior() {
+		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent));
 		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableAluminiumColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableChromiumColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableOilColumn, resourcesPercent);
