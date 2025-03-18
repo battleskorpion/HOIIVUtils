@@ -4,6 +4,7 @@ import javafx.scene.control.TableCell;
 import javafx.util.StringConverter;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class DoubleOrPercentTableCell<S> extends TableCell<S, Double> {
 
@@ -11,8 +12,8 @@ public class DoubleOrPercentTableCell<S> extends TableCell<S, Double> {
 	private boolean percent;
 	private static final String DEFAULT_FORMAT = "#,##0.0#";
 	private static final String PERCENT_FORMAT = "#,##0";
-	private final DecimalFormat decimalFormat = new DecimalFormat(DEFAULT_FORMAT);
-	private final DecimalFormat percentFormat = new DecimalFormat(PERCENT_FORMAT);
+	private final NumberFormat decimalFormat = new DecimalFormat(DEFAULT_FORMAT);
+	private final NumberFormat percentFormat = NumberFormat.getPercentInstance();
 
 	private final StringConverter<Double> converter = new StringConverter<>() {
 		@Override
