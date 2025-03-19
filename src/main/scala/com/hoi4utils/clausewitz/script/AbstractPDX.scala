@@ -32,7 +32,10 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
    */
   @throws[UnexpectedIdentifierException]
   protected def usingIdentifier(exp: Node): Unit = {
-    if (pdxIdentifiers.indexWhere(exp.nameEquals) == -1) {
+    if (pdxIdentifiers.isEmpty) {
+      // all good? 
+    }
+    else if (pdxIdentifiers.indexWhere(exp.nameEquals) == -1) {
       LOGGER.error("Unexpected identifier: " + exp.name)
       throw new UnexpectedIdentifierException(exp)
     } 
@@ -89,8 +92,10 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     if (expression.name == null) {
-      System.out.println("Error loading PDX script: " + expression)
-      return
+      if (pdxIdentifiers.nonEmpty || expression.isEmpty) {
+        System.out.println("Error loading PDX script: " + expression)
+        return
+      }
     }
     try set(expression)
     catch {

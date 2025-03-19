@@ -106,11 +106,13 @@ class Parser {
         nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
       }
       /* handle escaped characters */
-      val nameValue = unescapeCharacters(name, name.value)
-      // TODO node value?
-      val node = new Node
-      node.identifier = nameValue
-      node.nameToken = name
+//      val nameValue = unescapeCharacters(name, name.value)
+      val parsedValue = parseThisTokenValue(name)
+
+      /* node that is only a value, such as '0.0'. this node has no identifier (no lhs) */
+      val node = new Node(parsedValue)
+      node.identifier = null
+      node.nameToken = name // todo i am lazy this should probably be null. then again everything *should* maybe be redone atp anyways 
       node.operator = null
       node.operatorToken = null
       /* node.value = null; */
@@ -189,12 +191,34 @@ class Parser {
         if (!(right.value == "}")) throw new ParserException("Parser expected a matching \"}\"")
         return new NodeValue(result)
       }
-      // necessary if addtl. case added, so will keep.
-
 
       case _ => throw new ParserException("Unexpected value: " + nextToken.`type`)
     }
     throw new ParserException("Parser expected a string, number, symbol, or {")
+  }
+
+  @throws[ParserException]
+  def parseThisTokenValue(token: Token): NodeValue = {
+    // todo eeeh?
+    token.`type` match {
+      case TokenType.string =>
+        if (token.length == 1) System.out.println("Parser: ?? " + token.value)
+        /* substring from 1 to length() - 2: don't replace "" */
+        if (token.value.length == 2) return new NodeValue(token.value)
+        return new NodeValue(token.value.substring(1, token.length - 2).replaceAll(Parser.escape_quote_regex, "\"").replaceAll(Parser.escape_backslash_regex, "\\"))
+      
+      case TokenType.`float` => return new NodeValue(token.value.toDouble)
+      
+      case TokenType.`int` => return new NodeValue(
+        if (token.value.startsWith("0x")) Integer.parseInt(token.value.substring(2), 16)
+        else token.value.toInt
+      )
+      
+      case TokenType.symbol => return new NodeValue(token.value)
+      
+      case _ => throw new ParserException("Unexpected value: " + token.`type`)
+    }
+    throw new ParserException("Parser expected a string, number, or symbol")
   }
 
   def rootNode: Node = this._rootNode
