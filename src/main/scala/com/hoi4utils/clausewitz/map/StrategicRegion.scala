@@ -2,7 +2,7 @@ package com.hoi4utils.clausewitz.map
 
 import com.hoi4utils.clausewitz.map.province.Province
 import org.apache.logging.log4j.{LogManager, Logger}
-import com.hoi4utils.clausewitz.script.{IntPDX, ListPDX, PDXScript, StringPDX, StructuredPDX}
+import com.hoi4utils.clausewitz.script.{DoublePDX, IntPDX, ListPDX, MultiPDX, PDXScript, StringPDX, StructuredPDX}
 import javafx.collections.{FXCollections, ObservableList}
 
 import java.io.File
@@ -21,12 +21,13 @@ class StrategicRegion extends StructuredPDX("strategic_region") {
     }
     new ListPDX[Province](loadNewProvince, "provinces")
   }
-  
+  final val weather = new Weather()
+
   private var _strategicRegionFile: Option[File] = None
-  
-  /* init */ 
+
+  /* init */
   StrategicRegion.add(this)
-  
+
   def this(file: File) = {
     this()
     loadPDX(file)
@@ -37,11 +38,43 @@ class StrategicRegion extends StructuredPDX("strategic_region") {
    * @inheritdoc
    */
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
-    ListBuffer(id, name, provinces)
+    ListBuffer(id, name, provinces, weather)
   }
 
   def setFile(file: File): Unit = {
     _strategicRegionFile = Some(file)
+  }
+
+  class Weather extends StructuredPDX("weather") {
+    final val period = new MultiPDX[WeatherPeriod](None, Some(() => new WeatherPeriod()), "period")
+
+    /**
+     * @inheritdoc
+     */
+    override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
+      ListBuffer(period)
+    }
+
+    class WeatherPeriod extends StructuredPDX("period") {
+      final val between = new ListPDX[DoublePDX](() => new DoublePDX(), "between")
+      final val temperature = new ListPDX[DoublePDX](() => new DoublePDX(), "temperature")
+      final val no_phenomenon = new DoublePDX("no_phenomenon")
+      final val rain_light = new DoublePDX("rain_light")
+      final val rain_heavy = new DoublePDX("rain_heavy")
+      final val snow = new DoublePDX("snow")
+      final val blizzard = new DoublePDX("blizzard")
+      final val arctic_water = new DoublePDX("arctic_water")
+      final val mud = new DoublePDX("mud")
+      final val sandstorm = new DoublePDX("sandstorm")
+      final val min_snow_level = new DoublePDX("min_snow_level")
+
+      /**
+       * @inheritdoc
+       */
+      override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
+        ListBuffer(between, temperature, no_phenomenon, rain_light, rain_heavy, snow, blizzard, arctic_water, mud, sandstorm, min_snow_level)
+      }
+    }
   }
 }
 
@@ -55,15 +88,15 @@ object StrategicRegion {
     if (!strategicRegions.exists(_._strategicRegionFile.contains(file))) new StrategicRegion(file)
     strategicRegions.find(_._strategicRegionFile.contains(file))
   }
-  
+
   def observeStates: ObservableList[StrategicRegion] = {
     FXCollections.observableArrayList(CollectionConverters.asJava(strategicRegions))
   }
-  
+
   def clear(): Unit = {
     strategicRegions.clear()
   }
-  
+
   def add(stratRegion: StrategicRegion): Iterable[StrategicRegion] = {
     strategicRegions += stratRegion
     strategicRegions

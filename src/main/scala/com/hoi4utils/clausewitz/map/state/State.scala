@@ -43,7 +43,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
 
     override def getPDXTypeName: String = "Resources"
   }
-  final val history = new History
+  final val history = new History()
   final val provinces = {
     val loadNewProvince = () => {val p = new Province(); Province.add(p); p}
     new ListPDX[Province](loadNewProvince, "provinces")
