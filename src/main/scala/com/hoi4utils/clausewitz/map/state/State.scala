@@ -286,7 +286,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
  */
 object State extends Iterable[State] {
   private val LOGGER: Logger = LogManager.getLogger(getClass)
-  /* static */
+
   private val states = new ListBuffer[State]
 
   def get(file: File): Option[State] = {

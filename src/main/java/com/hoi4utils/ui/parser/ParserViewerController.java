@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz.data.country.Country;
 import com.hoi4utils.clausewitz.data.country.CountryTag$;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.focus.FocusTree$;
+import com.hoi4utils.clausewitz.map.StrategicRegion;
 import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.clausewitz.script.AbstractPDX;
@@ -100,6 +101,8 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 					pdx = new Country(selectedFile, CountryTag$.MODULE$.get(selectedFile.getName().substring(0, 3)));
 				} else if (pdxIdentifier.equals("resources")) {
 					pdx = new ResourcesFile(selectedFile);
+				} else if (pdxIdentifier.equals("strategic_region")) {
+					pdx = new StrategicRegion(selectedFile);
 				}
 
 				if (pdx == null || pdx.isUndefined()) return;
