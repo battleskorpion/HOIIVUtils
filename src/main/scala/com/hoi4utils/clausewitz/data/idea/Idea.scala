@@ -75,7 +75,7 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
   final val removalCost = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
 
   def this(node: Node) = {
-    this(node.identifier)
+    this(node.name)
     loadPDX(node)
   }
 

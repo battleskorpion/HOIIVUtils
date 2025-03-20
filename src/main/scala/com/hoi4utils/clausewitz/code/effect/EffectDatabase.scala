@@ -60,7 +60,7 @@ object EffectDatabase {
       override def simplePDXSupplier(): Option[Node => Option[SimpleEffect]] = {
         Some((expr: Node) => {
           _effects.filter(_.isInstanceOf[SimpleEffect])
-              .find(_.pdxIdentifier == expr.identifier)
+              .find(_.pdxIdentifier == expr.name)
               .map(_.clone().asInstanceOf[SimpleEffect])
         })
       }
@@ -68,7 +68,7 @@ object EffectDatabase {
       override def blockPDXSupplier(): Option[Node => Option[BlockEffect]] = {
         Some((expr: Node) => {
           _effects.filter(_.isInstanceOf[BlockEffect])
-              .find(_.pdxIdentifier == expr.identifier)
+              .find(_.pdxIdentifier == expr.name)
               .map(_.clone().asInstanceOf[BlockEffect])
         })
       }

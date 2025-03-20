@@ -55,7 +55,7 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, (
   require(isValidPDXTypeIdentifier(id), s"Invalid resource identifier: $id. Expected one of: ${Resource.resourceIdentifiers.mkString(", ")}")
   
   def this(node: Node) = {
-    this(node.identifier)
+    this(node.name)
     loadPDX(node)
   }
   
@@ -158,7 +158,7 @@ class ResourcesFile extends CollectionPDX[ResourceDef](ResourcesFile.pdxSupplier
 
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
-    if (expression.name == null) {
+    if (expression.identifier.isEmpty) {
       expression.$ match {
         case l: ListBuffer[Node] =>
           loadPDX(l)
@@ -178,7 +178,7 @@ private class ResourceDef(pdxIdentifier: String) extends StructuredPDX(pdxIdenti
   final var convoys = new DoublePDX("convoys")
 
   def this(node: Node) = {
-    this(node.identifier)
+    this(node.name)
     loadPDX(node)
   }
 

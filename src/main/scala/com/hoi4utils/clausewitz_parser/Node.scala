@@ -10,19 +10,19 @@ import scala.collection.mutable.ListBuffer
 //  private val boolType: BoolType = null
 //}
 
-class Node(private var _identifier: String, private var _operator: String,
+class Node(@NotNull private var _identifier: Option[String], @NotNull private var _operator: Option[String],
            protected[clausewitz_parser] var nodeValue: NodeValue, protected[clausewitz_parser] var nameToken: Token,
            protected[clausewitz_parser] var operatorToken: Token)
   extends NodeIterable[Node] {
 
   if (nodeValue == null) nodeValue = new NodeValue
   
-  def this(identifier: String, operator: String, value: String | Int | Double | Boolean | ListBuffer[Node] | Null) = {
-    this(identifier, operator, new NodeValue(value), null, null)
+  def this(@NotNull identifier: String, @NotNull operator: String, value: String | Int | Double | Boolean | ListBuffer[Node] | Null) = {
+    this(Some(identifier), Some(operator), new NodeValue(value), null, null)
   }
   
   def this(value: NodeValue) = {
-    this(null, null, value, null, null)
+    this(None, None, value, null, null)
   }
 
   def this() = {
@@ -33,7 +33,7 @@ class Node(private var _identifier: String, private var _operator: String,
     this(new NodeValue(value))
   }
 
-  def name: String = identifier
+  def name: String = identifier.getOrElse("")
 
   def value: Option[String | Int | Double | Boolean | ListBuffer[Node]] = nodeValue.value
 
@@ -72,42 +72,70 @@ class Node(private var _identifier: String, private var _operator: String,
    */
   override def toString: String = {
     if (!isEmpty)
-      identifier + operator + nodeValue.asString
-    else
-      super.toString()
+      (identifier, operator) match {
+        case (Some(id), Some(op)) =>
+          id + op + nodeValue.asString
+        case (Some(id), None) =>
+          id + nodeValue.asString
+        case (None, Some(op)) =>
+          "[null]" + op + nodeValue.asString
+        case (None, None) =>
+          nodeValue.asString
+      }
+    else super.toString()
   }
 
   def toScript: String = {
+    val sb = new StringBuilder()
+
     if (!isEmpty && !valueIsNull) {
-      val sb = new StringBuilder()
-      sb.append(identifier).append(' ')
-      sb.append(operator).append(' ')
+      if (identifier.nonEmpty) sb.append(identifier.get).append(' ')
+      if (operator.nonEmpty) sb.append(operator.get).append(' ')
       $.match {
         case l: ListBuffer[Node] =>
-          sb.append("{").append('\n')
-          for (node <- l) {
-            var sScript = node.toScript
-            if (sScript != null && sScript.nonEmpty) {
-              // add extra tab to any secondary lines
-              sScript = sScript.replace("\n", "\n\t")
-              sb.append('\t').append(sScript)
-            }
+          // special handling if is list of numbers such as '0.0 1.0 0.7 1.3...'
+          // todo make this a setting? set number before break line? etc? 
+          if (l.forall(_.identifier.isEmpty) && l.forall(_.operator.isEmpty) && l.forall(_.nodeValue.isNumber)) {
+            sb.append("{").append(' ')
+            sb.append(l.map(_.nodeValue.asString).mkString(" "))
+            sb.append(' ').append("}").append('\n')
           }
-          sb.append("}").append('\n')
+          else {
+            sb.append("{").append('\n').append('\t')
+            for (node <- l) {
+              var sScript = node.toScript
+              if (sScript != null && sScript.nonEmpty) {
+                // add extra tab to any secondary lines
+                sScript = sScript.replace("\n", "\n\t")
+                sb.append(sScript)
+              }
+            }
+            // unindent, close block
+            sb.deleteCharAt(sb.size - 1).append("}").append('\n')
+          }
         case _ =>
           sb.append(nodeValue.asString).append('\n')
       }
-      sb.toString
+    } else if (identifier != null && operator != null) {
+      sb.append(identifier.get).append(' ')
+      sb.append(operator.get).append(' ')
+      sb.append("[null]").append('\n')
     } else {
-      null
+      sb.append("[null]").append('\n')
     }
+    sb.toString()
   }
 
-  def nameAsInteger: Int = identifier.toInt
+  def nameAsInteger: Int = identifier match {
+    case None => 0
+    case Some(s) => s.toInt
+  }
 
   def nameEquals(s: String): Boolean = {
-    if (identifier == null) return false
-    identifier == s
+    identifier match {
+      case None => if s == null then true else false
+      case Some(id) => id.equals(s)
+    }
   }
   
   def setNull(): Unit = nodeValue = new NodeValue
@@ -119,16 +147,18 @@ class Node(private var _identifier: String, private var _operator: String,
     case Some(v) => v
   }
 
-  def identifier: String = _identifier
+  def identifier: Option[String] = _identifier
 
   def identifier_= (identifier: String): Unit = {
-    _identifier = identifier
+    if (identifier == null) _identifier = None
+    else _identifier = Some(identifier)
   }
 
-  def operator: String = _operator
+  def operator: Option[String] = _operator
 
   def operator_= (operator: String): Unit = {
-    _operator = operator
+    if (operator == null) _operator = None
+    else _operator = Some(operator)
   }
 
   override def iterator: Iterator[Node] = {

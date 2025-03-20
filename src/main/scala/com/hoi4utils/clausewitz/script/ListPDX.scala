@@ -103,19 +103,19 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     pdxList.forall(_.isUndefined) || pdxList.isEmpty
   }
 
-  override def toScript: String = {
-    if (node.isEmpty || node.get.isEmpty) return null
-
-//    val sb = new StringBuilder()
-//    sb.append(node.get.identifier)
-//    sb.append(" = {\n")
-//    for (pdx <- get().get) {
-//      sb.append('\t')
-//      sb.append(pdx.toScript)
-//    }
-//    sb.toString
-    null
-  }
+//  override def toScript: String = {
+//    if (node.isEmpty || node.get.isEmpty) return null
+//
+////    val sb = new StringBuilder()
+////    sb.append(node.get.identifier)
+////    sb.append(" = {\n")
+////    for (pdx <- get().get) {
+////      sb.append('\t')
+////      sb.append(pdx.toScript)
+////    }
+////    sb.toString
+//    null
+//  }
 
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)

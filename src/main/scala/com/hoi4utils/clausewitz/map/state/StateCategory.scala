@@ -57,7 +57,7 @@ class StateCategory(id: String) extends ReferencePDX[StateCategoryDef](() => Sta
   require(isValidID(id), s"Invalid state category identifier: $id")
 
   def this(node: Node) = {
-    this(node.identifier)
+    this(node.name)
     loadPDX(node)
   }
 
@@ -159,7 +159,7 @@ class StateCategoryDef(pdxIdentifier: String) extends StructuredPDX(pdxIdentifie
   //final var color = new ColorPDX("color") // todo :D
 
   def this(node: Node) = {
-    this(node.identifier)
+    this(node.name)
     loadPDX(node)
   }
 

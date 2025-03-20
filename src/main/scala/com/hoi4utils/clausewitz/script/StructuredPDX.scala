@@ -47,7 +47,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
   // 
   
   override def loadPDX(expression: Node): Unit = {
-    if (expression.name == null) {
+    if (expression.identifier.isEmpty) {
       expression.$ match {
         case l: ListBuffer[Node] =>
           loadPDX(l)
@@ -128,18 +128,29 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     }
   }
 
-  override def toScript: String = {
-    if (node.isEmpty || node.get.isEmpty) return null
+//  override def toScript: String = {
+//    if (node.isEmpty || node.get.isEmpty) return null
+//
+////    val sb = new StringBuilder()
+////    sb.append(node.get.identifier)
+////    sb.append(" = {\n")
+////    for (pdx <- childScripts) {
+////      sb.append('\t')
+////      sb.append(pdx.toScript)
+////    }
+////    sb.toString
+//    // favorable. more in-order as wanted/as was originally.
+//    node.get.toScript
+//  }
 
-//    val sb = new StringBuilder()
-//    sb.append(node.get.identifier)
-//    sb.append(" = {\n")
-//    for (pdx <- childScripts) {
-//      sb.append('\t')
-//      sb.append(pdx.toScript)
+//  override def toScript: String = {
+//    val details = new StringBuilder()
+//    for (property <- childScripts) {
+//      val text = property.toScript
+//      if (text != null) {
+//        details.append(text)
+//      }
 //    }
-//    sb.toString
-    // favorable. more in-order as wanted/as was originally.
-    node.get.toScript
-  }
+//    details.toString()
+//  }
 }

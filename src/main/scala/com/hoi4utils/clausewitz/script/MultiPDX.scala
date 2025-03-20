@@ -124,7 +124,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     if (node.isEmpty || node.get.isEmpty) return null
 
     val sb = new StringBuilder()
-    sb.append(node.get.identifier)
+    sb.append(node.get.name)
     sb.append(" = {\n")
     for (pdx <- pdxList) {
       sb.append('\t')

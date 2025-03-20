@@ -113,17 +113,17 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     resolvedReferences
   }
 
-  override def toScript: String = {
-    val sb = new StringBuilder
-    value match {
-      case Some(scripts) =>
-        for (identifier <- referenceNames) {
-          sb.append(pdxIdentifier).append(" = ").append(identifier).append("\n")
-        }
-      case None => return null
-    }
-    sb.toString
-  }
+//  override def toScript: String = {
+//    val sb = new StringBuilder
+//    value match {
+//      case Some(scripts) =>
+//        for (identifier <- referenceNames) {
+//          sb.append(pdxIdentifier).append(" = ").append(identifier).append("\n")
+//        }
+//      case None => return null
+//    }
+//    sb.toString
+//  }
 
   def setReferenceName(index: Int, value: String): Unit = {
     referenceNames.update(index, value)

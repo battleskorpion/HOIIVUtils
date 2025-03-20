@@ -227,17 +227,6 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   
   def isLocalized: Boolean = localizationStatus(Property.NAME) != Localization.Status.MISSING
 
-  override def toScript: String = {
-    val details = new StringBuilder()
-    for (property <- childScripts) {
-      val text = property.toScript
-      if (text != null) {
-        details.append(text)
-      }
-    }
-    details.toString()
-  }
-
   def getCompletionReward: CompletionReward = completionReward
 
 //  def setCompletionReward(completionReward: List[Effect]): Unit = {

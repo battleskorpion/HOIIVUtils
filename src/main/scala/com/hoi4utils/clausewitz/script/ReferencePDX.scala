@@ -73,11 +73,11 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     }
   }
 
-  override def toScript: String = {
-    val scripts = value
-    if (scripts == null) return null
-    (pdxIdentifier + " = " + referenceName) + "\n"
-  }
+//  override def toScript: String = {
+//    val scripts = value
+//    if (scripts == null) return null
+//    (pdxIdentifier + " = " + referenceName) + "\n"
+//  }
 
   def getReferenceName: String = referenceName
 

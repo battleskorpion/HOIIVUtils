@@ -57,7 +57,7 @@ object ModifierDatabase {
       override def simplePDXSupplier(): Option[Node => Option[Modifier]] = {
         Some((expr: Node) => {
           _modifiers.filter(_.isInstanceOf[Modifier]) // todo? 
-            .find(_.pdxIdentifier == expr.identifier)
+            .find(_.pdxIdentifier == expr.name)
             .map(_.clone().asInstanceOf[Modifier])
         })
       }
@@ -65,7 +65,7 @@ object ModifierDatabase {
       override def blockPDXSupplier(): Option[Node => Option[Modifier]] = {
         Some((expr: Node) => {
           _modifiers.filter(_.isInstanceOf[Modifier])
-            .find(_.pdxIdentifier == expr.identifier)
+            .find(_.pdxIdentifier == expr.name)
             .map(_.clone().asInstanceOf[Modifier])
         })
       }

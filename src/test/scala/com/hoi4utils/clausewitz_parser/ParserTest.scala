@@ -52,7 +52,7 @@ class ParserTest extends AnyFunSuiteLike {
   test("the '=' operator should be with an identifier") {
     withParsedFiles { node =>
       node.toList.foreach(n => {
-        assert(n.identifier != null, s"Node $n has no identifier")
+        assert(n.identifier.nonEmpty && n.name.nonEmpty, s"Node $n has no identifier")
       })
     }
   }

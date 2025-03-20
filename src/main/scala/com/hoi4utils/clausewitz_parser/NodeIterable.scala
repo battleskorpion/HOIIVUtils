@@ -19,20 +19,20 @@ trait NodeIterable[NodeType <: Node] extends Iterable[NodeType] {
     }
 
   def find(str: String): Option[NodeType] = {
-    find((node: NodeType) => node.identifier != null && node.identifier.equals(str))
+    find((node: NodeType) => node.identifier.isDefined && node.name.equals(str))
   }
   
   def findCaseInsensitive(str: String): Option[NodeType] = {
-    find((node: NodeType) => node.identifier != null && node.identifier.equalsIgnoreCase(str))
+    find((node: NodeType) => node.identifier.isDefined && node.name.equalsIgnoreCase(str))
   }
 
   // Now filterName returns a NodeIterable instead of Iterable.
   def filterName(str: String): NodeIterable[NodeType] = {
-    fromIterable(filter(node => node.identifier != null && node.identifier.equals(str)))
+    fromIterable(filter(node => node.identifier.isDefined && node.name.equals(str)))
   }
 
   def filterNameCaseInsensitive(str: String): NodeIterable[NodeType] = {
-    fromIterable(filter(node => node.identifier != null && node.identifier.equalsIgnoreCase(str)))
+    fromIterable(filter(node => node.identifier.isDefined && node.name.equalsIgnoreCase(str)))
   }
 
   def filter(str: String): NodeIterable[NodeType] = filterName(str)

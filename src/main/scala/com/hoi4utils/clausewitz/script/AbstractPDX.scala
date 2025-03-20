@@ -27,17 +27,17 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   /**
    * Sets the active identifier to match the given expression, 
    * if it is a valid identifier. Otherwise, throws exception. 
-   * @param exp the expression to check, and set the active identifier to the identifier of the expression
+   * @param expr the expression to check, and set the active identifier to the identifier of the expression
    * @throws UnexpectedIdentifierException if the expression is not a valid identifier
    */
   @throws[UnexpectedIdentifierException]
-  protected def usingIdentifier(exp: Node): Unit = {
+  protected def usingIdentifier(expr: Node): Unit = {
     if (pdxIdentifiers.isEmpty) {
       // all good? 
     }
-    else if (pdxIdentifiers.indexWhere(exp.nameEquals) == -1) {
-      LOGGER.error("Unexpected identifier: " + exp.name)
-      throw new UnexpectedIdentifierException(exp)
+    else if (pdxIdentifiers.indexWhere(expr.nameEquals) == -1) {
+      LOGGER.error("Unexpected identifier: " + expr.name)
+      throw new UnexpectedIdentifierException(expr)
     } 
   }
 
@@ -91,7 +91,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
    */
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
-    if (expression.name == null) {
+    if (expression.identifier.isEmpty) {
       if (pdxIdentifiers.nonEmpty || expression.isEmpty) {
         System.out.println("Error loading PDX script: " + expression)
         return
@@ -171,7 +171,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
 
   override def toScript: String = {
     if (node.isEmpty || node.get.isEmpty) return null
-    node.get.identifier + node.get.operator + node.get.$ + "\n"
+    node.get.toScript
   }
 
   override def equals(other: PDXScript[?]): Boolean = {
