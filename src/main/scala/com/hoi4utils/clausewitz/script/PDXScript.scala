@@ -2,7 +2,9 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.clausewitz_parser.Node
+import org.apache.poi.hssf.usermodel.HeaderFooter.file
 
+import java.io.File
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
@@ -118,4 +120,13 @@ trait PDXScript[T] {
   def isDefined: Boolean
 
   def pdxIdentifier: String
+  
+}
+
+object PDXScript {
+  def allPDXFilesInDirectory(directory: File): List[File] = {
+    if (directory.isFile) List(directory)
+    else directory.listFiles().filter(_.isFile).filter(_.getName.endsWith(".txt")).toList
+  }
+  
 }

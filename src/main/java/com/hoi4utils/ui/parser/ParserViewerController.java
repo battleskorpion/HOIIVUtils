@@ -9,21 +9,26 @@ import com.hoi4utils.clausewitz.map.StrategicRegion;
 import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.clausewitz.script.AbstractPDX;
+import com.hoi4utils.clausewitz.script.PDXFile;
 import com.hoi4utils.clausewitz.script.PDXScript;
 import com.hoi4utils.clausewitz_parser.Parser;
 import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.pdxscript.PDXTreeViewFactory;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ParserViewerController extends HOIIVUtilsAbstractController {
 
@@ -39,10 +44,13 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	public AnchorPane pdxTreeViewPane;
 	@FXML
 	private TextField searchTextField;  // user enters search text here
+	// Suppose we have a ListView
+	@FXML
+	private ListView<PDXScript<?>> filesListView;
 	@FXML
 	private MenuItem saveMenuItem;
 	
-	public PDXScript<?> pdx = null; 
+	private final List<PDXScript<?>> pdxScripts = new ArrayList<>();
 	
 	public ParserViewerController() {
 		setFxmlResource("ParserViewer.fxml");
@@ -52,6 +60,26 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	@FXML
 	void initialize() {
 		includeVersion();
+
+		// Then on list selection:
+		filesListView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+			if (newVal != null) {
+				// Create a tree view for the newly selected script
+				TreeView<PDXScript<?>> pdxTreeView = PDXTreeViewFactory.createPDXTreeView(newVal);
+				pdxTreeViewPane.getChildren().removeIf(node -> node instanceof TreeView);
+				pdxTreeViewPane.getChildren().add(pdxTreeView);
+
+				AnchorPane.setTopAnchor(pdxTreeView, 25.0);
+				AnchorPane.setBottomAnchor(pdxTreeView, 0.0);
+				AnchorPane.setLeftAnchor(pdxTreeView, 0.0);
+				AnchorPane.setRightAnchor(pdxTreeView, 0.0);
+
+				searchTextField.setOnAction(event -> {
+					String searchTerm = searchTextField.getText();
+					PDXTreeViewFactory.searchAndSelect(pdxTreeView, searchTerm);
+				});
+			}
+		});
 	}
 
 	private void includeVersion() {
@@ -61,68 +89,106 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	@FXML
 	private void handlePDXFileBrowseAction() {
 		File initialDirectory = HOIIVFiles.Mod.folder;
-		File selectedFile = JavaFXUIManager.openChooser(browseButton, initialDirectory, false);
+		File selected = JavaFXUIManager.openChooser(browseButton, initialDirectory, true);
 
-		System.out.println(selectedFile);
+		System.out.println(selected);
 
-		if (selectedFile != null) {
-			parsePDXFileTextField.setText(selectedFile.getAbsolutePath());
-			//focusTree = FocusTree$.MODULE$.get(selectedFile).getOrElse(() -> null);
-			Parser pdxParser = new Parser(selectedFile);
-            try {
-                var rootNode = pdxParser.parse();
-	            if (rootNode == null) {
-		            JOptionPane.showMessageDialog(null, "Error: Selected focus tree not found in loaded focus trees.");
-		            return;
-	            }
+		if (selected != null) {
+			pdxScripts.clear();
 
-				var rootNodeValue = rootNode.nodeValue();
-				if (!rootNodeValue.isList()) {
-					pdxIdentifierLabel.setText("[empty]");
-					return;
+			if (selected.isDirectory()) {
+				List<File> allPDXFiles = CollectionConverters.asJava(PDXScript.allPDXFilesInDirectory(selected));
+
+				for (File file : allPDXFiles) {
+					try {
+						Parser parser = new Parser(file);
+						var rootNode = parser.parse();
+						if (rootNode == null) continue;
+
+						// Identify if it’s a strategic_region, state, focus_tree, etc.
+						var firstChild = rootNode.nodeValue().list().apply(0);
+						String pdxIdentifier = firstChild.name();
+
+						AbstractPDX<?> pdx = switch (pdxIdentifier) {
+							case "focus_tree"       -> new FocusTree(file);
+							case "state"            -> new State(false, file);
+							case "strategic_region" -> new StrategicRegion(file);
+
+							// ...
+							default -> null;
+						};
+
+						if (pdx != null && !pdx.isUndefined()) {
+							pdxScripts.add(pdx);
+						}
+					} catch (ParserException e) {
+						// handle errors
+					}
 				}
-				
-				var childPDXNode = rootNodeValue.list().apply(0);
-				var pdxIdentifier = childPDXNode.name();
-	            if (rootNodeValue.list().length() == 1) {
-					pdxIdentifierLabel.setText(pdxIdentifier);
-	            } else {
-					pdxIdentifierLabel.setText(selectedFile.getName()); 
-	            }
+			}
 
-	            AbstractPDX<?> pdx = null;
-				if (pdxIdentifier.equals("focus_tree")) {
-					pdx = new FocusTree(selectedFile);
-				} else if (pdxIdentifier.equals("state")) {
-					pdx = new State(false, selectedFile);
-				} else if (selectedFile.getParent().endsWith("countries") && selectedFile.getParentFile().getParent().endsWith("history")) {
-					pdx = new Country(selectedFile, CountryTag$.MODULE$.get(selectedFile.getName().substring(0, 3)));
-				} else if (pdxIdentifier.equals("resources")) {
-					pdx = new ResourcesFile(selectedFile);
-				} else if (pdxIdentifier.equals("strategic_region")) {
-					pdx = new StrategicRegion(selectedFile);
+			else {
+				parsePDXFileTextField.setText(selected.getAbsolutePath());
+				//focusTree = FocusTree$.MODULE$.get(selectedFile).getOrElse(() -> null);
+				Parser pdxParser = new Parser(selected);
+				try {
+					var rootNode = pdxParser.parse();
+					if (rootNode == null) {
+						JOptionPane.showMessageDialog(null, "Error: Selected focus tree not found in loaded focus trees.");
+						return;
+					}
+
+					var rootNodeValue = rootNode.nodeValue();
+					if (!rootNodeValue.isList()) {
+						pdxIdentifierLabel.setText("[empty]");
+						return;
+					}
+
+					var childPDXNode = rootNodeValue.list().apply(0);
+					var pdxIdentifier = childPDXNode.name();
+					if (rootNodeValue.list().length() == 1) {
+						pdxIdentifierLabel.setText(pdxIdentifier);
+					} else {
+						pdxIdentifierLabel.setText(selected.getName());
+					}
+
+					AbstractPDX<?> pdx = null;
+					if (pdxIdentifier.equals("focus_tree")) {
+						pdx = new FocusTree(selected);
+					} else if (pdxIdentifier.equals("state")) {
+						pdx = new State(false, selected);
+					} else if (selected.getParent().endsWith("countries") && selected.getParentFile().getParent().endsWith("history")) {
+						pdx = new Country(selected, CountryTag$.MODULE$.get(selected.getName().substring(0, 3)));
+					} else if (pdxIdentifier.equals("resources")) {
+						pdx = new ResourcesFile(selected);
+					} else if (pdxIdentifier.equals("strategic_region")) {
+						pdx = new StrategicRegion(selected);
+					}
+
+					if (pdx == null || pdx.isUndefined()) return;
+					this.pdxScripts.add(pdx);
+
+//					// Build a TreeView out of the rootScript
+//					TreeView<PDXScript<?>> pdxTreeView = PDXTreeViewFactory.createPDXTreeView(pdx);
+//
+//					pdxTreeViewPane.getChildren().removeIf(node -> node instanceof TreeView);
+//					pdxTreeViewPane.getChildren().add(pdxTreeView);
+//					AnchorPane.setTopAnchor(pdxTreeView, 25.0);
+//					AnchorPane.setBottomAnchor(pdxTreeView, 0.0);
+//					AnchorPane.setLeftAnchor(pdxTreeView, 0.0);
+//					AnchorPane.setRightAnchor(pdxTreeView, 0.0);
+//
+//					searchTextField.setOnAction(event -> {
+//						String searchTerm = searchTextField.getText();
+//						PDXTreeViewFactory.searchAndSelect(pdxTreeView, searchTerm);
+//					});
+				} catch (ParserException e) {
+					throw new RuntimeException(e);
 				}
+			}
 
-				if (pdx == null || pdx.isUndefined()) return;
-	            this.pdx = pdx; 
-
-	            // Build a TreeView out of the rootScript
-	            TreeView<PDXScript<?>> pdxTreeView = PDXTreeViewFactory.createPDXTreeView(pdx);
-
-	            pdxTreeViewPane.getChildren().removeIf(node -> node instanceof TreeView);
-	            pdxTreeViewPane.getChildren().add(pdxTreeView);
-				AnchorPane.setTopAnchor(pdxTreeView, 25.0);
-				AnchorPane.setBottomAnchor(pdxTreeView, 0.0);
-				AnchorPane.setLeftAnchor(pdxTreeView, 0.0);
-				AnchorPane.setRightAnchor(pdxTreeView, 0.0);
-
-	            searchTextField.setOnAction(event -> {
-		            String searchTerm = searchTextField.getText();
-		            PDXTreeViewFactory.searchAndSelect(pdxTreeView, searchTerm);
-	            });
-            } catch (ParserException e) {
-                throw new RuntimeException(e);
-            }
+			// After loading all PDX scripts:
+			filesListView.setItems(FXCollections.observableList(pdxScripts));
 		} else {
 			pdxIdentifierLabel.setText("[not found]");
 		}
@@ -130,7 +196,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 	@FXML
 	private void handleSaveAction() {
-		savePDX(this.pdx);
+		savePDX(this.pdxScripts);
 	}
 
 	private void savePDX(PDXScript<?> pdx) {
@@ -139,7 +205,10 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 		if (!dir.mkdir()) {
 			LOGGER.error("Error creating directory for saving PDXScript: \n{}", pdx);
 		}
-		var path = dir.getPath() + "\\" + pdx.getClass().getSimpleName() + ".txt"; 
+		File path = switch (pdx) {
+			case PDXFile pdxf -> new File(pdxf.fileName());
+			default -> new File(pdx.getClass().getSimpleName() + ".txt");
+		};
 		
 		try (PrintWriter writer = new PrintWriter(path)) {
 			// Write the focus tree to the file
@@ -150,6 +219,12 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 			LOGGER.error("Error exporting PDXScript: {}", e.getMessage());
 			JOptionPane.showMessageDialog(null, "Error exporting PDXScript: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void savePDX(List<PDXScript<?>> pdxScripts) {
+		for (PDXScript<?> pdx : pdxScripts) {
+			savePDX(pdx);
 		}
 	}
 }

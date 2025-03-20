@@ -2,10 +2,12 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -15,11 +17,12 @@
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.parser.ParserViewerController">
    <children>
-      <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="100.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <GridPane layoutX="-102.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="100.0" prefHeight="400.0" prefWidth="702.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.0" minWidth="80.0" prefWidth="138.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.0" minWidth="80.0" prefWidth="138.0" />
           <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="395.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="195.0" minWidth="40.0" prefWidth="60.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="60.0" prefWidth="70.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints />
@@ -31,24 +34,11 @@
          <children>
             <Label fx:id="idVersion" text="Version Number" GridPane.rowIndex="1" />
             <Label text="File to parse: " GridPane.rowIndex="2" />
-            <Button fx:id="browseButton" mnemonicParsing="false" onAction="#handlePDXFileBrowseAction" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <TextField fx:id="parsePDXFileTextField" prefHeight="25.0" prefWidth="266.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Button fx:id="browseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handlePDXFileBrowseAction" text="Browse" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <TextField fx:id="parsePDXFileTextField" prefHeight="25.0" prefWidth="266.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" />
             <Label text="File:" GridPane.rowIndex="3" />
             <Label fx:id="pdxIdentifierLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS">
-              <content>
-                <AnchorPane fx:id="pdxTreeViewPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                        <HBox layoutX="166.0" layoutY="-36.0" maxHeight="25.0" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                              <Label maxHeight="1.7976931348623157E308" minWidth="40.0" prefHeight="25.0" prefWidth="54.0" text="Search: " />
-                              <TextField fx:id="searchTextField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="80.0" prefHeight="25.0" prefWidth="417.0" HBox.hgrow="ALWAYS" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </AnchorPane>
-              </content>
-            </ScrollPane>
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS" />
             <MenuBar GridPane.columnSpan="2147483647">
               <menus>
                 <Menu mnemonicParsing="false" text="File">
@@ -68,6 +58,22 @@
                 </Menu>
               </menus>
             </MenuBar>
+            <Label text="Select File or Directory to parse PDXScripts from, and select a PDXScript file to view:" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+            <SplitPane dividerPositions="0.18714285714285714" prefHeight="160.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
+              <items>
+                  <ListView fx:id="filesListView" prefHeight="200.0" prefWidth="200.0" />
+                  <AnchorPane fx:id="pdxTreeViewPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <HBox layoutX="166.0" layoutY="-36.0" maxHeight="25.0" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" minWidth="40.0" prefHeight="25.0" prefWidth="54.0" text="Search: " />
+                              <TextField fx:id="searchTextField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="80.0" prefHeight="25.0" prefWidth="417.0" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
          </children>
       </GridPane>
    </children>

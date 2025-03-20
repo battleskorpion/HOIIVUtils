@@ -104,7 +104,7 @@ object FocusTree {
  *       Use FocusTree.get(File) instead.
  */
 class FocusTree
-  extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] {
+  extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile {
   /* pdxscript */
   final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
   final var focuses = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
@@ -200,6 +200,10 @@ class FocusTree
   def setFile(file: File): Unit = {
     _focusFile = Some(file)
     _focusFile.foreach(file => focusTreeFileMap.put(file, this))
+  }
+  
+  override def getFile: Option[File] = {
+    _focusFile
   }
 
   override def compareTo(o: FocusTree): Int = {
