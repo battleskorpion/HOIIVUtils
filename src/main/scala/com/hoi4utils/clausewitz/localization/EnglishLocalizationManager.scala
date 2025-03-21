@@ -195,7 +195,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
    * @param append
    */
   protected def writeLocalization(file: File, key: String, version: String, value: String, append: Boolean): Unit = {
-    var entry = key + ":" + version + " \"" + value + "\""
+    var entry = "\t" + key + ":" + version + " \"" + value + "\""
     entry = entry.replaceAll("§", "Â§") // necessary with UTF-8 BOM
 
     val writer: PrintWriter = getLocalizationWriter(file, true)
@@ -212,11 +212,14 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
       val lines = Files.readAllLines(Paths.get(file.getAbsolutePath))
       for (i <- 0 until lines.size) {
         var continue = true
-        if (lines.get(i).trim.startsWith(key) && continue) {
+//        if (lines.get(i).trim.startsWith(key) && continue) {
+
+//        }
+        if (lines.get(i).filter(c => !c.isWhitespace).startsWith(key + ":") && continue) {
           lines.set(i, entry)
           lineReplaced = true
           System.out.println("Replaced localization " + key)
-          continue = false 
+          continue = false
         }
       }
       if (!lineReplaced) throw new IOException // todo better exception

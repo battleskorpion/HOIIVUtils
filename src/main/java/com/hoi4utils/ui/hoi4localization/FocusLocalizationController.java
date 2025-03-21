@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.focus.FocusTree$;
 import com.hoi4utils.clausewitz.localization.Localization;
+import com.hoi4utils.clausewitz.localization.LocalizationManager;
 import com.hoi4utils.clausewitz.localization.Property;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
@@ -182,6 +183,7 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
 //        }
 //
 //        focusLocFile.writeLocalization();
+        LocalizationManager.get().saveLocalization();
     }
 
     @Override

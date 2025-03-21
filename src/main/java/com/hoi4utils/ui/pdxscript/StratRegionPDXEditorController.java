@@ -140,7 +140,7 @@ public class StratRegionPDXEditorController extends HOIIVUtilsAbstractController
 
         // Example row 1: "Between End"
         Label lblBetweenEnd = new Label("Between End:");
-        Slider sldBetweenEnd; 
+        Slider sldBetweenEnd;
         if (period.between().size() >= 2) {
             sldBetweenEnd = createDoubleSlider(
                     period.between().apply(1).getOrElse(0.0),
