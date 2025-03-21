@@ -145,4 +145,11 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     obj
   }
 
+  def headOrElse[U](default: U)(implicit ev: T <:< PDXScript[U]): U = {
+    pdxList.headOption match {
+      case Some(pdx) => ev(pdx).getOrElse(default)
+      case None => default
+    }
+  }
+
 }

@@ -172,7 +172,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 
   def setCost(cost: Number): Unit = {
-    this.cost.setNode(cost.doubleValue())
+    this.cost.set(cost.doubleValue())
   }
 
   def getDDSImage: Option[Image] = {

@@ -42,7 +42,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  override def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
+  override protected def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
   // todo?
     if (node.isEmpty) {
       return

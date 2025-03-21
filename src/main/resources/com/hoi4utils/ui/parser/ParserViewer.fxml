@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.parser.ParserViewerController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.parser.ParserViewerController">
    <children>
       <GridPane layoutX="-102.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="100.0" prefHeight="400.0" prefWidth="702.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -61,7 +62,14 @@
             <Label text="Select File or Directory to parse PDXScripts from, and select a PDXScript file to view:" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
             <SplitPane dividerPositions="0.18714285714285714" prefHeight="160.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
               <items>
-                  <ListView fx:id="filesListView" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="filesListView" prefHeight="200.0" prefWidth="200.0">
+                     <contextMenu>
+                        <ContextMenu fx:id="pdxListViewContextMenu">
+                          <items>
+                            <MenuItem fx:id="pdxListViewMenuEditAll" mnemonicParsing="false" onAction="#handlePDXListViewEditAll" text="Edit All"/>
+                          </items>
+                        </ContextMenu>
+                     </contextMenu></ListView>
                   <AnchorPane fx:id="pdxTreeViewPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
                      <children>
                         <HBox layoutX="166.0" layoutY="-36.0" maxHeight="25.0" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

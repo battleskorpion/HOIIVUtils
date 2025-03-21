@@ -92,7 +92,7 @@ object StrategicRegion {
     strategicRegions.find(_._strategicRegionFile.contains(file))
   }
 
-  def observeStates: ObservableList[StrategicRegion] = {
+  def observeStratRegions: ObservableList[StrategicRegion] = {
     FXCollections.observableArrayList(CollectionConverters.asJava(strategicRegions))
   }
 

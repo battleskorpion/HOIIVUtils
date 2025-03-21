@@ -14,6 +14,7 @@ import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.pdxscript.PDXTreeViewFactory;
+import com.hoi4utils.ui.pdxscript.StratRegionPDXEditorController;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import lombok.val;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
@@ -191,6 +193,12 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 			// After loading all PDX scripts:
 			filesListView.setItems(FXCollections.observableList(pdxScripts));
+			// yes this is after because the last statement can set an empty list in view
+			if (pdxScripts.isEmpty()) return;
+
+			/* do stuff with the pdx scripts */
+
+
 		} else {
 			pdxIdentifierLabel.setText("[not found]");
 		}
@@ -211,5 +219,26 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	private void handleOpenReplAction() {
 		// Launch an Ammonite REPL, passing in the pdxScripts list
 		new ReplUIController().open(pdxScripts); 
+	}
+
+	@FXML
+	private void handlePDXListViewEditAll() {
+		switch(pdxScripts.getFirst()) {
+			case StrategicRegion sr -> {
+				// Open the strategic region editor
+				StratRegionPDXEditorController stratRegionEditor = new StratRegionPDXEditorController();
+				List<StrategicRegion> list = new ArrayList<>();
+				// java workaround
+				pdxScripts.forEach(pdx -> {
+					if (pdx instanceof StrategicRegion) {
+						list.add((StrategicRegion) pdx);
+					}
+				});
+				stratRegionEditor.open(list);
+			}
+			default -> {
+				JOptionPane.showMessageDialog(null, "No editor available for this PDX type.");
+			}
+		}
 	}
 }

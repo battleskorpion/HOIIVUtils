@@ -17,12 +17,13 @@ import org.apache.logging.log4j.Logger
 /**
  *
  * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
- * @tparam T
+ * @tparam V
  */
-trait PDXScript[T] {
-  val LOGGER: Logger = LogManager.getLogger(classOf[AbstractPDX[T]])
+trait PDXScript[V] {
+
+  val LOGGER: Logger = LogManager.getLogger(classOf[AbstractPDX[V]])
   
-  def set(obj: T): T
+  def set(obj: V): V
 
   /**
    * Set the node value to the given value.
@@ -32,7 +33,7 @@ trait PDXScript[T] {
    * flexibility i.e. setting a PDX of type double with an int value, and this also matches
    * the underlying node class functionality.
    */
-  def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit
+  protected def setNode(value: V | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit
 
   /**
    * Set the node value to the given expression.
@@ -46,7 +47,7 @@ trait PDXScript[T] {
    * Get the value of the PDX script.
    * @return
    */
-  def value: Option[T]
+  def value: Option[V]
 
   /**
    * Get the node of the PDX script.
@@ -95,7 +96,7 @@ trait PDXScript[T] {
    */
   def setNull(): Unit
     
-  def loadOrElse(exp: Node, value: T): Unit
+  def loadOrElse(exp: Node, value: V): Unit
 
   def toScript: String
 
@@ -121,7 +122,7 @@ trait PDXScript[T] {
    * @param elseValue
    * @return
    */
-  def getOrElse(elseValue: T): T
+  def getOrElse(elseValue: V): V
   
   def isUndefined: Boolean
 

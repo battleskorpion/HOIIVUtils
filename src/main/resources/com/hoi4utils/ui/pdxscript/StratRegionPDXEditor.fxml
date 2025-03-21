@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+
+<AnchorPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.pdxscript.StratRegionPDXEditorController">
+   <children>
+      <SplitPane dividerPositions="0.3553370786516854" prefHeight="458.0" prefWidth="714.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <items>
+              <VBox maxHeight="1.7976931348623157E308" spacing="10">
+                  <children>
+                      <Label text="Strategic Regions" />
+                      <TableView fx:id="strategicRegionTable" VBox.vgrow="ALWAYS">
+                          <columns>
+                              <TableColumn fx:id="idColumn" prefWidth="100" text="ID" />
+                              <TableColumn fx:id="nameColumn" prefWidth="200" text="Name" />
+                          </columns>
+                      </TableView>
+                  </children>
+              </VBox>
+            <GridPane>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="189.0" minWidth="10.0" prefWidth="167.0" />
+                  <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="289.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="-Infinity" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="1.7976931348623157E308" minHeight="80.0" prefHeight="377.0" vgrow="ALWAYS" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="40.0" prefHeight="100.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                      <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Edit Strategic Region" />
+                  <VBox GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+                     <children>
+                              <Label prefWidth="97.0" text="Provinces:" />
+                              <ListView fx:id="provincesListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="SOMETIMES" />
+                     </children>
+                  </VBox>
+                  <VBox prefWidth="456.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+                     <children>
+                              <Label text="Weather Periods:" />
+                        <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                          <content>
+                            <AnchorPane>
+                                 <children>
+                                    <Accordion fx:id="weatherAccordion" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
+                      <!-- Editing Name -->
+                      <HBox spacing="10" GridPane.columnIndex="1" GridPane.columnSpan="2147483647">
+                          <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Name:" />
+                              <TextField fx:id="nameField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                          </children>
+                      </HBox>
+               </children>
+            </GridPane>
+         </items>
+      </SplitPane>
+   </children>
+</AnchorPane>
