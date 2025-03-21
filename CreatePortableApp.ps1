@@ -9,7 +9,7 @@ $ErrorActionPreference = "Stop"
 $createZipFile = $false  # Set to $true if you want to create a zip archive
 
 # Define paths
-$sourceDir = "$HOME\Documents\Github\HOIIVUtils"
+$sourceDir = "$HOME\programming\intelliJ\HOIIVUtils"
 $targetDir = "$HOME\Desktop\HOIIVUtils"
 $demoModSource = "$sourceDir\demo_mod"
 $demoModTarget = "$targetDir\demo_mod"
