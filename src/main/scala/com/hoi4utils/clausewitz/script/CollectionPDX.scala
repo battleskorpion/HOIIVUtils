@@ -83,6 +83,22 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     pdxList += pdxScript
   }
 
+  def removeIf(p: T => Boolean): ListBuffer[T] = {
+    for (
+      i <- pdxList.indices
+    ) {
+      if (p(pdxList(i))) {
+        pdxList.remove(i)
+        node match {
+          case Some(n) => n.remove(i)
+          case None => // do nothing
+        }
+      }
+    }
+    
+    pdxList
+  }
+
   protected def useSupplierFunction(expression: Node): T = {
     pdxSupplier(expression) match {
       case Some(s) => s

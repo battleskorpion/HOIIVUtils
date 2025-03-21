@@ -19,8 +19,6 @@ import scala.reflect.ClassTag
  * <p>
  */
 trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScript[T] {
-  val LOGGER: Logger = LogManager.getLogger(classOf[AbstractPDX[T]])
-  
   private[script] var activeIdentifier = 0
   protected[script] var node: Option[Node] = None
 

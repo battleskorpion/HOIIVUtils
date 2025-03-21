@@ -1,8 +1,8 @@
 package com.hoi4utils.clausewitz.script
 
 import language.experimental.namedTuples
-
 import com.hoi4utils.clausewitz.data.focus.FocusTree
+import com.hoi4utils.clausewitz.map.StrategicRegion
 import com.hoi4utils.clausewitz_parser.{Node, Parser}
 import org.scalatest.funsuite.AnyFunSuiteLike
 
@@ -22,11 +22,15 @@ class PDXScriptTests extends AnyFunSuiteLike {
     new File(testPath + "focus_with_search_filter_test2.txt"),
     new File(testPath + "carriage_return.txt"),
   )
+  private val validStratRegionTestFiles = List(
+    new File(testPath + "StrategicRegion.txt"),
+  )
   private val filesToTest = List(
-    new File(testPath + "specialinfantry.txt")
+    new File(testPath + "specialinfantry.txt"),
   )
     .appendedAll(validFocusTreeTestFiles)
     .appendedAll(validFocusTestFiles)
+    .appendedAll(validStratRegionTestFiles)
 
   def withParsedFiles(testFunction: Node => Unit): Unit = {
     filesToTest.foreach { file =>
@@ -54,6 +58,19 @@ class PDXScriptTests extends AnyFunSuiteLike {
       testFunction(focusTree)
     })
   }
+
+
+  def withValidStratRegions(testFunction: StrategicRegion => Unit): Unit = {
+    validStratRegionTestFiles.foreach(file => {
+      val parser = new Parser(file)
+      val node = parser.parse
+      assert(node != null, s"Failed to parse $file")
+      val stratRegion = new StrategicRegion()
+      stratRegion.loadPDX(node)
+      testFunction(stratRegion)
+    })
+  }
+
 
   test("Some PDXScript objects should be loaded through loadPDX() when present") {
     withValidFocusTrees { focusTree =>
@@ -95,6 +112,24 @@ class PDXScriptTests extends AnyFunSuiteLike {
           case _ => true
         })
       )
+    }
+  }
+
+  test("Strategic region has findable between") {
+    withValidStratRegions { stratRegion =>
+      assert(stratRegion.pdxProperties.nonEmpty)
+      assert(stratRegion.weather.period.nonEmpty)
+      assert(stratRegion.weather.period.exists(_.between.exists(_ @== 4.11)))
+      assert(stratRegion.weather.period.size == 13)
+    }
+  }
+
+  test("remove region") {
+    withValidStratRegions { stratRegion =>
+      assert(stratRegion.pdxProperties.nonEmpty)
+      stratRegion.weather.period.removeIf(_.between.exists(_ @== 4.11))
+      assert(stratRegion.weather.period.size == 12)
+      stratRegion.savePDX()
     }
   }
   

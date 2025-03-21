@@ -22,10 +22,10 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
-
+  
   def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T], pdxIdentifiers: String*) = {
     this(simpleSupplier, blockSupplier, pdxIdentifiers.toList)
-  }
+  } 
 
   /**
    * @inheritdoc
@@ -78,6 +78,27 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
         childScript.loadPDX(expression)
         pdxList.addOne(childScript)
     }
+  }
+
+  def removeIf(p: T => Boolean): ListBuffer[T] = {
+    for (
+      i <- pdxList.indices
+    ) {
+      if (p(pdxList(i))) {
+        pdxList(i).getNode match {
+          case Some(node) => node.clear()
+          case _ =>
+        }
+        pdxList(i).clearNode()
+        pdxList.remove(i)
+      }
+    }
+
+    pdxList
+  }
+
+  def filterInPlace(p: T => Boolean): ListBuffer[T] = {
+    this.removeIf(p andThen(!_))
   }
 
   /**

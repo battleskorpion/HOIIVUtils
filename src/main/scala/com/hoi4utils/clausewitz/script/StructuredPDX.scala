@@ -3,8 +3,10 @@ package com.hoi4utils.clausewitz.script
 import com.hoi4utils.clausewitz.HOIIVUtils
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
+import org.apache.poi.ss.formula.functions.T
 
 import scala.collection.mutable.ListBuffer
+import scala.tools.nsc.doc.html.HtmlTags.U
 
 abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) {
   def this(pdxIdentifiers: String*) = {
@@ -127,7 +129,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
       case _ => scripts
     }
   }
-
+  
 //  override def toScript: String = {
 //    if (node.isEmpty || node.get.isEmpty) return null
 //

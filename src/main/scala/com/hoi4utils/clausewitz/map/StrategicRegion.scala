@@ -2,7 +2,7 @@ package com.hoi4utils.clausewitz.map
 
 import com.hoi4utils.clausewitz.map.province.Province
 import org.apache.logging.log4j.{LogManager, Logger}
-import com.hoi4utils.clausewitz.script.{DoublePDX, IntPDX, ListPDX, MultiPDX, PDXScript, StringPDX, StructuredPDX}
+import com.hoi4utils.clausewitz.script.{DoublePDX, IntPDX, ListPDX, MultiPDX, PDXFile, PDXScript, StringPDX, StructuredPDX}
 import javafx.collections.{FXCollections, ObservableList}
 
 import java.io.File
@@ -10,7 +10,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
-class StrategicRegion extends StructuredPDX("strategic_region") {
+class StrategicRegion extends StructuredPDX("strategic_region") with PDXFile {
   private val LOGGER: Logger = LogManager.getLogger(getClass)
 
   final val id = new IntPDX("id")
@@ -45,6 +45,8 @@ class StrategicRegion extends StructuredPDX("strategic_region") {
     _strategicRegionFile = Some(file)
   }
 
+  override def getFile: Option[File] = _strategicRegionFile
+
   class Weather extends StructuredPDX("weather") {
     final val period = new MultiPDX[WeatherPeriod](None, Some(() => new WeatherPeriod()), "period")
 
@@ -76,6 +78,7 @@ class StrategicRegion extends StructuredPDX("strategic_region") {
       }
     }
   }
+
 }
 
 object StrategicRegion {

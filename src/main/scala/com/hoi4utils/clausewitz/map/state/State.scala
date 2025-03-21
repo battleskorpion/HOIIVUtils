@@ -26,7 +26,7 @@ import scala.util.{Failure, Success, Try}
  * @param stateFile state file
  * @param addToStatesList if true, adds the state to the list of states
  */
-class State(addToStatesList: Boolean) extends StructuredPDX("state") with InfrastructureData with Localizable with Iterable[Province] with Comparable[State] {
+class State(addToStatesList: Boolean) extends StructuredPDX("state") with InfrastructureData with Localizable with Iterable[Province] with Comparable[State] with PDXFile {
   private val LOGGER: Logger = LogManager.getLogger(getClass)
 
   final val stateID = new IntPDX("id")
@@ -276,6 +276,8 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
   @NotNull override def getLocalizableGroup: Iterable[? <: Localizable] = State.states
 
   override def iterator: Iterator[Province] = provinces.iterator
+
+  override def getFile: Option[File] = _stateFile
 }
 
 /**

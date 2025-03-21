@@ -37,6 +37,15 @@ object ScalaEmbeddedRepl {
           |// Hide the default Predef print/println
           |import scala.Predef.{print => _, println => _}
           |import com.hoi4utils.clausewitz.script._
+          |import com.hoi4utils.clausewitz.map._
+          |import com.hoi4utils.clausewitz.map.province._
+          |import com.hoi4utils.clausewitz.map.state._
+          |import com.hoi4utils.clausewitz_parser._
+          |//import language.experimental.namedTuples
+          |//import com.hoi4utils.clausewitz.data.focus._
+          |import com.hoi4utils.clausewitz.map.province._
+          |import com.hoi4utils.clausewitz.code._
+          | 
           |import scala.reflect.ClassTag
           |
           |// Define new ones that call 'replOut'
@@ -61,6 +70,7 @@ object ScalaEmbeddedRepl {
           """Welcome to the HOI4Utils Debug REPL!
             |Type `pdxScripts` to see the loaded scripts.
             |Use the 'toType' function to filter the loaded scripts into the desired PDXScript class type.
+            |  Ex: `def scripts = toType[StrategicRegion](pdxScripts)`
             |Type `exit` or press Ctrl+D to quit.
             |""".stripMargin
         )

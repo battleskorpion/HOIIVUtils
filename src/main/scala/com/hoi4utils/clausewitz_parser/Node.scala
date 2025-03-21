@@ -116,12 +116,12 @@ class Node(@NotNull private var _identifier: Option[String], @NotNull private va
         case _ =>
           sb.append(nodeValue.asString).append('\n')
       }
-    } else if (identifier != null && operator != null) {
+    } else if (identifier.isDefined && operator.isDefined) {
       sb.append(identifier.get).append(' ')
       sb.append(operator.get).append(' ')
       sb.append("[null]").append('\n')
     } else {
-      sb.append("[null]").append('\n')
+      //sb.append("[null]").append('\n') // nononononononnn
     }
     sb.toString()
   }
@@ -139,6 +139,12 @@ class Node(@NotNull private var _identifier: Option[String], @NotNull private va
   }
   
   def setNull(): Unit = nodeValue = new NodeValue
+
+  def clear(): Unit = {
+    _identifier = None
+    _operator = None
+    nodeValue = new NodeValue
+  }
   
   def valueIsInstanceOf(clazz: Class[?]): Boolean = nodeValue.valueIsInstanceOf(clazz)
 
@@ -236,4 +242,11 @@ class Node(@NotNull private var _identifier: Option[String], @NotNull private va
   }
   
   def start: Int = nameToken.start
+
+  def remove(i: Int): Unit = {
+    this.$ match {
+      case l: ListBuffer[Node] => l.remove(i)
+      case _ => // do nothing
+    }
+  }
 }

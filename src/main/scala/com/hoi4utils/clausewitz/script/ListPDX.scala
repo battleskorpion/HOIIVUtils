@@ -77,6 +77,22 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     }
   }
 
+  def removeIf(p: T => Boolean): ListBuffer[T] = {
+    for (
+      i <- pdxList.indices
+    ) {
+      if (p(pdxList(i))) {
+        pdxList.remove(i)
+        node match {
+          case Some(n) => n.remove(i)
+          case None => // do nothing
+        }
+      }
+    }
+
+    pdxList
+  }
+  
   protected def useSupplierFunction(expression: Node): T = {
     simpleSupplier()
   }
