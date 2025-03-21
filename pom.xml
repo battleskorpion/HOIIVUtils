@@ -205,15 +205,6 @@
 			<artifactId>scala3-compiler_3</artifactId>
 			<version>3.6.3</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.lihaoyi/ammonite -->
-		<dependency>
-			<groupId>com.lihaoyi</groupId>
-			<artifactId>ammonite_3.6.3</artifactId>
-			<version>3.0.2</version>
-		</dependency>
-
-
-
 
 	</dependencies>
 

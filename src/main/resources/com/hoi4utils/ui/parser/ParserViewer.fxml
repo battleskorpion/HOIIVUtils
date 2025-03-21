@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.parser.ParserViewerController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.parser.ParserViewerController">
    <children>
       <GridPane layoutX="-102.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="100.0" prefHeight="400.0" prefWidth="702.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -66,7 +66,7 @@
                      <contextMenu>
                         <ContextMenu fx:id="pdxListViewContextMenu">
                           <items>
-                            <MenuItem fx:id="pdxListViewMenuEditAll" mnemonicParsing="false" onAction="#handlePDXListViewEditAll" text="Edit All"/>
+                            <MenuItem fx:id="pdxListViewMenuEditAll" mnemonicParsing="false" onAction="#handlePDXListViewEditAll" text="Edit All" />
                           </items>
                         </ContextMenu>
                      </contextMenu></ListView>
@@ -82,7 +82,7 @@
                   </AnchorPane>
               </items>
             </SplitPane>
-            <Button fx:id="debugReplButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleOpenReplAction" text="Open REPL" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
+            <Button fx:id="debugReplButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="[TODO]" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
          </children>
       </GridPane>
    </children>
