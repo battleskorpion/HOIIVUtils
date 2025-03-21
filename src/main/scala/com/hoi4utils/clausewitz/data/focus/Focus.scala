@@ -13,9 +13,10 @@ import com.hoi4utils.ddsreader.DDSReader
 import javafx.scene.image.Image
 
 import java.awt.Point
-import scala.annotation.targetName
+import scala.annotation.{experimental, tailrec, targetName}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import language.experimental.namedTuples
 
 @lombok.extern.slf4j.Slf4j
 class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Localizable with DataFunctionProvider[Focus] {
@@ -29,63 +30,74 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   final val y: IntPDX = new IntPDX("y", ExpectedRange.ofPositiveInt) // if relative, relative y
   final val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
   final val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
-  final val relativePositionFocus = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.get(), "relative_position_id")
+  final val relativePositionFocus = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.value, "relative_position_id")
   final val cost: DoublePDX = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
   final val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
   final val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
   final val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
   //var ddsImage: Image = _
   /* completion reward */
-  val completionReward: CompletionReward = new CompletionReward()
+  final val completionReward: CompletionReward = new CompletionReward()
 
   def this(focusTree: FocusTree, node: Node) = {
     this(focusTree)
     loadPDX(node)
   }
 
+  /**
+   * @inheritdoc
+   */
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
-    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost, availableIfCapitulated,
-      cancelIfInvalid, continueIfInvalid, completionReward)
+    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost,
+      availableIfCapitulated, cancelIfInvalid, continueIfInvalid, completionReward)
   }
 
-  def absoluteX: Int = absolutePosition().x
+  def absoluteX: Int = absolutePosition.x
 
-  def absoluteY: Int = absolutePosition().y
+  def absoluteY: Int = absolutePosition.y
 
   def position: Point = new Point(x.getOrElse(0), y.getOrElse(0))
 
-  def absolutePosition: Point = absolutePosition(Set.empty)
+  def absolutePosition: Point = {
+    /**
+     * Recursively calculate the absolute position of a focus, taking into account relative positions.
+     * @param focus the focus to calculate the absolute position of
+     * @param visited set of focus ids that have been visited to detect circular references
+     * @param offsetAcc accumulated point adjustment
+     * @return the absolute position of the focus
+     */
+    @tailrec
+    def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: Point = new Point(0, 0)): Point = {
+      if (focus.relativePositionFocus.isUndefined) {
+        return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+      }
+      // Check for self-reference
+      if (focus.relativePositionFocus @== focus.id) {
+        System.err.println(s"Relative position id same as focus id for $this")
+        return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+      }
+      // Check for circular references
+      if (visited(focus.id.str)) {
+        System.err.println(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
+        return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+      }
 
-  private def absolutePosition(visited: Set[String] = Set.empty): Point = {
-    if (relativePositionFocus.isUndefined) {
-      return position
-    }
-    // Check for self-reference
-    if (relativePositionFocus @== id) {
-      System.err.println(s"Relative position id same as focus id for $this")
-      return position
-    }
-    // Check for circular references
-    if (visited(id.str)) {
-      System.err.println(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
-      return position
+      focus.relativePositionFocus.value match {
+        case Some(relativeFocus) =>
+          val newAcc = new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+          // Tail call: pass nextFocus, the updated visited set, and the new accumulated offset.
+          absolutePosition(relativeFocus, visited + focus.id.str, newAcc)
+        case None =>
+          System.err.println(s"Focus id ${focus.relativePositionFocus.getReferenceName} not a valid focus")
+          new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+      }
     }
 
-    relativePositionFocus.get() match {
-      case Some(f) =>
-        // Call absolutePosition on the focus, adding the current focus id to the visited set
-        // Add our relative coordinates to the relative focus absolute position to obtain our absolute position
-        val adjPoint = f.absolutePosition(visited + id.str)
-        val absolutePoint = new Point(adjPoint.x + x.getOrElse(0), adjPoint.y + y.getOrElse(0))
-        absolutePoint
-      case None =>
-        System.err.println(s"Focus id ${relativePositionFocus.getReferenceName} not a valid focus")
-        position
-    }
+    absolutePosition(this)
   }
 
   override def toString: String = {
-    id.get() match {
+    id.value match {
       case Some(id) => id
       case None => "[Unknown]"
     }
@@ -114,10 +126,10 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
    */
   def setAbsoluteXY(x: Int, y: Int, updateChildRelativeOffsets: Boolean): Point = {
     val prevAbsolute = absolutePosition
-    relativePositionFocus.get() match {
+    relativePositionFocus.value match {
       case Some(f) =>
         // keep relative to the focus, but absolute coordinates are always the same
-        val rp = f.absolutePosition()
+        val rp = f.absolutePosition
         setXY(x - rp.x, y - rp.y)
       case None => setXY(x, y)
     }
@@ -160,7 +172,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 
   def setCost(cost: Number): Unit = {
-    this.cost.setNode(cost.doubleValue())
+    this.cost.set(cost.doubleValue())
   }
 
   def getDDSImage: Option[Image] = {
@@ -168,7 +180,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     if (icon.isDefined) {
       var img: Option[Image] = None
       for (i <- icon) i match {
-        case simpleIcon: SimpleIcon => simpleIcon.get() match {
+        case simpleIcon: SimpleIcon => simpleIcon.value match {
           case Some(iconName) =>
             Interface.getGFX(iconName) match {
               case Some(gfx) => img = Some(DDSReader.readDDSImage(gfx))
@@ -215,17 +227,6 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   
   def isLocalized: Boolean = localizationStatus(Property.NAME) != Localization.Status.MISSING
 
-  override def toScript: String = {
-    val details = new StringBuilder()
-    for (property <- childScripts) {
-      val text = property.toScript
-      if (text != null) {
-        details.append(text)
-      }
-    }
-    details.toString()
-  }
-
   def getCompletionReward: CompletionReward = completionReward
 
 //  def setCompletionReward(completionReward: List[Effect]): Unit = {
@@ -242,7 +243,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 //  }
 
   private def setCompletionRewardsOfNode(completionRewardNode: Node): Unit = {
-    focusTree.country.get() match {
+    focusTree.country.value match {
       case Some(countryTag) =>
         setCompletionRewardsOfNode(completionRewardNode, Scope.of(countryTag))
       case None =>
@@ -331,7 +332,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   }
 
   class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus])
-    extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.get(), "prerequisite", "focus") {
+    extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.value, "prerequisite", "focus") {
 
     def this() = {
       this(() => focusTree.focuses)
@@ -341,7 +342,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
    * mutually exclusive is a multi-reference of focuses
    */
   class MutuallyExclusiveSet(referenceFocusesSupplier: () => Iterable[Focus])
-    extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.get(), "mutually_exclusive", "focus") {
+    extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.value, "mutually_exclusive", "focus") {
   }
 
   trait Icon extends PDXScript[?] {
@@ -352,18 +353,16 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
   class BlockIcon extends StructuredPDX("icon") with Icon {
 
-    final private val value: StringPDX = new StringPDX("value")
+    final private val `value`: StringPDX = new StringPDX("value")
 
-    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(value)
+    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(`value`)
 
-    override def equals(other: PDXScript[?]): Boolean = {
-      other match {
-        case icon: Icon => value.equals(icon.get()) // todo :(
-        case _ => false
-      }
+    override def equals(other: PDXScript[?]): Boolean = other match {
+      case icon: Focus#Icon => `value`.equals(icon.value) // todo :(
+      case _ => false
     }
 
-    def iconName: Option[String] = value.get()
+    def iconName: Option[String] = `value`.value
   }
 
   class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward") {
@@ -371,6 +370,8 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     override def loadPDX(expression: Node): Unit = {
       super.loadPDX(expression)
     }
+
+    override def getPDXTypeName: String = "Completion Reward"
   }
 
 }
@@ -381,8 +382,8 @@ object Focus {
     dataFunctions += (focus => {
       focus.id.getOrElse("[unknown]")
     })
-    dataFunctions += (focus => focus.localizationText(Property.NAME))
-    dataFunctions += (focus => focus.localizationText(Property.DESCRIPTION))
+    dataFunctions += (_.localizationText(Property.NAME))
+    dataFunctions += (_.localizationText(Property.DESCRIPTION))
     dataFunctions
   }
 

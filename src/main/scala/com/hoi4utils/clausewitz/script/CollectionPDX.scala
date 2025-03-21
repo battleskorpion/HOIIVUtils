@@ -46,7 +46,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
-  override def get(): Option[ListBuffer[T]] = {
+  override def value: Option[ListBuffer[T]] = {
     if (pdxList.isEmpty) None
     else Some(pdxList)
   }
@@ -73,6 +73,32 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     }
   }
 
+  /**
+   * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.
+   *
+   * @param pdxScript the PDXScript to add
+   */
+  @targetName("add")
+  def +=(pdxScript: T): Unit = {
+    pdxList += pdxScript
+  }
+
+  def removeIf(p: T => Boolean): ListBuffer[T] = {
+    for (
+      i <- pdxList.indices
+    ) {
+      if (p(pdxList(i))) {
+        pdxList.remove(i)
+        node match {
+          case Some(n) => n.remove(i)
+          case None => // do nothing
+        }
+      }
+    }
+    
+    pdxList
+  }
+
   protected def useSupplierFunction(expression: Node): T = {
     pdxSupplier(expression) match {
       case Some(s) => s
@@ -88,31 +114,37 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     }
   }
 
-  override def isEmpty: Boolean = get().isEmpty
+  override def isEmpty: Boolean = pdxList.isEmpty
 
-  override def iterator: Iterator[T] = get().iterator.flatten   // todo idk
+  override def iterator: Iterator[T] = pdxList.iterator // todo idk
 
   override def foreach[U](f: T => U): Unit = super.foreach(f)
   
   override def length: Int = size
 
   override def apply(i: Int): T = pdxList(i)
+  
+  override def size: Int = value.size
 
-  override def isUndefined: Boolean = super.isUndefined
+  override def toList: List[T] = pdxList.toList
 
-  override def toScript: String = {
-    if (node.isEmpty || node.get.isEmpty) return null
-
-//    val sb = new StringBuilder()
-//    sb.append(node.get.identifier)
-//    sb.append(" = {\n")
-//    for (pdx <- get().get) {
-//      sb.append('\t')
-//      sb.append(pdx.toScript)
-//    }
-//    sb.toString
-    null  // todo
+  override def isUndefined: Boolean = {
+    pdxList.forall(_.isUndefined) || pdxList.isEmpty
   }
+
+//  override def toScript: String = {
+//    if (node.isEmpty || node.get.isEmpty) return null
+//
+////    val sb = new StringBuilder()
+////    sb.append(node.get.identifier)
+////    sb.append(" = {\n")
+////    for (pdx <- get().get) {
+////      sb.append('\t')
+////      sb.append(pdx.toScript)
+////    }
+////    sb.toString
+//    null  // todo
+//  }
 
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
@@ -125,6 +157,8 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     //
     obj
   }
+
+  override def getPDXTypeName: String
 }
 
 

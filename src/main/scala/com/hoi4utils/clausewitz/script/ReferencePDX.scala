@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable
 import java.util.function.{Function, Supplier}
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
+import scala.language.implicitConversions
 
 /**
  * A PDXObject that may reference another PDXObject.
@@ -25,7 +26,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
 
   // the string identifier of the referenced PDXScript
   protected[script] var referenceName: String = _
-  protected[script] var reference: Option[T] = None
+  private var reference: Option[T] = None
 
   def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => Option[String], pdxIdentifiers: String*) = {
     this(referenceCollectionSupplier, idExtractor, pdxIdentifiers.toList)
@@ -39,12 +40,14 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     value match {
       case s: String =>
         referenceName = s
+      case s: Int =>
+        referenceName = s.toString
       case _ =>
-        throw new NodeValueTypeException(expression, "string")
+        throw new NodeValueTypeException(expression, "string | int")
     }
   }
 
-  override def get(): Option[T] = {
+  override def value: Option[T] = {
     if (reference.nonEmpty) return reference
     resolveReference()
   }
@@ -70,11 +73,11 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     }
   }
 
-  override def toScript: String = {
-    val scripts = get()
-    if (scripts == null) return null
-    (getPDXIdentifier + " = " + referenceName) + "\n"
-  }
+//  override def toScript: String = {
+//    val scripts = value
+//    if (scripts == null) return null
+//    (pdxIdentifier + " = " + referenceName) + "\n"
+//  }
 
   def getReferenceName: String = referenceName
 

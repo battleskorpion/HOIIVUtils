@@ -5,9 +5,8 @@ import com.hoi4utils.clausewitz.script.*
 
 import scala.collection.mutable
 
-// todo with StructuredPDX
-// extends StructuredPDX(_identifiers)  todo???
-trait BlockEffect(private val structuredBlock: StructuredPDX) extends Effect with Cloneable {
+//trait BlockEffect(private val structuredBlock: StructuredPDX) extends Effect with Cloneable {
+trait BlockEffect extends Effect {
   _supportedScopes = Set(ScopeType.country) // Example scope types
   _supportedTargets = Set(ScopeType.state) // Example target types
 

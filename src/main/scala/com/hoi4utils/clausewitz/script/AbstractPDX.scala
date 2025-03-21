@@ -19,33 +19,30 @@ import scala.reflect.ClassTag
  * <p>
  */
 trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScript[T] {
-  val LOGGER: Logger = LogManager.getLogger(classOf[AbstractPDX[T]])
-  
   private[script] var activeIdentifier = 0
   protected[script] var node: Option[Node] = None
 
   /**
-   * Sets the active identifier to match the given expression, if applicable.
-   * @param exp
-   * @throws UnexpectedIdentifierException
+   * Sets the active identifier to match the given expression, 
+   * if it is a valid identifier. Otherwise, throws exception. 
+   * @param expr the expression to check, and set the active identifier to the identifier of the expression
+   * @throws UnexpectedIdentifierException if the expression is not a valid identifier
    */
   @throws[UnexpectedIdentifierException]
-  protected def usingIdentifier(exp: Node): Unit = {
-    for (i <- pdxIdentifiers.indices) {
-      if (exp.nameEquals(pdxIdentifiers(i))) {
-        activeIdentifier = i
-        return
-      }
+  protected def usingIdentifier(expr: Node): Unit = {
+    if (pdxIdentifiers.isEmpty) {
+      // all good? 
     }
-    // TODO: Do something so that this doesn't clog up the console
-    LOGGER.error("Unexpected identifier: " + exp)
-    throw new UnexpectedIdentifierException(exp)
+    else if (pdxIdentifiers.indexWhere(expr.nameEquals) == -1) {
+      LOGGER.error("Unexpected identifier: " + expr.name)
+      throw new UnexpectedIdentifierException(expr)
+    } 
   }
 
   /**
    * @inheritdoc
    */
-  override def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
+  override protected def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
   // todo?
     if (node.isEmpty) {
       return
@@ -69,14 +66,13 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   @throws[UnexpectedIdentifierException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.$
-    setNode(value)
+    setNode(expression.$)
   }
 
   /**
    * @inheritdoc
    */
-  override def get(): Option[T] = {
+  override def value: Option[T] = {
     node.getOrElse(return None).$ match {
       case value: T => Some(value)
       case _ => None
@@ -93,9 +89,11 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
    */
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
-    if (expression.name == null) {
-      System.out.println("Error loading PDX script: " + expression)
-      return
+    if (expression.identifier.isEmpty) {
+      if (pdxIdentifiers.nonEmpty || expression.isEmpty) {
+        System.out.println("Error loading PDX script: " + expression)
+        return
+      }
     }
     try set(expression)
     catch {
@@ -141,6 +139,10 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   override def isValidIdentifier(node: Node): Boolean = {
     pdxIdentifiers.contains(node.name)
   }
+  
+  override def isValidID(identifier: String): Boolean = {
+    pdxIdentifiers.contains(identifier)
+  }
 
   /**
    * @inheritdoc
@@ -167,7 +169,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
 
   override def toScript: String = {
     if (node.isEmpty || node.get.isEmpty) return null
-    node.get.identifier + node.get.operator + node.get.$ + "\n"
+    node.get.toScript
   }
 
   override def equals(other: PDXScript[?]): Boolean = {
@@ -199,7 +201,10 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
 
   override def isDefined: Boolean = !isUndefined
 
-  override def getPDXIdentifier: String = pdxIdentifiers(activeIdentifier)
+  override def pdxIdentifier: String = {
+    if (pdxIdentifiers.isEmpty) return null
+    else pdxIdentifiers(activeIdentifier)
+  }
 
   /**
    * Returns true if the value of the node is an instance of the specified class.
@@ -211,6 +216,10 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   def valueIsInstanceOf[A](implicit ct: ClassTag[A]): Boolean = {
     if (node.isEmpty) false
     else ct.runtimeClass.isInstance(node.get.$)
+  }
+
+  def getPDXTypeName: String = {
+    pdxIdentifier
   }
 
   def schema(): PDXSchema[T] = {

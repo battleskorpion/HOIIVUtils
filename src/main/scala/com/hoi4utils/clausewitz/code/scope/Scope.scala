@@ -22,7 +22,9 @@ object Scope {
         // state?
         // State.isValidStateID(id)
         //				System.out.println(name + ", ?");
-        val state_scope = of(State.get(id))
+        val state = State.get(id)
+        if (state.isEmpty) return null 
+        val state_scope = of(state.get)
         if (state_scope == null) {
           System.out.println("invalid state id: " + id + ", in Scope.of()")
           return null
@@ -53,15 +55,15 @@ object Scope {
 
   private def of(state: State): Scope = {
     if (state == null) return null
-    val state_str = state.id + "@state"
+    val state_str = state.stateID.toString + "@state"
     val s = getClone(state_str)
-    if (s == null) new Scope(state.id + "@state", ScopeType.any, ScopeType.state, ScopeCategory.DUAL)
+    if (s == null) new Scope(state.stateID.toString + "@state", ScopeType.any, ScopeType.state, ScopeCategory.DUAL)
     else s
   }
 
   def of(effect: Effect): Scope = {
     if (effect == null || !effect.isScope) return null
-    val effect_identifier = effect.getPDXIdentifier
+    val effect_identifier = effect.pdxIdentifier
     val s = getClone(effect_identifier)
     if (s == null) null
     else s

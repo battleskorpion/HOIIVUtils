@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz.data.focus.Focus;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.focus.FocusTree$;
 import com.hoi4utils.clausewitz.localization.Localization;
+import com.hoi4utils.clausewitz.localization.LocalizationManager;
 import com.hoi4utils.clausewitz.localization.Property;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
@@ -155,7 +156,7 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
         Iterator<Focus> iterator = focusObservableList.iterator();
         while (iterator.hasNext()) {
             Focus f = iterator.next();
-            if (f.id().get().equals(focus.id().get())) {
+            if (f.id().value().equals(focus.id().value())) {
                 iterator.remove(); // Remove the current element using the iterator
                 focusObservableList.add(i, focus);
                 return; // update is done
@@ -182,6 +183,7 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
 //        }
 //
 //        focusLocFile.writeLocalization();
+        LocalizationManager.get().saveLocalization();
     }
 
     @Override

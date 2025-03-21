@@ -184,10 +184,6 @@ public class ManageFocusTreesController extends HOIIVUtilsAbstractController imp
 		// todo handle any exceptions?
 		if (onSaveActions.isEmpty()) return;
 		onSaveActions.forEach(Runnable::run);
-		/*
-		 * todo should make sure we are maybe using just one from the beginning
-		 *  makes sure that we avoid any funny issues in the future.
-		 */
 		LocalizationManager.get().saveLocalization();
 		onSaveActions.clear();
 	}

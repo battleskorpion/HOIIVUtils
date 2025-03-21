@@ -9,7 +9,7 @@ import scala.annotation.targetName
  * Allows shi**y clausewitz engine numbers to be used in a more sane way.
  * @tparam T
  */
-trait ValPDXScript[T <: AnyVal] extends PDXScript[T] {
+trait ValPDXScript[T <: AnyVal] extends PDXScript[T] with Comparable[T] {
   def isDefaultRange: Boolean
 
   def defaultRange: ExpectedRange[T]
@@ -30,8 +30,19 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] {
    * @return
    */
   @targetName("getEquals")
-  def @==(other: T): Boolean = get() match {
-    case Some(value) => value == other
+  def @==(other: T): Boolean = value match {
+    case Some(v) => v.equals(other)
+    case None => false
+  }
+
+  /**
+   * Checks the value of the script is equal to the value of the given script.
+   * @param other
+   * @return
+   */
+  @targetName("getEquals")
+  def @==(other: ValPDXScript[T]): Boolean = value match {
+    case Some(v) => other @== v
     case None => false
   }
 
@@ -53,8 +64,8 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] {
    * Sets the value of the script to the value of the given script.
    * @param other
    */
-  def @=(other: PDXScript[T]): Unit = other.get() match {
-    case Some(value) => set(value)
+  def @=(other: PDXScript[T]): Unit = other.value match {
+    case Some(v) => set(v)
     case None => setNull()
   }
 
@@ -87,5 +98,29 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] {
 
   @targetName("divideEquals")
   def /=(other: T): T = set(this / other)
+
+  override def compareTo(o: T): Int = {
+    value match {
+      case Some(v) => v match {
+        case i: Int => i.compareTo(o.asInstanceOf[Int])
+        case d: Double => d.compareTo(o.asInstanceOf[Double])
+        case b: Boolean => b.compareTo(o.asInstanceOf[Boolean])
+        //case s: String => s.compareTo(o.asInstanceOf[String])
+        case _ => throw new IllegalArgumentException(s"Cannot compare $v to $o")
+      }
+      case None => throw new IllegalArgumentException("Cannot compare null to $o")
+    }
+  }
+  
+  def compareTo(o: ValPDXScript[T]): Option[Int] = {
+    o.value match {
+      case Some(v) => Some(this.compareTo(v))
+      case None => None
+    }
+  }
+
+  def asString: String = this.value.map(_.toString).getOrElse("")
+  
+  override def toString: String = if asString eq "" then "[null]" else asString
 
 }

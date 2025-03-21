@@ -7,7 +7,7 @@ import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.export.ExcelExport;
 import com.hoi4utils.ui.javafx.table.DoubleTableCell;
-import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
+import com.hoi4utils.ui.javafx.table.DoubleOrPercentTableCell;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -69,7 +69,7 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	@FXML
 	TableColumn<State, Double> stateDataTableTungstenColumn;
 
-	private Boolean resourcesPercent;
+	private boolean resourcesPercent;
 	private Country country;
 	private ObservableList<State> stateList;
 
@@ -93,7 +93,7 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	void initialize() {
 		System.out.println("Country: " + country);
 		// includeVersion();
-		loadTableView(this, stateDataTable, stateList, State.getStateDataFunctions(false));
+		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent));
 
 		JOptionPane.showMessageDialog(null, "dev - loaded rows: " + stateDataTable.getItems().size());
 
@@ -113,7 +113,9 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 		}
 
 		try {
-			Desktop.getDesktop().edit(state.getFile());
+			if (state.stateFile().isDefined()) {
+				Desktop.getDesktop().edit(state.stateFile().get());
+			}
 		} catch (IOException exc) {
 			System.err.println("Unable to open state file: " + state);
 			throw new RuntimeException(exc);
@@ -125,6 +127,7 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	// }
 
 	private void updateResourcesColumnsPercentBehavior() {
+		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent));
 		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableAluminiumColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableChromiumColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableOilColumn, resourcesPercent);
@@ -141,12 +144,12 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 		stateDataTablePopCivRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		stateDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		stateDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTableAluminiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableChromiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableOilColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableRubberColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableSteelColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		stateDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		stateDataTableAluminiumColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		stateDataTableChromiumColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		stateDataTableOilColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		stateDataTableRubberColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		stateDataTableSteelColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		stateDataTableTungstenColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
 	}
 
 	@FXML

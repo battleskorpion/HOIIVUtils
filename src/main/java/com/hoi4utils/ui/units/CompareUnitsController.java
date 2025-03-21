@@ -32,7 +32,7 @@ public class CompareUnitsController extends HOIIVUtilsAbstractController {
      */
     @FXML
     void initialize() {
-        List<SubUnit> customUnits = SubUnit.read(HOIIVFiles.Mod.units_folder); // TODO: account for null, causes Unit window not to load
+        List<SubUnit> customUnits = SubUnit.read(HOIIVFiles.Mod.units_folder);
         List<SubUnit> baseUnits = SubUnit.read(HOIIVFiles.HOI4.units_folder);
 
         unitsDiffViewPane = new DiffViewPane("Base Unit Details", "Custom Unit Details");

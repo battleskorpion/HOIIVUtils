@@ -21,7 +21,11 @@ object Token {
 
     TokenType.string -> Regex("\"(\\\\.|[^\"])*\""),           // Seperates Double Quotes
 
-    TokenType.number -> Regex("-?\\d*\\.\\d+|-?\\d+|0x\\d+"),  // Seperates Numbers
+    //TokenType.number -> Regex("-?\\d*\\.\\d+|-?\\d+|0x\\d+"),  // Seperates Numbers
+
+    TokenType.float -> "-?\\d*\\.\\d+".r,
+
+    TokenType.int -> "-?(?:\\d+|0x[0-9a-fA-F]+)".r,
 
     TokenType.eof -> "\\$".r
   )
@@ -51,7 +55,19 @@ class Token {
    */
   private def determineTokenType(value: String): TokenType = {
     for ((key, regex) <- Token.tokenRegex) {
-      if (regex.findFirstIn(value).isDefined) return key
+      key match {
+        case TokenType.int =>
+          // For int tokens, ensure the entire value is matched
+          regex.findFirstMatchIn(value) match {
+            case Some(m) if m.start == 0 && m.end == value.length =>
+              return key
+            case _ => // not a complete match, continue
+          }
+        case _ =>
+          // For other token types, accept a match anywhere
+          if (regex.findFirstIn(value).isDefined)
+            return key
+      }
     }
     TokenType.unknown
   }
@@ -59,4 +75,6 @@ class Token {
   def length: Int = this.value.length
 
   override def toString: String = this.value
+
+  def isNumber: Boolean = TokenType.isNumeric(`type`)
 }

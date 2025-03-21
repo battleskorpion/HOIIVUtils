@@ -34,8 +34,8 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
     value
   }
 
-  override def get(): Option[Boolean] = {
-    val v = super.get()
+  override def value: Option[Boolean] = {
+    val v = super.value
     v.orNull match {
       case b: Boolean => Some(b)
       case _ => None
@@ -43,7 +43,7 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
   }
 
   def $ : Boolean = {
-    get().getOrElse(defaultValue)
+    value.getOrElse(defaultValue)
   }
 
   def objEquals(other: PDXScript[?]): Boolean = {
@@ -57,4 +57,6 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
     setNode(!this.$)
     this.$
   }
+
+  override def toString: String = this.value.map(_.toString).getOrElse("")
 }

@@ -3,9 +3,13 @@ package com.hoi4utils.clausewitz;
 import com.hoi4utils.PublicFieldChangeNotifier;
 import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
 import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
+import com.hoi4utils.clausewitz.data.country.Country;
+import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
+import com.hoi4utils.clausewitz.data.idea.IdeaFile;
 import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
+import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.clausewitz.data.gfx.Interface;
 import com.hoi4utils.fileIO.FileListener.FileAdapter;
@@ -42,8 +46,6 @@ public class HOIIVUtilsInitializer {
 	private String propertiesFile;
 	private InputStream defaultProperties;
 	private String version;
-	private ModifierDatabase mdb;
-	private EffectDatabase edb;
 
 	
 
@@ -55,7 +57,8 @@ public class HOIIVUtilsInitializer {
 	public HOIIVUtilsConfig initialize() {
 		LOGGER.info("Initializing HOIIVUtils");
 		// Load databases first
-		initializeDatabases();
+		ModifierDatabase.init();
+		EffectDatabase.init();
 
 		// Configure application directories
 		resolveApplicationDirectory();
@@ -79,11 +82,6 @@ public class HOIIVUtilsInitializer {
 
 		// Return configuration for use by application
 		return createConfig();
-	}
-
-	private void initializeDatabases() {
-		mdb = new ModifierDatabase();
-		edb = new EffectDatabase();
 	}
 
 	private void resolveApplicationDirectory() {
@@ -255,6 +253,27 @@ public class HOIIVUtilsInitializer {
 			LOGGER.error("Failed to read gfx interface files");
 		}
 
+		if (ResourcesFile.read()) {
+			setProperty("valid.Resources", "true");
+		} else {
+			setProperty("valid.Resources", "false");
+			LOGGER.error("Failed to read resources");
+		}
+
+		if (CountryTag.read()) {
+			setProperty("valid.CountryTag", "true");
+		} else {
+			setProperty("valid.CountryTag", "false");
+			LOGGER.error("Failed to read country tags");
+		}
+
+		if (Country.read()) {
+			setProperty("valid.Country", "true");
+		} else {
+			setProperty("valid.Country", "false");
+			LOGGER.error("Failed to read countries");
+		}
+
 		if (State.read()) {
 			setProperty("valid.State", "true");
 		} else {
@@ -267,6 +286,13 @@ public class HOIIVUtilsInitializer {
 		} else {
 			setProperty("valid.FocusTree", "false");
 			LOGGER.error("Failed to read focus trees");
+		}
+
+		if (IdeaFile.read()) {
+			setProperty("valid.IdeaFiles", "true");
+		} else {
+			setProperty("valid.IdeaFiles", "false");
+			LOGGER.error("Failed to read idea files");
 		}
 	}
 
@@ -328,9 +354,7 @@ public class HOIIVUtilsInitializer {
 			propertiesFile,
 			defaultProperties,
 			version,
-			properties,
-			mdb,
-			edb
+			properties
 		);
 	}
 

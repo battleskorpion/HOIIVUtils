@@ -22,10 +22,10 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
-
+  
   def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T], pdxIdentifiers: String*) = {
     this(simpleSupplier, blockSupplier, pdxIdentifiers.toList)
-  }
+  } 
 
   /**
    * @inheritdoc
@@ -54,7 +54,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
-  override def get(): Option[ListBuffer[T]] = {
+  override def value: Option[ListBuffer[T]] = {
     if (pdxList.isEmpty) None
     else Some(pdxList)
   }
@@ -80,6 +80,27 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     }
   }
 
+  def removeIf(p: T => Boolean): ListBuffer[T] = {
+    for (
+      i <- pdxList.indices
+    ) {
+      if (p(pdxList(i))) {
+        pdxList(i).getNode match {
+          case Some(node) => node.clear()
+          case _ =>
+        }
+        pdxList(i).clearNode()
+        pdxList.remove(i)
+      }
+    }
+
+    pdxList
+  }
+
+  def filterInPlace(p: T => Boolean): ListBuffer[T] = {
+    this.removeIf(p andThen(!_))
+  }
+
   /**
    * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.
    * @param pdxScript
@@ -99,14 +120,14 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     pdxList.clear()
   }
 
-  override def isEmpty: Boolean = get().isEmpty
+  override def isEmpty: Boolean = value.isEmpty
 
   override def iterator: Iterator[T] = pdxList.iterator
 
   //  override def forEach(action: Consumer[? >: T]): Unit = {
   //    get().foreach(action)
   //  }
-  override def foreach[U](f: T => U): Unit = super.foreach(f)
+  override def foreach[U](f: T => U): Unit = pdxList.foreach(f)
 
 //  override def spliterator: Spliterator[T] = get().spliterator
 
@@ -117,14 +138,14 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   override def apply(idx: Int): T = pdxList(idx)
 
   override def isUndefined: Boolean = {
-    pdxList.forall(_.isUndefined)
+    pdxList.forall(_.isUndefined) || pdxList.isEmpty
   }
 
   override def toScript: String = {
     if (node.isEmpty || node.get.isEmpty) return null
 
     val sb = new StringBuilder()
-    sb.append(node.get.identifier)
+    sb.append(node.get.name)
     sb.append(" = {\n")
     for (pdx <- pdxList) {
       sb.append('\t')

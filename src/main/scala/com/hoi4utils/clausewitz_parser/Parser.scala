@@ -66,7 +66,7 @@ class Parser {
       } else {
         try {
           val n = parseNode(tokens)
-          // check if n is a comment node
+          // check if n is a comment node // todo maybe should be optional?
           if (n.nameToken.`type` ne TokenType.comment) nodes.addOne(n)
         } catch {
           case e: ParserException =>
@@ -88,19 +88,31 @@ class Parser {
       return node
     }
     // System.out.println(name.value);
-    if ((name.`type` ne TokenType.string) && (name.`type` ne TokenType.symbol) && (name.`type` ne TokenType.number)) throw new ParserException("Parser: incorrect token type " + name.`type` + ", token: " + name + " at index: " + name.start)
+    // todo case
+    if ((name.`type` ne TokenType.string) && (name.`type` ne TokenType.symbol) && (!name.isNumber))
+      throw new ParserException("Parser: incorrect token type " + name.`type` + ", token: " + name + " at index: " + name.start)
     var nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
+    // 'if the next token is not an operator or a [special character]'
+    // '^[]': means must contain exactly *one* of the characters within the brackets
     if ((nextToken.`type` ne TokenType.operator) || nextToken.value.matches("^[,;}]$")) {
+      /*
+      example where you would make it inside here:
+        color = { 1.0 1.0 1.0 }
+        colortwo = { 1.0 1.0 1.0 }
+      each 1.0 will be a node which makes it within here
+       */
       while (nextToken.value.matches("^[,;]$")) {
         tokens.next
         nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
       }
       /* handle escaped characters */
-      val nameValue = unescapeCharacters(name, name.value)
-      // TODO node value?
-      val node = new Node
-      node.identifier = nameValue
-      node.nameToken = name
+//      val nameValue = unescapeCharacters(name, name.value)
+      val parsedValue = parseThisTokenValue(name)
+
+      /* node that is only a value, such as '0.0'. this node has no identifier (no lhs) */
+      val node = new Node(parsedValue)
+      node.identifier = null
+      node.nameToken = name // todo i am lazy this should probably be null. then again everything *should* maybe be redone atp anyways 
       node.operator = null
       node.operatorToken = null
       /* node.value = null; */
@@ -108,15 +120,16 @@ class Parser {
     }
 
     /* "= {" */
-    var operator: Token = null
-    if (nextToken.value == "{") {
-      operator = new Token("=", nextToken.start, TokenType.operator) // Create a new Token with the '=' value
-
-      nextToken = new Token("=", operator.start, TokenType.operator)
-      nextToken.start = operator.start
-      operator.value = "="
+    val operator: Token = {
+      if (nextToken.value == "{") {
+        // Create a new Token with the '=' value
+        val op = new Token("=", nextToken.start, TokenType.operator)
+        nextToken = new Token("=", op.start, TokenType.operator)
+        op
+      } else {
+        tokens.next.get
+      }
     }
-    else operator = tokens.next.get
 
     var parsedValue = parseNodeValue(tokens)
     /* Handle value attachment (e.g., when there's a nested block) */
@@ -163,10 +176,12 @@ class Parser {
         if (nextToken.value.length == 2) return new NodeValue(nextToken.value)
         return new NodeValue(nextToken.value.substring(1, nextToken.length - 2).replaceAll(Parser.escape_quote_regex, "\"").replaceAll(Parser.escape_backslash_regex, "\\"))
 
-      case TokenType.number =>
-        /* handles hexadecimal or floating-point/integers */
-        return new NodeValue(if (nextToken.value.startsWith("0x")) Integer.parseInt(nextToken.value.substring(2), 16)
-        else nextToken.value.toDouble)
+      case TokenType.`float` => return new NodeValue(nextToken.value.toDouble)
+
+      case TokenType.`int` => return new NodeValue(
+        if (nextToken.value.startsWith("0x")) Integer.parseInt(nextToken.value.substring(2), 16)
+        else nextToken.value.toInt
+      )
 
       case TokenType.symbol => return new NodeValue(nextToken.value)
 
@@ -176,12 +191,34 @@ class Parser {
         if (!(right.value == "}")) throw new ParserException("Parser expected a matching \"}\"")
         return new NodeValue(result)
       }
-      // necessary if addtl. case added, so will keep.
-
 
       case _ => throw new ParserException("Unexpected value: " + nextToken.`type`)
     }
     throw new ParserException("Parser expected a string, number, symbol, or {")
+  }
+
+  @throws[ParserException]
+  def parseThisTokenValue(token: Token): NodeValue = {
+    // todo eeeh?
+    token.`type` match {
+      case TokenType.string =>
+        if (token.length == 1) System.out.println("Parser: ?? " + token.value)
+        /* substring from 1 to length() - 2: don't replace "" */
+        if (token.value.length == 2) return new NodeValue(token.value)
+        return new NodeValue(token.value.substring(1, token.length - 2).replaceAll(Parser.escape_quote_regex, "\"").replaceAll(Parser.escape_backslash_regex, "\\"))
+      
+      case TokenType.`float` => return new NodeValue(token.value.toDouble)
+      
+      case TokenType.`int` => return new NodeValue(
+        if (token.value.startsWith("0x")) Integer.parseInt(token.value.substring(2), 16)
+        else token.value.toInt
+      )
+      
+      case TokenType.symbol => return new NodeValue(token.value)
+      
+      case _ => throw new ParserException("Unexpected value: " + token.`type`)
+    }
+    throw new ParserException("Parser expected a string, number, or symbol")
   }
 
   def rootNode: Node = this._rootNode

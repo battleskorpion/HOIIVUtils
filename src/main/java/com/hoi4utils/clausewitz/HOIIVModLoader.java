@@ -1,7 +1,11 @@
 package com.hoi4utils.clausewitz;
 
+import com.hoi4utils.clausewitz.data.country.Country;
+import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
+import com.hoi4utils.clausewitz.data.idea.IdeaFile;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
+import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.clausewitz.data.gfx.Interface;
 import org.apache.logging.log4j.LogManager;
@@ -36,6 +40,27 @@ public class HOIIVModLoader {
 			config.setProperty("valid.Interface", "false");
 			LOGGER.error("Failed to read gfx interface files");
 		}
+
+		if (ResourcesFile.read()) {
+			config.setProperty("valid.Resources", "true");
+		} else {
+			config.setProperty("valid.Resources", "false");
+			LOGGER.error("Failed to read resources");
+		}
+
+		if (CountryTag.read()) {
+			config.setProperty("valid.CountryTag", "true");
+		} else {
+			config.setProperty("valid.CountryTag", "false");
+			LOGGER.error("Failed to read country tags");
+		}
+		
+		if (Country.read()) {
+			config.setProperty("valid.Country", "true");
+		} else {
+			config.setProperty("valid.Country", "false");
+			LOGGER.error("Failed to read countries");
+		}
 		
 		if (State.read()) {
 			config.setProperty("valid.State", "true");
@@ -49,6 +74,13 @@ public class HOIIVModLoader {
 		} else {
 			config.setProperty("valid.FocusTree", "false");
 			LOGGER.error("Failed to read focus trees");
+		}
+
+		if (IdeaFile.read()) {
+			config.setProperty("valid.IdeaFiles", "true");
+		} else {
+			config.setProperty("valid.IdeaFiles", "false");
+			LOGGER.error("Failed to read idea files");
 		}
 	}
 

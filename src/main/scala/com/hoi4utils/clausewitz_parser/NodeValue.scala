@@ -96,11 +96,13 @@ final class NodeValue {
     case _ => "[invalid type]"
   } 
 
-  def isList: Boolean = _value.get.isInstanceOf[List[?]]
+  def isList: Boolean = _value.get.isInstanceOf[ListBuffer[?]]
 
   def isString: Boolean = _value.get.isInstanceOf[String]
 
   def isNumber: Boolean = _value.get.isInstanceOf[Number]
+
+  def isInt: Boolean = _value.get.isInstanceOf[Int]
   // public boolean isBoolean() {
   // return value instanceof Boolean;
   // }
@@ -134,6 +136,13 @@ final class NodeValue {
   }
   
   def valueIsInstanceOf(clazz: Class[?]): Boolean = clazz.isInstance(_value.get)
+
+  //  def $ (clazz: Class[_]): Boolean = valueIsInstanceOf(clazz)
+  override def toString: String = {
+    _value match {
+      case Some(v) => v.toString
+      case None => "[null]"
+    }
+  }
   
-//  def $ (clazz: Class[_]): Boolean = valueIsInstanceOf(clazz)
 }

@@ -184,7 +184,7 @@
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala3-library_3</artifactId>
-			<version>3.6.2</version>
+			<version>3.6.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.scalatest</groupId>
@@ -192,6 +192,29 @@
 			<version>3.3.0-alpha.1</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
+		<dependency>
+			<groupId>org.controlsfx</groupId>
+			<artifactId>controlsfx</artifactId>
+			<version>11.2.1</version>
+		</dependency>
+
+		<!-- scala compiler for user scripts -->
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala3-compiler_3</artifactId>
+			<version>3.6.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.lihaoyi/ammonite -->
+		<dependency>
+			<groupId>com.lihaoyi</groupId>
+			<artifactId>ammonite_3.6.3</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+
+
+
+
 	</dependencies>
 
 	<build>

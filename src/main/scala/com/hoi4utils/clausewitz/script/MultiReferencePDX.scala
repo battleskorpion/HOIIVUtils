@@ -19,14 +19,13 @@ import scala.collection.mutable.ListBuffer
  * @tparam T the PDXScript type of the reference PDXScript objects
  */
 class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: () => Iterable[T],
-                                             protected var idExtractor: T => Option[String], pdxIdentifiers: List[String],
-                                             referencePDXIdentifiers: List[String])
+                                             protected var idExtractor: T => Option[String], pdxIdentifiers: List[String])
   extends MultiPDX[T](None, None, pdxIdentifiers) {
 
   final protected val referenceNames = new ListBuffer[String]
 
   def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => Option[String], pdxIdentifiers: String, referenceIdentifier: String) = {
-    this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers), List(referenceIdentifier))
+    this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers))
   }
 
   /**
@@ -65,7 +64,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
    *
    * @return
    */
-  override def get(): Option[ListBuffer[T]] = references() match {
+  override def value: Option[ListBuffer[T]] = references() match {
     case list if list.isEmpty => None
     case list => Some(list)
   }
@@ -82,7 +81,6 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
-    usingReferenceIdentifier(expression)
     referenceNames.clear()
     expression.$ match {
       case s: String => referenceNames.addOne(s)
@@ -95,7 +93,6 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   override protected def add(expression: Node): Unit = {
-    usingReferenceIdentifier(expression)
     expression.$ match {
       case str: String => referenceNames.addOne(str)
       case _ =>
@@ -116,26 +113,17 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     resolvedReferences
   }
 
-  @throws[UnexpectedIdentifierException]
-  protected def usingReferenceIdentifier(exp: Node): Unit = {
-    if(referencePDXIdentifiers.contains(exp.name)) {
-
-    } else {
-      throw new UnexpectedIdentifierException(exp)
-    }
-  }
-
-  override def toScript: String = {
-    val sb = new StringBuilder
-    get() match {
-      case Some(scripts) =>
-        for (identifier <- referenceNames) {
-          sb.append(getPDXIdentifier).append(" = ").append(identifier).append("\n")
-        }
-      case None => return null
-    }
-    sb.toString
-  }
+//  override def toScript: String = {
+//    val sb = new StringBuilder
+//    value match {
+//      case Some(scripts) =>
+//        for (identifier <- referenceNames) {
+//          sb.append(pdxIdentifier).append(" = ").append(identifier).append("\n")
+//        }
+//      case None => return null
+//    }
+//    sb.toString
+//  }
 
   def setReferenceName(index: Int, value: String): Unit = {
     referenceNames.update(index, value)
@@ -212,12 +200,12 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
    *
    * @return
    */
-  override def length: Int = get() match {
+  override def length: Int = value match {
     case Some(list) => list.size
     case None => 0
   }
 
-  override def apply(idx: Int): T = get() match {
+  override def apply(idx: Int): T = value match {
     case Some(list) => list(idx)
     case None => throw new IndexOutOfBoundsException
   }

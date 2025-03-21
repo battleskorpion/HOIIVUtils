@@ -8,8 +8,9 @@ import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.export.ExcelExport;
 import com.hoi4utils.ui.javafx.table.DoubleTableCell;
-import com.hoi4utils.ui.javafx.table.IntegerOrPercentTableCell;
+import com.hoi4utils.ui.javafx.table.DoubleOrPercentTableCell;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
@@ -17,6 +18,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
+import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
 
@@ -67,7 +69,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	@FXML
 	TableColumn<Country, Double> countryDataTableTungstenColumn;
 
-	private Boolean resourcesPercent;
+	private boolean resourcesPercent = false;
 	private final ClausewitzDate date = ClausewitzDate.defaulty();
 
 	private final ObservableList<Country> countryList;
@@ -76,13 +78,13 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 		setFxmlResource("BuildingsByCountry.fxml");
 		setTitle("HOIIVUtils Buildings By Country Window");
 
-		countryList = Country.loadCountries();
+		countryList = FXCollections.observableArrayList(CollectionConverters.asJava(Country.list()));
 	}
 
 	@FXML
 	void initialize() {
 		includeVersion();
-		loadTableView(this, countryDataTable, countryList, Country.getCountryDataFunctions(false));
+		loadTableView(this, countryDataTable, countryList, Country.getDataFunctions(resourcesPercent));
 
 		/* action listeners */
 		countryDataTable.setOnMouseClicked(event -> {
@@ -100,6 +102,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	// todo put this in hoi4window parent class or whatever
 
 	private void updateResourcesColumnsPercentBehavior() {
+		loadTableView(this, countryDataTable, countryList, Country.getDataFunctions(resourcesPercent));
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableAluminiumColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableChromiumColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableOilColumn, resourcesPercent);
@@ -110,18 +113,19 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 
 	public void setDataTableCellFactories() {
 		// table cell factories
+		// todo these should also consider column percent behavior (percenttablecell)
 		countryDataTableCivMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		countryDataTablePopFactoryRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		countryDataTablePopCivRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		countryDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		countryDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
 		countryDataTablePopNumStatesRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		countryDataTableAluminiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		countryDataTableChromiumColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		countryDataTableOilColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		countryDataTableRubberColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		countryDataTableSteelColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
-		countryDataTableTungstenColumn.setCellFactory(col -> new IntegerOrPercentTableCell<>());
+		countryDataTableAluminiumColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		countryDataTableChromiumColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		countryDataTableOilColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		countryDataTableRubberColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		countryDataTableSteelColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		countryDataTableTungstenColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
 	}
 
 	@FXML
@@ -144,7 +148,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 		return resourcesPercent;
 	}
 
-	public void setResourcesPercent(Boolean resourcesPercent) {
+	public void setResourcesPercent(boolean resourcesPercent) {
 		this.resourcesPercent = resourcesPercent;
 		updateResourcesColumnsPercentBehavior();
 	}
