@@ -20,8 +20,8 @@
       <GridPane layoutX="-102.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="100.0" prefHeight="400.0" prefWidth="702.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.0" minWidth="80.0" prefWidth="138.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.0" minWidth="80.0" prefWidth="138.0" />
-          <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="395.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="346.0" minWidth="80.0" prefWidth="205.0" />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="290.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="60.0" prefWidth="70.0" />
         </columnConstraints>
         <rowConstraints>
@@ -74,6 +74,7 @@
                   </AnchorPane>
               </items>
             </SplitPane>
+            <Button fx:id="debugReplButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleOpenReplAction" text="Open REPL" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
          </children>
       </GridPane>
    </children>

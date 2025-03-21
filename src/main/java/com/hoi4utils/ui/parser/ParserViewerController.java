@@ -8,9 +8,7 @@ import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.map.StrategicRegion;
 import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
-import com.hoi4utils.clausewitz.script.AbstractPDX;
-import com.hoi4utils.clausewitz.script.PDXFile;
-import com.hoi4utils.clausewitz.script.PDXScript;
+import com.hoi4utils.clausewitz.script.*;
 import com.hoi4utils.clausewitz_parser.Parser;
 import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
@@ -18,13 +16,17 @@ import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.pdxscript.PDXTreeViewFactory;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -226,5 +228,11 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 		for (PDXScript<?> pdx : pdxScripts) {
 			savePDX(pdx);
 		}
+	}
+
+	@FXML
+	private void handleOpenReplAction() {
+		// Launch an Ammonite REPL, passing in the pdxScripts list
+		new ReplUIController().open(pdxScripts); 
 	}
 }
