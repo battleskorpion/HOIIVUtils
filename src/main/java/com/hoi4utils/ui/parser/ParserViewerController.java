@@ -215,11 +215,11 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 		}
 	}
 
-	@FXML
-	private void handleOpenReplAction() {
-		// Launch an Ammonite REPL, passing in the pdxScripts list
-		new ReplUIController().open(pdxScripts); 
-	}
+//	@FXML
+//	private void handleOpenReplAction() {
+//		// Launch an Ammonite REPL, passing in the pdxScripts list
+//		new ReplUIController().open(pdxScripts); 
+//	}
 
 	@FXML
 	private void handlePDXListViewEditAll() {

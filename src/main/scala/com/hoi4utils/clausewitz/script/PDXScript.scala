@@ -3,7 +3,6 @@ package com.hoi4utils.clausewitz.script
 import com.hoi4utils.clausewitz.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.clausewitz_parser.Node
 import org.apache.poi.hssf.usermodel.HeaderFooter.file
-import upickle.legacy.writer
 
 import java.io.{File, FileNotFoundException, PrintWriter}
 import java.time.LocalDateTime
