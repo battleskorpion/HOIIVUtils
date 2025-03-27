@@ -21,6 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import lombok.val;
 import scala.jdk.javaapi.CollectionConverters;
@@ -52,6 +53,8 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	@FXML
 	private ListView<PDXScript<?>> filesListView;
 	@FXML
+	private TextArea pdxNodeTextArea;
+	@FXML
 	private MenuItem saveMenuItem;
 	
 	private final List<PDXScript<?>> pdxScripts = new ArrayList<>();
@@ -81,6 +84,14 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 				searchTextField.setOnAction(event -> {
 					String searchTerm = searchTextField.getText();
 					PDXTreeViewFactory.searchAndSelect(pdxTreeView, searchTerm);
+				});
+
+				pdxTreeView.setOnMouseClicked(event -> {
+					// todo improve visual?
+					PDXScript<?> selectedPDX = pdxTreeView.getSelectionModel().getSelectedItem().getValue();
+					if (selectedPDX != null) {
+						pdxNodeTextArea.setText(selectedPDX.toScript());
+					}
 				});
 			}
 		});
@@ -193,6 +204,14 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 			// After loading all PDX scripts:
 			filesListView.setItems(FXCollections.observableList(pdxScripts));
+			// show pdx's node in side view when pdx item is selected in list view
+			filesListView.setOnMouseClicked(event -> {
+				PDXScript<?> selectedPDX = filesListView.getSelectionModel().getSelectedItem();
+				if (selectedPDX != null) {
+					// todo improve visual?
+					pdxNodeTextArea.setText(selectedPDX.toScript());
+				}
+			});
 			// yes this is after because the last statement can set an empty list in view
 			if (pdxScripts.isEmpty()) return;
 

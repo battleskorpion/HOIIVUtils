@@ -21,6 +21,8 @@ import scala.language.implicitConversions
 class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String])
   extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
 
+  val nodeRefs = new ListBuffer[Node]
+
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
   
   def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T], pdxIdentifiers: String*) = {
@@ -78,6 +80,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
         childScript.loadPDX(expression)
         pdxList.addOne(childScript)
     }
+    nodeRefs += expression
   }
 
   def removeIf(p: T => Boolean): ListBuffer[T] = {
@@ -105,10 +108,30 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.
    * @param pdxScript
    */
-  @targetName ("add")
+  @targetName("add")
   def +=(pdxScript: T): Unit = {
     pdxList += pdxScript
+    // TODO TODO add to node
   }
+
+  /**
+   * Removes a PDXScript from the list of PDXScripts.
+   * @param pdxScript
+   */
+  def -=(pdxScript: T): this.type = {
+    val index = pdxList.indexOf(pdxScript)
+    pdxList -= pdxScript
+    pdxScript.clearNode()
+    this
+  }
+
+  /**
+   * Removes a PDXScript from the list of PDXScripts.
+   * @param pdxScript
+   * @note Java was *struggling* with 'this.type' return type. Use '-=' otherwise.
+   * @return
+   */
+  def remove(pdxScript: T): Unit = this -= pdxScript
 
   def clear(): Unit = {
     if (node.nonEmpty) {
@@ -182,6 +205,17 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
       case (None, None) => throw new RuntimeException("Both suppliers are null")
     }
   }
+
+  def addNewPDX(): T = {
+    val pdx = applySomeSupplier()
+    this += pdx
+    pdx
+  }
+
+  override def clearNode(): Unit = {
+    pdxList.foreach(_.clearNode())
+  }
+
 }
 
 

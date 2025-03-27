@@ -217,4 +217,8 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   protected def resolvedReferences: ListBuffer[T] = {
     pdxList
   }
+
+  override def clearNode(): Unit = {
+    super.clearNode()
+  }
 }
