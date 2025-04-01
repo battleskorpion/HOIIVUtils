@@ -20,7 +20,7 @@ trait HeadlessPDX { this: StructuredPDX =>
           pdxScript.loadPDX(l)
         }
       case _ =>
-        throw new NodeValueTypeException(expression, "list")
+        throw new NodeValueTypeException(expression, "list", this.getClass)
     }
   }
 

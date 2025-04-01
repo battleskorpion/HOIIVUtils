@@ -73,7 +73,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
         pdxList.addOne(childScript)
       case _ =>
         // todo idk
-        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "list")
+        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "list", this.getClass)
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(expression)
         pdxList.addOne(childScript)

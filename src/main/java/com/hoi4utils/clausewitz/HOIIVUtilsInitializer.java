@@ -70,9 +70,6 @@ public class HOIIVUtilsInitializer {
 		autoSetHOIIVPath();
 		autoSetDemoModPath();
 
-		// Load game data
-		loadMod();
-
 		// Save configuration after initialization
 		saveConfiguration();
 

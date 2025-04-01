@@ -1,5 +1,7 @@
 package com.hoi4utils.clausewitz_parser
 
+import com.hoi4utils.clausewitz.HOIIVUtils
+
 import java.io.{File, IOException}
 import java.nio.file.Files
 import scala.collection.mutable.ListBuffer
@@ -66,8 +68,12 @@ class Parser {
       } else {
         try {
           val n = parseNode(tokens)
-          // check if n is a comment node // todo maybe should be optional?
-          if (n.nameToken.`type` ne TokenType.comment) nodes.addOne(n)
+          // check if n is a comment node
+          if (HOIIVUtils.get("parser.ignore_comments").equals("true")) {
+            if (n.nonComment) nodes.addOne(n)
+          } else {
+            nodes.addOne(n)
+          }
         } catch {
           case e: ParserException =>
             throw e
@@ -80,10 +86,10 @@ class Parser {
   @throws[ParserException]
   def parseNode(tokens: Tokenizer): Node = {
     val name = tokens.next.getOrElse(throw new ParserException("Unexpected null next token"))
-    /* skip comments */
+    /* skip comments (no further processing) */
     if (name.`type` eq TokenType.comment) {
-      val node = new Node
-      node.identifier = name.value
+      val node = new Node(new NodeValue(new Comment(name.value)))
+      //node.identifier = name.value
       node.nameToken = name
       return node
     }

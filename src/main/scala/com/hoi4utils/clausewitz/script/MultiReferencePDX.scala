@@ -86,7 +86,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
       case s: String => referenceNames.addOne(s)
       case _ =>
         LOGGER.warn(s"Expected string value for pdx reference identifier, got ${expression.$}")
-        throw new NodeValueTypeException(expression, "string")
+        throw new NodeValueTypeException(expression, "string", this.getClass)
     }
   }
 
@@ -97,7 +97,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
       case str: String => referenceNames.addOne(str)
       case _ =>
         LOGGER.warn(s"Expected string value for pdx reference identifier, got ${expression.$}")
-        throw new NodeValueTypeException(expression, "string")
+        throw new NodeValueTypeException(expression, "string", this.getClass)
     }
   }
 

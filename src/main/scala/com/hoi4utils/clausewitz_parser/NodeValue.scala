@@ -11,9 +11,9 @@ import scala.collection.mutable.ListBuffer
  */
 // todo should be subclasseed to impl effect parameter?
 final class NodeValue {
-  private var _value: Option[String | Int | Double | Boolean | ListBuffer[Node]] = None
+  private var _value: Option[String | Int | Double | Boolean | ListBuffer[Node] | Comment] = None
 
-  def this(value: String | Int | Double | Boolean | ListBuffer[Node] | Null) = {
+  def this(value: String | Int | Double | Boolean | ListBuffer[Node] | Comment | Null) = {
     this()
     // todo optim
     if (value != null) {
@@ -70,7 +70,13 @@ final class NodeValue {
       list
     case None => null
     case _ => throw new ParserException("Expected NodeValue to be an ArrayList<Node>, value: " + _value)
-  } 
+  }
+
+  def comment: Comment = _value match {
+    case None => null
+    case Some(str: Comment) => str
+    case _ => throw new ParserException("Expected NodeValue value to be a string, value: " + _value)
+  }
 
   def node: Node = _value match {
     case Some(n: Node) => n
@@ -92,21 +98,39 @@ final class NodeValue {
       sb.append("}")
       sb.toString()
     case Some(n: Node) => n.toString
+    case Some(c: Comment) => c.toString
     case None => return "[null]"
     case _ => "[invalid type]"
   } 
 
   def isList: Boolean = _value.get.isInstanceOf[ListBuffer[?]]
 
-  def isString: Boolean = _value.get.isInstanceOf[String]
+  def isString: Boolean = _value match {
+    case Some(_: String) => true
+    case _ => false
+  }
 
-  def isNumber: Boolean = _value.get.isInstanceOf[Number]
+  def isNumber: Boolean = _value match {
+    case Some(_: Int) => true
+    case Some(_: Double) => true
+    case _ => false
+  }
 
-  def isInt: Boolean = _value.get.isInstanceOf[Int]
+  def isInt: Boolean = _value match {
+    case Some(_: Int) => true
+    case _ => false
+  }
   // public boolean isBoolean() {
   // return value instanceof Boolean;
   // }
   // todo check allowables
+  
+  def isComment: Boolean = _value match {
+    case Some(_: Comment) => true
+    case _ => false
+  }
+  
+  def nonComment: Boolean = !isComment
 
   @targetName("plus")
   def +(other: NodeValue): NodeValue = (_value.get, other._value.get) match {
@@ -120,18 +144,18 @@ final class NodeValue {
       throw new ParserException(s"Cannot add NodeValues of types ${_value.get.getClass} and ${other._value.get.getClass}")
   }
 
-  def value: Option[String | Int | Double | Boolean | ListBuffer[Node]] = {
+  def value: Option[String | Int | Double | Boolean | ListBuffer[Node] | Comment] = {
     _value
   }
   
-  def setValue (value: String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
+  def setValue (value: String | Int | Double | Boolean | ListBuffer[Node] | Comment | Null): Unit = {
     value match {
       case null => _value = None
       case _ => _value = Some(value)
     }
   }
 
-  def value_=(value: String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
+  def value_=(value: String | Int | Double | Boolean | ListBuffer[Node] | Comment | Null): Unit = {
     setValue(value)
   }
   

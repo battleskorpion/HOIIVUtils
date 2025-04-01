@@ -36,6 +36,7 @@ public class HOIIVUtils {
 			// Initialize application using the new initializer
 			HOIIVUtilsInitializer initializer = new HOIIVUtilsInitializer();
 			config = initializer.initialize();
+			initializer.loadMod();
 
 			// Set static references for backwards compatibility
 			HOIIVUTILS_DIR = config.getHoi4UtilsDir();

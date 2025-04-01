@@ -17,7 +17,7 @@ class Node(@NotNull private var _identifier: Option[String], @NotNull private va
 
   if (nodeValue == null) nodeValue = new NodeValue
   
-  def this(@NotNull identifier: String, @NotNull operator: String, value: String | Int | Double | Boolean | ListBuffer[Node] | Null) = {
+  def this(@NotNull identifier: String, @NotNull operator: String, value: String | Int | Double | Boolean | ListBuffer[Node] | Comment | Null) = {
     this(Some(identifier), Some(operator), new NodeValue(value), null, null)
   }
   
@@ -35,7 +35,7 @@ class Node(@NotNull private var _identifier: Option[String], @NotNull private va
 
   def name: String = identifier.getOrElse("")
 
-  def value: Option[String | Int | Double | Boolean | ListBuffer[Node]] = nodeValue.value
+  def value: Option[String | Int | Double | Boolean | ListBuffer[Node] | Comment] = nodeValue.value
 
   //def getValue(id:String): NodeValue = find(id).nodeValue
   def getValue(id: String): NodeValue = {
@@ -54,76 +54,16 @@ class Node(@NotNull private var _identifier: Option[String], @NotNull private va
     }
   }
 
-  def setValue(value: String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
+  def setValue(value: String | Int | Double | Boolean | ListBuffer[Node] | Comment | Null): Unit = {
     this.nodeValue.setValue(value)
   }
 
   def isParent: Boolean = nodeValue.isList
 
-  def valueIsNull: Boolean = this.$ == null
+  def valueIsNull: Boolean = this.$value == null
   
   override def isEmpty: Boolean = {
     valueIsNull && identifier == null && operator == null
-  }
-
-  /**
-   * Returns a string representation of the individual node.
-   * @return
-   */
-  override def toString: String = {
-    if (!isEmpty)
-      (identifier, operator) match {
-        case (Some(id), Some(op)) =>
-          id + op + nodeValue.asString
-        case (Some(id), None) =>
-          id + nodeValue.asString
-        case (None, Some(op)) =>
-          "[null]" + op + nodeValue.asString
-        case (None, None) =>
-          nodeValue.asString
-      }
-    else super.toString()
-  }
-
-  def toScript: String = {
-    val sb = new StringBuilder()
-
-    if (!isEmpty && !valueIsNull) {
-      if (identifier.nonEmpty) sb.append(identifier.get).append(' ')
-      if (operator.nonEmpty) sb.append(operator.get).append(' ')
-      $.match {
-        case l: ListBuffer[Node] =>
-          // special handling if is list of numbers such as '0.0 1.0 0.7 1.3...'
-          // todo make this a setting? set number before break line? etc? 
-          if (l.forall(_.identifier.isEmpty) && l.forall(_.operator.isEmpty) && l.forall(_.nodeValue.isNumber)) {
-            sb.append("{").append(' ')
-            sb.append(l.map(_.nodeValue.asString).mkString(" "))
-            sb.append(' ').append("}").append('\n')
-          }
-          else {
-            sb.append("{").append('\n').append('\t')
-            for (node <- l) {
-              var sScript = node.toScript
-              if (sScript != null && sScript.nonEmpty) {
-                // add extra tab to any secondary lines
-                sScript = sScript.replace("\n", "\n\t")
-                sb.append(sScript)
-              }
-            }
-            // unindent, close block
-            sb.deleteCharAt(sb.size - 1).append("}").append('\n')
-          }
-        case _ =>
-          sb.append(nodeValue.asString).append('\n')
-      }
-    } else if (identifier.isDefined && operator.isDefined) {
-      sb.append(identifier.get).append(' ')
-      sb.append(operator.get).append(' ')
-      sb.append("[null]").append('\n')
-    } else {
-      //sb.append("[null]").append('\n') // nononononononnn
-    }
-    sb.toString()
   }
 
   def nameAsInteger: Int = identifier match {
@@ -150,6 +90,18 @@ class Node(@NotNull private var _identifier: Option[String], @NotNull private va
 
   def $ : String | Int | Double | Boolean | ListBuffer[Node] | Null = value match {
     case None => null
+    case Some(v: ListBuffer[Node]) => v.filter(_.nonComment)
+    case Some(v: String) => v
+    case Some(v: Int) => v
+    case Some(v: Double) => v
+    case Some(v: Boolean) => v
+    case Some(v: Comment) => null
+    case _ => null
+  }
+
+  def $value : String | Int | Double | Boolean | ListBuffer[Node] | Comment | Null = value match {
+    case None => null
+    case Some(v: ListBuffer[Node]) => v
     case Some(v) => v
   }
 
@@ -248,5 +200,71 @@ class Node(@NotNull private var _identifier: Option[String], @NotNull private va
       case l: ListBuffer[Node] => l.remove(i)
       case _ => // do nothing
     }
+  }
+
+  def isComment: Boolean = nodeValue.isComment
+
+  def nonComment: Boolean = nodeValue.nonComment
+
+  def toScript: String = {
+    val sb = new StringBuilder()
+
+    if (!isEmpty && !valueIsNull) {
+      if (identifier.nonEmpty) sb.append(identifier.get).append(' ')
+      if (operator.nonEmpty) sb.append(operator.get).append(' ')
+      $value match {
+        case l: ListBuffer[Node] =>
+          // special handling if is list of numbers such as '0.0 1.0 0.7 1.3...'
+          // todo make this a setting? set number before break line? etc?
+          if (l.forall(_.identifier.isEmpty) && l.forall(_.operator.isEmpty) && l.forall(_.nodeValue.isNumber)) {
+            sb.append("{").append(' ')
+            sb.append(l.map(_.nodeValue.asString).mkString(" "))
+            sb.append(' ').append("}").append('\n')
+          }
+          else {
+            sb.append("{").append('\n').append('\t')
+            for (node <- l) {
+              var sScript = node.toScript
+              if (sScript != null && sScript.nonEmpty) {
+                // add extra tab to any secondary lines
+                sScript = sScript.replace("\n", "\n\t")
+                sb.append(sScript)
+              }
+            }
+            // unindent, close block
+            sb.deleteCharAt(sb.size - 1).append("}").append('\n')
+          }
+        case _ =>
+          sb.append(nodeValue.asString).append('\n')
+      }
+    } else if (identifier.isDefined && operator.isDefined) {
+      sb.append(identifier.get).append(' ')
+      sb.append(operator.get).append(' ')
+      sb.append("[null]").append('\n')
+    } else {
+      //sb.append("[null]").append('\n') // nononononononnn
+      if (nameToken.`type` eq TokenType.comment) sb.append(nameToken.value).append('\n')
+    }
+    sb.toString()
+  }
+
+  /**
+   * Returns a string representation of the individual node.
+   *
+   * @return
+   */
+  override def toString: String = {
+    if (!isEmpty)
+      (identifier, operator) match {
+        case (Some(id), Some(op)) =>
+          id + op + nodeValue.asString
+        case (Some(id), None) =>
+          id + nodeValue.asString
+        case (None, Some(op)) =>
+          "[null]" + op + nodeValue.asString
+        case (None, None) =>
+          nodeValue.asString
+      }
+    else super.toString()
   }
 }

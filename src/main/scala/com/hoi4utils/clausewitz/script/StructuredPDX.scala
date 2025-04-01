@@ -2,7 +2,7 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.HOIIVUtils
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
+import com.hoi4utils.clausewitz_parser.{Comment, Node, NodeValue}
 import org.apache.poi.ss.formula.functions.T
 
 import scala.collection.mutable.ListBuffer
@@ -35,7 +35,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
           pdxScript.loadPDX(l)
         }
       case _ =>
-        throw new NodeValueTypeException(expression, "list")
+        throw new NodeValueTypeException(expression, "list", this.getClass)
     }
   }
 

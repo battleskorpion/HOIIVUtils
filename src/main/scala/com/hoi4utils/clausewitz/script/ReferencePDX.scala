@@ -43,7 +43,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
       case s: Int =>
         referenceName = s.toString
       case _ =>
-        throw new NodeValueTypeException(expression, "string | int")
+        throw new NodeValueTypeException(expression, "string | int", this.getClass)
     }
   }
 
