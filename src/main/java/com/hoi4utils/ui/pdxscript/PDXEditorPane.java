@@ -212,21 +212,77 @@ public class PDXEditorPane extends AnchorPane {
         else return null;
     }
 
-    private @Nullable Node visualizeMultiPDX(MultiPDX<?> pdx, boolean allowNull) {
+    private @Nullable <T extends PDXScript<?>> Node visualizeMultiPDX(MultiPDX<T> pdx, boolean allowNull) {
         VBox subVBox = new VBox();
         subVBox.setSpacing(10);
         if (!pdx.isEmpty()) {
+            /* sub PDX visualization */
             pdx.foreach(pdxScript -> {
-                var subNode = createSubNode(allowNull, (PDXScript<?>) pdxScript);
-                if (subNode != null) subVBox.getChildren().add(subNode);
+                // always allow null child to appear visually
+                var subNode = createSubNode(true, (T) pdxScript);
+                if (subNode != null) {
+                    // Wrap the sub-node with a remove button in a container.
+                    HBox container = new HBox();
+                    container.setSpacing(6);
+                    container.getChildren().add(subNode);
+
+                    // Create the remove button for this sub-element.
+                    Button removeButton = new Button("Remove");
+                    removeButton.setOnAction(event -> {
+                        // Remove this specific sub-element.
+                        pdx.remove(pdxScript);
+                        reloadEditor();
+                    });
+                    container.getChildren().add(removeButton);
+
+                    subVBox.getChildren().add(container);
+                }
+                //if (subNode != null) subVBox.getChildren().add(subNode);
                 return null;
             });
+
+            /* new sub pdx button */
+            Button addPDXButton = new Button("Add " + pdx.getPDXTypeName());
+            addPDXButton.setPrefWidth(200);
+            addPDXButton.setOnAction(event -> {
+//                var newPDX = pdx.applySomeSupplier();
+//                var newPDXNode = createEditorPDXNode((PDXScript<?>) newPDX, allowNull, false);
+//                if (newPDXNode != null) {
+//                    subVBox.getChildren().add(subVBox.getChildren().size() - 1, newPDXNode); // Add before the add button
+//                }
+                pdx.addNewPDX();
+                this.reloadEditor();
+            });
+            subVBox.getChildren().add(addPDXButton);
+
             return subVBox;
         } else if (allowNull) {
             var newPDX = pdx.applySomeSupplier();
             return createEditorPDXNode((PDXScript<?>) newPDX, allowNull, false);
         } else {
-            return null;
+            /* modify sub pdx buttons */
+            HBox modifySubPDXHBox = new HBox();
+            // add sub pdx
+            Button addPDXButton = new Button("Add " + pdx.getPDXTypeName());
+            addPDXButton.setPrefWidth(200);
+            addPDXButton.setOnAction(event -> {
+                var newPDX = pdx.applySomeSupplier();
+                // always allow null child to appear visually
+                var newPDXNode = createEditorPDXNode((PDXScript<?>) newPDX, true, false);
+                if (newPDXNode != null) {
+                    subVBox.getChildren().add(subVBox.getChildren().size() - 1, newPDXNode); // Add before the add button
+                }
+            });
+            // remove sub pdx
+            Button removePDXButton = new Button("Remove");
+            removePDXButton.setPrefWidth(80);
+            removePDXButton.setOnAction(event -> {
+                // hover over pdx (highlights), remove on click
+
+            });
+            modifySubPDXHBox.getChildren().add(addPDXButton);
+
+            return subVBox;
         }
     }
 
