@@ -154,7 +154,7 @@ class Parser {
     var tailComma = tokens.peek.get
     while ((tailComma.`type` eq TokenType.comment) || tailComma.value.matches("^[,;]")) {
       /* skip comments */
-      val node = new Node(new NodeValue(new Comment(name.value)))
+      val node = new Node(new NodeValue(new Comment(tailComma.value)))
       parsedNodes += node
       // proceed.
       tokens.next
