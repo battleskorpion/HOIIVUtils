@@ -81,8 +81,6 @@ public class PDXTreeViewFactory {
             });
         }
         else if (script instanceof MultiPDX<?> multiPDX) {
-            // Exactly how you iterate depends on your API.
-            // If `MultiPDX` also has a `foreach` or `getValues()` method, do something like:
             multiPDX.foreach(childPDX -> {
                 item.getChildren().add(buildTreeItem((PDXScript<?>) childPDX));
                 return null;
