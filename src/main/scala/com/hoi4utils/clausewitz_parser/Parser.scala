@@ -67,12 +67,13 @@ class Parser {
         cont = false
       } else {
         try {
-          val n = parseNode(tokens)
-          // check if n is a comment node
-          if (HOIIVUtils.get("parser.ignore_comments").equals("true")) {
-            if (n.nonComment) nodes.addOne(n)
-          } else {
-            nodes.addOne(n)
+          for (n <- parseNode(tokens)) {
+            // check if n is a comment node
+            if (HOIIVUtils.get("parser.ignore_comments").equals("true")) {
+              if (n.nonComment) nodes.addOne(n)
+            } else {
+              nodes.addOne(n)
+            }
           }
         } catch {
           case e: ParserException =>
@@ -84,14 +85,17 @@ class Parser {
   }
 
   @throws[ParserException]
-  def parseNode(tokens: Tokenizer): Node = {
+  def parseNode(tokens: Tokenizer): ListBuffer[Node] = {
+    val parsedNodes = new ListBuffer[Node]
+
     val name = tokens.next.getOrElse(throw new ParserException("Unexpected null next token"))
     /* skip comments (no further processing) */
     if (name.`type` eq TokenType.comment) {
       val node = new Node(new NodeValue(new Comment(name.value)))
       //node.identifier = name.value
       node.nameToken = name
-      return node
+      parsedNodes += node
+      return parsedNodes
     }
     // System.out.println(name.value);
     // todo case
@@ -122,7 +126,8 @@ class Parser {
       node.operator = null
       node.operatorToken = null
       /* node.value = null; */
-      return node
+      parsedNodes += node
+      return parsedNodes
     }
 
     /* "= {" */
@@ -148,6 +153,10 @@ class Parser {
     // Skip comments before tailComma
     var tailComma = tokens.peek.get
     while ((tailComma.`type` eq TokenType.comment) || tailComma.value.matches("^[,;]")) {
+      /* skip comments */
+      val node = new Node(new NodeValue(new Comment(name.value)))
+      parsedNodes += node
+      // proceed.
       tokens.next
       tailComma = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
     }
@@ -160,7 +169,8 @@ class Parser {
     // node.value = parsedValue;
     // node.valueStartToken = (Token) parsedValue[1];
     // node.valueEndToken = (Token) parsedValue[2];
-    node
+    parsedNodes += node // add the node to the list of parsed nodes
+    parsedNodes
   }
 
   private def unescapeCharacters(name: Token, nameValue: String): String = {
