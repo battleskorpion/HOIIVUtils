@@ -61,6 +61,10 @@ public class HOIIVUtils {
 	 * @return Property value or null if not found
 	 */
 	public static String get(String key) {
+		if (config == null) {
+			LOGGER.debug("Configuration not initialized!");
+			return "";
+		}
 		var property = config.getProperty(key);
 		if (property != null) return property;
 		else return ""; 

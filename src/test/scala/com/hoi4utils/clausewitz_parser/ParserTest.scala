@@ -1,5 +1,6 @@
 package com.hoi4utils.clausewitz_parser
 
+import dotty.tools.dotc.core.StdNames.str
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File
@@ -48,6 +49,29 @@ class ParserTest extends AnyFunSuiteLike {
       })
     }
   }
+
+  test("Node toScript()") {
+    filesToTest.foreach { file =>
+      val parser = new Parser(file)
+      val node = parser.parse
+      assert(node != null, s"Failed to parse $file")
+
+      // Define the expected file based on the input file name.
+      // Here, we assume the expected file is in the same testPath folder with a "_toScript.txt" suffix.
+      val expectedFileName = file.getName.replace(".txt", "_toScript.txt")
+      val expectedFile = new File(testPath + expectedFileName)
+
+      // Read the expected content.
+      val expectedContent = scala.io.Source.fromFile(expectedFile).mkString
+      // Get the actual content from toScript().
+      val actualContent = node.toScript
+
+      // Compare the actual output to the expected output.
+      assert(expectedContent == actualContent,
+        s"Output from ${file.getName} did not match expected output.")
+    }
+  }
+
 
   test("the '=' operator should be with an identifier") {
     withParsedFiles { node =>

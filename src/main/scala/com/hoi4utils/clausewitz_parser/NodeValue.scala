@@ -22,13 +22,13 @@ final class NodeValue {
       _value = None
     }
   }
-  
+
   def string: String = _value match {
     case None => null
     case Some(str: String) => str
     case _ => throw new ParserException("Expected NodeValue value to be a string, value: " + _value)
-  } 
-  
+  }
+
   def stringOrElse(default: String): String = _value match {
     case None => default
     case Some(str: String) => str
@@ -40,11 +40,11 @@ final class NodeValue {
     case Some(i: Int) => i
     case Some(d: Double) => d.intValue
     case _ => throw new ParserException("Expected NodeValue to be a Number or null, value: " + _value)
-  } 
+  }
 
   def integer: Integer = _value match {
     case Some(i: Int) => i;
-    case Some(d: Double) => d.intValue; 
+    case Some(d: Double) => d.intValue;
     case _ => throw new ParserException("Expected NodeValue to be a Number, value: " + _value)
   }
 
@@ -82,7 +82,7 @@ final class NodeValue {
     case Some(n: Node) => n
     case None => null
     case _ => throw new ParserException("Expected NodeValue to be a Node, value: " + _value)
-  } 
+  }
 
   def asString: String = _value match {
     case Some(s: String) => s
@@ -101,7 +101,7 @@ final class NodeValue {
     case Some(c: Comment) => c.toString
     case None => return "[null]"
     case _ => "[invalid type]"
-  } 
+  }
 
   def isList: Boolean = _value.get.isInstanceOf[ListBuffer[?]]
 
@@ -124,12 +124,12 @@ final class NodeValue {
   // return value instanceof Boolean;
   // }
   // todo check allowables
-  
+
   def isComment: Boolean = _value match {
     case Some(_: Comment) => true
     case _ => false
   }
-  
+
   def nonComment: Boolean = !isComment
 
   @targetName("plus")
@@ -147,8 +147,8 @@ final class NodeValue {
   def value: Option[String | Int | Double | Boolean | ListBuffer[Node] | Comment] = {
     _value
   }
-  
-  def setValue (value: String | Int | Double | Boolean | ListBuffer[Node] | Comment | Null): Unit = {
+
+  def setValue(value: String | Int | Double | Boolean | ListBuffer[Node] | Comment | Null): Unit = {
     value match {
       case null => _value = None
       case _ => _value = Some(value)
@@ -158,7 +158,7 @@ final class NodeValue {
   def value_=(value: String | Int | Double | Boolean | ListBuffer[Node] | Comment | Null): Unit = {
     setValue(value)
   }
-  
+
   def valueIsInstanceOf(clazz: Class[?]): Boolean = clazz.isInstance(_value.get)
 
   //  def $ (clazz: Class[_]): Boolean = valueIsInstanceOf(clazz)
@@ -168,5 +168,5 @@ final class NodeValue {
       case None => "[null]"
     }
   }
-  
+
 }
