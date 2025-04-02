@@ -38,7 +38,7 @@ public class FixFocus extends HOIIVUtils {
 
 		focuses.parallelStream()
 				.filter(focus -> {
-					boolean missingLocalization = focus.localization(Property.NAME) == null;
+					boolean missingLocalization = focus.localization(Property.NAME).isEmpty();
 					if (missingLocalization) {
 						LOGGER.debug("Missing localization for focus: {}", focus.id().str());
 					}
@@ -82,6 +82,7 @@ public class FixFocus extends HOIIVUtils {
 		// Set missing localizations
 		focus.setLocalization(Property.NAME, formattedName, locFile);
 		focus.setLocalization(Property.DESCRIPTION, generateDescription(), locFile);
+		
 	}
 
 	private static String extractFocusName(String focusName) {
@@ -99,6 +100,7 @@ public class FixFocus extends HOIIVUtils {
 	}
 
 	private static String generateDescription() {
-		return "Added on " + LocalDateTime.now() + " by hoi4localize.";
+		//return "Added on " + LocalDateTime.now() + " by hoi4localizer.";
+		return ""; 
 	}
 }

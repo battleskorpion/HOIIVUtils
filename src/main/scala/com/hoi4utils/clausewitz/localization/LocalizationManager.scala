@@ -55,6 +55,10 @@ object LocalizationManager {
  * It also allows reloading and saving localizations.
  */
 abstract class LocalizationManager {
+
+  // Group a base localization and its optional description together.
+  case class LocalizationGroup(base: Option[Localization], desc: Option[Localization])
+  
   /**
    * Sets the primary manager for localization management.
    *
@@ -143,7 +147,7 @@ abstract class LocalizationManager {
       case None =>
         val localization = new Localization(key, version, text, Localization.Status.NEW)
         localizations.add(localization, file)
-        None
+        Some(localization)
     }
   }
 
