@@ -2,7 +2,7 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.HOIIVUtils
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz_parser.{Comment, Node, NodeValue}
+import com.hoi4utils.clausewitz_parser.{Comment, Node}
 import org.apache.poi.ss.formula.functions.T
 
 import scala.collection.mutable.ListBuffer

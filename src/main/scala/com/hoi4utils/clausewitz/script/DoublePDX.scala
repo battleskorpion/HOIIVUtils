@@ -2,7 +2,7 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.ExpectedRange
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
+import com.hoi4utils.clausewitz_parser.{Node}
 
 import scala.annotation.targetName
 
@@ -34,7 +34,7 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
     if (this.node.nonEmpty)
       this.node.get.setValue(value)
     else
-      this.node = Some(Node(NodeValue(value)))
+      this.node = Some(Node(value))
     value
   }
 

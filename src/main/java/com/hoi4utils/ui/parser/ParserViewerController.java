@@ -9,6 +9,7 @@ import com.hoi4utils.clausewitz.map.StrategicRegion;
 import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.clausewitz.script.*;
+import com.hoi4utils.clausewitz_parser.Node;
 import com.hoi4utils.clausewitz_parser.Parser;
 import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
@@ -24,6 +25,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import lombok.val;
+import scala.Option;
+import scala.collection.mutable.ListBuffer;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
@@ -121,7 +124,8 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 						if (rootNode == null) continue;
 
 						// Identify if it’s a strategic_region, state, focus_tree, etc.
-						var firstChild = rootNode.nodeValue().list().apply(0);
+//						var firstChild = rootNode.nodeValue().list().apply(0);
+						var firstChild = rootNode.toList().apply(0); 
 						String pdxIdentifier = firstChild.name();
 
 						AbstractPDX<?> pdx = switch (pdxIdentifier) {
@@ -144,44 +148,52 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 			else {
 				parsePDXFileTextField.setText(selected.getAbsolutePath());
-				//focusTree = FocusTree$.MODULE$.get(selectedFile).getOrElse(() -> null);
+				// Create the parser from the selected file.
 				Parser pdxParser = new Parser(selected);
 				try {
-					var rootNode = pdxParser.parse();
+					Node rootNode = pdxParser.parse();
 					if (rootNode == null) {
 						JOptionPane.showMessageDialog(null, "Error: Selected focus tree not found in loaded focus trees.");
 						return;
 					}
 
-					var rootNodeValue = rootNode.nodeValue();
-					if (!rootNodeValue.isList()) {
+					// If the root node is not a parent (i.e. its raw value is not a list), set the label to "[empty]" and return.
+					if (!rootNode.isParent()) {
 						pdxIdentifierLabel.setText("[empty]");
 						return;
 					}
 
-					var childPDXNode = rootNodeValue.list().apply(0);
-					var pdxIdentifier = childPDXNode.name();
-					if (rootNodeValue.list().length() == 1) {
-						pdxIdentifierLabel.setText(pdxIdentifier);
+					// Get the child list from the root node’s raw value.
+					scala.Option<scala.collection.mutable.ListBuffer<Node>> maybeList = rootNode.$list();
+					if (maybeList.isDefined()) {
+						scala.collection.mutable.ListBuffer<Node> childList = maybeList.get();
+						Node childPDXNode = childList.apply(0); // Scala's apply(0) returns the first element.
+						String pdxIdentifier = childPDXNode.name();
+						if (childList.length() == 1) {
+							pdxIdentifierLabel.setText(pdxIdentifier);
+						} else {
+							pdxIdentifierLabel.setText(selected.getName());
+						}
+
+						AbstractPDX<?> pdx = null;
+						if (pdxIdentifier.equals("focus_tree")) {
+							pdx = new FocusTree(selected);
+						} else if (pdxIdentifier.equals("state")) {
+							pdx = new State(false, selected);
+						} else if (selected.getParent().endsWith("countries")
+								&& selected.getParentFile().getParent().endsWith("history")) {
+							pdx = new Country(selected, CountryTag$.MODULE$.get(selected.getName().substring(0, 3)));
+						} else if (pdxIdentifier.equals("resources")) {
+							pdx = new ResourcesFile(selected);
+						} else if (pdxIdentifier.equals("strategic_region")) {
+							pdx = new StrategicRegion(selected);
+						}
+
+						if (pdx == null || pdx.isUndefined()) return;
+						this.pdxScripts.add(pdx);
 					} else {
-						pdxIdentifierLabel.setText(selected.getName());
+						pdxIdentifierLabel.setText("[empty]");
 					}
-
-					AbstractPDX<?> pdx = null;
-					if (pdxIdentifier.equals("focus_tree")) {
-						pdx = new FocusTree(selected);
-					} else if (pdxIdentifier.equals("state")) {
-						pdx = new State(false, selected);
-					} else if (selected.getParent().endsWith("countries") && selected.getParentFile().getParent().endsWith("history")) {
-						pdx = new Country(selected, CountryTag$.MODULE$.get(selected.getName().substring(0, 3)));
-					} else if (pdxIdentifier.equals("resources")) {
-						pdx = new ResourcesFile(selected);
-					} else if (pdxIdentifier.equals("strategic_region")) {
-						pdx = new StrategicRegion(selected);
-					}
-
-					if (pdx == null || pdx.isUndefined()) return;
-					this.pdxScripts.add(pdx);
 
 //					// Build a TreeView out of the rootScript
 //					TreeView<PDXScript<?>> pdxTreeView = PDXTreeViewFactory.createPDXTreeView(pdx);

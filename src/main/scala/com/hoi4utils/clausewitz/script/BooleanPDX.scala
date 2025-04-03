@@ -2,7 +2,7 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.BoolType
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
+import com.hoi4utils.clausewitz_parser.{Node}
 import org.jetbrains.annotations.NotNull
 
 class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: Boolean, final private var boolType: BoolType) extends AbstractPDX[Boolean](pdxIdentifiers) {
@@ -30,7 +30,7 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
     if (this.node.nonEmpty)
       this.node.foreach(_.setValue(value))
     else
-      this.node = Some(Node(NodeValue(value)))
+      this.node = Some(Node(value))
     value
   }
 

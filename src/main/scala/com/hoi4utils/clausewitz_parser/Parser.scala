@@ -1,241 +1,200 @@
 package com.hoi4utils.clausewitz_parser
 
-import com.hoi4utils.clausewitz.HOIIVUtils
-
-import java.io.{File, IOException}
+import java.io.File
 import java.nio.file.Files
 import scala.collection.mutable.ListBuffer
 
-/*
- * Parser File new
- */
 object Parser {
   val escape_backslash_regex = "\\\\"
   val escape_quote_regex = "\\\\\""
 }
 
 class Parser {
-  final private var tokens: Tokenizer = _
+  private var tokens: Tokenizer = _
   private var _rootNode: Node = _
 
   def this(input: String) = {
     this()
-
-    /* EOF */
-    val str = input.concat(Token.EOF_INDICATOR) 
+    // Append EOF indicator so tokenizer can mark the end.
+    val str = input.concat(Token.EOF_INDICATOR)
     tokens = new Tokenizer(str)
   }
 
   def this(file: File) = {
-    this({
-      new String(Files.readAllBytes(file.toPath))
-    })
+    this(new String(Files.readAllBytes(file.toPath)))
+  }
+
+  /**
+   * Consumes and returns any tokens that are “trivia” (e.g., whitespace, comments).
+   */
+  private def consumeTrivia(): ListBuffer[Token] = {
+    val trivia = ListBuffer[Token]()
+    while (tokens.peek.exists(t => t.`type` == TokenType.whitespace || t.`type` == TokenType.comment)) {
+      trivia += tokens.next.get
+    }
+    trivia
   }
 
   @throws[ParserException]
   def parse: Node = {
-    val value = parseBlockContent(tokens)
-    if (value.isEmpty) {
-      throw new ParserException("parsed block content was empty")
-    }
-
-    /*
-     * need to reach up to eof indicator
-     * if last token is '}' this could indicate there was a
-     * missing '{' in the code
-     */
+    // Capture any leading trivia for the whole file.
+    val leading = consumeTrivia()
+    // Parse the block content that forms the root node.
+    val blockContent = parseBlockContent()
+    if (blockContent.isEmpty)
+      throw new ParserException("Parsed block content was empty")
+    // Consume any trailing trivia.
+    val trailing = consumeTrivia()
     tokens.peek match {
       case Some(token) =>
         token.`type` match {
-          case TokenType.eof => // good
-          case _ => throw new ParserException("Input not completely parsed by clausewitz-file parser \n" + "\t\tlast token: " + token.value)
+          case TokenType.eof => // OK
+          case _ => throw new ParserException("Input not completely parsed. Last token: " + token.value)
         }
-      case None => throw new ParserException("Input not completely parsed by clausewitz-file parser \n" + "\t\tlast token: null")
+      case None => throw new ParserException("Input not completely parsed. Last token: null")
     }
-    _rootNode = new Node(value)
+    // Create the root node using the parsed children (a ListBuffer[Node]) as its raw value.
+    _rootNode = new Node(
+      leadingTrivia = leading,
+      rawValue = Some(blockContent),
+      trailingTrivia = trailing
+    )
     _rootNode
   }
 
   @throws[ParserException]
-  def parseBlockContent(tokens: Tokenizer): ListBuffer[Node] = {
-    val nodes = new ListBuffer[Node]
-
+  def parseBlockContent(): ListBuffer[Node] = {
+    val nodes = ListBuffer[Node]()
     var cont = true
     while (cont) {
-      val nextToken: Token = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
-      if ((nextToken.`type` eq TokenType.eof) || nextToken.value == "}") {
-        cont = false
-      } else {
-        try {
-          for (n <- parseNode(tokens)) {
-            // check if n is a comment node
-            if (HOIIVUtils.get("parser.ignore_comments").equals("true")) {
-              if (n.nonComment) nodes.addOne(n)
-            } else {
-              nodes.addOne(n)
-            }
-          }
-        } catch {
-          case e: ParserException =>
-            throw e
-        }
+      // Consume any trivia before each node.
+      consumeTrivia()
+      tokens.peek match {
+        case Some(token) if token.`type` == TokenType.eof || token.value == "}" =>
+          cont = false
+        case _ =>
+          val node = parseNode()
+          nodes += node
       }
     }
     nodes
   }
 
   @throws[ParserException]
-  def parseNode(tokens: Tokenizer): ListBuffer[Node] = {
-    val parsedNodes = new ListBuffer[Node]
+  def parseNode(): Node = {
+    // Capture leading trivia for this node.
+    val leading = consumeTrivia()
+    val idToken = tokens.next.getOrElse(
+      throw new ParserException("Unexpected end of input while parsing node identifier")
+    )
 
-    val name = tokens.next.getOrElse(throw new ParserException("Unexpected null next token"))
-    /* skip comments (no further processing) */
-    if (name.`type` eq TokenType.comment) {
-      val node = new Node(new NodeValue(new Comment(name.value)))
-      //node.identifier = name.value
-      node.nameToken = name
-      parsedNodes += node
-      return parsedNodes
-    }
-    // System.out.println(name.value);
-    // todo case
-    if ((name.`type` ne TokenType.string) && (name.`type` ne TokenType.symbol) && (!name.isNumber))
-      throw new ParserException("Parser: incorrect token type " + name.`type` + ", token: " + name + " at index: " + name.start)
-    var nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
-    // 'if the next token is not an operator or a [special character]'
-    // '^[]': means must contain exactly *one* of the characters within the brackets
-    if ((nextToken.`type` ne TokenType.operator) || nextToken.value.matches("^[,;}]$")) {
-      /*
-      example where you would make it inside here:
-        color = { 1.0 1.0 1.0 }
-        colortwo = { 1.0 1.0 1.0 }
-      each 1.0 will be a node which makes it within here
-       */
-      while (nextToken.value.matches("^[,;]$")) {
-        tokens.next
-        nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
-      }
-      /* handle escaped characters */
-//      val nameValue = unescapeCharacters(name, name.value)
-      val parsedValue = parseThisTokenValue(name)
-
-      /* node that is only a value, such as '0.0'. this node has no identifier (no lhs) */
-      val node = new Node(parsedValue)
-      node.identifier = null
-      node.nameToken = name // todo i am lazy this should probably be null. then again everything *should* maybe be redone atp anyways 
-      node.operator = null
-      node.operatorToken = null
-      /* node.value = null; */
-      parsedNodes += node
-      return parsedNodes
+    // If the token is a comment, create a node that holds it.
+    if (idToken.`type` == TokenType.comment) {
+      return new Node(
+        leadingTrivia = leading,
+        identifierToken = Some(idToken),
+        rawValue = Some(new Comment(idToken.value)),
+        trailingTrivia = consumeTrivia()
+      )
     }
 
-    /* "= {" */
-    val operator: Token = {
-      if (nextToken.value == "{") {
-        // Create a new Token with the '=' value
-        val op = new Token("=", nextToken.start, TokenType.operator)
-        nextToken = new Token("=", op.start, TokenType.operator)
-        op
-      } else {
-        tokens.next.get
-      }
-    }
+    // Ensure the token is a valid identifier.
+    if (idToken.`type` != TokenType.string && idToken.`type` != TokenType.symbol && !idToken.isNumber)
+      throw new ParserException("Parser: incorrect token type " + idToken.`type` + " at index " + idToken.start)
 
-    var parsedValue = parseNodeValue(tokens)
-    /* Handle value attachment (e.g., when there's a nested block) */
-    if (parsedValue != null && parsedValue.value.isInstanceOf[Node]) {
-      val peekedToken = tokens.peek.get
-      if (peekedToken.value == "{") {
-        parsedValue = parseNodeValue(tokens)
-      }
-    }
-    // Skip comments before tailComma
-    var tailComma = tokens.peek.get
-    while ((tailComma.`type` eq TokenType.comment) || tailComma.value.matches("^[,;]")) {
-      /* skip comments */
-      val node = new Node(new NodeValue(new Comment(tailComma.value)))
-      parsedNodes += node
-      // proceed.
-      tokens.next
-      tailComma = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
-    }
-    // todo
-    val node = new Node(parsedValue)
-    node.identifier = name.value
-    node.nameToken = name
-    node.operator = operator.value
-    node.operatorToken = operator
-    // node.value = parsedValue;
-    // node.valueStartToken = (Token) parsedValue[1];
-    // node.valueEndToken = (Token) parsedValue[2];
-    parsedNodes += node // add the node to the list of parsed nodes
-    parsedNodes
-  }
+    // Consume any trivia after the identifier.
+    consumeTrivia()
+    val nextToken = tokens.peek.getOrElse(
+      throw new ParserException("Unexpected end of input after identifier")
+    )
+    var operatorOpt: Option[Token] = None
+    var raw: Option[String | Int | Double | Boolean | ListBuffer[Node] | Comment] = None
 
-  private def unescapeCharacters(name: Token, nameValue: String): String = {
-    if (name.`type` eq TokenType.string) nameValue
-      .substring(1, nameValue.length - 2)
-      .replaceAll(Parser.escape_quote_regex, "\"")
-      .replaceAll(Parser.escape_backslash_regex, "\\")
-    else nameValue
+    if (nextToken.`type` != TokenType.operator || nextToken.value.matches("^[,;}]$")) {
+      // No proper operator: treat this node as a value-only node.
+      raw = Some(parseThisTokenValue(idToken))
+      return new Node(
+        leadingTrivia = leading,
+        rawValue = raw,
+        trailingTrivia = consumeTrivia()
+      )
+    } else {
+      // Consume the operator token.
+      operatorOpt = Some(tokens.next.get)
+      // Consume any trivia after the operator.
+      consumeTrivia()
+      // Parse the node’s value.
+      raw = Some(parseNodeValue())
+    }
+    // Consume trailing trivia.
+    val trailing = consumeTrivia()
+    // Create and return the new node with all CST information attached.
+    new Node(
+      leadingTrivia = leading,
+      identifierToken = Some(idToken),
+      operatorToken = operatorOpt,
+      rawValue = raw,
+      trailingTrivia = trailing
+    )
   }
 
   @throws[ParserException]
-  def parseNodeValue(tokens: Tokenizer): NodeValue = {
-    val nextToken = tokens.next.getOrElse(return null)
-    // todo eeeh?
+  def parseNodeValue(): String | Int | Double | Boolean | ListBuffer[Node] | Comment = {
+    // Consume any trivia before the value.
+    consumeTrivia()
+    val nextToken = tokens.next.getOrElse(
+      throw new ParserException("Unexpected end of input while parsing node value")
+    )
     nextToken.`type` match {
       case TokenType.string =>
-        if (nextToken.length == 1) System.out.println("Parser: ?? " + nextToken.value)
-        /* substring from 1 to length() - 2: don't replace "" */
-        if (nextToken.value.length == 2) return new NodeValue(nextToken.value)
-        return new NodeValue(nextToken.value.substring(1, nextToken.length - 2).replaceAll(Parser.escape_quote_regex, "\"").replaceAll(Parser.escape_backslash_regex, "\\"))
-
-      case TokenType.`float` => return new NodeValue(nextToken.value.toDouble)
-
-      case TokenType.`int` => return new NodeValue(
-        if (nextToken.value.startsWith("0x")) Integer.parseInt(nextToken.value.substring(2), 16)
+        if (nextToken.value.length > 2)
+          nextToken.value.substring(1, nextToken.value.length - 1)
+            .replaceAll(Parser.escape_quote_regex, "\"")
+            .replaceAll(Parser.escape_backslash_regex, "\\")
+        else nextToken.value
+      case TokenType.float =>
+        nextToken.value.toDouble
+      case TokenType.int =>
+        if (nextToken.value.startsWith("0x"))
+          Integer.parseInt(nextToken.value.substring(2), 16)
         else nextToken.value.toInt
-      )
-
-      case TokenType.symbol => return new NodeValue(nextToken.value)
-
-      case TokenType.operator => if (nextToken.value == "{") {
-        val result = parseBlockContent(tokens)
-        val right = tokens.next.getOrElse(throw new ParserException("Parser expected a matching \"}\""))
-        if (!(right.value == "}")) throw new ParserException("Parser expected a matching \"}\"")
-        return new NodeValue(result)
-      }
-
-      case _ => throw new ParserException("Unexpected value: " + nextToken.`type`)
+      case TokenType.symbol =>
+        nextToken.value
+      case TokenType.operator if nextToken.value == "{" =>
+        // If the operator indicates a block, parse the block content.
+        val children = parseBlockContent()
+        val closing = tokens.next.getOrElse(
+          throw new ParserException("Expected closing '}'")
+        )
+        if (closing.value != "}")
+          throw new ParserException("Expected closing '}', got " + closing.value)
+        children
+      case _ =>
+        throw new ParserException("Unexpected token type in node value: " + nextToken.`type`)
     }
-    throw new ParserException("Parser expected a string, number, symbol, or {")
   }
 
   @throws[ParserException]
-  def parseThisTokenValue(token: Token): NodeValue = {
-    // todo eeeh?
+  def parseThisTokenValue(token: Token): String | Int | Double | Boolean | ListBuffer[Node] | Comment = {
     token.`type` match {
       case TokenType.string =>
-        if (token.length == 1) System.out.println("Parser: ?? " + token.value)
-        /* substring from 1 to length() - 2: don't replace "" */
-        if (token.value.length == 2) return new NodeValue(token.value)
-        return new NodeValue(token.value.substring(1, token.length - 2).replaceAll(Parser.escape_quote_regex, "\"").replaceAll(Parser.escape_backslash_regex, "\\"))
-      
-      case TokenType.`float` => return new NodeValue(token.value.toDouble)
-      
-      case TokenType.`int` => return new NodeValue(
-        if (token.value.startsWith("0x")) Integer.parseInt(token.value.substring(2), 16)
+        if (token.value.length > 2)
+          token.value.substring(1, token.value.length - 1)
+            .replaceAll(Parser.escape_quote_regex, "\"")
+            .replaceAll(Parser.escape_backslash_regex, "\\")
+        else token.value
+      case TokenType.float =>
+        token.value.toDouble
+      case TokenType.int =>
+        if (token.value.startsWith("0x"))
+          Integer.parseInt(token.value.substring(2), 16)
         else token.value.toInt
-      )
-      
-      case TokenType.symbol => return new NodeValue(token.value)
-      
-      case _ => throw new ParserException("Unexpected value: " + token.`type`)
+      case TokenType.symbol =>
+        token.value
+      case _ =>
+        throw new ParserException("Unexpected token type: " + token.`type`)
     }
-    throw new ParserException("Parser expected a string, number, or symbol")
   }
 
-  def rootNode: Node = this._rootNode
+  def rootNode: Node = _rootNode
 }

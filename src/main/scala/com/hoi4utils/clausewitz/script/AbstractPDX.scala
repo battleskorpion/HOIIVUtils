@@ -2,7 +2,7 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.HOIIVUtils
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz_parser.{Node, NodeValue, Parser, ParserException}
+import com.hoi4utils.clausewitz_parser.{Node, Parser, ParserException}
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.jetbrains.annotations.{NotNull, Nullable}

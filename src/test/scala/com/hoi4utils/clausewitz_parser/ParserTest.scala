@@ -92,7 +92,7 @@ class ParserTest extends AnyFunSuiteLike {
   test("Ints should be read as ints and not as type double") {
     withParsedFile ({ node => 
         val capital = node.find("capital").getOrElse(fail("focus not found"))
-        assert(capital.nodeValue.isInt)
+        assert(capital.isInt)
     }, new File(testPath + "SMD_Maryland.txt"))
   }
 
