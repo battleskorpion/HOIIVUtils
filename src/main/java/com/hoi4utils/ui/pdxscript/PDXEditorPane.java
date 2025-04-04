@@ -140,7 +140,7 @@ public class PDXEditorPane extends AnchorPane {
                     : visualizeMultiReferencePDX(pdx);
             case MultiPDX<?> pdx -> (pdx.isUndefined() && !allowNull)
                     ? null
-                    : visualizeMultiPDX(pdx, allowNull);
+                    : visualizeMultiPDX(pdx, allowNull);    // ignore error idk/idc rn it works 
             case CollectionPDX<?> pdx -> (pdx.isUndefined() && !allowNull)
                     ? null
                     : visualizeCollectionPDX(pdx, allowNull);
@@ -158,18 +158,11 @@ public class PDXEditorPane extends AnchorPane {
         else return null;
     }
 
-    private Node createEditorNullPDXNode(PDXScript<?> property, boolean withLabel) {
+    private Node createEditorNullPDXNode(PDXScript<?> property) {
         HBox editorNullPropertyHBox = new HBox();
         editorNullPropertyHBox.setSpacing(10);
         editorNullPropertyHBox.setPadding(new Insets(6, 6, 6, 20)); // Indent the null properties
         Label label = null;
-        if (withLabel) {
-            label = new Label(property.pdxIdentifier() + " =");
-            label.setFont(Font.font("Monospaced"));
-            label.setMinWidth(10);
-            label.setPrefHeight(25);
-            label.setStyle("-fx-text-fill: grey;");
-        }
         var allowNull = true;
 
         Node editorNode = switch (property) {
@@ -205,7 +198,7 @@ public class PDXEditorPane extends AnchorPane {
         };
 
         if (editorNode != null) {
-            if (withLabel) editorNullPropertyHBox.getChildren().add(label);
+            editorNullPropertyHBox.getChildren().add(label);
             editorNullPropertyHBox.getChildren().add(editorNode);
             return editorNullPropertyHBox;
         }
@@ -441,7 +434,7 @@ public class PDXEditorPane extends AnchorPane {
 //            label.setPrefHeight(25);
 //            label.setStyle("-fx-text-fill: grey;");
 
-            Node editorPDXNode = createEditorNullPDXNode(property, true);
+            Node editorPDXNode = createEditorNullPDXNode(property);
             if (editorPDXNode != null) {
 //                hbox.getChildren().addAll(label, editorPDXNode);
                 rootVBox.getChildren().add(rootVBox.getChildren().size() - 1, editorPDXNode); // Add before the add button
