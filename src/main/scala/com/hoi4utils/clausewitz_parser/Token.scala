@@ -10,9 +10,7 @@ object Token {
     TokenType.whitespace -> "\\s+".r,         // <-- NEW
     
     TokenType.comment -> "#.*".r, // Nullifies Comments  // prev: "#.*(?:[\r\n]|$)"
-
-    TokenType.symbol -> "(?:\\d+\\.)?[a-zA-Z_@\\[\\]][\\w:.@\\[\\]\\-?^/\\u00A0-\\u024F]*".r, // Symbol
-
+    
     TokenType.operator -> "[={}<>;,]|>=|<=|!=".r,         // Seperates Operators
 
     TokenType.string -> "\"(\\\\.|[^\"])*\"".r,           // Seperates Double Quotes
@@ -22,6 +20,8 @@ object Token {
     TokenType.float -> "-?\\d*\\.\\d+".r,
 
     TokenType.int -> "-?(?:\\d+|0x[0-9a-fA-F]+)".r,
+
+    TokenType.symbol -> "[A-Za-z0-9_:\\.@\\[\\]\\-?^/\\u00A0-\\u024F]+".r, // Symbol
 
     TokenType.eof -> "\\$".r
   )

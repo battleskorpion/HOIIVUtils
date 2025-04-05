@@ -47,17 +47,21 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
         usingIdentifier(expression)
 
         for (child <- list) {
-          try add(child)
-          catch {
-            case e: NodeValueTypeException =>
-              throw new RuntimeException(e)
+          try {
+            add(child)
+          } catch {
+            case e: UnexpectedIdentifierException =>
+              System.err.println("Error loading child node: " + e.getMessage + "\n\t" + child)
           }
         }
       case _ =>
-        try add(expression)
-        catch {
+        try {
+          add(expression)
+        } catch {
           case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-            throw new RuntimeException(e)
+            println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+            // Preserve the node so it isn’t lost.
+            node = Some(expression)
         }
     }
   }
@@ -99,8 +103,16 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
         childScript.loadPDX(expression)
         pdxList.addOne(childScript)
         referenceNames.addOne(str)
-      case _ =>
-        LOGGER.warn(s"Expected string value for pdx reference identifier, got ${expression.$}")
+      case other =>
+        LOGGER.warn(s"Expected string value for pdx reference identifier, got ${other}. Preserving node using its string representation.")
+        // Preserve the problematic node as a string.
+        val preservedValue = other.toString
+        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
+        val childScript = simpleSupplier.get.apply()
+        childScript.loadPDX(new Node(preservedValue))
+        pdxList.addOne(childScript)
+        referenceNames.addOne(preservedValue)
+        // Then throw the exception so that callers are aware of the issue.
         throw new NodeValueTypeException(expression, "string", this.getClass)
     }
   }

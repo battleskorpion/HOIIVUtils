@@ -36,6 +36,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   final val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
   final val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
   //var ddsImage: Image = _
+  final val ai_will_do = new AIWillDoPDX
   /* completion reward */
   final val completionReward: CompletionReward = new CompletionReward()
 
@@ -49,7 +50,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
    */
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
     ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost,
-      availableIfCapitulated, cancelIfInvalid, continueIfInvalid, completionReward)
+      availableIfCapitulated, cancelIfInvalid, continueIfInvalid, ai_will_do, completionReward)
   }
 
   def absoluteX: Int = absolutePosition.x
@@ -372,6 +373,28 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     }
 
     override def getPDXTypeName: String = "Completion Reward"
+  }
+
+  class AIWillDoPDX extends StructuredPDX("ai_will_do") {
+    final val base = new DoublePDX("base")
+    final val factor = new DoublePDX("factor")
+    final val add = new DoublePDX("add")
+    final val modifier = new MultiPDX[AIWillDoModifierPDX](None, Some(() => new AIWillDoModifierPDX), "modifier")
+
+    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add, modifier)
+
+    override def getPDXTypeName: String = "AI Willingness"
+
+    class AIWillDoModifierPDX extends StructuredPDX("modifier") {
+      final val base = new DoublePDX("base")
+      final val factor = new DoublePDX("factor")
+      final val add = new DoublePDX("add")
+      // todo trigger block
+
+      override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add)
+
+      override def getPDXTypeName: String = "Modifier"
+    }
   }
 
 }

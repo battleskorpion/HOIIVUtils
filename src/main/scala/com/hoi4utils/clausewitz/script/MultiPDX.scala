@@ -32,10 +32,13 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    */
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
-    try add(expression)
-    catch {
+    try {
+      add(expression)
+    } catch {
       case e: NodeValueTypeException =>
-        throw new RuntimeException(e)
+        println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+        // For MultiPDX, preserve the node by storing the raw expression.
+        node = Some(expression)
     }
   }
 

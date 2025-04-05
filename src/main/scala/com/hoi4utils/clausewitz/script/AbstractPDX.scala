@@ -93,12 +93,16 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
       System.out.println("Error loading PDX script: " + expression)
       return
     }
-    try set(expression)
-    catch {
+    try {
+      set(expression)
+    } catch {
       case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        System.out.println("Error loading PDX script:" + e.getMessage + "\n\t" + expression)
+        System.out.println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+        // Preserve the original node so that its content isn’t lost.
+        node = Some(expression)
     }
   }
+
 
   def loadPDX(expressions: Iterable[Node]): Unit = {
     Option(expressions).foreach { exprs =>
