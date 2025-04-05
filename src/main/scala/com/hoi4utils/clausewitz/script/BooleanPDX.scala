@@ -22,6 +22,10 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
 //        val v = this.node.$.asInstanceOf[String]
 //        if (boolType.maches(v)) obj = boolType.parse(v)
 //        else throw new NodeValueTypeException(expression, "String parsable as Bool matching enum + " + boolType.toString)
+      case _: String => 
+        val v = this.node.get.$.asInstanceOf[String]
+        if (boolType.matches(v)) set(boolType.parse(v))
+        else throw new NodeValueTypeException(expression, "String parsable as Bool matching enum + " + boolType.toString, this.getClass)
       case _ => throw new NodeValueTypeException(expression, "Boolean or String", this.getClass)
     }
   }
