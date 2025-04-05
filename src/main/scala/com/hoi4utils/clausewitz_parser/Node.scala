@@ -1,6 +1,7 @@
 package com.hoi4utils.clausewitz_parser
 
 import com.hoi4utils.clausewitz.BoolType
+import dotty.tools.sjs.ir.Trees.JSUnaryOp.!
 
 import scala.collection.mutable.ListBuffer
 
@@ -111,17 +112,19 @@ class Node(
           }
           for (child <- children) {
             // Recursively call toScript on each child with increased indent
-            sb.append(child.toScript(childIndent))
+            var childToScript = child.toScript(childIndent)
+            if (!childToScript.contains("\n")) childToScript = childToScript + "\n"
+            sb.append(childToScript)
             // Ensure each child ends with a newline
             //if (!child.toScript(childIndent).endsWith("\n")) sb.append("\n")
           }
-          if (sb.nonEmpty) sb.deleteCharAt(sb.length - 1)
+          //if (sb.nonEmpty) sb.deleteCharAt(sb.length - 1)
           if (identifier.nonEmpty) {
             // Remove all trailing whitespace from the StringBuilder
             while (sb.nonEmpty && sb.charAt(sb.length - 1).isWhitespace) {
               sb.deleteCharAt(sb.length - 1)
             }
-            sb.append(indent).append("}").append('\n')
+            sb.append('\n').append(indent).append("}")
           }
           else sb.append('\n')
         }
