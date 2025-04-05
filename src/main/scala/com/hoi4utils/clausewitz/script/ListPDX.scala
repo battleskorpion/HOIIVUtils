@@ -59,7 +59,6 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   protected def add(expression: Node): Unit = {
-    val value = expression.$
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     expression.$ match {
@@ -77,10 +76,12 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     }
   }
 
+  /**
+   * Removes elements matching the predicate.
+   * Also removes the corresponding node(s) from the underlying Node.
+   */
   def removeIf(p: T => Boolean): ListBuffer[T] = {
-    for (
-      i <- pdxList.indices
-    ) {
+    for (i <- pdxList.indices.reverse) {
       if (p(pdxList(i))) {
         pdxList.remove(i)
         node match {
@@ -89,7 +90,6 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
         }
       }
     }
-
     pdxList
   }
   
@@ -98,9 +98,11 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
   }
 
   def clear(): Unit = {
-    if (node.nonEmpty) {
-      node.get.$ match {
-        case l: ListBuffer[T] => l.clear()
+    pdxList.clear()
+    node.foreach { n =>
+      n.$ match {
+        case l: ListBuffer[?] => l.clear()
+        case _ => // do nothing
       }
     }
   }
@@ -149,6 +151,20 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     pdxList.headOption match {
       case Some(pdx) => ev(pdx).getOrElse(default)
       case None => default
+    }
+  }
+
+  /**
+   * Rebuilds the underlying Node tree from the current list of child PDXScript nodes.
+   */
+  override def updateNodeTree(): Unit = {
+    pdxList.foreach(_.updateNodeTree())
+    val childNodes: ListBuffer[Node] = pdxList.flatMap(_.getNode)
+    node match {
+      case Some(n) => n.setValue(childNodes)
+      case None => 
+        if (pdxList.nonEmpty) node = Some(new Node(childNodes))
+        else node = None
     }
   }
 

@@ -128,6 +128,21 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
       case _ => scripts
     }
   }
+
+  /**
+   * Rebuilds the underlying Node tree on demand by gathering the child nodes from childScripts.
+   * This ensures that any changes in the child PDXScript objects are reflected in the output.
+   */
+  override def updateNodeTree(): Unit = {
+    childScripts.foreach(_.updateNodeTree())
+    val childNodes: ListBuffer[Node] = childScripts.flatMap(_.getNode).to(ListBuffer)
+    node match {
+      case Some(n) =>
+        n.setValue(childNodes)
+      case None =>
+        node = Some(new Node(pdxIdentifier, "=", childNodes))
+    }
+  }
   
 //  override def toScript: String = {
 //    if (node.isEmpty || node.get.isEmpty) return null

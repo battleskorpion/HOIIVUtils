@@ -238,11 +238,6 @@ public class PDXEditorPane extends AnchorPane {
             Button addPDXButton = new Button("Add " + pdx.getPDXTypeName());
             addPDXButton.setPrefWidth(200);
             addPDXButton.setOnAction(event -> {
-//                var newPDX = pdx.applySomeSupplier();
-//                var newPDXNode = createEditorPDXNode((PDXScript<?>) newPDX, allowNull, false);
-//                if (newPDXNode != null) {
-//                    subVBox.getChildren().add(subVBox.getChildren().size() - 1, newPDXNode); // Add before the add button
-//                }
                 pdx.addNewPDX();
                 this.reloadEditor();
             });

@@ -21,8 +21,6 @@ import scala.language.implicitConversions
 class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String])
   extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
 
-  val nodeRefs = new ListBuffer[Node]
-
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
   
   def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T], pdxIdentifiers: String*) = {
@@ -65,7 +63,6 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   @throws[NodeValueTypeException]
   protected def add(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.$
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     expression.$ match {
@@ -75,28 +72,24 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
         pdxList.addOne(childScript)
       case _ =>
         // todo idk
-        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "list", this.getClass)
+        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "not a list", this.getClass)
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(expression)
         pdxList.addOne(childScript)
     }
-    nodeRefs += expression
   }
 
   def removeIf(p: T => Boolean): ListBuffer[T] = {
-    for (
-      i <- pdxList.indices
-    ) {
+    for (i <- pdxList.indices.reverse) {
       if (p(pdxList(i))) {
         pdxList(i).getNode match {
           case Some(node) => node.clear()
-          case _ =>
+          case _          => // do nothing
         }
         pdxList(i).clearNode()
         pdxList.remove(i)
       }
     }
-
     pdxList
   }
 
@@ -131,13 +124,15 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    * @note Java was *struggling* with 'this.type' return type. Use '-=' otherwise.
    * @return
    */
-  def remove(pdxScript: T): Unit = this -= pdxScript
+  def remove(pdxScript: T): Unit = {
+    this -= pdxScript
+  }
 
   def clear(): Unit = {
-    if (node.nonEmpty) {
-      node.get.$ match {
+    node.foreach { n =>
+      n.$ match {
         case l: ListBuffer[T] => l.clear()
-        case _ => 
+        case _                => // do nothing
       }
     }
     pdxList.clear()
@@ -147,39 +142,16 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def iterator: Iterator[T] = pdxList.iterator
 
-  //  override def forEach(action: Consumer[? >: T]): Unit = {
-  //    get().foreach(action)
-  //  }
   override def foreach[U](f: T => U): Unit = pdxList.foreach(f)
-
-//  override def spliterator: Spliterator[T] = get().spliterator
-
-//  override def size: Int = get().getOrElse(ListBuffer.empty).size
 
   override def length: Int = pdxList.length
 
   override def apply(idx: Int): T = pdxList(idx)
 
-  override def isUndefined: Boolean = {
-    pdxList.forall(_.isUndefined) || pdxList.isEmpty
-  }
-
-  override def toScript: String = {
-    if (node.isEmpty || node.get.isEmpty) return null
-
-    val sb = new StringBuilder()
-    sb.append(node.get.name)
-    sb.append(" = {\n")
-    for (pdx <- pdxList) {
-      sb.append('\t')
-      sb.append(pdx.toScript)
-    }
-    sb.toString
-  }
+  override def isUndefined: Boolean = pdxList.forall(_.isUndefined) || pdxList.isEmpty
 
   // todo no. in general multi. would be more than one node.
   override def set(obj: ListBuffer[T]): ListBuffer[T] = {
-    //
     obj
   }
 
@@ -214,6 +186,20 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def clearNode(): Unit = {
     pdxList.foreach(_.clearNode())
+  }
+
+  /**
+   * Rebuilds the underlying Node tree for MultiPDX from the current collection of child nodes.
+   */
+  override def updateNodeTree(): Unit = {
+    pdxList.foreach(_.updateNodeTree())
+    val childNodes: ListBuffer[Node] = pdxList.flatMap(_.getNode)
+    node match {
+      case Some(n) => n.setValue(childNodes)
+      case None => 
+        if (childNodes.nonEmpty) node = Some(new Node(childNodes))
+        else node = None
+    }
   }
 
 }

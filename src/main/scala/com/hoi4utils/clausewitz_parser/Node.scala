@@ -49,7 +49,7 @@ class Node(
       val sb = new StringBuilder
       sb.append("{")
       for (i <- list.indices) {
-        sb.append(list(i).toScript)
+        sb.append(list(i).toScriptSimple)
         if (i < list.size - 1) sb.append(" ")
       }
       sb.append("}")
@@ -73,36 +73,80 @@ class Node(
    * - the node’s value (or nested children, if a block)
    * - trailing trivia
    */
-  def toCSTString: String = {
+  def toScript(indent: String = ""): String = {
     val sb = new StringBuilder
-    // Append leading trivia.
-    for (t <- leadingTrivia) sb.append(t.value)
-    // Append identifier token if present.
-    identifierToken.foreach(t => sb.append(t.value))
-    // Append operator token (preceded by a space) if present.
-    operatorToken.foreach(t => sb.append(" ").append(t.value))
-    // Append the node’s value.
+
+    // Append all leading trivia on its own line(s) (preserving comments/whitespace)
+    for (t <- leadingTrivia) {
+      // replace all whitespace
+      sb.append(indent).append(t.value.replaceAll("\\t+", ""))
+    }
+
+    // Append the identifier and operator (if any)
+    identifier.foreach { id =>
+      sb.append(indent).append(id)
+      operator.foreach(op => sb.append(" ").append(op))
+      sb.append(" ") // separate identifier/operator from the value
+    }
+
+    /* value */
     rawValue match {
       case Some(children: ListBuffer[Node]) =>
-        sb.append(" {")
-        for (child <- children) {
-          sb.append(child.toCSTString)
+        if (children.forall(_.identifier.isEmpty) &&
+          children.forall(_.operator.isEmpty) &&
+          children.forall(n => n.rawValue.exists {
+            case _: Int | _: Double => true
+            case _ => false
+          })) {
+          sb.append("{ ")
+          sb.append(children.map(_.asString).mkString(" "))
+          sb.append(" }").append('\n')
+        } else {
+          // For a block of child nodes, open a brace and newline
+          if (identifier.nonEmpty) sb.append("{\n")
+          // Increase indent for children
+          val childIndent = {
+            if (identifier.nonEmpty) indent + "\t"
+            else indent
+          }
+          for (child <- children) {
+            // Recursively call toScript on each child with increased indent
+            sb.append(child.toScript(childIndent))
+            // Ensure each child ends with a newline
+            //if (!child.toScript(childIndent).endsWith("\n")) sb.append("\n")
+          }
+          if (sb.nonEmpty) sb.deleteCharAt(sb.length - 1)
+          if (identifier.nonEmpty) {
+            // Remove all trailing whitespace from the StringBuilder
+            while (sb.nonEmpty && sb.charAt(sb.length - 1).isWhitespace) {
+              sb.deleteCharAt(sb.length - 1)
+            }
+            sb.append(indent).append("}").append('\n')
+          }
+          else sb.append('\n')
         }
-        sb.append("}")
       case Some(v) =>
-        sb.append(" ").append(v.toString)
+        // For a literal value, simply append its string form
+        sb.append(v.toString)
       case None =>
+        if (identifier.nonEmpty && operator.nonEmpty)
+          sb.append("[null]").append('\n')
     }
-    // Append trailing trivia.
-    for (t <- trailingTrivia) sb.append(t.value)
+
+    // Append trailing trivia (e.g. comments that came after the node)
+    for (t <- trailingTrivia) {
+      sb.append(t.value.replaceAll("\\t+", ""))
+    }
     sb.toString()
   }
+
+  def toScript: String = toScript("")
 
   /**
    * Generates a canonical “pretty print” version.
    * This method produces a normalized output rather than preserving every original space.
    */
-  def toScript: String = {
+  def toScriptSimple: String = {
     val sb = new StringBuilder
     if (identifier.nonEmpty) sb.append(identifier.get).append(" ")
     if (operator.nonEmpty)   sb.append(operator.get).append(" ")
@@ -120,9 +164,9 @@ class Node(
           sb.append(children.map(_.asString).mkString(" "))
           sb.append(" }").append('\n')
         } else {
-          sb.append("{\n\t")
+          if (identifier.nonEmpty) sb.append("{\n\t")
           for (child <- children) {
-            var sScript = child.toScript
+            var sScript = child.toScriptSimple
             if (sScript != null && sScript.nonEmpty) {
               // Add an extra tab to subsequent lines.
               sScript = sScript.replace("\n", "\n\t")
@@ -130,7 +174,7 @@ class Node(
             }
           }
           if (sb.nonEmpty) sb.deleteCharAt(sb.length - 1)
-          sb.append("}").append('\n')
+          if (identifier.nonEmpty) sb.append("}").append('\n')
         }
       case Some(v) =>
         sb.append(asString).append('\n')
@@ -139,6 +183,15 @@ class Node(
           sb.append(identifier.get).append(" ").append(operator.get).append(" [null]").append('\n')
     }
     sb.toString()
+  }
+
+  override def toString: String = {
+//    val sb = new StringBuilder
+//    if (identifier.nonEmpty) sb.append(identifier.get).append(" ")
+//    if (operator.nonEmpty)   sb.append(operator.get).append(" ")
+//    sb.append(asString)
+//    sb.toString()
+    asString
   }
 
   // Helper methods to find child nodes (assuming NodeIterable provides find and findCaseInsensitive).

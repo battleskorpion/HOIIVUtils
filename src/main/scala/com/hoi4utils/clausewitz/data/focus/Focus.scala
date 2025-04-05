@@ -251,9 +251,9 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     }
   }
 
-  def mutuallyExclusiveList: List[Focus] = mutuallyExclusive.flatten().toList
-  
-  def prerequisiteList: List[Focus] = prerequisites.flatten().toList
+  def mutuallyExclusiveList: List[Focus] =   mutuallyExclusive.flatMap(_.references()).toList
+
+  def prerequisiteList: List[Focus] = prerequisites.flatMap(_.references()).toList
   
   def prerequisiteSets: List[PrerequisiteSet] = prerequisites.toList
 
@@ -389,9 +389,9 @@ object Focus {
 
   def focusesWithPrerequisites(focuses: Iterable[Focus]): List[(Focus, List[Focus])] = {
     focuses.filter(_.hasPrerequisites).map { f =>
-      (f, f.prerequisiteSets.flatten)
+      (f, f.prerequisiteSets.flatMap(_.references()))
     }.toList
   }
 
-//  def schema = new PDXSchema()
+  //  def schema = new PDXSchema()
 }

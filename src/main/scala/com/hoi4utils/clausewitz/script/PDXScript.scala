@@ -97,6 +97,8 @@ trait PDXScript[V] {
     
   def loadOrElse(exp: Node, value: V): Unit
 
+  def updateNodeTree(): Unit
+  
   def toScript: String
 
   /**

@@ -102,7 +102,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
     }
   }
 
-  test("") {
+  test("StringPDX test") {
     withValidFocusTrees { focusTree =>
       assert(focusTree.focuses
         .flatMap(_.pdxProperties)
@@ -114,6 +114,14 @@ class PDXScriptTests extends AnyFunSuiteLike {
       )
     }
   }
+
+//  test("ReferencePDX test") {
+//    withValidFocusTrees { focusTree =>
+//      assert(focusTree.country.isDefined, s"Country is not defined: ${focusTree.country}, focus tree: ${focusTree}")
+//      assert(focusTree.country.value.nonEmpty)
+//      assert(focusTree.country.referenceName.nonEmpty)
+//    }
+//  }
 
   test("Strategic region has findable between") {
     withValidStratRegions { stratRegion =>
