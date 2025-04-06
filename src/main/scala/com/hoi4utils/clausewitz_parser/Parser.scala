@@ -149,9 +149,15 @@ class Parser {
     nextToken.`type` match {
       case TokenType.string =>
         if (nextToken.value.length > 2)
-          nextToken.value.substring(1, nextToken.value.length - 1)
-            .replaceAll(Parser.escape_quote_regex, "\"")
-            .replaceAll(Parser.escape_backslash_regex, "\\")
+          try {
+            nextToken.value.substring(1, nextToken.value.length - 1)
+              .replaceAll(Parser.escape_quote_regex, "\"")
+              .replaceAll(Parser.escape_backslash_regex, java.util.regex.Matcher.quoteReplacement("\\"))
+          } catch {
+            case _: IllegalArgumentException =>
+              println("Illegal argument exception while parsing string: " + nextToken.value)
+              nextToken.value
+          }
         else nextToken.value
       case TokenType.float =>
         nextToken.value.toDouble

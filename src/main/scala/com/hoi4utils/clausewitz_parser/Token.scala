@@ -1,12 +1,16 @@
 package com.hoi4utils.clausewitz_parser
 
 import com.hoi4utils.clausewitz_parser.TokenType.TokenType
+
+import scala.collection.mutable
+import scala.collection.mutable.LinkedHashMap
 import scala.util.matching.Regex
 
 object Token {
   val EOF_INDICATOR = "$"
 
-  val tokenRegex: Map[TokenType, Regex] = Map(
+  // im being lazy and need ordered
+  val tokenRegex: mutable.LinkedHashMap[TokenType, Regex] = mutable.LinkedHashMap(
     TokenType.whitespace -> "\\s+".r,         // <-- NEW
     
     TokenType.comment -> "#.*".r, // Nullifies Comments  // prev: "#.*(?:[\r\n]|$)"
