@@ -115,6 +115,12 @@ class PDXScriptTests extends AnyFunSuiteLike {
     }
   }
 
+  test("ReferencePDX test") {
+    withValidFocusTrees { focusTree =>
+
+    }
+  }
+
 //  test("ReferencePDX test") {
 //    withValidFocusTrees { focusTree =>
 //      assert(focusTree.country.isDefined, s"Country is not defined: ${focusTree.country}, focus tree: ${focusTree}")

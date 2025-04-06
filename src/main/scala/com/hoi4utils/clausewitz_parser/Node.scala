@@ -349,4 +349,11 @@ class Node (
     case _: String => true
     case _         => false
   }
+  
+  def valueEquals(value: String | Int | Double | Boolean | ListBuffer[Node]): Boolean = {
+    rawValue match {
+      case Some(v) => v == value
+      case None     => false
+    }
+  }
 }

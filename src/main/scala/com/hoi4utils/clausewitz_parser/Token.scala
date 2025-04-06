@@ -57,7 +57,7 @@ class Token {
   private def determineTokenType(value: String): TokenType = {
     for ((key, regex) <- Token.tokenRegex) {
       key match {
-        case TokenType.int =>
+        case TokenType.int | TokenType.float =>
           // For int tokens, ensure the entire value is matched
           regex.findFirstMatchIn(value) match {
             case Some(m) if m.start == 0 && m.end == value.length => return key

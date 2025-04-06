@@ -72,10 +72,14 @@ object FocusTree {
    */
   def add(focusTree: FocusTree): Iterable[FocusTree] = {
     focusTrees += focusTree
+    focusTree.focusFile match {
+      case Some(file) => focusTreeFileMap.put(file, focusTree)
+      case None =>
+    }
     focusTrees
   }
 
-  def listFocusTrees: Iterable[FocusTree] = focusTreeFileMap.values
+  def listFocusTrees: Iterable[FocusTree] = focusTrees
 
   /**
    * Returns focus tree corresponding to the tag, if it exists
@@ -89,7 +93,7 @@ object FocusTree {
       //if (tree.country.equals(tag)) return tree
       val countryTag = tree.countryTag
       countryTag match {
-        case Some(t) => if (t.tag.equals(tag)) return tree
+        case Some(t) => if (tag.equals(t.tag)) return tree
         case None => 
       }
     }
