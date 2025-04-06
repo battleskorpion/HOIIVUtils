@@ -90,30 +90,40 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     if (expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty)) {
-      System.out.println("Error loading PDX script: " + expression)
+      LOGGER.error("Error loading PDX script: " + expression)
       return
     }
     try {
       set(expression)
     } catch {
       case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        System.out.println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+        LOGGER.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
         // Preserve the original node so that its content isn’t lost.
         node = Some(expression)
     }
   }
 
-
   def loadPDX(expressions: Iterable[Node]): Unit = {
-    Option(expressions).foreach { exprs =>
-      exprs.find(isValidIdentifier) match {
-        case Some(expression) =>
-          try loadPDX(expression)
-          catch {
-            case e: UnexpectedIdentifierException =>
-              throw new RuntimeException(e)
-          }
-        case None => setNull()
+//    Option(expressions).foreach { exprs =>
+//      exprs.find(isValidIdentifier) match {
+//        case Some(expression) =>
+//          try loadPDX(expression)
+//          catch {
+//            case e: UnexpectedIdentifierException =>
+//              throw new RuntimeException(e)
+//          }
+//        case None => setNull()
+//      }
+//    }
+    expressions.foreach { expression =>
+      if (isValidIdentifier(expression)) {
+        try loadPDX(expression)
+        catch {
+          case e: UnexpectedIdentifierException =>
+            LOGGER.error(e.getMessage)
+        }
+      } else {
+        setNull()
       }
     }
   }

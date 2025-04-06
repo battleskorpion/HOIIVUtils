@@ -6,7 +6,7 @@ import dotty.tools.sjs.ir.Trees.JSUnaryOp.!
 import scala.collection.mutable.ListBuffer
 
 // Consolidated Node class (no NodeValue) using rawValue directly.
-class Node(
+class Node (
             // Tokens that occurred before the “core” of this node.
             var leadingTrivia: ListBuffer[Token] = ListBuffer(),
             // The main identifier token (if any)

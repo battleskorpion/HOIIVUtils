@@ -36,7 +36,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
       add(expression)
     } catch {
       case e: NodeValueTypeException =>
-        println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+        LOGGER.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
         // For MultiPDX, preserve the node by storing the raw expression.
         node = Some(expression)
     }
@@ -48,7 +48,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
         try loadPDX(expression)
         catch {
           case e: UnexpectedIdentifierException =>
-            System.err.println(e.getMessage)
+            LOGGER.error(e.getMessage)
           //throw new RuntimeException(e);
         }
       })
