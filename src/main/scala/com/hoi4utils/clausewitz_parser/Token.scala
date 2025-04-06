@@ -13,8 +13,6 @@ object Token {
     
     TokenType.operator -> "[={}<>;,]|>=|<=|!=".r,         // Seperates Operators
 
-    TokenType.string -> "\"(\\\\.|[^\"])*\"".r,           // Seperates Double Quotes
-
     //TokenType.number -> Regex("-?\\d*\\.\\d+|-?\\d+|0x\\d+"),  // Seperates Numbers
 
     TokenType.float -> "-?\\d*\\.\\d+".r,
@@ -22,6 +20,8 @@ object Token {
     TokenType.int -> "-?(?:\\d+|0x[0-9a-fA-F]+)".r,
 
     TokenType.symbol -> "[A-Za-z0-9_:\\.@\\[\\]\\-?^/\\u00A0-\\u024F]+".r, // Symbol
+
+    TokenType.string -> "\"(\\\\.|[^\"])*\"".r,           // Seperates Double Quotes
 
     TokenType.eof -> "\\$".r
   )

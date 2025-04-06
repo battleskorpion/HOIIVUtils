@@ -20,13 +20,14 @@ import scala.collection.mutable.ListBuffer
  * @tparam T the PDXScript type of the reference PDXScript objects
  */
 class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: () => Iterable[T],
-                                             protected var idExtractor: T => Option[String], pdxIdentifiers: List[String])
+                                             protected var idExtractor: T => Option[String], pdxIdentifiers: List[String],
+                                             referencePDXIdentifiers: List[String])
   extends MultiPDX[ReferencePDX[T]](Some(() => new ReferencePDX(referenceCollectionSupplier, idExtractor, pdxIdentifiers)), None, pdxIdentifiers) {
 
   final protected val referenceNames = new ListBuffer[String]
 
   def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => Option[String], pdxIdentifiers: String, referenceIdentifier: String) = {
-    this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers))
+    this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers), List(referenceIdentifier))
   }
 
   /**
@@ -96,6 +97,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   override protected def add(expression: Node): Unit = {
+    checkReferenceIdentifier(expression)
     expression.$ match {
       case str: String =>
         if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
@@ -296,6 +298,11 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
       referenceNames.update(index, newName)
       resolveReferences()
     }
+  }
+
+  private def checkReferenceIdentifier(exp: Node): Unit = {
+    if (!referencePDXIdentifiers.contains(exp.name))
+      throw new UnexpectedIdentifierException(exp)
   }
 
   /**
