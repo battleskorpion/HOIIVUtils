@@ -56,13 +56,15 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
           System.out.println("Error loading PDX script: " + expression)
       }
     }
-    try {
-      set(expression)
-    } catch {
-      case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        System.out.println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
-        // Preserve the original node in StructuredPDX as well.
-        node = Some(expression)
+    else {
+      try {
+        set(expression)
+      } catch {
+        case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
+          System.out.println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+          // Preserve the original node in StructuredPDX as well.
+          node = Some(expression)
+      }
     }
   }
 
