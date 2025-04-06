@@ -96,4 +96,64 @@ class ParserTest extends AnyFunSuiteLike {
     }, new File(testPath + "SMD_Maryland.txt"))
   }
 
+  test("textSpriteType block is parsed correctly") {
+    // The input contains a stray semicolon after effectFile.
+    val input =
+      """textSpriteType = {
+        |    name = "largefloaterbutton"
+        |    texturefile = "gfx//interface//button_type_1.tga"
+        |    noOfFrames = 1
+        |    effectFile = "gfx/FX/buttonstate.lua";
+        |}""".stripMargin
+
+    val parser = new Parser(input)
+    val root = parser.parse
+
+    // Find the textSpriteType node.
+    val textSpriteOpt = root.find("textSpriteType")
+    assert(textSpriteOpt.isDefined, "textSpriteType node not found")
+    val textSprite = textSpriteOpt.get
+
+    // Verify child nodes are present.
+    val nameOpt = textSprite.find("name")
+    val texturefileOpt = textSprite.find("texturefile")
+    val noOfFramesOpt = textSprite.find("noOfFrames")
+    val effectFileOpt = textSprite.find("effectFile")
+
+    assert(nameOpt.isDefined, "Missing 'name' node")
+    assert(texturefileOpt.isDefined, "Missing 'texturefile' node")
+    assert(noOfFramesOpt.isDefined, "Missing 'noOfFrames' node")
+    assert(effectFileOpt.isDefined, "Missing 'effectFile' node")
+
+    // Check that their values are parsed correctly.
+    // Assuming valueAsString returns the literal string value.
+    assert(nameOpt.get.valueAsString == "largefloaterbutton")
+    assert(texturefileOpt.get.valueAsString == "gfx//interface//button_type_1.tga")
+    // Depending on your parser, noOfFrames may be read as a number or string.
+    // Adjust the following assertion if necessary.
+    assert(noOfFramesOpt.get.valueAsString == "1")
+    assert(effectFileOpt.get.valueAsString == "gfx/FX/buttonstate.lua")
+  }
+
+  test("focus id line is parsed correctly") {
+    // The input contains a stray semicolon after effectFile.
+    val input =
+      """focus = {
+        |    id = SMA_Maryland
+        |}
+        |""".stripMargin
+
+    val parser = new Parser(input)
+    val root = parser.parse
+
+    assert(root.nonEmpty, "Root node is empty")
+    assert(root.contains("focus"), "Root node does not contain 'focus'")
+    assert(root.find("focus").get.identifier.isDefined, "Root node does not have an identifier")
+    assert(root.find("focus").get.find("id").get.valueAsString == "SMA_Maryland", "Root node identifier is not 'SMA_Maryland'")
+    assert(root.find("focus").get.find("id").isDefined, "ID node not found")
+    assert(root.find("focus").get.find("id").get.valueAsString == "SMA_Maryland", "ID node value is not 'SMA_Maryland'")
+    assert(root.find("focus").get.find("id").get.identifier.isDefined, "ID node does not have an identifier")
+    assert(root.find("focus").get.find("id").get.identifier.get == "id", "ID node identifier is not 'SMA_Maryland'")
+    //assert(root.toScript == input, "Output does not match input")
+  }
 }

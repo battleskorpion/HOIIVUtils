@@ -102,6 +102,19 @@ trait NodeIterable[NodeType <: Node] extends Iterable[NodeType] {
 
   def contains(str: String): Boolean = filter(str).toList.nonEmpty
 
+  def valueContains(str: String): Boolean = {
+    filter((node: NodeType) =>
+      node.$ match {
+        case l: List[Node] =>
+          l.exists(_.valueAsString.equals(str))
+        case _ =>
+          node.identifier.isDefined && node.valueAsString.equals(str)
+      }
+    ).toList.nonEmpty
+  }
+
+  def scriptContains(str: String): Boolean = contains(str) || valueContains(str)
+
   def containsCaseInsensitive(str: String): Boolean = filterCaseInsensitive(str).toList.nonEmpty
 
   def containsAll(strings: String*): Boolean = strings.forall(contains)

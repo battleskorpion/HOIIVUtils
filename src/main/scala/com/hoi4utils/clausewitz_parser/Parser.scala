@@ -29,7 +29,7 @@ class Parser {
    */
   private def consumeTrivia(): ListBuffer[Token] = {
     val trivia = ListBuffer[Token]()
-    while (tokens.peek.exists(t => t.`type` == TokenType.whitespace || t.`type` == TokenType.comment)) {
+    while (tokens.peek.exists(t => t.`type` == TokenType.whitespace || t.`type` == TokenType.comment || t.value.matches("^[,;]"))) {
       trivia += tokens.next.get
     }
     trivia
@@ -85,12 +85,8 @@ class Parser {
   def parseNode(): Node = {
     // Capture leading trivia for this node.
     val leading = consumeTrivia()
-    // Skip stray punctuation (semicolons or commas) that appear before the identifier.
-    while (tokens.peek.exists(t => t.`type` == TokenType.operator && (t.value == ";" || t.value == ","))) {
-      tokens.next // Consume stray semicolon or comma.
-    }
 
-    var idToken = tokens.next.getOrElse(
+    val idToken = tokens.next.getOrElse(
       throw new ParserException("Unexpected end of input while parsing node identifier")
     )
 
@@ -106,17 +102,27 @@ class Parser {
 
     // Ensure the token is a valid identifier.
     if (idToken.`type` != TokenType.string && idToken.`type` != TokenType.symbol && !idToken.isNumber)
-      throw new ParserException("Parser: incorrect token type " + idToken.`type` + " at index " + idToken.start)
+      throw new ParserException("Parser: incorrect token type " + idToken.`type` + " at index " + idToken.start + " for: " + idToken.value)
 
     // Consume any trivia after the identifier.
     consumeTrivia()
-    val nextToken = tokens.peek.getOrElse(
+    var nextToken = tokens.peek.getOrElse(
       throw new ParserException("Unexpected end of input after identifier")
     )
     var operatorOpt: Option[Token] = None
     var raw: Option[String | Int | Double | Boolean | ListBuffer[Node] | Comment] = None
 
     if (nextToken.`type` != TokenType.operator || nextToken.value.matches("^[,;}]$")) {
+      /*
+      example where you would make it inside here:
+        color = { 1.0 1.0 1.0 }
+        colortwo = { 1.0 1.0 1.0 }
+      each 1.0 will be a node which makes it within here
+       */
+      while (nextToken.value.matches("^[,;]$")) {
+        tokens.next
+        nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
+      }
       // No proper operator: treat this node as a value-only node.
       raw = Some(parseThisTokenValue(idToken))
       return new Node(

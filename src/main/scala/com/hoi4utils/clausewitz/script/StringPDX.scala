@@ -104,4 +104,9 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
     case Some(v) => set(v)
     case None => setNull()
   }
+
+  override def updateNodeTree(): Unit = {
+    // Default behavior for leaf nodes: update the node's value from the current state.
+    node.foreach(n => setNode(value.orNull))
+  }
 }

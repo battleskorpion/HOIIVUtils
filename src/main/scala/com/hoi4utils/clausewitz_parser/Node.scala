@@ -133,7 +133,7 @@ class Node (
         sb.append(v.toString)
       case None =>
         if (identifier.nonEmpty && operator.nonEmpty)
-          sb.append("[null]").append('\n')
+          sb.append("[null]")
     }
 
     // Append trailing trivia (e.g. comments that came after the node)
@@ -266,7 +266,7 @@ class Node (
 
   override def iterator: Iterator[Node] = rawValue match {
     case Some(l: ListBuffer[Node]) => l.iterator
-    case _ => Iterator.empty
+    case _ => List(this).iterator //Iterator.empty
   }
 
   def $list(): Option[ListBuffer[Node]] = $ match {

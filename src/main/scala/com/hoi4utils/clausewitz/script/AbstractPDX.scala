@@ -122,8 +122,6 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
           case e: UnexpectedIdentifierException =>
             LOGGER.error(e.getMessage)
         }
-      } else {
-        setNull()
       }
     }
   }

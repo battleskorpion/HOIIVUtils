@@ -11,15 +11,13 @@ object Token {
 
   // im being lazy and need ordered
   val tokenRegex: mutable.LinkedHashMap[TokenType, Regex] = mutable.LinkedHashMap(
-    TokenType.whitespace -> "\\s+".r,         // <-- NEW
-    
     TokenType.comment -> "#.*".r, // Nullifies Comments  // prev: "#.*(?:[\r\n]|$)"
-    
-    TokenType.operator -> "[={}<>;,]|>=|<=|!=".r,         // Seperates Operators
 
     //TokenType.number -> Regex("-?\\d*\\.\\d+|-?\\d+|0x\\d+"),  // Seperates Numbers
 
     TokenType.string -> "\"(\\\\.|[^\"])*\"".r,           // Seperates Double Quotes
+
+    TokenType.operator -> "[={}<>;,]|>=|<=|!=".r,         // Seperates Operators
 
     TokenType.float -> "-?\\d*\\.\\d+".r,
 
@@ -27,7 +25,9 @@ object Token {
 
     TokenType.symbol -> "[A-Za-z0-9_:\\.@\\[\\]\\-?^/\\u00A0-\\u024F]+".r, // Symbol
 
-    TokenType.eof -> "\\$".r
+    TokenType.eof -> "\\$".r,
+
+    TokenType.whitespace -> "\\s+".r,         // <-- NEW
   )
 }
 
@@ -76,4 +76,12 @@ class Token {
   override def toString: String = this.value
   
   def isNumber: Boolean = TokenType.isNumeric(`type`)
+
+  override def equals(other: Any): Boolean = {
+    other match {
+      case that: Token =>
+        this.value == that.value && this.`type` == that.`type` && this.start == that.start
+      case _ => false
+    }
+  }
 }

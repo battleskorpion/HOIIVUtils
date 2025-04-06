@@ -34,6 +34,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
         for (pdxScript <- childScripts) {
           pdxScript.loadPDX(l)
         }
+        val t = 5
       case _ =>
         throw new NodeValueTypeException(expression, "list", this.getClass)
     }
@@ -157,7 +158,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
 
     // Preserve any original nodes that were not loaded into child scripts.
     val preservedNodes: ListBuffer[Node] = originalNodes.filterNot { orig =>
-      loadedChildNodes.exists(child => child.identifier == orig.identifier)
+      loadedChildNodes.exists(child => child.identifier == orig.identifier) // todo BAD!!!!!
     }
 
     // Combine the loaded child nodes with any preserved nodes.
