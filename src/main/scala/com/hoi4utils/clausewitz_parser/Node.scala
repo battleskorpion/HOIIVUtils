@@ -138,7 +138,7 @@ class Node (
 
     // Append trailing trivia (e.g. comments that came after the node)
     for (t <- trailingTrivia) {
-      sb.append(t.value.replaceAll("\\t+", ""))
+      sb.append(indent).append(t.value.replaceAll("\\t+", ""))
     }
     sb.toString()
   }
