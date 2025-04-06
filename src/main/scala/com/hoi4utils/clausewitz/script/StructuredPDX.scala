@@ -137,11 +137,13 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    * This ensures that any changes in the child PDXScript objects are reflected in the output.
    */
   override def updateNodeTree(): Unit = {
-    // First, update each child script’s node tree.
+    // Update each child script's node tree.
     childScripts.foreach(_.updateNodeTree())
-    // Gather nodes from child scripts.
+
+    // Gather nodes from the child scripts.
     val loadedChildNodes: ListBuffer[Node] = childScripts.flatMap(_.getNode).to(ListBuffer)
-    // Retrieve the original children (if any) from the current node.
+
+    // Retrieve any original child nodes from the current node.
     val originalNodes: ListBuffer[Node] = node match {
       case Some(n) =>
         n.$ match {
@@ -150,19 +152,27 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
         }
       case None => ListBuffer.empty[Node]
     }
-    // Preserve any original node that wasn’t loaded into a child script.
+
+    // Preserve any original nodes that were not loaded into child scripts.
     val preservedNodes: ListBuffer[Node] = originalNodes.filterNot { orig =>
-      loadedChildNodes.exists(_.identifier == orig.identifier)
+      loadedChildNodes.exists(child => child.identifier == orig.identifier)
     }
-    // Combine the loaded nodes with the preserved ones.
+
+    // Combine the loaded child nodes with any preserved nodes.
     val combinedNodes: ListBuffer[Node] = loadedChildNodes ++ preservedNodes
+
+    // Update the current node's value with the combined list.
     if (combinedNodes.nonEmpty) {
       node match {
         case Some(n) => n.setValue(combinedNodes)
         case None    => node = Some(new Node(pdxIdentifier, "=", combinedNodes))
       }
+    } else {
+      // If no nodes remain, clear the node.
+      node = None
     }
   }
+
 
   
 //  override def toScript: String = {

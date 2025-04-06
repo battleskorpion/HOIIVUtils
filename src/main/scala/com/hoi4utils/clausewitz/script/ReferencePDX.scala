@@ -36,12 +36,16 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
+    // Always preserve the original node.
+    this.node = Some(expression)
     expression.$ match {
       case s: String =>
         referenceName = s
       case s: Int =>
         referenceName = s.toString
-      case _ =>
+      case other =>
+        // Log a warning, preserve the node, then throw the exception.
+        LOGGER.warn(s"Expected a string or int for a reference identifier, but got ${other.getClass.getSimpleName}. Preserving original node.")
         throw new NodeValueTypeException(expression, "string | int", this.getClass)
     }
   }

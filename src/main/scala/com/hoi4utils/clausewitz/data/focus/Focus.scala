@@ -244,9 +244,9 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 //  }
 
   private def setCompletionRewardsOfNode(completionRewardNode: Node): Unit = {
-    focusTree.country.value match {
-      case Some(countryTag) =>
-        setCompletionRewardsOfNode(completionRewardNode, Scope.of(countryTag))
+    focusTree.countryTag match {
+      case Some(tag) =>
+        setCompletionRewardsOfNode(completionRewardNode, Scope.of(tag))
       case None =>
         setCompletionRewardsOfNode(completionRewardNode, null)
     }

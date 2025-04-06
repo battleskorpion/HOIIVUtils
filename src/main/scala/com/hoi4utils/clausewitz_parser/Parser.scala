@@ -39,6 +39,7 @@ class Parser {
   def parse: Node = {
     // Capture any leading trivia for the whole file.
     val leading = consumeTrivia()
+
     // Parse the block content that forms the root node.
     val blockContent = parseBlockContent()
     if (blockContent.isEmpty)
