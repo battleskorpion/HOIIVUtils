@@ -85,7 +85,12 @@ class Parser {
   def parseNode(): Node = {
     // Capture leading trivia for this node.
     val leading = consumeTrivia()
-    val idToken = tokens.next.getOrElse(
+    // Skip stray punctuation (semicolons or commas) that appear before the identifier.
+    while (tokens.peek.exists(t => t.`type` == TokenType.operator && (t.value == ";" || t.value == ","))) {
+      tokens.next // Consume stray semicolon or comma.
+    }
+
+    var idToken = tokens.next.getOrElse(
       throw new ParserException("Unexpected end of input while parsing node identifier")
     )
 
