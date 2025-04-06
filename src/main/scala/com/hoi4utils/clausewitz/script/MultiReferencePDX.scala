@@ -55,6 +55,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
               System.err.println("Error loading child node: " + e.getMessage + "\n\t" + child)
           }
         }
+        this.node = Some(expression)
       case _ =>
         try {
           add(expression)
