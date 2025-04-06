@@ -190,6 +190,10 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   override def clearNode(): Unit = {
     pdxList.foreach(_.clearNode())
   }
+  
+  override def getNodes: List[Node] = {
+    pdxList.flatMap(_.getNodes).toList
+  }
 
   /**
    * Rebuilds the underlying Node tree for MultiPDX from the current collection of child nodes.

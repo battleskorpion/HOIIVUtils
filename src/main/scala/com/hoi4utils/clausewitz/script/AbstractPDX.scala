@@ -84,6 +84,11 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
    */
   override def getNode: Option[Node] = node
 
+  override def getNodes: List[Node] = getNode match {
+    case Some(node) => List(node)
+    case None => List.empty
+  }
+
   /**
    * @inheritdoc
    */

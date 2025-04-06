@@ -140,13 +140,33 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    * This ensures that any changes in the child PDXScript objects are reflected in the output.
    */
   override def updateNodeTree(): Unit = {
+    // First, record the original positions of the nodes in the current node's value.
+    val originalPositions: Map[String, Int] = node match {
+      case Some(n) =>
+        n.$ match {
+          case lb: ListBuffer[Node] => lb.zipWithIndex.map { case (n, i) => n.identifier.getOrElse("") -> i }.toMap
+          case _ => Map.empty
+        }
+      case None => Map.empty
+    }
+
     // Update each child script's node tree.
     childScripts.foreach(_.updateNodeTree())
 
-    // Gather nodes from the child scripts.
-    val loadedChildNodes: ListBuffer[Node] = childScripts.flatMap(_.getNode).to(ListBuffer)
+    // Get the loaded child nodes.
+    val loadedChildNodes: ListBuffer[Node] = {
+      childScripts.flatMap(_.getNodes).to(ListBuffer)
+    }
 
-    // Retrieve any original child nodes from the current node.
+    // Sort the loaded nodes based on their original positions.
+    val sortedLoadedNodes = loadedChildNodes.sortBy { child =>
+      child.identifier match {
+        case Some(id) => originalPositions.getOrElse(id, Int.MaxValue)
+        case None     => Int.MaxValue
+      }
+    }
+
+    // Retrieve the original nodes.
     val originalNodes: ListBuffer[Node] = node match {
       case Some(n) =>
         n.$ match {
@@ -156,27 +176,26 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
       case None => ListBuffer.empty[Node]
     }
 
-    // Preserve any original nodes that were not loaded into child scripts.
-    val preservedNodes: ListBuffer[Node] = originalNodes.filterNot { orig =>
-      loadedChildNodes.exists(child => child.identifier == orig.identifier) // todo BAD!!!!!
-    }
+    // Preserve any original nodes that were not loaded by child scripts.
+    val preservedNodes = originalNodes.filterNot(orig =>
+      sortedLoadedNodes.exists(child => child.identifier == orig.identifier)
+    )
 
-    // Combine the loaded child nodes with any preserved nodes.
-    val combinedNodes: ListBuffer[Node] = loadedChildNodes ++ preservedNodes
+    // Merge the loaded nodes and preserved nodes, then re-sort by the original order.
+    val combinedNodes = (sortedLoadedNodes ++ preservedNodes)
+      .sortBy(node => originalPositions.getOrElse(node.identifier.getOrElse(""), Int.MaxValue))
 
-    // Update the current node's value with the combined list.
+
+    // Update the current node's value.
     if (combinedNodes.nonEmpty) {
       node match {
         case Some(n) => n.setValue(combinedNodes)
         case None    => node = Some(new Node(pdxIdentifier, "=", combinedNodes))
       }
     } else {
-      // If no nodes remain, clear the node.
       node = None
     }
   }
-
-
   
 //  override def toScript: String = {
 //    if (node.isEmpty || node.get.isEmpty) return null

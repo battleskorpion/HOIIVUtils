@@ -53,6 +53,8 @@ trait PDXScript[V] {
    * @return
    */
   def getNode : Option[Node]
+  
+  def getNodes: List[Node]
 
   /**
    * Load the PDX script represented by the given expression.
