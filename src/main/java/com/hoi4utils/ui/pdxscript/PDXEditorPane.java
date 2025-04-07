@@ -2,6 +2,7 @@ package com.hoi4utils.ui.pdxscript;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.script.*;
+import com.hoi4utils.ui.map.MapEditorController;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -10,6 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import scala.jdk.javaapi.CollectionConverters;
@@ -24,6 +27,8 @@ import java.util.List;
  * A Pane that displays an editor for a PDXScript.
  */
 public class PDXEditorPane extends AnchorPane {
+    public static final Logger LOGGER = LogManager.getLogger(PDXEditorPane.class);
+    
     private final PDXScript<?> pdxScript;
     private final VBox rootVBox;
     private final List<PDXScript<?>> nullProperties = new ArrayList<>();
@@ -494,5 +499,19 @@ public class PDXEditorPane extends AnchorPane {
                 applyDebugBorders(childParent); // Recursively apply to children
             }
         }
+    }
+
+    public void showSaveButton() {
+        Button saveButton = new Button("Save Script");
+        saveButton.setOnAction(event -> {
+            LOGGER.info("Saving PDXScript...");
+            switch (pdxScript) {
+                case PDXFile pdxFile -> pdxFile.save();
+                default -> {
+                    LOGGER.warn("Cannot save PDXScript of type: " + pdxScript.getClass());
+                }
+            }
+        });
+        rootVBox.getChildren().add(saveButton);
     }
 }

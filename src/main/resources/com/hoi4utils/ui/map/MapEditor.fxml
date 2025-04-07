@@ -31,7 +31,7 @@
             </MenuBar>
         </top>
         <center>
-         <SplitPane dividerPositions="0.7705410821643287">
+         <SplitPane dividerPositions="0.8016032064128257">
             <items>
                   <ScrollPane fx:id="mapScrollPane" pannable="true">
                       <content>

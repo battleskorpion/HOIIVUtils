@@ -1,5 +1,6 @@
 package com.hoi4utils.clausewitz.map.state
 
+import com.hoi4utils.ExpectedRange
 import com.hoi4utils.clausewitz.code.ClausewitzDate
 import com.hoi4utils.clausewitz.data.country.{Country, CountryTag, CountryTagsManager}
 import com.hoi4utils.clausewitz.localization.*
@@ -515,11 +516,11 @@ object State extends Iterable[State] {
   }
 
   class BuildingsPDX extends StructuredPDX("buildings") {
-    final val infrastructure = new IntPDX("infrastructure")
-    final val civilianFactories = new IntPDX("industrial_complex")
-    final val militaryFactories = new IntPDX("arms_factory")
-    final val navalDockyards = new IntPDX("naval_base")
-    final val airBase = new IntPDX("air_base")
+    final val infrastructure = new IntPDX("infrastructure", ExpectedRange.ofPositiveInt)
+    final val civilianFactories = new IntPDX("industrial_complex", ExpectedRange.ofPositiveInt)
+    final val militaryFactories = new IntPDX("arms_factory", ExpectedRange.ofPositiveInt)
+    final val navalDockyards = new IntPDX("naval_base", ExpectedRange.ofPositiveInt)
+    final val airBase = new IntPDX("air_base", ExpectedRange.ofPositiveInt)
 
     def this(node: Node) = {
       this()

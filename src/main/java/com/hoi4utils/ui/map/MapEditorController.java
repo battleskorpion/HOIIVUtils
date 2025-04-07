@@ -317,6 +317,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
                 LOGGER.info("Right-clicked state: " + clickedState);
                 // add pdxEditor to scroll pane
                 var pdxEditorPane = new PDXEditorPane(clickedState);
+                pdxEditorPane.showSaveButton();
                 pdxAnchorPane.getChildren().clear();
                 pdxAnchorPane.getChildren().add(pdxEditorPane);
                 pdxScrollPane.setVisible(true);
