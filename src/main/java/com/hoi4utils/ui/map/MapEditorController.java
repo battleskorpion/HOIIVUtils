@@ -12,6 +12,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
@@ -38,8 +39,13 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
     private ScrollPane mapScrollPane;
 
     private Image mapImage;
+    // Keep the original province map image (with definition colors) for hover lookup.
+    private Image originalMapImage;
+
     private double zoomFactor = 1.0;
 
+    // Tooltip to display state info on hover.
+    private final Tooltip stateTooltip = new Tooltip();
 
     public MapEditorController() {
         setFxmlResource("MapEditor.fxml");
@@ -53,6 +59,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
             File file = HOIIVFiles.Mod.province_map_file;
             if (file.exists()) {
                 mapImage = new Image(file.toURI().toString());
+                originalMapImage = mapImage; // store original
                 LOGGER.info("Default province map loaded: " + file.getAbsolutePath());
             } else {
                 LOGGER.warn("Default province map not found at " + file.getAbsolutePath());
@@ -82,11 +89,13 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
     void onLoadProvinceMap() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Province Map");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Bitmap Images", "*.bmp", "*.png", "*.jpg"));
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Bitmap Images", "*.bmp", "*.png", "*.jpg"));
         File file = fileChooser.showOpenDialog(mapCanvas.getScene().getWindow());
         if (file != null) {
             try {
                 mapImage = new Image(file.toURI().toString());
+                originalMapImage = mapImage; // update original as well
                 LOGGER.info("Loaded province map: " + file.getAbsolutePath());
                 drawMap();
             } catch (Exception e) {
@@ -97,27 +106,29 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
 
     @FXML
     void onViewByProvince() {
-        // TODO: Implement the province view rendering.
         LOGGER.info("Switching view mode to Province.");
+        // Remove any existing mouse handler.
+        mapCanvas.setOnMouseMoved(null);
         drawMap();
     }
 
     /**
      * Implements the state view using the definitions CSV.
      * For each pixel in the province map, we:
-     *   1. Look up its RGB value in the definitions mapping to determine the province id.
-     *   2. Look up the province id in the state mapping (built from loaded states) to get a state color.
+     *   1. Look up its RGB value (from the original image) in the definitions mapping to determine the province id.
+     *   2. Use a mapping from province id to State (built from loaded states) to get a state color.
      *   3. Recolor the pixel with the state color (if available), or leave it unchanged otherwise.
+     * Also, install a mouse moved event handler that shows a tooltip with the state name under the mouse.
      */
     @FXML
     void onViewByState() {
         LOGGER.info("Switching view mode to State.");
-        if (mapImage == null) {
+        if (originalMapImage == null) {
             LOGGER.warn("No province map image loaded.");
             return;
         }
 
-        // Load definitions CSV. Assume HOIIVFiles.Mod.definitions_file exists.
+        // Load definitions CSV. Assume HOIIVFiles.Mod.definition_csv_file exists.
         File defFile = HOIIVFiles.Mod.definition_csv_file;
         if (!defFile.exists()) {
             LOGGER.warn("Definitions file not found: " + defFile.getAbsolutePath());
@@ -127,35 +138,35 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
         // Load the province definitions from CSV (Scala object)
         scala.collection.immutable.Map<Object, ProvinceDefinition> scalaDefs = DefinitionCSV.load(defFile);
         // Convert Scala Map to Java Map
-        Map<Object, ProvinceDefinition> defs = CollectionConverters.asJava(scalaDefs); 
+        Map<Object, ProvinceDefinition> defs = CollectionConverters.asJava(scalaDefs);
 
-        // Build a mapping from province RGB to province id.
-        Map<Integer, Integer> provinceColorToId = new HashMap<>();
+        // Build a mapping from province RGB (as in the original image) to province id.
+        final Map<Integer, Integer> provinceColorToId = new HashMap<>();
         for (ProvinceDefinition def : defs.values()) {
-            // Combine RGB components into a single int (ignoring alpha).
             int rgb = (def.red() << 16) | (def.green() << 8) | def.blue();
             provinceColorToId.put(rgb, def.id());
         }
 
-        // Build a mapping from province id to a state color.
-        Map<Integer, Color> provinceIdToStateColor = new HashMap<>();
-        // Retrieve all states (assuming State.observeStates() returns an ObservableList<State>)
+        // Build a mapping from province id to a state color and a mapping to the state.
+        final Map<Integer, Color> provinceIdToStateColor = new HashMap<>();
+        final Map<Integer, State> provinceIdToStateMap = new HashMap<>();
         ObservableList<State> states = State.observeStates();
         for (State state : states) {
             // Assign a random color for each state.
             Color stateColor = Color.hsb(Math.random() * 360, 0.5, 0.9);
-            // Assume state.provinces() returns an Iterable<Province> and each Province has a getId() method.
+            // Assume state.provinces() returns an Iterable<Province> (convert Scala collection to Java)
             for (Province province : CollectionConverters.asJava(state.provinces().toList())) {
-                var id = (Integer) province.id().get(); 
+                Integer id = (Integer) province.id().get();
                 provinceIdToStateColor.put(id, stateColor);
+                provinceIdToStateMap.put(id, state);
             }
         }
 
-        // Create a new WritableImage and recolor it.
-        int width = (int) mapImage.getWidth();
-        int height = (int) mapImage.getHeight();
+        // Create a new WritableImage by recoloring the original image.
+        int width = (int) originalMapImage.getWidth();
+        int height = (int) originalMapImage.getHeight();
         WritableImage newImage = new WritableImage(width, height);
-        PixelReader reader = mapImage.getPixelReader();
+        PixelReader reader = originalMapImage.getPixelReader();
         PixelWriter writer = newImage.getPixelWriter();
 
         for (int y = 0; y < height; y++) {
@@ -178,15 +189,44 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
                 }
             }
         }
-        // Update the map image and redraw.
+        // Update the displayed image.
         mapImage = newImage;
         drawMap();
+
+        mapCanvas.setOnMouseMoved((MouseEvent event) -> {
+            // Calculate coordinates in the original image.
+            int origX = (int) (event.getX() / zoomFactor);
+            int origY = (int) (event.getY() / zoomFactor);
+            if (origX < 0 || origY < 0 || origX >= originalMapImage.getWidth() || origY >= originalMapImage.getHeight()) {
+                stateTooltip.hide();
+                return;
+            }
+            PixelReader origReader = originalMapImage.getPixelReader();
+            Color origPixelColor = origReader.getColor(origX, origY);
+            int pr = (int) (origPixelColor.getRed() * 255);
+            int pg = (int) (origPixelColor.getGreen() * 255);
+            int pb = (int) (origPixelColor.getBlue() * 255);
+            int origRgb = (pr << 16) | (pg << 8) | pb;
+            Integer provinceId = provinceColorToId.get(origRgb);
+            if (provinceId != null) {
+                State state = provinceIdToStateMap.get(provinceId);
+                if (state != null) {
+                    stateTooltip.setText("State: " + state.toString());
+                    // Show tooltip near the mouse pointer (with a slight offset)
+                    stateTooltip.show(mapCanvas, event.getScreenX() + 10, event.getScreenY() + 10);
+                    return;
+                }
+            }
+            stateTooltip.hide();
+        });
     }
 
     @FXML
     void onViewByStrategicRegion() {
-        // TODO: Implement strategic region view rendering.
         LOGGER.info("Switching view mode to Strategic Region.");
+        // TODO: Implement strategic region view rendering.
+        // Remove tooltip handler if active.
+        mapCanvas.setOnMouseMoved(null);
         drawMap();
     }
 
