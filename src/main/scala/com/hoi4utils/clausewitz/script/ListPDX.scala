@@ -170,7 +170,10 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     node match {
       case Some(n) => n.setValue(childNodes)
       case None => 
-        if (pdxList.nonEmpty) node = Some(new Node(childNodes))
+        if (pdxList.nonEmpty) node = {
+          if (pdxIdentifier.nonEmpty) Some(Node(pdxIdentifier, "=", childNodes))
+          else Some(Node(childNodes))
+        }
         else node = None
     }
   }

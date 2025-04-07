@@ -60,6 +60,7 @@ enum ParameterValueType(val identifiers: List[String]) extends Enum[ParameterVal
   case advisor_slot       extends ParameterValueType(List("advisor_slot"))
   case event              extends ParameterValueType(List("event"))
   case wargoal            extends ParameterValueType(List("wargoal", "war_goal"))
+  case effect             extends ParameterValueType(List("effect"))
 
   private var _activeIdentifier: String = ""
 
