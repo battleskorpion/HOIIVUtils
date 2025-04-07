@@ -100,7 +100,7 @@ public class SettingsController extends Application implements JavaFXUIManager {
 		}
 		darkTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "dark"));
 		lightTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "light"));
-		preferredMonitorComboBox.getSelectionModel().select(Integer.parseInt(HOIIVUtils.get("preferred.screen")));
+		preferredMonitorComboBox.getSelectionModel().select(validateAndGetPreferredScreen());
 		debugColorsTButton.setSelected(Boolean.parseBoolean(HOIIVUtils.get("debug.colors")));
 		if (debugColorsTButton.isSelected()) {
 			debugColorsTButton.setText("ON");

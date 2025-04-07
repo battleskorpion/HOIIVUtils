@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger
  * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
  * @tparam V
  */
-trait PDXScript[V] {
+trait PDXScript[V] extends Cloneable {
 
   val LOGGER: Logger = LogManager.getLogger(classOf[AbstractPDX[V]])
   
@@ -53,7 +53,7 @@ trait PDXScript[V] {
    * @return
    */
   def getNode : Option[Node]
-  
+
   def getNodes: List[Node]
 
   /**
@@ -68,7 +68,7 @@ trait PDXScript[V] {
    * Load the PDX script represented by the given expressions.
    * @param expressions
    */
-  def loadPDX(expressions: Iterable[Node]): Unit
+  def loadPDX(expressions: Iterable[Node]): Iterable[Node]
 
   //void loadPDX(@NotNull File file);//void loadPDX(@NotNull File file);
 
@@ -155,6 +155,18 @@ trait PDXScript[V] {
       case e: FileNotFoundException => LOGGER.error("Error saving PDXScript: \n{}", e.getMessage)
     }
   }
+
+  /**
+   * A custom clone method for PDXScript.
+   *
+   * This performs a shallow clone (via super.clone) and then explicitly resets fields
+   * that should remain shared between the original and the clone (for example, childScripts).
+   */
+  override def clone(): AnyRef = {
+    val cloned = super.clone().asInstanceOf[PDXScript[V]]
+    cloned
+  }
+
 }
 
 object PDXScript {

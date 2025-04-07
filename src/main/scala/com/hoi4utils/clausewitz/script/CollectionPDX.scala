@@ -30,17 +30,22 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     }
   }
 
-  override def loadPDX(expressions: Iterable[Node]): Unit = {
+  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
     if (expressions != null) {
+      val remaining = ListBuffer.from(expressions)
       expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
-        try loadPDX(expression)
+        try {
+          loadPDX(expression)
+          remaining -= expression
+        }
         catch {
           case e: UnexpectedIdentifierException =>
             System.err.println(e.getMessage)
           //throw new RuntimeException(e);
         }
       })
-    }
+      remaining
+    } else ListBuffer.empty 
   }
 
   override def equals(other: PDXScript[?]) = false // todo? well.

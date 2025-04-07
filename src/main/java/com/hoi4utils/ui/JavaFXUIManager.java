@@ -116,7 +116,14 @@ public interface JavaFXUIManager {
 	}
 	
 	default Screen validateAndGetPreferredScreen() {
-		int preferredScreen = Integer.parseInt(HOIIVUtils.get("preferred.screen"));
+		int preferredScreen = -1;
+		try {
+			preferredScreen = Integer.parseInt(HOIIVUtils.get("preferred.screen"));
+		} catch (NumberFormatException e) {
+			LOGGER.warn("Preferred screen is not a number, resorting to defaults.");
+			return null;
+		}
+
 		ObservableList<Screen> screens = Screen.getScreens();
 		
 		if (preferredScreen > screens.size() - 1) {

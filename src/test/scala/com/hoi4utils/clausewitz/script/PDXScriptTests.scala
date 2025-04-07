@@ -295,4 +295,11 @@ class PDXScriptTests extends AnyFunSuiteLike {
     println(treeSMA.toScript)
     assert(treeSMA.pdxProperties.nonEmpty)
   }
+
+  test("SMA") {
+    val file = new File(testPath + "Massachusetts_focus.txt")
+    val treeSMA = new FocusTree(file)
+    println(treeSMA.toScript)
+    assert(treeSMA.pdxProperties.nonEmpty)
+  }
 }

@@ -322,7 +322,7 @@ object EffectDatabase {
         case (id, ParameterValueType.idea, true) => new ListPDX[ReferencePDX[Idea]](() => new ReferencePDX[Idea](() => Idea.listAllIdeas, idea => idea.id, id), id)   // ex: idea = my_idea // todo fix (id)
         case (name = id, `type` = ParameterValueType.mission, isList = false) => new StringPDX(id)      // ex: activate_mission = my_mission (in future: ReferencePDX[Mission])
         //case (id, ParameterValueType.modifier) => new ReferencePDX[Modifier]
-        case (name = id, `type` = ParameterValueType.scope) => new StringPDX(id)        // ex: scope = my_scope
+        case (name = id, `type` = ParameterValueType.scope) => new StringPDX(id)       // ex: scope = my_scope
         case (name = id, `type` = ParameterValueType.state) => new ReferencePDX[State](() => State.list, s => s.stateID.asSomeString, id)
         case (name = id, `type` = ParameterValueType.equipment) => new StringPDX(id)    // ex: type = fighter_equipment_0. in future: ReferencePDX[Equipment]
         case (name = id, `type` = ParameterValueType.strategic_region) => new IntPDX(id, ExpectedRange.ofPositiveInt) // ex: region = 5. in future: ReferencePDX[StratRegion]
@@ -346,3 +346,4 @@ object EffectDatabase {
     }
   }
 }
+

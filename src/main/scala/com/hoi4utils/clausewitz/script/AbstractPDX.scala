@@ -108,27 +108,26 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     }
   }
 
-  def loadPDX(expressions: Iterable[Node]): Unit = {
-//    Option(expressions).foreach { exprs =>
-//      exprs.find(isValidIdentifier) match {
-//        case Some(expression) =>
-//          try loadPDX(expression)
-//          catch {
-//            case e: UnexpectedIdentifierException =>
-//              throw new RuntimeException(e)
-//          }
-//        case None => setNull()
-//      }
-//    }
+  /**
+   * 
+   * @param expressions
+   * @return remaining unloaded expressions
+   */
+  def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
+    val remaining = ListBuffer.from(expressions)
     expressions.foreach { expression =>
       if (isValidIdentifier(expression)) {
-        try loadPDX(expression)
+        try {
+          loadPDX(expression)
+          remaining -= expression
+        }
         catch {
           case e: UnexpectedIdentifierException =>
             LOGGER.error(e.getMessage)
         }
       }
     }
+    remaining
   }
   
   protected def loadPDX(file: File): Unit = {

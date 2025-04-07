@@ -12,6 +12,8 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     this(pdxIdentifiers.toList)
   }
 
+  var badNodesList: Iterable[Node] = ListBuffer.empty
+
   protected def childScripts: collection.mutable.Iterable[? <: PDXScript[?]]
 
   /**
@@ -31,10 +33,11 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     expression.$ match {
       case l: ListBuffer[Node] =>
         // then load each sub-PDXScript
+        var list = Iterable.from(l)
         for (pdxScript <- childScripts) {
-          pdxScript.loadPDX(l)
+          list = pdxScript.loadPDX(list)
         }
-        val t = 5
+        badNodesList = list
       case _ =>
         throw new NodeValueTypeException(expression, "list", this.getClass)
     }
@@ -66,6 +69,25 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
           // Preserve the original node in StructuredPDX as well.
           node = Some(expression)
       }
+    }
+  }
+
+  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
+    if (expressions != null) {
+      val remaining = ListBuffer.from(expressions)
+      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
+        try {
+          loadPDX(expression)
+          remaining -= expression
+        }
+        catch {
+          case e: UnexpectedIdentifierException =>
+            System.err.println(e.getMessage)
+        }
+      })
+      remaining
+    } else {
+      ListBuffer.empty
     }
   }
 
@@ -166,20 +188,21 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
       }
     }
 
-    // Retrieve the original nodes.
-    val originalNodes: ListBuffer[Node] = node match {
-      case Some(n) =>
-        n.$ match {
-          case lb: ListBuffer[Node] => lb
-          case _ => ListBuffer.empty[Node]
-        }
-      case None => ListBuffer.empty[Node]
-    }
+//    // Retrieve the original nodes.
+//    val originalNodes: ListBuffer[Node] = node match {
+//      case Some(n) =>
+//        n.$ match {
+//          case lb: ListBuffer[Node] => lb
+//          case _ => ListBuffer.empty[Node]
+//        }
+//      case None => ListBuffer.empty[Node]
+//    }
 
-    // Preserve any original nodes that were not loaded by child scripts.
-    val preservedNodes = originalNodes.filterNot(orig =>
-      sortedLoadedNodes.exists(child => child.identifier == orig.identifier)
-    )
+//    // Preserve any original nodes that were not loaded by child scripts.
+//    val preservedNodes = originalNodes.filterNot(orig =>
+//      sortedLoadedNodes.exists(child => child.identifier == orig.identifier)
+//    )
+    val preservedNodes = badNodesList
 
     // Merge the loaded nodes and preserved nodes, then re-sort by the original order.
     val combinedNodes = (sortedLoadedNodes ++ preservedNodes)
@@ -196,30 +219,13 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
       node = None
     }
   }
-  
-//  override def toScript: String = {
-//    if (node.isEmpty || node.get.isEmpty) return null
-//
-////    val sb = new StringBuilder()
-////    sb.append(node.get.identifier)
-////    sb.append(" = {\n")
-////    for (pdx <- childScripts) {
-////      sb.append('\t')
-////      sb.append(pdx.toScript)
-////    }
-////    sb.toString
-//    // favorable. more in-order as wanted/as was originally.
-//    node.get.toScript
-//  }
 
-//  override def toScript: String = {
-//    val details = new StringBuilder()
-//    for (property <- childScripts) {
-//      val text = property.toScript
-//      if (text != null) {
-//        details.append(text)
-//      }
-//    }
-//    details.toString()
-//  }
+  override def clone(): AnyRef = {
+    val clone = super.clone().asInstanceOf[StructuredPDX]
+    clone.node = Some(Node(pdxIdentifier, "=", ListBuffer.empty))
+    LOGGER.debug("Cloning StructuredPDX: {} -> {}", this, clone)
+    clone.badNodesList = this.badNodesList
+    clone
+  }
+
 }
