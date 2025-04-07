@@ -20,7 +20,7 @@ import scala.collection.mutable.ListBuffer
  * where you know the structured part (e.g. the "limit") must be present,
  * but arbitrary effect nodes may also be appended.
  */
-abstract class StructuredWithEffectsPDX(pdxIdentifiers: List[String])
+abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
   extends StructuredPDX(pdxIdentifiers) {
 
   def this(pdxIdentifiers: String*) = this(pdxIdentifiers.toList)
@@ -138,7 +138,7 @@ abstract class StructuredWithEffectsPDX(pdxIdentifiers: List[String])
    * Ensure that cloning also replicates the extra effect nodes.
    */
   override def clone(): AnyRef = {
-    val clone = super.clone().asInstanceOf[StructuredWithEffectsPDX]
+    val clone = super.clone().asInstanceOf[StructuredWithEffectBlockPDX]
     clone.effectNodes = this.effectNodes.clone()
     clone
   }

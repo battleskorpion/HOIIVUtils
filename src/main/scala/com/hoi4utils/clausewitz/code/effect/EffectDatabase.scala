@@ -327,7 +327,7 @@ object EffectDatabase {
       val useWithEffects = effectParameters.exists { case (_, paramType, _) => paramType == ParameterValueType.effect }
 
       val structuredEffectBlock = if (useWithEffects) {
-        new StructuredWithEffectsPDX(pdxIdentifier) with BlockEffect {
+        new StructuredWithEffectBlockPDX(pdxIdentifier) with BlockEffect {
           override protected def childScripts: mutable.Iterable[PDXScript[?]] = effectPDXParameters
         }
       } else {
