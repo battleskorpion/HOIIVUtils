@@ -6,6 +6,7 @@ import com.hoi4utils.clausewitz.map.province.Province;
 import com.hoi4utils.clausewitz.map.province.ProvinceDefinition;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.pdxscript.PDXEditorPane;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -17,7 +18,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +40,10 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
     private Slider zoomSlider;
     @FXML
     private ScrollPane mapScrollPane;
+    @FXML
+    private ScrollPane pdxScrollPane;
+    @FXML
+    private AnchorPane pdxAnchorPane;
 
     private Image mapImage;
     // Keep the original province map image (with definition colors) for hover lookup.
@@ -69,6 +76,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
         }
 
         zoomSlider.setValue(1.0);
+        pdxScrollPane.setVisible(false);
         drawMap();
     }
 
@@ -83,6 +91,38 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
         GraphicsContext gc = mapCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, width, height);
         gc.drawImage(mapImage, 0, 0, width, height);
+    }
+
+    /**
+     * Helper function that calculates and returns the state at the given canvas coordinates.
+     *
+     * @param canvasX               X coordinate on the canvas.
+     * @param canvasY               Y coordinate on the canvas.
+     * @param provinceColorToId     Mapping from province RGB to province id.
+     * @param provinceIdToStateMap  Mapping from province id to State.
+     * @return the State at the given coordinates, or null if none.
+     */
+    private State getStateAtCanvasCoordinates(double canvasX, double canvasY,
+                                              Map<Integer, Integer> provinceColorToId,
+                                              Map<Integer, State> provinceIdToStateMap) {
+        if (originalMapImage == null) return null;
+        // Convert canvas coordinates to original image coordinates.
+        int origX = (int) (canvasX / zoomFactor);
+        int origY = (int) (canvasY / zoomFactor);
+        if (origX < 0 || origY < 0 || origX >= originalMapImage.getWidth() || origY >= originalMapImage.getHeight()) {
+            return null;
+        }
+        PixelReader origReader = originalMapImage.getPixelReader();
+        Color origPixelColor = origReader.getColor(origX, origY);
+        int pr = (int) (origPixelColor.getRed() * 255);
+        int pg = (int) (origPixelColor.getGreen() * 255);
+        int pb = (int) (origPixelColor.getBlue() * 255);
+        int origRgb = (pr << 16) | (pg << 8) | pb;
+        Integer provinceId = provinceColorToId.get(origRgb);
+        if (provinceId != null) {
+            return provinceIdToStateMap.get(provinceId);
+        }
+        return null;
     }
 
     @FXML
@@ -137,7 +177,6 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
 
         // Load the province definitions from CSV (Scala object)
         scala.collection.immutable.Map<Object, ProvinceDefinition> scalaDefs = DefinitionCSV.load(defFile);
-        // Convert Scala Map to Java Map
         Map<Object, ProvinceDefinition> defs = CollectionConverters.asJava(scalaDefs);
 
         // Build a mapping from province RGB (as in the original image) to province id.
@@ -193,31 +232,16 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
         mapImage = newImage;
         drawMap();
 
+
+        // Install a mouse moved handler to update a tooltip with the state name.
         mapCanvas.setOnMouseMoved((MouseEvent event) -> {
-            // Calculate coordinates in the original image.
-            int origX = (int) (event.getX() / zoomFactor);
-            int origY = (int) (event.getY() / zoomFactor);
-            if (origX < 0 || origY < 0 || origX >= originalMapImage.getWidth() || origY >= originalMapImage.getHeight()) {
+            State s = getStateAtCanvasCoordinates(event.getX(), event.getY(), provinceColorToId, provinceIdToStateMap);
+            if (s != null) {
+                stateTooltip.setText("State: " + s.toString());
+                stateTooltip.show(mapCanvas, event.getScreenX() + 10, event.getScreenY() + 10);
+            } else {
                 stateTooltip.hide();
-                return;
             }
-            PixelReader origReader = originalMapImage.getPixelReader();
-            Color origPixelColor = origReader.getColor(origX, origY);
-            int pr = (int) (origPixelColor.getRed() * 255);
-            int pg = (int) (origPixelColor.getGreen() * 255);
-            int pb = (int) (origPixelColor.getBlue() * 255);
-            int origRgb = (pr << 16) | (pg << 8) | pb;
-            Integer provinceId = provinceColorToId.get(origRgb);
-            if (provinceId != null) {
-                State state = provinceIdToStateMap.get(provinceId);
-                if (state != null) {
-                    stateTooltip.setText("State: " + state.toString());
-                    // Show tooltip near the mouse pointer (with a slight offset)
-                    stateTooltip.show(mapCanvas, event.getScreenX() + 10, event.getScreenY() + 10);
-                    return;
-                }
-            }
-            stateTooltip.hide();
         });
     }
 
@@ -255,6 +279,51 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
     void onZoomSliderReleased(MouseEvent event) {
         zoomFactor = zoomSlider.getValue();
         drawMap();
+    }
+
+    /**
+     * Mouse click handler that calls getStateAtCanvasCoordinates and processes the clicked state.
+     * This method is meant to be used as a right-click handler.
+     *
+     * @param event the mouse event.
+     */
+    @FXML
+    void onCanvasMouseClick(MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY) {
+            // For simplicity, we rebuild the mappings as in onViewByState().
+            // In a production version, consider caching these maps.
+            File defFile = HOIIVFiles.Mod.definition_csv_file;
+            if (!defFile.exists()) {
+                LOGGER.warn("Definitions file not found: " + defFile.getAbsolutePath());
+                return;
+            }
+            scala.collection.immutable.Map<Object, ProvinceDefinition> scalaDefs = DefinitionCSV.load(defFile);
+            Map<Object, ProvinceDefinition> defs = CollectionConverters.asJava(scalaDefs);
+            final Map<Integer, Integer> provinceColorToId = new HashMap<>();
+            for (ProvinceDefinition def : defs.values()) {
+                int rgb = (def.red() << 16) | (def.green() << 8) | def.blue();
+                provinceColorToId.put(rgb, def.id());
+            }
+            final Map<Integer, State> provinceIdToStateMap = new HashMap<>();
+            ObservableList<State> states = State.observeStates();
+            for (State state : states) {
+                for (Province province : CollectionConverters.asJava(state.provinces().toList())) {
+                    Integer id = (Integer) province.id().get();
+                    provinceIdToStateMap.put(id, state);
+                }
+            }
+            State clickedState = getStateAtCanvasCoordinates(event.getX(), event.getY(), provinceColorToId, provinceIdToStateMap);
+            if (clickedState != null) {
+                LOGGER.info("Right-clicked state: " + clickedState);
+                // add pdxEditor to scroll pane
+                var pdxEditorPane = new PDXEditorPane(clickedState);
+                pdxAnchorPane.getChildren().clear();
+                pdxAnchorPane.getChildren().add(pdxEditorPane);
+                pdxScrollPane.setVisible(true);
+            } else {
+                LOGGER.info("Right-clicked on an undefined state area.");
+            }
+        }
     }
 
 }

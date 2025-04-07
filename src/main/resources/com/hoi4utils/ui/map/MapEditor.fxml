@@ -6,6 +6,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -30,11 +31,20 @@
             </MenuBar>
         </top>
         <center>
-            <ScrollPane fx:id="mapScrollPane" pannable="true">
-                <content>
-                    <Canvas fx:id="mapCanvas" />
-                </content>
-            </ScrollPane>
+         <SplitPane dividerPositions="0.7705410821643287">
+            <items>
+                  <ScrollPane fx:id="mapScrollPane" pannable="true">
+                      <content>
+                          <Canvas fx:id="mapCanvas" onMouseClicked="#onCanvasMouseClick" />
+                      </content>
+                  </ScrollPane>
+               <ScrollPane fx:id="pdxScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+                 <content>
+                   <AnchorPane fx:id="pdxAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                 </content>
+               </ScrollPane>
+            </items>
+         </SplitPane>
         </center>
         <bottom>
             <ToolBar>
