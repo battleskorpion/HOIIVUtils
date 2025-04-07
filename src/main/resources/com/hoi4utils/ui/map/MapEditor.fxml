@@ -1,8 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
-
+<?import javafx.scene.layout.BorderPane?>
 
 <AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.map.MapEditorController">
-
+    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <top>
+            <MenuBar>
+                <Menu text="File">
+                    <MenuItem onAction="#onLoadProvinceMap" text="Load Province Map" />
+                </Menu>
+                <Menu text="View">
+                    <MenuItem onAction="#onViewByProvince" text="By Province" />
+                    <MenuItem onAction="#onViewByState" text="By State" />
+                    <MenuItem onAction="#onViewByStrategicRegion" text="By Strategic Region" />
+                </Menu>
+                <Menu text="Tools">
+                    <MenuItem onAction="#onZoomIn" text="Zoom In" />
+                    <MenuItem onAction="#onZoomOut" text="Zoom Out" />
+                    <MenuItem onAction="#onResetZoom" text="Reset Zoom" />
+                </Menu>
+            </MenuBar>
+        </top>
+        <center>
+            <ScrollPane fx:id="mapScrollPane" pannable="true">
+                <content>
+                    <Canvas fx:id="mapCanvas" />
+                </content>
+            </ScrollPane>
+        </center>
+        <bottom>
+            <ToolBar>
+                <Slider fx:id="zoomSlider" max="5.0" min="0.1" onMouseReleased="#onZoomSliderReleased" prefWidth="300" value="1.0" />
+            </ToolBar>
+        </bottom>
+    </BorderPane>
 </AnchorPane>
