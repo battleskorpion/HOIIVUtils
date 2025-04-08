@@ -9,7 +9,6 @@ import com.hoi4utils.clausewitz.map.StrategicRegion;
 import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.clausewitz.script.*;
-import com.hoi4utils.clausewitz_parser.Node;
 import com.hoi4utils.clausewitz_parser.Parser;
 import com.hoi4utils.clausewitz_parser.ParserException;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
@@ -22,11 +21,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import lombok.val;
-import scala.Option;
-import scala.collection.mutable.ListBuffer;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
@@ -55,8 +51,6 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	// Suppose we have a ListView
 	@FXML
 	private ListView<PDXScript<?>> filesListView;
-	@FXML
-	private TextArea pdxNodeTextArea;
 	@FXML
 	private MenuItem saveMenuItem;
 	
@@ -88,14 +82,6 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 					String searchTerm = searchTextField.getText();
 					PDXTreeViewFactory.searchAndSelect(pdxTreeView, searchTerm);
 				});
-
-				pdxTreeView.setOnMouseClicked(event -> {
-					// todo improve visual?
-					PDXScript<?> selectedPDX = pdxTreeView.getSelectionModel().getSelectedItem().getValue();
-					if (selectedPDX != null) {
-						pdxNodeTextArea.setText(selectedPDX.toScript());
-					}
-				});
 			}
 		});
 	}
@@ -124,8 +110,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 						if (rootNode == null) continue;
 
 						// Identify if it’s a strategic_region, state, focus_tree, etc.
-//						var firstChild = rootNode.nodeValue().list().apply(0);
-						var firstChild = rootNode.toList().apply(0); 
+						var firstChild = rootNode.nodeValue().list().apply(0);
 						String pdxIdentifier = firstChild.name();
 
 						AbstractPDX<?> pdx = switch (pdxIdentifier) {
@@ -148,52 +133,44 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 			else {
 				parsePDXFileTextField.setText(selected.getAbsolutePath());
-				// Create the parser from the selected file.
+				//focusTree = FocusTree$.MODULE$.get(selectedFile).getOrElse(() -> null);
 				Parser pdxParser = new Parser(selected);
 				try {
-					Node rootNode = pdxParser.parse();
+					var rootNode = pdxParser.parse();
 					if (rootNode == null) {
 						JOptionPane.showMessageDialog(null, "Error: Selected focus tree not found in loaded focus trees.");
 						return;
 					}
 
-					// If the root node is not a parent (i.e. its raw value is not a list), set the label to "[empty]" and return.
-					if (!rootNode.isParent()) {
+					var rootNodeValue = rootNode.nodeValue();
+					if (!rootNodeValue.isList()) {
 						pdxIdentifierLabel.setText("[empty]");
 						return;
 					}
 
-					// Get the child list from the root node’s raw value.
-					scala.Option<scala.collection.mutable.ListBuffer<Node>> maybeList = rootNode.$list();
-					if (maybeList.isDefined()) {
-						scala.collection.mutable.ListBuffer<Node> childList = maybeList.get();
-						Node childPDXNode = childList.apply(0); // Scala's apply(0) returns the first element.
-						String pdxIdentifier = childPDXNode.name();
-						if (childList.length() == 1) {
-							pdxIdentifierLabel.setText(pdxIdentifier);
-						} else {
-							pdxIdentifierLabel.setText(selected.getName());
-						}
-
-						AbstractPDX<?> pdx = null;
-						if (pdxIdentifier.equals("focus_tree")) {
-							pdx = new FocusTree(selected);
-						} else if (pdxIdentifier.equals("state")) {
-							pdx = new State(false, selected);
-						} else if (selected.getParent().endsWith("countries")
-								&& selected.getParentFile().getParent().endsWith("history")) {
-							pdx = new Country(selected, CountryTag$.MODULE$.get(selected.getName().substring(0, 3)));
-						} else if (pdxIdentifier.equals("resources")) {
-							pdx = new ResourcesFile(selected);
-						} else if (pdxIdentifier.equals("strategic_region")) {
-							pdx = new StrategicRegion(selected);
-						}
-
-						if (pdx == null || pdx.isUndefined()) return;
-						this.pdxScripts.add(pdx);
+					var childPDXNode = rootNodeValue.list().apply(0);
+					var pdxIdentifier = childPDXNode.name();
+					if (rootNodeValue.list().length() == 1) {
+						pdxIdentifierLabel.setText(pdxIdentifier);
 					} else {
-						pdxIdentifierLabel.setText("[empty]");
+						pdxIdentifierLabel.setText(selected.getName());
 					}
+
+					AbstractPDX<?> pdx = null;
+					if (pdxIdentifier.equals("focus_tree")) {
+						pdx = new FocusTree(selected);
+					} else if (pdxIdentifier.equals("state")) {
+						pdx = new State(false, selected);
+					} else if (selected.getParent().endsWith("countries") && selected.getParentFile().getParent().endsWith("history")) {
+						pdx = new Country(selected, CountryTag$.MODULE$.get(selected.getName().substring(0, 3)));
+					} else if (pdxIdentifier.equals("resources")) {
+						pdx = new ResourcesFile(selected);
+					} else if (pdxIdentifier.equals("strategic_region")) {
+						pdx = new StrategicRegion(selected);
+					}
+
+					if (pdx == null || pdx.isUndefined()) return;
+					this.pdxScripts.add(pdx);
 
 //					// Build a TreeView out of the rootScript
 //					TreeView<PDXScript<?>> pdxTreeView = PDXTreeViewFactory.createPDXTreeView(pdx);
@@ -216,14 +193,6 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 			// After loading all PDX scripts:
 			filesListView.setItems(FXCollections.observableList(pdxScripts));
-			// show pdx's node in side view when pdx item is selected in list view
-			filesListView.setOnMouseClicked(event -> {
-				PDXScript<?> selectedPDX = filesListView.getSelectionModel().getSelectedItem();
-				if (selectedPDX != null) {
-					// todo improve visual?
-					pdxNodeTextArea.setText(selectedPDX.toScript());
-				}
-			});
 			// yes this is after because the last statement can set an empty list in view
 			if (pdxScripts.isEmpty()) return;
 

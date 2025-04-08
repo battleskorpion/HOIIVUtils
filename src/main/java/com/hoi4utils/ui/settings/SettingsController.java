@@ -56,8 +56,6 @@ public class SettingsController extends Application implements JavaFXUIManager {
 	ComboBox<Screen> preferredMonitorComboBox;
 	@FXML
 	ToggleButton debugColorsTButton;
-	@FXML
-	CheckBox parserIgnoreCommentsCheckBox;
 
 	@FXML
 	void initialize() {
@@ -100,15 +98,13 @@ public class SettingsController extends Application implements JavaFXUIManager {
 		}
 		darkTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "dark"));
 		lightTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "light"));
-		preferredMonitorComboBox.getSelectionModel().select(validateAndGetPreferredScreen());
+		preferredMonitorComboBox.getSelectionModel().select(Integer.parseInt(HOIIVUtils.get("preferred.screen")));
 		debugColorsTButton.setSelected(Boolean.parseBoolean(HOIIVUtils.get("debug.colors")));
 		if (debugColorsTButton.isSelected()) {
 			debugColorsTButton.setText("ON");
 		} else {
 			debugColorsTButton.setText("OFF");
 		}
-		// parser settings: 
-		parserIgnoreCommentsCheckBox.setSelected(Boolean.parseBoolean(HOIIVUtils.get("parser.ignore_comments")));
 	}
 
 	/**
@@ -266,21 +262,13 @@ public class SettingsController extends Application implements JavaFXUIManager {
 		HOIIVUtils.set("preferred.screen", String.valueOf(preferredMonitorComboBox.getSelectionModel().getSelectedIndex()));
 	}
 
-	public void handleDebugColorsAction() {
+	public void handleDebugColorsTButton() {
 		if (debugColorsTButton.isSelected()) {
 			HOIIVUtils.set("debug.colors", "true");
 			debugColorsTButton.setText("ON");
 		} else {
 			HOIIVUtils.set("debug.colors", "false");
 			debugColorsTButton.setText("OFF");
-		}
-	}
-
-	public void handleParserIgnoreCommentsAction() {
-		if (parserIgnoreCommentsCheckBox.isSelected()) {
-			HOIIVUtils.set("parser.ignore_comments", "true");
-		} else {
-			HOIIVUtils.set("parser.ignore_comments", "false");
 		}
 	}
 

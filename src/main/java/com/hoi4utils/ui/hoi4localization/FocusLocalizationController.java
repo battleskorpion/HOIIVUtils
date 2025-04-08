@@ -8,7 +8,6 @@ import com.hoi4utils.clausewitz.data.focus.FocusTree$;
 import com.hoi4utils.clausewitz.localization.Localization;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
 import com.hoi4utils.clausewitz.localization.Property;
-import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.table.TableViewWindow;
@@ -24,7 +23,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.function.Function;
 
 
 /**
@@ -56,11 +54,6 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
     private TableColumn<Focus, String> focusNameColumn;
     @FXML
     private TableColumn<Focus, String> focusDescColumn;
-    @FXML
-    private TableColumn<Focus, String> focusLocStatusColumn;
-    @FXML
-    private RadioMenuItem localizationStatusRadioItem;
-
     private FocusTree focusTree;
     //private FocusLocalizationFile focusLocFile;
 
@@ -82,21 +75,13 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
     void initialize() {
         /* table */
         loadTableView(this, focusListTable, focusObservableList, Focus.getDataFunctions());
-        Function<Focus, String> dataFunction = (Focus focus) ->
-                "Name: " + focus.localizationStatus(Property.NAME).toString()
-                + ", Desc: " + focus.localizationStatus(Property.DESCRIPTION).toString();
-        focusLocStatusColumn.setCellValueFactory(JavaFXUIManager.tableCellDataCallback(dataFunction));
 
         /* buttons */
         saveButton.setDisable(true);
-
-        /* effects */
-        focusLocStatusColumn.setVisible(localizationStatusRadioItem.isSelected());
         // focusDescColumn.setEditable(true); // redundant
     }
 
-    @FXML
-    private void handleFocusTreeFileBrowseButtonAction() {
+    public void handleFocusTreeFileBrowseButtonAction() {
         File initialFocusDirectory = HOIIVFiles.Mod.focus_folder;
         File selectedFile = JavaFXUIManager.openChooser(focusTreeFileBrowseButton, initialFocusDirectory, false);
         
@@ -116,8 +101,7 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
         }
     }
 
-    @FXML
-    private void handleFocusLocFileBrowseButtonAction() {
+    public void handleFocusLocFileBrowseButtonAction() {
 //        File initialFocusLocDirectory = HOIIVUtilsFiles.mod_localization_folder;
 //        File selectedFile = openChooser(focusLocFileBrowseButton, initialFocusLocDirectory, false);
 //        
@@ -136,8 +120,7 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
 //        }
     }
 
-    @FXML
-    private void handleLoadButtonAction() {
+    public void handleLoadButtonAction() {
         if (focusTree == null) {
             JOptionPane.showMessageDialog(null, "Error: Focus tree not properly initialized.");
             return;
@@ -191,8 +174,7 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
                 .replace("x", String.valueOf(numLocalizedFocuses)));
     }
 
-    @FXML
-    private void handleSaveButtonAction() {
+    public void handleSaveButtonAction() {
 //        if (focusLocFile == null) {
 //            // Handle the case where focusLocFile is not properly initialized
 //            MessageController window = new MessageController();
@@ -204,21 +186,11 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
         LocalizationManager.get().saveLocalization();
     }
 
-    @FXML
-    private void handleShowFocusLocalizationSettingAction() {
-        if (localizationStatusRadioItem.isSelected()) {
-            focusLocStatusColumn.setVisible(true);
-        } else {
-            focusLocStatusColumn.setVisible(false);
-        }
-    }
-
     @Override
     public void setDataTableCellFactories() {
         /* column factory */
         focusNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         focusDescColumn.setCellFactory(TextFieldTableCell.forTableColumn()); // This makes the column editable
-        focusLocStatusColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         setColumnOnEditCommits();
 
         /* row factory */
@@ -253,12 +225,10 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
         focusNameColumn.setOnEditCommit(event -> {
             Focus focus = event.getRowValue();
             focus.replaceLocalization(Property.NAME, event.getNewValue());
-            focusListTable.refresh();  // Force update of the table view
         });
         focusDescColumn.setOnEditCommit(event -> {
             Focus focus = event.getRowValue();
             focus.replaceLocalization(Property.DESCRIPTION, event.getNewValue());
-            focusListTable.refresh();  // Force update of the table view
         });
     }
 

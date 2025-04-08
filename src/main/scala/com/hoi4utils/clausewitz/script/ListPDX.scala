@@ -37,22 +37,15 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     }
   }
 
-  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
+  override def loadPDX(expressions: Iterable[Node]): Unit = {
     if (expressions != null) {
-      val remaining = ListBuffer.from(expressions)
       expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
+        try loadPDX(expression)
         catch {
           case e: UnexpectedIdentifierException =>
             System.err.println(e.getMessage)
         }
       })
-      remaining
-    } else {
-      ListBuffer.empty
     }
   }
 
@@ -66,6 +59,7 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   protected def add(expression: Node): Unit = {
+    val value = expression.$
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     expression.$ match {
@@ -83,12 +77,10 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     }
   }
 
-  /**
-   * Removes elements matching the predicate.
-   * Also removes the corresponding node(s) from the underlying Node.
-   */
   def removeIf(p: T => Boolean): ListBuffer[T] = {
-    for (i <- pdxList.indices.reverse) {
+    for (
+      i <- pdxList.indices
+    ) {
       if (p(pdxList(i))) {
         pdxList.remove(i)
         node match {
@@ -97,6 +89,7 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
         }
       }
     }
+
     pdxList
   }
   
@@ -105,11 +98,9 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
   }
 
   def clear(): Unit = {
-    pdxList.clear()
-    node.foreach { n =>
-      n.$ match {
-        case l: ListBuffer[?] => l.clear()
-        case _ => // do nothing
+    if (node.nonEmpty) {
+      node.get.$ match {
+        case l: ListBuffer[T] => l.clear()
       }
     }
   }
@@ -158,23 +149,6 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     pdxList.headOption match {
       case Some(pdx) => ev(pdx).getOrElse(default)
       case None => default
-    }
-  }
-
-  /**
-   * Rebuilds the underlying Node tree from the current list of child PDXScript nodes.
-   */
-  override def updateNodeTree(): Unit = {
-    pdxList.foreach(_.updateNodeTree())
-    val childNodes: ListBuffer[Node] = pdxList.flatMap(_.getNode)
-    node match {
-      case Some(n) => n.setValue(childNodes)
-      case None => 
-        if (pdxList.nonEmpty) node = {
-          if (pdxIdentifier.nonEmpty) Some(Node(pdxIdentifier, "=", childNodes))
-          else Some(Node(childNodes))
-        }
-        else node = None
     }
   }
 

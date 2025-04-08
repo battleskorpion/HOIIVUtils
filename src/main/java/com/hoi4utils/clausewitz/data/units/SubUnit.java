@@ -84,24 +84,24 @@ public record SubUnit(
 		for (Node subUnitNode : list) {
 			SubUnit subUnit = new SubUnit(
 				subUnitNode.name(),
-				subUnitNode.contains("abbreviation") ? subUnitNode.getValue("abbreviation").asString() : null,
-				subUnitNode.contains("sprite") ? subUnitNode.getValue("sprite").asString()  : null,
-				subUnitNode.contains("map_icon_category") ? subUnitNode.getValue("map_icon_category").asString()  : null,
-				subUnitNode.contains("priority") ? subUnitNode.getValue("priority").$intOrElse(0) : null,
-				subUnitNode.contains("ai_priority") ? subUnitNode.getValue("ai_priority").$intOrElse(0) : null,
-				subUnitNode.contains("active") ? subUnitNode.getValue("active").asBool(BoolType.YES_NO) : null,
+				subUnitNode.contains("abbreviation") ? subUnitNode.getValue("abbreviation").string() : null,
+				subUnitNode.contains("sprite") ? subUnitNode.getValue("sprite").string() : null,
+				subUnitNode.contains("map_icon_category") ? subUnitNode.getValue("map_icon_category").string() : null,
+				subUnitNode.contains("priority") ? subUnitNode.getValue("priority").integer() : null,
+				subUnitNode.contains("ai_priority") ? subUnitNode.getValue("ai_priority").integer() : null,
+				subUnitNode.contains("active") ? subUnitNode.getValue("active").bool(BoolType.YES_NO) : null,
 				//subUnit.type
-				subUnitNode.contains("group") ? subUnitNode.getValue("group").asString() : null,
+				subUnitNode.contains("group") ? subUnitNode.getValue("group").string() : null,
 				//subUnit.categories
-				subUnitNode.contains("combat_width") ? subUnitNode.getValue("combat_width").$intOrElse(0) : null,
+				subUnitNode.contains("combat_width") ? subUnitNode.getValue("combat_width").integer() : null,
 				//subUnit.need
-				subUnitNode.contains("manpower") ? subUnitNode.getValue("manpower").$intOrElse(0) : null,
-				subUnitNode.contains("max_organization") ? subUnitNode.getValue("max_organization").$intOrElse(0) : null,
-				subUnitNode.contains("default_morale") ? subUnitNode.getValue("default_morale").$intOrElse(0) : null,
-				subUnitNode.contains("max_strength") ? subUnitNode.getValue("max_strength").$intOrElse(0) : null,
-				subUnitNode.contains("training_time") ? subUnitNode.getValue("training_time").$intOrElse(0) : null,
-				subUnitNode.contains("weight") ? subUnitNode.getValue("weight").$doubleOrElse(0.0) : null,
-				subUnitNode.contains("supply_consumption") ? subUnitNode.getValue("supply_consumption").$doubleOrElse(0.0) : null
+				subUnitNode.contains("manpower") ? subUnitNode.getValue("manpower").integer() : null,
+				subUnitNode.contains("max_organization") ? subUnitNode.getValue("max_organization").integer() : null,
+				subUnitNode.contains("default_morale") ? subUnitNode.getValue("default_morale").integer() : null,
+				subUnitNode.contains("max_strength") ? subUnitNode.getValue("max_strength").integer() : null,
+				subUnitNode.contains("training_time") ? subUnitNode.getValue("training_time").integer() : null,
+				subUnitNode.contains("weight") ? subUnitNode.getValue("weight").rational() : null,
+				subUnitNode.contains("supply_consumption") ? subUnitNode.getValue("supply_consumption").rational() : null
 			);
 	
 			subUnits.add(subUnit);

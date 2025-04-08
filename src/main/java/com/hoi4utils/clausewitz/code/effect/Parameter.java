@@ -1,6 +1,7 @@
 package com.hoi4utils.clausewitz.code.effect;
 
 import com.hoi4utils.clausewitz.exceptions.NullParameterTypeException;
+import com.hoi4utils.clausewitz_parser.NodeValue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,17 +43,17 @@ public class Parameter implements EffectParameter, Cloneable {
 		this(name, (ParameterValueType) null);
 	}
 
-//	public static Parameter of(String name, NodeValue v) {
-//		Parameter parameter = getClone(name);
-//		if (parameter == null)
-//			return null;
-//		parameter.value = new ParameterValue(v);
-//		return parameter;
-//	}
-//
-//	public static Parameter of(NodeValue v) {
-//		return of(null, v);
-//	}
+	public static Parameter of(String name, NodeValue v) {
+		Parameter parameter = getClone(name);
+		if (parameter == null)
+			return null;
+		parameter.value = new ParameterValue(v);
+		return parameter;
+	}
+
+	public static Parameter of(NodeValue v) {
+		return of(null, v);
+	}
 
 	private static Parameter getClone(String name) {
 		Parameter clone;
@@ -93,7 +94,17 @@ public class Parameter implements EffectParameter, Cloneable {
 	//// allParameters.get(identifier).addValidParameterValueTypes(validParameterValueTypes);
 	//// }
 	// }
-		
+
+	public static boolean isParameter(String name, NodeValue v) {
+		if (v.isString()) {
+			return allParameters.containsKey(v.string());
+		}
+		if (v.isNumber()) {
+			return true;
+		}
+        // todo not sure
+        return v.isList(); // maybe? hm..
+    }
 
 //	@Override
 //	public String displayScript() {
@@ -109,6 +120,15 @@ public class Parameter implements EffectParameter, Cloneable {
 
 		public ParameterValue(String value) {
 			this.value = value;
+		}
+
+		public ParameterValue(NodeValue value) {
+			if (!value.isList()) {
+				//this.value = value.valueObject();
+				this.value = value.value(); 
+			} else {
+				System.err.println("effect value can not be list.");
+			}
 		}
 
 		@Override

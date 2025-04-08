@@ -205,13 +205,6 @@
 			<artifactId>scala3-compiler_3</artifactId>
 			<version>3.6.3</version>
 		</dependency>
-		<!-- used to be in main library moved out pre scala 3, nice. -->
-		<!-- https://mvnrepository.com/artifact/org.scala-lang.modules/scala-parser-combinators -->
-		<dependency>
-			<groupId>org.scala-lang.modules</groupId>
-			<artifactId>scala-parser-combinators_3</artifactId>
-			<version>2.4.0</version>
-		</dependency>
 
 	</dependencies>
 

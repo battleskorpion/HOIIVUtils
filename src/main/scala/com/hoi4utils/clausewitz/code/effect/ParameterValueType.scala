@@ -37,7 +37,7 @@ enum ParameterValueType(val identifiers: List[String]) extends Enum[ParameterVal
   case cw_float           extends ParameterValueType(List("float", "fraction"))
   case cw_int             extends ParameterValueType(List("int", "integer"))
   case cw_list            extends ParameterValueType(List("list"))
-  case cw_string          extends ParameterValueType(List("string", "LITERAL_ALL")) // todo handle LITERAL_ALL ('all') specially
+  case cw_string          extends ParameterValueType(List("string"))
   case cw_trait           extends ParameterValueType(List("trait"))
 //  case cw_variable      extends ParameterValueType(List())
   case decision           extends ParameterValueType(List("decision"))
@@ -60,7 +60,6 @@ enum ParameterValueType(val identifiers: List[String]) extends Enum[ParameterVal
   case advisor_slot       extends ParameterValueType(List("advisor_slot"))
   case event              extends ParameterValueType(List("event"))
   case wargoal            extends ParameterValueType(List("wargoal", "war_goal"))
-  case effect             extends ParameterValueType(List("effect"))
 
   private var _activeIdentifier: String = ""
 

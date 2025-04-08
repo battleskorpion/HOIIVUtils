@@ -72,14 +72,10 @@ object FocusTree {
    */
   def add(focusTree: FocusTree): Iterable[FocusTree] = {
     focusTrees += focusTree
-    focusTree.focusFile match {
-      case Some(file) => focusTreeFileMap.put(file, focusTree)
-      case None =>
-    }
     focusTrees
   }
 
-  def listFocusTrees: Iterable[FocusTree] = focusTrees
+  def listFocusTrees: Iterable[FocusTree] = focusTreeFileMap.values
 
   /**
    * Returns focus tree corresponding to the tag, if it exists
@@ -91,9 +87,9 @@ object FocusTree {
     //focusTrees.values.stream.filter((focusTree: FocusTree) => focusTree.country.nodeEquals(tag)).findFirst.orElse(null)
     for (tree <- listFocusTrees) {
       //if (tree.country.equals(tag)) return tree
-      val countryTag = tree.countryTag
+      val countryTag = tree.country.value
       countryTag match {
-        case Some(t) => if (tag.equals(t.tag)) return tree
+        case Some(t) => if (t.tag.equals(tag)) return tree
         case None => 
       }
     }
@@ -110,8 +106,7 @@ object FocusTree {
 class FocusTree
   extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile {
   /* pdxscript */
-  //final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
-  final var country = new FocusTreeCountryPDX
+  final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
   final var focuses = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   final var id = new StringPDX("id")
   // private boolean defaultFocus; // ! todo Do This
@@ -145,7 +140,11 @@ class FocusTree
    * @return list containing each focus ID
    */
   def listFocusIDs: Seq[String] = Seq.from(focuses.flatMap(_.id.value))
-  
+
+  def countryTag: CountryTag = country.value match {
+    case Some(t) => t
+    case None => null
+  }
   def focusFile: Option[File] = _focusFile
 
   override def toString: String = {
@@ -195,10 +194,7 @@ class FocusTree
   }
 
   def setCountryTag(tag: CountryTag): Unit = {
-    country.modifier.length match {
-      case 0 => //country.modifier.add(new country.TagModifierPDX)
-      case _ => country.modifier.head.tag.set(tag)
-    }
+    this.country.set(tag)
   }
 
   def setFile(file: File): Unit = {
@@ -210,17 +206,10 @@ class FocusTree
     _focusFile
   }
 
-  def countryTag: Option[CountryTag] = {
-    country.modifier.length match {
-      case 0 => None
-      case _ => country.modifier.head.tag.value
-    }
-  }
-
   override def compareTo(o: FocusTree): Int = {
-    (this.countryTag, this.id.value) match {
+    (this.country.value, this.id.value) match {
       case (Some(countryTag), Some(id)) =>
-        (o.countryTag, o.id.value) match {
+        (o.country.value, o.id.value) match {
           case (Some(otherCountryTag), Some(otherID)) =>
             val c = countryTag.compareTo(otherCountryTag)
             if (c == 0) id.compareTo(otherID) else c
@@ -252,27 +241,5 @@ class FocusTree
   override def equals(other: PDXScript[?]): Boolean = {
     if (other.isInstanceOf[FocusTree]) return this == other
     false
-  }
-  
-  class FocusTreeCountryPDX extends StructuredPDX("country") {
-    final val base = new DoublePDX("base")
-    final val factor = new DoublePDX("factor")
-    final val add = new DoublePDX("add")
-    final val modifier = new MultiPDX[TagModifierPDX](None, Some(() => new TagModifierPDX), "modifier")
-
-    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add, modifier)
-
-    override def getPDXTypeName: String = "AI Willingness"
-
-    class TagModifierPDX extends StructuredPDX("modifier") {
-      final val base = new DoublePDX("base")
-      final val factor = new DoublePDX("factor")
-      final val add = new DoublePDX("add")
-      final val tag = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
-
-      override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add, tag)
-
-      override def getPDXTypeName: String = "Modifier"
-    }
   }
 }

@@ -2,7 +2,7 @@ package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.HOIIVUtils
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz_parser.{Node, Parser, ParserException}
+import com.hoi4utils.clausewitz_parser.{Node, NodeValue, Parser, ParserException}
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.jetbrains.annotations.{NotNull, Nullable}
@@ -43,6 +43,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
    * @inheritdoc
    */
   override protected def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
+  // todo?
     if (node.isEmpty) {
       return
     }
@@ -50,13 +51,12 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
       setNull()
       return
     }
-    value match {
+    value.match {
       case s: String => node.get.setValue(s)
       case i: Int => node.get.setValue(i)
       case d: Double => node.get.setValue(d)
       case b: Boolean => node.get.setValue(b)
-      case l: ListBuffer[Node] => node.get.setValue(l)
-      case _ => throw new RuntimeException(s"Unsupported type: ${value.getClass}")
+      case _ => throw new RuntimeException("Unsupported type")
     }
   }
 
@@ -84,50 +84,36 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
    */
   override def getNode: Option[Node] = node
 
-  override def getNodes: List[Node] = getNode match {
-    case Some(node) => List(node)
-    case None => List.empty
-  }
-
   /**
    * @inheritdoc
    */
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
-    if (expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty)) {
-      LOGGER.error("Error loading PDX script: " + expression)
-      return
+    if (expression.identifier.isEmpty) {
+      if (pdxIdentifiers.nonEmpty || expression.isEmpty) {
+        System.out.println("Error loading PDX script: " + expression)
+        return
+      }
     }
-    try {
-      set(expression)
-    } catch {
+    try set(expression)
+    catch {
       case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        LOGGER.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
-        // Preserve the original node so that its content isn’t lost.
-        node = Some(expression)
+        System.out.println("Error loading PDX script:" + e.getMessage + "\n\t" + expression)
     }
   }
 
-  /**
-   * 
-   * @param expressions
-   * @return remaining unloaded expressions
-   */
-  def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    val remaining = ListBuffer.from(expressions)
-    expressions.foreach { expression =>
-      if (isValidIdentifier(expression)) {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
-        catch {
-          case e: UnexpectedIdentifierException =>
-            LOGGER.error(e.getMessage)
-        }
+  def loadPDX(expressions: Iterable[Node]): Unit = {
+    Option(expressions).foreach { exprs =>
+      exprs.find(isValidIdentifier) match {
+        case Some(expression) =>
+          try loadPDX(expression)
+          catch {
+            case e: UnexpectedIdentifierException =>
+              throw new RuntimeException(e)
+          }
+        case None => setNull()
       }
     }
-    remaining
   }
   
   protected def loadPDX(file: File): Unit = {
@@ -181,23 +167,9 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
     if (node.get.valueIsNull) set(value)
   }
 
-  /**
-   * Rebuilds the underlying Node tree from the current state.
-   * For simple leaf nodes, this is a no-op.
-   * Composite types (e.g. StructuredPDX) should override this method to rebuild their Node tree.
-   */
-  override def updateNodeTree(): Unit = {
-    // Default behavior for leaf nodes: update the node's value from the current state.
-    node.foreach(n => setNode(value.orNull))
-  }
-
-  /**
-   * Generates the script output.
-   * Before returning the script, updateNodeTree() is called so that the underlying Node reflects any changes.
-   */
   override def toScript: String = {
-    updateNodeTree()
-    node.map(_.toScript).getOrElse("")
+    if (node.isEmpty || node.get.isEmpty) return null
+    node.get.toScript
   }
 
   override def equals(other: PDXScript[?]): Boolean = {
@@ -221,13 +193,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   }
 
   override def toString: String = {
-    if (node.isEmpty || node.get.isEmpty) {
-      if (value.isEmpty) {
-        return super.toString
-      } else {
-        return value.get.toString
-      }
-    }
+    if (node.isEmpty || node.get.isEmpty) return super.toString
     node.toString
   }
 
@@ -241,10 +207,15 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
   }
 
   /**
-   * Checks whether the node’s value is an instance of the specified class.
+   * Returns true if the value of the node is an instance of the specified class.
+   * The implicit class tag is necessary to get around type erasure (preserve A's class at runtime).
+   * @param ct
+   * @tparam A
+   * @return
    */
   def valueIsInstanceOf[A](implicit ct: ClassTag[A]): Boolean = {
-    node.exists(n => ct.runtimeClass.isInstance(n.$))
+    if (node.isEmpty) false
+    else ct.runtimeClass.isInstance(node.get.$)
   }
 
   def getPDXTypeName: String = {

@@ -2,39 +2,35 @@ package com.hoi4utils.clausewitz_parser
 
 import com.hoi4utils.clausewitz_parser.TokenType.TokenType
 
-import scala.collection.mutable
-import scala.collection.mutable.LinkedHashMap
 import scala.util.matching.Regex
 
+/**
+ * Adapted partially from <a href="https://github.com/herbix/hoi4modutilities/blob/master/src/hoiformat/hoiparser.ts">hoiparser.ts</a>
+ * from repo <a href="https://github.com/herbix/hoi4modutilities">herbix/hoi4modutilities</a>
+ *
+ */
 object Token {
   val EOF_INDICATOR = "$"
 
-  // im being lazy and need ordered
-  val tokenRegex: mutable.LinkedHashMap[TokenType, Regex] = mutable.LinkedHashMap(
-    TokenType.comment -> "#.*".r, // Nullifies Comments  // prev: "#.*(?:[\r\n]|$)"
+  val tokenRegex: Map[TokenType, Regex] = Map(
+    TokenType.comment -> Regex("#.*"), // Nullifies Comments  // prev: "#.*(?:[\r\n]|$)"
+
+    TokenType.symbol -> Regex("(?:\\d+\\.)?[a-zA-Z_@\\[\\]][\\w:.@\\[\\]\\-?^/\\u00A0-\\u024F]*"), // Symbol
+
+    TokenType.operator -> Regex("[={}<>;,]|>=|<=|!="),         // Seperates Operators
+
+    TokenType.string -> Regex("\"(\\\\.|[^\"])*\""),           // Seperates Double Quotes
 
     //TokenType.number -> Regex("-?\\d*\\.\\d+|-?\\d+|0x\\d+"),  // Seperates Numbers
-
-    TokenType.string -> "\"(\\\\.|[^\"])*\"".r,           // Seperates Double Quotes
-
-    TokenType.operator -> "[={}<>;,]|>=|<=|!=".r,         // Seperates Operators
 
     TokenType.float -> "-?\\d*\\.\\d+".r,
 
     TokenType.int -> "-?(?:\\d+|0x[0-9a-fA-F]+)".r,
 
-    TokenType.symbol -> "[A-Za-z0-9_:\\.@\\[\\]\\-?^/\\u00A0-\\u024F]+".r, // Symbol
-
-    TokenType.eof -> "\\$".r,
-
-    TokenType.whitespace -> "\\s+".r,         // <-- NEW
+    TokenType.eof -> "\\$".r
   )
 }
 
-/**
- * Token class remains mostly the same; it will now recognize whitespace 
- * as a distinct TokenType if it matches the regex above.
- */
 class Token {
   var value: String = _
   var `type`: TokenType = _
@@ -54,34 +50,31 @@ class Token {
     this.`type` = determineTokenType(value)
   }
 
+  /**
+   * Determine token type based on token regex map
+   */
   private def determineTokenType(value: String): TokenType = {
     for ((key, regex) <- Token.tokenRegex) {
       key match {
-        case TokenType.int | TokenType.float =>
+        case TokenType.int =>
           // For int tokens, ensure the entire value is matched
           regex.findFirstMatchIn(value) match {
-            case Some(m) if m.start == 0 && m.end == value.length => return key
-            case _ => // not a complete match, keep looking
+            case Some(m) if m.start == 0 && m.end == value.length =>
+              return key
+            case _ => // not a complete match, continue
           }
         case _ =>
           // For other token types, accept a match anywhere
-          if (regex.findFirstIn(value).isDefined) return key
+          if (regex.findFirstIn(value).isDefined)
+            return key
       }
     }
     TokenType.unknown
   }
 
   def length: Int = this.value.length
-  
-  override def toString: String = this.value
-  
-  def isNumber: Boolean = TokenType.isNumeric(`type`)
 
-  override def equals(other: Any): Boolean = {
-    other match {
-      case that: Token =>
-        this.value == that.value && this.`type` == that.`type` && this.start == that.start
-      case _ => false
-    }
-  }
+  override def toString: String = this.value
+
+  def isNumber: Boolean = TokenType.isNumeric(`type`)
 }

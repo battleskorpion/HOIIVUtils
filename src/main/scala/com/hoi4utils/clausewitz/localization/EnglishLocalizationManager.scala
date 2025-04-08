@@ -2,17 +2,15 @@ package com.hoi4utils.clausewitz.localization
 
 import com.hoi4utils.FileUtils
 import com.hoi4utils.clausewitz.exceptions.LocalizationExistsException
-import com.hoi4utils.clausewitz.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.clausewitz.{HOIIVUtils, HOIIVFiles}
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.*
-import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import java.util.Scanner
 import scala.Option
 import scala.jdk.javaapi.CollectionConverters
-import scala.util.control.Exception.noCatch.opt
 
 object EnglishLocalizationManager {
   protected val l_english = "l_english:"
@@ -42,8 +40,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
   }
 
   protected def loadLocalization(): Unit = {
-    /* Load mod localization after vanilla to give mod localizations priority */
-    // vanilla
+    // Load mod localization after vanilla to give mod localizations priority
     if (HOIIVFiles.HOI4.localization_folder == null)
       LOGGER.warn("'HOI4 localization folder' is null.")
     else if (!HOIIVFiles.HOI4.localization_folder.exists)
@@ -51,9 +48,8 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
     else if (!HOIIVFiles.HOI4.localization_folder.isDirectory)
       LOGGER.warn("'HOI4 localization folder' is not a directory.")
     else
-      loadLocalization(HOIIVFiles.HOI4.localization_folder, Localization.Status.VANILLA)
+      loadLocalization(HOIIVFiles.HOI4.localization_folder, Localization.Status.EXISTS)
 
-    // mod
     if (HOIIVFiles.Mod.localization_folder == null)
       LOGGER.warn("'Mod localization folder' is null.")
     else if (!HOIIVFiles.Mod.localization_folder.exists)
@@ -61,7 +57,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
     else if (!HOIIVFiles.Mod.localization_folder.isDirectory)
       LOGGER.warn("'Mod localization folder' is not a directory.")
     else
-      loadLocalization(HOIIVFiles.Mod.localization_folder, Localization.Status.EXISTS)
+      loadLocalization(HOIIVFiles.Mod.localization_folder, Localization.Status.VANILLA)
   }
 
 
@@ -106,10 +102,11 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
             System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
           } else {
             // trim whitespace
-            for (i <- data.indices) data(i) = data(i).trim
+            for (i <- 0 until data.length) {
+              data(i) = data(i).trim
+            }
             // ignore ":" before version number
             data(1) = data(1).substring(1)
-
             // ignore escaped quotes
             data(2) = data(2).replaceAll("//\"", "\u0000")
             val startQuote = data(2).indexOf("\"")
@@ -136,14 +133,14 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
               var version: Integer = null
               var value: String = null
               if (data(1).isBlank) {
-                key = data(0).trim
+                key = data(0)
                 version = null
-                value = data(2).trim
+                value = data(2)
               }
               else {
-                key = data(0).trim
-                version = data(1).trim.toInt
-                value = data(2).trim
+                key = data(0)
+                version = data(1).toInt
+                value = data(2)
               }
               // fix file format issues (as it is a UTF-8 BOM file)
               value = value.replaceAll("(Â§)", "§")
@@ -164,126 +161,29 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
     val files = localizationFolder.listFiles
     if (files == null) return
     // Separate new and changed localizations
-    val changedLocalizations = localizationCollection.filterByStatus(Localization.Status.UPDATED)
-    val newLocalizations = localizationCollection.filterByStatus(Localization.Status.NEW)
+    val changedLocalizations = CollectionConverters.asJava(localizationCollection.filterByStatus(Localization.Status.UPDATED))
+    val newLocalizations = CollectionConverters.asJava(localizationCollection.filterByStatus(Localization.Status.NEW))
     // Save updated and new localizations
-//    val sortAlphabetically = false
-//    changedLocalizations.forEach(entry => updateLocalizationFile(entry._1, entry._2.toList, sortAlphabetically))
-//    newLocalizations.forEach(entry => updateLocalizationFile(entry._1, entry._2.toList, sortAlphabetically))
-// Merge the maps: for every file, combine the two lists (or use one if the file exists only in one map)
-    val mergedLocalizations: Map[File, List[Localization]] =
-      (changedLocalizations ++ newLocalizations)
-        .groupBy(_._1)
-        .view
-        .mapValues(_.flatMap(_._2).toList)
-        .toMap
-
-    val sortAlphabetically = false
-    mergedLocalizations.foreach { case (file, locList) =>
-      updateLocalizationFile(file, locList, sortAlphabetically)
-    }
+    changedLocalizations.forEach(entry => writeAllLocalization(entry._2.toList, entry._1))
+    newLocalizations.forEach(entry => writeAllLocalization(entry._2.toList, entry._1))
   }
 
-//  def writeAllLocalization(list: List[Localization], file: File): Unit = {
-//    // Sort the list by the base key (i.e. key without the '_desc' suffix).
-//    // For entries with the same base key, ensure the non-'_desc' version comes first.
-//    val sortedList = list.sortWith { (loc1, loc2) =>
-//      val base1 = if (loc1.ID.endsWith("_desc")) loc1.ID.dropRight(5) else loc1.ID
-//      val base2 = if (loc2.ID.endsWith("_desc")) loc2.ID.dropRight(5) else loc2.ID
-//      if (base1 == base2) !loc1.ID.endsWith("_desc")
-//      else base1 < base2
-//    }
-//
-//    sortedList.foreach { localization =>
-//      localization.status match {
-//        case Localization.Status.UPDATED => writeLocalization(file, localization)
-//        case Localization.Status.NEW => writeLocalization(file, localization)
-//        case _ =>
-//          throw new IllegalStateException("Unexpected value: " + localization.status)
-//      }
-//    }
-//  }
-
-  /**
-   * Updates a localization file by merging new localizations with existing ones.
-   *
-   * @param file               The localization file to update.
-   * @param localizationList   The list of new or updated localizations.
-   * @param sortAlphabetically If true, groups are sorted alphabetically; if false, new entries are appended.
-   */
-  def updateLocalizationFile(file: File, localizationList: List[Localization], sortAlphabetically: Boolean): Unit = {
-    // Read the entire file as lines.
-    val fileLines = Files.readAllLines(file.toPath).toArray.mkString("\n")
-
-    // Assume the first non-empty line is a header (for example, "l_english:")
-    val lines = fileLines.split("\n").toList
-    val header = lines.headOption.getOrElse("")
-
-    val existingLocalization: List[Localization] =
-      lines.flatMap(LocalizationParser.parseLine)
-    LOGGER.debug(s"File: ${file.getName}, Existing localizations: ${existingLocalization.size}")
-
-    /* --- Group by base key --- */
-    val existingGroups: Map[String, LocalizationGroup] =
-      existingLocalization.groupBy(_.baseKey).map { case (base, locs) =>
-        val baseEntry = locs.find(!_.ID.endsWith("_desc"))
-        val descEntry = locs.find(_.ID.endsWith("_desc"))
-        base -> LocalizationGroup(baseEntry, descEntry)
+  def writeAllLocalization(list: List[Localization], file: File): Unit = {
+    for (localization <- list) {
+      val key = localization.ID
+      val version = {
+        if (localization.version == null) ""
+        else String.valueOf(localization.version)
       }
-
-    val newGroups: Map[String, LocalizationGroup] =
-      localizationList.groupBy(_.baseKey).map { case (base, locs) =>
-        val baseEntry = locs.find(!_.ID.endsWith("_desc"))
-        val descEntry = locs.find(_.ID.endsWith("_desc"))
-        base -> LocalizationGroup(baseEntry, descEntry)
-      }
-
-    /* --- Merge groups --- */
-    // For each base key, let new entries override existing ones when available.
-    val mergedGroups: Map[String, LocalizationGroup] = (existingGroups.keySet ++ newGroups.keySet).map { key =>
-      val existing = existingGroups.getOrElse(key, LocalizationGroup(None, None))
-      val added = newGroups.getOrElse(key, LocalizationGroup(None, None))
-
-      // New update takes precedence; otherwise, use the existing file value.
-      val mergedGroup = LocalizationGroup(
-        base = added.base.orElse(existing.base),
-        desc = added.desc.orElse(existing.desc)
-      )
-      key -> mergedGroup
-    }.toMap
-
-    /* --- Ordering --- */
-    val groupList: List[(String, LocalizationGroup)] = {
-      if (sortAlphabetically) {
-        mergedGroups.toList.sortBy(_._1)
-      } else {
-        // Determine the order from the existing file: use the first occurrence of each base key.
-        val existingOrder: List[String] = existingLocalization.map(_.baseKey).distinct
-        val inFileGroups = existingOrder.flatMap { key =>
-          mergedGroups.get(key).map(group => key -> group)
-        }
-        // Append any new groups
-        val newKeys = mergedGroups.keys.toList.filterNot(existingOrder.toSet)
-        inFileGroups ++ newKeys.map(key => key -> mergedGroups(key))
+      val value = localization.text
+      
+      localization.status match {
+        case Localization.Status.UPDATED => writeLocalization(file, key, version, value, false)
+        case Localization.Status.NEW => writeLocalization(file, key, version, value, true)
+        case _ => throw new IllegalStateException("Unexpected value: " + localization.status)
       }
     }
-
-    // --- Build new file content ---
-    val newContent = new StringBuilder
-    newContent.append(header).append("\n")
-
-    // For each group, print the base loc and then the description loc (if any).
-    for ((_, group) <- groupList) {
-      group.base.foreach(loc => newContent.append("\t").append(formatLocalization(loc)).append("\n"))
-      group.desc.foreach(loc => newContent.append("\t").append(formatLocalization(loc)).append("\n"))
-      newContent.append("\n")   // empty line between groups
-    }
-
-    // Write the updated content back to the file.
-    Files.write(file.toPath, newContent.toString.getBytes(StandardCharsets.UTF_8))
-//    Files.write(Paths.get(file.getAbsolutePath), lines)
   }
-
 
   /**
    * Use to replace existing localization with entry
@@ -294,26 +194,11 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
    * @param value
    * @param append
    */
-  protected def writeLocalization(file: File, localization: Localization): Unit = {
-    /* localization */
-    val key = localization.ID
-    val version = {
-      if (localization.version == null) ""
-      else String.valueOf(localization.version)
-    }
-    val value = localization.text
-
+  protected def writeLocalization(file: File, key: String, version: String, value: String, append: Boolean): Unit = {
     var entry = "\t" + key + ":" + version + " \"" + value + "\""
-    entry = entry.replaceAll("§", "Â§")
+    entry = entry.replaceAll("§", "Â§") // necessary with UTF-8 BOM
 
     val writer: PrintWriter = getLocalizationWriter(file, true)
-
-    /* append is a quick add to end no more logic needed */
-    val append = localization.status match {
-      case Localization.Status.NEW => true
-      case Localization.Status.UPDATED => false
-      case _ => throw new IllegalStateException("Unexpected value: " + localization.status)
-    }
     if (append) try {
       writer.println(entry)
     } catch {
@@ -321,7 +206,8 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
         System.err.println("Failed to write new localization to file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
     } finally {
       if (writer != null) writer.close()
-    } else try {
+    }
+    else try {
       var lineReplaced = false
       val lines = Files.readAllLines(Paths.get(file.getAbsolutePath))
       for (i <- 0 until lines.size) {
@@ -342,17 +228,6 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
       case exc: IOException =>
         System.err.println("Failed to update localization in file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
     }
-  }
-
-  /** Formats a Localization into a file line. */
-  def formatLocalization(loc: Localization): String = {
-    val versionStr = loc.version match {
-      case null => ""
-      case v => v.toString
-    }
-    // Build the entry string
-    val entry = s"${loc.ID}:$versionStr \"${loc.text}\""
-    entry.replaceAll("§", "Â§")   // necessary with UTF-8 BOM
   }
 
   @throws[IOException]
@@ -424,52 +299,3 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
 
   override def toString: String = "EnglishLocalizationManager{" + "localizations=" + localizationCollection + "}"
 }
-
-object LocalizationParser:
-
-  def parseLine(line: String): Option[Localization] =
-    val colonIndex = line.indexOf(':')
-    if colonIndex < 0 then
-      None
-    else
-      val key = line.substring(0, colonIndex).trim
-      val afterColon = line.substring(colonIndex + 1).trim
-
-      // Split out the number (if any)
-      val (numPart, restAfterNumber) = afterColon.span(_.isDigit)
-      val ver = if numPart.isEmpty then null else numPart.toInt
-      val afterNumber = restAfterNumber.trim
-
-      // Check that we start with a quote
-      if !afterNumber.startsWith("\"") then
-        None
-      else
-        try
-          val (quotedText, indexAfterQuote) = parseQuoted(afterNumber, 0)
-          val trailing = afterNumber.substring(indexAfterQuote).trim
-          Some(Localization(key, ver.asInstanceOf[Integer], quotedText, Localization.Status.EXISTS))
-        catch
-          case _: Exception => None
-
-  /** Parses a quoted string starting at startIndex (which should point to a double quote).
-   * It handles inner escaped quotes represented by a double double-quote.
-   * Returns a tuple with the parsed string and the index immediately after the closing quote.
-   */
-  private def parseQuoted(s: String, startIndex: Int): (String, Int) =
-    // We expect s(startIndex) to be the starting quote.
-    val sb = new StringBuilder
-    var i = startIndex + 1 // Skip the initial quote
-    while i < s.length do
-      if s(i) == '"' then
-        // If the next char is also a quote, it is an escaped quote.
-        if i + 1 < s.length && s(i + 1) == '"' then
-          sb.append('"')
-          i += 2
-        else
-          // End of quoted text.
-          return (sb.toString, i + 1)
-      else
-        sb.append(s(i))
-        i += 1
-    throw new Exception("No closing quote found in input")
-

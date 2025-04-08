@@ -93,10 +93,4 @@ public record Localization(String ID, Integer version, String text, Status statu
 		return ID + ":" + (version == null? "" : version) + " " + "\"" + text + "\"";
 	}
 
-	public String baseKey() {
-		if (ID.endsWith("_desc")) {
-			return ID.substring(0, ID.length() - 5);
-		} else return ID; 
-	}
-
 }

@@ -54,7 +54,7 @@ public class CustomTooltip {
 			if (!exp.contains("tooltip")) {
 				continue;
 			}
-			String expID = exp.getValue("tooltip").$stringOrElse(null);
+			String expID = exp.getValue("tooltip").string();
 			if (expID == null) {
 				continue;
 			}

@@ -36,7 +36,6 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   final val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
   final val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
   //var ddsImage: Image = _
-  final val ai_will_do = new AIWillDoPDX
   /* completion reward */
   final val completionReward: CompletionReward = new CompletionReward()
 
@@ -50,7 +49,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
    */
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
     ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost,
-      availableIfCapitulated, cancelIfInvalid, continueIfInvalid, ai_will_do, completionReward)
+      availableIfCapitulated, cancelIfInvalid, continueIfInvalid, completionReward)
   }
 
   def absoluteX: Int = absolutePosition.x
@@ -244,17 +243,17 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 //  }
 
   private def setCompletionRewardsOfNode(completionRewardNode: Node): Unit = {
-    focusTree.countryTag match {
-      case Some(tag) =>
-        setCompletionRewardsOfNode(completionRewardNode, Scope.of(tag))
+    focusTree.country.value match {
+      case Some(countryTag) =>
+        setCompletionRewardsOfNode(completionRewardNode, Scope.of(countryTag))
       case None =>
         setCompletionRewardsOfNode(completionRewardNode, null)
     }
   }
 
-  def mutuallyExclusiveList: List[Focus] =   mutuallyExclusive.flatMap(_.references()).toList
-
-  def prerequisiteList: List[Focus] = prerequisites.flatMap(_.references()).toList
+  def mutuallyExclusiveList: List[Focus] = mutuallyExclusive.flatten().toList
+  
+  def prerequisiteList: List[Focus] = prerequisites.flatten().toList
   
   def prerequisiteSets: List[PrerequisiteSet] = prerequisites.toList
 
@@ -375,28 +374,6 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     override def getPDXTypeName: String = "Completion Reward"
   }
 
-  class AIWillDoPDX extends StructuredPDX("ai_will_do") {
-    final val base = new DoublePDX("base")
-    final val factor = new DoublePDX("factor")
-    final val add = new DoublePDX("add")
-    final val modifier = new MultiPDX[AIWillDoModifierPDX](None, Some(() => new AIWillDoModifierPDX), "modifier")
-
-    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add, modifier)
-
-    override def getPDXTypeName: String = "AI Willingness"
-
-    class AIWillDoModifierPDX extends StructuredPDX("modifier") {
-      final val base = new DoublePDX("base")
-      final val factor = new DoublePDX("factor")
-      final val add = new DoublePDX("add")
-      // todo trigger block
-
-      override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add)
-
-      override def getPDXTypeName: String = "Modifier"
-    }
-  }
-
 }
 
 object Focus {
@@ -412,9 +389,9 @@ object Focus {
 
   def focusesWithPrerequisites(focuses: Iterable[Focus]): List[(Focus, List[Focus])] = {
     focuses.filter(_.hasPrerequisites).map { f =>
-      (f, f.prerequisiteSets.flatMap(_.references()))
+      (f, f.prerequisiteSets.flatten)
     }.toList
   }
 
-  //  def schema = new PDXSchema()
+//  def schema = new PDXSchema()
 }

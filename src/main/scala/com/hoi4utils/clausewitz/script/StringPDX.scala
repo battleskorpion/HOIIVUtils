@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz_parser.{Node}
+import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
 
 import scala.annotation.targetName
 
@@ -20,7 +20,7 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
     this.node = Some(expression)
     this.node.get.$ match {
       case _: String =>
-      case _ => throw new NodeValueTypeException(this.node.get, this.getClass)
+      case _ => throw new NodeValueTypeException(this.node.get)
     }
   }
   
@@ -103,10 +103,5 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
   def @=(other: PDXScript[String]): Unit = other.value match {
     case Some(v) => set(v)
     case None => setNull()
-  }
-
-  override def updateNodeTree(): Unit = {
-    // Default behavior for leaf nodes: update the node's value from the current state.
-    node.foreach(n => setNode(value.orNull))
   }
 }

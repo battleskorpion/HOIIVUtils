@@ -70,8 +70,6 @@ class CountryTag(val tag: String) extends Comparable[CountryTag] {
     obj match {
       case other: CountryTag =>
         tag.equals(other.tag)
-      case string: String =>
-        tag.equals(string)
       case _ => false
     }
   }
