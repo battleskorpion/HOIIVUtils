@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
+import com.hoi4utils.clausewitz_parser.{Node}
 import org.jetbrains.annotations.{NotNull, Nullable}
 
 import java.util.function.{Consumer, Supplier}
@@ -32,23 +32,33 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    */
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
-    try add(expression)
-    catch {
+    try {
+      add(expression)
+    } catch {
       case e: NodeValueTypeException =>
-        throw new RuntimeException(e)
+        LOGGER.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+        // For MultiPDX, preserve the node by storing the raw expression.
+        node = Some(expression)
     }
   }
 
-  override def loadPDX(expressions: Iterable[Node]): Unit = {
+  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
     if (expressions != null) {
+      val remaining = ListBuffer.from(expressions)
       expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
-        try loadPDX(expression)
+        try {
+          loadPDX(expression)
+          remaining -= expression
+        }
         catch {
           case e: UnexpectedIdentifierException =>
-            System.err.println(e.getMessage)
+            LOGGER.error(e.getMessage)
           //throw new RuntimeException(e);
         }
       })
+      remaining
+    } else {
+      ListBuffer.empty
     }
   }
 
@@ -63,7 +73,6 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   @throws[NodeValueTypeException]
   protected def add(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.$
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     expression.$ match {
@@ -73,7 +82,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
         pdxList.addOne(childScript)
       case _ =>
         // todo idk
-        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "list")
+        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "not a list", this.getClass)
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(expression)
         pdxList.addOne(childScript)
@@ -81,19 +90,16 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   }
 
   def removeIf(p: T => Boolean): ListBuffer[T] = {
-    for (
-      i <- pdxList.indices
-    ) {
+    for (i <- pdxList.indices.reverse) {
       if (p(pdxList(i))) {
         pdxList(i).getNode match {
           case Some(node) => node.clear()
-          case _ =>
+          case _          => // do nothing
         }
         pdxList(i).clearNode()
         pdxList.remove(i)
       }
     }
-
     pdxList
   }
 
@@ -105,16 +111,38 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.
    * @param pdxScript
    */
-  @targetName ("add")
+  @targetName("add")
   def +=(pdxScript: T): Unit = {
     pdxList += pdxScript
+    // TODO TODO add to node
+  }
+
+  /**
+   * Removes a PDXScript from the list of PDXScripts.
+   * @param pdxScript
+   */
+  def -=(pdxScript: T): this.type = {
+    val index = pdxList.indexOf(pdxScript)
+    pdxList -= pdxScript
+    pdxScript.clearNode()
+    this
+  }
+
+  /**
+   * Removes a PDXScript from the list of PDXScripts.
+   * @param pdxScript
+   * @note Java was *struggling* with 'this.type' return type. Use '-=' otherwise.
+   * @return
+   */
+  def remove(pdxScript: T): Unit = {
+    this -= pdxScript
   }
 
   def clear(): Unit = {
-    if (node.nonEmpty) {
-      node.get.$ match {
+    node.foreach { n =>
+      n.$ match {
         case l: ListBuffer[T] => l.clear()
-        case _ => 
+        case _                => // do nothing
       }
     }
     pdxList.clear()
@@ -124,39 +152,16 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def iterator: Iterator[T] = pdxList.iterator
 
-  //  override def forEach(action: Consumer[? >: T]): Unit = {
-  //    get().foreach(action)
-  //  }
   override def foreach[U](f: T => U): Unit = pdxList.foreach(f)
-
-//  override def spliterator: Spliterator[T] = get().spliterator
-
-//  override def size: Int = get().getOrElse(ListBuffer.empty).size
 
   override def length: Int = pdxList.length
 
   override def apply(idx: Int): T = pdxList(idx)
 
-  override def isUndefined: Boolean = {
-    pdxList.forall(_.isUndefined) || pdxList.isEmpty
-  }
-
-  override def toScript: String = {
-    if (node.isEmpty || node.get.isEmpty) return null
-
-    val sb = new StringBuilder()
-    sb.append(node.get.name)
-    sb.append(" = {\n")
-    for (pdx <- pdxList) {
-      sb.append('\t')
-      sb.append(pdx.toScript)
-    }
-    sb.toString
-  }
+  override def isUndefined: Boolean = pdxList.forall(_.isUndefined) || pdxList.isEmpty
 
   // todo no. in general multi. would be more than one node.
   override def set(obj: ListBuffer[T]): ListBuffer[T] = {
-    //
     obj
   }
 
@@ -182,6 +187,35 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
       case (None, None) => throw new RuntimeException("Both suppliers are null")
     }
   }
+
+  def addNewPDX(): T = {
+    val pdx = applySomeSupplier()
+    this += pdx
+    pdx
+  }
+
+  override def clearNode(): Unit = {
+    pdxList.foreach(_.clearNode())
+  }
+
+  override def getNodes: List[Node] = {
+    pdxList.flatMap(_.getNode).toList
+  }
+
+  /**
+   * Rebuilds the underlying Node tree for MultiPDX from the current collection of child nodes.
+   */
+  override def updateNodeTree(): Unit = {
+    pdxList.foreach(_.updateNodeTree())
+    val childNodes: ListBuffer[Node] = pdxList.flatMap(_.getNode)
+    node match {
+      case Some(n) => n.setValue(childNodes)
+      case None => 
+        if (childNodes.nonEmpty) node = Some(new Node(childNodes))
+        else node = None
+    }
+  }
+
 }
 
 

@@ -19,11 +19,25 @@ trait NodeIterable[NodeType <: Node] extends Iterable[NodeType] {
     }
 
   def find(str: String): Option[NodeType] = {
-    find((node: NodeType) => node.identifier.isDefined && node.name.equals(str))
+    find((node: NodeType) =>
+      node.$ match {
+        case l: List[Node] =>
+          l.exists(_.name.equals(str))
+        case _ =>
+          node.identifier.isDefined && node.name.equals(str)
+      }
+    )
   }
   
   def findCaseInsensitive(str: String): Option[NodeType] = {
-    find((node: NodeType) => node.identifier.isDefined && node.name.equalsIgnoreCase(str))
+    find((node: NodeType) =>
+      node.$ match {
+        case l: List[Node] =>
+          l.exists(_.name.equalsIgnoreCase(str))
+        case _ =>
+          node.identifier.isDefined && node.name.equalsIgnoreCase(str)
+      }
+    )
   }
 
   // Now filterName returns a NodeIterable instead of Iterable.
@@ -87,6 +101,19 @@ trait NodeIterable[NodeType <: Node] extends Iterable[NodeType] {
   }
 
   def contains(str: String): Boolean = filter(str).toList.nonEmpty
+
+  def valueContains(str: String): Boolean = {
+    filter((node: NodeType) =>
+      node.$ match {
+        case l: List[Node] =>
+          l.exists(_.valueAsString.equals(str))
+        case _ =>
+          node.identifier.isDefined && node.valueAsString.equals(str)
+      }
+    ).toList.nonEmpty
+  }
+
+  def scriptContains(str: String): Boolean = contains(str) || valueContains(str)
 
   def containsCaseInsensitive(str: String): Boolean = filterCaseInsensitive(str).toList.nonEmpty
 

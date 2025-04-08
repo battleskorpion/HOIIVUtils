@@ -159,8 +159,8 @@ class Interface(private val file: File)
     val validSpriteTypes = spriteTypeNodes.filter(_.containsAllCaseInsensitive("name", "texturefile"))
     for (spriteType <- validSpriteTypes) {
       try {
-        val name = spriteType.getValueCaseInsensitive("name").stringOrElse("").replace("\"", "")
-        val filename = spriteType.getValueCaseInsensitive("texturefile").stringOrElse("").replace("\"", "")
+        val name = spriteType.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
+        val filename = spriteType.getValueCaseInsensitive("texturefile").$stringOrElse("").replace("\"", "")
         if (name.isEmpty || filename.isEmpty) {
           LOGGER.warn(s"SpriteType in interface .gfx file, $file, has empty name or texturefile.")
         }

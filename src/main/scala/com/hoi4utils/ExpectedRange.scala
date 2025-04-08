@@ -28,9 +28,9 @@ object ExpectedRange {
   
   def ofPositiveDouble: ExpectedRange[Double] = new ExpectedRange[Double](0, Double.MaxValue)
 
-  def infinite: ExpectedRange[Double] = new ExpectedRange[Double](Double.NegativeInfinity, Double.PositiveInfinity)
+  def ofInfinite: ExpectedRange[Double] = new ExpectedRange[Double](Double.NegativeInfinity, Double.PositiveInfinity)
   
-  def infinitePositive: ExpectedRange[Double] = new ExpectedRange[Double](0, Double.PositiveInfinity)
+  def ofPositiveInfinite: ExpectedRange[Double] = new ExpectedRange[Double](0, Double.PositiveInfinity)
   
-  def infiniteNegative: ExpectedRange[Double] = new ExpectedRange[Double](Double.NegativeInfinity, 0)
+  def ofNegativeInfinite: ExpectedRange[Double] = new ExpectedRange[Double](Double.NegativeInfinity, 0)
 }

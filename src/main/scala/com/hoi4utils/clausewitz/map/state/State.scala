@@ -1,5 +1,6 @@
 package com.hoi4utils.clausewitz.map.state
 
+import com.hoi4utils.ExpectedRange
 import com.hoi4utils.clausewitz.code.ClausewitzDate
 import com.hoi4utils.clausewitz.data.country.{Country, CountryTag, CountryTagsManager}
 import com.hoi4utils.clausewitz.localization.*
@@ -8,7 +9,7 @@ import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.province.Province
 import com.hoi4utils.clausewitz.map.state.State.{History, globalResources}
 import com.hoi4utils.clausewitz.script.*
-import com.hoi4utils.clausewitz.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.clausewitz.{BoolType, HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.clausewitz_parser.*
 import javafx.collections.{FXCollections, ObservableList}
 import org.apache.logging.log4j.{LogManager, Logger}
@@ -52,6 +53,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
   final val buildingsMaxLevelFactor = new DoublePDX("buildings_max_level_factor")
   final val state_category = new StateCategory("state_category")
   final val local_supplies = new DoublePDX("local_supplies")
+  final val impassible = new BooleanPDX("impassible", false, BoolType.YES_NO)
 
   private var _stateFile: Option[File] = None
 
@@ -69,7 +71,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
    */
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
     ListBuffer(stateID, name, resources, history, provinces, manpower, buildingsMaxLevelFactor,
-      state_category, local_supplies)
+      state_category, local_supplies, impassible)
   }
 
 //  private def parseStateNode(stateFile: File): Option[Node] = {
@@ -495,11 +497,13 @@ object State extends Iterable[State] {
 
   @NotNull override def iterator: Iterator[State] = states.iterator
 
+  // todo fix structured effect block later when i can read
   class History extends StructuredPDX("history") {
     final val owner = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "owner")
+    final val controller = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "controller")
     final val buildings = new BuildingsPDX
+    final val victory_points = new MultiPDX[VictoryPointPDX](None, Some(() => new VictoryPointPDX), "victory_points")
 //    final MultiPDX[VictoryPoint] victoryPoints = new MultiPDX(None, Some())
-    //final val addCoreOf = new MultiReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), List("add_core_of")) // TODO
 
     def this(node: Node) = {
       this()
@@ -510,16 +514,16 @@ object State extends Iterable[State] {
      * @inheritdoc
      */
     override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
-      ListBuffer(owner, buildings)
+      ListBuffer(owner, buildings, controller, victory_points)
     }
   }
 
   class BuildingsPDX extends StructuredPDX("buildings") {
-    final val infrastructure = new IntPDX("infrastructure")
-    final val civilianFactories = new IntPDX("industrial_complex")
-    final val militaryFactories = new IntPDX("arms_factory")
-    final val navalDockyards = new IntPDX("naval_base")
-    final val airBase = new IntPDX("air_base")
+    final val infrastructure = new IntPDX("infrastructure", ExpectedRange.ofPositiveInt)
+    final val civilianFactories = new IntPDX("industrial_complex", ExpectedRange.ofPositiveInt)
+    final val militaryFactories = new IntPDX("arms_factory", ExpectedRange.ofPositiveInt)
+    final val navalDockyards = new IntPDX("naval_base", ExpectedRange.ofPositiveInt)
+    final val airBase = new IntPDX("air_base", ExpectedRange.ofPositiveInt)
 
     def this(node: Node) = {
       this()
@@ -532,5 +536,9 @@ object State extends Iterable[State] {
     override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
       ListBuffer(infrastructure, civilianFactories, militaryFactories, navalDockyards, airBase)
     }
+  }
+
+  class VictoryPointPDX extends ListPDX[IntPDX](() => new IntPDX(), "victory_points") {
+    override def getPDXTypeName: String = "Victory Point"
   }
 }
