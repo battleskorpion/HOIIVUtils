@@ -473,7 +473,7 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 
 	private void selectClosestMatch(ComboBox<FocusTree> comboBox, String typedText) {
 		for (FocusTree item : comboBox.getItems()) {
-			scala.Option<CountryTag> optionalCountry = item.country().value();
+			scala.Option<CountryTag> optionalCountry = item.countryTag();
 			if (optionalCountry.nonEmpty() && optionalCountry.getOrElse(() -> "").toLowerCase().startsWith(typedText.toLowerCase())) {
 				comboBox.getSelectionModel().select(item);
 				comboBox.getEditor().setText(String.valueOf(item));

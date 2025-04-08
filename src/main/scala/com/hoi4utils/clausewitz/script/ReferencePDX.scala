@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
+import com.hoi4utils.clausewitz_parser.{Node}
 import org.jetbrains.annotations.Nullable
 
 import java.util.function.{Function, Supplier}
@@ -36,14 +36,17 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
-    val value = expression.$
-    value match {
+    // Always preserve the original node.
+    this.node = Some(expression)
+    expression.$ match {
       case s: String =>
         referenceName = s
       case s: Int =>
         referenceName = s.toString
-      case _ =>
-        throw new NodeValueTypeException(expression, "string | int")
+      case other =>
+        // Log a warning, preserve the node, then throw the exception.
+        LOGGER.warn(s"Expected a string or int for a reference identifier, but got ${other.getClass.getSimpleName}. Preserving original node.")
+        throw new NodeValueTypeException(expression, "string | int", this.getClass)
     }
   }
 
@@ -54,10 +57,10 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
 
   private def resolveReference(): Option[T] = {
     val referenceCollection = referenceCollectionSupplier()
-    for (reference <- referenceCollection) {
-      val referenceID: Option[String] = idExtractor.apply(reference)
+    for (ref <- referenceCollection) {
+      val referenceID: Option[String] = idExtractor.apply(ref)
       if (referenceID.nonEmpty && referenceID.get.equals(referenceName)) {
-        this.reference = Some(reference)
+        this.reference = Some(ref)
         return this.reference
       }
     }
@@ -67,17 +70,12 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
   override def equals(other: PDXScript[?]): Boolean = {
     other match {
       case referencePDX: ReferencePDX[?] =>
-        (referencePDX @== referenceName) && this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier
-        && this.idExtractor == referencePDX.idExtractor
+        (referencePDX @== referenceName) &&
+          this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier &&
+          this.idExtractor == referencePDX.idExtractor
       case _ => false
     }
   }
-
-//  override def toScript: String = {
-//    val scripts = value
-//    if (scripts == null) return null
-//    (pdxIdentifier + " = " + referenceName) + "\n"
-//  }
 
   def getReferenceName: String = referenceName
 
@@ -97,7 +95,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
 
   @targetName("setReference")
   def @= (other: T): Unit = {
-    referenceName = idExtractor.apply(other).orNull
+    referenceName = idExtractor(other).orNull
     reference = Some(other)
   }
 
@@ -108,7 +106,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
   def @==(other: StringPDX): Boolean = referenceName == other.str
 
   @targetName("referenceEquals")
-  def @== (other: T): Boolean = idExtractor.apply(other).contains(referenceName)
+  def @== (other: T): Boolean = idExtractor(other).contains(referenceName)
 
   override def isUndefined: Boolean = {
     resolveReference()
@@ -117,7 +115,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
 
   override def set(obj: T): T = {
     reference = Some(obj)
-    referenceName = idExtractor.apply(obj).orNull // sure
+    referenceName = idExtractor(obj).orNull // sure
     obj
   }
 
@@ -128,5 +126,19 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     super.setNull()
     reference = None
     referenceName = null
+  }
+
+  /**
+   * On-demand Node rebuilding: update the underlying node’s value to the current reference name.
+   */
+  override def updateNodeTree(): Unit = {
+    if (node.isEmpty && referenceName != null) {
+      node = Some(new Node(pdxIdentifier, "=", referenceName))
+    }
+    else node.foreach(_.setValue(referenceName))
+  }
+  
+  override def toString : String = {
+    super.toString
   }
 }

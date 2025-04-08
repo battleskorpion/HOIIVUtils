@@ -2,6 +2,7 @@ package com.hoi4utils.ui.pdxscript;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.script.*;
+import com.hoi4utils.ui.map.MapEditorController;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -10,6 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import scala.jdk.javaapi.CollectionConverters;
@@ -24,6 +27,8 @@ import java.util.List;
  * A Pane that displays an editor for a PDXScript.
  */
 public class PDXEditorPane extends AnchorPane {
+    public static final Logger LOGGER = LogManager.getLogger(PDXEditorPane.class);
+    
     private final PDXScript<?> pdxScript;
     private final VBox rootVBox;
     private final List<PDXScript<?>> nullProperties = new ArrayList<>();
@@ -140,7 +145,7 @@ public class PDXEditorPane extends AnchorPane {
                     : visualizeMultiReferencePDX(pdx);
             case MultiPDX<?> pdx -> (pdx.isUndefined() && !allowNull)
                     ? null
-                    : visualizeMultiPDX(pdx, allowNull);
+                    : visualizeMultiPDX(pdx, allowNull);    // ignore error idk/idc rn it works 
             case CollectionPDX<?> pdx -> (pdx.isUndefined() && !allowNull)
                     ? null
                     : visualizeCollectionPDX(pdx, allowNull);
@@ -158,18 +163,11 @@ public class PDXEditorPane extends AnchorPane {
         else return null;
     }
 
-    private Node createEditorNullPDXNode(PDXScript<?> property, boolean withLabel) {
+    private Node createEditorNullPDXNode(PDXScript<?> property) {
         HBox editorNullPropertyHBox = new HBox();
         editorNullPropertyHBox.setSpacing(10);
         editorNullPropertyHBox.setPadding(new Insets(6, 6, 6, 20)); // Indent the null properties
         Label label = null;
-        if (withLabel) {
-            label = new Label(property.pdxIdentifier() + " =");
-            label.setFont(Font.font("Monospaced"));
-            label.setMinWidth(10);
-            label.setPrefHeight(25);
-            label.setStyle("-fx-text-fill: grey;");
-        }
         var allowNull = true;
 
         Node editorNode = switch (property) {
@@ -205,28 +203,79 @@ public class PDXEditorPane extends AnchorPane {
         };
 
         if (editorNode != null) {
-            if (withLabel) editorNullPropertyHBox.getChildren().add(label);
+            editorNullPropertyHBox.getChildren().add(label);
             editorNullPropertyHBox.getChildren().add(editorNode);
             return editorNullPropertyHBox;
         }
         else return null;
     }
 
-    private @Nullable Node visualizeMultiPDX(MultiPDX<?> pdx, boolean allowNull) {
+    private @Nullable <T extends PDXScript<?>> Node visualizeMultiPDX(MultiPDX<T> pdx, boolean allowNull) {
         VBox subVBox = new VBox();
         subVBox.setSpacing(10);
         if (!pdx.isEmpty()) {
+            /* sub PDX visualization */
             pdx.foreach(pdxScript -> {
-                var subNode = createSubNode(allowNull, (PDXScript<?>) pdxScript);
-                if (subNode != null) subVBox.getChildren().add(subNode);
+                // always allow null child to appear visually
+                var subNode = createSubNode(true, (T) pdxScript);
+                if (subNode != null) {
+                    // Wrap the sub-node with a remove button in a container.
+                    HBox container = new HBox();
+                    container.setSpacing(6);
+                    container.getChildren().add(subNode);
+
+                    // Create the remove button for this sub-element.
+                    Button removeButton = new Button("Remove");
+                    removeButton.setOnAction(event -> {
+                        // Remove this specific sub-element.
+                        pdx.remove(pdxScript);
+                        reloadEditor();
+                    });
+                    container.getChildren().add(removeButton);
+
+                    subVBox.getChildren().add(container);
+                }
+                //if (subNode != null) subVBox.getChildren().add(subNode);
                 return null;
             });
+
+            /* new sub pdx button */
+            Button addPDXButton = new Button("Add " + pdx.getPDXTypeName());
+            addPDXButton.setPrefWidth(200);
+            addPDXButton.setOnAction(event -> {
+                pdx.addNewPDX();
+                this.reloadEditor();
+            });
+            subVBox.getChildren().add(addPDXButton);
+
             return subVBox;
         } else if (allowNull) {
             var newPDX = pdx.applySomeSupplier();
             return createEditorPDXNode((PDXScript<?>) newPDX, allowNull, false);
         } else {
-            return null;
+            /* modify sub pdx buttons */
+            HBox modifySubPDXHBox = new HBox();
+            // add sub pdx
+            Button addPDXButton = new Button("Add " + pdx.getPDXTypeName());
+            addPDXButton.setPrefWidth(200);
+            addPDXButton.setOnAction(event -> {
+                var newPDX = pdx.applySomeSupplier();
+                // always allow null child to appear visually
+                var newPDXNode = createEditorPDXNode((PDXScript<?>) newPDX, true, false);
+                if (newPDXNode != null) {
+                    subVBox.getChildren().add(subVBox.getChildren().size() - 1, newPDXNode); // Add before the add button
+                }
+            });
+            // remove sub pdx
+            Button removePDXButton = new Button("Remove");
+            removePDXButton.setPrefWidth(80);
+            removePDXButton.setOnAction(event -> {
+                // hover over pdx (highlights), remove on click
+
+            });
+            modifySubPDXHBox.getChildren().add(addPDXButton);
+
+            return subVBox;
         }
     }
 
@@ -385,7 +434,7 @@ public class PDXEditorPane extends AnchorPane {
 //            label.setPrefHeight(25);
 //            label.setStyle("-fx-text-fill: grey;");
 
-            Node editorPDXNode = createEditorNullPDXNode(property, true);
+            Node editorPDXNode = createEditorNullPDXNode(property);
             if (editorPDXNode != null) {
 //                hbox.getChildren().addAll(label, editorPDXNode);
                 rootVBox.getChildren().add(rootVBox.getChildren().size() - 1, editorPDXNode); // Add before the add button
@@ -450,5 +499,19 @@ public class PDXEditorPane extends AnchorPane {
                 applyDebugBorders(childParent); // Recursively apply to children
             }
         }
+    }
+
+    public void showSaveButton() {
+        Button saveButton = new Button("Save Script");
+        saveButton.setOnAction(event -> {
+            LOGGER.info("Saving PDXScript...");
+            switch (pdxScript) {
+                case PDXFile pdxFile -> pdxFile.save();
+                default -> {
+                    LOGGER.warn("Cannot save PDXScript of type: " + pdxScript.getClass());
+                }
+            }
+        });
+        rootVBox.getChildren().add(saveButton);
     }
 }

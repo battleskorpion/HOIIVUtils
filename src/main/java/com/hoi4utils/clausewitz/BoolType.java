@@ -19,4 +19,22 @@ public enum BoolType {
     public String falseResponse() {
         return falseResponse;
     }
+    
+    public boolean matches(String value) {
+        if (value.equalsIgnoreCase(trueResponse)) {
+            return true;
+        } else if (value.equalsIgnoreCase(falseResponse)) {
+            return true;
+        }
+        return false;
+    }
+    
+    public Boolean parse(String value) {
+        if (value.equalsIgnoreCase(trueResponse)) {
+            return true;
+        } else if (value.equalsIgnoreCase(falseResponse)) {
+            return false;
+        }
+        return null;
+    }
 }

@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz_parser.{Node, NodeValue}
+import com.hoi4utils.clausewitz_parser.{Node}
 import scala.collection.mutable.ListBuffer
 
 trait HeadlessPDX { this: StructuredPDX =>
@@ -20,7 +20,7 @@ trait HeadlessPDX { this: StructuredPDX =>
           pdxScript.loadPDX(l)
         }
       case _ =>
-        throw new NodeValueTypeException(expression, "list")
+        throw new NodeValueTypeException(expression, "list", this.getClass)
     }
   }
 

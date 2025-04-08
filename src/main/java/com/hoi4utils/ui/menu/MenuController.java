@@ -13,6 +13,7 @@ import com.hoi4utils.ui.hoi4localization.CustomTooltipController;
 import com.hoi4utils.ui.hoi4localization.FocusLocalizationController;
 import com.hoi4utils.ui.hoi4localization.IdeaLocalizationController;
 import com.hoi4utils.ui.log_viewer.LogViewerController;
+import com.hoi4utils.ui.map.MapEditorController;
 import com.hoi4utils.ui.map.MapGenerationController;
 import com.hoi4utils.ui.parser.ParserViewerController;
 import com.hoi4utils.ui.province_colors.ProvinceColorsController;
@@ -298,6 +299,8 @@ public class MenuController extends Application implements JavaFXUIManager {
 	public void openMapGeneration() {
 		openUtilsWindow(new MapGenerationController());
 	}
+	
+	public void openMapEditor() { openUtilsWindow(new MapEditorController()); }
 
 	public void openParserView() {
 		openUtilsWindow(new ParserViewerController());
