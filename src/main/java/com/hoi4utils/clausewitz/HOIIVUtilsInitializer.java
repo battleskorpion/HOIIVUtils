@@ -42,12 +42,11 @@ public class HOIIVUtilsInitializer {
 	@SuppressWarnings("exports")
 	private FileWatcher stateFilesWatcher;
 	
+	private HOIIVModLoader modLoader;
 	private File hoi4UtilsDir;
 	private String propertiesFile;
 	private InputStream defaultProperties;
 	private String version;
-
-	
 
 	/**
 	 * Initializes the HOIIVUtils application.
@@ -77,8 +76,14 @@ public class HOIIVUtilsInitializer {
 		version = getProperty("version");
 		LOGGER.info("HOIIVUtils {} initialized", version);
 
+		// Create config with change notifier
+		HOIIVUtilsConfig config = createConfig();
+		
+		// Initialize mod loader
+		modLoader = new HOIIVModLoader(config);
+		
 		// Return configuration for use by application
-		return createConfig();
+		return config;
 	}
 
 	private void resolveApplicationDirectory() {
@@ -233,155 +238,16 @@ public class HOIIVUtilsInitializer {
 		}
 	}
 
+	/**
+	 * Loads mod data using the HOIIVModLoader.
+	 * This delegates to the central mod loading logic.
+	 */
 	public void loadMod() {
-		if (!createHOIIVFilePaths()) {
-			LOGGER.error("Failed to create HOIIV file paths");
-			setProperty("valid.HOIIVFilePaths", "false");
-		} else {
-			setProperty("valid.HOIIVFilePaths", "true");
+		if (modLoader == null) {
+			LOGGER.error("Cannot load mod: mod loader is not initialized");
+			return;
 		}
-
-		try {
-			LocalizationManager.getOrCreate(EnglishLocalizationManager::new).reload();
-		} catch (Exception e) {
-			LOGGER.error("Failed to reload localization", e);
-		}
-
-		try {
-			if (Interface.read()) {
-				setProperty("valid.Interface", "true");
-			} else {
-				setProperty("valid.Interface", "false");
-				LOGGER.error("Failed to read gfx interface files");
-			}
-		} catch (Exception e) {
-			setProperty("valid.Interface", "false");
-			LOGGER.error("Exception while reading interface files", e);
-		}
-
-		try {
-			if (ResourcesFile.read()) {
-				setProperty("valid.Resources", "true");
-			} else {
-				setProperty("valid.Resources", "false");
-				LOGGER.error("Failed to read resources");
-			}
-		} catch (Exception e) {
-			setProperty("valid.Resources", "false");
-			LOGGER.error("Exception while reading resources", e);
-		}
-
-		try {
-			if (CountryTag.read()) {
-				setProperty("valid.CountryTag", "true");
-			} else {
-				setProperty("valid.CountryTag", "false");
-				LOGGER.error("Failed to read country tags");
-			}
-		} catch (Exception e) {
-			setProperty("valid.CountryTag", "false");
-			LOGGER.error("Exception while reading country tags", e);
-		}
-
-		try {
-			if (Country.read()) {
-				setProperty("valid.Country", "true");
-			} else {
-				setProperty("valid.Country", "false");
-				LOGGER.error("Failed to read countries");
-			}
-		} catch (Exception e) {
-			setProperty("valid.Country", "false");
-			LOGGER.error("Exception while reading countries", e);
-		}
-
-		try {
-			if (State.read()) {
-				setProperty("valid.State", "true");
-			} else {
-				setProperty("valid.State", "false");
-				LOGGER.error("Failed to read states");
-			}
-		} catch (Exception e) {
-			setProperty("valid.State", "false");
-			LOGGER.error("Exception while reading states", e);
-		}
-
-		try {
-			if (FocusTree.read()) {
-				setProperty("valid.FocusTree", "true");
-			} else {
-				setProperty("valid.FocusTree", "false");
-				LOGGER.error("Failed to read focus trees");
-			}
-		} catch (Exception e) {
-			setProperty("valid.FocusTree", "false");
-			LOGGER.error("Exception while reading focus trees", e);
-		}
-
-		try {
-			if (IdeaFile.read()) {
-				setProperty("valid.IdeaFiles", "true");
-			} else {
-				setProperty("valid.IdeaFiles", "false");
-				LOGGER.error("Failed to read idea files");
-			}
-		} catch (Exception e) {
-			setProperty("valid.IdeaFiles", "false");
-			LOGGER.error("Exception while reading idea files", e);
-		}
-	}
-
-	private boolean createHOIIVFilePaths() {
-		if (!createHOIIVPaths()) {
-			return false;
-		}
-		if (!createModPaths()) {
-			return false;
-		}
-		changeNotifier.checkAndNotifyChanges();
-		return true;
-	}
-
-	private boolean createModPaths() {
-		String modPath = getProperty("mod.path");
-
-		if (!validateDirectoryPath(modPath, "mod.path")) {
-			return false;
-		}
-
-		HOIIVFiles.setModPathChildDirs(modPath);
-		return true;
-	}
-
-	private boolean createHOIIVPaths() {
-		String hoi4Path = getProperty("hoi4.path");
-
-		if (!validateDirectoryPath(hoi4Path, "hoi4.path")) {
-			return false;
-		}
-
-		HOIIVFiles.setHoi4PathChildDirs(hoi4Path);
-		return true;
-	}
-
-	/** Validates whether the provided directory path is valid */
-	private boolean validateDirectoryPath(String path, String keyName) {
-		if (path == null || path.isEmpty()) {
-			LOGGER.error("{} is null or empty!", keyName);
-			// Log but don't show popup - we'll show a consolidated warning later
-			return false;
-		}
-
-		File directory = new File(path);
-
-		if (!directory.exists() || !directory.isDirectory()) {
-			LOGGER.error("{} does not point to a valid directory: {}", keyName, path);
-			// Log but don't show popup - we'll show a consolidated warning later
-			return false;
-		}
-
-		return true;
+		modLoader.loadMod();
 	}
 
 	private HOIIVUtilsConfig createConfig() {
@@ -390,7 +256,8 @@ public class HOIIVUtilsInitializer {
 			propertiesFile,
 			defaultProperties,
 			version,
-			properties
+			properties, 
+			changeNotifier::checkAndNotifyChanges
 		);
 	}
 
@@ -407,7 +274,7 @@ public class HOIIVUtilsInitializer {
 	 * @param stateFiles The directory containing state files.
 	 */
 	public void watchStateFiles(File stateFiles) {
-		if (!validateDirectoryPath(Optional.ofNullable(stateFiles).map(File::getPath).orElse(null), "State files directory")) {
+		if (!HOIIVFiles.validateDirectoryPath(Optional.ofNullable(stateFiles).map(File::getPath).orElse(null), "State files directory")) {
 			return;
 		}
 

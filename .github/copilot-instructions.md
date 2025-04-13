@@ -9,3 +9,4 @@ HOIIVUtils is a offline desktop utility designed to streamline the modding proce
 - Use the latest Scala
 - Use the latest maven plugins and depedencies
 - Write code that is easy to read
+- This is a very mixed code base with many calls back and foward with java and scala, please look through scala and java code at the same time
