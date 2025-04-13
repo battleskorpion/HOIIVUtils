@@ -27,60 +27,100 @@ public class HOIIVModLoader {
 		} else {
 			LOGGER.error("Failed to create HOIIV file paths");
 			config.setProperty("valid.HOIIVFilePaths", "false");
-		}
+			}
+		
 		Interface.clear();
 		State.clear();
 		FocusTree.clear();
 		
-		LocalizationManager.get().reload();
+		try {
+			LocalizationManager.get().reload();
+		} catch (Exception e) {
+			LOGGER.error("Failed to reload localization", e);
+		}
 		
-		if (Interface.read()) {
-			config.setProperty("valid.Interface", "true");
-		} else {
+		try {
+			if (Interface.read()) {
+				config.setProperty("valid.Interface", "true");
+			} else {
+				config.setProperty("valid.Interface", "false");
+				LOGGER.error("Failed to read gfx interface files");
+			}
+		} catch (Exception e) {
 			config.setProperty("valid.Interface", "false");
-			LOGGER.error("Failed to read gfx interface files");
+			LOGGER.error("Exception while reading interface files", e);
 		}
 
-		if (ResourcesFile.read()) {
-			config.setProperty("valid.Resources", "true");
-		} else {
+		try {
+			if (ResourcesFile.read()) {
+				config.setProperty("valid.Resources", "true");
+			} else {
+				config.setProperty("valid.Resources", "false");
+				LOGGER.error("Failed to read resources");
+			}
+		} catch (Exception e) {
 			config.setProperty("valid.Resources", "false");
-			LOGGER.error("Failed to read resources");
+			LOGGER.error("Exception while reading resources", e);
 		}
 
-		if (CountryTag.read()) {
-			config.setProperty("valid.CountryTag", "true");
-		} else {
+		try {
+			if (CountryTag.read()) {
+				config.setProperty("valid.CountryTag", "true");
+			} else {
+				config.setProperty("valid.CountryTag", "false");
+				LOGGER.error("Failed to read country tags");
+			}
+		} catch (Exception e) {
 			config.setProperty("valid.CountryTag", "false");
-			LOGGER.error("Failed to read country tags");
+			LOGGER.error("Exception while reading country tags", e);
 		}
 		
-		if (Country.read()) {
-			config.setProperty("valid.Country", "true");
-		} else {
+		try {
+			if (Country.read()) {
+				config.setProperty("valid.Country", "true");
+			} else {
+				config.setProperty("valid.Country", "false");
+				LOGGER.error("Failed to read countries");
+			}
+		} catch (Exception e) {
 			config.setProperty("valid.Country", "false");
-			LOGGER.error("Failed to read countries");
+			LOGGER.error("Exception while reading countries", e);
 		}
 		
-		if (State.read()) {
-			config.setProperty("valid.State", "true");
-		} else {
+		try {
+			if (State.read()) {
+				config.setProperty("valid.State", "true");
+			} else {
+				config.setProperty("valid.State", "false");
+				LOGGER.error("Failed to read states");
+			}
+		} catch (Exception e) {
 			config.setProperty("valid.State", "false");
-			LOGGER.error("Failed to read states");
+			LOGGER.error("Exception while reading states", e);
 		}
 
-		if (FocusTree.read()) {
-			config.setProperty("valid.FocusTree", "true");
-		} else {
+		try {
+			if (FocusTree.read()) {
+				config.setProperty("valid.FocusTree", "true");
+			} else {
+				config.setProperty("valid.FocusTree", "false");
+				LOGGER.error("Failed to read focus trees");
+			}
+		} catch (Exception e) {
 			config.setProperty("valid.FocusTree", "false");
-			LOGGER.error("Failed to read focus trees");
+			LOGGER.error("Exception while reading focus trees", e);
 		}
 
-		if (IdeaFile.read()) {
-			config.setProperty("valid.IdeaFiles", "true");
-		} else {
+		try {
+			if (IdeaFile.read()) {
+				config.setProperty("valid.IdeaFiles", "true");
+			} else {
+				config.setProperty("valid.IdeaFiles", "false");
+				LOGGER.error("Failed to read idea files");
+			}
+		} catch (Exception e) {
 			config.setProperty("valid.IdeaFiles", "false");
-			LOGGER.error("Failed to read idea files");
+			LOGGER.error("Exception while reading idea files", e);
 		}
 	}
 
@@ -122,7 +162,7 @@ public class HOIIVModLoader {
 	private boolean validateDirectoryPath(String path, String keyName) {
 		if (path == null || path.isEmpty()) {
 			LOGGER.error("{} is null or empty!", keyName);
-			JOptionPane.showMessageDialog(null, keyName + " is null or empty!", "Error", JOptionPane.ERROR_MESSAGE);
+			// Log but don't show popup - we'll show a consolidated warning later
 			return false;
 		}
 
@@ -130,7 +170,7 @@ public class HOIIVModLoader {
 
 		if (!directory.exists() || !directory.isDirectory()) {
 			LOGGER.error("{} does not point to a valid directory: {}", keyName, path);
-			JOptionPane.showMessageDialog(null, keyName + " does not point to a valid directory: " + path, "Error", JOptionPane.ERROR_MESSAGE);
+			// Log but don't show popup - we'll show a consolidated warning later
 			return false;
 		}
 

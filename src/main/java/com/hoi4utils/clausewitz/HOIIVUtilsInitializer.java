@@ -241,55 +241,94 @@ public class HOIIVUtilsInitializer {
 			setProperty("valid.HOIIVFilePaths", "true");
 		}
 
-		LocalizationManager.getOrCreate(EnglishLocalizationManager::new).reload();
+		try {
+			LocalizationManager.getOrCreate(EnglishLocalizationManager::new).reload();
+		} catch (Exception e) {
+			LOGGER.error("Failed to reload localization", e);
+		}
 
-		if (Interface.read()) {
-			setProperty("valid.Interface", "true");
-		} else {
+		try {
+			if (Interface.read()) {
+				setProperty("valid.Interface", "true");
+			} else {
+				setProperty("valid.Interface", "false");
+				LOGGER.error("Failed to read gfx interface files");
+			}
+		} catch (Exception e) {
 			setProperty("valid.Interface", "false");
-			LOGGER.error("Failed to read gfx interface files");
+			LOGGER.error("Exception while reading interface files", e);
 		}
 
-		if (ResourcesFile.read()) {
-			setProperty("valid.Resources", "true");
-		} else {
+		try {
+			if (ResourcesFile.read()) {
+				setProperty("valid.Resources", "true");
+			} else {
+				setProperty("valid.Resources", "false");
+				LOGGER.error("Failed to read resources");
+			}
+		} catch (Exception e) {
 			setProperty("valid.Resources", "false");
-			LOGGER.error("Failed to read resources");
+			LOGGER.error("Exception while reading resources", e);
 		}
 
-		if (CountryTag.read()) {
-			setProperty("valid.CountryTag", "true");
-		} else {
+		try {
+			if (CountryTag.read()) {
+				setProperty("valid.CountryTag", "true");
+			} else {
+				setProperty("valid.CountryTag", "false");
+				LOGGER.error("Failed to read country tags");
+			}
+		} catch (Exception e) {
 			setProperty("valid.CountryTag", "false");
-			LOGGER.error("Failed to read country tags");
+			LOGGER.error("Exception while reading country tags", e);
 		}
 
-		if (Country.read()) {
-			setProperty("valid.Country", "true");
-		} else {
+		try {
+			if (Country.read()) {
+				setProperty("valid.Country", "true");
+			} else {
+				setProperty("valid.Country", "false");
+				LOGGER.error("Failed to read countries");
+			}
+		} catch (Exception e) {
 			setProperty("valid.Country", "false");
-			LOGGER.error("Failed to read countries");
+			LOGGER.error("Exception while reading countries", e);
 		}
 
-		if (State.read()) {
-			setProperty("valid.State", "true");
-		} else {
+		try {
+			if (State.read()) {
+				setProperty("valid.State", "true");
+			} else {
+				setProperty("valid.State", "false");
+				LOGGER.error("Failed to read states");
+			}
+		} catch (Exception e) {
 			setProperty("valid.State", "false");
-			LOGGER.error("Failed to read states");
+			LOGGER.error("Exception while reading states", e);
 		}
 
-		if (FocusTree.read()) {
-			setProperty("valid.FocusTree", "true");
-		} else {
+		try {
+			if (FocusTree.read()) {
+				setProperty("valid.FocusTree", "true");
+			} else {
+				setProperty("valid.FocusTree", "false");
+				LOGGER.error("Failed to read focus trees");
+			}
+		} catch (Exception e) {
 			setProperty("valid.FocusTree", "false");
-			LOGGER.error("Failed to read focus trees");
+			LOGGER.error("Exception while reading focus trees", e);
 		}
 
-		if (IdeaFile.read()) {
-			setProperty("valid.IdeaFiles", "true");
-		} else {
+		try {
+			if (IdeaFile.read()) {
+				setProperty("valid.IdeaFiles", "true");
+			} else {
+				setProperty("valid.IdeaFiles", "false");
+				LOGGER.error("Failed to read idea files");
+			}
+		} catch (Exception e) {
 			setProperty("valid.IdeaFiles", "false");
-			LOGGER.error("Failed to read idea files");
+			LOGGER.error("Exception while reading idea files", e);
 		}
 	}
 
@@ -330,7 +369,7 @@ public class HOIIVUtilsInitializer {
 	private boolean validateDirectoryPath(String path, String keyName) {
 		if (path == null || path.isEmpty()) {
 			LOGGER.error("{} is null or empty!", keyName);
-			JOptionPane.showMessageDialog(null, keyName + " is null or empty!", "Error", JOptionPane.ERROR_MESSAGE);
+			// Log but don't show popup - we'll show a consolidated warning later
 			return false;
 		}
 
@@ -338,7 +377,7 @@ public class HOIIVUtilsInitializer {
 
 		if (!directory.exists() || !directory.isDirectory()) {
 			LOGGER.error("{} does not point to a valid directory: {}", keyName, path);
-			JOptionPane.showMessageDialog(null, keyName + " does not point to a valid directory: " + path, "Error", JOptionPane.ERROR_MESSAGE);
+			// Log but don't show popup - we'll show a consolidated warning later
 			return false;
 		}
 
