@@ -20,7 +20,6 @@ import com.hoi4utils.ui.province_colors.ProvinceColorsController;
 import com.hoi4utils.ui.settings.SettingsController;
 import com.hoi4utils.ui.units.CompareUnitsController;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,7 +31,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 
@@ -40,7 +38,6 @@ public class MenuController extends Application implements JavaFXUIManager {
 	public static final Logger LOGGER = LogManager.getLogger(MenuController.class);
 	private String fxmlResource = "Menu.fxml";
 	private String title = "HOIIVUtils Menu " + HOIIVUtils.HOIIVUTILS_VERSION;
-	private Stage stage;
 
 	@FXML
 	public Button settingsButton;
@@ -54,7 +51,7 @@ public class MenuController extends Application implements JavaFXUIManager {
 		Task<Void> task = new Task<>() {
 			@Override
 			protected Void call() throws Exception {
-				MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton);
+				SettingsValidator.checkForInvalidSettingsAndShowWarnings(settingsButton, LOGGER);
 				return null;
 			}
 		};
@@ -62,140 +59,48 @@ public class MenuController extends Application implements JavaFXUIManager {
 		new Thread(task).start();
 	}
 
-	private static boolean checkForInvalidSettingsAndShowWarnings(Button button) {
-		boolean hasInvalidPaths = false;
-		StringBuilder warningMessage = new StringBuilder("The following settings need to be configured:\n\n");
-
-		if (HOIIVUtils.get("valid.HOIIVFilePaths").equals("false")) {
-			LOGGER.warn("Invalid HOI IV file paths detected");
-			warningMessage.append("• Hearts of Iron IV file paths\n");
-			hasInvalidPaths = true;
-		}
-
-		if (HOIIVUtils.get("valid.Interface").equals("false")) {
-			LOGGER.warn("Invalid GFX Interface file paths detected");
-			warningMessage.append("• Interface file paths\n");
-			hasInvalidPaths = true;
-		}
-
-		if (HOIIVUtils.get("valid.State").equals("false")) {
-			LOGGER.warn("Invalid State paths detected");
-			warningMessage.append("• State file paths\n");
-			hasInvalidPaths = true;
-		}
-
-		if (HOIIVUtils.get("valid.FocusTree").equals("false")) {
-			LOGGER.warn("Invalid Focus Tree paths detected");
-			warningMessage.append("• Focus Tree file paths\n");
-			hasInvalidPaths = true;
-		}
-
-		// Show a single consolidated warning if any paths are invalid
-		if (hasInvalidPaths) {
-			warningMessage.append("\nPlease go to Settings to configure these paths.");
-
-			// Create a custom dialog for better visual appearance
-			JDialog dialog = new JDialog();
-			dialog.setTitle("Configuration Required");
-			dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-			dialog.setLayout(new BorderLayout());
-
-			// Create panel with icon and message
-			JPanel panel = new JPanel(new BorderLayout(15, 15));
-			panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-			// Add warning icon
-			JLabel iconLabel = new JLabel(UIManager.getIcon("OptionPane.warningIcon"));
-			panel.add(iconLabel, BorderLayout.WEST);
-
-			// Add message
-			JTextArea messageArea = new JTextArea(warningMessage.toString());
-			messageArea.setEditable(false);
-			messageArea.setBackground(panel.getBackground());
-			messageArea.setLineWrap(true);
-			messageArea.setWrapStyleWord(true);
-			messageArea.setFont(new Font("Dialog", Font.PLAIN, 14));
-			panel.add(messageArea, BorderLayout.CENTER);
-
-			// Add button panel
-			JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-			JButton settingsButton = new JButton("Open Settings");
-
-			settingsButton.addActionListener(e -> {
-				Platform.runLater(() -> { 
-					try {
-						((Stage) (button.getScene().getWindow())).close();
-					} catch (Exception ex) {
-						LOGGER.error("Failed to close menu window", ex);
-					}
-				}); 
-				Platform.runLater(() -> new SettingsController().open());
-				dialog.dispose();
-			});
-			
-			buttonPanel.add(settingsButton);
-
-			// Add panels to dialog
-			dialog.add(panel, BorderLayout.CENTER);
-			dialog.add(buttonPanel, BorderLayout.SOUTH);
-
-			// Size and display the dialog
-			dialog.pack();
-			dialog.setSize(450, 300);
-			dialog.setLocationRelativeTo(null);
-			dialog.setVisible(true);
-		}
-		
-		return hasInvalidPaths;
-	}
-
 	public void launchMenuWindow(String[] args) {
 		launch(args);
 	}
-
+	
 	@Override
 	public void start(Stage stage) {
 		try {
-			Parent root = loadFXML();
-			setupAndShowStage(root);
+			Parent result;
+			FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource), getResourceBundle());
+			result = launchLoader.load();
+			Parent root = result;
+			Scene scene = new Scene(root);
+
+			if ("dark".equals(HOIIVUtils.get("theme"))) {
+				scene.getStylesheets().add("com/hoi4utils/ui/javafx_dark.css");
+			}
+//			scene.getStylesheets().add("com/hoi4utils/ui/highlight-background.css");
+
+            stage.setScene(scene);
+			stage.setTitle(title);
+			decideScreen(stage);
+			stage.show();
+
+			LOGGER.debug("Stage created and shown: {}", title);
 		} catch (IOException e) {
-			handleFXMLLoadError(e);
+			String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource;
+			LOGGER.fatal("Error loading FXML: {}", fxmlResource, e);
+			JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+			throw new RuntimeException(errorMessage, e);
 		}
 	}
 
 
 	public void open() {
-		if (stage != null) {
-			showExistingStage();
-			return;
-		}
-
 		if (fxmlResource == null) {
-			handleMissingFXMLResource();
+			String errorMessage = "Failed to open window\nError: FXML resource is null.";
+			LOGGER.error(errorMessage);
+			JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
 		start(new Stage());
-	}
-
-	private void showExistingStage() {
-		stage.show();
-		LOGGER.info("Stage already exists, showing: {}", title);
-	}
-
-	private void handleMissingFXMLResource() {
-		String errorMessage = "Failed to open window\nError: FXML resource is null.";
-		LOGGER.error(errorMessage);
-		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
-	}
-
-	private Parent loadFXML() throws IOException {
-		FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource), getResourceBundle());
-		try {
-			return launchLoader.load();
-		} catch (IOException e) {
-			throw new IOException("Failed to load FXML: " + fxmlResource, e);
-		}
 	}
 
 	private static ResourceBundle getResourceBundle() {
@@ -210,45 +115,9 @@ public class MenuController extends Application implements JavaFXUIManager {
 		return bundle;
 	}
 
-	private void setupAndShowStage(Parent root) {
-		Scene scene = new Scene(root);
-		addSceneStylesheets(scene);
-		this.stage = createLaunchStage(scene);
-		LOGGER.debug("Stage created and shown: {}", title);
-	}
-
-	private void addSceneStylesheets(Scene scene) {
-		scene.getStylesheets().add("com/hoi4utils/ui/javafx_dark.css");
-
-		try {
-			scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/hoi4utils/ui/highlight-background.css")).toExternalForm());
-		} catch (NullPointerException e) {
-			System.err.println("Warning: Stylesheet 'highlight-background.css' not found!");
-		}
-	}
-
-	private Stage createLaunchStage(Scene scene) {
-		Optional.ofNullable(stage).ifPresent(Stage::close);
-
-		Stage launchStage = new Stage();
-		launchStage.setScene(scene);
-		launchStage.setTitle(title);
-		decideScreen(launchStage);
-		launchStage.show();
-
-		return launchStage;
-	}
-
-	private void handleFXMLLoadError(IOException e) {
-		String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource;
-		LOGGER.fatal("Error loading FXML: {}", fxmlResource, e);
-		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
-		throw new RuntimeException(errorMessage, e);
-	}
-
 	public void openSettings() {
 		closeWindow(settingsButton); // closes the menu window
-		new SettingsController().open();
+		openUtilsWindow(new SettingsController());
 	}
 
 	public void openLogViewer() {
