@@ -23,6 +23,12 @@ public class SettingsValidator {
             hasInvalidPaths = true;
         }
 
+        if (HOIIVUtils.get("valid.LocalizationManager").equals("false")) {
+            logger.error("Localization Manager failed to load");
+            warningMessage.append("• Localization failed (bad hoi4 folder?)\n");
+            hasInvalidPaths = true;
+        }
+
         if (HOIIVUtils.get("valid.Interface").equals("false")) {
             logger.warn("Invalid GFX Interface file paths detected");
             warningMessage.append("• Interface file paths\n");
@@ -45,6 +51,8 @@ public class SettingsValidator {
             warningMessage.append("\nPlease go to Settings to configure these paths.");
             showWarningDialog(warningMessage.toString(), button, logger);
         }
+        
+        HOIIVUtils.set("valid.Settings", String.valueOf(!hasInvalidPaths));
     }
 
     private static void showWarningDialog(String message, Button button, Logger logger) {

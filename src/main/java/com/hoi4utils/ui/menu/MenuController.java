@@ -36,11 +36,21 @@ import java.util.*;
 
 public class MenuController extends Application implements JavaFXUIManager {
 	public static final Logger LOGGER = LogManager.getLogger(MenuController.class);
+	public Button focusLocalizButton;
+	public Button openAllFocusesButton;
+	public Button ideasLocalizationButton;
+	public Button customTooltipLocalizationButton;
+	public Button viewBuilding;
+	public Button viewGFX;
+	public Button focusTreeViewButton;
+	public Button viewUnitComparison;
+	public Button viewProvinceColors;
+	public Button settingsButton;
+	
+
 	private String fxmlResource = "Menu.fxml";
 	private String title = "HOIIVUtils Menu " + HOIIVUtils.HOIIVUTILS_VERSION;
 
-	@FXML
-	public Button settingsButton;
 
 	
 	@FXML
@@ -57,6 +67,16 @@ public class MenuController extends Application implements JavaFXUIManager {
 		};
 		
 		new Thread(task).start();
+
+		boolean valid = HOIIVUtils.get("valid.Settings").equals("true");
+		focusLocalizButton.setDisable(!valid);
+		openAllFocusesButton.setDisable(!valid);
+		ideasLocalizationButton.setDisable(!valid);
+		customTooltipLocalizationButton.setDisable(!valid);
+		viewBuilding.setDisable(!valid);
+		viewGFX.setDisable(!valid);
+		focusTreeViewButton.setDisable(!valid);
+		viewUnitComparison.setDisable(!valid);
 	}
 
 	public void launchMenuWindow(String[] args) {

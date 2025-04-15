@@ -83,8 +83,10 @@ public class HOIIVModLoader {
 	private void reloadLocalization() {
 		try {
 			LocalizationManager.get().reload();
+			setProperty("valid.LocalizationManager", "true");
 		} catch (Exception e) {
-			LOGGER.error("Failed to reload localization", e);
+			LOGGER.fatal("Failed to reload localization", e);
+			setProperty("valid.LocalizationManager", "false");
 		}
 	}
 	
