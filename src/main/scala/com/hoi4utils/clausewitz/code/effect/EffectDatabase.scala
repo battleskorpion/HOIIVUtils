@@ -10,6 +10,7 @@ import com.hoi4utils.clausewitz.map.province.Province
 import com.hoi4utils.clausewitz.map.state.*
 import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz_parser.Node
+import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.{File, IOException}
 import java.nio.file.{Files, StandardCopyOption}
@@ -21,6 +22,8 @@ import scala.util.{Try, Using}
 import language.experimental.namedTuples
 
 object EffectDatabase {
+  private val LOGGER: Logger = LogManager.getLogger(getClass)
+
   try {
     Class.forName("org.sqlite.JDBC")
   } catch {
@@ -29,29 +32,40 @@ object EffectDatabase {
   }
 
   private val edb: String = "databases/effects.db"
-  private var _connection: Connection = _
+  private var _connection: Connection = _ // TODO: @BattleSkorp Replace underscore
   private var _effects: List[Effect] = List()
 
   def init(): Unit = {
     try {
-      val url = getClass.getClassLoader.getResource(edb)
-      if (url == null) throw new SQLException(s"Unable to find '$edb'")
+      Option(getClass.getClassLoader.getResource(edb)) match {
+        case Some(url) =>
+          val tempFile = File.createTempFile("effects", ".db")
+          tempFile.deleteOnExit()
 
-      val tempFile = File.createTempFile("effects", ".db")
-      tempFile.deleteOnExit()
+          Using(url.openStream) { inputStream =>
+            Files.copy(inputStream, tempFile.toPath, StandardCopyOption.REPLACE_EXISTING)
+          }.recover {
+            case e: Exception =>
+              LOGGER.fatal(s"Failed to copy database file: ${e.getMessage}", e)
+              throw e
+          }
 
-      Using(url.openStream) { inputStream =>
-        Files.copy(inputStream, tempFile.toPath, StandardCopyOption.REPLACE_EXISTING)
-      }.recover {
-        case e: Exception =>
-          println(s"An error occurred: ${e.getMessage}")
+          if (_connection != null && !_connection.isClosed) {
+            _connection.close()
+          }
+          _connection = DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath)
+          _effects = loadEffects()
+
+        case None =>
+          throw new SQLException(s"Database file '$edb' not found in resources.")
       }
-
-      _connection = DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath)
-      _effects = loadEffects()
     } catch {
-      case e@(_: IOException | _: SQLException) =>
-        e.printStackTrace()
+      case e: IOException =>
+        LOGGER.fatal(s"IO error during initialization: ${e.getMessage}", e)
+        throw e
+      case e: SQLException =>
+        LOGGER.fatal(s"SQL error during initialization: ${e.getMessage}", e)
+        throw e
     }
   }
 
@@ -82,57 +96,49 @@ object EffectDatabase {
       if (_connection != null) _connection.close()
     } catch {
       case e: SQLException =>
-        e.printStackTrace()
+        LOGGER.fatal(s"SQL Error while closing connection: ${e.getMessage}", e)
     }
   }
 
   private def loadEffects(): List[Effect] = {
-    val loadedEffects = new ListBuffer[Effect]
     val retrieveSQL = "SELECT * FROM effects"
-    try {
-      val retrieveStatement = _connection.prepareStatement(retrieveSQL)
-      val resultSet = retrieveStatement.executeQuery
-      while (resultSet.next) {
-        val pdxIdentifier = resultSet.getString("identifier")
-        val supportedScopes_str = resultSet.getString("supported_scopes")
-        val supportedTargets_str = resultSet.getString("supported_targets")
-        val requiredParametersFull_str = resultSet.getString("required_parameters_full")
-        val requiredParametersSimple_str = resultSet.getString("required_parameters_simple")
 
-        val supportedScopes = parseEnumSet(supportedScopes_str)
+    Using(_connection.prepareStatement(retrieveSQL)) { retrieveStatement =>
+      Using(retrieveStatement.executeQuery) { resultSet =>
+        val loadedEffects = new ListBuffer[Effect]
 
-        if (!(requiredParametersFull_str == null && requiredParametersSimple_str == null)) {
+        while (resultSet.next()) {
+          val pdxIdentifier = resultSet.getString("identifier")
+          val supportedScopes = parseEnumSet(resultSet.getString("supported_scopes"))
+          val requiredParametersFull = Option(resultSet.getString("required_parameters_full"))
+          val requiredParametersSimple = Option(resultSet.getString("required_parameters_simple"))
+
           if (supportedScopes.isEmpty) {
-            throw new InvalidParameterException("Invalid scope definition: " + supportedScopes_str)
+            throw new InvalidParameterException(s"Invalid scope definition for $pdxIdentifier")
           }
 
-          val requiredParametersFull = Option(requiredParametersFull_str)
-          val requiredParameterSimple = Option(requiredParametersSimple_str)
-
           val effects = new ListBuffer[Effect]
-
-          (requiredParametersFull, requiredParameterSimple) match {
-            case (Some(requiredParametersFull), Some(requiredParameterSimple)) =>
-              effects ++= parametersToEffect(pdxIdentifier, requiredParametersFull_str)
-              effects ++= simpleParameterToEffect(pdxIdentifier, requiredParametersSimple_str)
-            case (Some(requiredParametersFull), None) =>
-              effects ++= parametersToEffect(pdxIdentifier, requiredParametersFull_str)
-            case (None, Some(requiredParameterSimple)) =>
-              effects ++= simpleParameterToEffect(pdxIdentifier, requiredParametersSimple_str)
-            case (None, None) =>
-            // todo (bad)
+          (requiredParametersFull, requiredParametersSimple) match {
+            case (Some(full), Some(simple)) =>
+              effects ++= parametersToEffect(pdxIdentifier, full)
+              effects ++= simpleParameterToEffect(pdxIdentifier, simple)
+            case (Some(full), None) =>
+              effects ++= parametersToEffect(pdxIdentifier, full)
+            case (None, Some(simple)) =>
+              effects ++= simpleParameterToEffect(pdxIdentifier, simple)
+            case (None, None) => ???
           }
 
           loadedEffects ++= effects
-        } else {
-          System.out.println("No parameters for " + pdxIdentifier + " in effects database.")
         }
+
+        loadedEffects.toList
+      }.getOrElse {
+        throw new SQLException("Failed to execute query or process results.")
       }
-    } catch {
-      case e: SQLException =>
-        e.printStackTrace()
+    }.getOrElse {
+      throw new SQLException("Failed to prepare statement.")
     }
-    loadedEffects.toList
   }
 
   private def parseEnumSet(enumSetString: String): Option[Set[ScopeType]] = {
@@ -338,7 +344,4 @@ object EffectDatabase {
       Some(structuredEffectBlock)
     }
   }
-
-
 }
-
