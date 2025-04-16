@@ -5,6 +5,7 @@ import com.hoi4utils.clausewitz.data.country.CountryTag;
 import com.hoi4utils.clausewitz.data.focus.FocusTree;
 import com.hoi4utils.clausewitz.data.idea.IdeaFile;
 import com.hoi4utils.clausewitz.localization.LocalizationManager;
+import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
 import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
 import com.hoi4utils.clausewitz.data.gfx.Interface;
@@ -85,8 +86,13 @@ public class HOIIVModLoader {
 			LocalizationManager.get().reload();
 			setProperty("valid.LocalizationManager", "true");
 		} catch (Exception e) {
-			LOGGER.fatal("Failed to reload localization", e);
-			setProperty("valid.LocalizationManager", "false");
+			try {
+				LocalizationManager.getOrCreate(EnglishLocalizationManager::new).reload();
+				setProperty("valid.LocalizationManager", "true");
+			} catch (Exception ex) {
+				LOGGER.error("Failed to reload localization with English fallback", ex);
+				setProperty("valid.LocalizationManager", "false");
+			}
 		}
 	}
 	

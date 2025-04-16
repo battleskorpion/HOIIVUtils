@@ -20,6 +20,7 @@ import com.hoi4utils.ui.province_colors.ProvinceColorsController;
 import com.hoi4utils.ui.settings.SettingsController;
 import com.hoi4utils.ui.units.CompareUnitsController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,6 +35,8 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
 
+import static com.hoi4utils.ui.menu.SettingsValidator.dialog;
+
 public class MenuController extends Application implements JavaFXUIManager {
 	public static final Logger LOGGER = LogManager.getLogger(MenuController.class);
 	public Button focusLocalizButton;
@@ -46,7 +49,11 @@ public class MenuController extends Application implements JavaFXUIManager {
 	public Button viewUnitComparison;
 	public Button viewProvinceColors;
 	public Button settingsButton;
-	
+
+	private List<Button> buttonsToDisable;
+
+	private Thread settingsValidationThread;
+	private boolean isPopupClosed = false;
 
 	private String fxmlResource = "Menu.fxml";
 	private String title = "HOIIVUtils Menu " + HOIIVUtils.HOIIVUTILS_VERSION;
@@ -56,7 +63,6 @@ public class MenuController extends Application implements JavaFXUIManager {
 	@FXML
 	void initialize() {
 		LOGGER.debug("MenuController initialized");
-		
 		// Check for invalid folder paths and show appropriate warnings
 		Task<Void> task = new Task<>() {
 			@Override
@@ -65,31 +71,44 @@ public class MenuController extends Application implements JavaFXUIManager {
 				return null;
 			}
 		};
-		
-		new Thread(task).start();
 
-		boolean valid = HOIIVUtils.get("valid.Settings").equals("true");
-		focusLocalizButton.setDisable(!valid);
-		openAllFocusesButton.setDisable(!valid);
-		ideasLocalizationButton.setDisable(!valid);
-		customTooltipLocalizationButton.setDisable(!valid);
-		viewBuilding.setDisable(!valid);
-		viewGFX.setDisable(!valid);
-		focusTreeViewButton.setDisable(!valid);
-		viewUnitComparison.setDisable(!valid);
-	}
+		settingsValidationThread = new Thread(task);
+		settingsValidationThread.setDaemon(true);
+		settingsValidationThread.start();
 
-	public void launchMenuWindow(String[] args) {
+        disableButtons();
+    }
+
+    private void disableButtons() {
+        // TODO: @BattleSkorp change which buttons require successful parse of hoi4 or more
+        buttonsToDisable = List.of(focusLocalizButton, openAllFocusesButton, ideasLocalizationButton,
+                customTooltipLocalizationButton, viewBuilding, viewGFX, focusTreeViewButton, viewUnitComparison);
+
+        focusLocalizButton.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
+                    if (newWindow != null) {
+                        Stage stage = (Stage) newWindow;
+                        stage.focusedProperty().addListener((obsFocus, wasFocused, isNowFocused) -> {
+                            buttonsToDisable.forEach(btn -> {
+                                btn.setDisable(!HOIIVUtils.get("valid.Settings").equals("true"));
+                            });
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    public void launchMenuWindow(String[] args) {
 		launch(args);
 	}
 	
 	@Override
 	public void start(Stage stage) {
 		try {
-			Parent result;
 			FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource), getResourceBundle());
-			result = launchLoader.load();
-			Parent root = result;
+			Parent root = launchLoader.load();
 			Scene scene = new Scene(root);
 
 			if ("dark".equals(HOIIVUtils.get("theme"))) {
@@ -99,6 +118,30 @@ public class MenuController extends Application implements JavaFXUIManager {
 
             stage.setScene(scene);
 			stage.setTitle(title);
+			stage.setOnCloseRequest(event -> {
+				LOGGER.info("Main menu window closed. Exiting application.");
+				if (dialog != null && dialog.isShowing()) {
+					dialog.dispose(); // Close the dialog if it's open
+				}
+				if (settingsValidationThread != null && settingsValidationThread.isAlive()) {
+					settingsValidationThread.interrupt(); // Interrupt the thread
+				}
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        LOGGER.info("Popup dialog closed.");
+                        isPopupClosed = true;
+                        if (!stage.isShowing()) {
+                            Platform.exit(); // Exit if the main menu is already closed
+                        }
+                    }
+                });
+                if (!isPopupClosed) {
+                    Platform.exit();
+                }
+            });
+
+
 			decideScreen(stage);
 			stage.show();
 
