@@ -35,7 +35,7 @@ public class PublicFieldChangeNotifier {
         pcs.removePropertyChangeListener(listener);
     }
 
-    public void checkAndNotifyChanges(Runnable runnable) {
+    public void checkAndNotifyChanges() {
         for (Field field : targetClass.getFields()) {
             try {
                 Object oldValue = fieldValues.get(field.getName());

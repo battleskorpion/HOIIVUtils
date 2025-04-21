@@ -13,222 +13,167 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.function.Consumer;
-import java.util.Properties;
 
-/**
- * Handles loading of mod data and file paths for the HOIIVUtils application.
- */
 public class HOIIVModLoader {
 	private static final Logger LOGGER = LogManager.getLogger(HOIIVModLoader.class);
-	private final HOIIVUtilsConfig config;
-	private final Properties properties;
-	private final Consumer<Runnable> changeNotifier;
-	
-	/**
-	 * Creates a new HOIIVModLoader using the specified config.
-	 *
-	 * @param config The configuration to use
-	 */
+	private HOIIVUtilsConfig config;
 	public HOIIVModLoader(HOIIVUtilsConfig config) {
 		this.config = config;
-		this.properties = config.getProperties();
-		this.changeNotifier = config.getChangeNotifier();
 	}
 
-	/**
-	 * Loads all mod data from the configured paths.
-	 * This will set up file paths and reload all mod data.
-	 */
-	public void loadMod() {
-		if (setupFilePaths()) {
-			setProperty("valid.HOIIVFilePaths", "true");
+	void loadMod() {
+		if (createHOIIVFilePaths()) {
+			config.setProperty("valid.HOIIVFilePaths", "true");
 		} else {
 			LOGGER.error("Failed to create HOIIV file paths");
-			setProperty("valid.HOIIVFilePaths", "false");
-		}
-		
-		clearExistingData();
-		reloadLocalization();
-		loadModModules();
-	}
-	
-	/**
-	 * Sets up the file paths for both HOI4 and mod folders.
-	 * Uses the paths stored in the configuration.
-	 *
-	 * @return true if successful, false otherwise
-	 */
-	public boolean setupFilePaths() {
-		final String modPath = config.getProperty("mod.path");
-		final String hoi4Path = config.getProperty("hoi4.path");
-		
-		return HOIIVFiles.setupFilePaths(modPath, hoi4Path, () -> {
-			if (changeNotifier != null) {
-				changeNotifier.accept(() -> {});
+			config.setProperty("valid.HOIIVFilePaths", "false");
 			}
-		});
-	}
-	
-	/**
-	 * Clears any existing data to prepare for reloading.
-	 */
-	private void clearExistingData() {
+		
 		Interface.clear();
 		State.clear();
 		FocusTree.clear();
-	}
-	
-	/**
-	 * Reloads localization data.
-	 */
-	private void reloadLocalization() {
+		
 		try {
 			LocalizationManager.get().reload();
 		} catch (Exception e) {
 			LOGGER.error("Failed to reload localization", e);
 		}
-	}
-	
-	/**
-	 * Loads all mod modules (interface, resources, countries, etc.).
-	 */
-	private void loadModModules() {
-		loadInterface();
-		loadResources();
-		loadCountryTags();
-		loadCountries();
-		loadStates();
-		loadFocusTrees();
-		loadIdeaFiles();
-	}
-	
-	/**
-	 * Loads interface data.
-	 */
-	private void loadInterface() {
+		
 		try {
 			if (Interface.read()) {
-				setProperty("valid.Interface", "true");
+				config.setProperty("valid.Interface", "true");
 			} else {
-				setProperty("valid.Interface", "false");
+				config.setProperty("valid.Interface", "false");
 				LOGGER.error("Failed to read gfx interface files");
 			}
 		} catch (Exception e) {
-			setProperty("valid.Interface", "false");
+			config.setProperty("valid.Interface", "false");
 			LOGGER.error("Exception while reading interface files", e);
 		}
-	}
-	
-	/**
-	 * Loads resources data.
-	 */
-	private void loadResources() {
+
 		try {
 			if (ResourcesFile.read()) {
-				setProperty("valid.Resources", "true");
+				config.setProperty("valid.Resources", "true");
 			} else {
-				setProperty("valid.Resources", "false");
+				config.setProperty("valid.Resources", "false");
 				LOGGER.error("Failed to read resources");
 			}
 		} catch (Exception e) {
-			setProperty("valid.Resources", "false");
+			config.setProperty("valid.Resources", "false");
 			LOGGER.error("Exception while reading resources", e);
 		}
-	}
-	
-	/**
-	 * Loads country tags data.
-	 */
-	private void loadCountryTags() {
+
 		try {
 			if (CountryTag.read()) {
-				setProperty("valid.CountryTag", "true");
+				config.setProperty("valid.CountryTag", "true");
 			} else {
-				setProperty("valid.CountryTag", "false");
+				config.setProperty("valid.CountryTag", "false");
 				LOGGER.error("Failed to read country tags");
 			}
 		} catch (Exception e) {
-			setProperty("valid.CountryTag", "false");
+			config.setProperty("valid.CountryTag", "false");
 			LOGGER.error("Exception while reading country tags", e);
 		}
-	}
-	
-	/**
-	 * Loads countries data.
-	 */
-	private void loadCountries() {
+		
 		try {
 			if (Country.read()) {
-				setProperty("valid.Country", "true");
+				config.setProperty("valid.Country", "true");
 			} else {
-				setProperty("valid.Country", "false");
+				config.setProperty("valid.Country", "false");
 				LOGGER.error("Failed to read countries");
 			}
 		} catch (Exception e) {
-			setProperty("valid.Country", "false");
+			config.setProperty("valid.Country", "false");
 			LOGGER.error("Exception while reading countries", e);
 		}
-	}
-	
-	/**
-	 * Loads states data.
-	 */
-	private void loadStates() {
+		
 		try {
 			if (State.read()) {
-				setProperty("valid.State", "true");
+				config.setProperty("valid.State", "true");
 			} else {
-				setProperty("valid.State", "false");
+				config.setProperty("valid.State", "false");
 				LOGGER.error("Failed to read states");
 			}
 		} catch (Exception e) {
-			setProperty("valid.State", "false");
+			config.setProperty("valid.State", "false");
 			LOGGER.error("Exception while reading states", e);
 		}
-	}
-	
-	/**
-	 * Loads focus trees data.
-	 */
-	private void loadFocusTrees() {
+
 		try {
 			if (FocusTree.read()) {
-				setProperty("valid.FocusTree", "true");
+				config.setProperty("valid.FocusTree", "true");
 			} else {
-				setProperty("valid.FocusTree", "false");
+				config.setProperty("valid.FocusTree", "false");
 				LOGGER.error("Failed to read focus trees");
 			}
 		} catch (Exception e) {
-			setProperty("valid.FocusTree", "false");
+			config.setProperty("valid.FocusTree", "false");
 			LOGGER.error("Exception while reading focus trees", e);
 		}
-	}
-	
-	/**
-	 * Loads idea files data.
-	 */
-	private void loadIdeaFiles() {
+
 		try {
 			if (IdeaFile.read()) {
-				setProperty("valid.IdeaFiles", "true");
+				config.setProperty("valid.IdeaFiles", "true");
 			} else {
-				setProperty("valid.IdeaFiles", "false");
+				config.setProperty("valid.IdeaFiles", "false");
 				LOGGER.error("Failed to read idea files");
 			}
 		} catch (Exception e) {
-			setProperty("valid.IdeaFiles", "false");
+			config.setProperty("valid.IdeaFiles", "false");
 			LOGGER.error("Exception while reading idea files", e);
 		}
 	}
-	
-	/**
-	 * Sets a property in the configuration.
-	 *
-	 * @param key Property key
-	 * @param value Property value
-	 */
-	private void setProperty(String key, String value) {
-		properties.setProperty(key, value);
+
+	private boolean createHOIIVFilePaths() {
+		if (!createHOIIVPaths()) {
+			return false;
+		}
+		if (!createModPaths()) {
+			return false;
+		}
+		HOIIVUtilsInitializer.changeNotifier.checkAndNotifyChanges();
+		return true;
+	}
+
+	private boolean createModPaths() {
+		String modPath = config.getProperty("mod.path");
+
+		if (!validateDirectoryPath(modPath, "mod.path")) {
+			return false;
+		}
+		
+
+		HOIIVFiles.setModPathChildDirs(modPath);
+		return true;
+	}
+
+	private boolean createHOIIVPaths() {
+		String hoi4Path = config.getProperty("hoi4.path");
+
+		if (!validateDirectoryPath(hoi4Path, "hoi4.path")) {
+			return false;
+		}
+
+		HOIIVFiles.setHoi4PathChildDirs(hoi4Path);
+		return true;
+	}
+
+	/** Validates whether the provided directory path is valid */
+	private boolean validateDirectoryPath(String path, String keyName) {
+		if (path == null || path.isEmpty()) {
+			LOGGER.error("{} is null or empty!", keyName);
+			// Log but don't show popup - we'll show a consolidated warning later
+			return false;
+		}
+
+		File directory = new File(path);
+
+		if (!directory.exists() || !directory.isDirectory()) {
+			LOGGER.error("{} does not point to a valid directory: {}", keyName, path);
+			// Log but don't show popup - we'll show a consolidated warning later
+			return false;
+		}
+
+		return true;
 	}
 }
