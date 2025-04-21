@@ -5,7 +5,6 @@ import com.hoi4utils.ui.settings.SettingsController;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
-import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +12,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SettingsValidator {
-    private static final Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(SettingsValidator.class);
 
     public static void checkForInvalidSettingsAndShowWarnings(Button button, Logger logger) {
         boolean hasInvalidPaths = false;
@@ -48,17 +46,17 @@ public class SettingsValidator {
             warningMessage.append("• Focus Tree file paths\n");
             hasInvalidPaths = true;
         }
-        LOGGER.info("valid.Settings property set to: {}", hasInvalidPaths ? "false" : "true");
-        HOIIVUtils.set("valid.Settings", hasInvalidPaths ? "false" : "true");
+
         if (hasInvalidPaths) {
             warningMessage.append("\nPlease go to Settings to configure these paths.");
             showWarningDialog(warningMessage.toString(), button, logger);
         }
-
+        
+        HOIIVUtils.set("valid.Settings", String.valueOf(!hasInvalidPaths));
     }
-    static JDialog dialog;
+
     private static void showWarningDialog(String message, Button button, Logger logger) {
-        dialog = new JDialog();
+        JDialog dialog = new JDialog();
         dialog.setTitle("Configuration Required");
         dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setLayout(new BorderLayout());
@@ -84,8 +82,6 @@ public class SettingsValidator {
         dialog.pack();
         dialog.setSize(450, 300);
         dialog.setLocationRelativeTo(null);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
         dialog.setVisible(true);
     }
 
