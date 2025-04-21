@@ -126,19 +126,16 @@ public class MenuController extends Application implements JavaFXUIManager {
 				if (settingsValidationThread != null && settingsValidationThread.isAlive()) {
 					settingsValidationThread.interrupt(); // Interrupt the thread
 				}
-                if (dialog != null) {
-                    assert dialog != null;
-                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                        @Override
-                        public void windowClosing(java.awt.event.WindowEvent e) {
-                            LOGGER.info("Popup dialog closed.");
-                            isPopupClosed = true;
-                            if (!stage.isShowing()) {
-                                Platform.exit(); // Exit if the main menu is already closed
-                            }
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        LOGGER.info("Popup dialog closed.");
+                        isPopupClosed = true;
+                        if (!stage.isShowing()) {
+                            Platform.exit(); // Exit if the main menu is already closed
                         }
-                    });
-                }
+                    }
+                });
                 if (!isPopupClosed) {
                     Platform.exit();
                 }
