@@ -3,7 +3,15 @@ package com.hoi4utils.clausewitz;
 import com.hoi4utils.PublicFieldChangeNotifier;
 import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
 import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
+import com.hoi4utils.clausewitz.data.country.Country;
+import com.hoi4utils.clausewitz.data.country.CountryTag;
+import com.hoi4utils.clausewitz.data.focus.FocusTree;
+import com.hoi4utils.clausewitz.data.idea.IdeaFile;
+import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
+import com.hoi4utils.clausewitz.localization.LocalizationManager;
+import com.hoi4utils.clausewitz.map.state.ResourcesFile;
 import com.hoi4utils.clausewitz.map.state.State;
+import com.hoi4utils.clausewitz.data.gfx.Interface;
 import com.hoi4utils.fileIO.FileListener.FileAdapter;
 import com.hoi4utils.fileIO.FileListener.FileEvent;
 import com.hoi4utils.fileIO.FileListener.FileWatcher;
@@ -52,12 +60,10 @@ public class HOIIVUtilsInitializer {
 		EffectDatabase.init();
 
 		// Configure application directories
-		findHOIIVUtilsDir();
+		resolveApplicationDirectory();
 
 		// Load configuration
-		propertiesFile = hoi4UtilsDir + File.separator + "HOIIVUtils.properties";
-		defaultProperties = HOIIVUtils.class.getClassLoader().getResourceAsStream("HOIIVUtils.properties");
-		loadConfiguration();
+		initializeConfiguration();
 
 		// Configure paths
 		autoSetHOIIVPath();
@@ -80,28 +86,43 @@ public class HOIIVUtilsInitializer {
 		return config;
 	}
 
-	private void findHOIIVUtilsDir() {
+	private void resolveApplicationDirectory() {
 		try {
 			URI sourceLocation = HOIIVUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI();
 			File sourceFile = new File(sourceLocation);
 
-			File parentDir = sourceFile.getParentFile();
-			if (parentDir == null || !parentDir.exists()) {
+			// Check if parent exists
+			File parentDir = new File(sourceFile.getParent());
+			if (!parentDir.exists()) {
 				LOGGER.warn("Parent directory does not exist: {}", parentDir);
 				throw new RuntimeException("Failed to determine application parent directory");
 			}
 
-			hoi4UtilsDir = parentDir.getParentFile();
-			if (hoi4UtilsDir == null || !hoi4UtilsDir.isDirectory()) {
+			hoi4UtilsDir = new File(parentDir.getParent());
+
+			boolean isInvalidDir = !hoi4UtilsDir.exists() || !hoi4UtilsDir.isDirectory() || hoi4UtilsDir == null;
+			if (isInvalidDir) {
 				LOGGER.warn("Invalid HOIIVUTILS_DIR: {}", hoi4UtilsDir);
 				throw new RuntimeException("Invalid HOIIVUtils directory");
 			}
-		} catch (URISyntaxException | RuntimeException e) {
+		} catch (URISyntaxException e) {
 			LOGGER.error("Failed to determine application directory", e);
 			throw new RuntimeException("Failed to determine application directory", e);
+		} catch (NullPointerException e) {
+			LOGGER.error("Null reference encountered while determining application directory", e);
+			throw new RuntimeException("Null reference in application directory resolution", e);
+		} catch (Exception e) {
+			LOGGER.error("Unexpected error while determining application directory", e);
+			throw new RuntimeException("Unexpected error determining application directory", e);
 		}
 
 		LOGGER.debug("HOIIVUtils Directory: {}", hoi4UtilsDir);
+	}
+
+	private void initializeConfiguration() {
+		propertiesFile = hoi4UtilsDir + File.separator + "HOIIVUtils.properties";
+		defaultProperties = HOIIVUtils.class.getClassLoader().getResourceAsStream("HOIIVUtils.properties");
+		loadConfiguration();
 	}
 
 	private void loadConfiguration() {
