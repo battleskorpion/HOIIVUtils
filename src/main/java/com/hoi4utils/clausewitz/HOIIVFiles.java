@@ -109,9 +109,13 @@ public class HOIIVFiles {
 	 * @return true if both paths are valid and set up correctly, false otherwise
 	 */
 	public static boolean setupFilePaths(String modPath, String hoi4Path, Runnable changeNotifier) {
-		boolean success = setHoi4PathChildDirs(hoi4Path);
-
-        if (!setModPathChildDirs(modPath)) {
+		boolean success = true;
+		
+		if (!setHoi4PathChildDirs(hoi4Path)) {
+			success = false;
+		}
+		
+		if (!setModPathChildDirs(modPath)) {
 			success = false;
 		}
 		

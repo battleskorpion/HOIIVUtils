@@ -46,7 +46,6 @@ public class HOIIVModLoader {
 		} else {
 			LOGGER.error("Failed to create HOIIV file paths");
 			setProperty("valid.HOIIVFilePaths", "false");
-			return;
 		}
 		
 		clearExistingData();
@@ -61,7 +60,10 @@ public class HOIIVModLoader {
 	 * @return true if successful, false otherwise
 	 */
 	public boolean setupFilePaths() {
-		return HOIIVFiles.setupFilePaths(config.getProperty("mod.path"), config.getProperty("hoi4.path"), () -> {
+		final String modPath = config.getProperty("mod.path");
+		final String hoi4Path = config.getProperty("hoi4.path");
+		
+		return HOIIVFiles.setupFilePaths(modPath, hoi4Path, () -> {
 			if (changeNotifier != null) {
 				changeNotifier.accept(() -> {});
 			}

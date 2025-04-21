@@ -3,7 +3,6 @@ package com.hoi4utils.ui.settings;
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.menu.MenuController;
 import javafx.application.Application;
@@ -31,8 +30,11 @@ import java.util.Optional;
  *
  * @author thiccchris
  */
-public class SettingsController extends HOIIVUtilsAbstractController implements JavaFXUIManager {
+public class SettingsController extends Application implements JavaFXUIManager {
 	public static final Logger LOGGER = LogManager.getLogger(SettingsController.class);
+	private String fxmlResource = "Settings.fxml";
+	private String title = "HOIIVUtils Settings " + HOIIVUtils.HOIIVUTILS_VERSION;
+	private Stage stage;
 
 	@FXML
 	Label versionLabel;
@@ -57,11 +59,6 @@ public class SettingsController extends HOIIVUtilsAbstractController implements 
 	@FXML
 	CheckBox parserIgnoreCommentsCheckBox;
 
-	public SettingsController() {
-		setFxmlResource("Settings.fxml");
-		setTitle("HOIIVUtils Settings " + HOIIVUtils.HOIIVUTILS_VERSION);
-	}
-	
 	@FXML
 	void initialize() {
 		versionLabel.setText(HOIIVUtils.HOIIVUTILS_VERSION);
@@ -69,36 +66,6 @@ public class SettingsController extends HOIIVUtilsAbstractController implements 
 		loadMonitor();
 	}
 
-	private void loadUIWithSavedSettings() {
-		// Load paths
-		updateTextField(modPathTextField, HOIIVUtils.get("mod.path"));
-		updateTextField(hoi4PathTextField, HOIIVUtils.get("hoi4.path"));
-		idOkButton.setDisable(HOIIVUtils.get("hoi4.path").isEmpty());
-	
-		// Load theme
-		boolean isDarkTheme = "dark".equals(HOIIVUtils.get("theme"));
-		darkTheme.setSelected(isDarkTheme);
-		lightTheme.setSelected(!isDarkTheme);
-	
-		// Load monitor preference
-		preferredMonitorComboBox.getSelectionModel().select(validateAndGetPreferredScreen());
-	
-		// Load debug colors
-		boolean debugColors = Boolean.parseBoolean(HOIIVUtils.get("debug.colors"));
-		debugColorsTButton.setSelected(debugColors);
-		debugColorsTButton.setText(debugColors ? "ON" : "OFF");
-	
-		// Load parser settings
-		parserIgnoreCommentsCheckBox.setSelected(Boolean.parseBoolean(HOIIVUtils.get("parser.ignore_comments")));
-	}
-
-	private void updateTextField(TextField textField, String value) {
-		textField.clear();
-		if (!"".equals(value)) {
-			textField.setText(value);
-		}
-	}
-	
 	private void loadMonitor() {
 		preferredMonitorComboBox.setItems(Screen.getScreens());
 		preferredMonitorComboBox.setCellFactory(_ -> new ListCell<>() {
@@ -122,13 +89,120 @@ public class SettingsController extends HOIIVUtilsAbstractController implements 
 		});
 	}
 
+	private void loadUIWithSavedSettings() {
+		modPathTextField.clear();
+		if (!"null".equals(HOIIVUtils.get("mod.path"))) {
+			modPathTextField.setText(HOIIVUtils.get("mod.path"));
+		}
+		hoi4PathTextField.clear();
+		if (!"null".equals(HOIIVUtils.get("hoi4.path"))) {
+			hoi4PathTextField.setText(HOIIVUtils.get("hoi4.path"));
+		}
+		darkTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "dark"));
+		lightTheme.setSelected(Objects.equals(HOIIVUtils.get("theme"), "light"));
+		preferredMonitorComboBox.getSelectionModel().select(validateAndGetPreferredScreen());
+		debugColorsTButton.setSelected(Boolean.parseBoolean(HOIIVUtils.get("debug.colors")));
+		if (debugColorsTButton.isSelected()) {
+			debugColorsTButton.setText("ON");
+		} else {
+			debugColorsTButton.setText("OFF");
+		}
+		// parser settings: 
+		parserIgnoreCommentsCheckBox.setSelected(Boolean.parseBoolean(HOIIVUtils.get("parser.ignore_comments")));
+	}
+
+	/**
+	 * Starts the settings window. This method is called when the program is first launched, and it is
+	 * responsible for creating the stage and setting the scene.
+	 *
+	 * @param stage the stage to be used for the settings window
+	 */
+	@Override
+	public void start(Stage stage) {
+		try {
+			Parent root = loadFXML();
+			setupAndShowStage(root);
+		} catch (IOException e) {
+			handleFXMLLoadError(e);
+		}
+	}
+
+	public void open() {
+		if (stage != null) {
+			showExistingStage();
+			return;
+		}
+
+		if (fxmlResource == null) {
+			handleMissingFXMLResource();
+			return;
+		}
+		
+		start(new Stage());
+	}
+
+	private void showExistingStage() {
+		stage.show();
+		LOGGER.info("Stage already exists, showing: {}", title);
+	}
+
+	private void handleMissingFXMLResource() {
+		String errorMessage = "Failed to open window\nError: FXML resource is null.";
+		LOGGER.error(errorMessage);
+		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	private Parent loadFXML() throws IOException {
+		FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
+		try {
+			return launchLoader.load();
+		} catch (IOException e) {
+			throw new IOException("Failed to load FXML: " + fxmlResource, e);
+		}
+	}
+
+	private void setupAndShowStage(Parent root) {
+		Scene scene = new Scene(root);
+		addSceneStylesheets(scene);
+		this.stage = createLaunchStage(scene);
+		LOGGER.debug("Stage created and shown: {}", title);
+	}
+
+	private void addSceneStylesheets(Scene scene) {
+		scene.getStylesheets().add("com/hoi4utils/ui/javafx_dark.css");
+
+		try {
+			scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/hoi4utils/ui/highlight-background.css")).toExternalForm());
+		} catch (NullPointerException e) {
+			System.err.println("Warning: Stylesheet 'highlight-background.css' not found!");
+		}
+	}
+
+	private Stage createLaunchStage(Scene scene) {
+		Optional.ofNullable(stage).ifPresent(Stage::close);
+
+		Stage launchStage = new Stage();
+		launchStage.setScene(scene);
+		launchStage.setTitle(title);
+		decideScreen(launchStage);
+		launchStage.show();
+
+		return launchStage;
+	}
+
+	private void handleFXMLLoadError(IOException e) {
+		String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource;
+		LOGGER.fatal("Error loading FXML: {}", fxmlResource, e);
+		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+		throw new RuntimeException(errorMessage, e);
+	}
+
 	public void handleModPathTextField() {
-		HOIIVUtils.set("mod.path", modPathTextField.getText());
+		validateAndSetPath(modPathTextField.getText(), "mod.path");
 	}
 
 	public void handleHOIIVPathTextField() {
-		HOIIVUtils.set("hoi4.path", hoi4PathTextField.getText());
-        idOkButton.setDisable(HOIIVUtils.get("hoi4.path").isEmpty());
+		validateAndSetPath(hoi4PathTextField.getText(), "hoi4.path");
 	}
 
 	public void handleModFileBrowseAction() {
@@ -140,7 +214,19 @@ public class SettingsController extends HOIIVUtilsAbstractController implements 
 		File initialHoi4Dir = FileUtils.ProgramFilesX86 == null ? null :
 			new File(FileUtils.ProgramFilesX86 + File.separator + FileUtils.steamHOI4LocalPath);
 		handleFileBrowseAction(hoi4PathTextField, hoi4FolderBrowseButton, initialHoi4Dir, "hoi4.path");
-		idOkButton.setDisable(HOIIVUtils.get("hoi4.path").isEmpty());
+	}
+	
+	// Generic method to validate a directory path and set it to settings
+	private void validateAndSetPath(String path, String settingKey) {
+		if (path.isEmpty()) return;
+		
+		File file = new File(path);
+		
+		boolean isValidFile = file.exists() && file.isDirectory();
+		
+		if (isValidFile) {
+			HOIIVUtils.set(settingKey, String.valueOf(file));
+		}
 	}
 	
 	// Generic method to handle file browser actions
@@ -159,11 +245,15 @@ public class SettingsController extends HOIIVUtilsAbstractController implements 
 	}
 
 	public void handleDarkThemeRadioAction() {
-		HOIIVUtils.set("theme", "dark");
+		if (darkTheme.isSelected()) {
+			HOIIVUtils.set("theme", "dark");
+		}
 	}
 
 	public void handleLightThemeRadioAction() {
-		HOIIVUtils.set("theme", "light");
+		if (lightTheme.isSelected()) {
+			HOIIVUtils.set("theme", "light");
+		}
 	}
 
 	/**
@@ -202,5 +292,15 @@ public class SettingsController extends HOIIVUtilsAbstractController implements 
 		HOIIVUtils.save();
 		hideWindow(idOkButton);
 		new MenuController().open();
+	}
+
+	@Override
+	public void setFxmlResource(String fxmlResource) {
+		this.fxmlResource = fxmlResource;
+	}
+
+	@Override
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }

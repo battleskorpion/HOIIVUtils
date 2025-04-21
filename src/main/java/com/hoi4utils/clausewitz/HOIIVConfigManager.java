@@ -16,10 +16,8 @@ public class HOIIVConfigManager {
 		this.propertiesFile = config.getPropertiesFile();
 		this.defaultProperties = config.getDefaultProperties();
 	}
-	
-	// TODO: make these the methods that HOIIVUtilsInitializer use instead of duplicates
 
-	public void saveConfiguration() {
+	void saveConfiguration() {
 		File externalFile = new File(propertiesFile);
 
 		boolean noSavedSettings = !externalFile.exists() && defaultProperties != null;
@@ -36,7 +34,7 @@ public class HOIIVConfigManager {
 		}
 	}
 
-	public void loadConfiguration() {
+	private void loadConfiguration() {
 		File externalFile = new File(propertiesFile);
 
 		if (!externalFile.exists()) {
@@ -53,7 +51,7 @@ public class HOIIVConfigManager {
 		}
 	}
 	
-	public void loadDefaultProperties() {
+	private void loadDefaultProperties() {
 		File externalFile = new File(propertiesFile);
 		try (OutputStream externalOut = new FileOutputStream(externalFile)) {
 			byte[] buffer = new byte[8192];

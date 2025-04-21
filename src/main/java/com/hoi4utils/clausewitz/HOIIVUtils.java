@@ -28,6 +28,7 @@ public class HOIIVUtils {
 	// Static references to application configuration
 	public static File HOIIVUTILS_DIR;
 	public static String HOIIVUTILS_VERSION;
+	public static MenuController menuController;
 	private static HOIIVUtilsConfig config;
 
 	public static void main(String[] args) {
@@ -42,20 +43,22 @@ public class HOIIVUtils {
 			HOIIVUTILS_VERSION = config.getVersion();
 
 			LOGGER.info("HOIIVUtils {} launched successfully", HOIIVUTILS_VERSION);
+			menuController = new MenuController();
+			menuController.launchMenuWindow(args);
 		} catch (Exception e) {
 			LOGGER.fatal("Failed to initialize HOIIVUtils", e);
 			JOptionPane.showMessageDialog(null,
 				"Failed to initialize HOIIVUtils: " + e.getMessage(),
 				"Critical Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
 		}
-		new MenuController().launchMenuWindow(args);
 	}
 
 	/**
 	 * Gets a property from the configuration.
 	 *
 	 * @param key Property key
-	 * @return Property value or empty string if not found
+	 * @return Property value or null if not found
 	 */
 	public static String get(String key) {
 		if (config == null) {
