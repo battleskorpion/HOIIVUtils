@@ -1,7 +1,9 @@
 package com.hoi4utils.ui.province_colors;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.clausewitz.map.gen.ColorGenerator;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -10,27 +12,34 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color.*;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+
+import static javafx.scene.paint.Color.BLACK;
+import static javafx.scene.paint.Color.rgb;
 
 public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 	public static final Logger LOGGER = LogManager.getLogger(ProvinceColorsController.class);
 
-	// Color constraints from old code
-	private static int redMin = 0;
-	private static int redMax = 255;
-	private static int greenMin = 0;
-	private static int greenMax = 255;
-	private static int blueMin = 0;
-	private static int blueMax = 255;
+    // Getters and setters for color ranges
+    // Color constraints from old code
+	@Setter
+    private static int redMin = 0;
+	@Setter
+    private static int redMax = 255;
+	@Setter
+    private static int greenMin = 0;
+	@Setter
+    private static int greenMax = 255;
+	@Setter
+    private static int blueMin = 0;
+	@Setter
+    private static int blueMax = 255;
 
 	@FXML
 	public Label idWindowName;
@@ -73,10 +82,10 @@ public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 	@FXML
 	private Label maxBlueAmtLabel;
 
-	private String input = "10";
+	private String input = "65536";
 
-	// Set to track generated colors for uniqueness check
-	private Set<Integer> generatedColors = new HashSet<>();
+
+	private final String outputPath = HOIIVUtils.HOIIVUTILS_DIR + File.separator + "Generated Province Colors.bmp";
 
 	public ProvinceColorsController() {
 		setFxmlResource("ProvinceColors.fxml");
@@ -94,6 +103,7 @@ public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 	}
 
 	/**
+	 * TODO: Fix Sliders to work with colorGenerator Example, if max red is 0 and min red is 0, then generate no red.
 	 * Sets up the sliders with listeners and initial values
 	 */
 	private void setupSliders() {
@@ -172,16 +182,16 @@ public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 
 			// Check if exceeding maximum possible unique colors based on constraints
 			if (numColors > maxPossibleColors) {
-				numColors = (int) Math.min(Integer.MAX_VALUE, maxPossibleColors);
+				numColors = (int) maxPossibleColors;
 				statusLabel.setText("Warning: Limited to " + numColors + " colors based on RGB ranges.");
-				LOGGER.warn("Requested more colors than possible with current RGB ranges. Limited to " + numColors);
+                LOGGER.warn("Requested more colors than possible with current RGB ranges. Limited to {}", numColors);
 			}
 
 			// Also check the absolute maximum (16.7 million)
 			if (numColors > (1 << 24) - 1) {
 				numColors = (1 << 24) - 1;
 				statusLabel.setText("Warning: Limited to maximum of " + numColors + " unique colors.");
-				LOGGER.warn("Requested more colors than possible (24-bit RGB). Limited to " + numColors);
+                LOGGER.warn("Requested more colors than possible (24-bit RGB). Limited to {}", numColors);
 			}
 
 			return numColors;
@@ -214,30 +224,29 @@ public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 			return; // Error already displayed in getNumColorsGenerate
 		}
 
-		// Clear the set of generated colors
-		generatedColors.clear();
-
 		// Show progress indicator
 		statusLabel.setText("Generating BMP with " + numColors + " unique colors...");
 		progressIndicator.setVisible(true);
 		generateButton.setDisable(true);
 
+		ColorGenerator colorGenerator = new ColorGenerator();
+
 		// Run BMP generation on a background thread
 		new Thread(() -> {
 			try {
-				String outputPath = HOIIVUtils.HOIIVUTILS_DIR + File.separator + "Generated Province Colors.bmp";
-				generateBMP(numColors, outputPath);
+				
+				colorGenerator.generateColors(numColors, outputPath);
 
 				// Update UI on completion
-				javafx.application.Platform.runLater(() -> {
+				Platform.runLater(() -> {
 					progressIndicator.setVisible(false);
 					generateButton.setDisable(false);
 					statusLabel.setText("BMP generated successfully: " + outputPath);
-					LOGGER.info("Generated BMP with " + numColors + " unique colors: " + outputPath);
+                    LOGGER.info("Generated BMP with {} unique colors: {}", numColors, outputPath);
 				});
 			} catch (Exception e) {
-				e.printStackTrace();
-				javafx.application.Platform.runLater(() -> {
+				LOGGER.fatal("Error generating BMP", e);
+				Platform.runLater(() -> {
 					progressIndicator.setVisible(false);
 					generateButton.setDisable(false);
 					statusLabel.setText("Error: Failed to generate BMP - " + e.getMessage());
@@ -248,118 +257,7 @@ public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 	}
 
 	/**
-	 * Generates a BMP file with a specified number of unique colors.
-	 *
-	 * @param numColors  The total number of unique colors to generate.
-	 * @param outputPath The file path to save the BMP.
-	 */
-	private void generateBMP(int numColors, String outputPath) throws IOException {
-		// Calculate closest square dimensions
-		int dimension = (int) Math.ceil(Math.sqrt(numColors));
-		BufferedImage image = new BufferedImage(dimension, dimension, BufferedImage.TYPE_INT_RGB);
-
-		// Generate unique colors and fill the image
-		int colorCount = 0;
-		int attemptCount = 0;
-		final int MAX_ATTEMPTS = 1000000; // Avoid infinite loops
-
-		while (colorCount < numColors && attemptCount < MAX_ATTEMPTS) {
-			Color color = generateUniqueColor(colorCount, numColors);
-			int rgb = color.getRGB() & 0xFFFFFF; // Mask to just RGB values (no alpha)
-
-			// Check if this color is already used
-			if (!generatedColors.contains(rgb)) {
-				generatedColors.add(rgb);
-
-				// Calculate position in the image
-				int x = colorCount % dimension;
-				int y = colorCount / dimension;
-
-				// Set the color in the image
-				image.setRGB(x, y, color.getRGB());
-				colorCount++;
-
-				// Update progress indicator periodically
-				if (colorCount % 100 == 0 || colorCount == numColors) {
-					final int currentCount = colorCount;
-					javafx.application.Platform.runLater(() -> {
-						progressIndicator.setProgress((double) currentCount / numColors);
-					});
-				}
-			}
-
-			attemptCount++;
-
-			// If we're having trouble finding unique colors, log a warning
-			if (attemptCount >= MAX_ATTEMPTS) {
-				LOGGER.warn("Reached maximum attempt limit while generating unique colors");
-
-				int finalColorCount = colorCount;
-				javafx.application.Platform.runLater(() -> {
-					statusLabel.setText("Warning: Difficulty finding unique colors. Generated " + finalColorCount + " colors.");
-				});
-			}
-		}
-
-		// Fill any remaining pixels with black
-		if (colorCount < numColors) {
-			for (int y = 0; y < dimension; y++) {
-				for (int x = 0; x < dimension; x++) {
-					int index = y * dimension + x;
-					if (index >= colorCount && index < dimension * dimension) {
-						image.setRGB(x, y, Color.BLACK.getRGB());
-					}
-				}
-			}
-		}
-
-		// Save the BMP file
-		File outputFile = new File(outputPath);
-		ImageIO.write(image, "bmp", outputFile);
-	}
-
-	/**
-	 * Generates a unique color based on the index.
-	 *
-	 * @param index       The current color index.
-	 * @param totalColors The total number of colors to generate.
-	 * @return A unique Color object.
-	 */
-	private Color generateUniqueColor(int index, int totalColors) {
-		// Calculate the number of possible colors within the constraints
-		int redRange = redMax - redMin + 1;
-		int greenRange = greenMax - greenMin + 1;
-		int blueRange = blueMax - blueMin + 1;
-
-		// Use prime number multiplication and large constants to create a more random distribution
-		// The goal is to visit as many unique RGB combinations as possible
-		long multiplier = 2862933555777941757L; // Large prime
-		long addend = 3037000493L; // Another prime
-
-		// Generate a pseudo-random number based on the index
-		long randomValue = (index * multiplier + addend) & 0x7FFFFFFFFFFFFFFFL;
-
-		// Extract RGB components from the random value, respecting the min/max constraints
-		int r = redMin + (int)(randomValue % redRange);
-		randomValue /= redRange;
-
-		int g = greenMin + (int)(randomValue % greenRange);
-		randomValue /= greenRange;
-
-		int b = blueMin + (int)(randomValue % blueRange);
-
-		// Use deterministic but well-distributed hash if we're getting colors that are too similar
-		if (index > totalColors / 2) {
-			// Alternative algorithm to maximize distance between colors
-			r = redMin + (int)(((index * 7621) + 1) % redRange);
-			g = greenMin + (int)(((index * 4567) + 5) % greenRange);
-			b = blueMin + (int)(((index * 3571) + 7) % blueRange);
-		}
-
-		return new Color(r, g, b);
-	}
-
-	/**
+	 * TODO: Fix Preview
 	 * Updates the color preview in the UI with the specified number of unique colors.
 	 *
 	 * @param numColors Number of unique colors to display.
@@ -368,268 +266,25 @@ public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 		if (numColors <= 0) return;
 
 		colorPreviewGrid.getChildren().clear();
-		generatedColors.clear();
 
 		int columns = (int) Math.ceil(Math.sqrt(numColors));
 		int boxSize = 8;
 		int previewLimit = Math.min(numColors, 1000);
 
-		int maxRetries = 100; // Prevent infinite loops with a max retry count
-
 		for (int i = 0; i < previewLimit; i++) {
-			// Generate unique color
-			Color color = generateUniqueColor(i, numColors);
-			int rgb = color.getRGB() & 0xFFFFFF;
-
-			int retryCount = 0;
-			// Check if this color is already used
-			while (generatedColors.contains(rgb) && retryCount < maxRetries) {
-				// Try a slightly different approach on retries
-				color = generateUniqueColor(i + retryCount * previewLimit, numColors * 2);
-				rgb = color.getRGB() & 0xFFFFFF;
-				retryCount++;
-			}
-
-			if (retryCount >= maxRetries) {
-				LOGGER.warn("Too many retries to generate unique color at index " + i);
-				// Use a fallback color or break
-				color = new Color(i % 256, (i / 256) % 256, (i / 65536) % 256);
-				rgb = color.getRGB() & 0xFFFFFF;
-			}
-
-			generatedColors.add(rgb);
-
 			// Create a rectangle with the color
 			Rectangle rect = new Rectangle(boxSize, boxSize);
-			rect.setFill(javafx.scene.paint.Color.rgb(color.getRed(), color.getGreen(), color.getBlue()));
-			rect.setStroke(javafx.scene.paint.Color.BLACK);
+			// TODO: Get some colors from colorGenerator to be preview here, somehow?
+			int rColor = 0;
+			int gColor = 0;
+			int bColor = 0;
+			rect.setFill(rgb(rColor, gColor, bColor));
+			rect.setStroke(BLACK);
 
 			// Add the rectangle to the GridPane
 			int row = i / columns;
 			int col = i % columns;
 			colorPreviewGrid.add(rect, col, row);
-
-			// Safety check for RGB space exhaustion
-			if (generatedColors.size() >= (redMax - redMin + 1) * (greenMax - greenMin + 1) * (blueMax - blueMin + 1)) {
-				LOGGER.warn("Cannot generate more unique colors within the current RGB range constraints");
-				break;
-			}
 		}
 	}
-
-	// Getters and setters for color ranges
-	public static void setRedMin(int value) {
-		redMin = value;
-	}
-
-	public static void setRedMax(int value) {
-		redMax = value;
-	}
-
-	public static void setGreenMin(int value) {
-		greenMin = value;
-	}
-
-	public static void setGreenMax(int value) {
-		greenMax = value;
-	}
-
-	public static void setBlueMin(int value) {
-		blueMin = value;
-	}
-
-	public static void setBlueMax(int value) {
-		blueMax = value;
-	}
 }
-
-
-
-// Old code for generating unique colors from before javafx
-
-//package com.HOIIVUtils.ui.colorgen;
-//
-//import com.HOIIVUtils.hoi4utils.map.province.ColorGenerator;
-//
-//import javax.swing.*;
-//import javax.swing.event.ChangeEvent;
-//import javax.swing.event.ChangeListener;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import java.util.concurrent.Executors;
-//import java.util.concurrent.ScheduledExecutorService;
-//import java.util.concurrent.TimeUnit;
-//
-//public class ColorGeneratorMenu extends JFrame {
-//	private JPanel colorGeneratorJPanel;
-//	private JSlider redMinSlider;
-//	private JSlider redMaxSlider;
-//	private JSlider greenMinSlider;
-//	private JSlider greenMaxSlider;
-//	private JSlider blueMinSlider;
-//	private JSlider blueMaxSlider;
-//	private JButton generateButton;
-//	private JTextField numColorsTextField;
-//	private JLabel minGreenAmtLabel;
-//	private JLabel maxGreenAmtLabel;
-//	private JLabel minRedAmtLabel;
-//	private JLabel maxRedAmtLabel;
-//	private JLabel minBlueAmtLabel;
-//	private JLabel maxBlueAmtLabel;
-//	private JProgressBar generateProgressBar;
-//
-//	public ColorGeneratorMenu() {
-//		super("Color Generator");
-//
-//		/* vars */
-//		JSlider[] sliders = {redMinSlider, redMaxSlider, greenMinSlider, greenMaxSlider, blueMinSlider, blueMaxSlider};
-//		JLabel[] sliderAmtLabels = {minRedAmtLabel, maxRedAmtLabel, minGreenAmtLabel, maxGreenAmtLabel, minBlueAmtLabel, maxBlueAmtLabel};
-//
-//		/* color generator */
-//		ColorGenerator colorGenerator = new ColorGenerator();
-//
-//		/* component visibility */
-//		generateProgressBar.setVisible(false);
-//
-//		setContentPane(colorGeneratorJPanel);
-//		setSize(700, 500);
-//		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//		pack();
-//
-//		/* action listeners */
-//		generateButton.addActionListener(new ActionListener() {
-//			/**
-//			 * Invoked when an action occurs.
-//			 *
-//			 * @param e the event to be processed
-//			 */
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				Thread generateThread = new Thread() {
-//					public void run() {
-//						int numColors;
-//
-//						/* get num colors to generate */
-//						try {
-//							SwingUtilities.invokeAndWait(() -> {
-//								generateButton.setEnabled(false);
-//								generateButton.setVisible(false);
-//							});
-//						}
-//						catch (Exception e) {
-//							e.printStackTrace();
-//						}
-//
-//						try {
-//							numColors = getNumColorsGenerate();
-//						} catch (Exception exc) {
-//							System.err.println(exc.getMessage());
-//							System.err.println("\t" + "in " + this);
-//							try {
-//								SwingUtilities.invokeAndWait(() -> {
-//									generateButton.setEnabled(true);
-//									generateButton.setVisible(true);
-//								});
-//							}
-//							catch (Exception e) {
-//								e.printStackTrace();
-//							}
-//							return;
-//						}
-//
-//						/* display progress bar */
-//						try {
-//							SwingUtilities.invokeAndWait(() -> {
-//								generateProgressBar.setMaximum(numColors);
-//								generateProgressBar.setVisible(true);
-//							});
-//						}
-//						catch (Exception e) {
-//							e.printStackTrace();
-//						}
-//
-//						/* generate colors */
-//						colorGenerator.generateColors(numColors);
-//
-//						/* reset visibility */
-//						final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-//						// delay at least half a second
-//						executorService.schedule(() -> {
-//							try {
-//								SwingUtilities.invokeAndWait(() -> {
-//									generateProgressBar.setVisible(false);
-//									generateButton.setEnabled(true);
-//									generateButton.setVisible(true);
-//								});
-//							}
-//							catch (Exception e) {
-//								e.printStackTrace();
-//							}
-//						}, 500, TimeUnit.MILLISECONDS);
-//
-//						System.out.println("Finished on " + Thread.currentThread());
-//					}
-//
-//				};
-//				generateThread.start();
-//			}
-//		});
-//
-//		for (int i = 0; i < sliders.length; i++) {
-//			int finalI = i;
-//			sliders[i].addChangeListener(new ChangeListener() {
-//				@Override
-//				public void stateChanged(ChangeEvent e) {
-//					int value = sliders[finalI].getValue();
-//					updateValuesFromSlider(value, sliderAmtLabels[finalI], finalI);
-//				}
-//			});
-//		}
-//	}
-//
-//	private void updateValuesFromSlider(int value, JLabel label, int index) {
-//		label.setText(Integer.toString(value));
-//
-//		switch (index) {
-//			case 0:
-//				ColorGenerator.setRedMin(value);
-//				break;
-//			case 1:
-//				ColorGenerator.setRedMax(value);
-//				break;
-//			case 2:
-//				ColorGenerator.setGreenMin(value);
-//				break;
-//			case 3:
-//				ColorGenerator.setGreenMax(value);
-//				break;
-//			case 4:
-//				ColorGenerator.setBlueMin(value);
-//				break;
-//			case 5:
-//				ColorGenerator.setBlueMax(value);
-//				break;
-//			default:
-//				break;
-//		}
-//	}
-//
-//	/**
-//	 * @throws IllegalArgumentException from <code>Integer.parseInt()</code> if <code>numColorsTextField</code> cannot be read.
-//	 * @return number of colors selected to generate
-//	 */
-//	private int getNumColorsGenerate() {
-//		int numColors;
-//		numColors = Integer.parseInt(numColorsTextField.getText());
-//
-//		if (numColors > (1 << 24) - 1) {
-//			numColors = (1 << 24) - 1;
-//			String err = "Error: Attempting to generate more unique colors than is possible. Will generate max possible "
-//					+ "[" + numColors + "]" + " instead.";
-//			JOptionPane.showMessageDialog(this, err, this.getTitle(), JOptionPane.WARNING_MESSAGE);
-//			System.err.println(err);
-//		}
-//		return numColors;
-//	}
-//
-//}

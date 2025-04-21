@@ -1,8 +1,12 @@
 package com.hoi4utils.clausewitz;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 
 public class HOIIVFiles {
+    private static final Logger LOGGER = LogManager.getLogger(HOIIVFiles.class);
 
 	// Nested class for mod files
 	public static class Mod {
@@ -41,7 +45,17 @@ public class HOIIVFiles {
 	public static final File usersParadoxHOIIVModFolder =
 			new File(File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod");
 
-	public static void setModPathChildDirs(String modPath) {
+	/**
+	 * Sets up all mod child directories based on the provided mod path.
+	 * 
+	 * @param modPath Path to the mod directory
+	 * @return true if the directory is valid and paths were set up, false otherwise
+	 */
+	public static boolean setModPathChildDirs(String modPath) {
+		if (!validateDirectoryPath(modPath, "mod.path")) {
+			return false;
+		}
+		
 		Mod.folder = new File(modPath);
 		Mod.common_folder = new File(modPath, "common");
 		Mod.focus_folder = new File(modPath, "common\\national_focus");
@@ -57,9 +71,21 @@ public class HOIIVFiles {
 		Mod.country_tags_folder = new File(modPath, "common\\country_tags");
 		Mod.province_map_file = new File(modPath, "map\\provinces.bmp");
 		Mod.definition_csv_file = new File(modPath, "map\\definition.csv");
+		
+		return true;
 	}
 
-	public static void setHoi4PathChildDirs(String hoi4Path) {
+	/**
+	 * Sets up all HOI4 child directories based on the provided HOI4 path.
+	 * 
+	 * @param hoi4Path Path to the HOI4 directory
+	 * @return true if the directory is valid and paths were set up, false otherwise
+	 */
+	public static boolean setHoi4PathChildDirs(String hoi4Path) {
+		if (!validateDirectoryPath(hoi4Path, "hoi4.path")) {
+			return false;
+		}
+		
 		HOI4.folder = new File(hoi4Path);
 		HOI4.localization_folder = new File(hoi4Path, "localisation\\english");
 		HOI4.units_folder = new File(hoi4Path, "common\\units");
@@ -70,6 +96,30 @@ public class HOIIVFiles {
 		HOI4.country_tags_folder = new File(hoi4Path, "common\\country_tags");
 		HOI4.province_map_file = new File(hoi4Path, "map\\provinces.bmp");
 		HOI4.definition_csv_file = new File(hoi4Path, "map\\definition.csv");
+		
+		return true;
+	}
+
+	/**
+	 * Sets up both mod and HOI4 file paths based on the provided paths.
+	 *
+	 * @param modPath Path to the mod directory
+	 * @param hoi4Path Path to the HOI4 directory
+	 * @param changeNotifier Optional notifier to call after paths are updated
+	 * @return true if both paths are valid and set up correctly, false otherwise
+	 */
+	public static boolean setupFilePaths(String modPath, String hoi4Path, Runnable changeNotifier) {
+		boolean success = setHoi4PathChildDirs(hoi4Path);
+
+        if (!setModPathChildDirs(modPath)) {
+			success = false;
+		}
+		
+		if (changeNotifier != null) {
+			changeNotifier.run();
+		}
+		
+		return success;
 	}
 
 	// A sample validation method that uses both mod and base files
@@ -80,5 +130,22 @@ public class HOIIVFiles {
 	/** Checks if a directory is valid */
 	private static boolean isValidDirectory(File folder) {
 		return folder != null && folder.exists() && folder.isDirectory();
+	}
+	
+	/** Validates whether the provided directory path is valid */
+	public static boolean validateDirectoryPath(String path, String keyName) {
+		if (path == null || path.isEmpty()) {
+			LOGGER.error("{} is null or empty!", keyName);
+			return false;
+		}
+
+		File directory = new File(path);
+
+		if (!directory.exists() || !directory.isDirectory()) {
+			LOGGER.error("{} does not point to a valid directory: {}", keyName, path);
+			return false;
+		}
+
+		return true;
 	}
 }
