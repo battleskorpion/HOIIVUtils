@@ -87,7 +87,11 @@ public class ClausewitzDate implements Temporal, TemporalAdjuster, Comparable<Cl
 		if (pos2 <= 0) {
 			throw new IllegalArgumentException(s + " is not a valid clausewitz date");
 		}
-		year = Integer.parseInt(s.substring(pos1, pos2));
+		try {
+			year = Integer.parseInt(s.substring(pos1, pos2));
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(s + " is not a valid clausewitz date");
+		}
 
 		/* month */
 		pos1 = pos2 + 1;
@@ -95,7 +99,11 @@ public class ClausewitzDate implements Temporal, TemporalAdjuster, Comparable<Cl
 		if (pos2 <= pos1) {
 			throw new IllegalArgumentException(s + " is not a valid clausewitz date");
 		}
-		month = Integer.parseInt(s.substring(pos1, pos2));
+		try {
+			month = Integer.parseInt(s.substring(pos1, pos2));
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(s + " is not a valid clausewitz date");
+		}
 
 		/* day */
 		pos1 = pos2 + 1;
@@ -106,8 +114,12 @@ public class ClausewitzDate implements Temporal, TemporalAdjuster, Comparable<Cl
 		if (pos2 == pos1) {
 			throw new IllegalArgumentException(s + " is not a valid clausewitz date");
 		}
-		day = Integer.parseInt(s.substring(pos1, pos2));
-
+		try {
+			day = Integer.parseInt(s.substring(pos1, pos2));
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(s + " is not a valid clausewitz date");
+		}
+		
 		/* hour */
 		int temphour;
 		pos1 = pos2 + 1;
@@ -115,7 +127,11 @@ public class ClausewitzDate implements Temporal, TemporalAdjuster, Comparable<Cl
 		if (pos2 <= pos1) {
 			temphour = DEFAULT_HOUR;			  // valid to not have hour (in case, default)
 		} else {
-			temphour = Integer.parseInt(s.substring(pos1, pos2));
+			try {
+				temphour = Integer.parseInt(s.substring(pos1, pos2));
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException(s + " is not a valid clausewitz date");
+			}
 		}
 		hour = temphour;				// hour is final
 
@@ -133,9 +149,22 @@ public class ClausewitzDate implements Temporal, TemporalAdjuster, Comparable<Cl
 	public static ClausewitzDate defaulty() {
 		return DEFAULT_DATE;
 	}
+	
+	public static boolean validDate(String date) {
+		try {
+			of(date);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
 
 	public String toString() {
 		return year + "." + month + "." + day + "." + hour;
+	}
+	
+	public String YMDString() {
+		return year + "." + month + "." + day;
 	}
 
 	public String date() {

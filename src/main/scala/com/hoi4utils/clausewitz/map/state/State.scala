@@ -3,6 +3,7 @@ package com.hoi4utils.clausewitz.map.state
 import com.hoi4utils.ExpectedRange
 import com.hoi4utils.clausewitz.code.ClausewitzDate
 import com.hoi4utils.clausewitz.data.country.{Country, CountryTag, CountryTagsManager}
+import com.hoi4utils.clausewitz.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.clausewitz.localization.*
 import com.hoi4utils.clausewitz.map.{Owner, UndefinedStateIDException}
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
@@ -498,12 +499,14 @@ object State extends Iterable[State] {
   @NotNull override def iterator: Iterator[State] = states.iterator
 
   // todo fix structured effect block later when i can read
-  class History extends StructuredPDX("history") {
+  class History(pdxIdentifier: String = "history") extends StructuredPDX(pdxIdentifier) {
     final val owner = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "owner")
     final val controller = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "controller")
     final val buildings = new BuildingsPDX
-    final val victory_points = new MultiPDX[VictoryPointPDX](None, Some(() => new VictoryPointPDX), "victory_points")
-//    final MultiPDX[VictoryPoint] victoryPoints = new MultiPDX(None, Some())
+    final val victoryPoints = new MultiPDX[VictoryPointPDX](None, Some(() => new VictoryPointPDX), "victory_points")
+    final val startDateScopes = new MultiPDX[StartDateScopePDX](None, Some(() => new StartDateScopePDX))
+      with ProceduralIdentifierPDX(ClausewitzDate.validDate)
+    //    final MultiPDX[VictoryPoint] victoryPoints = new MultiPDX(None, Some())
 
     def this(node: Node) = {
       this()
@@ -514,8 +517,10 @@ object State extends Iterable[State] {
      * @inheritdoc
      */
     override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
-      ListBuffer(owner, buildings, controller, victory_points)
+      ListBuffer(owner, buildings, controller, victoryPoints, startDateScopes)
     }
+
+    override def getPDXTypeName: String = "History"
   }
 
   class BuildingsPDX extends StructuredPDX("buildings") {
@@ -540,5 +545,13 @@ object State extends Iterable[State] {
 
   class VictoryPointPDX extends ListPDX[IntPDX](() => new IntPDX(), "victory_points") {
     override def getPDXTypeName: String = "Victory Point"
+  }
+
+  class StartDateScopePDX(date: ClausewitzDate) extends History(date.YMDString) with ProceduralIdentifierPDX(ClausewitzDate.validDate) {
+    def this() = {
+      this(ClausewitzDate.defaulty)
+    }
+
+    override def getPDXTypeName: String = "Start Date History"
   }
 }

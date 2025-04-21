@@ -25,8 +25,12 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   
   def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T], pdxIdentifiers: String*) = {
     this(simpleSupplier, blockSupplier, pdxIdentifiers.toList)
-  } 
+  }
 
+  def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T]) = {
+    this(simpleSupplier, blockSupplier, List.empty)
+  }
+  
   /**
    * @inheritdoc
    */

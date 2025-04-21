@@ -42,8 +42,6 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
     private ScrollPane mapScrollPane;
     @FXML
     private ScrollPane pdxScrollPane;
-    @FXML
-    private AnchorPane pdxAnchorPane;
 
     private Image mapImage;
     // Keep the original province map image (with definition colors) for hover lookup.
@@ -318,8 +316,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
                 // add pdxEditor to scroll pane
                 var pdxEditorPane = new PDXEditorPane(clickedState);
                 pdxEditorPane.showSaveButton();
-                pdxAnchorPane.getChildren().clear();
-                pdxAnchorPane.getChildren().add(pdxEditorPane);
+                pdxScrollPane.setContent(pdxEditorPane);
                 pdxScrollPane.setVisible(true);
             } else {
                 LOGGER.info("Right-clicked on an undefined state area.");

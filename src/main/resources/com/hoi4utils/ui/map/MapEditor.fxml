@@ -38,11 +38,7 @@
                           <Canvas fx:id="mapCanvas" onMouseClicked="#onCanvasMouseClick" />
                       </content>
                   </ScrollPane>
-               <ScrollPane fx:id="pdxScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                 <content>
-                   <AnchorPane fx:id="pdxAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-                 </content>
-               </ScrollPane>
+               <ScrollPane fx:id="pdxScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" />
             </items>
          </SplitPane>
         </center>

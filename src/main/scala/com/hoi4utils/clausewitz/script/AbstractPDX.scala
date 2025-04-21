@@ -18,7 +18,7 @@ import scala.reflect.ClassTag
  * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
  * <p>
  */
-trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScript[T] {
+trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScript[T] {
   private[script] var activeIdentifier = 0
   protected[script] var node: Option[Node] = None
 
@@ -151,7 +151,7 @@ trait AbstractPDX[T](protected val pdxIdentifiers: List[String]) extends PDXScri
    * @inheritdoc
    */
   override def isValidIdentifier(node: Node): Boolean = {
-    pdxIdentifiers.contains(node.name)
+    isValidID(node.name)
   }
   
   override def isValidID(identifier: String): Boolean = {
