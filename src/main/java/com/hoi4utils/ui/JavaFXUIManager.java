@@ -2,8 +2,9 @@ package com.hoi4utils.ui;
 
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.ui.javafx.table.DoubleOrPercentTableCell;
-import com.hoi4utils.ui.javafx.table.TableViewWindow;
+import com.hoi4utils.ui.hoi4localization.CustomTooltipController;
+import com.hoi4utils.ui.javafx_ui.table.DoubleOrPercentTableCell;
+import com.hoi4utils.ui.javafx_ui.table.TableViewWindow;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -186,14 +187,15 @@ public interface JavaFXUIManager {
 		System.out.println("Loaded data into table: " + table.getId());
 	}
 
-	default <S> void loadTableView(TableViewWindow window, TableView<S> focusListTable, ObservableList<S>
-			focusObservableList, Iterable<Function1<S,?>> dataFunctions) {
+	default <S> void loadTableView(TableViewWindow window, TableView<S> table, ObservableList<S>
+			data, Iterable<Function1<S,?>> dataFunctions) {
 		var fns = CollectionConverters.asJava(dataFunctions);
 		List<Function<S, ?>> fnsJava = new ArrayList<>();
 		fns.forEach((x) -> fnsJava.add(FunctionConverters.asJavaFunction(x)));
-		loadTableView(window, focusListTable, focusObservableList, fnsJava);
+		loadTableView(window, table, data, fnsJava);
 	}
-
+	
+	
 //	default <S> void loadTreeTableView(TableViewWindow window, TreeTableView<S> table, ObservableList<S> data,
 //	                                   List<Function<S, ?>> dataFunctions, Function<S, ?> parentingFunction) {
 //		window.setDataTableCellFactories();

@@ -2,7 +2,7 @@ package com.hoi4utils.ui.pdxscript;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.script.*;
-import com.hoi4utils.ui.map.MapEditorController;
+import com.hoi4utils.script.*;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Node;

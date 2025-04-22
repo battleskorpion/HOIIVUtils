@@ -1,16 +1,18 @@
 package com.hoi4utils.clausewitz.data.focus
 
+import com.hoi4utils.hoi4.focus.{Focus, FocusTree}
+
 import java.io.{File, PrintWriter}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.BeforeAndAfterEach
-import scala.collection.mutable
 
+import scala.collection.mutable
 import language.experimental.namedTuples
 
 // Assuming Property is defined in the localization package.
 import com.hoi4utils.clausewitz.localization.Property
 // Import CountryTag from its package.
-import com.hoi4utils.clausewitz.data.country.CountryTag
+import com.hoi4utils.hoi4.country.CountryTag
 
 // Dummy implementation for CountryTag for testing purposes.
 class DummyCountryTag(tag: String) extends CountryTag(tag) {

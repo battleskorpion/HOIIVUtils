@@ -1,7 +1,7 @@
 package com.hoi4utils.clausewitz.map;
 
-import com.hoi4utils.clausewitz.data.country.Country;
-import com.hoi4utils.clausewitz.data.country.CountryTag;
+import com.hoi4utils.hoi4.country.Country;
+import com.hoi4utils.hoi4.country.CountryTag;
 import org.jetbrains.annotations.NotNull;
 
 /*

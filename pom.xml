@@ -213,6 +213,12 @@
 			<version>2.4.0</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.scalafx/scalafx -->
+		<dependency>
+			<groupId>org.scalafx</groupId>
+			<artifactId>scalafx_3</artifactId>
+			<version>23.0.1-R34</version>
+		</dependency>
 	</dependencies>
 
 	<build>

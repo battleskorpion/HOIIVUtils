@@ -1,9 +1,9 @@
 package com.hoi4utils.ui.pdxscript;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.clausewitz.data.country.CountryTag;
-import com.hoi4utils.clausewitz.data.country.CountryTag$;
-import com.hoi4utils.clausewitz.data.focus.FocusTree;
+import com.hoi4utils.hoi4.country.CountryTag;
+import com.hoi4utils.hoi4.country.CountryTag$;
+import com.hoi4utils.hoi4.focus.FocusTree;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

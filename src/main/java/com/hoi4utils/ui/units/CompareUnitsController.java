@@ -1,11 +1,14 @@
 package com.hoi4utils.ui.units;
 
 import com.hoi4utils.clausewitz.HOIIVFiles;
-import com.hoi4utils.clausewitz.data.units.SubUnit;
+import com.hoi4utils.hoi4.units.SubUnit;
+import com.hoi4utils.hoi4.units.SubUnit$;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.javafx.DiffViewPane;
+import com.hoi4utils.ui.javafx_ui.DiffViewPane;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
+import scala.jdk.javaapi.CollectionConverters;
+import scala.math.Ordering;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,8 +35,8 @@ public class CompareUnitsController extends HOIIVUtilsAbstractController {
      */
     @FXML
     void initialize() {
-        List<SubUnit> customUnits = SubUnit.read(HOIIVFiles.Mod.units_folder);
-        List<SubUnit> baseUnits = SubUnit.read(HOIIVFiles.HOI4.units_folder);
+        List<SubUnit> customUnits = CollectionConverters.asJava(SubUnit.read(HOIIVFiles.Mod.units_folder));
+        List<SubUnit> baseUnits = CollectionConverters.asJava(SubUnit.read(HOIIVFiles.HOI4.units_folder));
 
         unitsDiffViewPane = new DiffViewPane("Base Unit Details", "Custom Unit Details");
         rootAnchorPane.getChildren().add(unitsDiffViewPane);
@@ -65,11 +68,11 @@ public class CompareUnitsController extends HOIIVUtilsAbstractController {
     }
 
     private void appendUnitDetails(Collection<String> unitText, SubUnit unit) {
-        var df = SubUnit.getDataFunctions();
-        var dfl = SubUnit.getDataLabels();
+        var df = SubUnit.dataFunctions(); 
+        var dfl = CollectionConverters.asJava(SubUnit.dataLabels()); 
         int maxLabelWidth = dfl.stream().mapToInt(String::length).max().orElse(0);
         for (int i = 0; i < df.size(); i++) {
-            var data = df.get(i).apply(unit);
+            var data = df.apply(i).apply(unit);
             if (skipNullProperties && data == null) continue;
             var dataLabel = dfl.get(i);
             var spacing = " ".repeat(maxLabelWidth - dataLabel.length());

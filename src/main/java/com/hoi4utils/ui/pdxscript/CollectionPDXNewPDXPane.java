@@ -1,8 +1,8 @@
 package com.hoi4utils.ui.pdxscript;
 
-import com.hoi4utils.clausewitz.code.effect.Effect;
-import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
-import com.hoi4utils.clausewitz.script.*;
+import com.hoi4utils.hoi4.effect.Effect;
+import com.hoi4utils.hoi4.effect.EffectDatabase;
+import com.hoi4utils.script.CollectionPDX;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -86,7 +86,7 @@ public class CollectionPDXNewPDXPane extends AnchorPane {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    setText(effect.pdxIdentifier());
+                    setText(effect.pdxIdentifier());    // java must not understand this line chill? 
                     //setFont(Font.font("Monospaced"));
                 }
             }
@@ -105,7 +105,7 @@ public class CollectionPDXNewPDXPane extends AnchorPane {
                 } catch (CloneNotSupportedException e) {
                     throw new RuntimeException(e);
                 }
-                var pdxEditorPane = new PDXEditorPane(newPDX);
+                var pdxEditorPane = new PDXEditorPane(newPDX);  // java must not understand this line chill? 
                 rootVBox.getChildren().add(pdxEditorPane);
             }
         });
@@ -144,7 +144,7 @@ public class CollectionPDXNewPDXPane extends AnchorPane {
                 return true; // No search text => all pass
             }
             // You can filter by name, ID, or anything else in effectItem
-            return effectItem.pdxIdentifier().toLowerCase().contains(searchText);
+            return effectItem.pdxIdentifier().toLowerCase().contains(searchText);   // java must not understand this line chill? 
         });
     }
 

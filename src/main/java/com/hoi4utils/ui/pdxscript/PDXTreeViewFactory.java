@@ -1,13 +1,12 @@
 package com.hoi4utils.ui.pdxscript;
 
-import com.hoi4utils.clausewitz.localization.Localizable;
-import com.hoi4utils.clausewitz.localization.Property;
+import com.hoi4utils.localization.Localizable;
 import com.hoi4utils.clausewitz.script.*;
+import com.hoi4utils.script.*;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.util.Callback;
-import lombok.val;
 
 /**
  * Utility class that creates a TreeView to display any PDXScript hierarchy.

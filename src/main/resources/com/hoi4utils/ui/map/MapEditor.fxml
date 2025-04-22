@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -22,16 +23,19 @@
                     <MenuItem onAction="#onViewByProvince" text="By Province" />
                     <MenuItem onAction="#onViewByState" text="By State" />
                     <MenuItem onAction="#onViewByStrategicRegion" text="By Strategic Region" />
+               <MenuItem onAction="#onViewByCivFactories" text="By Civ Factories" />
+               <MenuItem onAction="#onViewByMilFactories" text="By Mil Factories" />
                 </Menu>
                 <Menu text="Tools">
                     <MenuItem onAction="#onZoomIn" text="Zoom In" />
                     <MenuItem onAction="#onZoomOut" text="Zoom Out" />
                     <MenuItem onAction="#onResetZoom" text="Reset Zoom" />
+               <CheckMenuItem mnemonicParsing="false" onAction="#onToggleBuildingsTable" text="Buildings Editor Table" />
                 </Menu>
             </MenuBar>
         </top>
         <center>
-         <SplitPane dividerPositions="0.8016032064128257">
+         <SplitPane fx:id="mapEditorSplitPane" dividerPositions="0.8016032064128257">
             <items>
                   <ScrollPane fx:id="mapScrollPane" pannable="true">
                       <content>

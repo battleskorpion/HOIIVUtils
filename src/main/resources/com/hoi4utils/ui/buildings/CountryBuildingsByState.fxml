@@ -2,9 +2,10 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import com.hoi4utils.ui.buildings.StateTable?>
 <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.buildings.CountryBuildingsByStateController">
    <children>
-      <TableView fx:id="stateDataTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+      <StateTable fx:id="stateDataTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
          <columns>
             <TableColumn fx:id="stateDataTableStateColumn" prefWidth="88.0" text="State" />
             <TableColumn fx:id="stateDataTablePopulationColumn" prefWidth="88.0" text="Population" />
@@ -24,7 +25,7 @@
             <TableColumn fx:id="stateDataTableSteelColumn" prefWidth="88.0" text="Steel" />
             <TableColumn fx:id="stateDataTableTungstenColumn" prefWidth="88.0" text="Tungsten" />
          </columns>
-      </TableView>
+      </StateTable>
       <MenuBar>
          <menus>
             <Menu mnemonicParsing="false" text="File">

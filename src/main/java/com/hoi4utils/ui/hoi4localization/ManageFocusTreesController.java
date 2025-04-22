@@ -1,12 +1,12 @@
 package com.hoi4utils.ui.hoi4localization;
 
-import com.hoi4utils.clausewitz.data.focus.Focus;
-import com.hoi4utils.clausewitz.data.focus.FocusTree;
-import com.hoi4utils.clausewitz.localization.Localization;
-import com.hoi4utils.clausewitz.localization.LocalizationManager;
-import com.hoi4utils.clausewitz.localization.Property;
+import com.hoi4utils.hoi4.focus.Focus;
+import com.hoi4utils.hoi4.focus.FocusTree;
+import com.hoi4utils.localization.Localization;
+import com.hoi4utils.localization.LocalizationManager;
+import com.hoi4utils.localization.Property;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.javafx.table.TableViewWindow;
+import com.hoi4utils.ui.javafx_ui.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

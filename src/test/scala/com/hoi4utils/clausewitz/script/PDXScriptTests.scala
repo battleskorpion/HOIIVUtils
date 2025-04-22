@@ -1,9 +1,10 @@
 package com.hoi4utils.clausewitz.script
 
 import language.experimental.namedTuples
-import com.hoi4utils.clausewitz.data.focus.FocusTree
-import com.hoi4utils.clausewitz.map.StrategicRegion
-import com.hoi4utils.clausewitz_parser.{Node, Parser, Tokenizer}
+import com.hoi4utils.parser.{Node, Parser, Tokenizer}
+import com.hoi4utils.hoi4.focus.FocusTree
+import com.hoi4utils.script.StringPDX
+import map.StrategicRegion
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File

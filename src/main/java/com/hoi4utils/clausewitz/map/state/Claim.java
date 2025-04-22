@@ -1,7 +1,8 @@
 package com.hoi4utils.clausewitz.map.state;
 
-import com.hoi4utils.clausewitz.code.ClausewitzDate;
-import com.hoi4utils.clausewitz.data.country.CountryTag;
+import com.hoi4utils.ClausewitzDate;
+import com.hoi4utils.hoi4.country.CountryTag;
+import map.State;
 
 /*
  * Claim File

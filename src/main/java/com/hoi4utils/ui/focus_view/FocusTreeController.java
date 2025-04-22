@@ -1,16 +1,15 @@
 package com.hoi4utils.ui.focus_view;
 
 import com.hoi4utils.clausewitz.HOIIVFiles;
-import com.hoi4utils.clausewitz.data.country.CountryTag;
-import com.hoi4utils.clausewitz.data.focus.FixFocus;
-import com.hoi4utils.clausewitz.data.focus.Focus;
-import com.hoi4utils.clausewitz.data.focus.FocusTree;
-import com.hoi4utils.clausewitz.data.focus.FocusTree$;
-import com.hoi4utils.clausewitz.localization.Property;
-import com.hoi4utils.clausewitz.script.PDXScript;
+import com.hoi4utils.hoi4.country.CountryTag;
+import com.hoi4utils.hoi4.focus.FixFocus;
+import com.hoi4utils.hoi4.focus.Focus;
+import com.hoi4utils.hoi4.focus.FocusTree;
+import com.hoi4utils.hoi4.focus.FocusTree$;
+import com.hoi4utils.script.PDXScript;
 import com.hoi4utils.ddsreader.DDSReader;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.javafx.image.JavaFXImageUtils;
+import com.hoi4utils.ui.javafx_ui.image.JavaFXImageUtils;
 import com.hoi4utils.ui.pdxscript.NewFocusTreeController;
 import com.hoi4utils.ui.pdxscript.PDXEditorController;
 import com.sun.javafx.geom.Dimension;

@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.localization
 
-import com.hoi4utils.clausewitz.data.focus.FocusTree
+import com.hoi4utils.hoi4.focus.FocusTree
 import dotty.tools.dotc.util.NoSourcePosition.lines
 import org.scalatest.funsuite.AnyFunSuiteLike
 

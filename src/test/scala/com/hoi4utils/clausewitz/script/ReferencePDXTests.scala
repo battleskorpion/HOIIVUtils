@@ -1,7 +1,8 @@
 package com.hoi4utils.clausewitz.script
 
 import com.hoi4utils.clausewitz.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz_parser.Node
+import com.hoi4utils.parser.Node
+import com.hoi4utils.script.ReferencePDX
 import org.scalatest.funsuite.AnyFunSuite
 
 // A simple dummy PDX object with an identifier.

@@ -1,9 +1,9 @@
 package com.hoi4utils.ui.pdxscript;
 
-import com.hoi4utils.clausewitz.map.StrategicRegion;
-import com.hoi4utils.clausewitz.map.province.Province;
-import com.hoi4utils.clausewitz.script.DoublePDX;
-import com.hoi4utils.clausewitz.script.PDXScript;
+import map.StrategicRegion;
+import map.Province;
+import com.hoi4utils.script.DoublePDX;
+import com.hoi4utils.script.PDXScript;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;

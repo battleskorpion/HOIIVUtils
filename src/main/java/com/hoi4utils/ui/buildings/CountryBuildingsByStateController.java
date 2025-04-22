@@ -1,21 +1,16 @@
 package com.hoi4utils.ui.buildings;
 
 
-import com.hoi4utils.clausewitz.data.country.Country;
-import com.hoi4utils.clausewitz.map.state.State;
-import com.hoi4utils.ui.JavaFXUIManager;
+import com.hoi4utils.hoi4.country.Country;
+import map.State;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.javafx.export.ExcelExport;
-import com.hoi4utils.ui.javafx.table.DoubleTableCell;
-import com.hoi4utils.ui.javafx.table.DoubleOrPercentTableCell;
-import com.hoi4utils.ui.javafx.table.TableViewWindow;
+import com.hoi4utils.ui.javafx_ui.export.ExcelExport;
+import com.hoi4utils.ui.javafx_ui.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 import scala.jdk.javaapi.CollectionConverters;
 
@@ -33,41 +28,7 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	@FXML
 	private MenuItem idExportToExcel;
 	@FXML
-	TableView<State> stateDataTable;
-	@FXML
-	TableColumn<State, String> stateDataTableStateColumn;
-	@FXML
-	TableColumn<State, Integer> stateDataTablePopulationColumn;
-	@FXML
-	TableColumn<State, Integer> stateDataTableCivFactoryColumn;
-	@FXML
-	TableColumn<State, Integer> stateDataTableMilFactoryColumn;
-	@FXML
-	TableColumn<State, Integer> stateDataTableDockyardsColumn;
-	@FXML
-	TableColumn<State, Integer> stateDataTableAirfieldsColumn;
-	@FXML
-	TableColumn<State, Double> stateDataTableCivMilRatioColumn;
-	@FXML
-	TableColumn<State, Double> stateDataTablePopFactoryRatioColumn;
-	@FXML
-	TableColumn<State, Double> stateDataTablePopCivRatioColumn;
-	@FXML
-	TableColumn<State, Double> stateDataTablePopMilRatioColumn;
-	@FXML
-	TableColumn<State, Double> stateDataTablePopAirCapacityRatioColumn;
-	@FXML
-	TableColumn<State, Double> stateDataTableAluminiumColumn; // todo dont do these yet
-	@FXML
-	TableColumn<State, Double> stateDataTableChromiumColumn;
-	@FXML
-	TableColumn<State, Double> stateDataTableOilColumn;
-	@FXML
-	TableColumn<State, Double> stateDataTableRubberColumn;
-	@FXML
-	TableColumn<State, Double> stateDataTableSteelColumn;
-	@FXML
-	TableColumn<State, Double> stateDataTableTungstenColumn;
+	StateTable stateDataTable;
 
 	private boolean resourcesPercent;
 	private Country country;
@@ -126,30 +87,9 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	// idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION);
 	// }
 
-	private void updateResourcesColumnsPercentBehavior() {
-		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent));
-		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableAluminiumColumn, resourcesPercent);
-		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableChromiumColumn, resourcesPercent);
-		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableOilColumn, resourcesPercent);
-		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableRubberColumn, resourcesPercent);
-		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableSteelColumn, resourcesPercent);
-		JavaFXUIManager.updateColumnPercentBehavior(stateDataTableTungstenColumn, resourcesPercent);
-	}
-
 	@Override
 	public void setDataTableCellFactories() {
-		// table cell factories
-		stateDataTableCivMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopFactoryRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopCivRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopMilRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTablePopAirCapacityRatioColumn.setCellFactory(col -> new DoubleTableCell<>());
-		stateDataTableAluminiumColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
-		stateDataTableChromiumColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
-		stateDataTableOilColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
-		stateDataTableRubberColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
-		stateDataTableSteelColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
-		stateDataTableTungstenColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+		stateDataTable.setDataTableCellFactories();
 	}
 
 	@FXML
@@ -170,12 +110,14 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 
 	public void setResourcesPercent(Boolean resourcesPercent) {
 		this.resourcesPercent = resourcesPercent;
-		updateResourcesColumnsPercentBehavior();
+		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent));
+		stateDataTable.updateResourcesColumnsPercentBehavior(resourcesPercent);
 	}
 
 	public void toggleResourcesPercent() {
 		resourcesPercent = !resourcesPercent;
-		updateResourcesColumnsPercentBehavior();
+		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent));
+		stateDataTable.updateResourcesColumnsPercentBehavior(resourcesPercent);
 	}
 
 	public void setCountry(Country country) {

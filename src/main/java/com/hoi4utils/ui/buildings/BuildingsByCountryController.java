@@ -1,15 +1,15 @@
 package com.hoi4utils.ui.buildings;
 
 
+import com.hoi4utils.ClausewitzDate;
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.clausewitz.code.ClausewitzDate;
-import com.hoi4utils.clausewitz.data.country.Country;
+import com.hoi4utils.hoi4.country.Country;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.javafx.export.ExcelExport;
-import com.hoi4utils.ui.javafx.table.DoubleTableCell;
-import com.hoi4utils.ui.javafx.table.DoubleOrPercentTableCell;
-import com.hoi4utils.ui.javafx.table.TableViewWindow;
+import com.hoi4utils.ui.javafx_ui.export.ExcelExport;
+import com.hoi4utils.ui.javafx_ui.table.DoubleTableCell;
+import com.hoi4utils.ui.javafx_ui.table.DoubleOrPercentTableCell;
+import com.hoi4utils.ui.javafx_ui.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

@@ -1,17 +1,15 @@
 package com.hoi4utils.clausewitz;
 
 import com.hoi4utils.PublicFieldChangeNotifier;
-import com.hoi4utils.clausewitz.code.effect.EffectDatabase;
-import com.hoi4utils.clausewitz.code.modifier.ModifierDatabase;
-import com.hoi4utils.clausewitz.data.country.Country;
-import com.hoi4utils.clausewitz.data.country.CountryTag;
-import com.hoi4utils.clausewitz.data.focus.FocusTree;
-import com.hoi4utils.clausewitz.data.idea.IdeaFile;
-import com.hoi4utils.clausewitz.localization.EnglishLocalizationManager;
-import com.hoi4utils.clausewitz.localization.LocalizationManager;
-import com.hoi4utils.clausewitz.map.state.ResourcesFile;
-import com.hoi4utils.clausewitz.map.state.State;
-import com.hoi4utils.clausewitz.data.gfx.Interface;
+import com.hoi4utils.gfx.Interface;
+import com.hoi4utils.hoi4.country.Country;
+import com.hoi4utils.hoi4.country.CountryTag;
+import com.hoi4utils.hoi4.focus.FocusTree;
+import com.hoi4utils.hoi4.idea.IdeaFile;
+import com.hoi4utils.localization.EnglishLocalizationManager;
+import com.hoi4utils.localization.LocalizationManager;
+import map.ResourcesFile;
+import map.State;
 import com.hoi4utils.fileIO.FileListener.FileAdapter;
 import com.hoi4utils.fileIO.FileListener.FileEvent;
 import com.hoi4utils.fileIO.FileListener.FileWatcher;
@@ -57,8 +55,8 @@ public class HOIIVUtilsInitializer {
 	public HOIIVUtilsConfig initialize() {
 		LOGGER.info("Initializing HOIIVUtils");
 		// Load databases first
-		ModifierDatabase.init();
-		EffectDatabase.init();
+		com.hoi4utils.hoi4.modifier.ModifierDatabase.init();
+		com.hoi4utils.hoi4.effect.EffectDatabase.init();
 
 		// Configure application directories
 		resolveApplicationDirectory();

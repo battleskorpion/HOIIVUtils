@@ -2,10 +2,11 @@ package com.hoi4utils.ui.map;
 
 import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.clausewitz.map.province.DefinitionCSV;
-import com.hoi4utils.clausewitz.map.province.Province;
-import com.hoi4utils.clausewitz.map.province.ProvinceDefinition;
-import com.hoi4utils.clausewitz.map.state.State;
+import map.Province;
+import map.ProvinceDefinition;
+import map.State;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.buildings.StateTable;
 import com.hoi4utils.ui.pdxscript.PDXEditorPane;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
@@ -20,7 +22,7 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +32,7 @@ import scala.jdk.javaapi.CollectionConverters;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.ToIntFunction;
 
 public class MapEditorController extends HOIIVUtilsAbstractController {
     public static final Logger LOGGER = LogManager.getLogger(MapEditorController.class);
@@ -39,15 +42,16 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
     @FXML
     private Slider zoomSlider;
     @FXML
-    private ScrollPane mapScrollPane;
-    @FXML
     private ScrollPane pdxScrollPane;
+    @FXML
+    private SplitPane mapEditorSplitPane;
 
     private Image mapImage;
     // Keep the original province map image (with definition colors) for hover lookup.
     private Image originalMapImage;
 
     private double zoomFactor = 1.0;
+    private boolean showBuildingsTable = false;
 
     // Tooltip to display state info on hover.
     private final Tooltip stateTooltip = new Tooltip();
@@ -121,6 +125,67 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
             return provinceIdToStateMap.get(provinceId);
         }
         return null;
+    }
+
+    /**
+     * Helper to render the map coloured by some per‐state integer metric.
+     * @param metricFn    extracts the metric (e.g. civ or mil factories) from a State
+     * @param colorFn     maps a normalized [0–1] value to a Color
+     */
+    private void viewByStateMetric(ToIntFunction<State> metricFn,
+                                   java.util.function.DoubleFunction<Color> colorFn) {
+        if (originalMapImage == null) return;
+
+        // load province→ID
+        File defFile = HOIIVFiles.Mod.definition_csv_file;
+        if (!defFile.exists()) return;
+        var scalaDefs = DefinitionCSV.load(defFile);
+        var defs = CollectionConverters.asJava(scalaDefs);
+        Map<Integer,Integer> provinceColorToId = new HashMap<>();
+        for (ProvinceDefinition d : defs.values()) {
+            int rgb = (d.red() << 16) | (d.green() << 8) | d.blue();
+            provinceColorToId.put(rgb, d.id());
+        }
+
+        // load states and compute max metric
+        ObservableList<State> states = State.observeStates();
+        int max = states.stream()
+                .mapToInt(metricFn)
+                .max()
+                .orElse(1);
+
+        // build province→stateColor map
+        Map<Integer,Color> provinceIdToColor = new HashMap<>();
+        for (State s : states) {
+            int val = metricFn.applyAsInt(s);
+            double norm = val / (double) max;
+            Color c = colorFn.apply(norm);
+            for (Province p : CollectionConverters.asJava(s.provinces().toList())) {
+                provinceIdToColor.put((Integer)p.id().get(), c);
+            }
+        }
+
+        // recolour every pixel
+        int w = (int) originalMapImage.getWidth(), h = (int) originalMapImage.getHeight();
+        WritableImage newImg = new WritableImage(w, h);
+        PixelReader rdr = originalMapImage.getPixelReader();
+        PixelWriter wtr = newImg.getPixelWriter();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                Color oc = rdr.getColor(x, y);
+                int pr = (int) (oc.getRed() * 255),
+                        pg = (int) (oc.getGreen() * 255),
+                        pb = (int) (oc.getBlue() * 255);
+                Integer pid = provinceColorToId.get((pr << 16) | (pg << 8) | pb);
+                wtr.setColor(x, y, (pid != null && provinceIdToColor.containsKey(pid))
+                        ? provinceIdToColor.get(pid)
+                        : oc);
+            }
+        }
+
+        mapImage = newImg;
+        drawMap();
+        mapCanvas.setOnMouseMoved(null); // no tooltip for these views
     }
 
     @FXML
@@ -253,6 +318,24 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
     }
 
     @FXML
+    void onViewByCivFactories() {
+        LOGGER.info("Switching view mode to Civilian Factories.");
+        viewByStateMetric(
+                State::civilianFactories,       // extract civilianFactories
+                norm -> Color.hsb(120, 0.8, 0.3 + 0.7 * norm) // greenish scale, brighter = more factories
+        );
+    }
+
+    @FXML
+    void onViewByMilFactories() {
+        LOGGER.info("Switching view mode to Military Factories.");
+        viewByStateMetric(
+                State::militaryFactories,       // extract militaryFactories
+                norm -> Color.hsb(0, 0.8, 0.3 + 0.7 * norm)   // reddish scale, brighter = more factories
+        );
+    }
+
+    @FXML
     void onZoomIn() {
         zoomFactor *= 1.2;
         zoomSlider.setValue(zoomFactor);
@@ -277,6 +360,24 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
     void onZoomSliderReleased(MouseEvent event) {
         zoomFactor = zoomSlider.getValue();
         drawMap();
+    }
+
+    @FXML
+    void onToggleBuildingsTable() {
+        showBuildingsTable = !showBuildingsTable;
+        if (showBuildingsTable) {
+            var buildingsTable = new Pane();
+            var content = new StateTable(); 
+            buildingsTable.getChildren().add(content); 
+            buildingsTable.setId("buildingsTable");
+            mapEditorSplitPane.getItems().add(buildingsTable);
+            buildingsTable.setVisible(true);
+        } else {
+            var buildingsTable = mapEditorSplitPane.lookup("#buildingsTable");
+            if (buildingsTable != null) {
+                mapEditorSplitPane.getItems().remove(buildingsTable);
+            }
+        }
     }
 
     /**
