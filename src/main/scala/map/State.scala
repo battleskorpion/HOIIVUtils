@@ -222,27 +222,27 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
 
   def airfields: Int = history.buildings.airBase.getOrElse(0)
 
-  def civMilRatio: Double = {
+  def civMilFactoryRatio: Double = {
     if (civilianFactories == 0) 0.0
     else militaryFactories.toDouble / civilianFactories
   }
 
-  def popPerFactoryRatio: Double = {
+  def populationFactoryRatio: Double = {
     if (civilianFactories == 0) 0.0
     else population.toDouble / civilianFactories
   }
 
-  def popPerCivRatio: Double = {
+  def populationCivFactoryRatio: Double = {
     if (civilianFactories == 0) 0.0
     else population.toDouble / civilianFactories
   }
 
-  def popPerMilRatio: Double = {
+  def populationMilFactoryRatio: Double = {
     if (militaryFactories == 0) 0.0
     else population.toDouble / militaryFactories
   }
 
-  def popAirportCapacityRatio: Double = {
+  def populationAirCapacityRatio: Double = {
     if (airfields == 0) 0.0
     else population.toDouble / airfields
   }
@@ -437,15 +437,15 @@ object State extends Iterable[State] {
 
     dataFunctions += (s => s.id)
     dataFunctions += (s => s.population)
-    dataFunctions += (s => s.civMilRatio)
+    dataFunctions += (s => s.civMilFactoryRatio)
     dataFunctions += (s => s.militaryFactories)
     dataFunctions += (s => s.navalDockyards)
     dataFunctions += (s => s.airfields)
-    dataFunctions += (s => s.civMilRatio)
-    dataFunctions += (s => s.popPerFactoryRatio)
-    dataFunctions += (s => s.popPerCivRatio)
-    dataFunctions += (s => s.popPerMilRatio)
-    dataFunctions += (s => s.popAirportCapacityRatio)
+    dataFunctions += (s => s.civMilFactoryRatio)
+    dataFunctions += (s => s.populationFactoryRatio)
+    dataFunctions += (s => s.populationCivFactoryRatio)
+    dataFunctions += (s => s.populationMilFactoryRatio)
+    dataFunctions += (s => s.populationAirCapacityRatio)
     /* todo better way to do this obv! plz fix :(
         with (wrapper function that returns either or depndent on resourcesPerfcentages boolean value ofc */
     // also if we're gonna have different resources able to load in down the line... it'll break this.

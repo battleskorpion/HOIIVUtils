@@ -1,16 +1,17 @@
 package com.hoi4utils.ui.buildings;
 
+import javafx.scene.control.TableCell;
 import map.State;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.javafx_ui.table.DoubleOrPercentTableCell;
 import com.hoi4utils.ui.javafx_ui.table.DoubleTableCell;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
+import java.util.Comparator;
+import java.util.function.Function;
 
 public class StateTable extends TableView<State> {
     public static final Logger LOGGER = LogManager.getLogger(StateTable.class);
@@ -34,12 +35,60 @@ public class StateTable extends TableView<State> {
     private final TableColumn<State, Double> tungstenColumn             = new TableColumn<>("Tungsten");
 
     public StateTable() {
-        FXMLLoader fxml = new FXMLLoader(
-                getClass().getResource("StateTable.fxml"));
-        fxml.setRoot(this);
-        fxml.setController(this);
-        try { fxml.load(); }
-        catch(IOException e) { throw new RuntimeException(e); }
+        initialize();
+    }
+
+    private void initialize() {
+        // make columns fill the width
+        setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+
+        // bind every column
+        bindColumn(stateColumn, (s -> s.name().getOrElse("[Unknown]")), String::compareTo);
+        bindColumn(populationColumn, State::population, Integer::compareTo);
+        bindColumn(civFactoryColumn, State::civilianFactories, Integer::compareTo);
+        bindColumn(milFactoryColumn, State::militaryFactories, Integer::compareTo);
+        bindColumn(dockyardsColumn, State::navalDockyards, Integer::compareTo);
+        bindColumn(airfieldsColumn, State::airfields, Integer::compareTo);
+        bindColumn(civMilRatioColumn, State::civMilFactoryRatio, Double::compareTo);
+        bindColumn(popFactoryRatioColumn, State::populationFactoryRatio, Double::compareTo);
+        bindColumn(popCivRatioColumn, State::populationCivFactoryRatio, Double::compareTo);
+        bindColumn(popMilRatioColumn, State::populationMilFactoryRatio, Double::compareTo);
+        bindColumn(popAirCapacityRatioColumn, State::populationAirCapacityRatio, Double::compareTo);
+        
+        aluminiumColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+        chromiumColumn .setCellFactory(col -> new DoubleOrPercentTableCell<>());
+        oilColumn      .setCellFactory(col -> new DoubleOrPercentTableCell<>());
+        rubberColumn   .setCellFactory(col -> new DoubleOrPercentTableCell<>());
+        steelColumn    .setCellFactory(col -> new DoubleOrPercentTableCell<>());
+        tungstenColumn .setCellFactory(col -> new DoubleOrPercentTableCell<>());
+
+        // comparators on those too
+        Comparator<Double> dblCmp = Double::compareTo;
+        aluminiumColumn.setComparator(dblCmp);
+        chromiumColumn.setComparator(dblCmp);
+        oilColumn.setComparator(dblCmp);
+        rubberColumn.setComparator(dblCmp);
+        steelColumn.setComparator(dblCmp);
+        tungstenColumn.setComparator(dblCmp);
+    }
+
+    <T> void bindColumn(
+            TableColumn<State,T> col,
+            Function<State,T> mapper,
+            Comparator<T> comparator
+    ) {
+        col.setCellFactory(c -> new TableCell<State,T>() {
+            @Override
+            protected void updateItem(T item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow().getItem() == null) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(mapper.apply(getTableRow().getItem())));
+                }
+            }
+        });
+        col.setComparator(comparator);
     }
 
     public void updateResourcesColumnsPercentBehavior(boolean resourcesPercent) {
