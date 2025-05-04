@@ -1,18 +1,10 @@
 package com.hoi4utils.exceptions
 
-class NotPermittedInScopeException extends Exception {
-  def this(message: String) {
-    this()
-    super (message)
-  }
+class NotPermittedInScopeException(message: String, cause: Throwable) extends Exception(message, cause) {
 
-  def this(message: String, cause: Throwable) {
-    this()
-    super (message, cause)
-  }
-
-  def this(cause: Throwable) {
-    this()
-    super (cause)
-  }
+  def this(cause: Throwable) =
+    this(null, cause)
+    
+  def this(message: String) =
+    this(message, null)
 }

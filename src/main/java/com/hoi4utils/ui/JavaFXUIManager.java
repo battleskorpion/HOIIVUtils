@@ -2,7 +2,6 @@ package com.hoi4utils.ui;
 
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.clausewitz.HOIIVUtils;
-import com.hoi4utils.ui.hoi4localization.CustomTooltipController;
 import com.hoi4utils.ui.javafx_ui.table.DoubleOrPercentTableCell;
 import com.hoi4utils.ui.javafx_ui.table.TableViewWindow;
 import javafx.beans.property.SimpleObjectProperty;

@@ -445,7 +445,7 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 		if (ddsImage.isDefined())
 			gc2D.drawImage(ddsImage.get(), x1, y1);
 		/* focus name text */ 
-		var locName = focus.localizationText(Property.NAME);
+		var locName = focus.localizationText(com.hoi4utils.localization.Property.NAME);
 		String name = locName.equals("[null]") && !focus.id().str().isBlank() ? focus.id().str() : locName;
 		gc2D.fillText(name, x1 - 20, y1 + yAdj2);
 

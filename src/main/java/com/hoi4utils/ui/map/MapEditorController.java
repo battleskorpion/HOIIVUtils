@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.map;
 
 import com.hoi4utils.clausewitz.HOIIVFiles;
-import com.hoi4utils.clausewitz.map.province.DefinitionCSV;
+import map.DefinitionCSV;
 import map.Province;
 import map.ProvinceDefinition;
 import map.State;

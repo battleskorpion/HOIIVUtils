@@ -5,7 +5,9 @@ import com.hoi4utils.hoi4.focus.FixFocus;
 import com.hoi4utils.hoi4.focus.Focus;
 import com.hoi4utils.hoi4.focus.FocusTree;
 import com.hoi4utils.hoi4.focus.FocusTree$;
+import com.hoi4utils.localization.Localization;
 import com.hoi4utils.localization.LocalizationManager;
+import com.hoi4utils.localization.Property;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx_ui.table.TableViewWindow;
@@ -80,8 +82,8 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
         /* table */
         loadTableView(this, focusListTable, focusObservableList, Focus.getDataFunctions());
         Function<Focus, String> dataFunction = (Focus focus) ->
-                "Name: " + focus.localizationStatus(Property.NAME).toString()
-                + ", Desc: " + focus.localizationStatus(Property.DESCRIPTION).toString();
+                "Name: " + focus.localizationStatus(Property.valueOf("NAME")).toString()
+                + ", Desc: " + focus.localizationStatus(Property.valueOf("DESCRIPTION")).toString();
         focusLocStatusColumn.setCellValueFactory(JavaFXUIManager.tableCellDataCallback(dataFunction));
 
         /* buttons */
@@ -227,13 +229,13 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
                 if (focus == null || empty) {
                     setGraphic(null); // Clear any previous content
                 } else {
-                    Localization.Status textStatus = focus.localizationStatus(Property.NAME); 
-                    Localization.Status descStatus = focus.localizationStatus(Property.DESCRIPTION); 
+                    Localization.Status textStatus = focus.localizationStatus(Property.valueOf("NAME"));
+                    Localization.Status descStatus = focus.localizationStatus(Property.valueOf("DESCRIPTION")); 
 
-                    boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
-                            || descStatus == Localization.Status.UPDATED;
-                    boolean hasStatusNew = descStatus == Localization.Status.NEW
-                            || textStatus == Localization.Status.NEW;
+                    boolean hasStatusUpdated = textStatus == Localization.Status.valueOf("UPDATED")
+                            || descStatus == Localization.Status.valueOf("UPDATED");
+                    boolean hasStatusNew = descStatus == Localization.Status.valueOf("NEW")
+                            || textStatus == Localization.Status.valueOf("NEW");
                     if (hasStatusUpdated || hasStatusNew) {
                         setTextFill(Color.BLACK); // Set text color to black
                         setStyle("-fx-font-weight: bold; -fx-background-color: #328fa8;"); // Apply bold text using CSS
@@ -249,12 +251,12 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
     private void setColumnOnEditCommits() {
         focusNameColumn.setOnEditCommit(event -> {
             Focus focus = event.getRowValue();
-            focus.replaceLocalization(Property.NAME, event.getNewValue());
+            focus.replaceLocalization(Property.valueOf("NAME"), event.getNewValue());
             focusListTable.refresh();  // Force update of the table view
         });
         focusDescColumn.setOnEditCommit(event -> {
             Focus focus = event.getRowValue();
-            focus.replaceLocalization(Property.DESCRIPTION, event.getNewValue());
+            focus.replaceLocalization(Property.valueOf("DESCRIPTION"), event.getNewValue());
             focusListTable.refresh();  // Force update of the table view
         });
     }

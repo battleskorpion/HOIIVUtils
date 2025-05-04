@@ -1,4 +1,5 @@
 package com.hoi4utils.localization
 
-enum Property:
+enum Property extends Enum[Property] {
   case NAME, DESCRIPTION
+}

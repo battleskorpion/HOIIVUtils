@@ -34,8 +34,8 @@ class OrdersOfBattle {
 
   final private val convoys = 0
 //  private val ideas: util.Set[Idea] = null
-  private val politics: Politics = null
-  private val popularities: Popularities = null
+  //private val politics: Politics = null
+  //private val popularities: Popularities = null
   private val recruitCharacters: util.Set[Character] = null
   private val countryLeader: Character = null // todo ?
 

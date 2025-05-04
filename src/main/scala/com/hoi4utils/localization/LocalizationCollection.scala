@@ -112,7 +112,7 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
     if (localization == null) throw new IllegalArgumentException("Localization must not be null")
 
     foreach { case (file, localizationsList) =>
-      val index = localizationsList.indexWhere(_.ID() == key)
+      val index = localizationsList.indexWhere(_.ID == key)
       if (index != -1) {
         val prevLocalization = localizationsList(index)
         localizationsList(index) = localization
@@ -138,7 +138,7 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
 
   def getLocalizationFile(key: String): File = {
     // todo parallel stream?
-    this.filter { case (file, localizations) => localizations.exists(_.ID().equals(key)) }.keys.headOption.orNull
+    this.filter { case (file, localizations) => localizations.exists(_.ID.equals(key)) }.keys.headOption.orNull
     //this.entrySet.parallelStream.filter((entry: util.Map.Entry[File, util.List[Localization]]) => entry.getValue.parallelStream.anyMatch((localization: Localization) => localization.ID == key)).map(util.Map.Entry.getKey).findFirst.orElse(null)
   }
 }

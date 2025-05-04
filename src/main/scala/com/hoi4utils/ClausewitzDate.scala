@@ -72,17 +72,17 @@ case class ClausewitzDate private (
       .compare(this, that)
 
   override def toString: String = s"$year.$month.$day.$hour"
-  def ymdString: String          = s"$year.$month.$day"
+  def YMDString: String          = s"$year.$month.$day"
 
   override def equals(obj: Any): Boolean = obj match {
-    case that: ClausewitzDate => this.ymdString == that.ymdString
+    case that: ClausewitzDate => this.YMDString == that.YMDString
     case _                    => false
   }
 
-  override def hashCode(): Int = {
-    val y = year
-    (y & 0xFFFFF800) ^ ((y << 11) + (month << 6) + day)
-  }
+//  override def hashCode(): Int = {
+//    val y = year
+//    (y & 0xFFFFF800) ^ ((y << 11) + (month << 6) + day)
+//  }
 }
 
 object ClausewitzDate {

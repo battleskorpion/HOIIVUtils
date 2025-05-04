@@ -1,16 +1,16 @@
 package com.hoi4utils.exceptions
 
-import com.hoi4utils.clausewitz.localization.Localization
+import com.hoi4utils.localization.Localization
 
+class UnexpectedLocalizationStatusException(message: String) extends RuntimeException(message) {
 
-class UnexpectedLocalizationStatusException extends RuntimeException {
-  def this(localization: Localization, other: Localization) {
-    this()
-    super ("Unexpected localization statuses: " + localization + ", status: " + localization.status + " and " + other + ", status: " + other.status)
-  }
+  def this(loc: Localization, other: Localization) =
+    this(
+      s"Unexpected localization statuses: $loc, status: ${loc.status} and $other, status: ${other.status}"
+    )
 
-  def this(localization: Localization) {
-    this()
-    super ("Unexpected localization status: " + localization + ", status: " + localization.status)
-  }
+  def this(loc: Localization) =
+    this(
+      s"Unexpected localization status: $loc, status: ${loc.status}"
+    )
 }

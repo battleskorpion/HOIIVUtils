@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.pdxscript;
 
 import com.hoi4utils.localization.Localizable;
-import com.hoi4utils.clausewitz.script.*;
+import com.hoi4utils.localization.Property;
 import com.hoi4utils.script.*;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
@@ -118,7 +118,7 @@ public class PDXTreeViewFactory {
             var headlessText = script instanceof HeadlessPDX ? " [Headless]" : "";
             
             if (pdx instanceof Localizable localizablePDX) {
-                var id = localizablePDX.localizableProperty(Property.NAME);
+                var id = localizablePDX.localizableProperty(Property.valueOf("NAME"));
                 if (id.isDefined()) {
                     return pdx.pdxIdentifier() + " <" + id.get() + ">" 
                             + "  (StructuredPDX" + headlessText + ", children=" + pdx.childScripts().size() + ")"

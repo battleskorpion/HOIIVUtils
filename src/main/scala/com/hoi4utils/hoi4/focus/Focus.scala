@@ -7,6 +7,7 @@ import com.hoi4utils.localization.*
 import com.hoi4utils.script.*
 import com.hoi4utils.parser.Node
 import com.hoi4utils.ddsreader.DDSReader
+import com.hoi4utils.gfx.Interface
 import com.hoi4utils.hoi4.effect.{Effect, EffectDatabase}
 import com.hoi4utils.hoi4.scope.Scope
 import com.hoi4utils.localization.Localizable

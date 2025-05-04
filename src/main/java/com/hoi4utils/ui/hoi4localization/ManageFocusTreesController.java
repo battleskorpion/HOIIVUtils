@@ -23,8 +23,8 @@ import java.util.List;
 
 public class ManageFocusTreesController extends HOIIVUtilsAbstractController implements TableViewWindow {
 
-	private static final Property NAME_PROPERTY = Property.NAME;
-	private static final Property DESC_PROPERTY = Property.DESCRIPTION;
+	private static final Property NAME_PROPERTY = Property.valueOf("NAME");
+	private static final Property DESC_PROPERTY = Property.valueOf("DESCRIPTION");
 
 	@FXML
 	private TableView<Focus> focusListTable;
@@ -76,11 +76,11 @@ public class ManageFocusTreesController extends HOIIVUtilsAbstractController imp
 					Localization.Status textStatus = focus.localizationStatus(NAME_PROPERTY);
 					Localization.Status descStatus = focus.localizationStatus(DESC_PROPERTY);
 
-					boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED
-							|| descStatus == Localization.Status.UPDATED;
-					boolean hasStatusNew = descStatus == Localization.Status.NEW
-							|| textStatus == Localization.Status.NEW;
-					boolean isVanilla = textStatus == Localization.Status.VANILLA;
+					boolean hasStatusUpdated = textStatus == Localization.Status.valueOf("UPDATED")
+							|| descStatus == Localization.Status.valueOf("UPDATED");
+					boolean hasStatusNew = descStatus == Localization.Status.valueOf("NEW")
+							|| textStatus == Localization.Status.valueOf("NEW");
+					boolean isVanilla = textStatus == Localization.Status.valueOf("VANILLA");
 					
 					if (hasStatusUpdated || hasStatusNew) {
 						setTextFill(Color.BLACK); // Set text color to black

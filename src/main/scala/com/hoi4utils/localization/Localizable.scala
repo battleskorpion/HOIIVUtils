@@ -110,7 +110,7 @@ trait Localizable {
    *
    * @return the localizable group of objects.
    */
-  def getLocalizableGroup: Iterable[_ <: Localizable]
+  def getLocalizableGroup: Iterable[? <: Localizable]
 
   /**
    * Asks the user to determine the localization file to use.

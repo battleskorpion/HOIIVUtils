@@ -3,13 +3,13 @@ package com.hoi4utils.ui.menu;
 
 import com.hoi4utils.clausewitz.HOIIVUtils;
 import com.hoi4utils.clausewitz.HOIIVFiles;
+import com.hoi4utils.ui.CustomTooltipController;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.buildings.BuildingsByCountryController;
 import com.hoi4utils.ui.clausewitz_gfx.InterfaceFileListController;
 import com.hoi4utils.ui.focus_view.FocusTreeController;
 import com.hoi4utils.ui.hoi4localization.ManageFocusTreesController;
-import com.hoi4utils.ui.hoi4localization.CustomTooltipController;
 import com.hoi4utils.ui.hoi4localization.FocusLocalizationController;
 import com.hoi4utils.ui.hoi4localization.IdeaLocalizationController;
 import com.hoi4utils.ui.log_viewer.LogViewerController;

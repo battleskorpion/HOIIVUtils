@@ -3,6 +3,8 @@ package com.hoi4utils.ui.hoi4localization;
 import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.hoi4.idea.Idea;
 import com.hoi4utils.hoi4.idea.IdeaFile;
+import com.hoi4utils.localization.Localization;
+import com.hoi4utils.localization.Property;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx_ui.table.TableViewWindow;
@@ -231,9 +233,9 @@ public class IdeaLocalizationController extends HOIIVUtilsAbstractController imp
                     setGraphic(null); // Clear any previous content
                 } else {
 //                    Localization.Status textStatus = idea.localization().status(); // todo
-                    Localization.Status textStatus = idea.localizationStatus(Property.NAME); 
-                    boolean hasStatusUpdated = textStatus == Localization.Status.UPDATED;
-                    boolean hasStatusNew = textStatus == Localization.Status.NEW;
+                    Localization.Status textStatus = idea.localizationStatus(Property.valueOf("NAME")); 
+                    boolean hasStatusUpdated = textStatus == Localization.Status.valueOf("UPDATED");
+                    boolean hasStatusNew = textStatus == Localization.Status.valueOf("NEW");
 
                     // Apply text style
                     if (hasStatusUpdated || hasStatusNew) {
