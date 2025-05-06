@@ -44,6 +44,10 @@ This is in pre-pre-alpha, and we consistently push commits that break the progra
 7. Select your preferred settings  
 6. Click Ok
 
+## Technical
+Primarily written in Scala, as well as Java. Includes a Clauzewitz scripting language parser, and intermediate 'PDXScript' 
+Map Generation includes many options, including multithreading and GPGPU generation (Java Aparapi).
+Although tested on both AMD and NVIDIA GPU's, GPU map generation support is *not* guaranteed for AMD cards due to technical limitations. 
 
 ## Feedback
 
