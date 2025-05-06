@@ -10,19 +10,21 @@ Heats of Iron 4 mod.
 North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59BcbM)  
 HOIIVUtils: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
 
-**WIP!** we are working on several things including:
+**WIP!** Features are in various stages of completion. Including: 
 
 - Demo Mod
-- Keybindings? 
+- Keybindings
 - Open Logs
-- Focus, Idea, Custom Tooltip, and more: Localization
+- Focuses and Ideas (National Modifiers)
 - Manage Focus Trees
-- View Country Data
-- View GFX
-- Focus Tree View
-- Unit Comparison
-- Province Colors
-- Map Generation
+- Localization automation features (Auto-generated localization for focuses, ideas)
+     - Custom Tooltip creation
+- View Country and View State Data (Buildings, Air Capacity, Population, Infrastructure)
+- View GFX 
+- Focus Tree View/Editor
+- Unit Comparison (Base Game, 'Vanilla' vs. Modified) 
+- Unique Province Color Generator 
+- Map Generation (Basic, Multithreaded, GPU-accelerated options) 
 - Parser View
 - Everything :D
 
