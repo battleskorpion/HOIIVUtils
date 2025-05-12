@@ -70,6 +70,27 @@ public class StateTable extends TableView<State> {
         rubberColumn.setComparator(dblCmp);
         steelColumn.setComparator(dblCmp);
         tungstenColumn.setComparator(dblCmp);
+        
+        // add columns to table
+        getColumns().addAll(
+                stateColumn,
+                populationColumn,
+                civFactoryColumn,
+                milFactoryColumn,
+                dockyardsColumn,
+                airfieldsColumn,
+                civMilRatioColumn,
+                popFactoryRatioColumn,
+                popCivRatioColumn,
+                popMilRatioColumn,
+                popAirCapacityRatioColumn,
+                aluminiumColumn,
+                chromiumColumn,
+                oilColumn,
+                rubberColumn,
+                steelColumn,
+                tungstenColumn
+        );
     }
 
     <T> void bindColumn(
@@ -113,5 +134,13 @@ public class StateTable extends TableView<State> {
         rubberColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
         steelColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
         tungstenColumn.setCellFactory(col -> new DoubleOrPercentTableCell<>());
+    }
+    
+    public void setStates(State... states) {
+        getItems().setAll(states); 
+    }
+    
+    public void clearStates() {
+        getItems().clear();
     }
 }

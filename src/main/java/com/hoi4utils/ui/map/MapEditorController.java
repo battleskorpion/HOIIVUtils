@@ -51,10 +51,15 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
     private Image originalMapImage;
 
     private double zoomFactor = 1.0;
+    
     private boolean showBuildingsTable = false;
 
     // Tooltip to display state info on hover.
     private final Tooltip stateTooltip = new Tooltip();
+    private StateTable stateTable = null; 
+    
+    private State selectedState = null; // currently selected state
+    private Province selectedProvince = null; // currently selected province
 
     public MapEditorController() {
         setFxmlResource("MapEditor.fxml");
@@ -136,7 +141,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
                                    java.util.function.DoubleFunction<Color> colorFn) {
         if (originalMapImage == null) return;
 
-        // load province→ID
+        // load province → ID
         File defFile = HOIIVFiles.Mod.definition_csv_file;
         if (!defFile.exists()) return;
         var scalaDefs = DefinitionCSV.load(defFile);
@@ -372,11 +377,15 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
             buildingsTable.setId("buildingsTable");
             mapEditorSplitPane.getItems().add(buildingsTable);
             buildingsTable.setVisible(true);
+            if (selectedState != null) content.setStates(selectedState); 
+            else content.clearStates();
+            stateTable = content;
         } else {
             var buildingsTable = mapEditorSplitPane.lookup("#buildingsTable");
             if (buildingsTable != null) {
                 mapEditorSplitPane.getItems().remove(buildingsTable);
             }
+            stateTable = null; 
         }
     }
 
@@ -419,8 +428,12 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
                 pdxEditorPane.showSaveButton();
                 pdxScrollPane.setContent(pdxEditorPane);
                 pdxScrollPane.setVisible(true);
+                this.selectedState = clickedState; 
+                if (stateTable != null) stateTable.setStates(clickedState); 
             } else {
                 LOGGER.info("Right-clicked on an undefined state area.");
+                this.selectedState = null; 
+                if (stateTable != null) stateTable.clearStates();
             }
         }
     }
