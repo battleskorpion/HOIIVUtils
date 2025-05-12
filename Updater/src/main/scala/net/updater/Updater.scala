@@ -7,7 +7,7 @@ import scala.sys.process.*
 
 object Updater {
   def main(args: Array[String]): Unit = {
-    Thread.sleep(3000)
+    Thread.sleep(10000)
     //    if (args.isEmpty) {
     //      println("No arguments provided!")
     //      sys.exit(1)
@@ -31,25 +31,66 @@ object Updater {
     // delete HOIIVUtils.jar
     val oJar = new File(hDir + File.separator + "target" + File.separator + "HOIIVUtils.jar")
     if (oJar.exists() && oJar.isFile) {
-      oJar.delete()
-
+      if (oJar.delete()) {
+        println("Old Jar deleted")
+      } else {
+        println("Old Jar failed to delete")
+      }
     } else {
-      println("Old Jar failed to delete")
+      println("Old Jar doesn't exsist or isn't a file")
       // JOptionPane popup
       val succ = false
     }
 
     val tempDir = new File(hDir + File.separator + "temp")
-    if (tempDir.mkdirs()) {
+    if (tempDir.exists() || tempDir.isDirectory) {
+      println("temp already made")
     } else {
-      println("Failed to make temp dir")
-      // JOptionPane popup
-      val succ = false
+      if (tempDir.mkdirs()) {
+        println("made temp dir")
+      } else {
+        println("Failed to make temp dir")
+        // JOptionPane popup
+        val succ = false
+      }
     }
+
     println("output path: " + tempDir.getAbsolutePath)
 
+    val zipPath = new File(tempDir.getAbsolutePath + File.separator + "HOIIVUtils.zip")
+    if (zipPath.exists()) {
+      if (zipPath.exists()) {
+        if (zipPath.delete()) {
+          println("zip deleted")
+        } else {
+          println("zip failed deleting")
+        }
+      } else {
+        println("zip doesn't exsist")
+      }
+    }
     val lrUrl = s"https://github.com/battleskorpion/HOIIVUtils/releases/download/$lV/HOIIVUtils.zip"
-    downloadReleaseAsset(lrUrl, tempDir.getAbsolutePath + File.separator + "HOIIVUtils.zip")
+    downloadReleaseAsset(lrUrl, zipPath.getAbsolutePath)
+
+    if (zipPath.exists()) {
+      if (zipPath.delete()) {
+        println("zip deleted")
+      } else {
+        println("zip failed deleting")
+      }
+    } else {
+      println("zip doesn't exsist")
+    }
+
+    if (tempDir.exists()) {
+      if (tempDir.delete()) {
+        println("temp dir deleted")
+      } else {
+        println("temp dir failed deleting")
+      }
+    } else {
+      println("temp dir doesn't exsist")
+    }
 
   }
 
@@ -58,7 +99,7 @@ object Updater {
       val updaterJar = hDir + File.separator + "target" + File.separator + "HOIIVUtils.jar"
       println("updaterJar: " + updaterJar)
       val command = Seq("java", "-jar", updaterJar)
-      val process = Process(command).run()
+//      val process = Process(command).run()
       sys.exit(0)
     } catch {
       case e: Exception =>
