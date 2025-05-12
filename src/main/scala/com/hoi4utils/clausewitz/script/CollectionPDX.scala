@@ -133,7 +133,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
 
   override def apply(i: Int): T = pdxList(i)
   
-  override def size: Int = value.size
+//  override def size: Int = value.size
 
   override def toList: List[T] = pdxList.toList
 
