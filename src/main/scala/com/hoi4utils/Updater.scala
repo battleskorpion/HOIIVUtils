@@ -2,10 +2,13 @@ package com.hoi4utils
 
 import com.hoi4utils.clausewitz.HOIIVUtils.HOIIVUTILS_VERSION
 
+import scala.sys.process._
+import java.io.File
 import scala.io.Source
 import scala.math.Ordered.orderingToOrdered
 
 class Updater {
+  var lV = "0.0.0"
   def updateCheck(v: String): Boolean = {
     println("Checking for updates...")
 
@@ -13,12 +16,13 @@ class Updater {
 
     // get the latest release version fom github api / or just cheat and get the redirect from the latest release page where it has the version number at the end of the url
 
-    val lV = getLatestVersion("battleskorpion/HOIIVUtils")
+    lV = getLatestVersion("battleskorpion/HOIIVUtils")
     println("Latest Version: " + lV)
     if (lV == "0.0.0") {
       println("Failed to fetch latest version")
       return false
     }
+    this.lV = lV
 
     val (maV: Int, miV: Int, paV: Int) = (ma(v), mi(v), pa(v))
     val (lmaV: Int, lmiV: Int, lpaV: Int) = (ma(lV), mi(lV), pa(lV))
@@ -37,7 +41,7 @@ class Updater {
       true
     } else {
       println("No updates found")
-      false
+      true //test true
     }
   }
 
@@ -69,9 +73,18 @@ class Updater {
     }
   }
   
-  def update(): Unit = {
+  def update(hDir: File): Unit = {
     println("Updating...")
-    // start a new process with the updater.jar file
+    try {
+      val updaterJar = hDir.getAbsolutePath + File.separator + "Updater" + File.separator + "target" + File.separator + "Updater.jar"
+      println("updaterJar: " + updaterJar)
+      val command = Seq("java", "-jar", updaterJar, hDir.getAbsolutePath, this.lV)
+      val process = Process(command).run()
+      sys.exit(0)
+    } catch {
+      case e: Exception =>
+        e.printStackTrace()
+    }
   }
   
   def updateUpdater(): Unit = {

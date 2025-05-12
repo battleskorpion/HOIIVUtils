@@ -54,7 +54,7 @@ public class HOIIVUtils {
 				);
 				if (response == JOptionPane.YES_OPTION) {
 					// run the updater
-
+					upr.update(HOIIVUTILS_DIR);
 					// run the updater updater
 				}
 			}
