@@ -35,7 +35,7 @@ public class HOIIVUtils {
 	public static void main(String[] args) {
 		Updater upr = new Updater();
 		try {
-			// Initialize application using the new initializer
+			// Initialize the application using the new initializer
 			HOIIVUtilsInitializer initializer = new HOIIVUtilsInitializer();
 			config = initializer.initialize();
 
@@ -43,21 +43,9 @@ public class HOIIVUtils {
 			HOIIVUTILS_DIR = config.getHoi4UtilsDir();
 			HOIIVUTILS_VERSION = config.getVersion();
 
-			if (upr.updateCheck(HOIIVUTILS_VERSION)) {
-				// show pop up
-				int response = JOptionPane.showConfirmDialog(
-						null,
-						"Do you want to update to the latest version?",
-						"Update Available",
-						JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE
-				);
-				if (response == JOptionPane.YES_OPTION) {
-					// run the updater
-					upr.update(HOIIVUTILS_DIR);
-					// run the updater updater
-				}
-			}
+			
+			
+			upr.updateCheck(HOIIVUTILS_VERSION, HOIIVUTILS_DIR);
 			
 			initializer.loadMod();
 			

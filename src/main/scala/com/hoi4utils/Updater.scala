@@ -1,47 +1,60 @@
 package com.hoi4utils
 
 import com.hoi4utils.clausewitz.HOIIVUtils.HOIIVUTILS_VERSION
+import org.apache.logging.log4j.{LogManager, Logger}
 
-import scala.sys.process._
+import scala.sys.process.*
 import java.io.File
+import java.nio.file.{Files, StandardCopyOption}
+import javax.swing.JOptionPane
 import scala.io.Source
 import scala.math.Ordered.orderingToOrdered
 
+/**
+ * Updater class to check for updates and update the application.
+ * Gets the latest version from GitHub releases.
+ * Runs the Updater.jar file to update the application.
+ * Closes the application and runs the updater.
+ */
 class Updater {
+
+  val LOGGER: Logger = LogManager.getLogger(classOf[Updater])
   var lV = "0.0.0"
-  def updateCheck(v: String): Boolean = {
-    println("Checking for updates...")
-
-    println("Current Version: " + v)
-
-    // get the latest release version fom github api / or just cheat and get the redirect from the latest release page where it has the version number at the end of the url
-
+  def updateCheck(v: String, hDir: File): Unit = {
+    LOGGER.debug("Checking for updates...")
+    val tempUprJar = new File(hDir.getAbsolutePath
+      + File.separator + "Updater"
+      + File.separator + "target"
+      + File.separator + "Updater.jar.temp")
+    if (tempUprJar.exists) {
+      updateUpdater(tempUprJar)
+      LOGGER.info("Deleting temp updater jar")
+    }
     lV = getLatestVersion("battleskorpion/HOIIVUtils")
-    println("Latest Version: " + lV)
-    if (lV == "0.0.0") {
-      println("Failed to fetch latest version")
-      return false
+    LOGGER.debug("Current Version: " + v)
+    LOGGER.debug("Latest Version: " + lV)
+    if (lV <= "0.0.0") {
+      LOGGER.error("Failed to fetch latest version")
+      return
     }
     this.lV = lV
-
     val (maV: Int, miV: Int, paV: Int) = (ma(v), mi(v), pa(v))
     val (lmaV: Int, lmiV: Int, lpaV: Int) = (ma(lV), mi(lV), pa(lV))
-    println("Current Version: " + maV + "." + miV + "." + paV)
-    println("Latest Version: " + lmaV + "." + lmiV + "." + lpaV)
-
-    println("maV: " + maV)
-    println("miV: " + miV)
-    println("buV: " + paV)
-    println("lmaV: " + lmaV)
-    println("lmiV: " + lmiV)
-    println("lbuV: " + lpaV)
-
     if ((lmaV, lmiV, lpaV) > (maV, miV, paV)) {
-      println("Update found")
-      true
+      LOGGER.debug("Update found")
+      val response = JOptionPane.showConfirmDialog(
+        null,
+        s"Do you want to update to the latest version?\nCurrent Version: $v\nLatest Version: $lV",
+        "Update Available",
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE
+      )
+
+      if (response == JOptionPane.YES_OPTION) {
+        update(hDir) // closes the program
+      }
     } else {
-      println("No updates found")
-      true //test true
+      LOGGER.debug("No updates found")
     }
   }
 
@@ -60,23 +73,27 @@ class Updater {
     buV
   }
 
-  private def getLatestVersion(repo: String): String = {
+  private def getLatestVersion(lV: String): String = {
     try {
-      val apiUrl = s"https://api.github.com/repos/$repo/releases/latest"
-      val response = Source.fromURL(apiUrl).mkString
+      val apiUrl = s"https://api.github.com/repos/$lV/releases/latest"
+      val source = Source.fromURL(apiUrl)
+      val response = source.mkString
       val json = ujson.read(response)
       json("tag_name").str
     } catch {
       case e: Exception =>
         println(s"Failed to fetch latest version: ${e.getMessage}")
-        "0.0.0" // Return a default version string that will be considered older than any valid version
+        "0.0.0"
     }
   }
   
   def update(hDir: File): Unit = {
     println("Updating...")
     try {
-      val updaterJar = hDir.getAbsolutePath + File.separator + "Updater" + File.separator + "target" + File.separator + "Updater.jar"
+      val updaterJar = hDir.getAbsolutePath
+        + File.separator + "Updater"
+        + File.separator + "target"
+        + File.separator + "Updater.jar"
       println("updaterJar: " + updaterJar)
       val command = Seq("java", "-jar", updaterJar, hDir.getAbsolutePath, this.lV)
       val process = Process(command).run()
@@ -87,11 +104,22 @@ class Updater {
     }
   }
   
-  def updateUpdater(): Unit = {
+  def updateUpdater(tempUprJar: File): Unit = {
     println("Updating updater...")
-    // check if a temp new downloaded updater.jar exists (updater.jar.temp), 
-    // if it does, delete the current updater.jar and rename the temp file to updater.jar
-    // before this, the update method should have downloaded the new updater.jar file
-    // and named it to updater.jar.temp
+
+    val updaterJar = new File(tempUprJar.getAbsolutePath.replace(".temp", ""))
+
+    Files.copy(tempUprJar.toPath, updaterJar.toPath, StandardCopyOption.REPLACE_EXISTING)
+
+    if (updaterJar.exists()) {
+      println("Updater updated successfully")
+    } else {
+      println("Failed to update updater")
+    }
+    if (tempUprJar.delete()) {
+      println("Temporary updater file deleted successfully")
+    } else {
+      println("Failed to delete temporary updater file")
+    }
   }
 }
