@@ -117,3 +117,4 @@ focuses_missing_descriptions.csv
 .idea/discord.xml
 .idea/scala_settings.xml
 temp/*
+/Updater/target/
