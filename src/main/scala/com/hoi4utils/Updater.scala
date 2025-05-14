@@ -1,6 +1,5 @@
 package com.hoi4utils
 
-import com.hoi4utils.clausewitz.HOIIVUtils.HOIIVUTILS_VERSION
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import scala.sys.process.*
@@ -8,7 +7,6 @@ import java.io.File
 import java.nio.file.{Files, StandardCopyOption}
 import javax.swing.JOptionPane
 import scala.io.Source
-import scala.math.Ordered.orderingToOrdered
 
 /**
  * Updater class to check for updates and update the application.
@@ -43,7 +41,7 @@ class Updater {
     LOGGER.debug("Current Version: " + v)
     LOGGER.debug("Latest Version: " + lV)
     this.lV = lV
-    if ((ma(lV), mi(lV), pa(lV)) > (ma(v), mi(v), pa(v)))
+    if (Version(lV) > Version(v))
       LOGGER.debug("Update found")
       val response = JOptionPane.showConfirmDialog(
         null,
@@ -55,10 +53,6 @@ class Updater {
       if (response == JOptionPane.YES_OPTION) update(hDir) // closes the program
     else LOGGER.debug("No updates found")
   }
-
-  private def ma(v: String): Int = v.split("\\.")(0).toInt
-  private def mi(v: String): Int = v.split("\\.")(1).toInt
-  private def pa(v: String): Int = v.split("\\.")(2).toInt
 
   private def update(hDir: File): Unit = {
     LOGGER.info("Updating...")
@@ -90,5 +84,21 @@ class Updater {
     } else {
       LOGGER.debug("Failed to delete temporary updater file")
     }
+  }
+}
+
+case class Version(major: Int, minor: Int, patch: Int) extends Ordered[Version] {
+  override def compare(that: Version): Int =
+    Ordering[(Int, Int, Int)]
+      .compare((major, minor, patch), (that.major, that.minor, that.patch))
+
+  override def toString: String = s"$major.$minor.$patch"
+}
+
+object Version {
+  /** Parses strings like "1.2.3" (and will throw on malformed input) */
+  def apply(s: String): Version = {
+    val Array(a, b, c) = s.split("\\.", 3)
+    Version(a.toInt, b.toInt, c.toInt)
   }
 }
