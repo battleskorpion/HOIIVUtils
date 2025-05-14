@@ -82,6 +82,14 @@
 	</dependencyManagement>
 
 	<dependencies>
+
+		<!-- https://mvnrepository.com/artifact/com.lihaoyi/ujson -->
+		<dependency>
+			<groupId>com.lihaoyi</groupId>
+			<artifactId>ujson_3</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

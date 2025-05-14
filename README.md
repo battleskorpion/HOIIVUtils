@@ -10,22 +10,22 @@ Heats of Iron 4 mod.
 North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59BcbM)  
 HOIIVUtils: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
 
-**WIP!** we are working on several things including:
+**WIP!** Features are in various stages of completion. Including: 
 
-- Demo Mod (50%)
-- Keybindings? (0%)
-- Open Logs (90%)
-- Focus Localization (90%)
-- Manage Focus Trees (50%)
-- Idea Localization (75%)
-- Custom Tooltip Localization (75%)
-- View Country Data (90%)
-- View GFX (15%)
-- Focus Tree View (99%)
-- Unit Comparison (75%)
-- Province Colors (75%)
-- Map Generation (90%)
-- Parser View (0%)
+- Demo Mod
+- Keybindings
+- Open Logs
+- Focuses and Ideas (National Modifiers)
+- Manage Focus Trees
+- Localization automation features (Auto-generated localization for focuses, ideas)
+     - Custom Tooltip creation
+- View Country and View State Data (Buildings, Air Capacity, Population, Infrastructure)
+- View GFX 
+- Focus Tree View/Editor
+- Unit Comparison (Base Game, 'Vanilla' vs. Modified) 
+- Unique Province Color Generator 
+- Map Generation (Basic, Multithreaded, GPU-accelerated options) 
+- Parser View
 - Everything :D
 
 ![image](./images/menu.png)
@@ -37,14 +37,19 @@ HOIIVUtils: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
 ## Usage
 Please keep in mind how **WIP** this is!  
 This is in pre-pre-alpha, and we consistently push commits that break the program.   
-1. Install [Java 23...](https://adoptium.net/temurin/releases/?version=23&os=any)  
-2. Go to [releases...](https://github.com/battleskorpion/HOIIVUtils/releases) and download HOIIVUtils.zip
-3. Extract the zip
-4. run  .bat or .sh
-5. Go to Settings
-6. Select your preferred settings  
+1. Install [Java 23...](https://adoptium.net/temurin/releases/?version=23&os=any)
+     (Use either Eclipse Temurin, OpenJDK, etc., the standard Oracle Java JDK or JRE may not work)
+3. Go to [releases...](https://github.com/battleskorpion/HOIIVUtils/releases) and download HOIIVUtils.zip
+4. Extract the zip
+5. run  .bat or .sh
+6. Go to Settings
+7. Select your preferred settings  
 6. Click Ok
 
+## Technical
+Primarily written in Scala, as well as Java. Includes a Clauzewitz scripting language parser, and intermediate 'PDXScript' 
+Map Generation includes many options, including multithreading and GPGPU generation (Java Aparapi).
+Although tested on both AMD and NVIDIA GPU's, GPU map generation support is *not* guaranteed for AMD cards due to technical limitations. 
 
 ## Feedback
 

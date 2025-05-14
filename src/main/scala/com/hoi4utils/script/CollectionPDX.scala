@@ -10,7 +10,7 @@ import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
 abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: List[String])
-  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Iterable[T] {
+  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
 
@@ -128,8 +128,12 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
   override def iterator: Iterator[T] = pdxList.iterator // todo idk
 
   override def foreach[U](f: T => U): Unit = super.foreach(f)
+  
+  override def length: Int = size
 
-  override def size: Int = value.size
+  override def apply(i: Int): T = pdxList(i)
+  
+//  override def size: Int = value.size
 
   override def toList: List[T] = pdxList.toList
 

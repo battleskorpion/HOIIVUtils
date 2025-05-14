@@ -3,6 +3,7 @@ package com.hoi4utils.clausewitz;
 import com.hoi4utils.ui.menu.MenuController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.hoi4utils.Updater;
 
 import javax.swing.*;
 import java.io.File;
@@ -32,16 +33,15 @@ public class HOIIVUtils {
 	private static HOIIVUtilsConfig config;
 
 	public static void main(String[] args) {
+		Updater upr = new Updater();
 		try {
-			// Initialize application using the new initializer
+			// Initialize the application using the new initializer
 			HOIIVUtilsInitializer initializer = new HOIIVUtilsInitializer();
 			config = initializer.initialize();
-			initializer.loadMod();
-
-			// Set static references for backwards compatibility
 			HOIIVUTILS_DIR = config.getHoi4UtilsDir();
 			HOIIVUTILS_VERSION = config.getVersion();
-
+			upr.updateCheck(HOIIVUTILS_VERSION, HOIIVUTILS_DIR);
+			initializer.loadMod();
 			LOGGER.info("HOIIVUtils {} launched successfully", HOIIVUTILS_VERSION);
 			menuController = new MenuController();
 			menuController.launchMenuWindow(args);
@@ -80,17 +80,11 @@ public class HOIIVUtils {
 		config.setProperty(key, value);
 	}
 
-	/**
-	 * Load mod data from configured paths.
-	 */
 	public static void loadMod() {
 		// Delegate to HOIIVModLoader to reload mod data
 		new HOIIVModLoader(config).loadMod();
 	}
 
-	/**
-	 * Save the current configuration to disk.
-	 */
 	public static void save() {
 		// Delegate to HOIIVConfigManager to save configuration
 		new HOIIVConfigManager(config).saveConfiguration();

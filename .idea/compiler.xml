@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <option name="BUILD_PROCESS_HEAP_SIZE" value="4000" />
+    <option name="BUILD_PROCESS_HEAP_SIZE" value="8192" />
+    <option name="PARALLEL_COMPILATION_OPTION" value="Disabled" />
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
