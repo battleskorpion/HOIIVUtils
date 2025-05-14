@@ -2,7 +2,6 @@ package map
 
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.{CollectionPDX, DoublePDX, IntPDX, PDXScript, PDXSupplier, PDXType, StructuredPDX}
 import org.apache.logging.log4j.{LogManager, Logger}

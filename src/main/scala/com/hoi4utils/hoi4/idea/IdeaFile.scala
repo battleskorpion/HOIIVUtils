@@ -3,7 +3,6 @@ package com.hoi4utils.hoi4.idea
 import language.experimental.namedTuples
 import com.hoi4utils.clausewitz.HOIIVFiles
 import IdeaFile.ideaFileFileMap
-import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.parser.Node
 import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.localization.Localizable

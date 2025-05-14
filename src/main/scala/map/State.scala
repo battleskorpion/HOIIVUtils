@@ -7,7 +7,6 @@ import com.hoi4utils.localization.*
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
 import com.hoi4utils.clausewitz.map.{Owner, UndefinedStateIDException}
-import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.clausewitz.{BoolType, HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.*
 import com.hoi4utils.hoi4.country.{Country, CountryTag, CountryTagsManager}

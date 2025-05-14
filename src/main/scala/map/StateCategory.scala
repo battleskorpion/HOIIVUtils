@@ -2,7 +2,6 @@ package map
 
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
-import com.hoi4utils.clausewitz.script.*
 import com.hoi4utils.parser.{Node, Parser, ParserException}
 import com.hoi4utils.localization.Localizable
 import com.hoi4utils.script.{CollectionPDX, IntPDX, PDXScript, PDXSupplier, ReferencePDX, StructuredPDX}

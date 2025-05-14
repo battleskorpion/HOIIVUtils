@@ -2,7 +2,6 @@ package com.hoi4utils.hoi4.focus
 
 import language.experimental.namedTuples
 import FocusTree.focusTreeFileMap
-import com.hoi4utils.clausewitz.script.*
 import javafx.collections.{FXCollections, ObservableList}
 import org.apache.logging.log4j.{LogManager, Logger}
 import com.hoi4utils.clausewitz.{HOIIVFiles, HOIIVUtils}

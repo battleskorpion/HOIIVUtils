@@ -10,7 +10,6 @@ import com.hoi4utils.script.PDXScript;
 import map.StrategicRegion;
 import map.ResourcesFile;
 import map.State;
-import com.hoi4utils.clausewitz.script.*;
 import com.hoi4utils.parser.Node;
 import com.hoi4utils.parser.Parser;
 import com.hoi4utils.parser.ParserException;
