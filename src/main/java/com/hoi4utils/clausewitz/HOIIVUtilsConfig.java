@@ -1,5 +1,7 @@
 package com.hoi4utils.clausewitz;
 
+import com.hoi4utils.Version;
+
 import java.io.*;
 import java.util.Properties;
 
@@ -11,14 +13,14 @@ public class HOIIVUtilsConfig {
 	private final File hoi4UtilsDir;
 	private final String propertiesFile;
 	private final InputStream defaultProperties;
-	private final String version;
+	private final Version version;
 	private final Properties properties;
 
 	public HOIIVUtilsConfig(
 		File hoi4UtilsDir, 
 		String propertiesFile, 
 		InputStream defaultProperties,
-		String version,
+		Version version,
 		Properties properties) {
 		this.hoi4UtilsDir = hoi4UtilsDir;
 		this.propertiesFile = propertiesFile;
@@ -39,7 +41,7 @@ public class HOIIVUtilsConfig {
 		return defaultProperties;
 	}
 
-	public String getVersion() {
+	public Version getVersion() {
 		return version;
 	}
 

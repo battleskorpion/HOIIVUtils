@@ -17,8 +17,8 @@ import scala.io.Source
  */
 class Updater {
   val LOGGER: Logger = LogManager.getLogger(classOf[Updater])
-  var lV = "0.0.0"
-  def updateCheck(v: String, hDir: File): Unit = {
+  var lV = Version.DEFAULT
+  def updateCheck(v: Version, hDir: File): Unit = {
     LOGGER.debug("Checking for updates...")
     val tempUprJar = new File(hDir.getAbsolutePath
       + File.separator + "Updater"
@@ -32,32 +32,27 @@ class Updater {
         val source = Source.fromURL(apiUrl)
         val response = source.mkString
         val json = ujson.read(response)
-        json("tag_name").str
+        Version(json("tag_name").str)
       } catch {
         case e: Exception =>
           LOGGER.error(s"Failed to fetch latest version: ${e.getMessage}")
-          "0.0.0"
+          Version.DEFAULT
       }
-    if (lV == "0.0.0") return
+    if (lV == Version.DEFAULT) return
     LOGGER.debug("Current Version: " + v)
     LOGGER.debug("Latest Version: " + lV)
     this.lV = lV
-    try {
-      if (Version(lV) > Version(v))
-        LOGGER.debug("Update found")
-        val response = JOptionPane.showConfirmDialog(
-          null,
-          s"Do you want to update to the latest version?\nCurrent Version: $v\nLatest Version: $lV\n \n This will delete your settings!",
-          "Update Available",
-          JOptionPane.YES_NO_OPTION,
-          JOptionPane.QUESTION_MESSAGE
-        )
-        if (response == JOptionPane.YES_OPTION) update(hDir) // closes the program
-      else LOGGER.debug("No updates found")
-    } catch {
-      case e: IllegalArgumentException =>
-        LOGGER.error("Failed to obtain version number from properties.")
-    }
+    if (lV > v)
+      LOGGER.debug("Update found")
+      val response = JOptionPane.showConfirmDialog(
+        null,
+        s"Do you want to update to the latest version?\nCurrent Version: $v\nLatest Version: $lV\n \n This will delete your settings!",
+        "Update Available",
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE
+      )
+      if (response == JOptionPane.YES_OPTION) update(hDir) // closes the program
+    else LOGGER.debug("No updates found")
   }
 
   private def update(hDir: File): Unit = {
@@ -108,4 +103,5 @@ object Version {
     val Array(a, b, c) = s.split("\\.", 3)
     Version(a.toInt, b.toInt, c.toInt)
   }
+  val DEFAULT: Version = Version(0, 0, 0)
 }

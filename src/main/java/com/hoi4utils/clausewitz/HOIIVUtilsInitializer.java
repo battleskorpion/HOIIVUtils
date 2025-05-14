@@ -1,6 +1,7 @@
 package com.hoi4utils.clausewitz;
 
 import com.hoi4utils.PublicFieldChangeNotifier;
+import com.hoi4utils.Version;
 import com.hoi4utils.gfx.Interface;
 import com.hoi4utils.hoi4.country.Country;
 import com.hoi4utils.hoi4.country.CountryTag;
@@ -43,9 +44,7 @@ public class HOIIVUtilsInitializer {
 	private File hoi4UtilsDir;
 	private String propertiesFile;
 	private InputStream defaultProperties;
-	private String version;
-
-	
+	private Version version;
 
 	/**
 	 * Initializes the HOIIVUtils application.
@@ -72,7 +71,7 @@ public class HOIIVUtilsInitializer {
 		saveConfiguration();
 
 		// Set version
-		version = getProperty("version");
+		version = Version.apply(getProperty("version"));
 		LOGGER.info("HOIIVUtils {} initialized", version);
 
 		// Return configuration for use by application

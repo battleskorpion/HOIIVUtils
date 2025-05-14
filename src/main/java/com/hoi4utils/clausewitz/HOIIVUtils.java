@@ -1,5 +1,6 @@
 package com.hoi4utils.clausewitz;
 
+import com.hoi4utils.Version;
 import com.hoi4utils.ui.menu.MenuController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +29,7 @@ public class HOIIVUtils {
 
 	// Static references to application configuration
 	public static File HOIIVUTILS_DIR;
-	public static String HOIIVUTILS_VERSION;
+	public static Version HOIIVUTILS_VERSION;
 	public static MenuController menuController;
 	private static HOIIVUtilsConfig config;
 
