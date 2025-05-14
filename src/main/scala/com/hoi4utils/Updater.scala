@@ -1,5 +1,6 @@
 package com.hoi4utils
 
+import dotty.tools.sjs.ir.Trees.JSBinaryOp.||
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import scala.sys.process.*
@@ -41,17 +42,22 @@ class Updater {
     LOGGER.debug("Current Version: " + v)
     LOGGER.debug("Latest Version: " + lV)
     this.lV = lV
-    if (Version(lV) > Version(v))
-      LOGGER.debug("Update found")
-      val response = JOptionPane.showConfirmDialog(
-        null,
-        s"Do you want to update to the latest version?\nCurrent Version: $v\nLatest Version: $lV\n \n This will delete your settings!",
-        "Update Available",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE
-      )
-      if (response == JOptionPane.YES_OPTION) update(hDir) // closes the program
-    else LOGGER.debug("No updates found")
+    try {
+      if (Version(lV) > Version(v))
+        LOGGER.debug("Update found")
+        val response = JOptionPane.showConfirmDialog(
+          null,
+          s"Do you want to update to the latest version?\nCurrent Version: $v\nLatest Version: $lV\n \n This will delete your settings!",
+          "Update Available",
+          JOptionPane.YES_NO_OPTION,
+          JOptionPane.QUESTION_MESSAGE
+        )
+        if (response == JOptionPane.YES_OPTION) update(hDir) // closes the program
+      else LOGGER.debug("No updates found")
+    } catch {
+      case e: IllegalArgumentException =>
+        LOGGER.error("Failed to obtain version number from properties.")
+    }
   }
 
   private def update(hDir: File): Unit = {
@@ -98,6 +104,9 @@ case class Version(major: Int, minor: Int, patch: Int) extends Ordered[Version] 
 object Version {
   /** Parses strings like "1.2.3" (and will throw on malformed input) */
   def apply(s: String): Version = {
+    if (s == null || s.isEmpty) {
+      throw new IllegalArgumentException("Version string cannot be null or empty")
+    }
     val Array(a, b, c) = s.split("\\.", 3)
     Version(a.toInt, b.toInt, c.toInt)
   }
