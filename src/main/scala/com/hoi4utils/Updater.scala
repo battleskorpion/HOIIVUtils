@@ -104,9 +104,7 @@ case class Version(major: Int, minor: Int, patch: Int) extends Ordered[Version] 
 object Version {
   /** Parses strings like "1.2.3" (and will throw on malformed input) */
   def apply(s: String): Version = {
-    if (s == null || s.isEmpty) {
-      throw new IllegalArgumentException("Version string cannot be null or empty")
-    }
+    if (s == null || s.isEmpty) throw new IllegalArgumentException("Version string cannot be null or empty")
     val Array(a, b, c) = s.split("\\.", 3)
     Version(a.toInt, b.toInt, c.toInt)
   }
