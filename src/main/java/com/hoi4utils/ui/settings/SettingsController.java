@@ -61,7 +61,7 @@ public class SettingsController extends Application implements JavaFXUIManager {
 
 	@FXML
 	void initialize() {
-		versionLabel.setText(HOIIVUtils.HOIIVUTILS_VERSION);
+		versionLabel.setText(HOIIVUtils.HOIIVUTILS_VERSION.toString());
 		loadUIWithSavedSettings();
 		loadMonitor();
 	}

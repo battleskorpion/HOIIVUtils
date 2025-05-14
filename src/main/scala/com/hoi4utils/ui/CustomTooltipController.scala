@@ -45,7 +45,7 @@ class CustomTooltipController extends HOIIVUtilsAbstractController with TableVie
   }
 
   private def includeVersion(): Unit =
-    idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION)
+    idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION.toString)
 
   // --- action handlers ---
   @FXML def handleTooltipFileBrowseAction(): Unit = {

@@ -25,7 +25,7 @@ public class InterfaceFileListController extends HOIIVUtilsAbstractController {
 	}
 
 	private void includeVersion() {
-		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION);
+		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION.toString());
 	}
 }
 

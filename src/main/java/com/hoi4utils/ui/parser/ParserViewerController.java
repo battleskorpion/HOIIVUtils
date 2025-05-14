@@ -91,7 +91,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	}
 
 	private void includeVersion() {
-		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION);
+		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION.toString());
 	}
 
 	@FXML
