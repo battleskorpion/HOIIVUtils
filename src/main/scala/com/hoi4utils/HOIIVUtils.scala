@@ -24,10 +24,10 @@ import javax.swing.*
  */
 object HOIIVUtils {
   val LOGGER: Logger = LogManager.getLogger(this.getClass)
-  val configManager = new HOIIVConfigManager
-  val config: HOIIVUtilsConfig = configManager.createConfig
-  val hInitializer: HOIIVUtilsInitializer = new HOIIVUtilsInitializer
-  val hModLoader: HOIIVModLoader = new HOIIVModLoader
+  val configManager = new ConfigManager
+  val config: Config = configManager.createConfig
+  val hInitializer: Initializer = new Initializer
+  val hModLoader: ModLoader = new ModLoader
   val hProperties: Properties = config.getProperties
 
   def main(args: Array[String]): Unit = {
@@ -67,7 +67,7 @@ object HOIIVUtils {
 
   def loadMod(): Unit = {
     try
-      new HOIIVModLoader().loadMod(hProperties)
+      new ModLoader().loadMod(hProperties)
     catch
       case e: Exception =>
         LOGGER.error("Failed to load mod: {}", e.getMessage)
@@ -77,7 +77,7 @@ object HOIIVUtils {
 
   def save(): Unit = {
     try
-     new HOIIVConfigManager().saveConfiguration(config)
+     new ConfigManager().saveConfiguration(config)
     catch
       case e: Exception =>
         LOGGER.error("Failed to save configuration: {}", e.getMessage)

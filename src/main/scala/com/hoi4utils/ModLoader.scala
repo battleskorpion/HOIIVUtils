@@ -15,7 +15,7 @@ import java.beans.PropertyChangeListener
 import java.io.File
 import java.util.Properties
 
-class HOIIVModLoader {
+class ModLoader {
   private val LOGGER = LogManager.getLogger(this.getClass)
   val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
 

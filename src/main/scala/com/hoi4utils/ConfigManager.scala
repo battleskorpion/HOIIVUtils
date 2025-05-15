@@ -6,14 +6,14 @@ import java.io.*
 import java.nio.file.{Path, Paths}
 import java.util.Properties
 
-class HOIIVConfigManager {
+class ConfigManager {
   private val LOGGER = LogManager.getLogger(this.getClass)
   val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
 
   /**
    * @return Configured HOIIVUtils configuration for use by the application
    */
-  def createConfig: HOIIVUtilsConfig = {
+  def createConfig: Config = {
     val jarPath = Paths.get(this.getClass.getProtectionDomain.getCodeSource.getLocation.toURI).toAbsolutePath
     val hDir = jarPath.getParent.getParent
     val hPropertiesPath = Paths.get {
@@ -21,10 +21,10 @@ class HOIIVConfigManager {
     }.toAbsolutePath
     val hPropertiesJarResource = this.getClass.getClassLoader.getResourceAsStream("HOIIVUtils.properties")
     val hProperties = new Properties()
-    new HOIIVUtilsConfig(hDir, hPropertiesPath, hPropertiesJarResource, hProperties)
+    new Config(hDir, hPropertiesPath, hPropertiesJarResource, hProperties)
   }
 
-  def saveConfiguration(config: HOIIVUtilsConfig): Unit = {
+  def saveConfiguration(config: Config): Unit = {
     val propertiesPath = config.getPropertiesPath
     val defaultProperties = config.getPropertiesJarResource
     val hProperties = config.getProperties
@@ -44,7 +44,7 @@ class HOIIVConfigManager {
     }
   }
 
-  def loadConfiguration(config: HOIIVUtilsConfig): Unit = {
+  def loadConfiguration(config: Config): Unit = {
     val propertiesPath = config.getPropertiesPath
     val externalFile = propertiesPath.toFile
 
@@ -65,7 +65,7 @@ class HOIIVConfigManager {
     }
   }
 
-  def loadDefaultProperties(config: HOIIVUtilsConfig): Unit = {
+  def loadDefaultProperties(config: Config): Unit = {
     val propertiesPath = config.getPropertiesPath
     val defaultProperties = config.getPropertiesJarResource
     val externalFile = propertiesPath.toFile

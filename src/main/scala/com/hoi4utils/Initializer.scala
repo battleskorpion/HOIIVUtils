@@ -8,7 +8,7 @@ import com.hoi4utils.hoi4.effect.EffectDatabase
 import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.hoi4.idea.IdeaFile
 import com.hoi4utils.hoi4.modifier.ModifierDatabase
-import com.hoi4utils.HOIIVUtilsConfig
+import com.hoi4utils.Config
 import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
 import map.{ResourcesFile, State}
 import org.apache.logging.log4j.LogManager
@@ -27,16 +27,16 @@ import scala.::
  * Handles initialization of the HOIIVUtils application.
  * Separates initialization logic from utility functions.
  */
-class HOIIVUtilsInitializer {
+class Initializer {
   private val LOGGER = LogManager.getLogger(this.getClass)
 
-  def initializer(config: HOIIVUtilsConfig): Unit = {
+  def initializer(config: Config): Unit = {
     ModifierDatabase.init()
     EffectDatabase.init()
-    HOIIVConfigManager().loadConfiguration(config)
+    ConfigManager().loadConfiguration(config)
     autoSetHOIIVPath(config.getProperties)
     autoSetDemoModPath(config.getProperties, config.getDir)
-    HOIIVConfigManager().saveConfiguration(config)
+    ConfigManager().saveConfiguration(config)
   }
 
   private def autoSetHOIIVPath(p: Properties): Unit = {

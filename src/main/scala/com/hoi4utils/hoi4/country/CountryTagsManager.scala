@@ -1,7 +1,5 @@
 package com.hoi4utils.hoi4.country
 
-import com.hoi4utils.{FileUtils, HOIIVUtils}
-
 import java.io.{File, IOException}
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
@@ -10,7 +8,7 @@ import scala.jdk.CollectionConverters.*
 /**
  * Manages loading and querying HOI4 country tags, both modded and base.
  */
-object CountryTagsManager extends HOIIVUtils with Iterable[CountryTag] {
+object CountryTagsManager extends Iterable[CountryTag] {
   // lazy so we only load once
   private lazy val countryTags: Seq[CountryTag] = loadCountryTags()
 
@@ -33,7 +31,7 @@ object CountryTagsManager extends HOIIVUtils with Iterable[CountryTag] {
     def readFiles(files: Seq[File], skipDuplicates: Boolean): Unit = {
       for (file <- files; line <- Source.fromFile(file).getLines()) {
         val data = line.replaceAll("\\s", "")
-        if (FileUtils.usefulData(data)) {
+        if (data.trim.charAt(0) != '#') {
           val key = data.takeWhile(_ != '=').trim
           val tag = new CountryTag(key)
           if (!tag.equals(CountryTag.NULL_TAG) && (!skipDuplicates || !tagsBuf.contains(tag))) {

@@ -1,6 +1,6 @@
 package com.hoi4utils.localization
 
-import com.hoi4utils.{FileUtils, HOIIVUtils}
+import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.exceptions.LocalizationExistsException
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
@@ -21,7 +21,7 @@ object EnglishLocalizationManager {
   protected val language_def: String = l_english
 }
 
-class EnglishLocalizationManager extends LocalizationManager with FileUtils {
+class EnglishLocalizationManager extends LocalizationManager {
   val LOGGER: Logger = LogManager.getLogger(classOf[EnglishLocalizationManager])
   /* */ 
   setManager(this)
@@ -86,7 +86,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
         var line = scanner.nextLine
         /* ignore BOM */
         if (line.startsWith("\uFEFF")) line = line.substring(1)
-        if (FileUtils.usefulData(line)) {
+        if (line.trim.charAt(0) != '#') {
           if (!line.trim.startsWith(EnglishLocalizationManager.language_def)) {
             System.out.println("Localization file is not in English: " + file.getAbsolutePath)
             return
@@ -100,7 +100,7 @@ class EnglishLocalizationManager extends LocalizationManager with FileUtils {
       }
       while (scanner.hasNextLine) {
         val line = scanner.nextLine
-        if (FileUtils.usefulData(line)) {
+        if (line.trim.charAt(0) != '#') {
           val data = line.splitWithDelimiters(EnglishLocalizationManager.versionNumberRegex, 2)
           if (data.length != 3) {
             System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
