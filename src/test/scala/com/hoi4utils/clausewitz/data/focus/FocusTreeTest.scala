@@ -9,7 +9,7 @@
 //import org.scalatest.BeforeAndAfterEach
 //
 //import scala.collection.mutable
-//import language.experimental.namedTuples
+//
 //
 //// Assuming Property is defined in the localization package.
 //import com.hoi4utils.clausewitz.localization.Property

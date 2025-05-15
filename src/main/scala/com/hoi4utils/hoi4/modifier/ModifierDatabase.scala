@@ -1,7 +1,5 @@
 package com.hoi4utils.hoi4.modifier
 
-import language.experimental.namedTuples
-
 import com.hoi4utils.hoi4.effect.EffectDatabase._effects
 import com.hoi4utils.parser.Node
 import com.hoi4utils.hoi4.effect.{BlockEffect, SimpleEffect}

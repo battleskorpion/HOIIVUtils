@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.script
 
-import language.experimental.namedTuples
+
 import com.hoi4utils.parser.{Node, Parser, Tokenizer}
 import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.script.StringPDX

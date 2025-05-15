@@ -18,7 +18,7 @@ import java.awt.Point
 import scala.annotation.{experimental, tailrec, targetName}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import language.experimental.namedTuples
+
 
 @lombok.extern.slf4j.Slf4j
 class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Localizable with DataFunctionProvider[Focus] {

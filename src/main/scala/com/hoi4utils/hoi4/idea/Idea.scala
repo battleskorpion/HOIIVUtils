@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4.idea
 
-import language.experimental.namedTuples
+
 import com.hoi4utils.ExpectedRange
 import Idea.listAllIdeas
 import com.hoi4utils.parser.Node

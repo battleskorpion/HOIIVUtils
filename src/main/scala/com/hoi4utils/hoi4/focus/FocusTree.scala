@@ -1,6 +1,5 @@
 package com.hoi4utils.hoi4.focus
 
-import language.experimental.namedTuples
 import FocusTree.focusTreeFileMap
 import com.hoi4utils.HOIIVUtils
 import javafx.collections.{FXCollections, ObservableList}

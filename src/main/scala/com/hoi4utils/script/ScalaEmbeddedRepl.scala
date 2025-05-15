@@ -43,7 +43,7 @@ package com.hoi4utils.script
 //          |import com.hoi4utils.clausewitz.map.province._
 //          |import com.hoi4utils.clausewitz.map.state._
 //          |import com.hoi4utils.clausewitz_parser._
-//          |//import language.experimental.namedTuples
+//          |//
 //          |//import com.hoi4utils.clausewitz.data.focus._
 //          |import com.hoi4utils.clausewitz.map.province._
 //          |import com.hoi4utils.clausewitz.code._

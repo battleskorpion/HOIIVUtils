@@ -16,7 +16,7 @@ import java.sql.*
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
-import scala.language.experimental.namedTuples
+
 import scala.util.{Try, Using}
 
 object EffectDatabase {
