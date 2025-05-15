@@ -33,7 +33,7 @@ import java.util.Optional;
 public class SettingsController extends Application implements JavaFXUIManager {
 	public static final Logger LOGGER = LogManager.getLogger(SettingsController.class);
 	private String fxmlResource = "Settings.fxml";
-	private String title = "HOIIVUtils Settings " + HOIIVUtils.HOIIVUTILS_VERSION;
+	private String title = "HOIIVUtils Settings " + HOIIVUtils.get("version");
 	private Stage stage;
 
 	@FXML
@@ -61,7 +61,7 @@ public class SettingsController extends Application implements JavaFXUIManager {
 
 	@FXML
 	void initialize() {
-		versionLabel.setText(HOIIVUtils.HOIIVUTILS_VERSION.toString());
+		versionLabel.setText(HOIIVUtils.get("version"));
 		loadUIWithSavedSettings();
 		loadMonitor();
 	}
@@ -206,15 +206,21 @@ public class SettingsController extends Application implements JavaFXUIManager {
 	}
 
 	public void handleModFileBrowseAction() {
-		File initialModDir = new File(FileUtils.usersDocuments + File.separator + HOIIVFiles.usersParadoxHOIIVModFolder);
+		String usersDocuments = System.getProperty("user.home") + File.separator + "Documents";
+		File initialModDir = new File(usersDocuments + File.separator + HOIIVFiles.usersParadoxHOIIVModFolder);
 		handleFileBrowseAction(modPathTextField, modFolderBrowseButton, initialModDir, "mod.path");
 	}
 
 	public void handleHOIIVFileBrowseAction() {
-		File initialHoi4Dir = FileUtils.ProgramFilesX86 == null ? null :
-			new File(FileUtils.ProgramFilesX86 + File.separator + FileUtils.steamHOI4LocalPath);
-		handleFileBrowseAction(hoi4PathTextField, hoi4FolderBrowseButton, initialHoi4Dir, "hoi4.path");
-	}
+        String steamHOI4LocalPath = "Steam" + File.separator + "steamapps" + File.separator + "common" + File.separator + "Hearts of Iron IV";
+        File programFilesX86 = null;
+        if (System.getenv("ProgramFiles(x86)") != null) {
+            programFilesX86 = new File(System.getenv("ProgramFiles(x86)"));
+        }
+        File initialHoi4Dir = programFilesX86 == null ? null :
+                new File(programFilesX86 + File.separator + steamHOI4LocalPath);
+        handleFileBrowseAction(hoi4PathTextField, hoi4FolderBrowseButton, initialHoi4Dir, "hoi4.path");
+    }
 	
 	// Generic method to validate a directory path and set it to settings
 	private void validateAndSetPath(String path, String settingKey) {

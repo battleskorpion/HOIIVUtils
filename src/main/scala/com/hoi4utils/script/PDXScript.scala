@@ -21,7 +21,7 @@ import scala.util.Using
  */
 trait PDXScript[V] extends Cloneable {
 
-  val LOGGER: Logger = LogManager.getLogger(this)
+  val LOGGER: Logger = LogManager.getLogger(this.getClass)
   
   def set(obj: V): V
 

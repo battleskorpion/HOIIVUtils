@@ -4,6 +4,7 @@ import com.hoi4utils.ui.menu.MenuController
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.File
+import java.util.Properties
 import javax.swing.*
 
 /**
@@ -22,69 +23,65 @@ import javax.swing.*
  * HOIIVUtils\\HOIIVUtils.sh
  */
 object HOIIVUtils {
-  val LOGGER: Logger = LogManager.getLogger(classOf[HOIIVUtils])
-  // Static references to application configuration
-  var HOIIVUTILS_DIR: File = null
-  var HOIIVUTILS_VERSION: Version = null
-  var menuController: MenuController = null
-  private var config: HOIIVUtilsConfig = null
+  val LOGGER: Logger = LogManager.getLogger(this.getClass)
+  val configManager = new HOIIVConfigManager
+  val config: HOIIVUtilsConfig = configManager.createConfig
+  val hInitializer: HOIIVUtilsInitializer = new HOIIVUtilsInitializer
+  val hModLoader: HOIIVModLoader = new HOIIVModLoader
+  val hProperties: Properties = config.getProperties
 
   def main(args: Array[String]): Unit = {
     val upr = new Updater
-    try {
-      // Initialize the application using the new initializer
-      val initializer = new HOIIVUtilsInitializer
-      config = initializer.initialize
-      HOIIVUTILS_DIR = config.getHoi4UtilsDir
-      HOIIVUTILS_VERSION = config.getVersion
-      upr.updateCheck(HOIIVUTILS_VERSION, HOIIVUTILS_DIR)
-      initializer.loadMod()
-      LOGGER.info("HOIIVUtils {} launched successfully", HOIIVUTILS_VERSION)
-      menuController = new MenuController
-      menuController.launchMenuWindow(args)
-    } catch {
-      case e: Exception =>
-        LOGGER.fatal("Failed to initialize HOIIVUtils", e)
-        JOptionPane.showMessageDialog(null, "Failed to initialize HOIIVUtils: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
-        System.exit(1)
-    }
+//    upr.updateCheck(, config.getDir)
+    hModLoader.loadMod(hProperties)
+//    LOGGER.info("HOIIVUtils {} launched successfully", config.getVersion)
+    val menuController = new MenuController
+    menuController.launchMenuWindow(args)
   }
 
   /**
-   * Gets a property from the configuration.
-   *
-   * @param key Property key
+   * @param key Property name
    * @return Property value or null if not found
    */
   def get(key: String): String = {
-    if (config == null) {
-      LOGGER.debug("Configuration not initialized!")
-      return ""
-    }
-    val property = config.getProperty(key)
-    if (property != null) return property
-    else return ""
+    try
+      hProperties.getProperty(key)
+    catch
+      case e: Exception =>
+        LOGGER.error("Failed to get property {}: {}", key, e.getMessage)
+        throw new RuntimeException(e)
   }
 
   /**
-   * Sets a property in the configuration.
-   *
    * @param key   Property key
    * @param value Property value
    */
   def set(key: String, value: String): Unit = {
-    config.setProperty(key, value)
+    try
+      hProperties.setProperty(key, value)
+    catch
+      case e: Exception =>
+        LOGGER.error("Failed to set property {}: {}", key, e.getMessage)
+        throw new RuntimeException(e)
   }
 
   def loadMod(): Unit = {
-    // Delegate to HOIIVModLoader to reload mod data
-    new HOIIVModLoader(config).loadMod()
+    try
+      new HOIIVModLoader().loadMod(hProperties)
+    catch
+      case e: Exception =>
+        LOGGER.error("Failed to load mod: {}", e.getMessage)
+        JOptionPane.showMessageDialog(null, "Failed to load mod: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
+        System.exit(1)
   }
 
   def save(): Unit = {
-    // Delegate to HOIIVConfigManager to save configuration
-    new HOIIVConfigManager(config).saveConfiguration()
+    try
+     new HOIIVConfigManager().saveConfiguration(config)
+    catch
+      case e: Exception =>
+        LOGGER.error("Failed to save configuration: {}", e.getMessage)
+        JOptionPane.showMessageDialog(null, "Failed to save configuration: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
+        System.exit(1)
   }
 }
-
-class HOIIVUtils {}

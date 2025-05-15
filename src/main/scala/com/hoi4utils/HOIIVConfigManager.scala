@@ -3,55 +3,72 @@ package com.hoi4utils
 import org.apache.logging.log4j.LogManager
 
 import java.io.*
+import java.nio.file.{Path, Paths}
+import java.util.Properties
 
-object HOIIVConfigManager {
-  private val LOGGER = LogManager.getLogger(classOf[HOIIVConfigManager])
-}
+class HOIIVConfigManager {
+  private val LOGGER = LogManager.getLogger(this.getClass)
+  val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
 
-class HOIIVConfigManager(private var config: HOIIVUtilsConfig) {
-  this.propertiesFile = config.getPropertiesFile
-  this.defaultProperties = config.getDefaultProperties
-  private var propertiesFile: String = null
-  private var defaultProperties: InputStream = null
+  /**
+   * @return Configured HOIIVUtils configuration for use by the application
+   */
+  def createConfig: HOIIVUtilsConfig = {
+    val jarPath = Paths.get(this.getClass.getProtectionDomain.getCodeSource.getLocation.toURI).toAbsolutePath
+    val hDir = jarPath.getParent.getParent
+    val hPropertiesPath = Paths.get {
+      s"$hDir${File.separator}HOIIVUtils.properties"
+    }.toAbsolutePath
+    val hPropertiesJarResource = this.getClass.getClassLoader.getResourceAsStream("HOIIVUtils.properties")
+    val hProperties = new Properties()
+    new HOIIVUtilsConfig(hDir, hPropertiesPath, hPropertiesJarResource, hProperties)
+  }
 
-  private[hoi4utils] def saveConfiguration(): Unit = {
-    val externalFile = new File(propertiesFile)
+  def saveConfiguration(config: HOIIVUtilsConfig): Unit = {
+    val propertiesPath = config.getPropertiesPath
+    val defaultProperties = config.getPropertiesJarResource
+    val hProperties = config.getProperties
+    val externalFile = propertiesPath.toFile
     val noSavedSettings = !(externalFile.exists) && defaultProperties != null
-    if (noSavedSettings) loadDefaultProperties()
+    if (noSavedSettings) loadDefaultProperties(config)
     try {
       val output = new FileOutputStream(externalFile)
       try {
-        HOIIVConfigManager.LOGGER.debug("Configuration saved to: {}", externalFile.getAbsolutePath)
-        config.store(output, "HOIIVUtils Configuration")
+        LOGGER.debug("Configuration saved to: {}", externalFile.getAbsolutePath)
+        hProperties.store(output, "HOIIVUtils Configuration")
       } catch {
         case e: IOException =>
-          HOIIVConfigManager.LOGGER.error("Failed to save configuration", e)
+          LOGGER.error("Failed to save configuration", e)
           throw new RuntimeException(e)
       } finally if (output != null) output.close()
     }
   }
 
-  private def loadConfiguration(): Unit = {
-    val externalFile = new File(propertiesFile)
-    if (!(externalFile.exists)) {
-      HOIIVConfigManager.LOGGER.warn("External configuration file not found: {}", propertiesFile)
-      loadDefaultProperties()
+  def loadConfiguration(config: HOIIVUtilsConfig): Unit = {
+    val propertiesPath = config.getPropertiesPath
+    val externalFile = propertiesPath.toFile
+
+    if (!externalFile.exists) {
+      LOGGER.warn("External configuration file not found: {}", propertiesPath)
+      loadDefaultProperties(config)
     }
     try {
       val input = new FileInputStream(externalFile)
       try {
-        HOIIVConfigManager.LOGGER.debug("External configuration loaded from: {}", propertiesFile)
-        config.load(input)
+        LOGGER.debug("External configuration loaded from: {}", propertiesPath)
+        config.getProperties.load(input)
       } catch {
         case e: IOException =>
-          HOIIVConfigManager.LOGGER.fatal("Error loading external properties from: {}", propertiesFile, e)
-          loadDefaultProperties()
+          LOGGER.fatal("Error loading external properties from: {}", propertiesPath, e)
+          loadDefaultProperties(config)
       } finally if (input != null) input.close()
     }
   }
 
-  private def loadDefaultProperties(): Unit = {
-    val externalFile = new File(propertiesFile)
+  def loadDefaultProperties(config: HOIIVUtilsConfig): Unit = {
+    val propertiesPath = config.getPropertiesPath
+    val defaultProperties = config.getPropertiesJarResource
+    val externalFile = propertiesPath.toFile
     try {
       val externalOut = new FileOutputStream(externalFile)
       try {
@@ -60,16 +77,16 @@ class HOIIVConfigManager(private var config: HOIIVUtilsConfig) {
         while ({bytesRead = defaultProperties.read(buffer); bytesRead != -1}) {
           externalOut.write(buffer, 0, bytesRead)
         }
-        HOIIVConfigManager.LOGGER.debug("Default properties copied to: {}", externalFile.getAbsolutePath)
+        LOGGER.debug("Default properties copied to: {}", externalFile.getAbsolutePath)
       } catch {
         case e: IOException =>
-          HOIIVConfigManager.LOGGER.error("Failed to copy default properties to external file", e)
+          LOGGER.error("Failed to copy default properties to external file", e)
       } finally {
         externalOut.close()
       }
     } catch {
       case e: IOException =>
-        HOIIVConfigManager.LOGGER.error("Failed to create output file: {}", externalFile.getAbsolutePath, e)
+        LOGGER.error("Failed to create output file: {}", externalFile.getAbsolutePath, e)
     }
   }
 }
