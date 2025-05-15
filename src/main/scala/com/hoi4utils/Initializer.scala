@@ -36,6 +36,7 @@ class Initializer {
     ConfigManager().loadProperties(config)
     autoSetHOIIVPath(config.getProperties)
     autoSetDemoModPath(config.getProperties, config.getDir)
+    config.getProperties.setProperty("hDir", config.getDir.toString)
     ConfigManager().saveProperties(config)
   }
 

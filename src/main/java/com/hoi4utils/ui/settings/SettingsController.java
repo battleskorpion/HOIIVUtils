@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.settings;
 
-import com.hoi4utils.FileUtils;
+import com.hoi4utils.Version;
 import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.ui.JavaFXUIManager;
@@ -33,7 +33,7 @@ import java.util.Optional;
 public class SettingsController extends Application implements JavaFXUIManager {
 	public static final Logger LOGGER = LogManager.getLogger(SettingsController.class);
 	private String fxmlResource = "Settings.fxml";
-	private String title = "HOIIVUtils Settings " + HOIIVUtils.get("version");
+	private String title = "HOIIVUtils Settings " + Version.getVersion().toString();
 	private Stage stage;
 
 	@FXML
@@ -61,7 +61,7 @@ public class SettingsController extends Application implements JavaFXUIManager {
 
 	@FXML
 	void initialize() {
-		versionLabel.setText(HOIIVUtils.get("version"));
+		versionLabel.setText(Version.getVersion().toString());
 		loadUIWithSavedSettings();
 		loadMonitor();
 	}

@@ -1,6 +1,5 @@
 package com.hoi4utils.ui;
 
-import com.hoi4utils.FileUtils;
 import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.ui.javafx_ui.table.DoubleOrPercentTableCell;
 import com.hoi4utils.ui.javafx_ui.table.TableViewWindow;
@@ -38,13 +37,14 @@ public interface JavaFXUIManager {
 	 * @return
 	 */
 	static File openChooser(Stage stage, File initialDirectory, boolean ford) {
+		File usersDocuments = new File(System.getProperty("user.home") + File.separator + "Documents");
 		File theChosenOne;
 		if (ford) {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 			if (initialDirectory != null && initialDirectory.exists() && initialDirectory.isDirectory()) {
 				directoryChooser.setInitialDirectory(initialDirectory);
 			} else {
-				directoryChooser.setInitialDirectory(FileUtils.usersDocuments);
+				directoryChooser.setInitialDirectory(usersDocuments);
 			}
 			theChosenOne = directoryChooser.showDialog(stage);
 		} else {
@@ -52,7 +52,7 @@ public interface JavaFXUIManager {
 			if (initialDirectory != null && initialDirectory.exists() && initialDirectory.isDirectory()) {
 				fileChooser.setInitialDirectory(initialDirectory);
 			} else {
-				fileChooser.setInitialDirectory(FileUtils.usersDocuments);
+				fileChooser.setInitialDirectory(usersDocuments);
 			}
 			theChosenOne = fileChooser.showOpenDialog(stage);
 		}
@@ -94,7 +94,8 @@ public interface JavaFXUIManager {
 	 * @see Node
 	 */
 	static File openChooser(Node fxcomponent, Boolean ford) {
-		return openChooser(fxcomponent, FileUtils.usersDocuments, ford);
+		File usersDocuments = new File(System.getProperty("user.home") + File.separator + "Documents");
+		return openChooser(fxcomponent, usersDocuments, ford);
 	}
 
 	static File openChooser(File initialDirectory, boolean ford) {

@@ -84,7 +84,7 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	}
 
 	// private void includeVersion() {
-	// idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION);
+	// idVersion.setText(Version.getVersion().toString());
 	// }
 
 	@Override

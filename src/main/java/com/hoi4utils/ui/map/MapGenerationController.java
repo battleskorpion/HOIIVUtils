@@ -1,5 +1,6 @@
 package com.hoi4utils.ui.map;
 
+import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.gen.Heightmap;
 import com.hoi4utils.clausewitz.map.province.ProvinceGeneration;
@@ -115,7 +116,7 @@ public class MapGenerationController extends HOIIVUtilsAbstractController {
 	void OnBrowseHeightmap() {
 		File file = null;
 		try {
-			file = JavaFXUIManager.openChooser(browseHeightmapButton, new File(HOIIVUTILS_DIR + File.separator + "maps"), false);
+			file = JavaFXUIManager.openChooser(browseHeightmapButton, new File(HOIIVUtils.get("hDir") + File.separator + "maps"), false);
 			heightmap = new Heightmap(file);
 		} catch (IOException | IllegalArgumentException exc) {
 			JOptionPane.showMessageDialog(null, "Bad File Path." + file.getPath(), "Error", JOptionPane.ERROR_MESSAGE);

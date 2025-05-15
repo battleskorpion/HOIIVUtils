@@ -83,7 +83,7 @@ public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 	private String input = "65536";
 
 
-	private final String outputPath = HOIIVUtils.HOIIVUTILS_DIR + File.separator + "Generated Province Colors.bmp";
+	private final String outputPath = HOIIVUtils.get("hDir") + File.separator + "Generated Province Colors.bmp";
 
 	public ProvinceColorsController() {
 		setFxmlResource("ProvinceColors.fxml");

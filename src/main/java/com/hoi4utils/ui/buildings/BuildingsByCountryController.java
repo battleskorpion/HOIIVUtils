@@ -2,7 +2,7 @@ package com.hoi4utils.ui.buildings;
 
 
 import com.hoi4utils.ClausewitzDate;
-import com.hoi4utils.HOIIVUtils;
+import com.hoi4utils.Version;
 import com.hoi4utils.hoi4.country.Country;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
@@ -96,7 +96,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	}
 
 	private void includeVersion() {
-		idVersionMenuItem.setText(HOIIVUtils.HOIIVUTILS_VERSION.toString());
+		idVersionMenuItem.setText(Version.getVersion().toString());
 	}
 
 	// todo put this in hoi4window parent class or whatever

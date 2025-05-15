@@ -1,5 +1,6 @@
 package com.hoi4utils.ui.parser;
 
+import com.hoi4utils.Version;
 import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.hoi4.country.Country;
@@ -91,7 +92,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	}
 
 	private void includeVersion() {
-		idVersion.setText(HOIIVUtils.HOIIVUTILS_VERSION.toString());
+		idVersion.setText(Version.getVersion().toString());
 	}
 
 	@FXML

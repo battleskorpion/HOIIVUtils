@@ -1,6 +1,7 @@
 package com.hoi4utils.ui
 
-import com.hoi4utils.HOIIVUtils
+import com.hoi4utils.{HOIIVUtils, Version}
+
 import java.io.File
 import java.net.URL
 import java.util.ResourceBundle
@@ -9,7 +10,6 @@ import com.hoi4utils.hoi4.tooltip.CustomTooltip
 import com.hoi4utils.ui.JavaFXUIManager
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.javafx_ui.table.TableViewWindow
-
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, Label, TableColumn, TableView}
 import javafx.collections.{FXCollections, ObservableList}
@@ -38,7 +38,7 @@ class CustomTooltipController extends HOIIVUtilsAbstractController with TableVie
   private val customTooltipBuf: ObservableBuffer[CustomTooltip] = ObservableBuffer.empty
   
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    idVersion.setText(HOIIVUtils.get("version"))
+    idVersion.setText(Version.getVersion.toString)
     // wire up the JavaFX TableView using your existing helper:
     loadTableView(this, customTooltipTableView, customTooltipBuf, CustomTooltip.dataFunctions())
   }
