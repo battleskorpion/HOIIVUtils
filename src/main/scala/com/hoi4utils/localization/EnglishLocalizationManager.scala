@@ -86,7 +86,7 @@ class EnglishLocalizationManager extends LocalizationManager {
         var line = scanner.nextLine
         /* ignore BOM */
         if (line.startsWith("\uFEFF")) line = line.substring(1)
-        if (line.trim.charAt(0) != '#') {
+        if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
           if (!line.trim.startsWith(EnglishLocalizationManager.language_def)) {
             System.out.println("Localization file is not in English: " + file.getAbsolutePath)
             return
@@ -100,7 +100,7 @@ class EnglishLocalizationManager extends LocalizationManager {
       }
       while (scanner.hasNextLine) {
         val line = scanner.nextLine
-        if (line.trim.charAt(0) != '#') {
+        if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
           val data = line.splitWithDelimiters(EnglishLocalizationManager.versionNumberRegex, 2)
           if (data.length != 3) {
             System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
