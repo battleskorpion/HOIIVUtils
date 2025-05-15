@@ -30,7 +30,7 @@ class HOIIVModLoader(private var config: HOIIVUtilsConfig) {
       case e: Exception =>
         HOIIVModLoader.LOGGER.error("Failed to reload localization", e)
     }
-    try if (Interface.read) config.setProperty("valid.Interface", "true")
+    try if (Interface.read()) config.setProperty("valid.Interface", "true")
     else {
       config.setProperty("valid.Interface", "false")
       HOIIVModLoader.LOGGER.error("Failed to read gfx interface files")
@@ -40,7 +40,7 @@ class HOIIVModLoader(private var config: HOIIVUtilsConfig) {
         config.setProperty("valid.Interface", "false")
         HOIIVModLoader.LOGGER.error("Exception while reading interface files", e)
     }
-    try if (ResourcesFile.read) config.setProperty("valid.Resources", "true")
+    try if (ResourcesFile.read()) config.setProperty("valid.Resources", "true")
     else {
       config.setProperty("valid.Resources", "false")
       HOIIVModLoader.LOGGER.error("Failed to read resources")
@@ -50,7 +50,7 @@ class HOIIVModLoader(private var config: HOIIVUtilsConfig) {
         config.setProperty("valid.Resources", "false")
         HOIIVModLoader.LOGGER.error("Exception while reading resources", e)
     }
-    try if (CountryTag.read) config.setProperty("valid.CountryTag", "true")
+    try if (CountryTag.read()) config.setProperty("valid.CountryTag", "true")
     else {
       config.setProperty("valid.CountryTag", "false")
       HOIIVModLoader.LOGGER.error("Failed to read country tags")
@@ -60,7 +60,7 @@ class HOIIVModLoader(private var config: HOIIVUtilsConfig) {
         config.setProperty("valid.CountryTag", "false")
         HOIIVModLoader.LOGGER.error("Exception while reading country tags", e)
     }
-    try if (Country.read) config.setProperty("valid.Country", "true")
+    try if (Country.read()) config.setProperty("valid.Country", "true")
     else {
       config.setProperty("valid.Country", "false")
       HOIIVModLoader.LOGGER.error("Failed to read countries")
@@ -70,7 +70,7 @@ class HOIIVModLoader(private var config: HOIIVUtilsConfig) {
         config.setProperty("valid.Country", "false")
         HOIIVModLoader.LOGGER.error("Exception while reading countries", e)
     }
-    try if (State.read) config.setProperty("valid.State", "true")
+    try if (State.read()) config.setProperty("valid.State", "true")
     else {
       config.setProperty("valid.State", "false")
       HOIIVModLoader.LOGGER.error("Failed to read states")
@@ -80,7 +80,7 @@ class HOIIVModLoader(private var config: HOIIVUtilsConfig) {
         config.setProperty("valid.State", "false")
         HOIIVModLoader.LOGGER.error("Exception while reading states", e)
     }
-    try if (FocusTree.read) config.setProperty("valid.FocusTree", "true")
+    try if (FocusTree.read()) config.setProperty("valid.FocusTree", "true")
     else {
       config.setProperty("valid.FocusTree", "false")
       HOIIVModLoader.LOGGER.error("Failed to read focus trees")
@@ -90,7 +90,7 @@ class HOIIVModLoader(private var config: HOIIVUtilsConfig) {
         config.setProperty("valid.FocusTree", "false")
         HOIIVModLoader.LOGGER.error("Exception while reading focus trees", e)
     }
-    try if (IdeaFile.read) config.setProperty("valid.IdeaFiles", "true")
+    try if (IdeaFile.read()) config.setProperty("valid.IdeaFiles", "true")
     else {
       config.setProperty("valid.IdeaFiles", "false")
       HOIIVModLoader.LOGGER.error("Failed to read idea files")

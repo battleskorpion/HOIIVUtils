@@ -93,7 +93,7 @@ class HOIIVUtilsInitializer {
   }
 
   private def initializeConfiguration(): Unit = {
-    propertiesFile = hoi4UtilsDir + File.separator + "HOIIVUtils.properties"
+    propertiesFile = s"hoi4UtilsDir${File.separator}HOIIVUtils.properties"
     defaultProperties = classOf[HOIIVUtils].getClassLoader.getResourceAsStream("HOIIVUtils.properties")
     loadConfiguration()
   }
@@ -216,7 +216,7 @@ class HOIIVUtilsInitializer {
       case e: Exception =>
         HOIIVUtilsInitializer.LOGGER.error("Failed to reload localization", e)
     }
-    try if (Interface.read) setProperty("valid.Interface", "true")
+    try if (Interface.read()) setProperty("valid.Interface", "true")
     else {
       setProperty("valid.Interface", "false")
       HOIIVUtilsInitializer.LOGGER.error("Failed to read gfx interface files")
@@ -226,7 +226,7 @@ class HOIIVUtilsInitializer {
         setProperty("valid.Interface", "false")
         HOIIVUtilsInitializer.LOGGER.error("Exception while reading interface files", e)
     }
-    try if (ResourcesFile.read) setProperty("valid.Resources", "true")
+    try if (ResourcesFile.read()) setProperty("valid.Resources", "true")
     else {
       setProperty("valid.Resources", "false")
       HOIIVUtilsInitializer.LOGGER.error("Failed to read resources")
@@ -236,7 +236,7 @@ class HOIIVUtilsInitializer {
         setProperty("valid.Resources", "false")
         HOIIVUtilsInitializer.LOGGER.error("Exception while reading resources", e)
     }
-    try if (CountryTag.read) setProperty("valid.CountryTag", "true")
+    try if (CountryTag.read()) setProperty("valid.CountryTag", "true")
     else {
       setProperty("valid.CountryTag", "false")
       HOIIVUtilsInitializer.LOGGER.error("Failed to read country tags")
@@ -246,7 +246,7 @@ class HOIIVUtilsInitializer {
         setProperty("valid.CountryTag", "false")
         HOIIVUtilsInitializer.LOGGER.error("Exception while reading country tags", e)
     }
-    try if (Country.read) setProperty("valid.Country", "true")
+    try if (Country.read()) setProperty("valid.Country", "true")
     else {
       setProperty("valid.Country", "false")
       HOIIVUtilsInitializer.LOGGER.error("Failed to read countries")
@@ -256,7 +256,7 @@ class HOIIVUtilsInitializer {
         setProperty("valid.Country", "false")
         HOIIVUtilsInitializer.LOGGER.error("Exception while reading countries", e)
     }
-    try if (State.read) setProperty("valid.State", "true")
+    try if (State.read()) setProperty("valid.State", "true")
     else {
       setProperty("valid.State", "false")
       HOIIVUtilsInitializer.LOGGER.error("Failed to read states")
@@ -266,7 +266,7 @@ class HOIIVUtilsInitializer {
         setProperty("valid.State", "false")
         HOIIVUtilsInitializer.LOGGER.error("Exception while reading states", e)
     }
-    try if (FocusTree.read) setProperty("valid.FocusTree", "true")
+    try if (FocusTree.read()) setProperty("valid.FocusTree", "true")
     else {
       setProperty("valid.FocusTree", "false")
       HOIIVUtilsInitializer.LOGGER.error("Failed to read focus trees")
@@ -276,7 +276,7 @@ class HOIIVUtilsInitializer {
         setProperty("valid.FocusTree", "false")
         HOIIVUtilsInitializer.LOGGER.error("Exception while reading focus trees", e)
     }
-    try if (IdeaFile.read) setProperty("valid.IdeaFiles", "true")
+    try if (IdeaFile.read()) setProperty("valid.IdeaFiles", "true")
     else {
       setProperty("valid.IdeaFiles", "false")
       HOIIVUtilsInitializer.LOGGER.error("Failed to read idea files")
@@ -339,21 +339,23 @@ class HOIIVUtilsInitializer {
    * @param stateFiles The directory containing state files.
    */
   def watchStateFiles(stateFiles: File): Unit = {
-    if (!(validateDirectoryPath(Optional.ofNullable(stateFiles).map(File.getPath).orElse(null), "State files directory"))) return
+    if (stateFiles == null || !validateDirectoryPath(stateFiles.getPath, "State files directory")) return
+
     stateFilesWatcher = new FileWatcher(stateFiles)
-    stateFilesWatcher.addListener(new FileAdapter() {
+    stateFilesWatcher.addListener(new FileAdapter {
       override def onCreated(event: FileEvent): Unit = {
-        handleStateFileEvent(event, "created/loaded", State.readState)
+        handleStateFileEvent(event, "created/loaded", file => State.readState(file))
       }
 
       override def onModified(event: FileEvent): Unit = {
-        handleStateFileEvent(event, "modified", State.readState)
+        handleStateFileEvent(event, "modified", file => State.readState(file))
       }
 
       override def onDeleted(event: FileEvent): Unit = {
-        handleStateFileEvent(event, "deleted", State.removeState)
+        handleStateFileEvent(event, "deleted", file => State.removeState(file))
       }
-    }).watch()
+    })
+    stateFilesWatcher.watch()
   }
 
   /**
@@ -363,13 +365,15 @@ class HOIIVUtilsInitializer {
    * @param actionName  Name of the action performed.
    * @param stateAction Function to apply to the file.
    */
-  private def handleStateFileEvent(event: FileEvent, actionName: String, stateAction: Consumer[File]): Unit = {
+  private def handleStateFileEvent(event: FileEvent, actionName: String, stateAction: File => Unit): Unit = {
     EventQueue.invokeLater(() => {
-      stateFilesWatcher.listenerPerformAction += 1
+      stateFilesWatcher.listenerPerformAction = stateFilesWatcher.listenerPerformAction + 1
       val file = event.getFile
-      stateAction.accept(file)
-      stateFilesWatcher.listenerPerformAction -= 1
-      HOIIVUtilsInitializer.LOGGER.debug("State was {}: {}", actionName, State.get(file))
+      if (file != null) {
+        stateAction(file)
+      }
+      stateFilesWatcher.listenerPerformAction = stateFilesWatcher.listenerPerformAction - 1
+      HOIIVUtilsInitializer.LOGGER.debug(s"State was $actionName: ${State.get(file)}")
     })
   }
 
