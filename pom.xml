@@ -211,7 +211,7 @@
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala3-compiler_3</artifactId>
-			<version>3.6.3</version>
+			<version>3.7.0</version>
 		</dependency>
 		<!-- used to be in main library moved out pre scala 3, nice. -->
 		<!-- https://mvnrepository.com/artifact/org.scala-lang.modules/scala-parser-combinators -->
@@ -245,7 +245,7 @@
 				<!-- see http://davidb.github.com/scala-maven-plugin -->
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
-				<version>4.9.2</version>
+				<version>4.9.5</version>
 				<executions>
 					<execution>
 						<id>scala-compile-first</id>
