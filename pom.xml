@@ -237,7 +237,7 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.8</version>
 				<configuration>
-					<mainClass>com.hoi4utils.clausewitz.HOIIVUtils</mainClass>
+					<mainClass>com.hoi4utils.HOIIVUtils</mainClass>
 				</configuration>
 			</plugin>
 			<!-- Scala Integration -->
@@ -333,7 +333,7 @@
 						<configuration>
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.hoi4utils.clausewitz.HOIIVUtils</mainClass>
+									<mainClass>com.hoi4utils.HOIIVUtils</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

@@ -17,7 +17,7 @@ import scala.io.Source
  */
 class Updater {
   val LOGGER: Logger = LogManager.getLogger(classOf[Updater])
-  var lV = Version.DEFAULT
+  var lV: Version = Version.DEFAULT
   def updateCheck(v: Version, hDir: File): Unit = {
     LOGGER.debug("Checking for updates...")
     val tempUprJar = new File(hDir.getAbsolutePath

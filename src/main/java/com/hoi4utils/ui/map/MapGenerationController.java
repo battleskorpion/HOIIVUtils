@@ -28,8 +28,6 @@ import java.io.InputStream;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-import static com.hoi4utils.clausewitz.HOIIVUtils.HOIIVUTILS_DIR;
-
 public class MapGenerationController extends HOIIVUtilsAbstractController {
 	public static final Logger LOGGER = LogManager.getLogger(MapGenerationController.class);
 	private ProvinceGeneration provinceGeneration;

@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.data.idea;
 
-import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.HOIIVUtils;
 
 /**
  * This is the FixIdea file.

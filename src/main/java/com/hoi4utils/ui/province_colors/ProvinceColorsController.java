@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.province_colors;
 
-import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.clausewitz.map.gen.ColorGenerator;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.application.Platform;
@@ -12,12 +12,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.paint.Color.*;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.*;
 import java.io.File;
 
 import static javafx.scene.paint.Color.BLACK;

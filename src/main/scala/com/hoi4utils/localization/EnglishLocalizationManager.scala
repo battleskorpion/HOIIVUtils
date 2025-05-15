@@ -1,8 +1,8 @@
 package com.hoi4utils.localization
 
-import com.hoi4utils.FileUtils
+import com.hoi4utils.{FileUtils, HOIIVUtils}
 import com.hoi4utils.exceptions.LocalizationExistsException
-import com.hoi4utils.clausewitz.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import org.apache.logging.log4j.{LogManager, Logger}
 

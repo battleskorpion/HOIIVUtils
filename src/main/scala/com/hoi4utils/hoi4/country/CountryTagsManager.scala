@@ -1,7 +1,6 @@
 package com.hoi4utils.hoi4.country
 
-import com.hoi4utils.FileUtils
-import com.hoi4utils.clausewitz.HOIIVUtils
+import com.hoi4utils.{FileUtils, HOIIVUtils}
 
 import java.io.{File, IOException}
 import scala.collection.mutable.ListBuffer

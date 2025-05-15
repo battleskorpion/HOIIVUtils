@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.menu;
 
 
-import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.ui.CustomTooltipController;
 import com.hoi4utils.ui.JavaFXUIManager;

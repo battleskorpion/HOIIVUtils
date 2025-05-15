@@ -2,7 +2,7 @@ package com.hoi4utils.ui.settings;
 
 import com.hoi4utils.FileUtils;
 import com.hoi4utils.clausewitz.HOIIVFiles;
-import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.menu.MenuController;
 import javafx.application.Application;

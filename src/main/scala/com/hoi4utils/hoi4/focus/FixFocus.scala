@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.focus
 
+import com.hoi4utils.HOIIVUtils
 import language.experimental.namedTuples
-import com.hoi4utils.clausewitz.HOIIVUtils
 import com.hoi4utils.hoi4.country.CountryTagsManager
 import com.hoi4utils.localization.{LocalizationManager, Property}
 import org.apache.logging.log4j.LogManager

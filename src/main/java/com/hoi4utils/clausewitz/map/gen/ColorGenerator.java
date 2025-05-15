@@ -1,10 +1,7 @@
 package com.hoi4utils.clausewitz.map.gen;
 
 
-import com.hoi4utils.clausewitz.HOIIVUtils;
-
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;

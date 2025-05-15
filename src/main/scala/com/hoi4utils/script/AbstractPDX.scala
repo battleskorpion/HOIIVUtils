@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.clausewitz.HOIIVUtils
+import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.{Node, Parser, ParserException}
 import org.apache.logging.log4j.LogManager

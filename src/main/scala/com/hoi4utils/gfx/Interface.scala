@@ -1,6 +1,7 @@
 package com.hoi4utils.gfx
 
-import com.hoi4utils.clausewitz.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.HOIIVUtils
+import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.parser.{Node, Parser, ParserException}
 import org.apache.logging.log4j.{LogManager, Logger}
 

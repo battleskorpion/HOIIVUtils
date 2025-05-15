@@ -2,7 +2,7 @@ package com.hoi4utils.ui.buildings;
 
 
 import com.hoi4utils.ClausewitzDate;
-import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.hoi4.country.Country;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;

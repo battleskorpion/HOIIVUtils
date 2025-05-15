@@ -2,9 +2,10 @@ package com.hoi4utils.hoi4.focus
 
 import language.experimental.namedTuples
 import FocusTree.focusTreeFileMap
+import com.hoi4utils.HOIIVUtils
 import javafx.collections.{FXCollections, ObservableList}
 import org.apache.logging.log4j.{LogManager, Logger}
-import com.hoi4utils.clausewitz.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.localization.{Localizable, Property}
 import com.hoi4utils.script.{DoublePDX, MultiPDX, PDXFile, PDXScript, ReferencePDX, StringPDX, StructuredPDX}

@@ -1,13 +1,13 @@
 package map
 
-import com.hoi4utils.ExpectedRange
+import com.hoi4utils.{ExpectedRange, HOIIVUtils}
 import com.hoi4utils.ClausewitzDate
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.localization.*
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
 import com.hoi4utils.clausewitz.map.{Owner, UndefinedStateIDException}
-import com.hoi4utils.clausewitz.{BoolType, HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.clausewitz.{BoolType, HOIIVFiles}
 import com.hoi4utils.parser.*
 import com.hoi4utils.hoi4.country.{Country, CountryTag, CountryTagsManager}
 import com.hoi4utils.localization.Localizable

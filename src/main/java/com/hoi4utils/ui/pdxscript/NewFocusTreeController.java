@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.pdxscript;
 
-import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.hoi4.country.CountryTag;
 import com.hoi4utils.hoi4.country.CountryTag$;
 import com.hoi4utils.hoi4.focus.FocusTree;

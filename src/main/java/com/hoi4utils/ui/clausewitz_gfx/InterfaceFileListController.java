@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.clausewitz_gfx;
 
-import com.hoi4utils.clausewitz.HOIIVUtils;
+import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
