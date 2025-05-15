@@ -1,13 +1,13 @@
-package com.hoi4utils.clausewitz.data.idea;
-
-import com.hoi4utils.HOIIVUtils;
-
-/**
- * This is the FixIdea file.
- * todo: modify design to work with new localization system
- */
-public class FixIdea extends HOIIVUtils {
-
+//package com.hoi4utils.clausewitz.data.idea;
+//
+//import com.hoi4utils.HOIIVUtils;
+//
+///**
+// * This is the FixIdea file.
+// * todo: modify design to work with new localization system
+// */
+//public class FixIdea extends HOIIVUtils {
+//
 //	public static int addIdeaLoc(IdeaFile idea_file, LocalizationFile localization) throws IOException {
 //		localization.read();
 //
@@ -49,4 +49,4 @@ public class FixIdea extends HOIIVUtils {
 ////		localization.writeLocalization();       // eh nah not here
 //		return ideasAddedLoc.size();
 //	}
-}
+//}

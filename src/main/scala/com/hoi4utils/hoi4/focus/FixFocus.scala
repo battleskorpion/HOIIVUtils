@@ -19,7 +19,7 @@ import java.time.LocalDateTime
  * It ensures that all focuses have proper localization for their names and descriptions.
  */
 object FixFocus {
-  private val LOGGER = LogManager.getLogger(classOf[FixFocus])
+  private val LOGGER = LogManager.getLogger(this.getClass)
 
   // TODO improve
   @throws[IOException]
@@ -99,5 +99,3 @@ object FixFocus {
 
   private def generateDescription = "Added on " + LocalDateTime.now + " by HOIIVUtils."
 }
-
-class FixFocus extends HOIIVUtils {}
