@@ -5,7 +5,7 @@ import org.apache.logging.log4j.{LogManager, Logger}
 
 import scala.sys.process.*
 import java.io.File
-import java.nio.file.{Files, StandardCopyOption}
+import java.nio.file.{Files, Path, StandardCopyOption}
 import javax.swing.JOptionPane
 import scala.io.Source
 
@@ -18,7 +18,8 @@ import scala.io.Source
 class Updater {
   val LOGGER: Logger = LogManager.getLogger(classOf[Updater])
   var lV: Version = Version.DEFAULT
-  def updateCheck(v: Version, hDir: File): Unit = {
+  def updateCheck(v: Version, hDirPath: Path): Unit = {
+    val hDir = hDirPath.toFile
     LOGGER.debug("Checking for updates...")
     val tempUprJar = new File(hDir.getAbsolutePath
       + File.separator + "Updater"

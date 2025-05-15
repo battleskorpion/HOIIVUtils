@@ -30,13 +30,13 @@ import scala.::
 class Initializer {
   private val LOGGER = LogManager.getLogger(this.getClass)
 
-  def initializer(config: Config): Unit = {
+  def initialize(config: Config): Unit = {
     ModifierDatabase.init()
     EffectDatabase.init()
-    ConfigManager().loadConfiguration(config)
+    ConfigManager().loadProperties(config)
     autoSetHOIIVPath(config.getProperties)
     autoSetDemoModPath(config.getProperties, config.getDir)
-    ConfigManager().saveConfiguration(config)
+    ConfigManager().saveProperties(config)
   }
 
   private def autoSetHOIIVPath(p: Properties): Unit = {

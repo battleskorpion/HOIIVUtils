@@ -32,9 +32,11 @@ object HOIIVUtils {
 
   def main(args: Array[String]): Unit = {
     val upr = new Updater
-//    upr.updateCheck(, config.getDir)
+    hInitializer.initialize(config)
+    val version = Version.getVersion
+    upr.updateCheck(version, config.getDir)
     hModLoader.loadMod(hProperties)
-//    LOGGER.info("HOIIVUtils {} launched successfully", config.getVersion)
+    LOGGER.info(s"HOIIVUtils $version launched successfully")
     val menuController = new MenuController
     menuController.launchMenuWindow(args)
   }
@@ -77,7 +79,7 @@ object HOIIVUtils {
 
   def save(): Unit = {
     try
-     new ConfigManager().saveConfiguration(config)
+     new ConfigManager().saveProperties(config)
     catch
       case e: Exception =>
         LOGGER.error("Failed to save configuration: {}", e.getMessage)

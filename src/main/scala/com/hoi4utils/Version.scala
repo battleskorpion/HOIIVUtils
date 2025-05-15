@@ -1,5 +1,7 @@
 package com.hoi4utils
 
+import java.util.Properties
+
 case class Version(major: Int, minor: Int, patch: Int) extends Ordered[Version] {
   override def compare(that: Version): Int =
     Ordering[(Int, Int, Int)]
@@ -16,4 +18,20 @@ object Version {
     Version(a.toInt, b.toInt, c.toInt)
   }
   val DEFAULT: Version = Version(0, 0, 0)
+
+  def getVersion: Version = {
+    val properties = new Properties()
+    val resourceStream = getClass.getClassLoader.getResourceAsStream("version.properties")
+
+    if (resourceStream != null) {
+      try {
+        properties.load(resourceStream)
+        Version(properties.getProperty("version"))
+      } finally {
+        resourceStream.close()
+      }
+    } else {
+      DEFAULT
+    }
+  }
 }

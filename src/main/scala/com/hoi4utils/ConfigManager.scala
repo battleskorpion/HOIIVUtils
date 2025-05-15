@@ -16,77 +16,35 @@ class ConfigManager {
   def createConfig: Config = {
     val jarPath = Paths.get(this.getClass.getProtectionDomain.getCodeSource.getLocation.toURI).toAbsolutePath
     val hDir = jarPath.getParent.getParent
-    val hPropertiesPath = Paths.get {
-      s"$hDir${File.separator}HOIIVUtils.properties"
-    }.toAbsolutePath
+    val hPropertiesPath = Paths.get {s"$hDir${File.separator}HOIIVUtils.properties"}.toAbsolutePath
     val hPropertiesJarResource = this.getClass.getClassLoader.getResourceAsStream("HOIIVUtils.properties")
     val hProperties = new Properties()
     new Config(hDir, hPropertiesPath, hPropertiesJarResource, hProperties)
   }
 
-  def saveConfiguration(config: Config): Unit = {
-    val propertiesPath = config.getPropertiesPath
-    val defaultProperties = config.getPropertiesJarResource
-    val hProperties = config.getProperties
-    val externalFile = propertiesPath.toFile
-    val noSavedSettings = !(externalFile.exists) && defaultProperties != null
-    if (noSavedSettings) loadDefaultProperties(config)
-    try {
-      val output = new FileOutputStream(externalFile)
-      try {
-        LOGGER.debug("Configuration saved to: {}", externalFile.getAbsolutePath)
-        hProperties.store(output, "HOIIVUtils Configuration")
-      } catch {
-        case e: IOException =>
-          LOGGER.error("Failed to save configuration", e)
-          throw new RuntimeException(e)
-      } finally if (output != null) output.close()
-    }
+  def saveProperties(config: Config): Unit = {
+    if (config.getPropertiesPath.toFile.exists()) createHOIIVUtilsPropertiesFile(config)
+    val output = new FileOutputStream(config.getPropertiesPath.toFile)
+    config.getProperties.store(output, "HOIIVUtils Configuration")
+    output.close()
   }
 
-  def loadConfiguration(config: Config): Unit = {
-    val propertiesPath = config.getPropertiesPath
-    val externalFile = propertiesPath.toFile
-
-    if (!externalFile.exists) {
-      LOGGER.warn("External configuration file not found: {}", propertiesPath)
-      loadDefaultProperties(config)
-    }
-    try {
-      val input = new FileInputStream(externalFile)
-      try {
-        LOGGER.debug("External configuration loaded from: {}", propertiesPath)
-        config.getProperties.load(input)
-      } catch {
-        case e: IOException =>
-          LOGGER.fatal("Error loading external properties from: {}", propertiesPath, e)
-          loadDefaultProperties(config)
-      } finally if (input != null) input.close()
-    }
+  def loadProperties(config: Config): Unit = {
+    val hPropertiesFile = config.getPropertiesPath.toFile
+    if (!hPropertiesFile.exists) createHOIIVUtilsPropertiesFile(config)
+    val input = new FileInputStream(hPropertiesFile)
+    config.getProperties.load(input)
+    input.close()
   }
 
-  def loadDefaultProperties(config: Config): Unit = {
-    val propertiesPath = config.getPropertiesPath
+  def createHOIIVUtilsPropertiesFile(config: Config): Unit = {
     val defaultProperties = config.getPropertiesJarResource
-    val externalFile = propertiesPath.toFile
-    try {
-      val externalOut = new FileOutputStream(externalFile)
-      try {
-        val buffer = new Array[Byte](8192)
-        var bytesRead = 0
-        while ({bytesRead = defaultProperties.read(buffer); bytesRead != -1}) {
-          externalOut.write(buffer, 0, bytesRead)
-        }
-        LOGGER.debug("Default properties copied to: {}", externalFile.getAbsolutePath)
-      } catch {
-        case e: IOException =>
-          LOGGER.error("Failed to copy default properties to external file", e)
-      } finally {
-        externalOut.close()
-      }
-    } catch {
-      case e: IOException =>
-        LOGGER.error("Failed to create output file: {}", externalFile.getAbsolutePath, e)
-    }
+    val stream = new FileOutputStream(config.getPropertiesPath.toFile)
+    val buffer = new Array[Byte](1024)
+    Iterator
+      .continually(defaultProperties.read(buffer))
+      .takeWhile(_ != -1)
+      .foreach(bytesRead => stream.write(buffer, 0, bytesRead))
+    stream.close()
   }
 }
