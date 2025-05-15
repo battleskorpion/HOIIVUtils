@@ -1,7 +1,6 @@
 package com.hoi4utils.parser
 
 import com.hoi4utils.clausewitz.BoolType
-import dotty.tools.sjs.ir.Trees.JSUnaryOp.!
 
 import scala.collection.mutable.ListBuffer
 

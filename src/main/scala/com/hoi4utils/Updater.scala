@@ -1,6 +1,5 @@
 package com.hoi4utils
 
-import dotty.tools.sjs.ir.Trees.JSBinaryOp.||
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import scala.sys.process.*
