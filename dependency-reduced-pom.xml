@@ -76,7 +76,7 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>4.9.2</version>
+        <version>4.9.5</version>
         <executions>
           <execution>
             <id>scala-compile-first</id>
@@ -94,6 +94,9 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <scalaVersion>${scala.version}</scalaVersion>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -136,7 +139,7 @@
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
-              <version>${lombok.version}</version>
+              <version>1.18.38</version>
             </path>
           </annotationProcessorPaths>
           <release>${java.version}</release>
@@ -161,13 +164,35 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.3.2</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${project.build.directory}</directory>
+              <includes>
+                <include>**/*</include>
+              </includes>
+            </fileset>
+            <fileset>
+              <directory>${basedir}</directory>
+              <includes>
+                <include>.bloop/**</include>
+                <include>.metals/**</include>
+                <include>.scala-build/**</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.36</version>
+      <version>1.18.38</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -254,12 +279,12 @@
     </dependencies>
   </dependencyManagement>
   <properties>
-    <lombok.version>1.18.36</lombok.version>
-    <java.version>23</java.version>
+    <java.version>24</java.version>
     <project.organization.name>battleskorpion</project.organization.name>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>23.0.2</javafx.version>
+    <javafx.version>24.0.1</javafx.version>
     <project.inceptionYear>2022</project.inceptionYear>
+    <scala.version>3.7.0</scala.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 </project>
