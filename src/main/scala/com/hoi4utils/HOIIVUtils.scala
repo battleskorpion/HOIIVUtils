@@ -33,7 +33,7 @@ object HOIIVUtils {
   def main(args: Array[String]): Unit = {
     val upr = new Updater
     hInitializer.initialize(config)
-    val version = Version.getVersion
+    val version = Version.getVersion(hProperties)
     upr.updateCheck(version, config.getDir)
     hModLoader.loadMod(hProperties)
     LOGGER.info(s"HOIIVUtils $version launched successfully")
