@@ -3,7 +3,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.log_viewer.LogViewerController">
+<VBox xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.log_viewer.LogViewerController">
     <TextArea fx:id="logTextArea" editable="false" prefHeight="500.0" prefWidth="1000.0">
       <font>
          <Font size="14.0" />
