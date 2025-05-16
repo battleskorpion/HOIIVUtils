@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.clausewitz_gfx;
 
 import com.hoi4utils.HOIIVUtils;
-import com.hoi4utils.Version;
+
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -26,7 +26,7 @@ public class InterfaceFileListController extends HOIIVUtilsAbstractController {
 	}
 
 	private void includeVersion() {
-		idVersion.setText(Version.getVersion().toString());
+		idVersion.setText(HOIIVUtils.get("version").toString());
 	}
 }
 

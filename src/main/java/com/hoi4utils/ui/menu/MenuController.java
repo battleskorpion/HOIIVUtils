@@ -2,7 +2,7 @@ package com.hoi4utils.ui.menu;
 
 
 import com.hoi4utils.HOIIVUtils;
-import com.hoi4utils.Version;
+
 import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.ui.CustomTooltipController;
 import com.hoi4utils.ui.JavaFXUIManager;
@@ -40,7 +40,7 @@ import java.util.*;
 public class MenuController extends Application implements JavaFXUIManager {
 	public static final Logger LOGGER = LogManager.getLogger(MenuController.class);
 	private String fxmlResource = "Menu.fxml";
-	private String title = "HOIIVUtils Menu " + Version.getVersion().toString();
+	private String title = "HOIIVUtils Menu " + HOIIVUtils.get("version").toString();
 	private Stage stage;
 
 	@FXML

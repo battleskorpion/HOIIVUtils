@@ -2,63 +2,88 @@ package com.hoi4utils
 
 import com.hoi4utils.ui.menu.MenuController
 import org.apache.logging.log4j.{LogManager, Logger}
+
+import java.io.File
 import java.util.Properties
-import javax.swing.JOptionPane
+import javax.swing.*
 
-// 1) Top-level @main with varargs for Scala 3
-@main def hoi4utils(args: String*): Unit =
-  val LOGGER: Logger = LogManager.getLogger("Main")
-  val configManager     = new ConfigManager
-  val config: Config    = configManager.createConfig
-  val initializer       = new Initializer
-  val modLoader         = new ModLoader
-  val properties: Properties = config.getProperties
-  val updater           = new Updater
-
-  // initialize & update
-  initializer.initialize(config)
-  val version = Version.getVersion
-  updater.updateCheck(version, config.getDir)
-
-  // load mod
-  try
-    modLoader.loadMod(properties)
-  catch
-    case e: Exception =>
-      LOGGER.error("Failed to load mod: {}", e.getMessage)
-      JOptionPane.showMessageDialog(null, s"Failed to load mod: ${e.getMessage}", "Critical Error", JOptionPane.ERROR_MESSAGE)
-      System.exit(1)
-
-  LOGGER.info(s"HOIIVUtils $version launched successfully")
-
-  // launch the Swing menu (Scala Array ⇄ Java String[] is seamless)
-  new MenuController().launchMenuWindow(args.toArray)
-
-// 2) Keep this object purely as utility storage (no more .main clash)
+/**
+ * HOIIVUtils.java main method is here
+ * <p>
+ * HOIIVUTILS Directory Layout:
+ * <p>
+ * HOIIVUtils\\target\\HOIIVUtils.jar
+ * <p>
+ * HOIIVUtils\\demo_mod\\*
+ * <p>
+ * HOIIVUtils\\HOIIVUtils.bat
+ * <p>
+ * HOIIVUtils\\HOIIVUtils.properties
+ * <p>
+ * HOIIVUtils\\HOIIVUtils.sh
+ */
 object HOIIVUtils {
-  private val LOGGER: Logger = LogManager.getLogger(this.getClass)
-  private val manager = new ConfigManager
-  private val config: Config = manager.createConfig
+  val LOGGER: Logger = LogManager.getLogger(this.getClass)
+  val configManager = new ConfigManager
+  val config: Config = configManager.createConfig
+  val hInitializer: Initializer = new Initializer
+  val hModLoader: ModLoader = new ModLoader
+  val hProperties: Properties = config.getProperties
 
-  def get(key: String): String =
-    try config.getProperties.getProperty(key)
+  def main(args: Array[String]): Unit = {
+    val upr = new Updater
+    hInitializer.initialize(config)
+    val version = Version.getVersion(hProperties)
+    upr.updateCheck(version, config.getDir)
+    hModLoader.loadMod(hProperties)
+    LOGGER.info(s"HOIIVUtils $version launched successfully")
+    val menuController = new MenuController
+    menuController.launchMenuWindow(args)
+  }
+
+  /**
+   * @param key Property name
+   * @return Property value or null if not found
+   */
+  def get(key: String): String = {
+    try
+      hProperties.getProperty(key)
     catch
       case e: Exception =>
         LOGGER.error("Failed to get property {}: {}", key, e.getMessage)
-        throw RuntimeException(e)
+        throw new RuntimeException(e)
+  }
 
-  def set(key: String, value: String): Unit =
-    try config.getProperties.setProperty(key, value)
+  /**
+   * @param key   Property key
+   * @param value Property value
+   */
+  def set(key: String, value: String): Unit = {
+    try
+      hProperties.setProperty(key, value)
     catch
       case e: Exception =>
         LOGGER.error("Failed to set property {}: {}", key, e.getMessage)
-        throw RuntimeException(e)
+        throw new RuntimeException(e)
+  }
 
-  def save(): Unit =
-    try manager.saveProperties(config)
+  def loadMod(): Unit = {
+    try
+      new ModLoader().loadMod(hProperties)
+    catch
+      case e: Exception =>
+        LOGGER.error("Failed to load mod: {}", e.getMessage)
+        JOptionPane.showMessageDialog(null, "Failed to load mod: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
+        System.exit(1)
+  }
+
+  def save(): Unit = {
+    try
+     new ConfigManager().saveProperties(config)
     catch
       case e: Exception =>
         LOGGER.error("Failed to save configuration: {}", e.getMessage)
-        JOptionPane.showMessageDialog(null, s"Failed to save configuration: ${e.getMessage}", "Critical Error", JOptionPane.ERROR_MESSAGE)
+        JOptionPane.showMessageDialog(null, "Failed to save configuration: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
         System.exit(1)
+  }
 }

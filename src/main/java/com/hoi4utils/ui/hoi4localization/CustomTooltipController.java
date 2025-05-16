@@ -65,7 +65,7 @@
 //	}
 //
 //	private void includeVersion() {
-//		idVersion.setText(Version.getVersion().toString());
+//		idVersion.setText(HOIIVUtils.get("version").toString());
 //	}
 //
 //	@Override

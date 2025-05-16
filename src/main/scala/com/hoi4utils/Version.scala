@@ -19,16 +19,15 @@ object Version {
   }
   val DEFAULT: Version = Version(0, 0, 0)
 
-  def getVersion: Version = {
-    val properties = new Properties()
-    val resourceStream = getClass.getClassLoader.getResourceAsStream("version.properties")
-
-    if (resourceStream != null) {
+  def getVersion(hProperties: Properties): Version = {
+    val versionString = hProperties.getProperty("version")
+    if (versionString != null && versionString.nonEmpty) {
       try {
-        properties.load(resourceStream)
-        Version(properties.getProperty("version"))
-      } finally {
-        resourceStream.close()
+        Version(versionString)
+      } catch {
+        case e: Exception =>
+          println(s"Failed to parse version string '$versionString': ${e.getMessage}")
+          DEFAULT
       }
     } else {
       DEFAULT
