@@ -150,10 +150,6 @@ public class MenuController extends Application implements JavaFXUIManager {
 		return hasInvalidPaths;
 	}
 
-	public void launchMenuWindow(String[] args) {
-		launch(args);
-	}
-
 	@Override
 	public void start(Stage stage) {
 		try {
