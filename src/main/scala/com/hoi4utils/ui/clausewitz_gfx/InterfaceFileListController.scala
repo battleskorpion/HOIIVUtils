@@ -1,35 +1,22 @@
-package com.hoi4utils.ui.clausewitz_gfx;
+package com.hoi4utils.ui.clausewitz_gfx
 
-import com.hoi4utils.HOIIVUtils;
-
-import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import com.hoi4utils.HOIIVUtils
+import com.hoi4utils.ui.HOIIVUtilsAbstractController
+import javafx.fxml.FXML
+import javafx.scene.control.Label
 
 // todo add actual effect (enable/disable) from check boxes
-public class InterfaceFileListController extends HOIIVUtilsAbstractController {
+// view GFX
+class InterfaceFileListController extends HOIIVUtilsAbstractController {
+  setFxmlResource("InterfaceFileList.fxml")
+  setTitle("HOIIVUtils Interface File List Window")
+  @FXML var idVersion: Label = null
+  @FXML var idWindowName: Label = null
 
-	@FXML
-	public Label idVersion;
-	@FXML
-	public Label idWindowName;
-
-	public InterfaceFileListController() {
-		setFxmlResource("InterfaceFileList.fxml");
-		setTitle("HOIIVUtils Interface File List Window");
-	}
-
-	@FXML
-	void initialize() {
-		includeVersion();
-		idWindowName.setText("InterfaceFileListWindow" + " WIP");
-	}
-
-	private void includeVersion() {
-		idVersion.setText(HOIIVUtils.get("version").toString());
-	}
-}
-
+  def initialize(): Unit = {
+    idVersion.setText(HOIIVUtils.get("version"))
+    idWindowName.setText("InterfaceFileListWindow" + " WIP")
+  }
 // private JPanel interfaceFileListJPanel;
 // private JTable interfaceFileListTable;
 // private DefaultTableModel interfaceFileListTableModel;
@@ -107,7 +94,6 @@ public class InterfaceFileListController extends HOIIVUtilsAbstractController {
 // // data
 // interfaceFileListTableModel.setValueAt(enableFile, i, 0);
 // interfaceFileListTableModel.setValueAt(interfaceFilename, i, 1);
+//  }
 // }
-// }
-
-// }
+}
