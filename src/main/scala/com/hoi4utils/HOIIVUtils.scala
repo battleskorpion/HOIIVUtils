@@ -1,6 +1,7 @@
 package com.hoi4utils
 
 import com.hoi4utils.ui.menu.MenuController
+import javafx.application.Application
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.File
@@ -38,7 +39,7 @@ object HOIIVUtils {
     hModLoader.loadMod(hProperties)
     LOGGER.info(s"HOIIVUtils $version launched successfully")
     val menuController = new MenuController
-    menuController.launchMenuWindow(args)
+    Application.launch(classOf[com.hoi4utils.ui.menu.MenuController], args*) //    menuController.launchMenuWindow(args)
   }
 
   /**
