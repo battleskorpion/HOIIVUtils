@@ -4,31 +4,29 @@ import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.ui.buildings.BuildingsByCountryController
 import com.hoi4utils.ui.focus_view.FocusTreeController
-import com.hoi4utils.ui.hoi4localization.{ManageFocusTreesController, FocusLocalizationController, IdeaLocalizationController}
+import com.hoi4utils.ui.hoi4localization.{FocusLocalizationController, IdeaLocalizationController, ManageFocusTreesController}
 import com.hoi4utils.ui.map.{MapEditorController, MapGenerationController}
 import com.hoi4utils.ui.parser.ParserViewerController
-
+import com.typesafe.scalalogging.LazyLogging
 import javafx.application.{Application, Platform}
 import javafx.concurrent.Task
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.{Parent, Scene}
 import javafx.scene.control.Button
 import javafx.stage.Stage
-
 import org.apache.logging.log4j.{LogManager, Logger}
 
-import javax.swing.{JDialog, JOptionPane, UIManager, JPanel, JTextArea, JButton, BorderFactory}
-import java.awt.{Dialog, BorderLayout, Font, FlowLayout}
+import javax.swing.{BorderFactory, JButton, JDialog, JOptionPane, JPanel, JTextArea, UIManager}
+import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import java.io.IOException
-import java.util.{Objects, Optional, ResourceBundle, MissingResourceException, Locale}
-import scala.util.{Try, Success, Failure}
+import java.util.{Locale, MissingResourceException, Objects, Optional, ResourceBundle}
+import scala.util.{Failure, Success, Try}
 
-class MenuController extends Application with JavaFXUIManager {
+class MenuController extends Application with JavaFXUIManager with LazyLogging {
   import MenuController._
 
   private var fxmlResource: String = "Menu.fxml"
   private var title: String = s"HOIIVUtils Menu ${HOIIVUtils.get("version")}"
-  private var stage: Stage = _
 
   @FXML
   var settingsButton: Button = _
@@ -49,127 +47,44 @@ class MenuController extends Application with JavaFXUIManager {
 
   override def start(stage: Stage): Unit = {
     try {
-      val root = loadFXML()
-      setupAndShowStage(root)
+      val loader = new FXMLLoader(getClass.getResource(fxmlResource), getResourceBundle)
+      val root = loader.load[Parent]()
+      val scene = new Scene(root)
+      if (HOIIVUtils.get("theme") == "dark")
+        scene.getStylesheets.add("com/hoi4utils/ui/javafx_dark.css")
+      else
+        scene.getStylesheets.add("/com/hoi4utils/ui/highlight-background.css")
+      val stage = new Stage()
+      stage.setScene(scene)
+      stage.setTitle(title)
+      decideScreen(stage)
+      stage.show()
+      logger.debug(s"Stage created and shown: $title")
     } catch {
-      case e: IOException => handleFXMLLoadError(e)
+      case e: IOException =>
+        val errorMessage = s"Failed to open window\nError loading FXML: $fxmlResource"
+        logger.error(s"Error loading FXML: $fxmlResource", e)
+        JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE)
+        throw new RuntimeException(errorMessage, e)
     }
   }
 
-  def open(): Unit = {
-    if (stage != null) {
-      showExistingStage()
-      return
-    }
-
-    if (fxmlResource == null) {
-      handleMissingFXMLResource()
-      return
-    }
-
-    start(new Stage())
-  }
-
-  private def showExistingStage(): Unit = {
-    stage.show()
-    logger.info(s"Stage already exists, showing: $title")
-  }
-
-  private def handleMissingFXMLResource(): Unit = {
-    val errorMessage = "Failed to open window\nError: FXML resource is null."
-    logger.error(errorMessage)
-    JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE)
-  }
-
-  private def loadFXML(): Parent = {
-    val launchLoader = new FXMLLoader(getClass.getResource(fxmlResource), getResourceBundle())
-    try {
-      launchLoader.load()
-    } catch {
-      case e: IOException => throw new IOException(s"Failed to load FXML: $fxmlResource", e)
-    }
-  }
-
-  private def setupAndShowStage(root: Parent): Unit = {
-    val scene = new Scene(root)
-    addSceneStylesheets(scene)
-    this.stage = createLaunchStage(scene)
-    logger.debug(s"Stage created and shown: $title")
-  }
-
-  private def addSceneStylesheets(scene: Scene): Unit = {
-    scene.getStylesheets.add("com/hoi4utils/ui/javafx_dark.css")
-
-    Try {
-      scene.getStylesheets.add(
-        Objects.requireNonNull(
-          getClass.getResource("/com/hoi4utils/ui/highlight-background.css")
-        ).toExternalForm
-      )
-    } match {
-      case Failure(_) => System.err.println("Warning: Stylesheet 'highlight-background.css' not found!")
-      case _ => // Success, do nothing
-    }
-  }
-
-  private def createLaunchStage(scene: Scene): Stage = {
-    Option(stage).foreach(_.close())
-
-    val launchStage = new Stage()
-    launchStage.setScene(scene)
-    launchStage.setTitle(title)
-    decideScreen(launchStage)
-    launchStage.show()
-
-    launchStage
-  }
-
-  private def handleFXMLLoadError(e: IOException): Unit = {
-    val errorMessage = s"Failed to open window\nError loading FXML: $fxmlResource"
-    logger.error(s"Error loading FXML: $fxmlResource", e)
-    JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE)
-    throw new RuntimeException(errorMessage, e)
-  }
+  def open(): Unit = start(new Stage())
 
   def openSettings(): Unit = {
     closeWindow(settingsButton) // closes the menu window
-    openUtilsWindow(new SettingsController())
+    new SettingsController().open()
   }
-
-  def openLogViewer(): Unit = {
-    openUtilsWindow(new LogViewerController())
-  }
-
-  def openLocalizeFocusTree(): Unit = {
-    openUtilsWindow(new FocusLocalizationController())
-  }
-
-  def openLocalizeIdeaFile(): Unit = {
-    openUtilsWindow(new IdeaLocalizationController())
-  }
-
-  def openAllFocusesWindow(): Unit = {
-    openUtilsWindow(new ManageFocusTreesController())
-  }
-
-  def openCustomTooltip(): Unit = {
-    openUtilsWindow(new CustomTooltipController())
-  }
-
-  def openBuildingsByCountry(): Unit = {
-    openUtilsWindow(new BuildingsByCountryController())
-  }
-
-  def openInterfaceFileList(): Unit = {
-    openUtilsWindow(new InterfaceFileListController())
-  }
-
-  def openFocusTreeViewer(): Unit = {
-    openUtilsWindow(new FocusTreeController())
-  }
-
+  def openLogViewer(): Unit = new LogViewerController().open()
+  def openLocalizeFocusTree(): Unit = new FocusLocalizationController().open()
+  def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open()
+  def openAllFocusesWindow(): Unit = new ManageFocusTreesController().open()
+  def openCustomTooltip(): Unit = new CustomTooltipController().open()
+  def openBuildingsByCountry(): Unit = new BuildingsByCountryController().open()
+  def openInterfaceFileList(): Unit = new InterfaceFileListController().open()
+  def openFocusTreeViewer(): Unit = new FocusTreeController().open()
   def openUnitComparisonView(): Unit = {
-    if (!HOIIVFiles.isUnitsFolderValid()) {
+    if (!HOIIVFiles.isUnitsFolderValid) {
       logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
       JOptionPane.showMessageDialog(
         null,
@@ -179,42 +94,19 @@ class MenuController extends Application with JavaFXUIManager {
       )
       return
     }
-    openUtilsWindow(new CompareUnitsController())
+    new CompareUnitsController().open()
   }
-
-  def openProvinceColors(): Unit = {
-    openUtilsWindow(new ProvinceColorsController())
-  }
-
-  def openMapGeneration(): Unit = {
-    openUtilsWindow(new MapGenerationController())
-  }
-
-  def openMapEditor(): Unit = {
-    openUtilsWindow(new MapEditorController())
-  }
-
-  def openParserView(): Unit = {
-    openUtilsWindow(new ParserViewerController())
-  }
-
-  private def openUtilsWindow(utilsWindow: HOIIVUtilsAbstractController): Unit = {
-    utilsWindow.open()
-  }
-
-  override def setFxmlResource(fxmlResource: String): Unit = {
-    this.fxmlResource = fxmlResource
-  }
-
-  override def setTitle(title: String): Unit = {
-    this.title = title
-  }
+  def openProvinceColors(): Unit = new ProvinceColorsController().open()
+  def openMapGeneration(): Unit = new MapGenerationController().open()
+  def openMapEditor(): Unit = new MapEditorController().open()
+  def openParserView(): Unit = new ParserViewerController().open()
+  override def setFxmlResource(fxmlResource: String): Unit = ???
+  override def setTitle(title: String): Unit = ???
 }
 
-object MenuController {
-  val logger: Logger = LogManager.getLogger(classOf[MenuController])
+object MenuController extends LazyLogging {
 
-  def getResourceBundle(): ResourceBundle = {
+  def getResourceBundle: ResourceBundle = {
     val currentLocale = Locale.getDefault
     try {
       ResourceBundle.getBundle("menu", currentLocale)

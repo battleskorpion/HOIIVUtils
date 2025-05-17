@@ -1,4 +1,4 @@
-package com.hoi4utils.clausewitz.data.focus;
+package com.hoi4utils.clausewitz.focus;
 //package src.hoi4utils.clausewitz_data.focus;
 //
 //import hoi4utils.clausewitz_data.focus.Focus;

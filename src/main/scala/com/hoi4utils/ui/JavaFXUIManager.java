@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.hoi4utils.ui.HOIIVUtilsAbstractController.logger;
-
 public interface JavaFXUIManager {
 
 	/**
@@ -121,20 +119,17 @@ public interface JavaFXUIManager {
 		try {
 			preferredScreen = Integer.parseInt(HOIIVUtils.get("preferred.screen"));
 		} catch (NumberFormatException e) {
-			logger.warn("Preferred screen is not a number, resorting to defaults.");
 			return null;
 		}
 
 		ObservableList<Screen> screens = Screen.getScreens();
 		
 		if (preferredScreen > screens.size() - 1) {
-			logger.warn("Preferred screen does not exist, resorting to defaults.");
 			return null;
 		}
 		
 		Screen screen = screens.get(preferredScreen);
 		if (screen == null) {
-			logger.warn("Preferred screen is null error, resorting to defaults.");
 			return null;
 		}
 		

@@ -38,7 +38,7 @@ class CustomTooltipController extends HOIIVUtilsAbstractController with TableVie
   private val customTooltipBuf: ObservableBuffer[CustomTooltip] = ObservableBuffer.empty
   
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    idVersion.setText(HOIIVUtils.get("version").toString)
+    idVersion.setText(HOIIVUtils.get("version"))
     // wire up the JavaFX TableView using your existing helper:
     loadTableView(this, customTooltipTableView, customTooltipBuf, CustomTooltip.dataFunctions())
   }
