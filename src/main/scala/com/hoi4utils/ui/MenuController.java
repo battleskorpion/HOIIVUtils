@@ -1,25 +1,17 @@
-package com.hoi4utils.ui.menu;
+package com.hoi4utils.ui;
 
 
 import com.hoi4utils.HOIIVUtils;
 
 import com.hoi4utils.clausewitz.HOIIVFiles;
-import com.hoi4utils.ui.CustomTooltipController;
-import com.hoi4utils.ui.JavaFXUIManager;
-import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.buildings.BuildingsByCountryController;
-import com.hoi4utils.ui.InterfaceFileListController;
 import com.hoi4utils.ui.focus_view.FocusTreeController;
 import com.hoi4utils.ui.hoi4localization.ManageFocusTreesController;
 import com.hoi4utils.ui.hoi4localization.FocusLocalizationController;
 import com.hoi4utils.ui.hoi4localization.IdeaLocalizationController;
-import com.hoi4utils.ui.LogViewerController;
 import com.hoi4utils.ui.map.MapEditorController;
 import com.hoi4utils.ui.map.MapGenerationController;
 import com.hoi4utils.ui.parser.ParserViewerController;
-import com.hoi4utils.ui.province_colors.ProvinceColorsController;
-import com.hoi4utils.ui.SettingsController;
-import com.hoi4utils.ui.CompareUnitsController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;

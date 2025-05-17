@@ -2,7 +2,6 @@ package com.hoi4utils.ui
 
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.HOIIVUtils
-import com.hoi4utils.ui.menu.MenuController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Application
 import javafx.fxml.{FXML, FXMLLoader}

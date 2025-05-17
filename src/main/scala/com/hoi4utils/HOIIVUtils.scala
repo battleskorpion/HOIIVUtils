@@ -1,6 +1,6 @@
 package com.hoi4utils
 
-import com.hoi4utils.ui.menu.MenuController
+import com.hoi4utils.ui.MenuController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Application
 
@@ -38,7 +38,7 @@ object HOIIVUtils extends LazyLogging {
     hModLoader.loadMod(hProperties)
     logger.info(s"HOIIVUtils $version launched successfully")
     val menuController = new MenuController
-    Application.launch(classOf[com.hoi4utils.ui.menu.MenuController], args*) //    menuController.launchMenuWindow(args)
+    Application.launch(classOf[MenuController], args*) //    menuController.launchMenuWindow(args)
   }
 
   /**
