@@ -2,13 +2,11 @@ package com.hoi4utils.ui.units;
 
 import com.hoi4utils.clausewitz.HOIIVFiles;
 import com.hoi4utils.hoi4.units.SubUnit;
-import com.hoi4utils.hoi4.units.SubUnit$;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx_ui.DiffViewPane;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import scala.jdk.javaapi.CollectionConverters;
-import scala.math.Ordering;
 
 import java.util.ArrayList;
 import java.util.Collection;
