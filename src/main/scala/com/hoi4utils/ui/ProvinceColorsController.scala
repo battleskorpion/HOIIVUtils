@@ -2,18 +2,20 @@ package com.hoi4utils.ui
 
 import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.clausewitz.map.gen.ColorGenerator
+import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.fxml.FXML
-import javafx.scene.control._
+import javafx.scene.control.*
 import javafx.scene.layout.GridPane
 import javafx.scene.shape.Rectangle
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.File
 import javafx.scene.paint.Color.{BLACK, rgb}
-import scala.jdk.CollectionConverters._
 
-class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLogger {
+import scala.jdk.CollectionConverters.*
+
+class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLogging {
   setFxmlResource("ProvinceColors.fxml")
   setTitle("HOIIVUtils Province Colors")
 
