@@ -11,12 +11,12 @@ import java.io.IOException
 import java.nio.file.*
 
 class LogViewerController extends HOIIVUtilsAbstractController {
-  private val LOGGER: Logger = LogManager.getLogger(this.getClass)
+  private val logger: Logger = LogManager.getLogger(this.getClass)
   setFxmlResource("LogViewer.fxml")
   setTitle("Log Viewer")
 
   def initialize(): Unit = {
-    LOGGER.info("Log Viewer initialized")
+    logger.info("Log Viewer initialized")
     println("Log Viewer initialized")
   }
 }

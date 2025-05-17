@@ -34,7 +34,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
       // all good? 
     }
     else if (pdxIdentifiers.indexWhere(expr.nameEquals) == -1) {
-      LOGGER.error("Unexpected identifier: " + expr.name)
+      logger.error("Unexpected identifier: " + expr.name)
       throw new UnexpectedIdentifierException(expr)
     } 
   }
@@ -95,14 +95,14 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     if (expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty)) {
-      LOGGER.error("Error loading PDX script: " + expression)
+      logger.error("Error loading PDX script: " + expression)
       return
     }
     try {
       set(expression)
     } catch {
       case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        LOGGER.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+        logger.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
         // Preserve the original node so that its content isn’t lost.
         node = Some(expression)
     }
@@ -123,7 +123,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
         }
         catch {
           case e: UnexpectedIdentifierException =>
-            LOGGER.error(e.getMessage)
+            logger.error(e.getMessage)
         }
       }
     }
@@ -132,7 +132,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   
   protected def loadPDX(file: File): Unit = {
     if (!file.exists) {
-      LOGGER.error(s"Focus tree file does not exist: $file")
+      logger.error(s"Focus tree file does not exist: $file")
       return
     }
 
@@ -142,7 +142,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
       loadPDX(rootNode)
     } catch {
       case e: ParserException =>
-        LOGGER.error(s"Error parsing focus tree file: $file\n\t${e.getMessage}")
+        logger.error(s"Error parsing focus tree file: $file\n\t${e.getMessage}")
       case e: UnexpectedIdentifierException => throw new RuntimeException(e)
     }
   }

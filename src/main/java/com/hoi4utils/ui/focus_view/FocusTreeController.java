@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class FocusTreeController extends HOIIVUtilsAbstractController {
-	private static final Logger LOGGER = LogManager.getLogger(FocusTreeController.class);
+	private static final Logger logger = LogManager.getLogger(FocusTreeController.class);
 	public static final int FOCUS_X_SCALE = 90; // ~2x per 1 y
 	public static final int CENTER_FOCUS_X = (FOCUS_X_SCALE / 2);
 	public static final int FOCUS_Y_SCALE = 140;
@@ -79,14 +79,14 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 	 */
 	@FXML
 	void initialize() {
-		LOGGER.info("Initializing FocusTreeWindow...");
+		logger.info("Initializing FocusTreeWindow...");
 
 		// Load available focus trees
 		ObservableList<FocusTree> trees = FocusTree$.MODULE$.observeFocusTrees();
-		LOGGER.debug("Loaded focus trees count: {}", (trees == null ? "null" : trees.size()));
+		logger.debug("Loaded focus trees count: {}", (trees == null ? "null" : trees.size()));
 
 		if (trees == null || trees.isEmpty()) {
-			LOGGER.warn("No focus trees found. Ensure mod files are loaded correctly.");
+			logger.warn("No focus trees found. Ensure mod files are loaded correctly.");
 		} else {
 			focusTreeDropdown.setItems(trees);
 		}
@@ -97,7 +97,7 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 		// Select first available item if list is not empty
 		if (trees != null && !trees.isEmpty()) {
 			focusTreeDropdown.getSelectionModel().select(0);
-			LOGGER.debug("Preselected first focus tree: {}", trees.get(0));
+			logger.debug("Preselected first focus tree: {}", trees.get(0));
 		}
 
 		focusTreeDropdown.getItems().sort(Comparator.comparing(FocusTree::toString));
@@ -105,7 +105,7 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 		// Listener for dropdown selection
 		focusTreeDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
-				LOGGER.debug("Focus tree selected: {}", newValue);
+				logger.debug("Focus tree selected: {}", newValue);
 				focusTree = newValue;
 				drawFocusTree();
 			}
@@ -114,13 +114,13 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 		// Set up scroll pane behavior for middle mouse button
 		focusTreeCanvasScrollPane.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.MIDDLE) {
-				LOGGER.debug("Middle mouse button pressed - enabling panning.");
+				logger.debug("Middle mouse button pressed - enabling panning.");
 				focusTreeCanvasScrollPane.setPannable(true);
 			}
 		});
 		focusTreeCanvasScrollPane.setOnMouseReleased(e -> {
 			if (e.getButton() == MouseButton.MIDDLE) {
-				LOGGER.debug("Middle mouse button released - disabling panning.");
+				logger.debug("Middle mouse button released - disabling panning.");
 				focusTreeCanvasScrollPane.setPannable(false);
 			}
 		});
@@ -130,33 +130,33 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 
 		// Load missing focus image
 		gfxFocusUnavailable = loadFocusUnavailableImage();
-		LOGGER.debug("gfxFocusUnavailable image loaded successfully.");
+		logger.debug("gfxFocusUnavailable image loaded successfully.");
 
 		// Try loading the focus tree
 		focusTree = getFocusTree();
 		if (focusTree == null) {
-			LOGGER.error("Failed to load a valid focus tree. This may indicate an issue with mod loading.");
+			logger.error("Failed to load a valid focus tree. This may indicate an issue with mod loading.");
 			JOptionPane.showMessageDialog(null, "Error: No valid Focus Tree found!", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
-		LOGGER.info("Loaded focus tree: {}", focusTree);
+		logger.info("Loaded focus tree: {}", focusTree);
 
 		// Fix localization
 		if (focusTree != null) {
 			try {
-				LOGGER.debug("Fixing localization for focus tree: {}", focusTree);
+				logger.debug("Fixing localization for focus tree: {}", focusTree);
 				FixFocus.fixLocalization(focusTree);
-				LOGGER.debug("Localization fix completed.");
+				logger.debug("Localization fix completed.");
 			} catch (IOException e) {
-				LOGGER.error("Failed to fix localization for focus tree: {}", focusTree, e);
+				logger.error("Failed to fix localization for focus tree: {}", focusTree, e);
 				JOptionPane.showMessageDialog(null, "Error fixing localization: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
 		// Draw the focus tree
 		drawFocusTree();
-		LOGGER.info("FocusTreeWindow initialized successfully.");
+		logger.info("FocusTreeWindow initialized successfully.");
 
 		JOptionPane.showMessageDialog(null,
 				"dev @end of initialize() [FocusTreeWindow] "
@@ -169,23 +169,23 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 	 * Attempts to load a valid FocusTree from different sources.
 	 */
 	private FocusTree getFocusTree() {
-		LOGGER.info("Attempting to load a FocusTree...");
+		logger.info("Attempting to load a FocusTree...");
 
 		// Try getting by country tag
 		FocusTree focusTree = FocusTree$.MODULE$.get(new CountryTag("SMA"));
-		LOGGER.debug("Attempted to load focus tree by country tag (SMA): {}", focusTree);
+		logger.debug("Attempted to load focus tree by country tag (SMA): {}", focusTree);
 
 		// If still null, try getting the first available focus tree
 		if (focusTree == null) {
 			var list = FocusTree.listFocusTrees();
-			LOGGER.debug("Focus tree list size: {}", list.size());
+			logger.debug("Focus tree list size: {}", list.size());
 
 			if (!list.isEmpty()) {
-				LOGGER.debug("First focus tree in list (raw Scala output): {}", list);
+				logger.debug("First focus tree in list (raw Scala output): {}", list);
 				focusTree = list.find(FocusTree::nonEmpty).getOrElse(null); // Ensure this actually returns a FocusTree
-				LOGGER.debug("Loaded first available focus tree: {}", focusTree);
+				logger.debug("Loaded first available focus tree: {}", focusTree);
 			} else {
-				LOGGER.error("No focus trees found in list!");
+				logger.error("No focus trees found in list!");
 			}
 		}
 
@@ -193,21 +193,21 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 		if (focusTree == null) {
 			File focusFile = new File(HOIIVFiles.Mod.focus_folder, "massachusetts.txt");
 			if (focusFile.exists()) {
-				LOGGER.debug("Trying to load focus tree from file: {}",
+				logger.debug("Trying to load focus tree from file: {}",
 						focusFile.getAbsolutePath());
 
 				focusTree = FocusTree$.MODULE$.get(focusFile).getOrElse(null);
-				LOGGER.debug("Loaded focus tree from file: {}", focusTree);
+				logger.debug("Loaded focus tree from file: {}", focusTree);
 			}
 		}
 
 		// Final validation
 		if (focusTree == null || focusTree.focuses() == null || focusTree.focuses().isEmpty()) {
-			LOGGER.error("All focus tree loading attempts failed or the tree is empty.");
+			logger.error("All focus tree loading attempts failed or the tree is empty.");
 			return null;
 		}
 
-		LOGGER.info("Successfully loaded valid focus tree: {}", focusTree);
+		logger.info("Successfully loaded valid focus tree: {}", focusTree);
 		return focusTree;
 	}
 
@@ -221,9 +221,9 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 			// Write the focus tree to the file
 			writer.println("### Generated by HOI4Utils, time: " + LocalDateTime.now() + "###");
 			writer.println(focusTree.toScript());
-			LOGGER.info("Exported focus tree {} to {}", focusTree, path);
+			logger.info("Exported focus tree {} to {}", focusTree, path);
 		} catch (FileNotFoundException e) {
-			LOGGER.error("Error exporting focus tree: {}", e.getMessage());
+			logger.error("Error exporting focus tree: {}", e.getMessage());
 			JOptionPane.showMessageDialog(null, "Error exporting focus tree: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -279,13 +279,13 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 
 			return JavaFXImageUtils.imageFromDDS(ddspixels, ddswidth, ddsheight);
 		} catch (IOException e) {
-			LOGGER.error("Error loading focus unavailable image: {}", e.getMessage());
+			logger.error("Error loading focus unavailable image: {}", e.getMessage());
 			return null;
 		}
 	}
 
 	public void drawFocusTree() {
-		LOGGER.debug("Drawing focus tree...");
+		logger.debug("Drawing focus tree...");
         List<Focus> focuses;
 		if (focusTree == null) focuses = null;
 		else focuses = CollectionConverters.asJava(focusTree.focuses());
@@ -364,12 +364,12 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 		var focusesWithPrereqs = focuses.stream().filter(f -> f.hasPrerequisites()).toList();
 
 		int numFocuses = focusesWithPrereqs.size();
-		LOGGER.debug("Drawing prerequisites for {} focuses...", numFocuses);
+		logger.debug("Drawing prerequisites for {} focuses...", numFocuses);
 
 		// Iterate over each tuple: the first element is the main focus,
 		// and the second element is the list of its prerequisite focuses.
 		for (var focus: focusesWithPrereqs) {
-			LOGGER.debug("Drawing {} prerequisite focus connections", focusesWithPrereqs.size());
+			logger.debug("Drawing {} prerequisite focus connections", focusesWithPrereqs.size());
 			var prereqFocuses = focus.prerequisiteList();  
 
 			// Calculate the main focus coordinates
@@ -488,7 +488,7 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 
 	private void viewFocusTree(FocusTree focusTree) {
 		// manually change the selected focus tree
-		LOGGER.info("Viewing focus tree: {}", focusTree);
+		logger.info("Viewing focus tree: {}", focusTree);
 		focusTreeDropdown.getSelectionModel().select(focusTree);
 	}
 
@@ -615,14 +615,14 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 					.filter(f -> f.absoluteX() == internalX && f.absoluteY() == internalY)
 					.findFirst()
 					.orElse(null);
-			LOGGER.info("Focus {} selected", draggedFocus);
+			logger.info("Focus {} selected", draggedFocus);
 		} else if (e.isSecondaryButtonDown()) {
 			// if secondary click -> add focus menu
 			ContextMenu contextMenu = new ContextMenu();
 			MenuItem addFocusItem = new MenuItem("Add Focus");
 			MenuItem newFocusTreeItem = new MenuItem("New Focus Tree");
 			addFocusItem.setOnAction(event -> {
-				LOGGER.info("Adding focus via context menu");
+				logger.info("Adding focus via context menu");
 				// open add focus menu to side of focus tree view
 				Focus newFocus = new Focus(focusTree);
 				focusTree.addNewFocus(newFocus);
@@ -631,7 +631,7 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 				openEditorWindow(newFocus, this::drawFocusTree);
 			});
 			newFocusTreeItem.setOnAction(event -> {
-				LOGGER.info("Creating new focus tree via context menu");
+				logger.info("Creating new focus tree via context menu");
 				// open new focus tree menu to side of focus tree view
 				openNewFocusTreeWindow();
 			});
@@ -654,7 +654,7 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
     
 			var prev = draggedFocus.setAbsoluteXY(newX, newY, e.isShiftDown());
 			if (!prev.equals(draggedFocus.position())) {
-				LOGGER.info("Focus {} moved to {}, {}", draggedFocus, newX, newY);
+				logger.info("Focus {} moved to {}, {}", draggedFocus, newX, newY);
 				
 				// TODO: fix for bad behavior when the pane is resized
 			}
@@ -702,7 +702,7 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 			// Perform the desired action on the selected focuses
 			for (Focus focus : selectedFocuses) {
 				// TODO: Replace this with your desired action
-				LOGGER.info("Marquee selected focus: {}", focus);
+				logger.info("Marquee selected focus: {}", focus);
 			}
 
 			marqueeStartPoint = null;
@@ -731,7 +731,7 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 				MenuItem setRelativeFocusItem = new MenuItem("Set Relative Focus");
 				setRelativeFocusItem.setOnAction(e -> {
 					// TODO: Replace this with your desired action
-					LOGGER.info("Set relative focus for selected focuses");
+					logger.info("Set relative focus for selected focuses");
 				});
 				contextMenu.getItems().add(setRelativeFocusItem);
 				contextMenu.show(focusTreeCanvas, event.getScreenX(), event.getScreenY());

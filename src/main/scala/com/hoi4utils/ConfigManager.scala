@@ -1,13 +1,12 @@
 package com.hoi4utils
 
-import org.apache.logging.log4j.LogManager
+import com.typesafe.scalalogging.LazyLogging
 
 import java.io.*
 import java.nio.file.{Path, Paths}
 import java.util.Properties
 
-class ConfigManager {
-  private val LOGGER = LogManager.getLogger(this.getClass)
+class ConfigManager extends LazyLogging {
   val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
 
   /**

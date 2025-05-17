@@ -1,8 +1,8 @@
 package com.hoi4utils
 
 import com.hoi4utils.ui.menu.MenuController
+import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Application
-import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.File
 import java.util.Properties
@@ -23,8 +23,7 @@ import javax.swing.*
  * <p>
  * HOIIVUtils\\HOIIVUtils.sh
  */
-object HOIIVUtils {
-  val LOGGER: Logger = LogManager.getLogger(this.getClass)
+object HOIIVUtils extends LazyLogging {
   val configManager = new ConfigManager
   val config: Config = configManager.createConfig
   val hInitializer: Initializer = new Initializer
@@ -37,7 +36,7 @@ object HOIIVUtils {
     val version = Version.getVersion(hProperties)
     upr.updateCheck(version, config.getDir)
     hModLoader.loadMod(hProperties)
-    LOGGER.info(s"HOIIVUtils $version launched successfully")
+    logger.info(s"HOIIVUtils $version launched successfully")
     val menuController = new MenuController
     Application.launch(classOf[com.hoi4utils.ui.menu.MenuController], args*) //    menuController.launchMenuWindow(args)
   }
@@ -51,7 +50,7 @@ object HOIIVUtils {
       hProperties.getProperty(key)
     catch
       case e: Exception =>
-        LOGGER.error("Failed to get property {}: {}", key, e.getMessage)
+        logger.error("Failed to get property {}: {}", key, e.getMessage)
         throw new RuntimeException(e)
   }
 
@@ -64,7 +63,7 @@ object HOIIVUtils {
       hProperties.setProperty(key, value)
     catch
       case e: Exception =>
-        LOGGER.error("Failed to set property {}: {}", key, e.getMessage)
+        logger.error("Failed to set property {}: {}", key, e.getMessage)
         throw new RuntimeException(e)
   }
 
@@ -73,7 +72,7 @@ object HOIIVUtils {
       new ModLoader().loadMod(hProperties)
     catch
       case e: Exception =>
-        LOGGER.error("Failed to load mod: {}", e.getMessage)
+        logger.error("Failed to load mod: {}", e.getMessage)
         JOptionPane.showMessageDialog(null, "Failed to load mod: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
         System.exit(1)
   }
@@ -83,7 +82,7 @@ object HOIIVUtils {
      new ConfigManager().saveProperties(config)
     catch
       case e: Exception =>
-        LOGGER.error("Failed to save configuration: {}", e.getMessage)
+        logger.error("Failed to save configuration: {}", e.getMessage)
         JOptionPane.showMessageDialog(null, "Failed to save configuration: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
         System.exit(1)
   }

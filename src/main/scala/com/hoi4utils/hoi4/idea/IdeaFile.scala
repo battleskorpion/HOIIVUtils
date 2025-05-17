@@ -7,15 +7,14 @@ import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.localization.Localizable
 import com.hoi4utils.script.{CollectionPDX, PDXScript, StructuredPDX}
 import javafx.collections.{FXCollections, ObservableList}
-import org.apache.logging.log4j.{LogManager, Logger}
+import com.typesafe.scalalogging.LazyLogging
 
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
-object IdeaFile {
-  val LOGGER: Logger = LogManager.getLogger(classOf[IdeaFile])
+object IdeaFile extends LazyLogging {
   private val ideaFileFileMap = new mutable.HashMap[File, IdeaFile]()
   private val ideaFiles = new ListBuffer[IdeaFile]()
 
@@ -33,13 +32,13 @@ object IdeaFile {
    */
   def read(): Boolean = {
     if (!HOIIVFiles.Mod.ideas_folder.exists || !HOIIVFiles.Mod.ideas_folder.isDirectory) {
-      LOGGER.fatal(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
+      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
       false
     } else if (HOIIVFiles.Mod.ideas_folder.listFiles == null || HOIIVFiles.Mod.ideas_folder.listFiles.length == 0) {
-      LOGGER.warn(s"No ideas found in ${HOIIVFiles.Mod.ideas_folder}")
+      logger.warn(s"No ideas found in ${HOIIVFiles.Mod.ideas_folder}")
       false
     } else {
-      LOGGER.info("Reading focus trees from " + HOIIVFiles.Mod.ideas_folder)
+      logger.info("Reading focus trees from " + HOIIVFiles.Mod.ideas_folder)
 
       // create focus trees from files
       HOIIVFiles.Mod.ideas_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
@@ -99,7 +98,7 @@ class IdeaFile extends StructuredPDX("ideas") with Iterable[Idea] {
   def this(file: File) = {
     this()
     if (!file.exists()) {
-      LOGGER.fatal(s"Idea file does not exist: $file")
+      logger.error(s"Idea file does not exist: $file")
       throw new IllegalArgumentException(s"File does not exist: $file")
     }
 

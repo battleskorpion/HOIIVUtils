@@ -4,9 +4,9 @@ import java.beans.{PropertyChangeListener, PropertyChangeSupport}
 import java.util
 
 class PublicFieldChangeNotifier(private val targetClass: Class[_]) {
-  initializeFieldValues()
   final private val pcs = new PropertyChangeSupport(this)
   final private val fieldValues = new util.HashMap[String, AnyRef]
+  initializeFieldValues()
 
   private def initializeFieldValues(): Unit = {
     for (field <- targetClass.getFields) {

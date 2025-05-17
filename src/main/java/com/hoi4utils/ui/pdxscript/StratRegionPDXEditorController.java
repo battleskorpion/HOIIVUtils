@@ -182,7 +182,7 @@ public class StratRegionPDXEditorController extends HOIIVUtilsAbstractController
                 double d = newVal.doubleValue();
                 // Call field.setNode(...) or however your DoublePDX updates the underlying Node
                 field.set(d);
-                LOGGER.info("Updated field {} to: {}", field.pdxIdentifier(), d);
+                logger.info("Updated field {} to: {}", field.pdxIdentifier(), d);
             });
         }
 

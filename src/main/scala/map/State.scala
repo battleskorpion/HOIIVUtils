@@ -31,7 +31,7 @@ import scala.util.{Failure, Success, Try}
  * @param addToStatesList if true, adds the state to the list of states
  */
 class State(addToStatesList: Boolean) extends StructuredPDX("state") with InfrastructureData with Localizable with Iterable[Province] with Comparable[State] with PDXFile {
-  private val LOGGER: Logger = LogManager.getLogger(getClass)
+  private val logger: Logger = LogManager.getLogger(getClass)
 
   final val stateID = new IntPDX("id")
   final val name = new StringPDX("name")
@@ -41,7 +41,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
         super.loadPDX(expr)
       } catch {
         case e: Exception =>
-          this.LOGGER.error(s"Error loading resources for state ${stateID.value.getOrElse("unknown")}: ${e.getMessage}")
+          this.logger.error(s"Error loading resources for state ${stateID.value.getOrElse("unknown")}: ${e.getMessage}")
       }
     }
 
@@ -90,7 +90,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
 //    if (stateNode.contains("id")) {
 //      stateNode.getValue("id").integer
 //    } else {
-//      LOGGER.error(s"State ID not found in file: ${stateFile.getName}, ${stateNode.$}")
+//      logger.error(s"State ID not found in file: ${stateFile.getName}, ${stateNode.$}")
 //      throw new UndefinedStateIDException(stateFile)
 //    }
 //  }
@@ -118,10 +118,10 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
 //    if (historyNode.contains("owner")) {
 //      historyNode.find("owner").get.$string match {
 //        case Some(ownerTag) => owner.put(ClausewitzDate.of, new Owner(new CountryTag(ownerTag)))
-//        case None => LOGGER.error(s"Warning: state owner not defined in ${stateFile.getName}")
+//        case None => logger.error(s"Warning: state owner not defined in ${stateFile.getName}")
 //      }
 //    } else {
-//      LOGGER.error(s"Warning: state owner not defined in ${stateFile.getName}")
+//      logger.error(s"Warning: state owner not defined in ${stateFile.getName}")
 //    }
 //  }
 
@@ -131,9 +131,9 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
 //      if (vpl.size == 2) {
 ////        victoryPoints.addOne(VictoryPoint.of(vpl.get(0).identifier.toInt, vpl.get(1).identifier.toInt)) //TODO
 //      } else {
-//        LOGGER.warn(s"Invalid victory point node in state: ${stateFile.getName}")
+//        logger.warn(s"Invalid victory point node in state: ${stateFile.getName}")
 //      }
-//    case None =>  LOGGER.info(s"Victory points not defined in state: ${stateFile.getName}")
+//    case None =>  logger.info(s"Victory points not defined in state: ${stateFile.getName}")
 //  }
 
 
@@ -292,7 +292,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
  * I apologize in advance.
  */
 object State extends Iterable[State] {
-  private val LOGGER: Logger = LogManager.getLogger(getClass)
+  private val logger: Logger = LogManager.getLogger(getClass)
 
   private val states = new ListBuffer[State]
 
@@ -311,13 +311,13 @@ object State extends Iterable[State] {
    */
   def read(): Boolean = {
     if (!HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory) {
-      LOGGER.fatal(s"In State.java - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
+      logger.error(s"In State.java - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
       false
     } else if (HOIIVFiles.Mod.states_folder.listFiles == null || HOIIVFiles.Mod.states_folder.listFiles.isEmpty) {
-      LOGGER.fatal(s"No states found in ${HOIIVFiles.Mod.states_folder}")
+      logger.error(s"No states found in ${HOIIVFiles.Mod.states_folder}")
       false
     } else {
-      LOGGER.info(s"Reading states from ${HOIIVFiles.Mod.states_folder}")
+      logger.info(s"Reading states from ${HOIIVFiles.Mod.states_folder}")
 
       HOIIVFiles.Mod.states_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
         new State(true, f)
@@ -404,10 +404,10 @@ object State extends Iterable[State] {
    */
   def readState(file: File): Boolean = {
     if (file == null || !file.exists || file.isDirectory) {
-      LOGGER.fatal(s"In State.java - ${file} is a directory, or it does not exist.")
+      logger.error(s"In State.java - ${file} is a directory, or it does not exist.")
       false
     } else {
-      LOGGER.info(s"Reading state from ${file}")
+      logger.info(s"Reading state from ${file}")
       new State(true, file)
       true
     }
@@ -424,7 +424,7 @@ object State extends Iterable[State] {
     for (state <- states) {
       if (state.stateID == tempState.stateID) {
         states -= state
-        LOGGER.debug("Removed state " + tempState)
+        logger.debug("Removed state " + tempState)
         return true
       }
     }

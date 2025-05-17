@@ -10,7 +10,7 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
 class StrategicRegion extends StructuredPDX("strategic_region") with PDXFile {
-  private val LOGGER: Logger = LogManager.getLogger(getClass)
+  private val logger: Logger = LogManager.getLogger(getClass)
 
   final val id = new IntPDX("id")
   final val name = new StringPDX("name")
@@ -81,7 +81,7 @@ class StrategicRegion extends StructuredPDX("strategic_region") with PDXFile {
 }
 
 object StrategicRegion {
-  private val LOGGER: Logger = LogManager.getLogger(getClass)
+  private val logger: Logger = LogManager.getLogger(getClass)
 
   private val strategicRegions = new ListBuffer[StrategicRegion]
 

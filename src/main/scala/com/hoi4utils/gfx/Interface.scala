@@ -3,7 +3,7 @@ package com.hoi4utils.gfx
 import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.parser.{Node, Parser, ParserException}
-import org.apache.logging.log4j.{LogManager, Logger}
+import com.typesafe.scalalogging.LazyLogging
 
 import java.io.File
 import java.util
@@ -125,9 +125,8 @@ object Interface {
  *   }
  * } </pre>
 */
-class Interface(private val file: File)
+class Interface(private val file: File) extends LazyLogging
 {
-  private val LOGGER: Logger = LogManager.getLogger(getClass)
   private var spriteTypes: mutable.Set[SpriteType] = new mutable.HashSet
 
   /* init */
@@ -141,7 +140,7 @@ class Interface(private val file: File)
       parser.parse
     } catch {
       case e: ParserException =>
-        LOGGER.error(s"Error parsing interface .gfx file, $file.\nException: $e")
+        logger.error(s"Error parsing interface .gfx file, $file.\nException: $e")
         return
     }
 
@@ -150,7 +149,7 @@ class Interface(private val file: File)
       parser.rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
     }
     if (spriteTypeNodes == null) {
-      LOGGER.warn(s"No SpriteTypes defined in interface .gfx file, $file")
+      logger.warn(s"No SpriteTypes defined in interface .gfx file, $file")
       return
     }
 
@@ -160,7 +159,7 @@ class Interface(private val file: File)
         val name = spriteType.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
         val filename = spriteType.getValueCaseInsensitive("texturefile").$stringOrElse("").replace("\"", "")
         if (name.isEmpty || filename.isEmpty) {
-          LOGGER.warn(s"SpriteType in interface .gfx file, $file, has empty name or texturefile.")
+          logger.warn(s"SpriteType in interface .gfx file, $file, has empty name or texturefile.")
         }
         else {
           val gfx = new SpriteType(name, filename, basepath = file.getParentFile.getParentFile)
@@ -169,7 +168,7 @@ class Interface(private val file: File)
         }
       } catch {
         case e: ParserException =>
-          LOGGER.error(s"Error parsing SpriteType in interface .gfx file, $file")
+          logger.error(s"Error parsing SpriteType in interface .gfx file, $file")
       }
     }
   }

@@ -45,7 +45,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
         referenceName = s.toString
       case other =>
         // Log a warning, preserve the node, then throw the exception.
-        LOGGER.warn(s"Expected a string or int for a reference identifier, but got ${other.getClass.getSimpleName}. Preserving original node.")
+        logger.warn(s"Expected a string or int for a reference identifier, but got ${other.getClass.getSimpleName}. Preserving original node.")
         throw new NodeValueTypeException(expression, "string | int", this.getClass)
     }
   }

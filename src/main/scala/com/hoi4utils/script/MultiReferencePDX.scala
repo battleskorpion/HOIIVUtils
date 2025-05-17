@@ -90,7 +90,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 //      case s: String =>
 //        referenceNames.addOne(s)
 //      case _ =>
-//        LOGGER.warn(s"Expected string value for pdx reference identifier, got ${expression.$}")
+//        logger.warn(s"Expected string value for pdx reference identifier, got ${expression.$}")
 //        throw new NodeValueTypeException(expression, "string", this.getClass)
 //    }
 //  }
@@ -107,7 +107,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
         pdxList.addOne(childScript)
         referenceNames.addOne(str)
       case other =>
-        LOGGER.warn(s"Expected string value for pdx reference identifier, got ${other}. Preserving node using its string representation.")
+        logger.warn(s"Expected string value for pdx reference identifier, got ${other}. Preserving node using its string representation.")
         // Preserve the problematic node as a string.
         val preservedValue = other.toString
         if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)

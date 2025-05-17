@@ -1,6 +1,6 @@
 package com.hoi4utils
 
-import org.apache.logging.log4j.{LogManager, Logger}
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.sys.process.*
 import java.io.File
@@ -14,17 +14,16 @@ import scala.io.Source
  * Runs the Updater.jar file to update the application.
  * Closes the application and runs the updater.
  */
-class Updater {
-  val LOGGER: Logger = LogManager.getLogger(classOf[Updater])
+class Updater extends LazyLogging {
   var lV: Version = Version.DEFAULT
   def updateCheck(v: Version, hDirPath: Path): Unit = {
     val hDir = hDirPath.toFile
-    LOGGER.debug("Checking for updates...")
+    logger.debug("Checking for updates...")
     val tempUprJar = new File(hDir.getAbsolutePath
       + File.separator + "Updater"
       + File.separator + "target"
       + File.separator + "Updater.jar.temp")
-    LOGGER.debug("Deleting temp updater jar")
+    logger.debug("Deleting temp updater jar")
     if (tempUprJar.exists) updateUpdater(tempUprJar)
     lV =
       try {
@@ -35,15 +34,15 @@ class Updater {
         Version(json("tag_name").str)
       } catch {
         case e: Exception =>
-          LOGGER.error(s"Failed to fetch latest version: ${e.getMessage}")
+          logger.error(s"Failed to fetch latest version: ${e.getMessage}")
           Version.DEFAULT
       }
     if (lV == Version.DEFAULT) return
-    LOGGER.debug("Current Version: " + v)
-    LOGGER.debug("Latest Version: " + lV)
+    logger.debug("Current Version: " + v)
+    logger.debug("Latest Version: " + lV)
     this.lV = lV
     if (lV > v)
-      LOGGER.debug("Update found")
+      logger.debug("Update found")
       val response = JOptionPane.showConfirmDialog(
         null,
         s"Do you want to update to the latest version?\nCurrent Version: $v\nLatest Version: $lV\n \n This will delete your settings!",
@@ -52,11 +51,11 @@ class Updater {
         JOptionPane.QUESTION_MESSAGE
       )
       if (response == JOptionPane.YES_OPTION) update(hDir) // closes the program
-    else LOGGER.debug("No updates found")
+    else logger.debug("No updates found")
   }
 
   private def update(hDir: File): Unit = {
-    LOGGER.info("Updating...")
+    logger.info("Updating...")
     try
       val updaterJar = hDir.getAbsolutePath
         + File.separator + "Updater"
@@ -68,22 +67,22 @@ class Updater {
       sys.exit(0)
     catch
       case e: Exception =>
-        LOGGER.error("Failed to update: " + e.getMessage)
+        logger.error("Failed to update: " + e.getMessage)
   }
   
   private def updateUpdater(tempUprJar: File): Unit = {
-    LOGGER.debug("Updating updater...")
+    logger.debug("Updating updater...")
     val updaterJar = new File(tempUprJar.getAbsolutePath.replace(".temp", ""))
     Files.copy(tempUprJar.toPath, updaterJar.toPath, StandardCopyOption.REPLACE_EXISTING)
     if (updaterJar.exists()) {
-      LOGGER.debug("Updater updated successfully")
+      logger.debug("Updater updated successfully")
     } else {
-      LOGGER.debug("Failed to update updater")
+      logger.debug("Failed to update updater")
     }
     if (tempUprJar.delete()) {
-      LOGGER.debug("Temporary updater file deleted successfully")
+      logger.debug("Temporary updater file deleted successfully")
     } else {
-      LOGGER.debug("Failed to delete temporary updater file")
+      logger.debug("Failed to delete temporary updater file")
     }
   }
 }

@@ -26,7 +26,7 @@ import java.util.List;
  * A Pane that displays an editor for a PDXScript.
  */
 public class PDXEditorPane extends AnchorPane {
-    public static final Logger LOGGER = LogManager.getLogger(PDXEditorPane.class);
+    public static final Logger logger = LogManager.getLogger(PDXEditorPane.class);
     
     private final PDXScript<?> pdxScript;
     private final VBox rootVBox;
@@ -503,11 +503,11 @@ public class PDXEditorPane extends AnchorPane {
     public void showSaveButton() {
         Button saveButton = new Button("Save Script");
         saveButton.setOnAction(event -> {
-            LOGGER.info("Saving PDXScript...");
+            logger.info("Saving PDXScript...");
             switch (pdxScript) {
                 case PDXFile pdxFile -> pdxFile.save();
                 default -> {
-                    LOGGER.warn("Cannot save PDXScript of type: " + pdxScript.getClass());
+                    logger.warn("Cannot save PDXScript of type: " + pdxScript.getClass());
                 }
             }
         });

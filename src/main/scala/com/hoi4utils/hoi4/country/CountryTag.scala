@@ -2,12 +2,11 @@ package com.hoi4utils.hoi4.country
 
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.parser.Parser
-import org.apache.logging.log4j.{LogManager, Logger}
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.collection.mutable.ListBuffer
 
-object CountryTag extends Iterable[CountryTag] {
-  val LOGGER: Logger = LogManager.getLogger(classOf[CountryTag])
+object CountryTag extends Iterable[CountryTag] with LazyLogging {
 
   val NULL_TAG = new CountryTag("###")
   val COUNTRY_TAG_LENGTH = 3 // standard country tag length (for a normal country tag)private final String tag;
@@ -19,13 +18,13 @@ object CountryTag extends Iterable[CountryTag] {
 
   def read(): Boolean = {
     if (!HOIIVFiles.Mod.country_tags_folder.exists || !HOIIVFiles.Mod.country_tags_folder.isDirectory) {
-      LOGGER.fatal(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_tags_folder} is not a directory, or it does not exist.")
+      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_tags_folder} is not a directory, or it does not exist.")
       false
     } else if (HOIIVFiles.Mod.country_tags_folder.listFiles == null || HOIIVFiles.Mod.country_tags_folder.listFiles.length == 0) {
-      LOGGER.warn(s"No country tags found in ${HOIIVFiles.Mod.country_tags_folder}")
+      logger.warn(s"No country tags found in ${HOIIVFiles.Mod.country_tags_folder}")
       false
     } else {
-      LOGGER.info("Reading country tags from " + HOIIVFiles.Mod.country_tags_folder)
+      logger.info("Reading country tags from " + HOIIVFiles.Mod.country_tags_folder)
 
       // create focus trees from files
       HOIIVFiles.Mod.country_tags_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>

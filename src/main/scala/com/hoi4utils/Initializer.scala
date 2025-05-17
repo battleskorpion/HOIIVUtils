@@ -28,7 +28,7 @@ import scala.::
  * Separates initialization logic from utility functions.
  */
 class Initializer {
-  private val LOGGER = LogManager.getLogger(this.getClass)
+  private val logger = LogManager.getLogger(this.getClass)
 
   def initialize(config: Config): Unit = {
     ModifierDatabase.init()
@@ -43,7 +43,7 @@ class Initializer {
   private def autoSetHOIIVPath(p: Properties): Unit = {
     val hoi4Path = Option(p.getProperty("hoi4.path")).getOrElse("")
     if (hoi4Path.nonEmpty && hoi4Path.trim.nonEmpty) {
-      LOGGER.debug("HOI4 path already set. Skipping auto-set.")
+      logger.debug("HOI4 path already set. Skipping auto-set.")
       return
     }
 
@@ -54,9 +54,9 @@ class Initializer {
       case Some(validPath) =>
         val hoi4Dir = Paths.get(validPath).toAbsolutePath.toFile
         p.setProperty("hoi4.path", hoi4Dir.getAbsolutePath)
-        LOGGER.debug("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath)
+        logger.debug("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath)
       case None =>
-        LOGGER.warn("Couldn't find HOI4 install folder. User must set it manually.")
+        logger.warn("Couldn't find HOI4 install folder. User must set it manually.")
         JOptionPane.showMessageDialog(
           null,
           "Couldn't find HOI4 install folder, please go to settings and add it (REQUIRED)",
@@ -93,7 +93,7 @@ class Initializer {
 
     if (modPath.isBlank) {
       p.setProperty("mod.path", demoModPath)
-      LOGGER.debug("Auto-set mod path to demo_mod")
+      logger.debug("Auto-set mod path to demo_mod")
       return
     }
 
@@ -101,15 +101,15 @@ class Initializer {
       Paths.get(modPath).getFileName.toString == "demo_mod"
     } catch {
       case e: Exception =>
-        LOGGER.warn("Error checking mod path: {}", e.getMessage)
+        logger.warn("Error checking mod path: {}", e.getMessage)
         false
     }
 
     if (isDemoMod) {
       p.setProperty("mod.path", demoModPath)
-      LOGGER.debug("Reset mod path to demo_mod")
+      logger.debug("Reset mod path to demo_mod")
     } else {
-      LOGGER.debug("Mod path already set. Skipping auto-set.")
+      logger.debug("Mod path already set. Skipping auto-set.")
     }
   }
 }

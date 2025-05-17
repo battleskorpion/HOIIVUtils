@@ -30,7 +30,7 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 
 public class MapGenerationController extends HOIIVUtilsAbstractController {
-	public static final Logger LOGGER = LogManager.getLogger(MapGenerationController.class);
+	public static final Logger logger = LogManager.getLogger(MapGenerationController.class);
 	private ProvinceGeneration provinceGeneration;
 	private ProvinceGenConfig config;
 	private Heightmap heightmap;
@@ -64,7 +64,7 @@ public class MapGenerationController extends HOIIVUtilsAbstractController {
 			InputStream heightmapStream = getClass().getResourceAsStream(Heightmap.DEFAULT);
 			heightmap = new Heightmap(heightmapStream);
 		} catch (IOException e) {
-			LOGGER.fatal("Default heightmap could not be loaded. {}", Heightmap.DEFAULT);
+			logger.error("Default heightmap could not be loaded. {}", Heightmap.DEFAULT);
 			throw new RuntimeException(e);
 		}
 
@@ -120,7 +120,7 @@ public class MapGenerationController extends HOIIVUtilsAbstractController {
 			heightmap = new Heightmap(file);
 		} catch (IOException | IllegalArgumentException exc) {
 			JOptionPane.showMessageDialog(null, "Bad File Path." + file.getPath(), "Error", JOptionPane.ERROR_MESSAGE);
-			LOGGER.warn("Error: heightmap could not be loaded. Filepath selected: {}", file.getPath());
+			logger.warn("Error: heightmap could not be loaded. Filepath selected: {}", file.getPath());
 			heightmap = null;
 			return;
 		}
@@ -139,7 +139,7 @@ public class MapGenerationController extends HOIIVUtilsAbstractController {
 			}
 		} catch (IOException | IllegalArgumentException exc) {
 			JOptionPane.showMessageDialog(null, "Bad File Path." + file.getPath(), "Error", JOptionPane.ERROR_MESSAGE);
-			LOGGER.warn("heightmap could not be loaded. Filepath selected: {}", file.getPath());
+			logger.warn("heightmap could not be loaded. Filepath selected: {}", file.getPath());
 			heightmap = null;
 			return;
 		}

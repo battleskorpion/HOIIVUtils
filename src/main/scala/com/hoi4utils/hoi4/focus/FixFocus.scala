@@ -1,9 +1,9 @@
 package com.hoi4utils.hoi4.focus
 
 import com.hoi4utils.HOIIVUtils
-
 import com.hoi4utils.hoi4.country.CountryTagsManager
 import com.hoi4utils.localization.{LocalizationManager, Property}
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -18,61 +18,60 @@ import java.time.LocalDateTime
  * FixFocus is a utility class for fixing focus localization in a focus tree.
  * It ensures that all focuses have proper localization for their names and descriptions.
  */
-object FixFocus {
-  private val LOGGER = LogManager.getLogger(this.getClass)
+object FixFocus extends LazyLogging {
 
   // TODO improve
   @throws[IOException]
   def fixLocalization(focusTree: FocusTree): Unit = {
-    LOGGER.debug("Starting fixLocalization for FocusTree: {}", focusTree)
+    logger.debug("Starting fixLocalization for FocusTree: {}", focusTree)
     if (!validateFocusTree(focusTree)) return
 
     val locManager = LocalizationManager.get
-    LOGGER.debug("LocalizationManager loaded")
+    logger.debug("LocalizationManager loaded")
 
     val locFile = focusTree.primaryLocalizationFile.get
-    LOGGER.debug("Primary localization file: {}", locFile.getAbsolutePath)
+    logger.debug("Primary localization file: {}", locFile.getAbsolutePath)
 
     val focuses = CollectionConverters.asJavaCollection(focusTree.focuses)
-    LOGGER.debug("Total focuses in tree: {}", focuses.size)
+    logger.debug("Total focuses in tree: {}", focuses.size)
 
     focuses.parallelStream.filter((focus: Focus) => {
       //val missingLocalization = focus.localization(Property.NAME) == null
-      //if (missingLocalization) LOGGER.debug("Missing localization for focus: {}", focus.id.str)
+      //if (missingLocalization) logger.debug("Missing localization for focus: {}", focus.id.str)
       //missingLocalization
       focus.localization(Property.NAME) match {
         case Some(_) => false
         case None =>
-          LOGGER.debug("Missing localization for focus: {}", focus.id.str)
+          logger.debug("Missing localization for focus: {}", focus.id.str)
           true
       }
     }).forEach((focus: Focus) => processFocusLocalization(focus, locManager, locFile))
 
-    LOGGER.debug("Finished fixing focus localization.")
+    logger.debug("Finished fixing focus localization.")
   }
 
   private def validateFocusTree(focusTree: FocusTree): Boolean = {
-    LOGGER.debug("Validating FocusTree: {}", focusTree)
+    logger.debug("Validating FocusTree: {}", focusTree)
     if (focusTree == null) {
-      LOGGER.fatal("Focus tree is null.")
+      logger.error("Focus tree is null.")
       JOptionPane.showMessageDialog(null, "Focus tree cannot be null.", "Error", JOptionPane.ERROR_MESSAGE)
       return false
     }
 
     if (focusTree.focuses == null || focusTree.focuses.isEmpty) {
-      LOGGER.fatal("Focus tree has NO focuses! Stopping initialization.")
+      logger.error("Focus tree has NO focuses! Stopping initialization.")
       JOptionPane.showMessageDialog(null, "Error: Focus tree has no focuses.", "Error", JOptionPane.ERROR_MESSAGE)
       throw new IllegalStateException("Focus tree has no focuses.")
     }
 
     if (focusTree.primaryLocalizationFile.isEmpty) {
-      LOGGER.info("Focus tree has no localization file.") // todo say which focus tree
+      logger.info("Focus tree has no localization file.") // todo say which focus tree
 
       JOptionPane.showMessageDialog(null, "Warning: Focus tree has no localization file.", "Warning", JOptionPane.WARNING_MESSAGE)
       return false
     }
 
-    LOGGER.debug("Focus tree is valid: {}", focusTree)
+    logger.debug("Focus tree is valid: {}", focusTree)
     true
   }
 

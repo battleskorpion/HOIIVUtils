@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.function.ToIntFunction;
 
 public class MapEditorController extends HOIIVUtilsAbstractController {
-    public static final Logger LOGGER = LogManager.getLogger(MapEditorController.class);
+    public static final Logger logger = LogManager.getLogger(MapEditorController.class);
 
     @FXML
     private Canvas mapCanvas;
@@ -74,12 +74,12 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
             if (file.exists()) {
                 mapImage = new Image(file.toURI().toString());
                 originalMapImage = mapImage; // store original
-                LOGGER.info("Default province map loaded: " + file.getAbsolutePath());
+                logger.info("Default province map loaded: " + file.getAbsolutePath());
             } else {
-                LOGGER.warn("Default province map not found at " + file.getAbsolutePath());
+                logger.warn("Default province map not found at " + file.getAbsolutePath());
             }
         } catch (Exception e) {
-            LOGGER.error("Error loading default province map image", e);
+            logger.error("Error loading default province map image", e);
         }
 
         zoomSlider.setValue(1.0);
@@ -204,17 +204,17 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
             try {
                 mapImage = new Image(file.toURI().toString());
                 originalMapImage = mapImage; // update original as well
-                LOGGER.info("Loaded province map: " + file.getAbsolutePath());
+                logger.info("Loaded province map: " + file.getAbsolutePath());
                 drawMap();
             } catch (Exception e) {
-                LOGGER.error("Failed to load image", e);
+                logger.error("Failed to load image", e);
             }
         }
     }
 
     @FXML
     void onViewByProvince() {
-        LOGGER.info("Switching view mode to Province.");
+        logger.info("Switching view mode to Province.");
         // Remove any existing mouse handler.
         mapCanvas.setOnMouseMoved(null);
         drawMap();
@@ -230,16 +230,16 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
      */
     @FXML
     void onViewByState() {
-        LOGGER.info("Switching view mode to State.");
+        logger.info("Switching view mode to State.");
         if (originalMapImage == null) {
-            LOGGER.warn("No province map image loaded.");
+            logger.warn("No province map image loaded.");
             return;
         }
 
         // Load definitions CSV. Assume HOIIVFiles.Mod.definition_csv_file exists.
         File defFile = HOIIVFiles.Mod.definition_csv_file;
         if (!defFile.exists()) {
-            LOGGER.warn("Definitions file not found: " + defFile.getAbsolutePath());
+            logger.warn("Definitions file not found: " + defFile.getAbsolutePath());
             return;
         }
 
@@ -315,7 +315,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
 
     @FXML
     void onViewByStrategicRegion() {
-        LOGGER.info("Switching view mode to Strategic Region.");
+        logger.info("Switching view mode to Strategic Region.");
         // TODO: Implement strategic region view rendering.
         // Remove tooltip handler if active.
         mapCanvas.setOnMouseMoved(null);
@@ -324,7 +324,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
 
     @FXML
     void onViewByCivFactories() {
-        LOGGER.info("Switching view mode to Civilian Factories.");
+        logger.info("Switching view mode to Civilian Factories.");
         viewByStateMetric(
                 State::civilianFactories,       // extract civilianFactories
                 norm -> Color.hsb(120, 0.8, 0.3 + 0.7 * norm) // greenish scale, brighter = more factories
@@ -333,7 +333,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
 
     @FXML
     void onViewByMilFactories() {
-        LOGGER.info("Switching view mode to Military Factories.");
+        logger.info("Switching view mode to Military Factories.");
         viewByStateMetric(
                 State::militaryFactories,       // extract militaryFactories
                 norm -> Color.hsb(0, 0.8, 0.3 + 0.7 * norm)   // reddish scale, brighter = more factories
@@ -402,7 +402,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
             // In a production version, consider caching these maps.
             File defFile = HOIIVFiles.Mod.definition_csv_file;
             if (!defFile.exists()) {
-                LOGGER.warn("Definitions file not found: " + defFile.getAbsolutePath());
+                logger.warn("Definitions file not found: " + defFile.getAbsolutePath());
                 return;
             }
             scala.collection.immutable.Map<Object, ProvinceDefinition> scalaDefs = DefinitionCSV.load(defFile);
@@ -422,7 +422,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
             }
             State clickedState = getStateAtCanvasCoordinates(event.getX(), event.getY(), provinceColorToId, provinceIdToStateMap);
             if (clickedState != null) {
-                LOGGER.info("Right-clicked state: " + clickedState);
+                logger.info("Right-clicked state: " + clickedState);
                 // add pdxEditor to scroll pane
                 var pdxEditorPane = new PDXEditorPane(clickedState);
                 pdxEditorPane.showSaveButton();
@@ -431,7 +431,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
                 this.selectedState = clickedState; 
                 if (stateTable != null) stateTable.setStates(clickedState); 
             } else {
-                LOGGER.info("Right-clicked on an undefined state area.");
+                logger.info("Right-clicked on an undefined state area.");
                 this.selectedState = null; 
                 if (stateTable != null) stateTable.clearStates();
             }

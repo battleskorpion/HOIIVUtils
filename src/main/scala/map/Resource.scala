@@ -83,7 +83,7 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, (
 }
 
 object ResourcesFile {
-  val LOGGER: Logger = LogManager.getLogger(classOf[ResourcesFile])
+  val logger: Logger = LogManager.getLogger(classOf[ResourcesFile])
 
   //  private var _resources: List[Resource] = List()
   private var _resourcesPDX: Option[ResourcesFile] = None
@@ -100,11 +100,11 @@ object ResourcesFile {
 
     resourcesFile match {
       case Some(file) =>
-        LOGGER.info(s"Reading resources from ${file.getAbsolutePath}")
+        logger.info(s"Reading resources from ${file.getAbsolutePath}")
         _resourcesPDX = Some(new ResourcesFile(file))
         true
       case None =>
-        LOGGER.fatal(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.HOI4.resources_file} is not a directory, " +
+        logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.HOI4.resources_file} is not a directory, " +
           s"or it does not exist (No resources file found).")
         false 
     }
@@ -130,7 +130,7 @@ object ResourcesFile {
     _resourcesPDX match {
       case Some(resources) => resources.toList
       case None =>
-        LOGGER.warn("Tried to obtain resources list but valid Resources info not loaded.")
+        logger.warn("Tried to obtain resources list but valid Resources info not loaded.")
         List()
     }
   }
@@ -143,7 +143,7 @@ class ResourcesFile extends CollectionPDX[ResourceDef](ResourcesFile.pdxSupplier
   def this(file: File) = {
     this()
     if (!file.exists) {
-      LOGGER.fatal(s"Resources file does not exist: $file")
+      logger.error(s"Resources file does not exist: $file")
       throw new IllegalArgumentException(s"File does not exist: $file")
     }
 

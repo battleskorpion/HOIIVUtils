@@ -8,10 +8,10 @@ import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.hoi4.technology.Technology
 import com.hoi4utils.hoi4.units.OrdersOfBattle
 import com.hoi4utils.script.{CollectionPDX, HeadlessPDX, PDXScript, ReferencePDX, StructuredPDX}
+import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import map.{Resource, State}
-import org.apache.logging.log4j.{LogManager, Logger}
 import org.jetbrains.annotations.NotNull
 
 import java.io.File
@@ -25,8 +25,7 @@ import scala.collection.mutable.ListBuffer
 // todo make country extend countrytag???? ehhhhh
 // todo consider... implements infrastructure, resources?????
 // todo localizable data?
-object Country {
-  val LOGGER: Logger = LogManager.getLogger(classOf[Country])
+object Country extends LazyLogging {
 
   private val countries = new ListBuffer[Country]()
 
@@ -34,13 +33,13 @@ object Country {
   
   def read(): Boolean = {
     if (!HOIIVFiles.Mod.country_folder.exists || !HOIIVFiles.Mod.country_folder.isDirectory) {
-      LOGGER.fatal(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_folder} is not a directory, or it does not exist.")
+      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_folder} is not a directory, or it does not exist.")
       false
     } else if (HOIIVFiles.Mod.country_folder.listFiles == null || HOIIVFiles.Mod.country_folder.listFiles.length == 0) {
-      LOGGER.warn(s"No focuses found in ${HOIIVFiles.Mod.country_folder}")
+      logger.warn(s"No focuses found in ${HOIIVFiles.Mod.country_folder}")
       false
     } else {
-      LOGGER.info("Reading focus trees from " + HOIIVFiles.Mod.country_folder)
+      logger.info("Reading focus trees from " + HOIIVFiles.Mod.country_folder)
 
       // create focus trees from files
       HOIIVFiles.Mod.country_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
@@ -167,7 +166,7 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
   def this(file: File, countryTag: CountryTag) = {
     this(countryTag)
     if (!file.exists) {
-      LOGGER.fatal(s"Country file does not exist: $file")
+      logger.error(s"Country file does not exist: $file")
       throw new IllegalArgumentException(s"File does not exist: $file")
     }
 

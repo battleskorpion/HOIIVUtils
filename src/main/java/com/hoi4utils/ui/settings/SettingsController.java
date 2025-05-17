@@ -31,7 +31,7 @@ import java.util.Optional;
  * @author thiccchris
  */
 public class SettingsController extends Application implements JavaFXUIManager {
-	public static final Logger LOGGER = LogManager.getLogger(SettingsController.class);
+	public static final Logger logger = LogManager.getLogger(SettingsController.class);
 	private String fxmlResource = "Settings.fxml";
 	private String title = "HOIIVUtils Settings " + HOIIVUtils.get("version").toString();
 	private Stage stage;
@@ -143,12 +143,12 @@ public class SettingsController extends Application implements JavaFXUIManager {
 
 	private void showExistingStage() {
 		stage.show();
-		LOGGER.info("Stage already exists, showing: {}", title);
+		logger.info("Stage already exists, showing: {}", title);
 	}
 
 	private void handleMissingFXMLResource() {
 		String errorMessage = "Failed to open window\nError: FXML resource is null.";
-		LOGGER.error(errorMessage);
+		logger.error(errorMessage);
 		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
@@ -165,7 +165,7 @@ public class SettingsController extends Application implements JavaFXUIManager {
 		Scene scene = new Scene(root);
 		addSceneStylesheets(scene);
 		this.stage = createLaunchStage(scene);
-		LOGGER.debug("Stage created and shown: {}", title);
+		logger.debug("Stage created and shown: {}", title);
 	}
 
 	private void addSceneStylesheets(Scene scene) {
@@ -192,7 +192,7 @@ public class SettingsController extends Application implements JavaFXUIManager {
 
 	private void handleFXMLLoadError(IOException e) {
 		String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource;
-		LOGGER.fatal("Error loading FXML: {}", fxmlResource, e);
+		logger.error("Error loading FXML: {}", fxmlResource, e);
 		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
 		throw new RuntimeException(errorMessage, e);
 	}

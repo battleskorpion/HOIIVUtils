@@ -59,7 +59,7 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
       case value: Double => Some(value.toInt)
       case null => None
       case _ => 
-        LOGGER.warn(s"Expected integer value for pdx int")
+        logger.warn(s"Expected integer value for pdx int")
         None
     }
   }
@@ -74,7 +74,7 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
         case i: Int => i
         case d: Double => d.toInt
         case _ => 
-          LOGGER.warn(s"Expected integer value for pdx int, got $value")
+          logger.warn(s"Expected integer value for pdx int, got $value")
           default
       }
       case None => default

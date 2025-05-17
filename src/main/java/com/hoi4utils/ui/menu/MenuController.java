@@ -38,7 +38,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class MenuController extends Application implements JavaFXUIManager {
-	public static final Logger LOGGER = LogManager.getLogger(MenuController.class);
+	public static final Logger logger = LogManager.getLogger(MenuController.class);
 	private String fxmlResource = "Menu.fxml";
 	private String title = "HOIIVUtils Menu " + HOIIVUtils.get("version").toString();
 	private Stage stage;
@@ -49,7 +49,7 @@ public class MenuController extends Application implements JavaFXUIManager {
 	
 	@FXML
 	void initialize() {
-		LOGGER.debug("MenuController initialized");
+		logger.debug("MenuController initialized");
 		
 		// Check for invalid folder paths and show appropriate warnings
 		Task<Void> task = new Task<>() {
@@ -68,25 +68,25 @@ public class MenuController extends Application implements JavaFXUIManager {
 		StringBuilder warningMessage = new StringBuilder("The following settings need to be configured:\n\n");
 
 		if (HOIIVUtils.get("valid.HOIIVFilePaths").equals("false")) {
-			LOGGER.warn("Invalid HOI IV file paths detected");
+			logger.warn("Invalid HOI IV file paths detected");
 			warningMessage.append("• Hearts of Iron IV file paths\n");
 			hasInvalidPaths = true;
 		}
 
 		if (HOIIVUtils.get("valid.Interface").equals("false")) {
-			LOGGER.warn("Invalid GFX Interface file paths detected");
+			logger.warn("Invalid GFX Interface file paths detected");
 			warningMessage.append("• Interface file paths\n");
 			hasInvalidPaths = true;
 		}
 
 		if (HOIIVUtils.get("valid.State").equals("false")) {
-			LOGGER.warn("Invalid State paths detected");
+			logger.warn("Invalid State paths detected");
 			warningMessage.append("• State file paths\n");
 			hasInvalidPaths = true;
 		}
 
 		if (HOIIVUtils.get("valid.FocusTree").equals("false")) {
-			LOGGER.warn("Invalid Focus Tree paths detected");
+			logger.warn("Invalid Focus Tree paths detected");
 			warningMessage.append("• Focus Tree file paths\n");
 			hasInvalidPaths = true;
 		}
@@ -127,7 +127,7 @@ public class MenuController extends Application implements JavaFXUIManager {
 					try {
 						((Stage) (button.getScene().getWindow())).close();
 					} catch (Exception ex) {
-						LOGGER.error("Failed to close menu window", ex);
+						logger.error("Failed to close menu window", ex);
 					}
 				}); 
 				Platform.runLater(() -> new SettingsController().open());
@@ -177,12 +177,12 @@ public class MenuController extends Application implements JavaFXUIManager {
 
 	private void showExistingStage() {
 		stage.show();
-		LOGGER.info("Stage already exists, showing: {}", title);
+		logger.info("Stage already exists, showing: {}", title);
 	}
 
 	private void handleMissingFXMLResource() {
 		String errorMessage = "Failed to open window\nError: FXML resource is null.";
-		LOGGER.error(errorMessage);
+		logger.error(errorMessage);
 		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
@@ -201,7 +201,7 @@ public class MenuController extends Application implements JavaFXUIManager {
 		try {
 			bundle = ResourceBundle.getBundle("menu", currentLocale);
 		} catch (MissingResourceException e) {
-			LOGGER.warn("Could not find ResourceBundle for locale {}. Falling back to English.", currentLocale);
+			logger.warn("Could not find ResourceBundle for locale {}. Falling back to English.", currentLocale);
 			bundle = ResourceBundle.getBundle("menu", Locale.ENGLISH);
 		}
 		return bundle;
@@ -211,7 +211,7 @@ public class MenuController extends Application implements JavaFXUIManager {
 		Scene scene = new Scene(root);
 		addSceneStylesheets(scene);
 		this.stage = createLaunchStage(scene);
-		LOGGER.debug("Stage created and shown: {}", title);
+		logger.debug("Stage created and shown: {}", title);
 	}
 
 	private void addSceneStylesheets(Scene scene) {
@@ -238,7 +238,7 @@ public class MenuController extends Application implements JavaFXUIManager {
 
 	private void handleFXMLLoadError(IOException e) {
 		String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource;
-		LOGGER.fatal("Error loading FXML: {}", fxmlResource, e);
+		logger.error("Error loading FXML: {}", fxmlResource, e);
 		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
 		throw new RuntimeException(errorMessage, e);
 	}
@@ -282,7 +282,7 @@ public class MenuController extends Application implements JavaFXUIManager {
 
 	public void openUnitComparisonView() {
 		if (!HOIIVFiles.isUnitsFolderValid()) {
-			LOGGER.warn("Unit comparison view cannot open: missing base or mod units folder.");
+			logger.warn("Unit comparison view cannot open: missing base or mod units folder.");
 			JOptionPane.showMessageDialog(null, "Unit folders not found. Please check your HOI4 installation or the chosen mod directory.", "Error", JOptionPane.WARNING_MESSAGE);
 			return;
 		}

@@ -8,7 +8,7 @@ import com.hoi4utils.hoi4.modifier.{Modifier, ModifierDatabase}
 import com.hoi4utils.localization.{Localizable, Property}
 import com.hoi4utils.script.{CollectionPDX, DoublePDX, PDXScript, PDXSupplier, StringPDX, StructuredPDX}
 import javafx.beans.property.SimpleStringProperty
-import org.apache.logging.log4j.{LogManager, Logger}
+import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
 
 import scala.jdk.javaapi.CollectionConverters
@@ -20,8 +20,7 @@ import scala.collection.mutable.{ListBuffer, Map}
 /**
  * This is the Idea file.
  */
-object Idea {
-  val LOGGER: Logger = LogManager.getLogger(classOf[Idea])
+object Idea extends LazyLogging {
 
   def getDataFunctions: Iterable[Idea => ?] = {
     val dataFunctions = new ListBuffer[Idea => ?]() // for optimization, limited number of data functions.

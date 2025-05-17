@@ -11,14 +11,14 @@ trait ProceduralIdentifierPDX(p: String => Boolean) { self: AbstractPDX[?] =>
     if (pdxIdentifiers.isEmpty) expr.identifier match {
       case Some(id) =>
         if (p(id)) {
-          LOGGER.debug("Using date identifier: " + id)
+          logger.debug("Using date identifier: " + id)
           pdxIdentifiers = List(id)
         }
       case None =>
-        LOGGER.debug("No identifier found")
+        logger.debug("No identifier found")
     }
     else if (pdxIdentifiers.indexWhere(expr.nameEquals) == -1) {
-      LOGGER.error("Unexpected identifier: " + expr.name)
+      logger.error("Unexpected identifier: " + expr.name)
       throw new UnexpectedIdentifierException(expr)
     }
   }

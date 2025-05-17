@@ -55,7 +55,7 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
       case value: Int => Some(value.toDouble)
       case null => None
       case _ => 
-        LOGGER.warn(s"Expected double value for pdx double")
+        logger.warn(s"Expected double value for pdx double")
         None
     }
   }
@@ -70,7 +70,7 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
         case d: Double => d
         case i: Int => i.toDouble
         case _ =>
-          LOGGER.warn(s"Expected double value for pdx double, got ${value}")
+          logger.warn(s"Expected double value for pdx double, got ${value}")
           default
       }
       case None => default

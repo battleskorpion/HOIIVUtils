@@ -4,7 +4,7 @@ import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.exceptions.LocalizationExistsException
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
-import org.apache.logging.log4j.{LogManager, Logger}
+import com.typesafe.scalalogging.LazyLogging
 
 import java.io.*
 import java.nio.charset.StandardCharsets
@@ -21,8 +21,7 @@ object EnglishLocalizationManager {
   protected val language_def: String = l_english
 }
 
-class EnglishLocalizationManager extends LocalizationManager {
-  val LOGGER: Logger = LogManager.getLogger(classOf[EnglishLocalizationManager])
+class EnglishLocalizationManager extends LocalizationManager with LazyLogging {
   /* */ 
   setManager(this)
 
@@ -45,21 +44,21 @@ class EnglishLocalizationManager extends LocalizationManager {
     /* Load mod localization after vanilla to give mod localizations priority */
     // vanilla
     if (HOIIVFiles.HOI4.localization_folder == null)
-      LOGGER.warn("'HOI4 localization folder' is null.")
+      logger.warn("'HOI4 localization folder' is null.")
     else if (!HOIIVFiles.HOI4.localization_folder.exists)
-      LOGGER.warn("'HOI4 localization folder' does not exist.")
+      logger.warn("'HOI4 localization folder' does not exist.")
     else if (!HOIIVFiles.HOI4.localization_folder.isDirectory)
-      LOGGER.warn("'HOI4 localization folder' is not a directory.")
+      logger.warn("'HOI4 localization folder' is not a directory.")
     else
       loadLocalization(HOIIVFiles.HOI4.localization_folder, Localization.Status.VANILLA)
 
     // mod
     if (HOIIVFiles.Mod.localization_folder == null)
-      LOGGER.warn("'Mod localization folder' is null.")
+      logger.warn("'Mod localization folder' is null.")
     else if (!HOIIVFiles.Mod.localization_folder.exists)
-      LOGGER.warn("'Mod localization folder' does not exist.")
+      logger.warn("'Mod localization folder' does not exist.")
     else if (!HOIIVFiles.Mod.localization_folder.isDirectory)
-      LOGGER.warn("'Mod localization folder' is not a directory.")
+      logger.warn("'Mod localization folder' is not a directory.")
     else
       loadLocalization(HOIIVFiles.Mod.localization_folder, Localization.Status.EXISTS)
   }
@@ -71,8 +70,8 @@ class EnglishLocalizationManager extends LocalizationManager {
     for (file <- files) {
       if (file.isDirectory) loadLocalization(file, status)
       else if (file.getName.endsWith(".yml")) loadLocalizationFile(file, status)
-      else LOGGER.info("Localization files can only be of type .yml. File: {}", file.getAbsolutePath)
-      LOGGER.debug("Loaded localization file: {}", file.getAbsolutePath)
+      else logger.info("Localization files can only be of type .yml. File: {}", file.getAbsolutePath)
+      logger.debug("Loaded localization file: {}", file.getAbsolutePath)
     }
   }
 
@@ -221,7 +220,7 @@ class EnglishLocalizationManager extends LocalizationManager {
 
     val existingLocalization: List[Localization] =
       lines.flatMap(LocalizationParser.parseLine)
-    LOGGER.debug(s"File: ${file.getName}, Existing localizations: ${existingLocalization.size}")
+    logger.debug(s"File: ${file.getName}, Existing localizations: ${existingLocalization.size}")
 
     /* --- Group by base key --- */
     val existingGroups: Map[String, LocalizationGroup] =

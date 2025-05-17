@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
  * @param <T> The type of data in the {@link TableView}.
  */
 public class ExcelExport<T> {
-	private static final Logger LOGGER = LogManager.getLogger(ExcelExport.class);
+	private static final Logger logger = LogManager.getLogger(ExcelExport.class);
 	private static final String FILE_EXTENSION = ".xls";
 
 	/**
@@ -101,14 +101,14 @@ public class ExcelExport<T> {
 	private void saveWorkbook(HSSFWorkbook workbook, String fileName) {
 		try (FileOutputStream fileOut = new FileOutputStream(fileName)) {
 			workbook.write(fileOut);
-			LOGGER.info("Excel file saved: {}", fileName);
+			logger.info("Excel file saved: {}", fileName);
 		} catch (IOException e) {
-			LOGGER.error("Failed to save Excel file: {}", fileName, e);
+			logger.error("Failed to save Excel file: {}", fileName, e);
 		} finally {
 			try {
 				workbook.close();
 			} catch (IOException e) {
-				LOGGER.error("Failed to close workbook: {}", fileName, e);
+				logger.error("Failed to close workbook: {}", fileName, e);
 			}
 		}
 	}

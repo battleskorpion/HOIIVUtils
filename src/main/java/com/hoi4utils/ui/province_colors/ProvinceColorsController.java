@@ -22,7 +22,7 @@ import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.rgb;
 
 public class ProvinceColorsController extends HOIIVUtilsAbstractController {
-	public static final Logger LOGGER = LogManager.getLogger(ProvinceColorsController.class);
+	public static final Logger logger = LogManager.getLogger(ProvinceColorsController.class);
 
     // Getters and setters for color ranges
     // Color constraints from old code
@@ -182,14 +182,14 @@ public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 			if (numColors > maxPossibleColors) {
 				numColors = (int) maxPossibleColors;
 				statusLabel.setText("Warning: Limited to " + numColors + " colors based on RGB ranges.");
-                LOGGER.warn("Requested more colors than possible with current RGB ranges. Limited to {}", numColors);
+                logger.warn("Requested more colors than possible with current RGB ranges. Limited to {}", numColors);
 			}
 
 			// Also check the absolute maximum (16.7 million)
 			if (numColors > (1 << 24) - 1) {
 				numColors = (1 << 24) - 1;
 				statusLabel.setText("Warning: Limited to maximum of " + numColors + " unique colors.");
-                LOGGER.warn("Requested more colors than possible (24-bit RGB). Limited to {}", numColors);
+                logger.warn("Requested more colors than possible (24-bit RGB). Limited to {}", numColors);
 			}
 
 			return numColors;
@@ -240,15 +240,15 @@ public class ProvinceColorsController extends HOIIVUtilsAbstractController {
 					progressIndicator.setVisible(false);
 					generateButton.setDisable(false);
 					statusLabel.setText("BMP generated successfully: " + outputPath);
-                    LOGGER.info("Generated BMP with {} unique colors: {}", numColors, outputPath);
+                    logger.info("Generated BMP with {} unique colors: {}", numColors, outputPath);
 				});
 			} catch (Exception e) {
-				LOGGER.fatal("Error generating BMP", e);
+				logger.error("Error generating BMP", e);
 				Platform.runLater(() -> {
 					progressIndicator.setVisible(false);
 					generateButton.setDisable(false);
 					statusLabel.setText("Error: Failed to generate BMP - " + e.getMessage());
-					LOGGER.error("Failed to generate BMP", e);
+					logger.error("Failed to generate BMP", e);
 				});
 			}
 		}).start();

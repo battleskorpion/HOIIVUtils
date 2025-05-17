@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
-	public static final Logger LOGGER = LogManager.getLogger(HOIIVUtilsAbstractController.class);
+	public static final Logger logger = LogManager.getLogger(HOIIVUtilsAbstractController.class);
 	private String fxmlResource;
 	private String title;
 	protected Stage stage;
@@ -71,12 +71,12 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 
 	private void showExistingStage() {
 		stage.show();
-		LOGGER.info("Stage already exists, showing: {}", title);
+		logger.info("Stage already exists, showing: {}", title);
 	}
 
 	private void handleMissingFXMLResource() {
 		String errorMessage = "Failed to open window\nError: FXML resource is null.";
-		LOGGER.error(errorMessage);
+		logger.error(errorMessage);
 		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
@@ -97,7 +97,7 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 		Scene scene = new Scene(root);
 		addSceneStylesheets(scene);
 		this.stage = createLaunchStage(scene);
-		LOGGER.debug("Stage created and shown: {}", title);
+		logger.debug("Stage created and shown: {}", title);
 	}
 	
 	private void setupAndShowStage(Parent root, FXMLLoader loader) {
@@ -105,7 +105,7 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 		addSceneStylesheets(scene);
 		this.loader = loader;
 		this.stage = createLaunchStage(scene);
-		LOGGER.debug("Stage created and shown: {}", title);
+		logger.debug("Stage created and shown: {}", title);
 	}
 
 	private void addSceneStylesheets(Scene scene) {
@@ -133,7 +133,7 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 
 	private void handleFXMLLoadError(IOException e) {
 		String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource;
-		LOGGER.fatal("Error loading FXML: {}", fxmlResource, e);
+		logger.error("Error loading FXML: {}", fxmlResource, e);
 		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
 		throw new RuntimeException(errorMessage, e);
 	}

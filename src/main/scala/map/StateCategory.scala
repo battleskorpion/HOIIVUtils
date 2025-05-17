@@ -70,7 +70,7 @@ class StateCategory(id: String) extends ReferencePDX[StateCategoryDef](() => Sta
 }
 
 object StateCategories {
-  val LOGGER: Logger = LogManager.getLogger(classOf[this.type])
+  val logger: Logger = LogManager.getLogger(classOf[this.type])
 
   private val _stateCategoryFiles: ListBuffer[StateCategoryFile] = ListBuffer()
 
@@ -88,13 +88,13 @@ object StateCategories {
 
     stateCategoryDirectory match {
       case Some(dir) =>
-        LOGGER.info(s"Reading resources from ${dir.getAbsolutePath}")
+        logger.info(s"Reading resources from ${dir.getAbsolutePath}")
         //_resourcesPDX = Some(new Resources(dir))
         stateCategoryDirectory.filter(_.getName.endsWith(".txt")).foreach { f =>
           _stateCategoryFiles += new StateCategoryFile(f)
         }
       case None =>
-        LOGGER.fatal(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.HOI4.resources_file} is not a directory, " +
+        logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.HOI4.resources_file} is not a directory, " +
           s"or it does not exist (No resources file found).")
     }
   }
@@ -131,7 +131,7 @@ class StateCategoryFile extends CollectionPDX[StateCategoryDef](StateCategories.
   def this(file: File) = {
     this()
     if (!file.exists) {
-      LOGGER.fatal(s"State Category file does not exist: $file")
+      logger.error(s"State Category file does not exist: $file")
       throw new IllegalArgumentException(s"File does not exist: $file")
     }
 

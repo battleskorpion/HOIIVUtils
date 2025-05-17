@@ -24,7 +24,7 @@ class Province extends IntPDX {
 }
 
 object Province {
-  val LOGGER: Logger = LogManager.getLogger(classOf[Province])
+  val logger: Logger = LogManager.getLogger(classOf[Province])
   private val provinces = new ListBuffer[Province]()
 
   /**

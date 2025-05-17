@@ -14,7 +14,7 @@ import java.util.Comparator;
 import java.util.function.Function;
 
 public class StateTable extends TableView<State> {
-    public static final Logger LOGGER = LogManager.getLogger(StateTable.class);
+    public static final Logger logger = LogManager.getLogger(StateTable.class);
 
     private final TableColumn<State, String> stateColumn                = new TableColumn<>("State");
     private final TableColumn<State, Integer> populationColumn          = new TableColumn<>("Population");

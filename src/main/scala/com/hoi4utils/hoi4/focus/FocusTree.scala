@@ -3,11 +3,11 @@ package com.hoi4utils.hoi4.focus
 import FocusTree.focusTreeFileMap
 import com.hoi4utils.HOIIVUtils
 import javafx.collections.{FXCollections, ObservableList}
-import org.apache.logging.log4j.{LogManager, Logger}
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.localization.{Localizable, Property}
 import com.hoi4utils.script.{DoublePDX, MultiPDX, PDXFile, PDXScript, ReferencePDX, StringPDX, StructuredPDX}
+import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.*
 
 import java.io.File
@@ -20,8 +20,7 @@ import scala.jdk.javaapi.CollectionConverters
  * Localizable data: focus tree name. Each focus is its own localizable data.
  */
 // todo extends file?
-object FocusTree {
-  val LOGGER: Logger = LogManager.getLogger(classOf[FocusTree])
+object FocusTree extends LazyLogging {
   private val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
   private val focusTrees = new ListBuffer[FocusTree]()
 
@@ -40,13 +39,13 @@ object FocusTree {
    */
   def read(): Boolean = {
     if (!HOIIVFiles.Mod.focus_folder.exists || !HOIIVFiles.Mod.focus_folder.isDirectory) {
-      LOGGER.fatal(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
+      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
       false
     } else if (HOIIVFiles.Mod.focus_folder.listFiles == null || HOIIVFiles.Mod.focus_folder.listFiles.length == 0) {
-      LOGGER.warn(s"No focuses found in ${HOIIVFiles.Mod.focus_folder}")
+      logger.warn(s"No focuses found in ${HOIIVFiles.Mod.focus_folder}")
       false
     } else {
-      LOGGER.info("Reading focus trees from " + HOIIVFiles.Mod.focus_folder)
+      logger.info("Reading focus trees from " + HOIIVFiles.Mod.focus_folder)
 
       // create focus trees from files
       HOIIVFiles.Mod.focus_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
@@ -125,7 +124,7 @@ class FocusTree
   def this(focus_file: File) = {
     this()
     if (!focus_file.exists) {
-      LOGGER.fatal(s"Focus tree file does not exist: $focus_file")
+      logger.error(s"Focus tree file does not exist: $focus_file")
       throw new IllegalArgumentException(s"File does not exist: $focus_file")
     }
 
