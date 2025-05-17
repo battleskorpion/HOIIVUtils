@@ -8,7 +8,7 @@ import com.hoi4utils.ui.CustomTooltipController;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.buildings.BuildingsByCountryController;
-import com.hoi4utils.ui.clausewitz_gfx.InterfaceFileListController;
+import com.hoi4utils.ui.InterfaceFileListController;
 import com.hoi4utils.ui.focus_view.FocusTreeController;
 import com.hoi4utils.ui.hoi4localization.ManageFocusTreesController;
 import com.hoi4utils.ui.hoi4localization.FocusLocalizationController;
@@ -18,7 +18,7 @@ import com.hoi4utils.ui.map.MapEditorController;
 import com.hoi4utils.ui.map.MapGenerationController;
 import com.hoi4utils.ui.parser.ParserViewerController;
 import com.hoi4utils.ui.province_colors.ProvinceColorsController;
-import com.hoi4utils.ui.settings.SettingsController;
+import com.hoi4utils.ui.SettingsController;
 import com.hoi4utils.ui.units.CompareUnitsController;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -245,7 +245,7 @@ public class MenuController extends Application implements JavaFXUIManager {
 
 	public void openSettings() {
 		closeWindow(settingsButton); // closes the menu window
-		new SettingsController().open();
+		openUtilsWindow(new SettingsController());
 	}
 
 	public void openLogViewer() {

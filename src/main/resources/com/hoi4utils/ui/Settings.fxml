@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Rectangle?>
 
-<GridPane prefHeight="425.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.settings.SettingsController">
+<GridPane prefHeight="425.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.SettingsController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
