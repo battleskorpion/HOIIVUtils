@@ -19,7 +19,7 @@ import com.hoi4utils.ui.map.MapGenerationController;
 import com.hoi4utils.ui.parser.ParserViewerController;
 import com.hoi4utils.ui.province_colors.ProvinceColorsController;
 import com.hoi4utils.ui.SettingsController;
-import com.hoi4utils.ui.units.CompareUnitsController;
+import com.hoi4utils.ui.CompareUnitsController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
