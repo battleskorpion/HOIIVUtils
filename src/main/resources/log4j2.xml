@@ -3,7 +3,7 @@
 	<Appenders>
 		<!-- Console Appender -->
 		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout pattern="[%d{HH:mm:ss.SSS}] [%-5level] %c - %msg%n" />
+			<PatternLayout pattern="[%-5level] (%c): %msg%n" />
 		</Console>
 
 		<!-- File Appender (Overwrites on Startup) -->

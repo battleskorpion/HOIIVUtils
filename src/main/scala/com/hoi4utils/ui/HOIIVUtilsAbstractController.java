@@ -1,12 +1,12 @@
 package com.hoi4utils.ui;
 
+import com.hoi4utils.HOIIVUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -18,29 +18,21 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 	public static final Logger logger = LogManager.getLogger(HOIIVUtilsAbstractController.class);
 	private String fxmlResource;
 	private String title;
-	protected Stage stage;
-	protected FXMLLoader loader;
 
 	/**
 	 * Opens the stage with the specified FXML resource and title.
 	 */
 	@Override
 	public void open() {
-		if (stage != null) {
-			showExistingStage();
-			return;
-		}
-
-		if (fxmlResource == null) {
-			handleMissingFXMLResource();
-			return;
-		}
-
 		try {
-			Parent root = loadFXML();
-			setupAndShowStage(root);
+			FXMLLoader fxml = new FXMLLoader(getClass().getResource(fxmlResource));
+			open(fxml);
+			logger.debug("{} Started", title);
 		} catch (IOException e) {
-			handleFXMLLoadError(e);
+			String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource + " Title: " + title;
+			logger.error("Error loading FXML: {}\n Title: {}", fxmlResource, title, e);
+			JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+			throw new RuntimeException(errorMessage, e);
 		}
 	}
 
@@ -50,98 +42,32 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 	 * @param initargs the initialization arguments for the controller
 	 */
 	public void open(Object... initargs) {
-		if (stage != null) {
-			showExistingStage();
-			return;
-		}
-
-		if (fxmlResource == null) {
-			handleMissingFXMLResource();
-			return;
-		}
-
 		try {
-			FXMLLoader launchLoader = createFXMLLoaderWithArgs(initargs);
-			Parent root = loadFXML(launchLoader);
-			setupAndShowStage(root, launchLoader);
+			FXMLLoader fxml = new FXMLLoader(getClass().getResource(fxmlResource));
+			fxml.setControllerFactory(c -> findMatchingConstructor(initargs));
+			open(fxml);
+			logger.debug("{} Started with arguments {}", title, initargs);
 		} catch (IOException e) {
-			handleFXMLLoadError(e);
+			String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource + " Title: " + title;
+			logger.error("Error loading FXML: {}\n Title: {}", fxmlResource, title, e);
+			JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+			throw new RuntimeException(errorMessage, e);
 		}
 	}
 
-	private void showExistingStage() {
+	public void open(FXMLLoader fxml) throws IOException {
+		Parent root = fxml.load();
+		Scene scene = new Scene(root);
+		if (Objects.equals(HOIIVUtils.get("theme"), "dark")) {
+			scene.getStylesheets().add("com/hoi4utils/ui/javafx_dark.css");
+		} else {
+			scene.getStylesheets().add("/com/hoi4utils/ui/highlight-background.css");
+		}
+		Stage stage = new Stage();
+		stage.setScene(scene);
+		stage.setTitle(title);
+		decideScreen(stage);
 		stage.show();
-		logger.info("Stage already exists, showing: {}", title);
-	}
-
-	private void handleMissingFXMLResource() {
-		String errorMessage = "Failed to open window\nError: FXML resource is null.";
-		logger.error(errorMessage);
-		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
-	}
-
-	private Parent loadFXML() throws IOException {
-		FXMLLoader launchLoader = new FXMLLoader(getClass().getResource(fxmlResource));
-		try {
-			return launchLoader.load();
-		} catch (IOException e) {
-			throw new IOException("Failed to load FXML: " + fxmlResource, e);
-		}
-	}
-	
-	private Parent loadFXML(FXMLLoader loader) throws IOException {
-		return loader.load();
-	}
-
-	private void setupAndShowStage(Parent root) {
-		Scene scene = new Scene(root);
-		addSceneStylesheets(scene);
-		this.stage = createLaunchStage(scene);
-		logger.debug("Stage created and shown: {}", title);
-	}
-	
-	private void setupAndShowStage(Parent root, FXMLLoader loader) {
-		Scene scene = new Scene(root);
-		addSceneStylesheets(scene);
-		this.loader = loader;
-		this.stage = createLaunchStage(scene);
-		logger.debug("Stage created and shown: {}", title);
-	}
-
-	private void addSceneStylesheets(Scene scene) {
-		scene.getStylesheets().add("com/hoi4utils/ui/javafx_dark.css");
-
-		try {
-			scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/hoi4utils/ui/highlight-background.css")).toExternalForm());
-		} catch (NullPointerException e) {
-			System.err.println("Warning: Stylesheet 'highlight-background.css' not found!");
-		}
-	}
-	
-	@NotNull
-	private Stage createLaunchStage(Scene scene) {
-		Optional.ofNullable(stage).ifPresent(Stage::close);
-
-		Stage launchStage = new Stage();
-		launchStage.setScene(scene);
-		launchStage.setTitle(title);
-		decideScreen(launchStage);
-		launchStage.show();
-
-		return launchStage;
-	}
-
-	private void handleFXMLLoadError(IOException e) {
-		String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource;
-		logger.error("Error loading FXML: {}", fxmlResource, e);
-		JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
-		throw new RuntimeException(errorMessage, e);
-	}
-
-	private FXMLLoader createFXMLLoaderWithArgs(Object... initargs) {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
-		loader.setControllerFactory(c -> findMatchingConstructor(initargs));
-		return loader;
 	}
 
 	private Object findMatchingConstructor(Object... initargs) {
