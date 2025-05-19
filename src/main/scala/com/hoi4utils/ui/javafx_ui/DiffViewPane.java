@@ -26,7 +26,6 @@ public class DiffViewPane extends AnchorPane {
     private final ListView<String> rightListView;
     private final String leftTitle;
     private final String rightTitle;
-    private final SplitPane splitPane;
     private Collection<String> leftData;
     private Collection<String> rightData;
 
@@ -34,7 +33,7 @@ public class DiffViewPane extends AnchorPane {
         this.leftTitle = leftTitle;
         this.rightTitle = rightTitle;
 
-        splitPane = new SplitPane();
+        SplitPane splitPane = new SplitPane();
         this.getChildren().add(splitPane);
         // Anchor split pane to all sides of the DiffViewPane
         AnchorPane.setTopAnchor(splitPane, 0.0);
