@@ -8,10 +8,12 @@
   <version>14.9.0</version>
   <description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
   <url>https://github.com/battleskorpion/HOIIVUtils</url>
+
   <issueManagement>
     <system>GitHub Issues</system>
     <url>https://github.com/battleskorpion/HOIIVUtils/issues</url>
   </issueManagement>
+
   <developers>
     <developer>
       <id>battleskorpion</id>
@@ -32,6 +34,7 @@
       <timezone>-7</timezone>
     </developer>
   </developers>
+
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -43,6 +46,7 @@
     <url>https://github.com/battleskorpion/HOIIVUtils</url>
     <connection>scm:git:git://github.com/battleskorpion/HOIIVUtils.git</connection>
   </scm>
+
   <build>
     <resources>
       <resource>
@@ -64,8 +68,10 @@
         <directory>src/main/resources_binary</directory>
       </resource>
     </resources>
+
     <finalName>${project.artifactId}</finalName>
     <!-- https://maven.apache.org/plugins/index.html -->
+
     <plugins>
       <!-- JavaFX Plugin https://github.com/openjfx/javafx-maven-plugin -->
       <plugin>
@@ -175,6 +181,7 @@
       </plugin>
     </plugins>
   </build>
+
   <!-- https://mvnrepository.com/ -->
   <dependencies>
     <!-- https://mvnrepository.com/artifact/com.lihaoyi/ujson -->
@@ -345,7 +352,132 @@
       <artifactId>scalafx_3</artifactId>
       <version>24.0.0-R35</version>
     </dependency>
+    <!-- !!!!! UI !!!!! -->
+    <dependency>
+      <groupId>com.hoi4utils</groupId>
+      <artifactId>compose-ui</artifactId>
+      <version>0.1.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>androidx.compose.material</groupId>
+          <artifactId>material</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.lifecycle</groupId>
+          <artifactId>lifecycle-runtime</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.lifecycle</groupId>
+          <artifactId>lifecycle-runtime-desktop</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.foundation</groupId>
+          <artifactId>foundation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.ui</groupId>
+          <artifactId>ui-geometry</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.lifecycle</groupId>
+          <artifactId>lifecycle-runtime-compose</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.arch.core</groupId>
+          <artifactId>core-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.material</groupId>
+          <artifactId>material-ripple</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.foundation</groupId>
+          <artifactId>foundation-layout</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.collection</groupId>
+          <artifactId>collection-jvm</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.ui</groupId>
+          <artifactId>ui</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.ui</groupId>
+          <artifactId>ui-text</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.lifecycle</groupId>
+          <artifactId>lifecycle-common-jvm</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.lifecycle</groupId>
+          <artifactId>lifecycle-runtime</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.annotation</groupId>
+          <artifactId>annotation-jvm</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.annotation</groupId>
+          <artifactId>annotation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.runtime</groupId>
+          <artifactId>runtime</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.ui</groupId>
+          <artifactId>ui-unit</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.runtime</groupId>
+          <artifactId>runtime-saveable</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.lifecycle</groupId>
+          <artifactId>lifecycle-viewmodel-desktop</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.ui</groupId>
+          <artifactId>ui-tooling-preview</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.ui</groupId>
+          <artifactId>ui-graphics</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.lifecycle</groupId>
+          <artifactId>lifecycle-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.ui</groupId>
+          <artifactId>ui-util</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.animation</groupId>
+          <artifactId>animation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.lifecycle</groupId>
+          <artifactId>lifecycle-viewmodel</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.compose.desktop</groupId>
+          <artifactId>desktop-jvm-windows-x64</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.collection</groupId>
+          <artifactId>collection</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>androidx.compose.animation</groupId>
+          <artifactId>animation-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
+
   <dependencyManagement>
     <dependencies>
       <!-- https://mvnrepository.com/artifact/org.junit/junit-bom -->
@@ -358,6 +490,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <properties>
     <java.version>24</java.version>
     <project.organization.name>battleskorpion</project.organization.name>
@@ -367,4 +500,5 @@
     <scala.version>3.7.0</scala.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
+
 </project>

@@ -12,17 +12,17 @@ import androidx.compose.ui.window.application
 @Composable @Preview
 fun App() {
     var count by remember { mutableStateOf(0) }
-    MaterialTheme {
-        Column(
-            Modifier.fillMaxSize().padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text("You clicked $count times")
-            Spacer(Modifier.height(16.dp))
-            Button(onClick = { count++ }) { Text("Click me!") }
-        }
-    }
+//    MaterialTheme {
+//        Column(
+//            Modifier.fillMaxSize().padding(32.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.Center
+//        ) {
+//            Text("You clicked $count times")
+//            Spacer(Modifier.height(16.dp))
+//            Button(onClick = { count++ }) { Text("Click me!") }
+//        }
+//    }
 }
 
 fun main() = application {
