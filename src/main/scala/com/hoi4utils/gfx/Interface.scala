@@ -1,6 +1,6 @@
 package com.hoi4utils.gfx
 
-import com.hoi4utils.HOIIVUtils
+import com.hoi4utils.{HOIIVUtils, PDXReading}
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.parser.{Node, Parser, ParserException}
 import com.typesafe.scalalogging.LazyLogging
@@ -16,7 +16,7 @@ import scala.jdk.javaapi.CollectionConverters
  * Represents a .gfx file in interface folder
  * Contains a set of SpriteTypes
  */
-object Interface {
+object Interface extends PDXReading {
   private val gfxMap: mutable.Map[String, SpriteType] = new mutable.HashMap
   private var interfaceFiles: mutable.Map[File, Interface] = new mutable.HashMap
 

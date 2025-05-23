@@ -1,7 +1,6 @@
 package map
 
-import com.hoi4utils.{ExpectedRange, HOIIVUtils}
-import com.hoi4utils.ClausewitzDate
+import com.hoi4utils.{ClausewitzDate, ExpectedRange, HOIIVUtils, PDXReading}
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.localization.*
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
@@ -291,7 +290,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
  *
  * I apologize in advance.
  */
-object State extends Iterable[State] {
+object State extends Iterable[State] with PDXReading {
   private val logger: Logger = LogManager.getLogger(getClass)
 
   private val states = new ListBuffer[State]

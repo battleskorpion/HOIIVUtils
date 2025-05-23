@@ -1,5 +1,6 @@
 package com.hoi4utils.hoi4.country
 
+import com.hoi4utils.PDXReading
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.clausewitz.data.country.CountryFlag
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
@@ -25,7 +26,7 @@ import scala.collection.mutable.ListBuffer
 // todo make country extend countrytag???? ehhhhh
 // todo consider... implements infrastructure, resources?????
 // todo localizable data?
-object Country extends LazyLogging {
+object Country extends LazyLogging with PDXReading {
 
   private val countries = new ListBuffer[Country]()
 

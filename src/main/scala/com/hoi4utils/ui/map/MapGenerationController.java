@@ -2,9 +2,9 @@ package com.hoi4utils.ui.map;
 
 import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
-import com.hoi4utils.clausewitz.map.gen.Heightmap;
-import com.hoi4utils.clausewitz.map.province.ProvinceGeneration;
-import com.hoi4utils.clausewitz.map.province.ProvinceMap;
+import com.hoi4utils.clausewitz.map.Heightmap;
+import com.hoi4utils.clausewitz.map.ProvinceGeneration;
+import com.hoi4utils.clausewitz.map.ProvinceMap;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.JavaFXUIManager;
 import javafx.concurrent.Task;

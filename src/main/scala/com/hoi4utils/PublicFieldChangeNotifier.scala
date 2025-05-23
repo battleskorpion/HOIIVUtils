@@ -3,7 +3,7 @@ package com.hoi4utils
 import java.beans.{PropertyChangeListener, PropertyChangeSupport}
 import java.util
 
-class PublicFieldChangeNotifier(private val targetClass: Class[_]) {
+class PublicFieldChangeNotifier(private val targetClass: Class[?]) {
   final private val pcs = new PropertyChangeSupport(this)
   final private val fieldValues = new util.HashMap[String, AnyRef]
   initializeFieldValues()

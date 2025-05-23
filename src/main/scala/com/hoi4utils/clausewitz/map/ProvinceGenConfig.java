@@ -1,6 +1,5 @@
 package com.hoi4utils.clausewitz.map;
 
-import com.hoi4utils.clausewitz.map.province.ProvinceDeterminationType;
 import com.hoi4utils.clausewitz.map.seed.SeedGenType;
 import lombok.Getter;
 import lombok.Setter;

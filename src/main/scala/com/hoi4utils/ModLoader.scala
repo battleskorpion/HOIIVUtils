@@ -24,6 +24,7 @@ class ModLoader extends LazyLogging {
   private var stateFilesWatcher: FileWatcher = null
   
   def loadMod(hProperties: Properties): Unit = {
+    implicit val properties: Properties = hProperties
     val hoi4Path = hProperties.getProperty("hoi4.path")
     val modPath = hProperties.getProperty("mod.path")
     if (validateDirectoryPath(hoi4Path, "hoi4.path") && validateDirectoryPath(modPath, "mod.path"))
@@ -37,77 +38,29 @@ class ModLoader extends LazyLogging {
     changeNotifier.checkAndNotifyChanges()
 
     LocalizationManager.getOrCreate(() => new EnglishLocalizationManager).reload()
-
-    try if (Interface.read()) hProperties.setProperty("valid.Interface", "true")
-    else {
-      hProperties.setProperty("valid.Interface", "false")
-      logger.error("Failed to read gfx interface files")
-    }
-    catch {
+    
+    List (
+      Interface,
+      State,
+      Country,
+      CountryTag,
+      FocusTree,
+      IdeaFile,
+      ResourcesFile
+    ).foreach(readPDXData)
+  }
+  
+  def readPDXData(clazz: PDXReading)(implicit properties: Properties): Unit = {
+    val property = s"valid.${clazz.validPropertyName}"
+    try
+      if (clazz.read()) properties.setProperty(property, "true")
+      else
+        properties.setProperty(property, "false")
+        logger.error(s"Exception while reading for ${clazz.validPropertyName}")
+    catch
       case e: Exception =>
-        hProperties.setProperty("valid.Interface", "false")
-        logger.error("Exception while reading interface files", e)
-    }
-    try if (ResourcesFile.read()) hProperties.setProperty("valid.Resources", "true")
-    else {
-      hProperties.setProperty("valid.Resources", "false")
-      logger.error("Failed to read resources")
-    }
-    catch {
-      case e: Exception =>
-        hProperties.setProperty("valid.Resources", "false")
-        logger.error("Exception while reading resources", e)
-    }
-    try if (CountryTag.read()) hProperties.setProperty("valid.CountryTag", "true")
-    else {
-      hProperties.setProperty("valid.CountryTag", "false")
-      logger.error("Failed to read country tags")
-    }
-    catch {
-      case e: Exception =>
-        hProperties.setProperty("valid.CountryTag", "false")
-        logger.error("Exception while reading country tags", e)
-    }
-    try if (Country.read()) hProperties.setProperty("valid.Country", "true")
-    else {
-      hProperties.setProperty("valid.Country", "false")
-      logger.error("Failed to read countries")
-    }
-    catch {
-      case e: Exception =>
-        hProperties.setProperty("valid.Country", "false")
-        logger.error("Exception while reading countries", e)
-    }
-    try if (State.read()) hProperties.setProperty("valid.State", "true")
-    else {
-      hProperties.setProperty("valid.State", "false")
-      logger.error("Failed to read states")
-    }
-    catch {
-      case e: Exception =>
-        hProperties.setProperty("valid.State", "false")
-        logger.error("Exception while reading states", e)
-    }
-    try if (FocusTree.read()) hProperties.setProperty("valid.FocusTree", "true")
-    else {
-      hProperties.setProperty("valid.FocusTree", "false")
-      logger.error("Failed to read focus trees")
-    }
-    catch {
-      case e: Exception =>
-        hProperties.setProperty("valid.FocusTree", "false")
-        logger.error("Exception while reading focus trees", e)
-    }
-    try if (IdeaFile.read()) hProperties.setProperty("valid.IdeaFiles", "true")
-    else {
-      hProperties.setProperty("valid.IdeaFiles", "false")
-      logger.error("Failed to read idea files")
-    }
-    catch {
-      case e: Exception =>
-        hProperties.setProperty("valid.IdeaFiles", "false")
-        logger.error("Exception while reading idea files", e)
-    }
+        properties.setProperty(property, "false")
+        logger.error(s"Exception while reading for ${clazz.validPropertyName}", e)
   }
 
   /** Validates whether the provided directory path is valid */
