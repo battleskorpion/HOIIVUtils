@@ -7,9 +7,10 @@ import com.hoi4utils.hoi4.country.{Country, CountryTag}
 import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.hoi4.idea.IdeaFile
 import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
+import com.hoi4utils.ui.MenuController
 import map.{ResourcesFile, State}
-
 import com.typesafe.scalalogging.LazyLogging
+import javafx.scene.control.Label
 
 import java.awt.EventQueue
 import java.beans.PropertyChangeListener
@@ -23,8 +24,10 @@ class ModLoader extends LazyLogging {
 
   private var stateFilesWatcher: FileWatcher = null
   
-  def loadMod(hProperties: Properties): Unit = {
+  def loadMod(hProperties: Properties, loadingLabel: Label): Unit = {
     implicit val properties: Properties = hProperties
+    implicit val label: Label = loadingLabel
+    MenuController.updateLoadingStatus(loadingLabel, "Finding Paths...")
     val hoi4Path = hProperties.getProperty("hoi4.path")
     val modPath = hProperties.getProperty("mod.path")
     if (validateDirectoryPath(hoi4Path, "hoi4.path") && validateDirectoryPath(modPath, "mod.path"))
@@ -36,7 +39,7 @@ class ModLoader extends LazyLogging {
       hProperties.setProperty("valid.HOIIVFilePaths", "false")
 
     changeNotifier.checkAndNotifyChanges()
-
+    MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
     LocalizationManager.getOrCreate(() => new EnglishLocalizationManager).reload()
     
     List (
@@ -50,8 +53,9 @@ class ModLoader extends LazyLogging {
     ).foreach(readPDXData)
   }
   
-  def readPDXData(clazz: PDXReading)(implicit properties: Properties): Unit = {
+  def readPDXData(clazz: PDXReading)(implicit properties: Properties, label: Label): Unit = {
     val property = s"valid.${clazz.validPropertyName}"
+    MenuController.updateLoadingStatus(label, s"Loading ${clazz.validPropertyName} files...")
     try
       if (clazz.read()) properties.setProperty(property, "true")
       else

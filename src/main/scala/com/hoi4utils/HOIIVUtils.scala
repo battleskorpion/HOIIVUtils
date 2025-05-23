@@ -24,20 +24,9 @@ import javax.swing.*
  * HOIIVUtils\\HOIIVUtils.sh
  */
 object HOIIVUtils extends LazyLogging {
-  val configManager = new ConfigManager
-  val config: Config = configManager.createConfig
-  val hInitializer: Initializer = new Initializer
-  val hModLoader: ModLoader = new ModLoader
-  val hProperties: Properties = config.getProperties
+  val config: Config = (new ConfigManager).createConfig
 
   def main(args: Array[String]): Unit = {
-    val upr = new Updater
-    hInitializer.initialize(config)
-    val version = Version.getVersion(hProperties)
-    upr.updateCheck(version, config.getDir)
-    hModLoader.loadMod(hProperties)
-    logger.info(s"HOIIVUtils $version launched successfully")
-    val menuController = new MenuController
     Application.launch(classOf[MenuController], args*) //    menuController.launchMenuWindow(args)
   }
 
@@ -47,7 +36,7 @@ object HOIIVUtils extends LazyLogging {
    */
   def get(key: String): String = {
     try
-      hProperties.getProperty(key)
+      config.getProperties.getProperty(key)
     catch
       case e: Exception =>
         logger.error("Failed to get property {}: {}", key, e.getMessage)
@@ -60,21 +49,11 @@ object HOIIVUtils extends LazyLogging {
    */
   def set(key: String, value: String): Unit = {
     try
-      hProperties.setProperty(key, value)
+      config.getProperties.setProperty(key, value)
     catch
       case e: Exception =>
         logger.error("Failed to set property {}: {}", key, e.getMessage)
         throw new RuntimeException(e)
-  }
-
-  def loadMod(): Unit = {
-    try
-      new ModLoader().loadMod(hProperties)
-    catch
-      case e: Exception =>
-        logger.error("Failed to load mod: {}", e.getMessage)
-        JOptionPane.showMessageDialog(null, "Failed to load mod: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
-        System.exit(1)
   }
 
   def save(): Unit = {

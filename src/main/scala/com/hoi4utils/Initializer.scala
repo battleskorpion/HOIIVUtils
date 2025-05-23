@@ -10,10 +10,12 @@ import com.hoi4utils.hoi4.idea.IdeaFile
 import com.hoi4utils.hoi4.modifier.ModifierDatabase
 import com.hoi4utils.Config
 import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
+import com.hoi4utils.ui.MenuController
+import com.typesafe.scalalogging.LazyLogging
+import javafx.scene.control.Label
 import map.{ResourcesFile, State}
 import org.apache.logging.log4j.LogManager
 
-import java.awt.*
 import java.beans.PropertyChangeListener
 import java.io.*
 import java.net.URISyntaxException
@@ -27,16 +29,19 @@ import scala.::
  * Handles initialization of the HOIIVUtils application.
  * Separates initialization logic from utility functions.
  */
-class Initializer {
-  private val logger = LogManager.getLogger(this.getClass)
+class Initializer extends LazyLogging {
 
-  def initialize(config: Config): Unit = {
+  def initialize(config: Config, loadingLabel: Label): Unit = {
+    MenuController.updateLoadingStatus(loadingLabel, "Initializing ModifierDatabase...")
     ModifierDatabase.init()
+    MenuController.updateLoadingStatus(loadingLabel, "Initializing EffectDatabase...")
     EffectDatabase.init()
+    MenuController.updateLoadingStatus(loadingLabel, "Loading Properties / Creating Properties...")
     ConfigManager().loadProperties(config)
     autoSetHOIIVPath(config.getProperties)
     autoSetDemoModPath(config.getProperties, config.getDir)
     config.getProperties.setProperty("hDir", config.getDir.toString)
+    MenuController.updateLoadingStatus(loadingLabel, "Saving Properties...")
     ConfigManager().saveProperties(config)
   }
 

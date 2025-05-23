@@ -1,6 +1,7 @@
 package com.hoi4utils.ui
 
-import com.hoi4utils.HOIIVUtils
+import com.hoi4utils.HOIIVUtils.config
+import com.hoi4utils.{Config, HOIIVUtils, Initializer, ModLoader, Updater, Version}
 import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.ui.buildings.BuildingsByCountryController
 import com.hoi4utils.ui.focus_view.FocusTreeController
@@ -12,7 +13,8 @@ import javafx.application.{Application, Platform}
 import javafx.concurrent.Task
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.{Parent, Scene}
-import javafx.scene.control.Button
+import javafx.scene.control.{Button, Label}
+import javafx.scene.layout.GridPane
 import javafx.stage.Stage
 import org.apache.logging.log4j.{LogManager, Logger}
 
@@ -26,19 +28,59 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
   import MenuController._
 
   private var fxmlResource: String = "Menu.fxml"
-  private var title: String = s"HOIIVUtils Menu ${HOIIVUtils.get("version")}"
 
   @FXML
   var settingsButton: Button = _
 
   @FXML
+  var loadingLabel: Label = _
+
+  @FXML
+  var contentContainer: GridPane = _
+
+  @FXML
   def initialize(): Unit = {
+    (new Initializer).initialize(config, loadingLabel)
     logger.debug("MenuController initialized")
 
-    // Check for invalid folder paths and show appropriate warnings
+    if (contentContainer != null) {
+      contentContainer.setVisible(false)
+    }
+
+    if (loadingLabel != null) {
+      loadingLabel.setVisible(true)
+      loadingLabel.setText(s"Starting HOIIVUtils ${Version.getVersion(config.getProperties)}...")
+    }
+
     val task = new Task[Unit] {
       override def call(): Unit = {
-        MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton)
+        try {
+          crazyUpdateLoadingStatus("Checking for Update...")
+          (new Updater).updateCheck(Version.getVersion(config.getProperties), config.getDir)
+          crazyUpdateLoadingStatus("Loading Files...")
+          new ModLoader().loadMod(config.getProperties, loadingLabel)
+
+          crazyUpdateLoadingStatus("Checking for bad files...")
+          MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton)
+          crazyUpdateLoadingStatus("Showing Menu...")
+
+          Platform.runLater(() => {
+            if (loadingLabel != null) {
+              loadingLabel.setVisible(false)
+            }
+            if (contentContainer != null) {
+              contentContainer.setVisible(true)
+            }
+          })
+        } catch {
+          case e: Exception =>
+            logger.error("Error during initialization", e)
+            crazyUpdateLoadingStatus("Error loading application")
+        }
+
+        def crazyUpdateLoadingStatus(status: String): Unit = {
+          updateLoadingStatus(loadingLabel, status)
+        }
       }
     }
 
@@ -56,10 +98,10 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
         scene.getStylesheets.add("/com/hoi4utils/ui/highlight-background.css")
       val stage = new Stage()
       stage.setScene(scene)
-      stage.setTitle(title)
+      stage.setTitle(s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}")
       decideScreen(stage)
       stage.show()
-      logger.debug(s"Stage created and shown: $title")
+      logger.debug(s"Stage created and shown: ${s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}"}")
     } catch {
       case e: IOException =>
         val errorMessage = s"Failed to open window\nError loading FXML: $fxmlResource"
@@ -105,6 +147,15 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
 }
 
 object MenuController extends LazyLogging {
+
+  def updateLoadingStatus(loadingLabel: Label, status: String): Unit = {
+    Platform.runLater(() => {
+      if (loadingLabel != null) {
+        val currentText = loadingLabel.getText
+        loadingLabel.setText(if (currentText.isEmpty) status else s"$currentText\n$status")
+      }
+    })
+  }
 
   def getResourceBundle: ResourceBundle = {
     val currentLocale = Locale.getDefault

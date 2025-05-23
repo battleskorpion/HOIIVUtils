@@ -1,7 +1,7 @@
 package com.hoi4utils.ui
 
 import com.hoi4utils.clausewitz.HOIIVFiles
-import com.hoi4utils.HOIIVUtils
+import com.hoi4utils.{Config, HOIIVUtils}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Application
 import javafx.fxml.{FXML, FXMLLoader}
@@ -191,7 +191,6 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
    * User Interactive Button in Settings Window Closes Settings Window Opens Menu Window
    */
   def handleOkButtonAction(): Unit = {
-    HOIIVUtils.loadMod()
     HOIIVUtils.save()
     hideWindow(idOkButton)
     new MenuController().open()
