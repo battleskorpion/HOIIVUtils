@@ -19,12 +19,13 @@ object JavaFXImageUtils {
   def imageFromDDS(ddspixels: Array[Int], ddswidth: Int, ddsheight: Int): Image = {
     val writableImage = new WritableImage(ddswidth, ddsheight)
     val pixelWriter = writableImage.getPixelWriter
-    for (y <- 0 until ddsheight) {
-      for (x <- 0 until ddswidth) {
-        val pixel = ddspixels(y * ddswidth + x)
-        pixelWriter.setArgb(x, y, pixel)
-      }
+    for (
+      y <- 0 until ddsheight; 
+      x <- 0 until ddswidth
+    ) {
+      val pixel = ddspixels(y * ddswidth + x)
+      pixelWriter.setArgb(x, y, pixel)
     }
-    return writableImage
+    writableImage
   }
 }
