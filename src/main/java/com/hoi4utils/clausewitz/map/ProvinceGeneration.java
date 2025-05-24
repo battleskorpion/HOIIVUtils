@@ -62,7 +62,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		seedGeneration.generate(stateBorderMapping, stateBorderMap);
 
 		ProvinceDetermination<MapPoint> provinceDetermination = provinceDeterminationFactory();
-		//executeProvinceDetermination();
 		provinceDetermination.generate(stateBorderMapping, stateBorderMap);
 	}
 
@@ -103,7 +102,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		}
 	}
 
-
 	private BorderMapping<MapPoint> borderMappingFactory() {
 		return switch (config.determinationType()) {
 			case DISTANCE_MULTITHREADED -> new BorderMapping_CPU<>();
@@ -123,6 +121,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	private @NotNull SeedGeneration<MapPoint> seedGenerationFactory() {
 		return switch (config.generationType()) {
 			case GRID -> new GridSeedGeneration(config, heightmap);
+			case HEX_GRID -> new HexGridSeedGeneration(config, heightmap)
 			case PROBABILISTIC_GPU -> new ProbabilisticSeedGeneration(heightmap, config);
 			case RANDOM -> new RandomSeedGeneration(config, heightmap);
 		};
