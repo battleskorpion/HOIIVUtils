@@ -17,6 +17,7 @@ import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.GridPane
 import javafx.stage.Stage
 import org.apache.logging.log4j.{LogManager, Logger}
+import scalafx.stage
 
 import javax.swing.{BorderFactory, JButton, JDialog, JOptionPane, JPanel, JTextArea, UIManager}
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
@@ -31,12 +32,12 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
 
   @FXML
   var settingsButton: Button = _
-
   @FXML
   var loadingLabel: Label = _
-
   @FXML
   var contentContainer: GridPane = _
+
+  var primaryStage: Stage = _
 
   @FXML
   def initialize(): Unit = {
@@ -88,6 +89,12 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
   }
 
   override def start(stage: Stage): Unit = {
+    primaryStage = stage
+    reloadUI()
+  }
+
+  // reloadUI might look something like:
+  def reloadUI(): Unit = {
     try {
       val loader = new FXMLLoader(getClass.getResource(fxmlResource), getResourceBundle)
       val root = loader.load[Parent]()
@@ -96,11 +103,10 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
         scene.getStylesheets.add("com/hoi4utils/ui/javafx_dark.css")
       else
         scene.getStylesheets.add("/com/hoi4utils/ui/highlight-background.css")
-      val stage = new Stage()
-      stage.setScene(scene)
-      stage.setTitle(s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}")
-      decideScreen(stage)
-      stage.show()
+      primaryStage.setScene(scene)
+      primaryStage.setTitle(s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}")
+      decideScreen(primaryStage)
+      primaryStage.show()
       logger.debug(s"Stage created and shown: ${s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}"}")
     } catch {
       case e: IOException =>
@@ -158,13 +164,21 @@ object MenuController extends LazyLogging {
   }
 
   def getResourceBundle: ResourceBundle = {
-    val currentLocale = Locale.getDefault
+    val currentLocale = {
+      val localeProperty = config.getProperties.getProperty("locale")
+      if (localeProperty != null)
+        Locale.forLanguageTag(localeProperty)
+      else Locale.getDefault
+    }
     try {
-      ResourceBundle.getBundle("menu", currentLocale)
+      val bundle = ResourceBundle.getBundle("i18n.menu", currentLocale)
+      logger.debug(s"Current resource bundle locale: $currentLocale")
+      logger.debug(s"Resource bundle found: ${bundle.getLocale}")
+      bundle
     } catch {
       case _: MissingResourceException =>
         logger.warn(s"Could not find ResourceBundle for locale $currentLocale. Falling back to English.")
-        ResourceBundle.getBundle("menu", Locale.ENGLISH)
+        ResourceBundle.getBundle("menu", Locale.US)
     }
   }
 

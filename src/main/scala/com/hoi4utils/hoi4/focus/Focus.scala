@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.focus
 
 import com.hoi4utils.ExpectedRange
-import com.hoi4utils.clausewitz.{BoolType, DataFunctionProvider}
+import com.hoi4utils.clausewitz.{BoolType}
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.localization.*
 import com.hoi4utils.script.*
@@ -21,7 +21,7 @@ import scala.collection.mutable.ListBuffer
 
 
 @lombok.extern.slf4j.Slf4j
-class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Localizable with DataFunctionProvider[Focus] {
+class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Localizable {
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
 

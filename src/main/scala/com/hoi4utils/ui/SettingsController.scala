@@ -11,9 +11,15 @@ import javafx.stage.{Screen, Stage}
 
 import javax.swing.JOptionPane
 import java.io.{File, IOException}
+import java.util.{Locale, ResourceBundle}
 import scala.jdk.CollectionConverters.*
 import scala.util.{Failure, Success, Try}
 import scala.util.matching.Regex
+
+import java.io.{File, FilenameFilter}
+import java.net.JarURLConnection
+import java.util.Locale
+import scala.jdk.CollectionConverters._
 
 /**
  * The SettingsController class is responsible for handling the program settings window and its
@@ -45,6 +51,8 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
   @FXML
   var preferredMonitorComboBox: ComboBox[Screen] = _
   @FXML
+  var languageComboBox: ComboBox[Locale] = _
+  @FXML
   var debugColorsTButton: ToggleButton = _
   @FXML
   var parserIgnoreCommentsCheckBox: CheckBox = _
@@ -52,12 +60,14 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
   @FXML
   def initialize(): Unit = {
     versionLabel.setText(HOIIVUtils.get("version").toString)
-    loadUIWithSavedSettings()
     loadMonitor()
+    loadLanguages()
+    // after loading, set saved settings
+    loadUIWithSavedSettings()
   }
 
   private def loadMonitor(): Unit = {
-    preferredMonitorComboBox.getItems.setAll(Screen.getScreens.asScala.toSeq: _*)
+    preferredMonitorComboBox.getItems.setAll(Screen.getScreens.asScala.toSeq*)
     preferredMonitorComboBox.setCellFactory(_ => new ListCell[Screen] {
       /**
        * Updates the item in the list view to the given value. The text of the item is set to "Screen
@@ -78,6 +88,95 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
     })
   }
 
+  private def loadLanguages(): Unit = {
+    val locales = detectSupportedLocales()
+
+    languageComboBox.getItems.setAll(locales: _*)
+
+//    languageComboBox.setCellFactory(_ => new ListCell[Locale] {
+//      override protected def updateItem(loc: Locale, empty: Boolean): Unit = {
+//        super.updateItem(loc, empty)
+//        setText(if (empty || loc == null) null else s"${loc.getDisplayLanguage(loc)} (${loc.toLanguageTag})")
+//      }
+//    })
+    languageComboBox.setCellFactory { _ =>
+      new ListCell[Locale] {
+        override protected def updateItem(loc: Locale, empty: Boolean): Unit = {
+          super.updateItem(loc, empty)
+          if (empty || loc == null) {
+            setText(null)
+            setGraphic(null)
+          } else {
+            val tag = loc.toLanguageTag // e.g. "en-GB"
+            val emoji = {
+              val parts = tag.split("-")
+              if (parts.length == 2) countryCodeToEmojiFlag(parts(1)) else ""
+            }
+            setText(s"$emoji  ${loc.getDisplayLanguage(loc)} ($tag)")
+            setGraphic(null) // we’re embedding the flag via emoji
+          }
+        }
+      }
+    }
+    languageComboBox.setButtonCell(languageComboBox.getCellFactory.call(null))
+
+    // 3) pre-select saved or default Locale
+    val savedTag = Option(HOIIVUtils.config.getProperties.getProperty("locale"))
+      .getOrElse(Locale.getDefault.toLanguageTag)
+    locales.find(_.toLanguageTag == savedTag)
+      .foreach(languageComboBox.getSelectionModel.select)
+  }
+      
+  /**
+   * Scan `resources/i18n` for ANY file matching `*_xx[_YY].properties`,
+   * pull out the locale part, and build a unique Seq[Locale].
+   */
+  private def detectSupportedLocales(): Seq[Locale] = {
+    val scanDir = "i18n"
+    val cl = getClass.getClassLoader
+
+    Option(cl.getResource(scanDir)).toSeq.flatMap { url =>
+        url.getProtocol match {
+
+          // exploded on disk
+          case "file" =>
+            val dir = new File(url.toURI)
+            val props: Array[File] = dir.listFiles(new FilenameFilter {
+              override def accept(dir: File, name: String): Boolean =
+                name.matches(""".+_[a-z]{2}(?:_[A-Z]{2})?\.properties""")
+            })
+            props.toSeq.map(_.getName)
+
+          // packaged inside a JAR
+          case "jar" =>
+            val conn = url.openConnection().asInstanceOf[JarURLConnection]
+            conn.getJarFile.entries.asScala.toSeq.collect {
+              case e if !e.isDirectory &&
+                e.getName.startsWith(s"$scanDir/") &&
+                e.getName.matches(s"""$scanDir/.+_[a-z]{2}(?:_[A-Z]{2})?\\.properties""") =>
+                e.getName.substring(e.getName.lastIndexOf('/') + 1)
+            }
+
+          case _ => Seq.empty
+        }
+      }
+      .map { filename =>
+        val code = filename
+          .replaceFirst("^.+?_", "")            // drop up to first underscore
+          .stripSuffix(".properties")           // yields "_xx[_YY]"
+          .replace('_','-')                     // now "_xx[-YY]"
+        Locale.forLanguageTag(code)
+      }
+
+  }
+
+  private def countryCodeToEmojiFlag(cc: String): String = {
+    cc.toUpperCase
+      .map(ch => 0x1F1E6 + (ch - 'A')) // U+1F1E6 is 🇦
+      .map(cp => new String(Character.toChars(cp)))
+      .mkString
+  }
+
   private def loadUIWithSavedSettings(): Unit = {
     modPathTextField.clear()
     if (!"null".equals(HOIIVUtils.get("mod.path"))) {
@@ -93,6 +192,8 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
     lightTheme.setSelected(HOIIVUtils.get("theme") == "light")
 
     preferredMonitorComboBox.getSelectionModel.select(validateAndGetPreferredScreen())
+
+    //languageComboBox.getSelectionModel.select()
 
     debugColorsTButton.setSelected(HOIIVUtils.get("debug.colors").toBoolean)
     debugColorsTButton.setText(if (debugColorsTButton.isSelected) "ON" else "OFF")
@@ -171,6 +272,14 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
    */
   def handlePreferredMonitorSelection(): Unit = {
     HOIIVUtils.set("preferred.screen", preferredMonitorComboBox.getSelectionModel.getSelectedIndex.toString)
+  }
+
+  def handleLanguageSelection(): Unit = {
+    val newLoc = languageComboBox.getValue
+    if (newLoc != null) {
+      HOIIVUtils.config.getProperties.setProperty("locale", newLoc.toLanguageTag)
+      logger.debug(s"Locale set to ${newLoc.toLanguageTag}")
+    }
   }
 
   def handleDebugColorsAction(): Unit = {
