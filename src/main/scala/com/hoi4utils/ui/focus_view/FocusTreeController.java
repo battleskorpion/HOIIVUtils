@@ -12,6 +12,7 @@ import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx_ui.image.JavaFXImageUtils;
 import com.hoi4utils.ui.pdxscript.NewFocusTreeController;
 import com.hoi4utils.ui.pdxscript.PDXEditorController;
+import com.hoi4utils.ui.pdxscript.PDXEditorPane;
 import com.sun.javafx.geom.Dimension;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -55,6 +56,8 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 	ComboBox<FocusTree> focusTreeDropdown;
 	@FXML
 	Button exportFocusTreeButton;
+	@FXML
+	SplitPane focusTreeViewSplitPane; 
 
 	private FocusTree focusTree;
 	private Tooltip focusTooltipView;
@@ -445,7 +448,7 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 		if (ddsImage.isDefined())
 			gc2D.drawImage(ddsImage.get(), x1, y1);
 		/* focus name text */ 
-		var locName = focus.localizationText(com.hoi4utils.localization.Property.NAME);
+		var locName = focus.localizationText(com.hoi4utils.localization.Property.NAME); // ignore .NAME error 
 		String name = locName.equals("[null]") && !focus.id().str().isBlank() ? focus.id().str() : locName;
 		gc2D.fillText(name, x1 - 20, y1 + yAdj2);
 
@@ -750,15 +753,17 @@ public class FocusTreeController extends HOIIVUtilsAbstractController {
 	@FXML
 	private void openEditorWindow(Focus focus) {
 		if (focus == null) throw new IllegalArgumentException("Focus cannot be null");
-		PDXEditorController pdxEditorController = new PDXEditorController();
-		pdxEditorController.open((PDXScript<?>) focus); // this is not necessarily redundant. DO NOT CHANGE
+		var pdxEditor = new PDXEditorPane((PDXScript<?>) focus); // this is not necessarily redundant. DO NOT CHANGE
+		focusTreeViewSplitPane.getItems().removeIf(node -> node instanceof PDXEditorPane);
+		focusTreeViewSplitPane.getItems().add(pdxEditor);
 	}
 
 	@FXML
 	private void openEditorWindow(Focus focus, Runnable onUpdate) {
 		if (focus == null) throw new IllegalArgumentException("Focus cannot be null");
-		PDXEditorController pdxEditorController = new PDXEditorController();
-		pdxEditorController.open((PDXScript<?>) focus, onUpdate); // DO NOT CHANGE
+		var pdxEditor = new PDXEditorPane((PDXScript<?>) focus, onUpdate); // DO NOT CHANGE
+		focusTreeViewSplitPane.getItems().removeIf(node -> node instanceof PDXEditorPane);
+		focusTreeViewSplitPane.getItems().add(pdxEditor); 
 	}
 
 	@FXML

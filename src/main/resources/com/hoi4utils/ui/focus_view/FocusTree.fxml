@@ -7,6 +7,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -14,7 +15,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.focus_view.FocusTreeController">
+<AnchorPane prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.focus_view.FocusTreeController">
    <children>
       <GridPane prefHeight="30.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -55,14 +56,18 @@
             <Insets left="5.0" right="5.0" />
          </padding>
       </GridPane>
-      <ScrollPane fx:id="focusTreeCanvasScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="601.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-        <content>
-          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
-               <children>
-                  <Canvas fx:id="focusTreeCanvas" height="384.0" onMouseClicked="#handleFocusTreeViewMouseClicked" onMouseDragged="#handleFocusTreeViewMouseDragged" onMouseMoved="#handleFocusTreeViewMouseMoved" onMousePressed="#handleFocusTreeViewMousePressed" onMouseReleased="#handleFocusTreeViewMouseReleased" width="589.0" />
-               </children>
-            </AnchorPane>
-        </content>
-      </ScrollPane>
+      <SplitPane fx:id="focusTreeViewSplitPane" layoutY="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+         <items>
+            <ScrollPane fx:id="focusTreeCanvasScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="601.0">
+              <content>
+                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
+                     <children>
+                        <Canvas fx:id="focusTreeCanvas" height="384.0" onMouseClicked="#handleFocusTreeViewMouseClicked" onMouseDragged="#handleFocusTreeViewMouseDragged" onMouseMoved="#handleFocusTreeViewMouseMoved" onMousePressed="#handleFocusTreeViewMousePressed" onMouseReleased="#handleFocusTreeViewMouseReleased" width="589.0" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </ScrollPane>
+         </items>
+      </SplitPane>
    </children>
 </AnchorPane>
