@@ -12,14 +12,15 @@ import com.typesafe.scalalogging.LazyLogging
 import javafx.application.{Application, Platform}
 import javafx.concurrent.Task
 import javafx.fxml.{FXML, FXMLLoader}
+import javafx.geometry.{Insets, Pos}
+import javafx.scene.control.Alert.AlertType
 import javafx.scene.{Parent, Scene}
-import javafx.scene.control.{Button, Label}
-import javafx.scene.layout.GridPane
-import javafx.stage.Stage
+import javafx.scene.control.{Alert, Button, Label, TextArea}
+import javafx.scene.layout.{BorderPane, GridPane, HBox}
+import javafx.scene.text.{Font, FontWeight}
+import javafx.stage.{Modality, Stage}
 import org.apache.logging.log4j.{LogManager, Logger}
 
-import javax.swing.{BorderFactory, JButton, JDialog, JOptionPane, JPanel, JTextArea, UIManager}
-import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import java.io.IOException
 import java.util.{Locale, MissingResourceException, Objects, Optional, ResourceBundle}
 import scala.util.{Failure, Success, Try}
@@ -106,7 +107,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
       case e: IOException =>
         val errorMessage = s"Failed to open window\nError loading FXML: $fxmlResource"
         logger.error(s"Error loading FXML: $fxmlResource", e)
-        JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE)
+        showErrorDialog(errorMessage)
         throw new RuntimeException(errorMessage, e)
     }
   }
@@ -127,13 +128,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
   def openFocusTreeViewer(): Unit = new FocusTreeController().open()
   def openUnitComparisonView(): Unit = {
     if (!HOIIVFiles.isUnitsFolderValid) {
-      logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
-      JOptionPane.showMessageDialog(
-        null,
-        "Unit folders not found. Please check your HOI4 installation or the chosen mod directory.",
-        "Error",
-        JOptionPane.WARNING_MESSAGE
-      )
+      showErrorDialog("Unit folders not found. Please check your HOI4 installation or the chosen mod directory.")
       return
     }
     new CompareUnitsController().open()
@@ -168,7 +163,7 @@ object MenuController extends LazyLogging {
     }
   }
 
-  def checkForInvalidSettingsAndShowWarnings(button: Button): Boolean = {
+  def checkForInvalidSettingsAndShowWarnings(button: Button): Unit = {
     var hasInvalidPaths = false
     val warningMessage = new StringBuilder("The following settings need to be configured:\n\n")
 
@@ -196,62 +191,70 @@ object MenuController extends LazyLogging {
       hasInvalidPaths = true
     }
 
-    // Show a single consolidated warning if any paths are invalid
     if (hasInvalidPaths) {
       warningMessage.append("\nPlease go to Settings to configure these paths.")
 
-      // Create a custom dialog for better visual appearance
-      val dialog = new JDialog()
-      dialog.setTitle("Configuration Required")
-      dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL)
-      dialog.setLayout(new BorderLayout())
+      Platform.runLater(() => {
+        // Create a new dialog
+        val dialog = new Stage()
+        dialog.initModality(Modality.APPLICATION_MODAL)
+        dialog.initOwner(button.getScene.getWindow)
+        dialog.setTitle("Configuration Required")
 
-      // Create panel with icon and message
-      val panel = new JPanel(new BorderLayout(15, 15))
-      panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20))
+        // Main layout
+        val root = new BorderPane()
+        root.setPadding(new Insets(20))
 
-      // Add warning icon
-      val iconLabel = new javax.swing.JLabel(UIManager.getIcon("OptionPane.warningIcon"))
-      panel.add(iconLabel, BorderLayout.WEST)
+        // Icon and message
+        val contentBox = new HBox(15)
+        contentBox.setAlignment(Pos.TOP_LEFT)
 
-      // Add message
-      val messageArea = new JTextArea(warningMessage.toString)
-      messageArea.setEditable(false)
-      messageArea.setBackground(panel.getBackground)
-      messageArea.setLineWrap(true)
-      messageArea.setWrapStyleWord(true)
-      messageArea.setFont(new Font("Dialog", Font.PLAIN, 14))
-      panel.add(messageArea, BorderLayout.CENTER)
+        val icon = new Label("⚠️")
+        icon.setStyle("-fx-font-size: 30px;")
 
-      // Add button panel
-      val buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT))
-      val settingsButton = new JButton("Open Settings")
+        val messageArea = new TextArea(warningMessage.toString)
+        messageArea.setWrapText(true)
+        messageArea.setEditable(false)
+        messageArea.setFont(Font.font("System", FontWeight.NORMAL, 14))
+        messageArea.setMaxWidth(350)
+        messageArea.setMaxHeight(180)
+        messageArea.setPrefRowCount(10)
 
-      settingsButton.addActionListener(_ => {
-        Platform.runLater(() => {
+        contentBox.getChildren.addAll(icon, messageArea)
+        root.setCenter(contentBox)
+
+        // Buttons
+        val openSettingsButton = new Button("Open Settings")
+        openSettingsButton.setOnAction(_ => {
           try {
-            (button.getScene.getWindow.asInstanceOf[Stage]).close()
+            dialog.close()
+            new SettingsController().open()
           } catch {
-            case ex: Exception => logger.error("Failed to close menu window", ex)
+            case ex: Exception => logger.error("Failed to open settings", ex)
           }
         })
-        Platform.runLater(() => new SettingsController().open())
-        dialog.dispose()
+
+        val buttonBox = new HBox()
+        buttonBox.setAlignment(Pos.CENTER_RIGHT)
+        buttonBox.setPadding(new Insets(10, 0, 0, 0))
+        buttonBox.getChildren.add(openSettingsButton)
+        root.setBottom(buttonBox)
+
+        // Scene and show
+        val scene = new Scene(root, 450, 300)
+        dialog.setScene(scene)
+        dialog.showAndWait()
       })
-
-      buttonPanel.add(settingsButton)
-
-      // Add panels to dialog
-      dialog.add(panel, BorderLayout.CENTER)
-      dialog.add(buttonPanel, BorderLayout.SOUTH)
-
-      // Size and display the dialog
-      dialog.pack()
-      dialog.setSize(450, 300)
-      dialog.setLocationRelativeTo(null)
-      dialog.setVisible(true)
     }
+  }
 
-    hasInvalidPaths
+  def showErrorDialog(errorMessage: String): Unit = {
+    Platform.runLater(() => {
+      val alert = new Alert(AlertType.ERROR)
+      alert.setTitle("Error")
+      alert.setHeaderText(null)
+      alert.setContentText(errorMessage)
+      alert.showAndWait()
+    })
   }
 }
