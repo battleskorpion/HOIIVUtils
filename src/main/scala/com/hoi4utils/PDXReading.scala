@@ -5,6 +5,6 @@ trait PDXReading {
   def read(): Boolean
   
   def validPropertyName: String = {
-    this.getClass.getSimpleName
+    this.getClass.getSimpleName.replaceAll("\\$", "")
   }
 }
