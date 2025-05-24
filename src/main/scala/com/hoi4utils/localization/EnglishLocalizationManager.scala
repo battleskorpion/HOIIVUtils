@@ -14,13 +14,6 @@ import scala.Option
 import scala.jdk.javaapi.CollectionConverters
 import scala.util.control.Exception.noCatch.opt
 
-object EnglishLocalizationManager {
-  protected val l_english = "l_english:"
-  protected val versionNumberRegex = ":(\\d*)" //  (version number is optional)
-
-  protected val language_def: String = l_english
-}
-
 class EnglishLocalizationManager extends LocalizationManager with LazyLogging {
   /* */ 
   setManager(this)
@@ -29,10 +22,6 @@ class EnglishLocalizationManager extends LocalizationManager with LazyLogging {
    * Localization collection for all English localization. 
    */
   final protected val localizationCollection = new LocalizationCollection
-
-  //    public static void setLanguage(String language) {
-  //        language_def = "l_" + language;
-  //    }
   
   override def localizations: LocalizationCollection = localizationCollection
 
@@ -41,6 +30,8 @@ class EnglishLocalizationManager extends LocalizationManager with LazyLogging {
     Set("a", "above", "after", "among", // among us
       "an", "and", "around", "as", "at", "below", "beneath", "beside", "between", "but", "by", "for", "from", "if", "in", "into", "nor", "of", "off", "on", "onto", "or", "over", "since", "the", "through", "throughout", "to", "under", "underneath", "until", "up", "with")
   }
+  
+  override def language_def: String = "l_english" 
 
   override def toString: String = "EnglishLocalizationManager{" + "localizations=" + localizationCollection + "}"
 }

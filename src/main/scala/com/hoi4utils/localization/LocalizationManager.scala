@@ -332,7 +332,7 @@ abstract class LocalizationManager extends LazyLogging {
         /* ignore BOM */
         if (line.startsWith("\uFEFF")) line = line.substring(1)
         if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
-          if (!line.trim.startsWith(EnglishLocalizationManager.language_def)) {
+          if (!line.trim.startsWith(language_def)) {
             System.out.println("Localization file is not in English: " + file.getAbsolutePath)
             return
           }
@@ -346,7 +346,7 @@ abstract class LocalizationManager extends LazyLogging {
       while (scanner.hasNextLine) {
         val line = scanner.nextLine
         if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
-          val data = line.splitWithDelimiters(EnglishLocalizationManager.versionNumberRegex, 2)
+          val data = line.splitWithDelimiters(versionNumberRegex, 2)
           if (data.length != 3) {
             System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
           } else {
@@ -403,6 +403,10 @@ abstract class LocalizationManager extends LazyLogging {
         exc.printStackTrace()
     } finally if (scanner != null) scanner.close()
   }
+  
+  def language_def: String 
+  
+  def versionNumberRegex = ":(\\d*)" //  (version number is optional)
 
   /**
    * Updates a localization file by merging new localizations with existing ones.
