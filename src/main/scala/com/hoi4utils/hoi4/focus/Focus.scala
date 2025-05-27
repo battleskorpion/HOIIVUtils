@@ -1,11 +1,6 @@
 package com.hoi4utils.hoi4.focus
 
-<<<<<<< Updated upstream
 import com.hoi4utils.{BoolType, ExpectedRange}
-=======
-import com.hoi4utils.ExpectedRange
-import com.hoi4utils.clausewitz.BoolType
->>>>>>> Stashed changes
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.localization.*
 import com.hoi4utils.script.*
