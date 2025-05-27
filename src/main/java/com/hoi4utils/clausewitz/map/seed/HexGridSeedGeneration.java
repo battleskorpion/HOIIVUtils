@@ -35,32 +35,36 @@ public class HexGridSeedGeneration extends AbstractSeedGeneration<MapPoint> {
      */
     @Override
     public void generate() {
-        Random random = new Random(); 		// Random number generator for generating seed locations
+        Random random = new Random();
 
-        for (double y = gridCenterY; y < heightmap.height(); y += gridHeight) {
-            for (double x = gridCenterX; x < heightmap.width(); x += gridWidth) {
-                //int xOffset = random.nextInt(heightmap.width()  / values.numSeedsX - 1)
-                //		- (heightmap.width()  / values.numSeedsX / 2 - 1); 	// -3 to 3		// should make variables	// int xOffset = random.nextInt(numSeedsX - 1) - (numSeedsX / 2 - 1);
-                //int yOffset = random.nextInt(heightmap.height() / values.numSeedsY - 1)
-                //		- (heightmap.height() / values.numSeedsY / 2 - 1); 	// -3 to 3		// should make variables	// int yOffset = random.nextInt(numSeedsY - 1) - (numSeedsY / 2 - 1);
-                int xOffset = random.nextInt(gridWidthFloor) - gridCenterXFloor;
+        // hex cell dimensions
+        double hexW = gridWidth;
+        double hexH = gridHeight;
+        // vertical distance between rows so that they interlock (75% of full cell height)
+        double vertSpacing = hexH * 0.75;
+        
+        for (int row = 0; row < properties.numSeedsY(); row++) {
+            double y = gridCenterY + row * vertSpacing;
+            // alternate rows shifted right by half a cell
+            double rowOffset = (row % 2 == 1) ? hexW / 2.0 : 0;
+            for (int col = 0; col < properties.numSeedsX(); col++) {
+                double x = gridCenterX + col * hexW + rowOffset;
+                
+                int xOffset = random.nextInt(gridWidthFloor)  - gridCenterXFloor;
                 int yOffset = random.nextInt(gridHeightFloor) - gridCenterYFloor;
-                int seedX = (int) Math.floor(x) + xOffset;		// x-value of seed
-                int seedY = (int) Math.floor(y) + yOffset; 		// y-value of seed
-
-                /* heightmap color stuff */
+                int seedX = (int) Math.floor(x) + xOffset;
+                int seedY = (int) Math.floor(y) + yOffset;
+                // clamp within bounds 
+                seedX = Math.max(0, Math.min(seedX, heightmap.width() - 1));    
+                seedY = Math.max(0, Math.min(seedY, heightmap.height() - 1));
+                
                 int heightmapHeight = heightmap.height_xy(seedX, seedY);
-                int rgb = mapPointColorGeneration(seedX, seedY, heightmapHeight, properties.seaLevel()); 			// rgb color int value
-
-                /* add point to points array */
-                MapPoint mapPoint;
+                int rgb = mapPointColorGeneration(seedX, seedY, heightmapHeight, properties.seaLevel());
                 int type = provinceType(heightmapHeight, properties.seaLevel());
-                mapPoint = new MapPoint(seedX, seedY, type);
-
-                /* add point to seeds array */
-                mapPoint.setRGB(rgb);
-                seeds.add(mapPoint);
-//				stateSeedsMap.put(provinceMapPoint, stateMapColor);
+                
+                MapPoint p = new MapPoint(seedX, seedY, type);
+                p.setRGB(rgb);
+                seeds.add(p);
             }
         }
     }

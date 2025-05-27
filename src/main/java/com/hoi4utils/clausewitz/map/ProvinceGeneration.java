@@ -121,7 +121,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	private @NotNull SeedGeneration<MapPoint> seedGenerationFactory() {
 		return switch (config.generationType()) {
 			case GRID -> new GridSeedGeneration(config, heightmap);
-			case HEX_GRID -> new HexGridSeedGeneration(config, heightmap)
+			case HEX_GRID -> new HexGridSeedGeneration(config, heightmap); 
 			case PROBABILISTIC_GPU -> new ProbabilisticSeedGeneration(heightmap, config);
 			case RANDOM -> new RandomSeedGeneration(config, heightmap);
 		};
