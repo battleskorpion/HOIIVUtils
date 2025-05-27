@@ -1,6 +1,6 @@
 package com.hoi4utils.localization
 
-import com.hoi4utils.clausewitz.HOIIVFiles
+import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull

@@ -1,6 +1,5 @@
 package com.hoi4utils
 
-import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.fileIO.FileListener.{FileAdapter, FileEvent, FileWatcher}
 import com.hoi4utils.gfx.Interface
 import com.hoi4utils.hoi4.country.{Country, CountryTag}

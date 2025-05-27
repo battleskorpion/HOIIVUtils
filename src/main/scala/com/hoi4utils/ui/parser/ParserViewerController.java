@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.parser;
 
 
-import com.hoi4utils.clausewitz.HOIIVFiles;
+import com.hoi4utils.HOIIVFiles;
 import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.hoi4.country.Country;
 import com.hoi4utils.hoi4.country.CountryTag$;

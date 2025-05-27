@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.hoi4localization;
 
-import com.hoi4utils.clausewitz.HOIIVFiles;
+import com.hoi4utils.HOIIVFiles;
 import com.hoi4utils.hoi4.focus.FixFocus;
 import com.hoi4utils.hoi4.focus.Focus;
 import com.hoi4utils.hoi4.focus.FocusTree;

@@ -1,6 +1,5 @@
 package com.hoi4utils
 
-import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.fileIO.FileListener.{FileAdapter, FileEvent, FileWatcher}
 import com.hoi4utils.gfx.Interface
 import com.hoi4utils.hoi4.country.{Country, CountryTag}
@@ -8,25 +7,28 @@ import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.hoi4.idea.IdeaFile
 import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
 import com.hoi4utils.ui.MenuController
-import map.{ResourcesFile, State}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.Label
+import map.{ResourcesFile, State}
 
 import java.awt.EventQueue
 import java.beans.PropertyChangeListener
 import java.io.File
 import java.util.Properties
 
-class ModLoader extends LazyLogging {
+/**
+ * Loads in the mod and hoi4 together
+ *
+ * TODO: @Skorp Update the ChangeNotifier and FileWatcher or delete this todo if working as intended
+ */
+class PDXLoader extends LazyLogging {
   val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
-
-  // TODO: @Skorp I don't know the stateFileWatcher stuff, but since it's in scala now you can probably make it better easier
-
   private var stateFilesWatcher: FileWatcher = null
   
-  def loadMod(hProperties: Properties, loadingLabel: Label): Unit = {
+  def load(hProperties: Properties, loadingLabel: Label): Unit = {
     implicit val properties: Properties = hProperties
     implicit val label: Label = loadingLabel
+
     MenuController.updateLoadingStatus(loadingLabel, "Finding Paths...")
     val hoi4Path = hProperties.getProperty("hoi4.path")
     val modPath = hProperties.getProperty("mod.path")
@@ -39,6 +41,7 @@ class ModLoader extends LazyLogging {
       hProperties.setProperty("valid.HOIIVFilePaths", "false")
 
     changeNotifier.checkAndNotifyChanges()
+
     MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
     LocalizationManager.getOrCreate(() => new EnglishLocalizationManager).reload()
     
@@ -50,21 +53,22 @@ class ModLoader extends LazyLogging {
       FocusTree,
       IdeaFile,
       ResourcesFile
-    ).foreach(readPDXData)
+    ).foreach(readPDX)
   }
   
-  def readPDXData(clazz: PDXReading)(implicit properties: Properties, label: Label): Unit = {
-    val property = s"valid.${clazz.validPropertyName}"
-    MenuController.updateLoadingStatus(label, s"Loading ${clazz.validPropertyName} files...")
+  def readPDX(pdx: PDXReadable)(implicit properties: Properties, label: Label): Unit = {
+    val property = s"valid.${pdx.name}"
+
+    MenuController.updateLoadingStatus(label, s"Loading ${pdx.name} files...")
     try
-      if (clazz.read()) properties.setProperty(property, "true")
+      if (pdx.read()) properties.setProperty(property, "true")
       else
         properties.setProperty(property, "false")
-        logger.error(s"Exception while reading for ${clazz.validPropertyName}")
+        logger.error(s"Exception while reading for ${pdx.name}")
     catch
       case e: Exception =>
         properties.setProperty(property, "false")
-        logger.error(s"Exception while reading for ${clazz.validPropertyName}", e)
+        logger.error(s"Exception while reading for ${pdx.name}", e)
   }
 
   /** Validates whether the provided directory path is valid */
@@ -89,7 +93,7 @@ class ModLoader extends LazyLogging {
 
   /**
    * Watches the state files in the given directory.
-   * TODO: @Skorp
+   *
    * @param stateFiles The directory containing state files.
    */
   def watchStateFiles(stateFiles: File): Unit = {
@@ -114,7 +118,7 @@ class ModLoader extends LazyLogging {
 
   /**
    * Handles state file events.
-   * TODO: @Skorp
+   *
    * @param event       File event that occurred.
    * @param actionName  Name of the action performed.
    * @param stateAction Function to apply to the file.

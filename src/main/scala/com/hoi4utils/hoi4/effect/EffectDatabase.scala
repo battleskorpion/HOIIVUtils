@@ -1,7 +1,6 @@
 package com.hoi4utils.hoi4.effect
 
-import com.hoi4utils.ExpectedRange
-import com.hoi4utils.clausewitz.BoolType
+import com.hoi4utils.{BoolType, ExpectedRange}
 import com.hoi4utils.exceptions.InvalidParameterException
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.hoi4.idea.Idea

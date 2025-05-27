@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.units
 
+import com.hoi4utils.BoolType
 import com.hoi4utils.parser.{Node, Parser, ParserException}
-import com.hoi4utils.clausewitz.BoolType
 
 import java.io.File
 import javax.swing.JOptionPane

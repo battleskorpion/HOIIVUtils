@@ -1,7 +1,6 @@
 package com.hoi4utils.gfx
 
-import com.hoi4utils.HOIIVUtils
-import com.hoi4utils.clausewitz.HOIIVFiles
+import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
 
 import java.io.File
 

@@ -1,9 +1,8 @@
 package com.hoi4utils.hoi4.focus
 
 import FocusTree.focusTreeFileMap
-import com.hoi4utils.{HOIIVUtils, PDXReading}
+import com.hoi4utils.{HOIIVFiles, HOIIVUtils, PDXReadable}
 import javafx.collections.{FXCollections, ObservableList}
-import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.localization.{Localizable, Property}
 import com.hoi4utils.script.{DoublePDX, MultiPDX, PDXFile, PDXScript, ReferencePDX, StringPDX, StructuredPDX}
@@ -20,7 +19,7 @@ import scala.jdk.javaapi.CollectionConverters
  * Localizable data: focus tree name. Each focus is its own localizable data.
  */
 // todo extends file?
-object FocusTree extends LazyLogging with PDXReading {
+object FocusTree extends LazyLogging with PDXReadable {
   private val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
   private val focusTrees = new ListBuffer[FocusTree]()
 

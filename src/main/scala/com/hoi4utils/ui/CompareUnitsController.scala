@@ -1,6 +1,6 @@
 package com.hoi4utils.ui
 
-import com.hoi4utils.clausewitz.HOIIVFiles
+import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.hoi4.units.SubUnit
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.javafx_ui.DiffViewPane

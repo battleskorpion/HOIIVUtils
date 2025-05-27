@@ -1,7 +1,6 @@
 package map
 
-import com.hoi4utils.PDXReading
-import com.hoi4utils.clausewitz.HOIIVFiles
+import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.{CollectionPDX, DoublePDX, IntPDX, PDXScript, PDXSupplier, PDXType, StructuredPDX}
@@ -83,7 +82,7 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, (
   def amt: Double = getOrElse(0)
 }
 
-object ResourcesFile extends PDXReading {
+object ResourcesFile extends PDXReadable {
   val logger: Logger = LogManager.getLogger(classOf[ResourcesFile])
 
   //  private var _resources: List[Resource] = List()
@@ -136,7 +135,7 @@ object ResourcesFile extends PDXReading {
     }
   }
   
-  override def validPropertyName: String = {
+  override def name: String = {
     this.getClass.getSimpleName
   }
 }

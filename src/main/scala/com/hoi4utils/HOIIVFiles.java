@@ -1,7 +1,10 @@
-package com.hoi4utils.clausewitz;
+package com.hoi4utils;
 
 import java.io.File;
 
+/**
+ * TODO: Convert to scala
+ */
 public class HOIIVFiles {
 
 	// Nested class for mod files

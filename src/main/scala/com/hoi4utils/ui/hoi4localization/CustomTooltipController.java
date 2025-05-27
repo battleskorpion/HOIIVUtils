@@ -1,7 +1,7 @@
 //package com.hoi4utils.ui.hoi4localization;
 //
 //import com.hoi4utils.HOIIVUtils;
-//import com.hoi4utils.clausewitz.HOIIVFiles;
+//import com.hoi4utils.HOIIVFiles;
 //import com.hoi4utils.hoi4.tooltip.CustomTooltip;
 //import com.hoi4utils.hoi4.tooltip.CustomTooltip$;
 //import com.hoi4utils.ui.JavaFXUIManager;

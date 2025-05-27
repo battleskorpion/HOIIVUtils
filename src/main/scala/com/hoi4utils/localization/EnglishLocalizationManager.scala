@@ -1,8 +1,7 @@
 package com.hoi4utils.localization
 
-import com.hoi4utils.HOIIVUtils
+import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.exceptions.LocalizationExistsException
-import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.typesafe.scalalogging.LazyLogging
 

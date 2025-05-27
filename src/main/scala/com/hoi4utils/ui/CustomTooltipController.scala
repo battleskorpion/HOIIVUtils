@@ -1,11 +1,10 @@
 package com.hoi4utils.ui
 
-import com.hoi4utils.{HOIIVUtils, Version}
+import com.hoi4utils.{HOIIVFiles, HOIIVUtils, Version}
 
 import java.io.File
 import java.net.URL
 import java.util.ResourceBundle
-import com.hoi4utils.clausewitz.HOIIVFiles
 import com.hoi4utils.hoi4.tooltip.CustomTooltip
 import com.hoi4utils.ui.JavaFXUIManager
 import com.hoi4utils.ui.HOIIVUtilsAbstractController

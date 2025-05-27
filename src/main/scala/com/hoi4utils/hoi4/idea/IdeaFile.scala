@@ -1,8 +1,7 @@
 package com.hoi4utils.hoi4.idea
 
-import com.hoi4utils.clausewitz.HOIIVFiles
 import IdeaFile.ideaFileFileMap
-import com.hoi4utils.PDXReading
+import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.hoi4utils.parser.Node
 import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.localization.Localizable
@@ -15,7 +14,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
-object IdeaFile extends LazyLogging with PDXReading {
+object IdeaFile extends LazyLogging with PDXReadable {
   private val ideaFileFileMap = new mutable.HashMap[File, IdeaFile]()
   private val ideaFiles = new ListBuffer[IdeaFile]()
 

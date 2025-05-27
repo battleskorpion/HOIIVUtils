@@ -1,13 +1,12 @@
 package com.hoi4utils.hoi4.country
 
-import com.hoi4utils.PDXReading
-import com.hoi4utils.clausewitz.HOIIVFiles
+import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.hoi4utils.parser.Parser
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.collection.mutable.ListBuffer
 
-object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReading {
+object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable {
 
   val NULL_TAG = new CountryTag("###")
   val COUNTRY_TAG_LENGTH = 3 // standard country tag length (for a normal country tag)private final String tag;

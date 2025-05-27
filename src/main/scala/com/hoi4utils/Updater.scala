@@ -23,7 +23,6 @@ class Updater extends LazyLogging {
       + File.separator + "Updater"
       + File.separator + "target"
       + File.separator + "Updater.jar.temp")
-    logger.debug("Deleting temp updater jar")
     if (tempUprJar.exists) updateUpdater(tempUprJar)
     lV =
       try {

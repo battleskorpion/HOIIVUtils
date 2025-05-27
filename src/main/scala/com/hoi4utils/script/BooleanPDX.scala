@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.clausewitz.BoolType
+import com.hoi4utils.BoolType
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 import org.jetbrains.annotations.NotNull

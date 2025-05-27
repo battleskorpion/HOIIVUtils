@@ -1,10 +1,9 @@
 package com.hoi4utils
 
-// todo this name sucks 
-trait PDXReading {
+trait PDXReadable {
   def read(): Boolean
   
-  def validPropertyName: String = {
+  def name: String = {
     this.getClass.getSimpleName.replaceAll("\\$", "")
   }
 }

@@ -1,12 +1,11 @@
 package map
 
-import com.hoi4utils.{ClausewitzDate, ExpectedRange, HOIIVUtils, PDXReading}
+import com.hoi4utils.{BoolType, ClausewitzDate, ExpectedRange, HOIIVFiles, HOIIVUtils, PDXReadable}
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.localization.*
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
 import com.hoi4utils.clausewitz.map.{Owner, UndefinedStateIDException}
-import com.hoi4utils.clausewitz.{BoolType, HOIIVFiles}
 import com.hoi4utils.parser.*
 import com.hoi4utils.hoi4.country.{Country, CountryTag, CountryTagsManager}
 import com.hoi4utils.localization.Localizable
@@ -290,7 +289,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
  *
  * I apologize in advance.
  */
-object State extends Iterable[State] with PDXReading {
+object State extends Iterable[State] with PDXReadable {
   private val logger: Logger = LogManager.getLogger(getClass)
 
   private val states = new ListBuffer[State]

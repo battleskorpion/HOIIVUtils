@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.hoi4localization;
 
-import com.hoi4utils.clausewitz.HOIIVFiles;
+import com.hoi4utils.HOIIVFiles;
 import com.hoi4utils.hoi4.idea.Idea;
 import com.hoi4utils.hoi4.idea.IdeaFile;
 import com.hoi4utils.localization.Localization;

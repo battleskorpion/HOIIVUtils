@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.map;
 
-import com.hoi4utils.clausewitz.HOIIVFiles;
+import com.hoi4utils.HOIIVFiles;
 import map.DefinitionCSV;
 import map.Province;
 import map.ProvinceDefinition;

@@ -1,8 +1,7 @@
 package com.hoi4utils.ui
 
 import com.hoi4utils.HOIIVUtils.config
-import com.hoi4utils.{Config, HOIIVUtils, Initializer, ModLoader, Updater, Version}
-import com.hoi4utils.clausewitz.HOIIVFiles
+import com.hoi4utils.{Config, HOIIVFiles, HOIIVUtils, Initializer, PDXLoader, Updater, Version}
 import com.hoi4utils.ui.buildings.BuildingsByCountryController
 import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.hoi4localization.{FocusLocalizationController, IdeaLocalizationController, ManageFocusTreesController}
@@ -41,7 +40,9 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
 
   @FXML
   def initialize(): Unit = {
-    (new Initializer).initialize(config, loadingLabel)
+    new Initializer().initialize(config, loadingLabel)
+    val hProperties = config.getProperties
+    val version = Version.getVersion(hProperties)
     logger.debug("MenuController initialized")
 
     if (contentContainer != null) {
@@ -50,21 +51,22 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
 
     if (loadingLabel != null) {
       loadingLabel.setVisible(true)
-      loadingLabel.setText(s"Starting HOIIVUtils ${Version.getVersion(config.getProperties)}...")
+      loadingLabel.setText(s"Starting HOIIVUtils $version...")
     }
 
     val task = new Task[Unit] {
       override def call(): Unit = {
         try {
           crazyUpdateLoadingStatus("Checking for Update...")
-          (new Updater).updateCheck(Version.getVersion(config.getProperties), config.getDir)
+          new Updater().updateCheck(version, config.getDir)
+
           crazyUpdateLoadingStatus("Loading Files...")
-          new ModLoader().loadMod(config.getProperties, loadingLabel)
+          new PDXLoader().load(hProperties, loadingLabel)
 
           crazyUpdateLoadingStatus("Checking for bad files...")
           MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton)
-          crazyUpdateLoadingStatus("Showing Menu...")
 
+          crazyUpdateLoadingStatus("Showing Menu...")
           Platform.runLater(() => {
             if (loadingLabel != null) {
               loadingLabel.setVisible(false)
@@ -75,8 +77,8 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
           })
         } catch {
           case e: Exception =>
-            logger.error("Error during initialization", e)
             crazyUpdateLoadingStatus("Error loading application")
+            logger.error("Error during initialization", e)
         }
 
         def crazyUpdateLoadingStatus(status: String): Unit = {
