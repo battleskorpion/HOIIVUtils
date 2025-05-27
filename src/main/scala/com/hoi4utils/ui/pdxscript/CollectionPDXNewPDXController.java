@@ -1,12 +1,13 @@
 package com.hoi4utils.ui.pdxscript;
 
+import com.hoi4utils.hoi4.effect.Effect;
 import com.hoi4utils.script.CollectionPDX;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 
 public class CollectionPDXNewPDXController extends HOIIVUtilsAbstractController {
-    private CollectionPDX<?> pdxScript;
+    private CollectionPDX<?> pdxScript; 
 
     @FXML
     AnchorPane rootAnchorPane;
@@ -30,7 +31,7 @@ public class CollectionPDXNewPDXController extends HOIIVUtilsAbstractController 
 
     @FXML
     void initialize() {
-        CollectionPDXNewPDXPane newPDXEditorPane = new CollectionPDXNewPDXPane(pdxScript);
+        CollectionPDXSearchPane newPDXEditorPane = new CollectionPDXSearchPane(pdxScript);
         rootAnchorPane.getChildren().add(newPDXEditorPane);
 
         AnchorPane.setTopAnchor(newPDXEditorPane, 30.0);
