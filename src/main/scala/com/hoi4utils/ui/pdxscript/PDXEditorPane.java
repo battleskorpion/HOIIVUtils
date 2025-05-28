@@ -126,13 +126,13 @@ public class PDXEditorPane extends AnchorPane {
             case StructuredPDX pdx ->
                 visualizeStructuredPDX(pdx);
             case StringPDX pdx -> (pdx.value() == null && !allowNull)
-                        ? null
-                        : visualizeStringPDX(property, pdx);
+                    ? null
+                    : visualizeStringPDX(property, pdx);
             case BooleanPDX pdx ->
                     visualizeBooleanPDX(pdx);
             case IntPDX pdx -> (pdx.value() == null && !allowNull)
-                            ? null
-                            : visualizeIntPDX(pdx);
+                    ? null
+                    : visualizeIntPDX(pdx);
             case DoublePDX pdx -> (pdx.value() == null && !allowNull)
                     ? null
                     : visualizeDoublePDX(pdx);
