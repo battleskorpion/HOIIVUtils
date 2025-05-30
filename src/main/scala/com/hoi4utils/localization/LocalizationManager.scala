@@ -3,9 +3,8 @@ package com.hoi4utils.localization
 import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
 import com.typesafe.scalalogging.LazyLogging
-import org.jetbrains.annotations.NotNull
 
-import java.io.{BufferedWriter, File, FileWriter, IOException, PrintWriter}
+import java.io.*
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import java.util.Scanner

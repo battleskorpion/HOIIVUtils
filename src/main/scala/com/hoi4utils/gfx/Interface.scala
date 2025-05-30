@@ -1,14 +1,11 @@
 package com.hoi4utils.gfx
 
-import com.hoi4utils.{HOIIVFiles, HOIIVUtils, PDXReadable}
-import com.hoi4utils.parser.{Node, Parser, ParserException}
+import com.hoi4utils.parser.{Parser, ParserException}
+import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.File
-import java.util
-import java.util.{HashMap, HashSet, List, Objects}
 import scala.collection.mutable
-import scala.jdk.javaapi.CollectionConverters
 
 
 /**

@@ -2,17 +2,13 @@ package map
 
 import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
-import com.hoi4utils.parser.{Node, Parser, ParserException}
-import com.hoi4utils.localization.Localizable
-import com.hoi4utils.script.{CollectionPDX, IntPDX, PDXScript, PDXSupplier, ReferencePDX, StructuredPDX}
+import com.hoi4utils.parser.Node
+import com.hoi4utils.script.*
 import org.apache.logging.log4j.{LogManager, Logger}
-import org.jetbrains.annotations.NotNull
 
 import java.io.File
-import java.util
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.jdk.javaapi.CollectionConverters
 
 
 /*

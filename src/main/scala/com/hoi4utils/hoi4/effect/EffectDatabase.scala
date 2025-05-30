@@ -1,12 +1,12 @@
 package com.hoi4utils.hoi4.effect
 
-import com.hoi4utils.{BoolType, ExpectedRange}
 import com.hoi4utils.exceptions.InvalidParameterException
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.hoi4.idea.Idea
 import com.hoi4utils.hoi4.scope.ScopeType
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
+import com.hoi4utils.{BoolType, ExpectedRange}
 import map.{Province, State}
 
 import java.io.{File, IOException}
@@ -14,8 +14,6 @@ import java.nio.file.{Files, StandardCopyOption}
 import java.sql.*
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.jdk.javaapi.CollectionConverters
-
 import scala.util.{Try, Using}
 
 object EffectDatabase {

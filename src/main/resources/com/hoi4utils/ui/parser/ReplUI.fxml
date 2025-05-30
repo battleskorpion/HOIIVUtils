@@ -2,9 +2,8 @@
 
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.AnchorPane?>
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.parser.ReplUIController">
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.parser.ReplUIController">
    <SplitPane dividerPositions="0.18090452261306533, 0.7587939698492462" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
      <items>
          <TextArea fx:id="replConsoleArea" editable="false" prefHeight="200.0" prefWidth="400.0" wrapText="true" />

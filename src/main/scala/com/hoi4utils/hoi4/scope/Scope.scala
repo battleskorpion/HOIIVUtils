@@ -3,12 +3,9 @@ package com.hoi4utils.hoi4.scope
 import com.hoi4utils.exceptions.NotPermittedInScopeException
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.hoi4.effect.Effect
-import com.hoi4utils.script.PDXScript
 import map.State
 
-import scala.Cloneable
 import scala.collection.mutable
-import scala.collection.mutable.HashMap
 
 
 object Scope {

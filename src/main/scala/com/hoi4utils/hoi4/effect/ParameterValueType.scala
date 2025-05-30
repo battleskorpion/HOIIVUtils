@@ -1,9 +1,5 @@
 package com.hoi4utils.hoi4.effect
 
-import org.sqlite.SQLiteConfig.Pragma
-
-import java.util
-
 object ParameterValueType {
   def of(s: String): Option[ParameterValueType] = {
     var str = if (s.startsWith("<") && s.endsWith(">")) {

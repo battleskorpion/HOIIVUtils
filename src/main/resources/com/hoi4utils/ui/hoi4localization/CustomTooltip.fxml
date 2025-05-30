@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane maxWidth="-Infinity" prefHeight="530.0" prefWidth="639.0" xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.CustomTooltipController">
+<AnchorPane maxWidth="-Infinity" prefHeight="530.0" prefWidth="639.0" xmlns="http://javafx.com/javafx/24.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.CustomTooltipController">
    <children>
       <TableView fx:id="customTooltipTableView" layoutY="117.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="130.0">
         <columns>

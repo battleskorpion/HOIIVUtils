@@ -1,7 +1,6 @@
 package com.hoi4utils.hoi4.effect
 
 import com.hoi4utils.hoi4.scope.ScopeType
-import com.hoi4utils.script.* 
 
 // private val tSupplier: () => Effect  // todo
 // extends AbstractPDX[T](identifiers)  todo? 

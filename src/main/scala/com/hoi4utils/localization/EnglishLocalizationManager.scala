@@ -1,17 +1,6 @@
 package com.hoi4utils.localization
 
-import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
-import com.hoi4utils.exceptions.LocalizationExistsException
-import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.typesafe.scalalogging.LazyLogging
-
-import java.io.*
-import java.nio.charset.StandardCharsets
-import java.nio.file.{Files, Paths}
-import java.util.Scanner
-import scala.Option
-import scala.jdk.javaapi.CollectionConverters
-import scala.util.control.Exception.noCatch.opt
 
 class EnglishLocalizationManager extends LocalizationManager with LazyLogging {
   /* */ 

@@ -1,7 +1,8 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
+import com.hoi4utils.exceptions.NodeValueTypeException
 import com.hoi4utils.parser.Node
+
 import scala.collection.mutable.ListBuffer
 
 trait HeadlessPDX { this: StructuredPDX =>

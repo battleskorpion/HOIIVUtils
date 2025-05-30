@@ -1,12 +1,12 @@
 package com.hoi4utils.ui
 
 import com.typesafe.scalalogging.LazyLogging
-
 import javafx.application.Platform
-import javafx.fxml.{FXML, Initializable}
+import javafx.fxml.FXML
 import javafx.scene.control.TextArea
 import javafx.stage.{FileChooser, Stage}
-import java.io.{File, FileWriter, OutputStream, PrintStream}
+
+import java.io.{FileWriter, OutputStream, PrintStream}
 import java.net.URL
 import java.util.ResourceBundle
 

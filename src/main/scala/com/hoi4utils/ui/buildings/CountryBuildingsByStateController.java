@@ -2,7 +2,6 @@ package com.hoi4utils.ui.buildings;
 
 
 import com.hoi4utils.hoi4.country.Country;
-import map.State;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx_ui.export.ExcelExport;
 import com.hoi4utils.ui.javafx_ui.table.TableViewWindow;
@@ -12,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
+import map.State;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;

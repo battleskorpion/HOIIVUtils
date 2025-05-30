@@ -12,11 +12,10 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.controlsfx.control.SearchableComboBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import scala.jdk.javaapi.CollectionConverters;
-
-import org.controlsfx.control.SearchableComboBox;
 
 import java.util.ArrayList;
 import java.util.Collection;

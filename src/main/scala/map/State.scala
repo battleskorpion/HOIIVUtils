@@ -1,27 +1,21 @@
 package map
 
-import com.hoi4utils.{BoolType, ClausewitzDate, ExpectedRange, HOIIVFiles, HOIIVUtils, PDXReadable}
-import com.hoi4utils.exceptions.UnexpectedIdentifierException
-import com.hoi4utils.localization.*
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
-import com.hoi4utils.clausewitz.map.{Owner, UndefinedStateIDException}
-import com.hoi4utils.parser.*
 import com.hoi4utils.hoi4.country.{Country, CountryTag, CountryTagsManager}
-import com.hoi4utils.localization.Localizable
-import com.hoi4utils.script.{BooleanPDX, CollectionPDX, DoublePDX, IntPDX, ListPDX, MultiPDX, PDXFile, PDXScript, ProceduralIdentifierPDX, ReferencePDX, StringPDX, StructuredPDX}
+import com.hoi4utils.localization.*
+import com.hoi4utils.parser.*
+import com.hoi4utils.script.*
+import com.hoi4utils.*
 import javafx.collections.{FXCollections, ObservableList}
-import map.Province
-import map.State.{History, globalResources}
+import map.State.History
 import org.apache.logging.log4j.{LogManager, Logger}
 import org.jetbrains.annotations.NotNull
 
 import java.io.File
 import scala.collection.mutable
-import scala.collection.mutable.{ListBuffer, Map}
-import scala.jdk.CollectionConverters.*
+import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
-import scala.util.{Failure, Success, Try}
 
 /**
  * Represents a state in HOI4

@@ -5,7 +5,6 @@ import com.hoi4utils.parser.{Node, Parser, ParserException}
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
-import scala.util.{Failure, Success, Try}
 
 /**
  * Represents one custom tooltip (by its ID), plus optional localization.

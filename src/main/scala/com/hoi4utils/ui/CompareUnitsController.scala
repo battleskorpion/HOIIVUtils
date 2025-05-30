@@ -2,13 +2,12 @@ package com.hoi4utils.ui
 
 import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.hoi4.units.SubUnit
-import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.javafx_ui.DiffViewPane
 import javafx.fxml.FXML
 import javafx.scene.layout.AnchorPane
 
 import scala.collection.mutable
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 class CompareUnitsController extends HOIIVUtilsAbstractController {
 

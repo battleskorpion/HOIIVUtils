@@ -1,24 +1,16 @@
 package com.hoi4utils.ui
 
-import com.hoi4utils.{Config, HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
 import com.typesafe.scalalogging.LazyLogging
-import javafx.application.Application
-import javafx.fxml.{FXML, FXMLLoader}
-import javafx.scene.{Node, Parent, Scene}
+import javafx.fxml.FXML
+import javafx.scene.Node
 import javafx.scene.control.*
-import javafx.stage.{Screen, Stage}
-
-import javax.swing.JOptionPane
-import java.io.{File, IOException}
-import java.util.{Locale, ResourceBundle}
-import scala.jdk.CollectionConverters.*
-import scala.util.{Failure, Success, Try}
-import scala.util.matching.Regex
+import javafx.stage.Screen
 
 import java.io.{File, FilenameFilter}
 import java.net.JarURLConnection
 import java.util.Locale
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 /**
  * The SettingsController class is responsible for handling the program settings window and its

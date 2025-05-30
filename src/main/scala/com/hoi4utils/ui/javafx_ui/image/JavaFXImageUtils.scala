@@ -1,8 +1,6 @@
 package com.hoi4utils.ui.javafx_ui.image
 
-import javafx.scene.image.Image
-import javafx.scene.image.PixelWriter
-import javafx.scene.image.WritableImage
+import javafx.scene.image.{Image, WritableImage}
 
 /**
  * Utility class for converting DDS pixel data into a JavaFX Image.

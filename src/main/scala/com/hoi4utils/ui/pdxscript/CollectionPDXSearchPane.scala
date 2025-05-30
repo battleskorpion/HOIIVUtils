@@ -1,17 +1,13 @@
 package com.hoi4utils.ui.pdxscript
 
-import com.hoi4utils.hoi4.effect.Effect
-import com.hoi4utils.hoi4.effect.EffectDatabase
-import com.hoi4utils.script.CollectionPDX
-import com.hoi4utils.script.PDXScript
+import com.hoi4utils.hoi4.effect.{Effect, EffectDatabase}
+import com.hoi4utils.script.{CollectionPDX, PDXScript}
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import javafx.collections.transformation.FilteredList
 import javafx.event.ActionEvent
 import javafx.geometry.Insets
-import javafx.scene.Node
-import javafx.scene.Parent
+import javafx.scene.{Node, Parent}
 import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.scene.paint.Paint

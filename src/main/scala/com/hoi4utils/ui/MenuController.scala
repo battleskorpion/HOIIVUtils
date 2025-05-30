@@ -1,31 +1,28 @@
 package com.hoi4utils.ui
 
 import com.hoi4utils.HOIIVUtils.config
-import com.hoi4utils.{Config, HOIIVFiles, HOIIVUtils, Initializer, PDXLoader, Updater, Version}
 import com.hoi4utils.ui.buildings.BuildingsByCountryController
 import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.hoi4localization.{FocusLocalizationController, IdeaLocalizationController, ManageFocusTreesController}
 import com.hoi4utils.ui.map.{MapEditorController, MapGenerationController}
 import com.hoi4utils.ui.parser.ParserViewerController
+import com.hoi4utils.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.{Application, Platform}
 import javafx.concurrent.Task
 import javafx.fxml.{FXML, FXMLLoader}
-import javafx.scene.{Parent, Scene}
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.GridPane
+import javafx.scene.{Parent, Scene}
 import javafx.stage.Stage
-import org.apache.logging.log4j.{LogManager, Logger}
-import scalafx.stage
 
-import javax.swing.{BorderFactory, JButton, JDialog, JOptionPane, JPanel, JTextArea, UIManager}
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import java.io.IOException
-import java.util.{Locale, MissingResourceException, Objects, Optional, ResourceBundle}
-import scala.util.{Failure, Success, Try}
+import java.util.{Locale, MissingResourceException, ResourceBundle}
+import javax.swing.*
 
 class MenuController extends Application with JavaFXUIManager with LazyLogging {
-  import MenuController._
+  import MenuController.*
 
   private var fxmlResource: String = "Menu.fxml"
 

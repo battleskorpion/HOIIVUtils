@@ -3,7 +3,6 @@ package com.hoi4utils.script
 import com.hoi4utils.BoolType
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
-import org.jetbrains.annotations.NotNull
 
 class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: Boolean, final private var boolType: BoolType) extends AbstractPDX[Boolean](pdxIdentifiers) {
 

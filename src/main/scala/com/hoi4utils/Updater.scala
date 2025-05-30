@@ -2,11 +2,11 @@ package com.hoi4utils
 
 import com.typesafe.scalalogging.LazyLogging
 
-import scala.sys.process.*
 import java.io.File
 import java.nio.file.{Files, Path, StandardCopyOption}
 import javax.swing.JOptionPane
 import scala.io.Source
+import scala.sys.process.*
 
 /**
  * Updater class to check for updates and update the application.

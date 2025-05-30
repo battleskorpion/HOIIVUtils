@@ -1,17 +1,13 @@
 package com.hoi4utils.hoi4.focus
 
-import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.hoi4.country.CountryTagsManager
 import com.hoi4utils.localization.{LocalizationManager, Property}
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
-import scala.jdk.javaapi.CollectionConverters
-import javax.swing.*
-import java.io.File
-import java.io.IOException
+import java.io.{File, IOException}
 import java.time.LocalDateTime
+import javax.swing.*
+import scala.jdk.javaapi.CollectionConverters
 
 
 /**

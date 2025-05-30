@@ -1,23 +1,17 @@
 package com.hoi4utils.hoi4.country
 
-import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.hoi4utils.clausewitz.data.country.CountryFlag
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
-import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.hoi4.technology.Technology
 import com.hoi4utils.hoi4.units.OrdersOfBattle
-import com.hoi4utils.script.{CollectionPDX, HeadlessPDX, PDXScript, ReferencePDX, StructuredPDX}
+import com.hoi4utils.script.{HeadlessPDX, PDXScript, ReferencePDX, StructuredPDX}
+import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import map.{Resource, State}
 import org.jetbrains.annotations.NotNull
 
 import java.io.File
-import scala.jdk.javaapi.CollectionConverters
-import java.util
-import java.util.function.Function
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 

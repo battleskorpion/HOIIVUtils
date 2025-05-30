@@ -1,12 +1,12 @@
 package com.hoi4utils.ui.buildings;
 
-import javafx.scene.control.TableCell;
-import map.State;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.javafx_ui.table.DoubleOrPercentTableCell;
 import com.hoi4utils.ui.javafx_ui.table.DoubleTableCell;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import map.State;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

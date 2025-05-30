@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.map;
 
-import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.ProvinceDeterminationType;
+import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.seed.SeedGenType;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;

@@ -3,7 +3,7 @@ package com.hoi4utils
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.*
-import java.nio.file.{Path, Paths}
+import java.nio.file.Paths
 import java.util.Properties
 
 class ConfigManager extends LazyLogging {

@@ -2,19 +2,15 @@ package com.hoi4utils.hoi4.idea
 
 
 import com.hoi4utils.ExpectedRange
-import Idea.listAllIdeas
-import com.hoi4utils.parser.Node
 import com.hoi4utils.hoi4.modifier.{Modifier, ModifierDatabase}
 import com.hoi4utils.localization.{Localizable, Property}
-import com.hoi4utils.script.{CollectionPDX, DoublePDX, PDXScript, PDXSupplier, StringPDX, StructuredPDX}
-import javafx.beans.property.SimpleStringProperty
+import com.hoi4utils.parser.Node
+import com.hoi4utils.script.*
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
 
-import scala.jdk.javaapi.CollectionConverters
-import java.io.File
 import scala.collection.mutable
-import scala.collection.mutable.{ListBuffer, Map}
+import scala.collection.mutable.ListBuffer
 
 
 /**

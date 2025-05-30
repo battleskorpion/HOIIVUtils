@@ -1,8 +1,8 @@
 package com.hoi4utils.ui.map;
 
 import com.hoi4utils.HOIIVUtils;
-import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.Heightmap;
+import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
 import com.hoi4utils.clausewitz.map.ProvinceGeneration;
 import com.hoi4utils.clausewitz.map.ProvinceMap;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;

@@ -1,12 +1,9 @@
 package com.hoi4utils.script
 
 import java.io.{File, FileNotFoundException, PrintWriter}
-import scala.util.Using
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
-
 import java.time.LocalDateTime
 import javax.swing.JOptionPane
+import scala.util.Using
 
 trait PDXFile extends PDXScript[?] {
   def getFile: Option[File]

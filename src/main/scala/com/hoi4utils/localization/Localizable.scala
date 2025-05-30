@@ -1,13 +1,10 @@
 package com.hoi4utils.localization
 
 import com.hoi4utils.HOIIVFiles
-import com.hoi4utils.localization.*
 import com.hoi4utils.ui.JavaFXUIManager
-import org.jetbrains.annotations.NotNull
 
 import java.io.File
 import scala.collection.mutable
-import scala.collection.mutable.{HashMap, Map}
 
 /**
  * Interface for Clausewitz-localizable objects. This interface is specifically related to

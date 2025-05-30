@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-
-<VBox alignment="CENTER" prefHeight="700.0" prefWidth="400.0" spacing="10" xmlns="http://javafx.com/javafx/${javafx.version}" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.ProvinceColorsController">
+<VBox alignment="CENTER" prefHeight="700.0" prefWidth="400.0" spacing="10" xmlns="http://javafx.com/javafx/24.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.ProvinceColorsController">
 
     <!-- Title and Version -->
     <Label fx:id="idWindowName" prefHeight="62.0" prefWidth="289.0" style="-fx-font-size: 18; -fx-font-weight: bold;" text="Province Colors - Unique Color Generator" textAlignment="CENTER" wrapText="true" />

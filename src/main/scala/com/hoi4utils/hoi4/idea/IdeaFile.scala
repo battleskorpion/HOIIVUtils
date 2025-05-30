@@ -1,13 +1,12 @@
 package com.hoi4utils.hoi4.idea
 
-import IdeaFile.ideaFileFileMap
-import com.hoi4utils.{HOIIVFiles, PDXReadable}
-import com.hoi4utils.parser.Node
-import com.hoi4utils.hoi4.focus.FocusTree
+import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileFileMap
 import com.hoi4utils.localization.Localizable
+import com.hoi4utils.parser.Node
 import com.hoi4utils.script.{CollectionPDX, PDXScript, StructuredPDX}
-import javafx.collections.{FXCollections, ObservableList}
+import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
+import javafx.collections.{FXCollections, ObservableList}
 
 import java.io.File
 import scala.collection.mutable

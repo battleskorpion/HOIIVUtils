@@ -1,19 +1,15 @@
 package com.hoi4utils.ui
 
-import com.hoi4utils.{HOIIVFiles, HOIIVUtils, Version}
+import com.hoi4utils.hoi4.tooltip.CustomTooltip
+import com.hoi4utils.ui.javafx_ui.table.TableViewWindow
+import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
+import javafx.fxml.{FXML, Initializable}
+import javafx.scene.control.*
+import scalafx.collections.ObservableBuffer
 
 import java.io.File
 import java.net.URL
 import java.util.ResourceBundle
-import com.hoi4utils.hoi4.tooltip.CustomTooltip
-import com.hoi4utils.ui.JavaFXUIManager
-import com.hoi4utils.ui.HOIIVUtilsAbstractController
-import com.hoi4utils.ui.javafx_ui.table.TableViewWindow
-import javafx.fxml.FXML
-import javafx.scene.control.{Button, ComboBox, Label, TableColumn, TableView}
-import javafx.collections.{FXCollections, ObservableList}
-import scalafx.collections.ObservableBuffer
-import javafx.fxml.{FXMLLoader, Initializable}
 
 /// // * todo: have to redo some functionality to work with new localization system
 class CustomTooltipController extends HOIIVUtilsAbstractController with TableViewWindow with Initializable {

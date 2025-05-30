@@ -3,7 +3,6 @@ package com.hoi4utils.parser
 import com.hoi4utils.parser.TokenType.TokenType
 
 import scala.collection.mutable
-import scala.collection.mutable.LinkedHashMap
 import scala.util.matching.Regex
 
 object Token {

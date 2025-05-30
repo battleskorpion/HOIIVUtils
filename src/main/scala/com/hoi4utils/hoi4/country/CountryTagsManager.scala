@@ -3,7 +3,6 @@ package com.hoi4utils.hoi4.country
 import java.io.{File, IOException}
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
-import scala.jdk.CollectionConverters.*
 
 /**
  * Manages loading and querying HOI4 country tags, both modded and base.

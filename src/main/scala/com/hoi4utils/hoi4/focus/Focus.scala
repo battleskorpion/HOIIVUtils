@@ -1,20 +1,18 @@
 package com.hoi4utils.hoi4.focus
 
-import com.hoi4utils.{BoolType, ExpectedRange}
-import com.hoi4utils.exceptions.UnexpectedIdentifierException
-import com.hoi4utils.localization.*
-import com.hoi4utils.script.*
-import com.hoi4utils.parser.Node
 import com.hoi4utils.ddsreader.DDSReader
+import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.gfx.Interface
 import com.hoi4utils.hoi4.effect.{Effect, EffectDatabase}
 import com.hoi4utils.hoi4.scope.Scope
-import com.hoi4utils.localization.Localizable
-import com.hoi4utils.script.{BooleanPDX, CollectionPDX, DoublePDX, IntPDX, MultiPDX, MultiReferencePDX, PDXScript, ReferencePDX, StringPDX, StructuredPDX}
+import com.hoi4utils.localization.*
+import com.hoi4utils.parser.Node
+import com.hoi4utils.script.*
+import com.hoi4utils.{BoolType, ExpectedRange}
 import javafx.scene.image.Image
 
 import java.awt.Point
-import scala.annotation.{experimental, tailrec, targetName}
+import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 

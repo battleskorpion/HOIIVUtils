@@ -1,8 +1,8 @@
 package map
 
-import org.apache.logging.log4j.{LogManager, Logger}
-import com.hoi4utils.script.{DoublePDX, IntPDX, ListPDX, MultiPDX, PDXFile, PDXScript, StringPDX, StructuredPDX}
+import com.hoi4utils.script.*
 import javafx.collections.{FXCollections, ObservableList}
+import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.File
 import scala.collection.mutable

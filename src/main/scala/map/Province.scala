@@ -3,7 +3,6 @@ package map
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.IntPDX
 import org.apache.logging.log4j.{LogManager, Logger}
-import org.jetbrains.annotations.NotNull
 
 import scala.collection.mutable.ListBuffer
 

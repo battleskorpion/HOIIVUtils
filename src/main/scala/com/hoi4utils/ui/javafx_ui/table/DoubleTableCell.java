@@ -2,6 +2,7 @@ package com.hoi4utils.ui.javafx_ui.table;
 
 import javafx.scene.control.TableCell;
 import javafx.util.StringConverter;
+
 import java.text.DecimalFormat;
 
 /**

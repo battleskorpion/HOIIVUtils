@@ -2,10 +2,7 @@ package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
-import org.jetbrains.annotations.{NotNull, Nullable}
 
-import java.util.function.Consumer
-import java.util.stream.Stream
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 

@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.country
 
-import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.hoi4utils.parser.Parser
+import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.collection.mutable.ListBuffer

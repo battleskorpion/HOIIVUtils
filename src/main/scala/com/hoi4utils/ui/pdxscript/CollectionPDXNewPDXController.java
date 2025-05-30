@@ -1,6 +1,5 @@
 package com.hoi4utils.ui.pdxscript;
 
-import com.hoi4utils.hoi4.effect.Effect;
 import com.hoi4utils.script.CollectionPDX;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;

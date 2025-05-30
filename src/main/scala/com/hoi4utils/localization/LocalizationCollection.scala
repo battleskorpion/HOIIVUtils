@@ -3,7 +3,7 @@ package com.hoi4utils.localization
 import java.io.File
 import scala.collection.concurrent.TrieMap
 import scala.collection.mutable
-import scala.collection.mutable.{HashMap, ListBuffer}
+import scala.collection.mutable.ListBuffer
 
 class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localization]] {
 

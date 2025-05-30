@@ -1,17 +1,16 @@
 package com.hoi4utils.hoi4.focus
 
-import FocusTree.focusTreeFileMap
-import com.hoi4utils.{HOIIVFiles, HOIIVUtils, PDXReadable}
-import javafx.collections.{FXCollections, ObservableList}
 import com.hoi4utils.hoi4.country.CountryTag
+import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileMap
 import com.hoi4utils.localization.{Localizable, Property}
-import com.hoi4utils.script.{DoublePDX, MultiPDX, PDXFile, PDXScript, ReferencePDX, StringPDX, StructuredPDX}
+import com.hoi4utils.script.*
+import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
-import org.jetbrains.annotations.*
+import javafx.collections.{FXCollections, ObservableList}
 
 import java.io.File
 import scala.collection.mutable
-import scala.collection.mutable.{HashMap, ListBuffer}
+import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
 /**

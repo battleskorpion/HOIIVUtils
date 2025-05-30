@@ -1,28 +1,15 @@
 package com.hoi4utils
 
-import com.hoi4utils.fileIO.FileListener.{FileAdapter, FileEvent, FileWatcher}
-import com.hoi4utils.gfx.Interface
-import com.hoi4utils.hoi4.country.{Country, CountryTag}
 import com.hoi4utils.hoi4.effect.EffectDatabase
-import com.hoi4utils.hoi4.focus.FocusTree
-import com.hoi4utils.hoi4.idea.IdeaFile
 import com.hoi4utils.hoi4.modifier.ModifierDatabase
-import com.hoi4utils.Config
-import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
 import com.hoi4utils.ui.MenuController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.Label
-import map.{ResourcesFile, State}
-import org.apache.logging.log4j.LogManager
 
-import java.beans.PropertyChangeListener
 import java.io.*
-import java.net.URISyntaxException
 import java.nio.file.{Path, Paths}
-import java.util
-import java.util.{Optional, Properties}
+import java.util.Properties
 import javax.swing.*
-import scala.::
 
 /**
  * Handles initialization of the HOIIVUtils application.

@@ -1,6 +1,7 @@
 package com.hoi4utils.parser
 
 import com.hoi4utils.BoolType
+
 import scala.collection.mutable.ListBuffer
 
 // Consolidated Node class (no NodeValue) using rawValue directly.

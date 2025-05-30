@@ -1,9 +1,9 @@
 package map
 
-import com.hoi4utils.{HOIIVFiles, PDXReadable}
-import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
+import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.parser.Node
-import com.hoi4utils.script.{CollectionPDX, DoublePDX, IntPDX, PDXScript, PDXSupplier, PDXType, StructuredPDX}
+import com.hoi4utils.script.*
+import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.File

@@ -4,8 +4,8 @@ import com.hoi4utils.hoi4.focus.Focus;
 import com.hoi4utils.script.PDXScript;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 
 public class PDXEditorController extends HOIIVUtilsAbstractController {
     private PDXScript<?> pdxScript;

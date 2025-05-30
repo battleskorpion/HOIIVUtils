@@ -2,9 +2,6 @@ package com.hoi4utils.hoi4.effect
 
 import com.hoi4utils.hoi4.scope.{Scope, ScopeType}
 import com.hoi4utils.script.{PDXScript, ScopedPDXScript}
-import org.jetbrains.annotations.NotNull
-
-import scala.collection.mutable
 
 // todo should be sealed? 
 // todo  with AbstractPDX[Effect](identifiers) ????

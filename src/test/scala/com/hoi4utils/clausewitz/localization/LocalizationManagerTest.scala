@@ -1,11 +1,8 @@
 package com.hoi4utils.clausewitz.localization
 
-import com.hoi4utils.hoi4.focus.FocusTree
-import dotty.tools.dotc.util.NoSourcePosition.lines
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File
-import java.nio.file.Files
 
 class LocalizationManagerTest extends AnyFunSuiteLike {
   private val testPath = "src/test/resources/clausewitz/localization/"

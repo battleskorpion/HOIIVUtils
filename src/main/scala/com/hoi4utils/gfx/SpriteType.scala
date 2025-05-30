@@ -1,6 +1,6 @@
 package com.hoi4utils.gfx
 
-import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.HOIIVUtils
 
 import java.io.File
 

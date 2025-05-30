@@ -4,8 +4,6 @@ import com.hoi4utils.ui.MenuController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Application
 
-import java.io.File
-import java.util.Properties
 import javax.swing.*
 
 /**

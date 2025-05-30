@@ -1,8 +1,6 @@
 package com.hoi4utils.hoi4.modifier
 
-import com.hoi4utils.hoi4.effect.EffectDatabase._effects
 import com.hoi4utils.parser.Node
-import com.hoi4utils.hoi4.effect.{BlockEffect, SimpleEffect}
 import com.hoi4utils.script.PDXSupplier
 
 import java.io.{File, IOException}

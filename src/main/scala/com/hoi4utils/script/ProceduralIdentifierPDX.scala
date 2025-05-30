@@ -1,6 +1,5 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.ClausewitzDate
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.parser.Node
 

@@ -1,10 +1,6 @@
 package com.hoi4utils.ui.map;
 
 import com.hoi4utils.HOIIVFiles;
-import map.DefinitionCSV;
-import map.Province;
-import map.ProvinceDefinition;
-import map.State;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.buildings.StateTable;
 import com.hoi4utils.ui.pdxscript.PDXEditorPane;
@@ -25,6 +21,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import map.DefinitionCSV;
+import map.Province;
+import map.ProvinceDefinition;
+import map.State;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import scala.jdk.javaapi.CollectionConverters;

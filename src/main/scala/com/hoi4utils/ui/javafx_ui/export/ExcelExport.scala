@@ -2,12 +2,9 @@ package com.hoi4utils.ui.javafx_ui.`export`
 
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.TableView
-import org.apache.poi.hssf.usermodel.HSSFRow
-import org.apache.poi.hssf.usermodel.HSSFSheet
-import org.apache.poi.hssf.usermodel.HSSFWorkbook
+import org.apache.poi.hssf.usermodel.{HSSFRow, HSSFSheet, HSSFWorkbook}
 
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.{FileOutputStream, IOException}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

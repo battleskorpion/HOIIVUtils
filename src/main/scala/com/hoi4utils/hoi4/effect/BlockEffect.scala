@@ -2,8 +2,6 @@ package com.hoi4utils.hoi4.effect
 
 import com.hoi4utils.hoi4.scope.ScopeType
 
-import scala.collection.mutable
-
 //trait BlockEffect(private val structuredBlock: StructuredPDX) extends Effect with Cloneable {
 trait BlockEffect extends Effect {
   _supportedScopes = Set(ScopeType.country) // Example scope types

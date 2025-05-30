@@ -6,7 +6,6 @@ import com.hoi4utils.parser.{Node, Parser, ParserException}
 import java.io.File
 import javax.swing.JOptionPane
 import scala.collection.mutable.ListBuffer
-import scala.jdk.CollectionConverters.*
 
 /**
  * A single sub‑unit definition in HOI4 (e.g. combat battalion or support company).

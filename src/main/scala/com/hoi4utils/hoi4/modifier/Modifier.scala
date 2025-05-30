@@ -5,8 +5,6 @@ package com.hoi4utils.hoi4.modifier
 //import java.util.ArrayList;//import java.util.ArrayList;
 
 import com.hoi4utils.script.PDXScript
-import java.util
-import java.util.{EnumSet, SortedMap, TreeMap}
 
 
 /**

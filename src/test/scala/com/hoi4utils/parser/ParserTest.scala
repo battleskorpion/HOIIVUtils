@@ -1,6 +1,5 @@
 package com.hoi4utils.parser
 
-import dotty.tools.dotc.core.StdNames.str
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File

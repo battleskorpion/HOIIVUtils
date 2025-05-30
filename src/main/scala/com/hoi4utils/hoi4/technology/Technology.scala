@@ -5,8 +5,6 @@ import com.hoi4utils.localization.{Localizable, Property}
 import org.jetbrains.annotations.NotNull
 
 import scala.collection.mutable
-import scala.collection.mutable.Map
-import scala.jdk.javaapi.CollectionConverters
 
 
 class Technology extends Localizable {

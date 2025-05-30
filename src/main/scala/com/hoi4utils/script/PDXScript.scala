@@ -2,15 +2,12 @@ package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.parser.Node
-import org.apache.poi.hssf.usermodel.HeaderFooter.file
+import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, FileNotFoundException, PrintWriter}
 import java.time.LocalDateTime
 import javax.swing.JOptionPane
-import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
-import com.typesafe.scalalogging.LazyLogging
-
 import scala.util.Using
 
 /**

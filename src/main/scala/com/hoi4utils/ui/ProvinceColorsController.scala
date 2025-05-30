@@ -7,14 +7,10 @@ import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.GridPane
+import javafx.scene.paint.Color.{BLACK, rgb}
 import javafx.scene.shape.Rectangle
-import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.File
-import javafx.scene.paint.Color.{BLACK, rgb}
-
-import scala.compiletime.uninitialized
-import scala.jdk.CollectionConverters.*
 import scala.compiletime.uninitialized
 
 case class IntRange(var min: Int, var max: Int)
