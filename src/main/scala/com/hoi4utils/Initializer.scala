@@ -1,7 +1,5 @@
 package com.hoi4utils
 
-import com.hoi4utils.hoi4.effect.EffectDatabase
-import com.hoi4utils.hoi4.modifier.ModifierDatabase
 import com.hoi4utils.ui.MenuController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.Label
@@ -17,25 +15,30 @@ import javax.swing.*
  */
 class Initializer extends LazyLogging {
 
-  def initialize(config: Config, loadingLabel: Label): Unit = {
-    MenuController.updateLoadingStatus(loadingLabel, "Initializing ModifierDatabase...")
-    ModifierDatabase.init()
-    MenuController.updateLoadingStatus(loadingLabel, "Initializing EffectDatabase...")
-    EffectDatabase.init()
+  // TODO: add success to some of these, this is so if something fails that we skip loading the mod and tell the user to go to setting and try again with new settings
+  def initialize(config: Config, loadingLabel: Label): Boolean = {
+    var success: Boolean = true
+
     MenuController.updateLoadingStatus(loadingLabel, "Loading Properties / Creating Properties...")
     ConfigManager().loadProperties(config)
-    autoSetHOIIVPath(config.getProperties)
+
+    success = autoSetHOIIVPath(config.getProperties)
+
     autoSetDemoModPath(config.getProperties, config.getDir)
+
     config.getProperties.setProperty("hDir", config.getDir.toString)
+
     MenuController.updateLoadingStatus(loadingLabel, "Saving Properties...")
     ConfigManager().saveProperties(config)
+
+    success
   }
 
-  private def autoSetHOIIVPath(p: Properties): Unit = {
+  private def autoSetHOIIVPath(p: Properties): Boolean = {
     val hoi4Path = Option(p.getProperty("hoi4.path")).getOrElse("")
     if (hoi4Path.nonEmpty && hoi4Path.trim.nonEmpty) {
       logger.debug("HOI4 path already set. Skipping auto-set.")
-      return
+      return true
     }
 
     getPossibleHOIIVPaths.find { path =>
@@ -46,14 +49,16 @@ class Initializer extends LazyLogging {
         val hoi4Dir = Paths.get(validPath).toAbsolutePath.toFile
         p.setProperty("hoi4.path", hoi4Dir.getAbsolutePath)
         logger.debug("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath)
+        true
       case None =>
         logger.warn("Couldn't find HOI4 install folder. User must set it manually.")
         JOptionPane.showMessageDialog(
           null,
-          "Couldn't find HOI4 install folder, please go to settings and add it (REQUIRED)",
+          s"version: ${Version.getVersion(p)} Couldn't find Hearts Of Iron 4 default steam installation folder, please go to the settings page and add it (REQUIRED)",
           "Error Message",
           JOptionPane.WARNING_MESSAGE
         )
+        false
     }
   }
 

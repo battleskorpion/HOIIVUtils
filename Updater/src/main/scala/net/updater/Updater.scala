@@ -17,6 +17,11 @@ object Updater {
     var lV = "14.9.0"
     if (args.length > 0 && args(0) != null) hDir = args(0)
     if (args.length > 1 && args(1) != null) lV = args(1)
+    if (hDir == "C:\\Users\\User\\Documents\\GitHub\\HOIIVUtils") {
+      println("Fatal error: Failed to get Users HOIIVUtils location")
+      println("Stopping Update, Please let us know in the discord if you see this")
+      System.exit(1)
+    }
     println(s"Received hDir: $hDir")
     println(s"Received lastestVersion: $lV")
     // create a temporary directory to download the latest release to

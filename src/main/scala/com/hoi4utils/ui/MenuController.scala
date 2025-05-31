@@ -37,19 +37,19 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
 
   @FXML
   def initialize(): Unit = {
-    new Initializer().initialize(config, loadingLabel)
-    val hProperties = config.getProperties
-    val version = Version.getVersion(hProperties)
-    logger.debug("MenuController initialized")
-
     if (contentContainer != null) {
       contentContainer.setVisible(false)
     }
 
     if (loadingLabel != null) {
       loadingLabel.setVisible(true)
-      loadingLabel.setText(s"Starting HOIIVUtils $version...")
     }
+
+    var allowedToLoad: Boolean = true
+    allowedToLoad = new Initializer().initialize(config, loadingLabel)
+    val hProperties = config.getProperties
+    val version = Version.getVersion(hProperties)
+    loadingLabel.setText(s"Starting HOIIVUtils $version...")
 
     val task = new Task[Unit] {
       override def call(): Unit = {
@@ -57,11 +57,15 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
           crazyUpdateLoadingStatus("Checking for Update...")
           new Updater().updateCheck(version, config.getDir)
 
-          crazyUpdateLoadingStatus("Loading Files...")
-          new PDXLoader().load(hProperties, loadingLabel)
-
-          crazyUpdateLoadingStatus("Checking for bad files...")
-          MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton)
+          if (allowedToLoad)
+            crazyUpdateLoadingStatus("Loading Files...")
+            new PDXLoader().load(hProperties, loadingLabel)
+            crazyUpdateLoadingStatus("Checking for bad files...")
+            MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton)
+          else {
+            logger.info(s"Skipping mod loading because of unsuccessful initialization")
+            crazyUpdateLoadingStatus("Skipping loading!!!")
+          }
 
           crazyUpdateLoadingStatus("Showing Menu...")
           Platform.runLater(() => {
@@ -75,7 +79,27 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
         } catch {
           case e: Exception =>
             crazyUpdateLoadingStatus("Error loading application")
-            logger.error("Error during initialization", e)
+            logger.error(s"${Version.getVersion(config.getProperties)} Error during initialization", e)
+            Platform.runLater(() => {
+                try {
+                  if (loadingLabel != null) {
+                    loadingLabel.setVisible(false)
+                  }
+                  if (contentContainer != null) {
+                    contentContainer.setVisible(true)
+                  }
+                } catch {
+                  case exception: Exception =>
+                    logger.error(s"version ${Version.getVersion(config.getProperties)} fatal crash: can't show menu buttons, please got to our discord")
+                    JOptionPane.showMessageDialog(
+                      null,
+                      s"Version: ${Version.getVersion(config.getProperties)}\nFatal crash: can't show menu buttons, please go to our Discord.",
+                      "Fatal Error",
+                      JOptionPane.ERROR_MESSAGE
+                    )
+                    System.exit(1)
+                }
+            })
         }
 
         def crazyUpdateLoadingStatus(status: String): Unit = {
@@ -83,7 +107,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
         }
       }
     }
-
+    logger.debug("MenuController initialized")
     new Thread(task).start()
   }
 
@@ -109,8 +133,8 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
       logger.debug(s"Stage created and shown: ${s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}"}")
     } catch {
       case e: IOException =>
-        val errorMessage = s"Failed to open window\nError loading FXML: $fxmlResource"
-        logger.error(s"Error loading FXML: $fxmlResource", e)
+        val errorMessage = s"version: ${Version.getVersion(config.getProperties)} Failed to open window\nError loading FXML: $fxmlResource"
+        logger.error(s"version: ${Version.getVersion(config.getProperties)} Error loading FXML: $fxmlResource", e)
         JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE)
         throw new RuntimeException(errorMessage, e)
     }
@@ -135,7 +159,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
       logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
       JOptionPane.showMessageDialog(
         null,
-        "Unit folders not found. Please check your HOI4 installation or the chosen mod directory.",
+        s"version: ${config.getProperties.getProperty("version")} Unit folders not found. Please check your HOI4 installation or the chosen mod directory.",
         "Error",
         JOptionPane.WARNING_MESSAGE
       )

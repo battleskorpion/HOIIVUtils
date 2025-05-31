@@ -1,5 +1,15 @@
 # HOIIVUtils
 
+## Install
+#### You will need an OpenJDK 24. (Here is what we use: https://adoptium.net/temurin/releases/?os=any&arch=x64&version=24).  
+#### Download the latest release HOIIVUtils.zip file on the GitHub release's page https://github.com/battleskorpion/HOIIVUtils/releases/latest.  
+#### Extract the HOIIVUtils.zip file anywhere, Desktop, Documents, Etc.
+
+## Run
+#### Open the HOIIVUtils Folder you extracted from the zip.
+#### Double-click on the HOIIVUtils.bat file if you are on windows.
+#### WARNING, You need Hearts of Iron 4 installed on your system.
+Report any bugs to the discord.
 ## Description
 
 This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.  
@@ -8,7 +18,7 @@ We created HOIIVUtils to help with our
 ["North America Divided"](https://steamcommunity.com/sharedfiles/filedetails/?id=2780506619)
 Heats of Iron 4 mod.  
 North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59BcbM)  
-HOIIVUtils: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
+HOIIVUtils Official Discord: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
 
 **WIP!** Features are in various stages of completion. Including: 
 
@@ -33,18 +43,6 @@ HOIIVUtils: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
 ![image](./images/mangen1.png)
 ![image](./images/mapgen2.png)
 ![image](./images/focustree.png)
-
-## Usage
-Please keep in mind how **WIP** this is!  
-This is in pre-pre-alpha, and we consistently push commits that break the program.   
-1. Install [Java 23...](https://adoptium.net/temurin/releases/?version=23&os=any)
-     (Use either Eclipse Temurin, OpenJDK, etc., the standard Oracle Java JDK or JRE may not work)
-3. Go to [releases...](https://github.com/battleskorpion/HOIIVUtils/releases) and download HOIIVUtils.zip
-4. Extract the zip
-5. run  .bat or .sh
-6. Go to Settings
-7. Select your preferred settings  
-6. Click Ok
 
 ## Technical
 Primarily written in Scala, as well as Java. Includes a Clauzewitz scripting language parser, and intermediate 'PDXScript' 

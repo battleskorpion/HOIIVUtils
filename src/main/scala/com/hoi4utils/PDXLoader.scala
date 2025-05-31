@@ -3,8 +3,10 @@ package com.hoi4utils
 import com.hoi4utils.fileIO.FileListener.{FileAdapter, FileEvent, FileWatcher}
 import com.hoi4utils.gfx.Interface
 import com.hoi4utils.hoi4.country.{Country, CountryTag}
+import com.hoi4utils.hoi4.effect.EffectDatabase
 import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.hoi4.idea.IdeaFile
+import com.hoi4utils.hoi4.modifier.ModifierDatabase
 import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
 import com.hoi4utils.ui.MenuController
 import com.typesafe.scalalogging.LazyLogging
@@ -28,6 +30,11 @@ class PDXLoader extends LazyLogging {
   def load(hProperties: Properties, loadingLabel: Label): Unit = {
     implicit val properties: Properties = hProperties
     implicit val label: Label = loadingLabel
+
+    MenuController.updateLoadingStatus(loadingLabel, "Initializing ModifierDatabase...")
+    ModifierDatabase.init()
+    MenuController.updateLoadingStatus(loadingLabel, "Initializing EffectDatabase...")
+    EffectDatabase.init()
 
     MenuController.updateLoadingStatus(loadingLabel, "Finding Paths...")
     val hoi4Path = hProperties.getProperty("hoi4.path")

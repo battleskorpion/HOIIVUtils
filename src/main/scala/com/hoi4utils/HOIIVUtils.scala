@@ -22,7 +22,7 @@ import javax.swing.*
  * HOIIVUtils\\HOIIVUtils.sh
  */
 object HOIIVUtils extends LazyLogging {
-  val config: Config = (new ConfigManager).createConfig
+  val config: Config = new ConfigManager().createConfig
 
   def main(args: Array[String]): Unit = {
     Application.launch(classOf[MenuController], args*) //    menuController.launchMenuWindow(args)
@@ -37,7 +37,7 @@ object HOIIVUtils extends LazyLogging {
       config.getProperties.getProperty(key)
     catch
       case e: Exception =>
-        logger.error("Failed to get property {}: {}", key, e.getMessage)
+        logger.error(s"v${config.getProperties.getProperty("version")} Failed to get property: $key, ; ${e.getMessage}")
         throw new RuntimeException(e)
   }
 
@@ -50,7 +50,7 @@ object HOIIVUtils extends LazyLogging {
       config.getProperties.setProperty(key, value)
     catch
       case e: Exception =>
-        logger.error("Failed to set property {}: {}", key, e.getMessage)
+        logger.error(s"v${config.getProperties.getProperty("version")} Failed to set property: $key, ; ${e.getMessage}")
         throw new RuntimeException(e)
   }
 
@@ -59,8 +59,8 @@ object HOIIVUtils extends LazyLogging {
      new ConfigManager().saveProperties(config)
     catch
       case e: Exception =>
-        logger.error("Failed to save configuration: {}", e.getMessage)
-        JOptionPane.showMessageDialog(null, "Failed to save configuration: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
+        logger.error(s"v${config.getProperties.getProperty("version")} Failed to save configuration: ${e.getMessage}")
+        JOptionPane.showMessageDialog(null, s"version: ${config.getProperties.getProperty("version")} Failed to save configuration: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
         System.exit(1)
   }
 }
