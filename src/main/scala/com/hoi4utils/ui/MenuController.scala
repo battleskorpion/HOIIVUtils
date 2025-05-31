@@ -67,6 +67,8 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
             crazyUpdateLoadingStatus("Skipping loading!!!")
           }
 
+          HOIIVUtils.save()
+
           crazyUpdateLoadingStatus("Showing Menu...")
           Platform.runLater(() => {
             if (loadingLabel != null) {
@@ -114,12 +116,24 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
   override def start(stage: Stage): Unit = {
     primaryStage = stage
     reloadUI()
+
+    // Add a listener to handle the "X" button click
+    primaryStage.setOnCloseRequest(_ => {
+      JOptionPane.getRootFrame.dispose()
+      System.exit(0)
+    })
   }
 
   // reloadUI might look something like:
   def reloadUI(): Unit = {
     try {
-      val loader = new FXMLLoader(getClass.getResource(fxmlResource), getResourceBundle)
+      val resourceBundle = getResourceBundle
+      logger.debug(s"ResourceBundle loaded: ${resourceBundle.getLocale}")
+      if (resourceBundle == null) {
+        logger.error("ResourceBundle is null, cannot load FXML.")
+        throw new RuntimeException("ResourceBundle is null, cannot load FXML.")
+      }
+      val loader = new FXMLLoader(getClass.getResource(fxmlResource), resourceBundle)
       val root = loader.load[Parent]()
       val scene = new Scene(root)
       if (HOIIVUtils.get("theme") == "dark")
@@ -186,22 +200,21 @@ object MenuController extends LazyLogging {
     })
   }
 
+  // Gets the local language, falling back to English if we don't have the resource bundle for the current locale
   def getResourceBundle: ResourceBundle = {
-    val currentLocale = {
-      val localeProperty = config.getProperties.getProperty("locale")
-      if (localeProperty != null)
-        Locale.forLanguageTag(localeProperty)
-      else Locale.getDefault
-    }
+//    val currentLocale = new Locale("tr", "TR") // Turkish locale
+    val currentLocale = Locale.getDefault
+    logger.debug(s"Testing with locale: $currentLocale")
     try {
       val bundle = ResourceBundle.getBundle("i18n.menu", currentLocale)
-      logger.debug(s"Current resource bundle locale: $currentLocale")
       logger.debug(s"Resource bundle found: ${bundle.getLocale}")
       bundle
     } catch {
       case _: MissingResourceException =>
         logger.warn(s"Could not find ResourceBundle for locale $currentLocale. Falling back to English.")
-        ResourceBundle.getBundle("menu", Locale.US)
+        val fallbackBundle = ResourceBundle.getBundle("i18n.menu", Locale.US)
+        logger.debug(s"Fallback ResourceBundle loaded: ${fallbackBundle.getLocale}")
+        fallbackBundle
     }
   }
 
