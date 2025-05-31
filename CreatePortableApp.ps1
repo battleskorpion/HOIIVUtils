@@ -15,7 +15,7 @@ $demoModSource = "$sourceDir\demo_mod"
 $demoModTarget = "$targetDir\demo_mod"
 $mapsSource = "$sourceDir\maps"
 $mapsTarget = "$targetDir\maps"
-$zipPath = "$HOME\Desktop\HOIIVUtils-Portable.zip"
+$zipPath = "$HOME\Desktop\HOIIVUtils.zip"
 
 # Create the main directory if it doesn't exist
 if (-not (Test-Path $targetDir)) {
@@ -90,7 +90,7 @@ if ($createZipFile) {
     }
 
     # Create the zip file using Compress-Archive (PowerShell 5.0+)
-    Compress-Archive -Path $targetDir\* -DestinationPath $zipPath
+    Compress-Archive -Path $targetDir -DestinationPath $zipPath
     Write-Output "Created portable ZIP file at: $zipPath"
 }
 
