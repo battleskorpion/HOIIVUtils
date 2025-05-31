@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox alignment="CENTER" prefHeight="700.0" prefWidth="400.0" spacing="10" xmlns="http://javafx.com/javafx/24.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.ProvinceColorsController">
+
+    <!-- Title and Version -->
+    <Label fx:id="idWindowName" prefHeight="62.0" prefWidth="289.0" style="-fx-font-size: 18; -fx-font-weight: bold;" text="Province Colors - Unique Color Generator" textAlignment="CENTER" wrapText="true" />
+    <Label text="Enter a number" />
+
+    <!-- User Input Section -->
+    <GridPane alignment="CENTER" hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+        </rowConstraints>
+
+        <Label text="Number of Unique Colors:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <TextField fx:id="colorInputField" onAction="#handleColorInputField" onInputMethodTextChanged="#handleColorInputField" onKeyReleased="#handleColorInputField" onMouseExited="#handleColorInputField" promptText="Enter a number" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+        <Button fx:id="generateButton" onAction="#handleGenerateButton" text="Generate BMP" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+    </GridPane>
+
+    <!-- RGB Slider Controls -->
+    <TitledPane text="Color Range Settings" expanded="true">
+        <VBox spacing="5">
+            <padding>
+                <Insets top="5" right="10" bottom="5" left="10" />
+            </padding>
+
+            <!-- Red Sliders -->
+            <Label text="Red Range:" style="-fx-font-weight: bold;" />
+            <GridPane hgap="10" vgap="5">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="15" />
+                    <ColumnConstraints percentWidth="70" />
+                    <ColumnConstraints percentWidth="15" />
+                </columnConstraints>
+
+                <Label text="Min:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Slider fx:id="redMinSlider" min="0" max="255" value="0" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Label fx:id="minRedAmtLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+
+                <Label text="Max:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Slider fx:id="redMaxSlider" min="0" max="255" value="255" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label fx:id="maxRedAmtLabel" text="255" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            </GridPane>
+
+            <!-- Green Sliders -->
+            <Label text="Green Range:" style="-fx-font-weight: bold;" />
+            <GridPane hgap="10" vgap="5">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="15" />
+                    <ColumnConstraints percentWidth="70" />
+                    <ColumnConstraints percentWidth="15" />
+                </columnConstraints>
+
+                <Label text="Min:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Slider fx:id="greenMinSlider" min="0" max="255" value="0" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Label fx:id="minGreenAmtLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+
+                <Label text="Max:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Slider fx:id="greenMaxSlider" min="0" max="255" value="255" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label fx:id="maxGreenAmtLabel" text="255" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            </GridPane>
+
+            <!-- Blue Sliders -->
+            <Label text="Blue Range:" style="-fx-font-weight: bold;" />
+            <GridPane hgap="10" vgap="5">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="15" />
+                    <ColumnConstraints percentWidth="70" />
+                    <ColumnConstraints percentWidth="15" />
+                </columnConstraints>
+
+                <Label text="Min:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Slider fx:id="blueMinSlider" min="0" max="255" value="0" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Label fx:id="minBlueAmtLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+
+                <Label text="Max:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Slider fx:id="blueMaxSlider" min="0" max="255" value="255" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label fx:id="maxBlueAmtLabel" text="255" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            </GridPane>
+        </VBox>
+    </TitledPane>
+
+    <!-- Status and Progress -->
+    <HBox alignment="CENTER" spacing="10">
+        <Label fx:id="statusLabel" alignment="TOP_LEFT" prefHeight="50.0" prefWidth="200.0" text="Status: Waiting for input..." wrapText="true" />
+        <ProgressIndicator fx:id="progressIndicator" visible="false" />
+    </HBox>
+
+    <!-- Color Preview Grid -->
+    <Label style="-fx-font-weight: bold;" text="Color Preview:" />
+    <ScrollPane prefHeight="200.0" prefWidth="300">
+        <GridPane fx:id="colorPreviewGrid" hgap="2" vgap="2" />
+    </ScrollPane>
+</VBox>

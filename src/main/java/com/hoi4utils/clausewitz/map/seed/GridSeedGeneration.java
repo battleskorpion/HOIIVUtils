@@ -1,8 +1,8 @@
 package com.hoi4utils.clausewitz.map.seed;
 
+import com.hoi4utils.clausewitz.map.Heightmap;
+import com.hoi4utils.clausewitz.map.MapPoint;
 import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
-import com.hoi4utils.clausewitz.map.gen.Heightmap;
-import com.hoi4utils.clausewitz.map.gen.MapPoint;
 
 import java.util.Random;
 
@@ -39,10 +39,6 @@ public class GridSeedGeneration extends AbstractSeedGeneration<MapPoint> {
 
 		for (double y = gridCenterY; y < heightmap.height(); y += gridHeight) {
 			for (double x = gridCenterX; x < heightmap.width(); x += gridWidth) {
-				//int xOffset = random.nextInt(heightmap.width()  / values.numSeedsX - 1)
-				//		- (heightmap.width()  / values.numSeedsX / 2 - 1); 	// -3 to 3		// should make variables	// int xOffset = random.nextInt(numSeedsX - 1) - (numSeedsX / 2 - 1);
-				//int yOffset = random.nextInt(heightmap.height() / values.numSeedsY - 1)
-				//		- (heightmap.height() / values.numSeedsY / 2 - 1); 	// -3 to 3		// should make variables	// int yOffset = random.nextInt(numSeedsY - 1) - (numSeedsY / 2 - 1);
 				int xOffset = random.nextInt(gridWidthFloor) - gridCenterXFloor;
 				int yOffset = random.nextInt(gridHeightFloor) - gridCenterYFloor;
 				int seedX = (int) Math.floor(x) + xOffset;		// x-value of seed

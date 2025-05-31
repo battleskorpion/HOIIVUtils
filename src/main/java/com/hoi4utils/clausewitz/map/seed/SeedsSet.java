@@ -1,10 +1,10 @@
 package com.hoi4utils.clausewitz.map.seed;
 
-import com.hoi4utils.clausewitz.map.gen.MapPoint;
+import com.hoi4utils.clausewitz.map.MapPoint;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class SeedsSet<P extends MapPoint> extends AbstractSet<P> implements Iterable<P>, Set<P> {
 	public static final int SEEDS_LIST_SIZE = 3;

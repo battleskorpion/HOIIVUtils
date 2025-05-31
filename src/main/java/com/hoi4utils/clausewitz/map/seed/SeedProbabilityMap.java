@@ -1,9 +1,9 @@
 package com.hoi4utils.clausewitz.map.seed;
 
+import com.hoi4utils.clausewitz.map.AbstractMapGeneration;
+import com.hoi4utils.clausewitz.map.Heightmap;
+import com.hoi4utils.clausewitz.map.MapPoint;
 import com.hoi4utils.clausewitz.map.SeedGenProperties;
-import com.hoi4utils.clausewitz.map.gen.AbstractMapGeneration;
-import com.hoi4utils.clausewitz.map.gen.Heightmap;
-import com.hoi4utils.clausewitz.map.gen.MapPoint;
 
 import java.util.Arrays;
 import java.util.Random;

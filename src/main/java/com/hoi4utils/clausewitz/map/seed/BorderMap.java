@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.map.seed;
 
-import com.hoi4utils.clausewitz.map.gen.Heightmap;
+import com.hoi4utils.clausewitz.map.Heightmap;
 
 import java.awt.image.*;
 import java.util.Hashtable;

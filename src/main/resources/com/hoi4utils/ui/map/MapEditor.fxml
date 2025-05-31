@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-
-<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.map.MapEditorController">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/24.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.map.MapEditorController">
     <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <top>
             <MenuBar>
@@ -22,27 +14,26 @@
                     <MenuItem onAction="#onViewByProvince" text="By Province" />
                     <MenuItem onAction="#onViewByState" text="By State" />
                     <MenuItem onAction="#onViewByStrategicRegion" text="By Strategic Region" />
+               <MenuItem onAction="#onViewByCivFactories" text="By Civ Factories" />
+               <MenuItem onAction="#onViewByMilFactories" text="By Mil Factories" />
                 </Menu>
                 <Menu text="Tools">
                     <MenuItem onAction="#onZoomIn" text="Zoom In" />
                     <MenuItem onAction="#onZoomOut" text="Zoom Out" />
                     <MenuItem onAction="#onResetZoom" text="Reset Zoom" />
+               <CheckMenuItem mnemonicParsing="false" onAction="#onToggleBuildingsTable" text="Buildings Editor Table" />
                 </Menu>
             </MenuBar>
         </top>
         <center>
-         <SplitPane dividerPositions="0.8016032064128257">
+         <SplitPane fx:id="mapEditorSplitPane" dividerPositions="0.8016032064128257">
             <items>
                   <ScrollPane fx:id="mapScrollPane" pannable="true">
                       <content>
                           <Canvas fx:id="mapCanvas" onMouseClicked="#onCanvasMouseClick" />
                       </content>
                   </ScrollPane>
-               <ScrollPane fx:id="pdxScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                 <content>
-                   <AnchorPane fx:id="pdxAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-                 </content>
-               </ScrollPane>
+               <ScrollPane fx:id="pdxScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" />
             </items>
          </SplitPane>
         </center>

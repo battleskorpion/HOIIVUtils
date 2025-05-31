@@ -6,10 +6,10 @@
 $ErrorActionPreference = "Stop"
 
 # Configuration variables
-$createZipFile = $false  # Set to $true if you want to create a zip archive
+$createZipFile = $true  # Set to $true if you want to create a zip archive
 
 # Define paths
-$sourceDir = "$HOME\programming\intelliJ\HOIIVUtils"
+$sourceDir = "$HOME\Documents\GitHub\HOIIVUtils"
 $targetDir = "$HOME\Desktop\HOIIVUtils"
 $demoModSource = "$sourceDir\demo_mod"
 $demoModTarget = "$targetDir\demo_mod"
@@ -29,9 +29,22 @@ if (-not (Test-Path "$targetDir\target")) {
     Write-Output "Created target directory: $targetDir\target"
 }
 
+if (-not (Test-Path "$targetDir\Updater")) {
+    New-Item -Path "$targetDir\Updater" -ItemType Directory -Force
+    Write-Output "Created target directory: $targetDir\Updater"
+}
+
+if (-not (Test-Path "$targetDir\Updater\target")) {
+    New-Item -Path "$targetDir\Updater\target" -ItemType Directory -Force
+    Write-Output "Created target directory: $targetDir\Updater\target"
+}
+
 # Copy the main JAR file and scripts
 Copy-Item -Path "$sourceDir\target\HOIIVUtils.jar" -Destination "$targetDir\target\HOIIVUtils.jar" -Force
 Write-Output "Copied HOIIVUtils.jar"
+
+Copy-Item -Path "$sourceDir\Updater\target\Updater.jar" -Destination "$targetDir\Updater\target\Updater.jar" -Force
+Write-Output "Copied Updater"
 
 Copy-Item -Path "$sourceDir\HOIIVUtils.bat" -Destination "$targetDir\HOIIVUtils.bat" -Force
 Write-Output "Copied HOIIVUtils.bat"

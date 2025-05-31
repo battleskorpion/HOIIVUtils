@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.map.seed;
 
-import com.hoi4utils.clausewitz.map.gen.MapPoint;
+import com.hoi4utils.clausewitz.map.MapPoint;
 
 import java.util.*;
 import java.util.stream.Collectors;
