@@ -51,11 +51,13 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
     val version = Version.getVersion(hProperties)
     loadingLabel.setText(s"Starting HOIIVUtils $version...")
 
+    updateLoadingStatus(loadingLabel, "Checking for Update...")
+    new Updater().updateCheck(version, config.getDir)
+
+
     val task = new Task[Unit] {
       override def call(): Unit = {
         try {
-          crazyUpdateLoadingStatus("Checking for Update...")
-          new Updater().updateCheck(version, config.getDir)
 
           if (allowedToLoad)
             crazyUpdateLoadingStatus("Loading Files...")
