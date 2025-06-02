@@ -16,7 +16,7 @@ This Java application provides a user-friendly interface to interact with your H
 
 We created HOIIVUtils to help with our
 ["North America Divided"](https://steamcommunity.com/sharedfiles/filedetails/?id=2780506619)
-Heats of Iron 4 mod.  
+Hearts of Iron 4 mod.  
 North America Divided: [https://discord.gg/AyJY59BcbM](https://discord.gg/AyJY59BcbM)  
 HOIIVUtils Official Discord: [https://discord.gg/dyakcKQZk9](https://discord.gg/dyakcKQZk9)
 
