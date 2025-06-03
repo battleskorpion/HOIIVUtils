@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<AnchorPane prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.focus_view.FocusTreeController">
+<AnchorPane prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.focus_view.FocusTreeController">
    <children>
      <StackPane prefHeight="900.0" prefWidth="1600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
        <Label fx:id="loadingLabel" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
@@ -67,11 +67,11 @@
            </GridPane>
            <SplitPane fx:id="focusTreeViewSplitPane" layoutY="30.0" prefHeight="900.0" prefWidth="1600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
              <items>
-               <ScrollPane fx:id="focusTreeCanvasScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="900.0" prefWidth="1600.0">
+               <ScrollPane fx:id="focusTreeCanvasScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0">
                  <content>
-                   <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="900.0" prefWidth="1600.0">
+                   <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
                      <children>
-                       <Canvas fx:id="focusTreeCanvas" height="900.0" onMouseClicked="#handleFocusTreeViewMouseClicked" onMouseDragged="#handleFocusTreeViewMouseDragged" onMouseMoved="#handleFocusTreeViewMouseMoved" onMousePressed="#handleFocusTreeViewMousePressed" onMouseReleased="#handleFocusTreeViewMouseReleased" width="1600.0" />
+                       <Canvas fx:id="focusTreeCanvas" height="384.0" onMouseClicked="#handleFocusTreeViewMouseClicked" onMouseDragged="#handleFocusTreeViewMouseDragged" onMouseMoved="#handleFocusTreeViewMouseMoved" onMousePressed="#handleFocusTreeViewMousePressed" onMouseReleased="#handleFocusTreeViewMouseReleased" width="589.0" />
                      </children>
                    </AnchorPane>
                  </content>

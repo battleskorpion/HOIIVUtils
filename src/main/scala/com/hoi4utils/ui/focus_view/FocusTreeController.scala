@@ -448,6 +448,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging 
         logger.error("Error in drawFocusTree setup", ex)
         isDrawing = false
     }
+    
   }
 
   /**
@@ -491,12 +492,12 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging 
   private def updateCanvasSize(width: Double, height: Double): Unit = {
     Platform.runLater(() => {
       try {
-        // Validate dimensions one more time before setting
-        if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
-          logger.error(s"Attempted to set Canvas size beyond safe limits: ${width}x${height}")
-          isDrawing = false
-          return
-        }
+//        // Validate dimensions one more time before setting
+//        if (width > MAX_CANVAS_WIDTH || height > MAX_CANVAS_HEIGHT) {
+//          logger.error(s"Attempted to set Canvas size beyond safe limits: ${width}x${height}")
+//          isDrawing = false
+//          return
+//        }
 
         focusTreeCanvas.setWidth(width)
         focusTreeCanvas.setHeight(height)
