@@ -1,5 +1,14 @@
 package com.hoi4utils.hoi4.focus
 
+<<<<<<< Updated upstream
+=======
+import com.hoi4utils.ExpectedRange
+import com.hoi4utils.clausewitz.BoolType
+import com.hoi4utils.exceptions.UnexpectedIdentifierException
+import com.hoi4utils.localization.*
+import com.hoi4utils.script.*
+import com.hoi4utils.parser.Node
+>>>>>>> Stashed changes
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.gfx.Interface
