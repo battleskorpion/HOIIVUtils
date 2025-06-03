@@ -10,6 +10,7 @@ import javafx.stage.Screen
 import java.io.{File, FilenameFilter}
 import java.net.JarURLConnection
 import java.util.Locale
+import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 
 /**
@@ -23,30 +24,21 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
   setFxmlResource("Settings.fxml")
   setTitle(s"HOIIVUtils Settings ${HOIIVUtils.get("version")}")
 
-  @FXML
-  var versionLabel: Label = _
-  @FXML
-  var modPathTextField: TextField = _
-  @FXML
-  var hoi4PathTextField: TextField = _
-  @FXML
-  var modFolderBrowseButton: Button = _
-  @FXML
-  var hoi4FolderBrowseButton: Button = _
-  @FXML
-  var idOkButton: Button = _
-  @FXML
-  var darkTheme: RadioButton = _
-  @FXML
-  var lightTheme: RadioButton = _
-  @FXML
-  var preferredMonitorComboBox: ComboBox[Screen] = _
-  @FXML
-  var languageComboBox: ComboBox[Locale] = _
-  @FXML
-  var debugColorsTButton: ToggleButton = _
-  @FXML
-  var parserIgnoreCommentsCheckBox: CheckBox = _
+  @FXML var versionLabel: Label = uninitialized
+  @FXML var modPathTextField: TextField = uninitialized
+  @FXML var hoi4PathTextField: TextField = uninitialized
+  @FXML var modFolderBrowseButton: Button = uninitialized
+  @FXML var hoi4FolderBrowseButton: Button = uninitialized
+  @FXML var idOkButton: Button = uninitialized
+  @FXML var darkTheme: RadioButton = uninitialized
+  @FXML var lightTheme: RadioButton = uninitialized
+  @FXML var preferredMonitorComboBox: ComboBox[Screen] = uninitialized
+  @FXML var languageComboBox: ComboBox[Locale] = uninitialized
+  @FXML var debugColorsTButton: ToggleButton = uninitialized
+  @FXML var parserIgnoreCommentsCheckBox: CheckBox = uninitialized
+  @FXML var maxYTF: TextField = uninitialized
+  @FXML var maxXTF: TextField = uninitialized
+  @FXML var errorLabel: Label = uninitialized
 
   @FXML
   def initialize(): Unit = {
@@ -189,6 +181,9 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
     debugColorsTButton.setSelected(HOIIVUtils.get("debug.colors").toBoolean)
     debugColorsTButton.setText(if (debugColorsTButton.isSelected) "ON" else "OFF")
 
+    maxXTF.setText(HOIIVUtils.get("canvas.max.width"))
+    maxYTF.setText(HOIIVUtils.get("canvas.max.height"))
+
     // parser settings:
     parserIgnoreCommentsCheckBox.setSelected(HOIIVUtils.get("parser.ignore.comments").toBoolean)
   }
@@ -287,6 +282,54 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
     HOIIVUtils.set("parser.ignore.comments", parserIgnoreCommentsCheckBox.isSelected.toString)
   }
 
+  def handleMaxXTF(): Unit = {
+    var maxX = maxXTF.getText
+    try {
+      if (maxX == null || maxX == "") maxX = "0"
+      val maxXValue = maxX.toDouble
+      maxXTF.setText(maxXValue.toString)
+      if (maxXValue < 1000 && maxXValue > -1000) throw new NumberFormatException("Max X value can't be between -1000 and 1000.")
+      HOIIVUtils.set("canvas.max.width", maxXValue.toString)
+      logger.debug(s"canvas.max.width set to $maxXValue")
+      errorLabel.setVisible(false)
+      idOkButton.setDisable(false)
+    } catch {
+      case e: NumberFormatException =>
+        logger.error(s"Invalid canvas.max.width value: ${e.getMessage}")
+        errorLabel.setVisible(true)
+        idOkButton.setDisable(true)
+        errorLabel.setText(s"Invalid canvas.max.width value. Please enter a valid integer. ${e.getMessage}")
+    }
+  }
+
+  def handleMaxYTF(): Unit = {
+    var maxY = maxYTF.getText
+    try {
+      if (maxY == null || maxY == "") maxY = "0"
+      val maxYValue = maxY.toDouble
+      maxYTF.setText(maxYValue.toString)
+      if (maxYValue < 1000 && maxYValue > -1000) throw new NumberFormatException("Max Y value can't be between -1000 and 1000.")
+      HOIIVUtils.set("canvas.max.height", maxYValue.toString)
+      logger.debug(s"canvas.max.height set to $maxYValue")
+      idOkButton.setDisable(false)
+      errorLabel.setVisible(false)
+    } catch {
+      case e: NumberFormatException =>
+        logger.error(s"Invalid canvas.max.height value: ${e.getMessage}")
+        errorLabel.setVisible(true)
+        errorLabel.setText(s"Invalid canvas.max.height value. Please enter a valid integer. ${e.getMessage}")
+        idOkButton.setDisable(true)
+    }
+  }
+
+  // This method is called when the user clicks on an empty area of the settings window.
+  def handleEmptyClick(): Unit = {
+    logger.debug("Empty click in settings window detected, handling all text fields.")
+    handleMaxYTF()
+    handleMaxXTF()
+    handleHOIIVPathTextField()
+    handleModPathTextField()
+  }
   /**
    * User Interactive Button in Settings Window Closes Settings Window Opens Menu Window
    */

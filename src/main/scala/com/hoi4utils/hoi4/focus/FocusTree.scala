@@ -81,19 +81,15 @@ object FocusTree extends LazyLogging with PDXReadable {
    * Returns focus tree corresponding to the tag, if it exists
    *
    * @param tag The country tag
-   * @return The focus tree, or null if could not be found/not yet created.
    */
-  def get(tag: CountryTag): FocusTree = {
-    //focusTrees.values.stream.filter((focusTree: FocusTree) => focusTree.country.nodeEquals(tag)).findFirst.orElse(null)
-    for (tree <- listFocusTrees) {
-      //if (tree.country.equals(tag)) return tree
-      val countryTag = tree.countryTag
-      countryTag match {
-        case Some(t) => if (tag.equals(t.tag)) return tree
-        case None => 
+  def get(tag: CountryTag): Option[FocusTree] = {
+    listFocusTrees.foreach { tree =>
+      tree.countryTag match {
+        case Some(t) if tag.equals(t.tag) => return Some(tree)
+        case _ => // Do nothing
       }
     }
-    null
+    None
   }
 }
 

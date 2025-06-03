@@ -3,63 +3,83 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/24.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.focus_view.FocusTreeController">
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+
+<AnchorPane prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.focus_view.FocusTreeController">
    <children>
-      <GridPane prefHeight="30.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="-Infinity" prefWidth="60.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="700.0" minWidth="10.0" prefWidth="482.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="482.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="50.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+     <StackPane prefHeight="900.0" prefWidth="1600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+       <Label fx:id="loadingLabel" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+
+       </Label>
+
+
+       <AnchorPane fx:id="contentContainer" prefHeight="900.0" prefWidth="1600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label fx:id="focusTreeLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Focus Tree">
-               <GridPane.margin>
-                  <Insets right="4.0" />
-               </GridPane.margin></Label>
-            <ComboBox fx:id="focusTreeDropdown" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="220.0" text="View File" GridPane.columnIndex="2">
-               <GridPane.margin>
-                  <Insets left="10.0" right="10.0" />
-               </GridPane.margin>
-            </Button>
-            <Button fx:id="exportFocusTreeButton" mnemonicParsing="false" onAction="#handleExportFocusTreeButtonClick" prefHeight="25.0" prefWidth="150.0" text="Export Focus Tree" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
-            <Button fx:id="toggleGridLinesButton" ellipsisString="" maxHeight="25.0" mnemonicParsing="false" onAction="#toggleGridLines" prefHeight="25.0" prefWidth="25.0" text="Button" GridPane.columnIndex="3">
-               <graphic>
-                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+           <GridPane prefHeight="30.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+             <columnConstraints>
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="-Infinity" prefWidth="60.0" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="700.0" minWidth="10.0" prefWidth="482.0" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="482.0" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="50.0" />
+             </columnConstraints>
+             <rowConstraints>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             </rowConstraints>
+             <children>
+               <Label fx:id="focusTreeLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Focus Tree">
+                 <GridPane.margin>
+                   <Insets right="4.0" />
+                 </GridPane.margin></Label>
+               <ComboBox fx:id="focusTreeDropdown" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
+               <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="220.0" text="View File" GridPane.columnIndex="2">
+                 <GridPane.margin>
+                   <Insets left="10.0" right="10.0" />
+                 </GridPane.margin>
+               </Button>
+               <Button fx:id="exportFocusTreeButton" mnemonicParsing="false" onAction="#handleExportFocusTreeButtonClick" prefHeight="25.0" prefWidth="150.0" text="Export Focus Tree" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+               <Button fx:id="toggleGridLinesButton" ellipsisString="" maxHeight="25.0" mnemonicParsing="false" onAction="#toggleGridLines" prefHeight="25.0" prefWidth="25.0" text="Button" GridPane.columnIndex="3">
+                 <graphic>
+                   <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <viewport>
-                        <Rectangle2D />
+                       <Rectangle2D />
                      </viewport>
                      <image>
-                        <Image url="@../../../../icons/png-clipart-grid-computer-icons-thumbnail-exquisite-option-button-miscellaneous-text.png" />
+                       <Image url="@../../../../icons/png-clipart-grid-computer-icons-thumbnail-exquisite-option-button-miscellaneous-text.png" />
                      </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-         </children>
-         <padding>
-            <Insets left="5.0" right="5.0" />
-         </padding>
-      </GridPane>
-      <SplitPane fx:id="focusTreeViewSplitPane" layoutY="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-         <items>
-            <ScrollPane fx:id="focusTreeCanvasScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="601.0">
-              <content>
-                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
+                   </ImageView>
+                 </graphic>
+               </Button>
+             </children>
+             <padding>
+               <Insets left="5.0" right="5.0" />
+             </padding>
+           </GridPane>
+           <SplitPane fx:id="focusTreeViewSplitPane" layoutY="30.0" prefHeight="900.0" prefWidth="1600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+             <items>
+               <ScrollPane fx:id="focusTreeCanvasScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="900.0" prefWidth="1600.0">
+                 <content>
+                   <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="900.0" prefWidth="1600.0">
                      <children>
-                        <Canvas fx:id="focusTreeCanvas" height="384.0" onMouseClicked="#handleFocusTreeViewMouseClicked" onMouseDragged="#handleFocusTreeViewMouseDragged" onMouseMoved="#handleFocusTreeViewMouseMoved" onMousePressed="#handleFocusTreeViewMousePressed" onMouseReleased="#handleFocusTreeViewMouseReleased" width="589.0" />
+                       <Canvas fx:id="focusTreeCanvas" height="900.0" onMouseClicked="#handleFocusTreeViewMouseClicked" onMouseDragged="#handleFocusTreeViewMouseDragged" onMouseMoved="#handleFocusTreeViewMouseMoved" onMousePressed="#handleFocusTreeViewMousePressed" onMouseReleased="#handleFocusTreeViewMouseReleased" width="1600.0" />
                      </children>
-                  </AnchorPane>
-              </content>
-            </ScrollPane>
-         </items>
-      </SplitPane>
+                   </AnchorPane>
+                 </content>
+               </ScrollPane>
+             </items>
+           </SplitPane>
+         </children>
+       </AnchorPane>
+     </StackPane>
    </children>
 </AnchorPane>

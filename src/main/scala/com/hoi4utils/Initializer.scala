@@ -17,12 +17,13 @@ class Initializer extends LazyLogging {
 
   // TODO: add success to some of these, this is so if something fails that we skip loading the mod and tell the user to go to setting and try again with new settings
   def initialize(config: Config, loadingLabel: Label): Boolean = {
-    var success: Boolean = true
+    var initFailed: Boolean = false
+
 
     MenuController.updateLoadingStatus(loadingLabel, "Loading Properties / Creating Properties...")
     ConfigManager().loadProperties(config)
 
-    success = autoSetHOIIVPath(config.getProperties)
+    initFailed = autoSetHOIIVPath(config.getProperties)
 
     autoSetDemoModPath(config.getProperties, config.getDir)
 
@@ -31,14 +32,14 @@ class Initializer extends LazyLogging {
     MenuController.updateLoadingStatus(loadingLabel, "Saving Properties...")
     ConfigManager().saveProperties(config)
 
-    success
+    initFailed
   }
 
   private def autoSetHOIIVPath(p: Properties): Boolean = {
     val hoi4Path = Option(p.getProperty("hoi4.path")).getOrElse("")
     if (hoi4Path.nonEmpty && hoi4Path.trim.nonEmpty) {
       logger.debug("HOI4 path already set. Skipping auto-set.")
-      return true
+      return false
     }
 
     getPossibleHOIIVPaths.find { path =>
@@ -49,7 +50,7 @@ class Initializer extends LazyLogging {
         val hoi4Dir = Paths.get(validPath).toAbsolutePath.toFile
         p.setProperty("hoi4.path", hoi4Dir.getAbsolutePath)
         logger.debug("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath)
-        true
+        false
       case None =>
         logger.warn("Couldn't find HOI4 install folder. User must set it manually.")
         JOptionPane.showMessageDialog(
@@ -58,7 +59,7 @@ class Initializer extends LazyLogging {
           "Error Message",
           JOptionPane.WARNING_MESSAGE
         )
-        false
+        true
     }
   }
 

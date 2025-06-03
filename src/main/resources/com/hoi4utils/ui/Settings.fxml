@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Rectangle?>
-<GridPane prefHeight="425.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/24.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.SettingsController">
+
+<GridPane prefHeight="425.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.SettingsController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
@@ -27,13 +43,13 @@
                <content>
                   <ScrollPane hbarPolicy="NEVER" minWidth="300.0">
                      <content>
-                        <GridPane fx:id="idPane" minWidth="290.0" prefHeight="370.0" prefWidth="690.0">
+                        <GridPane fx:id="idPane" minWidth="290.0" onMouseClicked="#handleEmptyClick" prefHeight="370.0" prefWidth="690.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="-Infinity" prefWidth="140.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="100.0" prefWidth="125.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="15.0" prefWidth="129.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="11.0" prefWidth="121.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="96.0" prefWidth="96.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="11.0" prefWidth="111.00005493164065" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="96.0" prefWidth="105.59994506835938" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0" minWidth="-Infinity" prefWidth="70.0" />
                            </columnConstraints>
                            <rowConstraints>
@@ -106,6 +122,28 @@
                                  </padding>
                               </Label>
                               <ComboBox fx:id="languageComboBox" maxWidth="-Infinity" onAction="#handleLanguageSelection" prefHeight="25.0" prefWidth="190.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+                              <Label alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Focus Tree View" textOverrun="CLIP" wrapText="true" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="5">
+                                 <GridPane.margin>
+                                    <Insets />
+                                 </GridPane.margin>
+                                 <padding>
+                                    <Insets right="4.0" />
+                                 </padding>
+                              </Label>
+                              <Label alignment="BOTTOM_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Max Size" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+                              <TextField fx:id="maxXTF" onAction="#handleMaxXTF" onMouseClicked="#handleMaxXTF" promptText="Width" text="4000.0" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                                 <GridPane.margin>
+                                    <Insets left="15.0" right="15.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <TextField fx:id="maxYTF" onAction="#handleMaxYTF" onMouseClicked="#handleMaxYTF" promptText="Height" text="4000.0" GridPane.columnIndex="4" GridPane.rowIndex="6">
+                                 <GridPane.margin>
+                                    <Insets left="15.0" right="15.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label text="X:" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+                              <Label text="Y:" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+                              <Label fx:id="errorLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="test" textAlignment="CENTER" textFill="RED" textOverrun="CLIP" visible="false" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="7" GridPane.rowSpan="2" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

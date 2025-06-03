@@ -20,33 +20,27 @@ import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import java.io.IOException
 import java.util.{Locale, MissingResourceException, ResourceBundle}
 import javax.swing.*
+import scala.compiletime.uninitialized
 
 class MenuController extends Application with JavaFXUIManager with LazyLogging {
   import MenuController.*
 
   private var fxmlResource: String = "Menu.fxml"
 
-  @FXML
-  var settingsButton: Button = _
-  @FXML
-  var loadingLabel: Label = _
-  @FXML
-  var contentContainer: GridPane = _
+  @FXML var settingsButton: Button = uninitialized
+  @FXML var loadingLabel: Label = uninitialized
+  @FXML var contentContainer: GridPane = uninitialized
 
-  var primaryStage: Stage = _
+  var primaryStage: Stage = uninitialized
 
   @FXML
   def initialize(): Unit = {
-    if (contentContainer != null) {
-      contentContainer.setVisible(false)
-    }
 
-    if (loadingLabel != null) {
-      loadingLabel.setVisible(true)
-    }
+    contentContainer.setVisible(false)
+    loadingLabel.setVisible(true)
 
-    var allowedToLoad: Boolean = true
-    allowedToLoad = new Initializer().initialize(config, loadingLabel)
+    var initFailed: Boolean = false
+    initFailed = new Initializer().initialize(config, loadingLabel)
     val hProperties = config.getProperties
     val version = Version.getVersion(hProperties)
     loadingLabel.setText(s"Starting HOIIVUtils $version...")
@@ -55,43 +49,28 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
     new Updater().updateCheck(version, config.getDir)
 
 
-    val task = new Task[Unit] {
+    val task = new javafx.concurrent.Task[Unit] {
       override def call(): Unit = {
         try {
-
-          if (allowedToLoad)
+          if (initFailed)
+            logger.info(s"Skipping mod loading because of unsuccessful initialization")
+            crazyUpdateLoadingStatus("Skipping loading!!!")
+          else {
             crazyUpdateLoadingStatus("Loading Files...")
             new PDXLoader().load(hProperties, loadingLabel)
             crazyUpdateLoadingStatus("Checking for bad files...")
             MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton)
-          else {
-            logger.info(s"Skipping mod loading because of unsuccessful initialization")
-            crazyUpdateLoadingStatus("Skipping loading!!!")
           }
-
           HOIIVUtils.save()
-
           crazyUpdateLoadingStatus("Showing Menu...")
-          Platform.runLater(() => {
-            if (loadingLabel != null) {
-              loadingLabel.setVisible(false)
-            }
-            if (contentContainer != null) {
-              contentContainer.setVisible(true)
-            }
-          })
         } catch {
           case e: Exception =>
             crazyUpdateLoadingStatus("Error loading application")
             logger.error(s"${Version.getVersion(config.getProperties)} Error during initialization", e)
             Platform.runLater(() => {
                 try {
-                  if (loadingLabel != null) {
-                    loadingLabel.setVisible(false)
-                  }
-                  if (contentContainer != null) {
-                    contentContainer.setVisible(true)
-                  }
+                  loadingLabel.setVisible(false)
+                  contentContainer.setVisible(true)
                 } catch {
                   case exception: Exception =>
                     logger.error(s"version ${Version.getVersion(config.getProperties)} fatal crash: can't show menu buttons, please got to our discord")
@@ -111,6 +90,13 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
         }
       }
     }
+
+    task.setOnSucceeded(_ => {
+      contentContainer.setVisible(true)
+      loadingLabel.setVisible(false)
+      logger.debug(s"Loading completed successfully")
+    })
+
     logger.debug("MenuController initialized")
     new Thread(task).start()
   }
