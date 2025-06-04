@@ -7,6 +7,7 @@ import java.io.{File, IOException}
 import java.nio.file.{Files, StandardCopyOption}
 import java.sql.*
 import scala.collection.mutable.ListBuffer
+import scala.compiletime.uninitialized
 import scala.util.Using
 
 object ModifierDatabase {
@@ -18,7 +19,7 @@ object ModifierDatabase {
   }
 
   private val mdb: String = "databases/modifiers.db"
-  private var _connection: Connection = _
+  private var _connection: Connection = uninitialized
   private var _modifiers: List[Modifier] = List()
 
   // Initialize the database

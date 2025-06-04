@@ -13,58 +13,39 @@ import javafx.scene.shape.Rectangle
 import java.io.File
 import scala.compiletime.uninitialized
 
-case class IntRange(var min: Int, var max: Int)
-
 class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLogging {
   setFxmlResource("ProvinceColors.fxml")
   setTitle("HOIIVUtils Province Colors")
 
-  @FXML
-  var idWindowName: Label = uninitialized
-  @FXML
-  private var colorInputField: TextField = uninitialized
-  @FXML
-  private var generateButton: Button = uninitialized
-  @FXML
-  private var statusLabel: Label = uninitialized
-  @FXML
-  private var progressIndicator: ProgressIndicator = uninitialized
-  @FXML
-  private var colorPreviewGrid: GridPane = uninitialized
+  @FXML var idWindowName: Label = uninitialized
+  @FXML private var colorInputField: TextField = uninitialized
+  @FXML private var generateButton: Button = uninitialized
+  @FXML private var statusLabel: Label = uninitialized
+  @FXML private var progressIndicator: ProgressIndicator = uninitialized
+  @FXML private var colorPreviewGrid: GridPane = uninitialized
 
   // Sliders for color ranges
-  @FXML
-  private var redMinSlider: Slider = uninitialized
-  @FXML
-  private var redMaxSlider: Slider = uninitialized
-  @FXML
-  private var greenMinSlider: Slider = uninitialized
-  @FXML
-  private var greenMaxSlider: Slider = uninitialized
-  @FXML
-  private var blueMinSlider: Slider = uninitialized
-  @FXML
-  private var blueMaxSlider: Slider = uninitialized
+  @FXML private var redMinSlider: Slider = uninitialized
+  @FXML private var redMaxSlider: Slider = uninitialized
+  @FXML private var greenMinSlider: Slider = uninitialized
+  @FXML private var greenMaxSlider: Slider = uninitialized
+  @FXML private var blueMinSlider: Slider = uninitialized
+  @FXML private var blueMaxSlider: Slider = uninitialized
 
   // Labels for slider values
-  @FXML
-  private var minRedAmtLabel: Label = uninitialized
-  @FXML
-  private var maxRedAmtLabel: Label = uninitialized
-  @FXML
-  private var minGreenAmtLabel: Label = uninitialized
-  @FXML
-  private var maxGreenAmtLabel: Label = uninitialized
-  @FXML
-  private var minBlueAmtLabel: Label = uninitialized
-  @FXML
-  private var maxBlueAmtLabel: Label = uninitialized
+  @FXML private var minRedAmtLabel: Label = uninitialized
+  @FXML private var maxRedAmtLabel: Label = uninitialized
+  @FXML private var minGreenAmtLabel: Label = uninitialized
+  @FXML private var maxGreenAmtLabel: Label = uninitialized
+  @FXML private var minBlueAmtLabel: Label = uninitialized
+  @FXML private var maxBlueAmtLabel: Label = uninitialized
 
   private var input: String = "65536"
 
   private val outputPath: String = HOIIVUtils.get("hDir") + File.separator + "Generated Province Colors.bmp"
 
   // Color constraints from old code
+  case class IntRange(var min: Int, var max: Int)
   private var redRange   = IntRange(0, 255)
   private var greenRange = IntRange(0, 255)
   private var blueRange  = IntRange(0, 255)
@@ -192,8 +173,7 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLog
     }
   }
 
-  @FXML
-  private def handleColorInputField(): Unit = {
+  @FXML private def handleColorInputField(): Unit = {
     input = colorInputField.getText
     val numColors = getNumColorsGenerate()
 
@@ -207,8 +187,7 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLog
   /**
    * Handler for "Generate BMP" button click.
    */
-  @FXML
-  private def handleGenerateButton(): Unit = {
+  @FXML private def handleGenerateButton(): Unit = {
     val numColors = getNumColorsGenerate()
 
     if (numColors <= 0) {

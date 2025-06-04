@@ -1,20 +1,11 @@
 package com.hoi4utils.hoi4.focus
 
-<<<<<<< Updated upstream
-=======
-import com.hoi4utils.ExpectedRange
-import com.hoi4utils.clausewitz.BoolType
-import com.hoi4utils.exceptions.UnexpectedIdentifierException
-import com.hoi4utils.localization.*
-import com.hoi4utils.script.*
-import com.hoi4utils.parser.Node
->>>>>>> Stashed changes
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.gfx.Interface
 import com.hoi4utils.hoi4.effect.{Effect, EffectDatabase}
 import com.hoi4utils.hoi4.scope.Scope
-import com.hoi4utils.localization.*
+import com.hoi4utils.localization.{Localizable, Localization, Property}
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
 import com.hoi4utils.{BoolType, ExpectedRange}
@@ -192,7 +183,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
         case simpleIcon: SimpleIcon => simpleIcon.value match {
           case Some(iconName) =>
             Interface.getGFX(iconName) match {
-              case Some(gfx) => img = Some(DDSReader.readDDSImage(gfx))
+              case Some(gfx) => img = Some(DDSReader.readDDSImage(gfx).get)
               case None => None
             }
           case None => None
@@ -200,7 +191,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
         case blockIcon: BlockIcon => blockIcon.iconName match {
           case Some(iconName) =>
             Interface.getGFX(iconName) match {
-              case Some(gfx) => img = Some(DDSReader.readDDSImage(gfx))
+              case Some(gfx) => img = Some(DDSReader.readDDSImage(gfx).get)
               case None => None
             }
           case None => None

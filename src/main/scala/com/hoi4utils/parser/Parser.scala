@@ -3,6 +3,7 @@ package com.hoi4utils.parser
 import java.io.File
 import java.nio.file.Files
 import scala.collection.mutable.ListBuffer
+import scala.compiletime.uninitialized
 
 object Parser {
   val escape_backslash_regex = "\\\\"
@@ -10,8 +11,8 @@ object Parser {
 }
 
 class Parser {
-  private var tokens: Tokenizer = _
-  private var _rootNode: Node = _
+  private var tokens: Tokenizer = uninitialized
+  private var _rootNode: Node = uninitialized
 
   def this(input: String) = {
     this()

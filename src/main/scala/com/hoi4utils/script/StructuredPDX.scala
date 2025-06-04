@@ -127,7 +127,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
       pdx match {
         case pdxScript: PDXScript[R] =>
           if (pdxScript.pdxIdentifier == identifier) return Some(pdxScript)
-        case _ =>
+        case null =>
       }
     }
     None

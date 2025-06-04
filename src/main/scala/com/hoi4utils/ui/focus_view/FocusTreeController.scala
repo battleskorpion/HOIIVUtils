@@ -383,7 +383,10 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging 
     inputStream.read(buffer)
     inputStream.close()
     JavaFXImageUtils.imageFromDDS(
-      DDSReader.read(buffer, DDSReader.ARGB, 0),
+      DDSReader.read(buffer, DDSReader.ARGB, 0) match {
+        case Some(value) => value
+        case None => ???
+      },
       DDSReader.getWidth(buffer),
       DDSReader.getHeight(buffer)
     )

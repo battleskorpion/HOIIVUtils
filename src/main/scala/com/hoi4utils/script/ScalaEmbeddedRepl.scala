@@ -16,7 +16,7 @@ package com.hoi4utils.script
 //import scala.concurrent.ExecutionContext.Implicits.global
 //import scala.reflect.ClassTag
 //
-//object ScalaEmbeddedRepl {
+object ScalaEmbeddedRepl {
 //  /**
 //   * Opens an Ammonite REPL, binding the provided pdxScripts so that
 //   * the user can manipulate them interactively.
@@ -115,7 +115,7 @@ package com.hoi4utils.script
 //  }
 //
 //
-//}
+}
 //
 //
 //class TextAreaPrintStream(textArea: TextArea) extends PrintStream(new OutputStream {

@@ -10,18 +10,19 @@ import scalafx.collections.ObservableBuffer
 import java.io.File
 import java.net.URL
 import java.util.ResourceBundle
+import scala.compiletime.uninitialized
 
 /// // * todo: have to redo some functionality to work with new localization system
 class CustomTooltipController extends HOIIVUtilsAbstractController with TableViewWindow with Initializable {
   
-  @FXML var idVersion: Label = _
-  @FXML var tooltipIdTableColumn: TableColumn[CustomTooltip,String] = _
-  @FXML var tooltipTextTableColumn: TableColumn[CustomTooltip,String] = _
-  @FXML var tooltipFileComboBox: ComboBox[File]          = _
-  @FXML var tooltipLocalizationFileComboBox: ComboBox[File] = _
-  @FXML var tooltipFileBrowseButton: Button              = _
-  @FXML var tooltipLocalizationFileBrowseButton: Button  = _
-  @FXML var customTooltipTableView: TableView[CustomTooltip] = _
+  @FXML var idVersion: Label = uninitialized
+  @FXML var tooltipIdTableColumn: TableColumn[CustomTooltip,String] = uninitialized
+  @FXML var tooltipTextTableColumn: TableColumn[CustomTooltip,String] = uninitialized
+  @FXML var tooltipFileComboBox: ComboBox[File]          = uninitialized
+  @FXML var tooltipLocalizationFileComboBox: ComboBox[File] = uninitialized
+  @FXML var tooltipFileBrowseButton: Button              = uninitialized
+  @FXML var tooltipLocalizationFileBrowseButton: Button  = uninitialized
+  @FXML var customTooltipTableView: TableView[CustomTooltip] = uninitialized
 
   private var tooltipFile: Option[File] = None 
   

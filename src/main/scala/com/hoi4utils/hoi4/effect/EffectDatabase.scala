@@ -14,6 +14,7 @@ import java.nio.file.{Files, StandardCopyOption}
 import java.sql.*
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.compiletime.uninitialized
 import scala.util.{Try, Using}
 
 object EffectDatabase {
@@ -25,7 +26,7 @@ object EffectDatabase {
   }
 
   private val edb: String = "databases/effects.db"
-  private var _connection: Connection = _
+  private var _connection: Connection = uninitialized
   private var _effects: List[Effect] = List()
 
   def init(): Unit = {

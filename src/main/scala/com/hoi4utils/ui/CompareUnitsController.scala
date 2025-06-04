@@ -7,6 +7,7 @@ import javafx.fxml.FXML
 import javafx.scene.layout.AnchorPane
 
 import scala.collection.mutable
+import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 
 class CompareUnitsController extends HOIIVUtilsAbstractController {
@@ -16,7 +17,7 @@ class CompareUnitsController extends HOIIVUtilsAbstractController {
   @FXML
   var rootAnchorPane: AnchorPane = new AnchorPane()
 
-  private var unitsDiffViewPane: DiffViewPane = _
+  private var unitsDiffViewPane: DiffViewPane = uninitialized
   private val skipNullProperties = true
 
   /**

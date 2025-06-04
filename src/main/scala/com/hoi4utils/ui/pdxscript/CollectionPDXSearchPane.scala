@@ -89,7 +89,7 @@ class CollectionPDXSearchPane[T <: PDXScript[?]](private val pdxScript: Collecti
         })
         val filterBar = new HBox(10, new Label("Search:"), searchField, new Label("Category:"), categoryCombo)
         rootVBox.getChildren.addAll(filterBar, effectListView)
-      case _ => 
+      case null =>
         throw new IllegalArgumentException("CollectionPDXSearchPane can only be used with CollectionPDX[Effect]")
     }
   }

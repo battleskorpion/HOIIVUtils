@@ -131,7 +131,7 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
     mutable.Map(Property.NAME -> id, Property.DESCRIPTION -> s"${id}_desc")
   }
 
-  @NotNull override def getLocalizableGroup: Iterable[_ <: Localizable] = {
+  @NotNull override def getLocalizableGroup: Iterable[? <: Localizable] = {
     _ideaFile match {
       case Some(ideaFile) => ideaFile.getLocalizableGroup
       case None => Iterable(this)

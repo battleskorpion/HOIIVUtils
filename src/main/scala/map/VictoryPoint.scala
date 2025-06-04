@@ -1,25 +1,31 @@
 package map
 
+import com.hoi4utils.localization.{Localizable, Property}
+
+import scala.collection.mutable
 
 
-// todo fix!
 
-//package com.hoi4utils.clausewitz.map.province
 //
-//import com.hoi4utils.clausewitz.localization.Localizable
-//import com.hoi4utils.clausewitz.localization.Property
-//import org.jetbrains.annotations.NotNull
-//
-//import scala.jdk.javaapi.CollectionConverters
-//import java.util
-//import java.util.{ArrayList, List, Map}
-//import scala.collection.mutable.Map
-//
-//
-///**
-// * localizable: victory point name
-// */
-//class VictoryPoint protected(province: Int, private[province] var value: Int) extends Localizable {
+/**
+ * localizable: victory point name
+ *
+ * TODO: Remove?
+ */
+class VictoryPoint protected(province: Int, var value: Int) extends Localizable {
+  /**
+   * Default method to get the localizable property identifiers and keys.
+   *
+   * @return a map of localizable property identifiers and keys.
+   */
+  override def getLocalizableProperties: mutable.Map[Property, String] = ???
+
+  /**
+   * Gets the localizable group of objects that this object is a part of.
+   *
+   * @return the localizable group of objects.
+   */
+  override def getLocalizableGroup: Iterable[? <: Localizable] = ???
 //  this.province = Province.apply(province)
 //  private[province] var province: Province = null
 //
@@ -44,4 +50,4 @@ package map
 //    }
 //    new VictoryPoint(province, value)
 //  }
-//}
+}

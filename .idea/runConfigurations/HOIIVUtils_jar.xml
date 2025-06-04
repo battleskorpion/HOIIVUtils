@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="HOIIVUtils.jar" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/target/HOIIVUtils.jar" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -9,6 +9,7 @@ import javafx.stage.{FileChooser, Stage}
 import java.io.{FileWriter, OutputStream, PrintStream}
 import java.net.URL
 import java.util.ResourceBundle
+import scala.compiletime.uninitialized
 
 class LogViewerController extends HOIIVUtilsAbstractController with LazyLogging {
   setFxmlResource("LogViewer.fxml")
@@ -18,10 +19,10 @@ class LogViewerController extends HOIIVUtilsAbstractController with LazyLogging 
     logger.info("Log Viewer initialized")
   }
 
-  @FXML private var consoleOutput: TextArea = _
+  @FXML private var consoleOutput: TextArea = uninitialized
 
-  private var originalOut: PrintStream = _
-  private var customOut: ConsoleOutputStream = _
+  private var originalOut: PrintStream = uninitialized
+  private var customOut: ConsoleOutputStream = uninitialized
 
   def initialize(location: URL, resources: ResourceBundle): Unit = {
     // Store the original System.out

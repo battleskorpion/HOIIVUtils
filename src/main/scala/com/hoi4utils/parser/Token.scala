@@ -3,6 +3,7 @@ package com.hoi4utils.parser
 import com.hoi4utils.parser.TokenType.TokenType
 
 import scala.collection.mutable
+import scala.compiletime.uninitialized
 import scala.util.matching.Regex
 
 object Token {
@@ -35,8 +36,8 @@ object Token {
  * as a distinct TokenType if it matches the regex above.
  */
 class Token {
-  var value: String = _
-  var `type`: TokenType = _
+  var value: String = uninitialized
+  var `type`: TokenType = uninitialized
   var start = 0
 
   def this(value: String, start: Int, `type`: TokenType) = {

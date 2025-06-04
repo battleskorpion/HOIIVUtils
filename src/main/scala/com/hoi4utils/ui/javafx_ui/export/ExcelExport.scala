@@ -9,33 +9,36 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /**
- * Exports a {@link TableView} to an Excel (.xls) file.
- * Adapted from <a href="https://stackoverflow.com/a/58074839/15639400">StackOverflow</a>.
+ * Exports a JavaFX TableView to an Excel (.xls) file.
  *
- * @param <T> The type of data in the {@link TableView}.
+ * Adapted from StackOverflow: https://stackoverflow.com/a/58074839/15639400
+ *
+ * @tparam T The type of data in the TableView.
  */
 class ExcelExport[T] extends LazyLogging {
   /**
-   * Exports the given {@link TableView} to an Excel file.
+   * Exports the given T to an Excel file.
    *
    * @param tableView The TableView to export.
    */
-    def `export`(tableView: TableView[T]): Unit = {
-      val workbookName = generateWorkbookName
-      val workbook = new HSSFWorkbook
-      val sheet = workbook.createSheet(workbookName)
-      createHeaderRow(sheet, tableView)
-      populateSheetWithData(sheet, tableView)
-      val xls = ".xls"
-      saveWorkbook(workbook, s"$workbookName.xls")
-    }
+  def `export`(tableView: TableView[T]): Unit = {
+    val workbookName = generateWorkbookName
+    val workbook = new HSSFWorkbook
+    val sheet = workbook.createSheet(workbookName)
+    createHeaderRow(sheet, tableView)
+    populateSheetWithData(sheet, tableView)
+    val xls = ".xls"
+    saveWorkbook(workbook, s"$workbookName.xls")
+  }
 
   /**
    * Generates a unique workbook name based on the current date.
    *
    * @return A formatted workbook name.
    */
-  private def generateWorkbookName: String = s"HOIIVUtils_Sheet_${LocalDateTime.now.format(DateTimeFormatter.BASIC_ISO_DATE)}"
+  private def generateWorkbookName: String = {
+    s"HOIIVUtils_Sheet_${LocalDateTime.now.format(DateTimeFormatter.BASIC_ISO_DATE)}"
+  }
 
   /**
    * Creates the header row in the Excel sheet.
@@ -88,21 +91,26 @@ class ExcelExport[T] extends LazyLogging {
    * @param fileName The file name.
    */
   private def saveWorkbook(workbook: HSSFWorkbook, fileName: String): Unit = {
+    var fileOut: FileOutputStream = null
     try {
-      val fileOut = new FileOutputStream(fileName)
+      fileOut = new FileOutputStream(fileName)
+      workbook.write(fileOut)
+      logger.info("Excel file saved: {}", fileName)
+    } catch {
+      case e: IOException =>
+        logger.error("Failed to save Excel file: {}", fileName, e)
+    } finally {
       try {
-        workbook.write(fileOut)
-        logger.info("Excel file saved: {}", fileName)
+        if (fileOut != null) fileOut.close()
       } catch {
         case e: IOException =>
-          logger.error("Failed to save Excel file: {}", fileName, e)
-      } finally {
-        try workbook.close()
-        catch {
-          case e: IOException =>
-            logger.error("Failed to close workbook: {}", fileName, e)
-        }
-        if (fileOut != null) fileOut.close()
+          logger.error("Failed to close FileOutputStream for: {}", fileName, e)
+      }
+      try {
+        workbook.close()
+      } catch {
+        case e: IOException =>
+          logger.error("Failed to close workbook: {}", fileName, e)
       }
     }
   }

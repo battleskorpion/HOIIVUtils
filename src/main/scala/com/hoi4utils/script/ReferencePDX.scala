@@ -4,6 +4,7 @@ import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierExc
 import com.hoi4utils.parser.Node
 
 import scala.annotation.targetName
+import scala.compiletime.uninitialized
 import scala.language.implicitConversions
 
 /**
@@ -22,7 +23,7 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
   extends AbstractPDX[T](pdxIdentifiers) {
 
   // the string identifier of the referenced PDXScript
-  protected[script] var referenceName: String = _
+  protected[script] var referenceName: String = uninitialized
   private var reference: Option[T] = None
 
   def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => Option[String], pdxIdentifiers: String*) = {

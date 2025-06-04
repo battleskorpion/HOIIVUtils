@@ -1,7 +1,7 @@
-//package com.hoi4utils.ui.parser;
+package com.hoi4utils.ui.parser;
 //
 //import com.hoi4utils.clausewitz.script.TextAreaPrintStream;
-//import com.hoi4utils.ui.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 //import javafx.fxml.FXML;
 //import javafx.scene.control.TextArea;
 //import javafx.scene.control.TextField;
@@ -14,7 +14,7 @@
 //import org.apache.poi.ss.formula.functions.T;
 //import scala.jdk.javaapi.CollectionConverters;
 //
-//public class ReplUIController extends HOIIVUtilsAbstractController {
+public class ReplUIController extends HOIIVUtilsAbstractController {
 //    
 //    @FXML
 //    private TextArea replConsoleArea; // This one TextArea will show output and accept input
@@ -82,4 +82,4 @@
 //                CollectionConverters.asScala(pdxScripts)
 //        );
 //    }
-//}
+}

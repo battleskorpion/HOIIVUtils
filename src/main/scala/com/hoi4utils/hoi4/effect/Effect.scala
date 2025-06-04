@@ -3,6 +3,8 @@ package com.hoi4utils.hoi4.effect
 import com.hoi4utils.hoi4.scope.{Scope, ScopeType}
 import com.hoi4utils.script.{PDXScript, ScopedPDXScript}
 
+import scala.annotation.nowarn
+
 // todo should be sealed? 
 // todo  with AbstractPDX[Effect](identifiers) ????
 trait Effect extends ScopedPDXScript with PDXScript[?] with Cloneable {
@@ -40,6 +42,7 @@ trait Effect extends ScopedPDXScript with PDXScript[?] with Cloneable {
     this.parameterValueType = Some(parameterValueType)
   }
 
+  @nowarn
   def effectCategory: String = {
     parameterValueType match {
       case Some(valueType) => valueType match {

@@ -25,5 +25,8 @@
   <component name="JavacSettings">
     <option name="DEBUGGING_INFO" value="false" />
     <option name="DEPRECATION" value="false" />
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="HOIIVUtils" options="" />
+    </option>
   </component>
 </project>

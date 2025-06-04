@@ -41,7 +41,7 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
     val v = super.value
     v.orNull match {
       case b: Boolean => Some(b)
-      case _ => None
+      case null => None
     }
   }
 
