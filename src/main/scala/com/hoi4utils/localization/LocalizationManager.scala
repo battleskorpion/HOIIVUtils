@@ -3,6 +3,7 @@ package com.hoi4utils.localization
 import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
 import com.typesafe.scalalogging.LazyLogging
+import com.hoi4utils.RichString
 
 import java.io.*
 import java.nio.charset.StandardCharsets

@@ -6,7 +6,7 @@ import com.hoi4utils.hoi4.idea.Idea
 import com.hoi4utils.hoi4.scope.ScopeType
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
-import com.hoi4utils.{BoolType, ExpectedRange}
+import com.hoi4utils.{BoolType, ExpectedRange, RichString}
 import map.{Province, State}
 
 import java.io.{File, IOException}
@@ -16,6 +16,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 import scala.util.{Try, Using}
+import scala.compiletime.uninitialized
 
 object EffectDatabase {
   try {
@@ -224,8 +225,7 @@ object EffectDatabase {
   }
 
   private def parametersToBlockEffect(pdxIdentifier: String, requiredParameters_str: String): Option[Effect] = {
-    type Parameter = (name: String, `type`: ParameterValueType, isList: Boolean)
-    val effectParameters = new ListBuffer[Parameter]
+    val effectParameters = new ListBuffer[(String, ParameterValueType, Boolean)]
 
     for (alternateParameter <- requiredParameters_str.split("\\s+\\|\\s+")) {
       val parametersStrlist = alternateParameter.split("\\s+,\\s+")
