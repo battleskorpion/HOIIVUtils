@@ -15,10 +15,8 @@ trait ProceduralIdentifierPDX(p: String => Boolean) { self: AbstractPDX[?] =>
         }
       case None =>
         logger.debug("No identifier found")
-    }
-    else if (pdxIdentifiers.indexWhere(expr.nameEquals) == -1) {
-      logger.error("Unexpected identifier: " + expr.name)
-      throw new UnexpectedIdentifierException(expr)
+    } else if (pdxIdentifiers.indexWhere(expr.nameEquals) == -1) {
+      // TODO: add to list to be used later
     }
   }
 

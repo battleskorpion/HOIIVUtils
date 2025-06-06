@@ -52,6 +52,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     else Some(pdxList)
   }
 
+  // TODO FIX THIS
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   protected def add(expression: Node): Unit = {
@@ -70,6 +71,13 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
         val childScript = useSupplierFunction(expression)
         childScript.loadPDX(expression)
         pdxList += childScript
+    }
+  }
+
+  protected def useSupplierFunction(expression: Node): T = {
+    pdxSupplier(expression) match {
+      case Some(s) => s
+      case None => throw new UnexpectedIdentifierException(expression, this.getClass)
     }
   }
 
@@ -98,13 +106,6 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
       }
     }
     pdxList
-  }
-
-  protected def useSupplierFunction(expression: Node): T = {
-    pdxSupplier(expression) match {
-      case Some(s) => s
-      case None => throw new UnexpectedIdentifierException(expression)
-    }
   }
 
   /**

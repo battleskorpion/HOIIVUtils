@@ -301,7 +301,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 
   private def checkReferenceIdentifier(exp: Node): Unit = {
     if (!referencePDXIdentifiers.contains(exp.name))
-      throw new UnexpectedIdentifierException(exp)
+      throw new UnexpectedIdentifierException(exp, classOf[MultiReferencePDX[T]], referencePDXIdentifiers.mkString(", "))
   }
 
   /**

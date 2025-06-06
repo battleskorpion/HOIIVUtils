@@ -27,10 +27,8 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   protected def usingIdentifier(expr: Node): Unit = {
     if (pdxIdentifiers.isEmpty) {
       // all good? 
-    }
-    else if (pdxIdentifiers.indexWhere(expr.nameEquals) == -1) {
-      logger.error("Unexpected identifier: " + expr.name)
-      throw new UnexpectedIdentifierException(expr)
+    } else if (pdxIdentifiers.indexWhere(expr.nameEquals) == -1) {
+      // TODO add to list to be used later
     } 
   }
 
