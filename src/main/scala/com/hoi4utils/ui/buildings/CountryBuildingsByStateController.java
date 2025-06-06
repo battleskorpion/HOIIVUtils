@@ -3,7 +3,7 @@ package com.hoi4utils.ui.buildings;
 
 import com.hoi4utils.hoi4.country.Country;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.javafx_ui.export.ExcelExport;
+import com.hoi4utils.ui.javafx_ui.ExcelExport;
 import com.hoi4utils.ui.javafx_ui.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -95,7 +95,7 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	@FXML
 	public void handleExportToExcelAction() {
 		ExcelExport<State> excelExport = new ExcelExport<>();
-		excelExport.export(stateDataTable);
+		excelExport.hExport(stateDataTable);
 	}
 
 	public void handlePercentageCheckMenuItemAction() {

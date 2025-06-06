@@ -1,4 +1,4 @@
-package com.hoi4utils.ui.javafx_ui.`export`
+package com.hoi4utils.ui.javafx_ui
 
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.TableView
@@ -21,7 +21,7 @@ class ExcelExport[T] extends LazyLogging {
    *
    * @param tableView The TableView to export.
    */
-  def `export`(tableView: TableView[T]): Unit = {
+  def hExport(tableView: TableView[T]): Unit = {
     val workbookName = generateWorkbookName
     val workbook = new HSSFWorkbook
     val sheet = workbook.createSheet(workbookName)
