@@ -11,12 +11,11 @@ import map.{Province, State}
 
 import java.io.{File, IOException}
 import java.nio.file.{Files, StandardCopyOption}
-import java.sql.*
+import java.sql.{Connection, DriverManager, SQLException}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 import scala.util.{Try, Using}
-import scala.compiletime.uninitialized
 
 object EffectDatabase {
   try {
@@ -84,6 +83,8 @@ object EffectDatabase {
     }
   }
 
+  private val noParamsBuffer: mutable.ArrayBuffer[String] = mutable.ArrayBuffer()
+
   private def loadEffects(): List[Effect] = {
     val loadedEffects = new ListBuffer[Effect]
     val retrieveSQL = "SELECT * FROM effects"
@@ -123,7 +124,8 @@ object EffectDatabase {
 
           loadedEffects ++= effects
         } else {
-          System.out.println("No parameters for " + pdxIdentifier + " in effects database.")
+          // Add pdxIdentifier to noParamsBuffer
+          noParamsBuffer += pdxIdentifier
         }
       }
     } catch {
