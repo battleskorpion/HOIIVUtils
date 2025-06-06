@@ -11,7 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
-import map.State;
+import com.map.State;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;

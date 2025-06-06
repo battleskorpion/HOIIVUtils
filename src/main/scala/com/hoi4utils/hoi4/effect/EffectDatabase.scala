@@ -7,7 +7,7 @@ import com.hoi4utils.hoi4.scope.ScopeType
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
 import com.hoi4utils.{BoolType, ExpectedRange, RichString}
-import map.{Province, State}
+import com.map.{Province, State}
 
 import java.io.{File, IOException}
 import java.nio.file.{Files, StandardCopyOption}

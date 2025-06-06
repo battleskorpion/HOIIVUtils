@@ -43,10 +43,10 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
     initFailed = new Initializer().initialize(config, loadingLabel)
     val hProperties = config.getProperties
     val version = Version.getVersion(hProperties)
-    loadingLabel.setText(s"Starting HOIIVUtils $version...")
 
-    updateLoadingStatus(loadingLabel, "Checking for Update...")
     new Updater().updateCheck(version, config.getDir)
+    logger.info(s"Starting HOIIVUtils $version, Loading mod: ${hProperties.getProperty("mod.path")}")
+    updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${hProperties.getProperty("mod.path")}\"")
 
 
     val task = new javafx.concurrent.Task[Unit] {
@@ -56,7 +56,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
             logger.info(s"Skipping mod loading because of unsuccessful initialization")
             crazyUpdateLoadingStatus("Skipping loading!!!")
           else {
-            crazyUpdateLoadingStatus("Loading Files...")
             new PDXLoader().load(hProperties, loadingLabel)
             crazyUpdateLoadingStatus("Checking for bad files...")
             MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton)
@@ -94,10 +93,9 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
     task.setOnSucceeded(_ => {
       contentContainer.setVisible(true)
       loadingLabel.setVisible(false)
-      logger.debug(s"Loading completed successfully")
+      logger.info(s"Loading completed successfully")
     })
 
-    logger.debug("MenuController initialized")
     new Thread(task).start()
   }
 
@@ -116,7 +114,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
   def reloadUI(): Unit = {
     try {
       val resourceBundle = getResourceBundle
-      logger.debug(s"ResourceBundle loaded: ${resourceBundle.getLocale}")
+      logger.info(s"Language loaded: ${resourceBundle.getLocale}")
       if (resourceBundle == null) {
         logger.error("ResourceBundle is null, cannot load FXML.")
         throw new RuntimeException("ResourceBundle is null, cannot load FXML.")
@@ -132,7 +130,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
       primaryStage.setTitle(s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}")
       decideScreen(primaryStage)
       primaryStage.show()
-      logger.debug(s"Stage created and shown: ${s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}"}")
     } catch {
       case e: IOException =>
         val errorMessage = s"version: ${Version.getVersion(config.getProperties)} Failed to open window\nError loading FXML: $fxmlResource"
@@ -192,16 +189,14 @@ object MenuController extends LazyLogging {
   def getResourceBundle: ResourceBundle = {
 //    val currentLocale = new Locale("tr", "TR") // Turkish locale
     val currentLocale = Locale.getDefault
-    logger.debug(s"Testing with locale: $currentLocale")
     try {
       val bundle = ResourceBundle.getBundle("i18n.menu", currentLocale)
-      logger.debug(s"Resource bundle found: ${bundle.getLocale}")
       bundle
     } catch {
       case _: MissingResourceException =>
         logger.warn(s"Could not find ResourceBundle for locale $currentLocale. Falling back to English.")
         val fallbackBundle = ResourceBundle.getBundle("i18n.menu", Locale.US)
-        logger.debug(s"Fallback ResourceBundle loaded: ${fallbackBundle.getLocale}")
+        logger.info(s"Fallback ResourceBundle loaded: ${fallbackBundle.getLocale}")
         fallbackBundle
     }
   }

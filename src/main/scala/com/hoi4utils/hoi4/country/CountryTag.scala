@@ -24,7 +24,6 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
       logger.warn(s"No country tags found in ${HOIIVFiles.Mod.country_tags_folder}")
       false
     } else {
-      logger.info("Reading country tags from " + HOIIVFiles.Mod.country_tags_folder)
 
       // create focus trees from files
       HOIIVFiles.Mod.country_tags_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>

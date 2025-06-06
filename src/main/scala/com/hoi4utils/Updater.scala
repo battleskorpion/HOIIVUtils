@@ -18,7 +18,7 @@ class Updater extends LazyLogging {
   var lV: Version = Version.DEFAULT
   def updateCheck(v: Version, hDirPath: Path): Unit = {
     val hDir = hDirPath.toFile
-    logger.debug("Checking for updates...")
+    logger.info("Checking for updates...")
     val tempUprJar = new File(hDir.getAbsolutePath
       + File.separator + "Updater"
       + File.separator + "target"
@@ -37,11 +37,10 @@ class Updater extends LazyLogging {
           Version.DEFAULT
       }
     if (lV == Version.DEFAULT) return
-    logger.debug("Current Version: " + v)
-    logger.debug("Latest Version: " + lV)
+  logger.info(s"Current Version: $v, Latest Version: $lV")
     this.lV = lV
     if (lV > v)
-      logger.debug("Update found")
+      logger.info("Update found")
       val response = JOptionPane.showConfirmDialog(
         null,
         s"Do you want to update to the latest version?\nCurrent Version: $v\nLatest Version: $lV\n \n This will delete your settings!",
@@ -50,7 +49,7 @@ class Updater extends LazyLogging {
         JOptionPane.QUESTION_MESSAGE
       )
       if (response == JOptionPane.YES_OPTION) update(hDir) // closes the program
-    else logger.debug("No updates found")
+    else logger.info("No updates found")
   }
 
   private def update(hDir: File): Unit = {
@@ -70,18 +69,9 @@ class Updater extends LazyLogging {
   }
   
   private def updateUpdater(tempUprJar: File): Unit = {
-    logger.debug("Updating updater...")
     val updaterJar = new File(tempUprJar.getAbsolutePath.replace(".temp", ""))
     Files.copy(tempUprJar.toPath, updaterJar.toPath, StandardCopyOption.REPLACE_EXISTING)
-    if (updaterJar.exists()) {
-      logger.debug("Updater updated successfully")
-    } else {
-      logger.debug("Failed to update updater")
-    }
-    if (tempUprJar.delete()) {
-      logger.debug("Temporary updater file deleted successfully")
-    } else {
-      logger.debug("Failed to delete temporary updater file")
-    }
+    if (!updaterJar.exists()) logger.error("Failed to update updater")
+    if (!tempUprJar.delete()) logger.debug("Failed to delete temporary updater file")
   }
 }

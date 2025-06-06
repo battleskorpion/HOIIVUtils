@@ -1,4 +1,4 @@
-package map
+package com.map
 
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
@@ -8,7 +8,7 @@ import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
 import com.hoi4utils.*
 import javafx.collections.{FXCollections, ObservableList}
-import map.State.History
+import State.History
 import org.apache.logging.log4j.{LogManager, Logger}
 import org.jetbrains.annotations.NotNull
 
@@ -309,7 +309,6 @@ object State extends Iterable[State] with PDXReadable {
       logger.error(s"No states found in ${HOIIVFiles.Mod.states_folder}")
       false
     } else {
-      logger.info(s"Reading states from ${HOIIVFiles.Mod.states_folder}")
 
       HOIIVFiles.Mod.states_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
         new State(true, f)
@@ -399,7 +398,6 @@ object State extends Iterable[State] with PDXReadable {
       logger.error(s"In State.java - ${file} is a directory, or it does not exist.")
       false
     } else {
-      logger.info(s"Reading state from ${file}")
       new State(true, file)
       true
     }

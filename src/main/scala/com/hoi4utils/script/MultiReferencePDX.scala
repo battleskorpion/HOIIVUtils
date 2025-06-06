@@ -29,6 +29,8 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers), List(referenceIdentifier))
   }
 
+  final protected var emptyPDXList: ListBuffer[String] = ListBuffer.empty
+
   /**
    * Load the PDX script from the given expression. If the expression is a list, then each element of the list will be
    * loaded as a separate PDX script, if applicable.
@@ -40,10 +42,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     expression.$ match {
       case list: ListBuffer[Node] =>
         // prolly don't need this check, but it doesn't hurt right now
-        if (list.isEmpty) {
-          System.out.println("PDX script had empty list: " + expression)
-          return
-        }
+        if (list.isEmpty) return
         usingIdentifier(expression)
 
         for (child <- list) {

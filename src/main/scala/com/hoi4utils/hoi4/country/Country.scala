@@ -7,8 +7,8 @@ import com.hoi4utils.hoi4.technology.Technology
 import com.hoi4utils.hoi4.units.OrdersOfBattle
 import com.hoi4utils.script.{HeadlessPDX, PDXScript, ReferencePDX, StructuredPDX}
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
+import com.map.{Resource, State}
 import com.typesafe.scalalogging.LazyLogging
-import map.{Resource, State}
 import org.jetbrains.annotations.NotNull
 
 import java.io.File
@@ -33,7 +33,6 @@ object Country extends LazyLogging with PDXReadable {
       logger.warn(s"No focuses found in ${HOIIVFiles.Mod.country_folder}")
       false
     } else {
-      logger.info("Reading focus trees from " + HOIIVFiles.Mod.country_folder)
 
       // create focus trees from files
       HOIIVFiles.Mod.country_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>

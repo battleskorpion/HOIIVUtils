@@ -1,33 +1,34 @@
-package map
+package com.map
 
 import java.io.File
 import scala.io.Source
 import scala.util.Try
 
-/**
- * Represents the definition for a province loaded from the CSV.
- *
- * @param id the province id
- * @param red red component (0-255)
- * @param green green component (0-255)
- * @param blue blue component (0-255)
- * @param terrain terrain type, e.g. "sea", "land", "lake"
- * @param isCoastal a flag (true/false) from the CSV
- * @param subtype a more specific type, e.g. "ocean", "forest", "plains"
- * @param score an integer value from the CSV (could represent weight or another parameter)
- */
-case class ProvinceDefinition(
-                               id: Int,
-                               red: Int,
-                               green: Int,
-                               blue: Int,
-                               terrain: String,
-                               isCoastal: Boolean,
-                               subtype: String,
-                               score: Int
-                             )
-
 object DefinitionCSV {
+
+
+  /**
+   * Represents the definition for a province loaded from the CSV.
+   *
+   * @param id        the province id
+   * @param red       red component (0-255)
+   * @param green     green component (0-255)
+   * @param blue      blue component (0-255)
+   * @param terrain   terrain type, e.g. "sea", "land", "lake"
+   * @param isCoastal a flag (true/false) from the CSV
+   * @param subtype   a more specific type, e.g. "ocean", "forest", "plains"
+   * @param score     an integer value from the CSV (could represent weight or another parameter)
+   */
+  case class ProvinceDefinition(
+                                 id: Int,
+                                 red: Int,
+                                 green: Int,
+                                 blue: Int,
+                                 terrain: String,
+                                 isCoastal: Boolean,
+                                 subtype: String,
+                                 score: Int
+                               )
 
   /**
    * Loads province definitions from the given CSV file.

@@ -4,6 +4,7 @@ import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.buildings.StateTable
 import com.hoi4utils.ui.pdxscript.PDXEditorPane
+import com.map.{DefinitionCSV, Province, State}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
@@ -14,7 +15,6 @@ import javafx.scene.input.{MouseButton, MouseEvent}
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.stage.FileChooser
-import map.{DefinitionCSV, Province, State}
 
 import scala.collection.mutable
 import scala.compiletime.uninitialized

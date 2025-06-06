@@ -37,7 +37,6 @@ object IdeaFile extends LazyLogging with PDXReadable {
       logger.warn(s"No ideas found in ${HOIIVFiles.Mod.ideas_folder}")
       false
     } else {
-      logger.info("Reading focus trees from " + HOIIVFiles.Mod.ideas_folder)
 
       // create focus trees from files
       HOIIVFiles.Mod.ideas_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>

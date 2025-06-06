@@ -9,9 +9,9 @@ import com.hoi4utils.hoi4.idea.IdeaFile
 import com.hoi4utils.hoi4.modifier.ModifierDatabase
 import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
 import com.hoi4utils.ui.MenuController
+import com.map.{ResourcesFile, State}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.Label
-import map.{ResourcesFile, State}
 
 import java.awt.EventQueue
 import java.beans.PropertyChangeListener

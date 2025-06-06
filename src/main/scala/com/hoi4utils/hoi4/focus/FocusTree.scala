@@ -43,7 +43,6 @@ object FocusTree extends LazyLogging with PDXReadable {
       logger.warn(s"No focuses found in ${HOIIVFiles.Mod.focus_folder}")
       false
     } else {
-      logger.info("Reading focus trees from " + HOIIVFiles.Mod.focus_folder)
 
       // create focus trees from files
       HOIIVFiles.Mod.focus_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>

@@ -221,7 +221,6 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
   override def clone(): AnyRef = {
     val clone = super.clone().asInstanceOf[StructuredPDX]
     clone.node = Some(Node(pdxIdentifier, "=", ListBuffer.empty))
-    logger.debug("Cloning StructuredPDX: {} -> {}", this, clone)
     clone.badNodesList = this.badNodesList
     clone
   }
