@@ -4,7 +4,7 @@ import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.hoi4.country.{Country, CountryTag}
 import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.parser.{Node, Parser, ParserException}
-import com.hoi4utils.script.{AbstractPDX, PDXScript}
+import com.hoi4utils.script.{AbstractPDX, PDXScript, PDXScriptFileOps}
 import com.hoi4utils.ui.{HOIIVUtilsAbstractController, JavaFXUIManager}
 import com.hoi4utils.ui.pdxscript.{PDXTreeViewFactory, StratRegionPDXEditorController}
 import com.map.{ResourcesFile, State, StrategicRegion}
@@ -180,7 +180,7 @@ class ParserViewerController extends HOIIVUtilsAbstractController:
 
   private def savePDX(pdxScripts: List[PDXScript[?]]): Unit =
     pdxScripts.foreach { pdx =>
-      pdx.savePDX(File("Parser Viewer PDXScripts"))
+      PDXScriptFileOps.savePDX(pdx, File("Parser Viewer PDXScripts"))
     }
 
   // @FXML

@@ -9,6 +9,7 @@ import com.hoi4utils.hoi4.idea.IdeaFile
 import com.hoi4utils.hoi4.modifier.ModifierDatabase
 import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
 import com.hoi4utils.ui.MenuController
+import com.hoi4utils.HOIIVFiles.isValidDirectory
 import com.map.{ResourcesFile, State}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.Label
@@ -24,8 +25,7 @@ import java.util.Properties
  * TODO: @Skorp Update the ChangeNotifier and FileWatcher or delete this todo if working as intended
  */
 class PDXLoader extends LazyLogging {
-  val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
-  private var stateFilesWatcher: FileWatcher = null
+  private val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
   
   def load(hProperties: Properties, loadingLabel: Label): Unit = {
     implicit val properties: Properties = hProperties
@@ -39,13 +39,9 @@ class PDXLoader extends LazyLogging {
     MenuController.updateLoadingStatus(loadingLabel, "Finding Paths...")
     val hoi4Path = hProperties.getProperty("hoi4.path")
     val modPath = hProperties.getProperty("mod.path")
-    if (validateDirectoryPath(hoi4Path, "hoi4.path") && validateDirectoryPath(modPath, "mod.path"))
-      HOIIVFiles.setHoi4PathChildDirs(hoi4Path)
-      HOIIVFiles.setModPathChildDirs(modPath)
-      hProperties.setProperty("valid.HOIIVFilePaths", "true")
-    else
-      logger.error("Failed to create HOIIV file paths")
-      hProperties.setProperty("valid.HOIIVFilePaths", "false")
+    HOIIVFiles.setNewFiles(hoi4Path, modPath)
+    new StateFilesWatcher()
+    
 
     changeNotifier.checkAndNotifyChanges()
 
@@ -63,7 +59,7 @@ class PDXLoader extends LazyLogging {
     ).foreach(readPDX)
   }
   
-  def readPDX(pdx: PDXReadable)(implicit properties: Properties, label: Label): Unit = {
+  private def readPDX(pdx: PDXReadable)(implicit properties: Properties, label: Label): Unit = {
     val property = s"valid.${pdx.name}"
 
     MenuController.updateLoadingStatus(label, s"Loading ${pdx.name} files...")
@@ -78,69 +74,16 @@ class PDXLoader extends LazyLogging {
         logger.error(s"Exception while reading for ${pdx.name}", e)
   }
 
-  /** Validates whether the provided directory path is valid */
-  private def validateDirectoryPath(path: String, keyName: String): Boolean = {
-    if (path == null || path.isEmpty) {
-      logger.error("{} is null or empty!", keyName)
-      return false
-    }
-    val directory = new File(path)
-    if (!(directory.exists) || !(directory.isDirectory)) {
-      logger.error("{} does not point to a valid directory: {}", keyName, path)
-      return false
-    }
-    true
-  }
-
-  def deleteMod(): Unit = {
+  def clearPDX(): Unit = {
     Interface.clear()
     State.clear()
+    Country.clear()
+    CountryTag.clear()
     FocusTree.clear()
+    IdeaFile.clear()
+    ResourcesFile.clear()
   }
 
-  /**
-   * Watches the state files in the given directory.
-   *
-   * @param stateFiles The directory containing state files.
-   */
-  def watchStateFiles(stateFiles: File): Unit = {
-    if (stateFiles == null || !validateDirectoryPath(stateFiles.getPath, "State files directory")) return
-
-    stateFilesWatcher = new FileWatcher(stateFiles)
-    stateFilesWatcher.addListener(new FileAdapter {
-      override def onCreated(event: FileEvent): Unit = {
-        handleStateFileEvent(event, "created/loaded", file => State.readState(file))
-      }
-
-      override def onModified(event: FileEvent): Unit = {
-        handleStateFileEvent(event, "modified", file => State.readState(file))
-      }
-
-      override def onDeleted(event: FileEvent): Unit = {
-        handleStateFileEvent(event, "deleted", file => State.removeState(file))
-      }
-    })
-    stateFilesWatcher.watch()
-  }
-
-  /**
-   * Handles state file events.
-   *
-   * @param event       File event that occurred.
-   * @param actionName  Name of the action performed.
-   * @param stateAction Function to apply to the file.
-   */
-  private def handleStateFileEvent(event: FileEvent, actionName: String, stateAction: File => Unit): Unit = {
-    EventQueue.invokeLater(() => {
-      stateFilesWatcher.listenerPerformAction = stateFilesWatcher.listenerPerformAction + 1
-      val file = event.getFile
-      if (file != null) {
-        stateAction(file)
-      }
-      stateFilesWatcher.listenerPerformAction = stateFilesWatcher.listenerPerformAction - 1
-      logger.debug(s"State was $actionName: ${State.get(file)}")
-    })
-  }
 
   def addPropertyChangeListener(listener: PropertyChangeListener): Unit = {
     changeNotifier.addPropertyChangeListener(listener)

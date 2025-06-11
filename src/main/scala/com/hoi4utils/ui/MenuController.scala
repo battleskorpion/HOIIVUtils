@@ -170,6 +170,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
   def openMapGeneration(): Unit = new MapGenerationController().open()
   def openMapEditor(): Unit = new MapEditorController().open()
   def openParserView(): Unit = new ParserViewerController().open()
+  def openLB(): Unit = new LBReaderController().open()
   override def setFxmlResource(fxmlResource: String): Unit = ???
   override def setTitle(title: String): Unit = ???
 }

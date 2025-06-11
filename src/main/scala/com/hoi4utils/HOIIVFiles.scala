@@ -75,6 +75,13 @@ object HOIIVFiles {
     HOI4.province_map_file = File(hoi4Path, "map" + File.separator + "provinces.bmp")
     HOI4.definition_csv_file = File(hoi4Path, "map" + File.separator + "definition.csv")
   }
+  
+  def setNewFiles(hoi4Path: String, modPath: String): Boolean = {
+    var success = true
+    if (isValidDirectory(hoi4Path)) setHoi4PathChildDirs(hoi4Path) else success = false
+    if (isValidDirectory(modPath)) setModPathChildDirs(modPath) else success = false
+    success
+  }
 
   // A sample validation method that uses both mod and base files
   def isUnitsFolderValid: Boolean = {
@@ -82,7 +89,12 @@ object HOIIVFiles {
   }
 
   /** Checks if a directory is valid */
-  private def isValidDirectory(folder: File): Boolean = {
-    folder != null && folder.exists() && folder.isDirectory()
+  def isValidDirectory(folder: File): Boolean = {
+    folder != null && folder.exists() && folder.isDirectory
+  }
+  
+  def isValidDirectory(path: String): Boolean = {
+    val file = new File(path)
+    isValidDirectory(file)
   }
 }

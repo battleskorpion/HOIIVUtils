@@ -38,6 +38,10 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
     }
   }
 
+  def clear(): Unit = {
+    _tagList.clear()
+  }
+
   def get(tag: String): CountryTag = {
     for (countryTag <- _tagList) {
       if (countryTag.get.equals(tag)) return countryTag

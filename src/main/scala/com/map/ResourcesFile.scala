@@ -34,6 +34,10 @@ object ResourcesFile extends PDXReadable with LazyLogging {
     }
   }
 
+  def clear(): Unit = {
+    _resourcesPDX = None
+  }
+
   def pdxSupplier(): PDXSupplier[ResourceDef] = {
     new PDXSupplier[ResourceDef] {
       override def simplePDXSupplier(): Option[Node => Option[ResourceDef]] = {

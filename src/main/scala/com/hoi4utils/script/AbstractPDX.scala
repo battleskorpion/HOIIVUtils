@@ -13,7 +13,7 @@ import scala.reflect.ClassTag
  * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
  * <p>
  */
-trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScript[T] {
+trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScript[V] {
   private[script] var activeIdentifier = 0
   protected[script] var node: Option[Node] = None
 
@@ -35,7 +35,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  override protected def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
+  override protected def setNode(value: V | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
     if (node.isEmpty) {
       return
     }
@@ -65,9 +65,9 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  override def value: Option[T] = {
+  override def value: Option[V] = {
     node.getOrElse(return None).$ match {
-      case value: T => Some(value)
+      case value: V => Some(value)
       case _ => None
     }
   }
@@ -88,14 +88,14 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     if (expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty)) {
-      logger.error("Error loading PDX script: " + expression)
+//      logger.error("Error loading PDX script: " + expression)
       return
     }
     try {
       set(expression)
     } catch {
       case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        logger.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+//        logger.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
         // Preserve the original node so that its content isn’t lost.
         node = Some(expression)
     }
@@ -116,7 +116,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
         }
         catch {
           case e: UnexpectedIdentifierException =>
-            logger.error(e.getMessage)
+//            logger.error(e.getMessage)
         }
       }
     }
@@ -125,7 +125,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   
   protected def loadPDX(file: File): Unit = {
     if (!file.exists) {
-      logger.error(s"Focus tree file does not exist: $file")
+//      logger.error(s"Focus tree file does not exist: $file")
       return
     }
 
@@ -135,7 +135,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
       loadPDX(rootNode)
     } catch {
       case e: ParserException =>
-        logger.error(s"Error parsing focus tree file: $file\n\t${e.getMessage}")
+//        logger.error(s"Error parsing focus tree file: $file\n\t${e.getMessage}")
       case e: UnexpectedIdentifierException => throw new RuntimeException(e)
     }
   }
@@ -165,7 +165,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
     node.foreach(_.setNull())
   }
 
-  override def loadOrElse(exp: Node, value: T): Unit = {
+  override def loadOrElse(exp: Node, value: V): Unit = {
     try loadPDX(exp)
     catch {
       case e: UnexpectedIdentifierException =>
@@ -206,10 +206,10 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  override def getOrElse(elseValue: T): T = {
+  override def getOrElse(elseValue: V): V = {
     val value = node.getOrElse(return elseValue).value
     value match
-      case Some(t: T) => t
+      case Some(t: V) => t
       case _ => elseValue
   }
 
@@ -244,9 +244,9 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
     pdxIdentifier
   }
 
-  def schema(): PDXSchema[T] = {
-    var schema = new PDXSchema[T](pdxIdentifiers*)
-    null.asInstanceOf[PDXSchema[T]]  // todo no
+  def schema(): PDXSchema[V] = {
+    var schema = new PDXSchema[V](pdxIdentifiers*)
+    null.asInstanceOf[PDXSchema[V]]  // todo no
   }
 
 }
