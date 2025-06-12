@@ -23,7 +23,7 @@ object Country extends LazyLogging with PDXReadable {
 
   private val countries = new ListBuffer[Country]()
 
-  def list: List[Country] = countries.toList
+  def getCountries: ListBuffer[Country] = countries
   
   def read(): Boolean = {
     if (!HOIIVFiles.Mod.country_folder.exists || !HOIIVFiles.Mod.country_folder.isDirectory) {

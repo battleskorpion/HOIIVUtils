@@ -7,23 +7,21 @@ import com.hoi4utils.localization.*
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
 import com.hoi4utils.*
-import javafx.collections.{FXCollections, ObservableList}
 import State.History
-import org.apache.logging.log4j.{LogManager, Logger}
+import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
 
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.jdk.javaapi.CollectionConverters
 
 /**
  * Represents a state in HOI4
  * @param stateFile state file
  * @param addToStatesList if true, adds the state to the list of states
  */
-class State(addToStatesList: Boolean) extends StructuredPDX("state") with InfrastructureData with Localizable with Iterable[Province] with Comparable[State] with PDXFile {
-  private val logger: Logger = LogManager.getLogger(getClass)
+class State(addToStatesList: Boolean) extends StructuredPDX("state") with InfrastructureData with Localizable with Iterable[Province] with Comparable[State] with PDXFile with LazyLogging {
+
 
   final val stateID = new IntPDX("id")
   final val name = new StringPDX("name")
@@ -283,8 +281,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
  *
  * I apologize in advance.
  */
-object State extends Iterable[State] with PDXReadable {
-  private val logger: Logger = LogManager.getLogger(getClass)
+object State extends Iterable[State] with PDXReadable with LazyLogging {
 
   private val states = new ListBuffer[State]
 
@@ -294,9 +291,7 @@ object State extends Iterable[State] with PDXReadable {
     states.find(_.stateFile.contains(file))
   }
 
-  def observeStates: ObservableList[State] = {
-    FXCollections.observableArrayList(CollectionConverters.asJava(states))
-  }
+  def getStates: ListBuffer[State] = states
 
   /**
    * Creates States from reading files

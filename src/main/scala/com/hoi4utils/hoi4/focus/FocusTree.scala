@@ -21,15 +21,13 @@ import scala.jdk.javaapi.CollectionConverters
 object FocusTree extends LazyLogging with PDXReadable {
   private val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
   private val focusTrees = new ListBuffer[FocusTree]()
+  
+  def getFocusTrees: ListBuffer[FocusTree] = focusTrees
 
   def get(focus_file: File): Option[FocusTree] = {
     if (focus_file == null) return None
     if (!focusTreeFileMap.contains(focus_file)) new FocusTree(focus_file)
     focusTreeFileMap.get(focus_file)
-  }
-
-  def observeFocusTrees: ObservableList[FocusTree] = {
-    FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
   }
 
   /**

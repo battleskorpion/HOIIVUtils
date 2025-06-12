@@ -1,6 +1,6 @@
 package com.hoi4utils.ui
 
-import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.{HOIIVFiles, HOIIVUtils, PDXLoader}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
 import javafx.scene.Node

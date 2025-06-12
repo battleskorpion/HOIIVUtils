@@ -131,9 +131,9 @@ class Interface(private val file: File) extends LazyLogging
   private def readGFXFile(file: File): Unit = {
     spriteTypes.clear()
 
-    val parser = new Parser(file)
+    val parser = new Parser(file, this.getClass)
     try {
-      parser.parse
+      parser.rootNode
     } catch {
       case e: ParserException =>
         logger.error(s"Error parsing interface .gfx file, $file.\nException: $e")

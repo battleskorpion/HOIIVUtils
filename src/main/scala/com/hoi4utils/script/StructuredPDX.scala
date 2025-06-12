@@ -52,13 +52,10 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
   override def loadPDX(expression: Node): Unit = {
     if (expression.identifier.isEmpty) {
       expression.$ match {
-        case l: ListBuffer[Node] =>
-          loadPDX(l)
-        case _ =>
-          System.out.println("Error loading PDX script: " + expression)
+        case l: ListBuffer[Node] => loadPDX(l)
+        case _ => System.out.println("Error loading PDX script: " + expression)
       }
-    }
-    else {
+    } else {
       try {
         set(expression)
       } catch {
@@ -71,21 +68,21 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
   }
 
   override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    if (expressions != null) {
-      val remaining = ListBuffer.from(expressions)
-      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
-        catch {
-          case e: UnexpectedIdentifierException =>
-            System.err.println(e.getMessage)
-        }
-      })
-      remaining
-    } else {
-      ListBuffer.empty
+    expressions match {
+      case null => ListBuffer.empty
+      case _ =>
+        val remaining = ListBuffer.from(expressions)
+        expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
+          try {
+            loadPDX(expression)
+            remaining -= expression
+          }
+          catch {
+            case e: UnexpectedIdentifierException =>
+              System.err.println(e.getMessage)
+          }
+        })
+        remaining
     }
   }
 

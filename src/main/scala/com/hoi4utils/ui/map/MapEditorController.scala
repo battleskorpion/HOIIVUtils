@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.map
 
 import com.hoi4utils.HOIIVFiles
+import com.hoi4utils.extensions._
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.buildings.StateTable
 import com.hoi4utils.ui.pdxscript.PDXEditorPane
@@ -134,7 +135,7 @@ class MapEditorController extends HOIIVUtilsAbstractController with LazyLogging 
     }
 
     // load states and compute max metric
-    val states: ObservableList[State] = State.observeStates
+    val states: ObservableList[State] = State.getStates.toObservableList
     val max = states.asScala.map(metricFn).maxOption.getOrElse(1)
 
     // build province→stateColor map
@@ -241,7 +242,7 @@ class MapEditorController extends HOIIVUtilsAbstractController with LazyLogging 
     // Build a mapping from province id to a state color and a mapping to the state.
     val provinceIdToStateColor = mutable.Map[Int, Color]()
     val provinceIdToStateMap = mutable.Map[Int, State]()
-    val states: ObservableList[State] = State.observeStates
+    val states: ObservableList[State] = State.getStates.toObservableList
 
     for (state <- states.asScala) {
       // Assign a random color for each state.
@@ -398,7 +399,7 @@ class MapEditorController extends HOIIVUtilsAbstractController with LazyLogging 
       }
 
       val provinceIdToStateMap = mutable.Map[Int, State]()
-      val states: ObservableList[State] = State.observeStates
+      val states: ObservableList[State] = State.getStates.toObservableList
 
       for (state <- states.asScala) {
         for (province <- state.provinces.toList.asJava.asScala) {

@@ -52,11 +52,15 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
     val task = new javafx.concurrent.Task[Unit] {
       override def call(): Unit = {
         try {
+          val pdxLoader = new PDXLoader()
+          pdxLoader.clearPDX()
+          pdxLoader.clearLB()
+          pdxLoader.closeDB()
           if (initFailed)
             logger.info(s"Skipping mod loading because of unsuccessful initialization")
             crazyUpdateLoadingStatus("Skipping loading!!!")
           else {
-            new PDXLoader().load(hProperties, loadingLabel)
+            pdxLoader.load(hProperties, loadingLabel)
             crazyUpdateLoadingStatus("Checking for bad files...")
             MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton)
           }

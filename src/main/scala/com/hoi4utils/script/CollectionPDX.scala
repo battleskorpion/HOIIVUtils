@@ -28,21 +28,22 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
   }
 
   override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    if (expressions != null) {
-      val remaining = ListBuffer.from(expressions)
-      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
-        catch {
-          case e: UnexpectedIdentifierException =>
-            System.err.println(e.getMessage)
-          //throw new RuntimeException(e);
-        }
-      })
-      remaining
-    } else ListBuffer.empty 
+    expressions match {
+      case null => ListBuffer.empty
+      case _ =>
+        val remaining = ListBuffer.from(expressions)
+        expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
+          try {
+            loadPDX(expression)
+            remaining -= expression
+          }
+          catch {
+            case e: UnexpectedIdentifierException =>
+              System.err.println(e.getMessage)
+          }
+        })
+        remaining
+    }
   }
 
   override def equals(other: PDXScript[?]) = false // todo? well.
@@ -52,34 +53,24 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     else Some(pdxList)
   }
 
-  // TODO FIX THIS
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  protected def add(expression: Node): Unit = {
-    //usingIdentifier(expression);  // could be any identifier based on T
-    // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
-    // then load each sub-PDXScript
-    expression.$ match {
-      case l: ListBuffer[Node] =>
-        for (childExpr <- l) {
-          val childScript = useSupplierFunction(childExpr)
-          childScript.loadPDX(childExpr)
-          pdxList += childScript
-        }
-      case _ =>
-        // todo idk   // double todo
-        val childScript = useSupplierFunction(expression)
-        childScript.loadPDX(expression)
-        pdxList += childScript
-    }
-  }
+  protected def add(expression: Node): Unit =
+    val nodesToProcess = expression.$ match
+      case nodes: ListBuffer[Node] => nodes
+      case _: String => logger.error("String value found where a collection was expected: " + expression); ListBuffer.empty
+      case _: Int => logger.error("Integer value found where a collection was expected: " + expression); ListBuffer.empty
+      case _: Double => logger.error("Double value found where a collection was expected: " + expression); ListBuffer.empty
+      case true => logger.error("Boolean value found where a collection was expected: " + expression); ListBuffer.empty
+      case false => logger.error("Boolean value found where a collection was expected: " + expression); ListBuffer.empty
 
-  protected def useSupplierFunction(expression: Node): T = {
-    pdxSupplier(expression) match {
-      case Some(s) => s
-      case None => throw new UnexpectedIdentifierException(expression, this.getClass)
+    nodesToProcess.foreach { node =>
+      val childScript = pdxSupplier(node) match
+        case Some(script) => script
+        case None => throw new UnexpectedIdentifierException(node, this.getClass)
+      childScript.loadPDX(node)
+      pdxList += childScript
     }
-  }
 
   /**
    * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.

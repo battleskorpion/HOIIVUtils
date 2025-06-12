@@ -1,6 +1,8 @@
 package com.map
 
+import com.hoi4utils.extensions._
 import com.hoi4utils.script.*
+import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 import org.apache.logging.log4j.{LogManager, Logger}
 
@@ -9,8 +11,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
-class StrategicRegion extends StructuredPDX("strategic_region") with PDXFile {
-  private val logger: Logger = LogManager.getLogger(getClass)
+class StrategicRegion extends StructuredPDX("strategic_region") with PDXFile with LazyLogging {
 
   final val id = new IntPDX("id")
   final val name = new StringPDX("name")
@@ -80,8 +81,7 @@ class StrategicRegion extends StructuredPDX("strategic_region") with PDXFile {
 
 }
 
-object StrategicRegion {
-  private val logger: Logger = LogManager.getLogger(getClass)
+object StrategicRegion extends LazyLogging {
 
   private val strategicRegions = new ListBuffer[StrategicRegion]
 
@@ -92,7 +92,7 @@ object StrategicRegion {
   }
 
   def observeStratRegions: ObservableList[StrategicRegion] = {
-    FXCollections.observableArrayList(CollectionConverters.asJava(strategicRegions))
+    strategicRegions.toObservableList
   }
 
   def clear(): Unit = {

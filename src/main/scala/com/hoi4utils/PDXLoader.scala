@@ -1,5 +1,6 @@
 package com.hoi4utils
 
+import com.hoi4utils.StateFilesWatcher.statesThatChanged
 import com.hoi4utils.fileIO.FileListener.{FileAdapter, FileEvent, FileWatcher}
 import com.hoi4utils.gfx.Interface
 import com.hoi4utils.hoi4.country.{Country, CountryTag}
@@ -8,15 +9,13 @@ import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.hoi4.idea.IdeaFile
 import com.hoi4utils.hoi4.modifier.ModifierDatabase
 import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
+import com.hoi4utils.parser.Parser.parserFileErrors
 import com.hoi4utils.ui.MenuController
-import com.hoi4utils.HOIIVFiles.isValidDirectory
 import com.map.{ResourcesFile, State}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.Label
 
-import java.awt.EventQueue
 import java.beans.PropertyChangeListener
-import java.io.File
 import java.util.Properties
 
 /**
@@ -41,7 +40,7 @@ class PDXLoader extends LazyLogging {
     val modPath = hProperties.getProperty("mod.path")
     HOIIVFiles.setNewFiles(hoi4Path, modPath)
     new StateFilesWatcher()
-    
+
 
     changeNotifier.checkAndNotifyChanges()
 
@@ -58,16 +57,17 @@ class PDXLoader extends LazyLogging {
       ResourcesFile
     ).foreach(readPDX)
   }
-  
+
   private def readPDX(pdx: PDXReadable)(implicit properties: Properties, label: Label): Unit = {
     val property = s"valid.${pdx.name}"
 
     MenuController.updateLoadingStatus(label, s"Loading ${pdx.name} files...")
     try
-      if (pdx.read()) properties.setProperty(property, "true")
+      if pdx.read() then
+        properties.setProperty(property, "true")
       else
         properties.setProperty(property, "false")
-        logger.error(s"Exception while reading for ${pdx.name}")
+        logger.error(s"${pdx.name} Failed to load.")
     catch
       case e: Exception =>
         properties.setProperty(property, "false")
@@ -84,6 +84,15 @@ class PDXLoader extends LazyLogging {
     ResourcesFile.clear()
   }
 
+  def clearLB(): Unit = {
+    parserFileErrors.clear()
+    statesThatChanged.clear()
+  }
+
+  def closeDB(): Unit = {
+    ModifierDatabase.close()
+    EffectDatabase.close()
+  }
 
   def addPropertyChangeListener(listener: PropertyChangeListener): Unit = {
     changeNotifier.addPropertyChangeListener(listener)

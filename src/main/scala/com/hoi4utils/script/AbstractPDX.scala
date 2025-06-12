@@ -18,19 +18,17 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
   protected[script] var node: Option[Node] = None
 
   /**
-   * Sets the active identifier to match the given expression, 
-   * if it is a valid identifier. Otherwise, throws exception. 
+   * Sets the active identifier to match the given expression,
+   * if it is a valid identifier. Otherwise, throws exception.
+   *
    * @param expr the expression to check, and set the active identifier to the identifier of the expression
    * @throws UnexpectedIdentifierException if the expression is not a valid identifier
    */
-  @throws[UnexpectedIdentifierException]
-  protected def usingIdentifier(expr: Node): Unit = {
-    if (pdxIdentifiers.isEmpty) {
-      // all good? 
-    } else if (pdxIdentifiers.indexWhere(expr.nameEquals) == -1) {
-      // TODO add to list to be used later
-    } 
-  }
+  protected def usingIdentifier(expr: Node): Unit =
+    pdxIdentifiers match
+      case Nil => // all good?
+      case identifiers if !identifiers.exists(expr.nameEquals) => // TODO add to list to be used later
+      case _ => // identifier found, continue processing
 
   /**
    * @inheritdoc
@@ -86,20 +84,22 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @inheritdoc
    */
   @throws[UnexpectedIdentifierException]
-  override def loadPDX(expression: Node): Unit = {
-    if (expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty)) {
-//      logger.error("Error loading PDX script: " + expression)
-      return
-    }
-    try {
-      set(expression)
-    } catch {
-      case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-//        logger.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
-        // Preserve the original node so that its content isn’t lost.
-        node = Some(expression)
-    }
-  }
+  override def loadPDX(expression: Node): Unit =
+    if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then
+      logger.error(s"Error loading PDX script: $expression")
+    else
+      try
+        set(expression)
+      catch
+        case e: UnexpectedIdentifierException =>
+          // Preserve the original node in StructuredPDX as well.
+          node = Some(expression)
+          throw e
+        case e: NodeValueTypeException =>
+          // Preserve the original node in StructuredPDX as well.
+          node = Some(expression)
+          logger.error(s"Error loading PDX script: ${e.getMessage}\n\t$expression")
+          throw new NodeValueTypeException(expression, e, this.getClass)
 
   /**
    * 
@@ -116,28 +116,24 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
         }
         catch {
           case e: UnexpectedIdentifierException =>
-//            logger.error(e.getMessage)
+            logger.error(e.getMessage)
         }
       }
     }
     remaining
   }
-  
-  protected def loadPDX(file: File): Unit = {
-    if (!file.exists) {
-//      logger.error(s"Focus tree file does not exist: $file")
-      return
-    }
 
-    try {
-      val pdxParser = new Parser(file)
-      val rootNode = pdxParser.parse
-      loadPDX(rootNode)
-    } catch {
-      case e: ParserException =>
-//        logger.error(s"Error parsing focus tree file: $file\n\t${e.getMessage}")
-      case e: UnexpectedIdentifierException => throw new RuntimeException(e)
-    }
+  /**
+   * Loads a PDX file from the given file.
+   * The file should contain a valid PDX script block.
+   *
+   * @param file the file to load
+   * @throws ParserException if the file cannot be parsed
+   */
+  @throws[ParserException]
+  @throws[UnexpectedIdentifierException]
+  protected def loadPDX(file: File): Unit = {
+    loadPDX(new Parser(file, this.getClass).rootNode)
   }
 
   /**

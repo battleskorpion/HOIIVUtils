@@ -22,10 +22,6 @@ object IdeaFile extends LazyLogging with PDXReadable {
     ideaFileFileMap.get(idea_file)
   }
 
-  def observeIdeaFileList: ObservableList[IdeaFile] = {
-    FXCollections.observableArrayList(CollectionConverters.asJava(ideaFiles))
-  }
-
   /**
    * Reads all focus trees from the focus trees folder, creating FocusTree instances for each.
    */

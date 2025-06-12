@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.focus_view
 
 import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.extensions._
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.hoi4.focus.{FixFocus, Focus, FocusTree}
@@ -171,7 +172,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging 
 
     // Load available focus trees
     updateStatus("Loading focus trees...")
-    val trees: ObservableList[FocusTree] = FocusTree.observeFocusTrees
+    val trees: ObservableList[FocusTree] = FocusTree.getFocusTrees.toObservableList
 
     if (trees == null) {
       updateStatus("Focus trees list is null. Ensure mod files are loaded correctly.")

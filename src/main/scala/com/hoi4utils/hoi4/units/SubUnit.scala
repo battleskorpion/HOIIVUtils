@@ -59,7 +59,7 @@ object SubUnit {
     val buf = ListBuffer.empty[SubUnit]
 
     files.foreach { file =>
-      val root = try new Parser(file).parse
+      val root = try new Parser(file, this.getClass).rootNode
       catch {
         case e: ParserException =>
           JOptionPane.showMessageDialog(null,

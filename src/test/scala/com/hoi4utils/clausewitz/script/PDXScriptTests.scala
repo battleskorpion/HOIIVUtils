@@ -35,24 +35,22 @@ class PDXScriptTests extends AnyFunSuiteLike {
 
   def withParsedFiles(testFunction: Node => Unit): Unit = {
     filesToTest.foreach { file =>
-      val parser = new Parser(file)
-      val node = parser.parse
+      val parser = new Parser(file, this.getClass)
+      val node = parser.rootNode
       assert(node != null, s"Failed to parse $file")
       testFunction(node)
     }
   }
 
   def withParsedFile(testFunction: Node => Unit, file: File): Unit = {
-    val parser = new Parser(file)
-    val node = parser.parse
+    val node = new Parser(file, this.getClass).rootNode
     assert(node != null, s"Failed to parse $file")
     testFunction(node)
   }
 
   def withValidFocusTrees(testFunction: FocusTree => Unit): Unit = {
     validFocusTreeTestFiles.foreach(file => {
-      val parser = new Parser(file)
-      val node = parser.parse
+      val node = new Parser(file, this.getClass).rootNode
       assert(node != null, s"Failed to parse $file")
       val focusTree = new FocusTree()
       focusTree.loadPDX(node)
@@ -63,8 +61,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
 
   def withValidStratRegions(testFunction: StrategicRegion => Unit): Unit = {
     validStratRegionTestFiles.foreach(file => {
-      val parser = new Parser(file)
-      val node = parser.parse
+      val node = new Parser(file, this.getClass).rootNode
       assert(node != null, s"Failed to parse $file")
       val stratRegion = new StrategicRegion()
       stratRegion.loadPDX(node)
@@ -152,7 +149,6 @@ class PDXScriptTests extends AnyFunSuiteLike {
       assert(stratRegion.pdxProperties.nonEmpty)
       stratRegion.weather.period.removeIf(_.between.exists(_ @== 4.11))
       assert(stratRegion.weather.period.size == 12)
-      stratRegion.savePDX()
     }
   }
 
@@ -216,8 +212,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
   test("SpriteType objects are loaded with correct properties") {
     // Assumes a test file "sprite_types.txt" exists under testPath containing the SpriteType definitions.
     val spriteFile = new File(testPath + "sprite_types.txt")
-    val parser = new Parser(spriteFile)
-    val node = parser.parse
+    val node = new Parser(spriteFile, this.getClass).rootNode
     assert(node != null, s"Failed to parse ${spriteFile.getName}")
 
     // Filter nodes with the name "SpriteType"
@@ -264,8 +259,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
   test("SpriteType animations have distinct rotation values") {
     // Assumes a test file "sprite_types.txt" exists under testPath containing the SpriteType definitions.
     val spriteFile = new File(testPath + "sprite_types.txt")
-    val parser = new Parser(spriteFile)
-    val node = parser.parse
+    val node = new Parser(spriteFile, this.getClass).rootNode
     assert(node != null, s"Failed to parse ${spriteFile.getName}")
 
     val spriteNodes = node.filter(_.name == "SpriteType")
