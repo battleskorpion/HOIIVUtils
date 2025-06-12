@@ -77,6 +77,7 @@ class IdeaFile extends StructuredPDX("ideas") with Iterable[Idea] {
   final var countryIdeas = new CollectionPDX[Idea](Idea.pdxSupplier(), "country") {
     override def loadPDX(expr: Node): Unit = {
       super.loadPDX(expr)
+      // todo try catch for unexpected identifiers and add to class specific listBuffer
       pdxList.foreach(idea => idea.setIdeaFile(IdeaFile.this))
     }
 

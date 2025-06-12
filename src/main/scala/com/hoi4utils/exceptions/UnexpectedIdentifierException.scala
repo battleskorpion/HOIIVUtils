@@ -12,4 +12,7 @@ class UnexpectedIdentifierException(message: String) extends Exception(message) 
 
   def this(e: Exception, clazz: Class[?], file: String) =
     this(s"Unexpected identifier in class \"${clazz.getSimpleName}\" while reading file: $file. ${e.getMessage} \n ${e.getStackTrace.mkString("\n")}")
+
+  def this(exp: Node, message: String) =
+    this(s"Unexpected identifier: ${exp.name}, in class \"${exp.getClass.getSimpleName}\". $message")
 }

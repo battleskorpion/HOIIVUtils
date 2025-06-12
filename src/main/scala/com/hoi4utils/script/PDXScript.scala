@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.exceptions.UnexpectedIdentifierException
+import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 import com.typesafe.scalalogging.LazyLogging
 
@@ -53,10 +53,12 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
 
   /**
    * Load the PDX script represented by the given expression.
-   * @param expression
-   * @throws
+   * 
+   * @param expression The expression to load.
+   * @throws UnexpectedIdentifierException if the expression does not match any valid identifier for this PDX script.
    */
   @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
   def loadPDX(expression: Node): Unit
 
   /**

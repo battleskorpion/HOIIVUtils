@@ -19,32 +19,27 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
    * @inheritdoc
    */
   @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
   override def loadPDX(expression: Node): Unit = {
-    try add(expression)
-    catch {
-      case e: NodeValueTypeException =>
-        throw new RuntimeException(e)
-    }
+    add(expression)
   }
 
-  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    expressions match {
-      case null => ListBuffer.empty
-      case _ =>
-        val remaining = ListBuffer.from(expressions)
-        expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
-          try {
-            loadPDX(expression)
-            remaining -= expression
-          }
-          catch {
-            case e: UnexpectedIdentifierException =>
-              System.err.println(e.getMessage)
-          }
-        })
-        remaining
-    }
-  }
+  /**
+   * Loads a collection of PDXScripts from the provided expressions.
+   * It filters out invalid identifiers and processes valid ones.
+   *
+   * @param expressions the iterable collection of Node expressions to load
+   * @return an iterable of remaining expressions that were not processed
+   */
+  @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
+  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] =
+    Option(expressions) match
+      case None => List.empty
+      case Some(exprs) =>
+        val validExpressions = exprs.filter(isValidIdentifier).toSet
+        validExpressions.foreach(add)
+        exprs.filterNot(validExpressions.contains)
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
@@ -67,7 +62,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     nodesToProcess.foreach { node =>
       val childScript = pdxSupplier(node) match
         case Some(script) => script
-        case None => throw new UnexpectedIdentifierException(node, this.getClass)
+        case None => throw UnexpectedIdentifierException(node, this.getClass)
       childScript.loadPDX(node)
       pdxList += childScript
     }

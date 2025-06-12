@@ -20,14 +20,24 @@
                   </AnchorPane>
             </content>
           </Tab>
-          <Tab text="test">
+          <Tab text="stateFileErrors">
             <content>
               <AnchorPane>
                      <children>
-                        <ListView fx:id="testUI" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                        <ListView fx:id="stateFileErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
                                   AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
                      </children>
               </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="resouceFileErrors">
+            <content>
+                <AnchorPane>
+                    <children>
+                        <ListView fx:id="resouceFileErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                                  AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                    </children>
+                </AnchorPane>
             </content>
           </Tab>
             <Tab text="statesThatChanged">

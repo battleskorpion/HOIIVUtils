@@ -1,9 +1,10 @@
 package com.hoi4utils.hoi4.focus
 
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.exceptions.UnexpectedIdentifierException
+import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.gfx.Interface
 import com.hoi4utils.hoi4.effect.{Effect, EffectDatabase}
+import com.hoi4utils.hoi4.focus.Focus.focusErrors
 import com.hoi4utils.hoi4.scope.Scope
 import com.hoi4utils.localization.{Localizable, Localization, Property}
 import com.hoi4utils.parser.Node
@@ -366,9 +367,16 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   }
 
   class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward") {
-    @throws[UnexpectedIdentifierException]
     override def loadPDX(expression: Node): Unit = {
-      super.loadPDX(expression)
+      try super.loadPDX(expression)
+      catch {
+        case e: UnexpectedIdentifierException =>
+          focusErrors.addOne(s"[${getClass.getSimpleName}] Unexpected identifier: ${e.getMessage}")
+        case e: NodeValueTypeException =>
+          focusErrors.addOne(s"[${getClass.getSimpleName}] Node value type exception: ${e.getMessage}")
+        case e: IllegalStateException =>
+          focusErrors.addOne(s"[${getClass.getSimpleName}] Illegal State exception: ${e.getMessage}")
+      }
     }
 
     override def getPDXTypeName: String = "Completion Reward"
@@ -399,6 +407,9 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 }
 
 object Focus {
+
+  val focusErrors: ListBuffer[String] = ListBuffer.empty
+
   def getDataFunctions: Iterable[Focus => ?] = {
     val dataFunctions = ListBuffer[Focus => ?]()
     dataFunctions += (focus => {

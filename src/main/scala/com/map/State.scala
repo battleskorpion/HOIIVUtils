@@ -7,7 +7,8 @@ import com.hoi4utils.localization.*
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
 import com.hoi4utils.*
-import State.History
+import State.{History, stateFileErrors}
+import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
 
@@ -25,13 +26,17 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
 
   final val stateID = new IntPDX("id")
   final val name = new StringPDX("name")
-  final val resources = new CollectionPDX[Resource](Resource(), "resources") {
+  private val resourcePDXSupplier: PDXSupplier[Resource] = Resource() // todo: what
+  final val resources = new CollectionPDX[Resource](resourcePDXSupplier, "resources") {
     override def loadPDX(expr: Node): Unit = {
       try {
         super.loadPDX(expr)
       } catch {
-        case e: Exception =>
-          this.logger.error(s"Error loading resources for state ${stateID.value.getOrElse("unknown")}: ${e.getMessage}")
+        case e: UnexpectedIdentifierException =>
+          stateFileErrors.addOne(s"[${getClass.getSimpleName}] Unexpected identifier:\n  in state resources: ${e.getMessage}\n for state: ${stateID.value.getOrElse("unknown")}")
+          // Optionally, you could rethrow the exception or handle it differently
+        case e: NodeValueTypeException =>
+          stateFileErrors.addOne(s"[${getClass.getSimpleName}] Node value type exception:\n  in state resources: ${e.getMessage}\n for state: ${stateID.value.getOrElse("unknown")}")
       }
     }
 
@@ -55,7 +60,15 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
 
   def this(addToStatesList: Boolean, file: File) = {
     this(addToStatesList)
-    loadPDX(file)
+    try loadPDX(file)
+    catch {
+      case e: UnexpectedIdentifierException =>
+        stateFileErrors.addOne(s"[${getClass.getSimpleName}] Unexpected identifier:\n  in state file: ${e.getMessage}\n for state file: ${file.getName}")
+      case e: NodeValueTypeException =>
+        stateFileErrors.addOne(s"[${getClass.getSimpleName}] Node value type exception:\n  in state file: ${e.getMessage}\n for state file: ${file.getName}")
+      case e: IllegalStateException =>
+        stateFileErrors.addOne(s"[${getClass.getSimpleName}] Illegal State exception:\n  in state file: ${e.getMessage}\n for state file: ${file.getName}")
+    }
     setFile(file)
   }
 
@@ -241,10 +254,10 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
     else (infrastructure * buildingsMaxLevelFactor.getOrElse(0)).toInt
   }
 
-  def resource(name: String): Resource = resources.find(_.pdxTypeIdentifier.equals(name)) match {
-    case Some(r) => r
-    case None => new Resource(name, 0)
-  }
+  def resource(name: String): Resource =
+    resources.find(_.pdxTypeIdentifier.equals(name)) match
+      case Some(resource) => resource
+      case None => new Resource(name, 0)
 
   override def getInfrastructureRecord: Infrastructure = getStateInfrastructure
 
@@ -284,6 +297,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
 object State extends Iterable[State] with PDXReadable with LazyLogging {
 
   private val states = new ListBuffer[State]
+  val stateFileErrors: ListBuffer[String] = ListBuffer.empty
 
   def get(file: File): Option[State] = {
     if (file == null) return None
@@ -497,7 +511,13 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
 
     def this(node: Node) = {
       this()
-      loadPDX(node)
+      try loadPDX(node)
+      catch {
+        case e: UnexpectedIdentifierException =>
+          stateFileErrors.addOne(s"[${getClass.getSimpleName}] Unexpected identifier:\n  in history: ${e.getMessage}\n for state ${owner}")
+        case e: NodeValueTypeException =>
+          stateFileErrors.addOne(s"[${getClass.getSimpleName}] Node value type exception:\n  in history: ${e.getMessage}\n for state ${owner}")
+      }
     }
 
     /**
@@ -519,7 +539,13 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
 
     def this(node: Node) = {
       this()
-      loadPDX(node)
+      try loadPDX(node)
+      catch {
+        case e: UnexpectedIdentifierException =>
+          stateFileErrors.addOne(s"[${getClass.getSimpleName}] Unexpected identifier:\n  in buildings: ${e.getMessage}\n for state ${node.identifier}")
+        case e: NodeValueTypeException =>
+          stateFileErrors.addOne(s"[${getClass.getSimpleName}] Node value type exception:\n  in buildings: ${e.getMessage}\n for state ${node.identifier}")
+      }
     }
 
     /**

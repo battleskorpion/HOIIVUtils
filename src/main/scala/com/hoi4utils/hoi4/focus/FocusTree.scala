@@ -1,7 +1,8 @@
 package com.hoi4utils.hoi4.focus
 
+import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.hoi4.country.CountryTag
-import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileMap
+import com.hoi4utils.hoi4.focus.FocusTree.{focusTreeFileErrors, focusTreeFileMap}
 import com.hoi4utils.localization.{Localizable, Property}
 import com.hoi4utils.script.*
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
@@ -12,83 +13,6 @@ import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
-
-/**
- * ALL the FocusTree/FocusTrees
- * Localizable data: focus tree name. Each focus is its own localizable data.
- */
-// todo extends file?
-object FocusTree extends LazyLogging with PDXReadable {
-  private val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
-  private val focusTrees = new ListBuffer[FocusTree]()
-  
-  def getFocusTrees: ListBuffer[FocusTree] = focusTrees
-
-  def get(focus_file: File): Option[FocusTree] = {
-    if (focus_file == null) return None
-    if (!focusTreeFileMap.contains(focus_file)) new FocusTree(focus_file)
-    focusTreeFileMap.get(focus_file)
-  }
-
-  /**
-   * Reads all focus trees from the focus trees folder, creating FocusTree instances for each.
-   */
-  def read(): Boolean = {
-    if (!HOIIVFiles.Mod.focus_folder.exists || !HOIIVFiles.Mod.focus_folder.isDirectory) {
-      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
-      false
-    } else if (HOIIVFiles.Mod.focus_folder.listFiles == null || HOIIVFiles.Mod.focus_folder.listFiles.length == 0) {
-      logger.warn(s"No focuses found in ${HOIIVFiles.Mod.focus_folder}")
-      false
-    } else {
-
-      // create focus trees from files
-      HOIIVFiles.Mod.focus_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
-        new FocusTree(f)
-      }
-      true
-    }
-  }
-
-  /**
-   * Clears all focus trees and any other relevant values.
-   */
-  def clear(): Unit = {
-    focusTrees.clear()
-    focusTreeFileMap.clear()
-  }
-
-  /**
-   * Adds a focus tree to the list of focus trees.
-   * @param focusTree the focus tree to add
-   * @return the updated list of focus trees
-   */
-  def add(focusTree: FocusTree): Iterable[FocusTree] = {
-    focusTrees += focusTree
-    focusTree.focusFile match {
-      case Some(file) => focusTreeFileMap.put(file, focusTree)
-      case None =>
-    }
-    focusTrees
-  }
-
-  def listFocusTrees: Iterable[FocusTree] = focusTrees
-
-  /**
-   * Returns focus tree corresponding to the tag, if it exists
-   *
-   * @param tag The country tag
-   */
-  def get(tag: CountryTag): Option[FocusTree] = {
-    listFocusTrees.foreach { tree =>
-      tree.countryTag match {
-        case Some(t) if tag.equals(t.tag) => return Some(tree)
-        case _ => // Do nothing
-      }
-    }
-    None
-  }
-}
 
 /**
  * Represents a focus tree, which is a collection of focuses.
@@ -119,7 +43,13 @@ class FocusTree
       throw new IllegalArgumentException(s"File does not exist: $focus_file")
     }
 
-    loadPDX(focus_file)
+    try loadPDX(focus_file)
+    catch {
+      case e: UnexpectedIdentifierException =>
+        focusTreeFileErrors.addOne(s"[${this.getClass.getSimpleName}] Error loading focus tree from file: ${focus_file.getName}\n  : ${e.getMessage}")
+      case e: NodeValueTypeException =>
+        focusTreeFileErrors.addOne(s"[${this.getClass.getSimpleName}] Node value type exception while loading focus tree from file: ${focus_file.getName}\n  : ${e.getMessage}")
+    }
     setFile(focus_file)
   }
 
@@ -263,5 +193,84 @@ class FocusTree
 
       override def getPDXTypeName: String = "Modifier"
     }
+  }
+}
+
+/**
+ * ALL the FocusTree/FocusTrees
+ * Localizable data: focus tree name. Each focus is its own localizable data.
+ */
+// todo extends file?
+object FocusTree extends LazyLogging with PDXReadable {
+  private val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
+  private val focusTrees = new ListBuffer[FocusTree]()
+  
+  val focusTreeFileErrors: ListBuffer[String] = ListBuffer.empty
+
+  def getFocusTrees: ListBuffer[FocusTree] = focusTrees
+
+  def get(focus_file: File): Option[FocusTree] = {
+    if (focus_file == null) return None
+    if (!focusTreeFileMap.contains(focus_file)) new FocusTree(focus_file)
+    focusTreeFileMap.get(focus_file)
+  }
+
+  /**
+   * Reads all focus trees from the focus trees folder, creating FocusTree instances for each.
+   */
+  def read(): Boolean = {
+    if (!HOIIVFiles.Mod.focus_folder.exists || !HOIIVFiles.Mod.focus_folder.isDirectory) {
+      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
+      false
+    } else if (HOIIVFiles.Mod.focus_folder.listFiles == null || HOIIVFiles.Mod.focus_folder.listFiles.length == 0) {
+      logger.warn(s"No focuses found in ${HOIIVFiles.Mod.focus_folder}")
+      false
+    } else {
+
+      // create focus trees from files
+      HOIIVFiles.Mod.focus_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
+        new FocusTree(f)
+      }
+      true
+    }
+  }
+
+  /**
+   * Clears all focus trees and any other relevant values.
+   */
+  def clear(): Unit = {
+    focusTrees.clear()
+    focusTreeFileMap.clear()
+  }
+
+  /**
+   * Adds a focus tree to the list of focus trees.
+   * @param focusTree the focus tree to add
+   * @return the updated list of focus trees
+   */
+  def add(focusTree: FocusTree): Iterable[FocusTree] = {
+    focusTrees += focusTree
+    focusTree.focusFile match {
+      case Some(file) => focusTreeFileMap.put(file, focusTree)
+      case None =>
+    }
+    focusTrees
+  }
+
+  def listFocusTrees: Iterable[FocusTree] = focusTrees
+
+  /**
+   * Returns focus tree corresponding to the tag, if it exists
+   *
+   * @param tag The country tag
+   */
+  def get(tag: CountryTag): Option[FocusTree] = {
+    listFocusTrees.foreach { tree =>
+      tree.countryTag match {
+        case Some(t) if tag.equals(t.tag) => return Some(tree)
+        case _ => // Do nothing
+      }
+    }
+    None
   }
 }

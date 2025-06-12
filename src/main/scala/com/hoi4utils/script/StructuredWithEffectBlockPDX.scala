@@ -36,18 +36,7 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     // Try to process as normal structured node.
-    try {
-      super.set(expression)
-    } catch {
-      case e: UnexpectedIdentifierException =>
-        // Instead of failing, we log and store the node as an effect.
-        System.out.println("Not a structured property, treating as effect: " + expression)
-        effectNodes += expression
-      case e: NodeValueTypeException =>
-        // Likewise, if the node value type is not as expected, add it to the effect nodes.
-        System.out.println("Node value type error, treating as effect: " + e.getMessage + "\n\t" + expression)
-        effectNodes += expression
-    }
+    super.set(expression)
   }
 
   /**

@@ -2,6 +2,7 @@ package com.map
 
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.IntPDX
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import scala.collection.mutable.ListBuffer
@@ -22,8 +23,7 @@ class Province extends IntPDX {
   def id: Option[Int] = value
 }
 
-object Province {
-  val logger: Logger = LogManager.getLogger(classOf[Province])
+object Province extends LazyLogging {
   private val provinces = new ListBuffer[Province]()
 
   /**

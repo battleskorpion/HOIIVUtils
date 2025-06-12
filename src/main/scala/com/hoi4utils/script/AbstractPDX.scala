@@ -24,6 +24,7 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @param expr the expression to check, and set the active identifier to the identifier of the expression
    * @throws UnexpectedIdentifierException if the expression is not a valid identifier
    */
+  @throws[UnexpectedIdentifierException]
   protected def usingIdentifier(expr: Node): Unit =
     pdxIdentifiers match
       case Nil => // all good?
@@ -54,6 +55,7 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
+  @throws[NodeValueTypeException]
   @throws[UnexpectedIdentifierException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
@@ -84,22 +86,14 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @inheritdoc
    */
   @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
   override def loadPDX(expression: Node): Unit =
-    if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then
-      logger.error(s"Error loading PDX script: $expression")
+    if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then throw UnexpectedIdentifierException(expression, expression.getClass)
     else
-      try
-        set(expression)
-      catch
-        case e: UnexpectedIdentifierException =>
-          // Preserve the original node in StructuredPDX as well.
+      try set(expression) catch
+        case e: Throwable =>
           node = Some(expression)
           throw e
-        case e: NodeValueTypeException =>
-          // Preserve the original node in StructuredPDX as well.
-          node = Some(expression)
-          logger.error(s"Error loading PDX script: ${e.getMessage}\n\t$expression")
-          throw new NodeValueTypeException(expression, e, this.getClass)
 
   /**
    * 
@@ -128,10 +122,10 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
    * The file should contain a valid PDX script block.
    *
    * @param file the file to load
-   * @throws ParserException if the file cannot be parsed
+   * @throws UnexpectedIdentifierException if the file does not contain a valid PDX script block
    */
-  @throws[ParserException]
   @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
   protected def loadPDX(file: File): Unit = {
     loadPDX(new Parser(file, this.getClass).rootNode)
   }

@@ -30,9 +30,8 @@ class Parser(val input: String | File, clazz: Class[?]):
 
     tokens.peek match
       case Some(token) if token.tokenType == TokenType.eof => // OK
-      case Some(token) => throw ParserException(clazz, s"Input not completely parsed. Last token: ${token.value}", input.toString)
-      case None =>
-        parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n File: ${input.toString} \n Error: No tokens found after parsing block.")
+      case Some(token) => parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n File: ${input.toString} \n Error: Unexpected token after block parsing: ${token.value}")
+      case None => parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n File: ${input.toString} \n Error: No tokens found after parsing block.")
 
     Node(
       leadingTrivia = leading,

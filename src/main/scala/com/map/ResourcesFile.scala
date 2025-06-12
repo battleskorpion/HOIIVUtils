@@ -1,9 +1,10 @@
 package com.map
 
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
-import com.hoi4utils.exceptions.UnexpectedIdentifierException
+import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.{CollectionPDX, PDXSupplier}
+import com.map.ResourcesFile.resourcesFileErrors
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.File
@@ -17,17 +18,36 @@ class ResourcesFile(var _resourcesFile: File) extends CollectionPDX[ResourceDef]
   
   loadPDX(_resourcesFile)
 
-  @throws[UnexpectedIdentifierException]
+  /**
+   * 
+   * @param expression The expression to load.
+   */
   override def loadPDX(expression: Node): Unit = {
     if (expression.identifier.isEmpty) {
       expression.$ match {
         case l: ListBuffer[Node] =>
-          loadPDX(l)
+          try loadPDX(l)
+          catch {
+            case e: UnexpectedIdentifierException =>
+              resourcesFileErrors.addOne(s"[${getClass.getSimpleName}] Unexpected identifier:\n  : ${e.getMessage}")
+            case e: NodeValueTypeException =>
+              resourcesFileErrors.addOne(s"[${getClass.getSimpleName}] Node value type exception:\n  : ${e.getMessage}")
+            case e: IllegalStateException =>
+              resourcesFileErrors.addOne(s"[${getClass.getSimpleName}] Illegal State exception:\n  : ${e.getMessage}")
+          }
         case _ =>
-          System.out.println("Error loading PDX script: " + expression)
+          resourcesFileErrors.addOne(s"[${getClass.getSimpleName}] Expected a list of nodes, but found: ${expression.$}")
       }
     }
-    super.loadPDX(expression)
+    try super.loadPDX(expression)
+    catch {
+      case e: UnexpectedIdentifierException =>
+        resourcesFileErrors.addOne(s"[${getClass.getSimpleName}] Unexpected identifier:\n  : ${e.getMessage}")
+      case e: NodeValueTypeException =>
+        resourcesFileErrors.addOne(s"[${getClass.getSimpleName}] Node value type exception:\n  : ${e.getMessage}")
+      case e: IllegalStateException =>
+        resourcesFileErrors.addOne(s"[${getClass.getSimpleName}] Illegal State exception:\n  : ${e.getMessage}")
+    }
   }
 
   override def getPDXTypeName: String = "Resources"
@@ -35,12 +55,12 @@ class ResourcesFile(var _resourcesFile: File) extends CollectionPDX[ResourceDef]
 
 object ResourcesFile extends PDXReadable with LazyLogging {
 
+
   private var _resourcesPDX: Option[ResourcesFile] = None
+  val resourcesFileErrors: ListBuffer[String] = ListBuffer.empty
 
   def read(): Boolean =
-    val resourcesFile = findResourcesFile()
-
-    resourcesFile match
+    findResourcesFile() match
       case Some(file) =>
         _resourcesPDX = Some(ResourcesFile(file))
         true
@@ -76,12 +96,16 @@ object ResourcesFile extends PDXReadable with LazyLogging {
     }
   }
 
+  /**
+   * Returns the list of resources defined in the resources file.
+   * @throws IllegalStateException if the resources file has not been loaded yet.
+   * @return a list of ResourceDef objects representing the resources.
+   */
+  @throws[IllegalStateException]
   def list: List[ResourceDef] = {
     _resourcesPDX match {
       case Some(resources) => resources.toList
-      case None =>
-        logger.warn("Tried to obtain resources list but valid Resources info not loaded.")
-        List()
+      case None => throw new IllegalStateException("ResourcesFile has not been loaded yet.")
     }
   }
 

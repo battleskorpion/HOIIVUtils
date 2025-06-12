@@ -15,116 +15,6 @@ import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-
-// todo make country extend countrytag???? ehhhhh
-// todo consider... implements infrastructure, resources?????
-// todo localizable data?
-object Country extends LazyLogging with PDXReadable {
-
-  private val countries = new ListBuffer[Country]()
-
-  def getCountries: ListBuffer[Country] = countries
-  
-  def read(): Boolean = {
-    if (!HOIIVFiles.Mod.country_folder.exists || !HOIIVFiles.Mod.country_folder.isDirectory) {
-      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_folder} is not a directory, or it does not exist.")
-      false
-    } else if (HOIIVFiles.Mod.country_folder.listFiles == null || HOIIVFiles.Mod.country_folder.listFiles.length == 0) {
-      logger.warn(s"No focuses found in ${HOIIVFiles.Mod.country_folder}")
-      false
-    } else {
-
-      // create focus trees from files
-      HOIIVFiles.Mod.country_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
-        var tag = CountryTag.get(f.getName.split(" ")(0))
-        new Country(f, tag)
-      }
-      true
-    }
-  }
-
-  /**
-   * Clears all countries and any other relevant values. 
-   */
-  def clear(): Unit = {
-    countries.clear()
-  }
-
-  /**
-   * Adds a focus tree to the list of focus trees.
-   *
-   * @param focusTree the focus tree to add
-   * @return the updated list of focus trees
-   */
-  def add(country: Country): Iterable[Country] = {
-    countries += country
-    countries
-  }
-
-  def getDataFunctions(resourcePercentages: Boolean): Iterable[Country => ?] = {
-    val dataFunctions = ListBuffer[Country => ?]()
-
-    dataFunctions += (c => c.name)
-    dataFunctions += (c => c.infrastructure.population)
-    dataFunctions += (c => c.infrastructure.civilianFactories)
-    dataFunctions += (c => c.infrastructure.militaryFactories)
-    dataFunctions += (c => c.infrastructure.navalDockyards)
-    dataFunctions += (c => c.infrastructure.airfields)
-    dataFunctions += (c => c.infrastructure.civMilRatio)
-    dataFunctions += (c => c.infrastructure.popPerFactoryRatio)
-    dataFunctions += (c => c.infrastructure.popPerCivRatio)
-    dataFunctions += (c => c.infrastructure.popPerMilRatio)
-    dataFunctions += (c => c.infrastructure.popAirportCapacityRatio)
-    dataFunctions += (c => c.infrastructure.popPerStateRatio(c.numOwnedStates))
-    // again, this resource code is not expandable. fix sometime :(
-    if (resourcePercentages) {
-      dataFunctions += (c => c.aluminumPercentOfGlobal)
-      dataFunctions += (c => c.chromiumPercentOfGlobal)
-      dataFunctions += (c => c.oilPercentOfGlobal)
-      dataFunctions += (c => c.rubberPercentOfGlobal)
-      dataFunctions += (c => c.steelPercentOfGlobal)
-      dataFunctions += (c => c.tungstenPercentOfGlobal)
-    }
-    else {
-      dataFunctions += (c => c.aluminum)
-      dataFunctions += (c => c.chromium)
-      dataFunctions += (c => c.oil)
-      dataFunctions += (c => c.rubber)
-      dataFunctions += (c => c.steel)
-      dataFunctions += (c => c.tungsten)
-    }
-    dataFunctions
-  }
-
-//  def loadCountries[T](list: List[T]): List[Country] = {
-//    countryList.clear()
-//
-//    for (item <- list) {
-//      countryList.add(new Country(item))
-//    }
-//
-//    countryList
-//  }
-
-//  def loadCountries(countryTags: List[CountryTag], infrastructureList: List[Infrastructure],
-//                    resourcesList: List[List[Resource]]): ObservableList[Country] = {
-//    countries.clear()
-//
-//    val countryTagsIterator = countryTags.iterator
-//    val infrastructureListIterator = infrastructureList.iterator
-//    val resourcesListIterator = resourcesList.iterator
-//
-//    while (countryTagsIterator.hasNext) countries.add(new Country(countryTagsIterator.next, infrastructureListIterator.next, resourcesListIterator.next))
-//    countries
-//  }
-//
-//  def loadCountries(infrastructureList: List[Infrastructure], resourcesList: List[List[Resource]]): ObservableList[Country] = {
-//    loadCountries(CountryTagsManager.getCountryTags, infrastructureList, resourcesList)
-//  }
-
-//  def loadCountries: ObservableList[Country] = loadCountries(CollectionConverters.asJava(State.infrastructureOfCountries), CollectionConverters.asJava(State.resourcesOfCountries))
-}
-
 class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] with InfrastructureData {
   /* data */
   private var _countryTag: Option[CountryTag] = None
@@ -237,6 +127,113 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
     ListBuffer(oob, capital)
   }
+}
 
+// todo make country extend countrytag???? ehhhhh
+// todo consider... implements infrastructure, resources?????
+// todo localizable data?
+object Country extends LazyLogging with PDXReadable {
 
+  private val countries = new ListBuffer[Country]()
+
+  def getCountries: ListBuffer[Country] = countries
+
+  def read(): Boolean = {
+    if (!HOIIVFiles.Mod.country_folder.exists || !HOIIVFiles.Mod.country_folder.isDirectory) {
+      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_folder} is not a directory, or it does not exist.")
+      false
+    } else if (HOIIVFiles.Mod.country_folder.listFiles == null || HOIIVFiles.Mod.country_folder.listFiles.length == 0) {
+      logger.warn(s"No focuses found in ${HOIIVFiles.Mod.country_folder}")
+      false
+    } else {
+
+      // create focus trees from files
+      HOIIVFiles.Mod.country_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
+        var tag = CountryTag.get(f.getName.split(" ")(0))
+        new Country(f, tag)
+      }
+      true
+    }
+  }
+
+  /**
+   * Clears all countries and any other relevant values. 
+   */
+  def clear(): Unit = {
+    countries.clear()
+  }
+
+  /**
+   * Adds a focus tree to the list of focus trees.
+   *
+   * @param focusTree the focus tree to add
+   * @return the updated list of focus trees
+   */
+  def add(country: Country): Iterable[Country] = {
+    countries += country
+    countries
+  }
+
+  def getDataFunctions(resourcePercentages: Boolean): Iterable[Country => ?] = {
+    val dataFunctions = ListBuffer[Country => ?]()
+
+    dataFunctions += (c => c.name)
+    dataFunctions += (c => c.infrastructure.population)
+    dataFunctions += (c => c.infrastructure.civilianFactories)
+    dataFunctions += (c => c.infrastructure.militaryFactories)
+    dataFunctions += (c => c.infrastructure.navalDockyards)
+    dataFunctions += (c => c.infrastructure.airfields)
+    dataFunctions += (c => c.infrastructure.civMilRatio)
+    dataFunctions += (c => c.infrastructure.popPerFactoryRatio)
+    dataFunctions += (c => c.infrastructure.popPerCivRatio)
+    dataFunctions += (c => c.infrastructure.popPerMilRatio)
+    dataFunctions += (c => c.infrastructure.popAirportCapacityRatio)
+    dataFunctions += (c => c.infrastructure.popPerStateRatio(c.numOwnedStates))
+    // again, this resource code is not expandable. fix sometime :(
+    if (resourcePercentages) {
+      dataFunctions += (c => c.aluminumPercentOfGlobal)
+      dataFunctions += (c => c.chromiumPercentOfGlobal)
+      dataFunctions += (c => c.oilPercentOfGlobal)
+      dataFunctions += (c => c.rubberPercentOfGlobal)
+      dataFunctions += (c => c.steelPercentOfGlobal)
+      dataFunctions += (c => c.tungstenPercentOfGlobal)
+    }
+    else {
+      dataFunctions += (c => c.aluminum)
+      dataFunctions += (c => c.chromium)
+      dataFunctions += (c => c.oil)
+      dataFunctions += (c => c.rubber)
+      dataFunctions += (c => c.steel)
+      dataFunctions += (c => c.tungsten)
+    }
+    dataFunctions
+  }
+
+  //  def loadCountries[T](list: List[T]): List[Country] = {
+  //    countryList.clear()
+  //
+  //    for (item <- list) {
+  //      countryList.add(new Country(item))
+  //    }
+  //
+  //    countryList
+  //  }
+
+  //  def loadCountries(countryTags: List[CountryTag], infrastructureList: List[Infrastructure],
+  //                    resourcesList: List[List[Resource]]): ObservableList[Country] = {
+  //    countries.clear()
+  //
+  //    val countryTagsIterator = countryTags.iterator
+  //    val infrastructureListIterator = infrastructureList.iterator
+  //    val resourcesListIterator = resourcesList.iterator
+  //
+  //    while (countryTagsIterator.hasNext) countries.add(new Country(countryTagsIterator.next, infrastructureListIterator.next, resourcesListIterator.next))
+  //    countries
+  //  }
+  //
+  //  def loadCountries(infrastructureList: List[Infrastructure], resourcesList: List[List[Resource]]): ObservableList[Country] = {
+  //    loadCountries(CountryTagsManager.getCountryTags, infrastructureList, resourcesList)
+  //  }
+
+  //  def loadCountries: ObservableList[Country] = loadCountries(CollectionConverters.asJava(State.infrastructureOfCountries), CollectionConverters.asJava(State.resourcesOfCountries))
 }

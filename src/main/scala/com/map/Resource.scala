@@ -10,6 +10,48 @@ import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
+/**
+ * Represents a valid resource and its quantity.
+ *
+ * @param id
+ * @param amt // quantity of resource being represented
+ * @throws IllegalArgumentException if the id is not a valid resource identifier
+ */
+@throws[IllegalArgumentException]
+class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, () => ResourcesFile.list) {
+  /* init */
+  require(isValidPDXTypeIdentifier(id), s"Invalid resource identifier: \"$id\". Expected one of: ${Resource.resourceIdentifiers.mkString(", ")}")
+
+  @throws[IllegalArgumentException]
+  def this(node: Node) = {
+    this(node.name)
+    loadPDX(node)
+  }
+
+  @throws[IllegalArgumentException]
+  def this(id: String, amt: Double) = {
+    this(id)
+    this.set(amt)
+  }
+
+  def sameResource(resource: Resource): Boolean = this.name == resource.name
+
+  def sameResource(identifier: String): Boolean = this.name == name
+
+  //  def percentOfGlobal: Double = getOrElse(0) / State.resourcesOfStates.get(identifier).get
+
+  def name: String = id
+
+
+  def percentOfGlobal(implicit globalResources: List[Resource]): Double = {
+    globalResources
+      .filter(r => r.isValidID(name))
+      .map(_.getOrElse(0))
+      .sum
+  }
+
+  def amt: Double = getOrElse(0)
+}
 
 object Resource {
   private var resourceIdentifiers = Array("aluminium", "chromium", "oil", "rubber", "steel", "tungsten") // default: aluminium, chromium, oil, rubber, steel, tungsten todo load in resources if modified.
@@ -25,7 +67,13 @@ object Resource {
   def newList(): List[Resource] = {
     resourceIdentifiers.map(name => new Resource(name)).toList
   }
-  
+
+  /**
+   * Returns a list of all valid resources.
+   * @return List of all valid resources.
+   * @throws IllegalStateException if the resources file has not been loaded yet.
+   */
+  @throws[IllegalArgumentException]
   def apply(): PDXSupplier[Resource] = {
     new PDXSupplier[Resource] {
       override def simplePDXSupplier(): Option[Node => Option[Resource]] = {
@@ -41,43 +89,4 @@ object Resource {
       }
     }
   }
-}
-
-/**
- * Represents a valid resource and its quantity. 
- * 
- * @param id 
- * @param amt  // quantity of resource being represented
- */
-class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, () => ResourcesFile.list) {
-  /* init */
-  require(isValidPDXTypeIdentifier(id), s"Invalid resource identifier: $id. Expected one of: ${Resource.resourceIdentifiers.mkString(", ")}")
-  
-  def this(node: Node) = {
-    this(node.name)
-    loadPDX(node)
-  }
-  
-  def this(id: String, amt: Double) = {
-    this(id)
-    this.set(amt)
-  }
-
-  def sameResource(resource: Resource): Boolean = this.name == resource.name
-
-  def sameResource(identifier: String): Boolean = this.name == name
-
-//  def percentOfGlobal: Double = getOrElse(0) / State.resourcesOfStates.get(identifier).get
-
-  def name: String = id
-  
-  
-  def percentOfGlobal(implicit globalResources: List[Resource]): Double = {
-    globalResources
-      .filter(r => r.isValidID(name))
-      .map(_.getOrElse(0))
-      .sum
-  }
-  
-  def amt: Double = getOrElse(0)
 }

@@ -3,6 +3,8 @@ package com.hoi4utils.ui
 import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.StateFilesWatcher.statesThatChanged
 import com.hoi4utils.parser.Parser.parserFileErrors
+import com.map.State.stateFileErrors
+import com.map.ResourcesFile.resourcesFileErrors
 import com.hoi4utils.extensions.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
@@ -18,22 +20,33 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
 
   @FXML var parserFileErrorsList: ListView[String] = uninitialized
   @FXML var statesThatChangedList: ListView[String] = uninitialized
-  @FXML var testUI: ListView[String] = uninitialized
+  @FXML var resouceFileErrorsList: ListView[String] = uninitialized
+  @FXML var stateFileErrorsList: ListView[String] = uninitialized
 
   val testList: ListBuffer[String] = ListBuffer.empty[String]
 
   def initialize(): Unit = {
-    parserFileErrorsList.setItems(parserFileErrors.toObservableList)
-    statesThatChangedList.setItems(statesThatChanged.toObservableList)
-    testList.addOne("Test item 1")
-    testList.addOne("Test item 2")
-    testList.addOne("Test item 3")
-    testUI.setItems(testList.toObservableList)
-    List (
+    update()
+  }
+
+  private def update(): Unit = {
+    parserFileErrorsList.setItems(getListOrDefaultMessage(parserFileErrors))
+    stateFileErrorsList.setItems(getListOrDefaultMessage(stateFileErrors))
+    resouceFileErrorsList.setItems(getListOrDefaultMessage(resourcesFileErrors))
+    statesThatChangedList.setItems(getListOrDefaultMessage(statesThatChanged, "No States Changed"))
+    List(
       parserFileErrorsList,
-      statesThatChangedList,
-      testUI
+      stateFileErrorsList,
+      resouceFileErrorsList,
+      statesThatChangedList
     ).foreach(setupAlternatingListView)
+  }
+
+  private def getListOrDefaultMessage(listBuffer: ListBuffer[String], message: String = "No Problems Found") = {
+    listBuffer match {
+      case null | Nil => ListBuffer(message).toObservableList
+      case _ => listBuffer.toObservableList
+    }
   }
 
   private def setupAlternatingListView(listView: ListView[String]): Unit =

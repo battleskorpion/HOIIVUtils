@@ -6,6 +6,30 @@ import com.typesafe.scalalogging.LazyLogging
 
 import scala.collection.mutable.ListBuffer
 
+class CountryTag(val tag: String) extends Comparable[CountryTag] {
+  CountryTag.addTag(this)
+  
+  def get: String = tag
+  
+  override def toString: String = {
+    tag
+  }
+  
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case other: CountryTag =>
+        tag.equals(other.tag)
+      case string: String =>
+        tag.equals(string)
+      case _ => false
+    }
+  }
+
+  override def compareTo(o: CountryTag): Int = {
+    tag.compareTo(o.tag)
+  }
+}
+
 object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable {
 
   val NULL_TAG = new CountryTag("###")
@@ -53,29 +77,5 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
   //  def tagList(): List[CountryTag] = _tagList
   def addTag(tag: CountryTag): Unit = {
     _tagList.addOne(tag)
-  }
-}
-
-class CountryTag(val tag: String) extends Comparable[CountryTag] {
-  CountryTag.addTag(this)
-  
-  def get: String = tag
-  
-  override def toString: String = {
-    tag
-  }
-  
-  override def equals(obj: Any): Boolean = {
-    obj match {
-      case other: CountryTag =>
-        tag.equals(other.tag)
-      case string: String =>
-        tag.equals(string)
-      case _ => false
-    }
-  }
-
-  override def compareTo(o: CountryTag): Int = {
-    tag.compareTo(o.tag)
   }
 }

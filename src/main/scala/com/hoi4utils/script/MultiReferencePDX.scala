@@ -34,34 +34,30 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   /**
    * Load the PDX script from the given expression. If the expression is a list, then each element of the list will be
    * loaded as a separate PDX script, if applicable.
-   * @param expression
-   * @throws UnexpectedIdentifierException
+   * 
+   * @param expression the node expression to load
+   * @throws UnexpectedIdentifierException if the identifier used in the expression is unexpected.
    */
   @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
   override def loadPDX(expression: Node): Unit = {
     expression.$ match {
       case list: ListBuffer[Node] =>
-        // prolly don't need this check, but it doesn't hurt right now
-        if (list.isEmpty) return
         usingIdentifier(expression)
 
         for (child <- list) {
-          try {
-            add(child)
-          } catch {
-            case e: UnexpectedIdentifierException =>
-              System.err.println("Error loading child node: " + e.getMessage + "\n\t" + child)
-          }
+          add(child)
         }
+        
         this.node = Some(expression)
       case _ =>
         try {
           add(expression)
         } catch {
-          case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-            println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+          case e: Throwable =>
             // Preserve the node so it isn’t lost.
             node = Some(expression)
+            throw e
         }
     }
   }
@@ -299,6 +295,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     }
   }
 
+  @throws[UnexpectedIdentifierException]
   private def checkReferenceIdentifier(exp: Node): Unit = {
     if (!referencePDXIdentifiers.contains(exp.name))
       throw new UnexpectedIdentifierException(exp, classOf[MultiReferencePDX[T]], referencePDXIdentifiers.mkString(", "))
