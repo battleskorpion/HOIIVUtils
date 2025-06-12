@@ -184,40 +184,35 @@
     background-color: #1A1A1A;
 }
 
-/* ListCell */
-.list-cell{
-    -fx-background-radius: 0;
-    -fx-border-width: 0;
-    border-width: 0;
-    -fx-text-fill: #AFB1B3;
-    -fx-background-color: #1A1A1A;
-    background-color: #1A1A1A;
-    -fx-min-height: 18;
-    min-height: 18;
-    -fx-pref-height: 18;
-    -fx-padding: 0 0 0 3;
-    padding: 0 0 0 3;
-    -fx-wrap-text: true;
-}
-.list-cell:hover{
-    -fx-background-color: #3E3E40;
-    background-color: #3E3E40;
-    -fx-cursor: HAND;
-    cursor: HAND;
-    -fx-wrap-text: true;
-
-}
-.list-cell:pressed{
-    -fx-background-color: #3E3E40;
-    background-color: #3E3E40;
-    -fx-wrap-text: true;
-
-}
-.list-cell:selected{
-    -fx-background-color: #3E3E40;
-    -fx-wrap-text: true;
-    background-color: #3E3E40;
-}
+/*!* ListCell *!*/
+/*.list-cell{*/
+/*    -fx-background-radius: 0;*/
+/*    -fx-border-width: 0;*/
+/*    border-width: 0;*/
+/*    -fx-text-fill: #AFB1B3;*/
+/*    -fx-background-color: #1A1A1A;*/
+/*    background-color: #1A1A1A;*/
+/*    -fx-min-height: 18;*/
+/*    min-height: 18;*/
+/*    -fx-pref-height: 18;*/
+/*    -fx-padding: 0 0 0 3;*/
+/*    padding: 0 0 0 3;*/
+/*    -fx-wrap-text: true;*/
+/*}*/
+/*.list-cell:hover{*/
+/*    -fx-background-color: #3E3E40;*/
+/*    background-color: #3E3E40;*/
+/*    -fx-cursor: HAND;*/
+/*    cursor: HAND;*/
+/*}*/
+/*.list-cell:pressed{*/
+/*    -fx-background-color: #3E3E40;*/
+/*    background-color: #3E3E40;*/
+/*}*/
+/*.list-cell:selected{*/
+/*    -fx-background-color: #3E3E40;*/
+/*    background-color: #3E3E40;*/
+/*}*/
 
 
 /* ListView */
