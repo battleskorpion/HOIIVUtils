@@ -14,8 +14,9 @@ import scala.sys.process.*
  * Runs the Updater.jar file to update the application.
  * Closes the application and runs the updater.
  */
-class Updater extends LazyLogging {
-  var lV: Version = Version.DEFAULT
+class Updater extends LazyLogging:
+  private var lV: Version = Version.DEFAULT
+
   def updateCheck(v: Version, hDirPath: Path): Unit = {
     val hDir = hDirPath.toFile
     logger.info("Checking for updates...")
@@ -23,35 +24,38 @@ class Updater extends LazyLogging {
       + File.separator + "Updater"
       + File.separator + "target"
       + File.separator + "Updater.jar.temp")
-    if (tempUprJar.exists) updateUpdater(tempUprJar)
+    if tempUprJar.exists then updateUpdater(tempUprJar)
     lV =
       try {
-        val apiUrl = s"https://api.github.com/repos/battleskorpion/HOIIVUtils/releases/latest"
-        val source = Source.fromURL(apiUrl)
+        val source = Source.fromURL(s"https://api.github.com/repos/battleskorpion/HOIIVUtils/releases/latest")
         val response = source.mkString
         val json = ujson.read(response)
         Version(json("tag_name").str)
       } catch {
         case e: Exception =>
-          logger.error(s"Failed to fetch latest version: ${e.getMessage}")
-          Version.DEFAULT
+          logger.error(s"Failed to fetch latest version, no internet?: ${e.getMessage}")
+          return
       }
-    if (lV == Version.DEFAULT) return
-  logger.info(s"Current Version: $v, Latest Version: $lV")
-    this.lV = lV
-    if (lV > v)
-      logger.info("Update found")
-      val response = JOptionPane.showConfirmDialog(
-        null,
-        s"Do you want to update to the latest version?\nCurrent Version: $v\nLatest Version: $lV\n \n This will delete your settings!",
-        "Update Available",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE
-      )
-      if (response == JOptionPane.YES_OPTION) update(hDir) // closes the program
-    else logger.info("No updates found")
+    logger.info(s"Current Version: $v, Latest Version: $lV")
+    lV match
+      case lV if lV > v =>
+        this.lV = lV
+        logger.info("Update found")
+        val response = JOptionPane.showConfirmDialog(
+          null,
+          s"Do you want to update to the latest version?\nCurrent Version: $v\nLatest Version: $lV\n \n This will delete your settings!",
+          "Update Available",
+          JOptionPane.YES_NO_OPTION,
+          JOptionPane.QUESTION_MESSAGE
+        )
+        if response == JOptionPane.YES_OPTION then update(hDir) // closes the program
+      case lV if lV == v =>
+        logger.info("You are already on the latest version")
+      case lV if lV < v =>
+        logger.info("You are on a newer version than the latest version on GitHub, no updates found")
   }
 
+  // closes the program
   private def update(hDir: File): Unit = {
     logger.info("Updating...")
     try
@@ -74,4 +78,3 @@ class Updater extends LazyLogging {
     if (!updaterJar.exists()) logger.error("Failed to update updater")
     if (!tempUprJar.delete()) logger.debug("Failed to delete temporary updater file")
   }
-}

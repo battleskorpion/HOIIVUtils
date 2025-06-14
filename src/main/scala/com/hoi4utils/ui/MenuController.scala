@@ -23,7 +23,7 @@ import javax.swing.*
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 
-class MenuController extends Application with JavaFXUIManager with LazyLogging {
+class MenuController extends Application with JavaFXUIManager with LazyLogging:
   import MenuController.*
 
   private var fxmlResource: String = "Menu.fxml"
@@ -57,57 +57,61 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
           pdxLoader.clearPDX()
           pdxLoader.clearLB()
           pdxLoader.closeDB()
-          if (initFailed)
-            logger.info(s"Skipping mod loading because of unsuccessful initialization")
-            crazyUpdateLoadingStatus("Skipping loading!!!")
-          else {
+          if (initFailed) {
+            logger.info("Skipping mod loading because of unsuccessful initialization")
+            updateLoadingStatus("Skipping loading!!!")
+          } else {
             pdxLoader.load(hProperties, loadingLabel)
-            crazyUpdateLoadingStatus("Checking for bad files...")
-            val badFiles = ListBuffer(
-              "HOIIVFilePaths",
-              "Interface",
-              "State",
-              "Country",
-              "CountryTag",
-              "FocusTree",
-              "IdeaFile",
-              "ResourcesFile$" // why does this have a $ at the end? even though in PDXReader we remove all $, maybe cuz it's the last one in the list in PDXLoader
-            ).flatMap(checkFileError)
-            if badFiles.isEmpty then
-              crazyUpdateLoadingStatus("All files loaded successfully")
-            else
-              crazyUpdateLoadingStatus("Some files are not loaded correctly, please check the settings")
+            updateLoadingStatus("Checking for bad files...")
+            val badFiles = checkBadFiles()
+            if (badFiles.isEmpty) {
+              updateLoadingStatus("All files loaded successfully")
+            } else {
+              updateLoadingStatus("Some files are not loaded correctly, please check the settings")
               logger.warn(s"version: ${Version.getVersion(config.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
               showFilesErrorDialog(badFiles, settingsButton)
+            }
           }
           HOIIVUtils.save()
-          crazyUpdateLoadingStatus("Showing Menu...")
+          updateLoadingStatus("Showing Menu...")
         } catch {
           case e: Exception =>
-            crazyUpdateLoadingStatus("Error loading application")
+            updateLoadingStatus("Error loading application")
             logger.error(s"${Version.getVersion(config.getProperties)} Error during initialization", e)
-            Platform.runLater(() => {
-                try {
-                  loadingLabel.setVisible(false)
-                  contentContainer.setVisible(true)
-                } catch {
-                  case exception: Exception =>
-                    logger.error(s"version ${Version.getVersion(config.getProperties)} fatal crash: can't show menu buttons, please got to our discord")
-                    JOptionPane.showMessageDialog(
-                      null,
-                      s"Version: ${Version.getVersion(config.getProperties)}\nFatal crash: can't show menu buttons, please go to our Discord.",
-                      "Fatal Error",
-                      JOptionPane.ERROR_MESSAGE
-                    )
-                    System.exit(1)
-                }
-            })
-        }
-
-        def crazyUpdateLoadingStatus(status: String): Unit = {
-          updateLoadingStatus(loadingLabel, status)
+            Platform.runLater(() => handleFatalCrash())
         }
       }
+
+      private def updateLoadingStatus(status: String): Unit =
+        MenuController.updateLoadingStatus(loadingLabel, status)
+
+      private def checkBadFiles(): ListBuffer[String] =
+        ListBuffer(
+          "HOIIVFilePaths",
+          "Interface",
+          "State",
+          "Country",
+          "CountryTag",
+          "FocusTree",
+          "IdeaFile",
+          "ResourcesFile$"
+        ).flatMap(MenuController.checkFileError)
+
+      private def handleFatalCrash(): Unit =
+        try {
+          loadingLabel.setVisible(false)
+          contentContainer.setVisible(true)
+        } catch {
+          case _: Exception =>
+            logger.error(s"version ${Version.getVersion(config.getProperties)} fatal crash: can't show menu buttons, please go to our discord")
+            JOptionPane.showMessageDialog(
+              null,
+              s"Version: ${Version.getVersion(config.getProperties)}\nFatal crash: can't show menu buttons, please go to our Discord.",
+              "Fatal Error",
+              JOptionPane.ERROR_MESSAGE
+            )
+            System.exit(1)
+        }
     }
 
     task.setOnSucceeded(_ => {
@@ -131,32 +135,37 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
   }
 
   // reloadUI might look something like:
-  def reloadUI(): Unit = {
+  private def reloadUI(): Unit = {
     try {
       val resourceBundle = getResourceBundle
-      logger.info(s"Language loaded: ${resourceBundle.getLocale}")
-      if (resourceBundle == null) {
+      if resourceBundle == null then
         logger.error("ResourceBundle is null, cannot load FXML.")
         throw new RuntimeException("ResourceBundle is null, cannot load FXML.")
-      }
-      val loader = new FXMLLoader(getClass.getResource(fxmlResource), resourceBundle)
-      val root = loader.load[Parent]()
-      val scene = new Scene(root)
-      if (get("theme") == "dark")
-        scene.getStylesheets.add("com/hoi4utils/ui/javafx_dark.css")
-      else
-        scene.getStylesheets.add("/com/hoi4utils/ui/highlight-background.css")
-      primaryStage.setScene(scene)
-      primaryStage.setTitle(s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}")
-      decideScreen(primaryStage)
-      primaryStage.show()
+      logger.info(s"Language loaded: ${resourceBundle.getLocale}")
+      val fxml = new FXMLLoader(getClass.getResource(fxmlResource), resourceBundle)
+      open(fxml)
     } catch {
-      case e: IOException =>
-        val errorMessage = s"version: ${Version.getVersion(config.getProperties)} Failed to open window\nError loading FXML: $fxmlResource"
-        logger.error(s"version: ${Version.getVersion(config.getProperties)} Error loading FXML: $fxmlResource", e)
-        JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE)
-        throw new RuntimeException(errorMessage, e)
+      case e: Exception =>
+        handleOpenError(e)
     }
+  }
+
+  /**
+   * Opens the stage with the specified FXMLLoader.
+   * This method is used internally to set up the scene and stage.
+   *
+   * @param fxml the FXMLLoader instance to load the FXML resource
+   */
+  private def open(fxml: FXMLLoader): Unit = {
+    val root = fxml.load[Parent]()
+    val scene = new Scene(root)
+    get("theme") match
+      case "dark" => scene.getStylesheets.add("com/hoi4utils/ui/javafx_dark.css")
+      case _ => scene.getStylesheets.add("/com/hoi4utils/ui/highlight-background.css")
+    primaryStage.setScene(scene)
+    primaryStage.setTitle(s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}")
+    decideScreen(primaryStage)
+    primaryStage.show()
   }
 
   def open(): Unit = start(new Stage())
@@ -191,11 +200,18 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
   def openMapEditor(): Unit = new MapEditorController().open()
   def openParserView(): Unit = new ParserViewerController().open()
   def openLB(): Unit = new LBReaderController().open()
-  override def setFxmlResource(fxmlResource: String): Unit = ???
-  override def setTitle(title: String): Unit = ???
-}
+  override def setFxmlResource(fxmlResource: String): Unit =
+    this.fxmlResource = fxmlResource
+  override def setTitle(title: String): Unit =
+    primaryStage.setTitle(title)
 
-object MenuController extends LazyLogging {
+  private def handleOpenError(e: Exception): Unit =
+    val errorMessage = s"version: ${Version.getVersion(config.getProperties)} Failed to open window\nError loading FXML: $fxmlResource/n${e.getMessage}"
+    logger.error(s"version: ${Version.getVersion(config.getProperties)} Error loading FXML: $fxmlResource")
+    JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE)
+
+
+object MenuController extends LazyLogging:
 
   def updateLoadingStatus(loadingLabel: Label, status: String): Unit = {
     Platform.runLater(() => {
@@ -263,11 +279,8 @@ object MenuController extends LazyLogging {
 
     settingsButton.addActionListener(_ => {
       Platform.runLater(() => {
-        try {
-          (button.getScene.getWindow.asInstanceOf[Stage]).close()
-        } catch {
-          case ex: Exception => logger.error("Failed to close menu window", ex)
-        }
+        try button.getScene.getWindow.asInstanceOf[Stage].close()
+        catch case ex: Exception => logger.error("Failed to close menu window", ex)
       })
       Platform.runLater(() => new SettingsController().open())
       dialog.dispose()
@@ -289,4 +302,3 @@ object MenuController extends LazyLogging {
   def get(prop: String): String = {
     HOIIVUtils.get(prop)
   }
-}

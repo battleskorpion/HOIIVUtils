@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StratRegionPDXEditorController extends HOIIVUtilsAbstractController {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(StratRegionPDXEditorController.class);
 
     @FXML
     public TableView<StrategicRegion> strategicRegionTable;
