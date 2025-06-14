@@ -20,6 +20,7 @@ import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import java.io.IOException
 import java.util.{Locale, MissingResourceException, ResourceBundle}
 import javax.swing.*
+import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 
 class MenuController extends Application with JavaFXUIManager with LazyLogging {
@@ -62,7 +63,22 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
           else {
             pdxLoader.load(hProperties, loadingLabel)
             crazyUpdateLoadingStatus("Checking for bad files...")
-            MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton)
+            val badFiles = ListBuffer(
+              "HOIIVFilePaths",
+              "Interface",
+              "State",
+              "Country",
+              "CountryTag",
+              "FocusTree",
+              "IdeaFile",
+              "ResourcesFile$" // why does this have a $ at the end? even though in PDXReader we remove all $, maybe cuz it's the last one in the list in PDXLoader
+            ).flatMap(checkFileError)
+            if badFiles.isEmpty then
+              crazyUpdateLoadingStatus("All files loaded successfully")
+            else
+              crazyUpdateLoadingStatus("Some files are not loaded correctly, please check the settings")
+              logger.warn(s"version: ${Version.getVersion(config.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
+              showFilesErrorDialog(badFiles, settingsButton)
           }
           HOIIVUtils.save()
           crazyUpdateLoadingStatus("Showing Menu...")
@@ -126,7 +142,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
       val loader = new FXMLLoader(getClass.getResource(fxmlResource), resourceBundle)
       val root = loader.load[Parent]()
       val scene = new Scene(root)
-      if (HOIIVUtils.get("theme") == "dark")
+      if (get("theme") == "dark")
         scene.getStylesheets.add("com/hoi4utils/ui/javafx_dark.css")
       else
         scene.getStylesheets.add("/com/hoi4utils/ui/highlight-background.css")
@@ -206,90 +222,71 @@ object MenuController extends LazyLogging {
     }
   }
 
-  def checkForInvalidSettingsAndShowWarnings(button: Button): Boolean = {
-    var hasInvalidPaths = false
-    val warningMessage = new StringBuilder("The following settings need to be configured:\n\n")
+  private def checkFileError(file: String): Option[String] = {
+    if get(s"valid.$file") == "false" then Some(s"• $file") else None
+  }
 
-    if (HOIIVUtils.get("valid.HOIIVFilePaths") == "false") {
-      logger.warn("Invalid HOI IV file paths detected")
-      warningMessage.append("• Hearts of Iron IV file paths\n")
-      hasInvalidPaths = true
-    }
+  private def showFilesErrorDialog(badFiles: ListBuffer[String], button: Button): Unit = {
+    val warningMessageBuffer = new StringBuilder("")
+    warningMessageBuffer.append(badFiles.mkString(
+      "The following settings need to be configured:\n\n",
+      " directory(ies)\n",
+      " directory(ies)\n\nPlease go to Settings to configure these paths."
+    ))
 
-    if (HOIIVUtils.get("valid.Interface") == "false") {
-      logger.warn("Invalid GFX Interface file paths detected")
-      warningMessage.append("• Interface file paths\n")
-      hasInvalidPaths = true
-    }
+    // Create a custom dialog for better visual appearance
+    val dialog = new JDialog()
+    dialog.setTitle("Configuration Required")
+    dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL)
+    dialog.setLayout(new BorderLayout())
 
-    if (HOIIVUtils.get("valid.State") == "false") {
-      logger.warn("Invalid State paths detected")
-      warningMessage.append("• State file paths\n")
-      hasInvalidPaths = true
-    }
+    // Create panel with icon and message
+    val panel = new JPanel(new BorderLayout(15, 15))
+    panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20))
 
-    if (HOIIVUtils.get("valid.FocusTree") == "false") {
-      logger.warn("Invalid Focus Tree paths detected")
-      warningMessage.append("• Focus Tree file paths\n")
-      hasInvalidPaths = true
-    }
+    // Add warning icon
+    val iconLabel = new JLabel(UIManager.getIcon("OptionPane.warningIcon"))
+    panel.add(iconLabel, BorderLayout.WEST)
 
-    // Show a single consolidated warning if any paths are invalid
-    if (hasInvalidPaths) {
-      warningMessage.append("\nPlease go to Settings to configure these paths.")
+    // Add message
+    val messageArea = new JTextArea(warningMessageBuffer.toString)
+    messageArea.setEditable(false)
+    messageArea.setBackground(panel.getBackground)
+    messageArea.setLineWrap(true)
+    messageArea.setWrapStyleWord(true)
+    messageArea.setFont(new Font("Dialog", Font.PLAIN, 14))
+    panel.add(messageArea, BorderLayout.CENTER)
 
-      // Create a custom dialog for better visual appearance
-      val dialog = new JDialog()
-      dialog.setTitle("Configuration Required")
-      dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL)
-      dialog.setLayout(new BorderLayout())
+    // Add button panel
+    val buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT))
+    val settingsButton = new JButton("Open Settings")
 
-      // Create panel with icon and message
-      val panel = new JPanel(new BorderLayout(15, 15))
-      panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20))
-
-      // Add warning icon
-      val iconLabel = new javax.swing.JLabel(UIManager.getIcon("OptionPane.warningIcon"))
-      panel.add(iconLabel, BorderLayout.WEST)
-
-      // Add message
-      val messageArea = new JTextArea(warningMessage.toString)
-      messageArea.setEditable(false)
-      messageArea.setBackground(panel.getBackground)
-      messageArea.setLineWrap(true)
-      messageArea.setWrapStyleWord(true)
-      messageArea.setFont(new Font("Dialog", Font.PLAIN, 14))
-      panel.add(messageArea, BorderLayout.CENTER)
-
-      // Add button panel
-      val buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT))
-      val settingsButton = new JButton("Open Settings")
-
-      settingsButton.addActionListener(_ => {
-        Platform.runLater(() => {
-          try {
-            (button.getScene.getWindow.asInstanceOf[Stage]).close()
-          } catch {
-            case ex: Exception => logger.error("Failed to close menu window", ex)
-          }
-        })
-        Platform.runLater(() => new SettingsController().open())
-        dialog.dispose()
+    settingsButton.addActionListener(_ => {
+      Platform.runLater(() => {
+        try {
+          (button.getScene.getWindow.asInstanceOf[Stage]).close()
+        } catch {
+          case ex: Exception => logger.error("Failed to close menu window", ex)
+        }
       })
+      Platform.runLater(() => new SettingsController().open())
+      dialog.dispose()
+    })
 
-      buttonPanel.add(settingsButton)
+    buttonPanel.add(settingsButton)
 
-      // Add panels to dialog
-      dialog.add(panel, BorderLayout.CENTER)
-      dialog.add(buttonPanel, BorderLayout.SOUTH)
+    // Add panels to dialog
+    dialog.add(panel, BorderLayout.CENTER)
+    dialog.add(buttonPanel, BorderLayout.SOUTH)
 
-      // Size and display the dialog
-      dialog.pack()
-      dialog.setSize(450, 300)
-      dialog.setLocationRelativeTo(null)
-      dialog.setVisible(true)
-    }
+    // Size and display the dialog
+    dialog.pack()
+    dialog.setSize(450, 300)
+    dialog.setLocationRelativeTo(null)
+    dialog.setVisible(true)
+  }
 
-    hasInvalidPaths
+  def get(prop: String): String = {
+    HOIIVUtils.get(prop)
   }
 }
