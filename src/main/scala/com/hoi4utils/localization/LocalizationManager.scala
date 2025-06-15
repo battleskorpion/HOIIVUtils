@@ -256,6 +256,7 @@ abstract class LocalizationManager extends LazyLogging {
   protected def loadLocalization(localizationFolder: File, status: Localization.Status): Boolean = {
     var success = true
     val files = localizationFolder.listFiles
+    if files == null then success = false
     for (file <- files) {
       if file.isDirectory then success = loadLocalization(file, status)
       else if file.getName.endsWith(".yml") then loadLocalizationFile(file, status)
