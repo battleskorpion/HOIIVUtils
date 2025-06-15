@@ -85,6 +85,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
 
       private def checkBadFiles(): ListBuffer[String] =
         ListBuffer(
+          "localization",
           "HOIIVFilePaths",
           "Interface",
           "State",

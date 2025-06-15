@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.LBReaderController">
+<BorderPane prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.LBReaderController">
    <center>
       <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -16,7 +16,27 @@
                   </AnchorPane>
             </content>
           </Tab>
-          <Tab text="CountryErrors">
+          <Tab text="localizationErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="localizationErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="interfaceErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="interfaceErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="countryErrors">
             <content>
               <AnchorPane>
                 <children>
@@ -26,11 +46,21 @@
               </AnchorPane>
             </content>
           </Tab>
-          <Tab text="FocusErrors">
+          <Tab text="focusErrors">
             <content>
               <AnchorPane>
                 <children>
                   <ListView fx:id="focusErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="focusTreeErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="focusTreeErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
                             AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
                 </children>
               </AnchorPane>

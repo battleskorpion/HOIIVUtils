@@ -11,7 +11,8 @@ import scala.collection.mutable.ListBuffer
 
 class ResourcesFile(var _resourcesFile: File) extends CollectionPDX[ResourceDef](ResourcesFile.pdxSupplier(), "resources") {
   require(_resourcesFile.exists, s"File does not exist: ${_resourcesFile}")
-  
+
+  /* load ResourcesFile */
   loadPDX(_resourcesFile)
 
   /**

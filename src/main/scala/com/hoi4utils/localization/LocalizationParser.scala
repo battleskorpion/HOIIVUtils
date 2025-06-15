@@ -3,6 +3,16 @@ package com.hoi4utils.localization
 
 object LocalizationParser:
 
+  /** Parses a line of localization text and returns an Option[Localization].
+   * The line should be in the format: "key: [number] "quoted text""
+   * If the line is not properly formatted, it returns None.
+   * If the line is valid, it returns Some(Localization) with the parsed values.
+   *
+   * @param line the line to parse
+   * @return Some(Localization) if the line is valid, None otherwise
+   * @throws IllegalArgumentException if the quoted string is not properly terminated
+   */
+  @throws[IllegalArgumentException]
   def parseLine(line: String): Option[Localization] =
     val colonIndex = line.indexOf(':')
     if colonIndex < 0 then
@@ -20,17 +30,19 @@ object LocalizationParser:
       if !afterNumber.startsWith("\"") then
         None
       else
-        try
-          val (quotedText, indexAfterQuote) = parseQuoted(afterNumber, 0)
-          val trailing = afterNumber.substring(indexAfterQuote).trim
-          Some(Localization(key, ver, quotedText, Localization.Status.EXISTS))
-        catch
-          case _: Exception => None
+        val (quotedText, indexAfterQuote) = parseQuoted(afterNumber, 0)
+        val trailing = afterNumber.substring(indexAfterQuote).trim
+        Some(Localization(key, ver, quotedText, Localization.Status.EXISTS))
 
   /** Parses a quoted string starting at startIndex (which should point to a double quote).
    * It handles inner escaped quotes represented by a double double-quote.
    * Returns a tuple with the parsed string and the index immediately after the closing quote.
+   * @param s the string to parse
+   * @param startIndex the index where the quoted string starts (should be the index of the opening quote)
+   * @return a tuple containing the parsed string and the index after the closing quote
+   * @throws IllegalArgumentException if the quoted string is not properly terminated
    */
+  @throws[IllegalArgumentException]
   private def parseQuoted(s: String, startIndex: Int): (String, Int) =
     // We expect s(startIndex) to be the starting quote.
     val sb = new StringBuilder
@@ -47,4 +59,4 @@ object LocalizationParser:
       else
         sb.append(s(i))
         i += 1
-    throw new Exception("No closing quote found in input")
+    throw new IllegalArgumentException(s"Unterminated quoted string in: $s\n    at index: $startIndex")

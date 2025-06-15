@@ -38,7 +38,9 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
   private val completionReward: CompletionReward = new CompletionReward()
 
   /* Load focus */
-  loadPDX(node, focusErrors)
+  node match
+    case null =>
+    case _ => loadPDX(node, focusErrors)
 
   /**
    * @inheritdoc

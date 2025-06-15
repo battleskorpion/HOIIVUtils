@@ -33,14 +33,11 @@ class Idea(node: Node, ideaFile: IdeaFile = null) extends StructuredPDX(node.nam
 
   val removalCost = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
 
-  private var _ideaFile: Option[IdeaFile] = ideaFile match {
-    case null => None
-    case file if file.isInstanceOf[IdeaFile] => Some(file)
-    case _ => None
-  }
+  private var _ideaFile: Option[IdeaFile] = None
 
   /* load Idea */
   loadPDX(node, ideaErrors)
+  setIdeaFile(ideaFile)
 
   /**
    * @inheritdoc

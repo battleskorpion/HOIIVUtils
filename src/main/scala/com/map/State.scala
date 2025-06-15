@@ -46,12 +46,16 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
 
   private var _stateFile: Option[File] = None
 
+  /* load State */
+  file match
+    case f if f.exists() && f.isFile =>
+      loadPDX(file, stateFileErrors)
+      _stateFile = Some(file)
+    case f if f != null && !f.exists() =>
+      stateFileErrors += s"State file ${f.getName} does not exist."
+
   /* init */
   if (addToStatesList) State.add(this)
-
-  loadPDX(file, stateFileErrors)
-  setStateFile(file)
-
 
   /**
    * @inheritdoc

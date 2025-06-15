@@ -6,14 +6,10 @@ import com.hoi4utils.parser.Node
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
-abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T]:
+abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: String*) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers.toList) with Seq[T]:
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
-
-  def this(pdxSupplier: PDXSupplier[T], pdxIdentifiers: String*) = {
-    this(pdxSupplier, pdxIdentifiers.toList)
-  }
-
+  
   /**
    * @inheritdoc
    */

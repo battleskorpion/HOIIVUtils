@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
-<BorderPane prefHeight="450.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.MenuController">
+
+<BorderPane prefHeight="500.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.MenuController">
 	<center>
 		<StackPane>
 			<Label fx:id="loadingLabel" alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="200.0" layoutY="300.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textAlignment="CENTER" wrapText="true" BorderPane.alignment="CENTER">
@@ -20,7 +26,6 @@
 					<ColumnConstraints hgrow="SOMETIMES" />
 				</columnConstraints>
 				<rowConstraints>
-					<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
 					<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 					<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 					<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -33,9 +38,10 @@
 					<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 					<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 					<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+					<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 				</rowConstraints>
 				<children>
-               <Button mnemonicParsing="false" onAction="#openLB" text="Errors" GridPane.columnIndex="1" GridPane.rowIndex="12" />
 					<Button fx:id="settingsButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openSettings" prefHeight="25.0" prefWidth="100.0" text="Settings" GridPane.columnIndex="1">
 						<graphic>
 							<ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
@@ -61,6 +67,7 @@
 					<Button maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openParserView" prefHeight="25.0" prefWidth="400.0" text="%parser.view" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
 					<Button mnemonicParsing="false" onAction="#openLogViewer" text="Open Logs" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
 					<Button maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openMapEditor" prefHeight="25.0" prefWidth="400.0" text="%map.editor" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+               <Button maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openLB" prefHeight="25.0" prefWidth="400.0" text="Errors" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
 				</children>
 				<padding>
 					<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

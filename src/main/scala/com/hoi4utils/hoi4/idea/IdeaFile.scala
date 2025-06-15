@@ -22,16 +22,15 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
     override def getPDXTypeName: String = "Country Ideas"
   }
 
-  private var _file: Option[File] = file match
-    case null => None
-    case f if f.exists() && f.isFile => Some(f)
-    case _ => None
+  private var _file: Option[File] = None
 
-  _file match
-    case Some(f) =>
+  file match
+    case f if f.exists() && f.isFile =>
       loadPDX(f, ideaFileErrors)
+      _file = Some(f)
       ideaFileFileMap.put(f, this)
-    case None =>
+    case f if f != null && !f.exists() =>
+      ideaFileErrors += s"Idea file ${f.getName} does not exist."
 
   /* default */
   IdeaFile.add(this)

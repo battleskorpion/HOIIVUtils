@@ -1,15 +1,18 @@
 package com.hoi4utils.ui
 
 import com.hoi4utils.HOIIVUtils
-import com.hoi4utils.StateFilesWatcher.statesThatChanged
 import com.hoi4utils.extensions.*
+import com.hoi4utils.parser.Parser.parserFileErrors
+import com.hoi4utils.localization.LocalizationManager.localizationErrors
+import com.hoi4utils.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4.country.Country.countryErrors
 import com.hoi4utils.hoi4.focus.Focus.focusErrors
+import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
 import com.hoi4utils.hoi4.idea.Idea.ideaErrors
 import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
-import com.hoi4utils.parser.Parser.parserFileErrors
 import com.map.ResourcesFile.resourcesFileErrors
 import com.map.State.stateFileErrors
+import com.hoi4utils.StateFilesWatcher.statesThatChanged
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, ListCell, ListView}
@@ -23,8 +26,11 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
   setFxmlResource("LBReader.fxml")
 
   @FXML var parserFileErrorsList: ListView[String] = uninitialized
+  @FXML var localizationErrorsList: ListView[String] = uninitialized
+  @FXML var interfaceErrorsList: ListView[String] = uninitialized
   @FXML var countryErrorsList: ListView[String] = uninitialized
   @FXML var focusErrorsList: ListView[String] = uninitialized
+  @FXML var focusTreeErrorsList: ListView[String] = uninitialized
   @FXML var statesThatChangedList: ListView[String] = uninitialized
   @FXML var resouceFileErrorsList: ListView[String] = uninitialized
   @FXML var ideaErrorsList: ListView[String] = uninitialized
@@ -40,10 +46,13 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
   private def update(): Unit = {
     val listViewsWithErrors = ListBuffer(
       (parserFileErrorsList, parserFileErrors),
+      (localizationErrorsList, localizationErrors),
+      (interfaceErrorsList, interfaceErrors),
       (countryErrorsList, countryErrors),
+      (focusErrorsList, focusErrors),
+      (focusTreeErrorsList, focusTreeFileErrors),
       (ideaErrorsList, ideaErrors),
       (ideaFileErrorsList, ideaFileErrors),
-      (focusErrorsList, focusErrors),
       (resouceFileErrorsList, resourcesFileErrors),
       (stateFileErrorsList, stateFileErrors)
     )

@@ -2,17 +2,15 @@ package com.hoi4utils.hoi4.focus
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.hoi4.country.CountryTag
-import com.hoi4utils.hoi4.focus.FocusTree.{focusTreeFileErrors, focusTreeFileMap}
+import com.hoi4utils.hoi4.focus.FocusTree.{focusTreeFileErrors, focusTreeFileMap, add}
 import com.hoi4utils.localization.{Localizable, Property}
 import com.hoi4utils.script.*
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
-import javafx.collections.{FXCollections, ObservableList}
 
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.jdk.javaapi.CollectionConverters
 
 /**
  * Represents a focus tree, which is a collection of focuses.
@@ -20,8 +18,7 @@ import scala.jdk.javaapi.CollectionConverters
  * @note Do not create instances of this class directly, unless a few focus tree is being created or loaded.
  *       Use FocusTree.get(File) instead.
  */
-class FocusTree
-  extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile {
+class FocusTree(focus_file: File = null) extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile {
   /* pdxscript */
   //final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
   final var country = new FocusTreeCountryPDX
@@ -32,26 +29,17 @@ class FocusTree
 
   private var _focusFile: Option[File] = None
 
+  /* load FocusTree */
+  focus_file match
+    case file if file.exists() =>
+      loadPDX(focus_file, focusTreeFileErrors)
+      _focusFile = Some(file)
+      focusTreeFileMap.put(file, this)
+    case file if file != null && !file.exists() =>
+      focusTreeFileErrors += s"Focus tree file ${file.getName} does not exist."
+
   /* default */
-  FocusTree.add(this)
-
-  @throws[IllegalArgumentException]
-  def this(focus_file: File) = {
-    this()
-    if (!focus_file.exists) {
-      logger.error(s"Focus tree file does not exist: $focus_file")
-      throw new IllegalArgumentException(s"File does not exist: $focus_file")
-    }
-
-    try loadPDX(focus_file)
-    catch {
-      case e: UnexpectedIdentifierException =>
-        focusTreeFileErrors.addOne(s"[${this.getClass.getSimpleName}] Error loading focus tree from file: ${focus_file.getName}\n  : ${e.getMessage}")
-      case e: NodeValueTypeException =>
-        focusTreeFileErrors.addOne(s"[${this.getClass.getSimpleName}] Node value type exception while loading focus tree from file: ${focus_file.getName}\n  : ${e.getMessage}")
-    }
-    setFile(focus_file)
-  }
+  add(this)
 
   // todo: add default, continuous focus position
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
@@ -204,7 +192,6 @@ class FocusTree
 object FocusTree extends LazyLogging with PDXReadable {
   private val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
   private val focusTrees = new ListBuffer[FocusTree]()
-  
   val focusTreeFileErrors: ListBuffer[String] = ListBuffer.empty
 
   def getFocusTrees: ListBuffer[FocusTree] = focusTrees

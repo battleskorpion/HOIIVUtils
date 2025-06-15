@@ -38,14 +38,18 @@ class Country
   //private var _infrastructure: Infrastructure = null // infrastructure of all owned states
   //private var _resources: List[Resource] = List.empty // resources of all owned states
 
-  private var _file: Option[File] = file match
-    case f if f.exists() && f.isFile => Some(f)
+  private var _file: Option[File] = None
 
   private var _countryTag: Option[CountryTag] = countryTag match
     case tag => Some(tag)
-
+  
   /* load Country */
-  _file.foreach(f => loadPDX(f, countryErrors))
+  file match
+    case f if f.exists() && f.isFile =>
+      loadPDX(f, countryErrors)
+      _file = Some(f)
+    case f if f != null && !f.exists() =>
+      countryErrors += s"Country file ${f.getName} does not exist."
   
   countryErrors.addAll(
     getStructuredPDXBadNodesList match {

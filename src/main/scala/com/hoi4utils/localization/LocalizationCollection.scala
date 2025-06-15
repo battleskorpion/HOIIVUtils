@@ -13,6 +13,7 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
   final private val localizationKeyMap = new TrieMap[String, Localization]
 
   // Custom method to add a Localization
+  @throws[IllegalArgumentException]
   def add(localization: Localization, file: File): Unit = {
     if (localization == null || file == null) throw new IllegalArgumentException("Localization and file must not be null")
 

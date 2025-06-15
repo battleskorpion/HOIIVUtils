@@ -25,13 +25,13 @@ class Parser(val input: String | File, clazz: Class[?]):
   private val _rootNode: Node =
     val leading = consumeTrivia()
     val blockContent = parseBlockContent()
-    if blockContent.isEmpty then parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n File: ${input.toString} \n Error: No nodes found in the block.")
+    if blockContent.isEmpty then parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n    Issue: No nodes found in the block.\nFile: ${input.toString}")
     val trailing = consumeTrivia()
 
     tokens.peek match
       case Some(token) if token.tokenType == TokenType.eof => // OK
-      case Some(token) => parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n File: ${input.toString} \n Error: Unexpected token after block parsing: ${token.value}")
-      case None => parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n File: ${input.toString} \n Error: No tokens found after parsing block.")
+      case Some(token) => parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n    Issue: Unexpected token after block parsing: ${token.value}\nFile: ${input.toString} ")
+      case None => parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n    Issue: No tokens found after parsing block.\nFile: ${input.toString} ")
 
     Node(
       leadingTrivia = leading,
@@ -69,7 +69,7 @@ class Parser(val input: String | File, clazz: Class[?]):
             nodes += parseNode()
           catch
             case e: ParserException =>
-              parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n File: ${input.toString} \n Error: ${e.getMessage}")
+              parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n    Issue: ${e.getMessage}\nFile: ${input.toString}")
               return // Stop collecting on error
           collectNodes()
 
@@ -86,7 +86,7 @@ class Parser(val input: String | File, clazz: Class[?]):
     val leading = consumeTrivia()
 
     val idToken = tokens.next.getOrElse(
-      throw new ParserException("Unexpected end of input while parsing node identifier")
+      throw new ParserException(s"Unexpected end of input while parsing node identifier\n        Required: next token, \n        Found: ${tokens.peek}")
     )
 
     // Handle comment tokens
@@ -99,19 +99,16 @@ class Parser(val input: String | File, clazz: Class[?]):
       )
 
     // Validate identifier token
-    if !(idToken.tokenType == TokenType.string ||
+    if !(
+      idToken.tokenType == TokenType.string ||
       idToken.tokenType == TokenType.symbol ||
-      idToken.isNumber) then
-      throw ParserException(
-        clazz,
-        s"Parser: incorrect token type ${idToken.tokenType} at index ${idToken.start} for: ${idToken.value}",
-        input.toString
-      )
+      idToken.isNumber
+      ) then throw ParserException(s"Parser: incorrect token type \"${idToken.tokenType}\" at index \"${idToken.start}\" for: \"${idToken.value}\"")
 
     consumeTrivia()
 
     val nextToken = tokens.peek.getOrElse {
-      throw ParserException(clazz, "Unexpected end of input after identifier", input.toString)
+      throw ParserException(s"Unexpected end of input after identifier\n        Required: next token, \n        Found: ${tokens.peek}")
     }
 
     // Handle nodes without proper operators
@@ -152,7 +149,7 @@ class Parser(val input: String | File, clazz: Class[?]):
     consumeTrivia()
 
     val nextToken = tokens.next.getOrElse {
-      throw ParserException(clazz, "Unexpected end of input while parsing node value", input.toString)
+      throw ParserException(s"Unexpected end of input while parsing node value\n        Required: next token, \n        Found: ${tokens.peek}")
     }
 
     parseTokenValue(nextToken) match
@@ -173,7 +170,7 @@ class Parser(val input: String | File, clazz: Class[?]):
       case TokenType.operator if token.value == "{" =>
         parseBlock()
       case _ =>
-        throw ParserException(clazz, s"Unexpected token type: ${token.tokenType}", input.toString)
+        throw ParserException(s"Unexpected token type: ${token.tokenType}")
 
   private def parseStringToken(token: Token): String =
     if token.value.length <= 2 then
@@ -197,10 +194,10 @@ class Parser(val input: String | File, clazz: Class[?]):
   private def parseBlock(): ListBuffer[Node] =
     val children = parseBlockContent()
     val closing = tokens.next.getOrElse {
-      throw ParserException(clazz, "Expected closing '}'", input.toString)
+      throw ParserException(s"Unexpected end of input while parsing node value for block\n        Required: next token, \n        Found: ${tokens.peek}")
     }
     if closing.value != "}" then
-      parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n File: ${input.toString} \n Error: Unexpected end of block type: \n        Required: }, \n        Found: ${closing.value}")
+      throw ParserException(s"Error: Unexpected end of block type: \n        Required: }, \n        Found: ${closing.value}")
     children
 
 object Parser:

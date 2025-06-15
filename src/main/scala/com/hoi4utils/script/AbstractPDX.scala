@@ -142,10 +142,11 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
       case file: File => loadPDX(file)
       case null => errors.addOne("Cannot load PDX script from null value")
     catch
-      case e: UnexpectedIdentifierException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    ${e.getMessage}")
-      case e: NodeValueTypeException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    ${e.getMessage}")
-      case e: IllegalStateException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    ${e.getMessage}")
-      case e: Throwable => errors.addOne(s"Class: ${getClass.getSimpleName} \n    Unexpected error while loading PDX script: ${expressions.toString}\n    ${e.getMessage}")
+      case e: UnexpectedIdentifierException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    Issue: ${e.getMessage}\nFrom: ${expressions.toString}")
+      case e: NodeValueTypeException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    Issue: ${e.getMessage}\nFrom: ${expressions.toString}")
+      case e: IllegalStateException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    Issue: ${e.getMessage}\nFrom: ${expressions.toString}")
+      case e: MatchError => e.printStackTrace()
+      case e => errors.addOne(s"Class: ${getClass.getSimpleName} \n    Unexpected error while loading PDX script:\n    Issue: $e\nFrom: ${expressions.toString}")
   }
 
   /**
