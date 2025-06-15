@@ -3,8 +3,7 @@ package com.hoi4utils.ui.hoi4localization
 import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.hoi4.idea.{Idea, IdeaFile}
 import com.hoi4utils.localization.{Localization, Property}
-import com.hoi4utils.ui.HOIIVUtilsAbstractController
-import com.hoi4utils.ui.JavaFXUIManager
+import com.hoi4utils.ui.{HOIIVUtilsAbstractController, JavaFXUIManager}
 import com.hoi4utils.ui.javafx_ui.table.TableViewWindow
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.fxml.FXML

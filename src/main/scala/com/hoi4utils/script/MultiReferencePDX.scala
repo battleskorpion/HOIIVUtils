@@ -95,7 +95,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     checkReferenceIdentifier(expression)
     expression.$ match {
       case str: String =>
-        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
+        if (simpleSupplier.isEmpty) throw NodeValueTypeException(expression, "string", s"${expression.$}")
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(expression)
         pdxList.addOne(childScript)
@@ -104,13 +104,13 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
         logger.warn(s"Expected string value for pdx reference identifier, got ${other}. Preserving node using its string representation.")
         // Preserve the problematic node as a string.
         val preservedValue = other.toString
-        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
+        if (simpleSupplier.isEmpty) throw NodeValueTypeException(expression, "string", s"${expression.$}")
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(new Node(preservedValue))
         pdxList.addOne(childScript)
         referenceNames.addOne(preservedValue)
         // Then throw the exception so that callers are aware of the issue.
-        throw new NodeValueTypeException(expression, "string", this.getClass)
+        throw NodeValueTypeException(expression, "string", s"${expression.$}")
     }
   }
 
@@ -146,7 +146,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   def addReferenceTo(pdxScript: T): Unit = {
     val idOpt = idExtractor(pdxScript)
     if (idOpt.isEmpty) {
-      throw new NodeValueTypeException(new Node(""), "Unable to extract reference identifier", this.getClass)
+      throw NodeValueTypeException(new Node(""), "Unable to extract reference identifier", s"Nothing: $idOpt")
     }
     // Create a new ReferencePDX[T] using the supplier.
     val wrapper: ReferencePDX[T] = simpleSupplier.get.apply()
@@ -298,7 +298,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   @throws[UnexpectedIdentifierException]
   private def checkReferenceIdentifier(exp: Node): Unit = {
     if (!referencePDXIdentifiers.contains(exp.name))
-      throw new UnexpectedIdentifierException(exp, classOf[MultiReferencePDX[T]], referencePDXIdentifiers.mkString(", "))
+      throw UnexpectedIdentifierException(exp, referencePDXIdentifiers.mkString(", "))
   }
 
   /**

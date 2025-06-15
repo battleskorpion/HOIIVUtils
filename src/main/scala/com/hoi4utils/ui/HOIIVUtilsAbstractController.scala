@@ -1,15 +1,15 @@
 package com.hoi4utils.ui
 
-import com.hoi4utils.{HOIIVUtils, Version}
 import com.hoi4utils.HOIIVUtils.config
+import com.hoi4utils.{HOIIVUtils, Version}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXMLLoader
 import javafx.scene.{Parent, Scene}
 import javafx.stage.Stage
 
-import javax.swing.JOptionPane
 import java.lang.reflect.InvocationTargetException
 import java.util.{Arrays, HashSet}
+import javax.swing.JOptionPane
 import scala.collection.mutable
 import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
@@ -24,7 +24,7 @@ abstract class HOIIVUtilsAbstractController extends JavaFXUIManager with LazyLog
    * Opens the stage with the specified FXML resource and title.
    */
   override def open(): Unit =
-    try 
+    try
       val fxml = FXMLLoader(getClass.getResource(fxmlResource))
       open(fxml)
       logger.debug(s"$title Started")
@@ -145,10 +145,10 @@ abstract class HOIIVUtilsAbstractController extends JavaFXUIManager with LazyLog
 
     hierarchy.toList
 
-  private def handleOpenError(e: Exception): Unit = 
-    val errorMessage = s"version: ${Version.getVersion(config.getProperties)} Failed to open window\nError loading FXML: $fxmlResource/n${e.getMessage}"
+  private def handleOpenError(e: Exception): Unit =
+    val errorMessage = s"version: ${Version.getVersion(config.getProperties)} Failed to open window\nError loading FXML: $fxmlResource\n${e.getMessage}"
     logger.error(s"version: ${Version.getVersion(config.getProperties)} Error loading FXML: $fxmlResource")
     JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE)
-  
+    throw e
+
   def get(prop: String): String = HOIIVUtils.get(prop)
-  

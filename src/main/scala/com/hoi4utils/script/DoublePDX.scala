@@ -26,7 +26,7 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
     expression.$ match {
       case _: Double =>
       case _: Int =>
-      case _ =>throw new NodeValueTypeException(expression, "Number (as a Double)", this.getClass)
+      case _ => throw NodeValueTypeException(expression, "Number as a Double or Int", "")
     }
   }
   

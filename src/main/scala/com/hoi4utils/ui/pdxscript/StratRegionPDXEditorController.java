@@ -3,6 +3,8 @@ package com.hoi4utils.ui.pdxscript;
 import com.hoi4utils.script.DoublePDX;
 import com.hoi4utils.script.PDXScript;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
+import com.map.Province;
+import com.map.StrategicRegion;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -12,8 +14,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
-import com.map.Province;
-import com.map.StrategicRegion;
 import scala.jdk.javaapi.CollectionConverters;
 
 import java.util.ArrayList;

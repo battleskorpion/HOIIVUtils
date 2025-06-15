@@ -6,8 +6,7 @@ import com.hoi4utils.parser.Node
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
-abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: List[String])
-  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
+abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T]:
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
 
@@ -62,7 +61,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     nodesToProcess.foreach { node =>
       val childScript = pdxSupplier(node) match
         case Some(script) => script
-        case None => throw UnexpectedIdentifierException(node, this.getClass)
+        case None => throw UnexpectedIdentifierException(node)
       childScript.loadPDX(node)
       pdxList += childScript
     }
@@ -155,6 +154,3 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
   }
 
   override def getPDXTypeName: String
-}
-
-

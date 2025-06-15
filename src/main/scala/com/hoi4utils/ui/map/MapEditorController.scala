@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.map
 
 import com.hoi4utils.HOIIVFiles
-import com.hoi4utils.extensions._
+import com.hoi4utils.extensions.*
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.buildings.StateTable
 import com.hoi4utils.ui.pdxscript.PDXEditorPane

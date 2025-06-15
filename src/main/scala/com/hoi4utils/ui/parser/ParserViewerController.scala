@@ -1,20 +1,20 @@
 package com.hoi4utils.ui.parser
 
-import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.hoi4.country.{Country, CountryTag}
 import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.parser.{Node, Parser, ParserException}
 import com.hoi4utils.script.{AbstractPDX, PDXScript, PDXScriptFileOps}
-import com.hoi4utils.ui.{HOIIVUtilsAbstractController, JavaFXUIManager}
 import com.hoi4utils.ui.pdxscript.{PDXTreeViewFactory, StratRegionPDXEditorController}
+import com.hoi4utils.ui.{HOIIVUtilsAbstractController, JavaFXUIManager}
+import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
 import com.map.{ResourcesFile, State, StrategicRegion}
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 
-import javax.swing.JOptionPane
 import java.io.File
+import javax.swing.JOptionPane
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*

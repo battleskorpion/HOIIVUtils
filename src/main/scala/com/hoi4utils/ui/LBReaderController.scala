@@ -2,10 +2,14 @@ package com.hoi4utils.ui
 
 import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.StateFilesWatcher.statesThatChanged
-import com.hoi4utils.parser.Parser.parserFileErrors
-import com.map.State.stateFileErrors
-import com.map.ResourcesFile.resourcesFileErrors
 import com.hoi4utils.extensions.*
+import com.hoi4utils.hoi4.country.Country.countryErrors
+import com.hoi4utils.hoi4.focus.Focus.focusErrors
+import com.hoi4utils.hoi4.idea.Idea.ideaErrors
+import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
+import com.hoi4utils.parser.Parser.parserFileErrors
+import com.map.ResourcesFile.resourcesFileErrors
+import com.map.State.stateFileErrors
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, ListCell, ListView}
@@ -19,8 +23,12 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
   setFxmlResource("LBReader.fxml")
 
   @FXML var parserFileErrorsList: ListView[String] = uninitialized
+  @FXML var countryErrorsList: ListView[String] = uninitialized
+  @FXML var focusErrorsList: ListView[String] = uninitialized
   @FXML var statesThatChangedList: ListView[String] = uninitialized
   @FXML var resouceFileErrorsList: ListView[String] = uninitialized
+  @FXML var ideaErrorsList: ListView[String] = uninitialized
+  @FXML var ideaFileErrorsList: ListView[String] = uninitialized
   @FXML var stateFileErrorsList: ListView[String] = uninitialized
 
   val testList: ListBuffer[String] = ListBuffer.empty[String]
@@ -30,17 +38,24 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
   }
 
   private def update(): Unit = {
-    parserFileErrorsList.setItems(getListOrDefaultMessage(parserFileErrors))
-    stateFileErrorsList.setItems(getListOrDefaultMessage(stateFileErrors))
-    resouceFileErrorsList.setItems(getListOrDefaultMessage(resourcesFileErrors))
+    val listViewsWithErrors = ListBuffer(
+      (parserFileErrorsList, parserFileErrors),
+      (countryErrorsList, countryErrors),
+      (ideaErrorsList, ideaErrors),
+      (ideaFileErrorsList, ideaFileErrors),
+      (focusErrorsList, focusErrors),
+      (resouceFileErrorsList, resourcesFileErrors),
+      (stateFileErrorsList, stateFileErrors)
+    )
+
+    listViewsWithErrors.foreach((listView, errors) => setListViewItems(listView, errors))
     statesThatChangedList.setItems(getListOrDefaultMessage(statesThatChanged, "No States Changed"))
-    List(
-      parserFileErrorsList,
-      stateFileErrorsList,
-      resouceFileErrorsList,
-      statesThatChangedList
-    ).foreach(setupAlternatingListView)
+    listViewsWithErrors.addOne(statesThatChangedList, statesThatChanged)
+    listViewsWithErrors.map(_._1).foreach(setupAlternatingListView)
   }
+
+  private def setListViewItems(listView: ListView[String], errors: ListBuffer[String]): Unit =
+    listView.setItems(getListOrDefaultMessage(errors))
 
   private def getListOrDefaultMessage(listBuffer: ListBuffer[String], message: String = "No Problems Found") = {
     listBuffer match {

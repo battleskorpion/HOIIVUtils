@@ -6,11 +6,11 @@ import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.javafx_ui.table.TableViewWindow
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.fxml.FXML
-import javafx.scene.control.{TableColumn, TableRow, TableView}
 import javafx.scene.control.cell.TextFieldTableCell
+import javafx.scene.control.{TableColumn, TableRow, TableView}
 import javafx.scene.paint.Color
 
-import java.io.{BufferedWriter, File, FileWriter, IOException, PrintWriter}
+import java.io.*
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*

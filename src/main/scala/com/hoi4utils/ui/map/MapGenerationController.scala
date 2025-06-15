@@ -11,11 +11,11 @@ import javafx.scene.control.{Button, ProgressBar, TextField}
 import javafx.scene.image.{PixelWriter, WritableImage}
 import javafx.scene.layout.{AnchorPane, GridPane}
 
-import javax.swing.JOptionPane
 import java.awt.Color
 import java.io.{File, IOException, InputStream}
 import java.util.Objects
 import java.util.function.BiFunction
+import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
 
 class MapGenerationController extends HOIIVUtilsAbstractController with LazyLogging {

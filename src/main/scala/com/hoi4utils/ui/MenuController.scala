@@ -1,15 +1,14 @@
 package com.hoi4utils.ui
 
+import com.hoi4utils.*
 import com.hoi4utils.HOIIVUtils.config
 import com.hoi4utils.ui.buildings.BuildingsByCountryController
 import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.hoi4localization.{FocusLocalizationController, IdeaLocalizationController, ManageFocusTreesController}
 import com.hoi4utils.ui.map.{MapEditorController, MapGenerationController}
 import com.hoi4utils.ui.parser.ParserViewerController
-import com.hoi4utils.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.{Application, Platform}
-import javafx.concurrent.Task
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.GridPane
@@ -17,7 +16,6 @@ import javafx.scene.{Parent, Scene}
 import javafx.stage.Stage
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
-import java.io.IOException
 import java.util.{Locale, MissingResourceException, ResourceBundle}
 import javax.swing.*
 import scala.collection.mutable.ListBuffer

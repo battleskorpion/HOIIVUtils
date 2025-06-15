@@ -4,11 +4,8 @@ import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierExc
 import com.hoi4utils.parser.Node
 import com.typesafe.scalalogging.LazyLogging
 
-import java.io.{File, FileNotFoundException, PrintWriter}
-import java.time.LocalDateTime
-import javax.swing.JOptionPane
+import java.io.File
 import scala.collection.mutable.ListBuffer
-import scala.util.Using
 
 /**
  *

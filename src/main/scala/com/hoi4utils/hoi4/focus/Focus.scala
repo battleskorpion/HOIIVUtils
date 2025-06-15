@@ -1,8 +1,7 @@
 package com.hoi4utils.hoi4.focus
 
-import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.gfx.Interface
+import com.hoi4utils.extensions.*
+import com.hoi4utils.gfx.Interface.getGFX
 import com.hoi4utils.hoi4.effect.{Effect, EffectDatabase}
 import com.hoi4utils.hoi4.focus.Focus.focusErrors
 import com.hoi4utils.hoi4.scope.Scope
@@ -17,33 +16,29 @@ import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-
-@lombok.extern.slf4j.Slf4j
-class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Localizable {
+class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("focus") with Localizable {
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
 
   /* attributes */
-  final val id: StringPDX = new StringPDX("id")   // todo don't allow id to be null that feels wrong
-  final val icon: MultiPDX[Icon] = new MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
-  final val x: IntPDX = new IntPDX("x") // if relative, relative x
-  final val y: IntPDX = new IntPDX("y", ExpectedRange.ofPositiveInt) // if relative, relative y
-  final val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
-  final val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
-  final val relativePositionFocus = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.value, "relative_position_id")
-  final val cost: DoublePDX = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
-  final val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
-  final val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
-  final val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
+  val id: StringPDX = new StringPDX("id")   // todo don't allow id to be null that feels wrong
+  val icon: MultiPDX[Icon] = new MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
+  val x: IntPDX = new IntPDX("x") // if relative, relative x
+  val y: IntPDX = new IntPDX("y", ExpectedRange.ofPositiveInt) // if relative, relative y
+  private val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
+  private val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
+  private val relativePositionFocus = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.value, "relative_position_id")
+  private val cost: DoublePDX = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
+  private val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
+  private val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
+  private val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
   //var ddsImage: Image = _
-  final val ai_will_do = new AIWillDoPDX
+  private val ai_will_do = new AIWillDoPDX
   /* completion reward */
-  final val completionReward: CompletionReward = new CompletionReward()
+  private val completionReward: CompletionReward = new CompletionReward()
 
-  def this(focusTree: FocusTree, node: Node) = {
-    this(focusTree)
-    loadPDX(node)
-  }
+  /* Load focus */
+  loadPDX(node, focusErrors)
 
   /**
    * @inheritdoc
@@ -51,6 +46,27 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
     ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost,
       availableIfCapitulated, cancelIfInvalid, continueIfInvalid, ai_will_do, completionReward)
+  }
+
+  override def getLocalizableProperties: mutable.Map[Property, String] = {
+    //mutable.Map(Property.NAME -> id.get().get, Property.DESCRIPTION -> s"${id.get().get}_desc")
+    val id = this.id.getOrElse("")
+    mutable.Map(Property.NAME -> id, Property.DESCRIPTION -> s"${id}_desc")
+  }
+
+  override def getLocalizableGroup: Iterable[Localizable] = {
+    if (focusTree == null) {
+      Iterable(this)
+    } else {
+      focusTree.getLocalizableGroup
+    }
+  }
+
+  override def toString: String = {
+    id.value match {
+      case Some(id) => id
+      case None => "[Unknown]"
+    }
   }
 
   def absoluteX: Int = absolutePosition.x
@@ -95,13 +111,6 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     }
 
     absolutePosition(this)
-  }
-
-  override def toString: String = {
-    id.value match {
-      case Some(id) => id
-      case None => "[Unknown]"
-    }
   }
 
   def setID(s: String): Unit = {
@@ -176,33 +185,19 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     this.cost.set(cost.doubleValue())
   }
 
-  def getDDSImage: Option[Image] = {
-    // bad code. it's fine for now.
-    if (icon.isDefined) {
-      var img: Option[Image] = None
-      for (i <- icon) i match {
-        case simpleIcon: SimpleIcon => simpleIcon.value match {
-          case Some(iconName) =>
-            Interface.getGFX(iconName) match {
-              case Some(gfx) => img = Some(DDSReader.readDDSImage(gfx).get)
-              case None => None
-            }
-          case None => None
+  def getDDSImage: Option[Image] =
+    icon.collectFirst {
+      case simpleIcon: SimpleIcon =>
+        simpleIcon.value.flatMap(getGFX).flatMap(_.getDDSImage) match {
+          case Some(ddsImage) => ddsImage
+          case None => null
         }
-        case blockIcon: BlockIcon => blockIcon.iconName match {
-          case Some(iconName) =>
-            Interface.getGFX(iconName) match {
-              case Some(gfx) => img = Some(DDSReader.readDDSImage(gfx).get)
-              case None => None
-            }
-          case None => None
+      case blockIcon: BlockIcon =>
+        blockIcon.iconName.flatMap(getGFX).flatMap(_.getDDSImage) match {
+          case Some(ddsImage) => ddsImage
+          case None => null
         }
-        case _ => None
-      }
-      img
     }
-    else None
-  }
 
   def hasPrerequisites: Boolean = prerequisites.nonEmpty
 
@@ -211,20 +206,6 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   def displayedCompletionTime(): Double = Math.floor(preciseCompletionTime())
 
   def preciseCompletionTime(): Double = cost.getOrElse(DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
-
-  override def getLocalizableProperties: mutable.Map[Property, String] = {
-    //mutable.Map(Property.NAME -> id.get().get, Property.DESCRIPTION -> s"${id.get().get}_desc")
-    val id = this.id.getOrElse("")
-    mutable.Map(Property.NAME -> id, Property.DESCRIPTION -> s"${id}_desc")
-  }
-
-  override def getLocalizableGroup: Iterable[Localizable] = {
-    if (focusTree == null) {
-      Iterable(this)
-    } else {
-      focusTree.getLocalizableGroup
-    }
-  }
   
   def isLocalized: Boolean = localizationStatus(Property.NAME) != Localization.Status.MISSING
 
@@ -332,12 +313,8 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 //    }
   }
 
-  class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus])
+  class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus] = () => focusTree.focuses)
     extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.value, "prerequisite", "focus") {
-
-    def this() = {
-      this(() => focusTree.focuses)
-    }
   }
   /**
    * mutually exclusive is a multi-reference of focuses
@@ -347,14 +324,16 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   }
 
   trait Icon extends PDXScript[?] {
+    // todo
   }
 
-  class SimpleIcon extends StringPDX("icon") with Icon {
+  private class SimpleIcon extends StringPDX("icon") with Icon {
+    // todo
   }
 
   class BlockIcon extends StructuredPDX("icon") with Icon {
 
-    final private val `value`: StringPDX = new StringPDX("value")
+    private val `value`: StringPDX = new StringPDX("value")
 
     override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(`value`)
 
@@ -368,34 +347,26 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
   class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward") {
     override def loadPDX(expression: Node): Unit = {
-      try super.loadPDX(expression)
-      catch {
-        case e: UnexpectedIdentifierException =>
-          focusErrors.addOne(s"[${getClass.getSimpleName}] Unexpected identifier: ${e.getMessage}")
-        case e: NodeValueTypeException =>
-          focusErrors.addOne(s"[${getClass.getSimpleName}] Node value type exception: ${e.getMessage}")
-        case e: IllegalStateException =>
-          focusErrors.addOne(s"[${getClass.getSimpleName}] Illegal State exception: ${e.getMessage}")
-      }
+      super.loadPDX(expression, focusErrors)
     }
 
     override def getPDXTypeName: String = "Completion Reward"
   }
 
   class AIWillDoPDX extends StructuredPDX("ai_will_do") {
-    final val base = new DoublePDX("base")
-    final val factor = new DoublePDX("factor")
-    final val add = new DoublePDX("add")
-    final val modifier = new MultiPDX[AIWillDoModifierPDX](None, Some(() => new AIWillDoModifierPDX), "modifier")
+    val base = new DoublePDX("base")
+    val factor = new DoublePDX("factor")
+    val add = new DoublePDX("add")
+    val modifier = new MultiPDX[AIWillDoModifierPDX](None, Some(() => new AIWillDoModifierPDX), "modifier")
 
     override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add, modifier)
 
     override def getPDXTypeName: String = "AI Willingness"
 
     class AIWillDoModifierPDX extends StructuredPDX("modifier") {
-      final val base = new DoublePDX("base")
-      final val factor = new DoublePDX("factor")
-      final val add = new DoublePDX("add")
+      val base = new DoublePDX("base")
+      val factor = new DoublePDX("factor")
+      val add = new DoublePDX("add")
       // todo trigger block
 
       override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add)

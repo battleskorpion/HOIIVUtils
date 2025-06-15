@@ -3,18 +3,18 @@ package com.hoi4utils.ui.hoi4localization
 import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.hoi4.focus.{FixFocus, Focus, FocusTree}
 import com.hoi4utils.localization.{Localization, LocalizationManager, Property}
-import com.hoi4utils.ui.{HOIIVUtilsAbstractController, JavaFXUIManager}
 import com.hoi4utils.ui.javafx_ui.table.TableViewWindow
+import com.hoi4utils.ui.{HOIIVUtilsAbstractController, JavaFXUIManager}
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTableCell
 import javafx.scene.paint.Color
 
-import javax.swing.JOptionPane
 import java.io.{File, IOException}
 import java.util.Iterator
 import java.util.function.Function
+import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 

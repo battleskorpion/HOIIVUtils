@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-
-<BorderPane prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.LBReaderController">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.LBReaderController">
    <center>
       <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -20,13 +16,43 @@
                   </AnchorPane>
             </content>
           </Tab>
-          <Tab text="stateFileErrors">
+          <Tab text="CountryErrors">
             <content>
               <AnchorPane>
-                     <children>
-                        <ListView fx:id="stateFileErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
-                                  AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
-                     </children>
+                <children>
+                  <ListView fx:id="countryErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="FocusErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="focusErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="ideaErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="ideaErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="ideaFileErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="ideaFileErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
               </AnchorPane>
             </content>
           </Tab>
@@ -40,16 +66,26 @@
                 </AnchorPane>
             </content>
           </Tab>
-            <Tab text="statesThatChanged">
-              <content>
-                <AnchorPane>
-                     <children>
-                        <ListView fx:id="statesThatChangedList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
-                                  AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
-                     </children>
-                  </AnchorPane>
-              </content>
-            </Tab>
+          <Tab text="stateFileErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="stateFileErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="statesThatChanged">
+            <content>
+              <AnchorPane>
+                   <children>
+                      <ListView fx:id="statesThatChangedList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                                AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                   </children>
+                </AnchorPane>
+            </content>
+          </Tab>
         </tabs>
       </TabPane>
    </center>

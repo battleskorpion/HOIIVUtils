@@ -3,7 +3,6 @@ package com.hoi4utils.script
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, FileNotFoundException, PrintWriter}
-import java.io.{FileNotFoundException, PrintWriter}
 import java.time.LocalDateTime
 import javax.swing.JOptionPane
 import scala.util.Using

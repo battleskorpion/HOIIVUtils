@@ -2,17 +2,12 @@ package com.hoi4utils.exceptions
 
 import com.hoi4utils.parser.Node
 
-class UnexpectedIdentifierException(message: String) extends Exception(message) {
+class UnexpectedIdentifierException(message: String, exception: Exception = null)
+  extends Exception(message, exception)
 
-  def this(exp: Node, clazz: Class[?]) =
-    this(s"Unexpected identifier: ${exp.name}, in class \"${clazz.getSimpleName}\". ")
+object UnexpectedIdentifierException:
+  def apply(node: Node): UnexpectedIdentifierException =
+    new UnexpectedIdentifierException(s"Unexpected identifier: ${node.name}", null)
 
-  def this(exp: Node, clazz: Class[?], referencePDXIdentifiers: String) =
-    this(s"Unexpected identifier: ${exp.name}, in class \"${clazz.getSimpleName}\" with valid identifiers: $referencePDXIdentifiers. ")
-
-  def this(e: Exception, clazz: Class[?], file: String) =
-    this(s"Unexpected identifier in class \"${clazz.getSimpleName}\" while reading file: $file. ${e.getMessage} \n ${e.getStackTrace.mkString("\n")}")
-
-  def this(exp: Node, message: String) =
-    this(s"Unexpected identifier: ${exp.name}, in class \"${exp.getClass.getSimpleName}\". $message")
-}
+  def apply(node: Node, message: String): UnexpectedIdentifierException =
+    new UnexpectedIdentifierException(s"Unexpected identifier: ${node.name},\nMessage: $message", null)

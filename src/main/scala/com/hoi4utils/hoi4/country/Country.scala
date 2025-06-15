@@ -3,6 +3,7 @@ package com.hoi4utils.hoi4.country
 import com.hoi4utils.clausewitz.data.country.CountryFlag
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
+import com.hoi4utils.hoi4.country.Country.countryErrors
 import com.hoi4utils.hoi4.technology.Technology
 import com.hoi4utils.hoi4.units.OrdersOfBattle
 import com.hoi4utils.script.{HeadlessPDX, PDXScript, ReferencePDX, StructuredPDX}
@@ -15,10 +16,17 @@ import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] with InfrastructureData {
-  /* data */
-  private var _countryTag: Option[CountryTag] = None
+class Country
+(
+  file: File = null,
+  countryTag: CountryTag = null,
+  private var _infrastructure: Infrastructure = new Infrastructure,
+  private var _resources: List[Resource] = List[Resource]()
+) extends StructuredPDX with HeadlessPDX with Comparable[Country] with InfrastructureData {
+  require(file != null, "File cannot be null")
+  require(countryTag != null, "Country tag cannot be null")
 
+  /* data */
   private val oob = new ReferencePDX[OrdersOfBattle](() => OrdersOfBattle.list, oob => oob.id.value, "oob")
   private val defaultResearchSlots = 0 // default research slots as defined in history/countries file or similar
   private val countryFlags: Set[CountryFlag] = null
@@ -27,42 +35,29 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
   private val warSupport = 0.0 // war support percentage defined from 0.0-1.0
   private val startingTech: Set[Technology] = null // starting technology defined in history/countries file
 
-  private var _file: Option[File] = None
-
   //private var _infrastructure: Infrastructure = null // infrastructure of all owned states
   //private var _resources: List[Resource] = List.empty // resources of all owned states
+
+  private var _file: Option[File] = file match
+    case f if f.exists() && f.isFile => Some(f)
+
+  private var _countryTag: Option[CountryTag] = countryTag match
+    case tag => Some(tag)
+
+  /* load Country */
+  _file.foreach(f => loadPDX(f, countryErrors))
+  
+  countryErrors.addAll(
+    getStructuredPDXBadNodesList match {
+      case Some(errors) => errors.map(identity)
+      case None => List.empty
+    }
+  )
 
   /* default */
   Country.add(this)
 
-  def this(countryTag: CountryTag, infrastructure: Infrastructure, resources: List[Resource]) = {
-    this()
-    this._countryTag = Some(countryTag)
-//    this._infrastructure = infrastructure
-//    this._resources = resources
-  }
-
-  def this(countryTag: CountryTag) = {
-    this(countryTag, new Infrastructure, List[Resource]())
-  }
-
-  def this(file: File, countryTag: CountryTag) = {
-    this(countryTag)
-    if (!file.exists) {
-      logger.error(s"Country file does not exist: $file")
-      throw new IllegalArgumentException(s"File does not exist: $file")
-    }
-
-    loadPDX(file)
-    setFile(file)
-    _countryTag = Some(countryTag)
-  }
-
-  def setFile(file: File): Unit = {
-    _file = Some(file)
-  }
-
-  def countryTag: CountryTag = _countryTag.getOrElse(CountryTag.NULL_TAG)
+  def getCountryTag: CountryTag = _countryTag.getOrElse(CountryTag.NULL_TAG)
 
   def setCountryTag(countryTag: CountryTag): Unit = {
     this._countryTag = Some(countryTag)
@@ -118,7 +113,7 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
   private def numOwnedStates = 1 // todo;
 
   override def compareTo(@NotNull o: Country): Int = _countryTag match {
-    case Some(tag) => tag.compareTo(o.countryTag)
+    case Some(tag) => tag.compareTo(o.getCountryTag)
     case None => 0
   }
 
@@ -135,6 +130,7 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
 object Country extends LazyLogging with PDXReadable {
 
   private val countries = new ListBuffer[Country]()
+  val countryErrors = new ListBuffer[String]()
 
   def getCountries: ListBuffer[Country] = countries
 

@@ -4,14 +4,25 @@ import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierExc
 import com.hoi4utils.parser.Node
 
 import scala.collection.mutable.ListBuffer
-import scala.util.{Try, Success, Failure}
+import scala.util.{Failure, Success, Try}
 
 abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers):
 
   def this(pdxIdentifiers: String*) =
     this(pdxIdentifiers.toList)
 
-  var badNodesList: Iterable[Node] = ListBuffer.empty
+  var structuredPDXBadNodesList: Iterable[Node] = ListBuffer.empty
+
+  def getStructuredPDXBadNodesList: Option[ListBuffer[String]] = {
+    val structuredPDXBadNodesList = ListBuffer.empty[String]
+    for node <- this.structuredPDXBadNodesList do
+      node.identifier match
+        case Some(id) => structuredPDXBadNodesList += id
+        case None => structuredPDXBadNodesList += s"Node without identifier: ${node.$}"
+    structuredPDXBadNodesList match
+      case l if l.isEmpty => None
+      case _ => Some(structuredPDXBadNodesList)
+  }
 
   protected def childScripts: collection.mutable.Iterable[? <: PDXScript[?]]
 
@@ -35,9 +46,9 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
         var remaining = Iterable.from(l)
         for pdxScript <- childScripts do
           remaining = pdxScript.loadPDX(remaining)
-        badNodesList = remaining
+        structuredPDXBadNodesList = remaining
       case _ =>
-        throw NodeValueTypeException(expression, "list", this.getClass)
+        throw NodeValueTypeException(expression, "A List", s"${expression.$}")
 
   override def set(value: ListBuffer[Node]): ListBuffer[Node] =
     // TODO: Consider if this implementation is complete
@@ -63,6 +74,15 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
           case _ => println(s"Error loading PDX script: $expression")
       case Some(_) => set(expression)
 
+  /**
+   * Loads a collection of PDXScripts from the provided expressions.
+   * @param expressions the iterable collection of Node expressions to load
+   * @throws UnexpectedIdentifierException
+   * @throws NodeValueTypeException
+   *  @return remaining unloaded expressions
+   */
+  @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
   override def loadPDX(expressions: Iterable[Node]): Iterable[Node] =
     expressions match
       case null => ListBuffer.empty
@@ -73,10 +93,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
         for expression <- validExpressions do
           Try(loadPDX(expression)) match
             case Success(_) => remaining -= expression
-            case Failure(e: UnexpectedIdentifierException) =>
-              System.err.println(e.getMessage)
             case Failure(e) => throw e // Re-throw unexpected exceptions
-
         remaining
 
   /**
@@ -144,7 +161,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     }
 
     // Merge loaded nodes and preserved nodes, then re-sort by original order
-    val combinedNodes = (sortedLoadedNodes ++ badNodesList)
+    val combinedNodes = (sortedLoadedNodes ++ structuredPDXBadNodesList)
       .sortBy(node =>
         node.identifier.fold(Int.MaxValue)(originalPositions.getOrElse(_, Int.MaxValue))
       )
@@ -160,5 +177,5 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
   override def clone(): AnyRef =
     val clonedInstance = super.clone().asInstanceOf[StructuredPDX]
     clonedInstance.node = Some(Node(pdxIdentifier, "=", ListBuffer.empty))
-    clonedInstance.badNodesList = this.badNodesList
+    clonedInstance.structuredPDXBadNodesList = this.structuredPDXBadNodesList
     clonedInstance

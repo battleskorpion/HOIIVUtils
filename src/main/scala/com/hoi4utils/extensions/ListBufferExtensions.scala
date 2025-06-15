@@ -1,6 +1,7 @@
 package com.hoi4utils.extensions
 
 import javafx.collections.{FXCollections, ObservableList}
+
 import scala.collection.mutable.ListBuffer
 
 extension [T](buffer: ListBuffer[T])

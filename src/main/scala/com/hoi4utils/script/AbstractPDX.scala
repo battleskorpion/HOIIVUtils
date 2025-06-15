@@ -1,7 +1,7 @@
 package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.{Node, Parser, ParserException}
+import com.hoi4utils.parser.{Node, Parser}
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
@@ -16,6 +16,8 @@ import scala.reflect.ClassTag
 trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScript[V] {
   private[script] var activeIdentifier = 0
   protected[script] var node: Option[Node] = None
+
+  val badNodes: ListBuffer[Node] = ListBuffer.empty
 
   /**
    * Sets the active identifier to match the given expression,
@@ -88,7 +90,7 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   override def loadPDX(expression: Node): Unit =
-    if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then throw UnexpectedIdentifierException(expression, expression.getClass)
+    if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then throw UnexpectedIdentifierException(expression)
     else
       try set(expression) catch
         case e: Throwable =>
@@ -100,18 +102,14 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @param expressions
    * @return remaining unloaded expressions
    */
+  @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
   def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
     val remaining = ListBuffer.from(expressions)
     expressions.foreach { expression =>
       if (isValidIdentifier(expression)) {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
-        catch {
-          case e: UnexpectedIdentifierException =>
-            logger.error(e.getMessage)
-        }
+        loadPDX(expression)
+        remaining -= expression
       }
     }
     remaining
@@ -128,6 +126,26 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
   @throws[NodeValueTypeException]
   protected def loadPDX(file: File): Unit = {
     loadPDX(new Parser(file, this.getClass).rootNode)
+  }
+
+  /**
+   * Loads a PDX script from the given Node.
+   * The Node should represent a valid PDX script block.
+   *
+   * @param expressions the Node/Nodes/File to load
+   * @throws UnexpectedIdentifierException if the Node does not contain a valid PDX script block
+   */
+  protected def loadPDX(expressions: Node | Iterable[Node] | File, errors: ListBuffer[String]): Unit = {
+    try expressions match
+      case node: Node => loadPDX(node)
+      case nodes: Iterable[Node] => loadPDX(nodes)
+      case file: File => loadPDX(file)
+      case null => errors.addOne("Cannot load PDX script from null value")
+    catch
+      case e: UnexpectedIdentifierException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    ${e.getMessage}")
+      case e: NodeValueTypeException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    ${e.getMessage}")
+      case e: IllegalStateException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    ${e.getMessage}")
+      case e: Throwable => errors.addOne(s"Class: ${getClass.getSimpleName} \n    Unexpected error while loading PDX script: ${expressions.toString}\n    ${e.getMessage}")
   }
 
   /**

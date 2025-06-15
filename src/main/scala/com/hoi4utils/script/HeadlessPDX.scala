@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.exceptions.NodeValueTypeException
+import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 
 import scala.collection.mutable.ListBuffer
@@ -11,6 +11,7 @@ trait HeadlessPDX:
   /** Overrides the default set behavior to ignore the identifier check.
    * This is useful for headless files where there is no top-level key.
    */
+  @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit =
     // Skip identifier checking since headless files do not have a named header.
@@ -20,7 +21,7 @@ trait HeadlessPDX:
         // Load each sub-PDXScript
         childScripts.foreach(_.loadPDX(listBuffer))
       case _ =>
-        throw NodeValueTypeException(expression, "listBuffer", getClass)
+        throw NodeValueTypeException(expression, "listBuffer", s"${expression.$}")
 
 // Commented alternative implementation using pattern matching for error handling:
 //

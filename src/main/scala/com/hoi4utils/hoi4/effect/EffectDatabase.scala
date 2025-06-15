@@ -6,7 +6,7 @@ import com.hoi4utils.hoi4.idea.Idea
 import com.hoi4utils.hoi4.scope.ScopeType
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
-import com.hoi4utils.{BoolType, ExpectedRange, RichString}
+import com.hoi4utils.{BoolType, ExpectedRange}
 import com.map.{Province, State}
 
 import java.io.{File, IOException}

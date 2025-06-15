@@ -77,14 +77,10 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     val childScript = expression.$ match
-      case _: ListBuffer[Node] =>
-        applySupplier(expression) 
-        // todo ehhh
-      case _ =>
-        // todo idk
-        simpleSupplier match
+      case _: ListBuffer[Node] => applySupplier(expression) 
+      case _ => simpleSupplier match
           case Some(supplier) => supplier()
-          case None => throw NodeValueTypeException(expression, "not a list", this.getClass)
+          case None => throw NodeValueTypeException(expression, "A List", "Nothing")
   
     childScript.loadPDX(expression)
     pdxList.addOne(childScript)

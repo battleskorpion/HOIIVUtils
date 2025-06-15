@@ -1,15 +1,13 @@
 package com.map
 
-import com.hoi4utils.extensions._
+import com.hoi4utils.extensions.*
 import com.hoi4utils.script.*
 import com.typesafe.scalalogging.LazyLogging
-import javafx.collections.{FXCollections, ObservableList}
-import org.apache.logging.log4j.{LogManager, Logger}
+import javafx.collections.ObservableList
 
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.jdk.javaapi.CollectionConverters
 
 class StrategicRegion extends StructuredPDX("strategic_region") with PDXFile with LazyLogging {
 
