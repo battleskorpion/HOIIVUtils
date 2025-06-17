@@ -51,8 +51,8 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
     } else {
 
       // create focus trees from files
-      HOIIVFiles.Mod.country_tags_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
-        new Parser(f, this.getClass).rootNode.foreach(node => {
+      HOIIVFiles.Mod.country_tags_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { file =>
+        new Parser(file).rootNode.foreach(node => {
           new CountryTag(node.name.trim)
         })
       }

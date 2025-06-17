@@ -13,7 +13,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
 
   def withParsedFiles(testFunction: Node => Unit): Unit = {
     HOIIVUtilsTest().filesToTest.foreach { file =>
-      val parser = new Parser(file, this.getClass)
+      val parser = new Parser(file)
       val node = parser.rootNode
       assert(node != null, s"Failed to parse $file")
       testFunction(node)
@@ -21,14 +21,14 @@ class PDXScriptTests extends AnyFunSuiteLike {
   }
 
   def withParsedFile(testFunction: Node => Unit, file: File): Unit = {
-    val node = new Parser(file, this.getClass).rootNode
+    val node = new Parser(file).rootNode
     assert(node != null, s"Failed to parse $file")
     testFunction(node)
   }
 
   def withValidFocusTrees(testFunction: FocusTree => Unit): Unit = {
     HOIIVUtilsTest().validFocusTreeTestFiles.foreach(file => {
-      val node = new Parser(file, this.getClass).rootNode
+      val node = new Parser(file).rootNode
       assert(node != null, s"Failed to parse $file")
       val focusTree = new FocusTree()
       focusTree.loadPDX(node)
@@ -39,7 +39,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
 
   def withValidStratRegions(testFunction: StrategicRegion => Unit): Unit = {
     HOIIVUtilsTest().validStratRegionTestFiles.foreach(file => {
-      val node = new Parser(file, this.getClass).rootNode
+      val node = new Parser(file).rootNode
       assert(node != null, s"Failed to parse $file")
       val stratRegion = new StrategicRegion()
       stratRegion.loadPDX(node)

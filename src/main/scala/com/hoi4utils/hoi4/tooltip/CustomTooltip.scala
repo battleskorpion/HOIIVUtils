@@ -47,7 +47,7 @@ object CustomTooltip {
     if (!validFile(file)) return
 
     val rootNode: Node = try {
-      new Parser(file, this.getClass).rootNode
+      new Parser(file).rootNode
     } catch {
       case e: ParserException => throw new RuntimeException(e)
     }

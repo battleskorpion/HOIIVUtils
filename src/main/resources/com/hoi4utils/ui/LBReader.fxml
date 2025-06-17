@@ -6,16 +6,6 @@
    <center>
       <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab text="parserFileErrors">
-            <content>
-              <AnchorPane>
-                     <children>
-                        <ListView fx:id="parserFileErrorsList"  AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
-                                  AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
-                     </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
           <Tab text="localizationErrors">
             <content>
               <AnchorPane>

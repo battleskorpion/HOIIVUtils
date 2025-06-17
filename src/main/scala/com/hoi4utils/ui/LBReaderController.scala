@@ -2,7 +2,6 @@ package com.hoi4utils.ui
 
 import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.extensions.*
-import com.hoi4utils.parser.Parser.parserFileErrors
 import com.hoi4utils.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4.country.Country.countryErrors
@@ -30,7 +29,6 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
   setTitle("LB Reader")
   setFxmlResource("LBReader.fxml")
 
-  @FXML var parserFileErrorsList: ListView[String] = uninitialized
   @FXML var localizationErrorsList: ListView[String] = uninitialized
   @FXML var interfaceErrorsList: ListView[String] = uninitialized
   @FXML var countryErrorsList: ListView[String] = uninitialized
@@ -56,7 +54,6 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
 
   private def update(): Unit = {
     val listViewsWithErrors = ListBuffer(
-      (parserFileErrorsList, parserFileErrors),
       (localizationErrorsList, localizationErrors),
       (interfaceErrorsList, interfaceErrors),
       (countryErrorsList, countryErrors),

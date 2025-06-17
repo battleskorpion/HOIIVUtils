@@ -40,7 +40,7 @@ final class Interface private (file: File) extends LazyLogging:
 
   private def readGFXFile(file: File): Set[SpriteType] =
     Try {
-      val parser = Parser(file, this.getClass)
+      val parser = Parser(file)
       val spriteTypeNodes = parser.rootNode
         .filterCaseInsensitive("spriteTypes")
         .subFilterCaseInsensitive("spriteType")

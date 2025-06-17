@@ -20,14 +20,14 @@ class ParserTest extends AnyFunSuiteLike {
 
   def withParsedFiles(testFunction: Node => Unit): Unit = {
     filesToTest.foreach { file =>
-      val node = new Parser(file, this.getClass).rootNode
+      val node = new Parser(file).rootNode
       assert(node != null, s"Failed to parse $file")
       testFunction(node)
     }
   }
 
   def withParsedFile(testFunction: Node => Unit, file: File): Unit = {
-    val node = new Parser(file, this.getClass).rootNode
+    val node = new Parser(file).rootNode
     assert(node != null, s"Failed to parse $file")
     testFunction(node)
   }
