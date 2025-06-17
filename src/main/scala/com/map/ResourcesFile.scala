@@ -36,7 +36,7 @@ object ResourcesFile extends PDXReadable with LazyLogging {
   private var _resourcesPDX: Option[ResourcesFile] = None
   var resourcesFileErrors: ListBuffer[String] = ListBuffer.empty
 
-  def read(testFile: File = null): Boolean =
+  def read(): Boolean =
     findResourcesFile() match
       case Some(file) =>
         _resourcesPDX = Some(ResourcesFile(file))

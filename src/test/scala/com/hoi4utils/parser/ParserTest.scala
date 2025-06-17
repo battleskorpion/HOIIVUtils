@@ -1,6 +1,5 @@
 package com.hoi4utils.parser
 
-import com.hoi4utils.hoi4.focus.FocusTree
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File
