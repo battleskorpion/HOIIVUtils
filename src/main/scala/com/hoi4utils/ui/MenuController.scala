@@ -39,7 +39,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     loadingLabel.setVisible(true)
 
     var initFailed: Boolean = false
-    initFailed = new Initializer().initialize(config, loadingLabel)
+    initFailed = new Initializer().initialize(config)
     val hProperties = config.getProperties
     val version = Version.getVersion(hProperties)
 

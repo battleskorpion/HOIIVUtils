@@ -138,7 +138,7 @@ object Country extends LazyLogging with PDXReadable {
 
   def getCountries: ListBuffer[Country] = countries
 
-  def read(): Boolean = {
+  def read(testFile: File = null): Boolean = {
     if (!HOIIVFiles.Mod.country_folder.exists || !HOIIVFiles.Mod.country_folder.isDirectory) {
       logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_folder} is not a directory, or it does not exist.")
       false

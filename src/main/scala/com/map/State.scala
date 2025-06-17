@@ -295,7 +295,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
   /**
    * Creates States from reading files
    */
-  def read(): Boolean = {
+  def read(testFile: File = null): Boolean = {
     if (!HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory) {
       logger.error(s"In State.java - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
       false

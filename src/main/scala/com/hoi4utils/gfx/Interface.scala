@@ -108,7 +108,7 @@ object Interface extends PDXReadable with LazyLogging:
   def getSprite(name: String): Option[SpriteType] = gfxMap.get(name)
 
   /** Read interface files from both mod and HOI4 directories */
-  def read(): Boolean =
+  def read(testFile: File = null): Boolean =
     val modResult = readInterfaceDirectory(HOIIVFiles.Mod.interface_folder)
     val hoi4Result = readInterfaceDirectory(HOIIVFiles.HOI4.interface_folder)
     modResult && hoi4Result

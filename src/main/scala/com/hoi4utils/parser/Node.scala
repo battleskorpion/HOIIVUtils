@@ -19,8 +19,9 @@ class Node (
             var trailingTrivia: ListBuffer[Token] = ListBuffer()
           ) extends NodeIterable[Node] {
 
-  def this(value: String | Int | Double | Boolean | ListBuffer[Node] | Comment) =
+  def this(value: String | Int | Double | Boolean | ListBuffer[Node] | Comment) = {
     this(rawValue = Some(value))
+  }
 
   def this(identifier: String, operator: String, value: String | Int | Double | Boolean | ListBuffer[Node] | Comment) =
     this(

@@ -1,6 +1,6 @@
-package com.hoi4utils.clausewitz.script
+package com.hoi4utils.script
 
-
+import com.hoi4utils.HOIIVUtilsTest
 import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.parser.{Node, Parser, Tokenizer}
 import com.hoi4utils.script.StringPDX
@@ -11,30 +11,8 @@ import java.io.File
 
 class PDXScriptTests extends AnyFunSuiteLike {
 
-  private val testPath = "src/test/resources/clausewitz_parser/"
-  private val validFocusTreeTestFiles = List(
-    new File(testPath + "minimichigantest.txt"),
-    new File(testPath + "minimichigantest2.txt"),
-    new File(testPath + "minimichigantest3.txt"),
-    new File(testPath + "texas_tree.txt"),
-  )
-  private val validFocusTestFiles = List(
-    new File(testPath + "focus_with_search_filter_test1.txt"),
-    new File(testPath + "focus_with_search_filter_test2.txt"),
-    new File(testPath + "carriage_return.txt"),
-  )
-  private val validStratRegionTestFiles = List(
-    new File(testPath + "StrategicRegion.txt"),
-  )
-  private val filesToTest = List(
-    new File(testPath + "specialinfantry.txt"),
-  )
-    .appendedAll(validFocusTreeTestFiles)
-    .appendedAll(validFocusTestFiles)
-    .appendedAll(validStratRegionTestFiles)
-
   def withParsedFiles(testFunction: Node => Unit): Unit = {
-    filesToTest.foreach { file =>
+    HOIIVUtilsTest().filesToTest.foreach { file =>
       val parser = new Parser(file, this.getClass)
       val node = parser.rootNode
       assert(node != null, s"Failed to parse $file")
@@ -49,7 +27,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
   }
 
   def withValidFocusTrees(testFunction: FocusTree => Unit): Unit = {
-    validFocusTreeTestFiles.foreach(file => {
+    HOIIVUtilsTest().validFocusTreeTestFiles.foreach(file => {
       val node = new Parser(file, this.getClass).rootNode
       assert(node != null, s"Failed to parse $file")
       val focusTree = new FocusTree()
@@ -60,7 +38,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
 
 
   def withValidStratRegions(testFunction: StrategicRegion => Unit): Unit = {
-    validStratRegionTestFiles.foreach(file => {
+    HOIIVUtilsTest().validStratRegionTestFiles.foreach(file => {
       val node = new Parser(file, this.getClass).rootNode
       assert(node != null, s"Failed to parse $file")
       val stratRegion = new StrategicRegion()
@@ -69,10 +47,9 @@ class PDXScriptTests extends AnyFunSuiteLike {
     })
   }
 
-
   test("Some PDXScript objects should be loaded through loadPDX() when present") {
     withValidFocusTrees { focusTree =>
-      assert(focusTree.pdxProperties.nonEmpty)
+      assert(focusTree.pdxProperties.nonEmpty, "FocusTree should have some PDXScript properties loaded")
     }
   }
 
@@ -211,7 +188,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
 
   test("SpriteType objects are loaded with correct properties") {
     // Assumes a test file "sprite_types.txt" exists under testPath containing the SpriteType definitions.
-    val spriteFile = new File(testPath + "sprite_types.txt")
+    val spriteFile = new File(HOIIVUtilsTest().testPath + "sprite_types.txt")
     val node = new Parser(spriteFile, this.getClass).rootNode
     assert(node != null, s"Failed to parse ${spriteFile.getName}")
 
@@ -258,7 +235,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
 
   test("SpriteType animations have distinct rotation values") {
     // Assumes a test file "sprite_types.txt" exists under testPath containing the SpriteType definitions.
-    val spriteFile = new File(testPath + "sprite_types.txt")
+    val spriteFile = new File(HOIIVUtilsTest().testPath + "sprite_types.txt")
     val node = new Parser(spriteFile, this.getClass).rootNode
     assert(node != null, s"Failed to parse ${spriteFile.getName}")
 
@@ -285,14 +262,14 @@ class PDXScriptTests extends AnyFunSuiteLike {
   }
 
   test("SMA Simple") {
-    val file = new File(testPath + "Massachusetts_focus_simple.txt")
+    val file = new File(HOIIVUtilsTest().testPath + "Massachusetts_focus_simple.txt")
     val treeSMA = new FocusTree(file)
     println(treeSMA.toScript)
     assert(treeSMA.pdxProperties.nonEmpty)
   }
 
   test("SMA") {
-    val file = new File(testPath + "Massachusetts_focus.txt")
+    val file = new File(HOIIVUtilsTest().testPath + "Massachusetts_focus.txt")
     val treeSMA = new FocusTree(file)
     println(treeSMA.toScript)
     assert(treeSMA.pdxProperties.nonEmpty)

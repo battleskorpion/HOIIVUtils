@@ -1,15 +1,13 @@
-package com.hoi4utils.clausewitz.script
+package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.ReferencePDX
 import org.scalatest.funsuite.AnyFunSuite
 
-// A simple dummy PDX object with an identifier.
-case class DummyPDX(id: String)
-
 class ReferencePDXTests extends AnyFunSuite {
-
+  // A simple dummy PDX object with an identifier.
+  case class DummyPDX(id: String)
   // Our dummy collection and supplier/extractor.
   val dummyCollection: List[DummyPDX] = List(
     DummyPDX("dummy1"),

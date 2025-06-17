@@ -13,7 +13,7 @@ import scala.reflect.ClassTag
  * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
  * <p>
  */
-trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScript[V] {
+trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScript[T] {
   private[script] var activeIdentifier = 0
   protected[script] var node: Option[Node] = None
 
@@ -29,14 +29,14 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
   @throws[UnexpectedIdentifierException]
   protected def usingIdentifier(expr: Node): Unit =
     pdxIdentifiers match
-      case Nil => // all good?
-      case identifiers if !identifiers.exists(expr.nameEquals) => // TODO add to list to be used later
+      case pdxIdentifiers if pdxIdentifiers.isEmpty => throw UnexpectedIdentifierException(expr, "No PDX identifiers defined for this PDXScript")
+      case identifiers if !identifiers.exists(expr.nameEquals) => throw UnexpectedIdentifierException(expr, s"Identifier '${expr.name}' is not a valid PDX identifier. Valid identifiers: ${pdxIdentifiers.mkString(", ")}")
       case _ => // identifier found, continue processing
 
   /**
    * @inheritdoc
    */
-  override protected def setNode(value: V | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
+  override protected def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
     if (node.isEmpty) {
       return
     }
@@ -67,9 +67,9 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  override def value: Option[V] = {
+  override def value: Option[T] = {
     node.getOrElse(return None).$ match {
-      case value: V => Some(value)
+      case value: T => Some(value)
       case _ => None
     }
   }
@@ -174,7 +174,7 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
     node.foreach(_.setNull())
   }
 
-  override def loadOrElse(exp: Node, value: V): Unit = {
+  override def loadOrElse(exp: Node, value: T): Unit = {
     try loadPDX(exp)
     catch {
       case e: UnexpectedIdentifierException =>
@@ -215,10 +215,10 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  override def getOrElse(elseValue: V): V = {
+  override def getOrElse(elseValue: T): T = {
     val value = node.getOrElse(return elseValue).value
     value match
-      case Some(t: V) => t
+      case Some(t: T) => t
       case _ => elseValue
   }
 
@@ -253,9 +253,9 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
     pdxIdentifier
   }
 
-  def schema(): PDXSchema[V] = {
-    var schema = new PDXSchema[V](pdxIdentifiers*)
-    null.asInstanceOf[PDXSchema[V]]  // todo no
+  def schema(): PDXSchema[T] = {
+    var schema = new PDXSchema[T](pdxIdentifiers*)
+    null.asInstanceOf[PDXSchema[T]]  // todo no
   }
 
 }

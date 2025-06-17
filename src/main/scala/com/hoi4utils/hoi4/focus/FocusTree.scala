@@ -30,6 +30,7 @@ class FocusTree(focus_file: File = null) extends StructuredPDX("focus_tree") wit
 
   /* load FocusTree */
   focus_file match
+    case null => // create a focus tree without a file
     case file if file.exists() =>
       loadPDX(focus_file, focusTreeFileErrors)
       _focusFile = Some(file)
@@ -203,20 +204,25 @@ object FocusTree extends LazyLogging with PDXReadable {
   /**
    * Reads all focus trees from the focus trees folder, creating FocusTree instances for each.
    */
-  def read(): Boolean = {
-    if (!HOIIVFiles.Mod.focus_folder.exists || !HOIIVFiles.Mod.focus_folder.isDirectory) {
-      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
-      false
-    } else if (HOIIVFiles.Mod.focus_folder.listFiles == null || HOIIVFiles.Mod.focus_folder.listFiles.length == 0) {
-      logger.warn(s"No focuses found in ${HOIIVFiles.Mod.focus_folder}")
-      false
-    } else {
-
-      // create focus trees from files
-      HOIIVFiles.Mod.focus_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
-        new FocusTree(f)
-      }
-      true
+  def read(testFile: File = null): Boolean = {
+    testFile match {
+      case null => // Load focus trees like normal
+        HOIIVFiles.Mod.focus_folder match
+          case folder if !folder.exists || !folder.isDirectory =>
+            logger.error(s"In ${this.getClass.getSimpleName} - ${folder} is not a directory, or it does not exist.")
+            false
+          case folder if folder.listFiles == null || folder.listFiles.length == 0 =>
+            logger.warn(s"No focuses found in ${folder}")
+            false
+          case folder =>
+            folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
+              new FocusTree(f)
+            }
+            true
+      case tf if tf.exists() && tf.isFile && tf.getName.endsWith(".txt") =>
+        new FocusTree(tf) // create a single focus tree from the specified file
+        true
+      case _ => throw IllegalArgumentException("Invalid test file provided to FocusTree.read() method.")
     }
   }
 

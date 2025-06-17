@@ -72,7 +72,7 @@ object IdeaFile extends LazyLogging with PDXReadable:
   /**
    * Reads all focus trees from the focus trees folder, creating FocusTree instances for each.
    */
-  def read(): Boolean = {
+  def read(testFile: File = null): Boolean = {
     if (!HOIIVFiles.Mod.ideas_folder.exists || !HOIIVFiles.Mod.ideas_folder.isDirectory) {
       logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
       false

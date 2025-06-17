@@ -4,6 +4,7 @@ import com.hoi4utils.parser.Parser
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 
+import java.io.File
 import scala.collection.mutable.ListBuffer
 
 class CountryTag(val tag: String) extends Comparable[CountryTag] {
@@ -40,7 +41,7 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
     ListBuffer[CountryTag]()
   }
 
-  def read(): Boolean = {
+  def read(testFile: File = null): Boolean = {
     if (!HOIIVFiles.Mod.country_tags_folder.exists || !HOIIVFiles.Mod.country_tags_folder.isDirectory) {
       logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_tags_folder} is not a directory, or it does not exist.")
       false

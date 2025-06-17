@@ -1,4 +1,4 @@
-package com.hoi4utils.clausewitz.localization
+package com.hoi4utils.localization
 
 import org.scalatest.funsuite.AnyFunSuiteLike
 

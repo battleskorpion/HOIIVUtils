@@ -16,7 +16,7 @@ import javax.swing.*
 class Initializer extends LazyLogging {
 
   // TODO: add success to some of these, this is so if something fails that we skip loading the mod and tell the user to go to setting and try again with new settings
-  def initialize(config: Config, loadingLabel: Label): Boolean = {
+  def initialize(config: Config): Boolean = {
     var initFailed: Boolean = false
 
     ConfigManager().loadProperties(config)
