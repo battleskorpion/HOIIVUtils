@@ -86,21 +86,71 @@
               </AnchorPane>
             </content>
           </Tab>
-          <Tab text="resouceFileErrors">
+          <Tab text="provinceErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="provinceErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="resourceErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="resourceErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="resourcesFileErrors">
             <content>
                 <AnchorPane>
                     <children>
-                        <ListView fx:id="resouceFileErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                        <ListView fx:id="resourcesFileErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
                                   AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
                     </children>
                 </AnchorPane>
             </content>
           </Tab>
-          <Tab text="stateFileErrors">
+          <Tab text="stateErrors">
             <content>
               <AnchorPane>
                 <children>
-                  <ListView fx:id="stateFileErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                  <ListView fx:id="stateErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="stateCategoriesErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="stateCategoriesErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="strategicRegionErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="strategicRegionErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="victoryPointErrors">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="victoryPointErrorsList" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
                             AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
                 </children>
               </AnchorPane>

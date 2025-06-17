@@ -7,7 +7,7 @@ import org.apache.logging.log4j.{LogManager, Logger}
 
 import scala.collection.mutable.ListBuffer
 
-class Province extends IntPDX {
+class Province extends IntPDX:
   override def set(expression: Node): Unit = {
     super.set(expression)
   }
@@ -21,10 +21,10 @@ class Province extends IntPDX {
   }
   
   def id: Option[Int] = value
-}
 
-object Province extends LazyLogging {
+object Province extends LazyLogging:
   private val provinces = new ListBuffer[Province]()
+  val provinceErrors: ListBuffer[String] = ListBuffer.empty[String]
 
   /**
    * Clears all provinces and any other relevant values.
@@ -41,7 +41,6 @@ object Province extends LazyLogging {
   def list: List[Province] = provinces.toList
 
   def apply(id: Int): Province = {
-    require(id >= 0, "Province id must be non-negative")
     val newProvince = new Province()
     newProvince.set(id)
     //        provinces += newProvince
@@ -55,4 +54,3 @@ object Province extends LazyLogging {
 //        
 //    }
   }
-}

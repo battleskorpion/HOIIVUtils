@@ -1,9 +1,9 @@
 package com.map
 
-import com.hoi4utils.parser.Node
-import com.hoi4utils.script.{CollectionPDX, PDXSupplier}
-import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.map.ResourcesFile.resourcesFileErrors
+import com.hoi4utils.parser.Node
+import com.hoi4utils.script.{CollectionPDX, PDXSupplier, DoublePDX, IntPDX, PDXScript, StructuredPDX}
+import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.File
@@ -13,7 +13,7 @@ class ResourcesFile(var _resourcesFile: File) extends CollectionPDX[ResourceDef]
   require(_resourcesFile.exists, s"File does not exist: ${_resourcesFile}")
 
   /* load ResourcesFile */
-  loadPDX(_resourcesFile)
+  loadPDX(_resourcesFile, resourcesFileErrors)
 
   /**
    * @inheritdoc
@@ -34,7 +34,7 @@ class ResourcesFile(var _resourcesFile: File) extends CollectionPDX[ResourceDef]
 object ResourcesFile extends PDXReadable with LazyLogging {
 
   private var _resourcesPDX: Option[ResourcesFile] = None
-  val resourcesFileErrors: ListBuffer[String] = ListBuffer.empty
+  var resourcesFileErrors: ListBuffer[String] = ListBuffer.empty
 
   def read(): Boolean =
     findResourcesFile() match

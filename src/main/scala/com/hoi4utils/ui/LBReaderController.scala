@@ -10,8 +10,13 @@ import com.hoi4utils.hoi4.focus.Focus.focusErrors
 import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
 import com.hoi4utils.hoi4.idea.Idea.ideaErrors
 import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
+import com.map.Province.provinceErrors
+import com.map.Resource.resourceErrors
 import com.map.ResourcesFile.resourcesFileErrors
-import com.map.State.stateFileErrors
+import com.map.State.stateErrors
+import com.map.StateCategories.stateCategoriesErrors
+import com.map.StrategicRegion.strategicRegionErrors
+import com.map.VictoryPoint.victoryPointErrors
 import com.hoi4utils.StateFilesWatcher.statesThatChanged
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
@@ -31,11 +36,17 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
   @FXML var countryErrorsList: ListView[String] = uninitialized
   @FXML var focusErrorsList: ListView[String] = uninitialized
   @FXML var focusTreeErrorsList: ListView[String] = uninitialized
-  @FXML var statesThatChangedList: ListView[String] = uninitialized
-  @FXML var resouceFileErrorsList: ListView[String] = uninitialized
   @FXML var ideaErrorsList: ListView[String] = uninitialized
   @FXML var ideaFileErrorsList: ListView[String] = uninitialized
-  @FXML var stateFileErrorsList: ListView[String] = uninitialized
+  @FXML var provinceErrorsList: ListView[String] = uninitialized
+  @FXML var resourceErrorsList: ListView[String] = uninitialized
+  @FXML var resourcesFileErrorsList: ListView[String] = uninitialized
+  @FXML var resouceErrorsList: ListView[String] = uninitialized
+  @FXML var stateErrorsList: ListView[String] = uninitialized
+  @FXML var stateCategoriesErrorsList: ListView[String] = uninitialized
+  @FXML var strategicRegionErrorsList: ListView[String] = uninitialized
+  @FXML var victoryPointErrorsList: ListView[String] = uninitialized
+  @FXML var statesThatChangedList: ListView[String] = uninitialized
 
   val testList: ListBuffer[String] = ListBuffer.empty[String]
 
@@ -53,8 +64,13 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
       (focusTreeErrorsList, focusTreeFileErrors),
       (ideaErrorsList, ideaErrors),
       (ideaFileErrorsList, ideaFileErrors),
-      (resouceFileErrorsList, resourcesFileErrors),
-      (stateFileErrorsList, stateFileErrors)
+      (provinceErrorsList, provinceErrors),
+      (resourceErrorsList, resourceErrors),
+      (resourcesFileErrorsList, resourcesFileErrors),
+      (stateErrorsList, stateErrors),
+      (stateCategoriesErrorsList, stateCategoriesErrors),
+      (strategicRegionErrorsList, strategicRegionErrors),
+      (victoryPointErrorsList, victoryPointErrors)
     )
 
     listViewsWithErrors.foreach((listView, errors) => setListViewItems(listView, errors))

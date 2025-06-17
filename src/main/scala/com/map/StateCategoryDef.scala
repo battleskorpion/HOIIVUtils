@@ -2,24 +2,35 @@ package com.map
 
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.{IntPDX, PDXScript, StructuredPDX}
+import com.map.StateCategories.stateCategoriesErrors
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-class StateCategoryDef(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) {
+class StateCategoryDef(pdxIdentifier: String | Node)
+  extends StructuredPDX(
+    pdxIdentifier match {
+      case s: String => s
+      case n: Node => n.name
+    }
+  ) {
   final var local_building_slots = new IntPDX("local_building_slots")
   //final var color = new ColorPDX("color") // todo :D
 
-  def this(node: Node) = {
-    this(node.name)
-    loadPDX(node)
+  pdxIdentifier match {
+    case n: Node => loadPDX(n, stateCategoriesErrors)
+    case _ => // do nothing, pdxIdentifier is a String
   }
 
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
     ListBuffer(local_building_slots)
   }
 
-  def name: String = this.pdxIdentifier
+  def name: String =
+    this.pdxIdentifier match {
+      case s: String => s
+      case n: Node => n.name
+    }
 
   //	/**
   //	 * localizable: category name

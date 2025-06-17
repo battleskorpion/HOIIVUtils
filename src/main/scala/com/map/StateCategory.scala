@@ -2,31 +2,37 @@ package com.map
 
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.{PDXSupplier, ReferencePDX}
+import com.map.StateCategories.stateCategoriesErrors
 
 /**
  * Represents a valid state category.
  *
- * @param id
+ * @param id pdx identifier for the state category
  */
-class StateCategory(id: String) extends ReferencePDX[StateCategoryDef](() => StateCategories.list, s => Some(s.name), id) {
-  /* init */
-  require(isValidID(id), s"Invalid state category identifier: $id")
+@throws[IllegalArgumentException]
+class StateCategory(id: String | Node | StateCategoryDef)
+  extends ReferencePDX[StateCategoryDef](
+    () => StateCategories.list,
+    s => Some(s.name),
+    id match
+      case s: String => s
+      case n: Node => n.name
+      case d: StateCategoryDef => d.name
+  ):
 
-  def this(node: Node) = {
-    this(node.name)
-    loadPDX(node)
-  }
+  require(isValidID(id match
+    case s: String => s
+    case n: Node => n.name
+    case d: StateCategoryDef => d.name
+  ), s"Invalid state category identifier: $id")
 
-  def this(stateCategoryDef: StateCategoryDef) = {
-    this(stateCategoryDef.name)
-  }
+  id match
+    case n: Node => loadPDX(n, stateCategoriesErrors)
+    case _ => ()
 
   def sameStateCategory(stateCategory: StateCategory): Boolean = this.isValidID(stateCategory.identifier)
-
   def sameStateCategory(identifier: String): Boolean = this.isValidID(identifier)
-
   def identifier: String = this.pdxIdentifier
-}
 
 /*
  * StateCategory File

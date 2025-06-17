@@ -3,16 +3,20 @@ package com.map
 import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.PDXSupplier
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
 
-
-object StateCategories {
-  val logger: Logger = LogManager.getLogger(classOf[this.type])
+/* * StateCategories.scala
+ * This file is part of the HOI4 Map Editor project.
+ * It provides functionality to read and manage state categories from files.
+ */
+object StateCategories extends LazyLogging:
 
   private val _stateCategoryFiles: ListBuffer[StateCategoryFile] = ListBuffer()
+  var stateCategoriesErrors: ListBuffer[String] = ListBuffer().empty
 
   def read(): Unit = {
     clear()
@@ -33,7 +37,7 @@ object StateCategories {
           _stateCategoryFiles += new StateCategoryFile(f)
         }
       case None =>
-        logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.HOI4.resources_file} is not a directory, " +
+        stateCategoriesErrors.addOne(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.HOI4.resources_file} is not a directory, " +
           s"or it does not exist (No resources file found).")
     }
   }
@@ -61,4 +65,3 @@ object StateCategories {
   def clear(): Unit = {
     _stateCategoryFiles.clear()
   }
-}

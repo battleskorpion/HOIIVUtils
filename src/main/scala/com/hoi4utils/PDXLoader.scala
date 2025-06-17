@@ -16,7 +16,7 @@ import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
 import com.hoi4utils.hoi4.idea.Idea.ideaErrors
 import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
 import com.map.ResourcesFile.resourcesFileErrors
-import com.map.State.stateFileErrors
+import com.map.State.stateErrors
 import com.hoi4utils.StateFilesWatcher.statesThatChanged
 import com.hoi4utils.ui.MenuController
 import com.map.{ResourcesFile, State}
@@ -80,13 +80,13 @@ class PDXLoader extends LazyLogging {
   }
 
   def clearPDX(): Unit = {
-    Interface.clear()
-    State.clear()
-    Country.clear()
-    CountryTag.clear()
-    FocusTree.clear()
     IdeaFile.clear()
+    FocusTree.clear()
+    CountryTag.clear()
+    Country.clear()
+    State.clear()
     ResourcesFile.clear()
+    Interface.clear()
   }
 
   def clearLB(): Unit = {
@@ -100,7 +100,7 @@ class PDXLoader extends LazyLogging {
       ideaErrors,
       ideaFileErrors,
       resourcesFileErrors,
-      stateFileErrors,
+      stateErrors,
       loadedLocFiles
     ).foreach(_.clear())
   }

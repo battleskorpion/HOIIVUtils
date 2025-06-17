@@ -1,20 +1,13 @@
 package com.map
 
-import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
-import com.hoi4utils.{HOIIVFiles, PDXReadable}
-import org.apache.logging.log4j.{LogManager, Logger}
+import com.map.Resource.resourceErrors
 
-import java.io.File
-import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-
 /**
  * Represents a valid resource and its quantity.
  *
- * @param id
- * @param amt // quantity of resource being represented
  * @throws IllegalArgumentException if the id is not a valid resource identifier
  */
 @throws[IllegalArgumentException]
@@ -25,7 +18,7 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, (
   @throws[IllegalArgumentException]
   def this(node: Node) = {
     this(node.name)
-    loadPDX(node)
+    loadPDX(node, resourceErrors)
   }
 
   @throws[IllegalArgumentException]
@@ -56,6 +49,8 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, (
 object Resource {
   private var resourceIdentifiers = Array("aluminium", "chromium", "oil", "rubber", "steel", "tungsten") // default: aluminium, chromium, oil, rubber, steel, tungsten todo load in resources if modified.
 
+  val resourceErrors: ListBuffer[String] = ListBuffer.empty
+  
   private def setResourceIdentifiers(identifiers: Array[String]): Unit = {
     Resource.resourceIdentifiers = identifiers
   }

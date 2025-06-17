@@ -7,7 +7,7 @@ import com.hoi4utils.hoi4.country.{Country, CountryTag, CountryTagsManager}
 import com.hoi4utils.localization.*
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
-import com.map.State.{History, stateFileErrors}
+import com.map.State.{History, stateErrors}
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
 
@@ -28,7 +28,7 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
   private val resourcePDXSupplier: PDXSupplier[Resource] = Resource() // todo: what
   final val resources = new CollectionPDX[Resource](resourcePDXSupplier, "resources") {
     override def loadPDX(expr: Node): Unit = {
-      super.loadPDX(expr, stateFileErrors)
+      super.loadPDX(expr, stateErrors)
     }
 
     override def getPDXTypeName: String = "Resources"
@@ -49,10 +49,10 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
   /* load State */
   file match
     case f if f.exists() && f.isFile =>
-      loadPDX(file, stateFileErrors)
+      loadPDX(file, stateErrors)
       _stateFile = Some(file)
     case f if f != null && !f.exists() =>
-      stateFileErrors += s"State file ${f.getName} does not exist."
+      stateErrors += s"State file ${f.getName} does not exist."
 
   /* init */
   if (addToStatesList) State.add(this)
@@ -282,7 +282,7 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
 object State extends Iterable[State] with PDXReadable with LazyLogging {
 
   private val states = new ListBuffer[State]
-  val stateFileErrors: ListBuffer[String] = ListBuffer.empty
+  val stateErrors: ListBuffer[String] = ListBuffer.empty
 
   def get(file: File): Option[State] = {
     if (file == null) return None
