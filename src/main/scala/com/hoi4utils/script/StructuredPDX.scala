@@ -69,13 +69,8 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
       case None =>
         expression.$ match
           case listBuffer: ListBuffer[Node] => loadPDX(listBuffer)
-          case _ => throw IllegalArgumentException(s"Error loading PDX script: $expression")
-      case Some(_) =>
-        try set(expression)
-        catch
-          case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-            node = Some(expression) // Set the node even if an exception occurs
-            throw e // Re-throw the exception for further handling
+          case _ => println(s"Error loading PDX script: $expression")
+      case Some(_) => set(expression)
 
   /**
    * Loads a collection of PDXScripts from the provided expressions.
