@@ -19,16 +19,14 @@ class ParserTest extends AnyFunSuiteLike {
 
   def withParsedFiles(testFunction: Node => Unit): Unit = {
     filesToTest.foreach { file =>
-      val parser = new Parser(file)
-      val node = parser.parse
+      val node = new Parser(file, this.getClass).rootNode
       assert(node != null, s"Failed to parse $file")
       testFunction(node)
     }
   }
 
   def withParsedFile(testFunction: Node => Unit, file: File): Unit = {
-    val parser = new Parser(file)
-    val node = parser.parse
+    val node = new Parser(file, this.getClass).rootNode
     assert(node != null, s"Failed to parse $file")
     testFunction(node)
   }
@@ -105,8 +103,7 @@ class ParserTest extends AnyFunSuiteLike {
         |    effectFile = "gfx/FX/buttonstate.lua";
         |}""".stripMargin
 
-    val parser = new Parser(input)
-    val root = parser.parse
+    val root = new Parser(input, this.getClass).rootNode
 
     // Find the textSpriteType node.
     val textSpriteOpt = root.find("textSpriteType")
@@ -142,8 +139,7 @@ class ParserTest extends AnyFunSuiteLike {
         |}
         |""".stripMargin
 
-    val parser = new Parser(input)
-    val root = parser.parse
+    val root = new Parser(input, this.getClass).rootNode
 
     assert(root.nonEmpty, "Root node is empty")
     assert(root.contains("focus"), "Root node does not contain 'focus'")

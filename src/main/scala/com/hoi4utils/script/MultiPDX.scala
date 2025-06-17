@@ -33,35 +33,33 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    * @inheritdoc
    */
   @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
   override def loadPDX(expression: Node): Unit = {
     try {
       add(expression)
     } catch {
-      case e: NodeValueTypeException =>
-        logger.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
-        // For MultiPDX, preserve the node by storing the raw expression.
+      case e: Throwable =>
         node = Some(expression)
+        throw e
     }
   }
 
+  /**
+   * Loads a collection of PDXScripts from the provided expressions.
+   * It filters out invalid identifiers and processes valid ones.
+   *
+   * @param expressions the iterable collection of Node expressions to load
+   * @return an iterable of remaining expressions that were not processed
+   */
+  @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
   override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    if (expressions != null) {
-      val remaining = ListBuffer.from(expressions)
-      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
-        catch {
-          case e: UnexpectedIdentifierException =>
-            logger.error(e.getMessage)
-          //throw new RuntimeException(e);
-        }
-      })
-      remaining
-    } else {
-      ListBuffer.empty
-    }
+    Option(expressions) match
+      case None => List.empty
+      case Some(exprs) =>
+        val validExpressions = exprs.filter(isValidIdentifier).toSet
+        validExpressions.foreach(add)
+        exprs.filterNot(validExpressions.contains)
   }
 
   override def equals(other: PDXScript[?]) = false // todo? well.
@@ -73,23 +71,19 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  protected def add(expression: Node): Unit = {
+  protected def add(expression: Node): Unit =
     usingIdentifier(expression)
+
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
-    expression.$ match {
-      case l: ListBuffer[Node] =>
-        val childScript = applySupplier(expression) // todo ehhh
-        childScript.loadPDX(expression)
-        pdxList.addOne(childScript)
-      case _ =>
-        // todo idk
-        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "not a list", this.getClass)
-        val childScript = simpleSupplier.get.apply()
-        childScript.loadPDX(expression)
-        pdxList.addOne(childScript)
-    }
-  }
+    val childScript = expression.$ match
+      case _: ListBuffer[Node] => applySupplier(expression) 
+      case _ => simpleSupplier match
+          case Some(supplier) => supplier()
+          case None => throw NodeValueTypeException(expression, "A List", "Nothing")
+  
+    childScript.loadPDX(expression)
+    pdxList.addOne(childScript)
 
   def removeIf(p: T => Boolean): ListBuffer[T] = {
     for (i <- pdxList.indices.reverse) {

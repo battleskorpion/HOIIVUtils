@@ -1,57 +1,16 @@
 package com.hoi4utils.localization
 
-import com.hoi4utils.HOIIVFiles
+import com.hoi4utils.{HOIIVFiles, RichString}
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
+import com.hoi4utils.localization.LocalizationManager.{loadedLocFiles, localizationErrors}
 import com.typesafe.scalalogging.LazyLogging
-import com.hoi4utils.RichString
 
 import java.io.*
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import java.util.Scanner
+import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
-
-
-object LocalizationManager {
-  //static Map<String, Localization> localizations = new HashMap<>();
-  private var primaryManager: Option[LocalizationManager] = None
-
-  def getLocalizationFile(key: String): File = get.localizations.getLocalizationFile(key)
-
-  @throws[NoLocalizationManagerException]
-  def get: LocalizationManager = {
-    primaryManager match {
-      case Some(mgr) => mgr
-      case None => throw new NoLocalizationManagerException
-    }
-  }
-  
-  def getOrCreate(createManager: () => LocalizationManager): LocalizationManager = {
-    primaryManager match {
-      case Some(mgr) => mgr
-      case None => createManager()
-    }
-  }
-
-  def get(key: String): Option[Localization] = get.getLocalization(key)
-
-  def getAll(localizationKeys: Iterable[String]): Iterable[Localization] = get.localizations.getAll(localizationKeys)
-
-  @throws[IllegalArgumentException]
-  def find(key: String): Option[Localization] = get.getLocalization(key)
-
-  private[localization] def numCapitalLetters(word: String): Int = {
-    if (word == null) return 0
-    var num_cap_letters = 0
-    num_cap_letters = 0
-    for (j <- 0 until word.length) {
-      if (Character.isUpperCase(word.charAt(j))) num_cap_letters += 1
-    }
-    num_cap_letters
-  }
-
-  def isAcronym(word: String): Boolean = numCapitalLetters(word) == word.length
-}
 
 /**
  * Abstract class that manages localizations for a system.
@@ -76,7 +35,7 @@ abstract class LocalizationManager extends LazyLogging {
    * Reloads the localizations. The specific behavior of this method
    * depends on the implementation.
    */
-  def reload(): Unit = {
+  def reload(): Boolean = {
     localizations.clear()
     // load all localization files within the localization folder and any subfolders
     loadLocalization()
@@ -253,23 +212,23 @@ abstract class LocalizationManager extends LazyLogging {
     else if (words.head.length > 1) words(0) = Character.toUpperCase(words.head.charAt(0)) + words.head.substring(1)
     else {
       // todo this should never happen now right?
-      System.out.println("first word length < 1")
+      logger.debug("first word length < 1")
     }
 
-    System.out.println("num words: " + words.size)
+    logger.debug("num words: " + words.size)
     for (i <- 1 until words.size) {
       if (!LocalizationManager.isAcronym(words(i)) && !whitelist.contains(words(i))) {
         if (words(i).length == 1) {
           words(i) = Character.toUpperCase(words(i).charAt(0)) + ""
         }
         else if (words(i).length > 1) {
-          // System.out.println("working cap");
+          // logger.debug("working cap");
           words(i) = Character.toUpperCase(words(i).charAt(0)) + words(i).substring(1)
         }
       }
     }
 
-    System.out.println("capitalized: " + String.join(" ", CollectionConverters.asJava(words)))
+    logger.debug("capitalized: " + String.join(" ", CollectionConverters.asJava(words)))
     String.join(" ", CollectionConverters.asJava(words))
   }
 
@@ -287,121 +246,110 @@ abstract class LocalizationManager extends LazyLogging {
     entry.replaceAll("§", "Â§") // necessary with UTF-8 BOM
   }
 
-  protected def loadLocalization(): Unit = {
+  protected def loadLocalization(): Boolean = {
     /* Load mod localization after vanilla to give mod localizations priority */
-    // vanilla
-    if (HOIIVFiles.HOI4.localization_folder == null)
-      logger.warn("'HOI4 localization folder' is null.")
-    else if (!HOIIVFiles.HOI4.localization_folder.exists)
-      logger.warn("'HOI4 localization folder' does not exist.")
-    else if (!HOIIVFiles.HOI4.localization_folder.isDirectory)
-      logger.warn("'HOI4 localization folder' is not a directory.")
-    else
-      loadLocalization(HOIIVFiles.HOI4.localization_folder, Localization.Status.VANILLA)
-
-    // mod
-    if (HOIIVFiles.Mod.localization_folder == null)
-      logger.warn("'Mod localization folder' is null.")
-    else if (!HOIIVFiles.Mod.localization_folder.exists)
-      logger.warn("'Mod localization folder' does not exist.")
-    else if (!HOIIVFiles.Mod.localization_folder.isDirectory)
-      logger.warn("'Mod localization folder' is not a directory.")
-    else
-      loadLocalization(HOIIVFiles.Mod.localization_folder, Localization.Status.EXISTS)
+    val hoi4Success = loadLocalization(HOIIVFiles.HOI4.localization_folder, Localization.Status.VANILLA)
+    val modSuccess = loadLocalization(HOIIVFiles.Mod.localization_folder, Localization.Status.EXISTS)
+    hoi4Success && modSuccess
   }
 
-  protected def loadLocalization(localizationFolder: File, status: Localization.Status): Unit = {
+  protected def loadLocalization(localizationFolder: File, status: Localization.Status): Boolean = {
+    var success = true
     val files = localizationFolder.listFiles
-    if (files == null) return
+    if files == null then success = false
     for (file <- files) {
-      if (file.isDirectory) loadLocalization(file, status)
-      else if (file.getName.endsWith(".yml")) loadLocalizationFile(file, status)
-      else logger.info("Localization files can only be of type .yml. File: {}", file.getAbsolutePath)
-      logger.debug("Loaded localization file: {}", file.getAbsolutePath)
+      if file.isDirectory then success = loadLocalization(file, status)
+      else if file.getName.endsWith(".yml") then loadLocalizationFile(file, status)
+      else localizationErrors.addOne(s"Localization files can only be of type .yml.\n    Found: ${file.getAbsolutePath}")
+      loadedLocFiles.addOne(s"Loaded localization file: ${file.getName}")
     }
+    success
   }
 
-  // todo wow :(
+  /**
+   * Loads a localization file and processes its contents.
+   // todo wow :(
+   *
+   * @param file   the localization file to load
+   * @param Status the status of the localization entries
+   */
   protected def loadLocalizationFile(file: File, Status: Localization.Status): Unit = {
     val scanner = new Scanner(file)
-    try {
-      // check language
-      var languageFound = false
-      while (scanner.hasNextLine && !languageFound) {
-        var line = scanner.nextLine
-        /* ignore BOM */
-        if (line.startsWith("\uFEFF")) line = line.substring(1)
-        if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
-          if (!line.trim.startsWith(language_def)) {
-            System.out.println("Localization file is not in English: " + file.getAbsolutePath)
-            return
-          }
-          else languageFound = true
-        }
-      }
-      if (!languageFound) {
-        System.out.println("Localization file does not have a language definition: " + file.getAbsolutePath)
-        return
-      }
-      while (scanner.hasNextLine) {
-        val line = scanner.nextLine
-        if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
-          val data = line.splitWithDelimiters(versionNumberRegex, 2)
-          if (data.length != 3) {
-            System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
-          } else {
-            // trim whitespace
-            for (i <- data.indices) data(i) = data(i).trim
-            // ignore ":" before version number
-            data(1) = data(1).substring(1)
 
-            // ignore escaped quotes
-            data(2) = data(2).replaceAll("//\"", "\u0000")
-            val startQuote = data(2).indexOf("\"")
-            val endQuote = data(2).lastIndexOf("\"")
-            val extra = data(2).substring(endQuote + 1).trim
-            var invalid = false
-            if (extra.nonEmpty && !extra.startsWith("#")) {
-              System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: extraneous non-comment data after localization entry: " + extra)
-              invalid = true
+    // check language
+    var languageFound = false
+    while (scanner.hasNextLine && !languageFound) {
+      var line = scanner.nextLine
+      /* ignore BOM */
+      if (line.startsWith("\uFEFF")) line = line.substring(1)
+      if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
+        if (!line.trim.startsWith(language_def)) {
+          localizationErrors.addOne("Localization file is not in English: " + file.getAbsolutePath)
+          return
+        }
+        else languageFound = true
+      }
+    }
+    if (!languageFound) {
+      localizationErrors.addOne("Localization file does not have a language definition: " + file.getAbsolutePath)
+      return
+    }
+    while (scanner.hasNextLine) {
+      val line = scanner.nextLine
+      if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
+        val data = line.splitWithDelimiters(versionNumberRegex, 2)
+        if (data.length != 3) {
+          localizationErrors.addOne("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
+        } else {
+          // trim whitespace
+          for (i <- data.indices) data(i) = data(i).trim
+          // ignore ":" before version number
+          data(1) = data(1).substring(1)
+
+          // ignore escaped quotes
+          data(2) = data(2).replaceAll("//\"", "\u0000")
+          val startQuote = data(2).indexOf("\"")
+          val endQuote = data(2).lastIndexOf("\"")
+          val extra = data(2).substring(endQuote + 1).trim
+          var invalid = false
+          if (extra.nonEmpty && !extra.startsWith("#")) {
+            localizationErrors.addOne("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: extraneous non-comment data after localization entry: " + extra)
+            invalid = true
+          }
+          if (startQuote != 0 || endQuote == -1 || startQuote == endQuote) {
+            localizationErrors.addOne("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: localization value is not correctly enclosed in quotes")
+            invalid = true
+          }
+          if (!invalid) {
+            // remove leading/trailing quotes (and any comments)
+            data(2) = data(2).substring(startQuote + 1, endQuote)
+            /*
+            .yml example format:
+            CONTROLS_GREECE: "Controls all states in the §Y$strategic_region_greece$§! strategic region"
+            CONTROLS_ASIA_MINOR:1 "Controls all states in the §Y$strategic_region_asia_minor$§! strategic region"
+            */
+            var key: String = null
+            var version: Option[Int] = None
+            var value: String = null
+            if (data(1).isBlank) {
+              key = data(0).trim
+              version = None
+              value = data(2).trim
             }
-            if (startQuote != 0 || endQuote == -1 || startQuote == endQuote) {
-              System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: localization value is not correctly enclosed in quotes")
-              invalid = true
+            else {
+              key = data(0).trim
+              version = data(1).trim.toIntOption
+              value = data(2).trim
             }
-            if (!invalid) {
-              // remove leading/trailing quotes (and any comments)
-              data(2) = data(2).substring(startQuote + 1, endQuote)
-              /*
-              .yml example format:
-              CONTROLS_GREECE: "Controls all states in the §Y$strategic_region_greece$§! strategic region"
-              CONTROLS_ASIA_MINOR:1 "Controls all states in the §Y$strategic_region_asia_minor$§! strategic region"
-              */
-              var key: String = null
-              var version: Option[Int] = None
-              var value: String = null
-              if (data(1).isBlank) {
-                key = data(0).trim
-                version = None
-                value = data(2).trim
-              }
-              else {
-                key = data(0).trim
-                version = data(1).trim.toIntOption
-                value = data(2).trim
-              }
-              // fix file format issues (as it is a UTF-8 BOM file)
-              value = value.replaceAll("(Â§)", "§")
-              val localization = new Localization(key, version, value, Status)
-              localizations.add(localization, file)
-            }
+            // fix file format issues (as it is a UTF-8 BOM file)
+            value = value.replaceAll("(Â§)", "§")
+            val localization = new Localization(key, version, value, Status)
+            localizations.add(localization, file)
           }
         }
       }
-    } catch {
-      case exc: IOException =>
-        exc.printStackTrace()
-    } finally if (scanner != null) scanner.close()
+    }
+    if (scanner != null) scanner.close()
   }
   
   def language_def: String 
@@ -424,8 +372,12 @@ abstract class LocalizationManager extends LazyLogging {
     val header = lines.headOption.getOrElse("")
 
     val existingLocalization: List[Localization] =
-      lines.flatMap(LocalizationParser.parseLine)
-    logger.debug(s"File: ${file.getName}, Existing localizations: ${existingLocalization.size}")
+      try lines.flatMap(LocalizationParser.parseLine)
+      catch
+        case e: IllegalArgumentException =>
+          localizationErrors.addOne(s"Failed to parse localization line: ${e.getMessage}, in file: ${file.getName}")
+          return
+    localizationErrors.addOne(s"File: ${file.getName}, Existing localizations: ${existingLocalization.size}")
 
     /* --- Group by base key --- */
     val existingGroups: Map[String, LocalizationGroup] =
@@ -488,7 +440,6 @@ abstract class LocalizationManager extends LazyLogging {
     //    Files.write(Paths.get(file.getAbsolutePath), lines)
   }
 
-
   /**
    * Use to replace existing localization with entry
    *
@@ -512,20 +463,25 @@ abstract class LocalizationManager extends LazyLogging {
 
     val writer: PrintWriter = getLocalizationWriter(file, true)
 
-    /* append is a quick add to end no more logic needed */
-    val append = localization.status match {
-      case Localization.Status.NEW => true
-      case Localization.Status.UPDATED => false
-      case _ => throw new IllegalStateException("Unexpected value: " + localization.status)
+    var append = true
+
+    localization.status match {
+      case Localization.Status.NEW => append = true
+      case Localization.Status.UPDATED => append = false
+      case _ =>
+        localizationErrors.addOne("Unexpected value: " + localization.status)
+        return
     }
+    /* append is a quick add to end no more logic needed */
+
     if (append) try {
       writer.println(entry)
     } catch {
       case exc: IOException =>
-        System.err.println("Failed to write new localization to file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
+        localizationErrors.addOne("Failed to write new localization to file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
     } finally {
       if (writer != null) writer.close()
-    } else try {
+    } else {
       var lineReplaced = false
       val lines = Files.readAllLines(Paths.get(file.getAbsolutePath))
       for (i <- 0 until lines.size) {
@@ -536,67 +492,62 @@ abstract class LocalizationManager extends LazyLogging {
         if (lines.get(i).filter(c => !c.isWhitespace).startsWith(key + ":") && continue) {
           lines.set(i, entry)
           lineReplaced = true
-          System.out.println("Replaced localization " + key)
           continue = false
         }
       }
-      if (!lineReplaced) throw new IOException // todo better exception
+      if !lineReplaced then localizationErrors.addOne("Failed to replace localization in file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
+
       Files.write(Paths.get(file.getAbsolutePath), lines)
-    } catch {
-      case exc: IOException =>
-        System.err.println("Failed to update localization in file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
     }
   }
 
-  @throws[IOException]
-  protected def getLocalizationWriter(file: File, append: Boolean) = new PrintWriter(new BufferedWriter(new FileWriter(file, append)))
+  protected def getLocalizationWriter(file: File, append: Boolean) = {
+    file match
+      case null => localizationErrors.addOne(s"Localization file is null while trying to write localization \n    append: $append.")
+      case f if !f.exists() => localizationErrors.addOne(s"Localization file ${f.getName} does not exist while trying to write localization \n    append: $append.")
+    new PrintWriter(new BufferedWriter(new FileWriter(file, append)))
+  }
 }
 
-object LocalizationParser:
+object LocalizationManager {
+  //static Map<String, Localization> localizations = new HashMap<>();
+  private var primaryManager: Option[LocalizationManager] = None
+  var loadedLocFiles: ListBuffer[String] = ListBuffer.empty
+  var localizationErrors: ListBuffer[String] = ListBuffer.empty[String]
 
-  def parseLine(line: String): Option[Localization] =
-    val colonIndex = line.indexOf(':')
-    if colonIndex < 0 then
-      None
-    else
-      val key = line.substring(0, colonIndex).trim
-      val afterColon = line.substring(colonIndex + 1).trim
+  def getLocalizationFile(key: String): File = get.localizations.getLocalizationFile(key)
 
-      // Split out the number (if any)
-      val (numPart, restAfterNumber) = afterColon.span(_.isDigit)
-      val ver = if numPart.isEmpty then null else numPart.toIntOption
-      val afterNumber = restAfterNumber.trim
+  @throws[NoLocalizationManagerException]
+  def get: LocalizationManager = {
+    primaryManager match {
+      case Some(mgr) => mgr
+      case None => throw new NoLocalizationManagerException
+    }
+  }
 
-      // Check that we start with a quote
-      if !afterNumber.startsWith("\"") then
-        None
-      else
-        try
-          val (quotedText, indexAfterQuote) = parseQuoted(afterNumber, 0)
-          val trailing = afterNumber.substring(indexAfterQuote).trim
-          Some(Localization(key, ver, quotedText, Localization.Status.EXISTS))
-        catch
-          case _: Exception => None
+  def getOrCreate(createManager: () => LocalizationManager): LocalizationManager = {
+    primaryManager match {
+      case Some(mgr) => mgr
+      case None => createManager()
+    }
+  }
 
-  /** Parses a quoted string starting at startIndex (which should point to a double quote).
-   * It handles inner escaped quotes represented by a double double-quote.
-   * Returns a tuple with the parsed string and the index immediately after the closing quote.
-   */
-  private def parseQuoted(s: String, startIndex: Int): (String, Int) =
-    // We expect s(startIndex) to be the starting quote.
-    val sb = new StringBuilder
-    var i = startIndex + 1 // Skip the initial quote
-    while i < s.length do
-      if s(i) == '"' then
-        // If the next char is also a quote, it is an escaped quote.
-        if i + 1 < s.length && s(i + 1) == '"' then
-          sb.append('"')
-          i += 2
-        else
-          // End of quoted text.
-          return (sb.toString, i + 1)
-      else
-        sb.append(s(i))
-        i += 1
-    throw new Exception("No closing quote found in input")
-    
+  def get(key: String): Option[Localization] = get.getLocalization(key)
+
+  def getAll(localizationKeys: Iterable[String]): Iterable[Localization] = get.localizations.getAll(localizationKeys)
+
+  @throws[IllegalArgumentException]
+  def find(key: String): Option[Localization] = get.getLocalization(key)
+
+  private[localization] def numCapitalLetters(word: String): Int = {
+    if (word == null) return 0
+    var num_cap_letters = 0
+    num_cap_letters = 0
+    for (j <- 0 until word.length) {
+      if (Character.isUpperCase(word.charAt(j))) num_cap_letters += 1
+    }
+    num_cap_letters
+  }
+
+  def isAcronym(word: String): Boolean = numCapitalLetters(word) == word.length
+}

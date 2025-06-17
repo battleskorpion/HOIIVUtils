@@ -4,13 +4,25 @@ import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierExc
 import com.hoi4utils.parser.Node
 
 import scala.collection.mutable.ListBuffer
+import scala.util.{Failure, Success, Try}
 
-abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) {
-  def this(pdxIdentifiers: String*) = {
+abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers):
+
+  def this(pdxIdentifiers: String*) =
     this(pdxIdentifiers.toList)
-  }
 
-  var badNodesList: Iterable[Node] = ListBuffer.empty
+  var structuredPDXBadNodesList: Iterable[Node] = ListBuffer.empty
+
+  def getStructuredPDXBadNodesList: Option[ListBuffer[String]] = {
+    val structuredPDXBadNodesList = ListBuffer.empty[String]
+    for node <- this.structuredPDXBadNodesList do
+      node.identifier match
+        case Some(id) => structuredPDXBadNodesList += id
+        case None => structuredPDXBadNodesList += s"Node without identifier: ${node.$}"
+    structuredPDXBadNodesList match
+      case l if l.isEmpty => None
+      case _ => Some(structuredPDXBadNodesList)
+  }
 
   protected def childScripts: collection.mutable.Iterable[? <: PDXScript[?]]
 
@@ -25,205 +37,145 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def set(expression: Node): Unit = {
+  override def set(expression: Node): Unit =
     usingIdentifier(expression)
     this.node = Some(expression)
-    expression.$ match {
+    expression.$ match
       case l: ListBuffer[Node] =>
-        // then load each sub-PDXScript
-        var list = Iterable.from(l)
-        for (pdxScript <- childScripts) {
-          list = pdxScript.loadPDX(list)
-        }
-        badNodesList = list
+        // Load each sub-PDXScript
+        var remaining = Iterable.from(l)
+        for pdxScript <- childScripts do
+          remaining = pdxScript.loadPDX(remaining)
+        structuredPDXBadNodesList = remaining
       case _ =>
-        throw new NodeValueTypeException(expression, "list", this.getClass)
-    }
-  }
+        throw NodeValueTypeException(expression, "A List", s"${expression.$}")
 
-  override def set(value: ListBuffer[Node]): ListBuffer[Node] = {
-    // todo?
+  override def set(value: ListBuffer[Node]): ListBuffer[Node] =
+    // TODO: Consider if this implementation is complete
     super.setNode(value)
     value
-  }
-  
-  // 
-
-  override def loadPDX(expression: Node): Unit = {
-    if (expression.identifier.isEmpty) {
-      expression.$ match {
-        case l: ListBuffer[Node] =>
-          loadPDX(l)
-        case _ =>
-          System.out.println("Error loading PDX script: " + expression)
-      }
-    }
-    else {
-      try {
-        set(expression)
-      } catch {
-        case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-          System.out.println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
-          // Preserve the original node in StructuredPDX as well.
-          node = Some(expression)
-      }
-    }
-  }
-
-  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    if (expressions != null) {
-      val remaining = ListBuffer.from(expressions)
-      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
-        catch {
-          case e: UnexpectedIdentifierException =>
-            System.err.println(e.getMessage)
-        }
-      })
-      remaining
-    } else {
-      ListBuffer.empty
-    }
-  }
 
   /**
-   * Gets the child pdx property with the current identifier matching
-   * the given string.
+   * Loads the PDX script represented by the given expression.
+   * If the expression is a ListBuffer of nodes, it will load each sub-PDXScript for processing.
+   * If the expression does not have an identifier, it will attempt to set it directly.
    *
-   * @param identifier
+   * @param expression The expression to load.
+   * @throws UnexpectedIdentifierException if the identifier used in the expression is unexpected.
+   * @throws NodeValueTypeException        if the expression is not of type ListBuffer[Node], but was expected to be.
    */
-  def getPDXProperty(identifier: String): Option[PDXScript[?]] = {
-    for (pdx <- childScripts) {
-      if (pdx.pdxIdentifier == identifier) return Some(pdx)
-    }
-    None
-  }
+  @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
+  override def loadPDX(expression: Node): Unit =
+    expression.identifier match
+      case None =>
+        expression.$ match
+          case listBuffer: ListBuffer[Node] => loadPDX(listBuffer)
+          case _ => println(s"Error loading PDX script: $expression")
+      case Some(_) => set(expression)
 
   /**
-   * Gets the child pdx property with the current identifier matching
-   * the given string.
-   *
-   * @param identifiers
+   * Loads a collection of PDXScripts from the provided expressions.
+   * @param expressions the iterable collection of Node expressions to load
+   * @throws UnexpectedIdentifierException
+   * @throws NodeValueTypeException
+   *  @return remaining unloaded expressions
    */
-  def getPDXProperty(identifiers: List[String]): Option[PDXScript[?]] = {
-    for (identifier <- identifiers) {
-      val pdx = getPDXProperty(identifier)
-      if (pdx.isDefined) return pdx
-    }
-    None
-  }
+  @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
+  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] =
+    expressions match
+      case null => ListBuffer.empty
+      case _ =>
+        val remaining = ListBuffer.from(expressions)
+        val validExpressions = expressions.filter(this.isValidIdentifier)
+
+        for expression <- validExpressions do
+          Try(loadPDX(expression)) match
+            case Success(_) => remaining -= expression
+            case Failure(e) => throw e // Re-throw unexpected exceptions
+        remaining
 
   /**
-   * Gets the child pdx property with the current identifier matching
-   * the given string.
-   *
-   * @param identifier
+   * Gets the child PDX property with the current identifier matching the given string.
    */
-  def getPDXPropertyOfType[R](identifier: String): Option[PDXScript[R]] = {
-    for (pdx <- childScripts) {
-      pdx match {
-        case pdxScript: PDXScript[R] =>
-          if (pdxScript.pdxIdentifier == identifier) return Some(pdxScript)
-        case null =>
-      }
-    }
-    None
-  }
+  def getPDXProperty(identifier: String): Option[PDXScript[?]] =
+    childScripts.find(_.pdxIdentifier == identifier)
 
   /**
-   * Gets the child pdx property with the current identifier matching
-   * the given string.
-   *
-   * @param identifiers
+   * Gets the child PDX property with the current identifier matching any of the given strings.
    */
-  def getPDXPropertyOfType[R](identifiers: List[String]): Option[PDXScript[R]] = {
-    for (identifier <- identifiers) {
-      val pdx = getPDXPropertyOfType[R](identifier)
-      if (pdx.isDefined) return pdx
-    }
-    None
-  }
+  def getPDXProperty(identifiers: List[String]): Option[PDXScript[?]] =
+    identifiers.view
+      .map(getPDXProperty)
+      .find(_.isDefined)
+      .flatten
 
-  def pdxProperties: Iterable[? <: PDXScript[?]] = {
-    val scripts = childScripts
-    scripts match {
-      case null => null
-      case _ => scripts
+  /**
+   * Gets the child PDX property with the current identifier matching the given string,
+   * with type safety for the return type.
+   */
+  def getPDXPropertyOfType[R](identifier: String): Option[PDXScript[R]] =
+    childScripts.collectFirst {
+      case pdxScript: PDXScript[R] if pdxScript.pdxIdentifier == identifier => pdxScript
     }
-  }
+
+  /**
+   * Gets the child PDX property with the current identifier matching any of the given strings,
+   * with type safety for the return type.
+   */
+  def getPDXPropertyOfType[R](identifiers: List[String]): Option[PDXScript[R]] =
+    identifiers.view
+      .map(getPDXPropertyOfType[R])
+      .find(_.isDefined)
+      .flatten
+
+  def pdxProperties: Iterable[PDXScript[?]] =
+    Option(childScripts).getOrElse(Iterable.empty)
 
   /**
    * Rebuilds the underlying Node tree on demand by gathering the child nodes from childScripts.
    * This ensures that any changes in the child PDXScript objects are reflected in the output.
    */
-  override def updateNodeTree(): Unit = {
-    // First, record the original positions of the nodes in the current node's value.
-    val originalPositions: Map[String, Int] = node match {
+  override def updateNodeTree(): Unit =
+    // Record the original positions of nodes in the current node's value
+    val originalPositions: Map[String, Int] = node match
       case Some(n) =>
-        n.$ match {
-          case lb: ListBuffer[Node] => lb.zipWithIndex.map { case (n, i) => n.identifier.getOrElse("") -> i }.toMap
+        n.$ match
+          case lb: ListBuffer[Node] =>
+            lb.zipWithIndex
+              .map((node, index) => node.identifier.getOrElse("") -> index)
+              .toMap
           case _ => Map.empty
-        }
       case None => Map.empty
-    }
 
-    // Update each child script's node tree.
+    // Update each child script's node tree
     childScripts.foreach(_.updateNodeTree())
 
-    // Get the loaded child nodes.
-    val loadedChildNodes: ListBuffer[Node] = {
-      childScripts.flatMap(_.getNodes).to(ListBuffer)
-    }
+    // Get the loaded child nodes
+    val loadedChildNodes = childScripts.flatMap(_.getNodes).to(ListBuffer)
 
-    // Sort the loaded nodes based on their original positions.
+    // Sort the loaded nodes based on their original positions
     val sortedLoadedNodes = loadedChildNodes.sortBy { child =>
-      child.identifier match {
-        case Some(id) => originalPositions.getOrElse(id, Int.MaxValue)
-        case None     => Int.MaxValue
-      }
+      child.identifier.fold(Int.MaxValue)(originalPositions.getOrElse(_, Int.MaxValue))
     }
 
-//    // Retrieve the original nodes.
-//    val originalNodes: ListBuffer[Node] = node match {
-//      case Some(n) =>
-//        n.$ match {
-//          case lb: ListBuffer[Node] => lb
-//          case _ => ListBuffer.empty[Node]
-//        }
-//      case None => ListBuffer.empty[Node]
-//    }
+    // Merge loaded nodes and preserved nodes, then re-sort by original order
+    val combinedNodes = (sortedLoadedNodes ++ structuredPDXBadNodesList)
+      .sortBy(node =>
+        node.identifier.fold(Int.MaxValue)(originalPositions.getOrElse(_, Int.MaxValue))
+      )
 
-//    // Preserve any original nodes that were not loaded by child scripts.
-//    val preservedNodes = originalNodes.filterNot(orig =>
-//      sortedLoadedNodes.exists(child => child.identifier == orig.identifier)
-//    )
-    val preservedNodes = badNodesList
-
-    // Merge the loaded nodes and preserved nodes, then re-sort by the original order.
-    val combinedNodes = (sortedLoadedNodes ++ preservedNodes)
-      .sortBy(node => originalPositions.getOrElse(node.identifier.getOrElse(""), Int.MaxValue))
-
-
-    // Update the current node's value.
-    if (combinedNodes.nonEmpty) {
-      node match {
+    // Update the current node's value
+    if combinedNodes.nonEmpty then
+      node match
         case Some(n) => n.setValue(combinedNodes)
-        case None    => node = Some(new Node(pdxIdentifier, "=", combinedNodes))
-      }
-    } else {
+        case None => node = Some(Node(pdxIdentifier, "=", combinedNodes))
+    else
       node = None
-    }
-  }
 
-  override def clone(): AnyRef = {
-    val clone = super.clone().asInstanceOf[StructuredPDX]
-    clone.node = Some(Node(pdxIdentifier, "=", ListBuffer.empty))
-    logger.debug("Cloning StructuredPDX: {} -> {}", this, clone)
-    clone.badNodesList = this.badNodesList
-    clone
-  }
-
-}
+  override def clone(): AnyRef =
+    val clonedInstance = super.clone().asInstanceOf[StructuredPDX]
+    clonedInstance.node = Some(Node(pdxIdentifier, "=", ListBuffer.empty))
+    clonedInstance.structuredPDXBadNodesList = this.structuredPDXBadNodesList
+    clonedInstance

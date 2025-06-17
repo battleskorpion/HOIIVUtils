@@ -4,6 +4,4 @@ trait PDXType[T <: PDXScript[?]](var pdxTypeIdentifier: String, pdxTypeCollectio
   def isValidPDXTypeIdentifier(identifier: String): Boolean = {
     pdxTypeCollectionSupplier().exists(_.isValidID(identifier))
   }
-  
-  
 }

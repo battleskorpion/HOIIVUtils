@@ -1,29 +1,72 @@
 package com.hoi4utils.hoi4.idea
 
-import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileFileMap
+import com.hoi4utils.hoi4.idea.IdeaFile.{ideaFileErrors, ideaFileFileMap}
 import com.hoi4utils.localization.Localizable
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.{CollectionPDX, PDXScript, StructuredPDX}
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
-import javafx.collections.{FXCollections, ObservableList}
 
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.jdk.javaapi.CollectionConverters
 
-object IdeaFile extends LazyLogging with PDXReadable {
+class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[Idea]:
+  /* pdxscript */
+  final var countryIdeas = new CollectionPDX[Idea](Idea.pdxSupplier(), "country") {
+    override def loadPDX(expr: Node): Unit = {
+      super.loadPDX(expr, ideaFileErrors)
+      pdxList.foreach(idea => idea.setIdeaFile(IdeaFile.this))
+    }
+
+    override def getPDXTypeName: String = "Country Ideas"
+  }
+
+  private var _file: Option[File] = None
+
+  file match
+    case f if f.exists() && f.isFile =>
+      loadPDX(f, ideaFileErrors)
+      _file = Some(f)
+      ideaFileFileMap.put(f, this)
+    case f if f != null && !f.exists() =>
+      ideaFileErrors += s"Idea file ${f.getName} does not exist."
+
+  /* default */
+  IdeaFile.add(this)
+
+  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
+    ListBuffer(countryIdeas)
+  }
+
+  def getFile: Option[File] = _file
+
+  def listIdeas: List[Idea] = {
+    List.from(countryIdeas)
+  }
+
+  def setFile(file: File): Unit = {
+    _file = Some(file)
+  }
+
+  override def iterator: Iterator[Idea] = listIdeas.iterator
+
+  /**
+   * Get the localizable group for ideas in this file, which is the list of all ideas in this file.
+   *
+   * @return
+   */
+  def getLocalizableGroup: Iterable[? <: Localizable] = listIdeas
+
+object IdeaFile extends LazyLogging with PDXReadable:
+
+  var ideaFileErrors: ListBuffer[String] = ListBuffer.empty[String]
   private val ideaFileFileMap = new mutable.HashMap[File, IdeaFile]()
   private val ideaFiles = new ListBuffer[IdeaFile]()
 
   def get(idea_file: File): Option[IdeaFile] = {
     if (!ideaFileFileMap.contains(idea_file)) new IdeaFile(idea_file)
     ideaFileFileMap.get(idea_file)
-  }
-
-  def observeIdeaFileList: ObservableList[IdeaFile] = {
-    FXCollections.observableArrayList(CollectionConverters.asJava(ideaFiles))
   }
 
   /**
@@ -37,7 +80,6 @@ object IdeaFile extends LazyLogging with PDXReadable {
       logger.warn(s"No ideas found in ${HOIIVFiles.Mod.ideas_folder}")
       false
     } else {
-      logger.info("Reading focus trees from " + HOIIVFiles.Mod.ideas_folder)
 
       // create focus trees from files
       HOIIVFiles.Mod.ideas_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
@@ -74,58 +116,3 @@ object IdeaFile extends LazyLogging with PDXReadable {
   def listIdeasFromAllIdeaFiles: List[Idea] = {
     ideaFileFileMap.values.flatMap(_.listIdeas).toList
   }
-
-}
-
-class IdeaFile extends StructuredPDX("ideas") with Iterable[Idea] {
-  /* pdxscript */
-  final var countryIdeas = new CollectionPDX[Idea](Idea.pdxSupplier(), "country") {
-    override def loadPDX(expr: Node): Unit = {
-      super.loadPDX(expr)
-      pdxList.foreach(idea => idea.setIdeaFile(IdeaFile.this))
-    }
-
-    override def getPDXTypeName: String = "Country Ideas"
-  }
-
-  private var _file: Option[File] = None
-
-  /* default */
-  IdeaFile.add(this)
-
-  @throws[IllegalArgumentException]
-  def this(file: File) = {
-    this()
-    if (!file.exists()) {
-      logger.error(s"Idea file does not exist: $file")
-      throw new IllegalArgumentException(s"File does not exist: $file")
-    }
-
-    loadPDX(file)
-    setFile(file)
-    _file.foreach(file => ideaFileFileMap.put(file, this))
-  }
-
-  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
-    ListBuffer(countryIdeas)
-  }
-
-  def file: Option[File] = _file
-
-  def listIdeas: List[Idea] = {
-    List.from(countryIdeas)
-  }
-
-  def setFile(file: File): Unit = {
-    _file = Some(file)
-  }
-
-  override def iterator: Iterator[Idea] = listIdeas.iterator
-
-  /**
-   * Get the localizable group for ideas in this file, which is the list of all ideas in this file.
-   *
-   * @return
-   */
-  def getLocalizableGroup: Iterable[? <: Localizable] = listIdeas
-}

@@ -20,8 +20,7 @@ import scala.collection.mutable.ListBuffer
  * where you know the structured part (e.g. the "limit") must be present,
  * but arbitrary effect nodes may also be appended.
  */
-abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
-  extends StructuredPDX(pdxIdentifiers) {
+abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String]) extends StructuredPDX(pdxIdentifiers):
 
   def this(pdxIdentifiers: String*) = this(pdxIdentifiers.toList)
 
@@ -36,18 +35,7 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
   @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     // Try to process as normal structured node.
-    try {
-      super.set(expression)
-    } catch {
-      case e: UnexpectedIdentifierException =>
-        // Instead of failing, we log and store the node as an effect.
-        System.out.println("Not a structured property, treating as effect: " + expression)
-        effectNodes += expression
-      case e: NodeValueTypeException =>
-        // Likewise, if the node value type is not as expected, add it to the effect nodes.
-        System.out.println("Node value type error, treating as effect: " + e.getMessage + "\n\t" + expression)
-        effectNodes += expression
-    }
+    super.set(expression)
   }
 
   /**
@@ -55,61 +43,43 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
    * If the node’s identifier is not recognized among the structured child scripts,
    * it is assumed to be an effect.
    */
-  override def loadPDX(expression: Node): Unit = {
-    if (expression.identifier.isEmpty) {
-      expression.$ match {
-        case lb: ListBuffer[Node] =>
-          lb.foreach(loadPDX)
-        case _ =>
-          System.out.println("Error loading PDX script: " + expression)
-      }
-    } else {
-      if (this.isValidIdentifier(expression)) {
-        try {
-          set(expression)
-        } catch {
-          case e: UnexpectedIdentifierException =>
-            System.out.println("Error loading structured part: " + e.getMessage + "\n\t" + expression)
-            node = Some(expression)
-          case e: NodeValueTypeException =>
-            System.out.println("Error loading structured part: " + e.getMessage + "\n\t" + expression)
-            node = Some(expression)
-        }
-      } else {
-        // If the identifier is not among the expected structured ones, add it as an effect.
-        effectNodes += expression
-      }
-    }
-  }
+  @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
+  override def loadPDX(expression: Node): Unit =
+    if expression.identifier.isEmpty then
+      expression.$ match
+        case lb: ListBuffer[Node] => lb.foreach(loadPDX)
+        case _ => throw NodeValueTypeException(expression, "A List", s"${expression.$}")
+    else if isValidIdentifier(expression) then
+      try set(expression)
+      catch case e: Throwable =>
+          node = Some(expression)
+          throw e
+    else
+      effectNodes += expression
 
   /**
    * Override loadPDX for an iterable collection.
    * For each node, process structured properties and treat unknown nodes as effects.
    */
-  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    if (expressions != null) {
-      val remaining = ListBuffer.from(expressions)
-      // Process known structured nodes.
-      expressions.filter(this.isValidIdentifier).foreach { expression =>
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        } catch {
-          case e: UnexpectedIdentifierException =>
-            System.err.println(e.getMessage)
+  @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
+  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] =
+    Option(expressions) match
+      case Some(exprs) =>
+        val remaining = ListBuffer.from(exprs)
+        exprs.foreach { expression =>
+          if isValidIdentifier(expression) then
+            loadPDX(expression)
+            remaining -= expression
+          else
+            effectNodes += expression
+            remaining -= expression
         }
-      }
-      // For any nodes that are not valid structured properties, assume they are effects.
-      expressions.filterNot(this.isValidIdentifier).foreach { expression =>
-        effectNodes += expression
-        remaining -= expression
-      }
-      remaining
-    } else {
-      ListBuffer.empty
-    }
-  }
-
+        remaining
+      case None =>
+        ListBuffer.empty
+  
   /**
    * When updating the node tree, merge the structured nodes with the extra effect nodes.
    * In this example, the effect nodes are appended after the structured child nodes.
@@ -142,4 +112,3 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
     clone.effectNodes = this.effectNodes.clone()
     clone
   }
-}

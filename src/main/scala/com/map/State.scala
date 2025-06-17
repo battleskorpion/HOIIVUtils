@@ -1,40 +1,34 @@
-package map
+package com.map
 
+import com.hoi4utils.*
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
 import com.hoi4utils.hoi4.country.{Country, CountryTag, CountryTagsManager}
 import com.hoi4utils.localization.*
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
-import com.hoi4utils.*
-import javafx.collections.{FXCollections, ObservableList}
-import map.State.History
-import org.apache.logging.log4j.{LogManager, Logger}
+import com.map.State.{History, stateErrors}
+import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
 
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.jdk.javaapi.CollectionConverters
 
 /**
  * Represents a state in HOI4
  * @param stateFile state file
  * @param addToStatesList if true, adds the state to the list of states
  */
-class State(addToStatesList: Boolean) extends StructuredPDX("state") with InfrastructureData with Localizable with Iterable[Province] with Comparable[State] with PDXFile {
-  private val logger: Logger = LogManager.getLogger(getClass)
+class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("state") with InfrastructureData with Localizable with Iterable[Province] with Comparable[State] with PDXFile with LazyLogging {
+
 
   final val stateID = new IntPDX("id")
   final val name = new StringPDX("name")
-  final val resources = new CollectionPDX[Resource](Resource(), "resources") {
+  private val resourcePDXSupplier: PDXSupplier[Resource] = Resource() // todo: what
+  final val resources = new CollectionPDX[Resource](resourcePDXSupplier, "resources") {
     override def loadPDX(expr: Node): Unit = {
-      try {
-        super.loadPDX(expr)
-      } catch {
-        case e: Exception =>
-          this.logger.error(s"Error loading resources for state ${stateID.value.getOrElse("unknown")}: ${e.getMessage}")
-      }
+      super.loadPDX(expr, stateErrors)
     }
 
     override def getPDXTypeName: String = "Resources"
@@ -52,14 +46,16 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
 
   private var _stateFile: Option[File] = None
 
+  /* load State */
+  file match
+    case f if f.exists() && f.isFile =>
+      loadPDX(file, stateErrors)
+      _stateFile = Some(file)
+    case f if f != null && !f.exists() =>
+      stateErrors += s"State file ${f.getName} does not exist."
+
   /* init */
   if (addToStatesList) State.add(this)
-
-  def this(addToStatesList: Boolean, file: File) = {
-    this(addToStatesList)
-    loadPDX(file)
-    setFile(file)
-  }
 
   /**
    * @inheritdoc
@@ -181,9 +177,9 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
     }
   }
 
-  def stateFile: Option[File] = _stateFile
+  def getStateFile: Option[File] = _stateFile
 
-  def setFile(file: File): Unit = {
+  def setStateFile(file: File): Unit = {
     _stateFile = Some(file)
   }
 
@@ -243,10 +239,10 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
     else (infrastructure * buildingsMaxLevelFactor.getOrElse(0)).toInt
   }
 
-  def resource(name: String): Resource = resources.find(_.pdxTypeIdentifier.equals(name)) match {
-    case Some(r) => r
-    case None => new Resource(name, 0)
-  }
+  def resource(name: String): Resource =
+    resources.find(_.pdxTypeIdentifier.equals(name)) match
+      case Some(resource) => resource
+      case None => new Resource(name, 0)
 
   override def getInfrastructureRecord: Infrastructure = getStateInfrastructure
 
@@ -283,20 +279,18 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
  *
  * I apologize in advance.
  */
-object State extends Iterable[State] with PDXReadable {
-  private val logger: Logger = LogManager.getLogger(getClass)
+object State extends Iterable[State] with PDXReadable with LazyLogging {
 
   private val states = new ListBuffer[State]
+  val stateErrors: ListBuffer[String] = ListBuffer.empty
 
   def get(file: File): Option[State] = {
     if (file == null) return None
-    if (!states.exists(_.stateFile.contains(file))) new State(true, file)
-    states.find(_.stateFile.contains(file))
+    if (!states.exists(_.getStateFile.contains(file))) new State(true, file)
+    states.find(_.getStateFile.contains(file))
   }
 
-  def observeStates: ObservableList[State] = {
-    FXCollections.observableArrayList(CollectionConverters.asJava(states))
-  }
+  def getStates: ListBuffer[State] = states
 
   /**
    * Creates States from reading files
@@ -309,7 +303,6 @@ object State extends Iterable[State] with PDXReadable {
       logger.error(s"No states found in ${HOIIVFiles.Mod.states_folder}")
       false
     } else {
-      logger.info(s"Reading states from ${HOIIVFiles.Mod.states_folder}")
 
       HOIIVFiles.Mod.states_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
         new State(true, f)
@@ -337,7 +330,7 @@ object State extends Iterable[State] with PDXReadable {
     states.find(_.name @== state_name)
   }
 
-  def ownedStatesOfCountry(country: Country): ListBuffer[State] = ownedStatesOfCountry(country.countryTag)
+  def ownedStatesOfCountry(country: Country): ListBuffer[State] = ownedStatesOfCountry(country.getCountryTag)
 
   def ownedStatesOfCountry(tag: CountryTag): ListBuffer[State] = {
     states filter(state => state.owner(ClausewitzDate.defaulty).exists(_.equals(tag)))
@@ -399,7 +392,6 @@ object State extends Iterable[State] with PDXReadable {
       logger.error(s"In State.java - ${file} is a directory, or it does not exist.")
       false
     } else {
-      logger.info(s"Reading state from ${file}")
       new State(true, file)
       true
     }
@@ -493,7 +485,7 @@ object State extends Iterable[State] with PDXReadable {
   @NotNull override def iterator: Iterator[State] = states.iterator
 
   // todo fix structured effect block later when i can read
-  class History(pdxIdentifier: String = "history") extends StructuredPDX(pdxIdentifier) {
+  class History(pdxIdentifier: String = "history", node: Node = null) extends StructuredPDX(pdxIdentifier) {
     final val owner = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "owner")
     final val controller = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "controller")
     final val buildings = new BuildingsPDX
@@ -501,11 +493,7 @@ object State extends Iterable[State] with PDXReadable {
     final val startDateScopes = new MultiPDX[StartDateScopePDX](None, Some(() => new StartDateScopePDX))
       with ProceduralIdentifierPDX(ClausewitzDate.validDate)
     //    final MultiPDX[VictoryPoint] victoryPoints = new MultiPDX(None, Some())
-
-    def this(node: Node) = {
-      this()
-      loadPDX(node)
-    }
+    if node != null then loadPDX(node)
 
     /**
      * @inheritdoc
@@ -517,17 +505,13 @@ object State extends Iterable[State] with PDXReadable {
     override def getPDXTypeName: String = "History"
   }
 
-  class BuildingsPDX extends StructuredPDX("buildings") {
+  class BuildingsPDX(node: Node = null) extends StructuredPDX("buildings") {
     final val infrastructure = new IntPDX("infrastructure", ExpectedRange.ofPositiveInt)
     final val civilianFactories = new IntPDX("industrial_complex", ExpectedRange.ofPositiveInt)
     final val militaryFactories = new IntPDX("arms_factory", ExpectedRange.ofPositiveInt)
     final val navalDockyards = new IntPDX("naval_base", ExpectedRange.ofPositiveInt)
     final val airBase = new IntPDX("air_base", ExpectedRange.ofPositiveInt)
 
-    def this(node: Node) = {
-      this()
-      loadPDX(node)
-    }
 
     /**
      * @inheritdoc
