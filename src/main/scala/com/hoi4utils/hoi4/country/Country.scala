@@ -53,8 +53,8 @@ class Country
   
   countryErrors.addAll(
     getStructuredPDXBadNodesList match {
-      case ListBuffer() => List.empty
-      case errors => errors.map(identity)
+      case Some(errors) => errors.map(identity)
+      case None => List.empty
     }
   )
 
@@ -81,33 +81,33 @@ class Country
 //    this._resources = resources
 //  }
 
-  def aluminum: Double = resources.filter(_ isValidID "aluminium").map(_.amt).sum
+  def aluminum: Double = resources.filter(_.isValidID("aluminium")).map(_.amt).sum
 
-  def chromium: Double = resources.filter(_ isValidID "chromium").map(_.amt).sum
+  def chromium: Double = resources.filter(_.isValidID("chromium")).map(_.amt).sum
 
-  def oil: Double = resources.filter(_ isValidID "oil").map(_.amt).sum
+  def oil: Double = resources.filter(_.isValidID("oil")).map(_.amt).sum
 
-  def rubber: Double = resources.filter(_ isValidID "rubber").map(_.amt).sum
+  def rubber: Double = resources.filter(_.isValidID("rubber")).map(_.amt).sum
 
-  def steel: Double = resources.filter(_ isValidID "steel").map(_.amt).sum
+  def steel: Double = resources.filter(_.isValidID("steel")).map(_.amt).sum
 
-  def tungsten: Double = resources.filter(_ isValidID "tungsten").map(_.amt).sum
+  def tungsten: Double = resources.filter(_.isValidID("tungsten")).map(_.amt).sum
 
   private def tungstenPercentOfGlobal = {
-    tungsten / State.resourcesOfStates.filter(_ isValidID "tungsten").map(_.amt).sum
+    tungsten / State.resourcesOfStates.filter(_.isValidID("tungsten")).map(_.amt).sum
 
     // todo this all (getting the resources) should be done a lil differently (more generically still.)
   }
 
-  private def steelPercentOfGlobal = steel / State.resourcesOfStates.filter(_ isValidID "steel").map(_.amt).sum
+  private def steelPercentOfGlobal = steel / State.resourcesOfStates.filter(_.isValidID("steel")).map(_.amt).sum
 
-  private def rubberPercentOfGlobal = rubber / State.resourcesOfStates.filter(_ isValidID "rubber").map(_.amt).sum
+  private def rubberPercentOfGlobal = rubber / State.resourcesOfStates.filter(_.isValidID("rubber")).map(_.amt).sum
 
-  private def oilPercentOfGlobal = oil / State.resourcesOfStates.filter(_ isValidID "oil").map(_.amt).sum
+  private def oilPercentOfGlobal = oil / State.resourcesOfStates.filter(_.isValidID("oil")).map(_.amt).sum
 
-  private def chromiumPercentOfGlobal = chromium / State.resourcesOfStates.filter(_ isValidID "chromium").map(_.amt).sum
+  private def chromiumPercentOfGlobal = chromium / State.resourcesOfStates.filter(_.isValidID("chromium")).map(_.amt).sum
 
-  private def aluminumPercentOfGlobal = aluminum / State.resourcesOfStates.filter(_ isValidID "aluminium").map(_.amt).sum
+  private def aluminumPercentOfGlobal = aluminum / State.resourcesOfStates.filter(_.isValidID("aluminium")).map(_.amt).sum
 
   def name: String = _countryTag match {
     case Some(tag) => tag.toString
