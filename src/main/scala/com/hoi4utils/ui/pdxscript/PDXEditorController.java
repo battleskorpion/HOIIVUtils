@@ -28,7 +28,7 @@ public class PDXEditorController extends HOIIVUtilsAbstractController {
      * Use {@link #PDXEditorController()} to create a new instance.
      * Then call {@link #open(Object...)} to set the properties.
      *
-     * @param pdxScript
+     * @param pdxScript the PDXScript to edit
      */
     @SuppressWarnings("unused")
     public PDXEditorController(PDXScript<?> pdxScript) {
@@ -40,7 +40,8 @@ public class PDXEditorController extends HOIIVUtilsAbstractController {
      * Use {@link #PDXEditorController()} to create a new instance.
      * Then call {@link #open(Object...)} to set the properties.
      *
-     * @param pdxScript
+     * @param pdxScript the PDXScript to edit
+     * @param onUpdate a Runnable that will be called when pdxScript properties are updated
      */
     @SuppressWarnings("unused")
     public PDXEditorController(PDXScript<?> pdxScript, Runnable onUpdate) {
