@@ -6,7 +6,7 @@ import com.hoi4utils.parser.Node
 import scala.collection.mutable.ListBuffer
 
 trait HeadlessPDX:
-  self: StructuredPDX =>
+  this: StructuredPDX =>
 
   /** Overrides the default set behavior to ignore the identifier check.
    * This is useful for headless files where there is no top-level key.

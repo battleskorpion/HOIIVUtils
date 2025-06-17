@@ -68,8 +68,8 @@ class PDXLoader extends LazyLogging {
       State,
       Country,
       CountryTag,
-      FocusTree,
       IdeaFile,
+      FocusTree,
     ).foreach(readPDX)
   }
 
