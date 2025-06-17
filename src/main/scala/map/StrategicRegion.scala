@@ -1,15 +1,16 @@
-package com.map
+package map
 
-import com.hoi4utils.extensions.*
 import com.hoi4utils.script.*
-import com.typesafe.scalalogging.LazyLogging
-import javafx.collections.ObservableList
+import javafx.collections.{FXCollections, ObservableList}
+import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.jdk.javaapi.CollectionConverters
 
-class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region") with PDXFile with LazyLogging {
+class StrategicRegion extends StructuredPDX("strategic_region") with PDXFile {
+  private val logger: Logger = LogManager.getLogger(getClass)
 
   final val id = new IntPDX("id")
   final val name = new StringPDX("name")
@@ -22,17 +23,15 @@ class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region
   final val weather = new Weather()
 
   private var _strategicRegionFile: Option[File] = None
-  
+
   /* init */
-  file match {
-    case f if f != null && f.exists() && f.isFile =>
-      loadPDX(f)
-      setFile(f)
-    case f if f != null && !f.exists() =>
-      throw new IllegalArgumentException(s"Strategic Region file ${f.getName} does not exist.")
-    case _ => // do nothing, file is null or not a valid file
-  }
   StrategicRegion.add(this)
+
+  def this(file: File) = {
+    this()
+    loadPDX(file)
+    setFile(file)
+  }
 
   /**
    * @inheritdoc
@@ -81,10 +80,10 @@ class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region
 
 }
 
-object StrategicRegion extends LazyLogging {
+object StrategicRegion {
+  private val logger: Logger = LogManager.getLogger(getClass)
 
   private val strategicRegions = new ListBuffer[StrategicRegion]
-  val strategicRegionErrors: ListBuffer[String] = ListBuffer.empty
 
   def get(file: File): Option[StrategicRegion] = {
     if (file == null) return None
@@ -93,7 +92,7 @@ object StrategicRegion extends LazyLogging {
   }
 
   def observeStratRegions: ObservableList[StrategicRegion] = {
-    strategicRegions.toObservableList
+    FXCollections.observableArrayList(CollectionConverters.asJava(strategicRegions))
   }
 
   def clear(): Unit = {

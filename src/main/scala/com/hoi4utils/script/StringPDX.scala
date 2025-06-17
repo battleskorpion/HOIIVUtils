@@ -20,7 +20,7 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
     this.node = Some(expression)
     this.node.get.$ match {
       case _: String =>
-      case _ => throw NodeValueTypeException(this.node.get, "String", s"${this.node.get.$}")
+      case _ => throw new NodeValueTypeException(this.node.get, this.getClass)
     }
   }
   

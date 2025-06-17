@@ -3,15 +3,15 @@ package com.hoi4utils.ui.buildings;
 
 import com.hoi4utils.hoi4.country.Country;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.javafx_ui.ExcelExport;
+import com.hoi4utils.ui.javafx_ui.export.ExcelExport;
 import com.hoi4utils.ui.javafx_ui.table.TableViewWindow;
-import com.map.State;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
+import map.State;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
@@ -74,8 +74,8 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 		}
 
 		try {
-			if (state.getStateFile().isDefined()) {
-				Desktop.getDesktop().edit(state.getStateFile().get());
+			if (state.stateFile().isDefined()) {
+				Desktop.getDesktop().edit(state.stateFile().get());
 			}
 		} catch (IOException exc) {
 			System.err.println("Unable to open state file: " + state);
@@ -95,7 +95,7 @@ public class CountryBuildingsByStateController extends HOIIVUtilsAbstractControl
 	@FXML
 	public void handleExportToExcelAction() {
 		ExcelExport<State> excelExport = new ExcelExport<>();
-		excelExport.hExport(stateDataTable);
+		excelExport.export(stateDataTable);
 	}
 
 	public void handlePercentageCheckMenuItemAction() {

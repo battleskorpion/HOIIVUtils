@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.focus_view
 
+import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.extensions.*
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.hoi4.focus.{FixFocus, Focus, FocusTree}
 import com.hoi4utils.script.PDXScript
@@ -9,7 +9,6 @@ import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.focus_view.FocusTreeController.updateLoadingStatus
 import com.hoi4utils.ui.javafx_ui.image.ScalaFXImageUtils
 import com.hoi4utils.ui.pdxscript.{NewFocusTreeController, PDXEditorPane}
-import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.beans.property.SimpleBooleanProperty
@@ -23,16 +22,17 @@ import javafx.scene.input.{MouseButton, MouseEvent}
 import javafx.scene.layout.AnchorPane
 import javafx.scene.paint.Color
 
+import javax.swing.JOptionPane
 import java.io.*
 import java.time.LocalDateTime
-import java.util.Comparator
-import java.util.function.Consumer
-import javax.swing.JOptionPane
+import java.util.{Comparator, function}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 import scala.util.{Failure, Success, Try}
+import scala.compiletime.uninitialized
+import java.util.function.Consumer
+import scala.annotation.unused
 
 class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging {
   setFxmlResource("FocusTree.fxml")
@@ -141,7 +141,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging 
 
     // Load available focus trees
     updateStatus("Loading focus trees...")
-    val trees: ObservableList[FocusTree] = FocusTree.getFocusTrees.toObservableList
+    val trees: ObservableList[FocusTree] = FocusTree.observeFocusTrees
 
     if (trees == null) {
       updateStatus("Focus trees list is null. Ensure mod files are loaded correctly.")

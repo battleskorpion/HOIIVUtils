@@ -1021,6 +1021,6 @@
     SCA_Create_Cali_Police_Agency_desc:0 ""
 
     SCA_seek_foreign_support:0 "Seek Foreign Support"
-    SCA_seek_foreign_support_desc:0 ""
+    SCA_seek_foreign_support_desc:0
 
     SCA_union_research_groups:0 "Union Research Groups"

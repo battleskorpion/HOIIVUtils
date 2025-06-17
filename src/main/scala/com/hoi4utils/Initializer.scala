@@ -19,6 +19,8 @@ class Initializer extends LazyLogging {
   def initialize(config: Config, loadingLabel: Label): Boolean = {
     var initFailed: Boolean = false
 
+
+    MenuController.updateLoadingStatus(loadingLabel, "Loading Properties / Creating Properties...")
     ConfigManager().loadProperties(config)
 
     initFailed = autoSetHOIIVPath(config.getProperties)
@@ -27,6 +29,7 @@ class Initializer extends LazyLogging {
 
     config.getProperties.setProperty("hDir", config.getDir.toString)
 
+    MenuController.updateLoadingStatus(loadingLabel, "Saving Properties...")
     ConfigManager().saveProperties(config)
 
     initFailed
@@ -35,6 +38,7 @@ class Initializer extends LazyLogging {
   private def autoSetHOIIVPath(p: Properties): Boolean = {
     val hoi4Path = Option(p.getProperty("hoi4.path")).getOrElse("")
     if (hoi4Path.nonEmpty && hoi4Path.trim.nonEmpty) {
+      logger.debug("HOI4 path already set. Skipping auto-set.")
       return false
     }
 
@@ -45,7 +49,7 @@ class Initializer extends LazyLogging {
       case Some(validPath) =>
         val hoi4Dir = Paths.get(validPath).toAbsolutePath.toFile
         p.setProperty("hoi4.path", hoi4Dir.getAbsolutePath)
-        logger.info("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath)
+        logger.debug("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath)
         false
       case None =>
         logger.warn("Couldn't find HOI4 install folder. User must set it manually.")
@@ -86,7 +90,7 @@ class Initializer extends LazyLogging {
 
     if (modPath.isBlank) {
       p.setProperty("mod.path", demoModPath)
-      logger.info("Auto-set mod path to demo_mod")
+      logger.debug("Auto-set mod path to demo_mod")
       return
     }
 
@@ -94,10 +98,15 @@ class Initializer extends LazyLogging {
       Paths.get(modPath).getFileName.toString == "demo_mod"
     } catch {
       case e: Exception =>
-        logger.error("Error checking mod path: {}", e.getMessage)
+        logger.warn("Error checking mod path: {}", e.getMessage)
         false
     }
 
-    if (isDemoMod) p.setProperty("mod.path", demoModPath)
+    if (isDemoMod) {
+      p.setProperty("mod.path", demoModPath)
+      logger.debug("Reset mod path to demo_mod")
+    } else {
+      logger.debug("Mod path already set. Skipping auto-set.")
+    }
   }
 }

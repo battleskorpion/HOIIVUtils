@@ -29,35 +29,40 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers), List(referenceIdentifier))
   }
 
-  final protected var emptyPDXList: ListBuffer[String] = ListBuffer.empty
-
   /**
    * Load the PDX script from the given expression. If the expression is a list, then each element of the list will be
    * loaded as a separate PDX script, if applicable.
-   * 
-   * @param expression the node expression to load
-   * @throws UnexpectedIdentifierException if the identifier used in the expression is unexpected.
+   * @param expression
+   * @throws UnexpectedIdentifierException
    */
   @throws[UnexpectedIdentifierException]
-  @throws[NodeValueTypeException]
   override def loadPDX(expression: Node): Unit = {
     expression.$ match {
       case list: ListBuffer[Node] =>
+        // prolly don't need this check, but it doesn't hurt right now
+        if (list.isEmpty) {
+          System.out.println("PDX script had empty list: " + expression)
+          return
+        }
         usingIdentifier(expression)
 
         for (child <- list) {
-          add(child)
+          try {
+            add(child)
+          } catch {
+            case e: UnexpectedIdentifierException =>
+              System.err.println("Error loading child node: " + e.getMessage + "\n\t" + child)
+          }
         }
-        
         this.node = Some(expression)
       case _ =>
         try {
           add(expression)
         } catch {
-          case e: Throwable =>
+          case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
+            println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
             // Preserve the node so it isn’t lost.
             node = Some(expression)
-            throw e
         }
     }
   }
@@ -95,7 +100,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     checkReferenceIdentifier(expression)
     expression.$ match {
       case str: String =>
-        if (simpleSupplier.isEmpty) throw NodeValueTypeException(expression, "string", s"${expression.$}")
+        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(expression)
         pdxList.addOne(childScript)
@@ -104,13 +109,13 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
         logger.warn(s"Expected string value for pdx reference identifier, got ${other}. Preserving node using its string representation.")
         // Preserve the problematic node as a string.
         val preservedValue = other.toString
-        if (simpleSupplier.isEmpty) throw NodeValueTypeException(expression, "string", s"${expression.$}")
+        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(new Node(preservedValue))
         pdxList.addOne(childScript)
         referenceNames.addOne(preservedValue)
         // Then throw the exception so that callers are aware of the issue.
-        throw NodeValueTypeException(expression, "string", s"${expression.$}")
+        throw new NodeValueTypeException(expression, "string", this.getClass)
     }
   }
 
@@ -146,7 +151,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   def addReferenceTo(pdxScript: T): Unit = {
     val idOpt = idExtractor(pdxScript)
     if (idOpt.isEmpty) {
-      throw NodeValueTypeException(new Node(""), "Unable to extract reference identifier", s"Nothing: $idOpt")
+      throw new NodeValueTypeException(new Node(""), "Unable to extract reference identifier", this.getClass)
     }
     // Create a new ReferencePDX[T] using the supplier.
     val wrapper: ReferencePDX[T] = simpleSupplier.get.apply()
@@ -295,10 +300,9 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
     }
   }
 
-  @throws[UnexpectedIdentifierException]
   private def checkReferenceIdentifier(exp: Node): Unit = {
     if (!referencePDXIdentifiers.contains(exp.name))
-      throw UnexpectedIdentifierException(exp, referencePDXIdentifiers.mkString(", "))
+      throw new UnexpectedIdentifierException(exp)
   }
 
   /**

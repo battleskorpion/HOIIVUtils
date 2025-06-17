@@ -52,7 +52,11 @@ class ConfigManager extends LazyLogging {
     input2.close()
 
     config.getProperties.setProperty("version", version)
-    if (hVersionTempPath.exists() && !hVersionTempPath.delete()) logger.error("Failed to delete temporary version file: {}", hVersionTempPath)
+    if (hVersionTempPath.exists() && hVersionTempPath.delete()) {
+      logger.debug("Deleted temporary version file: {}", hVersionTempPath)
+    } else {
+      logger.warn("Failed to delete temporary version file: {}", hVersionTempPath)
+    }
   }
 
   def createHOIIVUtilsPropertiesFile(config: Config, defaultProperties: InputStream): Unit = {

@@ -12,17 +12,22 @@ class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: B
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def set(expression: Node): Unit =
+  override def set(expression: Node): Unit = {
     usingIdentifier(expression)
     this.node = Some(expression)
-    expression.$ match
-      case _: Boolean => // No action needed, value is already Boolean
-      case _: String =>
+    expression.$ match {
+      case _: Boolean =>
+//      case _: String =>
+//        val v = this.node.$.asInstanceOf[String]
+//        if (boolType.maches(v)) obj = boolType.parse(v)
+//        else throw new NodeValueTypeException(expression, "String parsable as Bool matching enum + " + boolType.toString)
+      case _: String => 
         val v = this.node.get.$.asInstanceOf[String]
-        if boolType.matches(v) then set(boolType.parse(v))
-        else throw NodeValueTypeException(expression, s"String parsable as Bool matching enum + ${boolType.toString}", s"${expression.$}")
-      case _ =>
-        throw NodeValueTypeException(expression, "Boolean or String", s"${expression.$}")
+        if (boolType.matches(v)) set(boolType.parse(v))
+        else throw new NodeValueTypeException(expression, "String parsable as Bool matching enum + " + boolType.toString, this.getClass)
+      case _ => throw new NodeValueTypeException(expression, "Boolean or String", this.getClass)
+    }
+  }
   
   override def set(value: Boolean): Boolean = {
     if (this.node.nonEmpty)

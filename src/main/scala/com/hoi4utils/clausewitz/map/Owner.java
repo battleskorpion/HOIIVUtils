@@ -21,7 +21,7 @@ public record Owner(CountryTag tag) implements Comparable<Owner> {
 			return this.tag.equals(other);
 		}
 		if (other instanceof Country) {
-			return this.tag.equals(((Country) other).getCountryTag());
+			return this.tag.equals(((Country) other).countryTag());
 		}
 
 		return false;

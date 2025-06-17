@@ -3,7 +3,7 @@ package com.hoi4utils.hoi4.scope
 import com.hoi4utils.exceptions.NotPermittedInScopeException
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.hoi4.effect.Effect
-import com.map.State
+import map.State
 
 import scala.collection.mutable
 

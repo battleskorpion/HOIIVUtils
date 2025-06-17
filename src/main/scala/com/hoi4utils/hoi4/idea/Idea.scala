@@ -2,7 +2,6 @@ package com.hoi4utils.hoi4.idea
 
 
 import com.hoi4utils.ExpectedRange
-import com.hoi4utils.hoi4.idea.Idea.ideaErrors
 import com.hoi4utils.hoi4.modifier.{Modifier, ModifierDatabase}
 import com.hoi4utils.localization.{Localizable, Property}
 import com.hoi4utils.parser.Node
@@ -13,31 +12,74 @@ import org.jetbrains.annotations.NotNull
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
+
+/**
+ * This is the Idea file.
+ */
+object Idea extends LazyLogging {
+
+  def getDataFunctions: Iterable[Idea => ?] = {
+    val dataFunctions = new ListBuffer[Idea => ?]() // for optimization, limited number of data functions.
+
+    dataFunctions += (idea => idea.localizationText(Property.NAME))
+    dataFunctions += (idea => idea.localizationText(Property.DESCRIPTION))
+    dataFunctions
+  }
+
+  def listAllIdeas: List[Idea] = {
+    IdeaFile.listIdeasFromAllIdeaFiles
+  }
+
+  def pdxSupplier(): PDXSupplier[Idea] = {
+    new PDXSupplier[Idea] {
+      override def simplePDXSupplier(): Option[Node => Option[Idea]] = {
+        Some((expr: Node) => {
+            Some(new Idea(expr)) // todo check if this is correct? or nah?
+        })
+      }
+
+      override def blockPDXSupplier(): Option[Node => Option[Idea]] = {
+        Some((expr: Node) => {
+          Some(new Idea(expr))
+        })
+      }
+    }
+  }
+}
+
 /**
  *
  * @param name
  *
  * @note Since name is not declared val or var, it will not become a field of Idea.
  */
-class Idea(node: Node, ideaFile: IdeaFile = null) extends StructuredPDX(node.name) with Localizable with Iterable[Modifier]:
-  require(node != null, "Node cannot be null")
+class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Localizable with Iterable[Modifier] {
+  private var _ideaFile: Option[IdeaFile] = None
 
   /* idea */
-  val modifiers = new CollectionPDX[Modifier](ModifierDatabase(), "modifier") {
+  final val modifiers = new CollectionPDX[Modifier](ModifierDatabase(), "modifier") {
     override def loadPDX(expr: Node): Unit = {
-      super.loadPDX(expr, ideaErrors)
+      super.loadPDX(expr)
     }
 
     override def getPDXTypeName: String = "Modifiers"
   }
+  final val removalCost = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
 
-  val removalCost = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
+  def this(node: Node) = {
+    this(node.name)
+    loadPDX(node)
+  }
 
-  private var _ideaFile: Option[IdeaFile] = None
+  def this(ideaFile: IdeaFile, identifier: String) = {
+    this(identifier)
+    this._ideaFile = Some(ideaFile)
+  }
 
-  /* load Idea */
-  loadPDX(node, ideaErrors)
-  setIdeaFile(ideaFile)
+  def this(ideaFile: IdeaFile, node: Node) = {
+    this(node)
+    this._ideaFile = Some(ideaFile)
+  }
 
   /**
    * @inheritdoc
@@ -58,9 +100,9 @@ class Idea(node: Node, ideaFile: IdeaFile = null) extends StructuredPDX(node.nam
 //  }
 //
 
-  def id: Option[String] = this.node.name match {
+  def id: Option[String] = this.pdxIdentifier match {
     case null => None
-    case _ => Some(this.node.name)
+    case _ => Some(this.pdxIdentifier)
   }
 
 //  def setID(id: String): Unit = {
@@ -96,36 +138,4 @@ class Idea(node: Node, ideaFile: IdeaFile = null) extends StructuredPDX(node.nam
     }
   }
 
-  /**
-   * This is the Idea file.
-   */
-object Idea extends LazyLogging:
-  def getDataFunctions: Iterable[Idea => ?] = {
-    val dataFunctions = new ListBuffer[Idea => ?]() // for optimization, limited number of data functions.
-
-    dataFunctions += (idea => idea.localizationText(Property.NAME))
-    dataFunctions += (idea => idea.localizationText(Property.DESCRIPTION))
-    dataFunctions
-  }
-  
-  var ideaErrors: ListBuffer[String] = ListBuffer.empty
-
-  def listAllIdeas: List[Idea] = {
-    IdeaFile.listIdeasFromAllIdeaFiles
-  }
-
-  def pdxSupplier(): PDXSupplier[Idea] = {
-    new PDXSupplier[Idea] {
-      override def simplePDXSupplier(): Option[Node => Option[Idea]] = {
-        Some((expr: Node) => {
-          Some(new Idea(expr)) // todo check if this is correct? or nah?
-        })
-      }
-
-      override def blockPDXSupplier(): Option[Node => Option[Idea]] = {
-        Some((expr: Node) => {
-          Some(new Idea(expr))
-        })
-      }
-    }
-  }
+}

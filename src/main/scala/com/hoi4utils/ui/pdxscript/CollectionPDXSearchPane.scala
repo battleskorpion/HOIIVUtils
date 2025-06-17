@@ -7,10 +7,10 @@ import javafx.collections.FXCollections
 import javafx.collections.transformation.FilteredList
 import javafx.event.ActionEvent
 import javafx.geometry.Insets
+import javafx.scene.{Node, Parent}
 import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.scene.paint.Paint
-import javafx.scene.{Node, Parent}
 import org.jetbrains.annotations.Nullable
 
 /**

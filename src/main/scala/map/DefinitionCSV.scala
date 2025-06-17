@@ -1,44 +1,43 @@
-package com.map
+package map
 
 import java.io.File
 import scala.io.Source
 import scala.util.Try
 
+/**
+ * Represents the definition for a province loaded from the CSV.
+ *
+ * @param id the province id
+ * @param red red component (0-255)
+ * @param green green component (0-255)
+ * @param blue blue component (0-255)
+ * @param terrain terrain type, e.g. "sea", "land", "lake"
+ * @param isCoastal a flag (true/false) from the CSV
+ * @param subtype a more specific type, e.g. "ocean", "forest", "plains"
+ * @param score an integer value from the CSV (could represent weight or another parameter)
+ */
+case class ProvinceDefinition(
+                               id: Int,
+                               red: Int,
+                               green: Int,
+                               blue: Int,
+                               terrain: String,
+                               isCoastal: Boolean,
+                               subtype: String,
+                               score: Int
+                             )
+
 object DefinitionCSV {
-  
-  /**
-   * Represents the definition for a province loaded from the CSV.
-   *
-   * @param id        the province id
-   * @param red       red component (0-255)
-   * @param green     green component (0-255)
-   * @param blue      blue component (0-255)
-   * @param terrain   terrain type, e.g. "sea", "land", "lake"
-   * @param isCoastal a flag (true/false) from the CSV
-   * @param subtype   a more specific type, e.g. "ocean", "forest", "plains"
-   * @param score     an integer value from the CSV (could represent weight or another parameter)
-   */
-  case class ProvinceDefinition
-  (
-     id: Int,
-     red: Int,
-     green: Int,
-     blue: Int,
-     terrain: String,
-     isCoastal: Boolean,
-     subtype: String,
-     score: Int
-  )
 
   /**
    * Loads province definitions from the given CSV file.
    *
    * The CSV is expected to have lines formatted like:
-   *{{{
+   *
    *     0;0;0;0;sea;false;unknown;10
    *     1;57;35;244;sea;false;ocean;3
    *     ...
-   *}}}
+   *
    * Fields are separated by semicolons.
    *
    * @param file the CSV file to load.

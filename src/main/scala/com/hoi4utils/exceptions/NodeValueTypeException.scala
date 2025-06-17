@@ -2,15 +2,17 @@ package com.hoi4utils.exceptions
 
 import com.hoi4utils.parser.Node
 
-class NodeValueTypeException(message: String, cause: Throwable = null)
-  extends Exception(message, cause)
+class NodeValueTypeException(message: String, cause: Throwable) extends Exception(message, cause) {
 
-object NodeValueTypeException:
-  def apply(message: String): NodeValueTypeException =
-    new NodeValueTypeException(message)
+  def this(message: String) =
+    this(message, null)
 
-  def apply(node: Node): NodeValueTypeException =
-    new NodeValueTypeException(s"Invalid node value type: ${node.name}")
+  def this(exp: Node, clazz: Class[?]) =
+    this(s"[${clazz.getName}] Invalid node value type: ${exp.name}")
 
-  def apply(node: Node, expected: String, received: String): NodeValueTypeException =
-    new NodeValueTypeException(s"Invalid node value type of expression: ${node.name},\n    Expected: $expected\n    Received: $received")
+  def this(exp: Node, cause: Throwable, clazz: Class[?]) =
+    this(s"[${clazz.getName}] Invalid node value type: ${exp.name}", cause)
+
+  def this(exp: Node, expected: String, clazz: Class[?]) =
+    this(s"[${clazz.getName}] Invalid node value type of expression: ${exp.name}, Expected: $expected")
+}

@@ -37,21 +37,21 @@ object Token {
  */
 class Token {
   var value: String = uninitialized
-  var tokenType: TokenType = uninitialized
+  var `type`: TokenType = uninitialized
   var start = 0
 
-  def this(value: String, start: Int, tokenType: TokenType) = {
+  def this(value: String, start: Int, `type`: TokenType) = {
     this()
     this.value = value
     this.start = start
-    this.tokenType = tokenType
+    this.`type` = `type`
   }
 
   def this(value: String, start: Int) = {
     this()
     this.value = value
     this.start = start
-    this.tokenType = determineTokenType(value)
+    this.`type` = determineTokenType(value)
   }
 
   private def determineTokenType(value: String): TokenType = {
@@ -75,12 +75,12 @@ class Token {
   
   override def toString: String = this.value
   
-  def isNumber: Boolean = TokenType.isNumeric(tokenType)
+  def isNumber: Boolean = TokenType.isNumeric(`type`)
 
   override def equals(other: Any): Boolean = {
     other match {
       case that: Token =>
-        this.value == that.value && this.tokenType == that.tokenType && this.start == that.start
+        this.value == that.value && this.`type` == that.`type` && this.start == that.start
       case _ => false
     }
   }

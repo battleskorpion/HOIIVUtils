@@ -25,17 +25,35 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     this(simpleSupplier, pdxIdentifiers.toList)
   }
 
+  /**
+   * @inheritdoc
+   */
   @throws[UnexpectedIdentifierException]
-  @throws[NodeValueTypeException]
+  override def loadPDX(expression: Node): Unit = {
+    try add(expression)
+    catch {
+      case e: NodeValueTypeException =>
+        throw new RuntimeException(e)
+    }
+  }
+
   override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    if expressions != null then
+    if (expressions != null) {
       val remaining = ListBuffer.from(expressions)
-      for expression <- expressions if isValidIdentifier(expression) do
-        add(expression)
-        remaining -= expression
+      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
+        try {
+          loadPDX(expression)
+          remaining -= expression
+        }
+        catch {
+          case e: UnexpectedIdentifierException =>
+            System.err.println(e.getMessage)
+        }
+      })
       remaining
-    else
+    } else {
       ListBuffer.empty
+    }
   }
 
   override def equals(other: PDXScript[?]) = false // todo? well.

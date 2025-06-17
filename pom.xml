@@ -105,7 +105,7 @@
           </execution>
         </executions>
         <configuration>
-          <scalaVersion>3.7.1</scalaVersion>
+          <scalaVersion>3.7.0</scalaVersion>
         </configuration>
       </plugin>
       <!-- https://maven.apache.org/plugins/maven-compiler-plugin/usage.html -->
@@ -319,7 +319,7 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala3-library_3</artifactId>
-      <version>3.7.1</version>
+      <version>3.7.0</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->
     <dependency>
@@ -338,7 +338,7 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala3-compiler_3</artifactId>
-      <version>3.7.1</version>
+      <version>3.7.0</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.scala-lang.modules/scala-parser-combinators -->
     <dependency>
@@ -499,7 +499,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javafx.version>24.0.1</javafx.version>
     <project.inceptionYear>2022</project.inceptionYear>
-    <scala.version>3.7.1</scala.version>
+    <scala.version>3.7.0</scala.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 

@@ -63,7 +63,7 @@ class Node (
   def asBool(boolType: BoolType): Boolean = rawValue match {
     case Some(s: String) => java.lang.Boolean.valueOf(s == boolType.trueResponse)
     case Some(b: Boolean) => java.lang.Boolean.valueOf(b)
-    case _ => throw new IllegalArgumentException(s"Cannot convert $rawValue to Boolean")
+    case _ => throw new ParserException("Expected a Boolean or String for boolean conversion")
   }
 
   /**

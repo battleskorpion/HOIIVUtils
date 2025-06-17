@@ -64,7 +64,7 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
         }
 
         File focusFile = new File(HOIIVUtils.get("mod.path") + "/common/national_focus/" + id + "_" + "temp_HOIIVUtils"+ ".txt");
-        FocusTree focusTree = new FocusTree(null);
+        FocusTree focusTree = new FocusTree();
         focusTree.setID(id);
         focusTree.setCountryTag(countryTag);
         focusTree.setFile(focusFile);

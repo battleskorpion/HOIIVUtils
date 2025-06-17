@@ -27,7 +27,7 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
     usingIdentifier(expression)
     this.node = Some(expression)
     if (!valueIsInstanceOf[Int | Integer]) {
-      throw NodeValueTypeException(expression, "Number (as an Integer)", s"$node")
+      throw new NodeValueTypeException(expression, "Number (as an Integer)", this.getClass)
     }
   }
 
