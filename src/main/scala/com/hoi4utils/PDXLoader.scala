@@ -6,7 +6,8 @@ import com.hoi4utils.hoi4.effect.EffectDatabase
 import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.hoi4.idea.IdeaFile
 import com.hoi4utils.hoi4.modifier.ModifierDatabase
-import com.hoi4utils.localization.EnglishLocalizationManager
+import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
+import com.hoi4utils.parser.Parser.parserFileErrors
 import com.hoi4utils.localization.LocalizationManager.{loadedLocFiles, localizationErrors, getOrCreate}
 import com.hoi4utils.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4.country.Country.countryErrors
@@ -91,6 +92,7 @@ class PDXLoader extends LazyLogging {
   def clearLB(): Unit = {
     ListBuffer (
       localizationErrors,
+      parserFileErrors,
       interfaceErrors,
       countryErrors,
       focusErrors,

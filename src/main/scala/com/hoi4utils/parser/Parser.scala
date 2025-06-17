@@ -1,17 +1,13 @@
 package com.hoi4utils.parser
 
+import com.hoi4utils.parser.Parser.parserFileErrors
+
 import java.io.File
 import java.nio.file.Files
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
-/**
- * Parser class for parsing Clausewitz Engine files.
- * @param input The input can be a String or a File containing the content to parse.
- */
-@throws[ParserException]
-class Parser(val input: String | File):
-  require(input != null, "Input cannot be null")
+class Parser(val input: String | File, clazz: Class[?]):
   private val escapeBackslashRegex = "\\\\"
   private val escapeQuoteRegex = "\\\\\""
 
@@ -29,13 +25,13 @@ class Parser(val input: String | File):
   private val _rootNode: Node =
     val leading = consumeTrivia()
     val blockContent = parseBlockContent()
-    if blockContent.isEmpty then throw ParserException(s"Issue: No nodes found in the block.\nFile: ${input.toString}")
+    if blockContent.isEmpty then parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n    Issue: No nodes found in the block.\nFile: ${input.toString}")
     val trailing = consumeTrivia()
 
     tokens.peek match
       case Some(token) if token.tokenType == TokenType.eof => // OK
-      case Some(token) => throw ParserException(s"Issue: Unexpected token after block parsing: ${token.value}\nFile: ${input.toString} ")
-      case None => throw ParserException(s"Issue: No tokens found after parsing block.\nFile: ${input.toString} ")
+      case Some(token) => parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n    Issue: Unexpected token after block parsing: ${token.value}\nFile: ${input.toString} ")
+      case None => parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n    Issue: No tokens found after parsing block.\nFile: ${input.toString} ")
 
     Node(
       leadingTrivia = leading,
@@ -69,7 +65,12 @@ class Parser(val input: String | File):
       tokens.peek match
         case Some(token) if token.tokenType == TokenType.eof || token.value == "}" => // Stop collecting
         case _ =>
-          nodes += parseNode()
+          try
+            nodes += parseNode()
+          catch
+            case e: ParserException =>
+              parserFileErrors.addOne(s"Class: ${clazz.getSimpleName} \n    Issue: ${e.getMessage}\nFile: ${input.toString}")
+              return // Stop collecting on error
           collectNodes()
 
     collectNodes()
@@ -198,3 +199,6 @@ class Parser(val input: String | File):
     if closing.value != "}" then
       throw ParserException(s"Error: Unexpected end of block type: \n        Required: }, \n        Found: ${closing.value}")
     children
+
+object Parser:
+  val parserFileErrors: ListBuffer[String] = ListBuffer.empty

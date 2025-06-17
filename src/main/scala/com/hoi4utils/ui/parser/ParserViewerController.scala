@@ -88,7 +88,7 @@ class ParserViewerController extends HOIIVUtilsAbstractController:
 
           allPDXFiles.foreach { pdxFile =>
             Try {
-              new Parser(file).rootNode
+              new Parser(file, this.getClass).rootNode
             } match
               case Success(rootNode) if rootNode != null =>
                 val firstChild = rootNode.toList.head
@@ -112,7 +112,7 @@ class ParserViewerController extends HOIIVUtilsAbstractController:
         else
           parsePDXFileTextField.setText(file.getAbsolutePath)
 
-          Try(new Parser(file).rootNode) match
+          Try(new Parser(file, this.getClass).rootNode) match
             case Success(rootNode) if rootNode != null =>
               if !rootNode.isParent then
                 pdxIdentifierLabel.setText("[empty]")

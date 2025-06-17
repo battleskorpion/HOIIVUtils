@@ -1,6 +1,5 @@
 package com.hoi4utils.hoi4.idea
 
-import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.hoi4.idea.IdeaFile.{ideaFileErrors, ideaFileFileMap}
 import com.hoi4utils.localization.Localizable
 import com.hoi4utils.parser.Node
@@ -15,10 +14,8 @@ import scala.collection.mutable.ListBuffer
 class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[Idea]:
   /* pdxscript */
   final var countryIdeas = new CollectionPDX[Idea](Idea.pdxSupplier(), "country") {
-    @throws[UnexpectedIdentifierException]
-    @throws[NodeValueTypeException]
     override def loadPDX(expr: Node): Unit = {
-      super.loadPDX(expr)
+      super.loadPDX(expr, ideaFileErrors)
       pdxList.foreach(idea => idea.setIdeaFile(IdeaFile.this))
     }
 

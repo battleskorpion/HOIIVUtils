@@ -1,6 +1,6 @@
 package com.map
 
-import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
+import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.CollectionPDX
 import com.map.StateCategoryFile.stateCategoryFileErrors
@@ -26,7 +26,6 @@ class StateCategoryFile(file: File = null) extends CollectionPDX[StateCategoryDe
   }
 
   @throws[UnexpectedIdentifierException]
-  @throws[NodeValueTypeException]
   override def loadPDX(expression: Node): Unit = {
     super.loadPDX(expression)
   }

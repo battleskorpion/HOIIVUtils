@@ -3,7 +3,6 @@ package com.map
 import com.hoi4utils.*
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
-import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.hoi4.country.{Country, CountryTag, CountryTagsManager}
 import com.hoi4utils.localization.*
 import com.hoi4utils.parser.*
@@ -27,8 +26,6 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
   final val stateID = new IntPDX("id")
   final val name = new StringPDX("name")
   private val resourcePDXSupplier: PDXSupplier[Resource] = Resource() // todo: what
-  @throws[UnexpectedIdentifierException]
-  @throws[NodeValueTypeException]
   final val resources = new CollectionPDX[Resource](resourcePDXSupplier, "resources") {
     override def loadPDX(expr: Node): Unit = {
       super.loadPDX(expr, stateErrors)

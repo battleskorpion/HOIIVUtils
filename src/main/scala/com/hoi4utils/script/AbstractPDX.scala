@@ -1,7 +1,7 @@
 package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.{Node, Parser, ParserException}
+import com.hoi4utils.parser.{Node, Parser}
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
@@ -89,20 +89,13 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def loadPDX(expression: Node): Unit = {
-    if (expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty)) {
-      logger.error("Error loading PDX script: " + expression)
-      return
-    }
-    try {
-      set(expression)
-    } catch {
-      case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        logger.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
-        // Preserve the original node so that its content isn’t lost.
-        node = Some(expression)
-    }
-  }
+  override def loadPDX(expression: Node): Unit =
+    if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then throw UnexpectedIdentifierException(expression)
+    else
+      try set(expression) catch
+        case e: Throwable =>
+          node = Some(expression)
+          throw e
 
   /**
    * 
@@ -115,23 +108,29 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
     val remaining = ListBuffer.from(expressions)
     expressions.foreach { expression =>
       if (isValidIdentifier(expression)) {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
-        catch {
-          case e: UnexpectedIdentifierException =>
-            logger.error(e.getMessage)
-        }
+        loadPDX(expression)
+        remaining -= expression
       }
     }
     remaining
   }
 
   /**
+   * Loads a PDX file from the given file.
+   * The file should contain a valid PDX script block.
+   *
+   * @param file the file to load
+   * @throws UnexpectedIdentifierException if the file does not contain a valid PDX script block
+   */
+  @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
+  protected def loadPDX(file: File): Unit = {
+    loadPDX(new Parser(file, this.getClass).rootNode)
+  }
+
+  /**
    * Loads a PDX script from the given Node.
    * The Node should represent a valid PDX script block.
-   * if the Node is a file, it will be parsed and the root Node will be used.
    *
    * @param expressions the Node/Nodes/File to load
    * @throws UnexpectedIdentifierException if the Node does not contain a valid PDX script block
@@ -140,14 +139,14 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
     try expressions match
       case node: Node => loadPDX(node)
       case nodes: Iterable[Node] => loadPDX(nodes)
-      case file: File =>
-        val fileRootNode: Node = new Parser(file).rootNode
-        loadPDX(fileRootNode)
+      case file: File => loadPDX(file)
       case null => errors.addOne("Cannot load PDX script from null value")
     catch
-      case e @ (_: UnexpectedIdentifierException | _: NodeValueTypeException | _: IllegalStateException | _: ParserException) =>
-        errors.addOne(s"Class: ${getClass.getSimpleName} \n    Issue: ${e.getMessage}\n\nFrom: ${expressions.toString}")
-      case e => errors.addOne(s"Class: ${getClass.getSimpleName} \n    Unexpected error while loading PDX script:    Issue: $e\n\nFrom: ${expressions.toString}")
+      case e: UnexpectedIdentifierException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    Issue: ${e.getMessage}\nFrom: ${expressions.toString}")
+      case e: NodeValueTypeException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    Issue: ${e.getMessage}\nFrom: ${expressions.toString}")
+      case e: IllegalStateException => errors.addOne(s"Class: ${getClass.getSimpleName} \n    Issue: ${e.getMessage}\nFrom: ${expressions.toString}")
+      case e: MatchError => e.printStackTrace()
+      case e => errors.addOne(s"Class: ${getClass.getSimpleName} \n    Unexpected error while loading PDX script:\n    Issue: $e\nFrom: ${expressions.toString}")
   }
 
   /**

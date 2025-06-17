@@ -1,9 +1,8 @@
 package com.map
 
-import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.map.ResourcesFile.resourcesFileErrors
 import com.hoi4utils.parser.Node
-import com.hoi4utils.script.{CollectionPDX, DoublePDX, IntPDX, PDXScript, PDXSupplier, StructuredPDX}
+import com.hoi4utils.script.{CollectionPDX, PDXSupplier, DoublePDX, IntPDX, PDXScript, StructuredPDX}
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 
@@ -19,8 +18,6 @@ class ResourcesFile(var _resourcesFile: File) extends CollectionPDX[ResourceDef]
   /**
    * @inheritdoc
    */
-  @throws[UnexpectedIdentifierException]
-  @throws[NodeValueTypeException]
   override def loadPDX(expression: Node): Unit = {
     if (expression.identifier.isEmpty) {
       expression.$ match {

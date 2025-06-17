@@ -2,7 +2,6 @@ package com.map
 
 import com.hoi4utils.extensions.*
 import com.hoi4utils.script.*
-import com.map.StrategicRegion.strategicRegionErrors
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.ObservableList
 
@@ -27,7 +26,7 @@ class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region
   /* init */
   file match {
     case f if f != null && f.exists() && f.isFile =>
-      loadPDX(f, strategicRegionErrors)
+      loadPDX(f)
       setFile(f)
     case f if f != null && !f.exists() =>
       throw new IllegalArgumentException(s"Strategic Region file ${f.getName} does not exist.")

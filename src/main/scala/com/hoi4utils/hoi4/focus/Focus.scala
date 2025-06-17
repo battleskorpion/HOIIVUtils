@@ -1,6 +1,5 @@
 package com.hoi4utils.hoi4.focus
 
-import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.extensions.*
 import com.hoi4utils.gfx.Interface.getGFX
 import com.hoi4utils.hoi4.effect.{Effect, EffectDatabase}
@@ -349,8 +348,6 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
   }
 
   class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward") {
-    @throws[UnexpectedIdentifierException]
-    @throws[NodeValueTypeException]
     override def loadPDX(expression: Node): Unit = {
       super.loadPDX(expression, focusErrors)
     }
