@@ -20,6 +20,7 @@ import scala.collection.mutable.ListBuffer
  */
 class FocusTree(focus_file: File = null) extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile {
   /* pdxscript */
+  //final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
   final var country = new FocusTreeCountryPDX
   final var focuses = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   final var id = new StringPDX("id")
@@ -33,11 +34,12 @@ class FocusTree(focus_file: File = null) extends StructuredPDX("focus_tree") wit
     case file if file.exists() =>
       loadPDX(focus_file, focusTreeFileErrors)
       _focusFile = Some(file)
+      focusTreeFileMap.put(file, this)
     case file if file != null && !file.exists() =>
       focusTreeFileErrors += s"Focus tree file ${file.getName} does not exist."
 
-  /* add tree */
-  FocusTree += this
+  /* default */
+  add(this)
 
   // todo: add default, continuous focus position
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
@@ -241,8 +243,6 @@ object FocusTree extends LazyLogging with PDXReadable {
     }
     focusTrees
   }
-
-  def += (focusTree: FocusTree): Iterable[FocusTree] = add(focusTree)
 
   def listFocusTrees: Iterable[FocusTree] = focusTrees
 
