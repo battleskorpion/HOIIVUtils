@@ -13,15 +13,13 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
 
   var structuredPDXBadNodesList: Iterable[Node] = ListBuffer.empty
 
-  def getStructuredPDXBadNodesList: Option[ListBuffer[String]] = {
+  def getStructuredPDXBadNodesList: ListBuffer[String] = {
     val structuredPDXBadNodesList = ListBuffer.empty[String]
     for node <- this.structuredPDXBadNodesList do
       node.identifier match
         case Some(id) => structuredPDXBadNodesList += id
         case None => structuredPDXBadNodesList += s"Node without identifier: ${node.$}"
-    structuredPDXBadNodesList match
-      case l if l.isEmpty => None
-      case _ => Some(structuredPDXBadNodesList)
+    structuredPDXBadNodesList
   }
 
   protected def childScripts: collection.mutable.Iterable[? <: PDXScript[?]]

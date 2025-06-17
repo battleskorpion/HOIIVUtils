@@ -152,11 +152,11 @@ trait AbstractPDX[V](protected var pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  override def isValidIdentifier(node: Node): Boolean = {
+  infix override def isValidIdentifier(node: Node): Boolean = {
     isValidID(node.name)
   }
   
-  override def isValidID(identifier: String): Boolean = {
+  infix override def isValidID(identifier: String): Boolean = {
     pdxIdentifiers.contains(identifier)
   }
 
