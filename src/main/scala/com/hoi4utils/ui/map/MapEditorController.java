@@ -211,6 +211,31 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
             }
         }
     }
+    
+    @FXML
+    void mapToPNG() {
+        if (mapImage == null) {
+            logger.warn("No map image to save.");
+            return;
+        }
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Map as PNG");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("PNG Images", "*.png"));
+        File file = fileChooser.showSaveDialog(mapCanvas.getScene().getWindow());
+        if (file != null) {
+            try {
+                WritableImage writableImage = new WritableImage((int) mapImage.getWidth(), (int) mapImage.getHeight());
+                PixelWriter pixelWriter = writableImage.getPixelWriter();
+                pixelWriter.setPixels(0, 0, (int) mapImage.getWidth(), (int) mapImage.getHeight(),
+                        mapImage.getPixelReader(), 0, 0);
+                javax.imageio.ImageIO.write(javafx.embed.swing.SwingFXUtils.fromFXImage(writableImage, null), "png", file);
+                logger.info("Map saved to: " + file.getAbsolutePath());
+            } catch (Exception e) {
+                logger.error("Failed to save map image", e);
+            }
+        }
+    }
 
     @FXML
     void onViewByProvince() {

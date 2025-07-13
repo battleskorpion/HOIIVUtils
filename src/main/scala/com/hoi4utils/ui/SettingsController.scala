@@ -198,7 +198,7 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
 
   def handleModFileBrowseAction(): Unit = {
     val usersDocuments = s"${System.getProperty("user.home")}${File.separator}Documents"
-    val initialModDir = new File(s"$usersDocuments${File.separator}${HOIIVFiles.usersParadoxHOIIVModFolder}")
+    val initialModDir = new File(s"$usersDocuments${File.separator}${File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod"}")
     handleFileBrowseAction(modPathTextField, modFolderBrowseButton, initialModDir, "mod.path")
   }
 
@@ -222,10 +222,19 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
     }
   }
 
-  // Generic method to handle file browser actions
   private def handleFileBrowseAction(textField: TextField, browseButton: Node,
                                      initialDirectory: File, settingKey: String): Unit = {
-    val selectedFile = JavaFXUIManager.openChooser(browseButton, initialDirectory, true)
+    if (initialDirectory == null || !initialDirectory.exists || !initialDirectory.isDirectory) {
+      logger.warn(s"Initial directory for $settingKey is invalid: ${initialDirectory.getAbsolutePath}")
+      return
+    }
+
+    val selectedFile = try JavaFXUIManager.openChooser(browseButton, initialDirectory, true)
+    catch {
+      case e: Exception =>
+        logger.error(s"Error opening file chooser for $settingKey: ${e.getMessage}", e)
+        JavaFXUIManager.openChooser(browseButton, true)
+    }
 
     if (selectedFile == null) return
 
