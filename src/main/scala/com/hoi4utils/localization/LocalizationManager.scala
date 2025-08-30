@@ -279,7 +279,7 @@ abstract class LocalizationManager extends LazyLogging {
   /** Formats a Localization into a file line. */
   def formatLocalization(loc: Localization): String = {
     val versionStr = loc.version match {
-      case null => ""
+      case None => ""
       case v => v.toString
     }
     // Build the entry string
