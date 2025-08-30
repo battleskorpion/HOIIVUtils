@@ -52,10 +52,10 @@ class Initializer extends LazyLogging {
         logger.debug("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath)
         false
       case None =>
-        logger.warn("Couldn't find HOI4 install folder. User must set it manually.")
+        logger.warn("Could not find HOI4 install folder. User must set it manually.")
         JOptionPane.showMessageDialog(
           null,
-          s"version: ${Version.getVersion(p)} Couldn't find Hearts Of Iron 4 default steam installation folder, please go to the settings page and add it (REQUIRED)",
+          s"version: ${Version.getVersion(p)} Could not find Hearts Of Iron 4 default steam installation folder, please go to the settings page and add it (REQUIRED)",
           "Error Message",
           JOptionPane.WARNING_MESSAGE
         )

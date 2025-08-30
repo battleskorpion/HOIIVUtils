@@ -227,6 +227,11 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   
   def isLocalized: Boolean = localizationStatus(Property.NAME) != Localization.Status.MISSING
 
+  def isLocalized(property: com.hoi4utils.localization.Property): Boolean = localization(property) match {
+    case Some(_) => true
+    case None => false
+  }
+
   def getCompletionReward: CompletionReward = completionReward
 
 //  def setCompletionReward(completionReward: List[Effect]): Unit = {

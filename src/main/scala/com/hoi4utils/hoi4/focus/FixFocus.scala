@@ -1,5 +1,6 @@
 package com.hoi4utils.hoi4.focus
 
+import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.hoi4.country.CountryTagsManager
 import com.hoi4utils.localization.{LocalizationManager, Property}
 import com.typesafe.scalalogging.LazyLogging
@@ -16,32 +17,38 @@ import scala.jdk.javaapi.CollectionConverters
  */
 object FixFocus extends LazyLogging {
 
-  // TODO improve
+  /**
+   * Fixes localization if necessary (who could've guessed).
+   *
+   * @param focusTree The focus tree to fix localization for.
+   * @param generateDefaultDescs Whether to generate default descriptions for focuses that lack them,
+   */
   @throws[IOException]
-  def fixLocalization(focusTree: FocusTree): Unit = {
+  def fixLocalization(focusTree: FocusTree, generateDefaultDescs: Boolean): Unit = {
     logger.debug("Starting fixLocalization for FocusTree: {}", focusTree)
     if (!validateFocusTree(focusTree)) return
 
     val locManager = LocalizationManager.get
-    logger.debug("LocalizationManager loaded")
-
     val locFile = focusTree.primaryLocalizationFile.get
-    logger.debug("Primary localization file: {}", locFile.getAbsolutePath)
+    val focuses = focusTree.focuses
 
-    val focuses = CollectionConverters.asJavaCollection(focusTree.focuses)
+    logger.debug("Localization Manager loaded.")
+    logger.debug("Primary localization file: {}", locFile.getAbsolutePath)
     logger.debug("Total focuses in tree: {}", focuses.size)
 
-    focuses.parallelStream.filter((focus: Focus) => {
-      //val missingLocalization = focus.localization(Property.NAME) == null
-      //if (missingLocalization) logger.debug("Missing localization for focus: {}", focus.id.str)
-      //missingLocalization
-      focus.localization(Property.NAME) match {
-        case Some(_) => false
-        case None =>
-          logger.debug("Missing localization for focus: {}", focus.id.str)
-          true
+    // add name localization if missing
+    focuses filter (_.isLocalized(Property.NAME)) foreach { focus =>
+      logger.debug("Missing localization for focus: {}", focus.id.str)
+      addGeneratedNameLocalization(focus, locManager, locFile)
+    }
+
+    // add desc localization if missing
+    if (generateDefaultDescs) {
+      focuses filter (_.isLocalized(Property.DESCRIPTION)) foreach { focus =>
+        logger.debug("Missing localization for focus: {}", focus.id.str)
+        addGeneratedDescLocalization(focus, locManager, locFile)
       }
-    }).forEach((focus: Focus) => processFocusLocalization(focus, locManager, locFile))
+    }
 
     logger.debug("Finished fixing focus localization.")
   }
@@ -71,13 +78,24 @@ object FixFocus extends LazyLogging {
     true
   }
 
-  private def processFocusLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
+  /**
+   *
+   *
+   * @param focus
+   * @param locManager
+   * @param locFile
+   */
+  private def addGeneratedNameLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
     val focusName = extractFocusName(focus.id.getOrElse(null))
     // Format the focus name
     val formattedName = locManager.titleCapitalize(focusName.replaceAll("_+", " ").trim)
 
     // Set missing localizations
     focus.setLocalization(Property.NAME, formattedName, locFile)
+    focus.setLocalization(Property.DESCRIPTION, generateDescription, locFile)
+  }
+
+  private def addGeneratedDescLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
     focus.setLocalization(Property.DESCRIPTION, generateDescription, locFile)
   }
 
