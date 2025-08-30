@@ -287,8 +287,10 @@ abstract class LocalizationManager extends LazyLogging {
     entry.replaceAll("§", "Â§") // necessary with UTF-8 BOM
   }
 
+  /**
+   * Loads localization. Loads mod localization after vanilla to give mod localizations priority
+   */
   protected def loadLocalization(): Unit = {
-    /* Load mod localization after vanilla to give mod localizations priority */
     // vanilla
     if (HOIIVFiles.HOI4.localization_folder == null)
       logger.warn("'HOI4 localization folder' is null.")
