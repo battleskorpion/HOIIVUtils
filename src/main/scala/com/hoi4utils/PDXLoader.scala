@@ -17,6 +17,7 @@ import java.awt.EventQueue
 import java.beans.PropertyChangeListener
 import java.io.File
 import java.util.Properties
+import scala.collection.mutable.ListBuffer
 
 /**
  * Loads in the mod and hoi4 together
@@ -92,10 +93,34 @@ class PDXLoader extends LazyLogging {
     true
   }
 
-  def deleteMod(): Unit = {
-    Interface.clear()
-    State.clear()
+  def clearPDX(): Unit = {
+    IdeaFile.clear()
     FocusTree.clear()
+//    CountryTag.clear()
+    Country.clear()
+    State.clear()
+//    ResourcesFile.clear()
+    Interface.clear()
+  }
+
+  def clearLB(): Unit = {
+//    ListBuffer(
+//          localizationErrors,
+//          interfaceErrors,
+//          countryErrors,
+//          focusErrors,
+//          focusTreeFileErrors,
+//          ideaErrors,
+//          ideaFileErrors,
+//          resourcesFileErrors,
+//          stateErrors,
+//          loadedLocFiles
+//    ).foreach(_.clear())
+  }
+
+  def closeDB(): Unit = {
+    ModifierDatabase.close()
+    EffectDatabase.close()
   }
 
   /**

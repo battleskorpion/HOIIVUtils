@@ -24,6 +24,7 @@
 /* Label */
 .label{
     -fx-text-fill: #AFB1B3;
+    -fx-wrap-text: true;
 }
 
 
@@ -151,6 +152,7 @@
     border-width: 0;
     -fx-padding: 1;
     padding: 1;
+    -fx-wrap-text: true;
 }
 
 /* ChoiceBox */
@@ -182,34 +184,35 @@
     background-color: #1A1A1A;
 }
 
-/* ListCell */
-.list-cell{
-    -fx-background-radius: 0;
-    -fx-border-width: 0;
-    border-width: 0;
-    -fx-text-fill: #AFB1B3;
-    -fx-background-color: #1A1A1A;
-    background-color: #1A1A1A;
-    -fx-min-height: 18;
-    min-height: 18;
-    -fx-pref-height: 18;
-    -fx-padding: 0 0 0 3;
-    padding: 0 0 0 3;
-}
-.list-cell:hover{
-    -fx-background-color: #3E3E40;
-    background-color: #3E3E40;
-    -fx-cursor: HAND;
-    cursor: HAND;
-}
-.list-cell:pressed{
-    -fx-background-color: #3E3E40;
-    background-color: #3E3E40;
-}
-.list-cell:selected{
-    -fx-background-color: #3E3E40;
-    background-color: #3E3E40;
-}
+/*!* ListCell *!*/
+/*.list-cell{*/
+/*    -fx-background-radius: 0;*/
+/*    -fx-border-width: 0;*/
+/*    border-width: 0;*/
+/*    -fx-text-fill: #AFB1B3;*/
+/*    -fx-background-color: #1A1A1A;*/
+/*    background-color: #1A1A1A;*/
+/*    -fx-min-height: 18;*/
+/*    min-height: 18;*/
+/*    -fx-pref-height: 18;*/
+/*    -fx-padding: 0 0 0 3;*/
+/*    padding: 0 0 0 3;*/
+/*    -fx-wrap-text: true;*/
+/*}*/
+/*.list-cell:hover{*/
+/*    -fx-background-color: #3E3E40;*/
+/*    background-color: #3E3E40;*/
+/*    -fx-cursor: HAND;*/
+/*    cursor: HAND;*/
+/*}*/
+/*.list-cell:pressed{*/
+/*    -fx-background-color: #3E3E40;*/
+/*    background-color: #3E3E40;*/
+/*}*/
+/*.list-cell:selected{*/
+/*    -fx-background-color: #3E3E40;*/
+/*    background-color: #3E3E40;*/
+/*}*/
 
 
 /* ListView */
@@ -221,6 +224,7 @@
     border-width: 1;
     -fx-padding: 1;
     padding: 1;
+    -fx-wrap-text: true;
 }
 .list-view .scroll-bar{
     -fx-background-insets: 0 -1 0 0;
@@ -234,6 +238,7 @@
     -fx-padding: 0;
     padding: 0;
     -fx-background-insets: 1 1 0 1;
+    -fx-wrap-text: true;
 }
 .list-view:focused{
     -fx-background-color: #1A1A1A;
@@ -243,6 +248,7 @@
     -fx-padding: 0 0 1 0;
     padding: 0 0 1 0;
     -fx-background-insets: 1;
+    -fx-wrap-text: true;
 }
 
 
@@ -795,6 +801,7 @@
     -fx-alignment: center-left;
     -fx-cursor: HAND;
     cursor: HAND;
+    -fx-wrap-text: true;
 }
 .table-view .filler {
     -fx-background-color: transparent;

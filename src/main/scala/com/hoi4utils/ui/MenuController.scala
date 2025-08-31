@@ -1,15 +1,14 @@
 package com.hoi4utils.ui
 
+import com.hoi4utils.*
 import com.hoi4utils.HOIIVUtils.config
 import com.hoi4utils.ui.buildings.BuildingsByCountryController
 import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.hoi4localization.{FocusLocalizationController, IdeaLocalizationController, ManageFocusTreesController}
 import com.hoi4utils.ui.map.{MapEditorController, MapGenerationController}
 import com.hoi4utils.ui.parser.ParserViewerController
-import com.hoi4utils.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.{Application, Platform}
-import javafx.concurrent.Task
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.GridPane
@@ -17,12 +16,12 @@ import javafx.scene.{Parent, Scene}
 import javafx.stage.Stage
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
-import java.io.IOException
 import java.util.{Locale, MissingResourceException, ResourceBundle}
 import javax.swing.*
+import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 
-class MenuController extends Application with JavaFXUIManager with LazyLogging {
+class MenuController extends Application with JavaFXUIManager with LazyLogging:
   import MenuController.*
 
   private var fxmlResource: String = "Menu.fxml"
@@ -36,74 +35,101 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
   @FXML
   def initialize(): Unit = {
 
+    logger.debug("Menu init 1")
     contentContainer.setVisible(false)
     loadingLabel.setVisible(true)
 
     var initFailed: Boolean = false
-    initFailed = new Initializer().initialize(config, loadingLabel)
+    logger.debug("Menu init 2")
+
+    initFailed = new Initializer().initialize(config)
+    logger.debug("Menu init 3")
+
     val hProperties = config.getProperties
     val version = Version.getVersion(hProperties)
-    loadingLabel.setText(s"Starting HOIIVUtils $version...")
 
-    updateLoadingStatus(loadingLabel, "Checking for Update...")
     new Updater().updateCheck(version, config.getDir)
+    logger.info(s"Starting HOIIVUtils $version, Loading mod: ${hProperties.getProperty("mod.path")}")
+    updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${hProperties.getProperty("mod.path")}\"")
 
 
     val task = new javafx.concurrent.Task[Unit] {
       override def call(): Unit = {
         try {
-          if (initFailed)
-            logger.info(s"Skipping mod loading because of unsuccessful initialization")
-            crazyUpdateLoadingStatus("Skipping loading!!!")
-          else {
-            crazyUpdateLoadingStatus("Loading Files...")
-            new PDXLoader().load(hProperties, loadingLabel)
-            crazyUpdateLoadingStatus("Checking for bad files...")
-            MenuController.checkForInvalidSettingsAndShowWarnings(settingsButton)
+          val pdxLoader = new PDXLoader()
+          pdxLoader.clearPDX()
+          pdxLoader.clearLB()
+          pdxLoader.closeDB()
+          if (initFailed) {
+            logger.info("Skipping mod loading because of unsuccessful initialization")
+            updateLoadingStatus("Skipping loading!!!")
+          } else {
+            pdxLoader.load(hProperties, loadingLabel)
+            updateLoadingStatus("Checking for bad files...")
+            val badFiles = checkBadFiles()
+            if (badFiles.isEmpty) {
+              updateLoadingStatus("All files loaded successfully")
+            } else {
+              updateLoadingStatus("Some files are not loaded correctly, please check the settings")
+              logger.warn(s"version: ${Version.getVersion(config.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
+              showFilesErrorDialog(badFiles, settingsButton)
+            }
           }
           HOIIVUtils.save()
-          crazyUpdateLoadingStatus("Showing Menu...")
+          updateLoadingStatus("Showing Menu...")
         } catch {
           case e: Exception =>
-            crazyUpdateLoadingStatus("Error loading application")
+            updateLoadingStatus("Error loading application")
             logger.error(s"${Version.getVersion(config.getProperties)} Error during initialization", e)
-            Platform.runLater(() => {
-                try {
-                  loadingLabel.setVisible(false)
-                  contentContainer.setVisible(true)
-                } catch {
-                  case exception: Exception =>
-                    logger.error(s"version ${Version.getVersion(config.getProperties)} fatal crash: can't show menu buttons, please got to our discord")
-                    JOptionPane.showMessageDialog(
-                      null,
-                      s"Version: ${Version.getVersion(config.getProperties)}\nFatal crash: can't show menu buttons, please go to our Discord.",
-                      "Fatal Error",
-                      JOptionPane.ERROR_MESSAGE
-                    )
-                    System.exit(1)
-                }
-            })
-        }
-
-        def crazyUpdateLoadingStatus(status: String): Unit = {
-          updateLoadingStatus(loadingLabel, status)
+            Platform.runLater(() => handleFatalCrash())
         }
       }
+
+      private def updateLoadingStatus(status: String): Unit =
+        MenuController.updateLoadingStatus(loadingLabel, status)
+
+      private def checkBadFiles(): ListBuffer[String] =
+        ListBuffer(
+          "localization",
+          "HOIIVFilePaths",
+          "Interface",
+          "State",
+//          "Country", // TODO: re-enable when Country and CountryTag have checks for bad files
+//          "CountryTag",
+          "FocusTree",
+          "IdeaFile",
+          "ResourcesFile$"
+        ).flatMap(MenuController.checkFileError)
+
+      private def handleFatalCrash(): Unit =
+        try {
+          loadingLabel.setVisible(false)
+          contentContainer.setVisible(true)
+        } catch {
+          case _: Exception =>
+            logger.error(s"version ${Version.getVersion(config.getProperties)} fatal crash: can't show menu buttons, please go to our discord")
+            JOptionPane.showMessageDialog(
+              null,
+              s"Version: ${Version.getVersion(config.getProperties)}\nFatal crash: can't show menu buttons, please go to our Discord.",
+              "Fatal Error",
+              JOptionPane.ERROR_MESSAGE
+            )
+            System.exit(1)
+        }
     }
 
     task.setOnSucceeded(_ => {
       contentContainer.setVisible(true)
       loadingLabel.setVisible(false)
-      logger.debug(s"Loading completed successfully")
+      logger.info(s"Loading completed successfully")
     })
 
-    logger.debug("MenuController initialized")
     new Thread(task).start()
   }
 
   override def start(stage: Stage): Unit = {
     primaryStage = stage
-    reloadUI()
+    openM()
 
     // Add a listener to handle the "X" button click
     primaryStage.setOnCloseRequest(_ => {
@@ -112,34 +138,64 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
     })
   }
 
-  // reloadUI might look something like:
-  def reloadUI(): Unit = {
-    try {
-      val resourceBundle = getResourceBundle
-      logger.debug(s"ResourceBundle loaded: ${resourceBundle.getLocale}")
-      if (resourceBundle == null) {
-        logger.error("ResourceBundle is null, cannot load FXML.")
-        throw new RuntimeException("ResourceBundle is null, cannot load FXML.")
+  private def getResourceBundleM = {
+    val resourceBundle: ResourceBundle =
+      //    val currentLocale = new Locale("tr", "TR") // Turkish locale
+      val currentLocale = Locale.getDefault
+      try {
+        val bundle = ResourceBundle.getBundle("i18n.menu", currentLocale)
+        bundle
+      } catch {
+        case _: MissingResourceException =>
+          logger.warn(s"Could not find ResourceBundle for locale $currentLocale. Falling back to English.")
+          val fallbackBundle = ResourceBundle.getBundle("i18n.menu", Locale.US)
+          logger.info(s"Fallback ResourceBundle loaded: ${fallbackBundle.getLocale}")
+          fallbackBundle
       }
-      val loader = new FXMLLoader(getClass.getResource(fxmlResource), resourceBundle)
-      val root = loader.load[Parent]()
+    if resourceBundle == null then
+      logger.error("ResourceBundle is null, cannot load FXML.")
+      throw new RuntimeException("ResourceBundle is null, cannot load FXML.")
+    logger.info(s"Language loaded: ${resourceBundle.getLocale}")
+    resourceBundle
+  }
+
+  /**
+   * Opens the stage with the specified FXMLLoader.
+   * This method is used internally to set up the scene and stage.
+   *
+   */
+  private def openM(): Unit = {
+    try
+      logger.debug(s"Loading FXML resource0: $fxmlResource")
+      val fxml = new FXMLLoader(getClass.getResource(fxmlResource), getResourceBundleM)
+      logger.debug(s"Loading FXML resource1: $fxmlResource")
+      val root = fxml.load[Parent]()
+      logger.debug(s"Loading FXML resource2: $fxmlResource")
       val scene = new Scene(root)
-      if (HOIIVUtils.get("theme") == "dark")
-        scene.getStylesheets.add("com/hoi4utils/ui/javafx_dark.css")
-      else
-        scene.getStylesheets.add("/com/hoi4utils/ui/highlight-background.css")
+      logger.debug(s"Loading FXML resource3: $fxmlResource")
+      get("theme") match
+        case "dark" => scene.getStylesheets.add("com/hoi4utils/ui/javafx_dark.css")
+        case _ => scene.getStylesheets.add("/com/hoi4utils/ui/highlight-background.css")
+      logger.debug(s"Loading FXML resource4: $fxmlResource")
       primaryStage.setScene(scene)
-      primaryStage.setTitle(s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}")
+      logger.debug(s"Loading FXML resource5: $fxmlResource")
+      primaryStage.setTitle(s"HOIIVUtils Menu ") // ${Version.getVersion(config.getProperties)}
+      logger.debug(s"Loading FXML resource6: $fxmlResource")
       decideScreen(primaryStage)
+      logger.debug(s"Loading FXML resource7: $fxmlResource")
       primaryStage.show()
-      logger.debug(s"Stage created and shown: ${s"HOIIVUtils Menu ${Version.getVersion(config.getProperties)}"}")
-    } catch {
-      case e: IOException =>
-        val errorMessage = s"version: ${Version.getVersion(config.getProperties)} Failed to open window\nError loading FXML: $fxmlResource"
-        logger.error(s"version: ${Version.getVersion(config.getProperties)} Error loading FXML: $fxmlResource", e)
-        JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE)
-        throw new RuntimeException(errorMessage, e)
-    }
+      logger.debug(s"Loading FXML resource5: $fxmlResource")
+    catch
+      case e: Exception =>
+        logger.error(s"version: ${Version.getVersion(config.getProperties)} Failed to load FXML resource: $fxmlResource", e)
+        JOptionPane.showMessageDialog(
+          null,
+          s"version: ${Version.getVersion(config.getProperties)} Failed to load FXML resource: $fxmlResource\nPlease go to our Discord for help.",
+          "Error",
+          JOptionPane.ERROR_MESSAGE
+        )
+        System.exit(1)
+    ()
   }
 
   def open(): Unit = start(new Stage())
@@ -173,11 +229,14 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging {
   def openMapGeneration(): Unit = new MapGenerationController().open()
   def openMapEditor(): Unit = new MapEditorController().open()
   def openParserView(): Unit = new ParserViewerController().open()
-  override def setFxmlResource(fxmlResource: String): Unit = ???
-  override def setTitle(title: String): Unit = ???
-}
+  def openLB(): Unit = new LBReaderController().open()
+  override def setFxmlResource(fxmlResource: String): Unit =
+    this.fxmlResource = fxmlResource
+  override def setTitle(title: String): Unit =
+    primaryStage.setTitle(title)
 
-object MenuController extends LazyLogging {
+
+object MenuController extends LazyLogging:
 
   def updateLoadingStatus(loadingLabel: Label, status: String): Unit = {
     Platform.runLater(() => {
@@ -188,108 +247,76 @@ object MenuController extends LazyLogging {
     })
   }
 
-  // Gets the local language, falling back to English if we don't have the resource bundle for the current locale
-  def getResourceBundle: ResourceBundle = {
-//    val currentLocale = new Locale("tr", "TR") // Turkish locale
-    val currentLocale = Locale.getDefault
-    logger.debug(s"Testing with locale: $currentLocale")
-    try {
-      val bundle = ResourceBundle.getBundle("i18n.menu", currentLocale)
-      logger.debug(s"Resource bundle found: ${bundle.getLocale}")
-      bundle
-    } catch {
-      case _: MissingResourceException =>
-        logger.warn(s"Could not find ResourceBundle for locale $currentLocale. Falling back to English.")
-        val fallbackBundle = ResourceBundle.getBundle("i18n.menu", Locale.US)
-        logger.debug(s"Fallback ResourceBundle loaded: ${fallbackBundle.getLocale}")
-        fallbackBundle
-    }
+  private def checkFileError(file: String): Option[String] = {
+    if get(s"valid.$file") == "false" then Some(s"• $file") else None
   }
 
-  def checkForInvalidSettingsAndShowWarnings(button: Button): Boolean = {
-    var hasInvalidPaths = false
-    val warningMessage = new StringBuilder("The following settings need to be configured:\n\n")
+  /**
+   * Shows a dialog listing the bad files and provides a button to open the settings.
+   *
+   * @param badFiles List of bad files to display in the dialog
+   * @param button Button to close the menu window when opening settings
+   */
+  private def showFilesErrorDialog(badFiles: ListBuffer[String], button: Button): Unit = {
+    val warningMessageBuffer = new StringBuilder("")
+    warningMessageBuffer.append(badFiles.mkString(
+      "The following settings need to be configured:\n\n",
+      " directory(ies)\n",
+      " directory(ies)\n\nPlease go to Settings to configure these paths."
+    ))
+    warningMessageBuffer.append(get("hoi4.path.status") match
+      case "failed" => "\n• HOI4 installation path not found (REQUIRED)"
+    )
 
-    if (HOIIVUtils.get("valid.HOIIVFilePaths") == "false") {
-      logger.warn("Invalid HOI IV file paths detected")
-      warningMessage.append("• Hearts of Iron IV file paths\n")
-      hasInvalidPaths = true
-    }
+    // Create a custom dialog for better visual appearance
+    val dialog = new JDialog()
+    dialog.setTitle("Configuration Required")
+    dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL)
+    dialog.setLayout(new BorderLayout())
 
-    if (HOIIVUtils.get("valid.Interface") == "false") {
-      logger.warn("Invalid GFX Interface file paths detected")
-      warningMessage.append("• Interface file paths\n")
-      hasInvalidPaths = true
-    }
+    // Create panel with icon and message
+    val panel = new JPanel(new BorderLayout(15, 15))
+    panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20))
 
-    if (HOIIVUtils.get("valid.State") == "false") {
-      logger.warn("Invalid State paths detected")
-      warningMessage.append("• State file paths\n")
-      hasInvalidPaths = true
-    }
+    // Add warning icon
+    val iconLabel = new JLabel(UIManager.getIcon("OptionPane.warningIcon"))
+    panel.add(iconLabel, BorderLayout.WEST)
 
-    if (HOIIVUtils.get("valid.FocusTree") == "false") {
-      logger.warn("Invalid Focus Tree paths detected")
-      warningMessage.append("• Focus Tree file paths\n")
-      hasInvalidPaths = true
-    }
+    // Add message
+    val messageArea = new JTextArea(warningMessageBuffer.toString)
+    messageArea.setEditable(false)
+    messageArea.setBackground(panel.getBackground)
+    messageArea.setLineWrap(true)
+    messageArea.setWrapStyleWord(true)
+    messageArea.setFont(new Font("Dialog", Font.PLAIN, 14))
+    panel.add(messageArea, BorderLayout.CENTER)
 
-    // Show a single consolidated warning if any paths are invalid
-    if (hasInvalidPaths) {
-      warningMessage.append("\nPlease go to Settings to configure these paths.")
+    // Add button panel
+    val buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT))
+    val settingsButton = new JButton("Open Settings")
 
-      // Create a custom dialog for better visual appearance
-      val dialog = new JDialog()
-      dialog.setTitle("Configuration Required")
-      dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL)
-      dialog.setLayout(new BorderLayout())
-
-      // Create panel with icon and message
-      val panel = new JPanel(new BorderLayout(15, 15))
-      panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20))
-
-      // Add warning icon
-      val iconLabel = new javax.swing.JLabel(UIManager.getIcon("OptionPane.warningIcon"))
-      panel.add(iconLabel, BorderLayout.WEST)
-
-      // Add message
-      val messageArea = new JTextArea(warningMessage.toString)
-      messageArea.setEditable(false)
-      messageArea.setBackground(panel.getBackground)
-      messageArea.setLineWrap(true)
-      messageArea.setWrapStyleWord(true)
-      messageArea.setFont(new Font("Dialog", Font.PLAIN, 14))
-      panel.add(messageArea, BorderLayout.CENTER)
-
-      // Add button panel
-      val buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT))
-      val settingsButton = new JButton("Open Settings")
-
-      settingsButton.addActionListener(_ => {
-        Platform.runLater(() => {
-          try {
-            (button.getScene.getWindow.asInstanceOf[Stage]).close()
-          } catch {
-            case ex: Exception => logger.error("Failed to close menu window", ex)
-          }
-        })
-        Platform.runLater(() => new SettingsController().open())
-        dialog.dispose()
+    settingsButton.addActionListener(_ => {
+      Platform.runLater(() => {
+        try button.getScene.getWindow.asInstanceOf[Stage].close()
+        catch case ex: Exception => logger.error("Failed to close menu window", ex)
       })
+      Platform.runLater(() => new SettingsController().open())
+      dialog.dispose()
+    })
 
-      buttonPanel.add(settingsButton)
+    buttonPanel.add(settingsButton)
 
-      // Add panels to dialog
-      dialog.add(panel, BorderLayout.CENTER)
-      dialog.add(buttonPanel, BorderLayout.SOUTH)
+    // Add panels to dialog
+    dialog.add(panel, BorderLayout.CENTER)
+    dialog.add(buttonPanel, BorderLayout.SOUTH)
 
-      // Size and display the dialog
-      dialog.pack()
-      dialog.setSize(450, 300)
-      dialog.setLocationRelativeTo(null)
-      dialog.setVisible(true)
-    }
-
-    hasInvalidPaths
+    // Size and display the dialog
+    dialog.pack()
+    dialog.setSize(450, 300)
+    dialog.setLocationRelativeTo(null)
+    dialog.setVisible(true)
   }
-}
+
+  def get(prop: String): String = {
+    HOIIVUtils.get(prop)
+  }
