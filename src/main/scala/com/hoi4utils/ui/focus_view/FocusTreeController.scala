@@ -179,6 +179,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging 
             updateStatus("Localization fix completed.")
             logger.debug("Localization fix completed.")
           case Failure(e) =>
+            
             updateStatus(s"Failed to fix localization for focus tree: $tree")
             logger.error(s"Failed to fix localization for focus tree: $tree", e)
             return InitializationResult(success = false, error = Some(s"Failed to fix localization: ${e.getMessage}"), focusTree = Some(tree), focusTrees = Some(trees))

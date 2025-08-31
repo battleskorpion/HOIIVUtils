@@ -43,11 +43,10 @@ object FixFocus extends LazyLogging {
     }
 
     // add desc localization if missing
-    if (generateDefaultDescs) {
-      focuses filter (_.isLocalized(Property.DESCRIPTION)) foreach { focus =>
-        logger.debug("Missing localization for focus: {}", focus.id.str)
-        addGeneratedDescLocalization(focus, locManager, locFile)
-      }
+    focuses filter (_.isLocalized(Property.DESCRIPTION)) foreach { focus =>
+      logger.debug("Missing localization for focus: {}", focus.id.str)
+      if (generateDefaultDescs) addGeneratedDescLocalization(focus, locManager, locFile)
+      else addEmptyDescLocalization(focus, locManager, locFile)
     }
 
     logger.debug("Finished fixing focus localization.")
@@ -92,11 +91,14 @@ object FixFocus extends LazyLogging {
 
     // Set missing localizations
     focus.setLocalization(Property.NAME, formattedName, locFile)
-    focus.setLocalization(Property.DESCRIPTION, generateDescription, locFile)
   }
 
   private def addGeneratedDescLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
     focus.setLocalization(Property.DESCRIPTION, generateDescription, locFile)
+  }
+
+  private def addEmptyDescLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
+    focus.setLocalization(Property.DESCRIPTION, "", locFile)
   }
 
   private def extractFocusName(focusName: String): String = {
