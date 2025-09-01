@@ -86,10 +86,10 @@
                      <Font size="14.0" />
                   </font>
                </Label>
-							<ImageView fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true" GridPane.valignment="TOP">
+							<ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.valignment="TOP">
 								<Image url="@../../../icons/settings-icon-gray-gear32.png" />
                   <GridPane.margin>
-                     <Insets top="2.0" />
+                     <Insets left="2.0" top="3.0" />
                   </GridPane.margin>
 							</ImageView>
 				</children>

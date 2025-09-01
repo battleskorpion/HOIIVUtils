@@ -13,10 +13,9 @@ import javafx.event.EventHandler
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.{Button, Label}
 import javafx.scene.image.Image
-import javafx.scene.layout.{BorderPane, GridPane}
+import javafx.scene.layout.GridPane
 import javafx.scene.{Parent, Scene}
 import javafx.stage.{Stage, StageStyle}
-import javafx.scene.input.MouseEvent
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import java.io.IOException
@@ -63,7 +62,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
 
   @FXML
   def initialize(): Unit = {
-    logger.debug("Menu init 1")
 
     // Debug FXML injection
     logger.debug(s"FXML injection check - contentContainer: ${contentContainer != null}, mClose: ${mClose != null}, mSquare: ${mSquare != null}, mMinimize: ${mMinimize != null}")
@@ -72,10 +70,8 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     loadingLabel.setVisible(true)
 
     var initFailed: Boolean = false
-    logger.debug("Menu init 2")
 
     initFailed = new Initializer().initialize(config)
-    logger.debug("Menu init 3")
 
     val hProperties = config.getProperties
     val version = Version.getVersion(hProperties)
@@ -153,6 +149,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     task.setOnSucceeded(_ => {
       contentContainer.setVisible(true)
       loadingLabel.setVisible(false)
+      vFocusTree.requestFocus()
       logger.info(s"Loading completed successfully")
     })
 
