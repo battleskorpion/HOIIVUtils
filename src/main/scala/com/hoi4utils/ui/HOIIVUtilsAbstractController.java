@@ -4,6 +4,7 @@ import com.hoi4utils.HOIIVUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,6 +65,13 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 			scene.getStylesheets().add("/com/hoi4utils/ui/highlight-background.css");
 		}
 		Stage stage = new Stage();
+		stage.getIcons().addAll(
+				new Image(getClass().getResourceAsStream("/icons/settings-icon-gray-gear16.png")),
+				new Image(getClass().getResourceAsStream("/icons/settings-icon-gray-gear32.png")),
+				new Image(getClass().getResourceAsStream("/icons/settings-icon-gray-gear48.png")),
+				new Image(getClass().getResourceAsStream("/icons/settings-icon-gray-gear64.png")),
+				new Image(getClass().getResourceAsStream("/icons/settings-icon-gray-gear128.png"))
+		);
 		stage.setScene(scene);
 		stage.setTitle(title);
 		decideScreen(stage);

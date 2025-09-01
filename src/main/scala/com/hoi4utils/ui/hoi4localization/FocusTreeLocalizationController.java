@@ -29,7 +29,7 @@ import java.util.function.Function;
 /**
  * TODO: have to redo some methods/design to fit with the new localization system
  */
-public class FocusLocalizationController extends HOIIVUtilsAbstractController implements TableViewWindow {
+public class FocusTreeLocalizationController extends HOIIVUtilsAbstractController implements TableViewWindow {
 
     @FXML
     private Label numLocAddedLabel;
@@ -65,7 +65,7 @@ public class FocusLocalizationController extends HOIIVUtilsAbstractController im
     //private FocusLocalizationFile focusLocFile;
     private final ObservableList<Focus> focusObservableList;
 
-    public FocusLocalizationController() {
+    public FocusTreeLocalizationController() {
         /* window */
         setFxmlResource("FocusLocalization.fxml");
         setTitle("HOIIVUtils Focus Localization");

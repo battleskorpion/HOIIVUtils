@@ -253,41 +253,139 @@
 
 
 /* Button */
-.button{
-    -fx-background-radius: 0;
-    -fx-border-insets: 0 0 -1 0;
+/* Enhanced Button Styles for Dark Mode */
+.button {
+    /* Base styling with rounded corners */
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+
+    /* Gradient background using original dark theme colors */
+    -fx-background-color:
+            linear-gradient(to bottom, #2A2A2A 0%, #1A1A1A 50%, #0F0F0F 100%),
+            #1A1A1A;
+
+    /* Border styling using original colors */
+    -fx-border-width: 1;
+    -fx-border-color: #222222;
+
+    /* Text styling */
+    -fx-text-fill: #AFB1B3;
+    -fx-font-weight: normal;
+
+    /* Shadow effect for depth (applies to background, not text) */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0.5, 0, 1);
+}
+
+.button .text {
+    /* Make sure text stays sharp and in front */
+    -fx-effect: null;
+    -fx-fill: #AFB1B3;
+}
+
+.button:hover {
+    -fx-background-color:
+            linear-gradient(to bottom, #3E3E40 0%, #2A2A2A 50%, #1A1A1A 100%),
+            #3E3E40;
+
+    -fx-border-color: #1F8ED8;
+
+    -fx-text-fill: #AFB1B3;
+
+    -fx-effect: dropshadow(gaussian, rgb(31, 141, 214), 4, 0.7, 0, 0);
+
+    -fx-cursor: HAND;
+}
+
+.button:pressed {
+    -fx-background-color:
+            linear-gradient(to bottom, #0F0F0F 0%, #1A1A1A 50%, #2A2A2A 100%),
+            #4e4e4e;
+
+    -fx-border-color: #4e4e4e;
+
+    /* Inner shadow for pressed effect */
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.6), 3, 0.7, 0, 1);
+
+    -fx-text-fill: #AFB1B3;
+
+    -fx-cursor: HAND;
+}
+
+.button:focused {
+    /* Focus outline */
+    -fx-border-color: #1F8ED8;
+    border-color: #1f8ed8;
     -fx-border-width: 1;
     border-width: 1;
-    -fx-border-color: #222222;
-    border-color: #222222;
-    -fx-background-color: #1A1A1A;
-    background-color: #1A1A1A;
-    -fx-text-fill: #AFB1B3;
-    -fx-min-height: 25;
-    min-height: 25;
-    -fx-pref-height: 25;
+
+    /* Maintain gradient using original colors */
+    -fx-background-color:
+            linear-gradient(to bottom, #2A2A2A 0%, #1A1A1A 50%, #0F0F0F 100%),
+            #1A1A1A;
+    background: linear-gradient(to bottom, #2A2A2A 0%, #1A1A1A 50%, #0F0F0F 100%);
+
+    /* Focus glow effect with subtle color */
+    -fx-effect: dropshadow(gaussian, rgb(31, 141, 214), 4, 0.7, 0, 0);
 }
-.button:focused{
-    -fx-border-color: #4e4e4e;
-    border-color: #4e4e4e;
-    -fx-background-color: #1A1A1A;
-    background-color: #1A1A1A;
+
+.button:disabled {
+    /* Muted colors for disabled state */
+    -fx-background-color:
+            linear-gradient(to bottom, #2A2A2C 0%, #1D1D20 50%, #151518 100%),
+            #1D1D20;
+    background: linear-gradient(to bottom, #2A2A2C 0%, #1D1D20 50%, #151518 100%);
+
+    -fx-border-color: #3A3A3C;
+    border-color: #3A3A3C;
+
+    -fx-text-fill: #6A6A6C;
+    color: #6A6A6C;
+
+    -fx-opacity: 0.6;
+    opacity: 0.6;
+
+    -fx-effect: none;
 }
-.button:hover{
-    -fx-border-color: #222222;
-    border-color: #222222;
-    -fx-background-color: #3E3E40;
-    background-color: #3E3E40;
-    -fx-cursor: HAND;
-    cursor: HAND;
- }
-.button:pressed{
-    -fx-border-color: #4e4e4e;
-    border-color: #4e4e4e;
-    -fx-background-color: #4e4e4e;
-    background-color: #4e4e4e;
-    -fx-cursor: HAND;
-    cursor: HAND;
+
+/* Alternative button styles for different purposes */
+.button.primary {
+    -fx-background-color:
+            linear-gradient(to bottom, #0F7EC8 0%, #007ACC 50%, #005A9E 100%),
+            #007ACC;
+    background: linear-gradient(to bottom, #0F7EC8 0%, #007ACC 50%, #005A9E 100%);
+
+    -fx-border-color: #1F8ED8;
+    border-color: #1F8ED8;
+}
+
+.button.primary:hover {
+    -fx-background-color:
+            linear-gradient(to bottom, #1F8ED8 0%, #0F7EC8 50%, #007ACC 100%),
+            #0F7EC8;
+    background: linear-gradient(to bottom, #1F8ED8 0%, #0F7EC8 50%, #007ACC 100%);
+
+    -fx-border-color: #2F9EE8;
+    border-color: #2F9EE8;
+}
+
+.button.success {
+    -fx-background-color:
+            linear-gradient(to bottom, #0D8043 0%, #0B7A3E 50%, #0A6B37 100%),
+            #0B7A3E;
+    background: linear-gradient(to bottom, #0D8043 0%, #0B7A3E 50%, #0A6B37 100%);
+
+    -fx-border-color: #1D9053;
+    border-color: #1D9053;
+}
+
+.button.danger {
+    -fx-background-color:
+            linear-gradient(to bottom, #C42B1C 0%, #B42B1C 50%, #A42B1C 100%),
+            #B42B1C;
+    background: linear-gradient(to bottom, #C42B1C 0%, #B42B1C 50%, #A42B1C 100%);
+
+    -fx-border-color: #D43B2C;
+    border-color: #D43B2C;
 }
 
 
@@ -415,7 +513,6 @@
     -fx-background-radius: 0;
     -fx-border-width: 0;
     border-width: 0;
-    -fx-background-radius: 0;
     -fx-background-color: #1A1A1A;
     background-color: #1A1A1A;
 }
