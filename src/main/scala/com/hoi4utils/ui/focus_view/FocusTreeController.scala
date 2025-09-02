@@ -7,7 +7,7 @@ import com.hoi4utils.hoi4.focus.{FixFocus, Focus, FocusTree}
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.focus_view.FocusTreeController.updateLoadingStatus
-import com.hoi4utils.ui.javafx_ui.image.ScalaFXImageUtils
+import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.hoi4utils.ui.pdxscript.{NewFocusTreeController, PDXEditorPane}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform

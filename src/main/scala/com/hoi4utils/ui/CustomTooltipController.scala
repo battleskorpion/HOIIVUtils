@@ -1,7 +1,7 @@
 package com.hoi4utils.ui
 
 import com.hoi4utils.hoi4.tooltip.CustomTooltip
-import com.hoi4utils.ui.javafx_ui.table.TableViewWindow
+import com.hoi4utils.ui.custom_javafx.table.TableViewWindow
 import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
 import javafx.fxml.{FXML, Initializable}
 import javafx.scene.control.*

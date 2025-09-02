@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4.units
 
-import com.hoi4utils.clausewitz.data.country.CountryFlag
+import com.hoi4utils.hoi4.country.CountryFlag
 import com.hoi4utils.hoi4.technology.Technology
 import com.hoi4utils.script.StringPDX
 

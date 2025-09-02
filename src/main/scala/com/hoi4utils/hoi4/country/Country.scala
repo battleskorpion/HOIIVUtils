@@ -1,6 +1,5 @@
 package com.hoi4utils.hoi4.country
 
-import com.hoi4utils.clausewitz.data.country.CountryFlag
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
 import com.hoi4utils.hoi4.technology.Technology

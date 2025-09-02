@@ -4,7 +4,7 @@
     <module name="HOIIVUtils" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.hoi4utils.*" />
+        <option name="PATTERN" value="com.hoi4utils.clausewitz.data.province.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

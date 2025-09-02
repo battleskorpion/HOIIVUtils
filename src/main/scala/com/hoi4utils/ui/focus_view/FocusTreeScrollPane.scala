@@ -4,7 +4,7 @@ import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4.focus.{Focus, FocusTree}
 import com.hoi4utils.script.PDXScript
-import com.hoi4utils.ui.javafx_ui.image.ScalaFXImageUtils
+import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.hoi4utils.ui.pdxscript.PDXEditorController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform

@@ -34,7 +34,7 @@ class Updater extends LazyLogging:
     if tempUprJar.exists then updateUpdater(tempUprJar)
     lV =
       try
-        val source = Source.fromURL("https://api.github.com/repos/battlekorpion/MOIVUtils/releases/latest")
+        val source = Source.fromURL("https://api.github.com/repos/battleskorpion/HOIIVUtils/releases/latest")
         val response = source.mkString
         val json = ujson.read(response)
         source.close()
