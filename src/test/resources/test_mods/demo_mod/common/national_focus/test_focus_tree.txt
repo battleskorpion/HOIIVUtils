@@ -1,0 +1,153 @@
+# Sample focus tree for testing - 15 focuses total
+focus_tree = {
+	id = test_tree
+	country = TST
+
+	continuous_focus_position = { x = 50 y = 1000 }
+
+	focus = {
+		id = test_start_focus
+		icon = GFX_goal_unknown
+		cost = 10
+		x = 5
+		y = 0
+	}
+
+	focus = {
+		id = test_industrial_focus
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = test_start_focus }
+		x = 3
+		y = 1
+	}
+
+	focus = {
+		id = test_military_focus
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = test_start_focus }
+		x = 7
+		y = 1
+	}
+
+	focus = {
+		id = test_civilian_factory
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = test_industrial_focus }
+		x = 1
+		y = 2
+	}
+
+	focus = {
+		id = test_military_factory
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = test_industrial_focus }
+		x = 5
+		y = 2
+	}
+
+	focus = {
+		id = test_army_doctrine
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = test_military_focus }
+		x = 7
+		y = 2
+	}
+
+	focus = {
+		id = test_air_doctrine
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = test_military_focus }
+		x = 9
+		y = 2
+	}
+
+	focus = {
+		id = test_advanced_industry
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = {
+			focus = test_civilian_factory
+			focus = test_military_factory
+		}
+		x = 3
+		y = 3
+	}
+
+	focus = {
+		id = test_combined_arms
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = {
+			focus = test_army_doctrine
+			focus = test_air_doctrine
+		}
+		x = 8
+		y = 3
+	}
+
+	focus = {
+		id = test_research_bonus
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = test_advanced_industry }
+		x = 2
+		y = 4
+	}
+
+	focus = {
+		id = test_production_bonus
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = test_advanced_industry }
+		x = 4
+		y = 4
+	}
+
+	focus = {
+		id = test_special_forces
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = test_combined_arms }
+		x = 7
+		y = 4
+	}
+
+	focus = {
+		id = test_elite_units
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = test_combined_arms }
+		x = 9
+		y = 4
+	}
+
+	focus = {
+		id = test_final_focus
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = {
+			focus = test_production_bonus
+			focus = test_special_forces
+		}
+		x = 5
+		y = 5
+	}
+
+	focus = {
+		id = test_ultimate_power
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = {
+			focus = test_final_focus
+			focus = test_elite_units
+		}
+		x = 7
+		y = 6
+	}
+}

@@ -109,4 +109,6 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
     // Default behavior for leaf nodes: update the node's value from the current state.
     node.foreach(n => setNode(value.orNull))
   }
+  
+  def get: Option[String] = value
 }

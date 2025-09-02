@@ -1,0 +1,328 @@
+﻿l_english:
+ 1_SCA_tt:0 "Disney's coup is to be put in motion."
+ 2_SCA_tt:0 "§OThis Removes Great Depression Debuffs§O"
+ 3_SCA_tt:0 "We need to seriously increase our spending to try and jumpstart the economy in order to fight back against the Depression"
+ 4_SCA_tt:0 "Finally, after many policies and work programs being passed we have managed to rebuild."
+ 5_SCA_tt:0 "Invite our northern brothers"
+ 6_SCA_tt:0 "Requesting the Navajo for support"
+ 7_SCA_tt:0 "Operation Zeta is a Go"
+ 8_SCA_tt:0 "Influencing in progress"
+ 9_SCA_tt:0 "§GThis will ease the public backlash at the delayed election of 1934.§Y"
+ 10_SCA_tt:0 ""
+ 11_SCA_tt:0 ""
+ 12_SCA_tt:0 ""
+ 13_SCA_tt:0 ""
+
+ SCA_OTHER_GATHERING_STORM_DESC:0 "With the Hoover doing jack crap to assist any state during the Great depression only enticed the once proud American West to finally say they had enough. Under the leadership of California, Majority of the Western states were the first t oformally leave the union. This was done under the guise that western america could still work together under California's banner. However, the depression worsened and with it many western states began to succumb to even greater hardships. we still hold an allince with Nevada, Arizona, and Oregon. President Merriam is currently planning several economic stimulus plans, but with the recent election coming up it is unsure wether these plans will come to frution. For now, the Western Bear slumbers... "
+
+
+
+ SCA_farmers_strikes_less:0 "San Joaquin Valley Agricultural Strikes"
+ SCA_farmers_strikes_less_desc:0 ""
+ 
+ SCA_farmers_strikes_violent:0 "Violent San Joaquin Valley Strikes"
+ SCA_farmers_strikes_violent_desc:0 ""
+
+
+ USA_gold_standard:0 "Backed by Gold"
+ SCA_delayed_election:0 "Delayed Election"
+ SCA_delayed_election_desc:0 "Since 1934 was a year defined by chaos for the emerging independent Californian state, incumbent governor Frank Merriam delayed the 1934 presidential elections to 1936. This has proven to be quite the unpopular move with many people calling Merriam a tyrant who delayed the election to prolong his tenure even though he was never elected in the first place as Merriam came to power after the previous governor's death in office."
+ SCA_assault_division:0 "Assault Brigades"
+ SCA_overwelming_firepower:0 "Overwelming Firepower"
+ SCA_legacy_war:0 "Legacies of War"
+ SCA_the_evangelion_tt:0 "Unlocks a new special type of fighter"
+ SCA_patton:0 "Patton's Legion"
+ SCA_pattob_ADJ:0 "Legionaires"
+ SCA_patton_DEF:0 "Patton's Legion"
+ SCA_to_live_and_die_in_cali_idea:0 "To Live and Die in California"
+ SCA_to_live_and_die_in_cali_idea_desc:0 "California must be defended in her finest hour of combat! It is time to repel these brutish invaders and push them back into the Pacific!"
+SCA_japanese_code_crackers:0 "Japanese Code Crackers"
+SCA_japanese_code_crackers_desc:0 "Japanese-Californians are aiding us in spying on the Japanese military's communications and code."
+
+
+SCA_general_motors:0 "General Motors"
+
+ SCA_racial_divides2:0 "Formal Segregation"
+ SCA_racial_divides2_desc:0 ""
+ 
+ SCA_cali_militias:0 "Californian State Militias"
+ SCA_cali_militias_desc:0 ""
+
+ usa_great_depression:0 "Great Depression"
+ usa_great_depression_2:0 "Great Depression"
+ usa_great_depression_3:0 "Great Depression"
+ SCA_lackluster_military_complex:0 "Lackluster Military Complex"
+ SCA_lackluster_military_complex_desc:0 "Our rapid expansionist foreign policy has caused our military complex to fall behind. Other was of supplying our troops are vital"
+ SCA_racial_divides:0 "Racial Segregation"
+ SCA_racial_divides_desc:0 "Since Cali secession from the US many have questioned whether we should re-pass old federal laws back into order. many civil rights leaders plead that a new era must ensue, conservative voices disagree."
+ SCA_racial_divides_mod:0 "Seperate, but Equal"
+ SCA_racial_divides_mod_desc:0 "The idea behind seperate but equal is that segregation is lawful if both facilities in question are held to the same standard. This is obviously not true..."
+ SCA_racial_divides_heavy:0 "Racial Opression"
+ SCA_racial_divides_heavy_desc:0 "(Just an FYI from the creator of this tree, I do not support racial superiority of any kind) THe Negro and other colored folk must be kept down in order to maintain order... "
+ SCA_racial_divides_equal:0 "Racial Equality"
+ SCA_racial_divides_equal_desc:0 "We need to move into the modern era, the federal laws were written with a mindset of times long past. "
+ SCA_migration_crisis:0 "Dustbowl Migration Crisis"
+ SCA_migration_crisis_desc:0 "With a lack of Federal aid, along with the failure of farmers in the Midwest and Great Plains., many are immigrating into our country. We need to solve this over population issue."
+ SCA_unlawful_country:0 "Un-regulated Countryside"
+ SCA_unlawful_country_desc:0 "Since the collapse of the Federal US many of our provincial governments have taken matters into their own hands in terms of regulation."
+ SCA_tight_sphere:0 "Tightened Sphere"
+ SCA_tight_sphere_desc:0 "Merriam has taken it upon himself to make sure the people surrounding him have good faith and are trustworth to him. This could be disatrous, or fruitful."
+ SCA_open_sphere:0 "Open Sphere"
+ SCA_open_sphere_desc:0 "Merriam has decided that in order to maintain the dignity of the state, we must open ourselves to newer ideas."
+ SCA_nevada_occupation:0 "Vegas Resistance"
+ SCA_nevada_occupation_desc:0 " There has been large resistance to us intergrating Las Vegas and its surrounding areas. It seems we have no ability to change this except wait them out."
+ SCA_history_of_segregation:0 "Segregated Military"
+ SCA_history_of_segregation_desc:0 "Currently are armed forces are still segregated with colored units not being frontline forces this lowers our available."
+ SCA_Fleet_command:0 "Pacfic Fleet Command"
+ SCA_Fleet_command_desc:0 "The pacfifc fleet command is a staple of California's ability to maintain a strongarm against opponents on the high seas"
+ SCA_californian_identity:0 "Californian Identity"
+ SCA_californian_identity_desc:0 "There is a great idealism in California. Many still view themselves Californian through all of its issues and troubles the state is going through."
+ SCA_Pacifc_treaty_Organization:0 "Pacific Treaty Orgainzation"
+ SCA_cavalrised_army:0 "Cavalrised Army"
+ SCA_cavalrised_army_desc:0 "Our army is lacking in a lot of equipment we lsot when seperating fro mthe union. Currently our army is utilizing horses for most transport."
+ SCA_motorised_army:0 "Motorised Army"
+ SCA_motorised_army_desc:0 "With our industry ramping up, we are able to produce more modern forms of transportation and become reliant on motor troops for our army."
+ SCA_mechanized_army:0 "Mecha-nized army"
+ SCA_mechanized_army_desc:0 " While trucks and tanks have been helpful in modernizing our army. The development of the gundam frames for warfare have greatly increased our armies power and speed."
+ SCA_combined_arms:0 "Combination of Arms"
+ SCA_combined_arms_desc:0 "With the significant strides in military research and strategic planning we have made a military that strikes fear into our enemies and good morale for our allies."
+ SCA_extend_age_conscription:0 "Age Expansion"
+ SCA_extend_age_conscription_desc:0 "To maintain the stability of the west coast we must, unfortunately, expand the age ranges for military conscription  "
+ SCA_war_propaganda:0 "War Propaganda"
+ SCA_war_propaganda_desc:0 "After the Intergations of Nevada we need to ramp up and convert our economy into a war against our future enemies. "
+ SCA_destroyer_sale:0 "Destoryer Sale"
+ SCA_destroyer_sale_desc:0 "With Hawaii's proposal to pay for our destroyer, we have accepted. While we need our navy, we need to focus on ending this depression first. This will surely help."
+
+
+
+ SCA_john_wayne:0 "John Wayne"
+ SCA_john_wayne_desc:0 " John Wayne is a famous actor in US cinema and is defenitely a famous figure for many Californians"
+ SCA_capt_industry:0 "Frank M. Jordan"
+ SCA_political_person:0 "George J. Hatfield"
+ SCA_gentleman_person:0 "Zackeri Reckmeyer"
+ SCA_military_factories:0 "Albert Ramiero"
+ SCA_backroom_backstab_guy:0 "August Vollmer"
+ SCA_intel_guy:0 "Carmen Sandeigo"
+
+ SCA_all_weather:0 "Everett Miller"
+ SCA_ground_bomb:0 "Gene Deatrick"
+
+ SCA_fleet_log:0 "Rod Braswell"
+ SCA_fleet_manuever:0 "Daniel J. Callaghan"
+ SCA_decisive_battle:0 "Jackson C. Pharris"
+
+ SCA_cav_leader:0 "John C. Cremony"
+ SCA_albert_bowling:0 "Albert Bowling Sr."
+ SCA_infantry_man:0 "James P. Olmstead"
+ SCA_high_fleet_log:0 "Philip Dalton"
+ SCA_air_interception:0 "Steve Pisanos"
+ SCA_regroup_guy:0 "Edwin A. Rigg"
+ SCA_commando_man:0 "James L. Underhill"
+
+ SCA_Charles_Rosco:0 "Charles Rosco"
+ SCA_Montgomery_Taylor:0 "Montgomery Taylor"
+ SCA_albert_bowling:0 "Albert Bowling Sr."
+ SCA_albert_bowling_sr:0 "Albert Bowling Sr."
+
+
+
+ morale_SCA:0 "Fredrick Walt"
+ drill_SCA:0 "Nacho Libre"
+ poke_SCA:0 " Cedric Heim"
+ planner_SCA:0 "Fred Jones"
+
+
+ diamondback_productions:0 " Diamondback Incorporation"
+ materiel_manufacturer:0 "Valley Gun Contruction"
+ SCA_motors_company:0 " California Ford Motors"
+ SCA_island_arsenal:0 "Harris Gunworks"
+
+
+
+
+
+
+
+
+ SCA_support_farmers:0 "Farmers Collective"
+ SCA_support_farmers_desc:0 " We need to assist our farmers in taking on more work and allowing their crops to be used most efficeiently."
+
+
+ SCA_mickey_mouse_club_recuritment:0 "Mickey Mouse Club Recuritment"
+ SCA_mickey_mouse_club_recuritment_desc:0 "Mickey mouse War crimes, they are lots of fun join Mustard Gas Goofy or Dastardly Donald for some fun Adventures."
+ 
+ SCA_end_the_chaos:0 "End the Chaos"
+ SCA_green_hornet_army:0 "Green Hornet Army"
+ SCA_mosby_rangers:0 "Mosby Rangers"
+ SCA_disney_radio:0 "Disney Radio"
+ SCA_GMO:0 "GMOs"
+ SCA_GMO_desc:0 "We have begun producing genetically modified organisms (GMOS), to help out our food production."
+ SCA_Early_robotics:0 "Early Robotics"
+ SCA_Early_robotics_desc:0 "Disney is pursuing the technology of tomorrow, no matter the cost!"
+ SCA_Secret_research:0 "Secret Research"
+ SCA_Secret_research_desc:0 "Scientific Research facilities have been constructed all around the nation and underneath the parks we have constructed top secret laboratories for research."
+ SCA_Disney_Super_Soldiers:0 "Disney Super Soldiers"
+ SCA_Disney_Super_Soldiers_desc:0 "We have hopped up our soldiers with the juices and drugs of the future to enhance their fighting abilities."
+ SCA_Frozen_walt_double:0 "Frozen Walt Body Double"
+ SCA_Frozen_walt_double_desc:0 "DISNEY HAS BEEN PRESERVED AND ARCHIVED, OPERATION BRAIN FREEZE DIRECTIVE: 01000010 01010010 IS A STUNNING SUCCESS!"
+ SCA_Constructing_Disney_World:0 "Constructing Disney World"
+ SCA_Constructing_Disney_World_desc:0 "Disney World is a extraordinary project, we must divert sectors of the economy to fund this project."
+ SCA_Trooper_training_park:0 "Trooper Training Camps"
+ SCA_Trooper_training_park_desc:0 "The future generation of soldiers and officers shall be trained at modern camps of warfare and park ranger techniques such as STAYING ON THE TRAIL!"
+ SCA_Tiki_room:0 "Tiki Rooms"
+ SCA_Tiki_room_desc:0 "Singing birds and commericalized Hawaiian culture will wow the masses into spending more money at our parks! HOO HA HOO TIKI TIKI."
+ SCA_carolwood_pacific_railroad:0 "Pacific Railroad Company"
+ SCA_war_economy:0 "Californian War Machine"
+ SCA_californians_love_war:0 "Californian's Love War"
+ SCA_cult_of_patton:0 "Patton's Cult"
+ SCA_southern_spirit:0 "Southern Spirit"
+
+ SCA_Cartoon_propaganda:0 "Cartoon Propaganda"
+
+ SCA_Disneyland_park_profits:0 "Disneyland Park Profits"
+
+ SCA_cavalry_army:0 "Mule Army" 
+ SCA_cavalry_army_desc:0 "Our supplies are mostly carried by mules to save money"
+
+ SCA_Orson_wells:0 "Orson Wells" 
+ SCA_Orson_wells_desc:0 "A Great showman can help us make propaganda"
+
+ SCA_Ward_Kimball:0 "Ward Kimball" 
+ SCA_Ward_Kimball_desc:0 "Kimball is a pioneer animator and will greatly improve our cartoons"
+
+ SCA_william_gericke:0 "William Gericke" 
+ SCA_william_gericke_desc:0 "A promising hydroponics expert. Specializes in big foods."
+
+ SCA_union_support:0 "Union Support"
+ SCA_union_support_desc:0 "Sinclair likes unions"
+ 
+ SCA_patton_figurehead:0 "Figurehead Patton"
+ SCA_patton_figurehead_desc:0 ""
+
+
+ SCA_nationalize_sierra_pacifica_idea:0 "Nationalize Sierra Pacifica"
+
+ SCA_rally_the_north_idea:0 "Rally the North"
+
+ SCA_full_executive_powers:0 "Full Executive Powers"
+
+ SCA_destroyer_sale:0 "Destroyer Sale"
+
+ SCA_civilian_backed_war_effort:0 "Civilian Backed War Effort"
+
+ SCA_civilian_wartime_measurements_idea:0 "Civilian Wartime Measurements"
+
+
+ SCA_political_focus:0 "Nationalize Sierra Pacifica"
+
+ SCA_farming_coops:0 "Farmer Co-Ops"
+ SCA_farming_coops_desc:0 ""
+
+ SCA_everybody_hates_sinclair:0 "Everybody Hates Sinclair"
+
+ SCA_everybody_hates_sinclair2:0 "Everybody Hates Sinclair"
+
+ SCA_leftist_infighting:0 "Leftist Infighting"
+
+ SCA_civilian_wartime_measurements_idea:0 "Civilian Wartime Measurements"
+
+ SCA_epic_opposition:0 "Epic Opposition"
+
+ SCA_merriams_movies:0 "Merriam's Movies"
+
+ SCA_epic_opposition2:0 "Epic Opposition"
+
+ SCA_california_state_police:0 "California State Police"
+
+ SCA_banned_unions:0 "Banned Unions"
+
+ SCA_great_depression_null:0 "Great Depression Null"
+
+ SCA_cult_of_Merriam:0 "Cult of Merriam"
+ 
+ SCA_autoindustry:0 "Auto-Industry"
+
+
+ SCA_EPIC_production:0 "E.P.I.C. Production"
+
+ SCA_loyal_workers:0 "Loyal Workers"
+
+ SCA_public_works_idea:0 "Public Works"
+
+ SCA_japanese_code_crackers:0 "Japanese Code Crackers"
+
+ SCA_dustbowl_crisis:0 "Dustbowl Crisis"
+ 
+ SCA_epic_opposition:0 "EPIC Opposition"
+ SCA_epic_opposition_desc:0 ""
+
+SCA_epic_opposition2:0 "Waning EPIC Opposition"
+SCA_epic_opposition2_desc:0 ""
+
+SCA_california_state_police:0 "California State Police"
+SCA_california_state_police_desc:0 ""
+
+SCA_corporate_nat_guard:0 "Corporate National Guard"
+SCA_corporate_nat_guard_desc:0 ""
+
+SCA_corporate_nat_guard2:0 "Improved Corporate National Guard"
+SCA_corporate_nat_guard2_desc:0 ""
+
+SCA_the_new_national_guard_idea:0 "Merriam's New National Guard"
+SCA_the_new_national_guard_idea_desc:0 ""
+
+  SCA_get_rid_of_trustbusting_idea:0 "Monopoly Dominance"
+  SCA_get_rid_of_trustbusting_idea_desc:0 "The Californian economy has become dominanted by monopolies, allowing for easier coordination and efficency"
+
+SCA_banned_unions:0 "Banned Unions"
+SCA_banned_unions_desc:0 ""
+
+SCA_autoindustry:0 "Californian Autoindustry"
+SCA_autoindustry_desc:0 ""
+
+SCA_cut_nat_guard_budget_idea:0 "National Guard Budget Cut"
+SCA_cut_nat_guard_budget_idea_desc:0 ""
+
+SCA_california_state_militia_idea:0 "California State Militia"
+SCA_california_state_militia_idea_desc:0 ""
+
+SCA_Female_Militas_idea:0 "Female Militias"
+SCA_Female_Militas_idea_desc:0 ""
+
+SCA_Militarization_Of_The_Unions_idea:0 "Militarization of the Unions"
+SCA_Militarization_Of_The_Unions_idea_desc:0 ""
+
+SOR_union_gun_trade:0 "Union Gun Trade"
+SOR_union_gun_trade_desc:0 ""
+
+SCA_Union_Officers_In_Army_idea:0 "Union Officers in the Army"
+SCA_Union_Officers_In_Army_idea_desc:0 ""
+
+SCA_worker_brigades_idea:0 "Worker Brigades"
+SCA_worker_brigades_idea_desc:0 ""
+
+SCA_prepare_offensive_plans_idea:0 "Prepare Offensive Plans"
+SCA_prepare_offensive_plans_idea_desc:0 ""
+
+SCA_California_Superiority_ideas:0 "Californian Superiority"
+SCA_California_Superiority_ideas_desc:0 ""
+
+SCA_Selling_Our_Research_idea:0 "Selling Our Research"
+SCA_Selling_Our_Research_idea_desc:0 ""
+
+SCA_officer_School_idea:0 "Officer School"
+SCA_officer_School_idea_desc:0 ""
+
+SCA_San_Diego_Automotive_Plants_idea:0 "San Diego Automotive Plants"
+SCA_San_Diego_Automotive_Plants_idea_desc:0 ""
+
+SCA_a_20thcentury_ceasar_idea:0 "A 20th Century Ceasar"
+SCA_a_20thcentury_ceasar_idea_desc:0 ""
+
+SCA_second_longshoreman_strike:0 "Second Longshoreman Strike"
+SCA_second_longshoreman_strike_desc:0 ""
+
+SCA_californian_migration_nevada:0 "Californian Migration"
+SCA_californian_migration_nevada_desc:0 "The recent political strife in California has caused Californians to flee to Nevada to avoid the conflicts. This has brought a great amount of people to our nation, however it will hurt our economy for a while."
+SCA_californian_migration_california:0 "Californian Migration"
+SCA_californian_migration_california_desc:0 "The recent political strife in California has caused Californians to flee to Nevada to avoid the conflicts. It will be a hard to task to bring them back into California even after the political strife has ended."
