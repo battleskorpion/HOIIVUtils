@@ -155,39 +155,23 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging 
       return InitializationResult(success = false, error = Some("No focus trees found"), focusTree = None, focusTrees = Some(trees))
     }
 
-    updateStatus(s"Focus trees loaded successfully: ${trees.size()} items")
-    logger.info(s"Focus trees loaded successfully: ${trees.size()} items")
+    updateStatus(s"${trees.size()} Focus trees loaded successfully.")
+    logger.info(s"${trees.size()} Focus trees loaded successfully.")
 
     // Try loading a specific focus tree
     updateStatus("Loading focus tree...")
     val loadedFocusTree = getFocusTree("SMA", "massachusetts.txt")
 
-    loadedFocusTree match {
+    loadedFocusTree match
       case None =>
         updateStatus("No valid Focus Tree found. Ensure mod files are loaded correctly.")
         logger.error("Failed to load a valid focus tree. This may indicate an issue with mod loading.")
-        return InitializationResult(success = false, error = Some("No valid Focus Tree found"), focusTree = None, focusTrees = Some(trees))
-
+        InitializationResult(success = false, error = Some("No valid Focus Tree found"), focusTree = None, focusTrees = Some(trees))
       case Some(tree) =>
         updateStatus("Focus tree loaded successfully.")
         logger.info(s"Loaded focus tree: $tree")
-
-        // Fix localization
-        updateStatus(s"Fixing localization for focus tree: $tree")
-        Try(FixFocus.fixLocalization(tree, HOIIVUtils.get("localization.generate.defaultDescriptions").toBoolean)) match {
-          case Success(_) =>
-            updateStatus("Localization fix completed.")
-            logger.debug("Localization fix completed.")
-          case Failure(e) =>
-            
-            updateStatus(s"Failed to fix localization for focus tree: $tree")
-            logger.error(s"Failed to fix localization for focus tree: $tree", e)
-            return InitializationResult(success = false, error = Some(s"Failed to fix localization: ${e.getMessage}"), focusTree = Some(tree), focusTrees = Some(trees))
-        }
-
         updateStatus("Initialization completed successfully. Drawing focus tree to canvas and displaying...")
-        return InitializationResult(success = true, error = None, focusTree = Some(tree), focusTrees = Some(trees))
-    }
+        InitializationResult(success = true, error = None, focusTree = Some(tree), focusTrees = Some(trees))
   }
 
   private def handleInitializationResult(result: InitializationResult): Unit = {
@@ -276,28 +260,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging 
    * Attempts to load a valid FocusTree from different sources.
    */
   private def getFocusTree(tag: String, filePath: String): Option[FocusTree] = {
-    // Attempt to get the FocusTree by country tag
-    val focusTreeOpt = FocusTree.get(CountryTag(tag))
-      .orElse {
-        // Attempt to load the FocusTree from a file
-        val focusFile = new File(HOIIVFiles.Mod.focus_folder, filePath)
-        if (focusFile.exists()) FocusTree.get(focusFile) else None
-      }
-      .orElse {
-        // Attempt to find a valid FocusTree from the list of focus trees
-        val focusTrees = FocusTree.listFocusTrees
-        focusTrees.find(_.nonEmpty)
-      }
-
-    // Handle the result
-    focusTreeOpt match {
-      case Some(tree) =>
-        logger.info(s"Found valid FocusTree: $tree")
-        Some(tree)
-      case None =>
-        logger.error(s"No valid FocusTree found for tag: $tag or file: $filePath")
-        None
-    }
+    FocusTree.getRandom
   }
 
   private def exportFocusTree(focusTree: FocusTree, path: String): Unit = {

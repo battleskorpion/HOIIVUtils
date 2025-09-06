@@ -13,25 +13,18 @@ import scala.jdk.javaapi.CollectionConverters
 
 
 object LocalizationManager {
-  //static Map<String, Localization> localizations = new HashMap<>();
   private var primaryManager: Option[LocalizationManager] = None
 
   def getLocalizationFile(key: String): File = get.localizations.getLocalizationFile(key)
 
   @throws[NoLocalizationManagerException]
-  def get: LocalizationManager = {
-    primaryManager match {
+  def get: LocalizationManager = primaryManager match
       case Some(mgr) => mgr
       case None => throw new NoLocalizationManagerException
-    }
-  }
   
-  def getOrCreate(createManager: () => LocalizationManager): LocalizationManager = {
-    primaryManager match {
-      case Some(mgr) => mgr
-      case None => createManager()
-    }
-  }
+  def getOrCreate(createManager: () => LocalizationManager): LocalizationManager = primaryManager match
+    case Some(mgr) => mgr
+    case None => createManager()
 
   def get(key: String): Option[Localization] = get.getLocalization(key)
 
@@ -40,17 +33,11 @@ object LocalizationManager {
   @throws[IllegalArgumentException]
   def find(key: String): Option[Localization] = get.getLocalization(key)
 
-  private[localization] def numCapitalLetters(word: String): Int = {
-    if (word == null) return 0
-    var num_cap_letters = 0
-    num_cap_letters = 0
-    for (j <- 0 until word.length) {
-      if (Character.isUpperCase(word.charAt(j))) num_cap_letters += 1
-    }
-    num_cap_letters
-  }
+  private[localization] def numCapitalLetters(word: String): Int =
+    if (word == null || word.isBlank) return 0
+    word count (_.isUpper)
 
-  def isAcronym(word: String): Boolean = numCapitalLetters(word) == word.length
+  def isAcronym(word: String): Boolean = numCapitalLetters(word) == word.trim.length
 }
 
 /**
@@ -68,17 +55,13 @@ abstract class LocalizationManager extends LazyLogging {
    *
    * @param manager the LocalizationManager to set as the primary manager
    */
-  final def setManager(manager: LocalizationManager): Unit = {
-    LocalizationManager.primaryManager = Some(manager)
-  }
+  final def setManager(manager: LocalizationManager): Unit = LocalizationManager.primaryManager = Some(manager)
 
   /**
    * Reloads the localizations. The specific behavior of this method
    * depends on the implementation.
    */
   def reload(): Unit = {
-    localizations.clear()
-    // load all localization files within the localization folder and any subfolders
     loadLocalization()
   }
 
@@ -291,6 +274,8 @@ abstract class LocalizationManager extends LazyLogging {
    * Loads localization. Loads mod localization after vanilla to give mod localizations priority
    */
   protected def loadLocalization(): Unit = {
+    localizations.clear()
+
     // vanilla
     if (HOIIVFiles.HOI4.localization_folder == null)
       logger.warn("'HOI4 localization folder' is null.")
@@ -341,10 +326,12 @@ abstract class LocalizationManager extends LazyLogging {
           else languageFound = true
         }
       }
+
       if (!languageFound) {
         System.out.println("Localization file does not have a language definition: " + file.getAbsolutePath)
         return
       }
+
       while (scanner.hasNextLine) {
         val line = scanner.nextLine
         if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
@@ -353,7 +340,7 @@ abstract class LocalizationManager extends LazyLogging {
             System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
           } else {
             // trim whitespace
-            for (i <- data.indices) data(i) = data(i).trim
+            data foreach (s => s.trim)
             // ignore ":" before version number
             data(1) = data(1).substring(1)
 
@@ -382,16 +369,14 @@ abstract class LocalizationManager extends LazyLogging {
               var key: String = null
               var version: Option[Int] = None
               var value: String = null
-              if (data(1).isBlank) {
+              if (data(1).isBlank)
                 key = data(0).trim
                 version = None
                 value = data(2).trim
-              }
-              else {
+              else
                 key = data(0).trim
                 version = data(1).trim.toIntOption
                 value = data(2).trim
-              }
               // fix file format issues (as it is a UTF-8 BOM file)
               value = value.replaceAll("(Â§)", "§")
               val localization = new Localization(key, version, value, Status)
@@ -490,21 +475,16 @@ abstract class LocalizationManager extends LazyLogging {
     //    Files.write(Paths.get(file.getAbsolutePath), lines)
   }
 
-
   /**
-   * Use to replace existing localization with entry
    *
    * @param file
-   * @param key
-   * @param version
-   * @param value
-   * @param append
+   * @param localization
    */
   protected def writeLocalization(file: File, localization: Localization): Unit = {
     /* localization */
     val key = localization.ID
     val version = {
-      if (localization.version == null) ""
+      if (localization.version.isEmpty) ""
       else String.valueOf(localization.version)
     }
     val value = localization.text

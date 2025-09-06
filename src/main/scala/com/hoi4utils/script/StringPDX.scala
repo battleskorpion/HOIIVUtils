@@ -104,6 +104,10 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
     case Some(v) => set(v)
     case None => setNull()
   }
+  
+  def nonEmpty: Boolean = value match
+    case Some(v) => v.nonEmpty
+    case None => false
 
   override def updateNodeTree(): Unit = {
     // Default behavior for leaf nodes: update the node's value from the current state.

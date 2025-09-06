@@ -91,6 +91,11 @@ object FocusTree extends LazyLogging with PDXReadable {
     }
     None
   }
+  
+  def getRandom: Option[FocusTree] = {
+    if (focusTrees.isEmpty) return None
+    Some(focusTrees(scala.util.Random.nextInt(focusTrees.size)))
+  }
 }
 
 /**
@@ -208,6 +213,8 @@ class FocusTree
       case _ => country.modifier.head.tag.value
     }
   }
+  
+  def hasFocuses: Boolean = focuses.nonEmpty
 
   override def compareTo(o: FocusTree): Int = {
     (this.countryTag, this.id.value) match {
