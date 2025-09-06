@@ -1,6 +1,5 @@
 package com.hoi4utils.hoi4.focus
 
-import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.hoi4.country.CountryTagsManager
 import com.hoi4utils.localization.{LocalizationManager, Property}
 import com.typesafe.scalalogging.LazyLogging
@@ -8,7 +7,6 @@ import com.typesafe.scalalogging.LazyLogging
 import java.io.{File, IOException}
 import java.time.LocalDateTime
 import javax.swing.*
-import scala.jdk.javaapi.CollectionConverters
 
 
 /**
