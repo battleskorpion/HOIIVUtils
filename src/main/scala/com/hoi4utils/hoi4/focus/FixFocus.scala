@@ -1,6 +1,5 @@
 package com.hoi4utils.hoi4.focus
 
-import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.hoi4.country.CountryTagsManager
 import com.hoi4utils.localization.{LocalizationManager, Property}
 import com.typesafe.scalalogging.LazyLogging
@@ -8,7 +7,6 @@ import com.typesafe.scalalogging.LazyLogging
 import java.io.{File, IOException}
 import java.time.LocalDateTime
 import javax.swing.*
-import scala.jdk.javaapi.CollectionConverters
 
 
 /**
@@ -39,38 +37,36 @@ object FixFocus extends LazyLogging {
     // add name localization if missing
     focuses filter (_.isLocalized(Property.NAME)) foreach { focus =>
       logger.debug("Missing localization for focus: {}", focus.id.str)
-      addGeneratedNameLocalization(focus, locManager, locFile)
+      setGeneratedNameLocalization(focus, locManager, locFile)
     }
 
     // add desc localization if missing
     focuses filter (_.isLocalized(Property.DESCRIPTION)) foreach { focus =>
       logger.debug("Missing localization for focus: {}", focus.id.str)
-      if (generateDefaultDescs) addGeneratedDescLocalization(focus, locManager, locFile)
-      else addEmptyDescLocalization(focus, locManager, locFile)
+      if (generateDefaultDescs) setGeneratedDescLocalization(focus, locManager, locFile)
+      else setEmptyDescLocalization(focus, locManager, locFile)
     }
 
     logger.debug("Finished fixing focus localization.")
   }
 
   private def validateFocusTree(focusTree: FocusTree): Boolean = {
-    logger.debug("Validating FocusTree: {}", focusTree)
     if (focusTree == null) {
       logger.error("Focus tree is null.")
       JOptionPane.showMessageDialog(null, "Focus tree cannot be null.", "Error", JOptionPane.ERROR_MESSAGE)
       return false
     }
 
-    if (focusTree.focuses == null || focusTree.focuses.isEmpty) {
+    if (!focusTree.hasFocuses) {
       logger.error("Focus tree has NO focuses! Stopping initialization.")
-      JOptionPane.showMessageDialog(null, "Error: Focus tree has no focuses.", "Error", JOptionPane.ERROR_MESSAGE)
-      throw new IllegalStateException("Focus tree has no focuses.")
+      JOptionPane.showMessageDialog(null, "Focus tree has no focuses.", "Error", JOptionPane.ERROR_MESSAGE)
+      return false
     }
 
     if (focusTree.primaryLocalizationFile.isEmpty) {
-      logger.info("Focus tree has no localization file.") // todo say which focus tree
-
-      JOptionPane.showMessageDialog(null, "Warning: Focus tree has no localization file.", "Warning", JOptionPane.WARNING_MESSAGE)
-      return false
+      logger.info(s"Focus Tree $focusTree has no localization file.")
+      JOptionPane.showMessageDialog(null, s"Warning: Could not find primary localization file for Focus Tree $focusTree.", "Warning", JOptionPane.WARNING_MESSAGE)
+      return false  // todo?
     }
 
     logger.debug("Focus tree is valid: {}", focusTree)
@@ -84,7 +80,7 @@ object FixFocus extends LazyLogging {
    * @param locManager
    * @param locFile
    */
-  private def addGeneratedNameLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
+  private def setGeneratedNameLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
     val focusName = extractFocusName(focus.id.getOrElse(null))
     // Format the focus name
     val formattedName = locManager.titleCapitalize(focusName.replaceAll("_+", " ").trim)
@@ -93,11 +89,11 @@ object FixFocus extends LazyLogging {
     focus.setLocalization(Property.NAME, formattedName, locFile)
   }
 
-  private def addGeneratedDescLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
+  private def setGeneratedDescLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
     focus.setLocalization(Property.DESCRIPTION, generateDescription, locFile)
   }
 
-  private def addEmptyDescLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
+  private def setEmptyDescLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
     focus.setLocalization(Property.DESCRIPTION, "", locFile)
   }
 

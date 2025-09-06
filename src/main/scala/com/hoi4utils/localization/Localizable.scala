@@ -1,6 +1,7 @@
 package com.hoi4utils.localization
 
 import com.hoi4utils.HOIIVFiles
+import com.hoi4utils.exceptions.LocalizationPropertyException
 import com.hoi4utils.ui.JavaFXUIManager
 
 import java.io.File
@@ -56,11 +57,9 @@ trait Localizable {
    * @return the localization for the given property.
    */
   def localization(property: Property): Option[Localization] = {
-    val key = getLocalizableProperties.get(property)
-    key match {
+    getLocalizableProperties.get(property) match
       case Some(k) => LocalizationManager.get(k)
       case None => None
-    }
   }
 
   /**
@@ -70,19 +69,13 @@ trait Localizable {
    * @return the localization text for the given property, or a placeholder if the localization
    *         is null.
    */
-  def localizationText(property: Property): String = {
-    localization(property) match {
-      case Some(l) => l.text
-      case None => "[null]"
-    }
-  }
+  def localizationText(property: Property): Option[String] = localization(property) match
+    case Some(l) => Some(l.text)
+    case None => None
 
-  def localizationStatus(property: Property): Localization.Status = {
-    localization(property) match {
-      case Some(l) => l.status
-      case None => Localization.Status.MISSING
-    }
-  }
+  def localizationStatus(property: Property): Localization.Status = localization(property) match
+    case Some(l) => l.status
+    case None => Localization.Status.MISSING
 
   // todo may bring back at some point
   //	/**
@@ -96,10 +89,9 @@ trait Localizable {
 
   def primaryLocalizationFile: Option[File] = {
     val localizableGroup = getLocalizableGroup
-    localizableGroup.flatMap(ll => ll.getLocalizationKeys).map(LocalizationManager.getLocalizationFile).filter(_ != null).headOption match {
+    localizableGroup.flatMap(ll => ll.getLocalizationKeys).map(LocalizationManager.getLocalizationFile).find(_ != null) match
       case Some(f) => Some(f)
       case None => None
-    }
   }
 
   /**
@@ -133,7 +125,7 @@ trait Localizable {
   }
 
   /**
-   * Sets the localization for the given property to the new value, or creates a new localization if none exists.
+   * Sets the localization for the given property to the new value
    *
    * @param property the localizable property to set.
    * @param version  the localization version number
@@ -145,7 +137,7 @@ trait Localizable {
     key match {
       case Some(k) =>
         LocalizationManager.get.setLocalization(k, version, text, file)
-      case None => //LocalizationManager.get.addLocalization(text, file)
+      case None => throw new LocalizationPropertyException(property, this)
     }
   }
 

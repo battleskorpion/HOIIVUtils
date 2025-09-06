@@ -3,6 +3,7 @@ package com.hoi4utils.ui.focus_view
 import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4.focus.{Focus, FocusTree}
+import com.hoi4utils.localization.Property
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.hoi4utils.ui.pdxscript.PDXEditorController
@@ -389,21 +390,21 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     }
 
     // Focus name plate gfx (focus unavailable version)
-    gfxFocusUnavailable match {
+    gfxFocusUnavailable match
       case null =>
         logger.warn("Focus unavailable image is null, using default color fill.")
         gc2D.setFill(Color.Gray)
         gc2D.fillRect(x1 - 32, y1 + yAdj1, FOCUS_X_SCALE * 2, FOCUS_Y_SCALE / 2.3)
       case img =>
         gc2D.drawImage(img, x1 - 32, y1 + yAdj1)
-    }
 
     // Focus icon
     focus.getDDSImage.foreach(img => gc2D.drawImage(img, x1, y1))
 
     // Focus name text
-    val locName = focus.localizationText(com.hoi4utils.localization.Property.NAME)
-    val name = if (locName == "[null]" && focus.id.str.nonEmpty) focus.id.str else locName
+    val name = focus.localizationText(Property.NAME) match
+      case Some(text) => text
+      case None => if (focus.id.nonEmpty) focus.id.str else "[localization missing]"
     gc2D.fillText(name, x1 - 20, y1 + yAdj2)
 
     // Draw selection border (on top of everything) if selected
