@@ -155,7 +155,7 @@ abstract class LocalizationManager extends LazyLogging {
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
   def replaceLocalization(key: String, text: String): Option[Localization] = {
-    if (key == null) throw new IllegalArgumentException("Key cannot be null.")
+    require(key != null, "Key cannot be null.")
     localizations.get(key) match {
       case Some(prevLocalization) =>
         val localization = prevLocalization.replaceWith(text)
