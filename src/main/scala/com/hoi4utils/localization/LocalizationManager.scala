@@ -532,6 +532,13 @@ abstract class LocalizationManager extends LazyLogging {
 
   @throws[IOException]
   protected def getLocalizationWriter(file: File, append: Boolean) = new PrintWriter(new BufferedWriter(new FileWriter(file, append)))
+
+  /**
+   * Gets all localization files managed by this manager.
+   * @return all localization files.
+   */
+  def localizationFiles: Iterable[File] = localizations.getLocalizationFiles
+
 }
 
 object LocalizationParser:

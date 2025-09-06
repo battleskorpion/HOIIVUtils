@@ -24,6 +24,7 @@ object FixFocus extends LazyLogging {
    * @param generateDefaultDescs Whether to generate default descriptions for focuses that lack them,
    */
   @throws[IOException]
+  @throws[LocalizationPreconditionException]
   def fixLocalization(focusTree: FocusTree, generateDefaultDescs: Boolean): Unit = {
     logger.debug(s"Starting fixLocalization for FocusTree: $focusTree")
     requireLocalizableFocusTree(focusTree)
@@ -37,7 +38,7 @@ object FixFocus extends LazyLogging {
     logger.debug(s"Total focuses in tree: ${focuses.size}")
 
     // add name localization if missing
-    focuses filter (_.isLocalized(Property.NAME)) foreach { focus =>
+    focuses filter (_.isUnlocalized(Property.NAME)) foreach { focus =>
       logger.debug(s"Missing localization for focus: ${focus.id.str}")
       setGeneratedNameLocalization(focus, locManager, locFile)
     }
@@ -52,6 +53,8 @@ object FixFocus extends LazyLogging {
     logger.debug("Finished fixing focus localization.")
   }
 
+  @throws[IllegalArgumentException]
+  @throws[LocalizationPreconditionException]
   private def requireLocalizableFocusTree(focusTree: FocusTree): Unit = {
     if (focusTree == null) throw new IllegalArgumentException("Focus tree is null.")
     if (!focusTree.hasFocuses) throw LocalizationPreconditionException(s"Focus tree $focusTree has localizable focuses.")

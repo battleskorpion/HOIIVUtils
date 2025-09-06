@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.hoi4localization;
 
 import com.hoi4utils.HOIIVFiles;
+import com.hoi4utils.exceptions.LocalizationPreconditionException;
 import com.hoi4utils.hoi4.focus.FixFocus;
 import com.hoi4utils.hoi4.focus.Focus;
 import com.hoi4utils.hoi4.focus.FocusTree;
@@ -31,18 +32,9 @@ import java.util.function.Function;
  */
 public class FocusTreeLocalizationController extends HOIIVUtilsAbstractController implements TableViewWindow {
 
+    /* ui components */
     @FXML
     private Label numLocAddedLabel;
-    @FXML
-    private TextField focusTreeFileTextField;
-    @FXML
-    private Button focusTreeFileBrowseButton;
-    @FXML
-    private Label focusTreeNameLabel;
-    @FXML
-    private TextField focusLocFileTextField;
-    @FXML
-    private Button focusLocFileBrowseButton;
     @FXML
     private Button loadButton;
     @FXML
@@ -59,6 +51,10 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
     private TableColumn<Focus, String> focusLocStatusColumn;
     @FXML
     private RadioMenuItem localizationStatusRadioItem;
+    @FXML
+    private ComboBox<FocusTree> focusTreeComboBox;
+    @FXML
+    private Label focusTreeFileLabel;
 
     private FocusTree focusTree;
     private boolean generateDummyDescriptions = false;
@@ -86,6 +82,9 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
                 + ", Desc: " + focus.localizationStatus(Property.valueOf("DESCRIPTION")).toString();
         focusLocStatusColumn.setCellValueFactory(JavaFXUIManager.tableCellDataCallback(dataFunction));
 
+        /* load data */
+        focusTreeComboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(FocusTree$.MODULE$.listFocusTrees())));
+
         /* buttons */
         saveButton.setDisable(true);
 
@@ -95,33 +94,21 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
     }
 
     @FXML
-    private void handleFocusTreeFileBrowseButtonAction() {
-        File initialFocusDirectory = HOIIVFiles.Mod.focus_folder;
-        File selectedFile = JavaFXUIManager.openChooser(focusTreeFileBrowseButton, initialFocusDirectory, false);
-        
-        System.out.println(selectedFile);
-        
+    private void handleSelectFocusTree() {
+        this.focusTree = focusTreeComboBox.getSelectionModel().getSelectedItem();
+        if (this.focusTree == null) { return; }
 
-        if (selectedFile != null) {
-            focusTreeFileTextField.setText(selectedFile.getAbsolutePath());
-            focusTree = FocusTree$.MODULE$.get(selectedFile).getOrElse(() -> null);
-            if (focusTree == null) {
-                JOptionPane.showMessageDialog(null, "Error: Selected focus tree not found in loaded focus trees.");
-                return; 
-            }
-            focusTreeNameLabel.setText(focusTree.toString());
-        } else {
-            focusTreeNameLabel.setText("[not found]");
-        }
+        focusTreeFileLabel.setText(focusTree.fileName());
+        System.out.println("Selected focus tree: " + focusTree);
     }
 
     @FXML
     private void handleFocusLocFileBrowseButtonAction() {
 //        File initialFocusLocDirectory = HOIIVUtilsFiles.mod_localization_folder;
 //        File selectedFile = openChooser(focusLocFileBrowseButton, initialFocusLocDirectory, false);
-//        
+//
 //        System.out.println(selectedFile);
-//        
+//
 //        if (selectedFile != null) {
 //            focusLocFileTextField.setText(selectedFile.getAbsolutePath());
 //            try {
@@ -146,12 +133,12 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
         try {
             FixFocus.fixLocalization(focusTree, generateDummyDescriptions);
             updateNumLocalizedFocuses(focusTree.listFocuses().count(Focus::isLocalized));
-        } catch (IOException e) {
+        } catch (IOException | LocalizationPreconditionException e) {
             openError(e);
             return;
         }
-        
-        updateObservableFocusList();
+
+	    updateObservableFocusList();
         /* enable saving of localization */
         saveButton.setDisable(false);
     }

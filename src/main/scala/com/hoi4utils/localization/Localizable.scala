@@ -96,14 +96,12 @@ trait Localizable {
 
   /**
    * Gets the localizable group of objects that this object is a part of.
-   *
    * @return the localizable group of objects.
    */
   def getLocalizableGroup: Iterable[? <: Localizable]
 
   /**
    * Asks the user to determine the localization file to use.
-   *
    * @return the localization file to use.
    */
   def askUserForLocalizationFile: File = {

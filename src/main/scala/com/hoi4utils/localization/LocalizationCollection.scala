@@ -141,4 +141,6 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
     this.filter { case (file, localizations) => localizations.exists(_.ID.equals(key)) }.keys.headOption.orNull
     //this.entrySet.parallelStream.filter((entry: util.Map.Entry[File, util.List[Localization]]) => entry.getValue.parallelStream.anyMatch((localization: Localization) => localization.ID == key)).map(util.Map.Entry.getKey).findFirst.orElse(null)
   }
+
+  def getLocalizationFiles: Iterable[File] = this.keys
 }
