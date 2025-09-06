@@ -1,8 +1,10 @@
 package com.hoi4utils.hoi4.focus
 
+import com.hoi4utils.exceptions.LocalizationPreconditionException
 import com.hoi4utils.hoi4.country.CountryTagsManager
 import com.hoi4utils.localization.{LocalizationManager, Property}
 import com.typesafe.scalalogging.LazyLogging
+import lombok.NonNull
 
 import java.io.{File, IOException}
 import java.time.LocalDateTime
@@ -23,26 +25,26 @@ object FixFocus extends LazyLogging {
    */
   @throws[IOException]
   def fixLocalization(focusTree: FocusTree, generateDefaultDescs: Boolean): Unit = {
-    logger.debug("Starting fixLocalization for FocusTree: {}", focusTree)
-    if (!validateFocusTree(focusTree)) return
+    logger.debug(s"Starting fixLocalization for FocusTree: $focusTree")
+    requireLocalizableFocusTree(focusTree)
 
     val locManager = LocalizationManager.get
     val locFile = focusTree.primaryLocalizationFile.get
     val focuses = focusTree.focuses
 
     logger.debug("Localization Manager loaded.")
-    logger.debug("Primary localization file: {}", locFile.getAbsolutePath)
-    logger.debug("Total focuses in tree: {}", focuses.size)
+    logger.debug(s"Primary localization file: ${locFile.getAbsolutePath}")
+    logger.debug(s"Total focuses in tree: ${focuses.size}")
 
     // add name localization if missing
     focuses filter (_.isLocalized(Property.NAME)) foreach { focus =>
-      logger.debug("Missing localization for focus: {}", focus.id.str)
+      logger.debug(s"Missing localization for focus: ${focus.id.str}")
       setGeneratedNameLocalization(focus, locManager, locFile)
     }
 
     // add desc localization if missing
-    focuses filter (_.isLocalized(Property.DESCRIPTION)) foreach { focus =>
-      logger.debug("Missing localization for focus: {}", focus.id.str)
+    focuses filter (_.isUnlocalized(Property.DESCRIPTION)) foreach { focus =>
+      logger.debug(s"Missing localization for focus: ${focus.id.str}")
       if (generateDefaultDescs) setGeneratedDescLocalization(focus, locManager, locFile)
       else setEmptyDescLocalization(focus, locManager, locFile)
     }
@@ -50,27 +52,10 @@ object FixFocus extends LazyLogging {
     logger.debug("Finished fixing focus localization.")
   }
 
-  private def validateFocusTree(focusTree: FocusTree): Boolean = {
-    if (focusTree == null) {
-      logger.error("Focus tree is null.")
-      JOptionPane.showMessageDialog(null, "Focus tree cannot be null.", "Error", JOptionPane.ERROR_MESSAGE)
-      return false
-    }
-
-    if (!focusTree.hasFocuses) {
-      logger.error("Focus tree has NO focuses! Stopping initialization.")
-      JOptionPane.showMessageDialog(null, "Focus tree has no focuses.", "Error", JOptionPane.ERROR_MESSAGE)
-      return false
-    }
-
-    if (focusTree.primaryLocalizationFile.isEmpty) {
-      logger.info(s"Focus Tree $focusTree has no localization file.")
-      JOptionPane.showMessageDialog(null, s"Warning: Could not find primary localization file for Focus Tree $focusTree.", "Warning", JOptionPane.WARNING_MESSAGE)
-      return false  // todo?
-    }
-
-    logger.debug("Focus tree is valid: {}", focusTree)
-    true
+  private def requireLocalizableFocusTree(focusTree: FocusTree): Unit = {
+    if (focusTree == null) throw new IllegalArgumentException("Focus tree is null.")
+    if (!focusTree.hasFocuses) throw LocalizationPreconditionException(s"Focus tree $focusTree has localizable focuses.")
+    if (focusTree.primaryLocalizationFile.isEmpty) throw LocalizationPreconditionException(s"Focus tree $focusTree has a known primary localization file.")
   }
 
   /**
