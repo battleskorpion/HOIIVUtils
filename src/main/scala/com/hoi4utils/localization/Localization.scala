@@ -12,6 +12,8 @@ case class Localization(
                          status: Localization.Status
                        ) {
 
+  require(version != null, "Version must not be null; use None for no version.")
+
   /** Does this record allow itself to be replaced by `other`? */
   @throws[UnexpectedLocalizationStatusException]
   def isReplaceableBy(other: Localization): Boolean = status match {
