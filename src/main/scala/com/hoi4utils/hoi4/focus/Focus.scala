@@ -407,13 +407,14 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
 object Focus {
   def getDataFunctions: Iterable[Focus => ?] = {
-    val dataFunctions = ListBuffer[Focus => ?]()
-    dataFunctions += (focus => {
-      focus.id.getOrElse("[unknown]")
-    })
-    dataFunctions += (_.localizationText(Property.NAME))
-    dataFunctions += (_.localizationText(Property.DESCRIPTION))
-    dataFunctions
+    def locOrMissing(p: Property): Focus => String =
+      f => f.localizationText(p).getOrElse("[Localization missing]")
+
+    List[Focus => ?](
+      f => f.id.getOrElse(s"[Focus missing id, focus tree: ${f.focusTree}, file: ${f.focusTree.fileName}]"),
+      locOrMissing(Property.NAME),
+      locOrMissing(Property.DESCRIPTION)
+    )
   }
 
   def focusesWithPrerequisites(focuses: Iterable[Focus]): List[(Focus, List[Focus])] = {

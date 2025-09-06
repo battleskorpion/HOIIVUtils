@@ -192,11 +192,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
 
     @FXML
     private void handleShowFocusLocalizationSettingAction() {
-        if (localizationStatusRadioItem.isSelected()) {
-            focusLocStatusColumn.setVisible(true);
-        } else {
-            focusLocStatusColumn.setVisible(false);
-        }
+	    focusLocStatusColumn.setVisible(localizationStatusRadioItem.isSelected());
     }
 
     @Override

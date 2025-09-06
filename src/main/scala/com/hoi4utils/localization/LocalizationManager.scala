@@ -340,7 +340,7 @@ abstract class LocalizationManager extends LazyLogging {
             System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
           } else {
             // trim whitespace
-            data foreach (s => s.trim)
+            data mapInPlace (s => s.trim)
             // ignore ":" before version number
             data(1) = data(1).substring(1)
 
