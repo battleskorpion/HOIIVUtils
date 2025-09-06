@@ -4,7 +4,7 @@ import com.hoi4utils.localization.Localization
 
 class LocalizationExistsException(message: String) extends Exception(message) {
   def this(localization: Localization) =
-    this(s"Localization already exists: ${localization.ID}")
+    this(s"Localization already exists: ${localization.id}")
 
   def this(prev: Localization, next: Localization) =
     this(

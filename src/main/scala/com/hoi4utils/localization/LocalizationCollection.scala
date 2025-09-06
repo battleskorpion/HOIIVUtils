@@ -19,7 +19,7 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
     val localizationList = this.getOrElseUpdate(file, new ListBuffer[Localization])
 //    val localizationsList = this.computeIfAbsent(file, (k: File) => new ListBuffer[Localization])
     localizationList.addOne(localization)
-    localizationKeyMap.put(localization.ID, localization) // Indexing for fast retrieval
+    localizationKeyMap.put(localization.id, localization) // Indexing for fast retrieval
   }
 
   // Custom method to remove a Localization
@@ -30,7 +30,7 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
       val removed = localizationsList.exists(_.equals(localization))
       if (removed) {
         localizationsList -= localization
-        localizationKeyMap.remove(localization.ID) // Remove from index
+        localizationKeyMap.remove(localization.id) // Remove from index
         anyRemoved = true
       }
     }
@@ -56,7 +56,7 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
   }
 
   def getAll(localizationKeys: Iterable[String]): Iterable[Localization] = {
-    localizationKeyMap.values.filter { localization => localizationKeys.toList.contains(localization.ID) }
+    localizationKeyMap.values.filter { localization => localizationKeys.toList.contains(localization.id) }
     //localizationKeyMap.values.parallelStream.filter((localization: Localization) => localizationKeys.contains(localization.ID)).toList
   }
 
@@ -112,11 +112,11 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
     if (localization == null) throw new IllegalArgumentException("Localization must not be null")
 
     foreach { case (file, localizationsList) =>
-      val index = localizationsList.indexWhere(_.ID == key)
+      val index = localizationsList.indexWhere(_.id == key)
       if (index != -1) {
         val prevLocalization = localizationsList(index)
         localizationsList(index) = localization
-        localizationKeyMap.put(localization.ID, localization) // Update index
+        localizationKeyMap.put(localization.id, localization) // Update index
         return Some(prevLocalization)
       }
     }
@@ -138,7 +138,7 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
 
   def getLocalizationFile(key: String): File = {
     // todo parallel stream?
-    this.filter { case (file, localizations) => localizations.exists(_.ID.equals(key)) }.keys.headOption.orNull
+    this.filter { case (file, localizations) => localizations.exists(_.id.equals(key)) }.keys.headOption.orNull
     //this.entrySet.parallelStream.filter((entry: util.Map.Entry[File, util.List[Localization]]) => entry.getValue.parallelStream.anyMatch((localization: Localization) => localization.ID == key)).map(util.Map.Entry.getKey).findFirst.orElse(null)
   }
 

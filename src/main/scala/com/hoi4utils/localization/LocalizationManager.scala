@@ -195,7 +195,7 @@ abstract class LocalizationManager extends LazyLogging {
   @throws[LocalizationExistsException]
   def addLocalization(localization: Localization, localizationCollection: LocalizationCollection, file: File): Unit = {
     if (localization == null) return
-    if (localizationCollection.containsLocKey(localization.ID)) throw new LocalizationExistsException(localization)
+    if (localizationCollection.containsLocKey(localization.id)) throw new LocalizationExistsException(localization)
     localizationCollection.add(localization, file)
   }
 
@@ -261,12 +261,8 @@ abstract class LocalizationManager extends LazyLogging {
 
   /** Formats a Localization into a file line. */
   def formatLocalization(loc: Localization): String = {
-    val versionStr = loc.version match {
-      case None => ""
-      case v => v.toString
-    }
     // Build the entry string
-    val entry = s"${loc.ID}:$versionStr \"${loc.text}\""
+    val entry = s"${loc.id}:${loc.versionStr} \"${loc.text}\""
     entry.replaceAll("§", "Â§") // necessary with UTF-8 BOM
   }
 
@@ -417,15 +413,15 @@ abstract class LocalizationManager extends LazyLogging {
     /* --- Group by base key --- */
     val existingGroups: Map[String, LocalizationGroup] =
       existingLocalization.groupBy(_.baseKey).map { case (base, locs) =>
-        val baseEntry = locs.find(!_.ID.endsWith("_desc"))
-        val descEntry = locs.find(_.ID.endsWith("_desc"))
+        val baseEntry = locs.find(!_.id.endsWith("_desc"))
+        val descEntry = locs.find(_.id.endsWith("_desc"))
         base -> LocalizationGroup(baseEntry, descEntry)
       }
 
     val newGroups: Map[String, LocalizationGroup] =
       localizationList.groupBy(_.baseKey).map { case (base, locs) =>
-        val baseEntry = locs.find(!_.ID.endsWith("_desc"))
-        val descEntry = locs.find(_.ID.endsWith("_desc"))
+        val baseEntry = locs.find(!_.id.endsWith("_desc"))
+        val descEntry = locs.find(_.id.endsWith("_desc"))
         base -> LocalizationGroup(baseEntry, descEntry)
       }
 
@@ -482,24 +478,15 @@ abstract class LocalizationManager extends LazyLogging {
    */
   protected def writeLocalization(file: File, localization: Localization): Unit = {
     /* localization */
-    val key = localization.ID
-    val version = {
-      if (localization.version.isEmpty) ""
-      else String.valueOf(localization.version)
-    }
-    val value = localization.text
-
-    var entry = "\t" + key + ":" + version + " \"" + value + "\""
-    entry = entry.replaceAll("§", "Â§")
-
+    val entry = localization.toString.replaceAll("§", "Â§")
     val writer: PrintWriter = getLocalizationWriter(file, true)
-
     /* append is a quick add to end no more logic needed */
     val append = localization.status match {
       case Localization.Status.NEW => true
       case Localization.Status.UPDATED => false
       case _ => throw new IllegalStateException("Unexpected value: " + localization.status)
     }
+
     if (append) try {
       writer.println(entry)
     } catch {
@@ -515,10 +502,10 @@ abstract class LocalizationManager extends LazyLogging {
         //        if (lines.get(i).trim.startsWith(key) && continue) {
 
         //        }
-        if (lines.get(i).filter(c => !c.isWhitespace).startsWith(key + ":") && continue) {
+        if (lines.get(i).filter(c => !c.isWhitespace).startsWith(localization.key + ":") && continue) {
           lines.set(i, entry)
           lineReplaced = true
-          System.out.println("Replaced localization " + key)
+          System.out.println("Replaced localization " + localization.key)
           continue = false
         }
       }

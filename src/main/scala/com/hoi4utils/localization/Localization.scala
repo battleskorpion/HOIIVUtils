@@ -6,7 +6,7 @@ import com.hoi4utils.localization.Localization.Status
 import java.io.File
 
 case class Localization(
-                         ID: String,
+                         id: String,
                          version: Option[Int],
                          text: String,
                          status: Localization.Status
@@ -61,11 +61,15 @@ case class Localization(
   }
 
   override def toString: String =
-    s"$ID:${version.map(_.toString).getOrElse("")} \"$text\""
+    s"$id:${version.map(_.toString).getOrElse("")} \"$text\""
+
+  /** Since the id is technically the YML key, this is a convenience method which returns the localization id */
+  def key: String = id
 
   /** If your key ends in "_desc", strip that suffix for the base key. */
-  def baseKey: String =
-    if ID.endsWith("_desc") then ID.stripSuffix("_desc") else ID
+  def baseKey: String = if id.endsWith("_desc") then id.stripSuffix("_desc") else id
+
+  def versionStr: String = version.map(_.toString).getOrElse("")
 }
 
 object Localization {
