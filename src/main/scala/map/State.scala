@@ -7,6 +7,7 @@ import com.hoi4utils.localization.*
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
 import com.hoi4utils.*
+import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 import map.State.History
 import org.apache.logging.log4j.{LogManager, Logger}
@@ -22,11 +23,14 @@ import scala.jdk.javaapi.CollectionConverters
  * @param stateFile state file
  * @param addToStatesList if true, adds the state to the list of states
  */
-class State(addToStatesList: Boolean) extends StructuredPDX("state") with InfrastructureData with Localizable with Iterable[Province] with Comparable[State] with PDXFile {
-  private val logger: Logger = LogManager.getLogger(getClass)
+class State(addToStatesList: Boolean) extends StructuredPDX("state") with InfrastructureData with Localizable with Iterable[Province] with Comparable[State] with PDXFile with LazyLogging {
 
   final val stateID = new IntPDX("id")
   final val name = new StringPDX("name")
+  /**
+   * Resources in this state
+   * Note: loading resources can sometimes fail due to malformed state files, so we catch exceptions here and log them
+   */
   final val resources = new CollectionPDX[Resource](Resource(), "resources") {
     override def loadPDX(expr: Node): Unit = {
       try {
@@ -187,9 +191,16 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
     _stateFile = Some(file)
   }
 
+  /**
+   * Todo fix java doc @ skorp
+   * Returns the amount of the specified resource in this state.
+   * If the resource is not found, returns 0.0.
+   * @param name the name of the resource (e.g., "aluminium", "chromium", "oil", "rubber", "steel", "tungsten")
+   * @return the amount of the specified resource in this state
+   */
   def resourceAmount(name: String): Double = resources.find(_.pdxTypeIdentifier.equals(name)) match {
     case Some(r) => r.getOrElse(0)
-    case None => 0.0
+    case None => 0
   }
   
   def owner(date: ClausewitzDate): Option[CountryTag] = {
@@ -316,8 +327,7 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
  *
  * I apologize in advance.
  */
-object State extends Iterable[State] with PDXReadable {
-  private val logger: Logger = LogManager.getLogger(getClass)
+object State extends Iterable[State] with PDXReadable with LazyLogging {
 
   private val states = new ListBuffer[State]
 
@@ -456,6 +466,12 @@ object State extends Iterable[State] with PDXReadable {
     false
   }
 
+  /**
+   * TODO fix this java doc @ skorp
+   * Returns a list of functions that return data about a state
+   * @param resourcePercentages if true, returns resource amounts, if false, returns resource percentages of global
+   * @return list of functions that return data about a state
+   */
   def getDataFunctions(resourcePercentages: Boolean): Iterable[State => ?] = {
     val dataFunctions = ListBuffer[State => ?]()
 
@@ -470,8 +486,7 @@ object State extends Iterable[State] with PDXReadable {
     dataFunctions += (s => s.populationCivFactoryRatio)
     dataFunctions += (s => s.populationMilFactoryRatio)
     dataFunctions += (s => s.populationAirCapacityRatio)
-    /* todo better way to do this obv! plz fix :(
-        with (wrapper function that returns either or depndent on resourcesPerfcentages boolean value ofc */
+    // todo better way to do this obv! plz fix :( with (wrapper function that returns either or depndent on resourcesPerfcentages boolean value ofc
     // also if we're gonna have different resources able to load in down the line... it'll break this.
     if (resourcePercentages) {
       dataFunctions += (s => s.resourceAmount("aluminium"))

@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.custom_javafx.state
 
 import com.hoi4utils.ui.JavaFXUIManager
+import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
 import javafx.beans.property.{IntegerProperty, ObjectProperty, ReadOnlyObjectWrapper, StringProperty}
 import javafx.collections.FXCollections
@@ -18,11 +19,7 @@ import scalafx.util.converter.IntStringConverter
 import java.util.Comparator
 import java.util.function.Function
 
-object StateTable {
-	val logger: Logger = LogManager.getLogger(classOf[StateTable])
-}
-
-class StateTable extends TableView[State] {
+class StateTable extends TableView[State] with LazyLogging {
 	final private val stateColumn = new TableColumn[State, String]("State")
 	final private val populationColumn = new TableColumn[State, Integer]("Population")
 	final private val civFactoryColumn = new TableColumn[State, Integer]("Civilian Factories")
@@ -93,6 +90,7 @@ class StateTable extends TableView[State] {
 		milFactoryColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, Integer]) => ev.getRowValue.militaryFactories_=?(ev.getNewValue))
 		dockyardsColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, Integer]) => ev.getRowValue.navalDockyards_=?(ev.getNewValue))
 		airfieldsColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, Integer]) => ev.getRowValue.airfields_=?(ev.getNewValue))
+		/** resources */
 		aluminiumColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, java.lang.Double]) => ev.getRowValue.setResource("aluminium", ev.getNewValue))
 		chromiumColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, java.lang.Double]) => ev.getRowValue.setResource("chromium", ev.getNewValue))
 		oilColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, java.lang.Double]) => ev.getRowValue.setResource("oil", ev.getNewValue))
@@ -100,7 +98,25 @@ class StateTable extends TableView[State] {
 		steelColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, java.lang.Double]) => ev.getRowValue.setResource("steel", ev.getNewValue))
 		tungstenColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, java.lang.Double]) => ev.getRowValue.setResource("tungsten", ev.getNewValue))
 		// add columns to table
-		this.getColumns.addAll(stateColumn, populationColumn, civFactoryColumn, milFactoryColumn, dockyardsColumn, airfieldsColumn, civMilRatioColumn, popFactoryRatioColumn, popCivRatioColumn, popMilRatioColumn, popAirCapacityRatioColumn, aluminiumColumn, chromiumColumn, oilColumn, rubberColumn, steelColumn, tungstenColumn)
+		this.getColumns.addAll(
+			stateColumn, 
+			populationColumn, 
+			civFactoryColumn, 
+			milFactoryColumn,
+			dockyardsColumn,
+			airfieldsColumn,
+			civMilRatioColumn,
+			popFactoryRatioColumn,
+			popCivRatioColumn,
+			popMilRatioColumn,
+			popAirCapacityRatioColumn,
+			aluminiumColumn,
+			chromiumColumn,
+			oilColumn,
+			rubberColumn,
+			steelColumn,
+			tungstenColumn
+		)
 	}
 
 //	private[buildings] def bindColumn[T](col: TableColumn[State, T], mapper: Function[State, T], comparator: Comparator[T]): Unit = {
@@ -123,10 +139,7 @@ class StateTable extends TableView[State] {
 		JavaFXUIManager.updateColumnPercentBehavior(tungstenColumn, resourcesPercent)
 	}
 
-	def setDataTableCellFactories(): Unit = {
-
-		//
-	}
+	def setDataTableCellFactories(): Unit = ???
 
 	def setEditableColumns(editable: Boolean): Unit = {
 		this.setEditable(true)

@@ -170,20 +170,44 @@ public interface JavaFXUIManager {
 
 	void setTitle(String title);
 
-	default <S> void loadTableView(TableViewWindow window, TableView<S> table, ObservableList<S> data,
-	                               List<Function<S, ?>> dataFunctions) {
+	/**
+	 * 
+	 * @param window
+	 * @param table
+	 * @param data 
+	 * @param dataFunctions
+	 * @param <S>
+	 */
+	default <S> void loadTableView(
+			TableViewWindow window,
+			TableView<S> table,
+			ObservableList<S> data,
+	        List<Function<S, ?>> dataFunctions
+	) {
 		window.setDataTableCellFactories();
 
 		setTableCellValueFactories(dataFunctions, table);
 
-		table.setItems(data);       // this is giving the factories the list of objects to collect
-									// their data from.
+		// this is giving the factories the list of objects to collect their data from.
+		table.setItems(data);
 
 		System.out.println("Loaded data into table: " + table.getId());
 	}
 
-	default <S> void loadTableView(TableViewWindow window, TableView<S> table, ObservableList<S>
-			data, Iterable<Function1<S,?>> dataFunctions) {
+	/**
+	 * 
+	 * @param window
+	 * @param table
+	 * @param data
+	 * @param dataFunctions
+	 * @param <S>
+	 */
+	default <S> void loadTableView(
+			TableViewWindow window, 
+			TableView<S> table, 
+			ObservableList<S> data,
+			Iterable<Function1<S,?>> dataFunctions
+	) {
 		var fns = CollectionConverters.asJava(dataFunctions);
 		List<Function<S, ?>> fnsJava = new ArrayList<>();
 		fns.forEach((x) -> fnsJava.add(FunctionConverters.asJavaFunction(x)));
