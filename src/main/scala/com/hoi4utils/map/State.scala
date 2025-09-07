@@ -546,7 +546,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
     final val controller = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "controller")
     final val buildings = new BuildingsPDX
     final val victoryPoints = new MultiPDX[VictoryPointPDX](None, Some(() => new VictoryPointPDX), "victory_points")
-    final val startDateScopes = new MultiPDX[StartDateScopePDX](None, Some(() => new StartDateScopePDX))
+    final val startDateScopes = new MultiPDX[StartDateScopePDX](None, Some(() => new StartDateScopePDX)
       with ProceduralIdentifierPDX(ClausewitzDate.validDate)
     //    final MultiPDX[VictoryPoint] victoryPoints = new MultiPDX(None, Some())
 
@@ -585,10 +585,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
     override def getPDXTypeName: String = "Victory Point"
   }
 
-  class StartDateScopePDX(date: ClausewitzDate) extends History(date.YMDString) with ProceduralIdentifierPDX(ClausewitzDate.validDate) {
-    def this() = {
-      this(ClausewitzDate.defaulty)
-    }
+  class StartDateScopePDX(date: ClausewitzDate = ClausewitzDate.defaulty) extends History() with ProceduralIdentifierPDX(ClausewitzDate.validDate) {
 
     override def getPDXTypeName: String = "Start Date History"
   }
