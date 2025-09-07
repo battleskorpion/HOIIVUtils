@@ -233,7 +233,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 	private void savePDX(List<PDXScript<?>> pdxScripts) {
 		for (PDXScript<?> pdx : pdxScripts) {
-			pdx.savePDX(new File("Parser Viewer PDXScripts"));
+			pdx.saveInDir(new File("Parser Viewer PDXScripts"));
 		}
 	}
 

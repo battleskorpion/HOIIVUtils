@@ -201,17 +201,45 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
 
   def population: Int = manpower.getOrElse(1)
 
+  def population_=(pop: Int): Unit = manpower @= pop
+
+  def population_=?(pop: Int): Unit = manpower @=? pop
+
   def infrastructure: Int = history.buildings.infrastructure.getOrElse(0)
+
+  def infrastructure_=(infrastructure: Int): Unit = history.buildings.infrastructure @= infrastructure
+
+  def infrastructure_=?(infrastructure: Int): Unit = history.buildings.infrastructure @=? infrastructure
 
   def civilianFactories: Int = history.buildings.civilianFactories.getOrElse(0)
 
+  def civilianFactories_=(factories: Int): Unit = history.buildings.civilianFactories @= factories
+
+  def civilianFactories_=?(factories: Int): Unit = history.buildings.civilianFactories @=? factories
+
   def militaryFactories: Int = history.buildings.militaryFactories.getOrElse(0)
+
+  def militaryFactories_=(factories: Int): Unit = history.buildings.militaryFactories @= factories
+
+  def militaryFactories_=?(factories: Int): Unit = history.buildings.militaryFactories @=? factories
 
   def navalDockyards: Int = history.buildings.navalDockyards.getOrElse(0)
 
+  def navalDockyards_=(dockyards: Int): Unit = history.buildings.navalDockyards @= dockyards
+
+  def navalDockyards_=?(dockyards: Int): Unit = history.buildings.navalDockyards @=? dockyards
+
   def navalPorts: Int = history.buildings.navalDockyards.getOrElse(0)
 
+  def navalPorts_=(ports: Int): Unit = history.buildings.navalDockyards @= ports
+
+  def navalPorts_=?(ports: Int): Unit = history.buildings.navalDockyards @=? ports
+
   def airfields: Int = history.buildings.airBase.getOrElse(0)
+
+  def airfields_=(airfields: Int): Unit = history.buildings.airBase @= airfields
+
+  def airfields_=?(airfields: Int): Unit = history.buildings.airBase @=? airfields
 
   def civMilFactoryRatio: Double = {
     if (civilianFactories == 0) 0.0
@@ -246,6 +274,11 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
   def resource(name: String): Resource = resources.find(_.pdxTypeIdentifier.equals(name)) match {
     case Some(r) => r
     case None => new Resource(name, 0)
+  }
+
+  def setResource(name: String, amt: Double): Unit = resources.find(_.pdxTypeIdentifier.equals(name)) match {
+    case Some(r) => r @= amt
+    case None => new Resource(name, amt)
   }
 
   override def getInfrastructureRecord: Infrastructure = getStateInfrastructure
@@ -428,7 +461,7 @@ object State extends Iterable[State] with PDXReadable {
 
     dataFunctions += (s => s.id)
     dataFunctions += (s => s.population)
-    dataFunctions += (s => s.civMilFactoryRatio)
+    dataFunctions += (s => s.civilianFactories)
     dataFunctions += (s => s.militaryFactories)
     dataFunctions += (s => s.navalDockyards)
     dataFunctions += (s => s.airfields)

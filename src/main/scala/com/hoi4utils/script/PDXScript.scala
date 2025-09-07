@@ -128,11 +128,11 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
 
   def pdxIdentifier: String
 
-  def savePDX(): Unit = {
-    savePDX(new File("Saved PDXScripts"))
+  def saveToPDXScriptsDir(): Unit = {
+    saveInDir(new File("Saved PDXScripts"))
   }
 
-  def savePDX(dir: File): Unit = {
+  def saveInDir(dir: File): Unit = {
     if (this == null) return
     if (!dir.exists()) if (!dir.mkdir) logger.error("Error creating directory for saving PDXScript: \n{}", this)
     val path = this match {

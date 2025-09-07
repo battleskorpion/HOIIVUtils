@@ -80,6 +80,8 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, (
   }
   
   def amt: Double = getOrElse(0)
+  
+  def amt_=(value: Double): Unit = set(value)
 }
 
 object ResourcesFile extends PDXReadable {

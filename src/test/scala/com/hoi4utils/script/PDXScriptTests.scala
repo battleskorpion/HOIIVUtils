@@ -151,7 +151,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
       assert(stratRegion.pdxProperties.nonEmpty)
       stratRegion.weather.period.removeIf(_.between.exists(_ @== 4.11))
       assert(stratRegion.weather.period.size == 12)
-      stratRegion.savePDX()
+      stratRegion.saveToPDXScriptsDir()
     }
   }
 

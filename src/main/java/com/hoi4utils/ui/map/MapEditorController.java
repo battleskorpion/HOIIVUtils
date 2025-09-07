@@ -2,7 +2,7 @@ package com.hoi4utils.ui.map;
 
 import com.hoi4utils.HOIIVFiles;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.buildings.StateTable;
+import com.hoi4utils.ui.custom_javafx.state.StateTable;
 import com.hoi4utils.ui.pdxscript.PDXEditorPane;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -56,7 +56,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
 
     // Tooltip to display state info on hover.
     private final Tooltip stateTooltip = new Tooltip();
-    private StateTable stateTable = null; 
+    private StateTable stateTable = null;
     
     private State selectedState = null; // currently selected state
     private Province selectedProvince = null; // currently selected province
@@ -402,8 +402,8 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
             buildingsTable.setId("buildingsTable");
             mapEditorSplitPane.getItems().add(buildingsTable);
             buildingsTable.setVisible(true);
-            if (selectedState != null) content.setStates(selectedState); 
-            else content.clearStates();
+            //if (selectedState != null) content.setStates(selectedState); // TODO FIX IN SCALA
+            //else content.clearStates();
             stateTable = content;
         } else {
             var buildingsTable = mapEditorSplitPane.lookup("#buildingsTable");
@@ -454,7 +454,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
                 pdxScrollPane.setContent(pdxEditorPane);
                 pdxScrollPane.setVisible(true);
                 this.selectedState = clickedState; 
-                if (stateTable != null) stateTable.setStates(clickedState); 
+                //if (stateTable != null) stateTable.setStates(clickedState);  TODO FIX IN SCALA
             } else {
                 logger.info("Right-clicked on an undefined state area.");
                 this.selectedState = null; 
