@@ -14,7 +14,7 @@ import scala.collection.mutable.ListBuffer
  * Represents a .gfx file in interface folder
  * Contains a set of SpriteTypes
  */
-object Interface extends PDXReadable {
+object Interface extends PDXReadable with LazyLogging {
   private val gfxMap: mutable.Map[String, SpriteType] = new mutable.HashMap
   private var interfaceFiles: mutable.Map[File, Interface] = new mutable.HashMap
   var interfaceErrors: ListBuffer[String] = ListBuffer.empty[String]
@@ -44,10 +44,10 @@ object Interface extends PDXReadable {
 
   private def readMod(): Boolean = {
     if (!HOIIVFiles.Mod.interface_folder.exists || !HOIIVFiles.Mod.interface_folder.isDirectory) {
-      System.out.println("Warning: mod interface directory does not exist")
+      logger.error("Warning: mod interface directory does not exist")
       false
     } else if (HOIIVFiles.Mod.interface_folder.listFiles == null || HOIIVFiles.Mod.interface_folder.listFiles.isEmpty) {
-      System.out.println("Warning: mod interface directory is empty")
+      logger.error("Warning: mod interface directory is empty")
       false
     } else {
       for (file <- HOIIVFiles.Mod.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))) {
@@ -59,10 +59,10 @@ object Interface extends PDXReadable {
 
   private def readHoi4(): Boolean = {
     if (!HOIIVFiles.HOI4.interface_folder.exists || !HOIIVFiles.HOI4.interface_folder.isDirectory) {
-      System.err.println("HOI4 interface directory does not exist")
+      logger.error("HOI4 interface directory does not exist")
       false
     } else if (HOIIVFiles.HOI4.interface_folder.listFiles == null || HOIIVFiles.HOI4.interface_folder.listFiles.isEmpty) {
-      System.err.println("HOI4 interface directory is empty")
+      logger.error("HOI4 interface directory is empty")
       false
     } else {
       for (file <- HOIIVFiles.HOI4.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))) {
@@ -107,8 +107,7 @@ object Interface extends PDXReadable {
  *   }
  * } </pre>
 */
-class Interface(private val file: File) extends LazyLogging
-{
+class Interface(private val file: File) extends LazyLogging {
   private var spriteTypes: mutable.Set[SpriteType] = new mutable.HashSet
 
   /* init */
