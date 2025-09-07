@@ -19,9 +19,9 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import map.ResourcesFile;
-import map.State;
-import map.StrategicRegion;
+import com.hoi4utils.map.ResourcesFile;
+import com.hoi4utils.map.State;
+import com.hoi4utils.map.StrategicRegion;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;

@@ -1,9 +1,9 @@
 package com.hoi4utils.script
 
 import com.hoi4utils.hoi4.focus.FocusTree
+import com.hoi4utils.map.StrategicRegion
 import com.hoi4utils.parser.{Node, Parser, Tokenizer}
 import com.hoi4utils.script.StringPDX
-import map.StrategicRegion
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File

@@ -4,10 +4,10 @@ import com.hoi4utils.exceptions.InvalidParameterException
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.hoi4.idea.Idea
 import com.hoi4utils.hoi4.scope.ScopeType
+import com.hoi4utils.map.{Province, State}
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
 import com.hoi4utils.{BoolType, ExpectedRange, RichString}
-import map.{Province, State}
 
 import java.io.{File, IOException}
 import java.nio.file.{Files, StandardCopyOption}

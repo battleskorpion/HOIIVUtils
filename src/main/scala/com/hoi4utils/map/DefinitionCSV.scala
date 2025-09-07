@@ -1,4 +1,4 @@
-package map
+package com.hoi4utils.map
 
 import java.io.File
 import scala.io.Source

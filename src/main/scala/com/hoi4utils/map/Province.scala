@@ -1,4 +1,4 @@
-package map
+package com.hoi4utils.map
 
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.IntPDX

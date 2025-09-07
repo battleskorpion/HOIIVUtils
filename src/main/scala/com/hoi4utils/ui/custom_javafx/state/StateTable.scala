@@ -1,5 +1,6 @@
 package com.hoi4utils.ui.custom_javafx.state
 
+import com.hoi4utils.map.State
 import com.hoi4utils.ui.JavaFXUIManager
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
@@ -8,7 +9,6 @@ import javafx.collections.FXCollections
 import javafx.scene.control.{TableCell, TableColumn, TableView}
 import javafx.scene.control.cell.TextFieldTableCell
 import javafx.util.converter.IntegerStringConverter
-import map.State
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS
