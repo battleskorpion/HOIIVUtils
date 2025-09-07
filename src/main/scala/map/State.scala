@@ -2,7 +2,7 @@ package map
 
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
-import com.hoi4utils.hoi4.country.{Country, CountryTag, CountryTagsManager}
+import com.hoi4utils.hoi4.country.{Country, CountryTag}
 import com.hoi4utils.localization.*
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
@@ -460,7 +460,7 @@ object State extends Iterable[State] with PDXReadable {
   }
 
   def infrastructureOfCountries: ListBuffer[Infrastructure] = {
-    val countryList = CountryTagsManager.getCountryTags
+    val countryList = CountryTag.countryTags
     val countriesInfrastructureList = new ListBuffer[Infrastructure]
     for (tag <- countryList) {
       countriesInfrastructureList.addOne(infrastructureOfCountry(tag))
@@ -474,7 +474,7 @@ object State extends Iterable[State] with PDXReadable {
 
   // ! todo test if working
   def resourcesOfCountries: List[List[Resource]] = {
-    val countryList = CountryTagsManager.getCountryTags
+    val countryList = CountryTag.countryTags
     val countriesResourcesList = new ListBuffer[List[Resource]]
     for (tag <- countryList) {
       countriesResourcesList.addOne(resourcesOfCountry(tag))

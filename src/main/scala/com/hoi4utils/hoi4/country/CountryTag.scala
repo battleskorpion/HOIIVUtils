@@ -4,7 +4,7 @@ import com.hoi4utils.parser.Parser
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 
-import java.io.File
+import java.io.{File, IOException}
 import scala.collection.mutable.ListBuffer
 
 object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable {
@@ -13,48 +13,80 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
   val COUNTRY_TAG_LENGTH = 3 // standard country tag length (for a normal country tag)private final String tag;
   // scala... (this is null (????????????) if you dont use 'lazy')
   private lazy val _tagList: ListBuffer[CountryTag] = {
-    //    println("Initializing _tagList")
     ListBuffer[CountryTag]()
   }
 
   def read(): Boolean = {
-    if (!HOIIVFiles.Mod.country_tags_folder.exists || !HOIIVFiles.Mod.country_tags_folder.isDirectory) {
-      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_tags_folder} is not a directory, or it does not exist.")
-      false
-    } else if (HOIIVFiles.Mod.country_tags_folder.listFiles == null || HOIIVFiles.Mod.country_tags_folder.listFiles.length == 0) {
-      logger.warn(s"No country tags found in ${HOIIVFiles.Mod.country_tags_folder}")
-      false
-    } else {
-      logger.info("Reading country tags from " + HOIIVFiles.Mod.country_tags_folder)
+    val tags = loadCountryTags()
+    if (tags.isEmpty)
+      logger.warn("No country tags loaded!")
+      return false
+    _tagList.addAll(tags)
+    true
+  }
 
-      // create focus trees from files
-      HOIIVFiles.Mod.country_tags_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
-        val parser = new Parser(f)
+  @throws[IOException]
+  private def loadCountryTags(): Seq[CountryTag] = {
+    val tagsBuf = ListBuffer.empty[CountryTag]
+
+    val modFiles = listTagFiles(HOIIVFiles.Mod.country_tags_folder).filterNot(_.getName.contains("dynamic_countries"))
+    val baseFiles = listTagFiles(HOIIVFiles.HOI4.country_tags_folder).filterNot(_.getName.contains("dynamic_countries"))
+
+    def readFiles(files: Seq[File], skipDuplicates: Boolean): Unit = {
+      for (file <- files) {
+        val parser = new Parser(file)
         val rootNode = parser.parse
 
         rootNode.foreach(node => {
-          CountryTag(node.name.trim, f)
+          CountryTag(node.name.trim, file)
         })
+        //        Using.resource(Source.fromFile(file)) { source =>
+        //          for (line <- source.getLines()) {
+        //            val data = line.replaceAll("\\s", "")
+        //            if (data.nonEmpty && data.charAt(0) != '#') {
+        //              val key = data.takeWhile(_ != '=').trim
+        //              val tag = CountryTag(key, file)
+        //              if (!tag.equals(CountryTag.NULL_TAG) && (!skipDuplicates || !tagsBuf.contains(tag))) {
+        //                tagsBuf += tag
+        //              }
+        //            }
+        //          }
+        //        }
       }
-      true
     }
+
+    readFiles(modFiles, skipDuplicates = false)
+    readFiles(baseFiles, skipDuplicates = true)
+
+    tagsBuf.toList
   }
 
-  def apply(tag: String): CountryTag = _tagList.find(_.get eq tag) match
+  def apply(tag: String): CountryTag = _tagList.find(_.get == tag) match
     case Some(countryTag) => countryTag
     case None => new CountryTag(tag)
 
-  def apply(tag: String, file: File): CountryTag = _tagList.find(t => t.get eq tag) match
-    case Some(countryTag) => countryTag
-    case None =>
-      logger.warn(s"In CountryTag.fromFile - Tag '$tag' from file '$file' not found in loaded tags.")
-      new CountryTag(tag, Some(file))
+  def apply(tag: String, file: File): CountryTag = _tagList.find(t => t.get == tag) match
+    case Some(countryTag) =>
+      logger.warn(s"Tag '$tag' from file '$file' already found in loaded tags, file: ${countryTag.file}")
+      countryTag
+    case None => new CountryTag(tag, Some(file))
 
   override def iterator: Iterator[CountryTag] = _tagList.iterator
 
   //  def tagList(): List[CountryTag] = _tagList
   def addTag(tag: CountryTag): Unit = _tagList.addOne(tag)
-  
+
+  private def listTagFiles(folder: File): Seq[File] = {
+    if (folder.exists() && folder.isDirectory) {
+      Option(folder.listFiles()).map(_.toList).getOrElse(Nil)
+    } else Nil
+  }
+
+  /** Returns all loaded country tags, loading on first access. */
+  def countryTags: Seq[CountryTag] = _tagList.toList
+
+  def exists(tag: String): Boolean = _tagList.exists(_.equals(tag))
+
 }
 
 /**
@@ -63,7 +95,7 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
  * @param file if this tag is defined in the mod's (or vanilla's) country tags files, file it is defined in,
  *             or should be defined in.
  */
-class CountryTag private(val tag: String, file: Option[File] = None) extends Comparable[CountryTag] {
+class CountryTag private(val tag: String, var file: Option[File] = None) extends Comparable[CountryTag] {
   CountryTag.addTag(this)
 
   def get: String = tag
@@ -73,8 +105,8 @@ class CountryTag private(val tag: String, file: Option[File] = None) extends Com
   }
   
   override def equals(obj: Any): Boolean = obj match
-    case other: CountryTag => tag eq other.tag
-    case str: String => tag eq str
+    case other: CountryTag => tag == other.tag
+    case str: String => tag == str
     case _ => false
 
   override def compareTo(o: CountryTag): Int = {

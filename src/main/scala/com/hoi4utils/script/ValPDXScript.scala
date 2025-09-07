@@ -121,6 +121,6 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] with Comparable[T] {
 
   def asString: String = this.value.map(_.toString).getOrElse("")
   
-  override def toString: String = if asString eq "" then "[null]" else asString
+  override def toString: String = if asString == "" then "[null]" else asString
 
 }

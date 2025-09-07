@@ -1,14 +1,12 @@
 package com.hoi4utils.hoi4.focus
 
 import com.hoi4utils.exceptions.LocalizationPreconditionException
-import com.hoi4utils.hoi4.country.CountryTagsManager
+import com.hoi4utils.hoi4.country.{CountryTag}
 import com.hoi4utils.localization.{LocalizationManager, Property}
 import com.typesafe.scalalogging.LazyLogging
-import lombok.NonNull
 
 import java.io.{File, IOException}
 import java.time.LocalDateTime
-import javax.swing.*
 
 
 /**
@@ -69,7 +67,7 @@ object FixFocus extends LazyLogging {
    * @param locFile
    */
   private def setGeneratedNameLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
-    val focusName = extractFocusName(focus.id.getOrElse(null))
+    val focusName = extractFocusName(focus.id.getOrElse("Unnamed_Focus"))
     // Format the focus name
     val formattedName = locManager.titleCapitalize(focusName.replaceAll("_+", " ").trim)
 
@@ -86,12 +84,11 @@ object FixFocus extends LazyLogging {
   }
 
   private def extractFocusName(focusName: String): String = {
-    var _focusName = focusName
-    if (_focusName == null || _focusName.length < 4) return "Unnamed Focus" // Fallback in case of invalid focus name
-    val tag = _focusName.substring(0, 3)
-    if (CountryTagsManager.exists(tag)) {
-      val hasUnderscore = _focusName.charAt(3) == '_'
-      _focusName = _focusName.substring(if (hasUnderscore) 4 else 3)
+    var _focusName = focusName.trim
+    val underscoreIndex = _focusName.indexOf('_')
+    if (underscoreIndex >= 0) {
+      val maybeTag = _focusName.substring(0, underscoreIndex)
+      if (CountryTag.exists(maybeTag)) _focusName = _focusName.substring(underscoreIndex + 1)
     }
     _focusName
   }

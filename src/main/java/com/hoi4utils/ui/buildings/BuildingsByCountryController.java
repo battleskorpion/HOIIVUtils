@@ -97,7 +97,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	}
 
 	private void includeVersion() {
-		idVersionMenuItem.setText(HOIIVUtils.get("version").toString());
+		idVersionMenuItem.setText(HOIIVUtils.get("version"));
 	}
 
 	// todo put this in hoi4window parent class or whatever
