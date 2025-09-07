@@ -70,12 +70,16 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, (
   def name: String = id
 
   //  def percentOfGlobal: Double = getOrElse(0) / State.resourcesOfStates.get(identifier).get
-  def percentOfGlobal(implicit globalResources: List[Resource]): Double =
-    globalResources
+  def percentOfGlobal(using globalResources: List[Resource]): Double =
+    val global = globalAmt
+    if global == 0.0 then 0.0 else amt / global
+
+  def globalAmt(using globalResources: List[Resource]): Double =
+    globalResources.view
       .filter(_ isResource name)
-      .map(_.getOrElse(0))
+      .map (_.amt)
       .sum
-  
+
   def amt: Double = getOrElse(0)
   
   def amt_=(value: Double): Unit = set(value)

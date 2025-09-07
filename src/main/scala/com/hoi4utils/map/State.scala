@@ -488,7 +488,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
     dataFunctions += (s => s.populationAirCapacityRatio)
     // todo better way to do this obv! plz fix :( with (wrapper function that returns either or depndent on resourcesPerfcentages boolean value ofc
     // also if we're gonna have different resources able to load in down the line... it'll break this.
-    if (resourcePercentages) {
+    if (!resourcePercentages) {
       dataFunctions += (s => s.resourceAmount("aluminium"))
       dataFunctions += (s => s.resourceAmount("chromium"))
       dataFunctions += (s => s.resourceAmount("oil"))
