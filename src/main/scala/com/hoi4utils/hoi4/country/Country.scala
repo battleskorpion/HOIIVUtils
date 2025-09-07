@@ -36,7 +36,7 @@ object Country extends LazyLogging with PDXReadable {
 
       // create focus trees from files
       HOIIVFiles.Mod.country_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
-        var tag = CountryTag.get(f.getName.split(" ")(0))
+        var tag = CountryTag(f.getName.split(" ")(0), f)
         new Country(f, tag)
       }
       true

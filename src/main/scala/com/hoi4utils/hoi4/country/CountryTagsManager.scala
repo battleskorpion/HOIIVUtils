@@ -1,8 +1,11 @@
 package com.hoi4utils.hoi4.country
 
+import com.hoi4utils.HOIIVFiles
+
 import java.io.{File, IOException}
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
+import scala.util.Using
 
 /**
  * Manages loading and querying HOI4 country tags, both modded and base.
@@ -11,30 +14,31 @@ object CountryTagsManager extends Iterable[CountryTag] {
   // lazy so we only load once
   private lazy val countryTags: Seq[CountryTag] = loadCountryTags()
 
-  private def listTagFiles(pathKey: String): Seq[File] = {
-    Option(pathKey).map { basePath =>
-      val folder = new File(s"$basePath\\common\\country_tags")
-      if (folder.exists() && folder.isDirectory) {
-        Option(folder.listFiles()).map(_.toList).getOrElse(Nil)
-      } else Nil
-    }.getOrElse(Nil)
+  private def listTagFiles(folder: File): Seq[File] = {
+    if (folder.exists() && folder.isDirectory) {
+      Option(folder.listFiles()).map(_.toList).getOrElse(Nil)
+    } else Nil
   }
 
   @throws[IOException]
   private def loadCountryTags(): Seq[CountryTag] = {
     val tagsBuf = ListBuffer.empty[CountryTag]
 
-    val modFiles  = listTagFiles("mod.path").filterNot(_.getName.contains("dynamic_countries"))
-    val baseFiles = listTagFiles("hoi4.path").filterNot(_.getName.contains("dynamic_countries"))
+    val modFiles  = listTagFiles(HOIIVFiles.Mod.country_tags_folder).filterNot(_.getName.contains("dynamic_countries"))
+    val baseFiles = listTagFiles(HOIIVFiles.HOI4.country_tags_folder).filterNot(_.getName.contains("dynamic_countries"))
 
     def readFiles(files: Seq[File], skipDuplicates: Boolean): Unit = {
-      for (file <- files; line <- Source.fromFile(file).getLines()) {
-        val data = line.replaceAll("\\s", "")
-        if (data.trim.charAt(0) != '#') {
-          val key = data.takeWhile(_ != '=').trim
-          val tag = new CountryTag(key)
-          if (!tag.equals(CountryTag.NULL_TAG) && (!skipDuplicates || !tagsBuf.contains(tag))) {
-            tagsBuf += tag
+      for (file <- files) {
+        Using.resource(Source.fromFile(file)) { source =>
+          for (line <- source.getLines()) {
+            val data = line.replaceAll("\\s", "")
+            if (data.nonEmpty && data.charAt(0) != '#') {
+              val key = data.takeWhile(_ != '=').trim
+              val tag = CountryTag(key, file)
+              if (!tag.equals(CountryTag.NULL_TAG) && (!skipDuplicates || !tagsBuf.contains(tag))) {
+                tagsBuf += tag
+              }
+            }
           }
         }
       }
@@ -51,7 +55,7 @@ object CountryTagsManager extends Iterable[CountryTag] {
 
   /** True if the given tag string exists among loaded country tags. */
   def exists(tag: String): Boolean =
-    countryTags.contains(new CountryTag(tag))
+    countryTags.contains(CountryTag(tag))
 
   /** Iterable implementation over CountryTag. */
   override def iterator: Iterator[CountryTag] = countryTags.iterator

@@ -256,7 +256,7 @@ public interface JavaFXUIManager {
 	static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> tableCellDataCallback(
 			Function<S, ?> propertyGetter) {
 		return cellData -> {
-				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue()));
+				//System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue())); // DEBUG ONLY
 			// unchecked cast is necessary because the compiler doesn't know that the given
 			// function will return a value of type T
 			@SuppressWarnings("unchecked")
@@ -279,7 +279,7 @@ public interface JavaFXUIManager {
 	static <S, T> Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> treeTableCellDataCallback(
 			Function<S, ?> propertyGetter) {
 		return cellData -> {
-				System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue().getValue()));
+				//System.out.println("Table callback created, data: " + propertyGetter.apply(cellData.getValue().getValue())); // DEBUG ONLY
 			// unchecked cast is necessary because the compiler doesn't know that the given
 			// function will return a value of type T
 			@SuppressWarnings("unchecked")

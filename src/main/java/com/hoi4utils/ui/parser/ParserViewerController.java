@@ -173,7 +173,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 							pdx = new State(false, selected);
 						} else if (selected.getParent().endsWith("countries")
 								&& selected.getParentFile().getParent().endsWith("history")) {
-							pdx = new Country(selected, CountryTag$.MODULE$.get(selected.getName().substring(0, 3)));
+							pdx = new Country(selected, CountryTag$.MODULE$.apply(selected.getName().substring(0, 3)));
 						} else if (pdxIdentifier.equals("resources")) {
 							pdx = new ResourcesFile(selected);
 						} else if (pdxIdentifier.equals("strategic_region")) {

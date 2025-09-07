@@ -79,6 +79,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 		setTitle("HOIIVUtils Buildings By Country Window");
 
 		countryList = FXCollections.observableArrayList(CollectionConverters.asJava(Country.list()));
+		System.out.println("Countries loaded: " + countryList.size());
 	}
 
 	@FXML
