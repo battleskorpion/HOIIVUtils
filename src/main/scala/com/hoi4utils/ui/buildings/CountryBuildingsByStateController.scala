@@ -56,7 +56,7 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 		/* state data table */
 		stateDataTable = new StateTable()
 		AnchorPane.setTopAnchor(stateDataTable, 0.0)
-		AnchorPane.setBottomAnchor(stateDataTable, 0.0)
+		AnchorPane.setBottomAnchor(stateDataTable, 30.0)
 		AnchorPane.setLeftAnchor(stateDataTable, 0.0)
 		AnchorPane.setRightAnchor(stateDataTable, 0.0)
 		stateTableAnchorPane.getChildren.add(stateDataTable)

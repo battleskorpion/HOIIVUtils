@@ -1,5 +1,7 @@
 package com.hoi4utils;
 
+import scala.Option;
+
 import java.io.File;
 
 /**
@@ -84,4 +86,5 @@ public class HOIIVFiles {
 	private static boolean isValidDirectory(File folder) {
 		return folder != null && folder.exists() && folder.isDirectory();
 	}
+	
 }
