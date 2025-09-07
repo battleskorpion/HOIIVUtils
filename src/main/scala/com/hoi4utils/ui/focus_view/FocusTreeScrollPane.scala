@@ -361,7 +361,10 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
 
     // Focus name text
     val locName = focus.localizationText(com.hoi4utils.localization.Property.NAME)
-    val name = if (locName == "[null]" && focus.id.str.nonEmpty) focus.id.str else locName
+    val name = locName match {
+      case None => if (focus.id.str.nonEmpty) focus.id.str else "[Localization missing]"
+      case Some(text) => text
+    }
     gc2D.fillText(name, x1 - 20, y1 + yAdj2)
 
     if (isSelected) {

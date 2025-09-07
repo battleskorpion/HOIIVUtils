@@ -44,7 +44,7 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 		setCountry(country)
 	}
 
-	@FXML private[buildings] def initialize(): Unit = {
+	@FXML def initialize(): Unit = {
 		System.out.println("Country: " + country)
 		// includeVersion();
 		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent))
