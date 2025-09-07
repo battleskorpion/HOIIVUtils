@@ -15,7 +15,7 @@ import scala.sys.process.*
  * Closes the application and runs the updater.
  */
 class Updater extends LazyLogging:
-  var lV: Version = Version.DEFAULT
+  private var lV: Version = Version.DEFAULT
 
   /**
    * Checks for updates by fetching the latest version from GitHub releases.
