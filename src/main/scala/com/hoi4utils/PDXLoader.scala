@@ -52,15 +52,16 @@ class PDXLoader extends LazyLogging {
 
     MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
     LocalizationManager.getOrCreate(() => new EnglishLocalizationManager).reload()
-    
+
+    /* LOAD ORDER IMPORTANT (depending on the class) */
     List (
       Interface,
+      ResourcesFile,
       State,
       Country,
       CountryTag,
-      FocusTree,
       IdeaFile,
-      ResourcesFile
+      FocusTree,
     ).foreach(readPDX)
   }
   

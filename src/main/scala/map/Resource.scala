@@ -90,27 +90,15 @@ object ResourcesFile extends PDXReadable {
   //  private var _resources: List[Resource] = List()
   private var _resourcesPDX: Option[ResourcesFile] = None
 
-  def read(): Boolean = {
-    var resourcesFile: Option[File] = None
-    if (!HOIIVFiles.Mod.resources_file.exists || HOIIVFiles.Mod.resources_file.isDirectory) {
-      if (HOIIVFiles.HOI4.resources_file.exists && HOIIVFiles.HOI4.resources_file.isFile) {
-        resourcesFile = Some(HOIIVFiles.HOI4.resources_file)
-      }
-    } else {
-      resourcesFile = Some(HOIIVFiles.Mod.resources_file)
-    }
-
-    resourcesFile match {
-      case Some(file) =>
-        logger.info(s"Reading resources from ${file.getAbsolutePath}")
-        _resourcesPDX = Some(new ResourcesFile(file))
-        true
-      case None =>
-        logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.HOI4.resources_file} is not a directory, " +
-          s"or it does not exist (No resources file found).")
-        false 
-    }
-  }
+  def read(): Boolean = primaryResourcesFile match
+    case Some(file) =>
+      logger.info(s"Reading resources from ${file.getAbsolutePath}")
+      _resourcesPDX = Some(new ResourcesFile(file))
+      true
+    case None =>
+      logger.error(s"In ${this.getClass.getSimpleName} - Resources file is not a directory, " +
+        s"or it does not exist (No resources file found).")
+      false
 
   def pdxSupplier(): PDXSupplier[ResourceDef] = {
     new PDXSupplier[ResourceDef] {
@@ -128,18 +116,30 @@ object ResourcesFile extends PDXReadable {
     }
   }
 
-  def list: List[ResourceDef] = {
-    _resourcesPDX match {
-      case Some(resources) => resources.toList
-      case None =>
-        logger.warn("Tried to obtain resources list but valid Resources info not loaded.")
-        List()
-    }
-  }
+  def list: List[ResourceDef] = _resourcesPDX match
+    case Some(resources) => resources.toList
+    case None =>
+      logger.warn("Tried to obtain resources list but valid Resources info not loaded.")
+      List()
   
   override def name: String = {
     this.getClass.getSimpleName
   }
+
+  // todo move both?
+  def primaryResourcesFile: Option[File] = {
+    if (modResourcesFileInvalid)
+      if (hoi4ResourcesFileValid) Some(HOIIVFiles.HOI4.resources_file)
+      else None
+    else Some(HOIIVFiles.Mod.resources_file)
+  }
+
+  private def hoi4ResourcesFileValid =
+    HOIIVFiles.HOI4.resources_file.exists && HOIIVFiles.HOI4.resources_file.isFile
+
+  private def modResourcesFileInvalid =
+    !HOIIVFiles.Mod.resources_file.exists || HOIIVFiles.Mod.resources_file.isDirectory
+
 }
 
 class ResourcesFile extends CollectionPDX[ResourceDef](ResourcesFile.pdxSupplier(), "resources") {
@@ -190,4 +190,5 @@ private class ResourceDef(pdxIdentifier: String) extends StructuredPDX(pdxIdenti
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
     ListBuffer(iconFrame, cic, convoys)
   }
+
 }
