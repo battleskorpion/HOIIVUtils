@@ -363,7 +363,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     closeWindow(vSettings) // closes the menu window
     new SettingsController().open()
   }
-  def openLogViewer(): Unit = new LogViewerController().open()
   def openFocusTreeViewer(): Unit = new FocusTreeController().open()
   def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open()
   def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open()
