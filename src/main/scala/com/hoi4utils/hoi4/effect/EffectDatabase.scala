@@ -8,6 +8,7 @@ import com.hoi4utils.map.{Province, State}
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
 import com.hoi4utils.{BoolType, ExpectedRange, RichString}
+import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, IOException}
 import java.nio.file.{Files, StandardCopyOption}
@@ -18,7 +19,7 @@ import scala.compiletime.uninitialized
 import scala.util.{Try, Using}
 import scala.compiletime.uninitialized
 
-object EffectDatabase {
+object EffectDatabase extends LazyLogging {
   try {
     Class.forName("org.sqlite.JDBC")
   } catch {
@@ -123,7 +124,7 @@ object EffectDatabase {
 
           loadedEffects ++= effects
         } else {
-          System.out.println("No parameters for " + pdxIdentifier + " in effects database.")
+          logger.error("No parameters for " + pdxIdentifier + " in effects database.")
         }
       }
     } catch {
@@ -335,7 +336,4 @@ object EffectDatabase {
       Some(structuredEffectBlock)
     }
   }
-
-
 }
-

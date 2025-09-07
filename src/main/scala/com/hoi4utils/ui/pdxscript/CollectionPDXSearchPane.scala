@@ -2,6 +2,7 @@ package com.hoi4utils.ui.pdxscript
 
 import com.hoi4utils.hoi4.effect.{Effect, EffectDatabase}
 import com.hoi4utils.script.{CollectionPDX, PDXScript}
+import com.typesafe.scalalogging.LazyLogging
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.transformation.FilteredList
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable
  * A Pane that displays an editor for a PDXScript.
  */
 // todo may make abstract instead of type Effect
-class CollectionPDXSearchPane[T <: PDXScript[?]](private val pdxScript: CollectionPDX[T]) extends AnchorPane {
+class CollectionPDXSearchPane[T <: PDXScript[?]](private val pdxScript: CollectionPDX[T]) extends AnchorPane with LazyLogging {
   /* UI */
   private val showDebugBorders = false // todo
 
@@ -65,7 +66,7 @@ class CollectionPDXSearchPane[T <: PDXScript[?]](private val pdxScript: Collecti
         })
         effectListView.getSelectionModel.selectedItemProperty.addListener((obs: ObservableValue[? <: Effect], oldItem: Effect, newEffect: Effect) => {
           if (newEffect != null) {
-            System.out.println("Selected: " + newEffect)
+            logger.debug("Selected: " + newEffect)
             searchField.setMaxHeight(100)
             var newPDX: Effect = null
             try newPDX = newEffect.clone.asInstanceOf[Effect]
