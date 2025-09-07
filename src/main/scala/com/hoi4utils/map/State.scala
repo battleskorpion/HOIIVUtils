@@ -469,10 +469,10 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
   /**
    * TODO fix this java doc @ skorp
    * Returns a list of functions that return data about a state
-   * @param resourcePercentages if true, returns resource amounts, if false, returns resource percentages of global
+   * @param resourcePercentages if <code>true</code>, returns resource percentages of global instead of resource amounts
    * @return list of functions that return data about a state
    */
-  def getDataFunctions(resourcePercentages: Boolean): Iterable[State => ?] = {
+  def getDataFunctions(resourcePercentages: Boolean = false): Iterable[State => ?] = {
     val dataFunctions = ListBuffer[State => ?]()
 
     dataFunctions += (s => s.id)
