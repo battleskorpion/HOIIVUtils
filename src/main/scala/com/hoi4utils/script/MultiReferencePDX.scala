@@ -2,6 +2,7 @@ package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
@@ -21,7 +22,7 @@ import scala.collection.mutable.ListBuffer
 class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: () => Iterable[T],
                                              protected var idExtractor: T => Option[String], pdxIdentifiers: List[String],
                                              referencePDXIdentifiers: List[String])
-  extends MultiPDX[ReferencePDX[T]](Some(() => new ReferencePDX(referenceCollectionSupplier, idExtractor, referencePDXIdentifiers)), None, pdxIdentifiers) {
+  extends MultiPDX[ReferencePDX[T]](Some(() => new ReferencePDX(referenceCollectionSupplier, idExtractor, referencePDXIdentifiers)), None, pdxIdentifiers) with LazyLogging {
 
   final protected val referenceNames = new ListBuffer[String]
 

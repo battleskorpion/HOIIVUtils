@@ -4,11 +4,12 @@ import com.hoi4utils.exceptions.NotPermittedInScopeException
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.hoi4.effect.Effect
 import com.hoi4utils.map.State
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.collection.mutable
 
 
-object Scope {
+object Scope extends LazyLogging {
   var scopes = new mutable.HashMap[String, Scope]
 
   @throws[NotPermittedInScopeException]
@@ -18,12 +19,12 @@ object Scope {
       if (within.canTargetCountry) {
         // state?
         // State.isValidStateID(id)
-        //				System.out.println(name + ", ?");
+        logger.debug(name + ", ?");
         val state = State.get(id)
         if (state.isEmpty) return null
         val state_scope = of(state.get)
         if (state_scope == null) {
-          System.out.println("invalid state id: " + id + ", in Scope.of()")
+          logger.warn("invalid state id: " + id + ", in Scope.of()")
           return null
         }
         state_scope.setWithin(within)

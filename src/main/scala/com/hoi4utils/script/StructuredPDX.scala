@@ -2,10 +2,11 @@ package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.collection.mutable.ListBuffer
 
-abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) {
+abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) with LazyLogging {
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
   }
@@ -55,7 +56,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
         case l: ListBuffer[Node] =>
           loadPDX(l)
         case _ =>
-          System.out.println("Error loading PDX script: " + expression)
+          logger.error("Error loading PDX script: " + expression)
       }
     }
     else {
@@ -63,7 +64,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
         set(expression)
       } catch {
         case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-          System.out.println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+          logger.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
           // Preserve the original node in StructuredPDX as well.
           node = Some(expression)
       }
@@ -80,7 +81,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
         }
         catch {
           case e: UnexpectedIdentifierException =>
-            System.err.println(e.getMessage)
+            logger.error(s"${e.getMessage}, skipping node: $expression, in ${this.pdxIdentifier}, continuing...")
         }
       })
       remaining
@@ -221,9 +222,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
   override def clone(): AnyRef = {
     val clone = super.clone().asInstanceOf[StructuredPDX]
     clone.node = Some(Node(pdxIdentifier, "=", ListBuffer.empty))
-    logger.debug("Cloning StructuredPDX: {} -> {}", this, clone)
     clone.badNodesList = this.badNodesList
     clone
   }
-
 }
