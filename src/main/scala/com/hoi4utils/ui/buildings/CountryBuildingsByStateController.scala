@@ -5,6 +5,7 @@ import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.custom_javafx.`export`.ExcelExport
 import com.hoi4utils.ui.custom_javafx.state.StateTable
 import com.hoi4utils.ui.custom_javafx.table.TableViewWindow
+import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
@@ -21,7 +22,7 @@ import java.io.IOException
 import scala.compiletime.uninitialized
 
 
-class CountryBuildingsByStateController extends HOIIVUtilsAbstractController with TableViewWindow {
+class CountryBuildingsByStateController extends HOIIVUtilsAbstractController with TableViewWindow with LazyLogging {
 	setFxmlResource("CountryBuildingsByState.fxml")
 	setTitle("HOIIVUtils Buildings By State Window")
 
@@ -51,7 +52,7 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 	}
 
 	@FXML def initialize(): Unit = {
-		System.out.println("Country: " + country)
+		logger.debug("Country: " + country)
 
 		/* state data table */
 		stateDataTable = new StateTable()
@@ -80,7 +81,7 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 		try if (state.stateFile.isDefined) Desktop.getDesktop.edit(state.stateFile.get)
 		catch {
 			case exc: IOException =>
-				System.err.println("Unable to open state file: " + state)
+				logger.error("Unable to open state file: " + state)
 				throw new RuntimeException(exc)
 		}
 	}
@@ -98,14 +99,8 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 	}
 
 	def handlePercentageCheckMenuItemAction(): Unit = {
-		if (idPercentageCheckMenuItem.isSelected) {
-			setResourcesPercent(true)
-			System.out.println("Percentage values are on")
-		}
-		else {
-			setResourcesPercent(false)
-			System.out.println("Percentage values are off")
-		}
+		setResourcesPercent(idPercentageCheckMenuItem.isSelected)
+		logger.debug(s"Percentage values on: ${idPercentageCheckMenuItem.isSelected}")
 	}
 
 	def setResourcesPercent(resourcesPercent: Boolean): Unit = {
@@ -124,7 +119,7 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 		this._country = country
 		setTitle("HOIIVUtils Buildings By State Window, Country: " + country.name)
 		stateList = FXCollections.observableArrayList(CollectionConverters.asJava(State.ownedStatesOfCountry(country)))
-		System.out.println("1 - Country: " + country)
+		logger.debug("1 - Country: " + country)
 	}
 
 	def country: Country = _country
