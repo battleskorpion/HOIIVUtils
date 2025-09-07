@@ -3,7 +3,7 @@ package com.hoi4utils.ui.buildings
 import com.hoi4utils.hoi4.country.Country
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.custom_javafx.`export`.ExcelExport
-import com.hoi4utils.ui.custom_javafx.state.{StateTable}
+import com.hoi4utils.ui.custom_javafx.state.StateTable
 import com.hoi4utils.ui.custom_javafx.table.TableViewWindow
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
@@ -12,11 +12,13 @@ import javafx.scene.control.CheckMenuItem
 import javafx.scene.control.MenuItem
 import javafx.scene.input.MouseButton
 import map.State
+import javafx.scene.layout.AnchorPane
 
 import scala.jdk.javaapi.CollectionConverters
 import javax.swing.*
 import java.awt.*
 import java.io.IOException
+import scala.compiletime.uninitialized
 
 
 class CountryBuildingsByStateController extends HOIIVUtilsAbstractController with TableViewWindow {
@@ -24,13 +26,17 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 	setTitle("HOIIVUtils Buildings By State Window")
 
 	// @FXML public Label idVersion;
-	@FXML var className: String = this.getClass.getName
-	@FXML private val idPercentageCheckMenuItem: CheckMenuItem = null
-	@FXML private val idExportToExcel: MenuItem = null
-	@FXML private val stateDataTable: StateTable = null
+	@FXML private var className: String = this.getClass.getName
+	@FXML private var idPercentageCheckMenuItem: CheckMenuItem = uninitialized
+	@FXML private var idExportToExcel: MenuItem = uninitialized
+	@FXML private var saveButton: Button = uninitialized
+	@FXML private var stateTableAnchorPane: AnchorPane = uninitialized
+
+	private var stateDataTable: StateTable = uninitialized
+
 	private var resourcesPercent = false
 	private var _country: Country = null
-	private var stateList: ObservableList[State] = null
+	private var stateList: ObservableList[State] = FXCollections.observableArrayList()
 
 	/**
 	 * This constructor is used internally by javafx.
@@ -46,6 +52,15 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 
 	@FXML def initialize(): Unit = {
 		System.out.println("Country: " + country)
+
+		/* state data table */
+		stateDataTable = new StateTable()
+		AnchorPane.setTopAnchor(stateDataTable, 0.0)
+		AnchorPane.setBottomAnchor(stateDataTable, 0.0)
+		AnchorPane.setLeftAnchor(stateDataTable, 0.0)
+		AnchorPane.setRightAnchor(stateDataTable, 0.0)
+		stateTableAnchorPane.getChildren.add(stateDataTable)
+
 		// includeVersion();
 		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent))
 		JOptionPane.showMessageDialog(null, "dev - loaded rows: " + stateDataTable.getItems.size)

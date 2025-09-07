@@ -5,8 +5,12 @@
 <?import com.hoi4utils.ui.custom_javafx.state.StateTable?>
 <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.buildings.CountryBuildingsByStateController">
    <children>
-      <StateTable fx:id="stateDataTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
-      </StateTable>
+<!--      <StateTable fx:id="stateDataTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">-->
+<!--      </StateTable>-->
+      <AnchorPane fx:id="stateTableAnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+      </AnchorPane>
+      <Button fx:id="saveButton" AnchorPane.bottomAnchor="0.0">
+      </Button>
       <MenuBar>
          <menus>
             <Menu mnemonicParsing="false" text="File">
