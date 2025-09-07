@@ -21,7 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-import map.DefinitionCSV;
+import com.hoi4utils.map.DefinitionCSV;
 import com.hoi4utils.map.Province;
 import com.hoi4utils.map.ProvinceDefinition;
 import com.hoi4utils.map.State;
