@@ -30,33 +30,16 @@ object Interface extends PDXReadable {
 
   def numGFX: Int = gfxMap.size
 
-  /**
-   * lists all SpriteType objects found in interface files
-   *
-   * @return
-   */
+  /** Lists all SpriteType objects found in interface files */
   def listGFX: Iterable[SpriteType] = gfxMap.values
 
-  /**
-   * returns all .gfx files parsed
-   *
-   * @return list of all .gfx files of type Interface
-   */
+  /** Returns all .gfx files parsed */
   def listGFXFiles: Iterable[Interface] = interfaceFiles.values
 
-  /**
-   * lists .gfx files which Interface class represents and which
-   * have been read in.
-   *
-   * @return list of all .gfx files of type Interface
-   */
+  /** Lists .gfx files which Interface class represents and which have been read in. */
   def list: Iterable[Interface] = listGFXFiles
 
-  /**
-   * Returns the number of .gfx interface files read
-   *
-   * @return number of interface files read
-   */
+  /** Returns the number of .gfx interface files read */
   def numFiles: Int = interfaceFiles.size
 
   private def readMod(): Boolean = {

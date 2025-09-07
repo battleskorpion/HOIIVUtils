@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.exceptions.NodeValueTypeException
+import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 
 import scala.collection.mutable.ListBuffer
@@ -25,18 +25,20 @@ trait HeadlessPDX { this: StructuredPDX =>
     }
   }
 
-//  /**
-//   * Optionally, override loadPDX if you want to further simplify handling of headless files.
-//   * Here, we assume that a headless node does not have a name and can be processed directly.
-//   */
+  /**
+   * Optionally, override loadPDX if you want to further simplify handling of headless files.
+   * Here, we assume that a headless node does not have a name and can be processed directly.
+   * TODO: Throw the exceptions to the caller instead of catching them here? so we can use a proper logger.
+   * @param expression The root node of the PDX script.
+   */
 //  override def loadPDX(expression: Node): Unit = {
 //    try {
 //      set(expression)
 //    } catch {
 //      case e: UnexpectedIdentifierException =>
-//        System.out.println("Unexpected identifier in headless PDX script: " + e.getMessage)
+//        System.out.println("Unexpected identifier in headless PDX script: " + e.getMessage) // TODO: use a logger
 //      case e: NodeValueTypeException =>
-//        System.out.println("Node value type error in headless PDX script: " + e.getMessage)
+//        System.out.println("Node value type error in headless PDX script: " + e.getMessage) // TODO: use a logger
 //    }
 //  }
 }
