@@ -37,7 +37,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
         }
         catch {
           case e: UnexpectedIdentifierException =>
-            System.err.println(e.getMessage)
+            logger.error(e.getMessage)
           //throw new RuntimeException(e);
         }
       })

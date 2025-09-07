@@ -59,7 +59,7 @@ class LogViewerController extends HOIIVUtilsAbstractController with LazyLogging 
         }
       } catch {
         case e: Exception =>
-          System.err.println(s"Error saving file: ${e.getMessage}")
+          logger.error(s"Error saving file: ${e.getMessage}")
       }
     }
   }

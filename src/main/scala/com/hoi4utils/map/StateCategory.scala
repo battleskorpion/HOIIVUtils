@@ -232,7 +232,7 @@ class StateCategoryDef(pdxIdentifier: String) extends StructuredPDX(pdxIdentifie
   //					//	int numBuildingSlots = categoryExp.get("local_building_slots").getValue();
   //					} else {
   //					//	int numBuildingSlots = 0;
-  //						System.err.println("Error - StateCategory.java: number of building slots was not found, " +
+  //						logger.error("Error - StateCategory.java: number of building slots was not found, " +
   //								"defaulted to 0");
   //					}
   //				}

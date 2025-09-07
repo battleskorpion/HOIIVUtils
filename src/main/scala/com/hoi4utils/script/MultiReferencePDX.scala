@@ -42,7 +42,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
       case list: ListBuffer[Node] =>
         // prolly don't need this check, but it doesn't hurt right now
         if (list.isEmpty) {
-          System.out.println("PDX script had empty list: " + expression)
+          logger.warn("PDX script had empty list: " + expression)
           return
         }
         usingIdentifier(expression)
@@ -52,7 +52,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
             add(child)
           } catch {
             case e: UnexpectedIdentifierException =>
-              System.err.println("Error loading child node: " + e.getMessage + "\n\t" + child)
+              logger.error("Error loading child node: " + e.getMessage + "\n\t" + child)
           }
         }
         this.node = Some(expression)

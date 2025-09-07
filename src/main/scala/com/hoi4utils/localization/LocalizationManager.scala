@@ -236,23 +236,23 @@ abstract class LocalizationManager extends LazyLogging {
     else if (words.head.length > 1) words(0) = Character.toUpperCase(words.head.charAt(0)) + words.head.substring(1)
     else {
       // todo this should never happen now right?
-      System.out.println("first word length < 1")
+      logger.error("first word length < 1")
     }
 
-    System.out.println("num words: " + words.size)
+    logger.debug("num words: " + words.size)
     for (i <- 1 until words.size) {
       if (!LocalizationManager.isAcronym(words(i)) && !whitelist.contains(words(i))) {
         if (words(i).length == 1) {
           words(i) = Character.toUpperCase(words(i).charAt(0)) + ""
         }
         else if (words(i).length > 1) {
-          // System.out.println("working cap");
+          logger.debug("working cap")
           words(i) = Character.toUpperCase(words(i).charAt(0)) + words(i).substring(1)
         }
       }
     }
 
-    System.out.println("capitalized: " + String.join(" ", CollectionConverters.asJava(words)))
+    logger.debug("capitalized: " + String.join(" ", CollectionConverters.asJava(words)))
     String.join(" ", CollectionConverters.asJava(words))
   }
 
@@ -316,7 +316,7 @@ abstract class LocalizationManager extends LazyLogging {
         if (line.startsWith("\uFEFF")) line = line.substring(1)
         if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
           if (!line.trim.startsWith(language_def)) {
-            System.out.println("Localization file is not in English: " + file.getAbsolutePath)
+            logger.warn("Localization file is not in English: " + file.getAbsolutePath)
             return
           }
           else languageFound = true
@@ -324,7 +324,7 @@ abstract class LocalizationManager extends LazyLogging {
       }
 
       if (!languageFound) {
-        System.out.println("Localization file does not have a language definition: " + file.getAbsolutePath)
+        logger.warn("Localization file does not have a language definition: " + file.getAbsolutePath)
         return
       }
 
@@ -333,7 +333,7 @@ abstract class LocalizationManager extends LazyLogging {
         if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
           val data = line.splitWithDelimiters(versionNumberRegex, 2)
           if (data.length != 3) {
-            System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
+            logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
           } else {
             // trim whitespace
             data mapInPlace (s => s.trim)
@@ -347,11 +347,11 @@ abstract class LocalizationManager extends LazyLogging {
             val extra = data(2).substring(endQuote + 1).trim
             var invalid = false
             if (extra.nonEmpty && !extra.startsWith("#")) {
-              System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: extraneous non-comment data after localization entry: " + extra)
+              logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: extraneous non-comment data after localization entry: " + extra)
               invalid = true
             }
             if (startQuote != 0 || endQuote == -1 || startQuote == endQuote) {
-              System.err.println("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: localization value is not correctly enclosed in quotes")
+              logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: localization value is not correctly enclosed in quotes")
               invalid = true
             }
             if (!invalid) {
@@ -491,7 +491,7 @@ abstract class LocalizationManager extends LazyLogging {
       writer.println(entry)
     } catch {
       case exc: IOException =>
-        System.err.println("Failed to write new localization to file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
+        logger.error("Failed to write new localization to file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
     } finally {
       if (writer != null) writer.close()
     } else try {
@@ -505,7 +505,7 @@ abstract class LocalizationManager extends LazyLogging {
         if (lines.get(i).filter(c => !c.isWhitespace).startsWith(localization.key + ":") && continue) {
           lines.set(i, entry)
           lineReplaced = true
-          System.out.println("Replaced localization " + localization.key)
+          logger.debug("Replaced localization " + localization.key)
           continue = false
         }
       }
@@ -513,7 +513,7 @@ abstract class LocalizationManager extends LazyLogging {
       Files.write(Paths.get(file.getAbsolutePath), lines)
     } catch {
       case exc: IOException =>
-        System.err.println("Failed to update localization in file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
+        logger.error("Failed to update localization in file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
     }
   }
 

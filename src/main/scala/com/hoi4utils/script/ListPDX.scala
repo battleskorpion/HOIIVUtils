@@ -47,7 +47,7 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
         }
         catch {
           case e: UnexpectedIdentifierException =>
-            System.err.println(e.getMessage)
+            logger.error(e.getMessage)
         }
       })
       remaining

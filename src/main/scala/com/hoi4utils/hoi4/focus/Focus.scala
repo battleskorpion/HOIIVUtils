@@ -73,12 +73,12 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
       }
       // Check for self-reference
       if (focus.relativePositionFocus @== focus.id) {
-        System.err.println(s"Relative position id same as focus id for $this")
+        logger.error(s"Relative position id same as focus id for $this")
         return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
       }
       // Check for circular references
       if (visited(focus.id.str)) {
-        System.err.println(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
+        logger.error(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
         return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
       }
 
@@ -88,7 +88,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
           // Tail call: pass nextFocus, the updated visited set, and the new accumulated offset.
           absolutePosition(relativeFocus, visited + focus.id.str, newAcc)
         case None =>
-          System.err.println(s"Focus id ${focus.relativePositionFocus.getReferenceName} not a valid focus")
+          logger.error(s"Focus id ${focus.relativePositionFocus.getReferenceName} not a valid focus")
           new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
       }
     }
@@ -309,7 +309,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 //              println(e.getMessage + ", scope: " + scope)
 //          }
 //          if (effect == null) {
-//            System.err.println("effect not found: " + n.name())
+//            logger.error("effect not found: " + n.name())
 //          } else {
 //            if (effect.hasSupportedTargets) {
 //              try {

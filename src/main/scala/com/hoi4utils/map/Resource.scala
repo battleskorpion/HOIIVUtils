@@ -66,11 +66,11 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, (
   def sameResource(resource: Resource): Boolean = this.name == resource.name
 
   def sameResource(identifier: String): Boolean = this.name == name
-  
+
   def name: String = id
 
   //  def percentOfGlobal: Double = getOrElse(0) / State.resourcesOfStates.get(identifier).get
-  def percentOfGlobal(implicit globalResources: List[Resource]): Double = globalResources.filter(r => r.isValidID(name)).map(_.getOrElse(0)).sum // TODO @ skorp 
+  def percentOfGlobal(implicit globalResources: List[Resource]): Double = globalResources.filter(r => r.isValidID(name)).map(_.getOrElse(0)).sum // TODO @ skorp
   
   def amt: Double = getOrElse(0)
   
@@ -161,7 +161,7 @@ class ResourcesFile extends CollectionPDX[ResourceDef](ResourcesFile.pdxSupplier
         case l: ListBuffer[Node] =>
           loadPDX(l)
         case _ =>
-          System.out.println("Error loading PDX script: " + expression)
+          logger.error("Error loading PDX script: " + expression)
       }
     }
     super.loadPDX(expression)
