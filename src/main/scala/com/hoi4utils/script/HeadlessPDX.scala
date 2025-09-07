@@ -36,9 +36,9 @@ trait HeadlessPDX { this: StructuredPDX =>
 //      set(expression)
 //    } catch {
 //      case e: UnexpectedIdentifierException =>
-//        System.out.println("Unexpected identifier in headless PDX script: " + e.getMessage) // TODO: use a logger
+//        logger.error("Unexpected identifier in headless PDX script: " + e.getMessage)
 //      case e: NodeValueTypeException =>
-//        System.out.println("Node value type error in headless PDX script: " + e.getMessage) // TODO: use a logger
+//        logger.error("Node value type error in headless PDX script: " + e.getMessage)
 //    }
 //  }
 }

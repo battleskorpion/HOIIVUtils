@@ -41,11 +41,11 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
     } catch {
       case e: UnexpectedIdentifierException =>
         // Instead of failing, we log and store the node as an effect.
-        System.out.println("Not a structured property, treating as effect: " + expression)
+        logger.error("Not a structured property, treating as effect: " + expression)
         effectNodes += expression
       case e: NodeValueTypeException =>
         // Likewise, if the node value type is not as expected, add it to the effect nodes.
-        System.out.println("Node value type error, treating as effect: " + e.getMessage + "\n\t" + expression)
+        logger.error("Node value type error, treating as effect: " + e.getMessage + "\n\t" + expression)
         effectNodes += expression
     }
   }
@@ -61,7 +61,7 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
         case lb: ListBuffer[Node] =>
           lb.foreach(loadPDX)
         case _ =>
-          System.out.println("Error loading PDX script: " + expression)
+          logger.error("Error loading PDX script: " + expression)
       }
     } else {
       if (this.isValidIdentifier(expression)) {
@@ -69,10 +69,10 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
           set(expression)
         } catch {
           case e: UnexpectedIdentifierException =>
-            System.out.println("Error loading structured part: " + e.getMessage + "\n\t" + expression)
+            logger.error("Error loading structured part: " + e.getMessage + "\n\t" + expression)
             node = Some(expression)
           case e: NodeValueTypeException =>
-            System.out.println("Error loading structured part: " + e.getMessage + "\n\t" + expression)
+            logger.error("Error loading structured part: " + e.getMessage + "\n\t" + expression)
             node = Some(expression)
         }
       } else {
@@ -96,7 +96,7 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
           remaining -= expression
         } catch {
           case e: UnexpectedIdentifierException =>
-            System.err.println(e.getMessage)
+            logger.error(e.getMessage)
         }
       }
       // For any nodes that are not valid structured properties, assume they are effects.

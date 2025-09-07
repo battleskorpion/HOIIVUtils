@@ -169,7 +169,7 @@ class ResourcesFile extends CollectionPDX[ResourceDef](ResourcesFile.pdxSupplier
         case l: ListBuffer[Node] =>
           loadPDX(l)
         case _ =>
-          System.out.println("Error loading PDX script: " + expression)
+          logger.error("Error loading PDX script: " + expression)
       }
     }
     super.loadPDX(expression)

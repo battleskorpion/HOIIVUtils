@@ -413,7 +413,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
     //      resourcesOfStates.add(resources)
     //    }
     //    //return new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
-    //    System.out.println(resourcesOfStates.get("aluminum").amt)
+    //    logger.debug(resourcesOfStates.get("aluminum").amt)
     //    resourcesOfStates
     if (states.isEmpty) Resource.newList()
     else {
