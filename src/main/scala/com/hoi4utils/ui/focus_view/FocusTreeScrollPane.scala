@@ -3,7 +3,6 @@ package com.hoi4utils.ui.focus_view
 import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4.focus.{Focus, FocusTree}
-import com.hoi4utils.localization.Property
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.hoi4utils.ui.pdxscript.PDXEditorController
@@ -27,16 +26,17 @@ import scala.compiletime.uninitialized
 
 class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends ScrollPane with LazyLogging {
   // Constants
-  private val FOCUS_X_SCALE: Int = 165 // Focus (box around icon, text, and text background icon) horizontal size starting from center where 2 is 1 width left and 1 width right + set with extra for padding
+  private val FOCUS_X_SCALE: Int = 90
   private val CENTER_FOCUS_X: Int = FOCUS_X_SCALE / 2
-  private val FOCUS_Y_SCALE: Int = 100 // Focus (box around icon, text, and text background icon) vertical size starting from the top where 2 is 2 area down from top, set with extra for padding
+  private val FOCUS_Y_SCALE: Int = 140
   private val CENTER_FOCUS_Y: Int = FOCUS_Y_SCALE / 2
-  private val X_OFFSET_FIX: Int = 37 // FOCUS_X_SCALE starts on the left side of the focus icon, so offset it to the left <- to have x center on center icon and include the name plate, no padding
-  private val Y_OFFSET_FIX: Int = 0
+  private val X_OFFSET_FIX: Int = 30
+  private val Y_OFFSET_FIX: Int = 40
+
   // vars
-  private var selectedFocuses: ListBuffer[Focus] = ListBuffer.empty
-  private var gfxFocusUnavailable: Image = loadFocusUnavailableImage("focus_unavailable_bg.dds")
   private var gridLines: Boolean = false
+  private val selectedFocuses: ListBuffer[Focus] = ListBuffer.empty
+  private val gfxFocusUnavailable: Image = loadFocusUnavailableImage("focus_unavailable_bg.dds")
   private var focusTooltipView: Option[Tooltip] = None
   private var focusDetailsFocus: Option[Focus] = None
   private var draggedFocus: Option[Focus] = None
@@ -106,10 +106,6 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     _focusTree.map(_.focuses.map(_.absoluteY).maxOption.getOrElse(10)).getOrElse(10)
   }
 
-  /**
-   * Update the Canvas and AnchorPane sizes based on focus tree dimensions
-   * @param focusUnavailablePath Path to the focus unavailable image resource
-   */
   private def loadFocusUnavailableImage(focusUnavailablePath: String): Image = {
     val inputStream =
       try
@@ -214,7 +210,6 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
 
   /**
    * Method to handle Canvas resize events (if needed)
-   * @param canvas Canvas to add listeners to
    */
   private def addResizeHandlers(canvas: Canvas): Unit = {
     canvas.widthProperty().addListener((obs, oldVal, newVal) => {
@@ -241,15 +236,9 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
 
   /**
    * Check if Canvas dimensions are within safe limits
-   * @param width Desired Canvas width
-   * @param height Desired Canvas height
    */
   def validateCanvasDimensions(width: Double, height: Double): Boolean = width > 0 && height > 0
 
-  /**
-   * Update the Canvas and AnchorPane sizes based on focus tree dimensions
-   * @param gc GraphicsContext to use for size calculations
-   */
   def drawGridLines(gc: GraphicsContext): Unit = {
     val minX = getMinX
     val maxX = getMaxX
@@ -289,12 +278,6 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     gc.setFont(font)
   }
 
-  /**
-   * Draw lines for focus prerequisites
-   * @param gc2D GraphicsContext to draw on
-   * @param focuses List of focuses to process
-   * @param minX Minimum X offset for positioning
-   */
   def drawPrerequisites(gc2D: GraphicsContext, focuses: Seq[Focus], minX: Int): Unit = {
     gc2D.setStroke(Color.Black)
     gc2D.setLineWidth(3)
@@ -330,12 +313,6 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     }
   }
 
-  /**
-   * Draw lines and circles for mutually exclusive focuses
-   * @param gc2D GraphicsContext to draw on
-   * @param focuses List of focuses to process
-   * @param minX Minimum X offset for positioning
-   */
   def drawMutuallyExclusiveFocuses(gc2D: GraphicsContext, focuses: Seq[Focus], minX: Int): Unit = {
     gc2D.setStroke(Color.DarkRed)
     gc2D.setLineWidth(3)
@@ -360,15 +337,8 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     }
   }
 
-  /**
-   * Draw a single focus at its calculated position
-   * @param gc2D GraphicsContext to draw on
-   * @param focus Focus to draw
-   * @param minX Minimum X offset for positioning
-   */
   def drawFocus(gc2D: GraphicsContext, focus: Focus, minX: Int): Unit = {
     val isSelected = selectedFocuses.contains(focus)
-    val isHovered = hoveredFocus.contains(focus)
 
     gc2D.setFill(Color.White)
     val x1 = FOCUS_X_SCALE * (focus.absoluteX - minX) + X_OFFSET_FIX
@@ -376,71 +346,50 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     val yAdj1 = (FOCUS_Y_SCALE / 2.2).toInt
     val yAdj2 = (FOCUS_Y_SCALE / 2) + 20
 
-    // Calculate the full focus area bounds (icon + name plate + text)
-    val focusAreaX = x1 - 32  // Slightly wider than name plate (-32)
-    val focusAreaY = y1       // Start from the focus icon top
-    val focusAreaWidth = FOCUS_X_SCALE  // Name plate width
-    val focusAreaHeight = FOCUS_Y_SCALE  // From icon top to below text
-
-    // Draw hover border first (behind everything else) if hovered
-    if (isHovered && !isSelected) {
-      gc2D.setStroke(Color.White)
-      gc2D.setLineWidth(2)
-      gc2D.strokeRect(focusAreaX, focusAreaY, focusAreaWidth, focusAreaHeight)
-    }
-
     // Focus name plate gfx (focus unavailable version)
-    gfxFocusUnavailable match
+    gfxFocusUnavailable match {
       case null =>
         logger.warn("Focus unavailable image is null, using default color fill.")
         gc2D.setFill(Color.Gray)
         gc2D.fillRect(x1 - 32, y1 + yAdj1, FOCUS_X_SCALE * 2, FOCUS_Y_SCALE / 2.3)
       case img =>
         gc2D.drawImage(img, x1 - 32, y1 + yAdj1)
+    }
 
     // Focus icon
     focus.getDDSImage.foreach(img => gc2D.drawImage(img, x1, y1))
 
     // Focus name text
-    val name = focus.localizationText(Property.NAME) match
-      case Some(text) => text
-      case None => if (focus.id.nonEmpty) focus.id.str else "[localization missing]"
+    val locName = focus.localizationText(com.hoi4utils.localization.Property.NAME)
+    val name = if (locName == "[null]" && focus.id.str.nonEmpty) focus.id.str else locName
     gc2D.fillText(name, x1 - 20, y1 + yAdj2)
 
-    // Draw selection border (on top of everything) if selected
     if (isSelected) {
       gc2D.setStroke(Color.Yellow)
       gc2D.setLineWidth(2)
-      gc2D.strokeRect(focusAreaX, focusAreaY, focusAreaWidth, focusAreaHeight)
+      gc2D.strokeRect(x1 - FOCUS_X_SCALE / 2.3, y1 + yAdj1, FOCUS_X_SCALE * 2, FOCUS_Y_SCALE / 2.3)
     }
   }
 
-
-  /**
-   * Convert mouse coordinates to content coordinates accounting for scroll position
-   * @param mouseX Mouse X coordinate relative to the ScrollPane
-   * @param mouseY Mouse Y coordinate relative to the ScrollPane
-   */
-  private def adjustMouseCoordinatesForScroll(mouseX: Double, mouseY: Double): Point2D = {
-    // Get the current scroll position
-    val scrollX = this.getHvalue * math.max(0, focusTreeCanvasAnchorPane.prefWidth.value - this.getViewportBounds.getWidth)
-    val scrollY = this.getVvalue * math.max(0, focusTreeCanvasAnchorPane.prefHeight.value - this.getViewportBounds.getHeight)
-
-    // Adjust mouse coordinates by scroll offset
-    new Point2D(mouseX + scrollX, mouseY + scrollY)
-  }
-
-  /**
-   * Add mouse event handlers to the focus tree pane
-   * @param p Pane to add handlers to
-   */
   def getFocusHover(p: Point2D): Option[Focus] = {
     _focusTree.flatMap { tree =>
-      val adjustedP = adjustMouseCoordinatesForScroll(p.getX, p.getY)
-      val x = (adjustedP.getX / FOCUS_X_SCALE).toInt + tree.minX
-      val y = (adjustedP.getY / FOCUS_Y_SCALE).toInt
+      val x = (p.getX / FOCUS_X_SCALE).toInt + tree.minX
+      val y = (p.getY / FOCUS_Y_SCALE).toInt
 
       tree.focuses.find(_.hasAbsolutePosition(x, y))
+    }
+  }
+
+  @FXML
+  def selectClosestMatch(comboBox: ComboBox[FocusTree], typedText: String): Unit = {
+    comboBox.getItems.forEach { item =>
+      item.countryTag match {
+        case Some(countryTag) if countryTag.toString.toLowerCase().startsWith(typedText.toLowerCase()) =>
+          comboBox.getSelectionModel.select(item)
+          comboBox.getEditor.setText(item.toString)
+          return
+        case _ => // Continue to next item
+      }
     }
   }
 
@@ -462,10 +411,6 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     focusMarqueeRectangle().contains(focusX, focusY)
   }
 
-  /**
-   * Get the current marquee selection rectangle in canvas coordinates
-   * @return Rectangle2D representing the marquee selection area
-   */
   def focusMarqueeRectangle(): Rectangle2D = {
     (marqueeStartPoint, marqueeEndPoint) match {
       case (Some(start), Some(end)) =>
@@ -477,6 +422,12 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
         )
       case _ => new Rectangle2D(0, 0, 0, 0)
     }
+  }
+
+  @FXML
+  def toggleGridLines(): Unit = {
+    gridLines = !gridLines
+    drawFocusTree()
   }
 
   def limitFocusMoveX(newFocusX: Int): Int = {
@@ -491,60 +442,19 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     math.max(minY, math.min(maxY, newFocusY))
   }
 
-  // Event handlers:
-
-  /**
-   * Add mouse event handlers to the focus tree pane
-   *
-   * @param comboBox  ComboBox to add handlers to
-   * @param typedText Text typed by the user
-   */
-  @FXML
-  def selectClosestMatch(comboBox: ComboBox[FocusTree], typedText: String): Unit = {
-    comboBox.getItems.forEach { item =>
-      item.countryTag match {
-        case Some(countryTag) if countryTag.toString.toLowerCase().startsWith(typedText.toLowerCase()) =>
-          comboBox.getSelectionModel.select(item)
-          comboBox.getEditor.setText(item.toString)
-          return
-        case _ => // Continue to next item
-      }
-    }
-  }
-
-  @FXML
-  def toggleGridLines(): Unit = {
-    gridLines = !gridLines
-    drawFocusTree()
-  }
-
-  private var hoveredFocus: Option[Focus] = None
-
-  /**
-   * Handle mouse move events for showing focus tooltips
-   * @param e MouseEvent
-   */
+  // Event handlers
   @FXML
   def handleFocusTreeViewMouseMoved(e: MouseEvent): Unit = {
     val p = new Point2D(e.getX, e.getY)
-    val focusTemp = getFocusHover(p) // getFocusHover now handles the adjustment internally
+    val focusTemp = getFocusHover(p)
 
     focusTemp match {
       case None =>
         focusTooltipView.foreach(_.hide())
         focusTooltipView = None
         focusDetailsFocus = None
-        // Clear hovered focus and redraw if there was one
-        if (hoveredFocus.isDefined) {
-          hoveredFocus = None
-          drawFocusTree()
-        }
       case Some(focus) if focusDetailsFocus.contains(focus) =>
-        // Same focus for tooltip, but check if hover changed
-        if (!hoveredFocus.contains(focus)) {
-          hoveredFocus = Some(focus)
-          drawFocusTree()
-        }
+      // Same focus, do nothing
       case Some(focus) =>
         focusDetailsFocus = Some(focus)
         focusTooltipView.foreach(_.hide())
@@ -553,27 +463,16 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
         val tooltip = new Tooltip(details)
         tooltip.show(focusTreeCanvas, e.getScreenX + 10, e.getScreenY + 10)
         focusTooltipView = Some(tooltip)
-
-        // Update hovered focus and redraw if changed
-        if (!hoveredFocus.contains(focus)) {
-          hoveredFocus = Some(focus)
-          drawFocusTree()
-        }
     }
   }
 
-  /**
-   * Handle mouse press events for selecting focuses or starting marquee selection
-   * @param e MouseEvent
-   */
   @FXML
   def handleFocusTreeViewMousePressed(e: MouseEvent): Unit = {
     if (e.isPrimaryButtonDown) {
       selectedFocuses.clear()
 
-      val adjustedP = adjustMouseCoordinatesForScroll(e.getX, e.getY)
-      val internalX = ((adjustedP.getX - X_OFFSET_FIX) / FOCUS_X_SCALE).toInt + _focusTree.map(_.minX).getOrElse(0)
-      val internalY = ((adjustedP.getY - Y_OFFSET_FIX) / FOCUS_Y_SCALE).toInt
+      val internalX = ((e.getX - X_OFFSET_FIX) / FOCUS_X_SCALE).toInt + _focusTree.map(_.minX).getOrElse(0)
+      val internalY = ((e.getY - Y_OFFSET_FIX) / FOCUS_Y_SCALE).toInt
 
       draggedFocus = _focusTree.flatMap(_.focuses.find(f => f.absoluteX == internalX && f.absoluteY == internalY))
       draggedFocus.foreach(focus => logger.info(s"Focus $focus selected"))
@@ -587,8 +486,7 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
         _focusTree.foreach { tree =>
           val newFocus = new Focus(tree)
           tree.addNewFocus(newFocus)
-          val adjustedP = adjustMouseCoordinatesForScroll(e.getX, e.getY)
-          newFocus.setAbsoluteXY(canvasToFocusX(adjustedP.getX), canvasToFocusY(adjustedP.getY), false)
+          newFocus.setAbsoluteXY(canvasToFocusX(e.getX), canvasToFocusY(e.getY), false)
           newFocus.setID(tree.nextTempFocusID())
           openPDXEditor(newFocus, () => drawFocusTree()) // TODO TODO TODO
         }
@@ -604,16 +502,11 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     }
   }
 
-  /**
-   * Handle mouse drag events for moving focuses or drawing marquee selection
-   * @param e MouseEvent
-   */
   @FXML
   def handleFocusTreeViewMouseDragged(e: MouseEvent): Unit = {
     if (e.isPrimaryButtonDown && draggedFocus.isDefined) {
-      val adjustedP = adjustMouseCoordinatesForScroll(e.getX, e.getY)
-      val newX = limitFocusMoveX(canvasToFocusX(adjustedP.getX))
-      val newY = limitFocusMoveY(canvasToFocusY(adjustedP.getY))
+      val newX = limitFocusMoveX(canvasToFocusX(e.getX))
+      val newY = limitFocusMoveY(canvasToFocusY(e.getY))
 
       draggedFocus.foreach { focus =>
         if (!focus.hasRelativePosition(newX, newY)) {
@@ -629,11 +522,10 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
         }
       }
     } else if (e.isSecondaryButtonDown) {
-      val adjustedP = adjustMouseCoordinatesForScroll(e.getX, e.getY)
       if (marqueeStartPoint.isEmpty) {
-        marqueeStartPoint = Some(adjustedP)
+        marqueeStartPoint = Some(new Point2D(e.getX, e.getY))
       } else {
-        marqueeEndPoint = Some(adjustedP)
+        marqueeEndPoint = Some(new Point2D(e.getX, e.getY))
       }
     }
   }
@@ -677,7 +569,7 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
       case MouseButton.Primary =>
         if (event.getClickCount == 2) {
           val clickedPoint = new Point2D(event.getX, event.getY)
-          val clickedFocus = getFocusHover(clickedPoint) // getFocusHover handles adjustment internally
+          val clickedFocus = getFocusHover(clickedPoint)
           clickedFocus match {
             case None =>
               logger.info("No focus clicked.")
