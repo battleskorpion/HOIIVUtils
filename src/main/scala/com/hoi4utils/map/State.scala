@@ -352,8 +352,6 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
       logger.error(s"No states found in ${HOIIVFiles.Mod.states_folder}")
       false
     } else {
-      logger.info(s"Reading states from ${HOIIVFiles.Mod.states_folder}")
-
       HOIIVFiles.Mod.states_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
         new State(true, f)
       }

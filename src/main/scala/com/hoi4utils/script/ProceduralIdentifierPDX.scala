@@ -14,7 +14,7 @@ trait ProceduralIdentifierPDX(p: String => Boolean) { self: AbstractPDX[?] =>
     if (pdxIdentifiers.isEmpty) expr.identifier match {
       case Some(id) =>
         if (p(id)) {
-          logger.debug("Using date identifier: " + id)
+//          logger.debug("Using date identifier: " + id)
           pdxIdentifiers = List(id)
         }
       case None =>

@@ -121,8 +121,8 @@ class Interface(private val file: File) extends LazyLogging {
       parser.parse
     } catch {
       case e: ParserException =>
-        interfaceErrors += s"Error parsing interface .gfx file, $file. Exception: $e"
-        logger.error(s"Error parsing interface .gfx file, $file.\nException: $e")
+        interfaceErrors += s"Error parsing interface .gfx file,\n\t$file\n\tException: $e"
+//        logger.error(s"Error parsing interface .gfx file, $file.\nException: $e")
         return
     }
 
@@ -131,8 +131,8 @@ class Interface(private val file: File) extends LazyLogging {
       parser.rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
     }
     if (spriteTypeNodes == null) {
-      interfaceErrors += s"No SpriteTypes defined in interface .gfx file, $file"
-      logger.warn(s"No SpriteTypes defined in interface .gfx file, $file")
+      interfaceErrors += s"No SpriteTypes defined in interface .gfx file,\n\t$file\n\tException: spriteTypeNodes can't be null."
+//      logger.warn(s"No SpriteTypes defined in interface .gfx file, $file")
       return
     }
 
@@ -142,8 +142,8 @@ class Interface(private val file: File) extends LazyLogging {
         val name = spriteType.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
         val filename = spriteType.getValueCaseInsensitive("texturefile").$stringOrElse("").replace("\"", "")
         if (name.isEmpty || filename.isEmpty) {
-          interfaceErrors += s"SpriteType in interface .gfx file, $file, has empty name or texturefile."
-          logger.warn(s"SpriteType in interface .gfx file, $file, has empty name or texturefile.")
+          interfaceErrors += s"SpriteType in interface .gfx file\n\t$file\n\tException: has empty name or texturefile."
+//          logger.warn(s"SpriteType in interface .gfx file, $file, has empty name or texturefile.")
         }
         else {
           val gfx = new SpriteType(name, filename, basepath = file.getParentFile.getParentFile)
@@ -152,8 +152,8 @@ class Interface(private val file: File) extends LazyLogging {
         }
       } catch {
         case e: ParserException =>
-          interfaceErrors += s"Error parsing SpriteType in interface .gfx file, $file. Exception: $e"
-          logger.error(s"Error parsing SpriteType in interface .gfx file, $file")
+          interfaceErrors += s"Error parsing SpriteType in interface .gfx file\n\t$file\n\tException: $e"
+//          logger.error(s"Error parsing SpriteType in interface .gfx file, $file")
       }
     }
   }
