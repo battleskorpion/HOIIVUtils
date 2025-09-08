@@ -5,9 +5,11 @@ import com.hoi4utils.gfx.Interface
 import com.hoi4utils.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4.country.{Country, CountryTag}
 import com.hoi4utils.hoi4.effect.EffectDatabase
+import com.hoi4utils.hoi4.effect.EffectDatabase.unrecognizedEffects
 import com.hoi4utils.hoi4.focus.FocusTree
 import com.hoi4utils.hoi4.idea.IdeaFile
 import com.hoi4utils.hoi4.modifier.ModifierDatabase
+import com.hoi4utils.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
 import com.hoi4utils.ui.MenuController
 import com.typesafe.scalalogging.LazyLogging
@@ -107,7 +109,8 @@ class PDXLoader extends LazyLogging {
 
   def clearLB(): Unit = {
     ListBuffer(
-//          localizationErrors,
+          unrecognizedEffects,
+          localizationErrors,
           interfaceErrors
 //          countryErrors,
 //          focusErrors,

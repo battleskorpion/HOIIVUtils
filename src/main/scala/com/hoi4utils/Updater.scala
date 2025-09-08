@@ -26,7 +26,7 @@ class Updater extends LazyLogging:
    */
   def updateCheck(v: Version, hDirPath: Path): Unit = {
     val hDir = hDirPath.toFile
-    logger.info("Checking for updates...")
+    logger.info(s"Checking for updates. Current version: $v")
     val tempUprJar = new File(hDir.getAbsolutePath
       + File.separator + "Updater"
       + File.separator + "target"
@@ -45,8 +45,6 @@ class Updater extends LazyLogging:
           logger.error(s"Failed to fetch latest version, no internet?, using default version: 0.0.0")
           Version.DEFAULT
     if lV == Version.DEFAULT then return
-    logger.info("Current Version: " + v)
-    logger.info("Latest Version: " + lV)
     this.lV = lV
     lV match
       case lV if lV > v =>
@@ -61,11 +59,11 @@ class Updater extends LazyLogging:
         )
         if response == JOptionPane.YES_OPTION then update(hDir) // closes the program
       case lV if lV == v =>
-        logger.info("You are already on the latest version")
+        logger.info(s"You are already on the latest version: $lV")
       case lV if lV < v =>
-        logger.info("You are on a newer version than the latest version on GitHub, no updates found")
+        logger.info(s"You are on a newer version than the latest version: $lV")
       case com.hoi4utils.Version(_, _, _) =>
-        logger.error("Failed to parse version")
+        logger.error(s"Failed to parse version: lastest:$lV current:$v")
   }
 
   /**

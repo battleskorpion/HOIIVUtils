@@ -3,15 +3,14 @@ package com.hoi4utils
 import java.util.Properties
 import javax.swing.JOptionPane
 
-case class Version(major: Int, minor: Int, patch: Int) extends Ordered[Version] {
+case class Version(major: Int, minor: Int, patch: Int) extends Ordered[Version]:
   override def compare(that: Version): Int =
     Ordering[(Int, Int, Int)]
       .compare((major, minor, patch), (that.major, that.minor, that.patch))
 
   override def toString: String = s"$major.$minor.$patch"
-}
 
-object Version {
+object Version:
   /** Parses strings like "1.2.3" (and will throw on malformed input) */
   def apply(s: String): Version =
     s match
@@ -31,4 +30,3 @@ object Version {
       println(s"Failed to parse version string '$versionString': ${e.getMessage}")
       JOptionPane.showMessageDialog(null, e.getMessage, "Error", JOptionPane.ERROR_MESSAGE)
       DEFAULT
-}

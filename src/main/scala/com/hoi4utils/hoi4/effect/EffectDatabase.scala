@@ -30,28 +30,23 @@ object EffectDatabase extends LazyLogging {
   private val edb: String = "databases/effects.db"
   private var _connection: Connection = uninitialized
   private var _effects: List[Effect] = List()
+  var unrecognizedEffects: ListBuffer[String] = ListBuffer()
 
   def init(): Unit = {
-    try {
-      val url = getClass.getClassLoader.getResource(edb)
-      if (url == null) throw new SQLException(s"Unable to find '$edb'")
+    val url = getClass.getClassLoader.getResource(edb)
+    if (url == null) throw new SQLException(s"Unable to find '$edb'")
 
-      val tempFile = File.createTempFile("effects", ".db")
-      tempFile.deleteOnExit()
+    val tempFile = File.createTempFile("effects", ".db")
+    tempFile.deleteOnExit()
 
-      Using(url.openStream) { inputStream =>
-        Files.copy(inputStream, tempFile.toPath, StandardCopyOption.REPLACE_EXISTING)
-      }.recover {
-        case e: Exception =>
-          println(s"An error occurred: ${e.getMessage}")
-      }
-
-      _connection = DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath)
-      _effects = loadEffects()
-    } catch {
-      case e@(_: IOException | _: SQLException) =>
-        e.printStackTrace()
+    Using(url.openStream) { inputStream =>
+      Files.copy(inputStream, tempFile.toPath, StandardCopyOption.REPLACE_EXISTING)
+    }.recover {
+      case e: Exception => Exception(e)
     }
+
+    _connection = DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath)
+    _effects = loadEffects()
   }
 
   def apply(): PDXSupplier[Effect] = {
@@ -76,14 +71,7 @@ object EffectDatabase extends LazyLogging {
 
   def effects: List[Effect] = _effects
 
-  def close(): Unit = {
-    try {
-      if (_connection != null) _connection.close()
-    } catch {
-      case e: SQLException =>
-        e.printStackTrace()
-    }
-  }
+  def close(): Unit = if (_connection != null) _connection.close()
 
   private def loadEffects(): List[Effect] = {
     val loadedEffects = new ListBuffer[Effect]
@@ -124,7 +112,15 @@ object EffectDatabase extends LazyLogging {
 
           loadedEffects ++= effects
         } else {
-          logger.error("No parameters for " + pdxIdentifier + " in effects database.")
+          // todo add metadata for where the unrecognized effect was found
+          unrecognizedEffects += s"""No parameters for "$pdxIdentifier" in effects database.
+              |Metadata:
+              |  supported_scopes: $supportedScopes_str
+              |  supported_targets: $supportedTargets_str
+              |  required_parameters_full: $requiredParametersFull_str
+              |  required_parameters_simple: $requiredParametersSimple_str
+              |""".stripMargin
+//          logger.error(s"No parameters for $pdxIdentifier in effects database.")
         }
       }
     } catch {

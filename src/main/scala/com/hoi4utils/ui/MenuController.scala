@@ -62,10 +62,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
 
   @FXML
   def initialize(): Unit = {
-
-    // Debug FXML injection
-    logger.debug(s"FXML injection check - contentContainer: ${contentContainer != null}, mClose: ${mClose != null}, mSquare: ${mSquare != null}, mMinimize: ${mMinimize != null}")
-
     contentContainer.setVisible(false)
     loadingLabel.setVisible(true)
 
@@ -77,7 +73,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     val version = Version.getVersion(hProperties)
 
     new Updater().updateCheck(version, config.getDir)
-    logger.info(s"Starting HOIIVUtils $version, Loading mod: ${hProperties.getProperty("mod.path")}")
+    logger.info(s"Loading mod: ${hProperties.getProperty("mod.path")}")
     updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${hProperties.getProperty("mod.path")}\"")
     mVersion.setText(s"v${config.getProperties.getProperty("version")}")
     mTitle.setText(s"HOIIVUtils Menu")
@@ -89,7 +85,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
           pdxLoader.clearLB()
           pdxLoader.closeDB()
           if (initFailed) {
-            logger.info("Skipping mod loading because of unsuccessful initialization")
+            logger.error("Skipping mod loading because of unsuccessful initialization")
             updateLoadingStatus("Skipping loading!!!")
           } else {
             pdxLoader.load(hProperties, loadingLabel)
@@ -150,7 +146,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
       contentContainer.setVisible(true)
       loadingLabel.setVisible(false)
       vFocusTree.requestFocus()
-      logger.info(s"Loading completed successfully")
     })
 
     new Thread(task).start()
@@ -158,7 +153,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
 
   // Setup window controls AFTER primaryStage is available
   private def setupWindowControls(): Unit = {
-    logger.debug("Setting up window controls...")
 
     // Verify all components are available
     if contentContainer == null then
@@ -174,7 +168,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
       if event != null then
         xOffset = event.getSceneX
         yOffset = event.getSceneY
-        logger.debug(s"Mouse pressed at: ($xOffset, $yOffset)")
     }
 
     contentContainer.setOnMouseDragged { event =>
@@ -184,13 +177,11 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
         primaryStage.setX(newX)
         primaryStage.setY(newY)
     }
-    logger.debug("Window dragging configured")
 
     // Setup window control buttons
     if mClose != null then
       mClose.setOnAction(_ => {
         try
-          logger.debug("Close button clicked")
           Option(JOptionPane.getRootFrame).foreach(_.dispose())
           System.exit(0)
         catch
@@ -204,7 +195,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     if mSquare != null then
       mSquare.setOnAction(_ => {
         try
-          logger.debug("Maximize/restore button clicked")
           if primaryStage != null then
             primaryStage.setMaximized(!primaryStage.isMaximized)
         catch
@@ -217,7 +207,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     if mMinimize != null then
       mMinimize.setOnAction(_ => {
         try
-          logger.debug("Minimize button clicked")
           if primaryStage != null then
             primaryStage.setIconified(true)
         catch
@@ -226,8 +215,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
       })
     else
       logger.warn("mMinimize button is null!")
-
-    logger.debug("Window controls setup completed")
   }
 
   override def start(stage: Stage): Unit = {
@@ -243,14 +230,11 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     )
 
     try
-      logger.debug(s"Loading FXML resource: $fxmlResource")
-
       // Validate FXML resource exists
       Option(getClass.getResource(fxmlResource)) match
         case None =>
           throw new IllegalArgumentException(s"FXML resource not found: $fxmlResource")
         case Some(resource) =>
-          logger.debug(s"Found FXML resource at: ${resource.getPath}")
 
       val fxml = new FXMLLoader(getClass.getResource(fxmlResource), getResourceBundleM)
       // CRITICAL: Set this instance as the controller so FXML injection works
@@ -261,7 +245,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
         throw new IllegalStateException(s"Failed to load FXML root from: $fxmlResource")
 
       val scene = new Scene(root)
-      logger.debug("Scene created successfully")
 
       // Apply theme with fallback
       val theme = Option(get("theme")).getOrElse("light")
@@ -273,7 +256,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
       Option(getClass.getResource(cssPath)) match
         case Some(_) =>
           scene.getStylesheets.add(cssPath)
-          logger.debug(s"Applied theme: $theme")
         case None =>
           logger.warn(s"CSS file not found: $cssPath, continuing without theme")
 
@@ -282,13 +264,11 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
 
       // Configure screen positioning
       decideScreen(primaryStage)
-      logger.debug("Screen positioning configured")
 
       // NOW setup window controls - both primaryStage and FXML fields are available
       setupWindowControls()
 
       primaryStage.show()
-      logger.info("Application started successfully")
 
     catch
       case e: IOException =>
@@ -345,15 +325,14 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
         bundle
       } catch {
         case _: MissingResourceException =>
-          logger.warn(s"Could not find ResourceBundle for locale $currentLocale. Falling back to English.")
+          logger.error(s"Could not find ResourceBundle for locale $currentLocale. Falling back to English.")
           val fallbackBundle = ResourceBundle.getBundle("i18n.menu", Locale.US)
-          logger.info(s"Fallback ResourceBundle loaded: ${fallbackBundle.getLocale}")
+          logger.error(s"Fallback ResourceBundle loaded: ${fallbackBundle.getLocale}")
           fallbackBundle
       }
     if resourceBundle == null then
       logger.error("ResourceBundle is null, cannot load FXML.")
       throw new RuntimeException("ResourceBundle is null, cannot load FXML.")
-    logger.info(s"Language loaded: ${resourceBundle.getLocale}")
     resourceBundle
   }
 

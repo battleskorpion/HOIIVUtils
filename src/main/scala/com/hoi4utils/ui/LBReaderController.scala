@@ -3,13 +3,14 @@ package com.hoi4utils.ui
 import com.hoi4utils.HOIIVUtils
 //import com.hoi4utils.StateFilesWatcher.statesThatChanged
 import com.hoi4utils.extensions.*
+import com.hoi4utils.hoi4.effect.EffectDatabase.unrecognizedEffects
 import com.hoi4utils.gfx.Interface.interfaceErrors 
 //import com.hoi4utils.hoi4.country.Country.countryErrors // todo re add errors or change to different lists
 //import com.hoi4utils.hoi4.focus.Focus.focusErrors
 //import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
 //import com.hoi4utils.hoi4.idea.Idea.ideaErrors
 //import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
-//import com.hoi4utils.localization.LocalizationManager.localizationErrors
+import com.hoi4utils.localization.LocalizationManager.localizationErrors
 //import com.map.Province.provinceErrors
 //import com.map.Resource.resourceErrors
 //import com.map.ResourcesFile.resourcesFileErrors
@@ -55,9 +56,10 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
 
   private def update(): Unit = {
     val listViewsWithErrors = ListBuffer(
-//      (localizationErrorsList, localizationErrors), // todo: re add errors or change to different lists
+      (parserFileErrorsList, unrecognizedEffects),
+      (localizationErrorsList, localizationErrors),
       (interfaceErrorsList, interfaceErrors),
-//      (countryErrorsList, countryErrors),
+//      (countryErrorsList, countryErrors),  // todo: re add errors or change to different lists
 //      (focusErrorsList, focusErrors),
 //      (focusTreeErrorsList, focusTreeFileErrors),
 //      (ideaErrorsList, ideaErrors),

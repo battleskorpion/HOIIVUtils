@@ -53,9 +53,8 @@ class ConfigManager extends LazyLogging {
 
     config.getProperties.setProperty("version", version)
     if (hVersionTempPath.exists() && hVersionTempPath.delete()) {
-      logger.debug("Deleted temporary version file: {}", hVersionTempPath)
     } else {
-      logger.warn("Failed to delete temporary version file: {}", hVersionTempPath)
+      logger.error("Failed to delete temporary version file: {}", hVersionTempPath)
     }
   }
 

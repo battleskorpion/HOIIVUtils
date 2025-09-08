@@ -4,16 +4,19 @@ import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
 import com.typesafe.scalalogging.LazyLogging
 import com.hoi4utils.RichString
+import com.hoi4utils.localization.LocalizationManager.localizationErrors
 
 import java.io.*
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import java.util.Scanner
+import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
 
 object LocalizationManager {
   private var primaryManager: Option[LocalizationManager] = None
+  val localizationErrors: ListBuffer[String] = ListBuffer.empty[String]
 
   def getLocalizationFile(key: String): File = get.localizations.getLocalizationFile(key)
 
@@ -274,21 +277,21 @@ abstract class LocalizationManager extends LazyLogging {
 
     // vanilla
     if (HOIIVFiles.HOI4.localization_folder == null)
-      logger.warn("'HOI4 localization folder' is null.")
+      logger.error("'HOI4 localization folder' is null.")
     else if (!HOIIVFiles.HOI4.localization_folder.exists)
-      logger.warn("'HOI4 localization folder' does not exist.")
+      logger.error("'HOI4 localization folder' does not exist.")
     else if (!HOIIVFiles.HOI4.localization_folder.isDirectory)
-      logger.warn("'HOI4 localization folder' is not a directory.")
+      logger.error("'HOI4 localization folder' is not a directory.")
     else
       loadLocalization(HOIIVFiles.HOI4.localization_folder, Localization.Status.VANILLA)
 
     // mod
     if (HOIIVFiles.Mod.localization_folder == null)
-      logger.warn("'Mod localization folder' is null.")
+      logger.error("'Mod localization folder' is null.")
     else if (!HOIIVFiles.Mod.localization_folder.exists)
-      logger.warn("'Mod localization folder' does not exist.")
+      logger.error("'Mod localization folder' does not exist.")
     else if (!HOIIVFiles.Mod.localization_folder.isDirectory)
-      logger.warn("'Mod localization folder' is not a directory.")
+      logger.error("'Mod localization folder' is not a directory.")
     else
       loadLocalization(HOIIVFiles.Mod.localization_folder, Localization.Status.EXISTS)
   }
@@ -299,8 +302,6 @@ abstract class LocalizationManager extends LazyLogging {
     for (file <- files) {
       if (file.isDirectory) loadLocalization(file, status)
       else if (file.getName.endsWith(".yml")) loadLocalizationFile(file, status)
-      else logger.info("Localization files can only be of type .yml. File: {}", file.getAbsolutePath)
-      logger.debug("Loaded localization file: {}", file.getAbsolutePath)
     }
   }
 
@@ -316,7 +317,12 @@ abstract class LocalizationManager extends LazyLogging {
         if (line.startsWith("\uFEFF")) line = line.substring(1)
         if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
           if (!line.trim.startsWith(language_def)) {
-            logger.warn("Localization file is not in English: " + file.getAbsolutePath)
+            localizationErrors +=
+              s"""Localization file is not in English
+                 |    File Path: "${file.getAbsolutePath}"
+                 |    Expected Language Definition: "$language_def"
+                 |    Found Language Definition: "$line"""".stripMargin
+//            logger.error("Localization file is not in English: " + file.getAbsolutePath)
             return
           }
           else languageFound = true
@@ -324,7 +330,11 @@ abstract class LocalizationManager extends LazyLogging {
       }
 
       if (!languageFound) {
-        logger.warn("Localization file does not have a language definition: " + file.getAbsolutePath)
+        localizationErrors +=
+          s"""Localization file does not have a language definition
+             |    File Path: "${file.getAbsolutePath}"
+             |    Expected Language Definition: "$language_def"""".stripMargin
+//        logger.error("Localization file does not have a language definition: " + file.getAbsolutePath)
         return
       }
 
@@ -333,7 +343,12 @@ abstract class LocalizationManager extends LazyLogging {
         if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
           val data = line.splitWithDelimiters(versionNumberRegex, 2)
           if (data.length != 3) {
-            logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
+            localizationErrors +=
+              s"""Invalid localization file format
+                 |    File Path: "${file.getAbsolutePath}"
+                 |    Line: "$line"
+                 |    Reason: incorrect number of line elements""".stripMargin
+//            logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
           } else {
             // trim whitespace
             data mapInPlace (s => s.trim)
@@ -347,11 +362,21 @@ abstract class LocalizationManager extends LazyLogging {
             val extra = data(2).substring(endQuote + 1).trim
             var invalid = false
             if (extra.nonEmpty && !extra.startsWith("#")) {
-              logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: extraneous non-comment data after localization entry: " + extra)
+              localizationErrors +=
+                s"""Invalid localization file format
+                   |    File Path: "${file.getAbsolutePath}"
+                   |    Line: "$line"
+                   |    Reason: extraneous non-comment data after localization entry: "$extra"""".stripMargin
+//              logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: extraneous non-comment data after localization entry: " + extra)
               invalid = true
             }
             if (startQuote != 0 || endQuote == -1 || startQuote == endQuote) {
-              logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: localization value is not correctly enclosed in quotes")
+              localizationErrors +=
+                s"""Invalid localization file format
+                   |    File Path: "${file.getAbsolutePath}"
+                   |    Line: "$line"
+                   |    Reason: localization value is not correctly enclosed in quotes""".stripMargin
+//              logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: localization value is not correctly enclosed in quotes")
               invalid = true
             }
             if (!invalid) {
