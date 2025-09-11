@@ -32,8 +32,6 @@ object Country extends LazyLogging with PDXReadable {
       logger.warn(s"No focuses found in ${HOIIVFiles.Mod.country_folder}")
       false
     } else {
-      logger.info("Reading focus trees from " + HOIIVFiles.Mod.country_folder)
-
       // create focus trees from files
       HOIIVFiles.Mod.country_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
         var tag = CountryTag(f.getName.split(" ")(0), f)
