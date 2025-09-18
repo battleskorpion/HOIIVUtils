@@ -268,14 +268,14 @@ class Node (
     case _ => List(this).iterator //Iterator.empty
   }
 
-  def $list(): Option[ListBuffer[Node]] = $ match {
-    case l: ListBuffer[Node] => Some(l)
-    case _                   => None
+  def $list(): Option[ListBuffer[Node]] = rawValue match {
+    case Some(l: ListBuffer[Node]) => Some(l)
+    case _ => None
   }
 
-  def $listOrElse(x: ListBuffer[Node]): ListBuffer[Node] = $ match {
-    case l: ListBuffer[Node] => l
-    case _                   => x
+  def $listOrElse(x: ListBuffer[Node]): ListBuffer[Node] = rawValue match {
+    case Some(l: ListBuffer[Node]) => l
+    case _ => x
   }
 
   def $string: Option[String] = $ match {

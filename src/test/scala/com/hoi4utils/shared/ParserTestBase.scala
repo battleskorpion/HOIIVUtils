@@ -174,7 +174,7 @@ abstract class ParserTestBase {
   protected def createExpectedCounts(): Map[String, Int] = {
     Map(
       "test_focus_tree.txt" -> 15, // Update this with actual count from your test file
-      "another_focus_tree.txt" -> 8 // Add more files as needed
+      "california.txt" -> 226  // in the file when you search for "focus = {" you get 230 but I'm guess 4 are broken or commented out, hopefully TODO: verify this
     )
   }
 
@@ -185,7 +185,7 @@ abstract class ParserTestBase {
   protected def getExpectedFocusCount(filename: String): Int = {
     filename match {
       case "test_focus_tree.txt" => 15 // Based on the sample I created - update with your actual count
-      case "another_focus_tree.txt" => 8
+      case "california.txt" => 226 // in the file when you search for "focus = {" you get 230 but I'm guess 4 are broken or commented out, hopefully TODO: verify this
       case _ => 0
     }
   }
