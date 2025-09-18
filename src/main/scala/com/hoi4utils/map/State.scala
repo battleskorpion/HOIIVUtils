@@ -7,6 +7,7 @@ import com.hoi4utils.localization.*
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
 import com.hoi4utils.*
+import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 import map.State.History
@@ -61,7 +62,13 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
 
   def this(addToStatesList: Boolean, file: File) = {
     this(addToStatesList)
-    loadPDX(file)
+    try loadPDX(file)
+    catch {
+      case e: ParserException =>
+        logger.error(s"Parser Exception: $file", e)
+      case e: UnexpectedIdentifierException =>
+        throw new RuntimeException(e)
+    }
     setFile(file)
   }
 

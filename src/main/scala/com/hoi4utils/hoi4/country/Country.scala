@@ -2,9 +2,11 @@ package com.hoi4utils.hoi4.country
 
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
+import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4.technology.Technology
 import com.hoi4utils.hoi4.units.OrdersOfBattle
 import com.hoi4utils.map.{Resource, State}
+import com.hoi4utils.parser.ParserException
 import com.hoi4utils.script.{HeadlessPDX, PDXScript, ReferencePDX, StructuredPDX}
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
@@ -161,7 +163,13 @@ class Country extends StructuredPDX with HeadlessPDX with Comparable[Country] wi
       throw new IllegalArgumentException(s"File does not exist: $file")
     }
 
-    loadPDX(file)
+    try loadPDX(file)
+    catch {
+      case e: ParserException =>
+        logger.error(s"Parser Exception: $file", e)
+      case e: UnexpectedIdentifierException =>
+        throw new RuntimeException(e)
+    }
     setFile(file)
     _countryTag = Some(countryTag)
   }

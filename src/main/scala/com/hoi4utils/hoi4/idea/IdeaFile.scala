@@ -1,8 +1,9 @@
 package com.hoi4utils.hoi4.idea
 
+import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileFileMap
 import com.hoi4utils.localization.Localizable
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, ParserException}
 import com.hoi4utils.script.{CollectionPDX, PDXScript, StructuredPDX}
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
@@ -101,7 +102,13 @@ class IdeaFile extends StructuredPDX("ideas") with Iterable[Idea] {
       throw new IllegalArgumentException(s"File does not exist: $file")
     }
 
-    loadPDX(file)
+    try loadPDX(file)
+    catch {
+      case e: ParserException =>
+        logger.error(s"Parser Exception: $file", e)
+      case e: UnexpectedIdentifierException =>
+        throw new RuntimeException(e)
+    }
     setFile(file)
     _file.foreach(file => ideaFileFileMap.put(file, this))
   }

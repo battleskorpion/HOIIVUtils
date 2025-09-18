@@ -1,8 +1,10 @@
 package com.hoi4utils.hoi4.focus
 
+import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileMap
 import com.hoi4utils.localization.{Localizable, Property}
+import com.hoi4utils.parser.ParserException
 import com.hoi4utils.script.*
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
@@ -127,7 +129,13 @@ class FocusTree
       throw new IllegalArgumentException(s"File does not exist: $focus_file")
     }
 
-    loadPDX(focus_file)
+    try loadPDX(focus_file)
+    catch {
+      case e: ParserException =>
+        logger.error(s"Could not load focus tree from file: $focus_file", e)
+      case e: UnexpectedIdentifierException =>
+        throw new RuntimeException(e)
+    }
     setFile(focus_file)
   }
 

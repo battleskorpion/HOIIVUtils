@@ -125,21 +125,16 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
     remaining
   }
   
+  @throws[UnexpectedIdentifierException]
+  @throws[ParserException]
   protected def loadPDX(file: File): Unit = {
     if (!file.exists) {
       logger.error(s"Focus tree file does not exist: $file")
       return
     }
-
-    try {
-      val pdxParser = new Parser(file)
-      val rootNode = pdxParser.parse
-      loadPDX(rootNode)
-    } catch {
-      case e: ParserException =>
-        logger.error(s"Error parsing focus tree file: $file\n\t${e.getMessage}")
-      case e: UnexpectedIdentifierException => throw new RuntimeException(e)
-    }
+    val pdxParser = new Parser(file)
+    val rootNode = pdxParser.parse
+    loadPDX(rootNode)
   }
 
   /**

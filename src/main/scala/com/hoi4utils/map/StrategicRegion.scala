@@ -1,5 +1,7 @@
 package com.hoi4utils.map
 
+import com.hoi4utils.exceptions.UnexpectedIdentifierException
+import com.hoi4utils.parser.ParserException
 import com.hoi4utils.script.*
 import javafx.collections.{FXCollections, ObservableList}
 import org.apache.logging.log4j.{LogManager, Logger}
@@ -29,7 +31,13 @@ class StrategicRegion extends StructuredPDX("strategic_region") with PDXFile {
 
   def this(file: File) = {
     this()
-    loadPDX(file)
+    try loadPDX(file)
+    catch {
+      case e: ParserException =>
+        logger.error(s"Parser Exception: $file", e)
+      case e: UnexpectedIdentifierException =>
+        throw new RuntimeException(e)
+    }
     setFile(file)
   }
 

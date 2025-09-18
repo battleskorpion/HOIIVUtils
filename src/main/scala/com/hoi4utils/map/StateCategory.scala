@@ -2,7 +2,7 @@ package com.hoi4utils.map
 
 import com.hoi4utils.HOIIVFiles
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, ParserException}
 import com.hoi4utils.script.*
 import org.apache.logging.log4j.{LogManager, Logger}
 
@@ -131,7 +131,13 @@ class StateCategoryFile extends CollectionPDX[StateCategoryDef](StateCategories.
       throw new IllegalArgumentException(s"File does not exist: $file")
     }
 
-    loadPDX(file)
+    try loadPDX(file)
+    catch {
+      case e: ParserException =>
+        logger.error(s"Parser Exception: $file", e)
+      case e: UnexpectedIdentifierException =>
+        throw new RuntimeException(e)
+    }
     setFile(file)
   }
 
