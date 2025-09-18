@@ -372,6 +372,12 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
     def iconName: Option[String] = `value`.value
   }
 
+  // This is breaking my brain because the loadpdx call here is the most confusing to keep track of with it being a: inner class + override + super. + child child child class
+  // like wtf or how the fuck am I suppose to figure out and clean it up so I can log errors and metadata without breaking the whole program like before
+  // it so such tightly knitted rat nest of fuck ass object oriented code.
+  // trait class and abstracts shouldn't handle exceptions / errors / user expected errors!
+  //      cuz the generic code means its hard to get metadata, log, debug etc
+  //TODO This small class is producing MOST of the unexpected identifier exceptions that show up in terminal, can you clean it up @Skorp or explain how I can touch it, please.
   class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward") {
     @throws[UnexpectedIdentifierException]
     override def loadPDX(expression: Node): Unit = {
