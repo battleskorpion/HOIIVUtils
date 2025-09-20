@@ -46,7 +46,7 @@ class Parser(pdx: String | File = null) {
           case TokenType.eof => // OK
           case _ => throw new ParserException("Input not completely parsed. Last token: " + token.value)
         }
-      case None => throw new ParserException("Input not completely parsed. Last token: null")
+      case None => throw new ParserException(s"Input not completely parsed. Tokens: ${tokens}")
     }
     // Create the root node using the parsed children (a ListBuffer[Node]) as its raw value.
     _rootNode = new Node(
@@ -80,28 +80,28 @@ class Parser(pdx: String | File = null) {
     // Capture leading trivia for this node.
     val leading = consumeTrivia()
 
-    val idToken = tokens.next.getOrElse(
+    val tokenIdentifier = tokens.next.getOrElse(
       throw new ParserException("Unexpected end of input while parsing node identifier")
     )
 
     // If the token is a comment, create a node that holds it.
-    if (idToken.`type` == TokenType.comment) {
+    if (tokenIdentifier.`type` == TokenType.comment) {
       return new Node(
         leadingTrivia = leading,
-        identifierToken = Some(idToken),
-        rawValue = Some(new Comment(idToken.value)),
+        identifierToken = Some(tokenIdentifier),
+        rawValue = Some(new Comment(tokenIdentifier.value)),
         trailingTrivia = consumeTrivia()
       )
     }
 
     // Ensure the token is a valid identifier.
-    if (idToken.`type` != TokenType.string && idToken.`type` != TokenType.symbol && !idToken.isNumber)
-      throw new ParserException("Parser: incorrect token type " + idToken.`type` + " at index " + idToken.start + " for: " + idToken.value)
+    if (tokenIdentifier.`type` != TokenType.string && tokenIdentifier.`type` != TokenType.symbol && !tokenIdentifier.isNumber)
+      throw new ParserException("Parser: incorrect token type " + tokenIdentifier.`type` + " at index " + tokenIdentifier.start + " for: " + tokenIdentifier.value)
 
     // Consume any trivia after the identifier.
     consumeTrivia()
     var nextToken = tokens.peek.getOrElse(
-      throw new ParserException("Unexpected end of input after identifier")
+      throw new ParserException("Unexpected end of input after identifier\nFound token: " + tokenIdentifier.value)
     )
     var operatorOpt: Option[Token] = None
     var raw: Option[String | Int | Double | Boolean | ListBuffer[Node] | Comment] = None
@@ -115,10 +115,10 @@ class Parser(pdx: String | File = null) {
        */
       while (nextToken.value.matches("^[,;]$")) {
         tokens.next
-        nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token"))
+        nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token\nFound token: " + tokenIdentifier.value))
       }
       // No proper operator: treat this node as a value-only node.
-      raw = Some(parseThisTokenValue(idToken))
+      raw = Some(parseThisTokenValue(tokenIdentifier))
       return new Node(
         leadingTrivia = leading,
         rawValue = raw,
@@ -137,7 +137,7 @@ class Parser(pdx: String | File = null) {
     // Create and return the new node with all CST information attached.
     new Node(
       leadingTrivia = leading,
-      identifierToken = Some(idToken),
+      identifierToken = Some(tokenIdentifier),
       operatorToken = operatorOpt,
       rawValue = raw,
       trailingTrivia = trailing

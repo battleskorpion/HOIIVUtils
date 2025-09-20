@@ -157,7 +157,6 @@ class ResourcesFile(file: File = null) extends CollectionPDX[ResourceDef](Resour
     _resourcesFile = Some(file)
   }
 
-  @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     if (expression.identifier.isEmpty) {
       expression.$ match {

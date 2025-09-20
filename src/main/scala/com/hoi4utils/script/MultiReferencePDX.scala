@@ -36,30 +36,16 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
    * @param expression
    * @throws UnexpectedIdentifierException
    */
-  @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     expression.$ match {
       case list: ListBuffer[Node] =>
         usingIdentifier(expression)
 
         for (child <- list) {
-          try {
-            add(child)
-          } catch {
-            case e: UnexpectedIdentifierException =>
-              logger.error("Error loading child node: " + e.getMessage + "\n\t" + child)
-          }
+          super.loadPDX(child)
         }
         this.node = Some(expression)
-      case _ =>
-        try {
-          add(expression)
-        } catch {
-          case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-            println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
-            // Preserve the node so it isn’t lost.
-            node = Some(expression)
-        }
+      case _ => super.loadPDX(expression)
     }
   }
 

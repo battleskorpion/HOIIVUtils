@@ -32,16 +32,17 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   /**
    * @inheritdoc
    */
-  @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
-    try {
-      add(expression)
-    } catch {
-      case e: NodeValueTypeException =>
-        logger.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
-        // For MultiPDX, preserve the node by storing the raw expression.
+    try add(expression)
+    catch
+      case e: UnexpectedIdentifierException =>
+        handleUnexpectedIdentifier(expression, e)
+        // Preserve the original node in StructuredPDX as well.
         node = Some(expression)
-    }
+      case e: NodeValueTypeException        =>
+        handleNodeValueTypeError(expression, e)
+        // Preserve the original node in StructuredPDX as well.
+        node = Some(expression)
   }
 
   override def equals(other: PDXScript[?]) = false // todo? well.

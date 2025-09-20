@@ -29,7 +29,6 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
       // all good? 
     }
     else if (pdxIdentifiers.indexWhere(expr.nameEquals) == -1) {
-      logger.error("Unexpected identifier: " + expr.name)
       throw new UnexpectedIdentifierException(expr)
     } 
   }
@@ -59,6 +58,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @inheritdoc
    */
   @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
     setNode(expression.$)
@@ -237,18 +237,95 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   }
 
   def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit = {
-    logger.error(s"Unexpected identifier in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}. Exception: ${exception.getMessage}")
+    val errorDetails = ListBuffer[String]()
+    errorDetails += s"PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}"
+    errorDetails += s"Node Identifier: ${node.identifier.getOrElse("none")}"
+    errorDetails += s"Expected Identifiers: ${if (pdxIdentifiers.nonEmpty) pdxIdentifiers.mkString("[", ", ", "]") else "any"}"
+    errorDetails += s"Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}"
+    errorDetails += s"Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}"
+    errorDetails += s"Active Identifier Index: $activeIdentifier"
+    errorDetails += s"Exception Message: ${exception.getMessage}"
+    if (exception.getCause != null) {
+      errorDetails += s"Root Cause: ${exception.getCause.getMessage}"
+    }
+
+    logger.error("Unexpected Identifier Error:")
+    errorDetails.foreach(detail => logger.error(s"\t$detail"))
   }
 
   def handleNodeValueTypeError(node: Node, exception: Exception): Unit = {
-    logger.error(s"Node value type error in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}. Exception: ${exception.getMessage}")
+    val errorDetails = ListBuffer[String]()
+    errorDetails += s"PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}"
+    errorDetails += s"Node Identifier: ${node.identifier.getOrElse("none")}"
+    errorDetails += s"Expected Type: T (generic parameter)"
+    errorDetails += s"Actual Value: ${Option(node.$).map(_.toString).getOrElse("null")}"
+    errorDetails += s"Actual Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}"
+    errorDetails += s"Node Has Value: ${node.$ != null}"
+    errorDetails += s"Node Is Empty: ${node.isEmpty}"
+    errorDetails += s"Exception Type: ${exception.getClass.getSimpleName}"
+    errorDetails += s"Exception Message: ${exception.getMessage}"
+    if (exception.getCause != null) {
+      errorDetails += s"Root Cause: ${exception.getCause.getMessage}"
+    }
+
+    logger.error("Node Value Type Error:")
+    errorDetails.foreach(detail => logger.error(s"\t$detail"))
   }
 
   def handleParserException(node: Node, exception: Exception): Unit = {
-    logger.error(s"Parser exception in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}. Exception: ${exception.getMessage}")
+    val errorDetails = ListBuffer[String]()
+    errorDetails += s"PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}"
+    errorDetails += s"Node Identifier: ${node.identifier.getOrElse("none")}"
+    errorDetails += s"Node Content: ${if (node.isEmpty) "empty" else "has content"}"
+    errorDetails += s"Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}"
+    errorDetails += s"Parser Exception Type: ${exception.getClass.getSimpleName}"
+    errorDetails += s"Exception Message: ${exception.getMessage}"
+    if (exception.getCause != null) {
+      errorDetails += s"Root Cause: ${exception.getCause.getMessage}"
+    }
+
+    logger.error("Parser Exception (Node):")
+    errorDetails.foreach(detail => logger.error(s"\t$detail"))
   }
 
   def handleParserException(file: File, exception: Exception): Unit = {
-    logger.error(s"Parser exception in ${this.pdxIdentifier} file: ${file.getAbsolutePath}. Exception: ${exception.getMessage}")
+    val errorDetails = ListBuffer[String]()
+    errorDetails += s"PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}"
+    errorDetails += s"File Path: ${file.getAbsolutePath}"
+    errorDetails += s"File Name: ${file.getName}"
+    errorDetails += s"File Exists: ${file.exists()}"
+    errorDetails += s"File Size: ${if (file.exists()) s"${file.length()} bytes" else "N/A"}"
+    errorDetails += s"File Readable: ${file.canRead}"
+    errorDetails += s"Parser Exception Type: ${exception.getClass.getSimpleName}"
+    errorDetails += s"Exception Message: ${exception.getMessage}"
+    if (exception.getCause != null) {
+      errorDetails += s"Root Cause: ${exception.getCause.getMessage}"
+    }
+
+    logger.error("Parser Exception (File):")
+    errorDetails.foreach(detail => logger.error(s"\t$detail"))
+  }
+
+  // Optional: Generic error handler that can be used by subclasses for custom errors
+  protected def handleGenericError(errorType: String, context: Map[String, Any], exception: Option[Exception] = None): Unit = {
+    val errorDetails = ListBuffer[String]()
+    errorDetails += s"PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}"
+
+    // Add context information
+    context.foreach { case (key, value) =>
+      errorDetails += s"$key: ${Option(value).map(_.toString).getOrElse("null")}"
+    }
+
+    // Add exception details if provided
+    exception.foreach { ex =>
+      errorDetails += s"Exception Type: ${ex.getClass.getSimpleName}"
+      errorDetails += s"Exception Message: ${ex.getMessage}"
+      if (ex.getCause != null) {
+        errorDetails += s"Root Cause: ${ex.getCause.getMessage}"
+      }
+    }
+
+    logger.error(s"$errorType Error:")
+    errorDetails.foreach(detail => logger.error(s"\t$detail"))
   }
 }
