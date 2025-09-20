@@ -14,9 +14,71 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
+class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[Idea] {
+  /* pdxscript */
+  final var countryIdeas = new CollectionPDX[Idea](Idea.pdxSupplier(), "country") {
+    override def loadPDX(expr: Node): Unit = {
+      super.loadPDX(expr)
+      pdxList.foreach(idea => idea.setIdeaFile(IdeaFile.this))
+    }
+
+    override def getPDXTypeName: String = "Country Ideas"
+  }
+
+  private var _file: Option[File] = None
+
+  /* default */
+  IdeaFile.add(this)
+
+  file match
+    case null => // create empty idea
+    case _ =>
+      require(file.exists && file.isFile, s"Idea file $file does not exist or is not a file.")
+      loadPDX(file)
+      setFile(file)
+      _file.foreach(file => ideaFileFileMap.put(file, this))
+
+  override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
+    val message = s"Unexpected identifier in idea file ${_file.map(_.getName).getOrElse("[Unknown file]")}: ${node.identifier}"
+    IdeaFile.ideaFileErrors += message
+//    logger.error(message)
+
+  override def handleParserException(node: Node, exception: Exception): Unit =
+    val message = s"Parser exception in idea file ${_file.map(_.getName).getOrElse("[Unknown file]")}: ${exception.getMessage}"
+    IdeaFile.ideaFileErrors += message
+//    logger.error(message)
+
+  override def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
+    val message = s"Node value type error in idea file ${_file.map(_.getName).getOrElse("[Unknown file]")}: ${exception.getMessage}"
+    IdeaFile.ideaFileErrors += message
+//    logger.error(message)
+
+  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
+    ListBuffer(countryIdeas)
+  }
+
+  def listIdeas: List[Idea] = {
+    List.from(countryIdeas)
+  }
+
+  def setFile(file: File): Unit = {
+    _file = Some(file)
+  }
+
+  override def iterator: Iterator[Idea] = listIdeas.iterator
+
+  /**
+   * Get the localizable group for ideas in this file, which is the list of all ideas in this file.
+   *
+   * @return
+   */
+  def getLocalizableGroup: Iterable[? <: Localizable] = listIdeas
+}
+
 object IdeaFile extends LazyLogging with PDXReadable {
   private val ideaFileFileMap = new mutable.HashMap[File, IdeaFile]()
   private val ideaFiles = new ListBuffer[IdeaFile]()
+  var ideaFileErrors: ListBuffer[String] = ListBuffer.empty
 
   def get(idea_file: File): Option[IdeaFile] = {
     if (!ideaFileFileMap.contains(idea_file)) new IdeaFile(idea_file)
@@ -76,63 +138,4 @@ object IdeaFile extends LazyLogging with PDXReadable {
     ideaFileFileMap.values.flatMap(_.listIdeas).toList
   }
 
-}
-
-class IdeaFile extends StructuredPDX("ideas") with Iterable[Idea] {
-  /* pdxscript */
-  final var countryIdeas = new CollectionPDX[Idea](Idea.pdxSupplier(), "country") {
-    override def loadPDX(expr: Node): Unit = {
-      super.loadPDX(expr)
-      pdxList.foreach(idea => idea.setIdeaFile(IdeaFile.this))
-    }
-
-    override def getPDXTypeName: String = "Country Ideas"
-  }
-
-  private var _file: Option[File] = None
-
-  /* default */
-  IdeaFile.add(this)
-
-  @throws[IllegalArgumentException]
-  def this(file: File) = {
-    this()
-    if (!file.exists()) {
-      logger.error(s"Idea file does not exist: $file")
-      throw new IllegalArgumentException(s"File does not exist: $file")
-    }
-
-    try loadPDX(file)
-    catch {
-      case e: ParserException =>
-        logger.error(s"Parser Exception: $file", e)
-      case e: UnexpectedIdentifierException =>
-        throw new RuntimeException(e)
-    }
-    setFile(file)
-    _file.foreach(file => ideaFileFileMap.put(file, this))
-  }
-
-  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
-    ListBuffer(countryIdeas)
-  }
-
-  def file: Option[File] = _file
-
-  def listIdeas: List[Idea] = {
-    List.from(countryIdeas)
-  }
-
-  def setFile(file: File): Unit = {
-    _file = Some(file)
-  }
-
-  override def iterator: Iterator[Idea] = listIdeas.iterator
-
-  /**
-   * Get the localizable group for ideas in this file, which is the list of all ideas in this file.
-   *
-   * @return
-   */
-  def getLocalizableGroup: Iterable[? <: Localizable] = listIdeas
 }

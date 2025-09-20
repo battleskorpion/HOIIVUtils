@@ -66,18 +66,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
           handleNodeValueTypeError(expression, e)
           // Preserve the original node in StructuredPDX as well.
           node = Some(expression)
-          
-
-  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = expressions match
-    case null => ListBuffer.empty
-    case _ =>
-      val remaining = ListBuffer.from(expressions)
-      expressions.filter(this.isValidIdentifier).foreach(expression =>
-        loadPDX(expression)
-        remaining -= expression
-      )
-      remaining
-
+  
   /**
    * Gets the child pdx property with the current identifier matching
    * the given string.

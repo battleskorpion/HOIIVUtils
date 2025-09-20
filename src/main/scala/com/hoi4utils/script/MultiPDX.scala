@@ -44,26 +44,6 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     }
   }
 
-  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    if (expressions != null) {
-      val remaining = ListBuffer.from(expressions)
-      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
-        catch {
-          case e: UnexpectedIdentifierException =>
-            logger.error(e.getMessage)
-          //throw new RuntimeException(e);
-        }
-      })
-      remaining
-    } else {
-      ListBuffer.empty
-    }
-  }
-
   override def equals(other: PDXScript[?]) = false // todo? well.
 
   override def value: Option[ListBuffer[T]] = {

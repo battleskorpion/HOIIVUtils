@@ -4,7 +4,7 @@ import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileMap
 import com.hoi4utils.localization.{Localizable, Property}
-import com.hoi4utils.parser.ParserException
+import com.hoi4utils.parser.{Node, ParserException}
 import com.hoi4utils.script.*
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
@@ -33,20 +33,28 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
   /* default */
   FocusTree.add(this)
 
-  file match {
+  file match
     case null => // create empty focus tree
     case _ =>
       require(file.exists && file.isFile, s"Focus tree file $file does not exist or is not a file.")
-      try loadPDX(file)
-      catch {
-        case e: ParserException =>
-          logger.error(s"Could not load focus tree from file: $file", e)
-        case e: UnexpectedIdentifierException =>
-          throw new RuntimeException(e)
-      }
+      loadPDX(file)
       setFile(file)
-  }
-  
+
+  override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
+    val message = s"Unexpected identifier in focus tree file ${_focusFile.map(_.getName).getOrElse("[Unknown file]")}: ${node.identifier}"
+    FocusTree.focusTreeFileErrors += message
+//    logger.error(message)
+
+  override def handleParserException(node: Node, exception: Exception): Unit =
+    val message = s"Parser exception in focus tree file ${_focusFile.map(_.getName).getOrElse("[Unknown file]")}: ${exception.getMessage}"
+    FocusTree.focusTreeFileErrors += message
+//    logger.error(message)
+
+  override def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
+    val message = s"Node value type error in focus tree file ${_focusFile.map(_.getName).getOrElse("[Unknown file]")}: ${exception.getMessage}"
+    FocusTree.focusTreeFileErrors += message
+//    logger.error(message)
+
   // todo: add default, continuous focus position
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
     ListBuffer(id, country, focuses)

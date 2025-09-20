@@ -8,7 +8,7 @@ import com.hoi4utils.gfx.Interface.interfaceErrors
 //import com.hoi4utils.hoi4.country.Country.countryErrors // todo re add errors or change to different lists
 import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
 //import com.hoi4utils.hoi4.idea.Idea.ideaErrors
-//import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
+import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
 import com.hoi4utils.localization.LocalizationManager.localizationErrors
 //import com.map.Province.provinceErrors
 //import com.map.Resource.resourceErrors
@@ -60,9 +60,9 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
       (interfaceErrorsList, interfaceErrors),
 //      (countryErrorsList, countryErrors),  // todo: re add errors or change to different lists
 //      (focusErrorsList, focusErrors),
-//      (focusTreeErrorsList, focusTreeFileErrors),
+      (focusTreeErrorsList, focusTreeFileErrors),
 //      (ideaErrorsList, ideaErrors),
-//      (ideaFileErrorsList, ideaFileErrors),
+      (ideaFileErrorsList, ideaFileErrors),
 //      (provinceErrorsList, provinceErrors),
 //      (resourceErrorsList, resourceErrors),
 //      (resourcesFileErrorsList, resourcesFileErrors),

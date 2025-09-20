@@ -109,25 +109,22 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @param expressions
    * @return remaining unloaded expressions
    */
-  def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    val remaining = ListBuffer.from(expressions)
-    expressions.filter(this.isValidIdentifier).foreach(expression =>
-      loadPDX(expression)
-      remaining -= expression
-    )
-    remaining
-  }
+  def loadPDX(expressions: Iterable[Node]): Iterable[Node] = expressions match
+    case null => ListBuffer.empty
+    case _ =>
+      val remaining = ListBuffer.from(expressions)
+      expressions.filter(this.isValidIdentifier).foreach(expression =>
+        loadPDX(expression)
+        remaining -= expression
+      )
+      remaining
   
-  @throws[UnexpectedIdentifierException]
-  @throws[ParserException]
+  
   protected def loadPDX(file: File): Unit = {
-    if (!file.exists) {
-      logger.error(s"Focus tree file does not exist: $file")
-      return
-    }
+    require(file.exists && file.isFile, s"File $file does not exist or is not a file.")
     val pdxParser = new Parser(file)
-    val rootNode = pdxParser.parse
-    loadPDX(rootNode)
+    try loadPDX(pdxParser.parse)
+    catch case e: ParserException => handleParserException(file, e)
   }
 
   /**
@@ -246,8 +243,12 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   def handleNodeValueTypeError(node: Node, exception: Exception): Unit = {
     logger.error(s"Node value type error in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
   }
-  
+
   def handleParserException(node: Node, exception: Exception): Unit = {
     logger.error(s"Parser exception in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
+  }
+  
+  def handleParserException(file: File, exception: Exception): Unit = {
+    logger.error(s"Parser exception in ${this.pdxIdentifier} file: ${file.getAbsolutePath}\n\t${exception.getMessage}")
   }
 }

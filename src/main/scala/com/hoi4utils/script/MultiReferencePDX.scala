@@ -40,11 +40,6 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
   override def loadPDX(expression: Node): Unit = {
     expression.$ match {
       case list: ListBuffer[Node] =>
-        // prolly don't need this check, but it doesn't hurt right now
-        if (list.isEmpty) {
-          logger.warn("PDX script had empty list: " + expression)
-          return
-        }
         usingIdentifier(expression)
 
         for (child <- list) {
