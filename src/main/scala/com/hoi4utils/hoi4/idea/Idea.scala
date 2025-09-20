@@ -62,6 +62,11 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
       super.loadPDX(expr)
     }
 
+    override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
+      val message = s"Unexpected identifier:\n Idea: ${Idea.this.toString}\n Idea file: ${_ideaFile.flatMap(_.getFile).map(_.getName).getOrElse("[Unknown file]")}\n pdxIdentifier: ${this.pdxIdentifier} / ${node.identifier} \n Exception: ${exception.getMessage}"
+      IdeaFile.ideaFileErrors += message
+//      logger.error(message)
+
     override def getPDXTypeName: String = "Modifiers"
   }
   final val removalCost = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))

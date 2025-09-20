@@ -28,13 +28,11 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
   /**
    * @inheritdoc
    */
-  @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     try add(expression)
-    catch {
-      case e: NodeValueTypeException =>
-        throw new RuntimeException(e)
-    }
+    catch
+      case e: NodeValueTypeException => handleNodeValueTypeError(expression, e)
+      case e: UnexpectedIdentifierException => handleUnexpectedIdentifier(expression, e)
   }
   
   override def equals(other: PDXScript[?]) = false // todo? well.

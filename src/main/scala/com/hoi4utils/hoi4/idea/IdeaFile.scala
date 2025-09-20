@@ -64,6 +64,8 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
   def setFile(file: File): Unit = {
     _file = Some(file)
   }
+  
+  def getFile: Option[File] = _file
 
   override def iterator: Iterator[Idea] = listIdeas.iterator
 

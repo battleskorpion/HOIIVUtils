@@ -17,10 +17,11 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
   /**
    * @inheritdoc
    */
-  @throws[UnexpectedIdentifierException]
-  @throws[NodeValueTypeException]
   override def loadPDX(expression: Node): Unit = {
-    add(expression)
+    try add(expression)
+    catch
+      case e: NodeValueTypeException => handleNodeValueTypeError(expression, e)
+      case e: UnexpectedIdentifierException => handleUnexpectedIdentifier(expression, e)
   }
 
   override def equals(other: PDXScript[?]) = false // todo? well.

@@ -118,8 +118,8 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
         remaining -= expression
       )
       remaining
-  
-  
+
+
   protected def loadPDX(file: File): Unit = {
     require(file.exists && file.isFile, s"File $file does not exist or is not a file.")
     val pdxParser = new Parser(file)
@@ -237,18 +237,18 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   }
 
   def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit = {
-    logger.error(s"Unexpected identifier in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
+    logger.error(s"Unexpected identifier in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}. Exception: ${exception.getMessage}")
   }
 
   def handleNodeValueTypeError(node: Node, exception: Exception): Unit = {
-    logger.error(s"Node value type error in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
+    logger.error(s"Node value type error in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}. Exception: ${exception.getMessage}")
   }
 
   def handleParserException(node: Node, exception: Exception): Unit = {
-    logger.error(s"Parser exception in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
+    logger.error(s"Parser exception in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}. Exception: ${exception.getMessage}")
   }
-  
+
   def handleParserException(file: File, exception: Exception): Unit = {
-    logger.error(s"Parser exception in ${this.pdxIdentifier} file: ${file.getAbsolutePath}\n\t${exception.getMessage}")
+    logger.error(s"Parser exception in ${this.pdxIdentifier} file: ${file.getAbsolutePath}. Exception: ${exception.getMessage}")
   }
 }
