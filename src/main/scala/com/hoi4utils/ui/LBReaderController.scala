@@ -5,18 +5,10 @@ import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.extensions.*
 import com.hoi4utils.hoi4.effect.EffectDatabase.unrecognizedEffects
 import com.hoi4utils.gfx.Interface.interfaceErrors 
-//import com.hoi4utils.hoi4.country.Country.countryErrors // todo re add errors or change to different lists
+import com.hoi4utils.hoi4.country.Country.countryErrors
 import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
-//import com.hoi4utils.hoi4.idea.Idea.ideaErrors
 import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
 import com.hoi4utils.localization.LocalizationManager.localizationErrors
-//import com.map.Province.provinceErrors
-//import com.map.Resource.resourceErrors
-//import com.map.ResourcesFile.resourcesFileErrors
-//import com.map.State.stateErrors
-//import com.map.StateCategories.stateCategoriesErrors
-//import com.map.StrategicRegion.strategicRegionErrors
-//import com.map.VictoryPoint.victoryPointErrors
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, ListCell, ListView}
@@ -58,18 +50,9 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
       (parserFileErrorsList, unrecognizedEffects),
       (localizationErrorsList, localizationErrors),
       (interfaceErrorsList, interfaceErrors),
-//      (countryErrorsList, countryErrors),  // todo: re add errors or change to different lists
-//      (focusErrorsList, focusErrors),
+      (countryErrorsList, countryErrors),
       (focusTreeErrorsList, focusTreeFileErrors),
-//      (ideaErrorsList, ideaErrors),
-      (ideaFileErrorsList, ideaFileErrors),
-//      (provinceErrorsList, provinceErrors),
-//      (resourceErrorsList, resourceErrors),
-//      (resourcesFileErrorsList, resourcesFileErrors),
-//      (stateErrorsList, stateErrors),
-//      (stateCategoriesErrorsList, stateCategoriesErrors),
-//      (strategicRegionErrorsList, strategicRegionErrors),
-//      (victoryPointErrorsList, victoryPointErrors)
+      (ideaFileErrorsList, ideaFileErrors)
     )
 
     // todo: re add errors or change to different lists

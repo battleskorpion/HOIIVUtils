@@ -84,7 +84,6 @@ object StateCategories {
 
     stateCategoryDirectory match {
       case Some(dir) =>
-        logger.info(s"Reading resources from ${dir.getAbsolutePath}")
         //_resourcesPDX = Some(new Resources(dir))
         stateCategoryDirectory.filter(_.getName.endsWith(".txt")).foreach { f =>
           _stateCategoryFiles += new StateCategoryFile(f)
@@ -120,26 +119,16 @@ object StateCategories {
   }
 }
 
-class StateCategoryFile extends CollectionPDX[StateCategoryDef](StateCategories.pdxSupplier(), "state_categories") {
+class StateCategoryFile(file: File = null) extends CollectionPDX[StateCategoryDef](StateCategories.pdxSupplier(), "state_categories") {
   private var _stateCategoryFile: Option[File] = None
 
   /* init */
-  def this(file: File) = {
-    this()
-    if (!file.exists) {
-      logger.error(s"State Category file does not exist: $file")
-      throw new IllegalArgumentException(s"File does not exist: $file")
-    }
-
-    try loadPDX(file)
-    catch {
-      case e: ParserException =>
-        logger.error(s"Parser Exception: $file", e)
-      case e: UnexpectedIdentifierException =>
-        throw new RuntimeException(e)
-    }
-    setFile(file)
-  }
+  file match
+    case null => // create empty StateCategoryFile
+    case _ =>
+      require(file.exists && file.isFile, s"StateCategoryFile $file does not exist or is not a file.")
+      loadPDX(file)
+      setFile(file)
 
   def setFile(file: File): Unit = {
     _stateCategoryFile = Some(file)

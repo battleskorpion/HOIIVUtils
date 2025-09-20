@@ -24,7 +24,7 @@ import scala.jdk.javaapi.CollectionConverters
  * @param stateFile state file
  * @param addToStatesList if true, adds the state to the list of states
  */
-class State(addToStatesList: Boolean) extends StructuredPDX("state") with InfrastructureData with Localizable with Iterable[Province] with Comparable[State] with PDXFile with LazyLogging {
+class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("state") with InfrastructureData with Localizable with Iterable[Province] with Comparable[State] with PDXFile with LazyLogging {
 
   final val stateID = new IntPDX("id")
   final val name = new StringPDX("name")
@@ -60,17 +60,12 @@ class State(addToStatesList: Boolean) extends StructuredPDX("state") with Infras
   /* init */
   if (addToStatesList) State.add(this)
 
-  def this(addToStatesList: Boolean, file: File) = {
-    this(addToStatesList)
-    try loadPDX(file)
-    catch {
-      case e: ParserException =>
-        logger.error(s"Parser Exception: $file", e)
-      case e: UnexpectedIdentifierException =>
-        throw new RuntimeException(e)
-    }
+  file match 
+    case null => // create empty state
+    case _ =>
+    require(file.exists && file.isFile, s"State $file does not exist or is not a file.")
+    loadPDX(file)
     setFile(file)
-  }
 
   /**
    * @inheritdoc
@@ -447,7 +442,6 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
       logger.error(s"In State.java - ${file} is a directory, or it does not exist.")
       false
     } else {
-      logger.info(s"Reading state from ${file}")
       new State(true, file)
       true
     }

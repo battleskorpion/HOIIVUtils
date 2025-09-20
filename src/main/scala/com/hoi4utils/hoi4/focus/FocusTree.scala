@@ -55,6 +55,11 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
     FocusTree.focusTreeFileErrors += message
 //    logger.error(message)
 
+  override def handleParserException(file: File, exception: Exception): Unit =
+    val message = s"Parser exception:\n File: ${file.getAbsolutePath}.\n Exception: \"${exception.getMessage}\""
+    FocusTree.focusTreeFileErrors += message
+//    logger.error(message)
+
   // todo: add default, continuous focus position
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
     ListBuffer(id, country, focuses)
@@ -230,7 +235,6 @@ object FocusTree extends LazyLogging with PDXReadable {
       logger.warn(s"No focuses found in ${HOIIVFiles.Mod.focus_folder}")
       false
     } else {
-      logger.info("Reading focus trees from " + HOIIVFiles.Mod.focus_folder)
 
       // create focus trees from files
       HOIIVFiles.Mod.focus_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>

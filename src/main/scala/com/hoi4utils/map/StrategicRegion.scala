@@ -3,6 +3,7 @@ package com.hoi4utils.map
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.parser.ParserException
 import com.hoi4utils.script.*
+import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 import org.apache.logging.log4j.{LogManager, Logger}
 
@@ -11,8 +12,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
-class StrategicRegion extends StructuredPDX("strategic_region") with PDXFile {
-  private val logger: Logger = LogManager.getLogger(getClass)
+class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region") with PDXFile with LazyLogging {
 
   final val id = new IntPDX("id")
   final val name = new StringPDX("name")
@@ -29,17 +29,12 @@ class StrategicRegion extends StructuredPDX("strategic_region") with PDXFile {
   /* init */
   StrategicRegion.add(this)
 
-  def this(file: File) = {
-    this()
-    try loadPDX(file)
-    catch {
-      case e: ParserException =>
-        logger.error(s"Parser Exception: $file", e)
-      case e: UnexpectedIdentifierException =>
-        throw new RuntimeException(e)
-    }
-    setFile(file)
-  }
+  file match
+    case null => // create empty StrategicRegion
+    case _ =>
+      require(file.exists && file.isFile, s"StrategicRegion $file does not exist or is not a file.")
+      loadPDX(file)
+      setFile(file)
 
   /**
    * @inheritdoc

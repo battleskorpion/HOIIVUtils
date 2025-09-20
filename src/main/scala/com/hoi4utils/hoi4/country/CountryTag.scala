@@ -19,7 +19,7 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
   def read(): Boolean = {
     val tags = loadCountryTags()
     if (tags.isEmpty)
-      logger.warn("No country tags loaded!")
+      logger.error(s"No country tags loaded!?")
       return false
     _tagList.addAll(tags)
     true
@@ -68,7 +68,9 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
   def apply(tag: String, file: File): CountryTag = _tagList.find(t => t.get == tag) match
     case Some(countryTag) =>
       if (countryTag.file.isEmpty) countryTag.file = Some(file)
-      else if (countryTag.file.get != file) logger.warn(s"Tag '$tag' from file '$file' already found in loaded tags, file: ${countryTag.file}")
+      else if (countryTag.file.get != file)
+        val message = s"Tag '$tag' from file '$file' already found in loaded tags, file: ${countryTag.file}"
+        Country.countryErrors += message
       countryTag
     case None => new CountryTag(tag, Some(file))
 

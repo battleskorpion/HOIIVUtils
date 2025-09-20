@@ -28,7 +28,6 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 		try {
 			FXMLLoader fxml = new FXMLLoader(getClass().getResource(fxmlResource));
 			open(fxml);
-			logger.debug("{} Started", title);
 		} catch (IOException e) {
 			String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource + " Title: " + title;
 			logger.error("Error loading FXML: {}\n Title: {}", fxmlResource, title, e);

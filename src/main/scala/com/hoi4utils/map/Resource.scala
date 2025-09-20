@@ -93,7 +93,6 @@ object ResourcesFile extends PDXReadable {
 
   def read(): Boolean = primaryResourcesFile match
     case Some(file) =>
-      logger.info(s"Reading resources from ${file.getAbsolutePath}")
       _resourcesPDX = Some(new ResourcesFile(file))
       true
     case None =>
@@ -143,26 +142,16 @@ object ResourcesFile extends PDXReadable {
 
 }
 
-class ResourcesFile extends CollectionPDX[ResourceDef](ResourcesFile.pdxSupplier(), "resources") {
+class ResourcesFile(file: File = null) extends CollectionPDX[ResourceDef](ResourcesFile.pdxSupplier(), "resources") {
   private var _resourcesFile: Option[File] = None
 
   /* init */
-  def this(file: File) = {
-    this()
-    if (!file.exists) {
-      logger.error(s"Resources file does not exist: $file")
-      throw new IllegalArgumentException(s"File does not exist: $file")
-    }
-
-    try loadPDX(file)
-    catch {
-      case e: ParserException =>
-        logger.error(s"Parser Exception: $file", e)
-      case e: UnexpectedIdentifierException =>
-        throw new RuntimeException(e)
-    }
-    setFile(file)
-  }
+  file match
+    case null => // create empty resource
+    case _ =>
+      require(file.exists && file.isFile, s"Resource file $file does not exist or is not a file.")
+      loadPDX(file)
+      setFile(file)
 
   def setFile(file: File): Unit = {
     _resourcesFile = Some(file)
