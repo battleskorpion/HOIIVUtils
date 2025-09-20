@@ -6,8 +6,7 @@ import com.hoi4utils.parser.Node
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
-abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: List[String])
-  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
+abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
 
@@ -19,12 +18,9 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
    * @inheritdoc
    */
   @throws[UnexpectedIdentifierException]
+  @throws[NodeValueTypeException]
   override def loadPDX(expression: Node): Unit = {
-    try add(expression)
-    catch {
-      case e: NodeValueTypeException =>
-        throw new RuntimeException(e)
-    }
+    add(expression)
   }
 
   override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {

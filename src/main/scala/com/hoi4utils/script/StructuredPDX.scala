@@ -48,28 +48,33 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     value
   }
 
+  /**
+   * @inheritdoc
+   */
   override def loadPDX(expression: Node): Unit = expression.identifier match
     case None => expression.$ match
       case l: ListBuffer[Node] => loadPDX(l)
-      case _ => logger.error(s"Error loading PDX script: $expression")
+      case _ => handleNodeValueTypeError(expression, NodeValueTypeException("PDXScript.loadPDX: Expected list of nodes, got: \n" + expression))
     case Some(_) =>
-      try {
-        set(expression)
-      } catch {
-        case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-          logger.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
+      try set(expression)
+      catch
+        case e: UnexpectedIdentifierException => 
+          handleUnexpectedIdentifier(expression, e)
           // Preserve the original node in StructuredPDX as well.
           node = Some(expression)
-      }
+        case e: NodeValueTypeException        => 
+          handleNodeValueTypeError(expression, e)
+          // Preserve the original node in StructuredPDX as well.
+          node = Some(expression)
+          
 
   override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = expressions match
     case null => ListBuffer.empty
     case _ =>
       val remaining = ListBuffer.from(expressions)
       expressions.filter(this.isValidIdentifier).foreach(expression =>
-        Try(loadPDX(expression)) match
-          case Success(_) => remaining -= expression
-          case Failure(e) => logger.error(s"${e.getMessage}, skipping node: $expression, in ${this.pdxIdentifier}, continuing...")
+        loadPDX(expression)
+        remaining -= expression
       )
       remaining
 
@@ -178,5 +183,13 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     clone.node = Some(Node(pdxIdentifier, "=", ListBuffer.empty))
     clone.badNodesList = this.badNodesList
     clone
+  }
+  
+  def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit = {
+    logger.error(s"Unexpected identifier in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
+  }
+  
+  def handleNodeValueTypeError(node: Node, exception: Exception): Unit = {
+    logger.error(s"Node value type error in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
   }
 }

@@ -18,7 +18,8 @@ import scala.collection.mutable.ListBuffer
 
 
 @lombok.extern.slf4j.Slf4j
-class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Localizable {
+class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("focus") with Localizable {
+
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
 
@@ -37,19 +38,16 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   //var ddsImage: Image = _
   final val ai_will_do = new AIWillDoPDX
   /* completion reward */
-  final val completionReward: CompletionReward = new CompletionReward()
+//  final val completionReward: CompletionReward = new CompletionReward()
 
-  def this(focusTree: FocusTree, node: Node) = {
-    this(focusTree)
-    loadPDX(node)
-  }
+  if node != null then loadPDX(node)
 
   /**
    * @inheritdoc
    */
   override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
     ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost,
-      availableIfCapitulated, cancelIfInvalid, continueIfInvalid, ai_will_do, completionReward)
+      availableIfCapitulated, cancelIfInvalid, continueIfInvalid, ai_will_do)
   }
 
   def absoluteX: Int = absolutePosition.x
@@ -234,7 +232,7 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
 
   def isUnlocalized(property: com.hoi4utils.localization.Property): Boolean = !isLocalized(property)
 
-  def getCompletionReward: CompletionReward = completionReward
+//  def getCompletionReward: CompletionReward = completionReward
 
 //  def setCompletionReward(completionReward: List[Effect]): Unit = {
 //    this.completionReward = completionReward
@@ -379,10 +377,6 @@ class Focus(var focusTree: FocusTree) extends StructuredPDX("focus") with Locali
   //      cuz the generic code means its hard to get metadata, log, debug etc
   //TODO This small class is producing MOST of the unexpected identifier exceptions that show up in terminal, can you clean it up @Skorp or explain how I can touch it, please.
   class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward") {
-    @throws[UnexpectedIdentifierException]
-    override def loadPDX(expression: Node): Unit = {
-      super.loadPDX(expression)
-    }
 
     override def getPDXTypeName: String = "Completion Reward"
   }

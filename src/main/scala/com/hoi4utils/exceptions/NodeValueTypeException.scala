@@ -2,6 +2,12 @@ package com.hoi4utils.exceptions
 
 import com.hoi4utils.parser.Node
 
+/**
+ * Exception thrown when a node's value type does not match the expected type.
+ *
+ * @param message The detail message.
+ * @param cause   The cause of the exception.
+ */
 class NodeValueTypeException(message: String, cause: Throwable) extends Exception(message, cause) {
 
   def this(message: String) =
