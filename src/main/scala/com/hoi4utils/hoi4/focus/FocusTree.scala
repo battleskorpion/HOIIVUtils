@@ -20,9 +20,7 @@ import scala.jdk.javaapi.CollectionConverters
  * @note Do not create instances of this class directly, unless a few focus tree is being created or loaded.
  *       Use FocusTree.get(File) instead.
  */
-class FocusTree
-  extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile {
-  /* pdxscript */
+class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile {
   //final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
   final var country = new FocusTreeCountryPDX
   final var focuses = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
@@ -35,24 +33,20 @@ class FocusTree
   /* default */
   FocusTree.add(this)
 
-  @throws[IllegalArgumentException]
-  def this(focus_file: File) = {
-    this()
-    if (!focus_file.exists) {
-      logger.error(s"Focus tree file does not exist: $focus_file")
-      throw new IllegalArgumentException(s"File does not exist: $focus_file")
-    }
-
-    try loadPDX(focus_file)
-    catch {
-      case e: ParserException =>
-        logger.error(s"Could not load focus tree from file: $focus_file", e)
-      case e: UnexpectedIdentifierException =>
-        throw new RuntimeException(e)
-    }
-    setFile(focus_file)
+  file match {
+    case null => // create empty focus tree
+    case _ =>
+      require(file.exists && file.isFile, s"Focus tree file $file does not exist or is not a file.")
+      try loadPDX(file)
+      catch {
+        case e: ParserException =>
+          logger.error(s"Could not load focus tree from file: $file", e)
+        case e: UnexpectedIdentifierException =>
+          throw new RuntimeException(e)
+      }
+      setFile(file)
   }
-
+  
   // todo: add default, continuous focus position
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
     ListBuffer(id, country, focuses)

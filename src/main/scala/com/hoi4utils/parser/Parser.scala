@@ -10,20 +10,13 @@ object Parser {
   val escape_quote_regex = "\\\\\""
 }
 
-class Parser {
+class Parser(pdx: String | File = null) {
   private var tokens: Tokenizer = uninitialized
   private var _rootNode: Node = uninitialized
 
-  def this(input: String) = {
-    this()
-    // Append EOF indicator so tokenizer can mark the end.
-    val str = input.concat(Token.EOF_INDICATOR)
-    tokens = new Tokenizer(str)
-  }
-
-  def this(file: File) = {
-    this(new String(Files.readAllBytes(file.toPath)))
-  }
+  pdx match
+    case pdx: File   => tokens = new Tokenizer(new String(Files.readAllBytes(pdx.toPath)).concat(Token.EOF_INDICATOR)) // Append EOF indicator so tokenizer can mark the end.
+    case pdx: String => tokens = new Tokenizer(pdx.concat(Token.EOF_INDICATOR)) // Append EOF indicator so tokenizer can mark the end.
 
   /**
    * Consumes and returns any tokens that are “trivia” (e.g., whitespace, comments).

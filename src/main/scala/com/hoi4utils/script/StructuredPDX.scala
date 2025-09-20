@@ -184,12 +184,4 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     clone.badNodesList = this.badNodesList
     clone
   }
-  
-  def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit = {
-    logger.error(s"Unexpected identifier in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
-  }
-  
-  def handleNodeValueTypeError(node: Node, exception: Exception): Unit = {
-    logger.error(s"Node value type error in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
-  }
 }

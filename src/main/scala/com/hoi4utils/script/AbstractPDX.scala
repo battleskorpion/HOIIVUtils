@@ -87,20 +87,21 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     if (expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty)) {
       logger.error("Error loading PDX script: " + expression)
       return
     }
-    try {
-      set(expression)
-    } catch {
-      case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-        logger.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
-        // Preserve the original node so that its content isn’t lost.
+    try set(expression)
+    catch
+      case e: UnexpectedIdentifierException =>
+        handleUnexpectedIdentifier(expression, e)
+        // Preserve the original node in StructuredPDX as well.
         node = Some(expression)
-    }
+      case e: NodeValueTypeException        =>
+        handleNodeValueTypeError(expression, e)
+        // Preserve the original node in StructuredPDX as well.
+        node = Some(expression)
   }
 
   /**
@@ -110,18 +111,10 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    */
   def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
     val remaining = ListBuffer.from(expressions)
-    expressions.foreach { expression =>
-      if (isValidIdentifier(expression)) {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
-        catch {
-          case e: UnexpectedIdentifierException =>
-            logger.error(e.getMessage)
-        }
-      }
-    }
+    expressions.filter(this.isValidIdentifier).foreach(expression =>
+      loadPDX(expression)
+      remaining -= expression
+    )
     remaining
   }
   
@@ -246,4 +239,15 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
     null.asInstanceOf[PDXSchema[T]]  // todo no
   }
 
+  def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit = {
+    logger.error(s"Unexpected identifier in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
+  }
+
+  def handleNodeValueTypeError(node: Node, exception: Exception): Unit = {
+    logger.error(s"Node value type error in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
+  }
+  
+  def handleParserException(node: Node, exception: Exception): Unit = {
+    logger.error(s"Parser exception in ${this.pdxIdentifier}: ${node.identifier.getOrElse("unknown")}\n\t${exception.getMessage}")
+  }
 }
