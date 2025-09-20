@@ -6,8 +6,7 @@ import com.hoi4utils.extensions.*
 import com.hoi4utils.hoi4.effect.EffectDatabase.unrecognizedEffects
 import com.hoi4utils.gfx.Interface.interfaceErrors 
 //import com.hoi4utils.hoi4.country.Country.countryErrors // todo re add errors or change to different lists
-//import com.hoi4utils.hoi4.focus.Focus.focusErrors
-//import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
+import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
 //import com.hoi4utils.hoi4.idea.Idea.ideaErrors
 //import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
 import com.hoi4utils.localization.LocalizationManager.localizationErrors
