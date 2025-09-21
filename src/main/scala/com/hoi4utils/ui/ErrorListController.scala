@@ -2,7 +2,7 @@ package com.hoi4utils.ui
 
 import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.extensions.*
-import com.hoi4utils.hoi4.effect.EffectDatabase.unrecognizedEffects
+import com.hoi4utils.hoi4.effect.EffectDatabase.effectErrors
 import com.hoi4utils.gfx.Interface.interfaceErrors 
 import com.hoi4utils.hoi4.country.Country.countryErrors
 import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
@@ -43,7 +43,7 @@ class ErrorListController extends HOIIVUtilsAbstractController with LazyLogging 
 
   private def update(): Unit = {
     val listViewsWithErrors = ListBuffer(
-      (effectsEL, unrecognizedEffects),
+      (effectsEL, effectErrors),
       (localizationEL, localizationErrors),
       (interfaceEL, interfaceErrors),
       (countryEL, countryErrors),

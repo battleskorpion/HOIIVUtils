@@ -117,6 +117,8 @@ object ResourcesFile extends PDXReadable with LazyLogging {
         s"or it does not exist (No resources file found).")
       false
 
+  def clear(): Unit = _resourcesPDX = None
+  
   def pdxSupplier(): PDXSupplier[ResourceDef] = {
     new PDXSupplier[ResourceDef] {
       override def simplePDXSupplier(): Option[Node => Option[ResourceDef]] = {

@@ -62,93 +62,81 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
 
   @FXML
   def initialize(): Unit = {
-    contentContainer.setVisible(false)
-    loadingLabel.setVisible(true)
-
-    var initFailed: Boolean = false
-
-    initFailed = new Initializer().initialize(config)
-
-    val hProperties = config.getProperties
-    val version = Version.getVersion(hProperties)
-
-    new Updater().updateCheck(version, config.getDir)
-    logger.info(s"Loading mod: ${hProperties.getProperty("mod.path")}")
-    updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${hProperties.getProperty("mod.path")}\"")
-    mVersion.setText(s"v${config.getProperties.getProperty("version")}")
-    mTitle.setText(s"HOIIVUtils Menu")
     val task = new javafx.concurrent.Task[Unit] {
       override def call(): Unit = {
-        try {
-          val pdxLoader = new PDXLoader()
-          pdxLoader.clearPDX()
-          pdxLoader.clearLB()
-          pdxLoader.closeDB()
-          if (initFailed) {
-            logger.error("Skipping mod loading because of unsuccessful initialization")
-            updateLoadingStatus("Skipping loading!!!")
-          } else {
-            pdxLoader.load(hProperties, loadingLabel)
-            updateLoadingStatus("Checking for bad files...")
-            val badFiles = checkBadFiles()
-            if (badFiles.isEmpty) {
-              updateLoadingStatus("All files loaded successfully")
-            } else {
-              updateLoadingStatus("Some files are not loaded correctly, please check the settings")
-              logger.warn(s"version: ${Version.getVersion(config.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
-              showFilesErrorDialog(badFiles, vSettings)
-            }
-          }
-          HOIIVUtils.save()
-          updateLoadingStatus("Showing Menu...")
-        } catch {
-          case e: Exception =>
-            updateLoadingStatus("Error loading application")
-            logger.error(s"${Version.getVersion(config.getProperties)} Error during initialization", e)
-            Platform.runLater(() => handleFatalCrash())
-        }
+        loadProgram()
       }
 
-      private def updateLoadingStatus(status: String): Unit =
-        MenuController.updateLoadingStatus(loadingLabel, status)
+      private def loadProgram(): Unit = {
+        val pdxLoader = new PDXLoader()
 
-      private def checkBadFiles(): ListBuffer[String] =
-        ListBuffer(
+        pdxLoader.clearPDX()
+        pdxLoader.clearLB()
+        pdxLoader.closeDB()
+
+        /* ! loads whole program ! */
+        pdxLoader.load(config.getProperties, loadingLabel)
+
+        MenuController.updateLoadingStatus(loadingLabel, "Checking for bad files...")
+        val badFiles = ListBuffer(
           "localization",
           "HOIIVFilePaths",
           "Interface",
           "State",
-          //          "Country", // TODO: re-enable when Country and CountryTag have checks for bad files
-          //          "CountryTag",
+          "Country",
+          "CountryTag",
           "FocusTree",
           "IdeaFile",
           "ResourcesFile$"
         ).flatMap(MenuController.checkFileError)
-
-      private def handleFatalCrash(): Unit =
-        try {
-          loadingLabel.setVisible(false)
-          contentContainer.setVisible(true)
-        } catch {
-          case _: Exception =>
-            logger.error(s"version ${Version.getVersion(config.getProperties)} fatal crash: can't show menu buttons, please go to our discord")
-            JOptionPane.showMessageDialog(
-              null,
-              s"Version: ${Version.getVersion(config.getProperties)}\nFatal crash: can't show menu buttons, please go to our Discord.",
-              "Fatal Error",
-              JOptionPane.ERROR_MESSAGE
-            )
-            System.exit(1)
+        if (badFiles.isEmpty) {
+          MenuController.updateLoadingStatus(loadingLabel, "All files loaded successfully")
+        } else {
+          MenuController.updateLoadingStatus(loadingLabel, "Some files are not loaded correctly, please check the settings")
+          logger.warn(s"version: ${Version.getVersion(config.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
+          showFilesErrorDialog(badFiles, vSettings)
+          blockButtons(true)
         }
+
+        HOIIVUtils.save()
+        MenuController.updateLoadingStatus(loadingLabel, "Showing Menu...")
+      }
     }
 
     task.setOnSucceeded(_ => {
       contentContainer.setVisible(true)
+      blockButtons(false)
       loadingLabel.setVisible(false)
       vFocusTree.requestFocus()
     })
 
-    new Thread(task).start()
+    /* INITIALIZATION */
+    contentContainer.setVisible(false)
+    loadingLabel.setVisible(true)
+
+    try
+      new Initializer().initialize(config)
+    catch case e: Exception => handleMInitError("Skipping mod loading because of unsuccessful initialization", e)
+
+    try
+      val version = Version.getVersion(config.getProperties)
+      new Updater().updateCheck(version, config.getDir)
+      logger.info(s"Loading mod: ${config.getProperties.getProperty("mod.path")}")
+      updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${config.getProperties.getProperty("mod.path")}\"")
+      mVersion.setText(s"v${config.getProperties.getProperty("version")}")
+      mTitle.setText(s"HOIIVUtils Menu")
+      new Thread(task).start()
+    catch case e: Exception => handleMInitError("Error starting program", e)
+  }
+
+  private def handleMInitError(msg: String, exception: Exception): Unit = {
+    logger.error(msg, exception)
+    updateLoadingStatus(loadingLabel, msg)
+    mTitle.setText(s"HOIIVUtils - Error\n$msg\n$exception")
+    contentContainer.setVisible(true)
+    blockButtons(true)
+    loadingLabel.setVisible(false)
+    vSettings.requestFocus()
   }
 
   // Setup window controls AFTER primaryStage is available
@@ -371,6 +359,24 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     this.fxmlResource = fxmlResource
   override def setTitle(title: String): Unit =
     primaryStage.setTitle(title)
+
+  // TODO: @skorp remove buttons you think don't need any files (hoi4, mod, valid, etc) cuz it is trigger happy and will disable on any at startup issue's
+  private def blockButtons(b: Boolean): Unit =
+    List(
+      vFocusTree,
+      vFocusTreeLoc,
+      vManageFocusTrees,
+      vIdeasLoc,
+      vCustomTooltipLoc,
+      vBuildingsByCountry,
+      vGFX,
+      vUnitComparison,
+      vMapEditor,
+      vParserView
+    ).foreach { button =>
+      if button != null then
+        button.setDisable(b)
+    }
 
 object MenuController extends LazyLogging:
 

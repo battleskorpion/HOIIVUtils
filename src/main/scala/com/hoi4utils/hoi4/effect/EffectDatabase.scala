@@ -30,7 +30,7 @@ object EffectDatabase extends LazyLogging {
   private val edb: String = "databases/effects.db"
   private var _connection: Connection = uninitialized
   private var _effects: List[Effect] = List()
-  var unrecognizedEffects: ListBuffer[String] = ListBuffer()
+  var effectErrors: ListBuffer[String] = ListBuffer()
 
   def init(): Unit = {
     val url = getClass.getClassLoader.getResource(edb)
@@ -113,7 +113,7 @@ object EffectDatabase extends LazyLogging {
           loadedEffects ++= effects
         } else {
           // todo add metadata for where the unrecognized effect was found
-          unrecognizedEffects += s"""No parameters for "$pdxIdentifier" in effects database.
+          effectErrors += s"""No parameters for "$pdxIdentifier" in effects database.
               |Metadata:
               |  supported_scopes: $supportedScopes_str
               |  supported_targets: $supportedTargets_str
