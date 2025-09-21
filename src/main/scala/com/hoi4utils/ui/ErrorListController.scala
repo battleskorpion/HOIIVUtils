@@ -1,7 +1,6 @@
 package com.hoi4utils.ui
 
 import com.hoi4utils.HOIIVUtils
-//import com.hoi4utils.StateFilesWatcher.statesThatChanged
 import com.hoi4utils.extensions.*
 import com.hoi4utils.hoi4.effect.EffectDatabase.unrecognizedEffects
 import com.hoi4utils.gfx.Interface.interfaceErrors 
@@ -9,7 +8,12 @@ import com.hoi4utils.hoi4.country.Country.countryErrors
 import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
 import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
 import com.hoi4utils.localization.LocalizationManager.localizationErrors
+import com.hoi4utils.map.Resource.resourceErrors
+import com.hoi4utils.map.State.stateErrors
+//import com.hoi4utils.StateFilesWatcher.statesThatChanged
+
 import com.typesafe.scalalogging.LazyLogging
+
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, ListCell, ListView}
 import javafx.util.Callback
@@ -17,26 +21,18 @@ import javafx.util.Callback
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 
-class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
+class ErrorListController extends HOIIVUtilsAbstractController with LazyLogging {
   setTitle("LB Reader")
-  setFxmlResource("LBReader.fxml")
+  setFxmlResource("ErrorList.fxml")
 
-  @FXML var parserFileErrorsList: ListView[String] = uninitialized
-  @FXML var localizationErrorsList: ListView[String] = uninitialized
-  @FXML var interfaceErrorsList: ListView[String] = uninitialized
-  @FXML var countryErrorsList: ListView[String] = uninitialized
-  @FXML var focusErrorsList: ListView[String] = uninitialized
-  @FXML var focusTreeErrorsList: ListView[String] = uninitialized
-  @FXML var ideaErrorsList: ListView[String] = uninitialized
-  @FXML var ideaFileErrorsList: ListView[String] = uninitialized
-  @FXML var provinceErrorsList: ListView[String] = uninitialized
-  @FXML var resourceErrorsList: ListView[String] = uninitialized
-  @FXML var resourcesFileErrorsList: ListView[String] = uninitialized
-  @FXML var resourcesErrorsList: ListView[String] = uninitialized
-  @FXML var stateErrorsList: ListView[String] = uninitialized
-  @FXML var stateCategoriesErrorsList: ListView[String] = uninitialized
-  @FXML var strategicRegionErrorsList: ListView[String] = uninitialized
-  @FXML var victoryPointErrorsList: ListView[String] = uninitialized
+  @FXML var effectsEL: ListView[String] = uninitialized
+  @FXML var localizationEL: ListView[String] = uninitialized
+  @FXML var interfaceEL: ListView[String] = uninitialized
+  @FXML var countryEL: ListView[String] = uninitialized
+  @FXML var focusTreeEL: ListView[String] = uninitialized
+  @FXML var ideaEL: ListView[String] = uninitialized
+  @FXML var resourceEL: ListView[String] = uninitialized
+  @FXML var stateEL: ListView[String] = uninitialized
   @FXML var statesThatChangedList: ListView[String] = uninitialized
 
   val testList: ListBuffer[String] = ListBuffer.empty[String]
@@ -47,15 +43,16 @@ class LBReaderController extends HOIIVUtilsAbstractController with LazyLogging {
 
   private def update(): Unit = {
     val listViewsWithErrors = ListBuffer(
-      (parserFileErrorsList, unrecognizedEffects),
-      (localizationErrorsList, localizationErrors),
-      (interfaceErrorsList, interfaceErrors),
-      (countryErrorsList, countryErrors),
-      (focusTreeErrorsList, focusTreeFileErrors),
-      (ideaFileErrorsList, ideaFileErrors)
+      (effectsEL, unrecognizedEffects),
+      (localizationEL, localizationErrors),
+      (interfaceEL, interfaceErrors),
+      (countryEL, countryErrors),
+      (focusTreeEL, focusTreeFileErrors),
+      (ideaEL, ideaFileErrors),
+      (resourceEL, resourceErrors),
+      (stateEL, stateErrors)
     )
 
-    // todo: re add errors or change to different lists
     listViewsWithErrors.foreach((listView, errors) => setListViewItems(listView, errors)) 
     statesThatChangedList.setItems(getListOrDefaultMessage(null, "No States Changed")) // null is statesThatChanged
     listViewsWithErrors.addOne(statesThatChangedList, null) // null is statesThatChanged

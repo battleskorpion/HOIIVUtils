@@ -4,6 +4,7 @@ import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.parser.{Node, ParserException}
 import com.hoi4utils.script.*
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.logging.log4j.{LogManager, Logger}
 
 import java.io.File
@@ -13,6 +14,7 @@ import scala.collection.mutable.ListBuffer
 
 object Resource {
   private var resourceIdentifiers = Array("aluminium", "chromium", "oil", "rubber", "steel", "tungsten") // default: aluminium, chromium, oil, rubber, steel, tungsten todo load in resources if modified.
+  var resourceErrors: ListBuffer[String] = ListBuffer().empty
 
   private def setResourceIdentifiers(identifiers: Array[String]): Unit = {
     Resource.resourceIdentifiers = identifiers
@@ -63,6 +65,22 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, (
     this.set(amt)
   }
 
+  override def handleNodeValueTypeError(node: Node, exception: Exception): Unit = { 
+    val msg = s"In ${this.getClass.getSimpleName} - Error parsing resource '${node.name}': ${exception.getMessage}"
+    Resource.resourceErrors += msg
+    super.handleNodeValueTypeError(node, exception)
+  }
+
+  override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit = 
+    val msg = s"In ${this.getClass.getSimpleName} - Unexpected identifier '${node.identifier.getOrElse("none")}' in resource '${node.name}': ${exception.getMessage}"
+    Resource.resourceErrors += msg
+    super.handleUnexpectedIdentifier(node, exception)
+
+  override def handleParserException(file: File, exception: Exception): Unit = 
+    val msg = s"In ${this.getClass.getSimpleName} - Error parsing resource in file '${file.getPath}': ${exception.getMessage}"
+    Resource.resourceErrors += msg
+    super.handleParserException(file, exception)
+
   infix def isResource(resource: Resource): Boolean = this.name == resource.name
 
   infix def isResource(identifier: String): Boolean = this.name == name
@@ -85,8 +103,7 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDef](id, (
   def amt_=(value: Double): Unit = set(value)
 }
 
-object ResourcesFile extends PDXReadable {
-  val logger: Logger = LogManager.getLogger(classOf[ResourcesFile])
+object ResourcesFile extends PDXReadable with LazyLogging {
 
   //  private var _resources: List[Resource] = List()
   private var _resourcesPDX: Option[ResourcesFile] = None
