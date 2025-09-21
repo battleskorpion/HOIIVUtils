@@ -11,24 +11,18 @@ object Token {
 
   // im being lazy and need ordered
   val tokenRegex: mutable.LinkedHashMap[TokenType, Regex] = mutable.LinkedHashMap(
-    TokenType.comment -> "#.*".r, // Nullifies Comments  // prev: "#.*(?:[\r\n]|$)"
-
-    //TokenType.number -> Regex("-?\\d*\\.\\d+|-?\\d+|0x\\d+"),  // Seperates Numbers
-
-    TokenType.string -> "\"(\\\\.|[^\"])*\"".r,           // Seperates Double Quotes
-
-    TokenType.operator -> "[={}<>;,]|>=|<=|!=".r,         // Seperates Operators
-
+    TokenType.comment -> "#.*".r,
+    TokenType.string -> "\"(\\\\.|[^\"])*\"".r,
+    TokenType.operator -> "[={}<>;,]|>=|<=|!=".r,
     TokenType.float -> "-?\\d*\\.\\d+".r,
-
     TokenType.int -> "-?(?:\\d+|0x[0-9a-fA-F]+)".r,
-
-    TokenType.symbol -> "[A-Za-z0-9_:\\.@\\[\\]\\-?^/\\u00A0-\\u024F]+".r, // Symbol
-
+    TokenType.symbol -> "[A-Za-z0-9_:\\.@\\[\\]\\-?^/\\u00A0-\\u024F]+".r,
     TokenType.eof -> "\\$".r,
-
-    TokenType.whitespace -> "\\s+".r,         // <-- NEW
+    TokenType.whitespace -> "\\s+".r,
   )
+
+  private val floatPattern = tokenRegex(TokenType.float)
+  private val intPattern = tokenRegex(TokenType.int)
 }
 
 /**
@@ -55,19 +49,41 @@ class Token {
   }
 
   private def determineTokenType(value: String): TokenType = {
-    for ((key, regex) <- Token.tokenRegex) {
-      key match {
-        case TokenType.int | TokenType.float =>
-          // For int tokens, ensure the entire value is matched
-          regex.findFirstMatchIn(value) match {
-            case Some(m) if m.start == 0 && m.end == value.length => return key
-            case _ => // not a complete match, keep looking
-          }
-        case _ =>
-          // For other token types, accept a match anywhere
-          if (regex.findFirstIn(value).isDefined) return key
+    if (value.length == 1) {
+      value.charAt(0) match {
+        case '=' | '{' | '}' | '<' | '>' | ';' | ',' => return TokenType.operator
+        case '$' => return TokenType.eof
+        case _ => // continue to regex matching
       }
     }
+
+    if (value.length == 2) {
+      value match {
+        case ">=" | "<=" | "!=" => return TokenType.operator
+        case _ => // continue to regex matching
+      }
+    }
+
+    // Check numbers first with direct pattern matching (avoiding loop overhead)
+    Token.intPattern.findFirstMatchIn(value) match {
+      case Some(m) if m.start == 0 && m.end == value.length => return TokenType.int
+      case _ =>
+    }
+
+    Token.floatPattern.findFirstMatchIn(value) match {
+      case Some(m) if m.start == 0 && m.end == value.length => return TokenType.float
+      case _ =>
+    }
+
+    // Check remaining types in order of frequency (adjust based on your data)
+    for ((tokenType, regex) <- Token.tokenRegex) {
+      tokenType match {
+        case TokenType.int | TokenType.float => // Already checked above
+        case _ =>
+          if (regex.findFirstIn(value).isDefined) return tokenType
+      }
+    }
+
     TokenType.unknown
   }
 
@@ -80,7 +96,9 @@ class Token {
   override def equals(other: Any): Boolean = {
     other match {
       case that: Token =>
-        this.value == that.value && this.`type` == that.`type` && this.start == that.start
+        this.start == that.start &&
+          this.`type` == that.`type` &&
+          this.value == that.value  // String comparison last as it's most expensive
       case _ => false
     }
   }

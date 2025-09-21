@@ -44,5 +44,4 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
     if (patternBuilder.nonEmpty) new Regex(patternBuilder.substring(1)) // Skip the leading "|"
     else throw new IllegalStateException("No patterns found for token types.")
   }
-
 }
