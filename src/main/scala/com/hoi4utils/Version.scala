@@ -29,4 +29,4 @@ object Version:
     catch case e: IllegalArgumentException =>
       println(s"Failed to parse version string '$versionString': ${e.getMessage}")
       JOptionPane.showMessageDialog(null, e.getMessage, "Error", JOptionPane.ERROR_MESSAGE)
-      DEFAULT
+      throw e
