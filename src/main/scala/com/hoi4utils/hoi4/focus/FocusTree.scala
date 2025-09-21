@@ -189,19 +189,15 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
 
   override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit = {
     val errorDetails = ListBuffer[String]()
-    errorDetails += s"Focus Tree File: ${_focusFile.map(_.getName).getOrElse("[Unknown file]")}"
+    errorDetails += s"Exception: ${exception.getMessage}"
     errorDetails += s"Focus Tree ID: ${id.value.getOrElse("undefined")}"
     errorDetails += s"Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}"
+    errorDetails += s"Focus Count: ${focuses.size}"
     errorDetails += s"Node Identifier: ${node.identifier.getOrElse("none")}"
     errorDetails += s"Expected Identifiers: ${pdxIdentifiers.mkString("[", ", ", "]")}"
     errorDetails += s"Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}"
     errorDetails += s"Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}"
-    errorDetails += s"Focus Count: ${focuses.size}"
     errorDetails += s"File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}"
-    errorDetails += s"Exception Message: ${exception.getMessage}"
-    if (exception.getCause != null) {
-      errorDetails += s"Root Cause: ${exception.getCause.getMessage}"
-    }
 
     val fullMessage = "Focus Tree - Unexpected Identifier Error:\n" +
       errorDetails.map(detail => s"\t$detail").mkString("\n")
@@ -213,22 +209,14 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
 
   override def handleNodeValueTypeError(node: Node, exception: Exception): Unit = {
     val errorDetails = ListBuffer[String]()
-    errorDetails += s"Focus Tree File: ${_focusFile.map(_.getName).getOrElse("[Unknown file]")}"
+    errorDetails += s"Exception: ${exception.getMessage}"
     errorDetails += s"Focus Tree ID: ${id.value.getOrElse("undefined")}"
     errorDetails += s"Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}"
-    errorDetails += s"Node Identifier: ${node.identifier.getOrElse("none")}"
-    errorDetails += s"Expected Type: Variable (context-dependent)"
-    errorDetails += s"Actual Value: ${Option(node.$).map(_.toString).getOrElse("null")}"
-    errorDetails += s"Actual Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}"
-    errorDetails += s"Node Has Value: ${node.$ != null}"
-    errorDetails += s"Node Is Empty: ${node.isEmpty}"
     errorDetails += s"Focus Count: ${focuses.size}"
+    errorDetails += s"Node Identifier: ${node.identifier.getOrElse("none")}"
+    errorDetails += s"Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}"
+    errorDetails += s"Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}"
     errorDetails += s"File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}"
-    errorDetails += s"Exception Type: ${exception.getClass.getSimpleName}"
-    errorDetails += s"Exception Message: ${exception.getMessage}"
-    if (exception.getCause != null) {
-      errorDetails += s"Root Cause: ${exception.getCause.getMessage}"
-    }
 
     val fullMessage = "Focus Tree - Node Value Type Error:\n" +
       errorDetails.map(detail => s"\t$detail").mkString("\n")
@@ -238,49 +226,16 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
 //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
   }
 
-  override def handleParserException(node: Node, exception: Exception): Unit = {
-    val errorDetails = ListBuffer[String]()
-    errorDetails += s"Focus Tree File: ${_focusFile.map(_.getName).getOrElse("[Unknown file]")}"
-    errorDetails += s"Focus Tree ID: ${id.value.getOrElse("undefined")}"
-    errorDetails += s"Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}"
-    errorDetails += s"Node Identifier: ${node.identifier.getOrElse("none")}"
-    errorDetails += s"Node Content: ${if (node.isEmpty) "empty" else "has content"}"
-    errorDetails += s"Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}"
-    errorDetails += s"Focus Count: ${focuses.size}"
-    errorDetails += s"Current Focuses: ${if (focuses.nonEmpty) focuses.flatMap(_.id.value).take(5).mkString("[", ", ", if (focuses.size > 5) ", ...]" else "]") else "none"}"
-    errorDetails += s"File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}"
-    errorDetails += s"Parser Exception Type: ${exception.getClass.getSimpleName}"
-    errorDetails += s"Exception Message: ${exception.getMessage}"
-    if (exception.getCause != null) {
-      errorDetails += s"Root Cause: ${exception.getCause.getMessage}"
-    }
-
-    val fullMessage = "Focus Tree - Parser Exception (Node):\n" +
-      errorDetails.map(detail => s"\t$detail").mkString("\n")
-
-    FocusTree.focusTreeFileErrors += fullMessage
-//    logger.error("Focus Tree - Parser Exception (Node):")
-//    errorDetails.foreach(detail => logger.error(s"\t$detail"))
-  }
-
   override def handleParserException(file: File, exception: Exception): Unit = {
     val errorDetails = ListBuffer[String]()
+    errorDetails += s"Exception: ${exception.getMessage}"
     errorDetails += s"Focus Tree ID: ${id.value.getOrElse("undefined")}"
     errorDetails += s"Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}"
-    errorDetails += s"File Path: ${file.getAbsolutePath}"
-    errorDetails += s"File Name: ${file.getName}"
-    errorDetails += s"File Exists: ${file.exists()}"
-    errorDetails += s"File Size: ${if (file.exists()) s"${file.length()} bytes" else "N/A"}"
-    errorDetails += s"File Readable: ${file.canRead}"
-    errorDetails += s"File Last Modified: ${if (file.exists()) new java.util.Date(file.lastModified()).toString else "N/A"}"
     errorDetails += s"Focus Count: ${focuses.size}"
     errorDetails += s"Current Focuses: ${if (focuses.nonEmpty) focuses.flatMap(_.id.value).take(5).mkString("[", ", ", if (focuses.size > 5) ", ...]" else "]") else "none"}"
     errorDetails += s"Total Focus Trees Loaded: ${FocusTree.listFocusTrees.size}"
-    errorDetails += s"Parser Exception Type: ${exception.getClass.getSimpleName}"
-    errorDetails += s"Exception Message: ${exception.getMessage}"
-    if (exception.getCause != null) {
-      errorDetails += s"Root Cause: ${exception.getCause.getMessage}"
-    }
+    errorDetails += s"File Last Modified: ${if (file.exists()) new java.util.Date(file.lastModified()).toString else "N/A"}"
+    errorDetails += s"File Path: ${file.getAbsolutePath}"
 
     val fullMessage = "Focus Tree - Parser Exception (File):\n" +
       errorDetails.map(detail => s"\t$detail").mkString("\n")

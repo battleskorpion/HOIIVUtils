@@ -336,12 +336,23 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
 //    }
   }
 
-  class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus])
-    extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.value, "prerequisite", "focus") {
 
-    def this() = {
-      this(() => focusTree.focuses)
-    }
+  class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus] = () => focusTree.focuses)
+    extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.value, "prerequisite", "focus") {
+    override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
+      val errorDetails = ListBuffer[String]()
+      errorDetails += s"Exception: ${exception.getMessage}"
+      errorDetails += s"Focus Tree ID: ${id.value.getOrElse("undefined")}"
+      errorDetails += s"Class: ${this.getClass.getSimpleName}"
+      errorDetails += s"Node Identifier: ${node.identifier.getOrElse("none")}"
+      errorDetails += s"Expected Identifiers: ${pdxIdentifiers.mkString("[", ", ", "]")}"
+      errorDetails += s"Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}"
+      errorDetails += s"Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}"
+
+      val fullMessage = "Prerequisite Set - Unexpected Identifier Error:\n" +
+        errorDetails.map(detail => s"\t$detail").mkString("\n")
+
+      FocusTree.focusTreeFileErrors += fullMessage
   }
   /**
    * mutually exclusive is a multi-reference of focuses

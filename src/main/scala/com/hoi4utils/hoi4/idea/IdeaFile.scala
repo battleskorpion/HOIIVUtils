@@ -43,10 +43,6 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
     IdeaFile.ideaFileErrors += message
 //    logger.error(message)
 
-  override def handleParserException(node: Node, exception: Exception): Unit =
-    val message = s"Parser exception in idea file ${_file.map(_.getName).getOrElse("[Unknown file]")}: ${exception.getMessage}"
-    IdeaFile.ideaFileErrors += message
-//    logger.error(message)
 
   override def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
     val message = s"Node value type error in idea file ${_file.map(_.getName).getOrElse("[Unknown file]")}: ${exception.getMessage}"
