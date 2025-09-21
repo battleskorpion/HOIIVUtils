@@ -23,7 +23,11 @@ class Parser(pdx: String | File = null) {
    */
   private def consumeTrivia(): ListBuffer[Token] = {
     val trivia = ListBuffer[Token]()
-    while (tokens.peek.exists(t => t.`type` == TokenType.whitespace || t.`type` == TokenType.comment || t.value.matches("^[,;]"))) {
+    while (tokens.peek.exists(t =>
+      t.`type` == TokenType.whitespace ||
+        t.`type` == TokenType.comment ||
+        (t.value.length == 1 && (t.value == "," || t.value == ";"))
+    )) {
       trivia += tokens.next.get
     }
     trivia
