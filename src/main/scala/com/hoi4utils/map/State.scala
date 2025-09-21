@@ -108,8 +108,6 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
 //      throw new UndefinedStateIDException(stateFile)
 //    }
 //  }
-
-//  // todo breh nah
 //  private def extractPopulation(stateNode: Node): Int = {
 //    stateNode.find("manpower").map(_.value match {
 //      case Some(v) => v match {

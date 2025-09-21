@@ -13,85 +13,72 @@ import scala.reflect.ClassTag
  * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
  * <p>
  */
-trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScript[T] {
+trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScript[T]:
   private[script] var activeIdentifier = 0
   protected[script] var node: Option[Node] = None
 
   /**
-   * Sets the active identifier to match the given expression, 
-   * if it is a valid identifier. Otherwise, throws exception. 
+   * Sets the active identifier to match the given expression,
+   * if it is a valid identifier. Otherwise, throws exception.
    * @param expr the expression to check, and set the active identifier to the identifier of the expression
    * @throws UnexpectedIdentifierException if the expression is not a valid identifier
    */
   @throws[UnexpectedIdentifierException]
-  protected def usingIdentifier(expr: Node): Unit = {
-    if (pdxIdentifiers.isEmpty) {
-      // all good? 
-    }
-    else if (pdxIdentifiers.indexWhere(expr.nameEquals) == -1) {
-      throw new UnexpectedIdentifierException(expr)
-    } 
-  }
+  protected def usingIdentifier(expr: Node): Unit =
+//    if pdxIdentifiers.isEmpty
+//      // all good?
+    if pdxIdentifiers.indexWhere(expr.nameEquals) == -1 then throw new UnexpectedIdentifierException(expr)
 
   /**
    * @inheritdoc
    */
-  override protected def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit = {
-    if (node.isEmpty) {
-      return
-    }
-    if (value == null) {
-      setNull()
-      return
-    }
-    value match {
+  override protected def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit =
+    value match
+      case value if node.isEmpty =>
+      case null => setNull()
       case s: String => node.get.setValue(s)
       case i: Int => node.get.setValue(i)
       case d: Double => node.get.setValue(d)
       case b: Boolean => node.get.setValue(b)
-      case l: ListBuffer[Node] => node.get.setValue(l)
+      case l: ListBuffer[_] => try node.get.setValue(l.asInstanceOf[ListBuffer[Node]])
+        catch case _: ClassCastException => throw new RuntimeException(s"Expected ListBuffer[Node], got ListBuffer with different element type")
       case _ => throw new RuntimeException(s"Unsupported type: ${value.getClass}")
-    }
-  }
 
   /**
    * @inheritdoc
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def set(expression: Node): Unit = {
+  override def set(expression: Node): Unit =
     usingIdentifier(expression)
     setNode(expression.$)
-  }
 
   /**
    * @inheritdoc
    */
-  override def value: Option[T] = {
-    node.getOrElse(return None).$ match {
-      case value: T => Some(value)
-      case _ => None
-    }
-  }
+  override def value: Option[T] = node match
+    case None => None
+    case Some(n) => n.$ match
+      case null => None
+      case value => try Some(value.asInstanceOf[T])
+        catch case _: ClassCastException => None
 
   /**
    * @inheritdoc
    */
   override def getNode: Option[Node] = node
 
-  override def getNodes: List[Node] = getNode match {
+  override def getNodes: List[Node] = getNode match
     case Some(node) => List(node)
     case None => List.empty
-  }
 
   /**
    * @inheritdoc
    */
-  override def loadPDX(expression: Node): Unit = {
-    if (expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty)) {
+  override def loadPDX(expression: Node): Unit =
+    if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then
       logger.error("Error loading PDX script: " + expression)
       return
-    }
     try set(expression)
     catch
       case e: UnexpectedIdentifierException =>
@@ -102,10 +89,9 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
         handleNodeValueTypeError(expression, e)
         // Preserve the original node in StructuredPDX as well.
         node = Some(expression)
-  }
 
   /**
-   * 
+   *
    * @param expressions
    * @return remaining unloaded expressions
    */
@@ -119,159 +105,116 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
       )
       remaining
 
-
-  protected def loadPDX(file: File): Unit = {
+  protected def loadPDX(file: File): Unit =
     require(file.exists && file.isFile, s"File $file does not exist or is not a file.")
     val pdxParser = new Parser(file)
     try loadPDX(pdxParser.parse)
     catch case e: ParserException => handleParserException(file, e)
-  }
 
   /**
    * @inheritdoc
    */
-  override def isValidIdentifier(node: Node): Boolean = {
-    isValidID(node.name)
-  }
-  
-  override def isValidID(identifier: String): Boolean = {
-    pdxIdentifiers.contains(identifier)
-  }
+  override def isValidIdentifier(node: Node): Boolean = isValidID(node.name)
+
+  override def isValidID(identifier: String): Boolean = pdxIdentifiers.contains(identifier)
 
   /**
    * @inheritdoc
    */
-  override def clearNode(): Unit = {
-    node = None
-  }
+  override def clearNode(): Unit = node = None
 
   /**
    * @inheritdoc
    */
-  override def setNull(): Unit = {
-    node.foreach(_.setNull())
-  }
+  override def setNull(): Unit = node.foreach(_.setNull())
 
-  override def loadOrElse(exp: Node, value: T): Unit = {
-    try loadPDX(exp)
-    catch {
-      case e: UnexpectedIdentifierException =>
-        throw new RuntimeException(e)
-    }
-    if (node.get.valueIsNull) set(value)
-  }
+  override def loadOrElse(exp: Node, value: T): Unit =
+    loadPDX(exp)
+    if node.get.valueIsNull then set(value)
 
   /**
    * Rebuilds the underlying Node tree from the current state.
    * For simple leaf nodes, this is a no-op.
    * Composite types (e.g. StructuredPDX) should override this method to rebuild their Node tree.
    */
-  override def updateNodeTree(): Unit = {
-    // Default behavior for leaf nodes: update the node's value from the current state.
-    node.foreach(n => setNode(value.orNull))
-  }
+  override def updateNodeTree(): Unit = node.foreach(n => setNode(value.orNull)) // Default behavior for leaf nodes: update the node's value from the current state.
 
   /**
    * Generates the script output.
    * Before returning the script, updateNodeTree() is called so that the underlying Node reflects any changes.
    */
-  override def toScript: String = {
+  override def toScript: String =
     updateNodeTree()
     node.map(_.toScript).getOrElse("")
-  }
 
-  override def equals(other: PDXScript[?]): Boolean = {
-    other match {
+  override def equals(other: PDXScript[?]): Boolean =
+    other match
       case pdx: AbstractPDX[?] =>
-        if (node == null) return false
-        if (pdx.node == null) return false
+        if node == null then return false
+        if pdx.node == null then return false
         node.equals(pdx.node)
       case _ => false
-    }
-  }
 
   /**
    * @inheritdoc
    */
-  override def getOrElse(elseValue: T): T = {
+  override def getOrElse(elseValue: T): T =
     val value = node.getOrElse(return elseValue).value
     value match
       case Some(t: T) => t
       case _ => elseValue
-  }
 
-  override def toString: String = {
-    if (node.isEmpty || node.get.isEmpty) {
-      if (value.isEmpty) {
-        return super.toString
-      } else {
-        return value.get.toString
-      }
-    }
+  override def toString: String =
+    if node.isEmpty || node.get.isEmpty then
+      if value.isEmpty then return super.toString
+      else return value.get.toString
     node.toString
-  }
 
   override def isUndefined: Boolean = node.isEmpty || node.get.valueIsNull
 
   override def isDefined: Boolean = !isUndefined
 
-  override def pdxIdentifier: String = {
-    if (pdxIdentifiers.isEmpty) return null
-    else pdxIdentifiers(activeIdentifier)
-  }
+  override def pdxIdentifier: String = if pdxIdentifiers.isEmpty then null else pdxIdentifiers(activeIdentifier)
 
   /**
-   * Checks whether the node’s value is an instance of the specified class.
+   * Checks whether the node's value is an instance of the specified class.
    */
-  def valueIsInstanceOf[A](implicit ct: ClassTag[A]): Boolean = {
-    node.exists(n => ct.runtimeClass.isInstance(n.$))
-  }
+  def valueIsInstanceOf[A](implicit ct: ClassTag[A]): Boolean = node.exists(n => ct.runtimeClass.isInstance(n.$))
 
-  def getPDXTypeName: String = {
-    pdxIdentifier
-  }
+  def getPDXTypeName: String = pdxIdentifier
 
-  def schema(): PDXSchema[T] = {
+  def schema(): PDXSchema[T] =
     var schema = new PDXSchema[T](pdxIdentifiers*)
     null.asInstanceOf[PDXSchema[T]]  // todo no
-  }
 
-  def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit = {
-    val errorDetails = ListBuffer[String]()
-    errorDetails += s"Exception: ${exception.getMessage}"
-    errorDetails += s"PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}"
-    errorDetails += s"Node Identifier: ${node.identifier.getOrElse("none")}"
-    errorDetails += s"Expected Identifiers: ${if (pdxIdentifiers.nonEmpty) pdxIdentifiers.mkString("[", ", ", "]") else "any"}"
-    errorDetails += s"Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}"
-    errorDetails += s"Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}"
-    errorDetails += s"Active Identifier Index: $activeIdentifier"
+  /* Error handling methods */
 
-    logger.error("Unexpected Identifier Error:")
-    errorDetails.foreach(detail => logger.error(s"\t$detail"))
-  }
+  def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
+    logger.error(
+      s"""Unexpected Identifier Error:
+         |	Exception: ${exception.getMessage}
+         |	PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}
+         |	Node Identifier: ${node.identifier.getOrElse("none")}
+         |	Expected Identifiers: ${if pdxIdentifiers.nonEmpty then pdxIdentifiers.mkString("[", ", ", "]") else "any"}
+         |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
+         |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
+         |	Active Identifier Index: $activeIdentifier""".stripMargin)
 
-  def handleNodeValueTypeError(node: Node, exception: Exception): Unit = {
-    val errorDetails = ListBuffer[String]()
-    errorDetails += s"Exception: ${exception.getMessage}"
-    errorDetails += s"PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}"
-    errorDetails += s"Node Identifier: ${node.identifier.getOrElse("none")}"
-    errorDetails += s"Expected Type: T (generic parameter)"
-    errorDetails += s"Actual Value: ${Option(node.$).map(_.toString).getOrElse("null")}"
-    errorDetails += s"Actual Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}"
-    errorDetails += s"Node Has Value: ${node.$ != null}"
-    errorDetails += s"Node Is Empty: ${node.isEmpty}"
+  def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
+    logger.error(
+      s"""Node Value Type Error:
+         |	Exception: ${exception.getMessage}
+         |	PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}
+         |	Node Identifier: ${node.identifier.getOrElse("none")}
+         |	Expected Type: T (generic parameter)
+         |	Actual Value: ${Option(node.$).map(_.toString).getOrElse("null")}
+         |	Actual Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
+         |	Node Has Value: ${node.$ != null}
+         |	Node Is Empty: ${node.isEmpty}""".stripMargin)
 
-    logger.error("Node Value Type Error:")
-    errorDetails.foreach(detail => logger.error(s"\t$detail"))
-  }
-
-  def handleParserException(file: File, exception: Exception): Unit = {
-    val errorDetails = ListBuffer[String]()
-    errorDetails += s"Exception Message: ${exception.getMessage}"
-    errorDetails += s"PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}"
-    errorDetails += s"File Path: ${file.getAbsolutePath}"
-
-    logger.error("Parser Exception (File):")
-    errorDetails.foreach(detail => logger.error(s"\t$detail"))
-  }
-}
+  def handleParserException(file: File, exception: Exception): Unit =
+    logger.error(
+      s"""Parser Exception (File):
+         |	Exception Message: ${exception.getMessage}
+         |	PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}
+         |	File Path: ${file.getAbsolutePath}""".stripMargin)

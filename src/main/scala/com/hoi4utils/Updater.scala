@@ -24,7 +24,7 @@ class Updater extends LazyLogging:
    * @param v The current version of the application.
    * @param hDirPath The home directory path of the application.
    */
-  def updateCheck(v: Version, hDirPath: Path): Unit = {
+  def updateCheck(v: Version, hDirPath: Path): Unit =
     val hDir = hDirPath.toFile
     logger.info(s"Checking for updates. Current version: $v")
     val tempUprJar = new File(hDir.getAbsolutePath
@@ -64,7 +64,6 @@ class Updater extends LazyLogging:
         logger.info(s"You are on a newer version than the latest version: $lV")
       case com.hoi4utils.Version(_, _, _) =>
         logger.error(s"Failed to parse version: lastest:$lV current:$v")
-  }
 
   /**
    * Runs the Updater.jar file to update the application.
@@ -72,7 +71,7 @@ class Updater extends LazyLogging:
    * the updater if successful will run this application again.
    * @param hDir The home directory of the application.
    */
-  private def update(hDir: File): Unit = {
+  private def update(hDir: File): Unit =
     logger.info("Updating...")
     try
       val updaterJar = hDir.getAbsolutePath
@@ -86,7 +85,6 @@ class Updater extends LazyLogging:
     catch
       case e: Exception =>
         logger.error("Failed to update: " + e.getMessage)
-  }
 
   /**
    * Updates the Updater.jar file if a temporary updater file exists.
@@ -96,10 +94,9 @@ class Updater extends LazyLogging:
    * (This is used to update the updater itself in case we compile a new one and release it.)
    * @param tempUprJar The temporary updater jar file.
    */
-  private def updateUpdater(tempUprJar: File): Unit = {
+  private def updateUpdater(tempUprJar: File): Unit =
     logger.debug("Updating updater...")
     val updaterJar = new File(tempUprJar.getAbsolutePath.replace(".temp", ""))
     Files.copy(tempUprJar.toPath, updaterJar.toPath, StandardCopyOption.REPLACE_EXISTING)
     if !updaterJar.exists() then logger.error("Failed to update updater")
     if !tempUprJar.delete() then logger.debug("Failed to delete temporary updater file")
-  }
