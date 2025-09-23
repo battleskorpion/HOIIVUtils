@@ -42,9 +42,9 @@ class Updater extends LazyLogging:
         Version(json("tag_name").str)
       catch
         case e: Exception =>
-          logger.error(s"Failed to fetch latest version, no internet?, using default version: 0.0.0")
-          Version.DEFAULT
-    if lV == Version.DEFAULT then return
+          logger.warn(s"Failed to fetch latest version, no internet?")
+          null
+    if lV == null then return
     this.lV = lV
     lV match
       case lV if lV > v =>
