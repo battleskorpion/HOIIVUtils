@@ -8,12 +8,12 @@
   <version>14.9.3</version>
   <description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
   <url>https://github.com/battleskorpion/HOIIVUtils</url>
-
+  
   <issueManagement>
     <system>GitHub Issues</system>
     <url>https://github.com/battleskorpion/HOIIVUtils/issues</url>
   </issueManagement>
-
+  
   <developers>
     <developer>
       <id>battleskorpion</id>
@@ -34,7 +34,7 @@
       <timezone>-7</timezone>
     </developer>
   </developers>
-
+  
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -42,11 +42,21 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  
   <scm>
     <url>https://github.com/battleskorpion/HOIIVUtils</url>
     <connection>scm:git:git://github.com/battleskorpion/HOIIVUtils.git</connection>
   </scm>
-
+  
+  <properties>
+    <project.organization.name>battleskorpion</project.organization.name>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.inceptionYear>2022</project.inceptionYear>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.release>24</maven.compiler.release>
+    <scala.version>3.7.3</scala.version>
+  </properties>
+  
   <build>
     <resources>
       <resource>
@@ -68,25 +78,58 @@
         <directory>src/main/resources_binary</directory>
       </resource>
     </resources>
-
+    
     <finalName>${project.artifactId}</finalName>
-    <!-- https://maven.apache.org/plugins/index.html -->
-
+    
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.13.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.4.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.6.1</version>
+        </plugin>
+        <plugin>
+          <groupId>net.alchim31.maven</groupId>
+          <artifactId>scala-maven-plugin</artifactId>
+          <version>4.9.6</version>
+        </plugin>
+        <plugin>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-maven-plugin</artifactId>
+          <version>0.0.8</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    
     <plugins>
-      <!-- JavaFX Plugin https://github.com/openjfx/javafx-maven-plugin -->
+      <!-- JavaFX Plugin -->
       <plugin>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
-        <version>0.0.8</version>
         <configuration>
           <mainClass>com.hoi4utils.HOIIVUtils</mainClass>
         </configuration>
       </plugin>
-      <!-- Scala Integration https://davidb.github.io/scala-maven-plugin/ -->
+      
+      <!-- Scala Integration -->
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>4.9.5</version>
         <executions>
           <execution>
             <id>scala-compile-first</id>
@@ -105,14 +148,14 @@
           </execution>
         </executions>
         <configuration>
-          <scalaVersion>3.7.0</scalaVersion>
+          <scalaVersion>${scala.version}</scalaVersion>
         </configuration>
       </plugin>
-      <!-- https://maven.apache.org/plugins/maven-compiler-plugin/usage.html -->
+      
+      <!-- Maven Compiler Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.14.0</version>
         <executions>
           <execution>
             <phase>compile</phase>
@@ -122,22 +165,22 @@
           </execution>
         </executions>
         <configuration>
-          <!-- Lombok Integration https://projectlombok.org/setup/maven -->
+          <!-- Lombok Integration -->
           <annotationProcessorPaths>
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
-              <version>1.18.38</version>
+              <version>1.18.42</version>
             </path>
           </annotationProcessorPaths>
-          <release>${java.version}</release>
+          <release>${maven.compiler.release}</release>
         </configuration>
       </plugin>
-      <!-- https://maven.apache.org/plugins/maven-shade-plugin/usage.html -->
+      
+      <!-- Maven Shade Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.6.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -154,11 +197,11 @@
           </execution>
         </executions>
       </plugin>
-      <!-- Clean plugin with additional configuration -->
+      
+      <!-- Clean plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>3.3.2</version>
         <configuration>
           <filesets>
             <fileset>
@@ -167,7 +210,7 @@
                 <include>**/*</include>
               </includes>
             </fileset>
-            <!-- Add this to clean Scala compilation cache -->
+            <!-- Clean Scala compilation cache -->
             <fileset>
               <directory>${basedir}</directory>
               <includes>
@@ -181,340 +224,203 @@
       </plugin>
     </plugins>
   </build>
-
-  <!-- https://mvnrepository.com/ -->
+  
+  <dependencyManagement>
+    <dependencies>
+      <!-- JUnit BOM -->
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.11.2</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/com.lihaoyi/ujson -->
+    <!-- Scala -->
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala3-library_3</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala3-compiler_3</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    
+    <!-- JSON Processing -->
     <dependency>
       <groupId>com.lihaoyi</groupId>
       <artifactId>ujson_3</artifactId>
-      <version>4.1.0</version>
+      <version>4.0.2</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+    
+    <!-- Lombok -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.38</version>
+      <version>1.18.42</version>
       <scope>provided</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
+    
+    <!-- JavaFX -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>${javafx.version}</version>
+      <version>23.0.1</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-fxml -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
-      <version>${javafx.version}</version>
+      <version>23.0.1</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.testfx/testfx-core -->
+    
+    <!-- ControlsFX -->
+    <dependency>
+      <groupId>org.controlsfx</groupId>
+      <artifactId>controlsfx</artifactId>
+      <version>11.2.1</version>
+    </dependency>
+    
+    <!-- RichTextFX -->
+    <dependency>
+      <groupId>org.fxmisc.richtext</groupId>
+      <artifactId>richtextfx</artifactId>
+      <version>0.11.3</version>
+    </dependency>
+    
+    <!-- ScalaFX -->
+    <dependency>
+      <groupId>org.scalafx</groupId>
+      <artifactId>scalafx_3</artifactId>
+      <version>23.0.1-R34</version>
+    </dependency>
+    
+    <!-- Database -->
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+      <version>3.46.1.3</version>
+    </dependency>
+    
+    <!-- Apache POI -->
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>5.3.0</version>
+    </dependency>
+    
+    <!-- JGraphT -->
+    <dependency>
+      <groupId>org.jgrapht</groupId>
+      <artifactId>jgrapht-core</artifactId>
+      <version>1.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jgrapht</groupId>
+      <artifactId>jgrapht-ext</artifactId>
+      <version>1.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jgrapht</groupId>
+      <artifactId>jgrapht-io</artifactId>
+      <version>1.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jgrapht</groupId>
+      <artifactId>jgrapht-opt</artifactId>
+      <version>1.5.2</version>
+    </dependency>
+    
+    <!-- Aparapi -->
+    <dependency>
+      <groupId>com.aparapi</groupId>
+      <artifactId>aparapi</artifactId>
+      <version>3.0.2</version>
+    </dependency>
+    
+    <!-- Java Diff Utils -->
+    <dependency>
+      <groupId>io.github.java-diff-utils</groupId>
+      <artifactId>java-diff-utils</artifactId>
+      <version>4.12</version>
+    </dependency>
+    
+    <!-- JetBrains Annotations -->
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>24.1.0</version>
+    </dependency>
+    
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.24.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.24.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j2-impl</artifactId>
+      <version>2.24.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.typesafe.scala-logging</groupId>
+      <artifactId>scala-logging_3</artifactId>
+      <version>3.9.5</version>
+    </dependency>
+    
+    <!-- Scala Parser Combinators -->
+    <dependency>
+      <groupId>org.scala-lang.modules</groupId>
+      <artifactId>scala-parser-combinators_3</artifactId>
+      <version>2.4.0</version>
+    </dependency>
+    
+    <!-- Test Dependencies -->
     <dependency>
       <groupId>org.testfx</groupId>
       <artifactId>testfx-core</artifactId>
       <version>4.0.18</version>
       <scope>test</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.testfx/testfx-junit5 -->
     <dependency>
       <groupId>org.testfx</groupId>
       <artifactId>testfx-junit5</artifactId>
       <version>4.0.18</version>
       <scope>test</scope>
     </dependency>
-    <!-- JUnit -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.10.0</version>
       <scope>test</scope>
     </dependency>
-    <!-- Mockito for mocking -->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.5.0</version>
+      <version>5.14.2</version>
       <scope>test</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
-    <dependency>
-      <groupId>org.xerial</groupId>
-      <artifactId>sqlite-jdbc</artifactId>
-      <version>3.49.1.0</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi</artifactId>
-      <version>5.4.1</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-core -->
-    <dependency>
-      <groupId>org.jgrapht</groupId>
-      <artifactId>jgrapht-core</artifactId>
-      <version>1.5.2</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext -->
-    <dependency>
-      <groupId>org.jgrapht</groupId>
-      <artifactId>jgrapht-ext</artifactId>
-      <version>1.5.2</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-io -->
-    <dependency>
-      <groupId>org.jgrapht</groupId>
-      <artifactId>jgrapht-io</artifactId>
-      <version>1.5.2</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-opt -->
-    <dependency>
-      <groupId>org.jgrapht</groupId>
-      <artifactId>jgrapht-opt</artifactId>
-      <version>1.5.2</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/com.aparapi/aparapi -->
-    <dependency>
-      <groupId>com.aparapi</groupId>
-      <artifactId>aparapi</artifactId>
-      <version>3.0.2</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>4.0.0-M1</version>
+      <version>3.26.3</version>
       <scope>test</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/io.github.java-diff-utils/java-diff-utils -->
-    <dependency>
-      <groupId>io.github.java-diff-utils</groupId>
-      <artifactId>java-diff-utils</artifactId>
-      <version>4.15</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.fxmisc.richtext/richtextfx -->
-    <dependency>
-      <groupId>org.fxmisc.richtext</groupId>
-      <artifactId>richtextfx</artifactId>
-      <version>0.11.5</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
-    <dependency>
-      <groupId>org.jetbrains</groupId>
-      <artifactId>annotations</artifactId>
-      <version>26.0.2</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>2.24.3</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <version>2.24.3</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j2-impl</artifactId>
-      <version>2.24.3</version>
-      <scope>compile</scope>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/com.typesafe.scala-logging/scala-logging -->
-    <dependency>
-      <groupId>com.typesafe.scala-logging</groupId>
-      <artifactId>scala-logging_3</artifactId>
-      <version>3.9.5</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.scala-lang/scala3-library -->
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala3-library_3</artifactId>
-      <version>3.7.0</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_3</artifactId>
-      <version>3.3.0-alpha.1</version>
+      <version>3.2.19</version>
       <scope>test</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
-    <dependency>
-      <groupId>org.controlsfx</groupId>
-      <artifactId>controlsfx</artifactId>
-      <version>11.2.2</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.scala-lang/scala3-compiler -->
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala3-compiler_3</artifactId>
-      <version>3.7.0</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.scala-lang.modules/scala-parser-combinators -->
-    <dependency>
-      <groupId>org.scala-lang.modules</groupId>
-      <artifactId>scala-parser-combinators_3</artifactId>
-      <version>2.4.0</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.scalafx/scalafx -->
-    <dependency>
-      <groupId>org.scalafx</groupId>
-      <artifactId>scalafx_3</artifactId>
-      <version>24.0.0-R35</version>
-    </dependency>
-    <!-- !!!!! UI !!!!! -->
-    <!--
-    <dependency>
-      <groupId>com.hoi4utils</groupId>
-      <artifactId>compose-ui</artifactId>
-      <version>0.1.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>androidx.compose.material</groupId>
-          <artifactId>material</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.lifecycle</groupId>
-          <artifactId>lifecycle-runtime</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.lifecycle</groupId>
-          <artifactId>lifecycle-runtime-desktop</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.foundation</groupId>
-          <artifactId>foundation</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.ui</groupId>
-          <artifactId>ui-geometry</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.lifecycle</groupId>
-          <artifactId>lifecycle-runtime-compose</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.arch.core</groupId>
-          <artifactId>core-common</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.material</groupId>
-          <artifactId>material-ripple</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.foundation</groupId>
-          <artifactId>foundation-layout</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.collection</groupId>
-          <artifactId>collection-jvm</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.ui</groupId>
-          <artifactId>ui</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.ui</groupId>
-          <artifactId>ui-text</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.lifecycle</groupId>
-          <artifactId>lifecycle-common-jvm</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.lifecycle</groupId>
-          <artifactId>lifecycle-runtime</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.annotation</groupId>
-          <artifactId>annotation-jvm</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.annotation</groupId>
-          <artifactId>annotation</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.runtime</groupId>
-          <artifactId>runtime</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.ui</groupId>
-          <artifactId>ui-unit</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.runtime</groupId>
-          <artifactId>runtime-saveable</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.lifecycle</groupId>
-          <artifactId>lifecycle-viewmodel-desktop</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.ui</groupId>
-          <artifactId>ui-tooling-preview</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.ui</groupId>
-          <artifactId>ui-graphics</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.lifecycle</groupId>
-          <artifactId>lifecycle-common</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.ui</groupId>
-          <artifactId>ui-util</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.animation</groupId>
-          <artifactId>animation</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.lifecycle</groupId>
-          <artifactId>lifecycle-viewmodel</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jetbrains.compose.desktop</groupId>
-          <artifactId>desktop-jvm-windows-x64</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.collection</groupId>
-          <artifactId>collection</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>androidx.compose.animation</groupId>
-          <artifactId>animation-core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    -->
   </dependencies>
-
-  <dependencyManagement>
-    <dependencies>
-      <!-- https://mvnrepository.com/artifact/org.junit/junit-bom -->
-      <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>5.13.0-M3</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-  <properties>
-    <java.version>24</java.version>
-    <project.organization.name>battleskorpion</project.organization.name>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>24.0.1</javafx.version>
-    <project.inceptionYear>2022</project.inceptionYear>
-    <scala.version>3.7.0</scala.version>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-  </properties>
 
 </project>
