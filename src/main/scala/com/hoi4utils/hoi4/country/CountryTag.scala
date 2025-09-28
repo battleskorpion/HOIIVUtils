@@ -101,7 +101,7 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
         countryTag.file = Some(file)
       else if (countryTag.file.get != file)
         val message = s"Tag '$tag' from file '$file' already found in loaded tags, file: ${countryTag.file}"
-        Country.countryErrors += message
+        CountryFile.countryErrors += message
       countryTag
 
   override def iterator: Iterator[CountryTag] = _tagList.iterator

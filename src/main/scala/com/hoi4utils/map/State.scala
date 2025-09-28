@@ -2,7 +2,7 @@ package com.hoi4utils.map
 
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
-import com.hoi4utils.hoi4.country.{Country, CountryTag}
+import com.hoi4utils.hoi4.country.{CountryFile, CountryTag}
 import com.hoi4utils.localization.*
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
@@ -396,7 +396,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
     states.find(_.name @== state_name)
   }
 
-  def ownedStatesOfCountry(country: Country): ListBuffer[State] = ownedStatesOfCountry(country.countryTag)
+  def ownedStatesOfCountry(country: CountryFile): ListBuffer[State] = ownedStatesOfCountry(country.countryTag)
 
   def ownedStatesOfCountry(tag: CountryTag): ListBuffer[State] = {
     states filter(state => state.owner(ClausewitzDate.defaulty).exists(_.equals(tag)))
@@ -533,7 +533,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
 
   def infrastructureOfCountry(tag: CountryTag) = infrastructureOfStates(ownedStatesOfCountry(tag))
   
-  def infrastructureOfCountry(country: Country) = infrastructureOfStates(ownedStatesOfCountry(country))
+  def infrastructureOfCountry(country: CountryFile) = infrastructureOfStates(ownedStatesOfCountry(country))
 
   // ! todo test if working
   def resourcesOfCountries: List[List[Resource]] = {
@@ -547,7 +547,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
 
   def resourcesOfCountry(tag: CountryTag): List[Resource] = resourcesOfStates(ownedStatesOfCountry(tag))
   
-  def resourcesOfCountry(country: Country): List[Resource] = resourcesOfStates(ownedStatesOfCountry(country))
+  def resourcesOfCountry(country: CountryFile): List[Resource] = resourcesOfStates(ownedStatesOfCountry(country))
 
   protected def usefulData(data: String): Boolean = if (data.nonEmpty) if (data.trim.charAt(0) == '#') false
   else true

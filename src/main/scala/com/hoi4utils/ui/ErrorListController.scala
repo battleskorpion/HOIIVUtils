@@ -4,8 +4,8 @@ import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.extensions.*
 import com.hoi4utils.hoi4.effect.EffectDatabase.effectErrors
 import com.hoi4utils.gfx.Interface.interfaceErrors 
-import com.hoi4utils.hoi4.country.Country.countryErrors
-import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
+import com.hoi4utils.hoi4.country.CountryFile.countryErrors
+import com.hoi4utils.hoi4.focus.FocusTreeFile.focusTreeFileErrors
 import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
 import com.hoi4utils.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.map.Resource.resourceErrors

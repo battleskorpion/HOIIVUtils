@@ -18,7 +18,7 @@ import scala.collection.mutable.ListBuffer
 
 
 @lombok.extern.slf4j.Slf4j
-class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("focus") with Localizable:
+class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredPDX("focus") with Localizable:
 
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
@@ -317,7 +317,7 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
                            |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
                            |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}""".stripMargin
 
-      FocusTree.focusTreeFileErrors += fullMessage
+      FocusTreeFile.focusTreeFileErrors += fullMessage
 
   /**
    * mutually exclusive is a multi-reference of focuses

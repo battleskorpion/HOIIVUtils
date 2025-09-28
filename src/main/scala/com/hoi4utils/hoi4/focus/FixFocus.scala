@@ -23,7 +23,7 @@ object FixFocus extends LazyLogging {
    */
   @throws[IOException]
   @throws[LocalizationPreconditionException]
-  def fixLocalization(focusTree: FocusTree, generateDefaultDescs: Boolean): Unit = {
+  def fixLocalization(focusTree: FocusTreeFile, generateDefaultDescs: Boolean): Unit = {
     logger.debug(s"Starting fixLocalization for FocusTree: $focusTree")
     requireLocalizableFocusTree(focusTree)
 
@@ -53,7 +53,7 @@ object FixFocus extends LazyLogging {
 
   @throws[IllegalArgumentException]
   @throws[LocalizationPreconditionException]
-  private def requireLocalizableFocusTree(focusTree: FocusTree): Unit = {
+  private def requireLocalizableFocusTree(focusTree: FocusTreeFile): Unit = {
     if (focusTree == null) throw new IllegalArgumentException("Focus tree is null.")
     if (!focusTree.hasFocuses) throw LocalizationPreconditionException(s"Focus tree $focusTree has localizable focuses.")
     if (focusTree.primaryLocalizationFile.isEmpty) throw LocalizationPreconditionException(s"Focus tree $focusTree has a known primary localization file.")

@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.buildings
 
-import com.hoi4utils.hoi4.country.Country
+import com.hoi4utils.hoi4.country.CountryFile
 import com.hoi4utils.map.State
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.custom_javafx.`export`.ExcelExport
@@ -36,7 +36,7 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 	private var stateDataTable: StateTable = uninitialized
 
 	private var resourcesPercent = false
-	private var _country: Country = null
+	private var _country: CountryFile = null
 	private var stateList: ObservableList[State] = FXCollections.observableArrayList()
 
 	/**
@@ -46,7 +46,7 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 	 *
 	 * @param country
 	 */
-	def this(country: Country) = {
+	def this(country: CountryFile) = {
 		this()
 		setCountry(country)
 	}
@@ -115,14 +115,14 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 		stateDataTable.updateResourcesColumnsPercentBehavior(resourcesPercent)
 	}
 
-	def setCountry(country: Country): Unit = {
+	def setCountry(country: CountryFile): Unit = {
 		this._country = country
 		setTitle("HOIIVUtils Buildings By State Window, Country: " + country.name)
 		stateList = FXCollections.observableArrayList(CollectionConverters.asJava(State.ownedStatesOfCountry(country)))
 		logger.debug("1 - Country: " + country)
 	}
 
-	def country: Country = _country
+	def country: CountryFile = _country
 
 	@FXML def handleSavePDX(): Unit = {
 		stateDataTable.getItems.forEach(_.save())

@@ -2,7 +2,7 @@ package com.hoi4utils.ui.focus_view
 
 import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.hoi4.focus.{Focus, FocusTree}
+import com.hoi4utils.hoi4.focus.{Focus, FocusTreeFile}
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.hoi4utils.ui.pdxscript.PDXEditorController
@@ -26,7 +26,7 @@ import scala.compiletime.uninitialized
 import scala.util.boundary
 import scala.jdk.CollectionConverters.*
 
-class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends ScrollPane with LazyLogging {
+class FocusTreeScrollPane(private var _focusTree: Option[FocusTreeFile]) extends ScrollPane with LazyLogging {
   // Constants
   private val FOCUS_X_SCALE: Int = 90
   private val CENTER_FOCUS_X: Int = FOCUS_X_SCALE / 2
@@ -386,7 +386,7 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
   }
 
   @FXML
-  def selectClosestMatch(comboBox: ComboBox[FocusTree], typedText: String): Unit = {
+  def selectClosestMatch(comboBox: ComboBox[FocusTreeFile], typedText: String): Unit = {
     val matchingItem = comboBox.getItems.asScala.find { item =>
       item.countryTag match {
         case Some(countryTag) => countryTag.toString.toLowerCase().startsWith(typedText.toLowerCase())
@@ -602,14 +602,14 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     }
   }
 
-  def focusTree: Option[FocusTree] = _focusTree
+  def focusTree: Option[FocusTreeFile] = _focusTree
 
-  def focusTree_= (focusTree: Option[FocusTree]): Unit = {
+  def focusTree_= (focusTree: Option[FocusTreeFile]): Unit = {
     _focusTree = focusTree
     drawFocusTree()
   }
 
-  def focusTree_=(focusTree: FocusTree): Unit = this.focusTree = Some(focusTree)
+  def focusTree_=(focusTree: FocusTreeFile): Unit = this.focusTree = Some(focusTree)
 
   private def addFocusTreePaneHandlers(): Unit = {
     addPanningHandlers()

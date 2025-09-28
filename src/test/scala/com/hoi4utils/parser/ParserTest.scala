@@ -380,35 +380,4 @@ class ParserTest extends ParserTestBase with AnyFunSuiteLike {
       }
     }
   }
-
-  @Test
-  @DisplayName("Should detect commented-out focus blocks")
-  def testCommentedFocusDetection(): Unit = {
-    val californiaFile = testModPath.resolve("common/national_focus/california.txt").toFile
-
-    // Create a new FocusTree from california.txt
-    val focusTree = new com.hoi4utils.hoi4.focus.FocusTree(californiaFile)
-
-    // Check that commented focuses were detected
-    val commentedFocuses = focusTree.commentedFocuses
-
-    // Should find exactly 4 commented focus blocks
-    assertEquals(4, commentedFocuses.size,
-      "Should detect exactly 4 commented-out focus blocks in california.txt")
-
-    // Should contain expected commented focus IDs
-    val expectedCommentedIds = Set("SCA_silver_legions", "SCA_allow_the_golden_legions_to_enter_politics",
-                                   "SCA_silver_assault_divsions_form", "SCA_gold_assault_divsions_form")
-
-    val actualCommentedIds = commentedFocuses.toSet
-
-    assertTrue(expectedCommentedIds.subsetOf(actualCommentedIds),
-      s"Expected commented focus IDs $expectedCommentedIds should be found in actual IDs $actualCommentedIds")
-
-    // Normal focuses should still work correctly
-    assertEquals(226, focusTree.focuses.size,
-      "Normal focus count should not be affected by commented focus detection")
-
-    println(s"✓ Detected ${commentedFocuses.size} commented focuses: ${commentedFocuses.take(3).mkString(", ")}...")
-  }
 }

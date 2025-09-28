@@ -177,28 +177,106 @@ The **"missing" 4 focuses** were never actually missing from the parser's perspe
 
 The parser is working exactly as intended - it correctly ignores commented code blocks while preserving the file structure for script regeneration.
 
-## **How Other Mod Files Get Parsed**
+## **HOI4 PDX Class Architecture: File vs Child Block Classes**
 
-The same PDX hierarchy is used for all mod file types:
+The HOI4 codebase follows a consistent pattern where each game system has **two types of classes**:
 
-### **Countries** (`src/main/scala/com/hoi4utils/hoi4/country/`)
-- **CountryTag**: Simple string identifiers (e.g., "GER", "USA")
-- **Country**: Complex objects with history, ideas, etc.
+### **FILE CLASSES** (Represent entire mod files)
+These classes represent complete `.txt` files and manage top-level file structure:
 
-### **Localization** (`src/main/scala/com/hoi4utils/localization/`)
-- **LocalizationCollection**: Maps of key-value pairs
-- **Property**: Enum for different text types (NAME, DESCRIPTION, etc.)
+| **Package** | **File Class**     | **Represents** | **File Type** |
+|-------------|--------------------|----------------|---------------|
+| `hoi4.focus` | **FocusTreeFile**  | Entire focus tree file | `common/national_focus/*.txt` |
+| `hoi4.idea` | **IdeaFile**       | Entire ideas file | `common/ideas/*.txt` |
+| `hoi4.country` | **CountryFile**    | Country definition file | `common/countries/*.txt` |
+| `hoi4.technology` | **TechPath**       | Technology file | `common/technologies/*.txt` |
+| `hoi4.units` | **OrdersOfBattle** | OOB file | `history/units/*.txt` |
 
-### **Ideas** (`src/main/scala/com/hoi4utils/hoi4/idea/`)
-- **IdeaDatabase**: Collection of all available ideas
-- **Idea**: Individual idea definitions with effects
+**Characteristics of File Classes:**
+- Extend `StructuredPDX` with the root identifier (e.g., `"focus_tree"`, `"ideas"`)
+- Manage collections of child blocks via `MultiPDX` or `CollectionPDX`
+- Handle file I/O operations (`loadPDX(file: File)`)
+- Maintain static registries for all loaded instances
+- Have companion objects with `read()`, `clear()`, `add()` methods
 
-### **Effects** (`src/main/scala/com/hoi4utils/hoi4/effect/`)
-- **EffectDatabase**: Registry of all available effects
-- **Effect**: Individual game effects (add_manpower, add_ideas, etc.)
+### **CHILD BLOCK CLASSES** (Represent blocks within files)
+These classes represent individual blocks/definitions within the files:
 
-All follow the same pattern:
-1. **File** → **Parser** → **Node tree**
-2. **PDX object** loads via **StructuredPDX** or **MultiPDX**
-3. **Child scripts** process specific identifiers
-4. **Unrecognized nodes** preserved in **badNodesList**
+| **Package** | **Child Block Class** | **Represents** | **Parent File Class** |
+|-------------|----------------------|----------------|----------------------|
+| `hoi4.focus` | **Focus** | Individual focus block | FocusTree |
+| `hoi4.idea` | **Idea** | Individual idea block | IdeaFile |
+| `hoi4.country` | **Character** | Character definition | Country |
+| `hoi4.technology` | **Technology** | Individual tech | TechPath |
+| `hoi4.units` | **DivisionTemplate** | Division template | OrdersOfBattle |
+| `hoi4.effect` | **Effect** | Game effect block | Various |
+| `hoi4.modifier` | **Modifier** | Modifier definition | Various |
+
+**Characteristics of Child Block Classes:**
+- Extend `StructuredPDX` with specific block identifiers (e.g., `"focus"`, idea names)
+- Contain game-specific properties as PDX fields
+- Often have references back to parent file class
+- Implement game logic and validation rules
+
+### **Example File Structure Mapping:**
+
+#### **Focus Tree File** (`california.txt`):
+```paradox
+focus_tree = {                    # ← FocusTree class
+    id = California               #   ├── id: StringPDX("id")
+    country = { ... }             #   ├── country: FocusTreeCountryPDX
+    focus = {                     #   └── focuses: MultiPDX[Focus]
+        id = some_focus           #       └── Focus class
+        x = 5                     #           ├── id: StringPDX("id")
+        y = 1                     #           ├── x: IntPDX("x")
+        # ... other focus props   #           └── (other properties)
+    }
+    focus = { ... }               #       └── Focus class (another)
+}
+```
+
+#### **Ideas File** (`california.txt`):
+```paradox
+ideas = {                         # ← IdeaFile class
+    country = {                   #   └── countryIdeas: CollectionPDX[Idea]
+        great_depression = {      #       └── Idea class
+            picture = depression  #           ├── modifiers: CollectionPDX[Modifier]
+            modifier = { ... }    #           └── removalCost: DoublePDX("cost")
+        }
+        war_economy = { ... }     #       └── Idea class (another)
+    }
+}
+```
+
+### **Complete HOI4 Class Categorization:**
+
+#### **📁 FILE CLASSES (Manage entire files):**
+- `FocusTree` - National focus files
+- `IdeaFile` - Ideas files
+- `Country` - Country definition files
+- `OrdersOfBattle` - Military unit organization files
+- `Defines` - Game defines files
+
+#### **📄 CHILD BLOCK CLASSES (Blocks within files):**
+- `Focus` - Individual focuses within focus trees
+- `Idea` - Individual ideas within idea files
+- `Character` - Characters within country files
+- `DivisionTemplate` - Division templates within OOB files
+- `Technology` - Individual technologies
+- `Equipment` - Equipment definitions
+- `Effect` - Game effects (add_manpower, etc.)
+- `Modifier` - Game modifiers (stability_factor, etc.)
+
+#### **🔧 UTILITY CLASSES (Supporting functionality):**
+- `CountryTag` - Country identifiers (GER, USA, etc.)
+- `Scope` - Game scopes (country, state, etc.)
+- `Parameter` - Effect parameters
+- `CustomTooltip` - UI tooltips
+
+### **Loading Pattern:**
+1. **File Class** loads entire file and creates root structure
+2. **File Class** uses `MultiPDX` or `CollectionPDX` to manage child collections
+3. **Child Block Classes** are created for each matching block
+4. **Child Block Classes** load their specific properties and game logic
+
+This architecture provides clear separation between file management and game object representation, making the codebase maintainable and extensible.

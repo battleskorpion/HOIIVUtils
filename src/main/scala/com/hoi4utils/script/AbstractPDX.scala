@@ -79,21 +79,21 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   override def loadPDX(expression: Node): Unit =
     if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then
       logger.error("Error loading PDX script: " + expression)
-      return ()
-    try set(expression)
-    catch
-      case e: UnexpectedIdentifierException =>
-        handleUnexpectedIdentifier(expression, e)
-        // Preserve the original node in StructuredPDX as well.
-        node = Some(expression)
-      case e: NodeValueTypeException        =>
-        handleNodeValueTypeError(expression, e)
-        // Preserve the original node in StructuredPDX as well.
-        node = Some(expression)
+    else 
+      try set(expression)
+      catch
+        case e: UnexpectedIdentifierException =>
+          handleUnexpectedIdentifier(expression, e)
+          // Preserve the original node in StructuredPDX as well.
+          node = Some(expression)
+        case e: NodeValueTypeException        =>
+          handleNodeValueTypeError(expression, e)
+          // Preserve the original node in StructuredPDX as well.
+          node = Some(expression)
 
   /**
    *
-   * @param expressions
+   * @param expressions pdx node that is iterable
    * @return remaining unloaded expressions
    */
   def loadPDX(expressions: Iterable[Node]): Iterable[Node] = expressions match
@@ -139,6 +139,72 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    * Composite types (e.g. StructuredPDX) should override this method to rebuild their Node tree.
    */
   override def updateNodeTree(): Unit = node.foreach(n => setNode(value.orNull)) // Default behavior for leaf nodes: update the node's value from the current state.
+
+  /**
+   * Updates the node tree for collection-based PDX scripts.
+   * This method handles the common pattern of updating child nodes and rebuilding the parent node.
+   *
+   * @param items Collection of PDXScript items to process
+   * @param identifier Optional identifier for the parent node (defaults to pdxIdentifier)
+   * @tparam U Type of PDXScript items in the collection
+   */
+  protected def updateCollectionNodeTree[U <: PDXScript[?]](
+    items: Iterable[U],
+    identifier: String = pdxIdentifier
+  ): Unit = {
+    items.foreach(_.updateNodeTree())
+    val childNodes: ListBuffer[Node] = items.flatMap(_.getNode).to(ListBuffer)
+    node match {
+      case Some(n) => n.setValue(childNodes)
+      case None =>
+        if (childNodes.nonEmpty) {
+          node = if (identifier != null && identifier.nonEmpty) Some(Node(identifier, "=", childNodes))
+                 else Some(Node(childNodes))
+        } else node = None
+    }
+  }
+
+  /**
+   * Template method for loading PDX collections with standardized error handling.
+   * Subclasses should implement addToCollection to define collection-specific behavior.
+   *
+   * @param expression The node expression to load into the collection
+   */
+  protected def loadPDXCollection(expression: Node): Unit = {
+    try addToCollection(expression)
+    catch {
+      case e: UnexpectedIdentifierException =>
+        handleUnexpectedIdentifier(expression, e)
+        node = Some(expression)
+      case e: NodeValueTypeException =>
+        handleNodeValueTypeError(expression, e)
+        node = Some(expression)
+    }
+  }
+
+  /**
+   * Abstract method for adding expressions to collections.
+   * Must be implemented by collection-based PDX classes.
+   *
+   * @param expression The node expression to add to the collection
+   */
+  protected def addToCollection(expression: Node): Unit = {
+    throw new UnsupportedOperationException("addToCollection must be implemented by collection-based PDX classes")
+  }
+
+  /**
+   * Provides enhanced error context for debugging.
+   * Can be overridden by subclasses to add domain-specific context.
+   *
+   * @return Map of context information for error reporting
+   */
+  protected def getErrorContext: Map[String, String] = Map(
+    "PDX Type" -> Option(pdxIdentifier).getOrElse("undefined"),
+    "Node Has Value" -> node.exists(_.$ != null).toString,
+    "Node Is Empty" -> node.exists(_.isEmpty).toString,
+    "Active Identifier Index" -> activeIdentifier.toString,
+    "Expected Identifiers" -> (if pdxIdentifiers.nonEmpty then pdxIdentifiers.mkString("[", ", ", "]") else "any")
+  )
 
   /**
    * Generates the script output.
@@ -191,32 +257,49 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
 
   /* Error handling methods */
 
-  def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
+  def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit = {
+    val context = getErrorContext
+    val nodeContext = Map(
+      "Node Identifier" -> node.identifier.getOrElse("none"),
+      "Node Value" -> Option(node.$).map(_.toString).getOrElse("null"),
+      "Node Type" -> Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")
+    )
+    val allContext = context ++ nodeContext
+
     logger.error(
       s"""Unexpected Identifier Error:
          |	Exception: ${exception.getMessage}
-         |	PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}
-         |	Node Identifier: ${node.identifier.getOrElse("none")}
-         |	Expected Identifiers: ${if pdxIdentifiers.nonEmpty then pdxIdentifiers.mkString("[", ", ", "]") else "any"}
-         |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
-         |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
-         |	Active Identifier Index: $activeIdentifier""".stripMargin)
+         |${allContext.map { case (k, v) => s"\t$k: $v" }.mkString("\n")}""".stripMargin)
+  }
 
-  def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
+  def handleNodeValueTypeError(node: Node, exception: Exception): Unit = {
+    val context = getErrorContext
+    val nodeContext = Map(
+      "Node Identifier" -> node.identifier.getOrElse("none"),
+      "Expected Type" -> "T (generic parameter)",
+      "Actual Value" -> Option(node.$).map(_.toString).getOrElse("null"),
+      "Actual Type" -> Option(node.$).map(_.getClass.getSimpleName).getOrElse("null"),
+      "Node Has Null Value" -> (node.$ == null).toString
+    )
+    val allContext = context ++ nodeContext
+
     logger.error(
       s"""Node Value Type Error:
          |	Exception: ${exception.getMessage}
-         |	PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}
-         |	Node Identifier: ${node.identifier.getOrElse("none")}
-         |	Expected Type: T (generic parameter)
-         |	Actual Value: ${Option(node.$).map(_.toString).getOrElse("null")}
-         |	Actual Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
-         |	Node Has Value: ${node.$ != null}
-         |	Node Is Empty: ${node.isEmpty}""".stripMargin)
+         |${allContext.map { case (k, v) => s"\t$k: $v" }.mkString("\n")}""".stripMargin)
+  }
 
-  def handleParserException(file: File, exception: Exception): Unit =
+  def handleParserException(file: File, exception: Exception): Unit = {
+    val context = getErrorContext
+    val fileContext = Map(
+      "File Path" -> file.getAbsolutePath,
+      "File Exists" -> file.exists().toString,
+      "File Last Modified" -> (if (file.exists()) new java.util.Date(file.lastModified()).toString else "N/A")
+    )
+    val allContext = context ++ fileContext
+
     logger.error(
       s"""Parser Exception (File):
          |	Exception Message: ${exception.getMessage}
-         |	PDX Type: ${Option(this.pdxIdentifier).getOrElse("undefined")}
-         |	File Path: ${file.getAbsolutePath}""".stripMargin)
+         |${allContext.map { case (k, v) => s"\t$k: $v" }.mkString("\n")}""".stripMargin)
+  }

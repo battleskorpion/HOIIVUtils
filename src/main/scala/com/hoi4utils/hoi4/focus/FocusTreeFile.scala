@@ -2,7 +2,7 @@ package com.hoi4utils.hoi4.focus
 
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4.country.CountryTag
-import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileMap
+import com.hoi4utils.hoi4.focus.FocusTreeFile.focusTreeFileMap
 import com.hoi4utils.localization.{Localizable, Property}
 import com.hoi4utils.parser.{Comment, Node, ParserException}
 import com.hoi4utils.script.*
@@ -22,7 +22,7 @@ import scala.jdk.javaapi.CollectionConverters
  * @note Do not create instances of this class directly, unless a few focus tree is being created or loaded.
  *       Use FocusTree.get(File) instead.
  */
-class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile:
+class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTreeFile] with Iterable[Focus] with PDXFile:
   //final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
   final var country = new FocusTreeCountryPDX
   final var focuses = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
@@ -34,7 +34,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
   private var _commentedFocuses: ListBuffer[String] = ListBuffer.empty
 
   /* default */
-  FocusTree.add(this)
+  FocusTreeFile.add(this)
 
   file match
     case null => // create empty focus tree
@@ -130,7 +130,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
 
   def hasFocuses: Boolean = focuses.nonEmpty
 
-  override def compareTo(o: FocusTree): Int =
+  override def compareTo(o: FocusTreeFile): Int =
     (this.countryTag, this.id.value) match
       case (Some(countryTag), Some(id)) =>
         (o.countryTag, o.id.value) match
@@ -158,56 +158,8 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
   override def getLocalizableGroup: Iterable[? <: Localizable] = focuses
 
   override def equals(other: PDXScript[?]): Boolean =
-    if other.isInstanceOf[FocusTree] then return this == other
+    if other.isInstanceOf[FocusTreeFile] then return this == other
     false
-
-  /**
-   * Override loadPDX to detect and collect commented focus blocks
-   */
-  override def loadPDX(expression: Node): Unit = {
-    // First, scan for commented focus blocks before normal processing
-    scanForCommentedFocuses(expression)
-
-    // Then proceed with normal PDX loading
-    super.loadPDX(expression)
-  }
-
-  /**
-   * Scans the parsed node tree for commented-out focus blocks
-   */
-  private def scanForCommentedFocuses(rootNode: Node): Unit = {
-    def scanRecursive(node: Node): Unit = {
-      // Check if this node is a comment containing a focus definition
-      node.rawValue match {
-        case Some(comment: Comment) =>
-          val commentText = comment.comment
-          if (commentText.trim.startsWith("# focus = {")) {
-            // Extract the focus ID if possible
-            val focusId = extractFocusIdFromComment(commentText)
-            _commentedFocuses += focusId
-          }
-        case Some(children: ListBuffer[Node]) =>
-          children.foreach(scanRecursive)
-        case _ => // Not a comment or parent node
-      }
-    }
-
-    scanRecursive(rootNode)
-  }
-
-  /**
-   * Attempts to extract a focus ID from a commented focus block
-   */
-  private def extractFocusIdFromComment(commentText: String): String = {
-    // Look for "id = some_id" pattern in the comment
-    val idPattern = """#\s*id\s*=\s*([A-Za-z0-9_]+)""".r
-    idPattern.findFirstMatchIn(commentText) match {
-      case Some(m) => m.group(1)
-      case None =>
-        // If no ID found, return the first line of the comment as identifier
-        commentText.split('\n').headOption.getOrElse("unknown_commented_focus").trim
-    }
-  }
 
   class FocusTreeCountryPDX extends StructuredPDX("country"):
     final val base = new DoublePDX("base")
@@ -244,7 +196,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
          |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
          |	File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}""".stripMargin
 
-    FocusTree.focusTreeFileErrors += fullMessage
+    FocusTreeFile.focusTreeFileErrors += fullMessage
   //    logger.error("Focus Tree - Unexpected Identifier Error:")
   //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
 
@@ -260,7 +212,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
          |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
          |	File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}""".stripMargin
 
-    FocusTree.focusTreeFileErrors += fullMessage
+    FocusTreeFile.focusTreeFileErrors += fullMessage
   //    logger.error("Focus Tree - Node Value Type Error:")
   //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
 
@@ -272,11 +224,11 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
          |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
          |	Focus Count: ${focuses.size}
          |	Current Focuses: ${if focuses.nonEmpty then focuses.flatMap(_.id.value).take(5).mkString("[", ", ", if focuses.size > 5 then ", ...]" else "]") else "none"}
-         |	Total Focus Trees Loaded: ${FocusTree.listFocusTrees.size}
+         |	Total Focus Trees Loaded: ${FocusTreeFile.listFocusTrees.size}
          |	File Last Modified: ${if file.exists() then new java.util.Date(file.lastModified()).toString else "N/A"}
          |	File Path: ${file.getAbsolutePath}""".stripMargin
 
-    FocusTree.focusTreeFileErrors += fullMessage
+    FocusTreeFile.focusTreeFileErrors += fullMessage
 //    logger.error("Focus Tree - Parser Exception (File):")
 //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
 
@@ -284,17 +236,17 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
  * ALL the FocusTree/FocusTrees
  * Localizable data: focus tree name. Each focus is its own localizable data.
  */
-object FocusTree extends LazyLogging with PDXReadable:
+object FocusTreeFile extends LazyLogging with PDXReadable:
   var focusTreeFileErrors: ListBuffer[String] = ListBuffer.empty
-  private val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
-  private val focusTrees = new ListBuffer[FocusTree]()
+  private val focusTreeFileMap = new mutable.HashMap[File, FocusTreeFile]()
+  private val focusTrees = new ListBuffer[FocusTreeFile]()
 
-  def get(focus_file: File): Option[FocusTree] =
+  def get(focus_file: File): Option[FocusTreeFile] =
     if focus_file == null then return None
-    if !focusTreeFileMap.contains(focus_file) then new FocusTree(focus_file)
+    if !focusTreeFileMap.contains(focus_file) then new FocusTreeFile(focus_file)
     focusTreeFileMap.get(focus_file)
 
-  def observeFocusTrees: ObservableList[FocusTree] =
+  def observeFocusTrees: ObservableList[FocusTreeFile] =
     FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
 
   /**
@@ -310,7 +262,7 @@ object FocusTree extends LazyLogging with PDXReadable:
     else
       // create focus trees from files
       HOIIVFiles.Mod.focus_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach: f =>
-        new FocusTree(f)
+        new FocusTreeFile(f)
       true
 
   /**
@@ -325,21 +277,21 @@ object FocusTree extends LazyLogging with PDXReadable:
    * @param focusTree the focus tree to add
    * @return the updated list of focus trees
    */
-  def add(focusTree: FocusTree): Iterable[FocusTree] =
+  def add(focusTree: FocusTreeFile): Iterable[FocusTreeFile] =
     focusTrees += focusTree
     focusTree.focusFile match
       case Some(file) => focusTreeFileMap.put(file, focusTree)
       case None =>
     focusTrees
 
-  def listFocusTrees: Iterable[FocusTree] = focusTrees
+  def listFocusTrees: Iterable[FocusTreeFile] = focusTrees
 
   /**
    * Returns focus tree corresponding to the tag, if it exists
    *
    * @param tag The country tag
    */
-  def get(tag: CountryTag): Option[FocusTree] = boundary {
+  def get(tag: CountryTag): Option[FocusTreeFile] = boundary {
     listFocusTrees.foreach: tree =>
       tree.countryTag match
         case Some(t) if tag.equals(t.tag) => boundary.break(Some(tree))
@@ -347,6 +299,6 @@ object FocusTree extends LazyLogging with PDXReadable:
     None
   }
 
-  def getRandom: Option[FocusTree] =
+  def getRandom: Option[FocusTreeFile] =
     if focusTrees.isEmpty then None
     else Some(focusTrees(scala.util.Random.nextInt(focusTrees.size)))

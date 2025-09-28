@@ -3,7 +3,7 @@ package com.hoi4utils.ui.focus_view
 import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4.country.CountryTag
-import com.hoi4utils.hoi4.focus.{FixFocus, Focus, FocusTree}
+import com.hoi4utils.hoi4.focus.{FixFocus, Focus, FocusTreeFile}
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.focus_view.FocusTreeController.updateLoadingStatus
@@ -42,7 +42,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
   private val VISIBLE_DROPDOWN_ROW_COUNT: Int = 20
 
   // FXML components
-  @FXML private var focusTreeDropdown: ComboBox[FocusTree] = uninitialized
+  @FXML private var focusTreeDropdown: ComboBox[FocusTreeFile] = uninitialized
   @FXML private var exportFocusTreeButton: Button = uninitialized
   @FXML private var focusTreeViewSplitPane: SplitPane = uninitialized
   @FXML var loadingLabel: Label = uninitialized
@@ -129,7 +129,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
 
     // Load available focus trees
     updateStatus("Loading focus trees...")
-    val trees: ObservableList[FocusTree] = FocusTree.observeFocusTrees
+    val trees: ObservableList[FocusTreeFile] = FocusTreeFile.observeFocusTrees
 
     if trees == null then
       updateStatus("Focus trees list is null. Ensure mod files are loaded correctly.")
@@ -171,7 +171,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
         // Setup dropdown with loaded trees
         result.focusTrees.foreach: trees =>
           focusTreeDropdown.setItems(trees)
-          focusTreeDropdown.getItems.sort(Comparator.comparing[FocusTree, String](_.toString))
+          focusTreeDropdown.getItems.sort(Comparator.comparing[FocusTreeFile, String](_.toString))
 
           if !trees.isEmpty then
             focusTreeDropdown.getSelectionModel.select(0)
@@ -206,15 +206,15 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
         logger.info("FocusTreeController initialized successfully.")
     )
 
-  private def setFocusTree(tree: FocusTree): Unit =
+  private def setFocusTree(tree: FocusTreeFile): Unit =
     focusTreePane.focusTree = tree
 
   // Helper case class for initialization results
   private case class InitializationResult(
                                            success: Boolean,
                                            error: Option[String],
-                                           focusTree: Option[FocusTree],
-                                           focusTrees: Option[ObservableList[FocusTree]]
+                                           focusTree: Option[FocusTreeFile],
+                                           focusTrees: Option[ObservableList[FocusTreeFile]]
                                          )
 
   // Helper methods for dialogs
@@ -230,10 +230,10 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
   /**
    * Attempts to load a valid FocusTree from different sources.
    */
-  private def getFocusTree(tag: String, filePath: String): Option[FocusTree] =
-    FocusTree.getRandom
+  private def getFocusTree(tag: String, filePath: String): Option[FocusTreeFile] =
+    FocusTreeFile.getRandom
 
-  private def exportFocusTree(focusTree: FocusTree, path: String): Unit =
+  private def exportFocusTree(focusTree: FocusTreeFile, path: String): Unit =
     Try:
       val writer = new PrintWriter(path)
       try
@@ -278,17 +278,17 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
 
   def openNewFocusTreeWindow(): Unit =
     val newFocusTreeController = new NewFocusTreeController()
-    newFocusTreeController.open(new Consumer[FocusTree]:
-      override def accept(f: FocusTree): Unit =
+    newFocusTreeController.open(new Consumer[FocusTreeFile]:
+      override def accept(f: FocusTreeFile): Unit =
         addFocusTree(f)
         viewFocusTree(f)
     )
 
-  def addFocusTree(focusTree: FocusTree): Unit =
+  def addFocusTree(focusTree: FocusTreeFile): Unit =
     focusTreeDropdown.getItems.add(focusTree)
-    focusTreeDropdown.getItems.sort(Comparator.comparing[FocusTree, String](_.toString))
+    focusTreeDropdown.getItems.sort(Comparator.comparing[FocusTreeFile, String](_.toString))
 
-  def viewFocusTree(focusTree: FocusTree): Unit =
+  def viewFocusTree(focusTree: FocusTreeFile): Unit =
     logger.info(s"Viewing focus tree: $focusTree")
     focusTreeDropdown.getSelectionModel.select(focusTree)
 

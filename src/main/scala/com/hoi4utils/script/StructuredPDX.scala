@@ -56,16 +56,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
       case l: ListBuffer[Node] => loadPDX(l)
       case _ => handleNodeValueTypeError(expression, NodeValueTypeException("PDXScript.loadPDX: Expected list of nodes, got: \n" + expression))
     case Some(_) =>
-      try set(expression)
-      catch
-        case e: UnexpectedIdentifierException => 
-          handleUnexpectedIdentifier(expression, e)
-          // Preserve the original node in StructuredPDX as well.
-          node = Some(expression)
-        case e: NodeValueTypeException        => 
-          handleNodeValueTypeError(expression, e)
-          // Preserve the original node in StructuredPDX as well.
-          node = Some(expression)
+      super.loadPDX(expression)
   
   /**
    * Gets the child pdx property with the current identifier matching

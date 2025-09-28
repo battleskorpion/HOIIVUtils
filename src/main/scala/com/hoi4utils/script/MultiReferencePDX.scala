@@ -78,7 +78,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override protected def add(expression: Node): Unit = {
+  override protected def addToCollection(expression: Node): Unit = {
     checkReferenceIdentifier(expression)
     expression.$ match {
       case str: String =>

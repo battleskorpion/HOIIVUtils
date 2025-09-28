@@ -3,9 +3,9 @@ package com.hoi4utils.ui.parser;
 
 import com.hoi4utils.HOIIVFiles;
 import com.hoi4utils.HOIIVUtils;
-import com.hoi4utils.hoi4.country.Country;
+import com.hoi4utils.hoi4.country.CountryFile;
 import com.hoi4utils.hoi4.country.CountryTag$;
-import com.hoi4utils.hoi4.focus.FocusTree;
+import com.hoi4utils.hoi4.focus.FocusTreeFile;
 import com.hoi4utils.parser.Node;
 import com.hoi4utils.parser.Parser;
 import com.hoi4utils.parser.ParserException;
@@ -120,7 +120,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 						String pdxIdentifier = firstChild.name();
 
 						AbstractPDX<?> pdx = switch (pdxIdentifier) {
-							case "focus_tree"       -> new FocusTree(file);
+							case "focus_tree"       -> new FocusTreeFile(file);
 							case "state"            -> new State(false, file);
 							case "strategic_region" -> new StrategicRegion(file);
 
@@ -168,12 +168,12 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 						AbstractPDX<?> pdx = null;
 						if (pdxIdentifier.equals("focus_tree")) {
-							pdx = new FocusTree(selected);
+							pdx = new FocusTreeFile(selected);
 						} else if (pdxIdentifier.equals("state")) {
 							pdx = new State(false, selected);
 						} else if (selected.getParent().endsWith("countries")
 								&& selected.getParentFile().getParent().endsWith("history")) {
-							pdx = new Country(selected, CountryTag$.MODULE$.apply(selected.getName().substring(0, 3)));
+							pdx = new CountryFile(selected, CountryTag$.MODULE$.apply(selected.getName().substring(0, 3)));
 						} else if (pdxIdentifier.equals("resources")) {
 							pdx = new ResourcesFile(selected);
 						} else if (pdxIdentifier.equals("strategic_region")) {

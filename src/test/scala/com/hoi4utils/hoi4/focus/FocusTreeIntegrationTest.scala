@@ -14,7 +14,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     super.setUpParserTest()
 
     // Clear any existing focus trees before each test
-    FocusTree.clear()
+    FocusTreeFile.clear()
 
     // Temporarily set the mod focus folder to our test directory
     // Note: You might need to modify HOIIVFiles to allow this override for testing
@@ -24,7 +24,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
   @AfterEach
   def tearDownIntegrationTest(): Unit = {
     // Clean up after each test
-    FocusTree.clear()
+    FocusTreeFile.clear()
   }
 
   @Test
@@ -33,7 +33,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     val testFile = testModPath.resolve("common/national_focus/california.txt").toFile
 
     Try {
-      val focusTree = new FocusTree(testFile)
+      val focusTree = new FocusTreeFile(testFile)
       focusTree
     } match {
       case Success(focusTree) =>
@@ -62,8 +62,8 @@ class FocusTreeIntegrationTest extends ParserTestBase {
 
     assertConsistentParsing(
       () => {
-        FocusTree.clear() // Clear before each test
-        val focusTree = new FocusTree(testFile)
+        FocusTreeFile.clear() // Clear before each test
+        val focusTree = new FocusTreeFile(testFile)
         focusTree.focuses.size
       },
       expectedResult = expectedCount,
@@ -79,7 +79,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     val testFile = testModPath.resolve("common/national_focus/california.txt").toFile
 
     Try {
-      val focusTree = new FocusTree(testFile)
+      val focusTree = new FocusTreeFile(testFile)
       focusTree
     } match {
       case Success(focusTree) =>
@@ -121,7 +121,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     val testFile = testModPath.resolve("common/national_focus/california.txt").toFile
 
     Try {
-      val focusTree = new FocusTree(testFile)
+      val focusTree = new FocusTreeFile(testFile)
       focusTree
     } match {
       case Success(focusTree) =>
@@ -157,7 +157,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     val testFile = testModPath.resolve("common/national_focus/california.txt").toFile
 
     Try {
-      val focusTree = new FocusTree(testFile)
+      val focusTree = new FocusTreeFile(testFile)
       focusTree
     } match {
       case Success(focusTree) =>
@@ -167,7 +167,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
           "FocusTree should reference correct source file")
 
         // Test FocusTree.get(file) functionality
-        val retrievedFocusTree = FocusTree.get(testFile)
+        val retrievedFocusTree = FocusTreeFile.get(testFile)
         assertTrue(retrievedFocusTree.isDefined, "Should be able to retrieve FocusTree by file")
         assertEquals(focusTree, retrievedFocusTree.get,
           "Retrieved FocusTree should be the same instance")
@@ -185,7 +185,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     val testFile = testModPath.resolve("common/national_focus/california.txt").toFile
 
     Try {
-      val focusTree = new FocusTree(testFile)
+      val focusTree = new FocusTreeFile(testFile)
       focusTree
     } match {
       case Success(focusTree) =>
@@ -225,36 +225,34 @@ class FocusTreeIntegrationTest extends ParserTestBase {
   def testMultipleFocusTreeFiles(): Unit = {
     val focusTreeFiles = getTestFilesOfType("common/national_focus")
 
-    if (focusTreeFiles.size < 2) {
+    if focusTreeFiles.size < 2 then
       println("Skipping multiple file test - need at least 2 focus tree files")
-      return ()
-    }
-
-    val createdTrees = focusTreeFiles.take(2).flatMap { file =>
-      Try(new FocusTree(file)) match {
-        case Success(tree) => Some(tree)
-        case Failure(exception) =>
-          println(s"Failed to create FocusTree from ${file.getName}: ${exception.getMessage}")
-          None
+    else
+      val createdTrees = focusTreeFiles.take(2).flatMap { file =>
+        Try(new FocusTreeFile(file)) match {
+          case Success(tree) => Some(tree)
+          case Failure(exception) =>
+            println(s"Failed to create FocusTree from ${file.getName}: ${exception.getMessage}")
+            None
+        }
       }
-    }
 
-    assertTrue(createdTrees.nonEmpty, "Should create at least one FocusTree")
+      assertTrue(createdTrees.nonEmpty, "Should create at least one FocusTree")
 
-    // Verify they are tracked properly
-    assertTrue(FocusTree.listFocusTrees.size >= createdTrees.size,
-      "All created focus trees should be tracked")
+      // Verify they are tracked properly
+      assertTrue(FocusTreeFile.listFocusTrees.size >= createdTrees.size,
+        "All created focus trees should be tracked")
 
-    // Each should have unique files
-    val files = createdTrees.flatMap(_.focusFile)
-    assertEquals(files.size, files.toSet.size,
-      "Each FocusTree should have a unique file")
+      // Each should have unique files
+      val files = createdTrees.flatMap(_.focusFile)
+      assertEquals(files.size, files.toSet.size,
+        "Each FocusTree should have a unique file")
 
-    println(s"Successfully created {createdTrees.size} focus trees from multiple files")
+      println(s"Successfully created {createdTrees.size} focus trees from multiple files")
   }
 
   // scala
-  private def debugScriptDuplication(focusTree: FocusTree, generatedScript: String): Unit = {
+  private def debugScriptDuplication(focusTree: FocusTreeFile, generatedScript: String): Unit = {
     import scala.util.{Try, Success, Failure}
 
     printFocusMatchContexts(generatedScript, maxMatches = 200)
@@ -332,30 +330,30 @@ class FocusTreeIntegrationTest extends ParserTestBase {
 
     var printed = 0
     regex.findAllMatchIn(generatedScript).foreach { m =>
-      if (printed >= maxMatches) return
-      val start = m.start
-      val lineStart = generatedScript.lastIndexOf('\n', start) match {
-        case -1 => 0
-        case i => i + 1
-      }
-      val lineEnd = generatedScript.indexOf('\n', start) match {
-        case -1 => generatedScript.length
-        case i => i
-      }
-      val line = generatedScript.substring(lineStart, lineEnd)
-      val trimmed = line.trim
-      val isLineComment = trimmed.startsWith("#") || trimmed.startsWith("//")
-      // crude inside-quotes detection (counts " before the match)
-      val before = generatedScript.substring(0, start)
-      val quoteCount = before.count(_ == '"')
-      val insideQuotes = (quoteCount % 2) == 1
-      val contextStart = math.max(0, start - 40)
-      val contextEnd = math.min(generatedScript.length, m.end + 40)
-      val context = generatedScript.substring(contextStart, contextEnd).replace("\n", "\\n")
-      println(s"[FOCUS-MATCH] index=${start}, line=${lineNumberForIndex(start)}, isLineComment=${isLineComment}, insideQuotes=${insideQuotes}")
-      println(s"[FOCUS-MATCH] line: ${trimmed}")
-      println(s"[FOCUS-MATCH] context: ...${context}...")
-      printed += 1
+      if (printed <= maxMatches)
+        val start = m.start
+        val lineStart = generatedScript.lastIndexOf('\n', start) match {
+          case -1 => 0
+          case i => i + 1
+        }
+        val lineEnd = generatedScript.indexOf('\n', start) match {
+          case -1 => generatedScript.length
+          case i => i
+        }
+        val line = generatedScript.substring(lineStart, lineEnd)
+        val trimmed = line.trim
+        val isLineComment = trimmed.startsWith("#") || trimmed.startsWith("//")
+        // crude inside-quotes detection (counts " before the match)
+        val before = generatedScript.substring(0, start)
+        val quoteCount = before.count(_ == '"')
+        val insideQuotes = (quoteCount % 2) == 1
+        val contextStart = math.max(0, start - 40)
+        val contextEnd = math.min(generatedScript.length, m.end + 40)
+        val context = generatedScript.substring(contextStart, contextEnd).replace("\n", "\\n")
+  //      println(s"[FOCUS-MATCH] index=${start}, line=${lineNumberForIndex(start)}, isLineComment=${isLineComment}, insideQuotes=${insideQuotes}")
+  //      println(s"[FOCUS-MATCH] line: ${trimmed}")
+  //      println(s"[FOCUS-MATCH] context: ...${context}...")
+        printed += 1
     }
     if (printed == 0) println("[FOCUS-MATCH] no matches found")
   }

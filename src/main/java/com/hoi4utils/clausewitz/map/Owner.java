@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.map;
 
-import com.hoi4utils.hoi4.country.Country;
+import com.hoi4utils.hoi4.country.CountryFile;
 import com.hoi4utils.hoi4.country.CountryTag;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,8 +20,8 @@ public record Owner(CountryTag tag) implements Comparable<Owner> {
 		if (other instanceof CountryTag) {
 			return this.tag.equals(other);
 		}
-		if (other instanceof Country) {
-			return this.tag.equals(((Country) other).countryTag());
+		if (other instanceof CountryFile) {
+			return this.tag.equals(((CountryFile) other).countryTag());
 		}
 
 		return false;

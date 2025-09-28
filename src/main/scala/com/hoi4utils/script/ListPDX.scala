@@ -41,12 +41,7 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
   /**
    * @inheritdoc
    */
-  override def loadPDX(expression: Node): Unit = {
-    try add(expression)
-    catch
-      case e: NodeValueTypeException => handleNodeValueTypeError(expression, e)
-      case e: UnexpectedIdentifierException => handleUnexpectedIdentifier(expression, e)
-  }
+  override def loadPDX(expression: Node): Unit = loadPDXCollection(expression)
   
   override def equals(other: PDXScript[?]) = false // todo? well.
 
@@ -55,13 +50,13 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     else Some(pdxList)
   }
 
-  /** 
-   * if this PDXScript is an encapsulation of PDXScripts (such as Focus)
-   * hen load each sub-PDXScript
+  /**
+   * Implementation of addToCollection for ListPDX.
+   * Uses simple supplier to create identical objects regardless of content.
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  protected def add(expression: Node): Unit = {
+  override protected def addToCollection(expression: Node): Unit = {
     expression.$ match {
       case l: ListBuffer[Node] =>
         for (childExpr <- l) {
@@ -70,7 +65,6 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
           pdxList += childScript
         }
       case _ =>
-        // todo idk   // double todo
         val childScript = useSupplierFunction(expression)
         childScript.loadPDX(expression)
         pdxList += childScript
@@ -155,19 +149,8 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
 
   /**
    * Rebuilds the underlying Node tree from the current list of child PDXScript nodes.
+   * Uses the abstracted collection node tree management from AbstractPDX.
    */
-  override def updateNodeTree(): Unit = {
-    pdxList.foreach(_.updateNodeTree())
-    val childNodes: ListBuffer[Node] = pdxList.flatMap(_.getNode)
-    node match {
-      case Some(n) => n.setValue(childNodes)
-      case None => 
-        if (pdxList.nonEmpty) node = {
-          if (pdxIdentifier.nonEmpty) Some(Node(pdxIdentifier, "=", childNodes))
-          else Some(Node(childNodes))
-        }
-        else node = None
-    }
-  }
+  override def updateNodeTree(): Unit = updateCollectionNodeTree(pdxList)
 
 }

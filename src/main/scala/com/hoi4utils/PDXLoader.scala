@@ -4,15 +4,15 @@ import com.hoi4utils.fileIO.FileListener.{FileAdapter, FileEvent, FileWatcher}
 import com.hoi4utils.gfx.Interface
 import com.hoi4utils.hoi4.effect.EffectDatabase.effectErrors
 import com.hoi4utils.gfx.Interface.interfaceErrors
-import com.hoi4utils.hoi4.country.Country.countryErrors
-import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileErrors
+import com.hoi4utils.hoi4.country.CountryFile.countryErrors
+import com.hoi4utils.hoi4.focus.FocusTreeFile.focusTreeFileErrors
 import com.hoi4utils.hoi4.idea.IdeaFile.ideaFileErrors
 import com.hoi4utils.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.map.Resource.resourceErrors
 import com.hoi4utils.map.State.stateErrors
-import com.hoi4utils.hoi4.country.{Country, CountryTag}
+import com.hoi4utils.hoi4.country.{CountryFile, CountryTag}
 import com.hoi4utils.hoi4.effect.EffectDatabase
-import com.hoi4utils.hoi4.focus.FocusTree
+import com.hoi4utils.hoi4.focus.FocusTreeFile
 import com.hoi4utils.hoi4.idea.IdeaFile
 import com.hoi4utils.hoi4.modifier.ModifierDatabase
 import com.hoi4utils.localization.{EnglishLocalizationManager, LocalizationManager}
@@ -66,10 +66,10 @@ class PDXLoader extends LazyLogging:
       Interface,
       ResourcesFile,
       State,
-      Country,
+      CountryFile,
       CountryTag,
       IdeaFile,
-      FocusTree,
+      FocusTreeFile,
     ).foreach(readPDX)
 
   def readPDX(pdx: PDXReadable)(implicit properties: Properties, label: Label): Unit =
@@ -99,9 +99,9 @@ class PDXLoader extends LazyLogging:
 
   def clearPDX(): Unit =
     IdeaFile.clear()
-    FocusTree.clear()
+    FocusTreeFile.clear()
     CountryTag.clear()
-    Country.clear()
+    CountryFile.clear()
     State.clear()
     ResourcesFile.clear()
     Interface.clear()

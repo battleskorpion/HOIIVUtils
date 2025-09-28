@@ -3,7 +3,7 @@ package com.hoi4utils.ui.pdxscript;
 import com.hoi4utils.HOIIVUtils;
 import com.hoi4utils.hoi4.country.CountryTag;
 import com.hoi4utils.hoi4.country.CountryTag$;
-import com.hoi4utils.hoi4.focus.FocusTree;
+import com.hoi4utils.hoi4.focus.FocusTreeFile;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -29,7 +29,7 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
     @FXML
     Button createFocusTreeButton;
 
-    private Consumer<FocusTree> onCreate = null;
+    private Consumer<FocusTreeFile> onCreate = null;
 
     public NewFocusTreeController() {
         setFxmlResource("NewFocusTree.fxml");
@@ -44,7 +44,7 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
      * @param onCreate
      */
     @SuppressWarnings("unused")
-    public NewFocusTreeController(Consumer<FocusTree> onCreate) {
+    public NewFocusTreeController(Consumer<FocusTreeFile> onCreate) {
         this();
         setOnCreateConsumerAction(onCreate);
     }
@@ -64,12 +64,12 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
         }
 
         File focusFile = new File(HOIIVUtils.get("mod.path") + "/common/national_focus/" + id + "_" + "temp_HOIIVUtils"+ ".txt");
-        FocusTree focusTree = new FocusTree(null);
-        focusTree.setID(id);
-        focusTree.setCountryTag(countryTag);
-        focusTree.setFile(focusFile);
+        FocusTreeFile focusTreeFile = new FocusTreeFile(null);
+        focusTreeFile.setID(id);
+        focusTreeFile.setCountryTag(countryTag);
+        focusTreeFile.setFile(focusFile);
         if (onCreate != null) {
-            onCreate.accept(focusTree);
+            onCreate.accept(focusTreeFile);
         }
         closeWindow(createFocusTreeButton);
     }
@@ -79,7 +79,7 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
         closeWindow(cancelButton);
     }
 
-    public void setOnCreateConsumerAction(Consumer<FocusTree> onCreate) {
+    public void setOnCreateConsumerAction(Consumer<FocusTreeFile> onCreate) {
        this.onCreate = onCreate;
        System.out.println(this.onCreate == null);
     }

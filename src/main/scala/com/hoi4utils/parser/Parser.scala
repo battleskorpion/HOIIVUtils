@@ -5,12 +5,9 @@ import java.nio.file.Files
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 
-object Parser {
-  val escape_backslash_regex = "\\\\"
-  val escape_quote_regex = "\\\\\""
-}
-
 class Parser(pdx: String | File = null) {
+  private val escape_backslash_regex = "\\\\"
+  private val escape_quote_regex = "\\\\\""
   private var tokens: Tokenizer = uninitialized
   private var _rootNode: Node = uninitialized
 
@@ -160,8 +157,8 @@ class Parser(pdx: String | File = null) {
         if (nextToken.value.length > 2)
           try {
             nextToken.value.substring(1, nextToken.value.length - 1)
-              .replaceAll(Parser.escape_quote_regex, "\"")
-              .replaceAll(Parser.escape_backslash_regex, java.util.regex.Matcher.quoteReplacement("\\"))
+              .replaceAll(escape_quote_regex, "\"")
+              .replaceAll(escape_backslash_regex, java.util.regex.Matcher.quoteReplacement("\\"))
           } catch {
             case _: IllegalArgumentException =>
               println("Illegal argument exception while parsing string: " + nextToken.value)
@@ -196,8 +193,8 @@ class Parser(pdx: String | File = null) {
       case TokenType.string =>
         if (token.value.length > 2)
           token.value.substring(1, token.value.length - 1)
-            .replaceAll(Parser.escape_quote_regex, "\"")
-            .replaceAll(Parser.escape_backslash_regex, "\\")
+            .replaceAll(escape_quote_regex, "\"")
+            .replaceAll(escape_backslash_regex, "\\")
         else token.value
       case TokenType.float =>
         token.value.toDouble

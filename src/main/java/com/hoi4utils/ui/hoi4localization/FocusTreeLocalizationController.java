@@ -1,11 +1,10 @@
 package com.hoi4utils.ui.hoi4localization;
 
-import com.hoi4utils.HOIIVFiles;
 import com.hoi4utils.exceptions.LocalizationPreconditionException;
 import com.hoi4utils.hoi4.focus.FixFocus;
 import com.hoi4utils.hoi4.focus.Focus;
-import com.hoi4utils.hoi4.focus.FocusTree;
-import com.hoi4utils.hoi4.focus.FocusTree$;
+import com.hoi4utils.hoi4.focus.FocusTreeFile;
+import com.hoi4utils.hoi4.focus.FocusTreeFile$;
 import com.hoi4utils.localization.Localization;
 import com.hoi4utils.localization.LocalizationManager;
 import com.hoi4utils.localization.Property;
@@ -21,7 +20,6 @@ import javafx.scene.paint.Color;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.function.Function;
@@ -52,11 +50,11 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
     @FXML
     private RadioMenuItem localizationStatusRadioItem;
     @FXML
-    private ComboBox<FocusTree> focusTreeComboBox;
+    private ComboBox<FocusTreeFile> focusTreeComboBox;
     @FXML
     private Label focusTreeFileLabel;
 
-    private FocusTree focusTree;
+    private FocusTreeFile focusTreeFile;
     private boolean generateDummyDescriptions = false;
     //private FocusLocalizationFile focusLocFile;
     private final ObservableList<Focus> focusObservableList;
@@ -83,7 +81,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
         focusLocStatusColumn.setCellValueFactory(JavaFXUIManager.tableCellDataCallback(dataFunction));
 
         /* load data */
-        focusTreeComboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(FocusTree$.MODULE$.listFocusTrees())));
+        focusTreeComboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(FocusTreeFile$.MODULE$.listFocusTrees())));
 
         /* buttons */
         saveButton.setDisable(true);
@@ -95,11 +93,11 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
 
     @FXML
     private void handleSelectFocusTree() {
-        this.focusTree = focusTreeComboBox.getSelectionModel().getSelectedItem();
-        if (this.focusTree == null) { return; }
+        this.focusTreeFile = focusTreeComboBox.getSelectionModel().getSelectedItem();
+        if (this.focusTreeFile == null) { return; }
 
-        focusTreeFileLabel.setText(focusTree.fileName());
-        System.out.println("Selected focus tree: " + focusTree);
+        focusTreeFileLabel.setText(focusTreeFile.fileName());
+        System.out.println("Selected focus tree: " + focusTreeFile);
     }
 
     @FXML
@@ -124,15 +122,15 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
 
     @FXML
     private void handleLoadButtonAction() {
-        if (focusTree == null) {
+        if (focusTreeFile == null) {
             JOptionPane.showMessageDialog(null, "Error: Focus tree not properly initialized.");
             return;
         }
         
         /* load focus loc */
         try {
-            FixFocus.fixLocalization(focusTree, generateDummyDescriptions);
-            updateNumLocalizedFocuses(focusTree.listFocuses().count(Focus::isLocalized));
+            FixFocus.fixLocalization(focusTreeFile, generateDummyDescriptions);
+            updateNumLocalizedFocuses(focusTreeFile.listFocuses().count(Focus::isLocalized));
         } catch (IOException | LocalizationPreconditionException e) {
             openError(e);
             return;
@@ -145,7 +143,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
 
     private void updateObservableFocusList() {
         focusObservableList.clear();
-        focusObservableList.addAll(CollectionConverters.asJava(focusTree.listFocuses()));
+        focusObservableList.addAll(CollectionConverters.asJava(focusTreeFile.listFocuses()));
     }
 
     @SuppressWarnings("unused")

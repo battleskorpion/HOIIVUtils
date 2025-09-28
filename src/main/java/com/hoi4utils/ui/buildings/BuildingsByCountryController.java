@@ -3,7 +3,7 @@ package com.hoi4utils.ui.buildings;
 
 import com.hoi4utils.ClausewitzDate;
 import com.hoi4utils.HOIIVUtils;
-import com.hoi4utils.hoi4.country.Country;
+import com.hoi4utils.hoi4.country.CountryFile;
 import com.hoi4utils.ui.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.JavaFXUIManager;
 import com.hoi4utils.ui.custom_javafx.export.ExcelExport;
@@ -31,61 +31,61 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	@FXML
 	private MenuItem idVersionMenuItem;
 	@FXML
-	TableView<Country> countryDataTable;
+	TableView<CountryFile> countryDataTable;
 	@FXML
-	TableColumn<Country, String> countryDataTableCountryColumn;
+	TableColumn<CountryFile, String> countryDataTableCountryColumn;
 	@FXML
-	TableColumn<Country, Integer> countryDataTablePopulationColumn;
+	TableColumn<CountryFile, Integer> countryDataTablePopulationColumn;
 	@FXML
-	TableColumn<Country, Integer> countryDataTableCivFactoryColumn;
+	TableColumn<CountryFile, Integer> countryDataTableCivFactoryColumn;
 	@FXML
-	TableColumn<Country, Integer> countryDataTableMilFactoryColumn;
+	TableColumn<CountryFile, Integer> countryDataTableMilFactoryColumn;
 	@FXML
-	TableColumn<Country, Integer> countryDataTableDockyardsColumn;
+	TableColumn<CountryFile, Integer> countryDataTableDockyardsColumn;
 	@FXML
-	TableColumn<Country, Integer> countryDataTableAirfieldsColumn;
+	TableColumn<CountryFile, Integer> countryDataTableAirfieldsColumn;
 	@FXML
-	TableColumn<Country, Double> countryDataTableCivMilRatioColumn;
+	TableColumn<CountryFile, Double> countryDataTableCivMilRatioColumn;
 	@FXML
-	TableColumn<Country, Double> countryDataTablePopFactoryRatioColumn;
+	TableColumn<CountryFile, Double> countryDataTablePopFactoryRatioColumn;
 	@FXML
-	TableColumn<Country, Double> countryDataTablePopCivRatioColumn;
+	TableColumn<CountryFile, Double> countryDataTablePopCivRatioColumn;
 	@FXML
-	TableColumn<Country, Double> countryDataTablePopMilRatioColumn;
+	TableColumn<CountryFile, Double> countryDataTablePopMilRatioColumn;
 	@FXML
-	TableColumn<Country, Double> countryDataTablePopAirCapacityRatioColumn;
+	TableColumn<CountryFile, Double> countryDataTablePopAirCapacityRatioColumn;
 	@FXML
-	TableColumn<Country, Double> countryDataTablePopNumStatesRatioColumn;
+	TableColumn<CountryFile, Double> countryDataTablePopNumStatesRatioColumn;
 	@FXML
-	TableColumn<Country, Double> countryDataTableAluminiumColumn; // todo dont do these yet
+	TableColumn<CountryFile, Double> countryDataTableAluminiumColumn; // todo dont do these yet
 	@FXML
-	TableColumn<Country, Double> countryDataTableChromiumColumn;
+	TableColumn<CountryFile, Double> countryDataTableChromiumColumn;
 	@FXML
-	TableColumn<Country, Double> countryDataTableOilColumn;
+	TableColumn<CountryFile, Double> countryDataTableOilColumn;
 	@FXML
-	TableColumn<Country, Double> countryDataTableRubberColumn;
+	TableColumn<CountryFile, Double> countryDataTableRubberColumn;
 	@FXML
-	TableColumn<Country, Double> countryDataTableSteelColumn;
+	TableColumn<CountryFile, Double> countryDataTableSteelColumn;
 	@FXML
-	TableColumn<Country, Double> countryDataTableTungstenColumn;
+	TableColumn<CountryFile, Double> countryDataTableTungstenColumn;
 
 	private boolean resourcesPercent = false;
 	private final ClausewitzDate date = ClausewitzDate.defaulty();
 
-	private final ObservableList<Country> countryList;
+	private final ObservableList<CountryFile> countryList;
 
 	public BuildingsByCountryController() {
 		setFxmlResource("BuildingsByCountry.fxml");
 		setTitle("HOIIVUtils Buildings By Country Window");
 
-		countryList = FXCollections.observableArrayList(CollectionConverters.asJava(Country.list()));
+		countryList = FXCollections.observableArrayList(CollectionConverters.asJava(CountryFile.list()));
 		System.out.println("Countries loaded: " + countryList.size());
 	}
 
 	@FXML
 	void initialize() {
 		includeVersion();
-		loadTableView(this, countryDataTable, countryList, Country.getDataFunctions(resourcesPercent));
+		loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(resourcesPercent));
 
 		/* action listeners */
 		countryDataTable.setOnMouseClicked(event -> {
@@ -103,7 +103,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	// todo put this in hoi4window parent class or whatever
 
 	private void updateResourcesColumnsPercentBehavior() {
-		loadTableView(this, countryDataTable, countryList, Country.getDataFunctions(resourcesPercent));
+		loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(resourcesPercent));
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableAluminiumColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableChromiumColumn, resourcesPercent);
 		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableOilColumn, resourcesPercent);
@@ -131,7 +131,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 
 	@FXML
 	private void handleExportToExcelAction() {
-		ExcelExport<Country> excelExport = new ExcelExport<>();
+		ExcelExport<CountryFile> excelExport = new ExcelExport<>();
 		excelExport.export(countryDataTable);
 	}
 
@@ -160,7 +160,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	}
 
 	public void viewCountryBuildingsByState() {
-		Country country = countryDataTable.getSelectionModel().getSelectedItem();
+		CountryFile country = countryDataTable.getSelectionModel().getSelectedItem();
 		if (country == null) {
 			return;
 		}
