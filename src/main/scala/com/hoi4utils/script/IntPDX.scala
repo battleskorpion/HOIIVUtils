@@ -8,62 +8,50 @@ import scala.annotation.targetName
 import scala.util.boundary
 
 class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedRange.ofInt) extends AbstractPDX[Int](pdxIdentifiers) 
-  with ValPDXScript[Int] {
+  with ValPDXScript[Int]:
   
-  def this(pdxIdentifiers: String*) = {
+  def this(pdxIdentifiers: String*) =
     this(pdxIdentifiers.toList)
-  }
 
-  def this(pdxIdentifier: String) = {
+  def this(pdxIdentifier: String) =
     this(List(pdxIdentifier))
-  }
 
-  def this(pdxIdentifier: String, range: ExpectedRange[Int]) = {
+  def this(pdxIdentifier: String, range: ExpectedRange[Int]) =
     this(List(pdxIdentifier), range)
-  }
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def set(expression: Node): Unit = {
+  override def set(expression: Node): Unit =
     usingIdentifier(expression)
     this.node = Some(expression)
-    if (!valueIsInstanceOf[Int | Integer]) {
+    if (!valueIsInstanceOf[Int | Integer]) then
       throw new NodeValueTypeException(expression, "Number (as an Integer)", this.getClass)
-    }
-  }
 
-  def set(value: Int): Int = {
+  def set(value: Int): Int =
     if (this.node.nonEmpty)
       this.node.get.setValue(value)
     else
       this.node = Some(Node(value))
     value
-  }
 
-  def set(other: IntPDX): Unit = {
-    other.value match {
+  def set(other: IntPDX): Unit =
+    other.value match
       case Some(value) => this @= value
       case None => this.node = None
-    }
-  }
 
-  override def equals(other: PDXScript[?]): Boolean = {
-    other match {
+  override def equals(other: PDXScript[?]): Boolean =
+    other match
       case x: IntPDX => node.equals(x.node)
       case _ => false
-    }
-  }
 
-  override def value: Option[Int] = boundary {
-    node.getOrElse(boundary.break(None)).$ match {
+  override def value: Option[Int] = boundary:
+    node.getOrElse(boundary.break(None)).$ match
       case value: Int => Some(value)
       case value: Double => Some(value.toInt)
       case null => None
       case _ =>
         logger.warn(s"Expected integer value for pdx int")
         None
-    }
-  }
 
   /**
    * @inheritdoc
@@ -71,13 +59,12 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
   override def getOrElse(default: Int): Int = boundary {
     val value = node.getOrElse(boundary.break(default)).value
     value match
-      case Some(v) => v match {
+      case Some(v) => v match
         case i: Int => i
         case d: Double => d.toInt
         case _ =>
           logger.warn(s"Expected integer value for pdx int, got $value")
           default
-      }
       case None => default
   }
 
@@ -96,37 +83,31 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
   override def defaultValue: Int = 0
 
   @targetName("unaryPlus")
-  override def unary_+ : Int = this.value match {
+  override def unary_+ : Int = this.value match
     case Some(v) => +v
     case None => 0
-  }
 
   @targetName("unaryMinus")
-  override def unary_- : Int = this.value match {
+  override def unary_- : Int = this.value match
     case Some(v) => -v
     case None => 0
-  }
 
   @targetName("plus")
-  override def +(other: Int): Int = this.value match {
+  override def +(other: Int): Int = this.value match
     case Some(v) => v + other
     case None => other
-  }
 
   @targetName("minus")
   override def -(other: Int): Int = this + (-other)
 
   @targetName("multiply")
-  override def *(other: Int): Int = this.value match {
+  override def *(other: Int): Int = this.value match
     case Some(v) => v * other
     case None => 0
-  }
 
   @targetName("divide")
-  override def /(other: Int): Int = this.value match {
+  override def /(other: Int): Int = this.value match
     case Some(v) => v / other
     case None => 0
-  }
   
   def asSomeString: Option[String] = Some(asString)
-}

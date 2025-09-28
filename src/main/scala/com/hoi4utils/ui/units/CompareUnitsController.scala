@@ -11,7 +11,7 @@ import scala.collection.mutable
 import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 
-class CompareUnitsController extends HOIIVUtilsAbstractController {
+class CompareUnitsController extends HOIIVUtilsAbstractController:
 
   setFxmlResource("CompareUnits.fxml")
   setTitle("Compare Units")
@@ -21,11 +21,8 @@ class CompareUnitsController extends HOIIVUtilsAbstractController {
   private var unitsDiffViewPane: DiffViewPane = uninitialized
   private val skipNullProperties = true
 
-  /**
-   * {@inheritDoc}
-   */
   @FXML
-  def initialize(): Unit = {
+  def initialize(): Unit =
     val customUnits = SubUnit.read(HOIIVFiles.Mod.units_folder).asJava
     val baseUnits = SubUnit.read(HOIIVFiles.HOI4.units_folder).asJava
 
@@ -40,40 +37,34 @@ class CompareUnitsController extends HOIIVUtilsAbstractController {
     /* add data */
     // custom unit
     val customUnitText = mutable.Buffer.empty[String]
-    for (i <- 0 until customUnits.size) {
+    for i <- 0 until customUnits.size do
       val unit = customUnits.get(i)
       appendUnitDetails(customUnitText, unit)
       customUnitText.append("")
-    }
-    if (customUnits.isEmpty) customUnitText.append("No custom units found")
+
+    if customUnits.isEmpty then customUnitText.append("No custom units found")
 
     // base unit
     val baseUnitText = mutable.Buffer.empty[String]
-    for (i <- 0 until baseUnits.size) {
+    for i <- 0 until baseUnits.size do
       val unit = baseUnits.get(i)
       appendUnitDetails(baseUnitText, unit)
       baseUnitText.append("")
-    }
-    if (baseUnits.isEmpty) baseUnitText.append("No base units found")
+
+    if baseUnits.isEmpty then baseUnitText.append("No base units found")
 
     // append
     unitsDiffViewPane.setData(baseUnitText.asJava, customUnitText.asJava)
-  }
 
-  private def appendUnitDetails(unitText: collection.mutable.Buffer[String], unit: SubUnit): Unit = {
+  private def appendUnitDetails(unitText: collection.mutable.Buffer[String], unit: SubUnit): Unit =
     val df = SubUnit.dataFunctions()
     val dfl = SubUnit.dataLabels().asJava
     val maxLabelWidth = dfl.asScala.map(_.length).max
 
-    for (i <- 0 until df.size) {
+    for i <- 0 until df.size do
       val data = df.apply(i).apply(unit)
-      if (skipNullProperties && data == null) {}
-      else {
+      if skipNullProperties && data != null then
         val dataLabel = dfl.get(i)
         val spacing = " " * (maxLabelWidth - dataLabel.length)
-        val str = s"$dataLabel: $spacing${if (data == null) "[null]" else data.toString}"
+        val str = s"$dataLabel: $spacing${if data == null then "[null]" else data.toString}"
         unitText.append(str)
-      }
-    }
-  }
-}

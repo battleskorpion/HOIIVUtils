@@ -7,65 +7,51 @@ import scala.annotation.targetName
 
 
 class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIdentifiers)
-  with Comparable[StringPDX] {
+  with Comparable[StringPDX]:
   
-  def this(pdxIdentifiers: String*) = {
+  def this(pdxIdentifiers: String*) =
     this(pdxIdentifiers.toList)
-  }
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def set(expression: Node): Unit = {
+  override def set(expression: Node): Unit =
     usingIdentifier(expression)
     this.node = Some(expression)
-    this.node.get.$ match {
+    this.node.get.$ match
       case _: String =>
       case _ => throw new NodeValueTypeException(this.node.get, this.getClass)
-    }
-  }
   
-  override def set(s: String): String = {
-    this.node match {
+  override def set(s: String): String =
+    this.node match
       case Some(node) => node.setValue(s)
       case None => this.node = Some(Node(pdxIdentifiers.head, "=", s))
-    }
     s
-  }
 
-  override def equals(other: PDXScript[?]): Boolean = {
-    other match {
+  override def equals(other: PDXScript[?]): Boolean =
+    other match
       case other: StringPDX =>
-        if (this.node.isEmpty || other.node.isEmpty) {
+        if (this.node.isEmpty || other.node.isEmpty) then
           return false
-        }
         node.get.equals(other.node.get)
       case _ => false
-    }
-  }
 
-  def nodeEquals(s: String): Boolean = {
+  def nodeEquals(s: String): Boolean =
     this.node.nonEmpty && node.get.$.equals(s)
-  }
 
-  override def compareTo(o: StringPDX): Int = {
-    (this.value, o.value) match {
+  override def compareTo(o: StringPDX): Int =
+    (this.value, o.value) match
       case (Some(str), Some(o)) => str.compareTo(o)
       case (Some(str), None) => 1
       case (None, Some(o)) => -1
       case (None, None) => 0
-    }
-  }
 
-  def str: String = {
+  def str: String =
     value.getOrElse("")
-  }
 
-  override def toString: String = {
-    this.node match {
+  override def toString: String =
+    this.node match
       case Some(node) => node.toString
       case None => "StringPDX[identifiers: " + pdxIdentifiers.mkString(", ") + "]"
-    }
-  }
 
   /**
    * Checks the value of the script is equal to the given value.
@@ -74,10 +60,9 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
    * @return
    */
   @targetName("getEquals")
-  def @==(other: String): Boolean = value match {
+  def @==(other: String): Boolean = value match
     case Some(v) => v.equals(other)
     case None => false
-  }
 
   /**
    * Checks if the value of the script is not equal to the given value.
@@ -100,19 +85,16 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
    *
    * @param other
    */
-  def @=(other: PDXScript[String]): Unit = other.value match {
+  def @=(other: PDXScript[String]): Unit = other.value match
     case Some(v) => set(v)
     case None => setNull()
-  }
   
   def nonEmpty: Boolean = value match
     case Some(v) => v.nonEmpty
     case None => false
 
-  override def updateNodeTree(): Unit = {
+  override def updateNodeTree(): Unit =
     // Default behavior for leaf nodes: update the node's value from the current state.
     node.foreach(n => setNode(value.orNull))
-  }
   
   def get: Option[String] = value
-}

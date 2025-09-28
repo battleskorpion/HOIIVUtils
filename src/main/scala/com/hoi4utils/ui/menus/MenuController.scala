@@ -146,75 +146,70 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
   }
 
   // Setup window controls AFTER primaryStage is available
-  private def setupWindowControls(): Unit = {
-
+  def setupWindowControls(): Unit = {
     // Verify all components are available
     if contentContainer == null then
       logger.error("contentContainer is null - FXML injection failed!")
-      return ()
-
-    if primaryStage == null then
+    else if primaryStage == null then
       logger.error("primaryStage is null - called too early!")
-      return ()
-
-    // Setup window dragging
-    contentContainer.setOnMousePressed { event =>
-      if event != null then
-        xOffset = event.getSceneX
-        yOffset = event.getSceneY
-    }
-
-    contentContainer.setOnMouseDragged { event =>
-      if event != null && primaryStage != null then
-        val newX = event.getScreenX - xOffset
-        val newY = event.getScreenY - yOffset
-        primaryStage.setX(newX)
-        primaryStage.setY(newY)
-    }
-
-    // Setup window control buttons
-    if mClose != null then
-      mClose.setOnAction(_ => {
-        try
-          Option(JOptionPane.getRootFrame).foreach(_.dispose())
-          System.exit(0)
-        catch
-          case e: Exception =>
-            logger.error("Error during application shutdown", e)
-            System.exit(1)
-      })
     else
-      logger.warn("mClose button is null!")
+      // Setup window dragging
+      contentContainer.setOnMousePressed { event =>
+        if event != null then
+          xOffset = event.getSceneX
+          yOffset = event.getSceneY
+      }
 
-    if mSquare != null then
-      mSquare.setOnAction(_ => {
-        try
-          if primaryStage != null then
-            primaryStage.setMaximized(!primaryStage.isMaximized)
-        catch
-          case e: Exception =>
-            logger.error("Error toggling window maximized state", e)
-      })
-    else
-      logger.warn("mSquare button is null!")
+      contentContainer.setOnMouseDragged { event =>
+        if event != null && primaryStage != null then
+          val newX = event.getScreenX - xOffset
+          val newY = event.getScreenY - yOffset
+          primaryStage.setX(newX)
+          primaryStage.setY(newY)
+      }
 
-    if mMinimize != null then
-      mMinimize.setOnAction(_ => {
-        try
-          if primaryStage != null then
-            primaryStage.setIconified(true)
-        catch
-          case e: Exception =>
-            logger.error("Error minimizing window", e)
-      })
-    else
-      logger.warn("mMinimize button is null!")
+      // Setup window control buttons
+      if mClose != null then
+        mClose.setOnAction(_ => {
+          try
+            Option(JOptionPane.getRootFrame).foreach(_.dispose())
+            System.exit(0)
+          catch
+            case e: Exception =>
+              logger.error("Error during application shutdown", e)
+              System.exit(1)
+        })
+      else
+        logger.warn("mClose button is null!")
+
+      if mSquare != null then
+        mSquare.setOnAction(_ => {
+          try
+            if primaryStage != null then
+              primaryStage.setMaximized(!primaryStage.isMaximized)
+          catch
+            case e: Exception =>
+              logger.error("Error toggling window maximized state", e)
+        })
+      else
+        logger.warn("mSquare button is null!")
+
+      if mMinimize != null then
+        mMinimize.setOnAction(_ => {
+          try
+            if primaryStage != null then
+              primaryStage.setIconified(true)
+          catch
+            case e: Exception =>
+              logger.error("Error minimizing window", e)
+        })
+      else
+        logger.warn("mMinimize button is null!")
   }
 
   override def start(stage: Stage): Unit = {
     primaryStage = stage
     primaryStage.initStyle(StageStyle.UNDECORATED)
-
     primaryStage.getIcons.addAll(
       new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear16.png")),
       new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear32.png")),
@@ -224,19 +219,12 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     )
 
     try
-      // Validate FXML resource exists
-      Option(getClass.getResource(fxmlResource)) match
-        case None =>
-          throw new IllegalArgumentException(s"FXML resource not found: $fxmlResource")
-        case Some(resource) =>
-
+      if getClass.getResource(fxmlResource) == null then throw new IllegalArgumentException(s"FXML resource not found: $fxmlResource")
       val fxml = new FXMLLoader(getClass.getResource(fxmlResource), getResourceBundleM)
-      // CRITICAL: Set this instance as the controller so FXML injection works
       fxml.setController(this)
       val root = fxml.load[Parent]()
 
-      if root == null then
-        throw new IllegalStateException(s"Failed to load FXML root from: $fxmlResource")
+      if root == null then throw new IllegalStateException(s"Failed to load FXML root from: $fxmlResource")
 
       val scene = new Scene(root)
 
@@ -255,15 +243,10 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
 
       primaryStage.setScene(scene)
       primaryStage.setTitle("HOIIVUtils")
-
-      // Configure screen positioning
       decideScreen(primaryStage)
-
-      // NOW setup window controls - both primaryStage and FXML fields are available
       setupWindowControls()
-
       primaryStage.show()
-
+      
     catch
       case e: IOException =>
         val errorMsg = s"IO Error loading FXML resource: $fxmlResource"

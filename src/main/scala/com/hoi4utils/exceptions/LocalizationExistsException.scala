@@ -2,7 +2,7 @@ package com.hoi4utils.exceptions
 
 import com.hoi4utils.hoi4mod.localization.Localization
 
-class LocalizationExistsException(message: String) extends Exception(message) {
+class LocalizationExistsException(message: String) extends Exception(message):
   def this(localization: Localization) =
     this(s"Localization already exists: ${localization.id}")
 
@@ -15,4 +15,3 @@ class LocalizationExistsException(message: String) extends Exception(message) {
     this(
       s"Localization already exists: $prev\n\tand cannot be replaced with the text: $text"
     )
-}

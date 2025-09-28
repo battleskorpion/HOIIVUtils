@@ -1,16 +1,19 @@
 package com.hoi4utils.ui.menus
 
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.ui.custom_javafx.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, JavaFXUIManager}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
 import javafx.scene.Node
 import javafx.scene.control.*
+import javafx.scene.layout.{GridPane, Pane}
 import javafx.stage.Screen
 
 import java.io.{File, FilenameFilter}
 import java.net.JarURLConnection
 import java.util.Locale
+import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 
@@ -21,10 +24,14 @@ import scala.jdk.CollectionConverters.*
  *
  * @author thiccchris
  */
-class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManager with LazyLogging {
+class SettingsController extends HOIIVUtilsAbstractController2 with JavaFXUIManager with LazyLogging {
   setFxmlResource("Settings.fxml")
   setTitle(s"HOIIVUtils Settings ${HOIIVUtils.get("version")}")
 
+  @FXML var contentContainer: GridPane = uninitialized
+  @FXML var mClose: Button = uninitialized
+  @FXML var mSquare: Button = uninitialized
+  @FXML var mMinimize: Button = uninitialized
   @FXML var versionLabel: Label = uninitialized
   @FXML var modPathTextField: TextField = uninitialized
   @FXML var hoi4PathTextField: TextField = uninitialized
@@ -48,6 +55,14 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
     loadLanguages()
     // after loading, set saved settings
     loadUIWithSavedSettings()
+  }
+  
+  override def fxmlSetController(): Unit = {
+    fxml.setController(this)
+  }
+  
+  override def preSetup(): Unit = {
+    setupWindowControls(contentContainer, mClose, mSquare, mMinimize)
   }
 
   private def loadMonitor(): Unit = {

@@ -8,7 +8,7 @@ import com.hoi4utils.parser.Node
  * @param message The detail message.
  * @param cause   The cause of the exception.
  */
-class NodeValueTypeException(message: String, cause: Throwable) extends Exception(message, cause) {
+class NodeValueTypeException(message: String, cause: Throwable) extends Exception(message, cause):
 
   def this(message: String) =
     this(message, null)
@@ -21,4 +21,3 @@ class NodeValueTypeException(message: String, cause: Throwable) extends Exceptio
 
   def this(exp: Node, expected: String, clazz: Class[?]) =
     this(s"[${clazz.getName}] Invalid node value type of expression: ${exp.name}, Expected: $expected")
-}

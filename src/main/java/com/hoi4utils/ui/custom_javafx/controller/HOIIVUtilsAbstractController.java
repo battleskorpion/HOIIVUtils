@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 
 public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 	public static final Logger logger = LogManager.getLogger(HOIIVUtilsAbstractController.class);
-	private String fxmlResource;
-	private String title;
+	public String fxmlResource;
+	public String title;
 
 	/**
 	 * Opens the stage with the specified FXML resource and title.
