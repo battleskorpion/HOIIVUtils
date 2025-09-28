@@ -4,7 +4,7 @@ import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4.country.CountryTag
 import com.hoi4utils.hoi4.focus.FocusTree.focusTreeFileMap
 import com.hoi4utils.localization.{Localizable, Property}
-import com.hoi4utils.parser.{Node, ParserException}
+import com.hoi4utils.parser.{Comment, Node, ParserException}
 import com.hoi4utils.script.*
 import com.hoi4utils.{HOIIVFiles, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
@@ -31,6 +31,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
   // private Point continuousFocusPosition; // ! todo DO THIS
 
   private var _focusFile: Option[File] = None
+  private var _commentedFocuses: ListBuffer[String] = ListBuffer.empty
 
   /* default */
   FocusTree.add(this)
@@ -54,6 +55,22 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
   def listFocusIDs: Seq[String] = Seq.from(focuses.flatMap(_.id.value))
 
   def focusFile: Option[File] = _focusFile
+
+  /**
+   * List of commented-out focus definitions found in the focus tree file.
+   * These are focus blocks that are commented out and therefore not processed
+   * as active focuses, but are preserved for potential future activation.
+   *
+   * @return list containing commented focus block text
+   */
+  def commentedFocuses: List[String] = _commentedFocuses.toList
+
+  /**
+   * Clears the list of commented focuses. Used for testing and reloading.
+   */
+  def clearCommentedFocuses(): Unit = {
+    _commentedFocuses.clear()
+  }
 
   override def toString: String =
     id.value.orElse(country.value.map(_.toString)).getOrElse:
@@ -143,6 +160,54 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
   override def equals(other: PDXScript[?]): Boolean =
     if other.isInstanceOf[FocusTree] then return this == other
     false
+
+  /**
+   * Override loadPDX to detect and collect commented focus blocks
+   */
+  override def loadPDX(expression: Node): Unit = {
+    // First, scan for commented focus blocks before normal processing
+    scanForCommentedFocuses(expression)
+
+    // Then proceed with normal PDX loading
+    super.loadPDX(expression)
+  }
+
+  /**
+   * Scans the parsed node tree for commented-out focus blocks
+   */
+  private def scanForCommentedFocuses(rootNode: Node): Unit = {
+    def scanRecursive(node: Node): Unit = {
+      // Check if this node is a comment containing a focus definition
+      node.rawValue match {
+        case Some(comment: Comment) =>
+          val commentText = comment.comment
+          if (commentText.trim.startsWith("# focus = {")) {
+            // Extract the focus ID if possible
+            val focusId = extractFocusIdFromComment(commentText)
+            _commentedFocuses += focusId
+          }
+        case Some(children: ListBuffer[Node]) =>
+          children.foreach(scanRecursive)
+        case _ => // Not a comment or parent node
+      }
+    }
+
+    scanRecursive(rootNode)
+  }
+
+  /**
+   * Attempts to extract a focus ID from a commented focus block
+   */
+  private def extractFocusIdFromComment(commentText: String): String = {
+    // Look for "id = some_id" pattern in the comment
+    val idPattern = """#\s*id\s*=\s*([A-Za-z0-9_]+)""".r
+    idPattern.findFirstMatchIn(commentText) match {
+      case Some(m) => m.group(1)
+      case None =>
+        // If no ID found, return the first line of the comment as identifier
+        commentText.split('\n').headOption.getOrElse("unknown_commented_focus").trim
+    }
+  }
 
   class FocusTreeCountryPDX extends StructuredPDX("country"):
     final val base = new DoublePDX("base")

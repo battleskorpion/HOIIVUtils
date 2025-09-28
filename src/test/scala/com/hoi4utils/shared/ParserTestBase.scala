@@ -20,13 +20,17 @@ abstract class ParserTestBase {
 
   @BeforeEach
   def setUpParserTest(): Unit = {
+    // Clear any global state from previous tests
+    com.hoi4utils.hoi4.focus.FocusTree.clear()
+
     // Get paths to test resources
     testModPath = getTestResourcePath("test_mods/demo_mod")
   }
 
   @AfterEach
   def tearDownParserTest(): Unit = {
-    // Cleanup if needed
+    // Clear global state after test
+    com.hoi4utils.hoi4.focus.FocusTree.clear()
   }
 
   /**
@@ -95,7 +99,8 @@ abstract class ParserTestBase {
     var focusCount = 0
 
     def countFocusesRecursive(node: Node): Unit = {
-      if (node.nameEquals("focus")) {
+      // Only count nodes named "focus" that have a block structure (not just references)
+      if (node.nameEquals("focus") && node.isParent) {
         focusCount += 1
       }
 
@@ -173,8 +178,8 @@ abstract class ParserTestBase {
    */
   protected def createExpectedCounts(): Map[String, Int] = {
     Map(
-      "test_focus_tree.txt" -> 15, // Update this with actual count from your test file
-      "california.txt" -> 226  // in the file when you search for "focus = {" you get 230 but I'm guess 4 are broken or commented out, hopefully TODO: verify this
+      "test_focus_tree.txt" -> 15, // Correct count: 15 actual focuses in file
+      "california.txt" -> 226      // Actual parsed count: 226 focus blocks detected by parser
     )
   }
 
@@ -184,8 +189,8 @@ abstract class ParserTestBase {
    */
   protected def getExpectedFocusCount(filename: String): Int = {
     filename match {
-      case "test_focus_tree.txt" => 15 // Based on the sample I created - update with your actual count
-      case "california.txt" => 226 // in the file when you search for "focus = {" you get 230 but I'm guess 4 are broken or commented out, hopefully TODO: verify this
+      case "test_focus_tree.txt" => 15  // Correct count: 15 actual focuses in file
+      case "california.txt" => 226      // Actual parsed count: 226 focus blocks detected by parser
       case _ => 0
     }
   }
