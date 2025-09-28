@@ -3,7 +3,6 @@ package com.hoi4utils.hoi4.country
 import com.hoi4utils.clausewitz.map.buildings.Infrastructure
 import com.hoi4utils.clausewitz.map.state.InfrastructureData
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
-import com.hoi4utils.hoi4.technology.Technology
 import com.hoi4utils.hoi4.units.OrdersOfBattle
 import com.hoi4utils.map.{Resource, State}
 import com.hoi4utils.parser.ParserException
@@ -26,7 +25,6 @@ class CountryFile extends StructuredPDX with HeadlessPDX with Comparable[Country
   private val capital = new ReferencePDX[State](() => State.list, state => state.stateID.asSomeString, "capital")
   private val stability = 0.0 // stability percentage defined from 0.0-1.0
   private val warSupport = 0.0 // war support percentage defined from 0.0-1.0
-  private val startingTech: Set[Technology] = null // starting technology defined in history/countries file
 
   private var _file: Option[File] = None
 
