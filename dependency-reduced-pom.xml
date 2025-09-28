@@ -64,11 +64,40 @@
       </resource>
     </resources>
     <finalName>${project.artifactId}</finalName>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.13.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.4.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.6.1</version>
+        </plugin>
+        <plugin>
+          <groupId>net.alchim31.maven</groupId>
+          <artifactId>scala-maven-plugin</artifactId>
+          <version>4.9.6</version>
+        </plugin>
+        <plugin>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-maven-plugin</artifactId>
+          <version>0.0.8</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
-        <version>0.0.8</version>
         <configuration>
           <mainClass>com.hoi4utils.HOIIVUtils</mainClass>
         </configuration>
@@ -76,7 +105,6 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>4.9.5</version>
         <executions>
           <execution>
             <id>scala-compile-first</id>
@@ -95,12 +123,11 @@
           </execution>
         </executions>
         <configuration>
-          <scalaVersion>3.7.0</scalaVersion>
+          <scalaVersion>${scala.version}</scalaVersion>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.14.0</version>
         <executions>
           <execution>
             <phase>compile</phase>
@@ -114,15 +141,14 @@
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
-              <version>1.18.38</version>
+              <version>1.18.42</version>
             </path>
           </annotationProcessorPaths>
-          <release>${java.version}</release>
+          <release>${maven.compiler.release}</release>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.6.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -141,7 +167,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>3.3.2</version>
         <configuration>
           <filesets>
             <fileset>
@@ -167,7 +192,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.38</version>
+      <version>1.18.42</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -191,17 +216,11 @@
       <artifactId>testfx-junit5</artifactId>
       <version>4.0.18</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>hamcrest</artifactId>
-          <groupId>org.hamcrest</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.10.0</version>
+      <version>5.11.2</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -221,7 +240,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.5.0</version>
+      <version>5.14.2</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -241,19 +260,13 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>4.0.0-M1</version>
+      <version>3.26.3</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>byte-buddy</artifactId>
-          <groupId>net.bytebuddy</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_3</artifactId>
-      <version>3.3.0-alpha.1</version>
+      <version>3.2.19</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -297,10 +310,6 @@
           <groupId>org.scalatest</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>scalatest-expectations_3</artifactId>
-          <groupId>org.scalatest</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>scalatest-matchers-core_3</artifactId>
           <groupId>org.scalatest</groupId>
         </exclusion>
@@ -320,19 +329,18 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.13.0-M3</version>
+        <version>5.11.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
   <properties>
-    <java.version>24</java.version>
     <project.organization.name>battleskorpion</project.organization.name>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>24.0.1</javafx.version>
     <project.inceptionYear>2022</project.inceptionYear>
-    <scala.version>3.7.0</scala.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.release>24</maven.compiler.release>
+    <scala.version>3.7.3</scala.version>
   </properties>
 </project>
