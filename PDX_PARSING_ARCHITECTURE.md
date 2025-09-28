@@ -109,9 +109,9 @@ The file contains **4 commented-out focus blocks**:
 3. **Actual parsed focuses**: **226** (230 - 4 = 226)
 
 ### **Validation**:
-- ✅ Found exactly 4 commented focus blocks: `grep -c "# focus = {" california.txt` = 4
-- ✅ Parser correctly ignores comments during tokenization
-- ✅ 230 - 4 = 226 matches actual parsed count
+- Found exactly 4 commented focus blocks: `grep -c "# focus = {" california.txt` = 4
+- Parser correctly ignores comments during tokenization
+- 230 - 4 = 226 matches actual parsed count
 
 ## **Complete Parsing Flow Diagram**
 
@@ -122,7 +122,7 @@ Tokenizer (ignores # comments)
     ↓
 Parser → Root Node Tree
     ↓
-FocusTree.loadPDX(rootNode)
+FocusTreeFile.loadPDX(rootNode)
     ↓
 StructuredPDX processes child scripts:
     ├── id.loadPDX() → finds "id = California"
@@ -189,7 +189,6 @@ These classes represent complete `.txt` files and manage top-level file structur
 | `hoi4.focus` | **FocusTreeFile**  | Entire focus tree file | `common/national_focus/*.txt` |
 | `hoi4.idea` | **IdeaFile**       | Entire ideas file | `common/ideas/*.txt` |
 | `hoi4.country` | **CountryFile**    | Country definition file | `common/countries/*.txt` |
-| `hoi4.technology` | **TechPath**       | Technology file | `common/technologies/*.txt` |
 | `hoi4.units` | **OrdersOfBattle** | OOB file | `history/units/*.txt` |
 
 **Characteristics of File Classes:**
@@ -207,7 +206,6 @@ These classes represent individual blocks/definitions within the files:
 | `hoi4.focus` | **Focus** | Individual focus block | FocusTree |
 | `hoi4.idea` | **Idea** | Individual idea block | IdeaFile |
 | `hoi4.country` | **Character** | Character definition | Country |
-| `hoi4.technology` | **Technology** | Individual tech | TechPath |
 | `hoi4.units` | **DivisionTemplate** | Division template | OrdersOfBattle |
 | `hoi4.effect` | **Effect** | Game effect block | Various |
 | `hoi4.modifier` | **Modifier** | Modifier definition | Various |

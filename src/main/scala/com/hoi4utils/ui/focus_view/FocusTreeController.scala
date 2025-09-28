@@ -1,38 +1,27 @@
 package com.hoi4utils.ui.focus_view
 
-import com.hoi4utils.{HOIIVFiles, HOIIVUtils}
-import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.hoi4.country.CountryTag
-import com.hoi4utils.hoi4.focus.{FixFocus, Focus, FocusTreeFile}
+import com.hoi4utils.hoi4mod.common.country_tags.CountryTag
+import com.hoi4utils.hoi4mod.common.national_focus.{FixFocus, Focus, FocusTreeFile}
+import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.script.PDXScript
-import com.hoi4utils.ui.HOIIVUtilsAbstractController
+import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.focus_view.FocusTreeController.updateLoadingStatus
-import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.hoi4utils.ui.pdxscript.{NewFocusTreeController, PDXEditorPane}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
-import javafx.geometry.{Point2D, Rectangle2D}
-import javafx.scene.canvas.{Canvas, GraphicsContext}
 import javafx.scene.control.*
-import javafx.scene.image.Image
-import javafx.scene.input.{MouseButton, MouseEvent}
 import javafx.scene.layout.AnchorPane
-import javafx.scene.paint.Color
 
-import javax.swing.JOptionPane
 import java.io.*
 import java.time.LocalDateTime
-import java.util.{Comparator, function}
-import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
-import scala.jdk.CollectionConverters.*
-import scala.util.{Failure, Success, Try, boundary}
-import scala.compiletime.uninitialized
+import java.util.Comparator
 import java.util.function.Consumer
-import scala.annotation.unused
+import javax.swing.JOptionPane
+import scala.compiletime.uninitialized
+import scala.util.Try
 
 class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
   setFxmlResource("FocusTree.fxml")

@@ -1,0 +1,1258 @@
+add_namespace = california
+country_event = {
+	id = california.1
+	title = california.1.t
+	desc = california.1.d
+	fire_only_once = yes
+	picture = GFX_report_event_election_vote
+	#limit = {								# bruh moment
+	#	has_government = democratic
+	#}
+	is_triggered_only = yes
+	option = {
+		ai_chance = {
+			factor = 70
+			modifier = {
+				OR = {
+					has_game_rule = {
+						rule = SCA_AI_BEHAVIOR
+						option = SCA_COMMUNIST
+					}
+					has_game_rule = {
+						rule = SCA_AI_BEHAVIOR
+						option = SCA_EPIC
+					}
+				}
+				factor = 0
+			}
+		}
+		name = california.1.a
+		complete_national_focus = SCA_the_establishment
+		set_political_party = {
+			ideology = democratic
+			popularity = 65
+		}
+	}
+	option = {
+		ai_chance = {
+			modifier = {
+				OR = {
+					has_game_rule = {
+						rule = SCA_AI_BEHAVIOR
+						option = SCA_COMMUNIST
+					}
+				}
+				factor = 0
+			}
+			factor = 30
+		}
+		name = california.1.b
+		complete_national_focus = SCA_anti_establishment
+		complete_national_focus = SCA_revitalize_our_system
+		set_politics = {
+			ruling_party = progressivism
+			elections_allowed = no
+			last_election = "1935.12.17"
+			election_frequency = 0
+		}
+		hidden_effect = {
+			country_event = usastates_news.28
+		}
+	}
+	option = {
+		ai_chance = {
+			modifier = {
+				OR = {
+					has_game_rule = {
+						rule = SCA_AI_BEHAVIOR
+						option = SCA_EPIC
+					}
+				}
+				factor = 0
+			}
+			factor = 25
+		}
+		name = california.1.c
+		complete_national_focus = SCA_anti_establishment
+		complete_national_focus = SCA_second_longshore_strike
+	}
+}
+
+country_event = {
+	id = california.21
+	title = california.21.t
+	desc = california.21.d
+	picture = GFX_california_political_violence
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = california.21.a
+		add_popularity = {
+			ideology = democratic
+			popularity = -0.05
+		}
+		add_stability = -0.05
+		add_manpower = -10000
+		hidden_effect = {
+			country_event = {
+				id = california.22
+				days = 6
+			}
+		}
+	}
+}
+
+country_event = {
+	id = california.22
+	title = california.22.t
+	desc = california.22.d
+	picture = GFX_california_patton_is_here
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = california.22.a
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.07
+		}
+		add_war_support = 0.05
+		add_political_power = -10
+		hidden_effect = {
+			country_event = {
+				id = california.23
+				days = 10
+			}
+			country_event = {
+				id = california.24
+				days = 6
+			}
+			country_event = {
+				id = california.25
+				days = 17
+			}
+		}
+	}
+}
+
+country_event = {
+	id = california.23
+	title = california.23.t
+	desc = california.23.d
+	picture = GFX_california_sinclair_speaks
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = california.23.a
+		add_popularity = {
+			ideology = communism
+			popularity = 0.08
+		}
+		add_popularity = {
+			ideology = progressivism
+			popularity = 0.05
+		}
+		add_stability = -0.05
+		add_political_power = -25
+	}
+}
+
+country_event = {
+	#californians flee
+	id = california.24
+	title = california.24.t
+	desc = california.24.d
+	picture = GFX_california_dust_bowl
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = california.24.a
+		add_manpower = -15000
+		25 = {
+			add_manpower = -12000
+		}
+		add_timed_idea = {
+			idea = SCA_californian_migration_california
+			days = 345
+		}
+		SNV = {
+			add_manpower = 15000
+			143 = {
+				add_manpower = 12000
+			}
+			add_timed_idea = {
+				idea = SCA_californian_migration_nevada
+				days = 345
+			}
+		}
+	}
+}
+
+country_event = {
+	#martial law
+	id = california.25
+	title = california.25.t
+	desc = california.25.d
+	picture = GFX_california_police_violence
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = california.25.a
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.12
+		}
+		add_popularity = {
+			ideology = democratic
+			popularity = -0.14
+		}
+		add_stability = -0.1
+		add_war_support = 0.1
+		country_event = {
+			id = california.26
+			days = 18
+		}
+	}
+}
+
+country_event = {
+	#republican party collapse
+	id = california.26
+	title = california.26.t
+	desc = california.26.d
+	picture = GFX_california_patton_march
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = california.26.a
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = no
+		}
+		set_cosmetic_tag = SCA_patton
+	}
+}
+
+country_event = {
+	id = california.10
+	title = california.10.t
+	desc = california.10.d
+	picture = GFX_california_peoples_republic_declared
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			remove_ideas = SCA_delayed_election
+			uncomplete_national_focus = {
+				focus = SCA_maintain_the_western_democracies
+				uncomplete_children = yes
+			}
+			unlock_national_focus = SCA_halt_the_elections
+			complete_national_focus = SCA_divided_we_fall
+			complete_national_focus = SCA_the_military_steps_in
+			country_event = {
+				id = washington.11
+				days = 10
+			}
+		}
+	}
+	option = {
+		name = california.10.a
+		RCA = {
+			transfer_state = 43
+			transfer_state = 55
+			transfer_state = 171
+			transfer_state = 25
+			transfer_state = 84
+			core_california = yes
+			load_oob = RCA_spawnables
+			inherit_technology = SCA
+			add_named_threat = {
+				threat = 5
+				name = SCA_civil_war_tt
+			}
+			country_event = {
+				id = commiecali.2
+				days = 3
+			}
+		}
+	}
+	option = {
+		name = california.10.b
+		RCA = {
+			transfer_state = 43
+			transfer_state = 55
+			transfer_state = 171
+			transfer_state = 25
+			transfer_state = 84
+			core_california = yes
+			load_oob = RCA_spawnables
+			inherit_technology = SCA
+			add_named_threat = {
+				threat = 5
+				name = SCA_civil_war_tt
+			}
+			country_event = {
+				id = commiecali.2
+				days = 3
+			}
+			change_tag_from = SCA
+		}
+	}
+}
+
+country_event = {
+	id = california.11
+	title = california.11.t
+	desc = california.11.d
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+	}
+	option = {
+		name = california.11.a
+		declare_war_on = {
+			target = RCA
+			type = civil_war
+		}
+	}
+}
+
+###military coup events start
+country_event = {
+	id = california.27
+	title = california.27.t
+	desc = california.27.d
+	picture = GFX_california_patton_march
+	#is_triggered_only = yes
+	trigger = {
+		focus_progress = {
+			progress > 0.1
+			focus = SCA_halt_the_elections
+		}
+	}
+	fire_only_once = yes
+	option = {
+		name = california.27.a
+		add_stability = -0.05
+	}
+}
+
+country_event = {
+	id = california.28
+	title = california.28.t
+	desc = california.28.d
+	picture = GFX_
+	#is_triggered_only = yes
+	trigger = {
+		focus_progress = {
+			progress > 0.4
+			focus = SCA_halt_the_elections
+		}
+	}
+	fire_only_once = yes
+	option = {
+		name = california.28.a
+		add_popularity = {
+			ideology = democratic
+			popularity = -0.05
+		}
+	}
+}
+
+country_event = {
+	id = california.29
+	title = california.29.t
+	desc = california.29.d
+	picture = GFX_
+	#is_triggered_only = yes
+	trigger = {
+		focus_progress = {
+			progress > 0.8
+			focus = SCA_halt_the_elections
+		}
+	}
+	fire_only_once = yes
+	option = {
+		name = california.29.a
+		add_stability = -0.05
+	}
+}
+
+country_event = {
+	id = california.2
+	title = california.2.t
+	desc = california.2.d
+	picture = GFX_report_event_europe_funeral
+	trigger = {
+		tag = SCA
+	}
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		ai_chance = {
+			modifier = {
+				OR = {
+					has_game_rule = {
+						rule = SCA_AI_BEHAVIOR
+						option = SCA_LEGION
+					}
+				}
+				factor = 0
+			}
+			factor = 30
+		}
+		name = california.2.a
+		#SCA = {
+		#	remove_ideas = great_depression
+		#}
+		#	set_politics = {
+		#		ruling_party = fascism
+		#		elections_allowed = no
+		#	}
+		#	set_party_name = { 
+		#	ideology = fascism
+		#	long_name = SCA_fascism_party_nadivided_short
+		#	name = SCA_fascism_party_nadivided_long
+		#}
+		#complete_national_focus = SCA_the_man_with_the_plan
+		if = {
+			limit = {
+				has_completed_focus = SCA_popular_uprising
+			}
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.1
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = {
+					has_completed_focus = SCA_popular_uprising
+				}
+			}
+			SCA = {
+				remove_ideas = great_depression
+			}
+			set_politics = {
+				ruling_party = fascism
+				elections_allowed = no
+			}
+			set_party_name = {
+				ideology = fascism
+				long_name = SCA_fascism_party_nadivided_short
+				name = SCA_fascism_party_nadivided_long
+			}
+			complete_national_focus = SCA_the_man_with_the_plan
+		}
+	}
+	option = {
+		ai_chance = {
+			modifier = {
+				OR = {
+					has_game_rule = {
+						rule = SCA_AI_BEHAVIOR
+						option = SCA_DISNEY
+					}
+				}
+				factor = 0
+			}
+			factor = 30
+		}
+		name = california.2.b
+		SCA = {
+			remove_ideas = great_depression
+		}
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = no
+		}
+		promote_character = {
+			character = SCA_george_s._patton
+			ideology = fascist_military_dictatorship
+		}
+		set_cosmetic_tag = SCA_patton
+		complete_national_focus = SCA_the_military_steps_in
+	}
+}
+
+country_event = {
+	id = california.3
+	title = california.3.t
+	desc = california.3.d
+	picture = GFX_
+	trigger = {
+		tag = SCA
+	}
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = california.3.a
+		add_political_power = 100
+	}
+}
+
+country_event = {
+	id = california.4
+	title = california.4.t
+	desc = california.4.d
+	#picture = GFX_
+	fire_only_once = yes
+	is_triggered_only = yes
+	option = {
+		name = california.4.a
+		swap_ideas = {
+			remove_idea = SCA_racial_divides
+			add_idea = SCA_racial_divides_equal
+		}
+		ai_chance = {
+			factor = 160
+		}
+	}
+}
+
+country_event = {
+	id = california.5
+	title = california.5.t
+	desc = california.5.d
+	#picture = GFX_
+	fire_only_once = yes
+	is_triggered_only = yes
+	option = {
+		name = california.5.a
+		SCA = {
+			remove_ideas = SCA_history_of_segregation
+		}
+		ai_chance = {
+			factor = 160
+		}
+	}
+}
+
+# Danzig or War (jefferson)
+country_event = {
+	id = california.86
+	title = california.86.t
+	desc = california.86.d
+	picture = GFX_report_event_german_troops
+	is_triggered_only = yes
+	trigger = {
+		NOT = {
+			has_war_with = SCA
+		}
+	}
+	option = {
+		name = california.86.a
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		SCA = {
+			country_event = {
+				id = california.87
+				days = 1
+			}
+		}
+	}
+	option = {
+		name = california.86.b
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 3
+				strength_ratio = {
+					tag = SCA
+					ratio > 0.7
+				}
+			}
+			modifier = {
+				factor = 10
+				any_other_country = {
+					is_major = yes
+					is_in_faction_with = JEF
+				}
+			}
+		}
+		SCA = {
+			country_event = {
+				id = california.88
+				days = 1
+			}
+		}
+	}
+}
+
+# Poland Cedes Danzig (Danzig or War)
+country_event = {
+	id = california.87
+	title = california.87.t
+	desc = california.87.d
+	picture = GFX_report_event_german_polish_border
+	is_triggered_only = yes
+	option = {
+		name = california.87.a
+		transfer_state = 85
+		remove_state_claim = 86
+	}
+}
+
+# Poland Refuses to Cede Danzig - so we jsut send guns to kill some bastards
+country_event = {
+	id = california.88
+	title = california.88.t
+	desc = california.88.d
+	#picture = GFX_report_event_polish_tanks_02
+	is_triggered_only = yes
+	option = {
+		name = california.88.a
+		SCA = {
+			send_equipment = {
+				equipment = infantry_equipment
+				amount = 2000
+				target = SOR
+			}
+		}
+	}
+}
+
+# Pressure Siam to become a puppet
+country_event = {
+	id = california.89
+	title = california.89.t
+	desc = california.89.d
+	#picture = GFX_report_event_californiaese_officers
+	is_triggered_only = yes
+	option = {
+		name = california.89.a
+		SID = {
+			country_event = {
+				id = california.90
+			}
+		}
+	}
+	option = {
+		name = california.89.b
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+# idaho event from ccali: Become puppet or not
+country_event = {
+	id = california.90
+	title = california.90.t
+	desc = california.90.d
+	#picture = GFX_report_event_californiaese_officers
+	is_triggered_only = yes
+	option = {
+		name = california.90.a
+		ai_chance = {
+			factor = 10
+		}
+		SCA = {
+			country_event = {
+				id = california.91
+			}
+			effect_tooltip = {
+				puppet = SID
+			}
+		}
+	}
+	option = {
+		name = california.90.b
+		ai_chance = {
+			factor = 90
+		}
+		SCA = {
+			country_event = {
+				id = california.14
+			}
+			effect_tooltip = {
+				declare_war_on = {
+					target = SID
+					type = puppet_wargoal_focus
+				}
+			}
+		}
+	}
+}
+
+# Siam accepts and is puppeted
+country_event = {
+	id = california.91
+	title = california.91.t
+	desc = california.91.d
+	#picture = GFX_report_event_californiaese_siam_politicians
+	is_triggered_only = yes
+	option = {
+		name = california.91.a
+		puppet = SID
+	}
+}
+
+# Siam refuses, nations go to war 
+country_event = {
+	id = california.92
+	title = california.92.t
+	desc = california.92.d
+	#picture = 
+	is_triggered_only = yes
+	option = {
+		name = california.92.a
+		declare_war_on = {
+			target = SID
+			type = puppet_wargoal_focus
+		}
+	}
+}
+
+country_event = {
+	id = california.93
+	title = california.93.t
+	desc = california.93.d
+	#picture = 
+	is_triggered_only = yes
+	option = {
+		name = california.93.a
+		transfer_ship = {
+			prefer_name = "temp ship 1"
+			type = destroyer
+			target = SHI
+			exclude_refitting = no
+		}
+		add_timed_idea = {
+			idea = SCA_destroyer_sale
+			days = 240
+		}
+		hidden_effect = {
+			SHI = {
+				country_event = {
+					days = 2
+					id = hawaii.1
+				}
+			}
+		}
+	}
+	option = {
+		name = california.93.b
+		hidden_effect = {
+			SHI = {
+				country_event = {
+					days = 2
+					id = hawaii.2
+				}
+			}
+		}
+	}
+}
+
+#zoot suit riots
+country_event = {
+	id = california.35
+	title = california.35.t
+	desc = california.35.d
+	picture = GFX_california35
+	is_triggered_only = no
+	fire_only_once = yes
+	trigger = {
+		TAG = SCA
+		SCA = {
+			NOT = {
+				has_government = progressivism
+			}
+			has_war = yes
+		}
+	}
+	option = {
+		add_war_support = -0.05
+		43 = {
+			add_manpower = -50
+			damage_building = {
+				type = infrastructure
+				damage = 2
+			}
+		}
+		name = california.35.a
+		add_political_power = -30
+	}
+}
+
+#cannery strike 1937
+country_event = {
+	id = california.36
+	title = california.36.t
+	desc = california.36.d
+	picture = GFX_california36
+	is_triggered_only = no
+	fire_only_once = yes
+	trigger = {
+		TAG = SCA
+		date > 1937.4.23
+	}
+	option = {
+		add_timed_idea = {
+			idea = SCA_farmers_strikes_violent
+			days = 35
+		}
+		army_experience = 15
+		403 = {
+			add_manpower = -150
+			damage_building = {
+				type = industrial_complex
+				damage = 3
+			}
+		}
+		name = california.36.a
+		add_political_power = -50
+		add_war_support = 0.03
+	}
+	option = {
+		add_timed_idea = {
+			idea = SCA_farmers_strikes_less
+			days = 35
+		}
+		403 = {
+			add_manpower = -150
+			damage_building = {
+				type = industrial_complex
+				damage = 3
+			}
+		}
+		add_political_power = -60
+		add_stability = 0.02
+		name = california.36.b
+	}
+}
+country_event = {
+	id = california.37
+	title = california.37.t
+	desc = california.37.d
+	#picture = 
+	fire_only_once = yes
+	trigger = {
+		tag = SCA
+		has_country_leader = {
+			character = SCA_walt_disney
+		}
+		SFL = {
+			exists = yes
+			is_subject = no
+		}
+		date > 1941.1.1
+	}
+	option = {
+		SFL = {
+			country_event = {
+				id = california.38
+				days = 3
+			}
+		}
+		add_political_power = -25
+		name = california.37.a
+	}
+	option = {
+		name = california.37.b
+	}
+}
+country_event = {
+	id = california.38
+	title = california.38.t
+	desc = california.39.d
+	#picture =
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		tag = SFL
+	}
+	option = {
+        country_event = {
+			id = california.39
+			days = 2
+        }
+        SCA = {
+            add_state_claim = 16
+            transfer_state = 16
+        }
+        add_political_power = 200
+        add_stability = -0.05
+        name = california.38.a
+	}
+    option = {
+        add_political_power = -50
+        add_stability = 0.025
+        country_event = {
+			id = california.40
+			days = 2
+        }
+        name = california.38.b
+    }
+}
+country_event = {
+	id = california.39
+	title = california.39.t
+	desc = california.39.d
+	#picture =
+	trigger = {
+		tag = SCA
+	}
+	fire_only_once = yes
+	is_triggered_only = yes
+	option = {
+		add_opinion_modifier = {
+			target = SFL
+			modifier = medium_increase
+		}
+		add_political_power = 25
+		name = california.39.a
+	}
+}
+country_event = {
+	id = california.40
+	title = california.40.t
+	desc = california.40.d
+	#picture = 
+	trigger = {
+		tag = SCA
+	}
+	fire_only_once = yes
+	option = {
+		add_opinion_modifier = {
+			target = SFL
+			modifier = small_decrease
+		}
+		add_political_power = -50
+		name = california.40.a
+	}
+}
+
+country_event = {
+	id = california.111	#recoded generic event for higher odds
+	title = generic.5.t
+	desc = {
+		# FROM and ROOT are Democratic
+		text = generic.5.d.a
+		trigger = {
+			AND = {
+				FROM = {
+					has_government = democratic
+				}
+				has_government = democratic
+			}
+		}
+	}
+	desc = {
+		# FROM and ROOT are Fascist
+		text = generic.5.d.b
+		trigger = {
+			AND = {
+				FROM = {
+					has_government = fascism
+				}
+				has_government = fascism
+			}
+		}
+	}
+	desc = {
+		# FROM and ROOT are Communist
+		text = generic.5.d.c
+		trigger = {
+			AND = {
+				FROM = {
+					has_government = communism
+				}
+				has_government = communism
+			}
+		}
+	}
+	desc = {
+		# FROM and ROOT are different ideologies
+		text = generic.5.d.e
+		trigger = {
+			NOT = {
+				AND = {
+					FROM = {
+						has_government = democratic
+					}
+					has_government = democratic
+				}
+				AND = {
+					FROM = {
+						has_government = fascism
+					}
+					has_government = fascism
+				}
+				AND = {
+					FROM = {
+						has_government = communism
+					}
+					has_government = communism
+				}
+			}
+		}
+	}
+	picture = GFX_report_event_generic_read_write
+	immediate = {
+		hidden_effect = {
+			save_event_target_as = alliance_applicant
+			FROM = {
+				save_event_target_as = alliance_inviter
+			}
+		}
+	}
+	is_triggered_only = yes
+	option = {
+		#Agree / Both Democratic
+		name = generic.5.a
+		trigger = {
+			is_in_faction = no
+			AND = {
+				FROM = {
+					has_government = democratic
+				}
+				has_government = democratic
+			}
+		}
+		ai_chance = {
+			base = 100
+		}
+		FROM = {
+			add_to_faction = ROOT
+			country_event = {
+				id = generic.6
+				hours = 6
+			}
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = FROM
+			value = 200
+		}
+		hidden_effect = {
+			set_country_flag = alliance_applicant@ROOT
+			FROM = {
+				set_country_flag = alliance_inviter@ROOT
+			}
+			news_event = {
+				id = news.289
+				hours = 12
+			}
+		}
+	}
+	option = {
+		#Agree / Both Fascist
+		name = generic.5.b
+		trigger = {
+			is_in_faction = no
+			AND = {
+				FROM = {
+					has_government = fascism
+				}
+				has_government = fascism
+			}
+		}
+		ai_chance = {
+			base = 100
+		}
+		FROM = {
+			add_to_faction = ROOT
+			country_event = {
+				id = generic.6
+				hours = 6
+			}
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = FROM
+			value = 200
+		}
+		hidden_effect = {
+			set_country_flag = alliance_applicant@ROOT
+			FROM = {
+				set_country_flag = alliance_inviter@ROOT
+			}
+			news_event = {
+				id = news.289
+				hours = 12
+			}
+		}
+	}
+	option = {
+		#Agree / Both Communist
+		name = generic.5.c
+		trigger = {
+			is_in_faction = no
+			AND = {
+				FROM = {
+					has_government = communism
+				}
+				has_government = communism
+			}
+		}
+		ai_chance = {
+			base = 100
+		}
+		FROM = {
+			add_to_faction = ROOT
+			country_event = {
+				id = generic.6
+				hours = 6
+			}
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = FROM
+			value = 200
+		}
+		hidden_effect = {
+			set_country_flag = alliance_applicant@ROOT
+			FROM = {
+				set_country_flag = alliance_inviter@ROOT
+			}
+			news_event = {
+				id = news.289
+				hours = 12
+			}
+		}
+	}
+	option = {
+		#Agree / Both different
+		name = generic.5.e
+		trigger = {
+			is_in_faction = no
+			NOT = {
+				AND = {
+					FROM = {
+						has_government = democratic
+					}
+					has_government = democratic
+				}
+				AND = {
+					FROM = {
+						has_government = fascism
+					}
+					has_government = fascism
+				}
+				AND = {
+					FROM = {
+						has_government = communism
+					}
+					has_government = communism
+				}
+			}
+		}
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 0.5
+				has_war = no
+				FROM = {
+					has_war = yes
+				}
+			}
+			modifier = {
+				factor = 0.5
+				NOT = {
+					has_government = neutrality
+				}
+			}
+			modifier = {
+				factor = 0.75
+				FROM = {
+					is_major = no
+				}
+			}
+		}
+		FROM = {
+			add_to_faction = ROOT
+			country_event = {
+				id = generic.6
+				hours = 6
+			}
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = FROM
+			value = 200
+		}
+	}
+	option = {
+		#Reject
+		name = generic.2.f
+		trigger = {
+			is_in_faction = no
+		}
+		ai_chance = {
+			factor = 0
+			modifier = {
+				factor = 0.5
+				has_opinion = {
+					target = FROM
+					value > 65
+				}
+			}
+			modifier = {
+				factor = 0.5
+				has_opinion = {
+					target = FROM
+					value > 35
+				}
+			}
+			modifier = {
+				factor = 0.5
+				has_opinion = {
+					target = FROM
+					value > 5
+				}
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = FROM
+					value < 35
+				}
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = FROM
+					value < 65
+				}
+			}
+			modifier = {
+				factor = 0.1
+				has_war = yes
+				FROM = {
+					has_war = no
+				}
+			}
+			modifier = {
+				factor = 0.1
+				FROM = {
+					is_major = yes
+				}
+			}
+		}
+		FROM = {
+			country_event = {
+				id = generic.7
+				hours = 6
+			}
+		}
+	}
+	option = {
+		#Reject if in faction
+		name = generic.2.g
+		trigger = {
+			is_in_faction = yes
+		}
+		FROM = {
+			country_event = {
+				id = generic.7
+				hours = 6
+			}
+		}
+	}
+}

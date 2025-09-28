@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.pdxscript;
 
-import com.hoi4utils.localization.Localizable;
-import com.hoi4utils.localization.Property;
+import com.hoi4utils.hoi4mod.localization.Localizable;
+import com.hoi4utils.hoi4mod.localization.Property;
 import com.hoi4utils.script.*;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;

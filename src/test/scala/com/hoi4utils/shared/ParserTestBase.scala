@@ -1,15 +1,16 @@
 package com.hoi4utils.shared
 
+import com.hoi4utils.hoi4mod.common.national_focus
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile
 import com.hoi4utils.parser.{Node, Parser}
-import com.hoi4utils.hoi4.focus.FocusTreeFile
 import org.junit.jupiter.api.{AfterEach, BeforeEach}
 
-import java.nio.file.{Files, Path, Paths}
 import java.io.File
-import scala.io.Source
-import scala.util.{Try, Using}
+import java.nio.file.{Files, Path, Paths}
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
+import scala.io.Source
+import scala.util.{Try, Using}
 
 /**
  * Base class for parser tests providing utilities to work with test mod files
@@ -21,7 +22,7 @@ abstract class ParserTestBase {
   @BeforeEach
   def setUpParserTest(): Unit = {
     // Clear any global state from previous tests
-    com.hoi4utils.hoi4.focus.FocusTreeFile.clear()
+    national_focus.FocusTreeFile.clear()
 
     // Get paths to test resources
     testModPath = getTestResourcePath("test_mods/demo_mod")
@@ -30,7 +31,7 @@ abstract class ParserTestBase {
   @AfterEach
   def tearDownParserTest(): Unit = {
     // Clear global state after test
-    com.hoi4utils.hoi4.focus.FocusTreeFile.clear()
+    national_focus.FocusTreeFile.clear()
   }
 
   /**

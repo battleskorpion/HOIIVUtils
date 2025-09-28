@@ -5,7 +5,6 @@ import com.hoi4utils.parser.Node
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.collection.mutable.ListBuffer
-import scala.util.{Failure, Success, Try}
 
 abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) with LazyLogging {
   def this(pdxIdentifiers: String*) = {

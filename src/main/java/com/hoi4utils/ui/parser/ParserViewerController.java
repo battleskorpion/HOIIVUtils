@@ -1,27 +1,27 @@
 package com.hoi4utils.ui.parser;
 
 
-import com.hoi4utils.HOIIVFiles;
-import com.hoi4utils.HOIIVUtils;
-import com.hoi4utils.hoi4.country.CountryFile;
-import com.hoi4utils.hoi4.country.CountryTag$;
-import com.hoi4utils.hoi4.focus.FocusTreeFile;
+import com.hoi4utils.hoi4mod.common.country_tags.CountryTag$;
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile;
+import com.hoi4utils.hoi4mod.history.countries.CountryFile;
+import com.hoi4utils.hoi4mod.map.resource.ResourcesFile;
+import com.hoi4utils.hoi4mod.map.state.State;
+import com.hoi4utils.hoi4mod.map.strategicregions.StrategicRegion;
+import com.hoi4utils.main.HOIIVFiles;
+import com.hoi4utils.main.HOIIVUtils;
 import com.hoi4utils.parser.Node;
 import com.hoi4utils.parser.Parser;
 import com.hoi4utils.parser.ParserException;
 import com.hoi4utils.script.AbstractPDX;
 import com.hoi4utils.script.PDXScript;
-import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.JavaFXUIManager;
+import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.custom_javafx.controller.JavaFXUIManager;
 import com.hoi4utils.ui.pdxscript.PDXTreeViewFactory;
 import com.hoi4utils.ui.pdxscript.StratRegionPDXEditorController;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import com.hoi4utils.map.ResourcesFile;
-import com.hoi4utils.map.State;
-import com.hoi4utils.map.StrategicRegion;
 import scala.jdk.javaapi.CollectionConverters;
 
 import javax.swing.*;

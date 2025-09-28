@@ -1,13 +1,13 @@
 package com.hoi4utils.parser
 
+import com.hoi4utils.shared.ParserTestBase
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.{DisplayName, Test}
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File
-import com.hoi4utils.shared.ParserTestBase
-import org.junit.jupiter.api.{Test, DisplayName, BeforeEach}
-import org.junit.jupiter.api.Assertions._
 import scala.collection.mutable.ListBuffer
-import scala.util.{Success, Failure}
+import scala.util.{Failure, Success}
 
 class ParserTest extends ParserTestBase with AnyFunSuiteLike {
 

@@ -1,6 +1,6 @@
 package com.hoi4utils.clausewitz.data.province;
 
-import com.hoi4utils.fileIO.FileRead;
+import com.hoi4utils.file.file_read.FileRead;
 
 import java.io.File;
 import java.io.FileWriter;

@@ -1,10 +1,10 @@
 package com.hoi4utils.ui.pdxscript;
 
-import com.hoi4utils.HOIIVUtils;
-import com.hoi4utils.hoi4.country.CountryTag;
-import com.hoi4utils.hoi4.country.CountryTag$;
-import com.hoi4utils.hoi4.focus.FocusTreeFile;
-import com.hoi4utils.ui.HOIIVUtilsAbstractController;
+import com.hoi4utils.hoi4mod.common.country_tags.CountryTag;
+import com.hoi4utils.hoi4mod.common.country_tags.CountryTag$;
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile;
+import com.hoi4utils.main.HOIIVUtils;
+import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;

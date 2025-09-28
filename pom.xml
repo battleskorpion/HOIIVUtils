@@ -127,7 +127,7 @@
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
         <configuration>
-          <mainClass>com.hoi4utils.HOIIVUtils</mainClass>
+          <mainClass>com.hoi4utils.main.HOIIVUtils</mainClass>
         </configuration>
       </plugin>
       
@@ -195,7 +195,7 @@
             <configuration>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.hoi4utils.HOIIVUtils</mainClass>
+                  <mainClass>com.hoi4utils.main.HOIIVUtils</mainClass>
                 </transformer>
               </transformers>
             </configuration>

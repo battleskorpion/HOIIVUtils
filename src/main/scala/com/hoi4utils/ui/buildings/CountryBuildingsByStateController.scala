@@ -1,25 +1,23 @@
 package com.hoi4utils.ui.buildings
 
-import com.hoi4utils.hoi4.country.CountryFile
-import com.hoi4utils.map.State
-import com.hoi4utils.ui.HOIIVUtilsAbstractController
+import com.hoi4utils.hoi4mod.history.countries.CountryFile
+import com.hoi4utils.hoi4mod.map.state.State
 import com.hoi4utils.ui.custom_javafx.`export`.ExcelExport
+import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.custom_javafx.state.StateTable
 import com.hoi4utils.ui.custom_javafx.table.TableViewWindow
 import com.typesafe.scalalogging.LazyLogging
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
+import javafx.collections.{FXCollections, ObservableList}
 import javafx.fxml.FXML
-import javafx.scene.control.CheckMenuItem
-import javafx.scene.control.MenuItem
+import javafx.scene.control.{CheckMenuItem, MenuItem}
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.AnchorPane
 
-import scala.jdk.javaapi.CollectionConverters
-import javax.swing.*
 import java.awt.*
 import java.io.IOException
+import javax.swing.*
 import scala.compiletime.uninitialized
+import scala.jdk.javaapi.CollectionConverters
 
 
 class CountryBuildingsByStateController extends HOIIVUtilsAbstractController with TableViewWindow with LazyLogging {

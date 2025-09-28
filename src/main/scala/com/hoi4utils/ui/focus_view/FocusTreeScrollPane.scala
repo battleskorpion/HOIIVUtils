@@ -1,8 +1,9 @@
 package com.hoi4utils.ui.focus_view
 
-import com.hoi4utils.HOIIVUtils
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.hoi4.focus.{Focus, FocusTreeFile}
+import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTreeFile}
+import com.hoi4utils.hoi4mod.localization.Property
+import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.hoi4utils.ui.pdxscript.PDXEditorController
@@ -10,21 +11,21 @@ import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.canvas.GraphicsContext
+import scalafx.Includes.*
 import scalafx.geometry.{Point2D, Rectangle2D}
 import scalafx.scene.canvas.Canvas
-import scalafx.scene.control.{ComboBox, ContextMenu, MenuItem, ScrollPane, Tooltip}
+import scalafx.scene.control.*
 import scalafx.scene.image.Image
 import scalafx.scene.input.{MouseButton, MouseEvent}
 import scalafx.scene.layout.{AnchorPane, VBox}
 import scalafx.scene.paint.Color
-import scalafx.Includes.*
 
 import javax.swing.JOptionPane
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
-import scala.util.boundary
 import scala.jdk.CollectionConverters.*
+import scala.util.boundary
 
 class FocusTreeScrollPane(private var _focusTree: Option[FocusTreeFile]) extends ScrollPane with LazyLogging {
   // Constants
@@ -362,7 +363,7 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTreeFile]) extends
     focus.getDDSImage.foreach(img => gc2D.drawImage(img, x1, y1))
 
     // Focus name text
-    val locName = focus.localizationText(com.hoi4utils.localization.Property.NAME)
+    val locName = focus.localizationText(Property.NAME)
     val name = locName match {
       case None => if (focus.id.str.nonEmpty) focus.id.str else "[Localization missing]"
       case Some(text) => text

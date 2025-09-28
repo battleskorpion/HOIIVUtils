@@ -11,9 +11,10 @@
 package com.hoi4utils.ddsreader
 
 import javafx.scene.image.{Image, PixelFormat, PixelWriter, WritableImage}
+
 import java.io.{File, IOException}
 import java.nio.file.Files
-import scala.util.{Try, Success, Failure}
+import scala.util.{Failure, Success, Try}
 
 object DDSReader {
 

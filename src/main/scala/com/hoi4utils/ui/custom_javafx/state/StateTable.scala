@@ -1,18 +1,17 @@
 package com.hoi4utils.ui.custom_javafx.state
 
-import com.hoi4utils.map.State
-import com.hoi4utils.ui.JavaFXUIManager
+import com.hoi4utils.hoi4mod.map.state.State
+import com.hoi4utils.ui.custom_javafx.controller.JavaFXUIManager
 import com.typesafe.scalalogging.LazyLogging
-import javafx.fxml.FXML
 import javafx.beans.property.{IntegerProperty, ObjectProperty, ReadOnlyObjectWrapper, StringProperty}
 import javafx.collections.FXCollections
-import javafx.scene.control.{TableCell, TableColumn, TableView}
-import javafx.scene.control.cell.TextFieldTableCell
-import javafx.util.converter.IntegerStringConverter
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import javafx.fxml.FXML
 import javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS
+import javafx.scene.control.cell.TextFieldTableCell
+import javafx.scene.control.{TableCell, TableColumn, TableView}
 import javafx.util.StringConverter
+import javafx.util.converter.IntegerStringConverter
+import org.apache.logging.log4j.{LogManager, Logger}
 import scalafx.collections.ObservableBuffer
 import scalafx.util.converter.IntStringConverter
 

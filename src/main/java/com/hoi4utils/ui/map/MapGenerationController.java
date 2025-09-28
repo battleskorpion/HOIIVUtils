@@ -1,12 +1,12 @@
 package com.hoi4utils.ui.map;
 
-import com.hoi4utils.HOIIVUtils;
-import com.hoi4utils.clausewitz.map.Heightmap;
-import com.hoi4utils.clausewitz.map.ProvinceGenConfig;
-import com.hoi4utils.clausewitz.map.ProvinceGeneration;
-import com.hoi4utils.clausewitz.map.ProvinceMap;
-import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.JavaFXUIManager;
+import com.hoi4utils.hoi4mod.map.gen.Heightmap;
+import com.hoi4utils.hoi4mod.map.province.ProvinceGenConfig;
+import com.hoi4utils.hoi4mod.map.province.ProvinceGeneration;
+import com.hoi4utils.hoi4mod.map.province.ProvinceMap;
+import com.hoi4utils.main.HOIIVUtils;
+import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.custom_javafx.controller.JavaFXUIManager;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;

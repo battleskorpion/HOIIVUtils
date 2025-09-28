@@ -1,7 +1,7 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.hoi4.focus.FocusTreeFile
-import com.hoi4utils.map.StrategicRegion
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile
+import com.hoi4utils.hoi4mod.map.strategicregions.StrategicRegion
 import com.hoi4utils.parser.{Node, Parser, Tokenizer}
 import com.hoi4utils.script.StringPDX
 import org.scalatest.funsuite.AnyFunSuiteLike

@@ -1,7 +1,10 @@
 package com.hoi4utils.ui.map;
 
-import com.hoi4utils.HOIIVFiles;
-import com.hoi4utils.ui.HOIIVUtilsAbstractController;
+import com.hoi4utils.hoi4mod.map.province.DefinitionCSV;
+import com.hoi4utils.hoi4mod.map.province.Province;
+import com.hoi4utils.hoi4mod.map.state.State;
+import com.hoi4utils.main.HOIIVFiles;
+import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.custom_javafx.state.StateTable;
 import com.hoi4utils.ui.pdxscript.PDXEditorPane;
 import javafx.collections.ObservableList;
@@ -21,10 +24,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-import com.hoi4utils.map.DefinitionCSV;
-import com.hoi4utils.map.Province;
-import com.hoi4utils.map.ProvinceDefinition;
-import com.hoi4utils.map.State;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import scala.jdk.javaapi.CollectionConverters;
@@ -147,7 +146,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
         var scalaDefs = DefinitionCSV.load(defFile);
         var defs = CollectionConverters.asJava(scalaDefs);
         Map<Integer,Integer> provinceColorToId = new HashMap<>();
-        for (ProvinceDefinition d : defs.values()) {
+        for (DefinitionCSV.ProvinceDefinition d : defs.values()) {
             int rgb = (d.red() << 16) | (d.green() << 8) | d.blue();
             provinceColorToId.put(rgb, d.id());
         }
@@ -269,12 +268,12 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
         }
 
         // Load the province definitions from CSV (Scala object)
-        scala.collection.immutable.Map<Object, ProvinceDefinition> scalaDefs = DefinitionCSV.load(defFile);
-        Map<Object, ProvinceDefinition> defs = CollectionConverters.asJava(scalaDefs);
+        scala.collection.immutable.Map<Object, DefinitionCSV.ProvinceDefinition> scalaDefs = DefinitionCSV.load(defFile);
+        Map<Object, DefinitionCSV.ProvinceDefinition> defs = CollectionConverters.asJava(scalaDefs);
 
         // Build a mapping from province RGB (as in the original image) to province id.
         final Map<Integer, Integer> provinceColorToId = new HashMap<>();
-        for (ProvinceDefinition def : defs.values()) {
+        for (DefinitionCSV.ProvinceDefinition def : defs.values()) {
             int rgb = (def.red() << 16) | (def.green() << 8) | def.blue();
             provinceColorToId.put(rgb, def.id());
         }
@@ -430,10 +429,10 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
                 logger.warn("Definitions file not found: " + defFile.getAbsolutePath());
                 return;
             }
-            scala.collection.immutable.Map<Object, ProvinceDefinition> scalaDefs = DefinitionCSV.load(defFile);
-            Map<Object, ProvinceDefinition> defs = CollectionConverters.asJava(scalaDefs);
+            scala.collection.immutable.Map<Object, DefinitionCSV.ProvinceDefinition> scalaDefs = DefinitionCSV.load(defFile);
+            Map<Object, DefinitionCSV.ProvinceDefinition> defs = CollectionConverters.asJava(scalaDefs);
             final Map<Integer, Integer> provinceColorToId = new HashMap<>();
-            for (ProvinceDefinition def : defs.values()) {
+            for (DefinitionCSV.ProvinceDefinition def : defs.values()) {
                 int rgb = (def.red() << 16) | (def.green() << 8) | def.blue();
                 provinceColorToId.put(rgb, def.id());
             }

@@ -4,28 +4,8 @@ import com.hoi4utils.parser.TokenType.TokenType
 
 import scala.collection.mutable
 import scala.compiletime.uninitialized
-import scala.util.matching.Regex
 import scala.util.boundary
-
-object Token {
-  val EOF_INDICATOR = "$"
-
-  // im being lazy and need ordered
-  val tokenRegex: mutable.LinkedHashMap[TokenType, Regex] = mutable.LinkedHashMap(
-    TokenType.comment -> "#.*".r,
-    TokenType.string -> "\"(\\\\.|[^\"])*\"".r,
-    TokenType.operator -> "[={}<>;,]|>=|<=|!=".r,
-    TokenType.float -> "-?\\d*\\.\\d+".r,
-    TokenType.int -> "-?(?:\\d+|0x[0-9a-fA-F]+)".r,
-    TokenType.symbol -> "[A-Za-z0-9_:\\.@\\[\\]\\-?^/\\u00A0-\\u024F]+".r,
-    TokenType.eof -> "\\$".r,
-    TokenType.whitespace -> "\\s+".r,
-  )
-
-  private val floatPattern = tokenRegex(TokenType.float)
-  private val intPattern = tokenRegex(TokenType.int)
-}
-
+import scala.util.matching.Regex
 /**
  * Token class remains mostly the same; it will now recognize whitespace 
  * as a distinct TokenType if it matches the regex above.
@@ -103,4 +83,23 @@ class Token {
       case _ => false
     }
   }
+}
+
+object Token {
+  val EOF_INDICATOR = "$"
+
+  // im being lazy and need ordered
+  val tokenRegex: mutable.LinkedHashMap[TokenType, Regex] = mutable.LinkedHashMap(
+    TokenType.comment -> "#.*".r,
+    TokenType.string -> "\"(\\\\.|[^\"])*\"".r,
+    TokenType.operator -> "[={}<>;,]|>=|<=|!=".r,
+    TokenType.float -> "-?\\d*\\.\\d+".r,
+    TokenType.int -> "-?(?:\\d+|0x[0-9a-fA-F]+)".r,
+    TokenType.symbol -> "[A-Za-z0-9_:\\.@\\[\\]\\-?^/\\u00A0-\\u024F]+".r,
+    TokenType.eof -> "\\$".r,
+    TokenType.whitespace -> "\\s+".r,
+  )
+
+  private val floatPattern = tokenRegex(TokenType.float)
+  private val intPattern = tokenRegex(TokenType.int)
 }

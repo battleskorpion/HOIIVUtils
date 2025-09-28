@@ -1,12 +1,12 @@
 package com.hoi4utils.ui.hoi4localization;
 
-import com.hoi4utils.HOIIVFiles;
-import com.hoi4utils.hoi4.idea.Idea;
-import com.hoi4utils.hoi4.idea.IdeaFile;
-import com.hoi4utils.localization.Localization;
-import com.hoi4utils.localization.Property;
-import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.JavaFXUIManager;
+import com.hoi4utils.hoi4mod.common.idea.Idea;
+import com.hoi4utils.hoi4mod.common.idea.IdeaFile;
+import com.hoi4utils.hoi4mod.localization.Localization;
+import com.hoi4utils.hoi4mod.localization.Property;
+import com.hoi4utils.main.HOIIVFiles;
+import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.custom_javafx.controller.JavaFXUIManager;
 import com.hoi4utils.ui.custom_javafx.table.TableViewWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

@@ -1,11 +1,11 @@
 package com.hoi4utils.ui.buildings;
 
 
-import com.hoi4utils.ClausewitzDate;
-import com.hoi4utils.HOIIVUtils;
-import com.hoi4utils.hoi4.country.CountryFile;
-import com.hoi4utils.ui.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.JavaFXUIManager;
+import com.hoi4utils.hoi4mod.history.countries.CountryFile;
+import com.hoi4utils.main.HOIIVUtils;
+import com.hoi4utils.parser.ClausewitzDate;
+import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.custom_javafx.controller.JavaFXUIManager;
 import com.hoi4utils.ui.custom_javafx.export.ExcelExport;
 import com.hoi4utils.ui.custom_javafx.table.DoubleOrPercentTableCell;
 import com.hoi4utils.ui.custom_javafx.table.DoubleTableCell;

@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.pdxscript
 
-import com.hoi4utils.hoi4.effect.{Effect, EffectDatabase}
+import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
 import com.hoi4utils.script.{CollectionPDX, PDXScript}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.beans.value.ObservableValue

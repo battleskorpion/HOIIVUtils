@@ -1,6 +1,6 @@
 package com.hoi4utils.exceptions
 
-import com.hoi4utils.localization.Localization
+import com.hoi4utils.hoi4mod.localization.Localization
 
 class UnexpectedLocalizationStatusException(message: String) extends Exception(message) {
 

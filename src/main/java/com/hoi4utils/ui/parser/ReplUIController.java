@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.parser;
 //
 //import com.hoi4utils.clausewitz.script.TextAreaPrintStream;
-import com.hoi4utils.ui.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
 //import javafx.fxml.FXML;
 //import javafx.scene.control.TextArea;
 //import javafx.scene.control.TextField;
