@@ -8,6 +8,7 @@ import java.io.*
 import java.nio.file.{Path, Paths}
 import java.util.Properties
 import javax.swing.*
+import scala.util.boundary
 
 /**
  * Handles initialization of the HOIIVUtils application.
@@ -30,7 +31,7 @@ class Initializer extends LazyLogging:
     val hoi4Path = Option(p.getProperty("hoi4.path")).getOrElse("")
     if hoi4Path.nonEmpty && hoi4Path.trim.nonEmpty then
       p.setProperty("hoi4.path.status", "saved")
-      return
+      return ()
 
     getPossibleHOIIVPaths.find { path =>
       val hoi4Dir = Paths.get(path).toAbsolutePath.toFile
@@ -78,7 +79,7 @@ class Initializer extends LazyLogging:
     if modPath.isBlank then
       p.setProperty("mod.path", demoModPath)
       logger.info("Auto-set mod path to demo_mod")
-      return
+      return ()
 
     val isDemoMod = try
       Paths.get(modPath).getFileName.toString == "demo_mod"

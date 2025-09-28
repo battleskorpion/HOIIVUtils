@@ -74,7 +74,7 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
   private def loadLanguages(): Unit = {
     val locales = detectSupportedLocales()
 
-    languageComboBox.getItems.setAll(locales: _*)
+    languageComboBox.getItems.setAll(locales*)
 
 //    languageComboBox.setCellFactory(_ => new ListCell[Locale] {
 //      override protected def updateItem(loc: Locale, empty: Boolean): Unit = {
@@ -226,7 +226,7 @@ class SettingsController extends HOIIVUtilsAbstractController with JavaFXUIManag
                                      initialDirectory: File, settingKey: String): Unit = {
     if (initialDirectory == null || !initialDirectory.exists || !initialDirectory.isDirectory) {
       logger.warn(s"Initial directory for $settingKey is invalid: ${initialDirectory.getAbsolutePath}")
-      return
+      return ()
     }
 
     val selectedFile = try JavaFXUIManager.openChooser(browseButton, initialDirectory, true)

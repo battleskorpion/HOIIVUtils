@@ -30,7 +30,7 @@ public class CollectionPDXNewPDXController extends HOIIVUtilsAbstractController 
 
     @FXML
     void initialize() {
-        CollectionPDXSearchPane newPDXEditorPane = new CollectionPDXSearchPane(pdxScript);
+        CollectionPDXSearchPane<?> newPDXEditorPane = new CollectionPDXSearchPane<>(pdxScript);
         rootAnchorPane.getChildren().add(newPDXEditorPane);
 
         AnchorPane.setTopAnchor(newPDXEditorPane, 30.0);

@@ -6,6 +6,7 @@ import com.hoi4utils.parser.{Node, Parser, ParserException}
 import java.io.File
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
+import scala.util.boundary
 
 /**
  * Any object that can be converted to a PDX script block, such as a focus, national focus tree,
@@ -78,7 +79,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   override def loadPDX(expression: Node): Unit =
     if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then
       logger.error("Error loading PDX script: " + expression)
-      return
+      return ()
     try set(expression)
     catch
       case e: UnexpectedIdentifierException =>
@@ -158,17 +159,18 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  override def getOrElse(elseValue: T): T =
-    val value = node.getOrElse(return elseValue).value
+  override def getOrElse(elseValue: T): T = boundary {
+    val value = node.getOrElse(boundary.break(elseValue)).value
     value match
-      case Some(t: T) => t
+      case Some(t) => t.asInstanceOf[T]
       case _ => elseValue
+  }
 
   override def toString: String =
     if node.isEmpty || node.get.isEmpty then
-      if value.isEmpty then return super.toString
-      else return value.get.toString
-    node.toString
+      if value.isEmpty then super.toString
+      else value.get.toString
+    else node.toString
 
   override def isUndefined: Boolean = node.isEmpty || node.get.valueIsNull
 

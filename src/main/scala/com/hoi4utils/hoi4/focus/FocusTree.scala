@@ -13,6 +13,7 @@ import javafx.collections.{FXCollections, ObservableList}
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.util.boundary
 import scala.jdk.javaapi.CollectionConverters
 
 /**
@@ -273,13 +274,14 @@ object FocusTree extends LazyLogging with PDXReadable:
    *
    * @param tag The country tag
    */
-  def get(tag: CountryTag): Option[FocusTree] =
+  def get(tag: CountryTag): Option[FocusTree] = boundary {
     listFocusTrees.foreach: tree =>
       tree.countryTag match
-        case Some(t) if tag.equals(t.tag) => return Some(tree)
+        case Some(t) if tag.equals(t.tag) => boundary.break(Some(tree))
         case _ => // Do nothing
     None
+  }
 
   def getRandom: Option[FocusTree] =
-    if focusTrees.isEmpty then return None
-    Some(focusTrees(scala.util.Random.nextInt(focusTrees.size)))
+    if focusTrees.isEmpty then None
+    else Some(focusTrees(scala.util.Random.nextInt(focusTrees.size)))

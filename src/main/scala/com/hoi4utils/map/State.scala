@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.util.boundary
 import scala.jdk.javaapi.CollectionConverters
 
 /**
@@ -468,13 +469,13 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
    *
    * @param file state file
    */
-  def removeState(file: File): Boolean = {
+  def removeState(file: File): Boolean = boundary {
     val tempState = new State(false)
     for (state <- states) {
       if (state.stateID == tempState.stateID) {
         states -= state
         logger.debug("Removed state " + tempState)
-        return true
+        boundary.break(true)
       }
     }
     false

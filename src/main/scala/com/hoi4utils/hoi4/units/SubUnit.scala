@@ -6,6 +6,7 @@ import com.hoi4utils.parser.{Node, Parser, ParserException}
 import java.io.File
 import javax.swing.JOptionPane
 import scala.collection.mutable.ListBuffer
+import scala.util.boundary
 
 /**
  * A single sub‑unit definition in HOI4 (e.g. combat battalion or support company).
@@ -48,7 +49,7 @@ case class SubUnit(
 
 object SubUnit {
   /** Read all sub‑unit definitions from files in the given directory. */
-  def read(dir: File): List[SubUnit] = {
+  def read(dir: File): List[SubUnit] = boundary {
     if (!dir.isDirectory) throw new IllegalArgumentException(s"$dir is not a directory")
 
     val files: List[File] = Option(dir.listFiles())
@@ -64,7 +65,7 @@ object SubUnit {
         case e: ParserException =>
           JOptionPane.showMessageDialog(null,
             s"[SubUnit] Error parsing ${file.getName}: ${e.getMessage}")
-          return buf.toList   // or simply skip this file
+          boundary.break(buf.toList)   // or simply skip this file
       }
       
       val nodes: Seq[Node] = root.find("sub_units").toSeq

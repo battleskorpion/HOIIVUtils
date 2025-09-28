@@ -8,6 +8,7 @@ import com.typesafe.scalalogging.LazyLogging
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.util.boundary
 
 
 /**
@@ -123,7 +124,7 @@ class Interface(private val file: File) extends LazyLogging {
       case e: ParserException =>
         interfaceErrors += s"Error parsing interface .gfx file,\n\t$file\n\tException: $e"
 //        logger.error(s"Error parsing interface .gfx file, $file.\nException: $e")
-        return
+        return ()
     }
 
     /* load listed sprites */
@@ -133,7 +134,7 @@ class Interface(private val file: File) extends LazyLogging {
     if (spriteTypeNodes == null) {
       interfaceErrors += s"No SpriteTypes defined in interface .gfx file,\n\t$file\n\tException: spriteTypeNodes can't be null."
 //      logger.warn(s"No SpriteTypes defined in interface .gfx file, $file")
-      return
+      return ()
     }
 
     val validSpriteTypes = spriteTypeNodes.filter(_.containsAllCaseInsensitive("name", "texturefile"))

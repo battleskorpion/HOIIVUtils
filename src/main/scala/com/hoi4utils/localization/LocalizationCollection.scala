@@ -4,6 +4,7 @@ import java.io.File
 import scala.collection.concurrent.TrieMap
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.util.boundary
 
 class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localization]] {
 
@@ -108,7 +109,7 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
 //      .flatten // Remove any None values
   }
 
-  def replace(key: String, localization: Localization): Option[Localization] = {
+  def replace(key: String, localization: Localization): Option[Localization] = boundary {
     if (localization == null) throw new IllegalArgumentException("Localization must not be null")
 
     foreach { case (file, localizationsList) =>
@@ -117,10 +118,11 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
         val prevLocalization = localizationsList(index)
         localizationsList(index) = localization
         localizationKeyMap.put(localization.id, localization) // Update index
-        return Some(prevLocalization)
+        boundary.break(Some(prevLocalization))
       }
     }
     None
+  }
 //    for (entry <- this.entrySet) {
 //      val localizationsList = entry.getValue
 //      for (i <- 0 until localizationsList.size) {
@@ -134,7 +136,6 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
 //    }
 //    // Return null if no localization with the given key was found
 //    null
-  }
 
   def getLocalizationFile(key: String): File = {
     // todo parallel stream?

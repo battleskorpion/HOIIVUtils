@@ -29,7 +29,7 @@ import java.util.{Comparator, function}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters.*
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success, Try, boundary}
 import scala.compiletime.uninitialized
 import java.util.function.Consumer
 import scala.annotation.unused
@@ -70,7 +70,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
         loadingLabel.setText("Error: Required UI components not loaded")
         initFailed.set(true)
       )
-      return
+      return ()
 
     // Setup UI components that don't require background loading
     setupUIComponents()
@@ -166,45 +166,44 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
         result.error.foreach: error =>
           logger.error("Initialization failed", error)
           showErrorDialog("Initialization Error", error)
-        return
+      else
+        logger.debug("Adding focus trees to dropdown...")
+        // Setup dropdown with loaded trees
+        result.focusTrees.foreach: trees =>
+          focusTreeDropdown.setItems(trees)
+          focusTreeDropdown.getItems.sort(Comparator.comparing[FocusTree, String](_.toString))
 
-      logger.debug("Adding focus trees to dropdown...")
-      // Setup dropdown with loaded trees
-      result.focusTrees.foreach: trees =>
-        focusTreeDropdown.setItems(trees)
-        focusTreeDropdown.getItems.sort(Comparator.comparing[FocusTree, String](_.toString))
+          if !trees.isEmpty then
+            focusTreeDropdown.getSelectionModel.select(0)
 
-        if !trees.isEmpty then
-          focusTreeDropdown.getSelectionModel.select(0)
+          // Setup selection listener
+          focusTreeDropdown.getSelectionModel.selectedItemProperty().addListener: (_, _, newValue) =>
+            Option(newValue).foreach: tree =>
+              logger.debug(s"Focus tree selected: $tree")
+              setFocusTree(tree)
 
-        // Setup selection listener
-        focusTreeDropdown.getSelectionModel.selectedItemProperty().addListener: (_, _, newValue) =>
-          Option(newValue).foreach: tree =>
-            logger.debug(s"Focus tree selected: $tree")
-            setFocusTree(tree)
+        // Set the loaded focus tree
+        logger.debug("Setting focus tree...")
+        result.focusTree.foreach: tree =>
+          setFocusTree(tree)
 
-      // Set the loaded focus tree
-      logger.debug("Setting focus tree...")
-      result.focusTree.foreach: tree =>
-        setFocusTree(tree)
+        // Show completion message
+        result.focusTree.foreach: tree =>
+          logger.info(s"Loaded focuses: ${tree.focuses.size}")
+          logger.info(s"Country: ${tree.country.value}")
+          logger.info(s"Focus tree: $tree")
 
-      // Show completion message
-      result.focusTree.foreach: tree =>
-        logger.info(s"Loaded focuses: ${tree.focuses.size}")
-        logger.info(s"Country: ${tree.country.value}")
-        logger.info(s"Focus tree: $tree")
+          // Optional: Show completion dialog
+          showInfoDialog("Initialization Complete",
+            s"Loaded focuses: ${tree.focuses.size}\n" +
+              s"Loaded tree of country: ${tree.country.value}\n" +
+              s"Focus tree: $tree")
 
-        // Optional: Show completion dialog
-        showInfoDialog("Initialization Complete",
-          s"Loaded focuses: ${tree.focuses.size}\n" +
-            s"Loaded tree of country: ${tree.country.value}\n" +
-            s"Focus tree: $tree")
-
-      // Switch to main content
-      loadingLabel.setVisible(false)
-      logger.debug("Switching to main content view...")
-      contentContainer.setVisible(true)
-      logger.info("FocusTreeController initialized successfully.")
+        // Switch to main content
+        loadingLabel.setVisible(false)
+        logger.debug("Switching to main content view...")
+        contentContainer.setVisible(true)
+        logger.info("FocusTreeController initialized successfully.")
     )
 
   private def setFocusTree(tree: FocusTree): Unit =
@@ -258,7 +257,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
       case None =>
         logger.error("No focus tree available to export.")
         JOptionPane.showMessageDialog(null, "No focus tree available to export.", "Error", JOptionPane.ERROR_MESSAGE)
-        return
+        return ()
 
     JOptionPane.showMessageDialog(null, s"Focus tree exported to $path", "Export Successful",
       JOptionPane.INFORMATION_MESSAGE)

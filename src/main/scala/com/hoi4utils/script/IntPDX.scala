@@ -5,6 +5,7 @@ import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierExc
 import com.hoi4utils.parser.Node
 
 import scala.annotation.targetName
+import scala.util.boundary
 
 class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedRange.ofInt) extends AbstractPDX[Int](pdxIdentifiers) 
   with ValPDXScript[Int] {
@@ -53,12 +54,12 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
     }
   }
 
-  override def value: Option[Int] = {
-    node.getOrElse(return None).$ match {
+  override def value: Option[Int] = boundary {
+    node.getOrElse(boundary.break(None)).$ match {
       case value: Int => Some(value)
       case value: Double => Some(value.toInt)
       case null => None
-      case _ => 
+      case _ =>
         logger.warn(s"Expected integer value for pdx int")
         None
     }
@@ -67,13 +68,13 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
   /**
    * @inheritdoc
    */
-  override def getOrElse(default: Int): Int = {
-    val value = node.getOrElse(return default).value
+  override def getOrElse(default: Int): Int = boundary {
+    val value = node.getOrElse(boundary.break(default)).value
     value match
       case Some(v) => v match {
         case i: Int => i
         case d: Double => d.toInt
-        case _ => 
+        case _ =>
           logger.warn(s"Expected integer value for pdx int, got $value")
           default
       }

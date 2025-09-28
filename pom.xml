@@ -197,7 +197,16 @@
           </execution>
         </executions>
       </plugin>
-      
+
+      <!-- Maven Resources Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <propertiesEncoding>UTF-8</propertiesEncoding>
+        </configuration>
+      </plugin>
+
       <!-- Clean plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

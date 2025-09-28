@@ -5,6 +5,7 @@ import com.hoi4utils.parser.TokenType.TokenType
 import scala.collection.mutable
 import scala.compiletime.uninitialized
 import scala.util.matching.Regex
+import scala.util.boundary
 
 object Token {
   val EOF_INDICATOR = "$"
@@ -48,30 +49,30 @@ class Token {
     this.`type` = determineTokenType(value)
   }
 
-  private def determineTokenType(value: String): TokenType = {
+  private def determineTokenType(value: String): TokenType = boundary {
     if (value.length == 1) {
       value.charAt(0) match {
-        case '=' | '{' | '}' | '<' | '>' | ';' | ',' => return TokenType.operator
-        case '$' => return TokenType.eof
+        case '=' | '{' | '}' | '<' | '>' | ';' | ',' => boundary.break(TokenType.operator)
+        case '$' => boundary.break(TokenType.eof)
         case _ => // continue to regex matching
       }
     }
 
     if (value.length == 2) {
       value match {
-        case ">=" | "<=" | "!=" => return TokenType.operator
+        case ">=" | "<=" | "!=" => boundary.break(TokenType.operator)
         case _ => // continue to regex matching
       }
     }
 
     // Check numbers first with direct pattern matching (avoiding loop overhead)
     Token.intPattern.findFirstMatchIn(value) match {
-      case Some(m) if m.start == 0 && m.end == value.length => return TokenType.int
+      case Some(m) if m.start == 0 && m.end == value.length => boundary.break(TokenType.int)
       case _ =>
     }
 
     Token.floatPattern.findFirstMatchIn(value) match {
-      case Some(m) if m.start == 0 && m.end == value.length => return TokenType.float
+      case Some(m) if m.start == 0 && m.end == value.length => boundary.break(TokenType.float)
       case _ =>
     }
 
@@ -80,7 +81,7 @@ class Token {
       tokenType match {
         case TokenType.int | TokenType.float => // Already checked above
         case _ =>
-          if (regex.findFirstIn(value).isDefined) return tokenType
+          if (regex.findFirstIn(value).isDefined) boundary.break(tokenType)
       }
     }
 

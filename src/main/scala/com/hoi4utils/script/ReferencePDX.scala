@@ -6,6 +6,7 @@ import com.hoi4utils.parser.Node
 import scala.annotation.targetName
 import scala.compiletime.uninitialized
 import scala.language.implicitConversions
+import scala.util.boundary
 
 /**
  * A PDXObject that may reference another PDXObject.
@@ -53,13 +54,13 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
     resolveReference()
   }
 
-  private def resolveReference(): Option[T] = {
+  private def resolveReference(): Option[T] = boundary {
     val referenceCollection = referenceCollectionSupplier()
     for (ref <- referenceCollection) {
       val referenceID: Option[String] = idExtractor.apply(ref)
       if (referenceID.nonEmpty && referenceID.get.equals(referenceName)) {
         this.reference = Some(ref)
-        return this.reference
+        boundary.break(this.reference)
       }
     }
     None

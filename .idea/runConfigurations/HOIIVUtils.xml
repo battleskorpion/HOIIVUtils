@@ -2,6 +2,7 @@
   <configuration default="false" name="HOIIVUtils" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="com.hoi4utils.HOIIVUtils" />
     <module name="HOIIVUtils" />
+    <option name="PROGRAM_PARAMETERS" value="-deprecation -Dscala.args=&quot;-deprecation -unchecked -feature&quot; -Dcompiler.compilerArgs=&quot;-Xlint:all&quot;" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.hoi4utils.clausewitz.data.province.*" />

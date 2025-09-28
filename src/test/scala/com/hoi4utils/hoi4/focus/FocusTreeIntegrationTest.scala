@@ -5,7 +5,7 @@ import com.hoi4utils.HOIIVFiles
 import org.junit.jupiter.api.{Test, DisplayName, BeforeEach, AfterEach}
 import org.junit.jupiter.api.Assertions._
 import java.io.File
-import scala.util.{Try, Success, Failure}
+import scala.util.{Try, Success, Failure, boundary}
 
 class FocusTreeIntegrationTest extends ParserTestBase {
 
@@ -227,7 +227,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
 
     if (focusTreeFiles.size < 2) {
       println("Skipping multiple file test - need at least 2 focus tree files")
-      return
+      return ()
     }
 
     val createdTrees = focusTreeFiles.take(2).flatMap { file =>

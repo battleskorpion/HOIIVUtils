@@ -16,7 +16,7 @@ import java.sql.*
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
-import scala.util.{Try, Using}
+import scala.util.{Try, Using, boundary}
 import scala.compiletime.uninitialized
 
 object EffectDatabase extends LazyLogging {
@@ -170,7 +170,7 @@ object EffectDatabase extends LazyLogging {
     effects
   }
 
-  private def simpleParameterToEffect(pdxIdentifier: String, requiredParametersSimple_str: String): Option[Effect] = {
+  private def simpleParameterToEffect(pdxIdentifier: String, requiredParametersSimple_str: String): Option[Effect] = boundary {
     var paramValueType: Option[ParameterValueType] = None
 
     for (alternateParameter <- requiredParametersSimple_str.split("\\s+\\|\\s+")) {
@@ -191,7 +191,7 @@ object EffectDatabase extends LazyLogging {
       }
     }
 
-    paramValueType.getOrElse(return None) match {
+    paramValueType.getOrElse(boundary.break(None)) match {
       case ParameterValueType.country => Some(
         new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country") with SimpleEffect {
         })

@@ -12,6 +12,7 @@ import java.nio.file.{Files, Paths}
 import java.util.Scanner
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
+import scala.util.boundary
 
 
 object LocalizationManager {
@@ -323,7 +324,7 @@ abstract class LocalizationManager extends LazyLogging {
                  |    Expected Language Definition: "$language_def"
                  |    Found Language Definition: "$line"""".stripMargin
 //            logger.error("Localization file is not in English: " + file.getAbsolutePath)
-            return
+            return ()
           }
           else languageFound = true
         }
@@ -335,7 +336,7 @@ abstract class LocalizationManager extends LazyLogging {
              |    File Path: "${file.getAbsolutePath}"
              |    Expected Language Definition: "$language_def"""".stripMargin
 //        logger.error("Localization file does not have a language definition: " + file.getAbsolutePath)
-        return
+        return ()
       }
 
       while (scanner.hasNextLine) {

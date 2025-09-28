@@ -23,6 +23,8 @@ import javax.swing.JOptionPane
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
+import scala.util.boundary
+import scala.jdk.CollectionConverters.*
 
 class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends ScrollPane with LazyLogging {
   // Constants
@@ -75,13 +77,13 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     // Prevent concurrent drawing operations
     if (isDrawing) {
       logger.debug("Drawing already in progress, skipping...")
-      return
+      return ()
     }
 
     // Ensure the Canvas is properly initialized
     if (focusTreeCanvas == null) {
       logger.error("focusTreeCanvas is null. Cannot draw focus tree.")
-      return
+      return ()
     }
 
     updateContentSize()
@@ -106,14 +108,14 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     _focusTree.map(_.focuses.map(_.absoluteY).maxOption.getOrElse(10)).getOrElse(10)
   }
 
-  private def loadFocusUnavailableImage(focusUnavailablePath: String): Image = {
+  private def loadFocusUnavailableImage(focusUnavailablePath: String): Image = boundary {
     val inputStream =
       try
         getClass.getClassLoader.getResourceAsStream(focusUnavailablePath)
       catch {
         case e: Exception =>
           logger.error(s"Failed to load focus unavailable image from $focusUnavailablePath", e)
-          return null
+          boundary.break(null)
       }
     val buffer = new Array[Byte](inputStream.available)
     inputStream.read(buffer)
@@ -139,7 +141,7 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
       if (gc2D == null) {
         logger.error("GraphicsContext2D is null. Cannot draw focus tree.")
         isDrawing = false
-        return
+        return ()
       }
 
       // Verify Canvas dimensions are valid and match expected values
@@ -149,7 +151,7 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
       if (canvasWidth <= 0 || canvasHeight <= 0) {
         logger.error(s"Invalid actual Canvas dimensions: width=$canvasWidth, height=$canvasHeight")
         isDrawing = false
-        return
+        return ()
       }
 
       // Apply scaling transformation if needed
@@ -385,14 +387,15 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
 
   @FXML
   def selectClosestMatch(comboBox: ComboBox[FocusTree], typedText: String): Unit = {
-    comboBox.getItems.forEach { item =>
+    val matchingItem = comboBox.getItems.asScala.find { item =>
       item.countryTag match {
-        case Some(countryTag) if countryTag.toString.toLowerCase().startsWith(typedText.toLowerCase()) =>
-          comboBox.getSelectionModel.select(item)
-          comboBox.getEditor.setText(item.toString)
-          return
-        case _ => // Continue to next item
+        case Some(countryTag) => countryTag.toString.toLowerCase().startsWith(typedText.toLowerCase())
+        case _ => false
       }
+    }
+    matchingItem.foreach { item =>
+      comboBox.getSelectionModel.select(item)
+      comboBox.getEditor.setText(item.toString)
     }
   }
 

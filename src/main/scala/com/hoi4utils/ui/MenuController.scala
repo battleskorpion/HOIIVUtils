@@ -18,6 +18,7 @@ import javafx.scene.{Parent, Scene}
 import javafx.stage.{Stage, StageStyle}
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
+import scala.util.boundary
 import java.io.IOException
 import java.util.{Locale, MissingResourceException, ResourceBundle}
 import javax.swing.{BorderFactory, JButton, JDialog, JLabel, JOptionPane, JPanel, JTextArea, UIManager}
@@ -145,11 +146,11 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     // Verify all components are available
     if contentContainer == null then
       logger.error("contentContainer is null - FXML injection failed!")
-      return
+      return ()
 
     if primaryStage == null then
       logger.error("primaryStage is null - called too early!")
-      return
+      return ()
 
     // Setup window dragging
     contentContainer.setOnMousePressed { event =>
@@ -346,7 +347,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
         "Error",
         JOptionPane.WARNING_MESSAGE
       )
-      return
+      return ()
     }
     new CompareUnitsController().open()
   }
