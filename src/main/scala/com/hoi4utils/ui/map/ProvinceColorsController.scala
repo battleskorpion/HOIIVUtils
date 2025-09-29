@@ -14,7 +14,7 @@ import javafx.scene.shape.Rectangle
 import java.io.File
 import scala.compiletime.uninitialized
 
-class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLogging {
+class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLogging:
   setFxmlResource("ProvinceColors.fxml")
   setTitle("HOIIVUtils Province Colors")
 
@@ -65,20 +65,19 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLog
   def setBlueMax(value: Int): Unit = blueRange.max = value
 
   @FXML
-  def initialize(): Unit = {
+  def initialize(): Unit =
     idWindowName.setText("Province Colors - Unique Color Generator")
     colorInputField.setText(input) // Set default input value
     progressIndicator.setVisible(false) // Hide progress indicator initially
 
     // Initialize sliders
     setupSliders()
-  }
 
   /**
    * TODO: Fix Sliders to work with colorGenerator Example, if max red is 0 and min red is 0, then generate no red.
    * Sets up the sliders with listeners and initial values
    */
-  private def setupSliders(): Unit = {
+  private def setupSliders(): Unit =
     // Initialize sliders with default values
     redMinSlider.setValue(redRange.min)
     redMaxSlider.setValue(redRange.max)
@@ -96,55 +95,47 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLog
     maxBlueAmtLabel.setText(blueRange.max.toString)
 
     // Add listeners to sliders
-    redMinSlider.valueProperty().addListener((_, _, newValue) => {
+    redMinSlider.valueProperty().addListener: (_, _, newValue) =>
       redRange.min = newValue.intValue()
       minRedAmtLabel.setText(redRange.max.toString)
       updateColorPreview(getNumColorsGenerate())
-    })
 
-    redMaxSlider.valueProperty().addListener((_, _, newValue) => {
+    redMaxSlider.valueProperty().addListener: (_, _, newValue) =>
       redRange.max = newValue.intValue()
       maxRedAmtLabel.setText(redRange.max.toString)
       updateColorPreview(getNumColorsGenerate())
-    })
 
-    greenMinSlider.valueProperty().addListener((_, _, newValue) => {
+    greenMinSlider.valueProperty().addListener: (_, _, newValue) =>
       greenRange.min = newValue.intValue()
       minGreenAmtLabel.setText(greenRange.min.toString)
       updateColorPreview(getNumColorsGenerate())
-    })
 
-    greenMaxSlider.valueProperty().addListener((_, _, newValue) => {
+    greenMaxSlider.valueProperty().addListener: (_, _, newValue) =>
       greenRange.max = newValue.intValue()
       maxGreenAmtLabel.setText(greenRange.max.toString)
       updateColorPreview(getNumColorsGenerate())
-    })
 
-    blueMinSlider.valueProperty().addListener((_, _, newValue) => {
+    blueMinSlider.valueProperty().addListener: (_, _, newValue) =>
       blueRange.min = newValue.intValue()
       minBlueAmtLabel.setText(blueRange.min.toString)
       updateColorPreview(getNumColorsGenerate())
-    })
 
-    blueMaxSlider.valueProperty().addListener((_, _, newValue) => {
+    blueMaxSlider.valueProperty().addListener: (_, _, newValue) =>
       blueRange.max = newValue.intValue()
       maxBlueAmtLabel.setText(blueRange.max.toString)
       updateColorPreview(getNumColorsGenerate())
-    })
-  }
 
   /**
    * Gets the number of colors to generate from the input field
    * @return The number of colors to generate
    */
-  private def getNumColorsGenerate(): Int = {
-    try {
+  private def getNumColorsGenerate(): Int =
+    try
       var numColors = Integer.parseInt(colorInputField.getText)
 
-      if (numColors <= 0) {
+      if numColors <= 0 then
         statusLabel.setText("Error: Number of colors must be positive.")
         return 0
-      }
 
       // Calculate the maximum possible colors within the RGB constraints
       val redMax = Math.max(1, redRange.max - redRange.min + 1)
@@ -153,47 +144,39 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLog
       val maxPossibleColors = redMax.toLong * greenMax * blueMax
 
       // Check if exceeding maximum possible unique colors based on constraints
-      if (numColors > maxPossibleColors) {
+      if numColors > maxPossibleColors then
         numColors = maxPossibleColors.toInt
         statusLabel.setText(s"Warning: Limited to $numColors colors based on RGB ranges.")
         logger.warn(s"Requested more colors than possible with current RGB ranges. Limited to $numColors")
-      }
 
       // Also check the absolute maximum (16.7 million)
-      if (numColors > (1 << 24) - 1) {
+      if numColors > (1 << 24) - 1 then
         numColors = (1 << 24) - 1
         statusLabel.setText(s"Warning: Limited to maximum of $numColors unique colors.")
         logger.warn(s"Requested more colors than possible (24-bit RGB). Limited to $numColors")
-      }
 
       numColors
-    } catch {
+    catch
       case e: NumberFormatException =>
         statusLabel.setText("Error: Please enter a valid number.")
         0
-    }
-  }
 
-  @FXML private def handleColorInputField(): Unit = {
+  @FXML private def handleColorInputField(): Unit =
     input = colorInputField.getText
     val numColors = getNumColorsGenerate()
 
-    if (numColors > 0) {
+    if numColors > 0 then
       // Update the color preview
       updateColorPreview(numColors)
       statusLabel.setText(s"Ready to generate BMP with $numColors unique colors.")
-    }
-  }
 
   /**
    * Handler for "Generate BMP" button click.
    */
-  @FXML private def handleGenerateButton(): Unit = {
+  @FXML private def handleGenerateButton(): Unit =
     val numColors = getNumColorsGenerate()
 
-    if (numColors <= 0) {
-      return // Error already displayed in getNumColorsGenerate
-    }
+    if numColors <= 0 then return // Error already displayed in getNumColorsGenerate
 
     // Show progress indicator
     statusLabel.setText(s"Generating BMP with $numColors unique colors...")
@@ -203,29 +186,27 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLog
     val colorGenerator = new ColorGenerator()
 
     // Run BMP generation on a background thread
-    new Thread(() => {
-      try {
+    new Thread(() =>
+      try
         colorGenerator.generateColors(numColors, outputPath)
 
         // Update UI on completion
-        Platform.runLater(() => {
+        Platform.runLater(() =>
           progressIndicator.setVisible(false)
           generateButton.setDisable(false)
           statusLabel.setText(s"BMP generated successfully: $outputPath")
           logger.info(s"Generated BMP with $numColors unique colors: $outputPath")
-        })
-      } catch {
+        )
+      catch
         case e: Exception =>
           logger.error("Error generating BMP", e)
-          Platform.runLater(() => {
+          Platform.runLater(() =>
             progressIndicator.setVisible(false)
             generateButton.setDisable(false)
             statusLabel.setText(s"Error: Failed to generate BMP - ${e.getMessage}")
             logger.error("Failed to generate BMP", e)
-          })
-      }
-    }).start()
-  }
+          )
+    ).start()
 
   /**
    * TODO: Fix Preview
@@ -233,8 +214,8 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLog
    *
    * @param numColors Number of unique colors to display.
    */
-  private def updateColorPreview(numColors: Int): Unit = {
-    if (numColors <= 0) return
+  private def updateColorPreview(numColors: Int): Unit =
+    if numColors <= 0 then return
 
     colorPreviewGrid.getChildren.clear()
 
@@ -242,7 +223,7 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLog
     val boxSize = 8
     val previewLimit = Math.min(numColors, 1000)
 
-    for (i <- 0 until previewLimit) {
+    for i <- 0 until previewLimit do
       // Create a rectangle with the color
       val rect = new Rectangle(boxSize, boxSize)
       // TODO: Get some colors from colorGenerator to be preview here, somehow?
@@ -256,6 +237,3 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLog
       val row = i / columns
       val col = i % columns
       colorPreviewGrid.add(rect, col, row)
-    }
-  }
-}

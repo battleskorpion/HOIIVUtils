@@ -46,24 +46,6 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
    */
   @FXML
   def initialize(): Unit =
-
-    // Set initial UI state on FX thread
-    contentContainer.setVisible(false)
-    loadingLabel.setVisible(true)
-    loadingLabel.setText("Beginning focus tree view initialization...")
-
-    // Validate other required FXML components
-    if focusTreeDropdown == null || exportFocusTreeButton == null then
-      logger.error("Required FXML components are null")
-      Platform.runLater(() =>
-        loadingLabel.setText("Error: Required UI components not loaded")
-        initFailed.set(true)
-      )
-      return ()
-
-    // Setup UI components that don't require background loading
-    setupUIComponents()
-
     // Start background initialization
     val task = new javafx.concurrent.Task[InitializationResult]:
       override def call(): InitializationResult =
@@ -97,10 +79,27 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
       )
     )
 
-    // Start the task in a new thread
-    val thread = new Thread(task)
-    thread.setDaemon(true)
-    thread.start()
+
+    // Set initial UI state on FX thread
+    contentContainer.setVisible(false)
+    loadingLabel.setVisible(true)
+    loadingLabel.setText("Beginning focus tree view initialization...")
+
+    // Validate other required FXML components
+    if focusTreeDropdown == null || exportFocusTreeButton == null then
+      logger.error("Required FXML components are null")
+      Platform.runLater(() =>
+        loadingLabel.setText("Error: Required UI components not loaded")
+        initFailed.set(true)
+      )
+    else
+      // Setup UI components that don't require background loading
+      setupUIComponents()
+  
+      // Start the task in a new thread
+      val thread = new Thread(task)
+      thread.setDaemon(true)
+      thread.start()
 
   private def setupUIComponents(): Unit =
     // Setup components that can be configured immediately

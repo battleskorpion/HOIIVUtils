@@ -67,13 +67,12 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
   var primaryStage: Stage = uninitialized
 
   @FXML
-  def initialize(): Unit = {
-    val task = new javafx.concurrent.Task[Unit] {
-      override def call(): Unit = {
+  def initialize(): Unit =
+    val task = new javafx.concurrent.Task[Unit]:
+      override def call(): Unit =
         loadProgram()
-      }
 
-      private def loadProgram(): Unit = {
+      private def loadProgram(): Unit =
         val pdxLoader = new PDXLoader()
 
         pdxLoader.clearPDX()
@@ -95,26 +94,22 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
           "IdeaFile",
           "ResourcesFile$"
         ).flatMap(MenuController.checkFileError)
-        if (badFiles.isEmpty) {
+        if badFiles.isEmpty then
           MenuController.updateLoadingStatus(loadingLabel, "All files loaded successfully")
-        } else {
+        else
           MenuController.updateLoadingStatus(loadingLabel, "Some files are not loaded correctly, please check the settings")
           logger.warn(s"version: ${Version.getVersion(config.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
           showFilesErrorDialog(badFiles, vSettings)
           blockButtons(true)
-        }
 
         HOIIVUtils.save()
         MenuController.updateLoadingStatus(loadingLabel, "Showing Menu...")
-      }
-    }
 
-    task.setOnSucceeded(_ => {
+    task.setOnSucceeded: _ =>
       contentContainer.setVisible(true)
       blockButtons(false)
       loadingLabel.setVisible(false)
       vFocusTree.requestFocus()
-    })
 
     /* INITIALIZATION */
     contentContainer.setVisible(false)
@@ -133,9 +128,8 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
       mTitle.setText(s"HOIIVUtils Menu")
       new Thread(task).start()
     catch case e: Exception => handleMInitError("Error starting program", e)
-  }
 
-  private def handleMInitError(msg: String, exception: Exception): Unit = {
+  private def handleMInitError(msg: String, exception: Exception): Unit =
     logger.error(msg, exception)
     updateLoadingStatus(loadingLabel, msg)
     mTitle.setText(s"HOIIVUtils - Error\n$msg\n$exception")
@@ -143,10 +137,9 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     blockButtons(true)
     loadingLabel.setVisible(false)
     vSettings.requestFocus()
-  }
 
   // Setup window controls AFTER primaryStage is available
-  def setupWindowControls(): Unit = {
+  def setupWindowControls(): Unit =
     // Verify all components are available
     if contentContainer == null then
       logger.error("contentContainer is null - FXML injection failed!")
@@ -154,23 +147,21 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
       logger.error("primaryStage is null - called too early!")
     else
       // Setup window dragging
-      contentContainer.setOnMousePressed { event =>
+      contentContainer.setOnMousePressed: event =>
         if event != null then
           xOffset = event.getSceneX
           yOffset = event.getSceneY
-      }
 
-      contentContainer.setOnMouseDragged { event =>
+      contentContainer.setOnMouseDragged: event =>
         if event != null && primaryStage != null then
           val newX = event.getScreenX - xOffset
           val newY = event.getScreenY - yOffset
           primaryStage.setX(newX)
           primaryStage.setY(newY)
-      }
 
       // Setup window control buttons
       if mClose != null then
-        mClose.setOnAction(_ => {
+        mClose.setOnAction: _ =>
           try
             Option(JOptionPane.getRootFrame).foreach(_.dispose())
             System.exit(0)
@@ -178,36 +169,32 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
             case e: Exception =>
               logger.error("Error during application shutdown", e)
               System.exit(1)
-        })
       else
         logger.warn("mClose button is null!")
 
       if mSquare != null then
-        mSquare.setOnAction(_ => {
+        mSquare.setOnAction: _ =>
           try
             if primaryStage != null then
               primaryStage.setMaximized(!primaryStage.isMaximized)
           catch
             case e: Exception =>
               logger.error("Error toggling window maximized state", e)
-        })
       else
         logger.warn("mSquare button is null!")
 
       if mMinimize != null then
-        mMinimize.setOnAction(_ => {
+        mMinimize.setOnAction: _ =>
           try
             if primaryStage != null then
               primaryStage.setIconified(true)
           catch
             case e: Exception =>
               logger.error("Error minimizing window", e)
-        })
       else
         logger.warn("mMinimize button is null!")
-  }
 
-  override def start(stage: Stage): Unit = {
+  override def start(stage: Stage): Unit =
     primaryStage = stage
     primaryStage.initStyle(StageStyle.UNDECORATED)
     primaryStage.getIcons.addAll(
@@ -246,7 +233,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
       decideScreen(primaryStage)
       setupWindowControls()
       primaryStage.show()
-      
+
     catch
       case e: IOException =>
         val errorMsg = s"IO Error loading FXML resource: $fxmlResource"
@@ -291,34 +278,31 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
           JOptionPane.ERROR_MESSAGE
         )
         System.exit(1)
-  }
 
-  private def getResourceBundleM = {
+  private def getResourceBundleM =
     val resourceBundle: ResourceBundle =
       //    val currentLocale = new Locale("tr", "TR") // Turkish locale
       val currentLocale = Locale.getDefault
-      try {
+      try
         val bundle = ResourceBundle.getBundle("i18n.menu", currentLocale)
         bundle
-      } catch {
+      catch
         case _: MissingResourceException =>
           logger.error(s"Could not find ResourceBundle for locale $currentLocale. Falling back to English.")
           val fallbackBundle = ResourceBundle.getBundle("i18n.menu", Locale.US)
           logger.error(s"Fallback ResourceBundle loaded: ${fallbackBundle.getLocale}")
           fallbackBundle
-      }
     if resourceBundle == null then
       logger.error("ResourceBundle is null, cannot load FXML.")
       throw new RuntimeException("ResourceBundle is null, cannot load FXML.")
     resourceBundle
-  }
 
   def open(): Unit = start(new Stage())
 
-  def openSettings(): Unit = {
+  def openSettings(): Unit =
     closeWindow(vSettings) // closes the menu window
     new SettingsController().open()
-  }
+
   def openFocusTreeViewer(): Unit = new FocusTreeController().open()
   def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open()
   def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open()
@@ -326,8 +310,8 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
   def openCustomTooltip(): Unit = new CustomTooltipController().open()
   def openBuildingsByCountry(): Unit = new BuildingsByCountryController().open()
   def openGFXInterfaceFileList(): Unit = new InterfaceFileListController().open()
-  def openUnitComparisonView(): Unit = {
-    if (!HOIIVFiles.isUnitsFolderValid) {
+  def openUnitComparisonView(): Unit =
+    if !HOIIVFiles.isUnitsFolderValid then
       logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
       JOptionPane.showMessageDialog(
         null,
@@ -335,10 +319,9 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
         "Error",
         JOptionPane.WARNING_MESSAGE
       )
-    } else {
+    else
       new CompareUnitsController().open()
-    }
-  }
+
   def openProvinceColors(): Unit = new ProvinceColorsController().open()
   def openMapGeneration(): Unit = new MapGenerationController().open()
   def openMapEditor(): Unit = new MapEditorController().open()
@@ -362,25 +345,20 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
       vUnitComparison,
       vMapEditor,
       vParserView
-    ).foreach { button =>
+    ).foreach: button =>
       if button != null then
         button.setDisable(b)
-    }
 
 object MenuController extends LazyLogging:
 
-  def updateLoadingStatus(loadingLabel: Label, status: String): Unit = {
-    Platform.runLater(() => {
-      if (loadingLabel != null) {
+  def updateLoadingStatus(loadingLabel: Label, status: String): Unit =
+    Platform.runLater: () =>
+      if loadingLabel != null then
         val currentText = loadingLabel.getText
-        loadingLabel.setText(if (currentText.isEmpty) status else s"$currentText\n$status")
-      }
-    })
-  }
+        loadingLabel.setText(if currentText.isEmpty then status else s"$currentText\n$status")
 
-  private def checkFileError(file: String): Option[String] = {
+  private def checkFileError(file: String): Option[String] =
     if get(s"valid.$file") == "false" then Some(s"• $file") else None
-  }
 
   /**
    * Shows a dialog listing the bad files and provides a button to open the settings.
@@ -388,7 +366,7 @@ object MenuController extends LazyLogging:
    * @param badFiles List of bad files to display in the dialog
    * @param button Button to close the menu window when opening settings
    */
-  private def showFilesErrorDialog(badFiles: ListBuffer[String], button: Button): Unit = {
+  private def showFilesErrorDialog(badFiles: ListBuffer[String], button: Button): Unit =
     val warningMessageBuffer = new StringBuilder("")
     warningMessageBuffer.append(badFiles.mkString(
       "The following settings need to be configured:\n\n",
@@ -426,14 +404,13 @@ object MenuController extends LazyLogging:
     val buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT))
     val settingsButton = new JButton("Open Settings")
 
-    settingsButton.addActionListener(_ => {
-      Platform.runLater(() => {
+    settingsButton.addActionListener: _ =>
+      Platform.runLater: () =>
         try button.getScene.getWindow.asInstanceOf[Stage].close()
         catch case ex: Exception => logger.error("Failed to close menu window", ex)
-      })
-      Platform.runLater(() => new SettingsController().open())
+      Platform.runLater: () =>
+        new SettingsController().open()
       dialog.dispose()
-    })
 
     buttonPanel.add(settingsButton)
 
@@ -446,8 +423,5 @@ object MenuController extends LazyLogging:
     dialog.setSize(450, 300)
     dialog.setLocationRelativeTo(null)
     dialog.setVisible(true)
-  }
 
-  def get(prop: String): String = {
-    HOIIVUtils.get(prop)
-  }
+  def get(prop: String): String = HOIIVUtils.get(prop)

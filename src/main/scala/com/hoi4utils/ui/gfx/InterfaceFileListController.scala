@@ -7,16 +7,16 @@ import javafx.scene.control.Label
 
 // todo add actual effect (enable/disable) from check boxes
 // view GFX
-class InterfaceFileListController extends HOIIVUtilsAbstractController {
+class InterfaceFileListController extends HOIIVUtilsAbstractController:
   setFxmlResource("InterfaceFileList.fxml")
   setTitle("HOIIVUtils Interface File List Window")
   @FXML var idVersion: Label = null
   @FXML var idWindowName: Label = null
 
-  def initialize(): Unit = {
+  def initialize(): Unit =
     idVersion.setText(HOIIVUtils.get("version"))
     idWindowName.setText("InterfaceFileListWindow" + " WIP")
-  }
+  
 // private JPanel interfaceFileListJPanel;
 // private JTable interfaceFileListTable;
 // private DefaultTableModel interfaceFileListTableModel;
@@ -96,4 +96,3 @@ class InterfaceFileListController extends HOIIVUtilsAbstractController {
 // interfaceFileListTableModel.setValueAt(interfaceFilename, i, 1);
 //  }
 // }
-}

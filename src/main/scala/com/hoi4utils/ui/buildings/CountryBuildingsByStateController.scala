@@ -20,7 +20,7 @@ import scala.compiletime.uninitialized
 import scala.jdk.javaapi.CollectionConverters
 
 
-class CountryBuildingsByStateController extends HOIIVUtilsAbstractController with TableViewWindow with LazyLogging {
+class CountryBuildingsByStateController extends HOIIVUtilsAbstractController with TableViewWindow with LazyLogging:
 	setFxmlResource("CountryBuildingsByState.fxml")
 	setTitle("HOIIVUtils Buildings By State Window")
 
@@ -44,12 +44,11 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 	 *
 	 * @param country
 	 */
-	def this(country: CountryFile) = {
+	def this(country: CountryFile) =
 		this()
 		setCountry(country)
-	}
 
-	@FXML def initialize(): Unit = {
+	@FXML def initialize(): Unit =
 		logger.debug("Country: " + country)
 
 		/* state data table */
@@ -65,64 +64,51 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 		JOptionPane.showMessageDialog(null, "dev - loaded rows: " + stateDataTable.getItems.size)
 		/* action listeners */
 		// double click to view state file
-		stateDataTable.setOnMouseClicked((event) => {
+		stateDataTable.setOnMouseClicked: (event) =>
 			// todo init stateDataTable in initialization() or whatever it is :)
 			if (event.getButton.equals(MouseButton.PRIMARY) && (event.getClickCount eq 2)) viewSelectedStateFile()
 
-		})
 		stateDataTable.setEditableColumns(true)
-	}
 
-	private def viewSelectedStateFile(): Unit = {
+	private def viewSelectedStateFile(): Unit =
 		val state = stateDataTable.getSelectionModel.getSelectedItem
 		if (state == null) return // no/invalid state selected
 		try if (state.stateFile.isDefined) Desktop.getDesktop.edit(state.stateFile.get)
-		catch {
+		catch
 			case exc: IOException =>
 				logger.error("Unable to open state file: " + state)
 				throw new RuntimeException(exc)
-		}
-	}
 
 	// private void includeVersion() {
 	// idVersion.setText(HOIIVUtils.get("version").toString());
 	// }
-	override def setDataTableCellFactories(): Unit = {
-		//stateDataTable.setDataTableCellFactories()
-	}
+	override def setDataTableCellFactories(): Unit = throw new NotImplementedError("setDataTableCellFactories not implemented yet")
+	//stateDataTable.setDataTableCellFactories()
 
-	@FXML def handleExportToExcelAction(): Unit = {
+	@FXML def handleExportToExcelAction(): Unit =
 		val excelExport = new ExcelExport[State]
 		excelExport.`export`(stateDataTable)
-	}
 
-	def handlePercentageCheckMenuItemAction(): Unit = {
+	def handlePercentageCheckMenuItemAction(): Unit =
 		setResourcesPercent(idPercentageCheckMenuItem.isSelected)
 		logger.debug(s"Percentage values on: ${idPercentageCheckMenuItem.isSelected}")
-	}
 
-	def setResourcesPercent(resourcesPercent: Boolean): Unit = {
+	def setResourcesPercent(resourcesPercent: Boolean): Unit =
 		this.resourcesPercent = resourcesPercent
 		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent))
 		stateDataTable.updateResourcesColumnsPercentBehavior(resourcesPercent)
-	}
 
-	def toggleResourcesPercent(): Unit = {
+	def toggleResourcesPercent(): Unit =
 		resourcesPercent = !resourcesPercent
 		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent))
 		stateDataTable.updateResourcesColumnsPercentBehavior(resourcesPercent)
-	}
 
-	def setCountry(country: CountryFile): Unit = {
+	def setCountry(country: CountryFile): Unit =
 		this._country = country
 		setTitle("HOIIVUtils Buildings By State Window, Country: " + country.name)
 		stateList = FXCollections.observableArrayList(CollectionConverters.asJava(State.ownedStatesOfCountry(country)))
 		logger.debug("1 - Country: " + country)
-	}
 
 	def country: CountryFile = _country
 
-	@FXML def handleSavePDX(): Unit = {
-		stateDataTable.getItems.forEach(_.save())
-	}
-}
+	@FXML def handleSavePDX(): Unit = stateDataTable.getItems.forEach(_.save())
