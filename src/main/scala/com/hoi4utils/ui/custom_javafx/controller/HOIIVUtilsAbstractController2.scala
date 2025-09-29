@@ -1,18 +1,17 @@
-package com.hoi4utils.ui.custom_javafx
+package com.hoi4utils.ui.custom_javafx.controller
 
-import com.hoi4utils.main.{HOIIVUtils, Version}
 import com.hoi4utils.main.HOIIVUtils.config
+import com.hoi4utils.main.{HOIIVUtils, Version}
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController
 import com.typesafe.scalalogging.LazyLogging
-import javafx.fxml.{FXML, FXMLLoader}
+import javafx.fxml.FXMLLoader
 import javafx.scene.control.Button
 import javafx.scene.image.Image
-import javafx.scene.layout.{GridPane, Pane}
+import javafx.scene.layout.GridPane
 import javafx.scene.{Parent, Scene}
 import javafx.stage.Stage
 
 import java.io.IOException
-import java.util.Objects
 import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
 

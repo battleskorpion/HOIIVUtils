@@ -1,19 +1,17 @@
 package com.hoi4utils.ui.menus
 
-import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
-import com.hoi4utils.ui.custom_javafx.HOIIVUtilsAbstractController2
-import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, JavaFXUIManager}
+import com.hoi4utils.main.HOIIVUtils
+import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
 import javafx.scene.Node
 import javafx.scene.control.*
-import javafx.scene.layout.{GridPane, Pane}
+import javafx.scene.layout.GridPane
 import javafx.stage.Screen
 
 import java.io.{File, FilenameFilter}
 import java.net.JarURLConnection
 import java.util.Locale
-import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 
@@ -197,9 +195,9 @@ class SettingsController extends HOIIVUtilsAbstractController2 with JavaFXUIMana
     if isValidFile then set(settingKey, file.toString)
 
   private def handleFileBrowseAction(
-                                    textField: TextField, 
+                                    textField: TextField,
                                     browseButton: Node,
-                                    initialDirectory: File, 
+                                    initialDirectory: File,
                                     settingKey: String
                                     ): Unit =
     if initialDirectory == null || !initialDirectory.exists || !initialDirectory.isDirectory then logger.warn(s"Initial directory for $settingKey is invalid: ${initialDirectory.getAbsolutePath}")

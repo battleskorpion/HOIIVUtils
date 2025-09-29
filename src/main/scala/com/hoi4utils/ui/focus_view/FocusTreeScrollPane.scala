@@ -3,7 +3,6 @@ package com.hoi4utils.ui.focus_view
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTreeFile}
 import com.hoi4utils.hoi4mod.localization.Property
-import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.hoi4utils.ui.pdxscript.PDXEditorController
@@ -17,13 +16,11 @@ import scalafx.scene.canvas.Canvas
 import scalafx.scene.control.*
 import scalafx.scene.image.Image
 import scalafx.scene.input.{MouseButton, MouseEvent}
-import scalafx.scene.layout.{AnchorPane, VBox}
+import scalafx.scene.layout.AnchorPane
 import scalafx.scene.paint.Color
 
 import javax.swing.JOptionPane
-import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 import scala.util.boundary
 
@@ -201,12 +198,12 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTreeFile]) extends
   private def addResizeHandlers(canvas: Canvas): Unit =
     canvas.widthProperty().addListener: (obs, oldVal, newVal) =>
       val newWidth = newVal.doubleValue()
-      if newWidth > 0 && !isDrawing then Platform.runLater: () => 
+      if newWidth > 0 && !isDrawing then Platform.runLater: () =>
         redrawFocusTree()
 
     canvas.heightProperty().addListener: (obs, oldVal, newVal) =>
       val newHeight = newVal.doubleValue()
-      if newHeight > 0 && !isDrawing then Platform.runLater: () => 
+      if newHeight > 0 && !isDrawing then Platform.runLater: () =>
         redrawFocusTree()
 
   /**

@@ -1,8 +1,6 @@
 package com.hoi4utils.ui.focus_view
 
-import com.hoi4utils.hoi4mod.common.country_tags.CountryTag
-import com.hoi4utils.hoi4mod.common.national_focus.{FixFocus, Focus, FocusTreeFile}
-import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTreeFile}
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.focus_view.FocusTreeController.updateLoadingStatus
@@ -95,7 +93,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
     else
       // Setup UI components that don't require background loading
       setupUIComponents()
-  
+
       // Start the task in a new thread
       val thread = new Thread(task)
       thread.setDaemon(true)
