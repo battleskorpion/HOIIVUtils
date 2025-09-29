@@ -2,7 +2,7 @@ package com.hoi4utils.ui.focus_view
 
 import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTreeFile}
 import com.hoi4utils.script.PDXScript
-import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController
+import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import com.hoi4utils.ui.focus_view.FocusTreeController.updateLoadingStatus
 import com.hoi4utils.ui.pdxscript.{NewFocusTreeController, PDXEditorPane}
 import com.typesafe.scalalogging.LazyLogging
@@ -11,7 +11,7 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.scene.control.*
-import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.{AnchorPane, GridPane}
 
 import java.io.*
 import java.time.LocalDateTime
@@ -21,7 +21,7 @@ import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
 import scala.util.Try
 
-class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
+class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging:
   setFxmlFile("FocusTree.fxml")
   setTitle("Focus Tree View")
 
@@ -29,6 +29,10 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
   private val VISIBLE_DROPDOWN_ROW_COUNT: Int = 20
 
   // FXML components
+  @FXML var focusTreeGridPane: GridPane = uninitialized
+  @FXML var mClose: Button = uninitialized
+  @FXML var mSquare: Button = uninitialized
+  @FXML var mMinimize: Button = uninitialized
   @FXML private var focusTreeDropdown: ComboBox[FocusTreeFile] = uninitialized
   @FXML private var exportFocusTreeButton: Button = uninitialized
   @FXML private var focusTreeViewSplitPane: SplitPane = uninitialized
@@ -98,6 +102,8 @@ class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
       val thread = new Thread(task)
       thread.setDaemon(true)
       thread.start()
+
+  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize, focusTreeGridPane)
 
   private def setupUIComponents(): Unit =
     // Setup components that can be configured immediately
