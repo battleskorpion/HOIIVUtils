@@ -39,7 +39,7 @@ public class ManageFocusTreesController extends HOIIVUtilsAbstractController imp
 
 	public ManageFocusTreesController() {
 		/* window */
-		setFxmlResource("ManageFocusTrees.fxml");
+		setFxmlFile("ManageFocusTrees.fxml");
 		setTitle("HOIIVUtils Manage Focus Trees");
 
 		focusObservableList = FXCollections.observableArrayList();

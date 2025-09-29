@@ -38,7 +38,7 @@ public class StratRegionPDXEditorController extends HOIIVUtilsAbstractController
 
 
     public StratRegionPDXEditorController() {
-        setFxmlResource("StratRegionPDXEditor.fxml");
+        setFxmlFile("StratRegionPDXEditor.fxml");
         setTitle("HOIIVUtils PDX Editor");
     }
 

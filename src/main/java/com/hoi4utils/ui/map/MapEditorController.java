@@ -61,7 +61,7 @@ public class MapEditorController extends HOIIVUtilsAbstractController {
     private Province selectedProvince = null; // currently selected province
 
     public MapEditorController() {
-        setFxmlResource("MapEditor.fxml");
+        setFxmlFile("MapEditor.fxml");
         setTitle("Map Editor");
     }
 

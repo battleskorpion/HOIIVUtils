@@ -22,7 +22,7 @@ import scala.compiletime.uninitialized
 import scala.util.Try
 
 class FocusTreeController extends HOIIVUtilsAbstractController with LazyLogging:
-  setFxmlResource("FocusTree.fxml")
+  setFxmlFile("FocusTree.fxml")
   setTitle("Focus Tree View")
 
   // Constants

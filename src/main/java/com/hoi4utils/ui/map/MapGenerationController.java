@@ -54,7 +54,7 @@ public class MapGenerationController extends HOIIVUtilsAbstractController {
 	ProgressBar provinceGenerationProgressBar;
 
 	public MapGenerationController() {
-		setFxmlResource("MapGeneration.fxml");
+		setFxmlFile("MapGeneration.fxml");
 		setTitle("Map Generation");
 	}
 

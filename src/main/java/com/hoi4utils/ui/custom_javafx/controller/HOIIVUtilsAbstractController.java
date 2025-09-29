@@ -16,9 +16,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
-	public static final Logger logger = LogManager.getLogger(HOIIVUtilsAbstractController.class);
-	public String fxmlResource;
-	public String title;
+	protected static final Logger logger = LogManager.getLogger(HOIIVUtilsAbstractController.class);
+	protected  String fxmlFile;
+	protected  String title;
 
 	/**
 	 * Opens the stage with the specified FXML resource and title.
@@ -26,11 +26,11 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 	@Override
 	public void open() {
 		try {
-			FXMLLoader fxml = new FXMLLoader(getClass().getResource(fxmlResource));
+			FXMLLoader fxml = new FXMLLoader(getClass().getResource(fxmlFile));
 			open(fxml);
 		} catch (IOException e) {
-			String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource + " Title: " + title;
-			logger.error("Error loading FXML: {}\n Title: {}", fxmlResource, title, e);
+			String errorMessage = "Failed to open window\nError loading FXML: " + fxmlFile + " Title: " + title;
+			logger.error("Error loading FXML: {}\n Title: {}", fxmlFile, title, e);
 			JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
 			throw new RuntimeException(errorMessage, e);
 		}
@@ -43,13 +43,13 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 	 */
 	public void open(Object... initargs) {
 		try {
-			FXMLLoader fxml = new FXMLLoader(getClass().getResource(fxmlResource));
+			FXMLLoader fxml = new FXMLLoader(getClass().getResource(fxmlFile));
 			fxml.setControllerFactory(c -> findMatchingConstructor(initargs));
 			open(fxml);
 			logger.debug("{} Started with arguments {}", title, initargs);
 		} catch (IOException e) {
-			String errorMessage = "Failed to open window\nError loading FXML: " + fxmlResource + " Title: " + title;
-			logger.error("Error loading FXML: {}\n Title: {}", fxmlResource, title, e);
+			String errorMessage = "Failed to open window\nError loading FXML: " + fxmlFile + " Title: " + title;
+			logger.error("Error loading FXML: {}\n Title: {}", fxmlFile, title, e);
 			JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
 			throw new RuntimeException(errorMessage, e);
 		}
@@ -143,8 +143,8 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 	}
 
 	@Override
-	public void setFxmlResource(String fxmlResource) {
-		this.fxmlResource = fxmlResource;
+	public void setFxmlFile(String fxmlFile) {
+		this.fxmlFile = fxmlFile;
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import com.hoi4utils.*
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.config
 import com.hoi4utils.ui.buildings.BuildingsByCountryController
-import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController2, JavaFXUIManager}
+import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController2, JavaFXUIManager, RootWindows}
 import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.gfx.InterfaceFileListController
 import com.hoi4utils.ui.hoi4localization.*
@@ -29,9 +29,9 @@ import javax.swing.*
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 
-class MenuController extends HOIIVUtilsAbstractController2 with JavaFXUIManager with LazyLogging:
+class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with LazyLogging:
   import MenuController.*
-  setFxmlResource("Menu.fxml")
+  setFxmlFile("Menu.fxml")
   setTitle("HOIIVUtils Menu")
 
   @FXML var contentContainer: GridPane = uninitialized
@@ -129,43 +129,18 @@ class MenuController extends HOIIVUtilsAbstractController2 with JavaFXUIManager 
     loadingLabel.setVisible(false)
     vSettings.requestFocus()
 
-  def start(stage: Stage): Unit = {
+  def start(stage: Stage): Unit =
     primaryStage = stage
     open()
-  }
+  
+  override def fxmlSetResource(): Unit = fxmlLoader.setResources(getResourceBundle("i18n.menu"))
 
-  override def fxmlSetController(): Unit = {
-    logger.debug(s"Setting controller for FXML: $this")
-    fxml.setController(this)
-    fxml.setResources(getResourceBundleM)
-  }
+  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize)
 
-  override def preSetup(): Unit =
-    primaryStage.initStyle(StageStyle.UNDECORATED)
-    setupWindowControls(contentContainer, mClose, mSquare, mMinimize)
-
-  private def getResourceBundleM =
-    val resourceBundle: ResourceBundle =
-      //    val currentLocale = new Locale("tr", "TR") // Turkish locale
-      val currentLocale = Locale.getDefault
-      try
-        val bundle = ResourceBundle.getBundle("i18n.menu", currentLocale)
-        bundle
-      catch
-        case _: MissingResourceException =>
-          logger.error(s"Could not find ResourceBundle for locale $currentLocale. Falling back to English.")
-          val fallbackBundle = ResourceBundle.getBundle("i18n.menu", Locale.US)
-          logger.error(s"Fallback ResourceBundle loaded: ${fallbackBundle.getLocale}")
-          fallbackBundle
-    if resourceBundle == null then
-      logger.error("ResourceBundle is null, cannot load FXML.")
-      throw new RuntimeException("ResourceBundle is null, cannot load FXML.")
-    resourceBundle
-
+  /* fxml menu buttons */
   def openSettings(): Unit =
     closeWindow(vSettings) // closes the menu window
     new SettingsController().open()
-
   def openFocusTreeViewer(): Unit = new FocusTreeController().open()
   def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open()
   def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open()
@@ -283,4 +258,4 @@ object MenuController extends LazyLogging:
     dialog.setLocationRelativeTo(null)
     dialog.setVisible(true)
 
-  def get(prop: String): String = HOIIVUtils.get(prop)
+  private def get(prop: String): String = HOIIVUtils.get(prop)

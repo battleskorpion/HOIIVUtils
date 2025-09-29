@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 public class BetterStateNudgerController extends HOIIVUtilsAbstractController {
 
     public BetterStateNudgerController() {
-        setFxmlResource("BetterStateNudger.fxml");
+        setFxmlFile("BetterStateNudger.fxml");
         setTitle("HOIIVUtils Better Map Editor");
     }
     

@@ -75,7 +75,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	private final ObservableList<CountryFile> countryList;
 
 	public BuildingsByCountryController() {
-		setFxmlResource("BuildingsByCountry.fxml");
+		setFxmlFile("BuildingsByCountry.fxml");
 		setTitle("HOIIVUtils Buildings By Country Window");
 
 		countryList = FXCollections.observableArrayList(CollectionConverters.asJava(CountryFile.list()));

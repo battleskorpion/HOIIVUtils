@@ -54,7 +54,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	private final List<PDXScript<?>> pdxScripts = new ArrayList<>();
 	
 	public ParserViewerController() {
-		setFxmlResource("ParserViewer.fxml");
+		setFxmlFile("ParserViewer.fxml");
 		setTitle("HOIIVUtils Parser Viewer");
 	}
 

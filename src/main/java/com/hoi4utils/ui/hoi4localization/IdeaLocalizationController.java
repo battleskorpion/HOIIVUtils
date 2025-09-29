@@ -51,7 +51,7 @@ public class IdeaLocalizationController extends HOIIVUtilsAbstractController imp
     private final ObservableList<Idea> ideaObservableList;
 
     public IdeaLocalizationController() {
-        setFxmlResource("IdeaLocalization.fxml");
+        setFxmlFile("IdeaLocalization.fxml");
         setTitle("HOIIVUtils Idea Localization");
 
         ideaObservableList = FXCollections.observableArrayList();

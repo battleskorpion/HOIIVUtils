@@ -32,7 +32,7 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
     private Consumer<FocusTreeFile> onCreate = null;
 
     public NewFocusTreeController() {
-        setFxmlResource("NewFocusTree.fxml");
+        setFxmlFile("NewFocusTree.fxml");
         setTitle("New Focus Tree");
     }
 

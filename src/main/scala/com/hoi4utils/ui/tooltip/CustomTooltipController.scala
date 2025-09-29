@@ -28,7 +28,7 @@ class CustomTooltipController extends HOIIVUtilsAbstractController with TableVie
   private var tooltipFile: Option[File] = None
 
   /* default */
-  setFxmlResource("CustomTooltip.fxml")
+  setFxmlFile("CustomTooltip.fxml")
   setTitle("Custom Tooltips")
 
   // ScalaFX‐friendly backing list

@@ -13,7 +13,7 @@ import scala.jdk.CollectionConverters.*
 
 class CompareUnitsController extends HOIIVUtilsAbstractController:
 
-  setFxmlResource("CompareUnits.fxml")
+  setFxmlFile("CompareUnits.fxml")
   setTitle("Compare Units")
   @FXML
   var rootAnchorPane: AnchorPane = new AnchorPane()

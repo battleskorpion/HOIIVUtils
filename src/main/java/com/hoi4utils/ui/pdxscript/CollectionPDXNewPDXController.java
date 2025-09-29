@@ -12,7 +12,7 @@ public class CollectionPDXNewPDXController extends HOIIVUtilsAbstractController 
     AnchorPane rootAnchorPane;
 
     public CollectionPDXNewPDXController() {
-        setFxmlResource("CollectionPDXNewPDXEditor.fxml");
+        setFxmlFile("CollectionPDXNewPDXEditor.fxml");
         setTitle("CollectionPDX new pdx Editor");
     }
 

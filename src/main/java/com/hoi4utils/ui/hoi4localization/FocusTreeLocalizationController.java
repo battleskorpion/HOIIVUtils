@@ -61,7 +61,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
 
     public FocusTreeLocalizationController() {
         /* window */
-        setFxmlResource("FocusLocalization.fxml");
+        setFxmlFile("FocusLocalization.fxml");
         setTitle("HOIIVUtils Focus Localization");
 
         focusObservableList = FXCollections.observableArrayList();

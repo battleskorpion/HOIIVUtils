@@ -15,7 +15,7 @@ import java.io.File
 import scala.compiletime.uninitialized
 
 class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLogging:
-  setFxmlResource("ProvinceColors.fxml")
+  setFxmlFile("ProvinceColors.fxml")
   setTitle("HOIIVUtils Province Colors")
 
   @FXML var idWindowName: Label = uninitialized

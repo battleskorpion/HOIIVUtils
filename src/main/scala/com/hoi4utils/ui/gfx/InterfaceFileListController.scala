@@ -8,7 +8,7 @@ import javafx.scene.control.Label
 // todo add actual effect (enable/disable) from check boxes
 // view GFX
 class InterfaceFileListController extends HOIIVUtilsAbstractController:
-  setFxmlResource("InterfaceFileList.fxml")
+  setFxmlFile("InterfaceFileList.fxml")
   setTitle("HOIIVUtils Interface File List Window")
   @FXML var idVersion: Label = null
   @FXML var idWindowName: Label = null

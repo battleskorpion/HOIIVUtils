@@ -19,7 +19,7 @@ public class PDXEditorController extends HOIIVUtilsAbstractController {
     TextField iconField;
 
     public PDXEditorController() {
-        setFxmlResource("PDXEditor.fxml");
+        setFxmlFile("PDXEditor.fxml");
         setTitle("PDX Editor");
     }
 

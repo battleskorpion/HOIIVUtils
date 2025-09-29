@@ -10,7 +10,9 @@ import com.hoi4utils.hoi4mod.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.hoi4mod.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4mod.map.state.State.stateErrors
 import com.hoi4utils.main.HOIIVUtils
-import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController
+import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
+import javafx.scene.control.{Button, TabPane}
+import javafx.scene.layout.BorderPane
 //import com.hoi4utils.StateFilesWatcher.statesThatChanged
 
 import com.typesafe.scalalogging.LazyLogging
@@ -21,9 +23,15 @@ import javafx.util.Callback
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 
-class ErrorListController extends HOIIVUtilsAbstractController with LazyLogging:
+class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging:
   setTitle("LB Reader")
-  setFxmlResource("ErrorList.fxml")
+  setFxmlFile("ErrorList.fxml")
+  
+  @FXML var contentContainer: BorderPane = uninitialized
+  @FXML var errorListTabPane: TabPane = uninitialized
+  @FXML var mClose: Button = uninitialized
+  @FXML var mSquare: Button = uninitialized
+  @FXML var mMinimize: Button = uninitialized
 
   @FXML var effectsEL: ListView[String] = uninitialized
   @FXML var localizationEL: ListView[String] = uninitialized
@@ -38,6 +46,8 @@ class ErrorListController extends HOIIVUtilsAbstractController with LazyLogging:
   val testList: ListBuffer[String] = ListBuffer.empty[String]
 
   def initialize(): Unit = update()
+
+  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize, errorListTabPane)
 
   private def update(): Unit =
     val listViewsWithErrors = ListBuffer(

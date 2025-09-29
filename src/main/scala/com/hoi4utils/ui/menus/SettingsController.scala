@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.menus
 
 import com.hoi4utils.main.HOIIVUtils
-import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager}
+import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager, RootWindows}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
 import javafx.scene.Node
@@ -12,6 +12,7 @@ import javafx.stage.Screen
 import java.io.{File, FilenameFilter}
 import java.net.JarURLConnection
 import java.util.Locale
+import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 
@@ -22,8 +23,8 @@ import scala.jdk.CollectionConverters.*
  *
  * @author thiccchris
  */
-class SettingsController extends HOIIVUtilsAbstractController2 with JavaFXUIManager with LazyLogging:
-  setFxmlResource("Settings.fxml")
+class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows with LazyLogging:
+  setFxmlFile("Settings.fxml")
   setTitle(s"HOIIVUtils Settings ${HOIIVUtils.get("version")}")
 
   @FXML var contentContainer: GridPane = uninitialized
@@ -54,8 +55,6 @@ class SettingsController extends HOIIVUtilsAbstractController2 with JavaFXUIMana
     loadLanguages()
     // after loading, set saved settings
     loadUIWithSavedSettings()
-
-  override def fxmlSetController(): Unit = fxml.setController(this)
 
   override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize, settingsTabPane)
 

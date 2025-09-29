@@ -34,7 +34,7 @@ public interface JavaFXUIManager {
 	 * @param ford // File or directory
 	 * @return
 	 */
-	static File openChooser(Stage stage, File initialDirectory, boolean ford) {
+	private static File openChooser(Stage stage, File initialDirectory, boolean ford) {
 		File usersDocuments = new File(System.getProperty("user.home") + File.separator + "Documents");
 		File theChosenOne;
 		if (ford) {
@@ -166,7 +166,7 @@ public interface JavaFXUIManager {
 
 	void open();
 
-	void setFxmlResource(String fxmlResource);
+	void setFxmlFile(String fxmlFile);
 
 	void setTitle(String title);
 

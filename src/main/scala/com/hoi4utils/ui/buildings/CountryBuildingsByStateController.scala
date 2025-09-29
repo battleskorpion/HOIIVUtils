@@ -21,7 +21,7 @@ import scala.jdk.javaapi.CollectionConverters
 
 
 class CountryBuildingsByStateController extends HOIIVUtilsAbstractController with TableViewWindow with LazyLogging:
-	setFxmlResource("CountryBuildingsByState.fxml")
+	setFxmlFile("CountryBuildingsByState.fxml")
 	setTitle("HOIIVUtils Buildings By State Window")
 
 	// @FXML public Label idVersion;

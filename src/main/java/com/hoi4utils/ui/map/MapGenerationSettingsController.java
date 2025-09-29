@@ -23,7 +23,7 @@ public class MapGenerationSettingsController extends HOIIVUtilsAbstractControlle
     private ProvinceGenConfig properties = null;
 
     public MapGenerationSettingsController() {
-        setFxmlResource("MapGenerationSettings.fxml");
+        setFxmlFile("MapGenerationSettings.fxml");
         setTitle("Map Generation Settings");
     }
 
