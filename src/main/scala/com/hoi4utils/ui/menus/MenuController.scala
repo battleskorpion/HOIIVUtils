@@ -4,7 +4,7 @@ import com.hoi4utils.*
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.config
 import com.hoi4utils.ui.buildings.BuildingsByCountryController
-import com.hoi4utils.ui.custom_javafx.controller.JavaFXUIManager
+import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController2, JavaFXUIManager}
 import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.gfx.InterfaceFileListController
 import com.hoi4utils.ui.hoi4localization.*
@@ -14,7 +14,7 @@ import com.hoi4utils.ui.parser.ParserViewerController
 import com.hoi4utils.ui.tooltip.CustomTooltipController
 import com.hoi4utils.ui.units.CompareUnitsController
 import com.typesafe.scalalogging.LazyLogging
-import javafx.application.{Application, Platform}
+import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.{Button, Label}
@@ -24,26 +24,20 @@ import javafx.scene.{Parent, Scene}
 import javafx.stage.{Stage, StageStyle}
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
-import java.io.IOException
 import java.util.{Locale, MissingResourceException, ResourceBundle}
 import javax.swing.*
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 
-class MenuController extends Application with JavaFXUIManager with LazyLogging:
+class MenuController extends HOIIVUtilsAbstractController2 with JavaFXUIManager with LazyLogging:
   import MenuController.*
-
-  private var fxmlResource: String = "Menu.fxml"
+  setFxmlResource("Menu.fxml")
+  setTitle("HOIIVUtils Menu")
 
   @FXML var contentContainer: GridPane = uninitialized
-  private var xOffset: Double = 0
-  private var yOffset: Double = 0
-
-  /* buttons */
   @FXML var mClose: Button = uninitialized
   @FXML var mSquare: Button = uninitialized
   @FXML var mMinimize: Button = uninitialized
-
   @FXML var vSettings: Button = uninitialized
   @FXML var vLogs: Button = uninitialized
   @FXML var vFocusTree: Button = uninitialized
@@ -63,8 +57,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
   @FXML var loadingLabel: Label = uninitialized
   @FXML var mTitle: Label = uninitialized
   @FXML var mVersion: Label = uninitialized
-
-  var primaryStage: Stage = uninitialized
 
   @FXML
   def initialize(): Unit =
@@ -115,8 +107,7 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     contentContainer.setVisible(false)
     loadingLabel.setVisible(true)
 
-    try
-      new Initializer().initialize(config)
+    try new Initializer().initialize(config)
     catch case e: Exception => handleMInitError("Skipping mod loading because of unsuccessful initialization", e)
 
     try
@@ -138,146 +129,20 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
     loadingLabel.setVisible(false)
     vSettings.requestFocus()
 
-  // Setup window controls AFTER primaryStage is available
-  def setupWindowControls(): Unit =
-    // Verify all components are available
-    if contentContainer == null then
-      logger.error("contentContainer is null - FXML injection failed!")
-    else if primaryStage == null then
-      logger.error("primaryStage is null - called too early!")
-    else
-      // Setup window dragging
-      contentContainer.setOnMousePressed: event =>
-        if event != null then
-          xOffset = event.getSceneX
-          yOffset = event.getSceneY
-
-      contentContainer.setOnMouseDragged: event =>
-        if event != null && primaryStage != null then
-          val newX = event.getScreenX - xOffset
-          val newY = event.getScreenY - yOffset
-          primaryStage.setX(newX)
-          primaryStage.setY(newY)
-
-      // Setup window control buttons
-      if mClose != null then
-        mClose.setOnAction: _ =>
-          try
-            Option(JOptionPane.getRootFrame).foreach(_.dispose())
-            System.exit(0)
-          catch
-            case e: Exception =>
-              logger.error("Error during application shutdown", e)
-              System.exit(1)
-      else
-        logger.warn("mClose button is null!")
-
-      if mSquare != null then
-        mSquare.setOnAction: _ =>
-          try
-            if primaryStage != null then
-              primaryStage.setMaximized(!primaryStage.isMaximized)
-          catch
-            case e: Exception =>
-              logger.error("Error toggling window maximized state", e)
-      else
-        logger.warn("mSquare button is null!")
-
-      if mMinimize != null then
-        mMinimize.setOnAction: _ =>
-          try
-            if primaryStage != null then
-              primaryStage.setIconified(true)
-          catch
-            case e: Exception =>
-              logger.error("Error minimizing window", e)
-      else
-        logger.warn("mMinimize button is null!")
-
-  override def start(stage: Stage): Unit =
+  def start(stage: Stage): Unit = {
     primaryStage = stage
+    open()
+  }
+
+  override def fxmlSetController(): Unit = {
+    logger.debug(s"Setting controller for FXML: $this")
+    fxml.setController(this)
+    fxml.setResources(getResourceBundleM)
+  }
+
+  override def preSetup(): Unit =
     primaryStage.initStyle(StageStyle.UNDECORATED)
-    primaryStage.getIcons.addAll(
-      new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear16.png")),
-      new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear32.png")),
-      new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear48.png")),
-      new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear64.png")),
-      new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear128.png"))
-    )
-
-    try
-      if getClass.getResource(fxmlResource) == null then throw new IllegalArgumentException(s"FXML resource not found: $fxmlResource")
-      val fxml = new FXMLLoader(getClass.getResource(fxmlResource), getResourceBundleM)
-      fxml.setController(this)
-      val root = fxml.load[Parent]()
-
-      if root == null then throw new IllegalStateException(s"Failed to load FXML root from: $fxmlResource")
-
-      val scene = new Scene(root)
-
-      // Apply theme with fallback
-      val theme = Option(get("theme")).getOrElse("light")
-      val cssPath = theme match
-        case "dark" => "/com/hoi4utils/ui/css/javafx_dark.css"
-        case _ => "/com/hoi4utils/ui/css/highlight-background.css"
-
-      // Validate CSS resource exists before adding
-      Option(getClass.getResource(cssPath)) match
-        case Some(_) =>
-          scene.getStylesheets.add(cssPath)
-        case None =>
-          logger.warn(s"CSS file not found: $cssPath, continuing without theme")
-
-      primaryStage.setScene(scene)
-      primaryStage.setTitle("HOIIVUtils")
-      decideScreen(primaryStage)
-      setupWindowControls()
-      primaryStage.show()
-
-    catch
-      case e: IOException =>
-        val errorMsg = s"IO Error loading FXML resource: $fxmlResource"
-        logger.error(s"version: ${Version.getVersion(config.getProperties)} $errorMsg", e)
-        JOptionPane.showMessageDialog(
-          null,
-          s"version: ${Version.getVersion(config.getProperties)} $errorMsg\nCheck if the file exists and is accessible.\nPlease go to our Discord for help.",
-          "File Loading Error",
-          JOptionPane.ERROR_MESSAGE
-        )
-        System.exit(1)
-
-      case e: IllegalArgumentException =>
-        val errorMsg = s"Invalid FXML resource: $fxmlResource"
-        logger.error(s"version: ${Version.getVersion(config.getProperties)} $errorMsg", e)
-        JOptionPane.showMessageDialog(
-          null,
-          s"version: ${Version.getVersion(config.getProperties)} $errorMsg\nThe specified resource path is invalid.\nPlease go to our Discord for help.",
-          "Configuration Error",
-          JOptionPane.ERROR_MESSAGE
-        )
-        System.exit(1)
-
-      case e: IllegalStateException =>
-        val errorMsg = s"Failed to initialize UI components from: $fxmlResource"
-        logger.error(s"version: ${Version.getVersion(config.getProperties)} $errorMsg", e)
-        JOptionPane.showMessageDialog(
-          null,
-          s"version: ${Version.getVersion(config.getProperties)} $errorMsg\nThe FXML file may be corrupted or invalid.\nPlease go to our Discord for help.",
-          "UI Initialization Error",
-          JOptionPane.ERROR_MESSAGE
-        )
-        System.exit(1)
-
-      case e: Exception =>
-        val errorMsg = s"Unexpected error during application startup"
-        logger.error(s"version: ${Version.getVersion(config.getProperties)} $errorMsg with FXML: $fxmlResource", e)
-        JOptionPane.showMessageDialog(
-          null,
-          s"version: ${Version.getVersion(config.getProperties)} $errorMsg\nError: ${e.getClass.getSimpleName}: ${Option(e.getMessage).getOrElse("Unknown error")}\nPlease go to our Discord for help.",
-          "Startup Error",
-          JOptionPane.ERROR_MESSAGE
-        )
-        System.exit(1)
+    setupWindowControls(contentContainer, mClose, mSquare, mMinimize)
 
   private def getResourceBundleM =
     val resourceBundle: ResourceBundle =
@@ -296,8 +161,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
       logger.error("ResourceBundle is null, cannot load FXML.")
       throw new RuntimeException("ResourceBundle is null, cannot load FXML.")
     resourceBundle
-
-  def open(): Unit = start(new Stage())
 
   def openSettings(): Unit =
     closeWindow(vSettings) // closes the menu window
@@ -327,10 +190,6 @@ class MenuController extends Application with JavaFXUIManager with LazyLogging:
   def openMapEditor(): Unit = new MapEditorController().open()
   def openParserView(): Unit = new ParserViewerController().open()
   def openErrorsW(): Unit = new ErrorListController().open()
-  override def setFxmlResource(fxmlResource: String): Unit =
-    this.fxmlResource = fxmlResource
-  override def setTitle(title: String): Unit =
-    primaryStage.setTitle(title)
 
   // TODO: @skorp remove buttons you think don't need any files (hoi4, mod, valid, etc) cuz it is trigger happy and will disable on any at startup issue's
   private def blockButtons(b: Boolean): Unit =

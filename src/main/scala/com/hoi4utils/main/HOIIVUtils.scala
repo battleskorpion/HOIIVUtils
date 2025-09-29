@@ -1,6 +1,5 @@
 package com.hoi4utils.main
 
-import com.hoi4utils.ui.menus.MenuController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Application
 
@@ -23,7 +22,7 @@ import javax.swing.*
  */
 object HOIIVUtils extends LazyLogging:
   val config: Config = new ConfigManager().createConfig
-  def main(args: Array[String]): Unit = Application.launch(classOf[MenuController], args*)
+  def main(args: Array[String]): Unit = Application.launch(classOf[App], args*)
 
   /**
    * Get a user saved property from property class saved properties, NOT from HOIIVUtils.properties.

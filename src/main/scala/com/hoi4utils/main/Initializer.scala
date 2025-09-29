@@ -31,27 +31,26 @@ class Initializer extends LazyLogging:
     val hoi4Path = Option(p.getProperty("hoi4.path")).getOrElse("")
     if hoi4Path.nonEmpty && hoi4Path.trim.nonEmpty then
       p.setProperty("hoi4.path.status", "saved")
-      return ()
-
-    getPossibleHOIIVPaths.find { path =>
-      val hoi4Dir = Paths.get(path).toAbsolutePath.toFile
-      hoi4Dir.exists
-    } match
-      case Some(validPath) =>
-        val hoi4Dir = Paths.get(validPath).toAbsolutePath.toFile
-        p.setProperty("hoi4.path", hoi4Dir.getAbsolutePath)
-        logger.info("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath)
-        p.setProperty("hoi4.path.status", "found")
-      case None =>
-        logger.warn("⚠\uFE0FCould not find HOI4 install folder. User must set it manually in *settings*.⚠\uFE0F")
-        JOptionPane.showMessageDialog(
-          null,
-          s"⚠️version: ${Version.getVersion(p)} Could not find Hearts Of Iron 4 default steam installation folder, please go to the settings page and add it (REQUIRED)⚠️",
-          "⚠\uFE0FError Message",
-          JOptionPane.WARNING_MESSAGE
-        )
-        p.setProperty("hoi4.path.status", "failed")
-        throw new Exception("Could not find HOI4 install folder")
+    else
+      getPossibleHOIIVPaths.find { path =>
+        val hoi4Dir = Paths.get(path).toAbsolutePath.toFile
+        hoi4Dir.exists
+      } match
+        case Some(validPath) =>
+          val hoi4Dir = Paths.get(validPath).toAbsolutePath.toFile
+          p.setProperty("hoi4.path", hoi4Dir.getAbsolutePath)
+          logger.info("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath)
+          p.setProperty("hoi4.path.status", "found")
+        case None =>
+          logger.warn("⚠\uFE0FCould not find HOI4 install folder. User must set it manually in *settings*.⚠\uFE0F")
+          JOptionPane.showMessageDialog(
+            null,
+            s"⚠️version: ${Version.getVersion(p)} Could not find Hearts Of Iron 4 default steam installation folder, please go to the settings page and add it (REQUIRED)⚠️",
+            "⚠\uFE0FError Message",
+            JOptionPane.WARNING_MESSAGE
+          )
+          p.setProperty("hoi4.path.status", "failed")
+          throw new Exception("Could not find HOI4 install folder")
 
   private def getPossibleHOIIVPaths: Seq[String] =
     val os = System.getProperty("os.name").toLowerCase

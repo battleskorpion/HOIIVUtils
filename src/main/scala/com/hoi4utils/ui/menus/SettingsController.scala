@@ -45,6 +45,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with JavaFXUIMana
   @FXML var maxYTF: TextField = uninitialized
   @FXML var maxXTF: TextField = uninitialized
   @FXML var errorLabel: Label = uninitialized
+  @FXML var settingsTabPane: TabPane = uninitialized
 
   @FXML
   def initialize(): Unit =
@@ -56,7 +57,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with JavaFXUIMana
 
   override def fxmlSetController(): Unit = fxml.setController(this)
 
-  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize)
+  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize, settingsTabPane)
 
   private def loadMonitor(): Unit =
     preferredMonitorComboBox.getItems.setAll(Screen.getScreens.asScala.toSeq*)
@@ -249,7 +250,6 @@ class SettingsController extends HOIIVUtilsAbstractController2 with JavaFXUIMana
       maxXTF.setText(maxXValue.toString)
       if maxXValue < 1000 && maxXValue > -1000 then throw new NumberFormatException("Max X value can't be between -1000 and 1000.")
       set("canvas.max.width", maxXValue.toString)
-      logger.debug(s"canvas.max.width set to $maxXValue")
       errorLabel.setVisible(false)
       idOkButton.setDisable(false)
     catch
@@ -267,7 +267,6 @@ class SettingsController extends HOIIVUtilsAbstractController2 with JavaFXUIMana
       maxYTF.setText(maxYValue.toString)
       if maxYValue < 1000 && maxYValue > -1000 then throw new NumberFormatException("Max Y value can't be between -1000 and 1000.")
       set("canvas.max.height", maxYValue.toString)
-      logger.debug(s"canvas.max.height set to $maxYValue")
       idOkButton.setDisable(false)
       errorLabel.setVisible(false)
     catch
@@ -279,7 +278,6 @@ class SettingsController extends HOIIVUtilsAbstractController2 with JavaFXUIMana
 
   // This method is called when the user clicks on an empty area of the settings window.
   def handleEmptyClick(): Unit =
-    logger.debug("Empty click in settings window detected, handling all text fields.")
     handleMaxYTF()
     handleMaxXTF()
     handleHOIIVPathTextField()
