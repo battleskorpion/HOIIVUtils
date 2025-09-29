@@ -2,11 +2,13 @@ package com.hoi4utils.ui.tooltip
 
 import com.hoi4utils.hoi4mod.tooltip.CustomTooltip
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
-import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, JavaFXUIManager}
+import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager}
 import com.hoi4utils.ui.custom_javafx.table.TableViewWindow
 import javafx.fxml.{FXML, Initializable}
 import javafx.scene.control.*
+import javafx.scene.layout.{BorderPane, GridPane}
 import scalafx.collections.ObservableBuffer
+import javafx.scene.layout.AnchorPane
 
 import java.io.File
 import java.net.URL
@@ -14,7 +16,15 @@ import java.util.ResourceBundle
 import scala.compiletime.uninitialized
 
 /// // * todo: have to redo some functionality to work with new localization system
-class CustomTooltipController extends HOIIVUtilsAbstractController with TableViewWindow with Initializable:
+class CustomTooltipController extends HOIIVUtilsAbstractController2 with TableViewWindow with Initializable:
+  setFxmlFile("CustomTooltip.fxml")
+  setTitle("Custom Tooltips")
+
+  @FXML var contentContainer: GridPane = uninitialized
+  @FXML var tooltipAnchorPane: AnchorPane = uninitialized
+  @FXML var mClose: Button = uninitialized
+  @FXML var mSquare: Button = uninitialized
+  @FXML var mMinimize: Button = uninitialized
 
   @FXML var idVersion: Label = uninitialized
   @FXML var tooltipIdTableColumn: TableColumn[CustomTooltip,String] = uninitialized
@@ -27,10 +37,6 @@ class CustomTooltipController extends HOIIVUtilsAbstractController with TableVie
 
   private var tooltipFile: Option[File] = None
 
-  /* default */
-  setFxmlFile("CustomTooltip.fxml")
-  setTitle("Custom Tooltips")
-
   // ScalaFX‐friendly backing list
   private val customTooltipBuf: ObservableBuffer[CustomTooltip] = ObservableBuffer.empty
 
@@ -39,6 +45,7 @@ class CustomTooltipController extends HOIIVUtilsAbstractController with TableVie
     // wire up the JavaFX TableView using your existing helper:
     loadTableView(this, customTooltipTableView, customTooltipBuf, CustomTooltip.dataFunctions())
 
+  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize, tooltipAnchorPane)
   // --- action handlers ---
   @FXML def handleTooltipFileBrowseAction(): Unit =
     val initial = HOIIVFiles.Mod.common_folder
@@ -52,5 +59,5 @@ class CustomTooltipController extends HOIIVUtilsAbstractController with TableVie
 
   @FXML def handleTooltipLocalizationFileBrowseAction(): Unit = throw new NotImplementedError("Localization file handling not implemented yet")
 
-  // TableViewWindow stub
-  override def setDataTableCellFactories(): Unit = throw new NotImplementedError("setDataTableCellFactories not implemented yet")
+  // TableViewWindow stub TODO implement
+  override def setDataTableCellFactories(): Unit = ()
