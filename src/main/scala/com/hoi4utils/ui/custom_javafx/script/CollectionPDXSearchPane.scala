@@ -1,7 +1,8 @@
-package com.hoi4utils.ui.pdxscript
+package com.hoi4utils.ui.custom_javafx.script
 
 import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
 import com.hoi4utils.script.{CollectionPDX, PDXScript}
+import com.hoi4utils.ui.pdxscript.PDXEditorPane
 import com.typesafe.scalalogging.LazyLogging
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
