@@ -2,22 +2,25 @@ package com.hoi4utils.ui.units
 
 import com.hoi4utils.hoi4mod.common.units.SubUnit
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController
+import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import com.hoi4utils.ui.custom_javafx.pane.DiffViewPane
 import javafx.fxml.FXML
-import javafx.scene.layout.AnchorPane
+import javafx.scene.control.Button
+import javafx.scene.layout.{AnchorPane, GridPane}
 
 import scala.collection.mutable
 import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 
-class CompareUnitsController extends HOIIVUtilsAbstractController:
-
+class CompareUnitsController extends HOIIVUtilsAbstractController2:
   setFxmlFile("CompareUnits.fxml")
   setTitle("Compare Units")
-  @FXML
-  var rootAnchorPane: AnchorPane = new AnchorPane()
 
+  @FXML var rootGridPane: GridPane = uninitialized
+  @FXML var rootAnchorPane: AnchorPane = uninitialized
+  @FXML var mClose: Button = uninitialized
+  @FXML var mSquare: Button = uninitialized
+  @FXML var mMinimize: Button = uninitialized
   private var unitsDiffViewPane: DiffViewPane = uninitialized
   private val skipNullProperties = true
 
@@ -55,6 +58,8 @@ class CompareUnitsController extends HOIIVUtilsAbstractController:
 
     // append
     unitsDiffViewPane.setData(baseUnitText.asJava, customUnitText.asJava)
+
+  override def preSetup(): Unit = setupWindowControls(rootGridPane, mClose, mSquare, mMinimize)
 
   private def appendUnitDetails(unitText: collection.mutable.Buffer[String], unit: SubUnit): Unit =
     val df = SubUnit.dataFunctions()
