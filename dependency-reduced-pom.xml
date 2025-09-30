@@ -92,6 +92,10 @@
           <artifactId>javafx-maven-plugin</artifactId>
           <version>0.0.8</version>
         </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.5.2</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -99,7 +103,7 @@
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
         <configuration>
-          <mainClass>com.hoi4utils.HOIIVUtils</mainClass>
+          <mainClass>com.hoi4utils.main.HOIIVUtils</mainClass>
         </configuration>
       </plugin>
       <plugin>
@@ -158,7 +162,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.hoi4utils.HOIIVUtils</mainClass>
+                  <mainClass>com.hoi4utils.main.HOIIVUtils</mainClass>
                 </transformer>
               </transformers>
             </configuration>
