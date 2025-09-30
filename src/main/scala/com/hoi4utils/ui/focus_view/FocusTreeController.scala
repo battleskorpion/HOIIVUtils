@@ -95,16 +95,24 @@ class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging
         initFailed.set(true)
       )
     else
-      focusTreeDropdown.setTooltip(new Tooltip("Select a focus tree to view"))
-      focusTreeDropdown.setVisibleRowCount(VISIBLE_DROPDOWN_ROW_COUNT)
-      exportFocusTreeButton.setOnAction(_ => handleExportFocusTreeButtonClick())
-      focusTreeViewSplitPane.getItems.add(focusTreePane)
-      
+      // Setup UI components that don't require background loading
+      setupUIComponents()
+
+      // Start the task in a new thread
       val thread = new Thread(task)
       thread.setDaemon(true)
       thread.start()
 
   override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize, focusTreeGridPane)
+
+  private def setupUIComponents(): Unit =
+    // Setup components that can be configured immediately
+    focusTreeDropdown.setTooltip(new Tooltip("Select a focus tree to view"))
+    focusTreeDropdown.setVisibleRowCount(VISIBLE_DROPDOWN_ROW_COUNT)
+
+    exportFocusTreeButton.setOnAction(_ => handleExportFocusTreeButtonClick())
+
+    focusTreeViewSplitPane.getItems.add(focusTreePane)
 
   private def performBackgroundInitialization(): InitializationResult =
 
@@ -192,13 +200,6 @@ class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging
 
   private def setFocusTree(tree: FocusTreeFile): Unit =
     focusTreePane.focusTree = tree
-    // Set up the editor callback to use the controller's method
-    focusTreePane.setEditorCallback((focus, onUpdate) => {
-      val runnable = new Runnable {
-        override def run(): Unit = onUpdate()
-      }
-      openEditorWindow(focus, runnable)
-    })
 
   // Helper case class for initialization results
   private case class InitializationResult(
@@ -248,6 +249,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging
       case None =>
         logger.error("No focus tree available to export.")
         JOptionPane.showMessageDialog(null, "No focus tree available to export.", "Error", JOptionPane.ERROR_MESSAGE)
+        return ()
 
     JOptionPane.showMessageDialog(null, s"Focus tree exported to $path", "Export Successful",
       JOptionPane.INFORMATION_MESSAGE)
