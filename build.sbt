@@ -3,32 +3,27 @@ import sbt.CrossType
 import sbt.Keys._
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
-lazy val shared = crossProject(JSPlatform, JVMPlatform)
-	.in(file("shared"))
+lazy val hoi4utils = crossProject(JSPlatform, JVMPlatform)
+	.in(file("."))
 	.settings(
 		scalaVersion := "3.7.3", // Or your desired Scala version
-		name := "shared",
+		name := "hoi4utils",
+		version := "20.0.1",
 //		libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "2.3.0" // Example dependency
 	)
-
-lazy val sharedJVM = shared.jvm
-lazy val sharedJS = shared.js
-
-lazy val frontend = project
-	.in(file("js"))
-	.settings(
-		scalaVersion := "3.7.3",
-		name := "frontend",
-		libraryDependencies += "org.scala-js" %% "scalajs-dom" % "2.9.0", // Example Scala.js specific dependency
-		dependsOn(sharedJS)
+	.jvmSettings(
+		// JVM-specific settings
+		libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided",
 	)
-	.enablePlugins(ScalaJSPlugin)
+	.jsSettings(
+		// JS-specific settings
+		scalaJSUseMainModuleInitializer := true,
+	)
 
-lazy val backend = project
-	.in(file("jvm"))
-	.settings(
-		scalaVersion := "3.7.3",
-		name := "backend",
-		dependsOn(sharedJVM)
+lazy val root = project.in(file(".")).
+	aggregate(hoi4utils.js, hoi4utils.jvm).
+	settings(
+		publish := {},
+		publishLocal := {},
 	)
 
