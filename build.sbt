@@ -1,5 +1,6 @@
 // build.
-
+import sbtcrossproject.CrossPlugin.autoImport._
+import scalajscrossproject.ScalaJSCrossPlugin.autoImport._
 ThisBuild / scalaVersion := "3.7.3"
 
 lazy val root = project.in(file(".")).
@@ -18,12 +19,13 @@ lazy val hoi4utils = crossProject(JSPlatform, JVMPlatform)
 	)
 	.jvmSettings(
 		// JVM-specific settings
-		libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided",
 	)
 	.jsSettings(
 		// JS-specific settings
 		scalaJSUseMainModuleInitializer := true,
 	)
 
+lazy val hoi4utilsJS  = hoi4utils.js
+lazy val hoi4utilsJVM = hoi4utils.jvm
 
 
