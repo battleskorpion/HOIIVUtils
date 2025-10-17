@@ -33,4 +33,6 @@ lazy val hoi4utils = crossProject(JSPlatform, JVMPlatform)
 lazy val hoi4utilsJS  = hoi4utils.js
 lazy val hoi4utilsJVM = hoi4utils.jvm
 
+addCommandAlias("runDev", "; hoi4utilsJVM/reStart --mode dev")
+
 

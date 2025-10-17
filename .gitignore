@@ -107,6 +107,14 @@ fabric.properties
 .bloop/
 .ammonite/
 metals.sbt
+.bsp
+.vscode
+
+project/target
+project/metals.sbt
+project/project
+
+
 #--------------------------------------------------------------------------------#
 output.bmp
 Generated Province Colors.bmp
@@ -120,3 +128,4 @@ temp/*
 /Updater/target/
 .claude/settings.local.json
 CLAUDE.md
+.bsp/sbt.json
