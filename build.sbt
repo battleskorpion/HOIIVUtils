@@ -1,12 +1,17 @@
-// build.sbt
-import sbt.CrossType
-import sbt.Keys._
-import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
+// build.
+
+ThisBuild / scalaVersion := "3.7.3"
+
+lazy val root = project.in(file(".")).
+	aggregate(hoi4utils.js, hoi4utils.jvm).
+	settings(
+		publish := {},
+		publishLocal := {},
+	)
 
 lazy val hoi4utils = crossProject(JSPlatform, JVMPlatform)
 	.in(file("."))
 	.settings(
-		scalaVersion := "3.7.3", // Or your desired Scala version
 		name := "hoi4utils",
 		version := "20.0.1",
 //		libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "2.3.0" // Example dependency
@@ -20,10 +25,5 @@ lazy val hoi4utils = crossProject(JSPlatform, JVMPlatform)
 		scalaJSUseMainModuleInitializer := true,
 	)
 
-lazy val root = project.in(file(".")).
-	aggregate(hoi4utils.js, hoi4utils.jvm).
-	settings(
-		publish := {},
-		publishLocal := {},
-	)
+
 
