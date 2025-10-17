@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ScalaCompilerConfiguration">
-    <profile name="sbt 1" modules="hoiivutils" />
+    <option name="separateProdTestSources" value="true" />
+    <profile name="sbt 1" modules="hoiivutils,root,root.hoi4utils.hoi4utilsJS,root.hoi4utils.hoi4utilsJVM,root.hoi4utils.hoi4utilsJVM.main,root.hoi4utils.hoi4utilsJVM.test,root.main,root.test" />
+    <profile name="sbt 2" modules="root.hoi4utils.hoi4utilsJS.main,root.hoi4utils.hoi4utilsJS.test">
+      <parameters>
+        <parameter value="-scalajs" />
+      </parameters>
+    </profile>
   </component>
 </project>
