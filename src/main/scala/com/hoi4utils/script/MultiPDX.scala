@@ -32,37 +32,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   /**
    * @inheritdoc
    */
-  @throws[UnexpectedIdentifierException]
-  override def loadPDX(expression: Node): Unit = {
-    try {
-      add(expression)
-    } catch {
-      case e: NodeValueTypeException =>
-        logger.error("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
-        // For MultiPDX, preserve the node by storing the raw expression.
-        node = Some(expression)
-    }
-  }
-
-  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    if (expressions != null) {
-      val remaining = ListBuffer.from(expressions)
-      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
-        catch {
-          case e: UnexpectedIdentifierException =>
-            logger.error(e.getMessage)
-          //throw new RuntimeException(e);
-        }
-      })
-      remaining
-    } else {
-      ListBuffer.empty
-    }
-  }
+  override def loadPDX(expression: Node): Unit = loadPDXCollection(expression)
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
@@ -71,19 +41,22 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     else Some(pdxList)
   }
 
+  /**
+   * Implementation of addToCollection for MultiPDX.
+   * Uses both simple and block suppliers based on node content.
+   */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  protected def add(expression: Node): Unit = {
+  override protected def addToCollection(expression: Node): Unit = {
     usingIdentifier(expression)
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     expression.$ match {
       case l: ListBuffer[Node] =>
-        val childScript = applySupplier(expression) // todo ehhh
+        val childScript = applySupplier(expression)
         childScript.loadPDX(expression)
         pdxList.addOne(childScript)
       case _ =>
-        // todo idk
         if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "not a list", this.getClass)
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(expression)
@@ -206,17 +179,9 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   /**
    * Rebuilds the underlying Node tree for MultiPDX from the current collection of child nodes.
+   * Uses the abstracted collection node tree management from AbstractPDX.
    */
-  override def updateNodeTree(): Unit = {
-    pdxList.foreach(_.updateNodeTree())
-    val childNodes: ListBuffer[Node] = pdxList.flatMap(_.getNode)
-    node match {
-      case Some(n) => n.setValue(childNodes)
-      case None => 
-        if (childNodes.nonEmpty) node = Some(new Node(childNodes))
-        else node = None
-    }
-  }
+  override def updateNodeTree(): Unit = updateCollectionNodeTree(pdxList)
 
 }
 

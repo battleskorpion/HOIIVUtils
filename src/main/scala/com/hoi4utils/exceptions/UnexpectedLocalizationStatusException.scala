@@ -1,8 +1,8 @@
 package com.hoi4utils.exceptions
 
-import com.hoi4utils.localization.Localization
+import com.hoi4utils.hoi4mod.localization.Localization
 
-class UnexpectedLocalizationStatusException(message: String) extends RuntimeException(message) {
+class UnexpectedLocalizationStatusException(message: String) extends Exception(message):
 
   def this(loc: Localization, other: Localization) =
     this(
@@ -13,4 +13,3 @@ class UnexpectedLocalizationStatusException(message: String) extends RuntimeExce
     this(
       s"Unexpected localization status: $loc, status: ${loc.status}"
     )
-}

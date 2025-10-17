@@ -1,10 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="HOIIVUtils" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="com.hoi4utils.HOIIVUtils" />
+  <configuration default="false" name="HOIIVUtils" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.hoi4utils.main.HOIIVUtils" />
     <module name="HOIIVUtils" />
+    <option name="PROGRAM_PARAMETERS" value="-deprecation -Dscala.args=&quot;-deprecation -unchecked -feature&quot; -Dcompiler.compilerArgs=&quot;-Xlint:all&quot;" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.hoi4utils.*" />
+        <option name="PATTERN" value="com.hoi4utils.clausewitz.data.province.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

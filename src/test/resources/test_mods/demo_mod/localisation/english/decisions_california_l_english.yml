@@ -1,0 +1,22 @@
+﻿l_english: 
+
+SCA_California_Sphere:0 "The California Sphere"
+
+SCA_decision_influnce_politics_in_SWA:0 "Influnce Politics in Washington"
+SCA_decision_influnce_politics_in_SNV:0 "Influence Politics in Nevada"
+SCA_decision_influnce_politics_in_SAZ:0 "Influence Politics in Arizona"
+SCA_decision_influnce_politics_in_SCO:0 "Influence Politics in Colorado"
+
+SWA_influenced_tt:0 "§GWashington will be more likely to accept political proposals from us§!"
+SNV_influenced_tt:0 "§GNevada will be more likely to accept political proposals from us§!"
+SAZ_influenced_tt:0 "§GArizona will be more likely to accept political proposals from us§!"
+SCO_influenced_tt:0 "§GColorado will be more likely to accept political proposals from us§!"
+
+SCA_integration_decisions:0 "PTO Integration"
+
+SCA_disney_form_usa_decision:0 "Declare the Magical Kingdom of America"
+
+SCA_union_integration_decisions:0 "Union Integration"
+SCA_integrate_nevada:0 "Integrate Nevadan Unions"
+SCA_integrate_arizona:0 "Integrate Arizona"
+SCA_integrate_baja:0 "Integrate Baja Communes"

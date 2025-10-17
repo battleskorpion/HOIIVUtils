@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.ExpectedRange
+import com.hoi4utils.custom_scala.ExpectedRange
 
 import scala.annotation.targetName
 
@@ -60,6 +60,15 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] with Comparable[T] {
    */
   def @=(other: T): Unit = set(other)
 
+  /**
+   * Sets the value of the script to the given value. If the given value is the script's default value
+   * and the script's value is empty, does nothing.
+   */
+  def @=?(other: T): Unit = {
+    if (other == defaultValue && value.isEmpty) return
+    set(other)
+  }
+  
   /**
    * Sets the value of the script to the value of the given script.
    * @param other
@@ -121,6 +130,6 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] with Comparable[T] {
 
   def asString: String = this.value.map(_.toString).getOrElse("")
   
-  override def toString: String = if asString eq "" then "[null]" else asString
+  override def toString: String = if asString == "" then "[null]" else asString
 
 }

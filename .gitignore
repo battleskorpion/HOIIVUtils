@@ -118,3 +118,5 @@ focuses_missing_descriptions.csv
 .idea/scala_settings.xml
 temp/*
 /Updater/target/
+.claude/settings.local.json
+CLAUDE.md

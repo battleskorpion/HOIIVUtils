@@ -1,6 +1,5 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.parser.Node
 import com.typesafe.scalalogging.LazyLogging
 
@@ -11,7 +10,7 @@ import scala.collection.mutable.ListBuffer
 import scala.util.Using
 
 /**
- *
+ * TODO fix documentation
  * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
  * @tparam V
  */
@@ -29,43 +28,17 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
    */
   protected def setNode(value: V | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit
 
-  /**
-   * Set the node value to the given expression.
-   * @param expression
-   * @throws
-   */
-  @throws[UnexpectedIdentifierException]
   def set(expression: Node): Unit
 
-  /**
-   * Get the value of the PDX script.
-   * @return
-   */
   def value: Option[V]
 
-  /**
-   * Get the node of the PDX script.
-   * @return
-   */
   def getNode : Option[Node]
 
   def getNodes: List[Node]
 
-  /**
-   * Load the PDX script represented by the given expression.
-   * @param expression
-   * @throws
-   */
-  @throws[UnexpectedIdentifierException]
   def loadPDX(expression: Node): Unit
 
-  /**
-   * Load the PDX script represented by the given expressions.
-   * @param expressions
-   */
   def loadPDX(expressions: Iterable[Node]): Iterable[Node]
-
-  //void loadPDX(@NotNull File file);//void loadPDX(@NotNull File file);
 
   /**
    * Checks if the given node matches any valid identifier for this PDX script.
@@ -87,9 +60,6 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
 
   def clearNode(): Unit
 
-  /**
-   * Set the node value and any relevant pdx properties to null.
-   */
   def setNull(): Unit
     
   def loadOrElse(exp: Node, value: V): Unit
@@ -128,11 +98,11 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
 
   def pdxIdentifier: String
 
-  def savePDX(): Unit = {
-    savePDX(new File("Saved PDXScripts"))
+  def saveToPDXScriptsDir(): Unit = {
+    saveInDir(new File("Saved PDXScripts"))
   }
 
-  def savePDX(dir: File): Unit = {
+  def saveInDir(dir: File): Unit = {
     if (this == null) return
     if (!dir.exists()) if (!dir.mkdir) logger.error("Error creating directory for saving PDXScript: \n{}", this)
     val path = this match {
@@ -180,5 +150,4 @@ object PDXScript {
     if (directory.isFile) List(directory)
     else directory.listFiles().filter(_.isFile).filter(_.getName.endsWith(".txt")).toList
   }
-  
 }

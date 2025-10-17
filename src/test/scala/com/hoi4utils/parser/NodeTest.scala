@@ -1,11 +1,11 @@
-//package com.hoi4utils.clausewitz_parser
-//
-//import org.scalatest.funsuite.AnyFunSuiteLike
-//
-//import java.io.File
-//
-//class NodeTest extends AnyFunSuiteLike {
-//
+package com.hoi4utils.parser
+
+import org.scalatest.funsuite.AnyFunSuiteLike
+
+import java.io.File
+
+class NodeTest extends AnyFunSuiteLike {
+
 //  private val testPath = "src/test/resources/clausewitz_parser/"
 //  private val filesToTest = List(
 //    new File(testPath + "minimichigantest.txt"),
@@ -34,7 +34,7 @@
 //  }
 //
 //  test("") {
-//    
-//  }
 //
-//}
+//  }
+
+}

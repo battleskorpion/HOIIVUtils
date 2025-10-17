@@ -5,12 +5,16 @@ import com.hoi4utils.parser.Node
 
 trait ProceduralIdentifierPDX(p: String => Boolean) { self: AbstractPDX[?] =>
 
+  clearIdentifiers()
+
+  def clearIdentifiers(): Unit = pdxIdentifiers = List.empty
+
   @throws[UnexpectedIdentifierException]
   override protected def usingIdentifier(expr: Node): Unit = {
     if (pdxIdentifiers.isEmpty) expr.identifier match {
       case Some(id) =>
         if (p(id)) {
-          logger.debug("Using date identifier: " + id)
+//          logger.debug("Using date identifier: " + id)
           pdxIdentifiers = List(id)
         }
       case None =>

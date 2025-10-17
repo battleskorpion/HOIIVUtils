@@ -39,13 +39,13 @@ object ScalaEmbeddedRepl {
 //          |// Hide the default Predef print/println
 //          |import scala.Predef.{print => _, println => _}
 //          |import com.hoi4utils.clausewitz.script._
-//          |import com.hoi4utils.clausewitz.map._
-//          |import com.hoi4utils.clausewitz.map.province._
-//          |import com.hoi4utils.clausewitz.map.state._
+//          |import com.hoi4utils.hoi4mod.map._
+//          |import com.hoi4utils.hoi4mod.map.province._
+//          |import com.hoi4utils.hoi4mod.map.state._
 //          |import com.hoi4utils.clausewitz_parser._
 //          |//
 //          |//import com.hoi4utils.clausewitz.data.focus._
-//          |import com.hoi4utils.clausewitz.map.province._
+//          |import com.hoi4utils.hoi4mod.map.province._
 //          |import com.hoi4utils.clausewitz.code._
 //          | 
 //          |import scala.reflect.ClassTag

@@ -15,7 +15,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
         </processorPath>
         <module name="HOIIVUtils" />
       </profile>
@@ -24,6 +25,7 @@
   <component name="JavacSettings">
     <option name="DEBUGGING_INFO" value="false" />
     <option name="DEPRECATION" value="false" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-Dcompiler.compilerArgs=&quot;-Xlint:all&quot;" />
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="HOIIVUtils" options="" />
     </option>

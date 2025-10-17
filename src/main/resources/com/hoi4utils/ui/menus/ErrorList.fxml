@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="contentContainer" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <TabPane fx:id="errorListTabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="Effects">
+            <content>
+              <AnchorPane>
+                     <children>
+                        <ListView fx:id="effectsEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Localization">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="localizationEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Interface">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="interfaceEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Countries">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="countryEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Focus Trees">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="focusTreeEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Ideas">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="ideaEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Resources">
+            <content>
+                <AnchorPane>
+                    <children>
+                        <ListView fx:id="resourceEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                    </children>
+                </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="States">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="stateEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="States that changed WIP todo @skorp?">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="statesThatChangedList" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+         <BorderPane.margin>
+            <Insets top="-30.0" />
+         </BorderPane.margin>
+      </TabPane>
+   </center>
+   <top>
+     <GridPane pickOnBounds="false" >
+       <Button fx:id="mMinimize" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+         <GridPane.margin>
+           <Insets right="60.0" />
+         </GridPane.margin>
+       </Button>
+       <Button fx:id="mSquare" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+         <GridPane.margin>
+           <Insets right="30.0" />
+         </GridPane.margin>
+       </Button>
+       <Button fx:id="mClose" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+         <font>
+           <Font name="System Bold" size="13.0" />
+         </font>
+       </Button>
+         <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+         </rowConstraints>
+     </GridPane>
+   </top>
+</BorderPane>

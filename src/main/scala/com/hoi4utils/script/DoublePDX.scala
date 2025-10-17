@@ -1,10 +1,11 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.ExpectedRange
+import com.hoi4utils.custom_scala.ExpectedRange
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 
 import scala.annotation.targetName
+import scala.util.boundary
 
 class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = ExpectedRange.ofDouble) extends AbstractPDX[Double](pdxIdentifiers) with ValPDXScript[Double] {
   def this(pdxIdentifiers: String*) = {
@@ -49,12 +50,12 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
     }
   }
 
-  override def value: Option[Double] = {
-    node.getOrElse(return None).$ match {
+  override def value: Option[Double] = boundary {
+    node.getOrElse(boundary.break(None)).$ match {
       case value: Double => Some(value)
       case value: Int => Some(value.toDouble)
       case null => None
-      case _ => 
+      case _ =>
         logger.warn(s"Expected double value for pdx double")
         None
     }
@@ -63,8 +64,8 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
   /**
    * @inheritdoc
    */
-  override def getOrElse(default: Double): Double = {
-    val value = node.getOrElse(return default).value
+  override def getOrElse(default: Double): Double = boundary {
+    val value = node.getOrElse(boundary.break(default)).value
     value match {
       case Some(v) => v.match {
         case d: Double => d

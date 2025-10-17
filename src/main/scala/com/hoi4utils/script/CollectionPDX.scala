@@ -6,8 +6,32 @@ import com.hoi4utils.parser.Node
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
-abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: List[String])
-  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
+/**
+ * Abstract base class for PDX collections that need polymorphic object creation.
+ *
+ * CollectionPDX vs ListPDX:
+ * - **CollectionPDX**: Uses context-aware suppliers that can create different subtypes based on node content
+ * - **ListPDX**: Uses simple suppliers that always create the same type regardless of content
+ *
+ * Use CollectionPDX when:
+ * - You need to parse heterogeneous collections (e.g., different types of focuses, ideas, or modifiers)
+ * - The type of object to create depends on the parsed content
+ * - You want comprehensive error handling for unexpected identifiers
+ *
+ * Example usage:
+ * {{{
+ * // CollectionPDX - can handle different focus types based on content
+ * class FocusCollection extends CollectionPDX[Focus](focusSupplier, "focus")
+ *
+ * // ListPDX - always creates StringPDX objects
+ * val ideas = new ListPDX(() => new StringPDX(), "remove_ideas")
+ * }}}
+ *
+ * @param pdxSupplier Function that creates objects based on the node content - enables polymorphism
+ * @param pdxIdentifiers List of identifiers this collection can handle
+ * @tparam T The base type of objects this collection contains
+ */
+abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
 
@@ -18,32 +42,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
   /**
    * @inheritdoc
    */
-  @throws[UnexpectedIdentifierException]
-  override def loadPDX(expression: Node): Unit = {
-    try add(expression)
-    catch {
-      case e: NodeValueTypeException =>
-        throw new RuntimeException(e)
-    }
-  }
-
-  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    if (expressions != null) {
-      val remaining = ListBuffer.from(expressions)
-      expressions.filter(this.isValidIdentifier).foreach((expression: Node) => {
-        try {
-          loadPDX(expression)
-          remaining -= expression
-        }
-        catch {
-          case e: UnexpectedIdentifierException =>
-            System.err.println(e.getMessage)
-          //throw new RuntimeException(e);
-        }
-      })
-      remaining
-    } else ListBuffer.empty 
-  }
+  override def loadPDX(expression: Node): Unit = loadPDXCollection(expression)
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
@@ -52,12 +51,13 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     else Some(pdxList)
   }
 
+  /**
+   * Implementation of addToCollection for CollectionPDX.
+   * Uses context-aware supplier to create appropriate PDXScript objects.
+   */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  protected def add(expression: Node): Unit = {
-    //usingIdentifier(expression);  // could be any identifier based on T
-    // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
-    // then load each sub-PDXScript
+  override protected def addToCollection(expression: Node): Unit = {
     expression.$ match {
       case l: ListBuffer[Node] =>
         for (childExpr <- l) {
@@ -66,7 +66,6 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
           pdxList += childScript
         }
       case _ =>
-        // todo idk   // double todo
         val childScript = useSupplierFunction(expression)
         childScript.loadPDX(expression)
         pdxList += childScript
@@ -126,17 +125,13 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
 
   override def foreach[U](f: T => U): Unit = super.foreach(f)
   
-  override def length: Int = size
+  override def length: Int = pdxList.length
 
   override def apply(i: Int): T = pdxList(i)
-  
-//  override def size: Int = value.size
 
   override def toList: List[T] = pdxList.toList
 
-  override def isUndefined: Boolean = {
-    pdxList.forall(_.isUndefined) || pdxList.isEmpty
-  }
+  override def isUndefined: Boolean = pdxList.forall(_.isUndefined) || pdxList.isEmpty
 
   override def set(expression: Node): Unit = {
     usingIdentifier(expression)
@@ -145,27 +140,14 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
     setNode(value)
   }
 
-  override def set(obj: ListBuffer[T]): ListBuffer[T] = {
-    obj
-  }
+  // todo @skorp implement?
+  override def set(obj: ListBuffer[T]): ListBuffer[T] = obj
 
   /**
    * Updates the underlying Node tree for collection types.
-   * It gathers the child Node for each child script in pdxList and sets that as the rawValue.
+   * Uses the abstracted collection node tree management from AbstractPDX.
    */
-  override def updateNodeTree(): Unit = {
-    // Rebuild the child nodes from each contained PDXScript.
-    pdxList.foreach(_.updateNodeTree())
-    val childNodes: ListBuffer[Node] = pdxList.flatMap(_.getNode)
-    node match {
-      case Some(n) =>
-        n.setValue(childNodes)
-      case None =>
-        // If no node exists, create a new one using the child nodes.
-        if(pdxList.nonEmpty) node = Some(new Node(pdxIdentifier, "=", childNodes))
-        else node = None
-    }
-  }
+  override def updateNodeTree(): Unit = updateCollectionNodeTree(pdxList)
 
   override def getPDXTypeName: String
 }

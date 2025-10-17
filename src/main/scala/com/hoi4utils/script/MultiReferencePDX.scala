@@ -2,6 +2,7 @@ package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
@@ -21,7 +22,7 @@ import scala.collection.mutable.ListBuffer
 class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: () => Iterable[T],
                                              protected var idExtractor: T => Option[String], pdxIdentifiers: List[String],
                                              referencePDXIdentifiers: List[String])
-  extends MultiPDX[ReferencePDX[T]](Some(() => new ReferencePDX(referenceCollectionSupplier, idExtractor, referencePDXIdentifiers)), None, pdxIdentifiers) {
+  extends MultiPDX[ReferencePDX[T]](Some(() => new ReferencePDX(referenceCollectionSupplier, idExtractor, referencePDXIdentifiers)), None, pdxIdentifiers) with LazyLogging {
 
   final protected val referenceNames = new ListBuffer[String]
 
@@ -35,35 +36,16 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
    * @param expression
    * @throws UnexpectedIdentifierException
    */
-  @throws[UnexpectedIdentifierException]
   override def loadPDX(expression: Node): Unit = {
     expression.$ match {
       case list: ListBuffer[Node] =>
-        // prolly don't need this check, but it doesn't hurt right now
-        if (list.isEmpty) {
-          System.out.println("PDX script had empty list: " + expression)
-          return
-        }
         usingIdentifier(expression)
 
         for (child <- list) {
-          try {
-            add(child)
-          } catch {
-            case e: UnexpectedIdentifierException =>
-              System.err.println("Error loading child node: " + e.getMessage + "\n\t" + child)
-          }
+          super.loadPDX(child)
         }
         this.node = Some(expression)
-      case _ =>
-        try {
-          add(expression)
-        } catch {
-          case e@(_: UnexpectedIdentifierException | _: NodeValueTypeException) =>
-            println("Error loading PDX script: " + e.getMessage + "\n\t" + expression)
-            // Preserve the node so it isn’t lost.
-            node = Some(expression)
-        }
+      case _ => super.loadPDX(expression)
     }
   }
 
@@ -96,7 +78,7 @@ class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSu
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override protected def add(expression: Node): Unit = {
+  override protected def addToCollection(expression: Node): Unit = {
     checkReferenceIdentifier(expression)
     expression.$ match {
       case str: String =>
