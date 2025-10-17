@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ScalaCompilerConfiguration">
-    <option name="separateProdTestSources" value="true" />
-    <profile name="sbt 1" modules="hoi4utils,hoi4utils-build,hoi4utils-build.hoi4utils.hoi4utilsJVM,hoi4utils.hoi4utils-crossproject.hoi4utilsJS,hoi4utils.hoi4utils-crossproject.hoi4utilsJVM,hoi4utils.hoi4utils-crossproject.hoi4utilsJVM.main,hoi4utils.hoi4utils-crossproject.hoi4utilsJVM.test,hoi4utils.main,hoi4utils.test,hoiivutils,root,root.hoi4utils.hoi4utilsJVM" />
-    <profile name="sbt 2" modules="hoi4utils-build.hoi4utils.hoi4utilsJS,hoi4utils.hoi4utils-crossproject.hoi4utilsJS.main,hoi4utils.hoi4utils-crossproject.hoi4utilsJS.test,root.hoi4utils.hoi4utilsJS">
-      <parameters>
-        <parameter value="-scalajs" />
-      </parameters>
-    </profile>
+    <profile name="sbt 1" modules="hoiivutils_916,hoiivutils_916.main,hoiivutils_916.test" />
   </component>
 </project>
