@@ -1,7 +1,6 @@
 package tutorial.webapp
 
 object TutorialApp {
-	def main(args: Array[String]): Unit = {
+	def main(args: Array[String]): Unit =
 		println("Hello, Scala.js!")
-	}
 }
