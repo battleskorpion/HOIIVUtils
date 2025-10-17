@@ -46,7 +46,7 @@
     <resources>
       <resource>
         <filtering>true</filtering>
-        <directory>src/main/resources</directory>
+        <directory>_src_old/main/resources</directory>
         <includes>
           <include>**/*.properties</include>
           <include>**/*.fxml</include>
@@ -60,7 +60,7 @@
         </includes>
       </resource>
       <resource>
-        <directory>src/main/resources_binary</directory>
+        <directory>_src_old/main/resources_binary</directory>
       </resource>
     </resources>
     <finalName>${project.artifactId}</finalName>

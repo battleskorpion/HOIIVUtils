@@ -1,12 +1,9 @@
-import sbt.Compile
-import sbt.Keys.unmanagedSourceDirectories
+
 // build.
 
 ThisBuild / scalaVersion := "3.7.3"
 
-Compile / unmanagedSourceDirectories := (Compile / unmanagedSourceDirectories).value.filterNot { dir =>
-	dir.getName == "src"
-}
+
 
 lazy val root = project.in(file("."))
 	.aggregate(hoi4utils.js, hoi4utils.jvm)
@@ -14,7 +11,6 @@ lazy val root = project.in(file("."))
 		name := "hoi4utils",
 		publish := {},
 		publishLocal := {},
-		Compile / unmanagedSourceDirectories := Seq(),
 	)
 
 lazy val hoi4utils = crossProject(JSPlatform, JVMPlatform)
