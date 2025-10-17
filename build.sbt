@@ -1,7 +1,10 @@
 // build.
-import sbtcrossproject.CrossPlugin.autoImport._
-import scalajscrossproject.ScalaJSCrossPlugin.autoImport._
+
 ThisBuild / scalaVersion := "3.7.3"
+
+Compile / unmanagedSourceDirectories := (Compile / unmanagedSourceDirectories).value.filterNot { dir =>
+	dir.getName == "src"
+}
 
 lazy val root = project.in(file(".")).
 	aggregate(hoi4utils.js, hoi4utils.jvm).
