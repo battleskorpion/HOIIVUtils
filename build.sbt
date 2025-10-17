@@ -1,4 +1,4 @@
-import sbt.Keys.skip
+import sbt.Keys.{fork, skip}
 // build.
 
 ThisBuild / organization := "com.hoi4utils"
@@ -27,12 +27,13 @@ lazy val hoi4utils = crossProject(JSPlatform, JVMPlatform)
 	)
 	.jvmSettings(
 		// JVM-specific settings
-		Compile / mainClass := Some("com.hoi4utils.HOI4Utils")
+		Compile / mainClass := Some("com.hoi4utils.HOI4Utils"),
+		run / fork := true
 	)
 
 lazy val hoi4utilsJS  = hoi4utils.js
 lazy val hoi4utilsJVM = hoi4utils.jvm
 
-addCommandAlias("runDev", "; hoi4utilsJVM/reStart --mode dev")
+addCommandAlias("runDev", ";hoi4utilsJVM/reStart --mode dev;hoi4utilsJS/fastLinkJS")
 
 
