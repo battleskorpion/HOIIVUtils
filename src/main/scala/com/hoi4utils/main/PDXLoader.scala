@@ -40,18 +40,22 @@ class PDXLoader extends LazyLogging:
   val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
   private var stateFilesWatcher: FileWatcher = null
 
-  def load(hProperties: Properties, loadingLabel: Label): Unit =
+  def load(hProperties: Properties, loadingLabel: Label, isCancelled: () => Boolean = () => false): Unit =
     implicit val properties: Properties = hProperties
     implicit val label: Label = loadingLabel
+    if isCancelled() then return
 
     MenuController.updateLoadingStatus(loadingLabel, "Initializing ModifierDatabase...")
     ModifierDatabase.init()
+    if isCancelled() then return
     MenuController.updateLoadingStatus(loadingLabel, "Initializing EffectDatabase...")
     EffectDatabase.init()
+    if isCancelled() then return
 
     MenuController.updateLoadingStatus(loadingLabel, "Finding Paths...")
     val hoi4Path = hProperties.getProperty("hoi4.path")
     val modPath = hProperties.getProperty("mod.path")
+    if isCancelled() then return
     if validateDirectoryPath(hoi4Path, "hoi4.path") && validateDirectoryPath(modPath, "mod.path") then
       HOIIVFiles.setHoi4PathChildDirs(hoi4Path)
       HOIIVFiles.setModPathChildDirs(modPath)
@@ -59,14 +63,15 @@ class PDXLoader extends LazyLogging:
     else
       logger.error("Failed to create HOIIV file paths")
       hProperties.setProperty("valid.HOIIVFilePaths", "false")
-
+    if isCancelled() then return
     changeNotifier.checkAndNotifyChanges()
 
     MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
     LocalizationManager.getOrCreate(() => new EnglishLocalizationManager).reload()
+    if isCancelled() then return
 
     /* LOAD ORDER IMPORTANT (depending on the class) */
-    List (
+    val pdxList = List (
       Interface,
       ResourcesFile,
       State,
@@ -74,12 +79,17 @@ class PDXLoader extends LazyLogging:
       CountryTag,
       IdeaFile,
       FocusTreeFile,
-    ).foreach(readPDX)
+    )
+    
+    pdxList.foreach(p =>
+      if !isCancelled() then readPDX(p, isCancelled)
+    )
 
-  def readPDX(pdx: PDXReadable)(implicit properties: Properties, label: Label): Unit =
+  def readPDX(pdx: PDXReadable, isCancelled: () => Boolean = () => false)(implicit properties: Properties, label: Label): Unit =
     val property = s"valid.${pdx.name}"
 
     MenuController.updateLoadingStatus(label, s"Loading ${pdx.name} files...")
+    if isCancelled() then return
     try
       if pdx.read() then properties.setProperty(property, "true")
       else

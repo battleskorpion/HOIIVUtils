@@ -564,6 +564,14 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTreeFile]) extends
     val rows = getMaxY - getMinY + 1
     val w = cols * FOCUS_X_SCALE + X_OFFSET_FIX * 2
     val h = rows * FOCUS_Y_SCALE + Y_OFFSET_FIX * 2
+    val fullMessage =
+      s"""
+         | Updating content size:
+         | Max X: ${getMaxX}, Min X: ${getMinX}, Columns: $cols
+         | Max Y: ${getMaxY}, Min Y: ${getMinY}, Rows: $rows
+         | Calculated Width: $w, Calculated Height: $h
+         |""".stripMargin
+    logger.info(fullMessage)
 
     focusTreeCanvasAnchorPane.prefWidth = w
     focusTreeCanvasAnchorPane.prefHeight = h

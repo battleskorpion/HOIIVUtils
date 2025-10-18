@@ -204,7 +204,7 @@
             <Insets top="-25.0" />
          </GridPane.margin>
       </TabPane>
-      <Button fx:id="idOkButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleOkButtonAction" prefHeight="25.0" prefWidth="411.0" text="Close" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+      <Button fx:id="idOkButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleOkButtonAction" prefHeight="25.0" prefWidth="411.0" text="Save and Load Mod" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
          <GridPane.margin>
             <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
          </GridPane.margin>

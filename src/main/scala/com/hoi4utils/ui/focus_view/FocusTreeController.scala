@@ -103,7 +103,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging
       thread.setDaemon(true)
       thread.start()
 
-  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize, focusTreeGridPane)
+  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize)
 
   private def setupUIComponents(): Unit =
     // Setup components that can be configured immediately

@@ -4,7 +4,8 @@ import com.hoi4utils.*
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.config
 import com.hoi4utils.ui.buildings.BuildingsByCountryController
-import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController2, JavaFXUIManager, RootWindows}
+import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController2, RootWindows}
+import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.gfx.InterfaceFileListController
 import com.hoi4utils.ui.hoi4localization.*
@@ -16,15 +17,12 @@ import com.hoi4utils.ui.units.CompareUnitsController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.event.EventHandler
-import javafx.fxml.{FXML, FXMLLoader}
-import javafx.scene.control.{Button, Label}
-import javafx.scene.image.Image
-import javafx.scene.layout.GridPane
-import javafx.scene.{Parent, Scene}
-import javafx.stage.{Stage, StageStyle}
+import javafx.fxml.FXML
+import javafx.scene.control.*
+import javafx.scene.layout.*
+import javafx.stage.Stage
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
-import java.util.{Locale, MissingResourceException, ResourceBundle}
 import javax.swing.*
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
@@ -34,7 +32,9 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   setFxmlFile("Menu.fxml")
   setTitle("HOIIVUtils Menu")
 
-  @FXML var contentContainer: GridPane = uninitialized
+  @FXML var mRoot: BorderPane = uninitialized
+  @FXML var contentStack: StackPane = uninitialized
+  @FXML var contentGrid: GridPane = uninitialized
   @FXML var mClose: Button = uninitialized
   @FXML var mSquare: Button = uninitialized
   @FXML var mMinimize: Button = uninitialized
@@ -58,23 +58,30 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   @FXML var mTitle: Label = uninitialized
   @FXML var mVersion: Label = uninitialized
 
+  private var currentTask: javafx.concurrent.Task[Unit] = null
+
   @FXML
   def initialize(): Unit =
     val task = new javafx.concurrent.Task[Unit]:
       override def call(): Unit =
-        loadProgram()
+        if isCancelled then return
 
-      private def loadProgram(): Unit =
         val pdxLoader = new PDXLoader()
+        if isCancelled then return
 
         pdxLoader.clearPDX()
         pdxLoader.clearLB()
         pdxLoader.closeDB()
+        if isCancelled then return
 
         /* ! loads whole program ! */
-        pdxLoader.load(config.getProperties, loadingLabel)
-
+        // If PDXLoader.load is long/blocking you should make it responsive to interruption.
+        // At minimum, check cancelled both before and after the call.
+        pdxLoader.load(config.getProperties, loadingLabel, () => isCancelled)
+        if isCancelled then return
+    
         MenuController.updateLoadingStatus(loadingLabel, "Checking for bad files...")
+
         val badFiles = ListBuffer(
           "localization",
           "HOIIVFilePaths",
@@ -86,6 +93,8 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           "IdeaFile",
           "ResourcesFile$"
         ).flatMap(MenuController.checkFileError)
+        if isCancelled then return
+
         if badFiles.isEmpty then
           MenuController.updateLoadingStatus(loadingLabel, "All files loaded successfully")
         else
@@ -93,18 +102,29 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           logger.warn(s"version: ${Version.getVersion(config.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
           showFilesErrorDialog(badFiles, vSettings)
           blockButtons(true)
+        if isCancelled then return
 
         HOIIVUtils.save()
         MenuController.updateLoadingStatus(loadingLabel, "Showing Menu...")
 
     task.setOnSucceeded: _ =>
-      contentContainer.setVisible(true)
+      contentGrid.setVisible(true)
       blockButtons(false)
       loadingLabel.setVisible(false)
       vFocusTree.requestFocus()
 
+    task.setOnCancelled: _ =>
+      Platform.runLater: () =>
+        if loadingLabel != null then
+          loadingLabel.setText("Operation cancelled")
+          loadingLabel.setVisible(false)
+        if contentGrid != null then
+          contentGrid.setVisible(true)
+        blockButtons(false)
+
     /* INITIALIZATION */
-    contentContainer.setVisible(false)
+    currentTask = task
+    contentGrid.setVisible(false)
     loadingLabel.setVisible(true)
 
     try new Initializer().initialize(config)
@@ -124,7 +144,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     logger.error(msg, exception)
     updateLoadingStatus(loadingLabel, msg)
     mTitle.setText(s"HOIIVUtils - Error\n$msg\n$exception")
-    contentContainer.setVisible(true)
+    contentGrid.setVisible(true)
     blockButtons(true)
     loadingLabel.setVisible(false)
     vSettings.requestFocus()
@@ -135,10 +155,11 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   
   override def fxmlSetResource(): Unit = fxmlLoader.setResources(getResourceBundle("i18n.menu"))
 
-  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize)
+  override def preSetup(): Unit = setupWindowControls(mRoot, mClose, mSquare, mMinimize, contentGrid)
 
   /* fxml menu buttons */
   def openSettings(): Unit =
+    cancelTask()
     closeWindow(vSettings) // closes the menu window
     new SettingsController().open()
   def openFocusTreeViewer(): Unit = new FocusTreeController().open()
@@ -165,6 +186,11 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   def openMapEditor(): Unit = new MapEditorController().open()
   def openParserView(): Unit = new ParserViewerController().open()
   def openErrorsW(): Unit = new ErrorListController().open()
+
+  private def cancelTask(): Unit =
+    if currentTask != null && !currentTask.isDone then
+      try currentTask.cancel(true)
+      catch case ex: Exception => logger.debug("Failed to cancel task", ex)
 
   // TODO: @skorp remove buttons you think don't need any files (hoi4, mod, valid, etc) cuz it is trigger happy and will disable on any at startup issue's
   private def blockButtons(b: Boolean): Unit =

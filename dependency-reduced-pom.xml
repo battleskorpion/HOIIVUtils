@@ -92,6 +92,10 @@
           <artifactId>javafx-maven-plugin</artifactId>
           <version>0.0.8</version>
         </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.5.2</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -99,7 +103,7 @@
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
         <configuration>
-          <mainClass>com.hoi4utils.HOIIVUtils</mainClass>
+          <mainClass>com.hoi4utils.main.HOIIVUtils</mainClass>
         </configuration>
       </plugin>
       <plugin>
@@ -158,7 +162,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.hoi4utils.HOIIVUtils</mainClass>
+                  <mainClass>com.hoi4utils.main.HOIIVUtils</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -222,6 +226,12 @@
       <artifactId>testfx-junit5</artifactId>
       <version>4.0.18</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -268,6 +278,12 @@
       <artifactId>assertj-core</artifactId>
       <version>3.26.3</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>byte-buddy</artifactId>
+          <groupId>net.bytebuddy</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
@@ -342,11 +358,11 @@
     </dependencies>
   </dependencyManagement>
   <properties>
+    <maven.compiler.release>24</maven.compiler.release>
     <project.organization.name>battleskorpion</project.organization.name>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.inceptionYear>2022</project.inceptionYear>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.release>24</maven.compiler.release>
     <scala.version>3.7.3</scala.version>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 </project>
