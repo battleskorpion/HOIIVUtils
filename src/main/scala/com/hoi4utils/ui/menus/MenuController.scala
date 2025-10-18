@@ -162,7 +162,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     cancelTask()
     closeWindow(vSettings) // closes the menu window
     new SettingsController().open()
-  def openFocusTreeViewer(): Unit = new FocusTreeController().open()
+  def openFocusTreeViewer(): Unit = new FocusTree2Controller().open()
   def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open()
   def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open()
   def openManageFocusTrees(): Unit = new ManageFocusTreesController().open()
