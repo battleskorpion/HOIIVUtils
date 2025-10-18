@@ -27,6 +27,9 @@ class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with 
   final var country = new FocusTreeCountryPDX
   final var focuses = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   final var id = new StringPDX("id")
+  var name: String = ""
+  var columns: Int = 1
+  var rows: Int = 1
   // private boolean defaultFocus; // ! todo Do This
   // private Point continuousFocusPosition; // ! todo DO THIS
 
@@ -42,6 +45,12 @@ class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with 
       require(file.exists && file.isFile, s"Focus tree file $file does not exist or is not a file.")
       loadPDX(file)
       setFile(file)
+
+  
+  def width: Int = focuses.map(_.absoluteX).maxOption.getOrElse(0)
+  def height: Int = focuses.map(_.absoluteY).maxOption.getOrElse(0)
+  columns = width + 1
+  rows = height + 1
 
   // todo: add default, continuous focus position
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] =
@@ -239,7 +248,7 @@ class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with 
 object FocusTreeFile extends LazyLogging with PDXReadable:
   var focusTreeFileErrors: ListBuffer[String] = ListBuffer.empty
   private val focusTreeFileMap = new mutable.HashMap[File, FocusTreeFile]()
-  private val focusTrees = new ListBuffer[FocusTreeFile]()
+  val focusTrees = new ListBuffer[FocusTreeFile]()
 
   def get(focus_file: File): Option[FocusTreeFile] =
     if focus_file == null then return None
