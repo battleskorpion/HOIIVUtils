@@ -66,18 +66,19 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     focusTreeView.add(Label(welcomeMessage), 0, 0)
 
   private def populateFocusTreeList: Unit =
-    focusTreeList += someFocusTree("One", 10, 100)
-    focusTreeList += someFocusTree("Two", 42, 10, 10)
+    focusTreeList += someFocusTree("One", 10, 2, 3)
+    focusTreeList += someFocusTree("Two", 42, 3, 2)
     focusTreeList += someFocusTree("Three", 7)
 
   class someFocusTree(var name: String, var testVar: Int = 0, var rows: Int = 1, var columns: Int = 1):
     var focuses: ListBuffer[someFocus] = ListBuffer.empty
     getFocuses
     private def getFocuses: Unit =
-      for i <- 1 to (rows * columns) do
-        focuses += someFocus(s"Focus_$i", i * 10)
+      // this is not a list of focuses lined up, cells will be empty except if the focus is present
+      focuses += someFocus(s"${name}_Focus_1", 1, 2, 1)
+      focuses += someFocus(s"${name}_Focus_2", 2, 1, 2)
 
-  class someFocus(var name: String, var testVar: Int = 0):
+  class someFocus(var name: String, var testVar: Int = 0, var positionX: Int = 1, var positionY: Int = 1):
     val anotherVar = s"Hello, Focus $name!"
 
 
@@ -93,13 +94,13 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       for row <- 0 until someFocusTree.rows do
         for column <- 0 until someFocusTree.columns do
           if focusIndex < someFocusTree.focuses.length then
-            val focus = someFocusTree.focuses(focusIndex)
-            val focusButton = FocusToggleButton(focus.name, focusGridColumnsSize, focusGridRowSize)
-            focusButton.setOnAction( _ =>
-              logger.info(s"Clicked on focus: ${focus.name}, anotherVar: ${focus.anotherVar}")
-            )
-            focusTreeView.add(focusButton, column, row)
-            focusIndex += 1
+            if someFocusTree.focuses(focusIndex).positionX == column + 1 && someFocusTree.focuses(focusIndex).positionY == row + 1 then
+              val focus = someFocusTree.focuses(focusIndex)
+              val focusLabel = Label(s"Focus: ${focus.name}\nTestVar: ${focus.testVar}\nAnotherVar: ${focus.anotherVar}\nPosition: (${focus.positionX}, ${focus.positionY})")
+              focusLabel.setStyle("-fx-border-color: black; -fx-padding: 10px;")
+              focusTreeView.add(focusLabel, column, row)
+              focusIndex += 1
+
 
   private def setCC() = {
     val cc = new ColumnConstraints()
