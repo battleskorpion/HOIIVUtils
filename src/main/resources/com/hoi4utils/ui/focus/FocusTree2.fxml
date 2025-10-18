@@ -41,6 +41,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -126,14 +127,13 @@
     <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
         <ScrollPane fx:id="focusSelection">
-          <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Master" textAlignment="CENTER" wrapText="false">
-            <font>
-              <Font size="18.0" fx:id="x1" />
-            </font>
-            <textFill>
-              <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
-            </textFill>
-          </Label>
+               <content>
+                  <VBox fx:id="vbox">
+                     <children>
+                        <ToggleButton fx:id="welcome" mnemonicParsing="false" onAction="#handleWelcome" text="Welcome" />
+                     </children>
+                  </VBox>
+               </content>
         </ScrollPane>
         <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
                <content>
@@ -152,7 +152,13 @@
         </ScrollPane>
         <AnchorPane>
           <children>
-            <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" textFill="$x2" wrapText="false" />
+            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" wrapText="false">
+                     <font>
+                 <Font size="18.0" fx:id="x1" />
+                     </font>
+                     <textFill>
+                 <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
+                     </textFill></Label>
           </children>
         </AnchorPane>
       </items>

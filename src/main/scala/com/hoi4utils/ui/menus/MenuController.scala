@@ -79,7 +79,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         // At minimum, check cancelled both before and after the call.
         pdxLoader.load(config.getProperties, loadingLabel, () => isCancelled)
         if isCancelled then return
-    
+
         MenuController.updateLoadingStatus(loadingLabel, "Checking for bad files...")
 
         val badFiles = ListBuffer(
