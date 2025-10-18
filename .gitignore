@@ -120,3 +120,4 @@ temp/*
 /Updater/target/
 .claude/settings.local.json
 CLAUDE.md
+.vscode
