@@ -108,7 +108,15 @@ fabric.properties
 .ammonite/
 metals.sbt
 .bsp
-.vscode
+
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 project/target
 project/metals.sbt
@@ -129,3 +137,10 @@ temp/*
 .claude/settings.local.json
 CLAUDE.md
 .bsp/sbt.json
+
+#--------------------------------------------------------------------------------#
+
+node_modules
+dist
+dist-ssr
+*.local
