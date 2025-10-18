@@ -3,8 +3,8 @@ package com.hoi4utils.ui.focus
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController2
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
-import javafx.scene.control.*
-import javafx.scene.layout.*
+import javafx.scene.control._
+import javafx.scene.layout._
 
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
@@ -14,12 +14,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   setTitle("Focus Tree Viewer 2: Electric Boogaloo")
   private var focusGridColumns: Int = 0
   private var focusGridRows: Int = 0
-  private var focusGridColumnsSize: Int = 100
-  private var focusGridRowSize: Int = 100
+  private var focusGridColumnsSize: Int = 250
+  private var focusGridRowSize: Int = 250
   private var gridLines: Boolean = true
   private val welcomeMessage: String = s"Welcome to the Focus Tree Viewer 2!"
 
-  private var focusTreeList: ListBuffer[someFocusTest] = ListBuffer.empty
+  private var focusTreeList: ListBuffer[someFocusTree] = ListBuffer.empty
 
   @FXML var focusTree2: VBox = uninitialized
   @FXML var menuBar: MenuBar = uninitialized
@@ -44,16 +44,11 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 
   private def populateFocusSelection(): Unit =
     populateFocusTreeList
-    focusTreeList.foreach( focusName =>
-      val toggleButton = ToggleButton(focusName.name)
+    focusTreeList.foreach(someFocusTree =>
+      val toggleButton = ToggleButton(someFocusTree.name)
       toggleButtons += toggleButton
       toggleButton.setToggleGroup(toggleGroup)
-      toggleButton.setOnAction( _ =>
-        clear()
-        logger.info(s"Selected focus tree: $focusName")
-        focusTreeView.getChildren.clear()
-        loadFocusTreeView(focusName)
-      )
+      toggleButton.setOnAction(_ => loadFocusTreeView(someFocusTree))
       vbox.getChildren.add(toggleButton)
     )
 
@@ -62,30 +57,65 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     focusTreeView.getChildren.clear()
     focusTreeView.getColumnConstraints.clear()
     focusTreeView.getRowConstraints.clear()
+    focusTreeView.setGridLinesVisible(gridLines)
 
   private def loadWelcomeMessage(): Unit =
-    focusTreeView.setGridLinesVisible(gridLines)
-    focusTreeView.getColumnConstraints.add(new ColumnConstraints(focusGridColumnsSize))
-    focusTreeView.getRowConstraints.add(new RowConstraints(focusGridRowSize))
-    focusTreeView.add(Label(welcomeMessage), 0, 1)
-    focusTreeView.addColumn(100, Label("Column 2"))
-    focusTreeView.addRow(100, Label("Row 2"))
+    clear()
+    setCC()
+    setRC()
+    focusTreeView.add(Label(welcomeMessage), 0, 0)
 
   private def populateFocusTreeList: Unit =
-    focusTreeList += someFocusTest("One")
-    focusTreeList += someFocusTest("Two", 42)
-    focusTreeList += someFocusTest("Three", 7)
+    focusTreeList += someFocusTree("One", 10, 100)
+    focusTreeList += someFocusTree("Two", 42, 10, 10)
+    focusTreeList += someFocusTree("Three", 7)
 
-  class someFocusTest(var name: String, var testVar: Int = 0):
-    val anotherVar = s"Hello, Focus Tree $name!"
+  class someFocusTree(var name: String, var testVar: Int = 0, var rows: Int = 1, var columns: Int = 1):
+    var focuses: ListBuffer[someFocus] = ListBuffer.empty
+    getFocuses
+    private def getFocuses: Unit =
+      for i <- 1 to (rows * columns) do
+        focuses += someFocus(s"Focus_$i", i * 10)
 
-  private def loadFocusTreeView(focusName: someFocusTest): Unit =
-    focusTreeView.setGridLinesVisible(gridLines)
-    focusTreeView.getColumnConstraints.add(new ColumnConstraints(focusGridColumnsSize))
-    focusTreeView.getRowConstraints.add(new RowConstraints(focusGridRowSize))
-    focusTreeView.add(Label(s"Focus Tree: ${focusName.name}"), 0, 1)
-    focusTreeView.addColumn(100, Label(s"Test Var: ${focusName.testVar}"))
-    focusTreeView.addRow(100, Label(s"Another Var: ${focusName.anotherVar}"))
+  class someFocus(var name: String, var testVar: Int = 0):
+    val anotherVar = s"Hello, Focus $name!"
+
+
+  private def loadFocusTreeView(someFocusTree: someFocusTree): Unit =
+    clear()
+    for _ <- 0 until someFocusTree.columns do setCC()
+    for _ <- 0 until someFocusTree.rows do setRC()
+
+    if someFocusTree.focuses.isEmpty then
+      focusTreeView.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
+    else
+      var focusIndex = 0
+      for row <- 0 until someFocusTree.rows do
+        for column <- 0 until someFocusTree.columns do
+          if focusIndex < someFocusTree.focuses.length then
+            val focus = someFocusTree.focuses(focusIndex)
+            val focusButton = FocusToggleButton(focus.name, focusGridColumnsSize, focusGridRowSize)
+            focusButton.setOnAction( _ =>
+              logger.info(s"Clicked on focus: ${focus.name}, anotherVar: ${focus.anotherVar}")
+            )
+            focusTreeView.add(focusButton, column, row)
+            focusIndex += 1
+
+  private def setCC() = {
+    val cc = new ColumnConstraints()
+    cc.setMinWidth(focusGridColumnsSize)
+    cc.setPrefWidth(focusGridColumnsSize)
+    cc.setMaxWidth(focusGridColumnsSize)
+    focusTreeView.getColumnConstraints.add(cc)
+  }
+
+  private def setRC() = {
+    val rc = new RowConstraints()
+    rc.setMinHeight(focusGridRowSize)
+    rc.setPrefHeight(focusGridRowSize)
+    rc.setMaxHeight(focusGridRowSize)
+    focusTreeView.getRowConstraints.add(rc)
+  }
 
   @FXML def handleWelcome(): Unit =
     clear()

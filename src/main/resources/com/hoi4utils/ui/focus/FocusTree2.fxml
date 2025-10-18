@@ -52,7 +52,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="focusTree2" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="focusTree2" minHeight="600.0" minWidth="900.0" prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
       <GridPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" VBox.vgrow="NEVER">
         <columnConstraints>
@@ -82,7 +82,7 @@
             <Insets left="450.0" />
          </VBox.margin>
       </GridPane>
-    <MenuBar fx:id="menuBar" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" VBox.vgrow="NEVER">
+    <MenuBar fx:id="menuBar" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" prefWidth="1507.0" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
@@ -121,10 +121,10 @@
         </Menu>
       </menus>
          <VBox.margin>
-            <Insets right="450.0" top="-30.0" />
+            <Insets right="90.0" top="-30.0" />
          </VBox.margin>
     </MenuBar>
-    <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.15, 0.7503" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
         <ScrollPane fx:id="focusSelection">
                <content>
