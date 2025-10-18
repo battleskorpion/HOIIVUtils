@@ -71,19 +71,28 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     for _ <- 0 until someFocusTree.columns do setCC()
     for _ <- 0 until someFocusTree.rows do setRC()
 
-    if someFocusTree.focuses.isEmpty then
-      focusTreeView.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
-    else // meat
-      var focusIndex = 0
-      for row <- 0 until someFocusTree.rows do
-        for column <- 0 until someFocusTree.columns do
-          if focusIndex < someFocusTree.focuses.length then
-            if someFocusTree.focuses(focusIndex).x.getOrElse(0) == column + 1 && someFocusTree.focuses(focusIndex).y.getOrElse(0) == row + 1 then
-              val focus = someFocusTree.focuses(focusIndex)
-              val focusLabel = Label(s"Focus: ${focus}\nPosition: (${focus.x}, ${focus.y})")
-              focusLabel.setStyle("-fx-border-color: black; -fx-padding: 10px;")
-              focusTreeView.add(focusLabel, column, row)
-              focusIndex += 1
+    val focuses = someFocusTree.focuses
+    focuses match
+      case null =>
+        focusTreeView.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
+        logger.warn("Focuses list is null, cannot draw focus tree.")
+      case _ if focuses.isEmpty =>
+        focusTreeView.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
+        logger.warn("Focuses list is empty, nothing to draw.")
+      case _ =>
+        for row <- 0 until someFocusTree.rows do
+          for column <- 0 until someFocusTree.columns do
+            // Find a focus at this absolute position
+            focuses.find(f => f.hasAbsolutePosition(column, row)) match
+              case Some(focus) =>
+                val focusButton = FocusToggleButton(focus.toString, focusGridColumnsSize, focusGridRowSize)
+                focusTreeView.add(focusButton, column, row)
+              case None =>
+                // No focus at this position, optionally add placeholder
+                ()
+
+
+
 
   private def setCC() = {
     val cc = new ColumnConstraints()
