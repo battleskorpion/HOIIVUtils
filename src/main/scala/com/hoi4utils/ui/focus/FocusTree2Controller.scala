@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.focus
 
-import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree, FocusTreesManager}
+import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree, FocusTreesManager, Focus as gridX}
 import com.hoi4utils.script.MultiPDX
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.custom_javafx.layout.ZoomableScrollPane
@@ -15,9 +15,11 @@ import javafx.scene.input.{DragEvent, Dragboard, MouseEvent, TransferMode}
 import javafx.scene.layout.*
 import scalafx.scene.input.ClipboardContent
 
+import java.awt.Point
 import javax.sound.sampled.Clip
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
+import scala.jdk.javaapi.CollectionConverters
 
 class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLogging:
   setFxmlFile("FocusTree2.fxml")
@@ -202,12 +204,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
               // For example, if you want to move the actual ToggleButton:
               // ((Pane) myToggleButton.getParent()).getChildren().remove(myToggleButton);
               // dropTargetPane.getChildren().add(myToggleButton)
-              // remove from old parent
-              //newGridPane.get
-              newGridPane.getChildren.remove(sourceButton)
-              GridPane.setColumnIndex(sourceButton, targetColumn)
-              GridPane.setRowIndex(sourceButton, targetRow)
-              newGridPane.getChildren.add(sourceButton)
+              updateFocusPosition(sourceButton.focus, gridToFocusXY(targetRow, targetColumn, sourceButton.focusTree))
               System.out.println("Dropped: " + data)
               success = true
             }
@@ -370,6 +367,20 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     }
   }
 
+  private def gridToFocusX(gridX: Int, focusTree: FocusTree): Int = gridX + focusTree.minX
+  private def gridToFocusY(gridY: Int, focusTree: FocusTree): Int = gridY
+  private def gridToFocusXY(gridX: Int, gridY: Int, focusTree: FocusTree): Point =
+    new Point(gridX + focusTree.minX, gridY)
+
+  private def focusToGridX(focusX: Int, focusTree: FocusTree): Int = focusX - focusTree.minX
+  private def focusToGridY(focusY: Int, focusTree: FocusTree): Int = focusY
+  private def focusToGridXY(focusX: Int, focusY: Int, focusTree: FocusTree): Point =
+    new Point(focusX - focusTree.minX, focusY)
+  private def focusToGridX(focus: Focus): Int = focus.absoluteX - focus.focusTree.minX
+  private def focusToGridY(focus: Focus): Int = focus.absoluteY
+  private def focusToGridXY(focus: Focus): Point =
+    new Point(focus.absoluteX - focus.focusTree.minX, focus.absoluteY)
+
   private def updateProgressIndicator(task: Task[GridPane]): Unit =
     if progressIndicator != null then
       progressIndicator.progressProperty().unbind()
@@ -443,3 +454,32 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     content.putString("ToggleButton Data") // You can put any data here
     db.setContent(content)
     event.consume()
+
+  def updateFocusPosition(focus: Focus, newFocusPos: Point): Unit = {
+    focus.setXY(newFocusPos)
+    // get the valid Focus objects to match
+    val relativelyPositionedFocuses = focus.selfAndRelativePositionedFocuses
+    val focusToggleButtons = CollectionConverters.asScala(focusTreeView.getChildren)
+    // filter children to only the FocusToggleButtons with matching focus
+    val focusButtons = focusToggleButtons.collect {
+      case btn: FocusToggleButton if relativelyPositionedFocuses.contains(btn.focus) => btn
+    }.toList
+
+    System.out.println(focusButtons)
+    focusButtons.foreach(fb =>
+      val gridX = focusToGridX(focus)
+      val gridY = focusToGridY(focus)
+      // find existing node at that grid position
+      val existing = focusTreeView.getChildren.filtered { node =>
+        GridPane.getColumnIndex(node) == gridY &&
+          GridPane.getRowIndex(node) == gridX
+      }
+      // remove any existing nodes at that position
+      if !existing.isEmpty then focusTreeView.getChildren.removeAll(existing)
+
+      focusTreeView.getChildren.remove(fb)
+      GridPane.setRowIndex(fb, gridX)
+      GridPane.setColumnIndex(fb, gridY)
+      focusTreeView.getChildren.add(fb)
+    )
+  }
