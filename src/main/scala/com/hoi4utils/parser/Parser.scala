@@ -11,9 +11,11 @@ class Parser(pdx: String | File = null) {
   private var tokens: Tokenizer = uninitialized
   private var _rootNode: Node = uninitialized
 
-  pdx match
-    case pdx: File   => tokens = new Tokenizer(new String(Files.readAllBytes(pdx.toPath)).concat(Token.EOF_INDICATOR)) // Append EOF indicator so tokenizer can mark the end.
-    case pdx: String => tokens = new Tokenizer(pdx.concat(Token.EOF_INDICATOR)) // Append EOF indicator so tokenizer can mark the end.
+  tokens = new Tokenizer(pdx match
+    // EOF indicator is appended so tokenizer can mark the end.
+    case pdx: File => new String(Files.readAllBytes(pdx.toPath)).concat(Token.EOF_INDICATOR)
+    case pdx: String => pdx.concat(Token.EOF_INDICATOR)
+  )
 
   /**
    * Consumes and returns any tokens that are “trivia” (e.g., whitespace, comments).

@@ -19,7 +19,7 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
   def set(obj: V): V
 
   /**
-   * Set the node value to the given value.
+   * Sets the node value to the given value.
    *
    * Obviously, if T != to the type of the value,
    * the new value may not be semantically correct. However, we need to allow this for
@@ -29,58 +29,97 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
   protected def setNode(value: V | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit
 
   /**
-   * Set the node value to the given expression.
-   * @param expression The node expression to set.
+   * Sets the node value to the given expression.
+   *
+   * @param expression The node expression to set
    */
   def set(expression: Node): Unit
 
+  /**
+   * Gets the value of the PDXScript.
+   *
+   * @return Value of the PDXScript, or None if undefined
+   */
   def value: Option[V]
 
+  /**
+   * Get the node of the PDX script.
+   *
+   * @return The node of the PDX script, or None if undefined
+   */
   def getNode : Option[Node]
 
   def getNodes: List[Node]
 
+  /**
+   * Loads the PDXScript as represented by the given expression.
+   *
+   * @param expression The node expression to load
+   */
   def loadPDX(expression: Node): Unit
 
+  /**
+   * Loads the PDXScript as represented by the given expressions.
+   *
+   * @param expressions The node expressions to load
+   */
   def loadPDX(expressions: Iterable[Node]): Iterable[Node]
 
   /**
    * Checks if the given node matches any valid identifier for this PDX script.
    *
-   * @param node The node to validate. Checks the name of the node against the list of valid identifiers.
-   * @return True if the node matches a valid identifier, false otherwise.
+   * @param node The node to validate. Checks the name of the node against the list of valid identifiers
+   * @return True if the node matches a valid identifier, false otherwise
    */
   def isValidIdentifier(node: Node): Boolean
 
   /**
    * Checks if the given identifier matches any valid identifier for this PDX script.
    * 
-   * @param identifier The identifier to validate.
-   * @return True if the identifier matches a valid identifier, false otherwise.
+   * @param identifier The identifier to validate
+   * @return True if the identifier matches a valid identifier, false otherwise
    */
   def isValidID(identifier: String): Boolean = {
     pdxIdentifier.equals(identifier)
   }
 
+  /**
+   * Clears all PDXScript nodes.
+   *
+   * @see [[Node.clear]]
+   */
   def clearNode(): Unit
 
+  /**
+   * Sets the node value and any relevant PDX properties to null.
+   */
   def setNull(): Unit
-    
+
+  /**
+   * Loads the PDXScript from the given expression, or sets the PDXScript's value to the given value if the value
+   * from the expression is null.
+   *
+   * @param exp The node expression to load
+   * @param value The value to set if the expression's value loaded as null
+   */
   def loadOrElse(exp: Node, value: V): Unit
 
+  /**
+   * Updates the internal node tree to reflect any changes made to the PDXScript's properties.
+   */
   def updateNodeTree(): Unit
   
   def toScript: String
 
-  /**
-   *
-   * @param other
-   * @return
-   *
-   * @note This method can not have a targetName annotation because, equals has to be a separate method, this
-   *       method can't be overridden
-   */
-  final def == (other: PDXScript[?]): Boolean = this.equals(other)
+//  /**
+//   * Compare this PDXScript to another PDXScript using the equals method.
+//   * @param other
+//   * @return
+//   *
+//   * @note This method can not have a targetName annotation because, equals has to be a separate method, this
+//   *       method can't be overridden
+//   */
+//  final def == (other: PDXScript[?]): Boolean = this.equals(other)
 
   /**
    * Compare this PDXScript to another PDXScript.
