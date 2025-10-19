@@ -56,6 +56,10 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
 
   def position: Point = new Point(x.getOrElse(0), y.getOrElse(0))
 
+  /**
+   * Calculates and returns the absolute position of the focus, taking into account any relative positioning.
+   * @return The absolute position of the focus, as it would be rendered on the focus tree.
+   */
   def absolutePosition: Point = {
     /**
      * Recursively calculate the absolute position of a focus, taking into account relative positions.
