@@ -170,7 +170,12 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     cancelTask()
     closeWindow(vSettings) // closes the menu window
     new SettingsController().open()
-  def openFocusTreeViewer(): Unit = new FocusTree2Controller().open()
+
+  @FXML
+  def handleFocusTreeViewerClick(event: MouseEvent): Unit =
+    if event.isControlDown then new FocusTree2Controller().open()
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/focus/FocusTree2.fxml")
+
   def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open()
   def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open()
   def openManageFocusTrees(): Unit = new ManageFocusTreesController().open()
@@ -193,21 +198,11 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   def openMapGeneration(): Unit = new MapGenerationController().open()
   def openMapEditor(): Unit = new MapEditorController().open()
   def openParserView(): Unit = new ParserViewerController().open()
+
   @FXML
   def handleErrorsClick(event: MouseEvent): Unit =
-    if event.isControlDown then
-      // Ctrl+Click: Open as popup
-      logger.info("Opening error list as popup (Ctrl+Click)")
-      new ErrorListController().open()
-    else
-      // Normal click: Show in detail panel
-      logger.info("Opening error list in detail panel")
-      showErrorList()
-
-  /** Show the error list in the detail panel */
-  private def showErrorList(): Unit =
-    detailPanelManager.switchToView("/com/hoi4utils/ui/menus/ErrorList.fxml")
-    logger.info("Error list loaded in detail panel")
+    if event.isControlDown then new ErrorListController().open()
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/menus/ErrorList.fxml")
 
   private def cancelTask(): Unit =
     if currentTask != null && !currentTask.isDone then

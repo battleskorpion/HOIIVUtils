@@ -23,12 +23,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML var focusTree2: VBox = uninitialized
   @FXML var menuBar: MenuBar = uninitialized
   @FXML var focusTreeView: GridPane = uninitialized
-  @FXML var mClose: Button = uninitialized
-  @FXML var mSquare: Button = uninitialized
-  @FXML var mMinimize: Button = uninitialized
+  @FXML var ft2Close: Button = uninitialized
+  @FXML var ft2Square: Button = uninitialized
+  @FXML var ft2Minimize: Button = uninitialized
   @FXML var focusSelection: ScrollPane = uninitialized
   @FXML var focusTreeScrollPane: ScrollPane = uninitialized
-  @FXML var splitPane: SplitPane = uninitialized
+  @FXML var ft2SplitPane: SplitPane = uninitialized
   @FXML var vbox: VBox = uninitialized
   @FXML var welcome: ToggleButton = uninitialized
   @FXML var toggleGroup: ToggleGroup = uninitialized
@@ -47,7 +47,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private var currentLoadTask: Option[Task[GridPane]] = None
   private var focusGridToggleGroup: ToggleGroup = new ToggleGroup()
 
+  private var isEmbedded: Boolean = false
+
   @FXML def initialize(): Unit =
+    Platform.runLater(() =>
+      hideButtons()
+    )
     // Replace the regular ScrollPane with ZoomableScrollPane
     replaceWithZoomableScrollPane()
 
@@ -58,6 +63,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     welcome.fire()
     populateFocusSelection()
     Platform.runLater(() => if progressIndicator != null then progressIndicator.setVisible(false))
+
+  private def hideButtons(): Unit =
+    isEmbedded = primaryScene == null
+    ft2Close.setVisible(!isEmbedded)
+    ft2Square.setVisible(!isEmbedded)
+    ft2Minimize.setVisible(!isEmbedded)
 
   private def replaceWithZoomableScrollPane(): Unit =
     // Remove the GridPane from the original ScrollPane first
@@ -71,13 +82,13 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     zoomableScrollPane.setPrefWidth(focusTreeScrollPane.getPrefWidth)
 
     // Replace in SplitPane
-    if splitPane != null then
-      val items = splitPane.getItems
+    if ft2SplitPane != null then
+      val items = ft2SplitPane.getItems
       val index = items.indexOf(focusTreeScrollPane)
       if index >= 0 then
         items.set(index, zoomableScrollPane)
       else
-        logger.error("Could not find focusTreeScrollPane in SplitPane items")
+        logger.error("Could not find focusTreeScrollPane in ft2SplitPane items")
     else
       logger.error("splitPane is null - check FXML fx:id")
 
@@ -170,19 +181,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         case Some(task) if task == loadFocusTreeTask =>
           val newPane = loadFocusTreeTask.getValue
           val currentZoom = zoomableScrollPane.getZoomLevel
-          val dividerPositions = splitPane.getDividerPositions
-          val newZoomableScrollPane = ZoomableScrollPane(newPane)
-          newZoomableScrollPane.setPrefHeight(zoomableScrollPane.getPrefHeight)
-          newZoomableScrollPane.setPrefWidth(zoomableScrollPane.getPrefWidth)
-          newZoomableScrollPane.setZoomLevel(currentZoom)
-          val items = splitPane.getItems
-          val index = items.indexOf(zoomableScrollPane)
-          if index >= 0 then
-            items.set(index, newZoomableScrollPane)
-          Platform.runLater(() => {
-            splitPane.setDividerPositions(dividerPositions: _*)
-          })
-          zoomableScrollPane = newZoomableScrollPane
+          zoomableScrollPane.setTarget(newPane)
+          zoomableScrollPane.setZoomLevel(currentZoom)
           focusTreeView = newPane
           setupZoomButtons()
           currentLoadTask = None
@@ -270,7 +270,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     if resetZoomButton != null then resetZoomButton.setOnAction(_ => zoomableScrollPane.resetZoom())
   }
 
-  override def preSetup(): Unit = setupWindowControls(focusTree2, mClose, mSquare, mMinimize, menuBar)
+  override def preSetup(): Unit = setupWindowControls(focusTree2, ft2Close, ft2Square, ft2Minimize, menuBar)
 
   @FXML def handleWelcome(): Unit =
     cancelCurrentTask()

@@ -61,17 +61,17 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="mClose" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT">
+            <Button fx:id="ft2Close" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Button>
-            <Button fx:id="mMinimize" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT">
+            <Button fx:id="ft2Minimize" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT">
                <GridPane.margin>
                   <Insets right="60.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="mSquare" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT">
+            <Button fx:id="ft2Square" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT">
                <GridPane.margin>
                   <Insets right="30.0" />
                </GridPane.margin>
@@ -123,7 +123,7 @@
             <Insets right="90.0" top="-30.0" />
          </VBox.margin>
     </MenuBar>
-    <SplitPane fx:id="splitPane" dividerPositions="0.15, 0.7503" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane fx:id="ft2SplitPane" dividerPositions="0.15, 0.7503" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
         <ScrollPane fx:id="focusSelection">
                <content>

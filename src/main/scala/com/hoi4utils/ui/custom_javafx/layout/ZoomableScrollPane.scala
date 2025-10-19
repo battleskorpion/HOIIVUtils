@@ -6,10 +6,10 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.input.ScrollEvent
 import javafx.scene.layout.VBox
 
-class ZoomableScrollPane(private val target: Node) extends ScrollPane:
+class ZoomableScrollPane(private var target: Node) extends ScrollPane:
   private var scaleValue: Double = 1.0
   private val zoomIntensity: Double = 0.02
-  private val zoomNode: Node = Group(target)
+  private var zoomNode: Node = Group(target)
 
   setContent(outerNode(zoomNode))
   setPannable(true)
@@ -81,4 +81,10 @@ class ZoomableScrollPane(private val target: Node) extends ScrollPane:
 
   def setZoomLevel(zoom: Double): Unit =
     scaleValue = Math.max(0.1, Math.min(10.0, zoom)) // Clamp between 0.1 and 10
+    updateScale()
+
+  def setTarget(newTarget: Node): Unit =
+    target = newTarget
+    zoomNode = Group(target)
+    setContent(outerNode(zoomNode))
     updateScale()

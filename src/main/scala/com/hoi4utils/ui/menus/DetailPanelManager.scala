@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.menus
 
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController2
+import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.{Pane, StackPane}
@@ -40,7 +41,6 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
       contentPane.getChildren.add(pane)
       currentView = Some(fxmlPath)
 
-      logger.info(s"Switched to view: $fxmlPath")
     catch
       case e: Exception =>
         logger.error(s"Failed to load view: $fxmlPath", e)
@@ -117,36 +117,37 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
    */
   private def loadView(fxmlPath: String): (Pane, Any) =
     val loader = new FXMLLoader(getClass.getResource(fxmlPath))
-  
+
     // Create controller instance based on the FXML path
     val controller = fxmlPath match
+      case "/com/hoi4utils/ui/focus/FocusTree2.fxml" =>
+        new FocusTree2Controller()
       case "/com/hoi4utils/ui/menus/ErrorList.fxml" =>
         new ErrorListController()
       case _ =>
         null
-  
+
     // Set the controller if we created one
     if controller != null then
       loader.setController(controller)
-  
+
     val pane = loader.load[Pane]()
-  
+
     // Get controller (either the one we set, or one from fx:controller)
     val actualController = Option(loader.getController[Any]()).getOrElse(controller)
-  
+
     // Manually call initialize() if it exists
-    if actualController != null then
-      try {
-        val initMethod = actualController.getClass.getMethod("initialize")
-        initMethod.invoke(actualController)
-        logger.debug(s"Manually called initialize() on controller for: $fxmlPath")
-      } catch {
-        case _: NoSuchMethodException =>
-          logger.debug(s"No initialize() method found for: $fxmlPath")
-        case e: Exception =>
-          logger.error(s"Error calling initialize() for: $fxmlPath", e)
-      }
-  
+//    if actualController != null then
+//      try {
+//        val initMethod = actualController.getClass.getMethod("initialize")
+//        initMethod.invoke(actualController)
+//      } catch {
+//        case _: NoSuchMethodException =>
+//          logger.debug(s"No initialize() method found for: $fxmlPath")
+//        case e: Exception =>
+//          logger.error(s"Error calling initialize() for: $fxmlPath", e)
+//      }
+
     (pane, actualController)
 
   /**

@@ -54,27 +54,19 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
     Platform.runLater(() =>
       hideButtons()
     )
-    logger.info(s"Error List is embedded: $isEmbedded, and initializing error lists")
-    if isEmbedded then
-      elClose.setVisible(false)
-      elSquare.setVisible(false)
-      elMinimize.setVisible(false)
     val loadErrorsTask = new Task[Unit]() {
       override def call(): Unit = update()
     }
 
     new Thread(loadErrorsTask).start()
 
-  override def preSetup(): Unit =
-    if !isEmbedded && elClose != null then
-      logger.info("Setting up window controls for Error List")
-      setupWindowControls(contentContainer, elClose, elSquare, elMinimize, errorListTabPane)
+  override def preSetup(): Unit = setupWindowControls(contentContainer, elClose, elSquare, elMinimize, errorListTabPane)
 
   private def hideButtons(): Unit =
-    isEmbedded = primaryScene != null
-    elClose.setVisible(isEmbedded)
-    elSquare.setVisible(isEmbedded)
-    elMinimize.setVisible(isEmbedded)
+    isEmbedded = primaryScene == null
+    elClose.setVisible(!isEmbedded)
+    elSquare.setVisible(!isEmbedded)
+    elMinimize.setVisible(!isEmbedded)
 
   private def update(): Unit =
     val listViewsWithErrors = ListBuffer(
