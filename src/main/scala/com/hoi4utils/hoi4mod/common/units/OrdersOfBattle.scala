@@ -1,5 +1,6 @@
 package com.hoi4utils.hoi4mod.common.units
 
+import com.hoi4utils.hoi4mod.common.technologies.Technology
 import com.hoi4utils.hoi4mod.history.countries.CountryFlag
 import com.hoi4utils.script.StringPDX
 
@@ -26,6 +27,8 @@ class OrdersOfBattle {
   private val stability = .0 // stability percentage defined from 0.0-1.0
 
   private val warSupport = .0 // war support percentage defined from 0.0-1.0
+
+  private val startingTech: util.Set[Technology] = null // starting technology defined in history/countries file
 
   final private val convoys = 0
 //  private val ideas: util.Set[Idea] = null

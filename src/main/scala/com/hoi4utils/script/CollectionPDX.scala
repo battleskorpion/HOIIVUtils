@@ -9,9 +9,9 @@ import scala.collection.mutable.ListBuffer
 /**
  * Abstract base class for PDX collections that need polymorphic object creation.
  *
- * CollectionPDX vs ListPDX:
- * - **CollectionPDX**: Uses context-aware suppliers that can create different subtypes based on node content
- * - **ListPDX**: Uses simple suppliers that always create the same type regardless of content
+ * [[CollectionPDX]] vs [[ListPDX]]:
+ * - CollectionPDX: Uses suppliers that can create different subtypes based on node content
+ * - ListPDX: Uses simple suppliers that always create the same type regardless of content
  *
  * Use CollectionPDX when:
  * - You need to parse heterogeneous collections (e.g., different types of focuses, ideas, or modifiers)
@@ -22,9 +22,6 @@ import scala.collection.mutable.ListBuffer
  * {{{
  * // CollectionPDX - can handle different focus types based on content
  * class FocusCollection extends CollectionPDX[Focus](focusSupplier, "focus")
- *
- * // ListPDX - always creates StringPDX objects
- * val ideas = new ListPDX(() => new StringPDX(), "remove_ideas")
  * }}}
  *
  * @param pdxSupplier Function that creates objects based on the node content - enables polymorphism
