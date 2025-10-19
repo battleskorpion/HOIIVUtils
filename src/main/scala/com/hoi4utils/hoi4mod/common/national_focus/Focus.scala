@@ -87,7 +87,7 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
           logger.error(s"Focus id ${focus.relativePositionFocus.getReferenceName} not a valid focus")
           new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
     }
-    
+
     absolutePosition(this)
   }
 
@@ -152,7 +152,7 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
    * @param y absolute y-coordinate
    * @return
    */
-  def hasAbsolutePosition(x: Int, y: Int): Boolean = this.absoluteX == x && this.absoluteY == y
+  def hasAbsolutePosition(x: Int, y: Int): Boolean = absolutePosition == new Point(x, y)
 
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 
