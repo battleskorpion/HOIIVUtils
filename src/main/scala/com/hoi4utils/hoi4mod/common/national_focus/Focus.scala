@@ -25,17 +25,17 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
   private val DEFAULT_FOCUS_COST = 10.0
 
   /* attributes */
-  final val id: StringPDX = new StringPDX("id")   // todo don't allow id to be null that feels wrong
-  final val icon: MultiPDX[Icon] = new MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
-  final val x: IntPDX = new IntPDX("x") // if relative, relative x
-  final val y: IntPDX = new IntPDX("y", ExpectedRange.ofPositiveInt) // if relative, relative y
-  final val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
-  final val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
-  final val relativePositionFocus = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.value, "relative_position_id")
-  final val cost: DoublePDX = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
-  final val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
-  final val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
-  final val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
+  final val id: StringPDX = StringPDX("id")   // todo don't allow id to be null that feels wrong
+  final val icon: MultiPDX[Icon] = MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
+  final val x: IntPDX = IntPDX("x") // if relative, relative x
+  final val y: IntPDX = IntPDX("y", ExpectedRange.ofPositiveInt) // if relative, relative y
+  final val prerequisites: MultiPDX[PrerequisiteSet] = MultiPDX(None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
+  final val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
+  final val relativePositionFocus = ReferencePDX[Focus](() => focusTree.focuses, f => f.id.value, "relative_position_id")
+  final val cost: DoublePDX = DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
+  final val availableIfCapitulated: BooleanPDX = BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
+  final val cancelIfInvalid: BooleanPDX = BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
+  final val continueIfInvalid: BooleanPDX = BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
   //var ddsImage: Image = _
   final val ai_will_do = new AIWillDoPDX
   /* completion reward */
