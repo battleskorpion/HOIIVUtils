@@ -7,6 +7,7 @@ import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXML
+import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.layout.*
 
@@ -90,6 +91,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           if toggleButton.isSelected then
             loadFocusTreeView(someFocusTree)
         })
+        toggleButton.setPadding(Insets(5, 10, 5, 10))
         vbox.getChildren.add(toggleButton)
       )
     )

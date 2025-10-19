@@ -43,14 +43,12 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
 <VBox fx:id="focusTree2" minHeight="600.0" minWidth="900.0" prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
@@ -129,10 +127,13 @@
       <items>
         <ScrollPane fx:id="focusSelection">
                <content>
-                  <VBox fx:id="vbox">
+                  <VBox fx:id="vbox" spacing="5.0">
                      <children>
                         <ToggleButton fx:id="welcome" mnemonicParsing="false" onAction="#handleWelcome" text="Welcome" />
                      </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
                   </VBox>
                </content>
         </ScrollPane>
@@ -151,7 +152,7 @@
             </GridPane>
           </content>
         </ScrollPane>
-        <fx:include source="FocusDetailsPane.fxml" fx:id="focusDetailsPane"/>
+        <fx:include fx:id="focusDetailsPane" source="FocusDetailsPane.fxml" />
       </items>
     </SplitPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">

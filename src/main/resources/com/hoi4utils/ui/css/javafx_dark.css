@@ -920,6 +920,52 @@
     padding: 5;
 }
 
+/* ToggleButton */
+.toggle-button {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+
+    -fx-background-color:
+            linear-gradient(to bottom, #2A2A2A 0%, #1A1A1A 50%, #0F0F0F 100%),
+            #1A1A1A;
+
+    -fx-border-width: 1;
+    -fx-border-color: #222222;
+
+    -fx-text-fill: #AFB1B3;
+    -fx-font-weight: normal;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0.5, 0, 1);
+}
+
+.toggle-button .text {
+    -fx-effect: null;
+    -fx-fill: #AFB1B3;
+}
+
+.toggle-button:hover {
+    -fx-background-color:
+            linear-gradient(to bottom, #3E3E40 0%, #2A2A2A 50%, #1A1A1A 100%),
+            #3E3E40;
+
+    -fx-border-color: #1F8ED8;
+    -fx-effect: dropshadow(gaussian, rgb(31, 141, 214), 4, 0.7, 0, 0);
+    -fx-cursor: HAND;
+}
+
+.toggle-button:selected {
+    -fx-background-color:
+            linear-gradient(to bottom, #0F0F0F 0%, #1A1A1A 50%, #2A2A2A 100%),
+            #4e4e4e;
+
+    -fx-border-color: #4e4e4e;
+    -fx-border-width: 1;
+
+    -fx-text-fill: #AFB1B3;
+
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.6), 3, 0.7, 0, 1);
+}
+
 /* FocusToggleButton - Subdued Dark Theme */
 .focus-toggle-button {
     /* Base styling */
