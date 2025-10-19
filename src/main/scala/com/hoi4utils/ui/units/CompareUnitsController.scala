@@ -4,6 +4,7 @@ import com.hoi4utils.hoi4mod.common.units.SubUnit
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import com.hoi4utils.ui.custom_javafx.pane.DiffViewPane
+import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.Button
 import javafx.scene.layout.{AnchorPane, GridPane}
@@ -18,14 +19,22 @@ class CompareUnitsController extends HOIIVUtilsAbstractController2:
 
   @FXML var rootGridPane: GridPane = uninitialized
   @FXML var rootAnchorPane: AnchorPane = uninitialized
-  @FXML var mClose: Button = uninitialized
-  @FXML var mSquare: Button = uninitialized
-  @FXML var mMinimize: Button = uninitialized
+  @FXML var cuClose: Button = uninitialized
+  @FXML var cuSquare: Button = uninitialized
+  @FXML var cuMinimize: Button = uninitialized
   private var unitsDiffViewPane: DiffViewPane = uninitialized
   private val skipNullProperties = true
+  private var isEmbedded: Boolean = false
+  
 
   @FXML
   def initialize(): Unit =
+    Platform.runLater(() =>
+      isEmbedded = primaryScene == null
+      cuClose.setVisible(!isEmbedded)
+      cuSquare.setVisible(!isEmbedded)
+      cuMinimize.setVisible(!isEmbedded)
+    )
     val customUnits = SubUnit.read(HOIIVFiles.Mod.units_folder).asJava
     val baseUnits = SubUnit.read(HOIIVFiles.HOI4.units_folder).asJava
 
@@ -37,29 +46,28 @@ class CompareUnitsController extends HOIIVUtilsAbstractController2:
     AnchorPane.setLeftAnchor(unitsDiffViewPane, 0.0)
     AnchorPane.setRightAnchor(unitsDiffViewPane, 0.0)
 
-    /* add data */
-    // custom unit
-    val customUnitText = mutable.Buffer.empty[String]
-    for i <- 0 until customUnits.size do
-      val unit = customUnits.get(i)
-      appendUnitDetails(customUnitText, unit)
-      customUnitText.append("")
+    val loadUnitsTask = new javafx.concurrent.Task[Unit]() {
+      override def call(): Unit =
+        /* add data */
+        // custom unit
+        val customUnitText = mutable.Buffer.empty[String]
+        for i <- 0 until customUnits.size do
+          val unit = customUnits.get(i)
+          appendUnitDetails(customUnitText, unit)
+          customUnitText.append("")
+        if customUnits.isEmpty then customUnitText.append("No custom units found")
+        // base unit
+        val baseUnitText = mutable.Buffer.empty[String]
+        for i <- 0 until baseUnits.size do
+          val unit = baseUnits.get(i)
+          appendUnitDetails(baseUnitText, unit)
+          baseUnitText.append("")
+        if baseUnits.isEmpty then baseUnitText.append("No base units found")
+        unitsDiffViewPane.setData(baseUnitText.asJava, customUnitText.asJava)
+    }
+    new Thread(loadUnitsTask).start()
 
-    if customUnits.isEmpty then customUnitText.append("No custom units found")
-
-    // base unit
-    val baseUnitText = mutable.Buffer.empty[String]
-    for i <- 0 until baseUnits.size do
-      val unit = baseUnits.get(i)
-      appendUnitDetails(baseUnitText, unit)
-      baseUnitText.append("")
-
-    if baseUnits.isEmpty then baseUnitText.append("No base units found")
-
-    // append
-    unitsDiffViewPane.setData(baseUnitText.asJava, customUnitText.asJava)
-
-  override def preSetup(): Unit = setupWindowControls(rootGridPane, mClose, mSquare, mMinimize)
+  override def preSetup(): Unit = setupWindowControls(rootGridPane, cuClose, cuSquare, cuMinimize)
 
   private def appendUnitDetails(unitText: collection.mutable.Buffer[String], unit: SubUnit): Unit =
     val df = SubUnit.dataFunctions()
