@@ -18,6 +18,7 @@ import scala.compiletime.uninitialized
 
 abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractController with LazyLogging:
   var primaryStage: Stage = uninitialized
+  var primaryScene: Scene = uninitialized
   protected var fxmlLoader: FXMLLoader = uninitialized
   protected var xOffset: Double = 0
   protected var yOffset: Double = 0
@@ -43,6 +44,7 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
       val root = fxmlLoader.load[Parent]()
       if root == null then throw new IllegalStateException(s"Failed to load FXML root from: $fxmlFile")
       val scene = new Scene(root)
+      primaryScene = scene
 
       /* theme */
       val cssPath = Option(HOIIVUtils.get("theme")).getOrElse("light") match

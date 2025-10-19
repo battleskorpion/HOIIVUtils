@@ -105,17 +105,17 @@
    </center>
    <top>
      <GridPane pickOnBounds="false" >
-       <Button fx:id="mMinimize" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+       <Button fx:id="elMinimize" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
          <GridPane.margin>
            <Insets right="60.0" />
          </GridPane.margin>
        </Button>
-       <Button fx:id="mSquare" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+       <Button fx:id="elSquare" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
          <GridPane.margin>
            <Insets right="30.0" />
          </GridPane.margin>
        </Button>
-       <Button fx:id="mClose" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+       <Button fx:id="elClose" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
          <font>
            <Font name="System Bold" size="13.0" />
          </font>

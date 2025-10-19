@@ -11,6 +11,8 @@ import com.hoi4utils.hoi4mod.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4mod.map.state.State.stateErrors
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
+import javafx.application.Platform
+import javafx.concurrent.Task
 import javafx.scene.control.{Button, TabPane}
 import javafx.scene.layout.BorderPane
 //import com.hoi4utils.StateFilesWatcher.statesThatChanged
@@ -29,9 +31,9 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
   
   @FXML var contentContainer: BorderPane = uninitialized
   @FXML var errorListTabPane: TabPane = uninitialized
-  @FXML var mClose: Button = uninitialized
-  @FXML var mSquare: Button = uninitialized
-  @FXML var mMinimize: Button = uninitialized
+  @FXML var elClose: Button = uninitialized
+  @FXML var elSquare: Button = uninitialized
+  @FXML var elMinimize: Button = uninitialized
 
   @FXML var effectsEL: ListView[String] = uninitialized
   @FXML var localizationEL: ListView[String] = uninitialized
@@ -47,17 +49,32 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
 
   val testList: ListBuffer[String] = ListBuffer.empty[String]
 
+  @FXML
   def initialize(): Unit =
-    isEmbedded = mClose == null
-    update()
+    Platform.runLater(() =>
+      hideButtons()
+    )
+    logger.info(s"Error List is embedded: $isEmbedded, and initializing error lists")
+    if isEmbedded then
+      elClose.setVisible(false)
+      elSquare.setVisible(false)
+      elMinimize.setVisible(false)
+    val loadErrorsTask = new Task[Unit]() {
+      override def call(): Unit = update()
+    }
+
+    new Thread(loadErrorsTask).start()
 
   override def preSetup(): Unit =
-    if !isEmbedded && mClose != null then
-      setupWindowControls(contentContainer, mClose, mSquare, mMinimize, errorListTabPane)
-    else
-      mClose.setVisible(false)
-      mSquare.setVisible(false)
-      mMinimize.setVisible(false)
+    if !isEmbedded && elClose != null then
+      logger.info("Setting up window controls for Error List")
+      setupWindowControls(contentContainer, elClose, elSquare, elMinimize, errorListTabPane)
+
+  private def hideButtons(): Unit =
+    isEmbedded = primaryScene != null
+    elClose.setVisible(isEmbedded)
+    elSquare.setVisible(isEmbedded)
+    elMinimize.setVisible(isEmbedded)
 
   private def update(): Unit =
     val listViewsWithErrors = ListBuffer(

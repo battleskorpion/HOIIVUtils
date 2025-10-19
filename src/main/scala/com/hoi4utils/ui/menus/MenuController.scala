@@ -144,7 +144,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
       logger.info(s"Loading mod: ${config.getProperties.getProperty("mod.path")}")
       updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${config.getProperties.getProperty("mod.path")}\"")
       mVersion.setText(s"v${config.getProperties.getProperty("version")}")
-      mTitle.setText(s"HOIIVUtils Menu")
+      mTitle.setText(s"HOIIVUtils")
       new Thread(task).start()
     catch case e: Exception => handleMInitError("Error starting program", e)
 
