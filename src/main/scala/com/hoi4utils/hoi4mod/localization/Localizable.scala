@@ -75,9 +75,7 @@ trait Localizable {
     case None => None
 
   def locName: Option[String] = this.localizationText(NAME)
-
-  def locDesc: Option[String] = this.localizationText(DESCRIPTION)
-
+  
   def localizationStatus(property: Property): Localization.Status = localization(property) match
     case Some(l) => l.status
     case None => Localization.Status.MISSING
