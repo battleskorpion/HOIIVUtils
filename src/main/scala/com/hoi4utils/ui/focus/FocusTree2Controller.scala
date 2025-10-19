@@ -2,6 +2,7 @@ package com.hoi4utils.ui.focus
 
 import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController2
+import com.hoi4utils.ui.custom_javafx.layout.ZoomableScrollPane
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
@@ -28,19 +29,43 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML var mSquare: Button = uninitialized
   @FXML var mMinimize: Button = uninitialized
   @FXML var focusSelection: ScrollPane = uninitialized
+  @FXML var focusTreeScrollPane: ScrollPane = uninitialized  // Add this reference to the ScrollPane
   @FXML var vbox: VBox = uninitialized
   @FXML var welcome: ToggleButton = uninitialized
   @FXML var toggleGroup: ToggleGroup = uninitialized
 
   private var toggleButtons: ListBuffer[ToggleButton] = ListBuffer.empty
+  private var zoomableScrollPane: ZoomableScrollPane = uninitialized
 
   @FXML def initialize(): Unit =
+    // Replace the regular ScrollPane with ZoomableScrollPane
+    replaceWithZoomableScrollPane()
+
     clear()
     welcome.setToggleGroup(toggleGroup)
     welcome.fire()
     populateFocusSelection()
 
   override def preSetup(): Unit = setupWindowControls(focusTree2, mClose, mSquare, mMinimize, menuBar)
+
+  private def replaceWithZoomableScrollPane(): Unit =
+    // Create the ZoomableScrollPane with the GridPane as target
+    zoomableScrollPane = ZoomableScrollPane(focusTreeView)
+
+    // Copy properties from the original ScrollPane
+    zoomableScrollPane.setPrefHeight(focusTreeScrollPane.getPrefHeight)
+    zoomableScrollPane.setPrefWidth(focusTreeScrollPane.getPrefWidth)
+
+    // Find the parent SplitPane and replace the ScrollPane
+    val parent = focusTreeScrollPane.getParent
+    parent match
+      case splitPane: SplitPane =>
+        val items = splitPane.getItems
+        val index = items.indexOf(focusTreeScrollPane)
+        if index >= 0 then
+          items.set(index, zoomableScrollPane)
+      case _ =>
+        logger.warn("Could not find SplitPane parent to replace ScrollPane")
 
   private def populateFocusSelection(): Unit =
     Some(FocusTreeFile.observeFocusTrees).foreach(trees =>
@@ -90,9 +115,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
               case None =>
                 // No focus at this position, optionally add placeholder
                 ()
-
-
-
 
   private def setCC() = {
     val cc = new ColumnConstraints()
