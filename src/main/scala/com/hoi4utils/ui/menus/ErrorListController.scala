@@ -43,11 +43,21 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
   @FXML var stateEL: ListView[String] = uninitialized
   @FXML var statesThatChangedList: ListView[String] = uninitialized
 
+  private var isEmbedded: Boolean = false
+
   val testList: ListBuffer[String] = ListBuffer.empty[String]
 
-  def initialize(): Unit = update()
+  def initialize(): Unit =
+    isEmbedded = mClose == null
+    update()
 
-  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize, errorListTabPane)
+  override def preSetup(): Unit =
+    if !isEmbedded && mClose != null then
+      setupWindowControls(contentContainer, mClose, mSquare, mMinimize, errorListTabPane)
+    else
+      mClose.setVisible(false)
+      mSquare.setVisible(false)
+      mMinimize.setVisible(false)
 
   private def update(): Unit =
     val listViewsWithErrors = ListBuffer(

@@ -21,6 +21,7 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.stage.Stage
+import javafx.scene.input.MouseEvent
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import javax.swing.*
@@ -29,10 +30,10 @@ import scala.compiletime.uninitialized
 
 class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with LazyLogging:
   import MenuController.*
-  setFxmlFile("Menu.fxml")
-  setTitle("HOIIVUtils Menu")
+  setFxmlFile("Menu2.fxml")
+  setTitle("HOIIVUtils")
 
-  @FXML var mRoot: BorderPane = uninitialized
+  @FXML var mRoot: VBox = uninitialized
   @FXML var contentStack: StackPane = uninitialized
   @FXML var contentGrid: GridPane = uninitialized
   @FXML var mClose: Button = uninitialized
@@ -53,12 +54,18 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   @FXML var vMapEditor: Button = uninitialized
   @FXML var vParserView: Button = uninitialized
   @FXML var vErrors: Button = uninitialized
+  @FXML var detailContentPane: StackPane = uninitialized
 
   @FXML var loadingLabel: Label = uninitialized
   @FXML var mTitle: Label = uninitialized
   @FXML var mVersion: Label = uninitialized
 
+  @FXML var errorList: BorderPane = uninitialized
+  @FXML var errorListController: ErrorListController = uninitialized
+
   private var currentTask: javafx.concurrent.Task[Unit] = null
+
+  private var detailPanelManager: DetailPanelManager = uninitialized
 
   @FXML
   def initialize(): Unit =
@@ -123,6 +130,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         blockButtons(false)
 
     /* INITIALIZATION */
+    detailPanelManager = new DetailPanelManager(detailContentPane)
     currentTask = task
     contentGrid.setVisible(false)
     loadingLabel.setVisible(true)
@@ -185,7 +193,21 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   def openMapGeneration(): Unit = new MapGenerationController().open()
   def openMapEditor(): Unit = new MapEditorController().open()
   def openParserView(): Unit = new ParserViewerController().open()
-  def openErrorsW(): Unit = new ErrorListController().open()
+  @FXML
+  def handleErrorsClick(event: MouseEvent): Unit =
+    if event.isControlDown then
+      // Ctrl+Click: Open as popup
+      logger.info("Opening error list as popup (Ctrl+Click)")
+      new ErrorListController().open()
+    else
+      // Normal click: Show in detail panel
+      logger.info("Opening error list in detail panel")
+      showErrorList()
+
+  /** Show the error list in the detail panel */
+  private def showErrorList(): Unit =
+    detailPanelManager.switchToView("/com/hoi4utils/ui/menus/ErrorList.fxml")
+    logger.info("Error list loaded in detail panel")
 
   private def cancelTask(): Unit =
     if currentTask != null && !currentTask.isDone then
