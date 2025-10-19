@@ -13,6 +13,11 @@ trait PDXFile extends PDXScript[?] {
     case None => getClass.getSimpleName + ".txt"
   }
 
+  def fileNameOrElse(defaultName: String): String = getFile match {
+    case Some(file) => file.getName
+    case None => defaultName
+  }
+
   def save(): Unit = this.getFile match {
     case Some(file) =>
       Using(new PrintWriter(file)) { writer =>

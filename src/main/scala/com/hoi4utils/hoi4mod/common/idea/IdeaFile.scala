@@ -39,13 +39,13 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
       _file.foreach(file => ideaFileFileMap.put(file, this))
 
   override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
-    val message = s"Unexpected identifier in idea file ${_file.map(_.getName).getOrElse("[Unknown file]")}: ${node.identifier}"
+    val message = s"Unexpected identifier in idea file ${fileNameOrElse("[Unknown file]")}: ${node.identifier}"
     IdeaFile.ideaFileErrors += message
 //    logger.error(message)
 
 
   override def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
-    val message = s"Node value type error in idea file ${_file.map(_.getName).getOrElse("[Unknown file]")}: ${exception.getMessage}"
+    val message = s"Node value type error in idea file ${fileNameOrElse("[Unknown file]")}: ${exception.getMessage}"
     IdeaFile.ideaFileErrors += message
 //    logger.error(message)
 
