@@ -10,8 +10,11 @@ import javafx.concurrent.Task
 import javafx.fxml.FXML
 import javafx.geometry.Insets
 import javafx.scene.control.*
+import javafx.scene.input.{DragEvent, Dragboard, MouseEvent, TransferMode}
 import javafx.scene.layout.*
+import scalafx.scene.input.ClipboardContent
 
+import javax.sound.sampled.Clip
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 
@@ -156,7 +159,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           newCC.setMaxWidth(cc.getMaxWidth)
           newGridPane.getColumnConstraints.add(newCC)
         })
-
         focusTreeView.getRowConstraints.forEach(rc => {
           val newRC = new RowConstraints()
           newRC.setMinHeight(rc.getMinHeight)
@@ -164,6 +166,39 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           newRC.setMaxHeight(rc.getMaxHeight)
           newGridPane.getRowConstraints.add(newRC)
         })
+
+        newGridPane.setOnDragOver(de => {
+          if (de.getGestureSource != newGridPane && de.getDragboard.hasString)
+            de.acceptTransferModes(TransferMode.MOVE)
+          de.consume()
+        })
+        newGridPane.setOnDragDropped(de =>
+          val src = de.getGestureSource
+          if !src.isInstanceOf[FocusToggleButton] then
+            de.setDropCompleted(false)
+            de.consume()
+          else
+            val sourceButton: FocusToggleButton = src.asInstanceOf[FocusToggleButton]
+            val db = de.getDragboard
+            var success = false
+            if (db.hasString) {
+              val data = db.getString
+              // Process the dropped data (e.g., add the ToggleButton to the pane)
+              // For example, if you want to move the actual ToggleButton:
+              // ((Pane) myToggleButton.getParent()).getChildren().remove(myToggleButton);
+              // dropTargetPane.getChildren().add(myToggleButton)
+              // remove from old parent
+              sourceButton.focus.x -= 1
+              sourceButton.getParent match
+                case p: Pane => p.getChildren.remove(sourceButton)
+                case _ => () // if it wasn't in a Pane, skip (or handle GridPane removal)
+              newGridPane.getChildren.add(sourceButton)
+              System.out.println("Dropped: " + data)
+              success = true
+            }
+            de.setDropCompleted(success)
+            de.consume()
+        )
 
         focuses match {
           case null =>
@@ -202,6 +237,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
                   focusGridRowSize
                 )
                 focusButton.setOnAction(_ => loadFocusView(focus))
+                focusButton.setOnDragDetected(me => handleDraggedFocusButton(me, focusButton))
                 focusButton.setToggleGroup(focusGridToggleGroup)
                 newGridPane.add(focusButton, gridX, gridY)
 
@@ -385,3 +421,10 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML def handleGridlines(): Unit =
     lines = gridlines.isSelected
     focusTreeView.setGridLinesVisible(gridlines.isSelected)
+
+  def handleDraggedFocusButton(event: MouseEvent, toggleButton: FocusToggleButton): Unit =
+    val db: Dragboard = toggleButton.startDragAndDrop(TransferMode.MOVE)
+    val content: ClipboardContent = ClipboardContent()
+    content.putString("ToggleButton Data") // You can put any data here
+    db.setContent(content)
+    event.consume()

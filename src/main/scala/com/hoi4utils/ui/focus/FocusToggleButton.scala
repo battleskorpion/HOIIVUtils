@@ -10,11 +10,11 @@ import javafx.scene.layout.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 
-class FocusToggleButton(private val focus: Focus, prefW: Double, prefH: Double) extends ToggleButton with LazyLogging:
+class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double) extends ToggleButton with LazyLogging:
 
   private val gfxFocusUnavailable: Image = loadFocusUnavailableImage("focus_unavailable_bg.dds")
   private val focusIcon: Image = loadFocusIcon()
-  private val cleanName: Label = Label(focus.locName.getOrElse(focus.id.str))
+  private val cleanName: Label = Label(_focus.locName.getOrElse(_focus.id.str))
 
   setPrefSize(prefW, prefH)
   setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE)
@@ -64,10 +64,12 @@ class FocusToggleButton(private val focus: Focus, prefW: Double, prefH: Double) 
     )
 
   private def loadFocusIcon(): Image = {
-    focus.getDDSImage match
+    _focus.getDDSImage match
       case Some(ddsImage) =>
         ddsImage
       case None =>
-        logger.warn(s"No DDS image found for focus: ${focus.id}")
+        logger.warn(s"No DDS image found for focus: ${_focus.id}")
         null
   }
+
+  def focus: Focus = _focus
