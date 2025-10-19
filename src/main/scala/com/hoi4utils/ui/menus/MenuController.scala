@@ -179,15 +179,19 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open()
   def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open()
   def openManageFocusTrees(): Unit = new ManageFocusTreesController().open()
-  
+
   @FXML
-  def handleCustomTooltipClick(event: MouseEvent): Unit = 
+  def handleCustomTooltipClick(event: MouseEvent): Unit =
     if event.isControlDown then new CustomTooltipController().open()
     else detailPanelManager.switchToView("/com/hoi4utils/ui/tooltip/CustomTooltip.fxml")
-  
-  
+
+
   def openBuildingsByCountry(): Unit = new BuildingsByCountryController().open()
-  def openGFXInterfaceFileList(): Unit = new InterfaceFileListController().open()
+
+  @FXML
+  def handleGFXInterfaceFileListClick(event: MouseEvent): Unit =
+    if event.isControlDown then new InterfaceFileListController().open()
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/gfx/InterfaceFileList.fxml")
 
   @FXML
   def handleUnitComparisonClick(event: MouseEvent): Unit =
