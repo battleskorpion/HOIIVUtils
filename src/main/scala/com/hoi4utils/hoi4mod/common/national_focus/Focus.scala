@@ -10,6 +10,8 @@ import com.hoi4utils.hoi4mod.localization.{HasDesc, Localizable, Localization, P
 import com.hoi4utils.hoi4mod.scope.Scope
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
+import dotty.tools.sjs.ir.Trees.JSBinaryOp.&&
+import dotty.tools.sjs.ir.Trees.JSUnaryOp.!
 import javafx.scene.image.Image
 
 import java.awt.Point
@@ -158,6 +160,26 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
    * @return
    */
   def hasAbsolutePosition(x: Int, y: Int): Boolean = absolutePosition == new Point(x, y)
+
+  def selfAndRelativePositionedFocuses: List[Focus] =
+    val focuses = ListBuffer[Focus]()
+    focuses += this
+
+    @tailrec
+    def gatherRelativeFocuses(currentFocuses: List[Focus]): Unit =
+      val newlyFoundFocuses = ListBuffer[Focus]()
+      for
+        focus <- focusTree.focuses
+        currentFocus <- currentFocuses
+        if (focus.relativePositionFocus @== currentFocus) && !focuses.contains(focus)
+      do
+        focuses += focus
+        newlyFoundFocuses += focus
+      if newlyFoundFocuses.nonEmpty then
+        gatherRelativeFocuses(newlyFoundFocuses.toList)
+
+    gatherRelativeFocuses(List(this))
+    focuses.toList
 
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 
