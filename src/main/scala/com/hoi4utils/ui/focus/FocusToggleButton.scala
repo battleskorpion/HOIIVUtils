@@ -15,7 +15,10 @@ class FocusToggleButton(var name: String = "No Name", prefW: Double = 200, prefH
   // initial sizing and style
   setPrefSize(prefW, prefH)
   setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE)
-  setMaxWidth(Double.MaxValue) // allow horizontal grow if placed in layouts that honor it
+  setMaxWidth(Double.MaxValue)
+
+  // Apply custom style class for subdued colors
+  getStyleClass.add("focus-toggle-button")
   setStyle("-fx-font-size: 14px; -fx-padding: 6px;")
 
   // set the DDS image as a graphic (ScalaFX Image -> JavaFX Image via delegate)
@@ -25,14 +28,12 @@ class FocusToggleButton(var name: String = "No Name", prefW: Double = 200, prefH
   // convenience methods to change settings at runtime
   def setSize(width: Double, height: Double): Unit =
     setPrefSize(width, height)
-  // keep min/max consistent if you want fixed size:
-  // setMinSize(width, height); setMaxSize(width, height)
 
   def setPreferredWidth(width: Double): Unit = setPrefWidth(width)
 
   def setPreferredHeight(height: Double): Unit = setPrefHeight(height)
 
-  def applyCssStyle(css: String): Unit = setStyle(css) // example: "-fx-background-color: #333; -fx-text-fill: white;"
+  def applyCssStyle(css: String): Unit = setStyle(css)
 
   def setBackgroundImage(image: Image): Unit =
     if image != null then setGraphic(new ImageView(image.delegate)) else setGraphic(null)

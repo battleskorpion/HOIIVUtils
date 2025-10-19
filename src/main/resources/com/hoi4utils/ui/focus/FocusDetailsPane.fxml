@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.hoi4utils.ui.focus.FocusDetailsPaneController"
+            fx:id="rootAnchorPane"
+            prefHeight="400.0" prefWidth="300.0">
+  
+  <VBox fx:id="contentVBox"
+        AnchorPane.topAnchor="0.0"
+        AnchorPane.bottomAnchor="0.0"
+        AnchorPane.leftAnchor="0.0"
+        AnchorPane.rightAnchor="0.0"
+        spacing="10">
+    <padding>
+      <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
+    <!-- Header with title -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+      <Label fx:id="titleLabel" text="Focus Details" style="-fx-font-weight: bold;">
+        <font>
+          <Font size="18.0"/>
+        </font>
+      </Label>
+      <Pane HBox.hgrow="ALWAYS"/>
+      <ProgressIndicator fx:id="loadingIndicator" visible="false" prefHeight="24.0" prefWidth="24.0"/>
+    </HBox>
+    
+    <Separator/>
+    
+    <!-- Scrollable content area for the PDXEditorPane -->
+    <ScrollPane fx:id="editorScrollPane"
+                fitToWidth="true"
+                VBox.vgrow="ALWAYS"
+                hbarPolicy="AS_NEEDED"
+                vbarPolicy="AS_NEEDED">
+      <content>
+        <VBox fx:id="editorContainer" spacing="5">
+          <!-- PDXEditorPane will be loaded here dynamically -->
+          <Label fx:id="placeholderLabel" text="Select a focus to view details" style="-fx-text-fill: gray;"/>
+        </VBox>
+      </content>
+    </ScrollPane>
+    
+    <!-- Optional action buttons at the bottom -->
+    <HBox fx:id="actionButtonsHBox" spacing="10" alignment="CENTER_RIGHT" visible="false">
+      <Button fx:id="saveButton" text="Save Changes" minWidth="100"/>
+      <Button fx:id="revertButton" text="Revert" minWidth="100"/>
+    </HBox>
+  
+  </VBox>
+
+</AnchorPane>
