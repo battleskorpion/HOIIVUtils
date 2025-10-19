@@ -38,9 +38,8 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
   final val availableIfCapitulated  = BooleanPDX("available_if_capitulated")
   final val cancelIfInvalid         = BooleanPDX("cancel_if_invalid", true)
   final val continueIfInvalid       = BooleanPDX("continue_if_invalid")
-  //var ddsImage: Image = _
-  final val ai_will_do = new AIWillDoPDX
-  /* completion reward */
+  final val ai_will_do              = AIWillDoPDX()
+  /** completion reward */
   //  final val completionReward: CompletionReward = new CompletionReward()
 
   if node != null then loadPDX(node)
