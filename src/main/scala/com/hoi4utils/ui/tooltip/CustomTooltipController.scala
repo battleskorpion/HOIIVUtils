@@ -4,6 +4,7 @@ import com.hoi4utils.hoi4mod.tooltip.CustomTooltip
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager}
 import com.hoi4utils.ui.custom_javafx.table.TableViewWindow
+import javafx.application.Platform
 import javafx.fxml.{FXML, Initializable}
 import javafx.scene.control.*
 import javafx.scene.layout.{BorderPane, GridPane}
@@ -22,9 +23,9 @@ class CustomTooltipController extends HOIIVUtilsAbstractController2 with TableVi
 
   @FXML var contentContainer: GridPane = uninitialized
   @FXML var tooltipAnchorPane: AnchorPane = uninitialized
-  @FXML var mClose: Button = uninitialized
-  @FXML var mSquare: Button = uninitialized
-  @FXML var mMinimize: Button = uninitialized
+  @FXML var ctClose: Button = uninitialized
+  @FXML var ctSquare: Button = uninitialized
+  @FXML var ctMinimize: Button = uninitialized
 
   @FXML var idVersion: Label = uninitialized
   @FXML var tooltipIdTableColumn: TableColumn[CustomTooltip,String] = uninitialized
@@ -37,15 +38,23 @@ class CustomTooltipController extends HOIIVUtilsAbstractController2 with TableVi
 
   private var tooltipFile: Option[File] = None
 
+  private var isEmbedded: Boolean = false
+
   // ScalaFX‐friendly backing list
   private val customTooltipBuf: ObservableBuffer[CustomTooltip] = ObservableBuffer.empty
 
   override def initialize(location: URL, resources: ResourceBundle): Unit =
+    Platform.runLater(() =>
+      isEmbedded = primaryScene == null
+      ctClose.setVisible(!isEmbedded)
+      ctSquare.setVisible(!isEmbedded)
+      ctMinimize.setVisible(!isEmbedded)
+    )
     idVersion.setText(HOIIVUtils.get("version"))
     // wire up the JavaFX TableView using your existing helper:
     loadTableView(this, customTooltipTableView, customTooltipBuf, CustomTooltip.dataFunctions())
 
-  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize, tooltipAnchorPane)
+  override def preSetup(): Unit = setupWindowControls(contentContainer, ctClose, ctSquare, ctMinimize, tooltipAnchorPane)
   // --- action handlers ---
   @FXML def handleTooltipFileBrowseAction(): Unit =
     val initial = HOIIVFiles.Mod.common_folder

@@ -179,13 +179,18 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open()
   def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open()
   def openManageFocusTrees(): Unit = new ManageFocusTreesController().open()
-  def openCustomTooltip(): Unit = new CustomTooltipController().open()
+  
+  @FXML
+  def handleCustomTooltipClick(event: MouseEvent): Unit = 
+    if event.isControlDown then new CustomTooltipController().open()
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/tooltip/CustomTooltip.fxml")
+  
+  
   def openBuildingsByCountry(): Unit = new BuildingsByCountryController().open()
   def openGFXInterfaceFileList(): Unit = new InterfaceFileListController().open()
 
   @FXML
   def handleUnitComparisonClick(event: MouseEvent): Unit =
-    logger.error("help 1")
     if !HOIIVFiles.isUnitsFolderValid then
       logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
       JOptionPane.showMessageDialog(
@@ -195,7 +200,6 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         JOptionPane.WARNING_MESSAGE
       )
     else
-      logger.error("help 1")
       if event.isControlDown then new CompareUnitsController().open()
       else detailPanelManager.switchToView("/com/hoi4utils/ui/units/CompareUnits.fxml")
 
