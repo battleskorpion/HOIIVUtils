@@ -40,6 +40,17 @@ class PDXLoader extends LazyLogging:
   val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
   private var stateFilesWatcher: FileWatcher = null
 
+  /* LOAD ORDER IMPORTANT (depending on the class) */
+  val pdxList: List[PDXReadable] = List(
+    Interface,
+    ResourcesFile,
+    State,
+    CountryFile,
+    CountryTag,
+    IdeaFile,
+    FocusTrees,
+  )
+
   def load(hProperties: Properties, loadingLabel: Label, isCancelled: () => Boolean = () => false): Unit =
     implicit val properties: Properties = hProperties
     implicit val label: Label = loadingLabel
@@ -69,17 +80,6 @@ class PDXLoader extends LazyLogging:
     MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
     LocalizationManager.getOrCreate(() => new EnglishLocalizationManager).reload()
     if isCancelled() then return
-
-    /* LOAD ORDER IMPORTANT (depending on the class) */
-    val pdxList = List (
-      Interface,
-      ResourcesFile,
-      State,
-      CountryFile,
-      CountryTag,
-      IdeaFile,
-      FocusTrees,
-    )
     
     pdxList.foreach(p =>
       if !isCancelled() then readPDX(p, isCancelled)
@@ -111,14 +111,8 @@ class PDXLoader extends LazyLogging:
       return false
     true
 
-  def clearPDX(): Unit =
-    IdeaFile.clear()
-    FocusTrees.clear()
-    CountryTag.clear()
-    CountryFile.clear()
-    State.clear()
-    ResourcesFile.clear()
-    Interface.clear()
+  /** Clears loaded PDX data. */
+  def clearPDX(): Unit = pdxList.foreach(_.clear())
 
   def clearLB(): Unit =
     ListBuffer(

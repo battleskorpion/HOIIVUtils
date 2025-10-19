@@ -56,7 +56,7 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
     true
   }
   
-  def clear(): Unit = _tagList.clear()
+  override def clear(): Unit = _tagList.clear()
 
   @throws[IOException]
   private def loadCountryTags(): Seq[CountryTag] = {

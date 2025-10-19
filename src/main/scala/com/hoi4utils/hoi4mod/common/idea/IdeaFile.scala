@@ -110,7 +110,7 @@ object IdeaFile extends LazyLogging with PDXReadable {
   /**
    * Clears all idea files and any other relevant values.
    */
-  def clear(): Unit = {
+  override def clear(): Unit = {
     ideaFiles.clear()
     ideaFileFileMap.clear()
   }

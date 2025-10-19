@@ -38,7 +38,7 @@ object FocusTrees extends LazyLogging with PDXReadable:
       true
 
   /** Clears all focus trees and any other relevant values. */
-  def clear(): Unit =
+  override def clear(): Unit =
     focusTrees.clear()
     focusTreeFileMap.clear()
 
