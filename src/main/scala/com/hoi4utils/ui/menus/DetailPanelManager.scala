@@ -2,6 +2,7 @@ package com.hoi4utils.ui.menus
 
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.focus.FocusTree2Controller
+import com.hoi4utils.ui.map.ProvinceColorsController
 import com.hoi4utils.ui.tooltip.CustomTooltipController
 import com.hoi4utils.ui.units.CompareUnitsController
 import com.typesafe.scalalogging.LazyLogging
@@ -125,6 +126,7 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
       case "/com/hoi4utils/ui/focus/FocusTree2.fxml" => new FocusTree2Controller()
       case "/com/hoi4utils/ui/tooltip/CustomTooltip.fxml" => new CustomTooltipController()
       case "/com/hoi4utils/ui/units/CompareUnits.fxml" => new CompareUnitsController()
+      case "/com/hoi4utils/ui/map/ProvinceColors.fxml" => new ProvinceColorsController()
       case "/com/hoi4utils/ui/menus/ErrorList.fxml" => new ErrorListController()
       case _ =>
         logger.warn(s"No specific controller mapping for: $fxmlPath")

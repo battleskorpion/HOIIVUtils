@@ -2,21 +2,29 @@ package com.hoi4utils.ui.map
 
 import com.hoi4utils.hoi4mod.map.gen.ColorGenerator
 import com.hoi4utils.main.HOIIVUtils
-import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController
+import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.*
-import javafx.scene.layout.GridPane
+import javafx.scene.layout.{GridPane, VBox}
 import javafx.scene.paint.Color.{BLACK, rgb}
 import javafx.scene.shape.Rectangle
 
 import java.io.File
 import scala.compiletime.uninitialized
 
-class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLogging:
+class ProvinceColorsController extends HOIIVUtilsAbstractController2 with LazyLogging:
   setFxmlFile("ProvinceColors.fxml")
   setTitle("HOIIVUtils Province Colors")
+  
+  @FXML var pcVboxRoot: VBox = uninitialized
+  @FXML var pcMenuBar: MenuBar = uninitialized
+  @FXML var pcClose: Button = uninitialized
+  @FXML var pcSquare: Button = uninitialized
+  @FXML var pcMinimize: Button = uninitialized
+  
+  private var isEmbedded: Boolean = true
 
   @FXML var idWindowName: Label = uninitialized
   @FXML private var colorInputField: TextField = uninitialized
@@ -66,12 +74,24 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController with LazyLog
 
   @FXML
   def initialize(): Unit =
-    idWindowName.setText("Province Colors - Unique Color Generator")
-    colorInputField.setText(input) // Set default input value
-    progressIndicator.setVisible(false) // Hide progress indicator initially
+    Platform.runLater(() =>
+      isEmbedded = primaryScene == null
+      pcClose.setVisible(!isEmbedded)
+      pcSquare.setVisible(!isEmbedded)
+      pcMinimize.setVisible(!isEmbedded)
+    )
 
     // Initialize sliders
-    setupSliders()
+    val task = new javafx.concurrent.Task[Unit]() {
+      override def call(): Unit =
+        idWindowName.setText("Province Colors - Unique Color Generator")
+        colorInputField.setText(input) // Set default input value
+        progressIndicator.setVisible(false) // Hide progress indicator initially
+        setupSliders()
+    }
+    new Thread(task).start()
+
+  override def preSetup(): Unit = setupWindowControls(pcVboxRoot, pcClose, pcSquare, pcMinimize, pcMenuBar)
 
   /**
    * TODO: Fix Sliders to work with colorGenerator Example, if max red is 0 and min red is 0, then generate no red.

@@ -169,16 +169,17 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   def openSettings(): Unit =
     cancelTask()
     closeWindow(vSettings) // closes the menu window
-    new SettingsController().open()
+    new SettingsController().open() // TODO embed settings in detail panel?????? Would require to clean up everything that auto gets cleaned when closing menu
 
+  // TODO 6 out of 14 views are embedded in detail panel, rest open new windows
   @FXML
   def handleFocusTreeViewerClick(event: MouseEvent): Unit =
     if event.isControlDown then new FocusTree2Controller().open()
     else detailPanelManager.switchToView("/com/hoi4utils/ui/focus/FocusTree2.fxml")
 
-  def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open()
-  def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open()
-  def openManageFocusTrees(): Unit = new ManageFocusTreesController().open()
+  def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open() // TODO embed
+  def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open() // TODO embed
+  def openManageFocusTrees(): Unit = new ManageFocusTreesController().open() // TODO embed
 
   @FXML
   def handleCustomTooltipClick(event: MouseEvent): Unit =
@@ -186,7 +187,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     else detailPanelManager.switchToView("/com/hoi4utils/ui/tooltip/CustomTooltip.fxml")
 
 
-  def openBuildingsByCountry(): Unit = new BuildingsByCountryController().open()
+  def openBuildingsByCountry(): Unit = new BuildingsByCountryController().open() // TODO embed
 
   @FXML
   def handleGFXInterfaceFileListClick(event: MouseEvent): Unit =
@@ -207,10 +208,14 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
       if event.isControlDown then new CompareUnitsController().open()
       else detailPanelManager.switchToView("/com/hoi4utils/ui/units/CompareUnits.fxml")
 
-  def openProvinceColors(): Unit = new ProvinceColorsController().open()
-  def openMapGeneration(): Unit = new MapGenerationController().open()
-  def openMapEditor(): Unit = new MapEditorController().open()
-  def openParserView(): Unit = new ParserViewerController().open()
+  @FXML
+  def handleProvinceColorsClick(event: MouseEvent): Unit =
+    if event.isControlDown then new ProvinceColorsController().open()
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/map/ProvinceColors.fxml")
+
+  def openMapGeneration(): Unit = new MapGenerationController().open() // TODO embed
+  def openMapEditor(): Unit = new MapEditorController().open() // TODO embed
+  def openParserView(): Unit = new ParserViewerController().open() // TODO embed
 
   @FXML
   def handleErrorsClick(event: MouseEvent): Unit =
