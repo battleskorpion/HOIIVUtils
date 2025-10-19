@@ -2,6 +2,7 @@ package com.hoi4utils.ui.menus
 
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.focus.FocusTree2Controller
+import com.hoi4utils.ui.tooltip.CustomTooltipController
 import com.hoi4utils.ui.units.CompareUnitsController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXMLLoader
@@ -122,6 +123,7 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
     // Create controller instance based on the FXML path
     val controller = fxmlPath match
       case "/com/hoi4utils/ui/focus/FocusTree2.fxml" => new FocusTree2Controller()
+      case "/com/hoi4utils/ui/tooltip/CustomTooltip.fxml" => new CustomTooltipController()
       case "/com/hoi4utils/ui/units/CompareUnits.fxml" => new CompareUnitsController()
       case "/com/hoi4utils/ui/menus/ErrorList.fxml" => new ErrorListController()
       case _ =>
