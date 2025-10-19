@@ -3,11 +3,12 @@ package com.hoi4utils.ui.custom_javafx.layout
 import javafx.geometry.{Bounds, Point2D, Pos}
 import javafx.scene.{Group, Node}
 import javafx.scene.control.ScrollPane
+import javafx.scene.input.ScrollEvent
 import javafx.scene.layout.VBox
 
 class ZoomableScrollPane(private val target: Node) extends ScrollPane:
-  private var scaleValue: Double = 0.7
-  private val zoomIntensity: Double = 0.04
+  private var scaleValue: Double = 1.0
+  private val zoomIntensity: Double = 0.02
   private val zoomNode: Node = Group(target)
 
   setContent(outerNode(zoomNode))
@@ -21,8 +22,10 @@ class ZoomableScrollPane(private val target: Node) extends ScrollPane:
   private def outerNode(node: Node): Node =
     val outer = centeredNode(node)
     outer.setOnScroll { e =>
-      e.consume()
-      onScroll(e.getTextDeltaY, Point2D(e.getX, e.getY))
+      // Only zoom if Ctrl is pressed, otherwise let normal scrolling happen
+      if e.isControlDown then
+        e.consume()
+        onScroll(e.getDeltaY, Point2D(e.getX, e.getY))
     }
     outer
 
@@ -62,3 +65,20 @@ class ZoomableScrollPane(private val target: Node) extends ScrollPane:
     val updatedInnerBounds = zoomNode.getBoundsInLocal
     setHvalue((valX + adjustment.getX) / (updatedInnerBounds.getWidth - viewportBounds.getWidth))
     setVvalue((valY + adjustment.getY) / (updatedInnerBounds.getHeight - viewportBounds.getHeight))
+
+  // Public methods for zoom controls
+  def zoomIn(): Unit =
+    onScroll(100.0, Point2D(getWidth / 2, getHeight / 2))
+
+  def zoomOut(): Unit =
+    onScroll(-100.0, Point2D(getWidth / 2, getHeight / 2))
+
+  def resetZoom(): Unit =
+    scaleValue = 1.0
+    updateScale()
+
+  def getZoomLevel: Double = scaleValue
+
+  def setZoomLevel(zoom: Double): Unit =
+    scaleValue = Math.max(0.1, Math.min(10.0, zoom)) // Clamp between 0.1 and 10
+    updateScale()

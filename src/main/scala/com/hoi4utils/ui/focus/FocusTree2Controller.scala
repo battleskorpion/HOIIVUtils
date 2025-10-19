@@ -8,6 +8,7 @@ import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.*
+import javafx.scene.paint.Color
 
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
@@ -29,10 +30,15 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML var mSquare: Button = uninitialized
   @FXML var mMinimize: Button = uninitialized
   @FXML var focusSelection: ScrollPane = uninitialized
-  @FXML var focusTreeScrollPane: ScrollPane = uninitialized  // Add this reference to the ScrollPane
+  @FXML var focusTreeScrollPane: ScrollPane = uninitialized
   @FXML var vbox: VBox = uninitialized
   @FXML var welcome: ToggleButton = uninitialized
   @FXML var toggleGroup: ToggleGroup = uninitialized
+
+  // Zoom control buttons (add these to your FXML or create programmatically)
+  @FXML var zoomInButton: Button = uninitialized
+  @FXML var zoomOutButton: Button = uninitialized
+  @FXML var resetZoomButton: Button = uninitialized
 
   private var toggleButtons: ListBuffer[ToggleButton] = ListBuffer.empty
   private var zoomableScrollPane: ZoomableScrollPane = uninitialized
@@ -40,6 +46,11 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML def initialize(): Unit =
     // Replace the regular ScrollPane with ZoomableScrollPane
     replaceWithZoomableScrollPane()
+
+    // Setup zoom buttons if they exist
+    if zoomInButton != null then zoomInButton.setOnAction(_ => zoomableScrollPane.zoomIn())
+    if zoomOutButton != null then zoomOutButton.setOnAction(_ => zoomableScrollPane.zoomOut())
+    if resetZoomButton != null then resetZoomButton.setOnAction(_ => zoomableScrollPane.resetZoom())
 
     clear()
     welcome.setToggleGroup(toggleGroup)
@@ -113,8 +124,20 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
                 val focusButton = FocusToggleButton(focus.toString, focusGridColumnsSize, focusGridRowSize)
                 focusTreeView.add(focusButton, column, row)
               case None =>
-                // No focus at this position, optionally add placeholder
-                ()
+                // Add a transparent pane as placeholder to enable dragging in empty cells
+                val placeholder = createEmptyCell()
+                focusTreeView.add(placeholder, column, row)
+
+  /** Creates an invisible pane that allows dragging/panning on empty grid cells */
+  private def createEmptyCell(): Pane =
+    val pane = new Pane()
+    pane.setPrefSize(focusGridColumnsSize, focusGridRowSize)
+    pane.setMinSize(focusGridColumnsSize, focusGridRowSize)
+    pane.setMaxSize(focusGridColumnsSize, focusGridRowSize)
+    // Make it transparent but still mouse-transparent = false so it captures events
+    pane.setStyle("-fx-background-color: transparent;")
+    pane.setMouseTransparent(false)
+    pane
 
   private def setCC() = {
     val cc = new ColumnConstraints()
