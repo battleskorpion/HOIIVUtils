@@ -108,13 +108,23 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     )
 
   /** Loads the given FocusTreeFile into the focusTreeView GridPane by creating it in a separate thread */
-  private def loadFocusTreeView(someFocusTree: FocusTreeFile): Unit =
-    // Cancel any currently running task
+  private def loadFocusTreeView(someFocusTree: FocusTreeFile): Unit = {
     cancelCurrentTask()
     clear()
     focusGridToggleGroup = new ToggleGroup()
-    for _ <- 0 until someFocusTree.columns do setCC()
-    for _ <- 0 until someFocusTree.rows do setRC()
+
+    val focuses = someFocusTree.focuses
+
+    // Calculate offset needed for negative coordinates
+    val (offsetX, offsetY) = calculateGridOffset(focuses)
+
+    // Calculate actual dimensions needed
+    val (gridCols, gridRows) = calculateGridDimensions(focuses, offsetX, offsetY)
+
+    // Setup column and row constraints
+    for (_ <- 0 until gridCols) setCC()
+    for (_ <- 0 until gridRows) setRC()
+
     val loadFocusTreeTask = new Task[GridPane]() {
       override def call(): GridPane = {
         val newGridPane = new GridPane()
@@ -124,6 +134,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         newGridPane.setVgap(focusTreeView.getVgap)
         newGridPane.setGridLinesVisible(lines)
         newGridPane.getStyleClass.addAll(focusTreeView.getStyleClass)
+
         focusTreeView.getColumnConstraints.forEach(cc => {
           val newCC = new ColumnConstraints()
           newCC.setMinWidth(cc.getMinWidth)
@@ -131,6 +142,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           newCC.setMaxWidth(cc.getMaxWidth)
           newGridPane.getColumnConstraints.add(newCC)
         })
+
         focusTreeView.getRowConstraints.forEach(rc => {
           val newRC = new RowConstraints()
           newRC.setMinHeight(rc.getMinHeight)
@@ -138,42 +150,73 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           newRC.setMaxHeight(rc.getMaxHeight)
           newGridPane.getRowConstraints.add(newRC)
         })
-        val focuses = someFocusTree.focuses
-        focuses match
+
+        focuses match {
           case null =>
-            if !isCancelled then
-              newGridPane.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
+            if (!isCancelled) {
+              newGridPane.add(
+                Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"),
+                0,
+                0
+              )
               logger.warn("Focuses list is null, cannot draw focus tree.")
+            }
           case _ if focuses.isEmpty =>
-            if !isCancelled then
-              newGridPane.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
+            if (!isCancelled) {
+              newGridPane.add(
+                Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"),
+                0,
+                0
+              )
               logger.warn("Focuses list is empty, nothing to draw.")
+            }
           case _ =>
-            val totalWork = someFocusTree.rows * someFocusTree.columns
+            val totalWork = focuses.size
             var workDone = 0
-            for row <- 0 until someFocusTree.rows do
-              if isCancelled then
-                logger.info(s"Task cancelled while loading row $row")
-              else
-                for column <- 0 until someFocusTree.columns do
-                  if isCancelled then
-                    logger.info(s"Task cancelled while loading column $column in row $row")
-                  else
-                    // adds focus to the grid if it matches the current position
-                    focuses.find(f => f.hasAbsolutePosition(column, row)) match
-                      case Some(focus) =>
-                        val focusButton = FocusToggleButton(focus.toString, focusGridColumnsSize, focusGridRowSize)
-                        focusButton.setOnAction(_ ⇒ loadFocusView(focus))
-                        focusButton.setToggleGroup(focusGridToggleGroup)
-                        newGridPane.add(focusButton, column, row)
-                      case None =>
-                        val placeholder = createEmptyCell()
-                        newGridPane.add(placeholder, column, row)
-                    workDone += 1
-                    updateProgress(workDone, totalWork)
+
+            // Iterate through actual focuses instead of grid positions
+            focuses.foreach { focus =>
+              if (!isCancelled) {
+                // Apply offset to convert to GridPane coordinates
+                val gridX = focus.absoluteX + offsetX
+                val gridY = focus.absoluteY + offsetY
+
+                val focusButton = FocusToggleButton(
+                  focus.toString,
+                  focusGridColumnsSize,
+                  focusGridRowSize
+                )
+                focusButton.setOnAction(_ => loadFocusView(focus))
+                focusButton.setToggleGroup(focusGridToggleGroup)
+                newGridPane.add(focusButton, gridX, gridY)
+
+                workDone += 1
+                updateProgress(workDone, totalWork)
+              }
+            }
+
+            // Optional: Fill empty cells with placeholders for better panning
+            if (!isCancelled) {
+              for {
+                row <- 0 until gridRows
+                col <- 0 until gridCols
+              } {
+                // Check if this position already has a focus
+                val hasFocus = focuses.exists { f =>
+                  (f.absoluteX + offsetX == col) && (f.absoluteY + offsetY == row)
+                }
+
+                if (!hasFocus) {
+                  val placeholder = createEmptyCell()
+                  newGridPane.add(placeholder, col, row)
+                }
+              }
+            }
+        }
         newGridPane
       }
     }
+
 
     // Load the completed UI
     loadFocusTreeTask.setOnSucceeded(_ => {
@@ -205,6 +248,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     val thread = new Thread(loadFocusTreeTask)
     thread.setDaemon(true)
     thread.start()
+  }
 
   private def loadFocusView(focus: Focus): Unit =
     logger.info(s"Focus selected: ${focus.id} at absolute: ${focus.absolutePosition}, relative: ${focus.relativePositionFocus}, (${focus.position})")
@@ -223,6 +267,38 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         logger.debug("Current task exists but is not running")
         currentLoadTask = None
       case None =>
+
+  /**
+   * Calculate the minimum x and y coordinates across all focuses
+   * to determine the offset needed for GridPane (which can't handle negative coords)
+   */
+  private def calculateGridOffset(focuses: Iterable[Focus]): (Int, Int) = {
+    if (focuses.isEmpty) {
+      (0, 0)
+    } else {
+      val minX = focuses.map(_.absoluteX).min
+      val minY = focuses.map(_.absoluteY).min
+      // Return absolute values if negative, otherwise 0
+      (if (minX < 0) -minX else 0, if (minY < 0) -minY else 0)
+    }
+  }
+
+  /**
+   * Calculate the actual grid dimensions needed, accounting for offset
+   */
+  private def calculateGridDimensions(
+                                       focuses: Iterable[Focus],
+                                       offsetX: Int,
+                                       offsetY: Int
+                                     ): (Int, Int) = {
+    if (focuses.isEmpty) {
+      (1, 1) // minimum grid size
+    } else {
+      val maxX = focuses.map(f => f.absoluteX + offsetX).max
+      val maxY = focuses.map(f => f.absoluteY + offsetY).max
+      (maxX + 1, maxY + 1) // +1 because we're 0-indexed
+    }
+  }
 
   private def updateProgressIndicator(task: Task[GridPane]): Unit =
     if progressIndicator != null then
