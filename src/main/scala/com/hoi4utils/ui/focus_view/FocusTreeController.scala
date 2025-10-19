@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.focus_view
 
-import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTreeFile}
+import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTreeFile, FocusTrees}
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import com.hoi4utils.ui.focus_view.FocusTreeController.updateLoadingStatus
@@ -121,7 +121,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging
 
     // Load available focus trees
     updateStatus("Loading focus trees...")
-    val trees: ObservableList[FocusTreeFile] = FocusTreeFile.observeFocusTrees
+    val trees: ObservableList[FocusTreeFile] = FocusTrees.observeFocusTrees
 
     if trees == null then
       updateStatus("Focus trees list is null. Ensure mod files are loaded correctly.")
@@ -222,8 +222,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging
   /**
    * Attempts to load a valid FocusTree from different sources.
    */
-  private def getFocusTree(tag: String, filePath: String): Option[FocusTreeFile] =
-    FocusTreeFile.getRandom
+  private def getFocusTree(tag: String, filePath: String): Option[FocusTreeFile] = None
 
   private def exportFocusTree(focusTree: FocusTreeFile, path: String): Unit =
     Try:

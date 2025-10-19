@@ -4,6 +4,7 @@ import com.hoi4utils.custom_scala.{BoolType, ExpectedRange}
 import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTrees.focusTreeErrors
 import com.hoi4utils.hoi4mod.gfx.Interface
 import com.hoi4utils.hoi4mod.localization.{Localizable, Localization, Property}
 import com.hoi4utils.hoi4mod.scope.Scope
@@ -317,11 +318,9 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
                            |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
                            |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}""".stripMargin
 
-      FocusTreeFile.focusTreeFileErrors += fullMessage
+      focusTreeErrors += fullMessage
 
-  /**
-   * mutually exclusive is a multi-reference of focuses
-   */
+  /** mutually exclusive is a multi-reference of focuses */
   class MutuallyExclusiveSet(referenceFocusesSupplier: () => Iterable[Focus])
     extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.value, "mutually_exclusive", "focus")
 

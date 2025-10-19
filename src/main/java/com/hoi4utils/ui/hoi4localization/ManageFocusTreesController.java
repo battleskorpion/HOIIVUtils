@@ -2,6 +2,7 @@ package com.hoi4utils.ui.hoi4localization;
 
 import com.hoi4utils.hoi4mod.common.national_focus.Focus;
 import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile;
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTrees;
 import com.hoi4utils.hoi4mod.localization.Localization;
 import com.hoi4utils.hoi4mod.localization.LocalizationManager;
 import com.hoi4utils.hoi4mod.localization.Property;
@@ -103,7 +104,7 @@ public class ManageFocusTreesController extends HOIIVUtilsAbstractController imp
 
 	private void updateObservableFocusList() {
 		focusObservableList.clear();
-		Iterable<FocusTreeFile> focuses = CollectionConverters.asJava(FocusTreeFile.listFocusTrees());
+		Iterable<FocusTreeFile> focuses = CollectionConverters.asJava(FocusTrees.focusTrees());
 		for (FocusTreeFile focusTreeFile : focuses) {
 			if (focusTreeFile != null) {
 				focusObservableList.addAll(CollectionConverters.asJava(focusTreeFile.listFocuses()));

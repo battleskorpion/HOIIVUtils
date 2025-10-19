@@ -1,11 +1,10 @@
 package com.hoi4utils.hoi4mod.common.national_focus
 
-import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4mod.common.country_tags.CountryTag
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile.focusTreeFileMap
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTrees.*
 import com.hoi4utils.hoi4mod.localization.{Localizable, Property}
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.{Comment, Node, ParserException}
+import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
@@ -37,7 +36,7 @@ class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with 
   private var _commentedFocuses: ListBuffer[String] = ListBuffer.empty
 
   /* default */
-  FocusTreeFile.add(this)
+  FocusTrees.add(this)
 
   file match
     case null => // create empty focus tree
@@ -205,7 +204,7 @@ class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with 
          |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
          |	File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}""".stripMargin
 
-    FocusTreeFile.focusTreeFileErrors += fullMessage
+    focusTreeErrors += fullMessage
   //    logger.error("Focus Tree - Unexpected Identifier Error:")
   //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
 
@@ -221,7 +220,7 @@ class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with 
          |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
          |	File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}""".stripMargin
 
-    FocusTreeFile.focusTreeFileErrors += fullMessage
+    focusTreeErrors += fullMessage
   //    logger.error("Focus Tree - Node Value Type Error:")
   //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
 
@@ -233,81 +232,10 @@ class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with 
          |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
          |	Focus Count: ${focuses.size}
          |	Current Focuses: ${if focuses.nonEmpty then focuses.flatMap(_.id.value).take(5).mkString("[", ", ", if focuses.size > 5 then ", ...]" else "]") else "none"}
-         |	Total Focus Trees Loaded: ${FocusTreeFile.listFocusTrees.size}
+         |	Total Focus Trees Loaded: ${focusTrees.size}
          |	File Last Modified: ${if file.exists() then new java.util.Date(file.lastModified()).toString else "N/A"}
          |	File Path: ${file.getAbsolutePath}""".stripMargin
 
-    FocusTreeFile.focusTreeFileErrors += fullMessage
+    focusTreeErrors += fullMessage
 //    logger.error("Focus Tree - Parser Exception (File):")
 //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
-
-/**
- * ALL the FocusTree/FocusTrees
- * Localizable data: focus tree name. Each focus is its own localizable data.
- */
-object FocusTreeFile extends LazyLogging with PDXReadable:
-  var focusTreeFileErrors: ListBuffer[String] = ListBuffer.empty
-  private val focusTreeFileMap = new mutable.HashMap[File, FocusTreeFile]()
-  val focusTrees = new ListBuffer[FocusTreeFile]()
-
-  def get(focus_file: File): Option[FocusTreeFile] =
-    if focus_file == null then return None
-    if !focusTreeFileMap.contains(focus_file) then new FocusTreeFile(focus_file)
-    focusTreeFileMap.get(focus_file)
-
-  def observeFocusTrees: ObservableList[FocusTreeFile] =
-    FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
-
-  /**
-   * Reads all focus trees from the focus trees folder, creating FocusTree instances for each.
-   */
-  def read(): Boolean =
-    if !HOIIVFiles.Mod.focus_folder.exists || !HOIIVFiles.Mod.focus_folder.isDirectory then
-      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
-      false
-    else if HOIIVFiles.Mod.focus_folder.listFiles == null || HOIIVFiles.Mod.focus_folder.listFiles.length == 0 then
-      logger.warn(s"No focuses found in ${HOIIVFiles.Mod.focus_folder}")
-      false
-    else
-      // create focus trees from files
-      HOIIVFiles.Mod.focus_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach: f =>
-        new FocusTreeFile(f)
-      true
-
-  /**
-   * Clears all focus trees and any other relevant values.
-   */
-  def clear(): Unit =
-    focusTrees.clear()
-    focusTreeFileMap.clear()
-
-  /**
-   * Adds a focus tree to the list of focus trees.
-   * @param focusTree the focus tree to add
-   * @return the updated list of focus trees
-   */
-  def add(focusTree: FocusTreeFile): Iterable[FocusTreeFile] =
-    focusTrees += focusTree
-    focusTree.focusFile match
-      case Some(file) => focusTreeFileMap.put(file, focusTree)
-      case None =>
-    focusTrees
-
-  def listFocusTrees: Iterable[FocusTreeFile] = focusTrees
-
-  /**
-   * Returns focus tree corresponding to the tag, if it exists
-   *
-   * @param tag The country tag
-   */
-  def get(tag: CountryTag): Option[FocusTreeFile] = boundary {
-    listFocusTrees.foreach: tree =>
-      tree.countryTag match
-        case Some(t) if tag.equals(t.tag) => boundary.break(Some(tree))
-        case _ => // Do nothing
-    None
-  }
-
-  def getRandom: Option[FocusTreeFile] =
-    if focusTrees.isEmpty then None
-    else Some(focusTrees(scala.util.Random.nextInt(focusTrees.size)))

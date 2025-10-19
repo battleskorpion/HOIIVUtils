@@ -5,6 +5,7 @@ import com.hoi4utils.hoi4mod.common.national_focus.FixFocus;
 import com.hoi4utils.hoi4mod.common.national_focus.Focus;
 import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile;
 import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile$;
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTrees;
 import com.hoi4utils.hoi4mod.localization.Localization;
 import com.hoi4utils.hoi4mod.localization.LocalizationManager;
 import com.hoi4utils.hoi4mod.localization.Property;
@@ -81,7 +82,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
         focusLocStatusColumn.setCellValueFactory(JavaFXUIManager.tableCellDataCallback(dataFunction));
 
         /* load data */
-        focusTreeComboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(FocusTreeFile$.MODULE$.listFocusTrees())));
+        focusTreeComboBox.setItems(FocusTrees.observeFocusTrees());
 
         /* buttons */
         saveButton.setDisable(true);
