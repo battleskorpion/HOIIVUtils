@@ -352,7 +352,6 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
   // it so such tightly knitted rat nest of fuck ass object oriented code.
   // trait class and abstracts shouldn't handle exceptions / errors / user expected errors!
   //      cuz the generic code means its hard to get metadata, log, debug etc
-  //TODO This small class is producing MOST of the unexpected identifier exceptions that show up in terminal, can you clean it up @Skorp or explain how I can touch it, please.
   class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward"):
 
     override def getPDXTypeName: String = "Completion Reward"

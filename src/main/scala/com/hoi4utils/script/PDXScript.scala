@@ -28,6 +28,10 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
    */
   protected def setNode(value: V | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit
 
+  /**
+   * Set the node value to the given expression.
+   * @param expression The node expression to set.
+   */
   def set(expression: Node): Unit
 
   def value: Option[V]
