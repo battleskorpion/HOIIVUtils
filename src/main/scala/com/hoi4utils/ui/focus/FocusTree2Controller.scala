@@ -13,12 +13,14 @@ import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.input.{DragEvent, Dragboard, MouseEvent, TransferMode}
 import javafx.scene.layout.*
+import javafx.scene.paint.Color
+import javafx.scene.shape.Line
 import scalafx.scene.input.ClipboardContent
 import sun.jvm.hotspot.HelloWorld.e
 
 import java.awt.Point
 import javax.sound.sampled.Clip
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.compiletime.uninitialized
 import scala.jdk.javaapi.CollectionConverters
 
@@ -36,6 +38,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML var ft2Minimize: Button = uninitialized
   @FXML var focusSelection: ScrollPane = uninitialized
   @FXML var focusTreeScrollPane: ScrollPane = uninitialized
+  @FXML var lineLayer: Pane = uninitialized
+  @FXML var layeredContent: StackPane = uninitialized
   @FXML var ft2SplitPane: SplitPane = uninitialized
   @FXML var vbox: VBox = uninitialized
   @FXML var welcome: ToggleButton = uninitialized
@@ -84,13 +88,28 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     focusTreeScrollPane.setContent(null)
 
     // Create the ZoomableScrollPane with the GridPane as target
-    zoomableScrollPane = ZoomableScrollPane(focusTreeView)
     focusTreeView.setGridLinesVisible(lines)
+
+    // Layer: lines under grid
+    lineLayer = new Pane()
+    lineLayer.setMouseTransparent(true) // pass events to grid/buttons
+    lineLayer.setPickOnBounds(false)
+    lineLayer.setStyle("-fx-background-color: transparent;")
+    // Stack: lineLayer (bottom) + focusTreeView (top)
+    layeredContent = new StackPane(lineLayer, focusTreeView)
+    lineLayer.toBack() // ensure under the grid
+
+    // keep the line layer the same size as the grid's allocated space
+    lineLayer.prefWidthProperty().bind(layeredContent.widthProperty())
+    lineLayer.prefHeightProperty().bind(layeredContent.heightProperty())
+
+    // Use layeredContent as the zoom target
+    zoomableScrollPane = ZoomableScrollPane(layeredContent)
 
     // Copy properties from the original ScrollPane
     zoomableScrollPane.setPrefHeight(focusTreeScrollPane.getPrefHeight)
     zoomableScrollPane.setPrefWidth(focusTreeScrollPane.getPrefWidth)
-    focusTreeView.setGridLinesVisible(lines)
+
     // Replace in SplitPane
     if ft2SplitPane != null then
       val items = ft2SplitPane.getItems
@@ -213,6 +232,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
             de.setDropCompleted(success)
             de.consume()
         )
+        newGridPane.layoutBoundsProperty().addListener((_, _, _) =>
+          Platform.runLater(() => redrawConnections())
+        )
+        newGridPane.getChildren.addListener((_: javafx.collections.ListChangeListener.Change[? <: Node]) =>
+          Platform.runLater(() => redrawConnections())
+        )
 
         focuses match {
           case null =>
@@ -294,8 +319,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         case Some(task) if task == loadFocusTreeTask =>
           val newPane = loadFocusTreeTask.getValue
           val currentZoom = zoomableScrollPane.getZoomLevel
-          zoomableScrollPane.setTarget(newPane)
+          // Rebuild layered content with same lineLayer (or new one if you prefer)
+          layeredContent.getChildren.setAll(lineLayer, newPane)
+          lineLayer.toBack() // ensure under the grid
+          zoomableScrollPane.setTarget(layeredContent)
           zoomableScrollPane.setZoomLevel(currentZoom)
+
           focusTreeView = newPane
           setupZoomButtons()
           currentLoadTask = None
@@ -483,6 +512,51 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       focusTreeView.getChildren.add(fb)
       System.out.println(fb)
     )
+
+    redrawConnections()
   }
 
-  
+  /** Clear and redraw all connection lines on the lineLayer. */
+  private def redrawConnections(): Unit =
+    if (lineLayer eq null) return
+    lineLayer.getChildren.clear()
+
+    // Example: connect each FocusToggleButton to its parent(s)
+    // Adapt this to your real relation data
+    val children = focusTreeView.getChildren
+    val it = children.iterator()
+    val btns = new scala.collection.mutable.ArrayBuffer[FocusToggleButton]()
+    while (it.hasNext) {
+      it.next() match
+        case b: FocusToggleButton => btns += b
+        case _ => ()
+    }
+
+    // For each button, draw lines to its prerequisites/relatives (example)
+    btns.foreach { b =>
+      val from = centerInLayer(b)
+      // Replace this with your real edges; e.g., b.focus.prerequisites
+//      val targets: Seq[FocusToggleButton] = computeTargetsFor(b, btns)
+      val targets: List[FocusToggleButton] = btns.filter(btn => b.focus.prerequisiteList.contains(btn.focus)).toList
+      targets.foreach { t =>
+        val to = centerInLayer(t)
+        val line = new Line(from._1, from._2, to._1, to._2)
+        line.setStroke(Color.BLUE)
+        line.setStrokeWidth(2.0)
+        line.setMouseTransparent(true)
+        lineLayer.getChildren.add(line)
+      }
+    }
+
+  /** Compute the center coordinates of a node relative to the layeredContent */
+  private def centerInLayer(n: Node): (Double, Double) =
+    // convert the node's center to the coordinate space of lineLayer/layeredContent
+    val b = n.getBoundsInParent
+    val centerXInGrid = b.getMinX + b.getWidth / 2
+    val centerYInGrid = b.getMinY + b.getHeight / 2
+    val p = n.getParent.localToScene(centerXInGrid, centerYInGrid)
+    val lp = layeredContent.sceneToLocal(p)
+    (lp.getX, lp.getY)
+
+
+
