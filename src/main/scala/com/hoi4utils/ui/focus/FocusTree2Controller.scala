@@ -159,6 +159,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
                   if isCancelled then
                     logger.info(s"Task cancelled while loading column $column in row $row")
                   else
+                    // adds focus to the grid if it matches the current position
                     focuses.find(f => f.hasAbsolutePosition(column, row)) match
                       case Some(focus) =>
                         val focusButton = FocusToggleButton(focus.toString, focusGridColumnsSize, focusGridRowSize)
