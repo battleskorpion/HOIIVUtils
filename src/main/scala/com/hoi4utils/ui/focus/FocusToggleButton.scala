@@ -21,7 +21,7 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
   setMaxWidth(Double.MaxValue)
 
   getStyleClass.add("focus-toggle-button")
-  setStyle("-fx-font-size: 14px; -fx-padding: 6px;")
+  setStyle("-fx-font-size: 14px; -fx-padding: 6px; -fx-background-color: transparent; -fx-border-color: transparent;")
 
   if gfxFocusUnavailable != null then
     val cleanNameBackGround = new ImageView(gfxFocusUnavailable)
