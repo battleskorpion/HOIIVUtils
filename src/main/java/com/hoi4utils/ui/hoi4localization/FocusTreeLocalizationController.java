@@ -239,7 +239,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
     private void setColumnOnEditCommits() {
         focusNameColumn.setOnEditCommit(event -> {
             Focus focus = event.getRowValue();
-            focus.replaceLocalization(Property.valueOf("NAME"), event.getNewValue());
+            focus.replaceName(event.getNewValue());
             focusListTable.refresh();  // Force update of the table view
         });
         focusDescColumn.setOnEditCommit(event -> {

@@ -155,5 +155,12 @@ trait Localizable {
       case None =>
     }
   }
+
+  /**
+   * Sets the name localization to the new value.
+   *
+   * @param text     the new localization text.
+   */
+  def replaceName(text: String): Unit = replaceLocalization(Property.NAME, text)
   
 }

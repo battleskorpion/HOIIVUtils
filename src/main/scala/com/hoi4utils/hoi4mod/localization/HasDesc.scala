@@ -8,6 +8,13 @@ trait HasDesc {
 
 // Only types that are BOTH Localizable and HasDesc get locDesc:
 object LocalizableSyntax:
-	extension (x: Localizable & HasDesc)
-		def locDesc: Option[String] = x.localizationText(DESCRIPTION)
+	extension (localized: Localizable & HasDesc)
+		def locDesc: Option[String] = localized.localizationText(DESCRIPTION)
+
+		/**
+		 * Sets the name localization to the new value.
+		 *
+		 * @param text the new localization text.
+		 */
+		def replaceDesc(text: String): Unit = localized.replaceLocalization(DESCRIPTION, text)
 
