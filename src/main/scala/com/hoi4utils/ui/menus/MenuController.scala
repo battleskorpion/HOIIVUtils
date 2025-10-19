@@ -182,7 +182,10 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   def openCustomTooltip(): Unit = new CustomTooltipController().open()
   def openBuildingsByCountry(): Unit = new BuildingsByCountryController().open()
   def openGFXInterfaceFileList(): Unit = new InterfaceFileListController().open()
-  def openUnitComparisonView(): Unit =
+
+  @FXML
+  def handleUnitComparisonClick(event: MouseEvent): Unit =
+    logger.error("help 1")
     if !HOIIVFiles.isUnitsFolderValid then
       logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
       JOptionPane.showMessageDialog(
@@ -192,7 +195,9 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         JOptionPane.WARNING_MESSAGE
       )
     else
-      new CompareUnitsController().open()
+      logger.error("help 1")
+      if event.isControlDown then new CompareUnitsController().open()
+      else detailPanelManager.switchToView("/com/hoi4utils/ui/units/CompareUnits.fxml")
 
   def openProvinceColors(): Unit = new ProvinceColorsController().open()
   def openMapGeneration(): Unit = new MapGenerationController().open()
