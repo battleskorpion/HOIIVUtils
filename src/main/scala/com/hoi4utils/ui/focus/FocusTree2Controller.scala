@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.focus
 
-import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTreeFile, FocusTrees}
+import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree, FocusTreesManager}
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.custom_javafx.layout.ZoomableScrollPane
 import com.typesafe.scalalogging.LazyLogging
@@ -93,7 +93,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       logger.error("splitPane is null - check FXML fx:id")
 
   private def populateFocusSelection(): Unit =
-    Some(FocusTrees.observeFocusTrees).foreach(trees =>
+    Some(FocusTreesManager.observeFocusTrees).foreach(trees =>
       trees.forEach(someFocusTree =>
         val toggleButton = ToggleButton(someFocusTree.toString)
         focusTreesToggleButtons += toggleButton
@@ -108,7 +108,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     )
 
   /** Loads the given FocusTreeFile into the focusTreeView GridPane by creating it in a separate thread */
-  private def loadFocusTreeView(someFocusTree: FocusTreeFile): Unit = {
+  private def loadFocusTreeView(someFocusTree: FocusTree): Unit = {
     cancelCurrentTask()
     clear()
     focusGridToggleGroup = new ToggleGroup()

@@ -3,7 +3,7 @@ package com.hoi4utils.ui.menus
 import com.hoi4utils.databases.effect.EffectDatabase.effectErrors
 import com.hoi4utils.extensions.*
 import com.hoi4utils.hoi4mod.common.idea.IdeaFile.ideaFileErrors
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTrees.focusTreeErrors
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager.focusTreeErrors
 import com.hoi4utils.hoi4mod.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4mod.history.countries.CountryFile.countryErrors
 import com.hoi4utils.hoi4mod.localization.LocalizationManager.localizationErrors

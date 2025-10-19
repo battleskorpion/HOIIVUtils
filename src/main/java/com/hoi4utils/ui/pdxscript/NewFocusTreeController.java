@@ -2,7 +2,7 @@ package com.hoi4utils.ui.pdxscript;
 
 import com.hoi4utils.hoi4mod.common.country_tags.CountryTag;
 import com.hoi4utils.hoi4mod.common.country_tags.CountryTag$;
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile;
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTree;
 import com.hoi4utils.main.HOIIVUtils;
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
@@ -29,7 +29,7 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
     @FXML
     Button createFocusTreeButton;
 
-    private Consumer<FocusTreeFile> onCreate = null;
+    private Consumer<FocusTree> onCreate = null;
 
     public NewFocusTreeController() {
         setFxmlFile("NewFocusTree.fxml");
@@ -44,7 +44,7 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
      * @param onCreate
      */
     @SuppressWarnings("unused")
-    public NewFocusTreeController(Consumer<FocusTreeFile> onCreate) {
+    public NewFocusTreeController(Consumer<FocusTree> onCreate) {
         this();
         setOnCreateConsumerAction(onCreate);
     }
@@ -64,7 +64,7 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
         }
 
         File focusFile = new File(HOIIVUtils.get("mod.path") + "/common/national_focus/" + id + "_" + "temp_HOIIVUtils"+ ".txt");
-        FocusTreeFile focusTreeFile = new FocusTreeFile(null);
+        FocusTree focusTreeFile = new FocusTree(null);
         focusTreeFile.setID(id);
         focusTreeFile.setCountryTag(countryTag);
         focusTreeFile.setFile(focusFile);
@@ -79,7 +79,7 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
         closeWindow(cancelButton);
     }
 
-    public void setOnCreateConsumerAction(Consumer<FocusTreeFile> onCreate) {
+    public void setOnCreateConsumerAction(Consumer<FocusTree> onCreate) {
        this.onCreate = onCreate;
        System.out.println(this.onCreate == null);
     }

@@ -7,8 +7,8 @@ import com.hoi4utils.file.file_listener.{FileAdapter, FileEvent, FileWatcher}
 import com.hoi4utils.hoi4mod.common.country_tags.CountryTag
 import com.hoi4utils.hoi4mod.common.idea.IdeaFile
 import com.hoi4utils.hoi4mod.common.idea.IdeaFile.ideaFileErrors
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTrees.focusTreeErrors
-import com.hoi4utils.hoi4mod.common.national_focus.{FocusTreeFile, FocusTrees}
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager.focusTreeErrors
+import com.hoi4utils.hoi4mod.common.national_focus.{FocusTree, FocusTreesManager}
 import com.hoi4utils.hoi4mod.gfx.Interface
 import com.hoi4utils.hoi4mod.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4mod.history.countries.CountryFile
@@ -48,7 +48,7 @@ class PDXLoader extends LazyLogging:
     CountryFile,
     CountryTag,
     IdeaFile,
-    FocusTrees,
+    FocusTreesManager,
   )
 
   def load(hProperties: Properties, loadingLabel: Label, isCancelled: () => Boolean = () => false): Unit =

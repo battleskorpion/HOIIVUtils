@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4mod.common.national_focus
 
 import com.hoi4utils.hoi4mod.common.country_tags.CountryTag
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTrees.*
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager.*
 import com.hoi4utils.hoi4mod.localization.{Localizable, Property}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.Node
@@ -21,7 +21,7 @@ import scala.util.boundary
  * @note Do not create instances of this class directly, unless a few focus tree is being created or loaded.
  *       Use FocusTree.get(File) instead.
  */
-class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTreeFile] with Iterable[Focus] with PDXFile:
+class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile:
   //final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
   final var country = new FocusTreeCountryPDX
   final var focuses = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
@@ -36,7 +36,7 @@ class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with 
   private var _commentedFocuses: ListBuffer[String] = ListBuffer.empty
 
   /* default */
-  FocusTrees.add(this)
+  FocusTreesManager.add(this)
 
   file match
     case null => // create empty focus tree
@@ -138,7 +138,7 @@ class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with 
 
   def hasFocuses: Boolean = focuses.nonEmpty
 
-  override def compareTo(o: FocusTreeFile): Int =
+  override def compareTo(o: FocusTree): Int =
     (this.countryTag, this.id.value) match
       case (Some(countryTag), Some(id)) =>
         (o.countryTag, o.id.value) match
@@ -166,7 +166,7 @@ class FocusTreeFile(file: File = null) extends StructuredPDX("focus_tree") with 
   override def getLocalizableGroup: Iterable[? <: Localizable] = focuses
 
   override def equals(other: PDXScript[?]): Boolean =
-    if other.isInstanceOf[FocusTreeFile] then return this == other
+    if other.isInstanceOf[FocusTree] then return this == other
     false
 
   class FocusTreeCountryPDX extends StructuredPDX("country"):

@@ -2,7 +2,7 @@ package com.hoi4utils.ui.parser;
 
 
 import com.hoi4utils.hoi4mod.common.country_tags.CountryTag$;
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile;
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTree;
 import com.hoi4utils.hoi4mod.history.countries.CountryFile;
 import com.hoi4utils.hoi4mod.map.resource.ResourcesFile;
 import com.hoi4utils.hoi4mod.map.state.State;
@@ -120,7 +120,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 						String pdxIdentifier = firstChild.name();
 
 						AbstractPDX<?> pdx = switch (pdxIdentifier) {
-							case "focus_tree"       -> new FocusTreeFile(file);
+							case "focus_tree"       -> new FocusTree(file);
 							case "state"            -> new State(false, file);
 							case "strategic_region" -> new StrategicRegion(file);
 
@@ -168,7 +168,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 						AbstractPDX<?> pdx = null;
 						if (pdxIdentifier.equals("focus_tree")) {
-							pdx = new FocusTreeFile(selected);
+							pdx = new FocusTree(selected);
 						} else if (pdxIdentifier.equals("state")) {
 							pdx = new State(false, selected);
 						} else if (selected.getParent().endsWith("countries")

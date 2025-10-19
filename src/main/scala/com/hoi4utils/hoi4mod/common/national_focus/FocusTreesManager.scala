@@ -16,12 +16,12 @@ import scala.util.boundary
  * ALL the FocusTree/FocusTrees
  * Localizable data: focus tree name. Each focus is its own localizable data.
  */
-object FocusTrees extends LazyLogging with PDXReadable:
-  val focusTrees = new ListBuffer[FocusTreeFile]()
-  val focusTreeFileMap = new mutable.HashMap[File, FocusTreeFile]()
+object FocusTreesManager extends LazyLogging with PDXReadable:
+  val focusTrees = new ListBuffer[FocusTree]()
+  val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
   var focusTreeErrors: ListBuffer[String] = ListBuffer.empty
 
-  def observeFocusTrees: ObservableList[FocusTreeFile] = FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
+  def observeFocusTrees: ObservableList[FocusTree] = FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
 
   /** Reads all focus trees from the focus trees folder, creating FocusTree instances for each. */
   def read(): Boolean =
@@ -34,7 +34,7 @@ object FocusTrees extends LazyLogging with PDXReadable:
     else
       // create focus trees from files
       HOIIVFiles.Mod.focus_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach: f =>
-        new FocusTreeFile(f)
+        new FocusTree(f)
       true
 
   /** Clears all focus trees and any other relevant values. */
@@ -47,7 +47,7 @@ object FocusTrees extends LazyLogging with PDXReadable:
    * @param focusTree the focus tree to add
    * @return the updated list of focus trees
    */
-  def add(focusTree: FocusTreeFile): Iterable[FocusTreeFile] =
+  def add(focusTree: FocusTree): Iterable[FocusTree] =
     focusTrees += focusTree
     focusTree.focusFile match
       case Some(file) => focusTreeFileMap.put(file, focusTree)
@@ -55,7 +55,7 @@ object FocusTrees extends LazyLogging with PDXReadable:
     focusTrees
 
   /** Returns focus tree corresponding to the tag, if it exists*/
-  def get(tag: CountryTag): Option[FocusTreeFile] = boundary {
+  def get(tag: CountryTag): Option[FocusTree] = boundary {
     focusTrees.foreach: tree =>
       tree.countryTag match
         case Some(t) if tag.equals(t.tag) => boundary.break(Some(tree))

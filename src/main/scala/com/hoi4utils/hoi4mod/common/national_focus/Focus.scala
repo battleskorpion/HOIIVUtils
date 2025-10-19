@@ -4,7 +4,7 @@ import com.hoi4utils.custom_scala.{BoolType, ExpectedRange}
 import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTrees.focusTreeErrors
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager.focusTreeErrors
 import com.hoi4utils.hoi4mod.gfx.Interface
 import com.hoi4utils.hoi4mod.localization.{Localizable, Localization, Property}
 import com.hoi4utils.hoi4mod.scope.Scope
@@ -19,7 +19,7 @@ import scala.collection.mutable.ListBuffer
 
 
 @lombok.extern.slf4j.Slf4j
-class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredPDX("focus") with Localizable:
+class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("focus") with Localizable:
 
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0

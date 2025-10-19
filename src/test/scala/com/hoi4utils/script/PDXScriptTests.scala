@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTree
 import com.hoi4utils.hoi4mod.map.strategicregions.StrategicRegion
 import com.hoi4utils.parser.{Node, Parser, Tokenizer}
 import com.hoi4utils.script.StringPDX
@@ -48,12 +48,12 @@ class PDXScriptTests extends AnyFunSuiteLike {
     testFunction(node)
   }
 
-  def withValidFocusTrees(testFunction: FocusTreeFile => Unit): Unit = {
+  def withValidFocusTrees(testFunction: FocusTree => Unit): Unit = {
     validFocusTreeTestFiles.foreach(file => {
       val parser = new Parser(file)
       val node = parser.parse
       assert(node != null, s"Failed to parse $file")
-      val focusTree = new FocusTreeFile()
+      val focusTree = new FocusTree()
       focusTree.loadPDX(node)
       testFunction(focusTree)
     })
@@ -291,14 +291,14 @@ class PDXScriptTests extends AnyFunSuiteLike {
 
   test("SMA Simple") {
     val file = new File(testPath + "Massachusetts_focus_simple.txt")
-    val treeSMA = new FocusTreeFile(file)
+    val treeSMA = new FocusTree(file)
     println(treeSMA.toScript)
     assert(treeSMA.pdxProperties.nonEmpty)
   }
 
   test("SMA") {
     val file = new File(testPath + "Massachusetts_focus.txt")
-    val treeSMA = new FocusTreeFile(file)
+    val treeSMA = new FocusTree(file)
     println(treeSMA.toScript)
     assert(treeSMA.pdxProperties.nonEmpty)
   }

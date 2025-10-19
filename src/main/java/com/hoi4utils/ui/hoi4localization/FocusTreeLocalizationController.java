@@ -3,9 +3,8 @@ package com.hoi4utils.ui.hoi4localization;
 import com.hoi4utils.exceptions.LocalizationPreconditionException;
 import com.hoi4utils.hoi4mod.common.national_focus.FixFocus;
 import com.hoi4utils.hoi4mod.common.national_focus.Focus;
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile;
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile$;
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTrees;
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTree;
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager;
 import com.hoi4utils.hoi4mod.localization.Localization;
 import com.hoi4utils.hoi4mod.localization.LocalizationManager;
 import com.hoi4utils.hoi4mod.localization.Property;
@@ -51,11 +50,11 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
     @FXML
     private RadioMenuItem localizationStatusRadioItem;
     @FXML
-    private ComboBox<FocusTreeFile> focusTreeComboBox;
+    private ComboBox<FocusTree> focusTreeComboBox;
     @FXML
     private Label focusTreeFileLabel;
 
-    private FocusTreeFile focusTreeFile;
+    private FocusTree focusTreeFile;
     private boolean generateDummyDescriptions = false;
     //private FocusLocalizationFile focusLocFile;
     private final ObservableList<Focus> focusObservableList;
@@ -82,7 +81,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
         focusLocStatusColumn.setCellValueFactory(JavaFXUIManager.tableCellDataCallback(dataFunction));
 
         /* load data */
-        focusTreeComboBox.setItems(FocusTrees.observeFocusTrees());
+        focusTreeComboBox.setItems(FocusTreesManager.observeFocusTrees());
 
         /* buttons */
         saveButton.setDisable(true);
