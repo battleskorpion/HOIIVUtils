@@ -5,7 +5,6 @@ import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.config
 import com.hoi4utils.ui.buildings.BuildingsByCountryController
 import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController2, RootWindows}
-import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.gfx.InterfaceFileListController
 import com.hoi4utils.ui.hoi4localization.*
