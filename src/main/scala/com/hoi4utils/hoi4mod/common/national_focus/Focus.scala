@@ -33,9 +33,9 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
   final val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
   final val relativePositionFocus = ReferencePDX[Focus](() => focusTree.focuses, f => f.id.value, "relative_position_id")
   final val cost: DoublePDX = DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
-  final val availableIfCapitulated: BooleanPDX = BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
-  final val cancelIfInvalid: BooleanPDX = BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
-  final val continueIfInvalid: BooleanPDX = BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
+  final val availableIfCapitulated: BooleanPDX = BooleanPDX("available_if_capitulated")
+  final val cancelIfInvalid: BooleanPDX = BooleanPDX("cancel_if_invalid", true)
+  final val continueIfInvalid: BooleanPDX = BooleanPDX("continue_if_invalid")
   //var ddsImage: Image = _
   final val ai_will_do = new AIWillDoPDX
   /* completion reward */

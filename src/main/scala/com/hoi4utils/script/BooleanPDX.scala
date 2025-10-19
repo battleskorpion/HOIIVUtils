@@ -6,7 +6,7 @@ import com.hoi4utils.parser.Node
 
 class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: Boolean, final private var boolType: BoolType) extends AbstractPDX[Boolean](pdxIdentifiers):
 
-  def this(pdxIdentifier: String, defaultValue: Boolean, boolType: BoolType) =
+  def this(pdxIdentifier: String, defaultValue: Boolean = false, boolType: BoolType = BoolType.YES_NO) =
     this(List(pdxIdentifier), defaultValue, boolType)
 
   @throws[UnexpectedIdentifierException]
