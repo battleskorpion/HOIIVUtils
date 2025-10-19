@@ -294,8 +294,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     if (focuses.isEmpty) {
       (1, 1) // minimum grid size
     } else {
-      val maxX = focuses.map(f => f.absoluteX + offsetX).max
-      val maxY = focuses.map(f => f.absoluteY + offsetY).max
+      val maxX = focuses.map(_.absoluteX + offsetX).max
+      val maxY = focuses.map(_.absoluteY + offsetY).max
       (maxX + 1, maxY + 1) // +1 because we're 0-indexed
     }
   }
