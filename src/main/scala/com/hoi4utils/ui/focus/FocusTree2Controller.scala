@@ -4,7 +4,9 @@ import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.custom_javafx.layout.ZoomableScrollPane
 import com.typesafe.scalalogging.LazyLogging
+import javafx.application.Platform
 import javafx.collections.ObservableList
+import javafx.concurrent.Task
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.*
@@ -35,8 +37,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML var vbox: VBox = uninitialized
   @FXML var welcome: ToggleButton = uninitialized
   @FXML var toggleGroup: ToggleGroup = uninitialized
-
-  // Zoom control buttons (add these to your FXML or create programmatically)
+  @FXML var progressIndicator: ProgressIndicator = uninitialized
   @FXML var zoomInButton: Button = uninitialized
   @FXML var zoomOutButton: Button = uninitialized
   @FXML var resetZoomButton: Button = uninitialized
@@ -57,6 +58,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     welcome.setToggleGroup(toggleGroup)
     welcome.fire()
     populateFocusSelection()
+    Platform.runLater(() => if progressIndicator != null then progressIndicator.setDisable(true))
+
 
   override def preSetup(): Unit = setupWindowControls(focusTree2, mClose, mSquare, mMinimize, menuBar)
 
@@ -107,31 +110,94 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     setRC()
     focusTreeView.add(Label(welcomeMessage), 0, 0)
 
+  /** Loads the given FocusTreeFile into the focusTreeView GridPane by creating it in a seperate thread */
   private def loadFocusTreeView(someFocusTree: FocusTreeFile): Unit =
     clear()
+
     for _ <- 0 until someFocusTree.columns do setCC()
     for _ <- 0 until someFocusTree.rows do setRC()
 
-    val focuses = someFocusTree.focuses
-    focuses match
-      case null =>
-        focusTreeView.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
-        logger.warn("Focuses list is null, cannot draw focus tree.")
-      case _ if focuses.isEmpty =>
-        focusTreeView.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
-        logger.warn("Focuses list is empty, nothing to draw.")
-      case _ =>
-        for row <- 0 until someFocusTree.rows do
-          for column <- 0 until someFocusTree.columns do
-            // Find a focus at this absolute position
-            focuses.find(f => f.hasAbsolutePosition(column, row)) match
-              case Some(focus) =>
-                val focusButton = FocusToggleButton(focus.toString, focusGridColumnsSize, focusGridRowSize)
-                focusTreeView.add(focusButton, column, row)
-              case None =>
-                // Add a transparent pane as placeholder to enable dragging in empty cells
-                val placeholder = createEmptyCell()
-                focusTreeView.add(placeholder, column, row)
+    val loadFocusTreeTask = new Task[GridPane]() {
+      override def call(): GridPane = {
+        val newGridPane = new GridPane()
+
+        // Copy properties from the existing focusTreeView
+        newGridPane.setHgap(focusTreeView.getHgap)
+        newGridPane.setVgap(focusTreeView.getVgap)
+        newGridPane.setGridLinesVisible(gridLines)
+        newGridPane.getStyleClass.addAll(focusTreeView.getStyleClass)
+        focusTreeView.getColumnConstraints.forEach(cc => {
+          val newCC = new ColumnConstraints()
+          newCC.setMinWidth(cc.getMinWidth)
+          newCC.setPrefWidth(cc.getPrefWidth)
+          newCC.setMaxWidth(cc.getMaxWidth)
+          newGridPane.getColumnConstraints.add(newCC)
+        })
+        focusTreeView.getRowConstraints.forEach(rc => {
+          val newRC = new RowConstraints()
+          newRC.setMinHeight(rc.getMinHeight)
+          newRC.setPrefHeight(rc.getPrefHeight)
+          newRC.setMaxHeight(rc.getMaxHeight)
+          newGridPane.getRowConstraints.add(newRC)
+        })
+        val focuses = someFocusTree.focuses
+        focuses match
+          case null =>
+            newGridPane.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
+            logger.warn("Focuses list is null, cannot draw focus tree.")
+          case _ if focuses.isEmpty =>
+            newGridPane.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
+            logger.warn("Focuses list is empty, nothing to draw.")
+          case _ =>
+            for row <- 0 until someFocusTree.rows do
+              if !isCancelled then
+                for column <- 0 until someFocusTree.columns do
+                  if !isCancelled then
+                    focuses.find(f => f.hasAbsolutePosition(column, row)) match
+                      case Some(focus) =>
+                        val focusButton = FocusToggleButton(focus.toString, focusGridColumnsSize, focusGridRowSize)
+                        newGridPane.add(focusButton, column, row)
+                      case None =>
+                        val placeholder = createEmptyCell()
+                        newGridPane.add(placeholder, column, row)
+
+        newGridPane
+      }
+    }
+
+    // Load the completed ui
+    loadFocusTreeTask.setOnSucceeded(_ => {
+      val newPane = loadFocusTreeTask.getValue
+      val currentZoom = zoomableScrollPane.getZoomLevel
+      val dividerPositions = splitPane.getDividerPositions  // Store current positions
+      val newZoomableScrollPane = ZoomableScrollPane(newPane)
+      newZoomableScrollPane.setPrefHeight(zoomableScrollPane.getPrefHeight)
+      newZoomableScrollPane.setPrefWidth(zoomableScrollPane.getPrefWidth)
+      newZoomableScrollPane.setZoomLevel(currentZoom)
+      val items = splitPane.getItems
+      val index = items.indexOf(zoomableScrollPane)
+      if index >= 0 then
+        items.set(index, newZoomableScrollPane)
+      Platform.runLater(() => {
+        splitPane.setDividerPositions(dividerPositions: _*) // Restore divider positions
+      })
+      zoomableScrollPane = newZoomableScrollPane
+      focusTreeView = newPane
+      if zoomInButton != null then zoomInButton.setOnAction(_ => zoomableScrollPane.zoomIn())
+      if zoomOutButton != null then zoomOutButton.setOnAction(_ => zoomableScrollPane.zoomOut())
+      if resetZoomButton != null then resetZoomButton.setOnAction(_ => zoomableScrollPane.resetZoom())
+    })
+
+    updateProgressIndicator(loadFocusTreeTask)
+
+    val thread = new Thread(loadFocusTreeTask)
+    thread.setDaemon(true)
+    thread.start()
+
+  private def updateProgressIndicator(task: Task[GridPane]): Unit =
+    if progressIndicator != null then
+      progressIndicator.progressProperty().bind(task.progressProperty())
+      progressIndicator.visibleProperty().bind(task.runningProperty())
 
   /** Creates an invisible pane that allows dragging/panning on empty grid cells */
   private def createEmptyCell(): Pane =
