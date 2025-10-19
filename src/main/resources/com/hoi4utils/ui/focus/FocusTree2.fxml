@@ -124,7 +124,7 @@
             <Insets right="90.0" top="-30.0" />
          </VBox.margin>
     </MenuBar>
-    <SplitPane dividerPositions="0.15, 0.7503" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane fx:id="splitPane" dividerPositions="0.15, 0.7503" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
         <ScrollPane fx:id="focusSelection">
                <content>

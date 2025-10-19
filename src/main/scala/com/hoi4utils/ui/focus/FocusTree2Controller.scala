@@ -31,6 +31,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML var mMinimize: Button = uninitialized
   @FXML var focusSelection: ScrollPane = uninitialized
   @FXML var focusTreeScrollPane: ScrollPane = uninitialized
+  @FXML var splitPane: SplitPane = uninitialized  // Add this FXML reference
   @FXML var vbox: VBox = uninitialized
   @FXML var welcome: ToggleButton = uninitialized
   @FXML var toggleGroup: ToggleGroup = uninitialized
@@ -60,6 +61,9 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   override def preSetup(): Unit = setupWindowControls(focusTree2, mClose, mSquare, mMinimize, menuBar)
 
   private def replaceWithZoomableScrollPane(): Unit =
+    // Remove the GridPane from the original ScrollPane first
+    focusTreeScrollPane.setContent(null)
+
     // Create the ZoomableScrollPane with the GridPane as target
     zoomableScrollPane = ZoomableScrollPane(focusTreeView)
 
@@ -67,16 +71,17 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     zoomableScrollPane.setPrefHeight(focusTreeScrollPane.getPrefHeight)
     zoomableScrollPane.setPrefWidth(focusTreeScrollPane.getPrefWidth)
 
-    // Find the parent SplitPane and replace the ScrollPane
-    val parent = focusTreeScrollPane.getParent
-    parent match
-      case splitPane: SplitPane =>
-        val items = splitPane.getItems
-        val index = items.indexOf(focusTreeScrollPane)
-        if index >= 0 then
-          items.set(index, zoomableScrollPane)
-      case _ =>
-        logger.warn("Could not find SplitPane parent to replace ScrollPane")
+    // Replace in SplitPane
+    if splitPane != null then
+      val items = splitPane.getItems
+      val index = items.indexOf(focusTreeScrollPane)
+      if index >= 0 then
+        items.set(index, zoomableScrollPane)
+        logger.info(s"Successfully replaced ScrollPane at index $index with ZoomableScrollPane")
+      else
+        logger.error("Could not find focusTreeScrollPane in SplitPane items")
+    else
+      logger.error("splitPane is null - check FXML fx:id")
 
   private def populateFocusSelection(): Unit =
     Some(FocusTreeFile.observeFocusTrees).foreach(trees =>
