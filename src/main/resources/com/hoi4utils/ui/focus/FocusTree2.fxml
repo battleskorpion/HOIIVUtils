@@ -38,7 +38,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
@@ -166,13 +166,14 @@
     </SplitPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
       <children>
-            <ProgressIndicator fx:id="progressIndicator" prefHeight="22.0" progress="0.0" />
+            <ProgressBar fx:id="progressIndicator" prefWidth="200.0" progress="0.0" />
         <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
             <HBox>
                <children>
                   <Button fx:id="zoomInButton" mnemonicParsing="false" text="Zoom In (+)" />
                   <Button fx:id="resetZoomButton" mnemonicParsing="false" text="Reset Zoom (1:1)" />
                   <Button fx:id="zoomOutButton" mnemonicParsing="false" text="Zoom Out (-)" />
+                  <ToggleButton fx:id="gridlines" mnemonicParsing="false" onAction="#handleGridlines" text="Gridlines" />
                </children>
             </HBox>
       </children>

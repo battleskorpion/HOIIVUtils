@@ -919,3 +919,172 @@
     -fx-padding: 5;
     padding: 5;
 }
+
+/* ToggleButton - Clear On/Off States */
+.toggle-button {
+    /* Base styling matching regular buttons */
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+
+    /* Default OFF state - darker, muted */
+    -fx-background-color:
+            linear-gradient(to bottom, #2A2A2A 0%, #1A1A1A 50%, #0F0F0F 100%),
+            #1A1A1A;
+
+    -fx-border-width: 1;
+    -fx-border-color: #222222;
+
+    -fx-text-fill: #AFB1B3;
+    -fx-font-weight: normal;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0.5, 0, 1);
+
+    /* Force the background insets to ensure proper rendering */
+    -fx-background-insets: 0;
+}
+
+.toggle-button .text {
+    -fx-effect: null;
+    -fx-fill: #AFB1B3;
+}
+
+.toggle-button:hover {
+    -fx-background-color:
+            linear-gradient(to bottom, #3E3E40 0%, #2A2A2A 50%, #1A1A1A 100%),
+            #3E3E40;
+
+    -fx-border-color: #1F8ED8;
+    -fx-effect: dropshadow(gaussian, rgb(31, 141, 214), 4, 0.7, 0, 0);
+    -fx-cursor: HAND;
+}
+
+/* SELECTED (ON) STATE - Bright and clearly different */
+.toggle-button:selected {
+    /* Bright blue gradient for ON state */
+    -fx-background-color:
+            linear-gradient(to bottom, #1F8ED8 0%, #0F7EC8 50%, #007ACC 100%),
+            #007ACC;
+
+    -fx-border-color: #2F9EE8;
+    -fx-border-width: 1;
+
+    /* Brighter text for ON state */
+    -fx-text-fill: #FFFFFF;
+
+    /* Glowing effect to emphasize active state */
+    -fx-effect: dropshadow(gaussian, rgb(31, 141, 214), 6, 0.8, 0, 0);
+
+    /* Force background insets */
+    -fx-background-insets: 0;
+}
+
+.toggle-button:selected .text {
+    -fx-fill: #FFFFFF;
+}
+
+/* Important: Override any focus/armed states that might interfere */
+.toggle-button:selected:armed {
+    -fx-background-color:
+            linear-gradient(to bottom, #1F8ED8 0%, #0F7EC8 50%, #007ACC 100%),
+            #007ACC;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-insets: 0;
+}
+
+.toggle-button:armed {
+    -fx-background-insets: 0;
+}
+
+.toggle-button:selected:hover {
+    -fx-background-color:
+            linear-gradient(to bottom, #2F9EE8 0%, #1F8ED8 50%, #0F7EC8 100%),
+            #0F7EC8;
+
+    -fx-border-color: #3FAEF8;
+    -fx-effect: dropshadow(gaussian, rgb(63, 174, 248), 8, 0.9, 0, 0);
+    -fx-cursor: HAND;
+}
+
+.toggle-button:selected:pressed {
+    /* Inverted gradient when pressing ON button */
+    -fx-background-color:
+            linear-gradient(to bottom, #007ACC 0%, #0F7EC8 50%, #1F8ED8 100%),
+            #005A9E;
+
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.4), 3, 0.7, 0, 1);
+}
+
+.toggle-button:pressed {
+    -fx-background-color:
+            linear-gradient(to bottom, #0F0F0F 0%, #1A1A1A 50%, #2A2A2A 100%),
+            #4e4e4e;
+
+    -fx-border-color: #4e4e4e;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.6), 3, 0.7, 0, 1);
+    -fx-cursor: HAND;
+}
+
+.toggle-button:focused {
+    -fx-border-color: #1F8ED8;
+    -fx-border-width: 1;
+}
+
+.toggle-button:selected:focused {
+    -fx-border-color: #3FAEF8;
+    -fx-border-width: 1;
+}
+
+.toggle-button:disabled {
+    -fx-background-color:
+            linear-gradient(to bottom, #2A2A2C 0%, #1D1D20 50%, #151518 100%),
+            #1D1D20;
+
+    -fx-border-color: #3A3A3C;
+    -fx-text-fill: #6A6A6C;
+    -fx-opacity: 0.6;
+    -fx-effect: none;
+}
+
+.toggle-button:selected:disabled {
+    -fx-background-color:
+            linear-gradient(to bottom, #3A5A7C 0%, #2A4A6C 50%, #1A3A5C 100%),
+            #2A4A6C;
+
+    -fx-border-color: #4A6A8C;
+    -fx-text-fill: #8A9AAC;
+    -fx-opacity: 0.6;
+    -fx-effect: none;
+}
+
+/* Alternative color schemes for different toggle button purposes */
+
+/* Success/Green toggle */
+.toggle-button.success:selected {
+    -fx-background-color:
+            linear-gradient(to bottom, #1D9053 0%, #0D8043 50%, #0B7A3E 100%),
+            #0B7A3E;
+
+    -fx-border-color: #2DA063;
+    -fx-effect: dropshadow(gaussian, rgb(29, 144, 83), 6, 0.8, 0, 0);
+}
+
+/* Danger/Red toggle */
+.toggle-button.danger:selected {
+    -fx-background-color:
+            linear-gradient(to bottom, #D43B2C 0%, #C42B1C 50%, #B42B1C 100%),
+            #B42B1C;
+
+    -fx-border-color: #E44B3C;
+    -fx-effect: dropshadow(gaussian, rgb(212, 59, 44), 6, 0.8, 0, 0);
+}
+
+/* Warning/Orange toggle */
+.toggle-button.warning:selected {
+    -fx-background-color:
+            linear-gradient(to bottom, #F5A623 0%, #E59613 50%, #D58603 100%),
+            #E59613;
+
+    -fx-border-color: #FFB633;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgb(245, 166, 35), 6, 0.8, 0, 0);
+}

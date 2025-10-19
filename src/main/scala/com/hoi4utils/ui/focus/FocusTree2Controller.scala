@@ -5,12 +5,10 @@ import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.custom_javafx.layout.ZoomableScrollPane
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
-import javafx.collections.ObservableList
 import javafx.concurrent.Task
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.*
-import javafx.scene.paint.Color
 
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
@@ -20,9 +18,9 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   setTitle("Focus Tree Viewer 2: Electric Boogaloo")
   private var focusGridColumns: Int = 0
   private var focusGridRows: Int = 0
-  private var focusGridColumnsSize: Int = 250
-  private var focusGridRowSize: Int = 250
-  private var gridLines: Boolean = true
+  private val focusGridColumnsSize: Int = 100
+  private val focusGridRowSize: Int = 200
+  private var lines: Boolean = true
   private val welcomeMessage: String = s"Welcome to the Focus Tree Viewer 2!"
 
   @FXML var focusTree2: VBox = uninitialized
@@ -33,11 +31,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML var mMinimize: Button = uninitialized
   @FXML var focusSelection: ScrollPane = uninitialized
   @FXML var focusTreeScrollPane: ScrollPane = uninitialized
-  @FXML var splitPane: SplitPane = uninitialized  // Add this FXML reference
+  @FXML var splitPane: SplitPane = uninitialized
   @FXML var vbox: VBox = uninitialized
   @FXML var welcome: ToggleButton = uninitialized
   @FXML var toggleGroup: ToggleGroup = uninitialized
   @FXML var progressIndicator: ProgressIndicator = uninitialized
+  @FXML var gridlines: ToggleButton = uninitialized
   @FXML var zoomInButton: Button = uninitialized
   @FXML var zoomOutButton: Button = uninitialized
   @FXML var resetZoomButton: Button = uninitialized
@@ -45,21 +44,20 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private var toggleButtons: ListBuffer[ToggleButton] = ListBuffer.empty
   private var zoomableScrollPane: ZoomableScrollPane = uninitialized
 
+  // Track the current running task
+  private var currentLoadTask: Option[Task[GridPane]] = None
+
   @FXML def initialize(): Unit =
     // Replace the regular ScrollPane with ZoomableScrollPane
     replaceWithZoomableScrollPane()
 
     // Setup zoom buttons if they exist
-    if zoomInButton != null then zoomInButton.setOnAction(_ => zoomableScrollPane.zoomIn())
-    if zoomOutButton != null then zoomOutButton.setOnAction(_ => zoomableScrollPane.zoomOut())
-    if resetZoomButton != null then resetZoomButton.setOnAction(_ => zoomableScrollPane.resetZoom())
-
+    setupZoomButtons()
     clear()
     welcome.setToggleGroup(toggleGroup)
     welcome.fire()
     populateFocusSelection()
-    Platform.runLater(() => if progressIndicator != null then progressIndicator.setDisable(true))
-
+    Platform.runLater(() => if progressIndicator != null then progressIndicator.setVisible(false))
 
   override def preSetup(): Unit = setupWindowControls(focusTree2, mClose, mSquare, mMinimize, menuBar)
 
@@ -80,7 +78,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       val index = items.indexOf(focusTreeScrollPane)
       if index >= 0 then
         items.set(index, zoomableScrollPane)
-        logger.info(s"Successfully replaced ScrollPane at index $index with ZoomableScrollPane")
       else
         logger.error("Could not find focusTreeScrollPane in SplitPane items")
     else
@@ -102,16 +99,22 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     focusTreeView.getChildren.clear()
     focusTreeView.getColumnConstraints.clear()
     focusTreeView.getRowConstraints.clear()
-    focusTreeView.setGridLinesVisible(gridLines)
+    focusTreeView.setGridLinesVisible(lines)
 
   private def loadWelcomeMessage(): Unit =
+    // Cancel any running task first
+    cancelCurrentTask()
+
     clear()
     setCC()
     setRC()
     focusTreeView.add(Label(welcomeMessage), 0, 0)
 
-  /** Loads the given FocusTreeFile into the focusTreeView GridPane by creating it in a seperate thread */
+  /** Loads the given FocusTreeFile into the focusTreeView GridPane by creating it in a separate thread */
   private def loadFocusTreeView(someFocusTree: FocusTreeFile): Unit =
+    // Cancel any currently running task
+    cancelCurrentTask()
+
     clear()
 
     for _ <- 0 until someFocusTree.columns do setCC()
@@ -124,7 +127,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         // Copy properties from the existing focusTreeView
         newGridPane.setHgap(focusTreeView.getHgap)
         newGridPane.setVgap(focusTreeView.getVgap)
-        newGridPane.setGridLinesVisible(gridLines)
+        newGridPane.setGridLinesVisible(lines)
         newGridPane.getStyleClass.addAll(focusTreeView.getStyleClass)
         focusTreeView.getColumnConstraints.forEach(cc => {
           val newCC = new ColumnConstraints()
@@ -140,62 +143,114 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           newRC.setMaxHeight(rc.getMaxHeight)
           newGridPane.getRowConstraints.add(newRC)
         })
+
         val focuses = someFocusTree.focuses
         focuses match
           case null =>
-            newGridPane.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
-            logger.warn("Focuses list is null, cannot draw focus tree.")
+            if !isCancelled then
+              newGridPane.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
+              logger.warn("Focuses list is null, cannot draw focus tree.")
           case _ if focuses.isEmpty =>
-            newGridPane.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
-            logger.warn("Focuses list is empty, nothing to draw.")
+            if !isCancelled then
+              newGridPane.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
+              logger.warn("Focuses list is empty, nothing to draw.")
           case _ =>
+            val totalWork = someFocusTree.rows * someFocusTree.columns
+            var workDone = 0
+
             for row <- 0 until someFocusTree.rows do
-              if !isCancelled then
-                for column <- 0 until someFocusTree.columns do
-                  if !isCancelled then
-                    focuses.find(f => f.hasAbsolutePosition(column, row)) match
-                      case Some(focus) =>
-                        val focusButton = FocusToggleButton(focus.toString, focusGridColumnsSize, focusGridRowSize)
-                        newGridPane.add(focusButton, column, row)
-                      case None =>
-                        val placeholder = createEmptyCell()
-                        newGridPane.add(placeholder, column, row)
+              if isCancelled then
+                logger.info(s"Task cancelled while loading row $row")
+                return newGridPane  // Exit early if cancelled
+
+              for column <- 0 until someFocusTree.columns do
+                if isCancelled then
+                  logger.info(s"Task cancelled while loading column $column in row $row")
+                  return newGridPane  // Exit early if cancelled
+
+                focuses.find(f => f.hasAbsolutePosition(column, row)) match
+                  case Some(focus) =>
+                    val focusButton = FocusToggleButton(focus.toString, focusGridColumnsSize, focusGridRowSize)
+                    newGridPane.add(focusButton, column, row)
+                  case None =>
+                    val placeholder = createEmptyCell()
+                    newGridPane.add(placeholder, column, row)
+
+                workDone += 1
+                updateProgress(workDone, totalWork)
 
         newGridPane
       }
     }
 
-    // Load the completed ui
+    // Load the completed UI
     loadFocusTreeTask.setOnSucceeded(_ => {
-      val newPane = loadFocusTreeTask.getValue
-      val currentZoom = zoomableScrollPane.getZoomLevel
-      val dividerPositions = splitPane.getDividerPositions  // Store current positions
-      val newZoomableScrollPane = ZoomableScrollPane(newPane)
-      newZoomableScrollPane.setPrefHeight(zoomableScrollPane.getPrefHeight)
-      newZoomableScrollPane.setPrefWidth(zoomableScrollPane.getPrefWidth)
-      newZoomableScrollPane.setZoomLevel(currentZoom)
-      val items = splitPane.getItems
-      val index = items.indexOf(zoomableScrollPane)
-      if index >= 0 then
-        items.set(index, newZoomableScrollPane)
-      Platform.runLater(() => {
-        splitPane.setDividerPositions(dividerPositions: _*) // Restore divider positions
-      })
-      zoomableScrollPane = newZoomableScrollPane
-      focusTreeView = newPane
-      if zoomInButton != null then zoomInButton.setOnAction(_ => zoomableScrollPane.zoomIn())
-      if zoomOutButton != null then zoomOutButton.setOnAction(_ => zoomableScrollPane.zoomOut())
-      if resetZoomButton != null then resetZoomButton.setOnAction(_ => zoomableScrollPane.resetZoom())
+      // Only update if this task is still the current one
+      currentLoadTask match
+        case Some(task) if task == loadFocusTreeTask =>
+          val newPane = loadFocusTreeTask.getValue
+          val currentZoom = zoomableScrollPane.getZoomLevel
+          val dividerPositions = splitPane.getDividerPositions
+          val newZoomableScrollPane = ZoomableScrollPane(newPane)
+          newZoomableScrollPane.setPrefHeight(zoomableScrollPane.getPrefHeight)
+          newZoomableScrollPane.setPrefWidth(zoomableScrollPane.getPrefWidth)
+          newZoomableScrollPane.setZoomLevel(currentZoom)
+          val items = splitPane.getItems
+          val index = items.indexOf(zoomableScrollPane)
+          if index >= 0 then
+            items.set(index, newZoomableScrollPane)
+          Platform.runLater(() => {
+            splitPane.setDividerPositions(dividerPositions: _*)
+          })
+          zoomableScrollPane = newZoomableScrollPane
+          focusTreeView = newPane
+          setupZoomButtons()
+          currentLoadTask = None
+        case _ =>
+          logger.info("Task succeeded but was already replaced by another task")
+    })
+
+    loadFocusTreeTask.setOnCancelled(_ => {
+      logger.info(s"Task cancelled for focus tree: ${someFocusTree.name}")
+      currentLoadTask = None
+    })
+
+    loadFocusTreeTask.setOnFailed(_ => {
+      logger.error(s"Task failed for focus tree: ${someFocusTree.name}", loadFocusTreeTask.getException)
+      currentLoadTask = None
     })
 
     updateProgressIndicator(loadFocusTreeTask)
+
+    // Store the current task
+    currentLoadTask = Some(loadFocusTreeTask)
 
     val thread = new Thread(loadFocusTreeTask)
     thread.setDaemon(true)
     thread.start()
 
+  private def setupZoomButtons(): Unit = {
+    if zoomInButton != null then zoomInButton.setOnAction(_ => zoomableScrollPane.zoomIn())
+    if zoomOutButton != null then zoomOutButton.setOnAction(_ => zoomableScrollPane.zoomOut())
+    if resetZoomButton != null then resetZoomButton.setOnAction(_ => zoomableScrollPane.resetZoom())
+  }
+
+  /** Cancels the currently running task if one exists */
+  private def cancelCurrentTask(): Unit =
+    currentLoadTask match
+      case Some(task) if task.isRunning =>
+        logger.info("Cancelling current load task")
+        task.cancel()
+        currentLoadTask = None
+      case Some(task) =>
+        logger.debug("Current task exists but is not running")
+        currentLoadTask = None
+      case None =>
+
   private def updateProgressIndicator(task: Task[GridPane]): Unit =
     if progressIndicator != null then
+      progressIndicator.progressProperty().unbind()
+      progressIndicator.visibleProperty().unbind()
       progressIndicator.progressProperty().bind(task.progressProperty())
       progressIndicator.visibleProperty().bind(task.runningProperty())
 
@@ -227,5 +282,10 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   }
 
   @FXML def handleWelcome(): Unit =
+    cancelCurrentTask()
     clear()
     loadWelcomeMessage()
+
+  @FXML def handleGridlines(): Unit =
+    lines = gridlines.isSelected
+    focusTreeView.setGridLinesVisible(gridlines.isSelected)
