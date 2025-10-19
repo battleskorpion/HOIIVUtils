@@ -112,6 +112,8 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
     this.y @= y
     prev
 
+  def setXY(xy: Point): Point = setXY(xy.x, xy.y)
+
   /**
    * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
    * that position, but its absolute coordinates are always the same.
@@ -119,8 +121,8 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
    * @param x absolute x-coordinate
    * @param y absolute y-coordinate
    * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
-   *                                   in the same position even though the position of this focus changes.
-   * @return the previous absolute position.
+   *                                   in the same position even though the position of this focus changes
+   * @return the previous absolute position
    */
   def setAbsoluteXY(x: Int, y: Int, updateChildRelativeOffsets: Boolean): Point =
     val prevAbsolute = absolutePosition
@@ -136,7 +138,16 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
           focus.offsetXY(prevAbsolute.x - x, prevAbsolute.y - y)
     prevAbsolute
 
-  def setXY(xy: Point): Point = setXY(xy.x, xy.y)
+  /**
+   * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
+   * that position, but its absolute coordinates are always the same.
+   *
+   * @param xy                         absolute x- and y-coordinates
+   * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
+   *                                   in the same position even though the position of this focus changes
+   * @return the previous absolute position
+   */
+  def setAbsoluteXY(xy: Point, updateChildRelativeOffsets: Boolean): Point = setAbsoluteXY(xy.x, xy.y, updateChildRelativeOffsets)
 
   def offsetXY(x: Int, y: Int): Point =
     val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))

@@ -181,13 +181,13 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           while (intersected != null && (intersected.getParent != newGridPane)) {
             intersected = intersected.getParent
           }
-          var targetColumn = 0
-          var targetRow = 0
+          var targetGridX = 0
+          var targetGridY = 0
           if (intersected != null) {
             val col = GridPane.getColumnIndex(intersected)
             val row = GridPane.getRowIndex(intersected)
-            targetColumn = if (col != null) col else 0
-            targetRow = if (row != null) row else 0
+            targetGridX = if (col != null) col else 0
+            targetGridY = if (row != null) row else 0
           }
 
           val src = de.getGestureSource
@@ -204,8 +204,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
               // For example, if you want to move the actual ToggleButton:
               // ((Pane) myToggleButton.getParent()).getChildren().remove(myToggleButton);
               // dropTargetPane.getChildren().add(myToggleButton)
-              updateFocusPosition(sourceButton.focus, gridToFocusXY(targetRow, targetColumn, sourceButton.focusTree))
-              System.out.println("Dropped: " + data)
+              updateFocusPosition(sourceButton.focus, gridToFocusXY(targetGridX, targetGridY, sourceButton.focusTree), false)
+              System.out.println("Dropped: " + data + "x: " + targetGridX + "y: " + targetGridY)
               success = true
             }
             de.setDropCompleted(success)
@@ -455,8 +455,10 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     db.setContent(content)
     event.consume()
 
-  def updateFocusPosition(focus: Focus, newFocusPos: Point): Unit = {
-    focus.setXY(newFocusPos)
+  def updateFocusPosition(focus: Focus, newFocusPos: Point, updateChildRelativeOffsets: Boolean): Unit = {
+    focus.setAbsoluteXY(newFocusPos, updateChildRelativeOffsets)
+    // TODO: in future only do main button move if updateChild is on for now its debug time
+
     // get the valid Focus objects to match
     val relativelyPositionedFocuses = focus.selfAndRelativePositionedFocuses
     val focusToggleButtons = CollectionConverters.asScala(focusTreeView.getChildren)
@@ -467,19 +469,16 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 
     System.out.println(focusButtons)
     focusButtons.foreach(fb =>
-      val gridX = focusToGridX(focus)
-      val gridY = focusToGridY(focus)
-      // find existing node at that grid position
-      val existing = focusTreeView.getChildren.filtered { node =>
-        GridPane.getColumnIndex(node) == gridY &&
-          GridPane.getRowIndex(node) == gridX
-      }
-      // remove any existing nodes at that position
-      if !existing.isEmpty then focusTreeView.getChildren.removeAll(existing)
+      val gridX = focusToGridX(fb.focus)
+      val gridY = focusToGridY(fb.focus)
 
+      System.out.println("removing fb")
+      System.out.println(s"new x $gridX")
+      System.out.println(s"new y $gridY")
       focusTreeView.getChildren.remove(fb)
-      GridPane.setRowIndex(fb, gridX)
-      GridPane.setColumnIndex(fb, gridY)
+      GridPane.setColumnIndex(fb, gridX)
+      GridPane.setRowIndex(fb, gridY)
       focusTreeView.getChildren.add(fb)
+      System.out.println(fb)
     )
   }
