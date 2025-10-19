@@ -9,6 +9,7 @@ import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXML
 import javafx.geometry.Insets
+import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.input.{DragEvent, Dragboard, MouseEvent, TransferMode}
 import javafx.scene.layout.*
@@ -173,12 +174,26 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           de.consume()
         })
         newGridPane.setOnDragDropped(de =>
+          var intersected = de.getPickResult.getIntersectedNode
+          // climb up to the direct child of the grid
+          while (intersected != null && (intersected.getParent != newGridPane)) {
+            intersected = intersected.getParent
+          }
+          var targetColumn = 0
+          var targetRow = 0
+          if (intersected != null) {
+            val col = GridPane.getColumnIndex(intersected)
+            val row = GridPane.getRowIndex(intersected)
+            targetColumn = if (col != null) col else 0
+            targetRow = if (row != null) row else 0
+          }
+
           val src = de.getGestureSource
           if !src.isInstanceOf[FocusToggleButton] then
             de.setDropCompleted(false)
             de.consume()
           else
-            val sourceButton: FocusToggleButton = src.asInstanceOf[FocusToggleButton]
+            val sourceButton = src.asInstanceOf[FocusToggleButton]
             val db = de.getDragboard
             var success = false
             if (db.hasString) {
@@ -188,10 +203,10 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
               // ((Pane) myToggleButton.getParent()).getChildren().remove(myToggleButton);
               // dropTargetPane.getChildren().add(myToggleButton)
               // remove from old parent
-              sourceButton.focus.x -= 1
-              sourceButton.getParent match
-                case p: Pane => p.getChildren.remove(sourceButton)
-                case _ => () // if it wasn't in a Pane, skip (or handle GridPane removal)
+              //newGridPane.get
+              newGridPane.getChildren.remove(sourceButton)
+              GridPane.setColumnIndex(sourceButton, targetColumn)
+              GridPane.setRowIndex(sourceButton, targetRow)
               newGridPane.getChildren.add(sourceButton)
               System.out.println("Dropped: " + data)
               success = true
