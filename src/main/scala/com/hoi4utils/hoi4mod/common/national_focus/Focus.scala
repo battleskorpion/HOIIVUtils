@@ -56,16 +56,17 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
 
   def position: Point = new Point(x.getOrElse(0), y.getOrElse(0))
 
-  def absolutePosition: Point =
+  def absolutePosition: Point = {
     /**
      * Recursively calculate the absolute position of a focus, taking into account relative positions.
-     * @param focus the focus to calculate the absolute position of
-     * @param visited set of focus ids that have been visited to detect circular references
+     *
+     * @param focus     the focus to calculate the absolute position of
+     * @param visited   set of focus ids that have been visited to detect circular references
      * @param offsetAcc accumulated point adjustment
      * @return the absolute position of the focus
      */
     @tailrec
-    def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: Point = new Point(0, 0)): Point =
+    def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: Point = new Point(0, 0)): Point = {
       if focus.relativePositionFocus.isUndefined then
         return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
       // Check for self-reference
@@ -85,8 +86,10 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
         case None =>
           logger.error(s"Focus id ${focus.relativePositionFocus.getReferenceName} not a valid focus")
           new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
-
+    }
+    
     absolutePosition(this)
+  }
 
   override def toString: String =
     id.value match
