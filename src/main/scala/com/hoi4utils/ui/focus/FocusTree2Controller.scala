@@ -14,6 +14,7 @@ import javafx.scene.control.*
 import javafx.scene.input.{DragEvent, Dragboard, MouseEvent, TransferMode}
 import javafx.scene.layout.*
 import scalafx.scene.input.ClipboardContent
+import sun.jvm.hotspot.HelloWorld.e
 
 import java.awt.Point
 import javax.sound.sampled.Clip
@@ -197,6 +198,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           else
             val sourceButton = src.asInstanceOf[FocusToggleButton]
             val db = de.getDragboard
+            val isShiftDown = db.getString.contains("shift:true")
             var success = false
             if (db.hasString) {
               val data = db.getString
@@ -204,7 +206,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
               // For example, if you want to move the actual ToggleButton:
               // ((Pane) myToggleButton.getParent()).getChildren().remove(myToggleButton);
               // dropTargetPane.getChildren().add(myToggleButton)
-              updateFocusPosition(sourceButton.focus, gridToFocusXY(targetGridX, targetGridY, sourceButton.focusTree), false)
+              updateFocusPosition(sourceButton.focus, gridToFocusXY(targetGridX, targetGridY, sourceButton.focusTree), isShiftDown)
               System.out.println("Dropped: " + data + "x: " + targetGridX + "y: " + targetGridY)
               success = true
             }
@@ -451,7 +453,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   def handleDraggedFocusButton(event: MouseEvent, toggleButton: FocusToggleButton): Unit =
     val db: Dragboard = toggleButton.startDragAndDrop(TransferMode.MOVE)
     val content: ClipboardContent = ClipboardContent()
-    content.putString("ToggleButton Data") // You can put any data here
+    content.putString(if event.isShiftDown then "shift:true" else "shift:false")
     db.setContent(content)
     event.consume()
 
