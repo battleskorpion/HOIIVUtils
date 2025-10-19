@@ -88,3 +88,5 @@ class ZoomableScrollPane(private var target: Node) extends ScrollPane:
     zoomNode = Group(target)
     setContent(outerNode(zoomNode))
     updateScale()
+
+  def getTarget: Node = target
