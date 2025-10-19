@@ -1,6 +1,7 @@
 package com.hoi4utils.hoi4mod.localization
 
 import com.hoi4utils.exceptions.LocalizationPropertyException
+import com.hoi4utils.hoi4mod.localization.Property.{DESCRIPTION, NAME}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.ui.custom_javafx.controller.JavaFXUIManager
 
@@ -72,6 +73,10 @@ trait Localizable {
   def localizationText(property: Property): Option[String] = localization(property) match
     case Some(l) => Some(l.text)
     case None => None
+
+  def locName: Option[String] = this.localizationText(NAME)
+
+  def locDesc: Option[String] = this.localizationText(DESCRIPTION)
 
   def localizationStatus(property: Property): Localization.Status = localization(property) match
     case Some(l) => l.status
