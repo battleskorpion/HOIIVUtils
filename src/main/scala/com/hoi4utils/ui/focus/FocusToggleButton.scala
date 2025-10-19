@@ -1,33 +1,38 @@
 package com.hoi4utils.ui.focus
 
 import com.hoi4utils.ddsreader.DDSReader
+import com.hoi4utils.hoi4mod.common.national_focus.Focus
 import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.typesafe.scalalogging.LazyLogging
+import javafx.geometry.Pos
 import javafx.scene.control.*
 import javafx.scene.layout.*
-import scalafx.scene.image.Image
+import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 
-class FocusToggleButton(var name: String = "No Name", prefW: Double = 200, prefH: Double = 40) extends ToggleButton with LazyLogging:
-  private var focus = name
-  private val gfxFocusUnavailable: Image = loadFocusUnavailableImage("focus_unavailable_bg.dds")
+class FocusToggleButton(private val focus: Focus, prefW: Double, prefH: Double) extends ToggleButton with LazyLogging:
 
-  // initial sizing and style
+  private val gfxFocusUnavailable: Image = loadFocusUnavailableImage("focus_unavailable_bg.dds")
+  private val focusIcon: Image = loadFocusIcon()
+  private val cleanName: Label = Label(focus.locName.getOrElse(focus.id.str))
+
   setPrefSize(prefW, prefH)
   setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE)
   setMaxWidth(Double.MaxValue)
 
-  // Apply custom style class for subdued colors
   getStyleClass.add("focus-toggle-button")
   setStyle("-fx-font-size: 14px; -fx-padding: 6px;")
 
-  // set the DDS image as a graphic (ScalaFX Image -> JavaFX Image via delegate)
   if gfxFocusUnavailable != null then
-    setGraphic(new ImageView(gfxFocusUnavailable.delegate))
+    val cleanNameBackGround = new ImageView(gfxFocusUnavailable)
+    val stackPane = new StackPane(cleanNameBackGround, cleanName)
+    stackPane.setAlignment(Pos.CENTER)
+    val iconView = new ImageView(focusIcon)
+    val vbox = new VBox(-127, stackPane, iconView)
+    vbox.setAlignment(Pos.CENTER) // Optional: center the items in the VBox
+    setGraphic(vbox) // Set vbox, not stackPane!
 
-  // convenience methods to change settings at runtime
-  def setSize(width: Double, height: Double): Unit =
-    setPrefSize(width, height)
+  def setSize(width: Double, height: Double): Unit = setPrefSize(width, height)
 
   def setPreferredWidth(width: Double): Unit = setPrefWidth(width)
 
@@ -36,11 +41,10 @@ class FocusToggleButton(var name: String = "No Name", prefW: Double = 200, prefH
   def applyCssStyle(css: String): Unit = setStyle(css)
 
   def setBackgroundImage(image: Image): Unit =
-    if image != null then setGraphic(new ImageView(image.delegate)) else setGraphic(null)
+    if image != null then setGraphic(new ImageView(image)) else setGraphic(null)
 
   def setHelpTooltip(text: String): Unit = setTooltip(new Tooltip(text))
 
-  // existing loader (unchanged behavior)
   private def loadFocusUnavailableImage(focusUnavailablePath: String): Image =
     val inputStream =
       try getClass.getClassLoader.getResourceAsStream(focusUnavailablePath)
@@ -58,3 +62,12 @@ class FocusToggleButton(var name: String = "No Name", prefW: Double = 200, prefH
       DDSReader.getWidth(buffer),
       DDSReader.getHeight(buffer)
     )
+
+  private def loadFocusIcon(): Image = {
+    focus.getDDSImage match
+      case Some(ddsImage) =>
+        ddsImage
+      case None =>
+        logger.warn(s"No DDS image found for focus: ${focus.id}")
+        null
+  }

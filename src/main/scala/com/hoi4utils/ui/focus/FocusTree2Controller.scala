@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.focus
 
 import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree, FocusTreesManager}
+import com.hoi4utils.script.MultiPDX
 import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.custom_javafx.layout.ZoomableScrollPane
 import com.typesafe.scalalogging.LazyLogging
@@ -41,7 +42,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML var resetZoomButton: Button = uninitialized
   private var focusGridColumns: Int = 0
   private var focusGridRows: Int = 0
-  private var lines: Boolean = true
+  private var lines: Boolean = false
   private var zoomableScrollPane: ZoomableScrollPane = uninitialized
   private var focusTreesToggleButtons: ListBuffer[ToggleButton] = ListBuffer.empty
   private var currentLoadTask: Option[Task[GridPane]] = None
@@ -61,6 +62,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     clear()
     welcome.setToggleGroup(toggleGroup)
     welcome.fire()
+    focusTreeView.setGridLinesVisible(lines)
     populateFocusSelection()
     Platform.runLater(() => if progressIndicator != null then progressIndicator.setVisible(false))
 
@@ -76,11 +78,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 
     // Create the ZoomableScrollPane with the GridPane as target
     zoomableScrollPane = ZoomableScrollPane(focusTreeView)
+    focusTreeView.setGridLinesVisible(lines)
 
     // Copy properties from the original ScrollPane
     zoomableScrollPane.setPrefHeight(focusTreeScrollPane.getPrefHeight)
     zoomableScrollPane.setPrefWidth(focusTreeScrollPane.getPrefWidth)
-
+    focusTreeView.setGridLinesVisible(lines)
     // Replace in SplitPane
     if ft2SplitPane != null then
       val items = ft2SplitPane.getItems
@@ -93,6 +96,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       logger.error("splitPane is null - check FXML fx:id")
 
   private def populateFocusSelection(): Unit =
+    focusTreeView.setGridLinesVisible(lines)
     Some(FocusTreesManager.observeFocusTrees).foreach(trees =>
       trees.forEach(someFocusTree =>
         val toggleButton = ToggleButton(someFocusTree.toString)
@@ -100,6 +104,17 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         toggleButton.setToggleGroup(toggleGroup)
         toggleButton.setOnAction(_ => {
           if toggleButton.isSelected then
+            // Manually deselect all other buttons
+            focusTreesToggleButtons.foreach(btn =>
+              if btn != toggleButton then
+                btn.setSelected(false)
+                welcome.setSelected(false)
+            )
+            welcome.setSelected(false)
+            loadFocusTreeView(someFocusTree)
+          else
+            toggleButton.setSelected(false)
+            toggleButton.setSelected(true)
             loadFocusTreeView(someFocusTree)
         })
         toggleButton.setPadding(Insets(5, 10, 5, 10))
@@ -112,8 +127,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     cancelCurrentTask()
     clear()
     focusGridToggleGroup = new ToggleGroup()
-
-    val focuses = someFocusTree.focuses
+    val focuses: MultiPDX[Focus] = someFocusTree.focuses
 
     // Calculate offset needed for negative coordinates
     val (offsetX, offsetY) = calculateGridOffset(focuses)
@@ -124,7 +138,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     // Setup column and row constraints
     for (_ <- 0 until gridCols) setCC()
     for (_ <- 0 until gridRows) setRC()
-
+    focusTreeView.setGridLinesVisible(lines)
     val loadFocusTreeTask = new Task[GridPane]() {
       override def call(): GridPane = {
         val newGridPane = new GridPane()
@@ -171,18 +185,19 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
               logger.warn("Focuses list is empty, nothing to draw.")
             }
           case _ =>
-            val totalWork = focuses.size
+            val focusCount = focuses.size
+            val emptyCount = (gridRows * gridCols) - focusCount
+            val totalWork = focusCount + emptyCount
             var workDone = 0
 
-            // Iterate through actual focuses instead of grid positions
+            // Add focus buttons
             focuses.foreach { focus =>
               if (!isCancelled) {
-                // Apply offset to convert to GridPane coordinates
                 val gridX = focus.absoluteX + offsetX
                 val gridY = focus.absoluteY + offsetY
 
                 val focusButton = FocusToggleButton(
-                  focus.toString,
+                  focus,
                   focusGridColumnsSize,
                   focusGridRowSize
                 )
@@ -195,20 +210,24 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
               }
             }
 
-            // Optional: Fill empty cells with placeholders for better panning
+            // Fill empty cells with placeholders
             if (!isCancelled) {
               for {
                 row <- 0 until gridRows
                 col <- 0 until gridCols
               } {
-                // Check if this position already has a focus
-                val hasFocus = focuses.exists { f =>
-                  (f.absoluteX + offsetX == col) && (f.absoluteY + offsetY == row)
-                }
+                if (!isCancelled) {
+                  val hasFocus = focuses.exists { f =>
+                    (f.absoluteX + offsetX == col) && (f.absoluteY + offsetY == row)
+                  }
 
-                if (!hasFocus) {
-                  val placeholder = createEmptyCell()
-                  newGridPane.add(placeholder, col, row)
+                  if (!hasFocus) {
+                    val placeholder = createEmptyCell()
+                    newGridPane.add(placeholder, col, row)
+
+                    workDone += 1
+                    updateProgress(workDone, totalWork)
+                  }
                 }
               }
             }
@@ -234,14 +253,17 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           logger.info("Task succeeded but was already replaced by another task")
     })
     loadFocusTreeTask.setOnCancelled(_ => {
+      focusTreeView.setGridLinesVisible(lines)
       logger.info(s"Task cancelled for focus tree: ${someFocusTree.name}")
       currentLoadTask = None
     })
     loadFocusTreeTask.setOnFailed(_ => {
+      focusTreeView.setGridLinesVisible(lines)
       logger.error(s"Task failed for focus tree: ${someFocusTree.name}", loadFocusTreeTask.getException)
       currentLoadTask = None
     })
     updateProgressIndicator(loadFocusTreeTask)
+    focusTreeView.setGridLinesVisible(lines)
 
     // Store the current task
     currentLoadTask = Some(loadFocusTreeTask)
@@ -251,7 +273,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   }
 
   private def loadFocusView(focus: Focus): Unit =
-    logger.info(s"Focus selected: ${focus.id} at absolute: ${focus.absolutePosition}, relative: ${focus.relativePositionFocus}, (${focus.position})")
     // Load the focus into the details pane
     if focusDetailsPaneController != null then
       focusDetailsPaneController.loadFocus(focus)
@@ -260,11 +281,9 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private def cancelCurrentTask(): Unit =
     currentLoadTask match
       case Some(task) if task.isRunning =>
-        logger.info("Cancelling current load task")
         task.cancel()
         currentLoadTask = None
       case Some(task) =>
-        logger.debug("Current task exists but is not running")
         currentLoadTask = None
       case None =>
 
@@ -350,19 +369,18 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   override def preSetup(): Unit = setupWindowControls(focusTree2, ft2Close, ft2Square, ft2Minimize, menuBar)
 
   @FXML def handleWelcome(): Unit =
-    cancelCurrentTask()
-    clear()
-    loadWelcomeMessage()
-    if focusDetailsPaneController != null then
-      focusDetailsPaneController.clear()
-
-  private def loadWelcomeMessage(): Unit =
-    // Cancel any running task first
+    welcome.setSelected(true)
+    focusTreesToggleButtons.foreach(btn =>
+        btn.setSelected(false)
+    )
     cancelCurrentTask()
     clear()
     setCC()
     setRC()
     focusTreeView.add(Label(welcomeMessage), 0, 0)
+    focusTreeView.setGridLinesVisible(lines)
+    if focusDetailsPaneController != null then
+      focusDetailsPaneController.clear()
 
   @FXML def handleGridlines(): Unit =
     lines = gridlines.isSelected
