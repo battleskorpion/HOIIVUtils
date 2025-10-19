@@ -163,7 +163,7 @@ object CountryFile extends LazyLogging with PDXReadable {
   /**
    * Clears all countries and any other relevant values. 
    */
-  def clear(): Unit = {
+  override def clear(): Unit = {
     countries.clear()
   }
 
