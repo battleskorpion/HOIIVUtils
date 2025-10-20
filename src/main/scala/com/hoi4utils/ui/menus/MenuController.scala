@@ -3,7 +3,7 @@ package com.hoi4utils.ui.menus
 import com.hoi4utils.*
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.config
-import com.hoi4utils.ui.countries.BuildingsByCountryController
+import com.hoi4utils.ui.countries.{BuildingsByCountryController, BuildingsByCountryController2}
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController2, RootWindows}
 import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.hoi4utils.ui.focus_view.FocusTreeController
@@ -187,7 +187,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     else detailPanelManager.switchToView("/com/hoi4utils/ui/localization/CustomTooltip.fxml")
 
 
-  def openBuildingsByCountry(): Unit = new BuildingsByCountryController().open() // TODO embed
+  def openBuildingsByCountry(): Unit = new BuildingsByCountryController2().open() // TODO embed
 
   @FXML
   def handleGFXInterfaceFileListClick(event: MouseEvent): Unit =

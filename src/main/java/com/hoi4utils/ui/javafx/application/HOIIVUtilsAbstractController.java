@@ -21,7 +21,7 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 	private Object[] initargs;
 	private final String darkCss = "com/hoi4utils/ui/css/javafx_dark.css";
 	private final String lightCss = "com/hoi4utils/ui/css/light.css";
-	private final List<Image> icons = List.of(
+	protected final List<Image> icons = List.of(
 			new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icons/settings-icon-gray-gear16.png"))),
 			new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icons/settings-icon-gray-gear32.png"))),
 			new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icons/settings-icon-gray-gear48.png"))),

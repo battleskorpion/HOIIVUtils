@@ -7,9 +7,9 @@ import com.hoi4utils.ui.javafx.scene.control.{ExcelExport, StateTable, TableView
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.fxml.FXML
-import javafx.scene.control.{CheckMenuItem, MenuItem}
+import javafx.scene.control.{CheckMenuItem, MenuItem, TableView}
 import javafx.scene.input.MouseButton
-import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.Pane
 
 import java.awt.*
 import java.io.IOException
@@ -27,7 +27,7 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 	@FXML private var idPercentageCheckMenuItem: CheckMenuItem = uninitialized
 	@FXML private var idExportToExcel: MenuItem = uninitialized
 	@FXML private var saveButton: Button = uninitialized
-	@FXML private var stateTableAnchorPane: AnchorPane = uninitialized
+	@FXML private var stateDataTablePlaceholder: TableView[_] = uninitialized
 
 	private var stateDataTable: StateTable = uninitialized
 
@@ -51,11 +51,9 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 
 		/* state data table */
 		stateDataTable = new StateTable()
-		AnchorPane.setTopAnchor(stateDataTable, 0.0)
-		AnchorPane.setBottomAnchor(stateDataTable, 30.0)
-		AnchorPane.setLeftAnchor(stateDataTable, 0.0)
-		AnchorPane.setRightAnchor(stateDataTable, 0.0)
-		stateTableAnchorPane.getChildren.add(stateDataTable)
+		// Replace placeholder with StateTable
+		val scrollPane = stateDataTablePlaceholder.getParent.asInstanceOf[javafx.scene.control.ScrollPane]
+		scrollPane.setContent(stateDataTable)
 
 		// includeVersion();
 		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(resourcesPercent))

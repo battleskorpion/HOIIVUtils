@@ -1,0 +1,179 @@
+package com.hoi4utils.ui.countries
+
+import com.hoi4utils.hoi4mod.history.countries.CountryFile
+import com.hoi4utils.hoi4mod.map.state.State
+import com.hoi4utils.main.HOIIVUtils
+import com.hoi4utils.parser.ClausewitzDate
+import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, JavaFXUIManager}
+import com.hoi4utils.ui.javafx.scene.control.{DoubleOrPercentTableCell, DoubleTableCell, ExcelExport, StateTable, TableViewWindow2}
+import com.typesafe.scalalogging.LazyLogging
+import javafx.collections.{FXCollections, ObservableList}
+import javafx.fxml.FXML
+import javafx.scene.control.{Button, CheckBox, Label, ScrollPane, SplitPane, TableColumn, TableView}
+import javafx.scene.input.MouseButton
+import javafx.scene.layout.VBox
+import scala.compiletime.uninitialized
+import scala.jdk.javaapi.CollectionConverters
+import javax.swing.JOptionPane
+
+class BuildingsByCountryController2 extends HOIIVUtilsAbstractController with TableViewWindow2 with LazyLogging:
+	setFxmlFile("BuildingsByCountry.fxml")
+	setTitle("HOIIVUtils Buildings By Country Window")
+
+	@FXML private var exportToExcelButton: Button = uninitialized
+	@FXML private var percentageCheckBox: CheckBox = uninitialized
+	@FXML private var versionLabel: Label = uninitialized
+	@FXML private var mainSplitPane: SplitPane = uninitialized
+	@FXML private var detailsPane: VBox = uninitialized
+	@FXML private var countryDataTable: TableView[CountryFile] = uninitialized
+	@FXML private var saveStateButton: Button = uninitialized
+	@FXML private var closeDetailsButton: Button = uninitialized
+	@FXML private var statePercentageCheckBox: CheckBox = uninitialized
+	@FXML private var stateTableScrollPane: ScrollPane = uninitialized
+	@FXML private var stateDataTablePlaceholder: TableView[_] = uninitialized
+	@FXML private var countryDataTableCountryColumn: TableColumn[CountryFile, String] = uninitialized
+	@FXML private var countryDataTablePopulationColumn: TableColumn[CountryFile, Integer] = uninitialized
+	@FXML private var countryDataTableCivFactoryColumn: TableColumn[CountryFile, Integer] = uninitialized
+	@FXML private var countryDataTableMilFactoryColumn: TableColumn[CountryFile, Integer] = uninitialized
+	@FXML private var countryDataTableDockyardsColumn: TableColumn[CountryFile, Integer] = uninitialized
+	@FXML private var countryDataTableAirfieldsColumn: TableColumn[CountryFile, Integer] = uninitialized
+	@FXML private var countryDataTableCivMilRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+	@FXML private var countryDataTablePopFactoryRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+	@FXML private var countryDataTablePopCivRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+	@FXML private var countryDataTablePopMilRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+	@FXML private var countryDataTablePopAirCapacityRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+	@FXML private var countryDataTablePopNumStatesRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+	@FXML private var countryDataTableAluminiumColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+	@FXML private var countryDataTableChromiumColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+	@FXML private var countryDataTableOilColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+	@FXML private var countryDataTableRubberColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+	@FXML private var countryDataTableSteelColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+	@FXML private var countryDataTableTungstenColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+
+	private var _resourcesPercent = false
+	private var _stateResourcesPercent = false
+	private val date = ClausewitzDate.defaulty
+	private var savedDividerPosition = 0.5
+	private var stateDataTable: StateTable = uninitialized
+	private var stateList: ObservableList[State] = FXCollections.observableArrayList()
+	private var selectedCountry: CountryFile = null
+
+	private val countryList: ObservableList[CountryFile] =
+		FXCollections.observableArrayList(CollectionConverters.asJava(CountryFile.list))
+
+	// Constructor initialization
+	logger.info(s"Countries loaded: ${countryList.size()}")
+
+	@FXML def initialize(): Unit =
+		versionLabel.setText(s"Version: ${HOIIVUtils.get("version")}")
+		loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(_resourcesPercent))
+
+		// Initially close the details pane (state table will be initialized on first use)
+		closeDetailsPane()
+
+		/* action listeners */
+		countryDataTable.setOnMouseClicked: event =>
+			if event.getButton.equals(MouseButton.PRIMARY) && event.getClickCount == 2 then
+				viewCountryBuildingsByState()
+
+		JOptionPane.showMessageDialog(null, s"dev - loaded rows: ${countryDataTable.getItems.size()}")
+
+	private def updateResourcesColumnsPercentBehavior(): Unit =
+		loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(_resourcesPercent))
+		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableAluminiumColumn, _resourcesPercent)
+		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableChromiumColumn, _resourcesPercent)
+		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableOilColumn, _resourcesPercent)
+		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableRubberColumn, _resourcesPercent)
+		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableSteelColumn, _resourcesPercent)
+		JavaFXUIManager.updateColumnPercentBehavior(countryDataTableTungstenColumn, _resourcesPercent)
+
+	override def setDataTableCellFactories(): Unit =
+		// table cell factories
+		// todo these should also consider column percent behavior (percenttablecell)
+		countryDataTableCivMilRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
+		countryDataTablePopFactoryRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
+		countryDataTablePopCivRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
+		countryDataTablePopMilRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
+		countryDataTablePopAirCapacityRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
+		countryDataTablePopNumStatesRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
+		countryDataTableAluminiumColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
+		countryDataTableChromiumColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
+		countryDataTableOilColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
+		countryDataTableRubberColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
+		countryDataTableSteelColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
+		countryDataTableTungstenColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
+
+	@FXML def handleExportToExcelAction(): Unit =
+		val excelExport = new ExcelExport[CountryFile]
+		excelExport.`export`(countryDataTable)
+
+	@FXML def handlePercentageCheckBoxAction(): Unit =
+		if percentageCheckBox.isSelected then
+			setResourcesPercent(true)
+			logger.info("Percentage values are on")
+		else
+			setResourcesPercent(false)
+			logger.info("Percentage values are off")
+
+	def resourcesPercent(): Boolean = _resourcesPercent
+
+	def setResourcesPercent(resourcesPercent: Boolean): Unit =
+		this._resourcesPercent = resourcesPercent
+		updateResourcesColumnsPercentBehavior()
+
+	def toggleResourcesPercent(): Unit =
+		_resourcesPercent = !_resourcesPercent
+		updateResourcesColumnsPercentBehavior()
+
+	def viewCountryBuildingsByState(): Unit =
+		val country = countryDataTable.getSelectionModel.getSelectedItem
+		if country == null then return
+
+		// Initialize state table on first use
+		if stateDataTable == null then
+			stateDataTable = new StateTable()
+			stateTableScrollPane.setContent(stateDataTable)
+			stateDataTable.setEditableColumns(true)
+
+		selectedCountry = country
+		stateList = FXCollections.observableArrayList(CollectionConverters.asJava(State.ownedStatesOfCountry(country)))
+		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(_stateResourcesPercent))
+
+		// Open the details pane
+		openDetailsPane()
+
+	@FXML def handleSaveStates(): Unit =
+		if stateDataTable != null then
+			stateDataTable.getItems.forEach(_.save())
+			logger.info("States saved successfully")
+
+	@FXML def handleCloseDetails(): Unit =
+		closeDetailsPane()
+
+	@FXML def handleStatePercentageCheckBoxAction(): Unit =
+		if statePercentageCheckBox.isSelected then
+			setStateResourcesPercent(true)
+			logger.info("State percentage values are on")
+		else
+			setStateResourcesPercent(false)
+			logger.info("State percentage values are off")
+
+	def setStateResourcesPercent(stateResourcesPercent: Boolean): Unit =
+		this._stateResourcesPercent = stateResourcesPercent
+		if stateDataTable != null && stateList != null then
+			loadTableView(this, stateDataTable, stateList, State.getDataFunctions(_stateResourcesPercent))
+			stateDataTable.updateResourcesColumnsPercentBehavior(_stateResourcesPercent)
+
+	/**
+	 * Closes the bottom details pane and maximizes the table view
+	 */
+	def closeDetailsPane(): Unit =
+		if mainSplitPane.getDividerPositions.length > 0 then
+			savedDividerPosition = mainSplitPane.getDividerPositions()(0)
+		mainSplitPane.setDividerPositions(1.0)
+
+	/**
+	 * Opens the bottom details pane and restores the previous divider position
+	 */
+	def openDetailsPane(): Unit =
+		mainSplitPane.setDividerPositions(savedDividerPosition)

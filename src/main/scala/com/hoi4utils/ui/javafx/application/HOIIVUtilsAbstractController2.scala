@@ -26,13 +26,7 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
   override def open(): Unit =
     if primaryStage == null then
       primaryStage = new Stage
-    primaryStage.getIcons.addAll(
-      new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear16.png")),
-      new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear32.png")),
-      new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear48.png")),
-      new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear64.png")),
-      new Image(getClass.getResourceAsStream("/icons/settings-icon-gray-gear128.png"))
-    )
+    primaryStage.getIcons.addAll(icons)
     primaryStage.initStyle(StageStyle.UNDECORATED)
     try
       /* fxml */

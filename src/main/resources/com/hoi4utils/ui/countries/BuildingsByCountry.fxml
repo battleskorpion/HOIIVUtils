@@ -33,15 +33,16 @@
 -->
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -49,27 +50,17 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.countries.BuildingsByCountryController">
+<VBox prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.countries.BuildingsByCountryController2">
   <children>
-      <MenuBar>
-         <menus>
-            <Menu mnemonicParsing="false" text="File">
-               <items>
-                  <MenuItem fx:id="idExportToExcel" mnemonicParsing="false" onAction="#handleExportToExcelAction" text="Export to Excel WIP" />
-               </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Edit">
-               <items>
-                  <CheckMenuItem fx:id="idPercentageCheckMenuItem" mnemonicParsing="false" onAction="#handlePercentageCheckMenuItemAction" text="Percentage Values" />
-               </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="About">
-               <items>
-                  <MenuItem fx:id="idVersionMenuItem" mnemonicParsing="false" text="version number" />
-               </items>
-            </Menu>
-         </menus>
-      </MenuBar>
+      <ToolBar>
+         <items>
+            <Button fx:id="exportToExcelButton" text="Export to Excel" onAction="#handleExportToExcelAction" />
+            <Separator orientation="VERTICAL" />
+            <CheckBox fx:id="percentageCheckBox" text="Show Percentages" onAction="#handlePercentageCheckBoxAction" />
+            <Separator orientation="VERTICAL" />
+            <Label fx:id="versionLabel" text="Version: Loading..." />
+         </items>
+      </ToolBar>
     <SplitPane fx:id="mainSplitPane" dividerPositions="0.5" focusTraversable="true" orientation="VERTICAL" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
             <TableView fx:id="countryDataTable">
@@ -94,17 +85,26 @@
                   <TableColumn fx:id="countryDataTableTungstenColumn" prefWidth="106.0" text="Tungsten" />
                </columns>
             </TableView>
-        <AnchorPane>
+        <VBox fx:id="detailsPane">
           <children>
-            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" wrapText="false">
-                     <font>
-                <Font size="18.0" fx:id="x1" />
-                     </font>
-                     <textFill>
-                <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
-                     </textFill></Label>
+            <ToolBar>
+              <items>
+                <Label text="State Details" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
+                <Separator orientation="VERTICAL" />
+                <CheckBox fx:id="statePercentageCheckBox" text="Show Percentages" onAction="#handleStatePercentageCheckBoxAction" />
+                <Separator orientation="VERTICAL" />
+                <Button fx:id="saveStateButton" text="Save States" onAction="#handleSaveStates" />
+                <Pane HBox.hgrow="ALWAYS" />
+                <Button fx:id="closeDetailsButton" text="Close" onAction="#handleCloseDetails" />
+              </items>
+            </ToolBar>
+            <ScrollPane fx:id="stateTableScrollPane" VBox.vgrow="ALWAYS">
+              <content>
+                <TableView fx:id="stateDataTablePlaceholder" />
+              </content>
+            </ScrollPane>
           </children>
-        </AnchorPane>
+        </VBox>
       </items>
     </SplitPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
