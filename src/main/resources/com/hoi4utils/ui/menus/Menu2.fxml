@@ -47,7 +47,7 @@
 
 <VBox fx:id="mRoot" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <GridPane maxHeight="33.0" minHeight="33.0" minWidth="450.0" prefHeight="33.0">
+    <GridPane prefHeight="30.0">
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -85,9 +85,15 @@
             <Insets top="-15.0" />
           </GridPane.margin>
         </Label>
-        <Button fx:id="vSettings" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" onAction="#openSettings" prefHeight="30.0" prefWidth="100.0" text="Settings" />
-        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-          <Image url="@../../../../icons/settings-icon-gray-gear32.png" />
+        <Button fx:id="vSettings" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openSettings" prefHeight="30.0" prefWidth="90.0" text="Settings">
+               <padding>
+                  <Insets left="20.0" />
+               </padding></Button>
+        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+          <Image url="@../../../../icons/settings-icon-gray-gear48.png" />
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
         </ImageView>
       </children>
     </GridPane>

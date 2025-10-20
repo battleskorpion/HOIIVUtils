@@ -3,6 +3,7 @@ package com.hoi4utils.ui.menus
 import com.hoi4utils.ui.countries.BuildingsByCountryController2
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.focus.FocusTree2Controller
+import com.hoi4utils.ui.gfx.InterfaceFileListController
 import com.hoi4utils.ui.localization.CustomTooltipController
 import com.hoi4utils.ui.map.ProvinceColorsController
 import com.hoi4utils.ui.units.CompareUnitsController
@@ -46,7 +47,7 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
       currentView = Some(fxmlPath)
 
     catch
-      case e: Exception =>
+      case e: Exception ⇒
         logger.error(s"Failed to load view: $fxmlPath", e)
         showError(s"Failed to load view: ${e.getMessage}")
 
@@ -55,7 +56,7 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
    * @param fxmlPath Path to FXML file
    * @param onLoad Callback with the controller
    */
-  def switchToViewWithCallback[T](fxmlPath: String, onLoad: T => Unit): Unit =
+  def switchToViewWithCallback[T](fxmlPath: String, onLoad: T ⇒ Unit): Unit =
     switchToViewWithCallback(fxmlPath, onLoad, forceReload = false)
 
   /**
@@ -64,7 +65,7 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
    * @param onLoad Callback with the controller
    * @param forceReload If true, ignores cache and reloads the view
    */
-  def switchToViewWithCallback[T](fxmlPath: String, onLoad: T => Unit, forceReload: Boolean): Unit =
+  def switchToViewWithCallback[T](fxmlPath: String, onLoad: T ⇒ Unit, forceReload: Boolean): Unit =
     try
       val (pane, controller) = if forceReload then
         viewCache.remove(fxmlPath)
@@ -81,7 +82,7 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
 
       logger.info(s"Switched to view: $fxmlPath with callback")
     catch
-      case e: Exception =>
+      case e: Exception ⇒
         logger.error(s"Failed to load view: $fxmlPath", e)
         showError(s"Failed to load view: ${e.getMessage}")
 
@@ -114,7 +115,7 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
    * Reload the current view (useful for refreshing data)
    */
   def reloadCurrentView(): Unit =
-    currentView.foreach(path => switchToView(path, forceReload = true))
+    currentView.foreach(path ⇒ switchToView(path, forceReload = true))
 
   /**
    * Internal method to load a view from FXML
@@ -124,13 +125,14 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
 
     // Create controller instance based on the FXML path
     val controller = fxmlPath match
-      case "/com/hoi4utils/ui/focus/FocusTree2.fxml" => new FocusTree2Controller()
-      case "/com/hoi4utils/ui/localization/CustomTooltip.fxml" => new CustomTooltipController()
-      case "/com/hoi4utils/ui/units/CompareUnits.fxml" => new CompareUnitsController()
+      case "/com/hoi4utils/ui/focus/FocusTree2.fxml" ⇒ new FocusTree2Controller()
+      case "/com/hoi4utils/ui/localization/CustomTooltip.fxml" ⇒ new CustomTooltipController()
       case "/com/hoi4utils/ui/countries/BuildingsByCountry.fxml" ⇒ new BuildingsByCountryController2()
-      case "/com/hoi4utils/ui/map/ProvinceColors.fxml" => new ProvinceColorsController()
-      case "/com/hoi4utils/ui/menus/ErrorList.fxml" => new ErrorListController()
-      case _ =>
+      case "/com/hoi4utils/ui/gfx/InterfaceFileList.fxml" ⇒ new InterfaceFileListController()
+      case "/com/hoi4utils/ui/units/CompareUnits.fxml" ⇒ new CompareUnitsController()
+      case "/com/hoi4utils/ui/map/ProvinceColors.fxml" ⇒ new ProvinceColorsController()
+      case "/com/hoi4utils/ui/menus/ErrorList.fxml" ⇒ new ErrorListController()
+      case _ ⇒
         logger.warn(s"No specific controller mapping for: $fxmlPath")
         null
 
@@ -149,9 +151,9 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
 //        val initMethod = actualController.getClass.getMethod("initialize")
 //        initMethod.invoke(actualController)
 //      } catch {
-//        case _: NoSuchMethodException =>
+//        case _: NoSuchMethodException ⇒
 //          logger.debug(s"No initialize() method found for: $fxmlPath")
-//        case e: Exception =>
+//        case e: Exception ⇒
 //          logger.error(s"Error calling initialize() for: $fxmlPath", e)
 //      }
 
