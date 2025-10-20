@@ -1,6 +1,6 @@
 package com.hoi4utils.databases.effect
 
-import com.hoi4utils.custom_scala.{BoolType, ExpectedRange, RichString}
+import com.hoi4utils.shared.{BoolType, ExpectedRange, RichString}
 import com.hoi4utils.exceptions.InvalidParameterException
 import com.hoi4utils.hoi4mod.common.country_tags.CountryTag
 import com.hoi4utils.hoi4mod.common.idea.Idea

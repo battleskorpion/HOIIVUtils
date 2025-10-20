@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4mod.common.idea
 
-import com.hoi4utils.custom_scala.ExpectedRange
+import com.hoi4utils.shared.ExpectedRange
 import com.hoi4utils.databases.modifier.{Modifier, ModifierDatabase}
 import com.hoi4utils.hoi4mod.localization.{Localizable, Property}
 import com.hoi4utils.parser.Node

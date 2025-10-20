@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4mod.map.state
 
 import com.hoi4utils.*
-import com.hoi4utils.custom_scala.{BoolType, ExpectedRange}
+import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import com.hoi4utils.hoi4mod.common.country_tags.CountryTag
 import com.hoi4utils.hoi4mod.history.countries.CountryFile
 import com.hoi4utils.hoi4mod.localization.*

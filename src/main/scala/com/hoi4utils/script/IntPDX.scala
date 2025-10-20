@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.custom_scala.ExpectedRange
+import com.hoi4utils.shared.ExpectedRange
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 

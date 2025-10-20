@@ -1,4 +1,4 @@
-package com.hoi4utils.custom_scala
+package com.hoi4utils.shared
 
 class ExpectedRange[T <: AnyVal](val min: T, val max: T):
 

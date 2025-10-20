@@ -1,4 +1,4 @@
-package com.hoi4utils.custom_scala
+package com.hoi4utils.shared
 
 implicit class RichString(val s: String) extends AnyVal:
   def splitWithDelimiters(regex: String, limit: Int = 0): Array[String] =

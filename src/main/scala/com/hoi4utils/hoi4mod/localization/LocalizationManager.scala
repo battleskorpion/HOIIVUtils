@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4mod.localization
 
-import com.hoi4utils.custom_scala.RichString
+import com.hoi4utils.shared.RichString
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
 import com.hoi4utils.hoi4mod.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.main.HOIIVFiles

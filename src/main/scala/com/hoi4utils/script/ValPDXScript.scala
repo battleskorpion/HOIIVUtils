@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.custom_scala.ExpectedRange
+import com.hoi4utils.shared.ExpectedRange
 
 import scala.annotation.targetName
 

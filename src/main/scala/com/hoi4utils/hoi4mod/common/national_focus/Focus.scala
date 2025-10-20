@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4mod.common.national_focus
 
-import com.hoi4utils.custom_scala.{BoolType, ExpectedRange}
+import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.exceptions.UnexpectedIdentifierException

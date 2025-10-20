@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4mod.common.units
 
-import com.hoi4utils.custom_scala.BoolType
+import com.hoi4utils.shared.BoolType
 import com.hoi4utils.parser.{Node, Parser, ParserException}
 
 import java.io.File

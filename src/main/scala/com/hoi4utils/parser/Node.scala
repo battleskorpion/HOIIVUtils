@@ -1,6 +1,6 @@
 package com.hoi4utils.parser
 
-import com.hoi4utils.custom_scala.BoolType
+import com.hoi4utils.shared.BoolType
 
 import scala.collection.mutable.ListBuffer
 
