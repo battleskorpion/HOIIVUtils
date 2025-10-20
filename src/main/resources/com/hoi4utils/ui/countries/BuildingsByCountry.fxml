@@ -70,7 +70,7 @@
             </Menu>
          </menus>
       </MenuBar>
-    <SplitPane dividerPositions="0.5" focusTraversable="true" orientation="VERTICAL" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane fx:id="mainSplitPane" dividerPositions="0.5" focusTraversable="true" orientation="VERTICAL" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
             <TableView fx:id="countryDataTable">
                <columns>

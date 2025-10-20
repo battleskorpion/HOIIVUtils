@@ -16,6 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
@@ -31,6 +32,8 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 	private CheckMenuItem idPercentageCheckMenuItem;
 	@FXML
 	private MenuItem idVersionMenuItem;
+	@FXML
+	private SplitPane mainSplitPane;
 	@FXML
 	TableView<CountryFile> countryDataTable;
 	@FXML
@@ -72,6 +75,7 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 
 	private boolean resourcesPercent = false;
 	private final ClausewitzDate date = ClausewitzDate.defaulty();
+	private double savedDividerPosition = 0.5;
 
 	private final ObservableList<CountryFile> countryList;
 
@@ -167,6 +171,23 @@ public class BuildingsByCountryController extends HOIIVUtilsAbstractController i
 		}
 		CountryBuildingsByStateController window = new CountryBuildingsByStateController();
 		window.open(country);
+	}
+
+	/**
+	 * Closes the bottom details pane and maximizes the table view
+	 */
+	public void closeDetailsPane() {
+		if (mainSplitPane.getDividerPositions().length > 0) {
+			savedDividerPosition = mainSplitPane.getDividerPositions()[0];
+		}
+		mainSplitPane.setDividerPositions(1.0);
+	}
+
+	/**
+	 * Opens the bottom details pane and restores the previous divider position
+	 */
+	public void openDetailsPane() {
+		mainSplitPane.setDividerPositions(savedDividerPosition);
 	}
 
 }
