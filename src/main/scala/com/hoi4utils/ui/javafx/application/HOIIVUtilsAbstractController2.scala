@@ -16,7 +16,7 @@ import java.util.{Locale, MissingResourceException, ResourceBundle}
 import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
 
-abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractController with LazyLogging:
+abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractController with JavaFXUIManager2 with LazyLogging:
   var primaryStage: Stage = uninitialized
   var primaryScene: Scene = uninitialized
   protected var fxmlLoader: FXMLLoader = uninitialized
