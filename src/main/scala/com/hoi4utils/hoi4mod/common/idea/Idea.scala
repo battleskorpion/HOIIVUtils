@@ -26,7 +26,7 @@ object Idea extends LazyLogging {
   }
 
   def listAllIdeas: List[Idea] = {
-    IdeaFile.listIdeasFromAllIdeaFiles
+    IdeasManager.listIdeasFromAllIdeaFiles
   }
 
   def pdxSupplier(): PDXSupplier[Idea] = {
@@ -64,7 +64,7 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
     override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
       // TODO add line number to message also fix not being able to get file name
       val message = s"Unexpected identifier:\n Idea: ${Idea.this.toString}\n Idea file: ${_ideaFile.flatMap(_.getFile).map(_.getName).getOrElse("[Unknown file]")}\n pdxIdentifier: ${this.pdxIdentifier} / ${node.identifier} \n Exception: ${exception.getMessage}"
-      IdeaFile.ideaFileErrors += message
+      IdeasManager.ideaFileErrors += message
 //      logger.error(message)
 
     override def getPDXTypeName: String = "Modifiers"

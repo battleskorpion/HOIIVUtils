@@ -5,8 +5,8 @@ import com.hoi4utils.databases.effect.EffectDatabase.effectErrors
 import com.hoi4utils.databases.modifier.ModifierDatabase
 import com.hoi4utils.file.file_listener.{FileAdapter, FileEvent, FileWatcher}
 import com.hoi4utils.hoi4mod.common.country_tags.CountryTag
-import com.hoi4utils.hoi4mod.common.idea.IdeaFile
-import com.hoi4utils.hoi4mod.common.idea.IdeaFile.ideaFileErrors
+import com.hoi4utils.hoi4mod.common.idea.IdeasManager.ideaFileErrors
+import com.hoi4utils.hoi4mod.common.idea.{IdeaFile, IdeasManager}
 import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager.focusTreeErrors
 import com.hoi4utils.hoi4mod.common.national_focus.{FocusTree, FocusTreesManager}
 import com.hoi4utils.hoi4mod.gfx.Interface
@@ -47,7 +47,7 @@ class PDXLoader extends LazyLogging:
     State,
     CountryFile,
     CountryTag,
-    IdeaFile,
+    IdeasManager,
     FocusTreesManager,
   )
 

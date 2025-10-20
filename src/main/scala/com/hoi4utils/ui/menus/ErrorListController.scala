@@ -2,7 +2,7 @@ package com.hoi4utils.ui.menus
 
 import com.hoi4utils.databases.effect.EffectDatabase.effectErrors
 import com.hoi4utils.extensions.*
-import com.hoi4utils.hoi4mod.common.idea.IdeaFile.ideaFileErrors
+import com.hoi4utils.hoi4mod.common.idea.IdeasManager.ideaFileErrors
 import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager.focusTreeErrors
 import com.hoi4utils.hoi4mod.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4mod.history.countries.CountryFile.countryErrors
@@ -10,7 +10,7 @@ import com.hoi4utils.hoi4mod.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.hoi4mod.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4mod.map.state.State.stateErrors
 import com.hoi4utils.main.HOIIVUtils
-import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
+import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.scene.control.{Button, TabPane}
