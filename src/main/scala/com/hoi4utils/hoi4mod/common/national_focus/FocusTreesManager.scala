@@ -55,10 +55,7 @@ object FocusTreesManager extends LazyLogging with PDXReadable:
     focusTrees
 
   /** Returns focus tree corresponding to the tag, if it exists*/
-  def get(tag: CountryTag): Option[FocusTree] = boundary {
-    focusTrees.foreach: tree =>
-      tree.countryTag match
-        case Some(t) if tag.equals(t.tag) => boundary.break(Some(tree))
-        case _ => // Do nothing
-    None
-  }
+  def get(tag: CountryTag | File): Option[FocusTree] =
+    tag match
+      case t: CountryTag => focusTrees.find(_.countryTag == t)
+      case f: File => focusTreeFileMap.get(f)

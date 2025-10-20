@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4mod.common.focus
 
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTree
+import com.hoi4utils.hoi4mod.common.national_focus.{FocusTree, FocusTreesManager}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.shared.ParserTestBase
 import org.junit.jupiter.api.Assertions.*
@@ -16,7 +16,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     super.setUpParserTest()
 
     // Clear any existing focus trees before each test
-    FocusTreeFile.clear()
+    FocusTreesManager.clear()
 
     // Temporarily set the mod focus folder to our test directory
     // Note: You might need to modify HOIIVFiles to allow this override for testing
@@ -26,7 +26,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
   @AfterEach
   def tearDownIntegrationTest(): Unit = {
     // Clean up after each test
-    FocusTreeFile.clear()
+    FocusTreesManager.clear()
   }
 
   @Test
@@ -64,7 +64,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
 
     assertConsistentParsing(
       () => {
-        FocusTreeFile.clear() // Clear before each test
+        FocusTreesManager.clear() // Clear before each test
         val focusTree = new FocusTree(testFile)
         focusTree.focuses.size
       },
@@ -169,7 +169,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
           "FocusTree should reference correct source file")
 
         // Test FocusTree.get(file) functionality
-        val retrievedFocusTree = FocusTreeFile.get(testFile)
+        val retrievedFocusTree = FocusTreesManager.get(testFile)
         assertTrue(retrievedFocusTree.isDefined, "Should be able to retrieve FocusTree by file")
         assertEquals(focusTree, retrievedFocusTree.get,
           "Retrieved FocusTree should be the same instance")
@@ -242,7 +242,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
       assertTrue(createdTrees.nonEmpty, "Should create at least one FocusTree")
 
       // Verify they are tracked properly
-      assertTrue(FocusTreeFile.listFocusTrees.size >= createdTrees.size,
+      assertTrue(FocusTreesManager.focusTrees.size >= createdTrees.size,
         "All created focus trees should be tracked")
 
       // Each should have unique files
