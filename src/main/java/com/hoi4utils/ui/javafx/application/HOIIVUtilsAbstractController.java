@@ -19,6 +19,8 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 	protected  String fxmlFile;
 	protected  String title;
 	private Object[] initargs;
+	private final String darkCss = "com/hoi4utils/ui/css/javafx_dark.css";
+	private final String lightCss = "com/hoi4utils/ui/css/light.css";
 	private final List<Image> icons = List.of(
 			new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icons/settings-icon-gray-gear16.png"))),
 			new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icons/settings-icon-gray-gear32.png"))),
@@ -41,12 +43,14 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 			}
 			Parent root = fxml.load();
 			Scene scene = new Scene(root);
+			this.scene = scene;
 			if (Objects.equals(HOIIVUtils.get("theme"), "dark")) {
-				scene.getStylesheets().add("com/hoi4utils/ui/css/javafx_dark.css");
+				scene.getStylesheets().add(darkCss);
 			} else {
-				scene.getStylesheets().add("/com/hoi4utils/ui/css/highlight-background.css");
+				scene.getStylesheets().add(lightCss);
 			}
 			Stage stage = new Stage();
+			this.stage = stage;
 			stage.getIcons().addAll(icons);
 			stage.setScene(scene);
 			stage.setTitle(title);
