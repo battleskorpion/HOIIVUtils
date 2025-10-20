@@ -16,7 +16,7 @@ import com.hoi4utils.script.AbstractPDX;
 import com.hoi4utils.script.PDXScript;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.application.JavaFXUIManager;
-import com.hoi4utils.ui.pdxscript.PDXTreeViewFactory;
+import com.hoi4utils.ui.javafx.scene.control.PDXTreeViewFactory;
 import com.hoi4utils.ui.pdxscript.StratRegionPDXEditorController;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;

@@ -1,4 +1,4 @@
-package com.hoi4utils.ui.pdxscript;
+package com.hoi4utils.ui.javafx.scene.control;
 
 import com.hoi4utils.hoi4mod.localization.Localizable;
 import com.hoi4utils.hoi4mod.localization.Property;

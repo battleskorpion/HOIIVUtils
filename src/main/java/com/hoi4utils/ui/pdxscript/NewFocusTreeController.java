@@ -16,6 +16,7 @@ import javax.swing.*;
 import java.io.File;
 import java.util.function.Consumer;
 
+@Deprecated
 public class NewFocusTreeController extends HOIIVUtilsAbstractController {
 
     @FXML
