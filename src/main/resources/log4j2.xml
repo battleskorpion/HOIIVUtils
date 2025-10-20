@@ -5,19 +5,26 @@
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout pattern="[%-5level] (%c): %msg%n" />
 		</Console>
-
+		
 		<!-- File Appender (Overwrites on Startup) -->
 		<RollingFile name="File" fileName="latest.log"
-					 filePattern="logs/archive-%d{yyyy-MM-dd-HH-mm-ss}.log">
+								 filePattern="logs/archive-%d{yyyy-MM-dd-HH-mm-ss}.log">
 			<PatternLayout>
 				<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Pattern>
 			</PatternLayout>
 			<Policies>
 				<OnStartupTriggeringPolicy/> <!-- Overwrites the log on every launch -->
 			</Policies>
+			<DefaultRolloverStrategy>
+				<Delete basePath="logs" maxDepth="1">
+					<IfFileName glob="archive-*.log">
+						<IfLastModified age="7d" />
+					</IfFileName>
+				</Delete>
+			</DefaultRolloverStrategy>
 		</RollingFile>
 	</Appenders>
-
+	
 	<Loggers>
 		<Root level="DEBUG"> <!-- Find a way to personalize this setting -->
 			<AppenderRef ref="Console"/>
