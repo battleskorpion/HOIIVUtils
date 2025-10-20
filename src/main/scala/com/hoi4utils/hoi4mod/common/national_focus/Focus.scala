@@ -4,11 +4,14 @@ import com.hoi4utils.custom_scala.{BoolType, ExpectedRange}
 import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager.focusTreeErrors
 import com.hoi4utils.hoi4mod.gfx.Interface
-import com.hoi4utils.hoi4mod.localization.{Localizable, Localization, Property}
+import com.hoi4utils.hoi4mod.localization.{HasDesc, Localizable, Localization, Property}
 import com.hoi4utils.hoi4mod.scope.Scope
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
+import dotty.tools.sjs.ir.Trees.JSBinaryOp.&&
+import dotty.tools.sjs.ir.Trees.JSUnaryOp.!
 import javafx.scene.image.Image
 
 import java.awt.Point
@@ -18,26 +21,27 @@ import scala.collection.mutable.ListBuffer
 
 
 @lombok.extern.slf4j.Slf4j
-class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredPDX("focus") with Localizable:
+class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("focus") with Localizable with HasDesc:
 
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
 
   /* attributes */
-  final val id: StringPDX = new StringPDX("id")   // todo don't allow id to be null that feels wrong
-  final val icon: MultiPDX[Icon] = new MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
-  final val x: IntPDX = new IntPDX("x") // if relative, relative x
-  final val y: IntPDX = new IntPDX("y", ExpectedRange.ofPositiveInt) // if relative, relative y
-  final val prerequisites: MultiPDX[PrerequisiteSet] = new MultiPDX(None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
-  final val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = new MultiPDX(None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
-  final val relativePositionFocus = new ReferencePDX[Focus](() => focusTree.focuses, f => f.id.value, "relative_position_id")
-  final val cost: DoublePDX = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
-  final val availableIfCapitulated: BooleanPDX = new BooleanPDX("available_if_capitulated", false, BoolType.YES_NO)
-  final val cancelIfInvalid: BooleanPDX = new BooleanPDX("cancel_if_invalid", true, BoolType.YES_NO)
-  final val continueIfInvalid: BooleanPDX = new BooleanPDX("continue_if_invalid", false, BoolType.YES_NO)
-  //var ddsImage: Image = _
-  final val ai_will_do = new AIWillDoPDX
-  /* completion reward */
+  final val id                      = StringPDX("id")   // todo don't allow id to be null that feels wrong
+  final val icon                    = MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
+  /** If relative positioning, relative x */
+  final val x                       = IntPDX("x")
+  /** If relative positioning, relative y */
+  final val y                       = IntPDX("y", ExpectedRange.ofPositiveInt)
+  final val prerequisites           = MultiPDX[PrerequisiteSet](None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
+  final val mutuallyExclusive       = MultiPDX[MutuallyExclusiveSet](None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
+  final val relativePositionFocus   = ReferencePDX[Focus](() => focusTree.focuses, f => f.id.value, "relative_position_id")
+  final val cost                    = DoublePDX("cost", ExpectedRange.ofPositiveInfinite(-1))
+  final val availableIfCapitulated  = BooleanPDX("available_if_capitulated")
+  final val cancelIfInvalid         = BooleanPDX("cancel_if_invalid", true)
+  final val continueIfInvalid       = BooleanPDX("continue_if_invalid")
+  final val ai_will_do              = AIWillDoPDX()
+  /** completion reward */
   //  final val completionReward: CompletionReward = new CompletionReward()
 
   if node != null then loadPDX(node)
@@ -55,16 +59,21 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
 
   def position: Point = new Point(x.getOrElse(0), y.getOrElse(0))
 
-  def absolutePosition: Point =
+  /**
+   * Calculates and returns the absolute position of the focus, taking into account any relative positioning.
+   * @return The absolute position of the focus, as it would be rendered on the focus tree.
+   */
+  def absolutePosition: Point = {
     /**
      * Recursively calculate the absolute position of a focus, taking into account relative positions.
-     * @param focus the focus to calculate the absolute position of
-     * @param visited set of focus ids that have been visited to detect circular references
+     *
+     * @param focus     the focus to calculate the absolute position of
+     * @param visited   set of focus ids that have been visited to detect circular references
      * @param offsetAcc accumulated point adjustment
      * @return the absolute position of the focus
      */
     @tailrec
-    def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: Point = new Point(0, 0)): Point =
+    def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: Point = new Point(0, 0)): Point = {
       if focus.relativePositionFocus.isUndefined then
         return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
       // Check for self-reference
@@ -84,8 +93,10 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
         case None =>
           logger.error(s"Focus id ${focus.relativePositionFocus.getReferenceName} not a valid focus")
           new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+    }
 
     absolutePosition(this)
+  }
 
   override def toString: String =
     id.value match
@@ -101,6 +112,8 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
     this.y @= y
     prev
 
+  def setXY(xy: Point): Point = setXY(xy.x, xy.y)
+
   /**
    * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
    * that position, but its absolute coordinates are always the same.
@@ -108,8 +121,8 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
    * @param x absolute x-coordinate
    * @param y absolute y-coordinate
    * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
-   *                                   in the same position even though the position of this focus changes.
-   * @return the previous absolute position.
+   *                                   in the same position even though the position of this focus changes
+   * @return the previous absolute position
    */
   def setAbsoluteXY(x: Int, y: Int, updateChildRelativeOffsets: Boolean): Point =
     val prevAbsolute = absolutePosition
@@ -125,7 +138,16 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
           focus.offsetXY(prevAbsolute.x - x, prevAbsolute.y - y)
     prevAbsolute
 
-  def setXY(xy: Point): Point = setXY(xy.x, xy.y)
+  /**
+   * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
+   * that position, but its absolute coordinates are always the same.
+   *
+   * @param xy                         absolute x- and y-coordinates
+   * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
+   *                                   in the same position even though the position of this focus changes
+   * @return the previous absolute position
+   */
+  def setAbsoluteXY(xy: Point, updateChildRelativeOffsets: Boolean): Point = setAbsoluteXY(xy.x, xy.y, updateChildRelativeOffsets)
 
   def offsetXY(x: Int, y: Int): Point =
     val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
@@ -148,7 +170,27 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
    * @param y absolute y-coordinate
    * @return
    */
-  def hasAbsolutePosition(x: Int, y: Int): Boolean = this.absoluteX == x && this.absoluteY == y
+  def hasAbsolutePosition(x: Int, y: Int): Boolean = absolutePosition == new Point(x, y)
+
+  def selfAndRelativePositionedFocuses: List[Focus] =
+    val focuses = ListBuffer[Focus]()
+    focuses += this
+
+    @tailrec
+    def gatherRelativeFocuses(currentFocuses: List[Focus]): Unit =
+      val newlyFoundFocuses = ListBuffer[Focus]()
+      for
+        focus <- focusTree.focuses
+        currentFocus <- currentFocuses
+        if (focus.relativePositionFocus @== currentFocus) && !focuses.contains(focus)
+      do
+        focuses += focus
+        newlyFoundFocuses += focus
+      if newlyFoundFocuses.nonEmpty then
+        gatherRelativeFocuses(newlyFoundFocuses.toList)
+
+    gatherRelativeFocuses(List(this))
+    focuses.toList
 
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 
@@ -317,11 +359,9 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
                            |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
                            |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}""".stripMargin
 
-      FocusTreeFile.focusTreeFileErrors += fullMessage
+      focusTreeErrors += fullMessage
 
-  /**
-   * mutually exclusive is a multi-reference of focuses
-   */
+  /** mutually exclusive is a multi-reference of focuses */
   class MutuallyExclusiveSet(referenceFocusesSupplier: () => Iterable[Focus])
     extends MultiReferencePDX[Focus](referenceFocusesSupplier, (f: Focus) => f.id.value, "mutually_exclusive", "focus")
 
@@ -346,7 +386,6 @@ class Focus(var focusTree: FocusTreeFile, node: Node = null) extends StructuredP
   // it so such tightly knitted rat nest of fuck ass object oriented code.
   // trait class and abstracts shouldn't handle exceptions / errors / user expected errors!
   //      cuz the generic code means its hard to get metadata, log, debug etc
-  //TODO This small class is producing MOST of the unexpected identifier exceptions that show up in terminal, can you clean it up @Skorp or explain how I can touch it, please.
   class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward"):
 
     override def getPDXTypeName: String = "Completion Reward"

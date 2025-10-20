@@ -1,103 +1,285 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+  Copyright (c) 2015, 2019, Gluon and/or its affiliates.
+  All rights reserved. Use is subject to license terms.
+
+  This file is available and licensed under the following license:
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the distribution.
+  - Neither the name of Oracle Corporation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<VBox alignment="CENTER" prefHeight="700.0" prefWidth="400.0" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.map.ProvinceColorsController">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
 
-    <!-- Title and Version -->
-    <Label fx:id="idWindowName" prefHeight="62.0" prefWidth="289.0" style="-fx-font-size: 18; -fx-font-weight: bold;" text="Province Colors - Unique Color Generator" textAlignment="CENTER" wrapText="true" />
-    <Label text="Enter a number" />
+<VBox fx:id="pcVboxRoot" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+      <GridPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Button fx:id="pcClose" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Button>
+            <Button fx:id="pcMinimize" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT">
+               <GridPane.margin>
+                  <Insets right="60.0" />
+               </GridPane.margin>
+            </Button>
+            <Button fx:id="pcSquare" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT">
+               <GridPane.margin>
+                  <Insets right="30.0" />
+               </GridPane.margin>
+            </Button>
+         </children>
+      </GridPane>
+    <MenuBar fx:id="pcMenuBar" prefHeight="30.0" VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" text="New" />
+            <MenuItem mnemonicParsing="false" text="Open…" />
+            <Menu mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Close" />
+            <MenuItem mnemonicParsing="false" text="Save" />
+            <MenuItem mnemonicParsing="false" text="Save As…" />
+            <MenuItem mnemonicParsing="false" text="Revert" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Preferences…" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Quit" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Undo" />
+            <MenuItem mnemonicParsing="false" text="Redo" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Cut" />
+            <MenuItem mnemonicParsing="false" text="Copy" />
+            <MenuItem mnemonicParsing="false" text="Paste" />
+            <MenuItem mnemonicParsing="false" text="Delete" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Select All" />
+            <MenuItem mnemonicParsing="false" text="Unselect All" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+          </items>
+        </Menu>
+      </menus>
+         <VBox.margin>
+            <Insets right="90.0" top="-30.0" />
+         </VBox.margin>
+    </MenuBar>
+    <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+      <items>
+        <AnchorPane>
+          <children>
+            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Master" textAlignment="CENTER" wrapText="false">
+              <font>
+                <Font size="18.0" fx:id="x1" />
+              </font>
+              <textFill>
+                <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
+              </textFill>
+            </Label>
+          </children>
+        </AnchorPane>
+        <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
+          <content>
+            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="430.0">
+              <children>
+                <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" textFill="$x2" wrapText="false" />
+				<VBox alignment="CENTER" prefHeight="730.0" prefWidth="400.0" spacing="10.0">
 
-    <!-- User Input Section -->
-    <GridPane alignment="CENTER" hgap="10" vgap="10">
-        <columnConstraints>
-            <ColumnConstraints />
-            <ColumnConstraints />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-        </rowConstraints>
+					<!-- Title and Version -->
+					<Label fx:id="idWindowName" prefHeight="62.0" prefWidth="289.0" style="-fx-font-size: 18; -fx-font-weight: bold;" text="Province Colors - Unique Color Generator" textAlignment="CENTER" wrapText="true" />
+					<Label text="Enter a number" />
 
-        <Label text="Number of Unique Colors:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-        <TextField fx:id="colorInputField" onAction="#handleColorInputField" onInputMethodTextChanged="#handleColorInputField" onKeyReleased="#handleColorInputField" onMouseExited="#handleColorInputField" promptText="Enter a number" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+					<!-- User Input Section -->
+					<GridPane alignment="CENTER" hgap="10" vgap="10">
+						<columnConstraints>
+							<ColumnConstraints />
+							<ColumnConstraints />
+						</columnConstraints>
+						<rowConstraints>
+							<RowConstraints />
+							<RowConstraints />
+						</rowConstraints>
 
-        <Button fx:id="generateButton" onAction="#handleGenerateButton" text="Generate BMP" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-    </GridPane>
+						<Label text="Number of Unique Colors:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+						<TextField fx:id="colorInputField" onAction="#handleColorInputField" onInputMethodTextChanged="#handleColorInputField" onKeyReleased="#handleColorInputField" onMouseExited="#handleColorInputField" promptText="Enter a number" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-    <!-- RGB Slider Controls -->
-    <TitledPane text="Color Range Settings" expanded="true">
-        <VBox spacing="5">
-            <padding>
-                <Insets top="5" right="10" bottom="5" left="10" />
-            </padding>
+						<Button fx:id="generateButton" onAction="#handleGenerateButton" text="Generate BMP" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+					</GridPane>
 
-            <!-- Red Sliders -->
-            <Label text="Red Range:" style="-fx-font-weight: bold;" />
-            <GridPane hgap="10" vgap="5">
-                <columnConstraints>
-                    <ColumnConstraints percentWidth="15" />
-                    <ColumnConstraints percentWidth="70" />
-                    <ColumnConstraints percentWidth="15" />
-                </columnConstraints>
+					<!-- RGB Slider Controls -->
+					<TitledPane expanded="true" text="Color Range Settings">
+						<VBox spacing="5">
+							<padding>
+								<Insets bottom="5" left="10" right="10" top="5" />
+							</padding>
 
-                <Label text="Min:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Slider fx:id="redMinSlider" min="0" max="255" value="0" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <Label fx:id="minRedAmtLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+							<!-- Red Sliders -->
+							<Label style="-fx-font-weight: bold;" text="Red Range:" />
+							<GridPane hgap="10" vgap="5">
+								<columnConstraints>
+									<ColumnConstraints percentWidth="15" />
+									<ColumnConstraints percentWidth="70" />
+									<ColumnConstraints percentWidth="15" />
+								</columnConstraints>
 
-                <Label text="Max:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Slider fx:id="redMaxSlider" min="0" max="255" value="255" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label fx:id="maxRedAmtLabel" text="255" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            </GridPane>
+								<Label text="Min:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+								<Slider fx:id="redMinSlider" majorTickUnit="64" max="255" min="0" minorTickCount="4" showTickLabels="true" showTickMarks="true" value="0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+								<Label fx:id="minRedAmtLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
 
-            <!-- Green Sliders -->
-            <Label text="Green Range:" style="-fx-font-weight: bold;" />
-            <GridPane hgap="10" vgap="5">
-                <columnConstraints>
-                    <ColumnConstraints percentWidth="15" />
-                    <ColumnConstraints percentWidth="70" />
-                    <ColumnConstraints percentWidth="15" />
-                </columnConstraints>
+								<Label text="Max:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+								<Slider fx:id="redMaxSlider" majorTickUnit="64" max="255" min="0" minorTickCount="4" showTickLabels="true" showTickMarks="true" value="255" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+								<Label fx:id="maxRedAmtLabel" text="255" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+							<rowConstraints>
+							   <RowConstraints />
+							   <RowConstraints />
+							</rowConstraints>
+							</GridPane>
 
-                <Label text="Min:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Slider fx:id="greenMinSlider" min="0" max="255" value="0" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <Label fx:id="minGreenAmtLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+							<!-- Green Sliders -->
+							<Label style="-fx-font-weight: bold;" text="Green Range:" />
+							<GridPane hgap="10" vgap="5">
+								<columnConstraints>
+									<ColumnConstraints percentWidth="15" />
+									<ColumnConstraints percentWidth="70" />
+									<ColumnConstraints percentWidth="15" />
+								</columnConstraints>
 
-                <Label text="Max:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Slider fx:id="greenMaxSlider" min="0" max="255" value="255" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label fx:id="maxGreenAmtLabel" text="255" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            </GridPane>
+								<Label text="Min:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+								<Slider fx:id="greenMinSlider" majorTickUnit="64" max="255" min="0" minorTickCount="4" showTickLabels="true" showTickMarks="true" value="0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+								<Label fx:id="minGreenAmtLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
 
-            <!-- Blue Sliders -->
-            <Label text="Blue Range:" style="-fx-font-weight: bold;" />
-            <GridPane hgap="10" vgap="5">
-                <columnConstraints>
-                    <ColumnConstraints percentWidth="15" />
-                    <ColumnConstraints percentWidth="70" />
-                    <ColumnConstraints percentWidth="15" />
-                </columnConstraints>
+								<Label text="Max:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+								<Slider fx:id="greenMaxSlider" majorTickUnit="64" max="255" min="0" minorTickCount="4" showTickLabels="true" showTickMarks="true" value="255" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+								<Label fx:id="maxGreenAmtLabel" text="255" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+							<rowConstraints>
+							   <RowConstraints />
+							   <RowConstraints />
+							</rowConstraints>
+							</GridPane>
 
-                <Label text="Min:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Slider fx:id="blueMinSlider" min="0" max="255" value="0" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <Label fx:id="minBlueAmtLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+							<!-- Blue Sliders -->
+							<Label style="-fx-font-weight: bold;" text="Blue Range:" />
+							<GridPane hgap="10" vgap="5">
+								<columnConstraints>
+									<ColumnConstraints percentWidth="15" />
+									<ColumnConstraints percentWidth="70" />
+									<ColumnConstraints percentWidth="15" />
+								</columnConstraints>
 
-                <Label text="Max:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Slider fx:id="blueMaxSlider" min="0" max="255" value="255" showTickMarks="true" showTickLabels="true" majorTickUnit="64" minorTickCount="4" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label fx:id="maxBlueAmtLabel" text="255" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            </GridPane>
-        </VBox>
-    </TitledPane>
+								<Label text="Min:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+								<Slider fx:id="blueMinSlider" majorTickUnit="64" max="255" min="0" minorTickCount="4" showTickLabels="true" showTickMarks="true" value="0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+								<Label fx:id="minBlueAmtLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
 
-    <!-- Status and Progress -->
-    <HBox alignment="CENTER" spacing="10">
-        <Label fx:id="statusLabel" alignment="TOP_LEFT" prefHeight="50.0" prefWidth="200.0" text="Status: Waiting for input..." wrapText="true" />
-        <ProgressIndicator fx:id="progressIndicator" visible="false" />
+								<Label text="Max:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+								<Slider fx:id="blueMaxSlider" majorTickUnit="64" max="255" min="0" minorTickCount="4" showTickLabels="true" showTickMarks="true" value="255" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+								<Label fx:id="maxBlueAmtLabel" text="255" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+							<rowConstraints>
+							   <RowConstraints />
+							   <RowConstraints />
+							</rowConstraints>
+							</GridPane>
+						</VBox>
+					</TitledPane>
+
+					<!-- Status and Progress -->
+					<HBox alignment="CENTER" spacing="10">
+						<Label fx:id="statusLabel" alignment="TOP_LEFT" prefHeight="50.0" prefWidth="200.0" text="Status: Waiting for input..." wrapText="true" />
+						<ProgressIndicator fx:id="progressIndicator" visible="false" />
+					</HBox>
+
+					<!-- Color Preview Grid -->
+					<Label style="-fx-font-weight: bold;" text="Color Preview:" />
+					<ScrollPane prefHeight="200.0" prefWidth="300">
+						<GridPane fx:id="colorPreviewGrid" hgap="2" vgap="2" />
+					</ScrollPane>
+				</VBox>
+			  </children>
+            </AnchorPane>
+          </content>
+        </ScrollPane>
+        <AnchorPane>
+          <children>
+            <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" textFill="$x2" wrapText="false" />
+          </children>
+        </AnchorPane>
+      </items>
+    </SplitPane>
+    <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+      <children>
+        <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Left status" HBox.hgrow="ALWAYS">
+          <font>
+            <Font size="11.0" fx:id="x3" />
+          </font>
+          <textFill>
+            <Color red="0.625" green="0.625" blue="0.625" fx:id="x4" />
+          </textFill>
+        </Label>
+        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+        <Label font="$x3" maxWidth="-1.0" text="Right status" textFill="$x4" HBox.hgrow="NEVER" />
+      </children>
+      <padding>
+        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+      </padding>
     </HBox>
-
-    <!-- Color Preview Grid -->
-    <Label style="-fx-font-weight: bold;" text="Color Preview:" />
-    <ScrollPane prefHeight="200.0" prefWidth="300">
-        <GridPane fx:id="colorPreviewGrid" hgap="2" vgap="2" />
-    </ScrollPane>
+  </children>
 </VBox>

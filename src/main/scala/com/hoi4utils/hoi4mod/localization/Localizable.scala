@@ -1,8 +1,9 @@
 package com.hoi4utils.hoi4mod.localization
 
 import com.hoi4utils.exceptions.LocalizationPropertyException
+import com.hoi4utils.hoi4mod.localization.Property.{DESCRIPTION, NAME}
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.ui.custom_javafx.controller.JavaFXUIManager
+import com.hoi4utils.ui.javafx.application.JavaFXUIManager
 
 import java.io.File
 import scala.collection.mutable
@@ -73,6 +74,8 @@ trait Localizable {
     case Some(l) => Some(l.text)
     case None => None
 
+  def locName: Option[String] = this.localizationText(NAME)
+  
   def localizationStatus(property: Property): Localization.Status = localization(property) match
     case Some(l) => l.status
     case None => Localization.Status.MISSING
@@ -152,5 +155,12 @@ trait Localizable {
       case None =>
     }
   }
+
+  /**
+   * Sets the name localization to the new value.
+   *
+   * @param text     the new localization text.
+   */
+  def replaceName(text: String): Unit = replaceLocalization(Property.NAME, text)
   
 }

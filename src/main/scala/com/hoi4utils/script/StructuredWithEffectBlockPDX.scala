@@ -63,7 +63,9 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
    */
   override def loadPDX(expression: Node): Unit = expression.identifier match
     case None => super.loadPDX(expression)
-    case Some(_) => if this.isValidIdentifier(expression) then super.loadPDX(expression) else effectNodes += expression // If the identifier is not among the expected structured ones, add it as an effect.
+    case Some(_) =>
+      // If the identifier is not among the expected structured ones, add it as an effect.
+      if this.isValidIdentifier(expression) then super.loadPDX(expression) else effectNodes += expression
 
 
   /**
@@ -75,8 +77,7 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
     super.loadPDX(expressions.filter(this.isValidIdentifier))
 
     // Collect effect nodes
-    val effectNodesToAdd = expressions.filterNot(this.isValidIdentifier)
-    effectNodes ++= effectNodesToAdd
+    effectNodes ++= expressions.filterNot(this.isValidIdentifier)
 
     ListBuffer.from(expressions).filterNot(this.isValidIdentifier)
   }

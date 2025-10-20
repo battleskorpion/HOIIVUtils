@@ -53,7 +53,7 @@ object ResourcesFile extends PDXReadable with LazyLogging {
         s"or it does not exist (No resources file found).")
       false
 
-  def clear(): Unit = _resourcesPDX = None
+  override def clear(): Unit = _resourcesPDX = None
 
   def pdxSupplier(): PDXSupplier[ResourceDefinition] = {
     new PDXSupplier[ResourceDefinition] {

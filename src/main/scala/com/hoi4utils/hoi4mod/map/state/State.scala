@@ -381,7 +381,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging {
     }
   }
 
-  def clear(): Unit = {
+  override def clear(): Unit = {
     states.clear()
   }
 

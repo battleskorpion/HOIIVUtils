@@ -7,8 +7,8 @@ import com.hoi4utils.file.file_listener.{FileAdapter, FileEvent, FileWatcher}
 import com.hoi4utils.hoi4mod.common.country_tags.CountryTag
 import com.hoi4utils.hoi4mod.common.idea.IdeaFile
 import com.hoi4utils.hoi4mod.common.idea.IdeaFile.ideaFileErrors
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile.focusTreeFileErrors
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager.focusTreeErrors
+import com.hoi4utils.hoi4mod.common.national_focus.{FocusTree, FocusTreesManager}
 import com.hoi4utils.hoi4mod.gfx.Interface
 import com.hoi4utils.hoi4mod.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4mod.history.countries.CountryFile
@@ -40,6 +40,17 @@ class PDXLoader extends LazyLogging:
   val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
   private var stateFilesWatcher: FileWatcher = null
 
+  /* LOAD ORDER IMPORTANT (depending on the class) */
+  val pdxList: List[PDXReadable] = List(
+    Interface,
+    ResourcesFile,
+    State,
+    CountryFile,
+    CountryTag,
+    IdeaFile,
+    FocusTreesManager,
+  )
+
   def load(hProperties: Properties, loadingLabel: Label, isCancelled: () => Boolean = () => false): Unit =
     implicit val properties: Properties = hProperties
     implicit val label: Label = loadingLabel
@@ -69,17 +80,6 @@ class PDXLoader extends LazyLogging:
     MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
     LocalizationManager.getOrCreate(() => new EnglishLocalizationManager).reload()
     if isCancelled() then return
-
-    /* LOAD ORDER IMPORTANT (depending on the class) */
-    val pdxList = List (
-      Interface,
-      ResourcesFile,
-      State,
-      CountryFile,
-      CountryTag,
-      IdeaFile,
-      FocusTreeFile,
-    )
     
     pdxList.foreach(p =>
       if !isCancelled() then readPDX(p, isCancelled)
@@ -111,14 +111,8 @@ class PDXLoader extends LazyLogging:
       return false
     true
 
-  def clearPDX(): Unit =
-    IdeaFile.clear()
-    FocusTreeFile.clear()
-    CountryTag.clear()
-    CountryFile.clear()
-    State.clear()
-    ResourcesFile.clear()
-    Interface.clear()
+  /** Clears loaded PDX data. */
+  def clearPDX(): Unit = pdxList.foreach(_.clear())
 
   def clearLB(): Unit =
     ListBuffer(
@@ -126,7 +120,7 @@ class PDXLoader extends LazyLogging:
       localizationErrors,
       interfaceErrors,
       countryErrors,
-      focusTreeFileErrors,
+      focusTreeErrors,
       ideaFileErrors,
       resourceErrors,
       stateErrors

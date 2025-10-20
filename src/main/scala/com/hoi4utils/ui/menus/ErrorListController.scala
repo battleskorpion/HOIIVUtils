@@ -3,14 +3,16 @@ package com.hoi4utils.ui.menus
 import com.hoi4utils.databases.effect.EffectDatabase.effectErrors
 import com.hoi4utils.extensions.*
 import com.hoi4utils.hoi4mod.common.idea.IdeaFile.ideaFileErrors
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile.focusTreeFileErrors
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager.focusTreeErrors
 import com.hoi4utils.hoi4mod.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4mod.history.countries.CountryFile.countryErrors
 import com.hoi4utils.hoi4mod.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.hoi4mod.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4mod.map.state.State.stateErrors
 import com.hoi4utils.main.HOIIVUtils
-import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
+import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
+import javafx.application.Platform
+import javafx.concurrent.Task
 import javafx.scene.control.{Button, TabPane}
 import javafx.scene.layout.BorderPane
 //import com.hoi4utils.StateFilesWatcher.statesThatChanged
@@ -29,9 +31,9 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
   
   @FXML var contentContainer: BorderPane = uninitialized
   @FXML var errorListTabPane: TabPane = uninitialized
-  @FXML var mClose: Button = uninitialized
-  @FXML var mSquare: Button = uninitialized
-  @FXML var mMinimize: Button = uninitialized
+  @FXML var elClose: Button = uninitialized
+  @FXML var elSquare: Button = uninitialized
+  @FXML var elMinimize: Button = uninitialized
 
   @FXML var effectsEL: ListView[String] = uninitialized
   @FXML var localizationEL: ListView[String] = uninitialized
@@ -43,11 +45,28 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
   @FXML var stateEL: ListView[String] = uninitialized
   @FXML var statesThatChangedList: ListView[String] = uninitialized
 
+  private var isEmbedded: Boolean = false
+
   val testList: ListBuffer[String] = ListBuffer.empty[String]
 
-  def initialize(): Unit = update()
+  @FXML
+  def initialize(): Unit =
+    Platform.runLater(() =>
+      hideButtons()
+    )
+    val loadErrorsTask = new Task[Unit]() {
+      override def call(): Unit = update()
+    }
 
-  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize, errorListTabPane)
+    new Thread(loadErrorsTask).start()
+
+  override def preSetup(): Unit = setupWindowControls(contentContainer, elClose, elSquare, elMinimize, errorListTabPane)
+
+  private def hideButtons(): Unit =
+    isEmbedded = primaryScene == null
+    elClose.setVisible(!isEmbedded)
+    elSquare.setVisible(!isEmbedded)
+    elMinimize.setVisible(!isEmbedded)
 
   private def update(): Unit =
     val listViewsWithErrors = ListBuffer(
@@ -55,7 +74,7 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
       (localizationEL, localizationErrors),
       (interfaceEL, interfaceErrors),
       (countryEL, countryErrors),
-      (focusTreeEL, focusTreeFileErrors),
+      (focusTreeEL, focusTreeErrors),
       (ideaEL, ideaFileErrors),
       (resourceEL, resourceErrors),
       (stateEL, stateErrors)

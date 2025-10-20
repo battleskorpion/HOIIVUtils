@@ -79,8 +79,8 @@ object Interface extends PDXReadable with LazyLogging {
     val hoi4Success = readHoi4()
     modSuccess && hoi4Success
   }
-  
-  def clear(): Unit = {
+
+  override def clear(): Unit = {
     gfxMap.clear()
     interfaceFiles.clear()
   }

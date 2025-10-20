@@ -3,15 +3,16 @@ package com.hoi4utils.ui.menus
 import com.hoi4utils.*
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.config
-import com.hoi4utils.ui.buildings.BuildingsByCountryController
-import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController2, RootWindows}
+import com.hoi4utils.ui.countries.BuildingsByCountryController
+import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController2, RootWindows}
+import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.gfx.InterfaceFileListController
-import com.hoi4utils.ui.hoi4localization.*
+import com.hoi4utils.ui.localization.*
+import com.hoi4utils.ui.localization.CustomTooltipController
 import com.hoi4utils.ui.map.{MapEditorController, MapGenerationController, ProvinceColorsController}
 import com.hoi4utils.ui.menus.SettingsController
 import com.hoi4utils.ui.parser.ParserViewerController
-import com.hoi4utils.ui.tooltip.CustomTooltipController
 import com.hoi4utils.ui.units.CompareUnitsController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
@@ -20,6 +21,7 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.stage.Stage
+import javafx.scene.input.MouseEvent
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import javax.swing.*
@@ -28,10 +30,10 @@ import scala.compiletime.uninitialized
 
 class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with LazyLogging:
   import MenuController.*
-  setFxmlFile("Menu.fxml")
-  setTitle("HOIIVUtils Menu")
+  setFxmlFile("Menu2.fxml")
+  setTitle("HOIIVUtils")
 
-  @FXML var mRoot: BorderPane = uninitialized
+  @FXML var mRoot: VBox = uninitialized
   @FXML var contentStack: StackPane = uninitialized
   @FXML var contentGrid: GridPane = uninitialized
   @FXML var mClose: Button = uninitialized
@@ -52,12 +54,18 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   @FXML var vMapEditor: Button = uninitialized
   @FXML var vParserView: Button = uninitialized
   @FXML var vErrors: Button = uninitialized
+  @FXML var detailContentPane: StackPane = uninitialized
 
   @FXML var loadingLabel: Label = uninitialized
   @FXML var mTitle: Label = uninitialized
   @FXML var mVersion: Label = uninitialized
 
+  @FXML var errorList: BorderPane = uninitialized
+  @FXML var errorListController: ErrorListController = uninitialized
+
   private var currentTask: javafx.concurrent.Task[Unit] = null
+
+  private var detailPanelManager: DetailPanelManager = uninitialized
 
   @FXML
   def initialize(): Unit =
@@ -78,7 +86,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         // At minimum, check cancelled both before and after the call.
         pdxLoader.load(config.getProperties, loadingLabel, () => isCancelled)
         if isCancelled then return
-    
+
         MenuController.updateLoadingStatus(loadingLabel, "Checking for bad files...")
 
         val badFiles = ListBuffer(
@@ -122,6 +130,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         blockButtons(false)
 
     /* INITIALIZATION */
+    detailPanelManager = new DetailPanelManager(detailContentPane)
     currentTask = task
     contentGrid.setVisible(false)
     loadingLabel.setVisible(true)
@@ -135,7 +144,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
       logger.info(s"Loading mod: ${config.getProperties.getProperty("mod.path")}")
       updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${config.getProperties.getProperty("mod.path")}\"")
       mVersion.setText(s"v${config.getProperties.getProperty("version")}")
-      mTitle.setText(s"HOIIVUtils Menu")
+      mTitle.setText(s"HOIIVUtils")
       new Thread(task).start()
     catch case e: Exception => handleMInitError("Error starting program", e)
 
@@ -161,14 +170,32 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     cancelTask()
     closeWindow(vSettings) // closes the menu window
     new SettingsController().open()
-  def openFocusTreeViewer(): Unit = new FocusTreeController().open()
-  def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open()
-  def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open()
-  def openManageFocusTrees(): Unit = new ManageFocusTreesController().open()
-  def openCustomTooltip(): Unit = new CustomTooltipController().open()
-  def openBuildingsByCountry(): Unit = new BuildingsByCountryController().open()
-  def openGFXInterfaceFileList(): Unit = new InterfaceFileListController().open()
-  def openUnitComparisonView(): Unit =
+
+  // TODO 6 out of 13 views are embedded in detail panel, rest open new windows
+  @FXML
+  def handleFocusTreeViewerClick(event: MouseEvent): Unit =
+    if event.isControlDown then new FocusTree2Controller().open()
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/focus/FocusTree2.fxml")
+
+  def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open() // TODO embed
+  def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open() // TODO embed
+  def openManageFocusTrees(): Unit = new ManageFocusTreesController().open() // TODO embed
+
+  @FXML
+  def handleCustomTooltipClick(event: MouseEvent): Unit =
+    if event.isControlDown then new CustomTooltipController().open()
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/localization/CustomTooltip.fxml")
+
+
+  def openBuildingsByCountry(): Unit = new BuildingsByCountryController().open() // TODO embed
+
+  @FXML
+  def handleGFXInterfaceFileListClick(event: MouseEvent): Unit =
+    if event.isControlDown then new InterfaceFileListController().open()
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/gfx/InterfaceFileList.fxml")
+
+  @FXML
+  def handleUnitComparisonClick(event: MouseEvent): Unit =
     if !HOIIVFiles.isUnitsFolderValid then
       logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
       JOptionPane.showMessageDialog(
@@ -178,13 +205,22 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         JOptionPane.WARNING_MESSAGE
       )
     else
-      new CompareUnitsController().open()
+      if event.isControlDown then new CompareUnitsController().open()
+      else detailPanelManager.switchToView("/com/hoi4utils/ui/units/CompareUnits.fxml")
 
-  def openProvinceColors(): Unit = new ProvinceColorsController().open()
-  def openMapGeneration(): Unit = new MapGenerationController().open()
-  def openMapEditor(): Unit = new MapEditorController().open()
-  def openParserView(): Unit = new ParserViewerController().open()
-  def openErrorsW(): Unit = new ErrorListController().open()
+  @FXML
+  def handleProvinceColorsClick(event: MouseEvent): Unit =
+    if event.isControlDown then new ProvinceColorsController().open()
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/map/ProvinceColors.fxml")
+
+  def openMapGeneration(): Unit = new MapGenerationController().open() // TODO embed
+  def openMapEditor(): Unit = new MapEditorController().open() // TODO embed
+  def openParserView(): Unit = new ParserViewerController().open() // TODO embed
+
+  @FXML
+  def handleErrorsClick(event: MouseEvent): Unit =
+    if event.isControlDown then new ErrorListController().open()
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/menus/ErrorList.fxml")
 
   private def cancelTask(): Unit =
     if currentTask != null && !currentTask.isDone then

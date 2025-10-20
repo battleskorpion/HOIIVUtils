@@ -12,7 +12,7 @@ class Province extends IntPDX {
   override def set(expression: Node): Unit = {
     super.set(expression)
   }
-  
+
   override def set(value: Int): Int = {
     super.set(value)
   }

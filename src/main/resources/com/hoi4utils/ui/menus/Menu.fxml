@@ -15,7 +15,7 @@
 <BorderPane fx:id="mRoot" prefHeight="560.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
 	<center>
 		<StackPane fx:id="contentStack">
-			<Label fx:id="loadingLabel" alignment="TOP_CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="text here" textAlignment="CENTER" wrapText="true">
+			<Label fx:id="loadingLabel" alignment="TOP_CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textAlignment="CENTER" wrapText="true">
             <font>
                <Font size="18.0" />
             </font>

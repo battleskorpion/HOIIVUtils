@@ -8,9 +8,9 @@ import scala.collection.mutable.ListBuffer
 /**
  * Concrete implementation for homogeneous PDX collections.
  *
- * CollectionPDX vs ListPDX:
- * - **ListPDX**: Simple supplier creates identical objects regardless of content
- * - **CollectionPDX**: Context-aware supplier can create different subtypes based on node content
+ * [[CollectionPDX]] vs [[ListPDX]]:
+ * - CollectionPDX: Uses suppliers that can create different subtypes based on node content
+ * - ListPDX: Uses simple suppliers that always create the same type regardless of content
  *
  * Use ListPDX when:
  * - Parsing collections where all elements are the same type
@@ -24,6 +24,7 @@ import scala.collection.mutable.ListBuffer
  *
  * // Collection of complex objects (all same type)
  * val uniformEvents = new ListPDX(() => new Event(), "events")
+ *
  * }}}
  *
  * @param simpleSupplier Function that creates new instances of T (content-agnostic)

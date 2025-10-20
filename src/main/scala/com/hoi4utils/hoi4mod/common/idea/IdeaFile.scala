@@ -5,7 +5,7 @@ import com.hoi4utils.hoi4mod.common.idea.IdeaFile.ideaFileFileMap
 import com.hoi4utils.hoi4mod.localization.Localizable
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Node, ParserException}
-import com.hoi4utils.script.{CollectionPDX, PDXReadable, PDXScript, StructuredPDX}
+import com.hoi4utils.script.{CollectionPDX, PDXFile, PDXReadable, PDXScript, StructuredPDX}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 
@@ -14,7 +14,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
-class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[Idea] {
+class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[Idea] with PDXFile {
   /* pdxscript */
   final var countryIdeas = new CollectionPDX[Idea](Idea.pdxSupplier(), "country") {
     override def loadPDX(expr: Node): Unit = {
@@ -39,13 +39,13 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
       _file.foreach(file => ideaFileFileMap.put(file, this))
 
   override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
-    val message = s"Unexpected identifier in idea file ${_file.map(_.getName).getOrElse("[Unknown file]")}: ${node.identifier}"
+    val message = s"Unexpected identifier in idea file ${fileNameOrElse("[Unknown file]")}: ${node.identifier}"
     IdeaFile.ideaFileErrors += message
 //    logger.error(message)
 
 
   override def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
-    val message = s"Node value type error in idea file ${_file.map(_.getName).getOrElse("[Unknown file]")}: ${exception.getMessage}"
+    val message = s"Node value type error in idea file ${fileNameOrElse("[Unknown file]")}: ${exception.getMessage}"
     IdeaFile.ideaFileErrors += message
 //    logger.error(message)
 
@@ -61,7 +61,7 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
     _file = Some(file)
   }
   
-  def getFile: Option[File] = _file
+  override def getFile: Option[File] = _file
 
   override def iterator: Iterator[Idea] = listIdeas.iterator
 
@@ -110,7 +110,7 @@ object IdeaFile extends LazyLogging with PDXReadable {
   /**
    * Clears all idea files and any other relevant values.
    */
-  def clear(): Unit = {
+  override def clear(): Unit = {
     ideaFiles.clear()
     ideaFileFileMap.clear()
   }

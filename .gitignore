@@ -121,3 +121,6 @@ temp/*
 .claude/settings.local.json
 CLAUDE.md
 .vscode
+src/.idea/workspace.xml
+src/.idea/misc.xml
+src/.idea/modules.xml

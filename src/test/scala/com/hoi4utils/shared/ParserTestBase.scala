@@ -1,7 +1,7 @@
 package com.hoi4utils.shared
 
 import com.hoi4utils.hoi4mod.common.national_focus
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTree
 import com.hoi4utils.parser.{Node, Parser}
 import org.junit.jupiter.api.{AfterEach, BeforeEach}
 

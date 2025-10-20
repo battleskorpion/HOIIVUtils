@@ -1,7 +1,8 @@
 package com.hoi4utils.ui.pdxscript;
 
 import com.hoi4utils.script.CollectionPDX;
-import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.javafx.scene.layout.CollectionPDXSearchPane;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 

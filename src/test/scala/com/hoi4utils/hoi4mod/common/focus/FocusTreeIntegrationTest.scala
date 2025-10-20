@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4mod.common.focus
 
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreeFile
+import com.hoi4utils.hoi4mod.common.national_focus.FocusTree
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.shared.ParserTestBase
 import org.junit.jupiter.api.Assertions.*
@@ -35,7 +35,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     val testFile = testModPath.resolve("common/national_focus/california.txt").toFile
 
     Try {
-      val focusTree = new FocusTreeFile(testFile)
+      val focusTree = new FocusTree(testFile)
       focusTree
     } match {
       case Success(focusTree) =>
@@ -65,7 +65,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     assertConsistentParsing(
       () => {
         FocusTreeFile.clear() // Clear before each test
-        val focusTree = new FocusTreeFile(testFile)
+        val focusTree = new FocusTree(testFile)
         focusTree.focuses.size
       },
       expectedResult = expectedCount,
@@ -81,7 +81,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     val testFile = testModPath.resolve("common/national_focus/california.txt").toFile
 
     Try {
-      val focusTree = new FocusTreeFile(testFile)
+      val focusTree = new FocusTree(testFile)
       focusTree
     } match {
       case Success(focusTree) =>
@@ -123,7 +123,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     val testFile = testModPath.resolve("common/national_focus/california.txt").toFile
 
     Try {
-      val focusTree = new FocusTreeFile(testFile)
+      val focusTree = new FocusTree(testFile)
       focusTree
     } match {
       case Success(focusTree) =>
@@ -159,7 +159,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     val testFile = testModPath.resolve("common/national_focus/california.txt").toFile
 
     Try {
-      val focusTree = new FocusTreeFile(testFile)
+      val focusTree = new FocusTree(testFile)
       focusTree
     } match {
       case Success(focusTree) =>
@@ -187,7 +187,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
     val testFile = testModPath.resolve("common/national_focus/california.txt").toFile
 
     Try {
-      val focusTree = new FocusTreeFile(testFile)
+      val focusTree = new FocusTree(testFile)
       focusTree
     } match {
       case Success(focusTree) =>
@@ -231,7 +231,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
       println("Skipping multiple file test - need at least 2 focus tree files")
     else
       val createdTrees = focusTreeFiles.take(2).flatMap { file =>
-        Try(new FocusTreeFile(file)) match {
+        Try(new FocusTree(file)) match {
           case Success(tree) => Some(tree)
           case Failure(exception) =>
             println(s"Failed to create FocusTree from ${file.getName}: ${exception.getMessage}")
@@ -254,7 +254,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
   }
 
   // scala
-  private def debugScriptDuplication(focusTree: FocusTreeFile, generatedScript: String): Unit = {
+  private def debugScriptDuplication(focusTree: FocusTree, generatedScript: String): Unit = {
     import scala.util.{Failure, Success}
 
     printFocusMatchContexts(generatedScript, maxMatches = 200)

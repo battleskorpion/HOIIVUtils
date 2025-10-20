@@ -1,10 +1,9 @@
 package com.hoi4utils.ui.focus_view
 
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTreeFile}
+import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree}
 import com.hoi4utils.hoi4mod.localization.Property
 import com.hoi4utils.script.PDXScript
-import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.hoi4utils.ui.pdxscript.PDXEditorController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
@@ -24,7 +23,7 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters.*
 import scala.util.boundary
 
-class FocusTreeScrollPane(private var _focusTree: Option[FocusTreeFile]) extends ScrollPane with LazyLogging:
+class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends ScrollPane with LazyLogging:
   // Constants
   private val FOCUS_X_SCALE: Int = 90
   private val CENTER_FOCUS_X: Int = FOCUS_X_SCALE / 2
@@ -112,7 +111,7 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTreeFile]) extends
     val buffer = new Array[Byte](inputStream.available)
     inputStream.read(buffer)
     inputStream.close()
-    ScalaFXImageUtils.imageFromDDS(
+    DDSReader.imageFromDDS(
       DDSReader.read(buffer, DDSReader.ARGB, 0) match
         case Some(value) => value
         case None => ???,
@@ -349,7 +348,7 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTreeFile]) extends
       tree.focuses.find(_.hasAbsolutePosition(x, y))
 
   @FXML
-  def selectClosestMatch(comboBox: ComboBox[FocusTreeFile], typedText: String): Unit =
+  def selectClosestMatch(comboBox: ComboBox[FocusTree], typedText: String): Unit =
     val matchingItem = comboBox.getItems.asScala.find: item =>
       item.countryTag match
         case Some(countryTag) => countryTag.toString.toLowerCase().startsWith(typedText.toLowerCase())
@@ -531,13 +530,13 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTreeFile]) extends
           contextMenu.show(focusTreeCanvas, event.getScreenX, event.getScreenY)
       case _ => // do nothing for other mouse buttons
 
-  def focusTree: Option[FocusTreeFile] = _focusTree
+  def focusTree: Option[FocusTree] = _focusTree
 
-  def focusTree_= (focusTree: Option[FocusTreeFile]): Unit =
+  def focusTree_= (focusTree: Option[FocusTree]): Unit =
     _focusTree = focusTree
     drawFocusTree()
 
-  def focusTree_=(focusTree: FocusTreeFile): Unit = this.focusTree = Some(focusTree)
+  def focusTree_=(focusTree: FocusTree): Unit = this.focusTree = Some(focusTree)
 
   private def addFocusTreePaneHandlers(): Unit =
     addPanningHandlers()
