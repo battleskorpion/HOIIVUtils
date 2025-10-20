@@ -2,8 +2,8 @@ package com.hoi4utils.ui.units
 
 import com.hoi4utils.hoi4mod.common.units.SubUnit
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
-import com.hoi4utils.ui.custom_javafx.pane.DiffViewPane
+import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
+import com.hoi4utils.ui.javafx.scene.layout.DiffViewPane
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.Button

@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.gfx
 
 import com.hoi4utils.main.HOIIVUtils
-import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
+import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label, MenuBar}

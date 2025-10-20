@@ -2,7 +2,7 @@ package com.hoi4utils.ui.pdxscript;
 
 import com.hoi4utils.hoi4mod.common.national_focus.Focus;
 import com.hoi4utils.script.PDXScript;
-import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;

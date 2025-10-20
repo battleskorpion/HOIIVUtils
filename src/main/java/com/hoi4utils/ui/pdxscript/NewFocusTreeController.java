@@ -4,7 +4,7 @@ import com.hoi4utils.hoi4mod.common.country_tags.CountryTag;
 import com.hoi4utils.hoi4mod.common.country_tags.CountryTag$;
 import com.hoi4utils.hoi4mod.common.national_focus.FocusTree;
 import com.hoi4utils.main.HOIIVUtils;
-import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;

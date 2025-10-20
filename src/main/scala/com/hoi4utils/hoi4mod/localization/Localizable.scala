@@ -3,7 +3,7 @@ package com.hoi4utils.hoi4mod.localization
 import com.hoi4utils.exceptions.LocalizationPropertyException
 import com.hoi4utils.hoi4mod.localization.Property.{DESCRIPTION, NAME}
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.ui.custom_javafx.controller.JavaFXUIManager
+import com.hoi4utils.ui.javafx.application.JavaFXUIManager
 
 import java.io.File
 import scala.collection.mutable

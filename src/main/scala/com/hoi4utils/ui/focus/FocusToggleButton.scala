@@ -2,7 +2,6 @@ package com.hoi4utils.ui.focus
 
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree}
-import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.typesafe.scalalogging.LazyLogging
 import javafx.geometry.Pos
 import javafx.scene.control.*
@@ -55,7 +54,7 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
     val buffer = new Array[Byte](inputStream.available)
     inputStream.read(buffer)
     inputStream.close()
-    ScalaFXImageUtils.imageFromDDS(
+    DDSReader.imageFromDDS(
       DDSReader.read(buffer, DDSReader.ARGB, 0) match
         case Some(value) => value
         case None => return null,

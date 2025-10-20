@@ -2,8 +2,8 @@ package com.hoi4utils.ui.focus
 
 import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree, FocusTreesManager, Focus as gridX}
 import com.hoi4utils.script.MultiPDX
-import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController2
-import com.hoi4utils.ui.custom_javafx.layout.ZoomableScrollPane
+import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
+import com.hoi4utils.ui.javafx.scene.control.ZoomableScrollPane
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.concurrent.Task

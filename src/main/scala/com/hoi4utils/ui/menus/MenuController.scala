@@ -3,16 +3,16 @@ package com.hoi4utils.ui.menus
 import com.hoi4utils.*
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.config
-import com.hoi4utils.ui.buildings.BuildingsByCountryController
-import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController2, RootWindows}
+import com.hoi4utils.ui.countries.BuildingsByCountryController
+import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController2, RootWindows}
 import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.gfx.InterfaceFileListController
-import com.hoi4utils.ui.hoi4localization.*
+import com.hoi4utils.ui.localization.*
+import com.hoi4utils.ui.localization.CustomTooltipController
 import com.hoi4utils.ui.map.{MapEditorController, MapGenerationController, ProvinceColorsController}
 import com.hoi4utils.ui.menus.SettingsController
 import com.hoi4utils.ui.parser.ParserViewerController
-import com.hoi4utils.ui.tooltip.CustomTooltipController
 import com.hoi4utils.ui.units.CompareUnitsController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
@@ -169,9 +169,9 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   def openSettings(): Unit =
     cancelTask()
     closeWindow(vSettings) // closes the menu window
-    new SettingsController().open() // TODO embed settings in detail panel?????? Would require to clean up everything that auto gets cleaned when closing menu
+    new SettingsController().open()
 
-  // TODO 6 out of 14 views are embedded in detail panel, rest open new windows
+  // TODO 6 out of 13 views are embedded in detail panel, rest open new windows
   @FXML
   def handleFocusTreeViewerClick(event: MouseEvent): Unit =
     if event.isControlDown then new FocusTree2Controller().open()
@@ -184,7 +184,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   @FXML
   def handleCustomTooltipClick(event: MouseEvent): Unit =
     if event.isControlDown then new CustomTooltipController().open()
-    else detailPanelManager.switchToView("/com/hoi4utils/ui/tooltip/CustomTooltip.fxml")
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/localization/CustomTooltip.fxml")
 
 
   def openBuildingsByCountry(): Unit = new BuildingsByCountryController().open() // TODO embed

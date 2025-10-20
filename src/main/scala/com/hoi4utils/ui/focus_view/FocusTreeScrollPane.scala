@@ -4,7 +4,6 @@ import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree}
 import com.hoi4utils.hoi4mod.localization.Property
 import com.hoi4utils.script.PDXScript
-import com.hoi4utils.ui.custom_javafx.image.ScalaFXImageUtils
 import com.hoi4utils.ui.pdxscript.PDXEditorController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
@@ -112,7 +111,7 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
     val buffer = new Array[Byte](inputStream.available)
     inputStream.read(buffer)
     inputStream.close()
-    ScalaFXImageUtils.imageFromDDS(
+    DDSReader.imageFromDDS(
       DDSReader.read(buffer, DDSReader.ARGB, 0) match
         case Some(value) => value
         case None => ???,

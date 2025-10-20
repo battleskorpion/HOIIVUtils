@@ -2,7 +2,7 @@ package com.hoi4utils.ui.map
 
 import com.hoi4utils.hoi4mod.map.gen.ColorGenerator
 import com.hoi4utils.main.HOIIVUtils
-import com.hoi4utils.ui.custom_javafx.controller.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
+import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.fxml.FXML

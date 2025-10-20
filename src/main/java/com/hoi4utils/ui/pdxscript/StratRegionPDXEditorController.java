@@ -4,7 +4,7 @@ import com.hoi4utils.hoi4mod.map.province.Province;
 import com.hoi4utils.hoi4mod.map.strategicregions.StrategicRegion;
 import com.hoi4utils.script.DoublePDX;
 import com.hoi4utils.script.PDXScript;
-import com.hoi4utils.ui.custom_javafx.controller.HOIIVUtilsAbstractController;
+import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
