@@ -6,7 +6,7 @@ import com.hoi4utils.hoi4mod.map.state.State;
 import com.hoi4utils.main.HOIIVFiles;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.scene.control.StateTable;
-import com.hoi4utils.ui.pdxscript.PDXEditorPane;
+import com.hoi4utils.ui.javafx.scene.layout.PDXEditorPane;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;

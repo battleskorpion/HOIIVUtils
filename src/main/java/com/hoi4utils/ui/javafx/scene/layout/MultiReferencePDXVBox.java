@@ -1,4 +1,4 @@
-package com.hoi4utils.ui.pdxscript;
+package com.hoi4utils.ui.javafx.scene.layout;
 
 import com.hoi4utils.script.MultiReferencePDX;
 import javafx.collections.FXCollections;
