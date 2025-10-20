@@ -3,7 +3,7 @@ package com.hoi4utils.ui.menus
 import com.hoi4utils.*
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.config
-import com.hoi4utils.ui.countries.{BuildingsByCountryController, BuildingsByCountryController2}
+import com.hoi4utils.ui.countries.BuildingsByCountryController2
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController2, RootWindows}
 import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.hoi4utils.ui.focus_view.FocusTreeController
