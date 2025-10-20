@@ -28,9 +28,6 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
   setTitle(s"HOIIVUtils Settings ${HOIIVUtils.get("version")}")
 
   @FXML var contentContainer: GridPane = uninitialized
-  @FXML var mClose: Button = uninitialized
-  @FXML var mSquare: Button = uninitialized
-  @FXML var mMinimize: Button = uninitialized
   @FXML var versionLabel: Label = uninitialized
   @FXML var modPathTextField: TextField = uninitialized
   @FXML var hoi4PathTextField: TextField = uninitialized
@@ -56,7 +53,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
     // after loading, set saved settings
     loadUIWithSavedSettings()
 
-  override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize, settingsTabPane)
+  override def preSetup(): Unit = setupWindowControls(contentContainer)
 
   private def loadMonitor(): Unit =
     preferredMonitorComboBox.getItems.setAll(Screen.getScreens.asScala.toSeq*)

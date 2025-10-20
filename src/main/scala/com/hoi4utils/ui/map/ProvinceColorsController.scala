@@ -5,6 +5,7 @@ import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
+import javafx.concurrent.Task
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.{GridPane, VBox}
@@ -20,11 +21,6 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController2 with LazyLo
   
   @FXML var pcVboxRoot: VBox = uninitialized
   @FXML var pcMenuBar: MenuBar = uninitialized
-  @FXML var pcClose: Button = uninitialized
-  @FXML var pcSquare: Button = uninitialized
-  @FXML var pcMinimize: Button = uninitialized
-  
-  private var isEmbedded: Boolean = true
 
   @FXML var idWindowName: Label = uninitialized
   @FXML private var colorInputField: TextField = uninitialized
@@ -74,24 +70,18 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController2 with LazyLo
 
   @FXML
   def initialize(): Unit =
-    Platform.runLater(() =>
-      isEmbedded = primaryScene == null
-      pcClose.setVisible(!isEmbedded)
-      pcSquare.setVisible(!isEmbedded)
-      pcMinimize.setVisible(!isEmbedded)
-    )
+    setWindowControlsVisibility()
 
     // Initialize sliders
-    val task = new javafx.concurrent.Task[Unit]() {
+    val loadProvinceColorDataTask = new Task[Unit]():
       override def call(): Unit =
         idWindowName.setText("Province Colors - Unique Color Generator")
         colorInputField.setText(input) // Set default input value
         progressIndicator.setVisible(false) // Hide progress indicator initially
         setupSliders()
-    }
-    new Thread(task).start()
+    new Thread(loadProvinceColorDataTask).start()
 
-  override def preSetup(): Unit = setupWindowControls(pcVboxRoot, pcClose, pcSquare, pcMinimize, pcMenuBar)
+  override def preSetup(): Unit = setupWindowControls(pcVboxRoot, pcMenuBar)
 
   /**
    * TODO: Fix Sliders to work with colorGenerator Example, if max red is 0 and min red is 0, then generate no red.

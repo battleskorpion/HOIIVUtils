@@ -5,6 +5,7 @@ import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager}
 import com.hoi4utils.ui.javafx.scene.control.TableViewWindow
 import javafx.application.Platform
+import javafx.concurrent.Task
 import javafx.fxml.{FXML, Initializable}
 import javafx.scene.control.*
 import javafx.scene.layout.{AnchorPane, BorderPane, GridPane}
@@ -37,19 +38,18 @@ class CustomTooltipController extends HOIIVUtilsAbstractController2 with TableVi
 
   private var tooltipFile: Option[File] = None
 
-  private var isEmbedded: Boolean = false
-
   // ScalaFX‐friendly backing list
   private val customTooltipBuf: ObservableBuffer[CustomTooltip] = ObservableBuffer.empty
 
   override def initialize(location: URL, resources: ResourceBundle): Unit =
-    Platform.runLater(() =>
-      isEmbedded = primaryScene == null
-      ctClose.setVisible(!isEmbedded)
-      ctSquare.setVisible(!isEmbedded)
-      ctMinimize.setVisible(!isEmbedded)
-    )
-    idVersion.setText(HOIIVUtils.get("version"))
+    setWindowControlsVisibility()
+    val loadTootipsTask = new Task[Unit]():
+      override def call(): Unit =
+        idVersion.setText(HOIIVUtils.get("version"))
+        load()
+    new Thread(loadTootipsTask).start()
+
+  private def load(): Unit =
     // wire up the JavaFX TableView using your existing helper:
     loadTableView(this, customTooltipTableView, customTooltipBuf, CustomTooltip.dataFunctions())
 

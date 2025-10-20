@@ -33,9 +33,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML var focusTree2: VBox = uninitialized
   @FXML var menuBar: MenuBar = uninitialized
   @FXML var focusTreeView: GridPane = uninitialized
-  @FXML var ft2Close: Button = uninitialized
-  @FXML var ft2Square: Button = uninitialized
-  @FXML var ft2Minimize: Button = uninitialized
   @FXML var focusSelection: ScrollPane = uninitialized
   @FXML var focusTreeScrollPane: ScrollPane = uninitialized
   @FXML var lineLayer: Pane = uninitialized
@@ -59,16 +56,9 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private var currentLoadTask: Option[Task[GridPane]] = None
   private var focusGridToggleGroup: ToggleGroup = new ToggleGroup()
 
-  private var isEmbedded: Boolean = false
-
   @FXML def initialize(): Unit =
-    Platform.runLater(() =>
-      hideButtons()
-    )
-    // Replace the regular ScrollPane with ZoomableScrollPane
+    setWindowControlsVisibility()
     replaceWithZoomableScrollPane()
-
-    // Setup zoom buttons if they exist
     setupZoomButtons()
     clear()
     welcome.setToggleGroup(toggleGroup)
@@ -77,19 +67,9 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     populateFocusSelection()
     Platform.runLater(() => if progressIndicator != null then progressIndicator.setVisible(false))
 
-  private def hideButtons(): Unit =
-    isEmbedded = primaryScene == null
-    ft2Close.setVisible(!isEmbedded)
-    ft2Square.setVisible(!isEmbedded)
-    ft2Minimize.setVisible(!isEmbedded)
-
   private def replaceWithZoomableScrollPane(): Unit =
-    // Remove the GridPane from the original ScrollPane first
     focusTreeScrollPane.setContent(null)
-
-    // Create the ZoomableScrollPane with the GridPane as target
     focusTreeView.setGridLinesVisible(lines)
-
     // Layer: lines under grid
     lineLayer = new Pane()
     lineLayer.setMouseTransparent(true) // pass events to grid/buttons
@@ -459,7 +439,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     if resetZoomButton != null then resetZoomButton.setOnAction(_ => zoomableScrollPane.resetZoom())
   }
 
-  override def preSetup(): Unit = setupWindowControls(focusTree2, ft2Close, ft2Square, ft2Minimize, menuBar)
+  override def preSetup(): Unit = setupWindowControls(focusTree2, menuBar)
 
   @FXML def handleWelcome(): Unit =
     welcome.setSelected(true)

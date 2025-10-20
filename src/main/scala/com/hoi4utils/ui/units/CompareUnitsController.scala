@@ -4,9 +4,7 @@ import com.hoi4utils.hoi4mod.common.units.SubUnit
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import com.hoi4utils.ui.javafx.scene.layout.DiffViewPane
-import javafx.application.Platform
 import javafx.fxml.FXML
-import javafx.scene.control.Button
 import javafx.scene.layout.{AnchorPane, GridPane}
 
 import scala.collection.mutable
@@ -19,22 +17,13 @@ class CompareUnitsController extends HOIIVUtilsAbstractController2:
 
   @FXML var rootGridPane: GridPane = uninitialized
   @FXML var rootAnchorPane: AnchorPane = uninitialized
-  @FXML var cuClose: Button = uninitialized
-  @FXML var cuSquare: Button = uninitialized
-  @FXML var cuMinimize: Button = uninitialized
   private var unitsDiffViewPane: DiffViewPane = uninitialized
   private val skipNullProperties = true
-  private var isEmbedded: Boolean = false
-  
+
 
   @FXML
   def initialize(): Unit =
-    Platform.runLater(() =>
-      isEmbedded = primaryScene == null
-      cuClose.setVisible(!isEmbedded)
-      cuSquare.setVisible(!isEmbedded)
-      cuMinimize.setVisible(!isEmbedded)
-    )
+    setWindowControlsVisibility()
     val customUnits = SubUnit.read(HOIIVFiles.Mod.units_folder).asJava
     val baseUnits = SubUnit.read(HOIIVFiles.HOI4.units_folder).asJava
 
@@ -67,7 +56,7 @@ class CompareUnitsController extends HOIIVUtilsAbstractController2:
     }
     new Thread(loadUnitsTask).start()
 
-  override def preSetup(): Unit = setupWindowControls(rootGridPane, cuClose, cuSquare, cuMinimize)
+  override def preSetup(): Unit = setupWindowControls(rootGridPane)
 
   private def appendUnitDetails(unitText: collection.mutable.Buffer[String], unit: SubUnit): Unit =
     val df = SubUnit.dataFunctions()

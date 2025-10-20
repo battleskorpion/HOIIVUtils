@@ -36,9 +36,6 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   @FXML var mRoot: VBox = uninitialized
   @FXML var contentStack: StackPane = uninitialized
   @FXML var contentGrid: GridPane = uninitialized
-  @FXML var mClose: Button = uninitialized
-  @FXML var mSquare: Button = uninitialized
-  @FXML var mMinimize: Button = uninitialized
   @FXML var vSettings: Button = uninitialized
   @FXML var vLogs: Button = uninitialized
   @FXML var vFocusTree: Button = uninitialized
@@ -163,7 +160,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   
   override def fxmlSetResource(): Unit = fxmlLoader.setResources(getResourceBundle("i18n.menu"))
 
-  override def preSetup(): Unit = setupWindowControls(mRoot, mClose, mSquare, mMinimize, contentGrid)
+  override def preSetup(): Unit = setupWindowControls(mRoot, contentGrid)
 
   /* fxml menu buttons */
   def openSettings(): Unit =
@@ -172,8 +169,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     new SettingsController().open()
 
   // TODO 6 out of 13 views are embedded in detail panel, rest open new windows
-  @FXML
-  def handleFocusTreeViewerClick(event: MouseEvent): Unit =
+  @FXML def handleFocusTreeViewerClick(event: MouseEvent): Unit =
     if event.isControlDown then new FocusTree2Controller().open()
     else detailPanelManager.switchToView("/com/hoi4utils/ui/focus/FocusTree2.fxml")
 
@@ -181,35 +177,26 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open() // TODO embed
   def openManageFocusTrees(): Unit = new ManageFocusTreesController().open() // TODO embed
 
-  @FXML
-  def handleCustomTooltipClick(event: MouseEvent): Unit =
+  @FXML def handleCustomTooltipClick(event: MouseEvent): Unit =
     if event.isControlDown then new CustomTooltipController().open()
     else detailPanelManager.switchToView("/com/hoi4utils/ui/localization/CustomTooltip.fxml")
 
+  @FXML def handleBuildingsByCountryClick(event: MouseEvent): Unit =
+    if event.isControlDown then new BuildingsByCountryController2().open()
+    else detailPanelManager.switchToView("/com/hoi4utils/ui/countries/BuildingsByCountry.fxml")
 
-  def openBuildingsByCountry(): Unit = new BuildingsByCountryController2().open() // TODO embed
-
-  @FXML
-  def handleGFXInterfaceFileListClick(event: MouseEvent): Unit =
+  @FXML def handleGFXInterfaceFileListClick(event: MouseEvent): Unit =
     if event.isControlDown then new InterfaceFileListController().open()
     else detailPanelManager.switchToView("/com/hoi4utils/ui/gfx/InterfaceFileList.fxml")
 
-  @FXML
-  def handleUnitComparisonClick(event: MouseEvent): Unit =
-    if !HOIIVFiles.isUnitsFolderValid then
-      logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
-      JOptionPane.showMessageDialog(
-        null,
-        s"version: ${config.getProperties.getProperty("version")} Unit folders not found. Please check your HOI4 installation or the chosen mod directory.",
-        "Error",
-        JOptionPane.WARNING_MESSAGE
-      )
-    else
+  @FXML def handleUnitComparisonClick(event: MouseEvent): Unit =
+    if HOIIVFiles.isUnitsFolderValid then
       if event.isControlDown then new CompareUnitsController().open()
       else detailPanelManager.switchToView("/com/hoi4utils/ui/units/CompareUnits.fxml")
+    else
+      handleInvalidUnitsFolder()
 
-  @FXML
-  def handleProvinceColorsClick(event: MouseEvent): Unit =
+  @FXML def handleProvinceColorsClick(event: MouseEvent): Unit =
     if event.isControlDown then new ProvinceColorsController().open()
     else detailPanelManager.switchToView("/com/hoi4utils/ui/map/ProvinceColors.fxml")
 
@@ -217,8 +204,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   def openMapEditor(): Unit = new MapEditorController().open() // TODO embed
   def openParserView(): Unit = new ParserViewerController().open() // TODO embed
 
-  @FXML
-  def handleErrorsClick(event: MouseEvent): Unit =
+  @FXML def handleErrorsClick(event: MouseEvent): Unit =
     if event.isControlDown then new ErrorListController().open()
     else detailPanelManager.switchToView("/com/hoi4utils/ui/menus/ErrorList.fxml")
 
@@ -226,6 +212,16 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     if currentTask != null && !currentTask.isDone then
       try currentTask.cancel(true)
       catch case ex: Exception => logger.debug("Failed to cancel task", ex)
+
+  private def handleInvalidUnitsFolder(): Unit = {
+    logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
+    JOptionPane.showMessageDialog(
+      null,
+      s"version: ${config.getProperties.getProperty("version")} Unit folders not found. Please check your HOI4 installation or the chosen mod directory.",
+      "Error",
+      JOptionPane.WARNING_MESSAGE
+    )
+  }
 
   // TODO: @skorp remove buttons you think don't need any files (hoi4, mod, valid, etc) cuz it is trigger happy and will disable on any at startup issue's
   private def blockButtons(b: Boolean): Unit =

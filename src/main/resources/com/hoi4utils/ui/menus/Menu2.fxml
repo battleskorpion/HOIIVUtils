@@ -57,17 +57,17 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       </rowConstraints>
       <children>
-        <Button fx:id="mClose" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
+        <Button fx:id="closeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
           <font>
             <Font name="System Bold" size="13.0" />
           </font>
         </Button>
-        <Button fx:id="mMinimize" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
+        <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
           <GridPane.margin>
             <Insets right="60.0" />
           </GridPane.margin>
         </Button>
-        <Button fx:id="mSquare" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
+        <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
           <GridPane.margin>
             <Insets right="30.0" />
           </GridPane.margin>
@@ -128,7 +128,7 @@
               <Button fx:id="vManageFocusTrees" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onAction="#openManageFocusTrees" prefHeight="30.0" prefWidth="425.0" text="%focus.find_no_localization" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
               <Button fx:id="vIdeasLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onAction="#openLocalizeIdeaFile" prefHeight="30.0" prefWidth="425.0" text="%idea.localization" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
               <Button fx:id="vCustomTooltipLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleCustomTooltipClick" prefHeight="30.0" prefWidth="425.0" text="%tooltip.localization" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-              <Button fx:id="vBuildingsByCountry" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onAction="#openBuildingsByCountry" prefHeight="30.0" prefWidth="425.0" text="%country.data.view" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+              <Button fx:id="vBuildingsByCountry" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleBuildingsByCountryClick" prefHeight="30.0" prefWidth="425.0" text="%country.data.view" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
               <Button fx:id="vGFXInterface" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleGFXInterfaceFileListClick" prefHeight="30.0" prefWidth="425.0" text="%gfx.view" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
               <Button fx:id="vUnitComparison" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleUnitComparisonClick" prefHeight="30.0" prefWidth="425.0" text="%units.view" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
               <Button fx:id="vProvinceColors" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleProvinceColorsClick" prefHeight="30.0" prefWidth="425.0" text="%map.gen.province.colors" GridPane.halignment="CENTER" GridPane.rowIndex="8" />

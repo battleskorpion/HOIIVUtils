@@ -31,9 +31,6 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
   
   @FXML var contentContainer: BorderPane = uninitialized
   @FXML var errorListTabPane: TabPane = uninitialized
-  @FXML var elClose: Button = uninitialized
-  @FXML var elSquare: Button = uninitialized
-  @FXML var elMinimize: Button = uninitialized
 
   @FXML var effectsEL: ListView[String] = uninitialized
   @FXML var localizationEL: ListView[String] = uninitialized
@@ -49,19 +46,14 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
 
   @FXML
   def initialize(): Unit =
-    Platform.runLater(() =>
-      isEmbedded = primaryScene == null
-      elClose.setVisible(!isEmbedded)
-      elSquare.setVisible(!isEmbedded)
-      elMinimize.setVisible(!isEmbedded)
-    )
+    setWindowControlsVisibility()
     val loadErrorsTask = new Task[Unit]() {
       override def call(): Unit = update()
     }
 
     new Thread(loadErrorsTask).start()
 
-  override def preSetup(): Unit = setupWindowControls(contentContainer, elClose, elSquare, elMinimize, errorListTabPane)
+  override def preSetup(): Unit = setupWindowControls(contentContainer, errorListTabPane)
 
   private def update(): Unit =
     val listViewsWithErrors = ListBuffer(

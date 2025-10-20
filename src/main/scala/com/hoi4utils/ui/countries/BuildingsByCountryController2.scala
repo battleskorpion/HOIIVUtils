@@ -26,9 +26,6 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
 	@FXML private var exportToExcelButton: Button = uninitialized
 	@FXML private var percentageCheckBox: CheckBox = uninitialized
 	@FXML private var versionLabel: Label = uninitialized
-	@FXML private var bbccMinimize: Button = uninitialized
-	@FXML private var bbccSquare: Button = uninitialized
-	@FXML private var bbccClose: Button = uninitialized
 	@FXML private var mainSplitPane: SplitPane = uninitialized
 	@FXML private var detailsPane: VBox = uninitialized
 	@FXML private var countryDataTable: TableView[CountryFile] = uninitialized
@@ -71,7 +68,7 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
 	logger.info(s"Countries loaded: ${countryList.size()}")
 
 	@FXML def initialize(): Unit =
-		checkEmbeddedModeVisibility(bbccClose, bbccSquare, bbccMinimize)
+		setWindowControlsVisibility()
 		versionLabel.setText(s"Version: ${HOIIVUtils.get("version")}")
 		loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(_resourcesPercent))
 
@@ -82,7 +79,7 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
 			if event.getButton.equals(MouseButton.PRIMARY) && event.getClickCount == 2 then
 				viewCountryBuildingsByState()
 
-	override def preSetup(): Unit = setupWindowControls(bbccRoot, bbccClose, bbccSquare, bbccMinimize)
+	override def preSetup(): Unit = setupWindowControls(bbccRoot)
 
 	private def updateResourcesColumnsPercentBehavior(): Unit =
 		loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(_resourcesPercent))

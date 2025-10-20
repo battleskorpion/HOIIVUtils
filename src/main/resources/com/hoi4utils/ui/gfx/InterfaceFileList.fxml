@@ -100,17 +100,17 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Button fx:id="iflClose" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT">
+            <Button fx:id="closeButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Button>
-            <Button fx:id="iflMinimize" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT">
+            <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT">
                <GridPane.margin>
                   <Insets right="60.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="iflSquare" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT">
+            <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT">
                <GridPane.margin>
                   <Insets right="30.0" />
                </GridPane.margin>

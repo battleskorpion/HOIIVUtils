@@ -1,5 +1,6 @@
 package com.hoi4utils.ui.menus
 
+import com.hoi4utils.ui.countries.BuildingsByCountryController2
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.hoi4utils.ui.localization.CustomTooltipController
@@ -126,6 +127,7 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
       case "/com/hoi4utils/ui/focus/FocusTree2.fxml" => new FocusTree2Controller()
       case "/com/hoi4utils/ui/localization/CustomTooltip.fxml" => new CustomTooltipController()
       case "/com/hoi4utils/ui/units/CompareUnits.fxml" => new CompareUnitsController()
+      case "/com/hoi4utils/ui/countries/BuildingsByCountry.fxml" ⇒ new BuildingsByCountryController2()
       case "/com/hoi4utils/ui/map/ProvinceColors.fxml" => new ProvinceColorsController()
       case "/com/hoi4utils/ui/menus/ErrorList.fxml" => new ErrorListController()
       case _ =>

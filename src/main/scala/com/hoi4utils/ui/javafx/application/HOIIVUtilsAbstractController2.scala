@@ -5,7 +5,7 @@ import com.hoi4utils.main.{HOIIVUtils, Initializer, Version}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
-import javafx.fxml.FXMLLoader
+import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.layout.{GridPane, Pane}
@@ -24,6 +24,11 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
   protected var xOffset: Double = 0
   protected var yOffset: Double = 0
   protected var isEmbedded: Boolean = false
+
+  // Generic window control buttons - use these fx:ids in all FXMLs
+  @FXML protected var closeButton: Button = uninitialized
+  @FXML protected var minimizeButton: Button = uninitialized
+  @FXML protected var maximizeButton: Button = uninitialized
 
   override def open(): Unit =
     if primaryStage == null then
@@ -71,19 +76,39 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
 
   protected def fxmlSetResource(): Unit = ()
 
-  protected def preSetup(): Unit = ()
-
-  protected def checkEmbeddedModeVisibility(c: Button, s: Button, m: Button): Unit =
+  protected def setWindowControlsVisibility(): Unit =
     Platform.runLater(() =>
       isEmbedded = primaryScene == null
-      Seq(c, s, m).foreach(_.setVisible(!isEmbedded))
+      Seq(closeButton, minimizeButton, maximizeButton).foreach(b => if b != null then b.setVisible(!isEmbedded))
     )
   
-  // Setup window controls AFTER primaryStage is available
-  protected def setupWindowControls(container: Pane, close: Button, square: Button, minimize: Button, additionalDraggableNodes: javafx.scene.Node*): Unit =
+  protected def preSetup(): Unit = ()
+
+  protected def setupWindowControls(container: Pane, additionalDraggableNodes: javafx.scene.Node*): Unit =
+    setupWindowDrag(container, additionalDraggableNodes*)
+    
+    // Made a method to be overrided by RootWindows
+    setCloseButtonAction()
+
+    if maximizeButton != null then
+      maximizeButton.setOnAction: _ =>
+        try if primaryStage != null then primaryStage.setMaximized(!primaryStage.isMaximized)
+        catch case e: Exception => logger.error("Error toggling window maximized state", e)
+    else
+      logger.warn("maximizeButton is null - fx:id='maximizeButton' not found in FXML")
+
+    // Minimize button
+    if minimizeButton != null then
+      minimizeButton.setOnAction: _ =>
+        try if primaryStage != null then primaryStage.setIconified(true)
+        catch case e: Exception => logger.error("Error minimizing window", e)
+    else
+      logger.warn("minimizeButton is null - fx:id='minimizeButton' not found in FXML")
+
+  private def setupWindowDrag(container: Pane, additionalDraggableNodes: javafx.scene.Node*): Unit =
     // Verify all components are available
     if container == null then
-      logger.error("aContentContainer is null - FXML injection failed!")
+      logger.error("Container is null - FXML injection failed!")
     else if primaryStage == null then
       logger.error("primaryStage is null - called too early!")
     else
@@ -104,20 +129,12 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
               primaryStage.setX(newX)
               primaryStage.setY(newY)
 
-      // Setup window control buttons
-      setCloseButtonAction(close)
-
-      if square != null then square.setOnAction: _ =>
-          try if primaryStage != null then primaryStage.setMaximized(!primaryStage.isMaximized)
-          catch case e: Exception => logger.error("Error toggling window maximized state", e)
-      else logger.warn("mSquare button is null!")
-
-      if minimize != null then minimize.setOnAction: _ =>
-          try if primaryStage != null then primaryStage.setIconified(true)
-          catch case e: Exception => logger.error("Error minimizing window", e)
-      else logger.warn("mMinimize button is null!")
-
-  protected def setCloseButtonAction(close: Button): Unit = close.setOnAction(_ => primaryStage.close())
+  protected def setCloseButtonAction(): Unit = {
+    if closeButton != null then
+      closeButton.setOnAction(_ => primaryStage.close())
+    else
+      logger.warn("closeButton is null - fx:id='closeButton' not found in FXML")
+  }
 
   protected def getResourceBundle(resourceFileName: String): ResourceBundle =
     val resourceBundle: ResourceBundle =

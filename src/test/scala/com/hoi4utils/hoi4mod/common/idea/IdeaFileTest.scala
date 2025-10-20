@@ -15,13 +15,13 @@ class IdeaFileTest extends ParserTestBase {
     super.setUpParserTest()
 
     // Clear any existing idea files before each test
-    IdeaFile.clear()
+    IdeasManager.clear()
   }
 
   @AfterEach
   def tearDownIdeaFileTest(): Unit = {
     // Clean up after each test
-    IdeaFile.clear()
+    IdeasManager.clear()
   }
 
   @Test
@@ -57,7 +57,7 @@ class IdeaFileTest extends ParserTestBase {
 
     assertConsistentParsing(
       () => {
-        IdeaFile.clear() // Clear before each test
+        IdeasManager.clear() // Clear before each test
         val ideaFile = new IdeaFile(testFile)
         ideaFile.countryIdeas.size
       },
@@ -163,17 +163,17 @@ class IdeaFileTest extends ParserTestBase {
     val ideaFile = new IdeaFile(testFile)
 
     // Test get method
-    val retrievedIdeaFile = IdeaFile.get(testFile)
+    val retrievedIdeaFile = IdeasManager.get(testFile)
     assertTrue(retrievedIdeaFile.isDefined, "Should retrieve existing IdeaFile")
     assertEquals(ideaFile, retrievedIdeaFile.get, "Retrieved IdeaFile should be the same instance")
 
     // Test list operations
-    val allIdeaFiles = IdeaFile.listIdeaFiles
+    val allIdeaFiles = IdeasManager.listIdeaFiles
     assertTrue(allIdeaFiles.nonEmpty, "Should have at least one IdeaFile")
     assertTrue(allIdeaFiles.exists(_ == ideaFile), "Should find our created IdeaFile in the list")
 
     // Test ideas from all files
-    val allIdeas = IdeaFile.listIdeasFromAllIdeaFiles
+    val allIdeas = IdeasManager.listIdeasFromAllIdeaFiles
     assertTrue(allIdeas.nonEmpty, "Should have ideas from all files")
 
     println(s"IdeaFile static methods working correctly:")

@@ -17,23 +17,11 @@ class InterfaceFileListController extends HOIIVUtilsAbstractController2:
 
   @FXML var iflVboxRoot: VBox = uninitialized
   @FXML var iflMenuBar: MenuBar = uninitialized
-  @FXML var iflClose: Button = uninitialized
-  @FXML var iflSquare: Button = uninitialized
-  @FXML var iflMinimize: Button = uninitialized
+  
+  @FXML def initialize(): Unit =
+    setWindowControlsVisibility()
 
-  private var isEmbedded: Boolean = true
-
-  @FXML
-  def initialize(): Unit =
-    Platform.runLater(() =>
-      isEmbedded = primaryScene == null
-      iflClose.setVisible(!isEmbedded)
-      iflSquare.setVisible(!isEmbedded)
-      iflMinimize.setVisible(!isEmbedded)
-    )
-
-
-  override def preSetup(): Unit = setupWindowControls(iflVboxRoot, iflClose, iflSquare, iflMinimize, iflMenuBar)
+  override def preSetup(): Unit = setupWindowControls(iflVboxRoot, iflMenuBar)
   
 // private JPanel interfaceFileListJPanel;
 // private JTable interfaceFileListTable;
