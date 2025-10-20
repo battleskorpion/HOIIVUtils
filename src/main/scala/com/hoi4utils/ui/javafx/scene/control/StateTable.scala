@@ -41,6 +41,25 @@ class StateTable extends TableView[State] with LazyLogging {
 	initialize()
 
 	private def initialize(): Unit = {
+		// Set column widths to match country table
+		stateColumn.setPrefWidth(106.0)
+		populationColumn.setPrefWidth(106.0)
+		civFactoryColumn.setPrefWidth(106.0)
+		milFactoryColumn.setPrefWidth(106.0)
+		dockyardsColumn.setPrefWidth(106.0)
+		airfieldsColumn.setPrefWidth(106.0)
+		civMilRatioColumn.setPrefWidth(106.0)
+		popFactoryRatioColumn.setPrefWidth(106.0)
+		popCivRatioColumn.setPrefWidth(106.0)
+		popMilRatioColumn.setPrefWidth(106.0)
+		popAirCapacityRatioColumn.setPrefWidth(222.0)
+		aluminiumColumn.setPrefWidth(106.0)
+		chromiumColumn.setPrefWidth(106.0)
+		oilColumn.setPrefWidth(106.0)
+		rubberColumn.setPrefWidth(106.0)
+		steelColumn.setPrefWidth(106.0)
+		tungstenColumn.setPrefWidth(106.0)
+
 		// make columns fill the width
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS)
 
@@ -89,6 +108,8 @@ class StateTable extends TableView[State] with LazyLogging {
 		milFactoryColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, Integer]) => ev.getRowValue.militaryFactories_=?(ev.getNewValue))
 		dockyardsColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, Integer]) => ev.getRowValue.navalDockyards_=?(ev.getNewValue))
 		airfieldsColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, Integer]) => ev.getRowValue.airfields_=?(ev.getNewValue))
+		/** spacer */
+
 		/** resources */
 		aluminiumColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, java.lang.Double]) => ev.getRowValue.setResource("aluminium", ev.getNewValue))
 		chromiumColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, java.lang.Double]) => ev.getRowValue.setResource("chromium", ev.getNewValue))
@@ -98,9 +119,9 @@ class StateTable extends TableView[State] with LazyLogging {
 		tungstenColumn.setOnEditCommit((ev: TableColumn.CellEditEvent[State, java.lang.Double]) => ev.getRowValue.setResource("tungsten", ev.getNewValue))
 		// add columns to table
 		this.getColumns.addAll(
-			stateColumn, 
-			populationColumn, 
-			civFactoryColumn, 
+			stateColumn,
+			populationColumn,
+			civFactoryColumn,
 			milFactoryColumn,
 			dockyardsColumn,
 			airfieldsColumn,

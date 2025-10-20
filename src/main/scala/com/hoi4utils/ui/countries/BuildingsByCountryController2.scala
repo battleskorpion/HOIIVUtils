@@ -68,7 +68,6 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController with Ta
 		versionLabel.setText(s"Version: ${HOIIVUtils.get("version")}")
 		loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(_resourcesPercent))
 
-		// Initially close the details pane (state table will be initialized on first use)
 		closeDetailsPane()
 
 		/* action listeners */
@@ -129,7 +128,6 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController with Ta
 		val country = countryDataTable.getSelectionModel.getSelectedItem
 		if country == null then return
 
-		// Initialize state table on first use
 		if stateDataTable == null then
 			stateDataTable = new StateTable()
 			stateTableScrollPane.setContent(stateDataTable)
@@ -139,7 +137,6 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController with Ta
 		stateList = FXCollections.observableArrayList(CollectionConverters.asJava(State.ownedStatesOfCountry(country)))
 		loadTableView(this, stateDataTable, stateList, State.getDataFunctions(_stateResourcesPercent))
 
-		// Open the details pane
 		openDetailsPane()
 
 	@FXML def handleSaveStates(): Unit =
@@ -168,12 +165,16 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController with Ta
 	 * Closes the bottom details pane and maximizes the table view
 	 */
 	def closeDetailsPane(): Unit =
-		if mainSplitPane.getDividerPositions.length > 0 then
-			savedDividerPosition = mainSplitPane.getDividerPositions()(0)
-		mainSplitPane.setDividerPositions(1.0)
+		if mainSplitPane.getItems.contains(detailsPane) then
+			if mainSplitPane.getDividerPositions.length > 0 then
+				savedDividerPosition = mainSplitPane.getDividerPositions()(0)
+			mainSplitPane.getItems.remove(detailsPane)
 
 	/**
 	 * Opens the bottom details pane and restores the previous divider position
 	 */
 	def openDetailsPane(): Unit =
-		mainSplitPane.setDividerPositions(savedDividerPosition)
+		if !mainSplitPane.getItems.contains(detailsPane) then
+			mainSplitPane.getItems.add(detailsPane)
+			// Need to delay the divider positioning to allow the pane to render
+			javafx.application.Platform.runLater(() => mainSplitPane.setDividerPositions(savedDividerPosition))
