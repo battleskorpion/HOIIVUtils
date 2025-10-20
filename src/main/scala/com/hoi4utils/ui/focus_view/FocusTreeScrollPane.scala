@@ -23,6 +23,7 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters.*
 import scala.util.boundary
 
+@Deprecated
 class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends ScrollPane with LazyLogging:
   // Constants
   private val FOCUS_X_SCALE: Int = 90

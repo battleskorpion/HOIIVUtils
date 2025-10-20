@@ -22,6 +22,7 @@ import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
 import scala.util.Try
 
+@Deprecated
 class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging:
   setFxmlFile("FocusTree.fxml")
   setTitle("Focus Tree View")
@@ -287,6 +288,7 @@ class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging
   @FXML
   private def toggleGridLines(): Unit = focusTreePane.toggleGridLines()
 
+@Deprecated
 object FocusTreeController:
   def updateLoadingStatus(loadingLabel: Label, status: String): Unit =
     Platform.runLater(() =>
