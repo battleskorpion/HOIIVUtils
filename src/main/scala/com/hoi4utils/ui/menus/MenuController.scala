@@ -30,7 +30,7 @@ import scala.compiletime.uninitialized
 
 class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with LazyLogging:
   import MenuController.*
-  setFxmlFile("Menu2.fxml")
+  setFxmlFile("/com/hoi4utils/ui/menus/Menu2.fxml")
   setTitle("HOIIVUtils")
 
   @FXML var mRoot: VBox = uninitialized

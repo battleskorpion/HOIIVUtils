@@ -43,22 +43,29 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hoi4utils.ui.countries.BuildingsByCountryController2">
+<VBox fx:id="bbccRoot" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
       <ToolBar>
          <items>
-            <Button fx:id="exportToExcelButton" text="Export to Excel" onAction="#handleExportToExcelAction" />
+            <Button fx:id="exportToExcelButton" onAction="#handleExportToExcelAction" text="Export to Excel" />
             <Separator orientation="VERTICAL" />
-            <CheckBox fx:id="percentageCheckBox" text="Show Percentages" onAction="#handlePercentageCheckBoxAction" />
+            <CheckBox fx:id="percentageCheckBox" onAction="#handlePercentageCheckBoxAction" text="Show Percentages" />
             <Separator orientation="VERTICAL" />
             <Label fx:id="versionLabel" text="Version: Loading..." />
+            <Separator orientation="VERTICAL" prefWidth="1475.0" />
+            <Button fx:id="bbccMinimize" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" />
+            <Button fx:id="bbccSquare" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" />
+            <Button fx:id="bbccClose" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Button>
          </items>
       </ToolBar>
     <SplitPane fx:id="mainSplitPane" dividerPositions="0.5" focusTraversable="true" orientation="VERTICAL" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
@@ -89,13 +96,13 @@
           <children>
             <ToolBar>
               <items>
-                <Label text="State Details" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
+                <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="State Details" />
                 <Separator orientation="VERTICAL" />
-                <CheckBox fx:id="statePercentageCheckBox" text="Show Percentages" onAction="#handleStatePercentageCheckBoxAction" />
+                <CheckBox fx:id="statePercentageCheckBox" onAction="#handleStatePercentageCheckBoxAction" text="Show Percentages" />
                 <Separator orientation="VERTICAL" />
-                <Button fx:id="saveStateButton" text="Save States" onAction="#handleSaveStates" />
+                <Button fx:id="saveStateButton" onAction="#handleSaveStates" text="Save States" />
                 <Pane HBox.hgrow="ALWAYS" />
-                <Button fx:id="closeDetailsButton" text="Close" onAction="#handleCloseDetails" />
+                <Button fx:id="closeDetailsButton" onAction="#handleCloseDetails" text="Close" />
               </items>
             </ToolBar>
             <ScrollPane fx:id="stateTableScrollPane" VBox.vgrow="ALWAYS">

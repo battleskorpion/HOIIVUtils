@@ -4,6 +4,7 @@ import com.hoi4utils.main.HOIIVUtils.config
 import com.hoi4utils.main.{HOIIVUtils, Initializer, Version}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController
 import com.typesafe.scalalogging.LazyLogging
+import javafx.application.Platform
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.Button
 import javafx.scene.image.Image
@@ -22,6 +23,7 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
   protected var fxmlLoader: FXMLLoader = uninitialized
   protected var xOffset: Double = 0
   protected var yOffset: Double = 0
+  protected var isEmbedded: Boolean = false
 
   override def open(): Unit =
     if primaryStage == null then
@@ -71,6 +73,12 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
 
   protected def preSetup(): Unit = ()
 
+  protected def checkEmbeddedModeVisibility(c: Button, s: Button, m: Button): Unit =
+    Platform.runLater(() =>
+      isEmbedded = primaryScene == null
+      Seq(c, s, m).foreach(_.setVisible(!isEmbedded))
+    )
+  
   // Setup window controls AFTER primaryStage is available
   protected def setupWindowControls(container: Pane, close: Button, square: Button, minimize: Button, additionalDraggableNodes: javafx.scene.Node*): Unit =
     // Verify all components are available

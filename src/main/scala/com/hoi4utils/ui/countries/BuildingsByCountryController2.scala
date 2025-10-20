@@ -4,25 +4,31 @@ import com.hoi4utils.hoi4mod.history.countries.CountryFile
 import com.hoi4utils.hoi4mod.map.state.State
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.parser.ClausewitzDate
-import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, JavaFXUIManager}
+import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController2, JavaFXUIManager}
 import com.hoi4utils.ui.javafx.scene.control.{DoubleOrPercentTableCell, DoubleTableCell, ExcelExport, StateTable, TableViewWindow2}
 import com.typesafe.scalalogging.LazyLogging
+import javafx.application.Platform
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, CheckBox, Label, ScrollPane, SplitPane, TableColumn, TableView}
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.VBox
+
 import scala.compiletime.uninitialized
 import scala.jdk.javaapi.CollectionConverters
 import javax.swing.JOptionPane
 
-class BuildingsByCountryController2 extends HOIIVUtilsAbstractController with TableViewWindow2 with LazyLogging:
-	setFxmlFile("BuildingsByCountry.fxml")
+class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with TableViewWindow2 with LazyLogging:
+	setFxmlFile("/com/hoi4utils/ui/countries/BuildingsByCountry.fxml")
 	setTitle("HOIIVUtils Buildings By Country Window")
 
+	@FXML private var bbccRoot: VBox = uninitialized
 	@FXML private var exportToExcelButton: Button = uninitialized
 	@FXML private var percentageCheckBox: CheckBox = uninitialized
 	@FXML private var versionLabel: Label = uninitialized
+	@FXML private var bbccMinimize: Button = uninitialized
+	@FXML private var bbccSquare: Button = uninitialized
+	@FXML private var bbccClose: Button = uninitialized
 	@FXML private var mainSplitPane: SplitPane = uninitialized
 	@FXML private var detailsPane: VBox = uninitialized
 	@FXML private var countryDataTable: TableView[CountryFile] = uninitialized
@@ -56,7 +62,7 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController with Ta
 	private var savedDividerPosition = 0.5
 	private var stateDataTable: StateTable = uninitialized
 	private var stateList: ObservableList[State] = FXCollections.observableArrayList()
-	private var selectedCountry: CountryFile = null
+	private var selectedCountry: CountryFile = uninitialized
 
 	private val countryList: ObservableList[CountryFile] =
 		FXCollections.observableArrayList(CollectionConverters.asJava(CountryFile.list))
@@ -65,6 +71,7 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController with Ta
 	logger.info(s"Countries loaded: ${countryList.size()}")
 
 	@FXML def initialize(): Unit =
+		checkEmbeddedModeVisibility(bbccClose, bbccSquare, bbccMinimize)
 		versionLabel.setText(s"Version: ${HOIIVUtils.get("version")}")
 		loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(_resourcesPercent))
 
@@ -75,7 +82,7 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController with Ta
 			if event.getButton.equals(MouseButton.PRIMARY) && event.getClickCount == 2 then
 				viewCountryBuildingsByState()
 
-		JOptionPane.showMessageDialog(null, s"dev - loaded rows: ${countryDataTable.getItems.size()}")
+	override def preSetup(): Unit = setupWindowControls(bbccRoot, bbccClose, bbccSquare, bbccMinimize)
 
 	private def updateResourcesColumnsPercentBehavior(): Unit =
 		loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(_resourcesPercent))
