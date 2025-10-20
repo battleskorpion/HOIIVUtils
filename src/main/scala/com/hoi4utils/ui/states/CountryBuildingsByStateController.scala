@@ -80,7 +80,7 @@ class CountryBuildingsByStateController extends HOIIVUtilsAbstractController wit
 	// private void includeVersion() {
 	// idVersion.setText(HOIIVUtils.get("version").toString());
 	// }
-	override def setDataTableCellFactories(): Unit = throw new NotImplementedError("setDataTableCellFactories not implemented yet")
+	override def setDataTableCellFactories(): Unit = ()
 	//stateDataTable.setDataTableCellFactories()
 
 	@FXML def handleExportToExcelAction(): Unit =
