@@ -273,6 +273,10 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
 
   def prerequisiteSets: List[PrerequisiteSet] = prerequisites.toList
 
+  /** Returns all focuses that have THIS focus as a prerequisite (reverse lookup) */
+  def dependents: List[Focus] =
+    focusTree.focuses.filter(_.prerequisiteList.contains(this)).toList
+
   private def setCompletionRewardsOfNode(completionRewardNode: Node, scope: Scope): Unit =
     //    completionRewardNode.$ match {
     //      case l: ListBuffer[Node] => for(n <- l) {

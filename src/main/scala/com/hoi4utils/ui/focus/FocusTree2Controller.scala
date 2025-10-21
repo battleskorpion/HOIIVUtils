@@ -6,6 +6,7 @@ import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.control.ZoomableScrollPane
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
+import javafx.collections.ListChangeListener
 import javafx.concurrent.Task
 import javafx.fxml.FXML
 import javafx.geometry.Insets
@@ -78,7 +79,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     lineLayer.setPickOnBounds(false)
     lineLayer.setStyle("-fx-background-color: transparent;")
     // Stack: lineLayer (bottom) + focusTreeView (top)
-    layeredContent = new StackPane(lineLayer, focusTreeView)
+    layeredContent = new StackPane(focusTreeView)
     lineLayer.toBack() // ensure under the grid
 
     // keep the line layer the same size as the grid's allocated space
@@ -105,34 +106,30 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 
   private def populateFocusSelection(): Unit =
     focusTreeView.setGridLinesVisible(lines)
-    Some(FocusTreesManager.observeFocusTrees).foreach(trees =>
-      trees.forEach(someFocusTree =>
+    Some(FocusTreesManager.observeFocusTrees).foreach: trees =>
+      trees.forEach: someFocusTree =>
         val toggleButton = ToggleButton(someFocusTree.toString)
         focusTreesToggleButtons += toggleButton
         toggleButton.setToggleGroup(toggleGroup)
-        toggleButton.setOnAction(_ => {
+        toggleButton.setOnAction: _ =>
           if toggleButton.isSelected then
             // Manually deselect all other buttons
-            focusTreesToggleButtons.foreach(btn =>
+            focusTreesToggleButtons.foreach: btn =>
               if btn != toggleButton then
                 btn.setSelected(false)
                 welcome.setSelected(false)
-            )
             welcome.setSelected(false)
             loadFocusTreeView(someFocusTree)
           else
             toggleButton.setSelected(false)
             toggleButton.setSelected(true)
             loadFocusTreeView(someFocusTree)
-        })
         toggleButton.setPadding(Insets(5, 10, 5, 10))
         vbox.getChildren.add(toggleButton)
-      )
       focusTreesCount.setText(s"Focus Trees: ${trees.size()}")
-    )
 
   /** Loads the given FocusTreeFile into the focusTreeView GridPane by creating it in a separate thread */
-  private def loadFocusTreeView(someFocusTree: FocusTree): Unit = {
+  private def loadFocusTreeView(someFocusTree: FocusTree): Unit =
     focusCountLabel.setText("Focuses: 0")
     cancelCurrentTask()
     clear()
@@ -146,11 +143,11 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     val (gridCols, gridRows) = calculateGridDimensions(focuses, offsetX, offsetY)
 
     // Setup column and row constraints
-    for (_ <- 0 until gridCols) setCC()
-    for (_ <- 0 until gridRows) setRC()
+    for _ <- 0 until gridCols do setCC()
+    for _ <- 0 until gridRows do setRC()
     focusTreeView.setGridLinesVisible(lines)
-    val loadFocusTreeTask = new Task[GridPane]() {
-      override def call(): GridPane = {
+    val loadFocusTreeTask = new Task[GridPane]():
+      override def call(): GridPane =
         val newGridPane = new GridPane()
 
         // Copy properties from the existing focusTreeView
@@ -159,40 +156,38 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         newGridPane.setGridLinesVisible(lines)
         newGridPane.getStyleClass.addAll(focusTreeView.getStyleClass)
 
-        focusTreeView.getColumnConstraints.forEach(cc => {
+        focusTreeView.getColumnConstraints.forEach: cc =>
           val newCC = new ColumnConstraints()
           newCC.setMinWidth(cc.getMinWidth)
           newCC.setPrefWidth(cc.getPrefWidth)
           newCC.setMaxWidth(cc.getMaxWidth)
           newGridPane.getColumnConstraints.add(newCC)
-        })
-        focusTreeView.getRowConstraints.forEach(rc => {
+
+        focusTreeView.getRowConstraints.forEach: rc =>
           val newRC = new RowConstraints()
           newRC.setMinHeight(rc.getMinHeight)
           newRC.setPrefHeight(rc.getPrefHeight)
           newRC.setMaxHeight(rc.getMaxHeight)
           newGridPane.getRowConstraints.add(newRC)
-        })
 
-        newGridPane.setOnDragOver(de => {
-          if (de.getGestureSource != newGridPane && de.getDragboard.hasString)
+        newGridPane.setOnDragOver: de =>
+          if de.getGestureSource != newGridPane && de.getDragboard.hasString then
             de.acceptTransferModes(TransferMode.MOVE)
           de.consume()
-        })
-        newGridPane.setOnDragDropped(de =>
+
+        newGridPane.setOnDragDropped: de =>
           var intersected = de.getPickResult.getIntersectedNode
           // climb up to the direct child of the grid
-          while (intersected != null && (intersected.getParent != newGridPane)) {
+          while intersected != null && (intersected.getParent != newGridPane) do
             intersected = intersected.getParent
-          }
+
           var targetGridX = 0
           var targetGridY = 0
-          if (intersected != null) {
+          if intersected != null then
             val col = GridPane.getColumnIndex(intersected)
             val row = GridPane.getRowIndex(intersected)
-            targetGridX = if (col != null) col else 0
-            targetGridY = if (row != null) row else 0
-          }
+            targetGridX = if col != null then col else 0
+            targetGridY = if row != null then row else 0
 
           val src = de.getGestureSource
           if !src.isInstanceOf[FocusToggleButton] then
@@ -203,7 +198,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
             val db = de.getDragboard
             val isShiftDown = db.getString.contains("shift:true")
             var success = false
-            if (db.hasString) {
+            if db.hasString then
               val data = db.getString
               // Process the dropped data (e.g., add the ToggleButton to the pane)
               // For example, if you want to move the actual ToggleButton:
@@ -212,36 +207,18 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
               updateFocusPosition(sourceButton.focus, gridToFocusXY(targetGridX, targetGridY, sourceButton.focusTree), isShiftDown)
               System.out.println("Dropped: " + data + "x: " + targetGridX + "y: " + targetGridY)
               success = true
-            }
             de.setDropCompleted(success)
             de.consume()
-        )
-        newGridPane.layoutBoundsProperty().addListener((_, _, _) =>
-          Platform.runLater(() => redrawConnections())
-        )
-        newGridPane.getChildren.addListener((_: javafx.collections.ListChangeListener.Change[? <: Node]) =>
-          Platform.runLater(() => redrawConnections())
-        )
 
-        focuses match {
+        focuses match
           case null =>
-            if (!isCancelled) {
-              newGridPane.add(
-                Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"),
-                0,
-                0
-              )
+            if !isCancelled then
+              newGridPane.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
               logger.warn("Focuses list is null, cannot draw focus tree.")
-            }
           case _ if focuses.isEmpty =>
-            if (!isCancelled) {
-              newGridPane.add(
-                Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"),
-                0,
-                0
-              )
+            if !isCancelled then
+              newGridPane.add(Label(s"No focuses found in Focus Tree: ${someFocusTree.name}"), 0, 0)
               logger.warn("Focuses list is empty, nothing to draw.")
-            }
           case _ =>
             val focusCount = focuses.size
             val emptyCount = (gridRows * gridCols) - focusCount
@@ -250,36 +227,119 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
             var cuteFocusCounter = 0
 
             // Add focus buttons
-            focuses.foreach { focus =>
-              if (!isCancelled) {
+            focuses.foreach: focus =>
+              if !isCancelled then
                 val gridX = focus.absoluteX + offsetX
                 val gridY = focus.absoluteY + offsetY
+                val linePane = new AnchorPane()
+                linePane.setPrefWidth(100)
+                linePane.setPrefHeight(200)
+                linePane.setMouseTransparent(true)
+                linePane.setBackground(Background.EMPTY)
 
-                val focusButton = FocusToggleButton(
-                  focus,
-                  focusGridColumnsSize,
-                  focusGridRowSize
+                focus.prerequisiteList.foreach(prerequisiteFocus ⇒
+                  val preGridX = prerequisiteFocus.absoluteX + offsetX
+                  val preGridY = prerequisiteFocus.absoluteY + offsetY
+
+                  // check if our focus is more than 1 cell below prerequisite
+                  if gridY == preGridY + 1 then
+                    if gridX > preGridX then
+                      val eastline = new Line(0, 10, 50, 10)
+                      val southlinecut = new Line(50, 10, 50, 100)
+                      linePane.getChildren.addAll(eastline, southlinecut)
+                    else if gridX < preGridX then
+                      val westline = new Line(100, 10, 50, 10)
+                      val southlinecut = new Line(50, 10, 50, 100)
+                      linePane.getChildren.addAll(westline, southlinecut)
+                    else
+                      val southline = new Line(50, 0, 50, 100)
+                      linePane.getChildren.addAll(southline)
+                  else
+                    val southline = new Line(50, 0, 50, 100)
+                    linePane.getChildren.addAll(southline)
                 )
+
+                focus.dependents.foreach(dependentFocus =>
+                  val depGridX = dependentFocus.absoluteX + offsetX
+                  val depGridY = dependentFocus.absoluteY + offsetY
+                  val turnY = gridY + 1
+
+                  // Only draw grid lines if dependent is MORE than 1 cell below
+                  if turnY < depGridY then
+                    val sameColumn = depGridX == gridX
+                    val goingEast = depGridX > gridX
+
+                    // First cell: corner or straight
+                    val firstLine = if sameColumn then "south" else if goingEast then "eastsouth" else "southwest"
+                    getLineAt(newGridPane, gridX, turnY) match
+                      case Some(existingLine) =>
+                        val combined = buildLineName(parseDirections(existingLine) ++ parseDirections(firstLine))
+                        println(s"Cell ($gridX, $turnY) has $existingLine + $firstLine = $combined")
+                        replaceLine(newGridPane, gridX, turnY, combined)
+                      case None =>
+                        val pane = loadLineFxml(firstLine)
+                        if pane != null then newGridPane.add(pane, gridX, turnY)
+
+                    // Horizontal
+                    if !sameColumn then
+                      val xRange = if goingEast then (gridX + 1) until depGridX else (depGridX + 1) until gridX
+                      xRange.foreach: x =>
+                        getLineAt(newGridPane, x, turnY) match
+                          case Some(existingLine) =>
+                            val combined = buildLineName(parseDirections(existingLine) ++ parseDirections("eastwest"))
+                            println(s"Cell ($x, $turnY) has $existingLine + eastwest = $combined")
+                            replaceLine(newGridPane, x, turnY, combined)
+                          case None =>
+                            val pane = loadLineFxml("eastwest")
+                            if pane != null then newGridPane.add(pane, x, turnY)
+
+                      // Corner
+                      if turnY < depGridY then
+                        val cornerLine = if goingEast then "southwest" else "eastsouth"
+                        getLineAt(newGridPane, depGridX, turnY) match
+                          case Some(existingLine) =>
+                            val combined = buildLineName(parseDirections(existingLine) ++ parseDirections(cornerLine))
+                            println(s"Cell ($depGridX, $turnY) has $existingLine + $cornerLine = $combined")
+                            replaceLine(newGridPane, depGridX, turnY, combined)
+                          case None =>
+                            val pane = loadLineFxml(cornerLine)
+                            if pane != null then newGridPane.add(pane, depGridX, turnY)
+
+                    // Vertical
+                    (turnY + 1 until depGridY).foreach: y =>
+                      getLineAt(newGridPane, depGridX, y) match
+                        case Some(existingLine) =>
+                          val existingDirs = parseDirections(existingLine)
+                          val newDirs = parseDirections("south")
+                          val combined = buildLineName(existingDirs ++ newDirs)
+                          if combined != existingLine then
+                            println(s"Cell ($depGridX, $y) CHANGING: $existingLine → $combined")
+                            replaceLine(newGridPane, depGridX, y, combined)
+                          else
+                            println(s"Cell ($depGridX, $y) already has south in $existingLine, no change")
+                        case None =>
+                          val pane = loadLineFxml("south")
+                          if pane != null then newGridPane.add(pane, depGridX, y)
+                )
+
+                val focusButton = FocusToggleButton(focus)
                 focusButton.setOnAction(_ => loadFocusView(focus))
                 focusButton.setOnDragDetected(me => handleDraggedFocusButton(me, focusButton))
                 focusButton.setToggleGroup(focusGridToggleGroup)
-                newGridPane.add(focusButton, gridX, gridY)
+                val focusStackPane = new StackPane(linePane, focusButton)
+                newGridPane.add(focusStackPane, gridX, gridY)
 
                 workDone += 1
                 cuteFocusCounter += 1
 
                 Platform.runLater(() => focusCountLabel.setText(s"Focuses: $cuteFocusCounter"))
                 updateProgress(workDone, totalWork)
-              }
-            }
-        }
-        newGridPane
-      }
-    }
 
+
+        newGridPane
 
     // Load the completed UI
-    loadFocusTreeTask.setOnSucceeded(_ => {
+    loadFocusTreeTask.setOnSucceeded: _ =>
       // Only update if this task is still the current one
       currentLoadTask match
         case Some(task) if task == loadFocusTreeTask =>
@@ -296,17 +356,17 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           currentLoadTask = None
         case _ =>
           logger.info("Task succeeded but was already replaced by another task")
-    })
-    loadFocusTreeTask.setOnCancelled(_ => {
+
+    loadFocusTreeTask.setOnCancelled: _ =>
       focusTreeView.setGridLinesVisible(lines)
       logger.info(s"Task cancelled for focus tree: ${someFocusTree.name}")
       currentLoadTask = None
-    })
-    loadFocusTreeTask.setOnFailed(_ => {
+
+    loadFocusTreeTask.setOnFailed: _ =>
       focusTreeView.setGridLinesVisible(lines)
       logger.error(s"Task failed for focus tree: ${someFocusTree.name}", loadFocusTreeTask.getException)
       currentLoadTask = None
-    })
+
     updateProgressIndicator(loadFocusTreeTask)
     focusTreeView.setGridLinesVisible(lines)
 
@@ -315,12 +375,9 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     val thread = new Thread(loadFocusTreeTask)
     thread.setDaemon(true)
     thread.start()
-  }
 
-  private def loadFocusView(focus: Focus): Unit =
-    // Load the focus into the details pane
-    if focusDetailsPaneController != null then
-      focusDetailsPaneController.loadFocus(focus)
+  // Load the focus into the details pane
+  private def loadFocusView(focus: Focus): Unit = if focusDetailsPaneController != null then focusDetailsPaneController.loadFocus(focus)
 
   /** Cancels the currently running task if one exists */
   private def cancelCurrentTask(): Unit =
@@ -336,16 +393,14 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
    * Calculate the minimum x and y coordinates across all focuses
    * to determine the offset needed for GridPane (which can't handle negative coords)
    */
-  private def calculateGridOffset(focuses: Iterable[Focus]): (Int, Int) = {
-    if (focuses.isEmpty) {
+  private def calculateGridOffset(focuses: Iterable[Focus]): (Int, Int) =
+    if focuses.isEmpty then
       (0, 0)
-    } else {
+    else
       val minX = focuses.map(_.absoluteX).min
       val minY = focuses.map(_.absoluteY).min
       // Return absolute values if negative, otherwise 0
-      (if (minX < 0) -minX else 0, if (minY < 0) -minY else 0)
-    }
-  }
+      (if minX < 0 then -minX else 0, if minY < 0 then -minY else 0)
 
   /**
    * Calculate the actual grid dimensions needed, accounting for offset
@@ -354,15 +409,13 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
                                        focuses: Iterable[Focus],
                                        offsetX: Int,
                                        offsetY: Int
-                                     ): (Int, Int) = {
-    if (focuses.isEmpty) {
+                                     ): (Int, Int) =
+    if focuses.isEmpty then
       (1, 1) // minimum grid size
-    } else {
+    else
       val maxX = focuses.map(_.absoluteX + offsetX).max
       val maxY = focuses.map(_.absoluteY + offsetY).max
       (maxX + 1, maxY + 1) // +1 because we're 0-indexed
-    }
-  }
 
   private def gridToFocusX(gridX: Int, focusTree: FocusTree): Int = gridX + focusTree.minX
   private def gridToFocusY(gridY: Int, focusTree: FocusTree): Int = gridY
@@ -396,21 +449,19 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     pane.setMouseTransparent(false)
     pane
 
-  private def setCC() = {
+  private def setCC() =
     val cc = new ColumnConstraints()
     cc.setMinWidth(focusGridColumnsSize)
     cc.setPrefWidth(focusGridColumnsSize)
     cc.setMaxWidth(focusGridColumnsSize)
     focusTreeView.getColumnConstraints.add(cc)
-  }
 
-  private def setRC() = {
+  private def setRC() =
     val rc = new RowConstraints()
     rc.setMinHeight(focusGridRowSize)
     rc.setPrefHeight(focusGridRowSize)
     rc.setMaxHeight(focusGridRowSize)
     focusTreeView.getRowConstraints.add(rc)
-  }
 
   /** Clears the focus tree view in the middle */
   private def clear(): Unit =
@@ -419,20 +470,18 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     focusTreeView.getRowConstraints.clear()
     focusTreeView.setGridLinesVisible(lines)
 
-  private def setupZoomButtons(): Unit = {
+  private def setupZoomButtons(): Unit =
     if zoomInButton != null then zoomInButton.setOnAction(_ => zoomableScrollPane.zoomIn())
     if zoomOutButton != null then zoomOutButton.setOnAction(_ => zoomableScrollPane.zoomOut())
     if resetZoomButton != null then resetZoomButton.setOnAction(_ => zoomableScrollPane.resetZoom())
-  }
 
   override def preSetup(): Unit = setupWindowControls(focusTree2, menuBar)
 
   @FXML def handleWelcome(): Unit =
     focusCountLabel.setText("")
     welcome.setSelected(true)
-    focusTreesToggleButtons.foreach(btn =>
-        btn.setSelected(false)
-    )
+    focusTreesToggleButtons.foreach: btn =>
+      btn.setSelected(false)
     cancelCurrentTask()
     clear()
     setCC()
@@ -453,7 +502,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     db.setContent(content)
     event.consume()
 
-  def updateFocusPosition(focus: Focus, newFocusPos: Point, updateChildRelativeOffsets: Boolean): Unit = {
+  def updateFocusPosition(focus: Focus, newFocusPos: Point, updateChildRelativeOffsets: Boolean): Unit =
     focus.setAbsoluteXY(newFocusPos, updateChildRelativeOffsets)
     // TODO: in future only do main button move if updateChild is on for now its debug time
 
@@ -461,12 +510,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     val relativelyPositionedFocuses = focus.selfAndRelativePositionedFocuses
     val focusToggleButtons = CollectionConverters.asScala(focusTreeView.getChildren)
     // filter children to only the FocusToggleButtons with matching focus
-    val focusButtons = focusToggleButtons.collect {
+    val focusButtons = focusToggleButtons.collect:
       case btn: FocusToggleButton if relativelyPositionedFocuses.contains(btn.focus) => btn
-    }.toList
+    .toList
 
     System.out.println(focusButtons)
-    focusButtons.foreach(fb =>
+    focusButtons.foreach: fb =>
       val gridX = focusToGridX(fb.focus)
       val gridY = focusToGridY(fb.focus)
 
@@ -478,14 +527,10 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       GridPane.setRowIndex(fb, gridY)
       focusTreeView.getChildren.add(fb)
       System.out.println(fb)
-    )
-
-    redrawConnections()
-  }
 
   /** Clear and redraw all connection lines on the lineLayer. */
   private def redrawConnections(): Unit =
-    if (lineLayer eq null) return
+    if lineLayer eq null then return
     lineLayer.getChildren.clear()
 
     // Example: connect each FocusToggleButton to its parent(s)
@@ -493,27 +538,24 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     val children = focusTreeView.getChildren
     val it = children.iterator()
     val btns = new scala.collection.mutable.ArrayBuffer[FocusToggleButton]()
-    while (it.hasNext) {
+    while it.hasNext do
       it.next() match
         case b: FocusToggleButton => btns += b
         case _ => ()
-    }
 
     // For each button, draw lines to its prerequisites/relatives (example)
-    btns.foreach { b =>
+    btns.foreach: b =>
       val from = centerInLayer(b)
       // Replace this with your real edges; e.g., b.focus.prerequisites
-//      val targets: Seq[FocusToggleButton] = computeTargetsFor(b, btns)
+      //      val targets: Seq[FocusToggleButton] = computeTargetsFor(b, btns)
       val targets: List[FocusToggleButton] = btns.filter(btn => b.focus.prerequisiteList.contains(btn.focus)).toList
-      targets.foreach { t =>
+      targets.foreach: t =>
         val to = centerInLayer(t)
         val line = new Line(from._1, from._2, to._1, to._2)
         line.setStroke(Color.BLUE)
         line.setStrokeWidth(2.0)
         line.setMouseTransparent(true)
         lineLayer.getChildren.add(line)
-      }
-    }
 
   /** Compute the center coordinates of a node relative to the layeredContent */
   private def centerInLayer(n: Node): (Double, Double) =
@@ -525,5 +567,47 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     val lp = layeredContent.sceneToLocal(p)
     (lp.getX, lp.getY)
 
+  /** Load a line FXML component by name (e.g., "south", "eastwest", "eastsouth") */
+  private def loadLineFxml(lineName: String): Pane =
+    try
+      val fxmlPath = s"/com/hoi4utils/ui/focus/$lineName.fxml"
+      val loader = new javafx.fxml.FXMLLoader(getClass.getResource(fxmlPath))
+      val pane = loader.load[Pane]()
+      pane.setMouseTransparent(true)
+      // Tag the pane with its line type so we can identify it later
+      pane.setUserData(lineName)
+      pane
+    catch
+      case e: Exception =>
+        logger.error(s"Failed to load line FXML: $lineName", e)
+        null
 
+  /** Get the line type at a cell, returns None if empty or occupied by non-line */
+  private def getLineAt(gridPane: GridPane, x: Int, y: Int): Option[String] =
+    CollectionConverters.asScala(gridPane.getChildren).find: node =>
+      val col = GridPane.getColumnIndex(node)
+      val row = GridPane.getRowIndex(node)
+      col != null && row != null && col == x && row == y
+    match
+      case Some(pane: Pane) if pane.getUserData.isInstanceOf[String] =>
+        Some(pane.getUserData.asInstanceOf[String])
+      case _ => None
 
+  /** Parse directions from line name (e.g., "eastsouth" -> Set("east", "south")) */
+  private def parseDirections(lineName: String): Set[String] =
+    Set("east", "north", "south", "west").filter(lineName.contains)
+
+  /** Build line name from directions (e.g., Set("east", "south", "west") -> "eastsouthwest") */
+  private def buildLineName(dirs: Set[String]): String =
+    Seq("east", "north", "south", "west").filter(dirs.contains).mkString("")
+
+  /** Replace a line at given position with a new line */
+  private def replaceLine(gridPane: GridPane, x: Int, y: Int, newLineName: String): Unit =
+    CollectionConverters.asScala(gridPane.getChildren).find: node =>
+      val col = GridPane.getColumnIndex(node)
+      val row = GridPane.getRowIndex(node)
+      col != null && row != null && col == x && row == y
+    .foreach: oldNode =>
+      gridPane.getChildren.remove(oldNode)
+      val newPane = loadLineFxml(newLineName)
+      if newPane != null then gridPane.add(newPane, x, y)

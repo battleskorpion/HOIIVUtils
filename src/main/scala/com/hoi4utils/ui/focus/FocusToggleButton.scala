@@ -8,9 +8,12 @@ import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.shape.Line
 
-class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double) extends ToggleButton with LazyLogging:
-
+class FocusToggleButton(private val _focus: Focus) extends ToggleButton with LazyLogging:
+  
+  private val prefW: Double = 100
+  private val prefH: Double = 200
   private val gfxFocusUnavailable: Image = loadFocusUnavailableImage("focus_unavailable_bg.dds")
   private val focusIcon: Image = loadFocusIcon()
   private val cleanName: Label = Label(_focus.locName.getOrElse(_focus.id.str))
@@ -29,7 +32,24 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
     val iconView = new ImageView(focusIcon)
     val vbox = new VBox(-127, stackPane, iconView)
     vbox.setAlignment(Pos.CENTER) // Optional: center the items in the VBox
-    setGraphic(vbox) // Set vbox, not stackPane!
+
+    // Check if focus has dependents and add a line if so
+    if _focus.dependents.nonEmpty then
+      val dependentLine = new Line()
+      dependentLine.setStartX(prefW - 19)
+      dependentLine.setStartY(30)
+      dependentLine.setEndX(prefW - 18)
+      dependentLine.setEndY(prefH)
+      dependentLine.setStrokeWidth(2.0)
+
+      val linePane = new Pane(dependentLine)
+      linePane.setPrefSize(prefW, prefH)
+      linePane.setMouseTransparent(true)
+
+      val overlay = new StackPane(linePane, vbox)
+      setGraphic(overlay)
+    else
+      setGraphic(vbox)
 
   def setSize(width: Double, height: Double): Unit = setPrefSize(width, height)
 
@@ -62,14 +82,13 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
       DDSReader.getHeight(buffer)
     )
 
-  private def loadFocusIcon(): Image = {
+  private def loadFocusIcon(): Image =
     _focus.getDDSImage match
       case Some(ddsImage) =>
         ddsImage
       case None =>
         logger.warn(s"No DDS image found for focus: ${_focus.id}")
         null
-  }
 
   def focus: Focus = _focus
 
