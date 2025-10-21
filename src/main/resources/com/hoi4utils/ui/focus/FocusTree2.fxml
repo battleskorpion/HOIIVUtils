@@ -157,7 +157,9 @@
     </SplitPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
       <children>
+            <Label fx:id="focusTreesCount" text="Focus Trees: 0" />
             <ProgressBar fx:id="progressIndicator" prefWidth="200.0" progress="0.0" />
+            <Label fx:id="focusCountLabel" />
         <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
             <HBox>
                <children>

@@ -25,7 +25,7 @@ import scala.compiletime.uninitialized
 import scala.jdk.javaapi.CollectionConverters
 
 class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLogging:
-  setFxmlFile("FocusTree2.fxml")
+  setFxmlFile("/com/hoi4utils/ui/focus/FocusTree2.fxml")
   setTitle("Focus Tree Viewer 2: Electric Boogaloo")
   private val focusGridColumnsSize: Int = 100
   private val focusGridRowSize: Int = 200
@@ -43,11 +43,13 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML var toggleGroup: ToggleGroup = uninitialized
   @FXML var focusDetailsPane: AnchorPane = uninitialized
   @FXML var focusDetailsPaneController: FocusDetailsPaneController = uninitialized
+  @FXML var focusTreesCount: Label = uninitialized
   @FXML var progressIndicator: ProgressIndicator = uninitialized
-  @FXML var gridlines: ToggleButton = uninitialized
+  @FXML var focusCountLabel: Label = uninitialized
   @FXML var zoomInButton: Button = uninitialized
   @FXML var zoomOutButton: Button = uninitialized
   @FXML var resetZoomButton: Button = uninitialized
+  @FXML var gridlines: ToggleButton = uninitialized
   private var focusGridColumns: Int = 0
   private var focusGridRows: Int = 0
   private var lines: Boolean = false
@@ -126,10 +128,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         toggleButton.setPadding(Insets(5, 10, 5, 10))
         vbox.getChildren.add(toggleButton)
       )
+      focusTreesCount.setText(s"Focus Trees: ${trees.size()}")
     )
 
   /** Loads the given FocusTreeFile into the focusTreeView GridPane by creating it in a separate thread */
   private def loadFocusTreeView(someFocusTree: FocusTree): Unit = {
+    focusCountLabel.setText("Focuses: 0")
     cancelCurrentTask()
     clear()
     focusGridToggleGroup = new ToggleGroup()
@@ -241,8 +245,9 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           case _ =>
             val focusCount = focuses.size
             val emptyCount = (gridRows * gridCols) - focusCount
-            val totalWork = focusCount + emptyCount
+            val totalWork = focusCount
             var workDone = 0
+            var cuteFocusCounter = 0
 
             // Add focus buttons
             focuses.foreach { focus =>
@@ -261,29 +266,10 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
                 newGridPane.add(focusButton, gridX, gridY)
 
                 workDone += 1
+                cuteFocusCounter += 1
+
+                Platform.runLater(() => focusCountLabel.setText(s"Focuses: $cuteFocusCounter"))
                 updateProgress(workDone, totalWork)
-              }
-            }
-
-            // Fill empty cells with placeholders
-            if (!isCancelled) {
-              for {
-                row <- 0 until gridRows
-                col <- 0 until gridCols
-              } {
-                if (!isCancelled) {
-                  val hasFocus = focuses.exists { f =>
-                    (f.absoluteX + offsetX == col) && (f.absoluteY + offsetY == row)
-                  }
-
-                  if (!hasFocus) {
-                    val placeholder = createEmptyCell()
-                    newGridPane.add(placeholder, col, row)
-
-                    workDone += 1
-                    updateProgress(workDone, totalWork)
-                  }
-                }
               }
             }
         }
@@ -442,6 +428,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   override def preSetup(): Unit = setupWindowControls(focusTree2, menuBar)
 
   @FXML def handleWelcome(): Unit =
+    focusCountLabel.setText("")
     welcome.setSelected(true)
     focusTreesToggleButtons.foreach(btn =>
         btn.setSelected(false)
