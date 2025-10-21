@@ -45,7 +45,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   private val mapGeneration         = "/com/hoi4utils/ui/map/MapGeneration.fxml" // todo scala, redesign
   private val mapEditor             = "/com/hoi4utils/ui/map/MapEditor.fxml" // todo scala, redesign
   private val parserViewer          = "/com/hoi4utils/ui/parser/ParserViewer.fxml" // todo scala, redesign WIP
-  private val errors                = "/com/hoi4utils/ui/menus/ErrorList.fxml"
+  private val errors                = "/com/hoi4utils/ui/menus/DragAndDrop.fxml"
 
   @FXML var mRoot: VBox = uninitialized
   @FXML var contentStack: StackPane = uninitialized
@@ -199,7 +199,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   @FXML def handleMapGenerationClick(event: MouseEvent): Unit = openWindow(event, classOf[MapGenerationController], mapGeneration)
   @FXML def handleMapEditorClick(event: MouseEvent): Unit = openWindow(event, classOf[MapEditorController], mapEditor)
   @FXML def handleParserViewerClick(event: MouseEvent): Unit = openWindow(event, classOf[ParserViewerController], parserViewer)
-  @FXML def handleErrorsClick(event: MouseEvent): Unit = openWindow(event, classOf[ErrorListController], errors)
+  @FXML def handleErrorsClick(event: MouseEvent): Unit = openWindow(event, classOf[DragAndDrop], errors)
 
   private def openWindow(event: MouseEvent, controller: Class[? <: HOIIVUtilsAbstractController2 | HOIIVUtilsAbstractController], fxml: String): Unit =
     if event.isControlDown then
