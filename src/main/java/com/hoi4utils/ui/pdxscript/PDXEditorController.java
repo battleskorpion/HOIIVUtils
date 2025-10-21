@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
+@Deprecated
 public class PDXEditorController extends HOIIVUtilsAbstractController {
     private PDXScript<?> pdxScript;
     private Runnable onUpdate = null;
