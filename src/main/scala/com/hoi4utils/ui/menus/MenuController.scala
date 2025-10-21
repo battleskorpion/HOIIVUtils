@@ -4,10 +4,10 @@ import com.hoi4utils.*
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.config
 import com.hoi4utils.ui.countries.BuildingsByCountryController2
-import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController2, RootWindows}
+import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, RootWindows}
 import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.hoi4utils.ui.focus_view.FocusTreeController
-import com.hoi4utils.ui.gfx.InterfaceFileListController
+import com.hoi4utils.ui.gfx.InterfaceController
 import com.hoi4utils.ui.localization.*
 import com.hoi4utils.ui.localization.CustomTooltipController
 import com.hoi4utils.ui.map.{MapEditorController, MapGenerationController, ProvinceColorsController}
@@ -32,6 +32,20 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   import MenuController.*
   setFxmlFile("/com/hoi4utils/ui/menus/Menu2.fxml")
   setTitle("HOIIVUtils")
+  
+  private val focusTreeViewer       = "/com/hoi4utils/ui/focus/FocusTree2.fxml"
+  private val focusTreeLocalization = "/com/hoi4utils/ui/localization/FocusTreeLocalization.fxml" // todo scala, redesign
+  private val ideaLocalization      = "/com/hoi4utils/ui/localization/IdeaLocalization.fxml" // todo scala, redesign
+  private val manageFocusTrees      = "/com/hoi4utils/ui/localization/ManageFocusTrees.fxml"
+  private val customTooltip         = "/com/hoi4utils/ui/localization/CustomTooltip.fxml"
+  private val buildingsByCountry    = "/com/hoi4utils/ui/countries/BuildingsByCountry.fxml"
+  private val interface             = "/com/hoi4utils/ui/gfx/Interface.fxml"
+  private val compareUnits          = "/com/hoi4utils/ui/units/CompareUnits.fxml"
+  private val provinceColors        = "/com/hoi4utils/ui/map/ProvinceColors.fxml"
+  private val mapGeneration         = "/com/hoi4utils/ui/map/MapGeneration.fxml" // todo scala, redesign
+  private val mapEditor             = "/com/hoi4utils/ui/map/MapEditor.fxml" // todo scala, redesign
+  private val parserViewer          = "/com/hoi4utils/ui/parser/ParserViewer.fxml" // todo scala, redesign WIP
+  private val errors                = "/com/hoi4utils/ui/menus/ErrorList.fxml"
 
   @FXML var mRoot: VBox = uninitialized
   @FXML var contentStack: StackPane = uninitialized
@@ -168,45 +182,31 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     closeWindow(vSettings) // closes the menu window
     new SettingsController().open()
 
-  // TODO 6 out of 13 views are embedded in detail panel, rest open new windows
-  @FXML def handleFocusTreeViewerClick(event: MouseEvent): Unit =
-    if event.isControlDown then new FocusTree2Controller().open()
-    else detailPanelManager.switchToView("/com/hoi4utils/ui/focus/FocusTree2.fxml")
-
-  def openFocusTreeLoc(): Unit = new FocusTreeLocalizationController().open() // TODO embed
-  def openLocalizeIdeaFile(): Unit = new IdeaLocalizationController().open() // TODO embed
-  def openManageFocusTrees(): Unit = new ManageFocusTreesController().open() // TODO embed
-
-  @FXML def handleCustomTooltipClick(event: MouseEvent): Unit =
-    if event.isControlDown then new CustomTooltipController().open()
-    else detailPanelManager.switchToView("/com/hoi4utils/ui/localization/CustomTooltip.fxml")
-
-  @FXML def handleBuildingsByCountryClick(event: MouseEvent): Unit =
-    if event.isControlDown then new BuildingsByCountryController2().open()
-    else detailPanelManager.switchToView("/com/hoi4utils/ui/countries/BuildingsByCountry.fxml")
-
-  @FXML def handleGFXInterfaceFileListClick(event: MouseEvent): Unit =
-    if event.isControlDown then new InterfaceFileListController().open()
-    else detailPanelManager.switchToView("/com/hoi4utils/ui/gfx/InterfaceFileList.fxml")
+  @FXML def handleFocusTreeViewerClick(event: MouseEvent): Unit = openWindow(event, classOf[FocusTree2Controller], focusTreeViewer)
+  @FXML def handleFocusTreeLocalizationClick(event: MouseEvent): Unit = openWindow(event, classOf[FocusTreeLocalizationController], focusTreeLocalization)
+  @FXML def handleIdeaLocalizationClick(event: MouseEvent): Unit = openWindow(event, classOf[IdeaLocalizationController], ideaLocalization)
+  @FXML def handleManageFocusTreesClick(event: MouseEvent): Unit = openWindow(event, classOf[ManageFocusTreesController], manageFocusTrees)
+  @FXML def handleCustomTooltipClick(event: MouseEvent): Unit = openWindow(event, classOf[CustomTooltipController], customTooltip)
+  @FXML def handleBuildingsByCountryClick(event: MouseEvent): Unit = openWindow(event, classOf[BuildingsByCountryController2], buildingsByCountry)
+  @FXML def handleInterfaceClick(event: MouseEvent): Unit = openWindow(event, classOf[InterfaceController], interface)
 
   @FXML def handleUnitComparisonClick(event: MouseEvent): Unit =
     if HOIIVFiles.isUnitsFolderValid then
-      if event.isControlDown then new CompareUnitsController().open()
-      else detailPanelManager.switchToView("/com/hoi4utils/ui/units/CompareUnits.fxml")
-    else
-      handleInvalidUnitsFolder()
+      openWindow(event, classOf[CompareUnitsController], compareUnits)
+    else handleInvalidUnitsFolder()
 
-  @FXML def handleProvinceColorsClick(event: MouseEvent): Unit =
-    if event.isControlDown then new ProvinceColorsController().open()
-    else detailPanelManager.switchToView("/com/hoi4utils/ui/map/ProvinceColors.fxml")
+  @FXML def handleProvinceColorsClick(event: MouseEvent): Unit = openWindow(event, classOf[ProvinceColorsController], provinceColors)
+  @FXML def handleMapGenerationClick(event: MouseEvent): Unit = openWindow(event, classOf[MapGenerationController], mapGeneration)
+  @FXML def handleMapEditorClick(event: MouseEvent): Unit = openWindow(event, classOf[MapEditorController], mapEditor)
+  @FXML def handleParserViewerClick(event: MouseEvent): Unit = openWindow(event, classOf[ParserViewerController], parserViewer)
+  @FXML def handleErrorsClick(event: MouseEvent): Unit = openWindow(event, classOf[ErrorListController], errors)
 
-  def openMapGeneration(): Unit = new MapGenerationController().open() // TODO embed
-  def openMapEditor(): Unit = new MapEditorController().open() // TODO embed
-  def openParserView(): Unit = new ParserViewerController().open() // TODO embed
+  private def openWindow(event: MouseEvent, controller: Class[? <: HOIIVUtilsAbstractController2 | HOIIVUtilsAbstractController], fxml: String): Unit =
+    if event.isControlDown then
+      try controller.getDeclaredConstructor().newInstance().open()
+      catch case e: Exception => logger.error("Failed to open window", e)
+    else detailPanelManager.switchToView(fxml)
 
-  @FXML def handleErrorsClick(event: MouseEvent): Unit =
-    if event.isControlDown then new ErrorListController().open()
-    else detailPanelManager.switchToView("/com/hoi4utils/ui/menus/ErrorList.fxml")
 
   private def cancelTask(): Unit =
     if currentTask != null && !currentTask.isDone then

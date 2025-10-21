@@ -11,13 +11,13 @@ import scala.compiletime.uninitialized
 
 // todo add actual effect (enable/disable) from check boxes
 // view GFX
-class InterfaceFileListController extends HOIIVUtilsAbstractController2:
-  setFxmlFile("InterfaceFileList.fxml")
+class InterfaceController extends HOIIVUtilsAbstractController2:
+  setFxmlFile("Interface.fxml")
   setTitle("HOIIVUtils Interface File List Window")
 
   @FXML var iflVboxRoot: VBox = uninitialized
   @FXML var iflMenuBar: MenuBar = uninitialized
-  
+
   @FXML def initialize(): Unit =
     setWindowControlsVisibility()
 

@@ -45,9 +45,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="mRoot" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="mRoot" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"> 
   <children>
-    <GridPane prefHeight="30.0">
+    <GridPane maxHeight="30.0" minHeight="30.0" prefHeight="30.0">
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -130,17 +130,17 @@
             </rowConstraints>
             <children>
               <Button fx:id="vFocusTree" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleFocusTreeViewerClick" prefHeight="30.0" prefWidth="425.0" text="%focus_tree.view" GridPane.halignment="CENTER" />
-              <Button fx:id="vFocusTreeLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onAction="#openFocusTreeLoc" prefHeight="30.0" prefWidth="425.0" text="%focus.localization" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-              <Button fx:id="vManageFocusTrees" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onAction="#openManageFocusTrees" prefHeight="30.0" prefWidth="425.0" text="%focus.find_no_localization" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-              <Button fx:id="vIdeasLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onAction="#openLocalizeIdeaFile" prefHeight="30.0" prefWidth="425.0" text="%idea.localization" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+              <Button fx:id="vFocusTreeLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleFocusTreeLocalizationClick" prefHeight="30.0" prefWidth="425.0" text="%focus.localization" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+              <Button fx:id="vManageFocusTrees" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleManageFocusTreesClick" prefHeight="30.0" prefWidth="425.0" text="%focus.find_no_localization" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+              <Button fx:id="vIdeasLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleIdeaLocalizationClick" prefHeight="30.0" prefWidth="425.0" text="%idea.localization" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
               <Button fx:id="vCustomTooltipLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleCustomTooltipClick" prefHeight="30.0" prefWidth="425.0" text="%tooltip.localization" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
               <Button fx:id="vBuildingsByCountry" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleBuildingsByCountryClick" prefHeight="30.0" prefWidth="425.0" text="%country.data.view" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-              <Button fx:id="vGFXInterface" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleGFXInterfaceFileListClick" prefHeight="30.0" prefWidth="425.0" text="%gfx.view" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+              <Button fx:id="vGFXInterface" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleInterfaceClick" prefHeight="30.0" prefWidth="425.0" text="%gfx.view" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
               <Button fx:id="vUnitComparison" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleUnitComparisonClick" prefHeight="30.0" prefWidth="425.0" text="%units.view" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
               <Button fx:id="vProvinceColors" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleProvinceColorsClick" prefHeight="30.0" prefWidth="425.0" text="%map.gen.province.colors" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
-              <Button fx:id="vMapGenerator" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onAction="#openMapGeneration" prefHeight="30.0" prefWidth="425.0" text="%map.gen" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
-              <Button fx:id="vMapEditor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onAction="#openMapEditor" prefHeight="30.0" prefWidth="425.0" text="%map.editor" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
-              <Button fx:id="vParser" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onAction="#openParserView" prefHeight="30.0" prefWidth="425.0" text="%parser.view" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+              <Button fx:id="vMapGenerator" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleMapGenerationClick" prefHeight="30.0" prefWidth="425.0" text="%map.gen" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
+              <Button fx:id="vMapEditor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleMapEditorClick" prefHeight="30.0" prefWidth="425.0" text="%map.editor" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
+              <Button fx:id="vParser" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleParserViewerClick" prefHeight="30.0" prefWidth="425.0" text="%parser.view" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
               <Button fx:id="vErrors" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleErrorsClick" prefHeight="30.0" prefWidth="425.0" text="Errors WIP" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
             </children>
             <padding>
