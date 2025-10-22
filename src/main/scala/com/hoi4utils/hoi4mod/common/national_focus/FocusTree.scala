@@ -24,7 +24,7 @@ import scala.util.boundary
 class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile:
   //final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
   final var country = new FocusTreeCountryPDX
-  final var focuses = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
+  private final var _focuses = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   final var id = new StringPDX("id")
   var name: String = ""
   var columns: Int = 1
@@ -46,24 +46,26 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
       setFile(file)
 
   
-  def width: Int = focuses.map(_.absoluteX).maxOption.getOrElse(0)
-  def height: Int = focuses.map(_.absoluteY).maxOption.getOrElse(0)
+  def width: Int = _focuses.map(_.absoluteX).maxOption.getOrElse(0)
+  def height: Int = _focuses.map(_.absoluteY).maxOption.getOrElse(0)
   columns = width + 1
   rows = height + 1
 
   // todo: add default, continuous focus position
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] =
-    ListBuffer(id, country, focuses)
+    ListBuffer(id, country, _focuses)
 
   /**
    * List of all focus IDs in this focus tree.
    *
    * @return list containing each focus ID
    */
-  def listFocusIDs: Seq[String] = Seq.from(focuses.flatMap(_.id.value))
+  def listFocusIDs: Seq[String] = Seq.from(_focuses.flatMap(_.id.value))
 
   def focusFile: Option[File] = _focusFile
 
+  def focuses: MultiPDX[Focus] = _focuses
+  
   /**
    * List of commented-out focus definitions found in the focus tree file.
    * These are focus blocks that are commented out and therefore not processed
@@ -90,12 +92,12 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
    * Get the minimum X coordinate of all focuses in this focus tree.
    * @return the minimum absolute X coordinate of all focuses
    */
-  def minX: Int = focuses.map(_.absoluteX).minOption.getOrElse(0)
+  def minX: Int = _focuses.map(_.absoluteX).minOption.getOrElse(0)
 
-  def listFocuses: List[Focus] = focuses.toList
+  def listFocuses: List[Focus] = _focuses.toList
 
   def addNewFocus(f: Focus): Unit =
-    focuses += f
+    _focuses += f
 
   /**
    * Get the next temporary focus ID.
@@ -104,7 +106,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
    * @note for Java compatibility -_- (as opposed to being able to just use Scala's default parameter)
    */
   def nextTempFocusID(): String =
-    nextTempFocusID(focuses.size)
+    nextTempFocusID(_focuses.size)
 
   /**
    * Get the next temporary focus ID.
@@ -113,7 +115,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
    */
   private def nextTempFocusID(lastIntID: Int): String =
     val id = "focus_" + (lastIntID + 1)
-    if focuses.exists(_.id.value.contains(id)) then return nextTempFocusID(lastIntID)
+    if _focuses.exists(_.id.value.contains(id)) then return nextTempFocusID(lastIntID)
     id
 
   def setID(s: String): Unit =
@@ -136,7 +138,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
       case 0 => None
       case _ => country.modifier.head.tag.value
 
-  def hasFocuses: Boolean = focuses.nonEmpty
+  def hasFocuses: Boolean = _focuses.nonEmpty
 
   override def compareTo(o: FocusTree): Int =
     (this.countryTag, this.id.value) match
@@ -148,7 +150,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
           case _ => 0
       case _ => 0
 
-  override def iterator: Iterator[Focus] = focuses.iterator
+  override def iterator: Iterator[Focus] = _focuses.iterator
 
   override def getLocalizableProperties: mutable.HashMap[Property, String] =
     // lets us map null if we use hashmap instead of generic of() method
@@ -163,7 +165,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
    *
    * @return
    */
-  override def getLocalizableGroup: Iterable[? <: Localizable] = focuses
+  override def getLocalizableGroup: Iterable[? <: Localizable] = _focuses
 
   override def equals(other: PDXScript[?]): Boolean =
     if other.isInstanceOf[FocusTree] then return this == other
@@ -197,7 +199,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
          |	Exception: ${exception.getMessage}
          |	Focus Tree ID: ${id.value.getOrElse("undefined")}
          |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
-         |	Focus Count: ${focuses.size}
+         |	Focus Count: ${_focuses.size}
          |	Node Identifier: ${node.identifier.getOrElse("none")}
          |	Expected Identifiers: ${pdxIdentifiers.mkString("[", ", ", "]")}
          |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
@@ -214,7 +216,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
          |	Exception: ${exception.getMessage}
          |	Focus Tree ID: ${id.value.getOrElse("undefined")}
          |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
-         |	Focus Count: ${focuses.size}
+         |	Focus Count: ${_focuses.size}
          |	Node Identifier: ${node.identifier.getOrElse("none")}
          |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
          |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
@@ -230,8 +232,8 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
          |	Exception: ${exception.getMessage}
          |	Focus Tree ID: ${id.value.getOrElse("undefined")}
          |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
-         |	Focus Count: ${focuses.size}
-         |	Current Focuses: ${if focuses.nonEmpty then focuses.flatMap(_.id.value).take(5).mkString("[", ", ", if focuses.size > 5 then ", ...]" else "]") else "none"}
+         |	Focus Count: ${_focuses.size}
+         |	Current Focuses: ${if _focuses.nonEmpty then _focuses.flatMap(_.id.value).take(5).mkString("[", ", ", if _focuses.size > 5 then ", ...]" else "]") else "none"}
          |	Total Focus Trees Loaded: ${focusTrees.size}
          |	File Last Modified: ${if file.exists() then new java.util.Date(file.lastModified()).toString else "N/A"}
          |	File Path: ${file.getAbsolutePath}""".stripMargin
