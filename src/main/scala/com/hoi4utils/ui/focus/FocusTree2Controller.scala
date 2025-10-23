@@ -14,12 +14,10 @@ import javafx.scene.control.*
 import javafx.scene.input.{DragEvent, Dragboard, MouseEvent, TransferMode}
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import javafx.scene.shape.Line
+import javafx.scene.shape.{Circle, Line}
 import scalafx.scene.input.ClipboardContent
-import sun.jvm.hotspot.HelloWorld.e
 
 import java.awt.Point
-import javax.sound.sampled.Clip
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.compiletime.uninitialized
 import scala.jdk.javaapi.CollectionConverters
@@ -57,11 +55,20 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private var focusTreesToggleButtons: ListBuffer[ToggleButton] = ListBuffer.empty
   private var currentLoadTask: Option[Task[GridPane]] = None
   private var focusGridToggleGroup: ToggleGroup = new ToggleGroup()
+  private var pathCalculator: FocusConnectionPathCalculator = uninitialized
 
   @FXML def initialize(): Unit =
     setWindowControlsVisibility()
     replaceWithZoomableScrollPane()
     setupZoomButtons()
+
+    // Initialize path calculator with grid dimensions
+    pathCalculator = new FocusConnectionPathCalculator(
+      cellWidth = focusGridColumnsSize.toDouble,
+      cellHeight = focusGridRowSize.toDouble,
+      lineOffset = 15.0
+    )
+
     clear()
     welcome.setToggleGroup(toggleGroup)
     welcome.fire()
@@ -205,10 +212,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
             var success = false
             if (db.hasString) {
               val data = db.getString
-              // Process the dropped data (e.g., add the ToggleButton to the pane)
-              // For example, if you want to move the actual ToggleButton:
-              // ((Pane) myToggleButton.getParent()).getChildren().remove(myToggleButton);
-              // dropTargetPane.getChildren().add(myToggleButton)
               updateFocusPosition(sourceButton.focus, gridToFocusXY(targetGridX, targetGridY, sourceButton.focusTree), isShiftDown)
               System.out.println("Dropped: " + data + "x: " + targetGridX + "y: " + targetGridY)
               success = true
@@ -244,7 +247,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
             }
           case _ =>
             val focusCount = focuses.size
-            val emptyCount = (gridRows * gridCols) - focusCount
             val totalWork = focusCount
             var workDone = 0
             var cuteFocusCounter = 0
@@ -277,7 +279,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       }
     }
 
-
     // Load the completed UI
     loadFocusTreeTask.setOnSucceeded(_ => {
       // Only update if this task is still the current one
@@ -293,6 +294,10 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 
           focusTreeView = newPane
           setupZoomButtons()
+
+          // Draw connections after grid is loaded
+          Platform.runLater(() => redrawConnections())
+
           currentLoadTask = None
         case _ =>
           logger.info("Task succeeded but was already replaced by another task")
@@ -385,17 +390,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       progressIndicator.progressProperty().bind(task.progressProperty())
       progressIndicator.visibleProperty().bind(task.runningProperty())
 
-  /** Creates an invisible pane that allows dragging/panning on empty grid cells */
-  private def createEmptyCell(): Pane =
-    val pane = new Pane()
-    pane.setPrefSize(focusGridColumnsSize, focusGridRowSize)
-    pane.setMinSize(focusGridColumnsSize, focusGridRowSize)
-    pane.setMaxSize(focusGridColumnsSize, focusGridRowSize)
-    // Make it transparent but still mouse-transparent = false so it captures events
-    pane.setStyle("-fx-background-color: transparent;")
-    pane.setMouseTransparent(false)
-    pane
-
   private def setCC() = {
     val cc = new ColumnConstraints()
     cc.setMinWidth(focusGridColumnsSize)
@@ -417,6 +411,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     focusTreeView.getChildren.clear()
     focusTreeView.getColumnConstraints.clear()
     focusTreeView.getRowConstraints.clear()
+    if lineLayer != null then lineLayer.getChildren.clear()
     focusTreeView.setGridLinesVisible(lines)
 
   private def setupZoomButtons(): Unit = {
@@ -431,7 +426,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     focusCountLabel.setText("")
     welcome.setSelected(true)
     focusTreesToggleButtons.foreach(btn =>
-        btn.setSelected(false)
+      btn.setSelected(false)
     )
     cancelCurrentTask()
     clear()
@@ -455,7 +450,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 
   def updateFocusPosition(focus: Focus, newFocusPos: Point, updateChildRelativeOffsets: Boolean): Unit = {
     focus.setAbsoluteXY(newFocusPos, updateChildRelativeOffsets)
-    // TODO: in future only do main button move if updateChild is on for now its debug time
 
     // get the valid Focus objects to match
     val relativelyPositionedFocuses = focus.selfAndRelativePositionedFocuses
@@ -465,22 +459,18 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       case btn: FocusToggleButton if relativelyPositionedFocuses.contains(btn.focus) => btn
     }.toList
 
-    System.out.println(focusButtons)
     focusButtons.foreach(fb =>
       val gridX = focusToGridX(fb.focus)
       val gridY = focusToGridY(fb.focus)
 
-      System.out.println("removing fb")
-      System.out.println(s"new x $gridX")
-      System.out.println(s"new y $gridY")
       focusTreeView.getChildren.remove(fb)
       GridPane.setColumnIndex(fb, gridX)
       GridPane.setRowIndex(fb, gridY)
       focusTreeView.getChildren.add(fb)
-      System.out.println(fb)
     )
 
-    redrawConnections()
+    // Redraw connections after position update
+    Platform.runLater(() => redrawConnections())
   }
 
   /** Clear and redraw all connection lines on the lineLayer. */
@@ -488,42 +478,86 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     if (lineLayer eq null) return
     lineLayer.getChildren.clear()
 
-    // Example: connect each FocusToggleButton to its parent(s)
-    // Adapt this to your real relation data
-    val children = focusTreeView.getChildren
-    val it = children.iterator()
-    val btns = new scala.collection.mutable.ArrayBuffer[FocusToggleButton]()
-    while (it.hasNext) {
-      it.next() match
-        case b: FocusToggleButton => btns += b
-        case _ => ()
-    }
+    // Collect all FocusToggleButtons from the grid
+    val buttons = collectFocusButtons()
 
-    // For each button, draw lines to its prerequisites/relatives (example)
-    btns.foreach { b =>
-      val from = centerInLayer(b)
-      // Replace this with your real edges; e.g., b.focus.prerequisites
-//      val targets: Seq[FocusToggleButton] = computeTargetsFor(b, btns)
-      val targets: List[FocusToggleButton] = btns.filter(btn => b.focus.prerequisiteList.contains(btn.focus)).toList
-      targets.foreach { t =>
-        val to = centerInLayer(t)
-        val line = new Line(from._1, from._2, to._1, to._2)
-        line.setStroke(Color.BLUE)
-        line.setStrokeWidth(2.0)
-        line.setMouseTransparent(true)
-        lineLayer.getChildren.add(line)
+    // Build a map of Focus -> FocusToggleButton for quick lookup
+    val buttonMap = buttons.map(b => b.focus -> b).toMap
+
+    // For each button, draw paths to its prerequisites
+    buttons.foreach { sourceButton =>
+      val prereqFocuses = sourceButton.focus.prerequisiteList
+
+      prereqFocuses.foreach { prereqFocus =>
+        buttonMap.get(prereqFocus).foreach { prereqButton =>
+          drawConnection(sourceButton, prereqButton)
+        }
       }
     }
 
-  /** Compute the center coordinates of a node relative to the layeredContent */
-  private def centerInLayer(n: Node): (Double, Double) =
-    // convert the node's center to the coordinate space of lineLayer/layeredContent
-    val b = n.getBoundsInParent
-    val centerXInGrid = b.getMinX + b.getWidth / 2
-    val centerYInGrid = b.getMinY + b.getHeight / 2
-    val p = n.getParent.localToScene(centerXInGrid, centerYInGrid)
+  /**
+   * Draw a single connection from source focus to prerequisite.
+   */
+  private def drawConnection(fromButton: FocusToggleButton, toButton: FocusToggleButton): Unit =
+    val segments = pathCalculator.calculatePath(fromButton, toButton)
+
+    segments.foreach { segment =>
+      val line = createLine(segment)
+      lineLayer.getChildren.add(line)
+    }
+
+    // Draw junction points at corners (optional, for visual clarity)
+    segments.tail.foreach { segment =>
+      val corner = createCornerCircle(segment.from)
+      lineLayer.getChildren.add(corner)
+    }
+
+  /**
+   * Create a JavaFX Line from a path segment, converting to scene coordinates.
+   */
+  private def createLine(segment: FocusConnectionPathCalculator#PathSegment): Line =
+    // Convert grid coordinates to scene coordinates
+    val fromScene = gridToScene(segment.from)
+    val toScene = gridToScene(segment.to)
+
+    val line = new Line(fromScene.x, fromScene.y, toScene.x, toScene.y)
+    line.setStroke(Color.rgb(139, 92, 246)) // Purple color like the game
+    line.setStrokeWidth(2.0)
+    line.setMouseTransparent(true)
+    line
+
+  /**
+   * Create a small circle at junction points (corners).
+   */
+  private def createCornerCircle(point: FocusConnectionPathCalculator#Point): Circle =
+    val scenePoint = gridToScene(point)
+    val circle = new Circle(scenePoint.x, scenePoint.y, 3.0)
+    circle.setFill(Color.rgb(139, 92, 246))
+    circle.setMouseTransparent(true)
+    circle
+
+  /**
+   * Convert grid-based coordinates to scene coordinates relative to layeredContent.
+   */
+  private def gridToScene(gridPoint: FocusConnectionPathCalculator#Point): FocusConnectionPathCalculator#Point =
+    // The grid coordinates are already in focusTreeView's coordinate space
+    // We need to convert them to layeredContent's coordinate space
+    val p = focusTreeView.localToScene(gridPoint.x, gridPoint.y)
     val lp = layeredContent.sceneToLocal(p)
-    (lp.getX, lp.getY)
+    pathCalculator.Point(lp.getX, lp.getY)
 
+  /**
+   * Collect all FocusToggleButton instances from the grid.
+   */
+  private def collectFocusButtons(): List[FocusToggleButton] =
+    val children = focusTreeView.getChildren
+    val buttons = new scala.collection.mutable.ArrayBuffer[FocusToggleButton]()
+    val it = children.iterator()
 
+    while (it.hasNext) {
+      it.next() match
+        case btn: FocusToggleButton => buttons += btn
+        case _ => ()
+    }
 
+    buttons.toList
