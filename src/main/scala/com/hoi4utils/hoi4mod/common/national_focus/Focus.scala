@@ -118,8 +118,8 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
    * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
    * that position, but its absolute coordinates are always the same.
    *
-   * @param x absolute x-coordinate
-   * @param y absolute y-coordinate
+   * @param x                          absolute x-coordinate
+   * @param y                          absolute y-coordinate
    * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
    *                                   in the same position even though the position of this focus changes
    * @return the previous absolute position
@@ -131,11 +131,21 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
         // keep relative to the focus, but absolute coordinates are always the same
         val rp = f.absolutePosition
         setXY(x - rp.x, y - rp.y)
-      case None => setXY(x, y)
+      case None =>
+        // No relative positioning, so just set directly
+        setXY(x, y)
     if updateChildRelativeOffsets then
-      for focus <- focusTree.focuses do
-        if focus.relativePositionFocus @== this then
-          focus.offsetXY(prevAbsolute.x - x, prevAbsolute.y - y)
+      val deltaX = prevAbsolute.x - x
+      val deltaY = prevAbsolute.y - y
+
+      // Only update children if there was actually a position change
+      if deltaX != 0 || deltaY != 0 then
+        for focus <- focusTree.focuses do
+          // Check if this focus has us as its relative position parent
+          focus.relativePositionFocus.value match
+            case Some(relParent) if relParent == this =>
+              focus.offsetXY(deltaX, deltaY)
+            case _ => // Do nothing
     prevAbsolute
 
   /**
@@ -147,7 +157,8 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
    *                                   in the same position even though the position of this focus changes
    * @return the previous absolute position
    */
-  def setAbsoluteXY(xy: Point, updateChildRelativeOffsets: Boolean): Point = setAbsoluteXY(xy.x, xy.y, updateChildRelativeOffsets)
+  def setAbsoluteXY(xy: Point, updateChildRelativeOffsets: Boolean): Point =
+    setAbsoluteXY(xy.x, xy.y, updateChildRelativeOffsets)
 
   def offsetXY(x: Int, y: Int): Point =
     val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))

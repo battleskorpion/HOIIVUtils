@@ -57,6 +57,11 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private var focusGridToggleGroup: ToggleGroup = new ToggleGroup()
   private var pathCalculator: FocusConnectionPathCalculator = uninitialized
 
+  // Store the current offset for coordinate conversions
+  private var currentOffsetX: Int = 0
+  private var currentOffsetY: Int = 0
+  private var currentFocusTree: Option[FocusTree] = None
+
   @FXML def initialize(): Unit =
     setWindowControlsVisibility()
     replaceWithZoomableScrollPane()
@@ -149,6 +154,11 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     // Calculate offset needed for negative coordinates
     val (offsetX, offsetY) = calculateGridOffset(focuses)
 
+    // STORE THE OFFSET and current focus tree for use in coordinate conversions
+    currentOffsetX = offsetX
+    currentOffsetY = offsetY
+    currentFocusTree = Some(someFocusTree)
+
     // Calculate actual dimensions needed
     val (gridCols, gridRows) = calculateGridDimensions(focuses, offsetX, offsetY)
 
@@ -186,39 +196,33 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
             de.acceptTransferModes(TransferMode.MOVE)
           de.consume()
         })
-        newGridPane.setOnDragDropped(de =>
-          var intersected = de.getPickResult.getIntersectedNode
-          // climb up to the direct child of the grid
-          while (intersected != null && (intersected.getParent != newGridPane)) {
-            intersected = intersected.getParent
-          }
-          var targetGridX = 0
-          var targetGridY = 0
-          if (intersected != null) {
-            val col = GridPane.getColumnIndex(intersected)
-            val row = GridPane.getRowIndex(intersected)
-            targetGridX = if (col != null) col else 0
-            targetGridY = if (row != null) row else 0
-          }
+        newGridPane.setOnDragDropped(de => {
+          // Calculate grid position from mouse coordinates instead of relying on intersected node
+          val localPoint = newGridPane.sceneToLocal(de.getSceneX, de.getSceneY)
+          val targetGridX = Math.max(0, (localPoint.getX / focusGridColumnsSize).toInt)
+          val targetGridY = Math.max(0, (localPoint.getY / focusGridRowSize).toInt)
 
-          val src = de.getGestureSource
-          if !src.isInstanceOf[FocusToggleButton] then
-            de.setDropCompleted(false)
-            de.consume()
-          else
-            val sourceButton = src.asInstanceOf[FocusToggleButton]
-            val db = de.getDragboard
-            val isShiftDown = db.getString.contains("shift:true")
-            var success = false
-            if (db.hasString) {
-              val data = db.getString
-              updateFocusPosition(sourceButton.focus, gridToFocusXY(targetGridX, targetGridY, sourceButton.focusTree), isShiftDown)
-              System.out.println("Dropped: " + data + "x: " + targetGridX + "y: " + targetGridY)
-              success = true
+          val db = de.getDragboard
+          var success = false
+          if (db.hasString) {
+            val data = db.getString
+            val parts = data.split("\\|")
+            if (parts.length >= 2) {
+              val focusId = parts(0)
+              val isShiftDown = parts(1).contains("true")
+
+              // Find the focus by ID
+              someFocusTree.focuses.find(_.id.str == focusId).foreach { focus =>
+                val newFocusPos = gridToFocusXY(targetGridX, targetGridY, someFocusTree)
+                updateFocusPosition(focus, newFocusPos, isShiftDown)
+                logger.info(s"Dropped focus $focusId at grid ($targetGridX, $targetGridY) -> focus coords $newFocusPos")
+                success = true
+              }
             }
-            de.setDropCompleted(success)
-            de.consume()
-        )
+          }
+          de.setDropCompleted(success)
+          de.consume()
+        })
         newGridPane.layoutBoundsProperty().addListener((_, _, _) =>
           Platform.runLater(() => redrawConnections())
         )
@@ -369,19 +373,29 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     }
   }
 
-  private def gridToFocusX(gridX: Int, focusTree: FocusTree): Int = gridX + focusTree.minX
-  private def gridToFocusY(gridY: Int, focusTree: FocusTree): Int = gridY
-  private def gridToFocusXY(gridX: Int, gridY: Int, focusTree: FocusTree): Point =
-    new Point(gridX + focusTree.minX, gridY)
+  // Fixed coordinate conversion methods
+  // Grid to Focus: Remove the offset that was added to make grid coordinates positive
+  private def gridToFocusX(gridX: Int, focusTree: FocusTree): Int =
+    gridX - currentOffsetX
 
-  private def focusToGridX(focusX: Int, focusTree: FocusTree): Int = focusX - focusTree.minX
-  private def focusToGridY(focusY: Int, focusTree: FocusTree): Int = focusY
-  private def focusToGridXY(focusX: Int, focusY: Int, focusTree: FocusTree): Point =
-    new Point(focusX - focusTree.minX, focusY)
-  private def focusToGridX(focus: Focus): Int = focus.absoluteX - focus.focusTree.minX
-  private def focusToGridY(focus: Focus): Int = focus.absoluteY
+  private def gridToFocusY(gridY: Int, focusTree: FocusTree): Int =
+    gridY - currentOffsetY
+
+  private def gridToFocusXY(gridX: Int, gridY: Int, focusTree: FocusTree): Point =
+    new Point(gridX - currentOffsetX, gridY - currentOffsetY)
+
+  // Focus to Grid: Add the offset to make focus coordinates positive for the grid
+  private def focusToGridX(focus: Focus): Int =
+    focus.absoluteX + currentOffsetX
+
+  private def focusToGridY(focus: Focus): Int =
+    focus.absoluteY + currentOffsetY
+
   private def focusToGridXY(focus: Focus): Point =
-    new Point(focus.absoluteX - focus.focusTree.minX, focus.absoluteY)
+    new Point(
+      focus.absoluteX + currentOffsetX,
+      focus.absoluteY + currentOffsetY
+    )
 
   private def updateProgressIndicator(task: Task[GridPane]): Unit =
     if progressIndicator != null then
@@ -444,7 +458,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   def handleDraggedFocusButton(event: MouseEvent, toggleButton: FocusToggleButton): Unit =
     val db: Dragboard = toggleButton.startDragAndDrop(TransferMode.MOVE)
     val content: ClipboardContent = ClipboardContent()
-    content.putString(if event.isShiftDown then "shift:true" else "shift:false")
+    // Store the focus ID so we can find it reliably
+    content.putString(s"${toggleButton.focus.id.str}|shift:${event.isShiftDown}")
     db.setContent(content)
     event.consume()
 
