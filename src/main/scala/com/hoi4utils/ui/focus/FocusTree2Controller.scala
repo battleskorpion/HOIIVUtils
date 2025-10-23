@@ -62,6 +62,10 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private var currentOffsetY: Int = 0
   private var currentFocusTree: Option[FocusTree] = None
 
+  // Visual feedback for dragging
+  private var dragHighlight: Region = uninitialized
+  private var currentHighlightedCell: Option[(Int, Int)] = None
+
   @FXML def initialize(): Unit =
     setWindowControlsVisibility()
     replaceWithZoomableScrollPane()
@@ -192,11 +196,23 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         })
 
         newGridPane.setOnDragOver(de => {
-          if (de.getGestureSource != newGridPane && de.getDragboard.hasString)
+          if (de.getGestureSource != newGridPane && de.getDragboard.hasString) {
             de.acceptTransferModes(TransferMode.MOVE)
+
+            // Calculate which grid cell we're hovering over
+            val localPoint = newGridPane.sceneToLocal(de.getSceneX, de.getSceneY)
+            val hoverGridX = Math.max(0, Math.min((localPoint.getX / focusGridColumnsSize).toInt, gridCols - 1))
+            val hoverGridY = Math.max(0, Math.min((localPoint.getY / focusGridRowSize).toInt, gridRows - 1))
+
+            // Update highlight if we're over a different cell
+            Platform.runLater(() => updateDragHighlight(newGridPane, hoverGridX, hoverGridY))
+          }
           de.consume()
         })
         newGridPane.setOnDragDropped(de => {
+          // Remove highlight when drop completes
+          Platform.runLater(() => removeDragHighlight())
+
           // Calculate grid position from mouse coordinates instead of relying on intersected node
           val localPoint = newGridPane.sceneToLocal(de.getSceneX, de.getSceneY)
           val targetGridX = Math.max(0, (localPoint.getX / focusGridColumnsSize).toInt)
@@ -422,6 +438,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 
   /** Clears the focus tree view in the middle */
   private def clear(): Unit =
+    removeDragHighlight()
     focusTreeView.getChildren.clear()
     focusTreeView.getColumnConstraints.clear()
     focusTreeView.getRowConstraints.clear()
@@ -460,8 +477,42 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     val content: ClipboardContent = ClipboardContent()
     // Store the focus ID so we can find it reliably
     content.putString(s"${toggleButton.focus.id.str}|shift:${event.isShiftDown}")
+
+    // Create a snapshot of the button for the drag image (semi-transparent)
+    val snapshot = toggleButton.snapshot(null, null)
+    db.setDragView(snapshot, snapshot.getWidth / 2, snapshot.getHeight / 2)
+
     db.setContent(content)
     event.consume()
+
+  private def updateDragHighlight(gridPane: GridPane, gridX: Int, gridY: Int): Unit =
+    // Remove old highlight if it's in a different cell
+    currentHighlightedCell match
+      case Some((oldX, oldY)) if oldX != gridX || oldY != gridY =>
+        removeDragHighlight()
+      case Some(_) =>
+        return // Same cell, no need to update
+      case None =>
+
+    // Create new highlight
+    dragHighlight = new Region()
+    dragHighlight.setStyle(
+      "-fx-background-color: rgba(139, 92, 246, 0.3); " +
+        "-fx-border-color: rgba(139, 92, 246, 0.8); " +
+        "-fx-border-width: 2px;"
+    )
+    dragHighlight.setPrefSize(focusGridColumnsSize, focusGridRowSize)
+    dragHighlight.setMouseTransparent(true)
+
+    gridPane.add(dragHighlight, gridX, gridY)
+    currentHighlightedCell = Some((gridX, gridY))
+
+  private def removeDragHighlight(): Unit =
+    if (dragHighlight != null && focusTreeView != null) {
+      focusTreeView.getChildren.remove(dragHighlight)
+      dragHighlight = null
+      currentHighlightedCell = None
+    }
 
   def updateFocusPosition(focus: Focus, newFocusPos: Point, updateChildRelativeOffsets: Boolean): Unit = {
     focus.setAbsoluteXY(newFocusPos, updateChildRelativeOffsets)
