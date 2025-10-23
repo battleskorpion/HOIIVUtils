@@ -11,6 +11,7 @@ import javafx.fxml.FXML
 import javafx.geometry.Insets
 import javafx.scene.Node
 import javafx.scene.control.*
+import javafx.scene.image.ImageView
 import javafx.scene.input.{DragEvent, Dragboard, MouseEvent, TransferMode}
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
@@ -65,6 +66,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   // Visual feedback for dragging
   private var dragHighlight: Region = uninitialized
   private var currentHighlightedCell: Option[(Int, Int)] = None
+  private var dragImageView: ImageView = uninitialized
 
   @FXML def initialize(): Unit =
     setWindowControlsVisibility()
@@ -206,6 +208,15 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 
             // Update highlight if we're over a different cell
             Platform.runLater(() => updateDragHighlight(newGridPane, hoverGridX, hoverGridY))
+
+            // Update drag image position and scale
+            if (dragImageView != null) {
+              Platform.runLater(() => {
+                val scale = zoomableScrollPane.getZoomLevel
+                dragImageView.setScaleX(scale)
+                dragImageView.setScaleY(scale)
+              })
+            }
           }
           de.consume()
         })
@@ -478,8 +489,18 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     // Store the focus ID so we can find it reliably
     content.putString(s"${toggleButton.focus.id.str}|shift:${event.isShiftDown}")
 
-    // Create a snapshot of the button for the drag image (semi-transparent)
-    val snapshot = toggleButton.snapshot(null, null)
+    // Create a snapshot with transparent background
+    val params = new javafx.scene.SnapshotParameters()
+    params.setFill(Color.TRANSPARENT)
+    val snapshot = toggleButton.snapshot(params, null)
+
+    // Store reference to update scale during drag
+    dragImageView = new ImageView(snapshot)
+    val currentScale = zoomableScrollPane.getZoomLevel
+    dragImageView.setScaleX(currentScale)
+    dragImageView.setScaleY(currentScale)
+
+    // Set the drag view with scaled image
     db.setDragView(snapshot, snapshot.getWidth / 2, snapshot.getHeight / 2)
 
     db.setContent(content)
