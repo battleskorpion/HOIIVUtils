@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.focus
 
-import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree, FocusTreesManager, Focus as gridX}
+import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree, FocusTreesManager, Point, Focus as gridX}
 import com.hoi4utils.script.MultiPDX
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.control.ZoomableScrollPane
@@ -18,7 +18,6 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.{Circle, Line}
 import scalafx.scene.input.ClipboardContent
 
-import java.awt.Point
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.compiletime.uninitialized
 import scala.jdk.javaapi.CollectionConverters
@@ -409,7 +408,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     gridY - currentOffsetY
 
   private def gridToFocusXY(gridX: Int, gridY: Int, focusTree: FocusTree): Point =
-    new Point(gridX - currentOffsetX, gridY - currentOffsetY)
+    Point(gridX - currentOffsetX, gridY - currentOffsetY)
 
   // Focus to Grid: Add the offset to make focus coordinates positive for the grid
   private def focusToGridX(focus: Focus): Int =
