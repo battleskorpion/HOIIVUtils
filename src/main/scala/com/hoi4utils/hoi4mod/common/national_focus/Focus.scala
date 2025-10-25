@@ -26,31 +26,31 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
   private val DEFAULT_FOCUS_COST = 10.0
 
   /* attributes */
-  final val id                      = StringPDX("id")   // todo don't allow id to be null that feels wrong
-  final val icon                    = MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
+  @ChildPDX final val id                      = StringPDX("id")   // todo don't allow id to be null that feels wrong
+  @ChildPDX final val icon                    = MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
   /** If relative positioning, relative x */
-  final val x                       = IntPDX("x")
+  @ChildPDX final val x                       = IntPDX("x")
   /** If relative positioning, relative y */
-  final val y                       = IntPDX("y", ExpectedRange.ofPositiveInt)
-  final val prerequisites           = MultiPDX[PrerequisiteSet](None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
-  final val mutuallyExclusive       = MultiPDX[MutuallyExclusiveSet](None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
-  final val relativePositionFocus   = ReferencePDX[Focus](() => focusTree.focuses, f => f.id.value, "relative_position_id")
-  final val cost                    = DoublePDX("cost", ExpectedRange.ofPositiveInfinite(-1))
-  final val availableIfCapitulated  = BooleanPDX("available_if_capitulated")
-  final val cancelIfInvalid         = BooleanPDX("cancel_if_invalid", true)
-  final val continueIfInvalid       = BooleanPDX("continue_if_invalid")
-  final val ai_will_do              = AIWillDoPDX()
+  @ChildPDX final val y                       = IntPDX("y", ExpectedRange.ofPositiveInt)
+  @ChildPDX final val prerequisites           = MultiPDX[PrerequisiteSet](None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
+  @ChildPDX final val mutuallyExclusive       = MultiPDX[MutuallyExclusiveSet](None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
+  @ChildPDX final val relativePositionFocus   = ReferencePDX[Focus](() => focusTree.focuses, f => f.id.value, "relative_position_id")
+  @ChildPDX final val cost                    = DoublePDX("cost", ExpectedRange.ofPositiveInfinite(-1))
+  @ChildPDX final val availableIfCapitulated  = BooleanPDX("available_if_capitulated")
+  @ChildPDX final val cancelIfInvalid         = BooleanPDX("cancel_if_invalid", true)
+  @ChildPDX final val continueIfInvalid       = BooleanPDX("continue_if_invalid")
+  @ChildPDX final val ai_will_do              = AIWillDoPDX()
   /** completion reward */
   //  final val completionReward: CompletionReward = new CompletionReward()
 
   if node != null then loadPDX(node)
 
-  /**
-   * @inheritdoc
-   */
-  override protected def childScripts: mutable.Iterable[PDXScript[?]] =
-    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost,
-      availableIfCapitulated, cancelIfInvalid, continueIfInvalid, ai_will_do)
+//  /**
+//   * @inheritdoc
+//   */
+//  override protected def childScripts: mutable.Iterable[PDXScript[?]] =
+//    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost,
+//      availableIfCapitulated, cancelIfInvalid, continueIfInvalid, ai_will_do)
 
   def absoluteX: Int = absolutePosition.x
 
@@ -378,9 +378,9 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
 
   class BlockIcon extends StructuredPDX("icon") with Icon:
 
-    final private val `value`: StringPDX = new StringPDX("value")
+    @ChildPDX final private val `value`: StringPDX = new StringPDX("value")
 
-    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(`value`)
+//    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = childScripts ++ List(`value`)
 
     override def equals(other: PDXScript[?]): Boolean = other match
       case icon: Focus#Icon => `value`.equals(icon.value) // todo :(
@@ -398,22 +398,22 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
     override def getPDXTypeName: String = "Completion Reward"
 
   class AIWillDoPDX extends StructuredPDX("ai_will_do"):
-    final val base = new DoublePDX("base")
-    final val factor = new DoublePDX("factor")
-    final val add = new DoublePDX("add")
-    final val modifier = new MultiPDX[AIWillDoModifierPDX](None, Some(() => new AIWillDoModifierPDX), "modifier")
+    @ChildPDX final val base = DoublePDX("base")
+    @ChildPDX final val factor = DoublePDX("factor")
+    @ChildPDX final val add = DoublePDX("add")
+    @ChildPDX final val modifier = MultiPDX[AIWillDoModifierPDX](None, Some(() => new AIWillDoModifierPDX), "modifier")
 
-    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add, modifier)
+//    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add, modifier)
 
     override def getPDXTypeName: String = "AI Willingness"
 
     class AIWillDoModifierPDX extends StructuredPDX("modifier"):
-      final val base = new DoublePDX("base")
-      final val factor = new DoublePDX("factor")
-      final val add = new DoublePDX("add")
+      @ChildPDX final val base = DoublePDX("base")
+      @ChildPDX final val factor = DoublePDX("factor")
+      @ChildPDX final val add = DoublePDX("add")
       // todo trigger block
 
-      override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add)
+//      override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add)
 
       override def getPDXTypeName: String = "Modifier"
 
