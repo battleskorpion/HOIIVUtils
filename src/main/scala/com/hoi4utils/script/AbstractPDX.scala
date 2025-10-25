@@ -225,7 +225,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  override def getOrElse(elseValue: T): T = boundary {
+  override infix def getOrElse(elseValue: T): T = boundary {
     val value = node.getOrElse(boundary.break(elseValue)).value
     value match
       case Some(t) => t.asInstanceOf[T]

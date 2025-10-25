@@ -466,7 +466,7 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
           val prevDim = focusTreeViewDimension()
           val prev = focus.setAbsoluteXY(newX, newY, e.isShiftDown)
 
-          if !prev.equals(focus.position) then
+          if !prev.equals(focus.relativePosition) then
             logger.info(s"Focus $focus moved to $newX, $newY")
 
           drawFocusTree()

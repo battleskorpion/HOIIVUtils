@@ -14,7 +14,6 @@ import dotty.tools.sjs.ir.Trees.JSBinaryOp.&&
 import dotty.tools.sjs.ir.Trees.JSUnaryOp.!
 import javafx.scene.image.Image
 
-import java.awt.Point
 import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -57,7 +56,9 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
 
   def absoluteY: Int = absolutePosition.y
 
-  def position: Point = new Point(x.getOrElse(0), y.getOrElse(0))
+  def relativePosition: Point = Point(x getOrElse 0, y getOrElse 0)
+
+  def xyPoint: Point = relativePosition
 
   /**
    * Calculates and returns the absolute position of the focus, taking into account any relative positioning.
@@ -74,25 +75,25 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
      */
     @tailrec
     def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: Point = new Point(0, 0)): Point = {
+      val nextPoint = new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
       if focus.relativePositionFocus.isUndefined then
-        return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+        return nextPoint
       // Check for self-reference
       if focus.relativePositionFocus @== focus.id then
         logger.error(s"Relative position id same as focus id for $this")
-        return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+        return nextPoint
       // Check for circular references
       if visited(focus.id.str) then
         logger.error(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
-        return new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+        return nextPoint
 
       focus.relativePositionFocus.value match
         case Some(relativeFocus: Focus) =>
-          val newAcc = new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
           // Tail call: pass nextFocus, the updated visited set, and the new accumulated offset.
-          absolutePosition(relativeFocus, visited + focus.id.str, newAcc)
+          absolutePosition(relativeFocus, visited + focus.id.str, nextPoint)
         case None =>
           logger.error(s"Focus id ${focus.relativePositionFocus.getReferenceName} not a valid focus")
-          new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+          nextPoint
     }
 
     absolutePosition(this)
@@ -107,10 +108,9 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
     this.id.set(s)
 
   def setXY(x: Int, y: Int): Point =
-    val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
     this.x @= x
     this.y @= y
-    prev
+    relativePosition
 
   def setXY(xy: Point): Point = setXY(xy.x, xy.y)
 
@@ -126,6 +126,10 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
    */
   def setAbsoluteXY(x: Int, y: Int, updateChildRelativeOffsets: Boolean): Point =
     val prevAbsolute = absolutePosition
+    val deltas = (x - prevAbsolute.x, y - prevAbsolute.y)
+    if deltas == (0, 0) then
+      // No position change, so nothing to do
+      return prevAbsolute
     relativePositionFocus.value match
       case Some(f) =>
         // keep relative to the focus, but absolute coordinates are always the same
@@ -135,17 +139,10 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
         // No relative positioning, so just set directly
         setXY(x, y)
     if updateChildRelativeOffsets then
-      val deltaX = prevAbsolute.x - x
-      val deltaY = prevAbsolute.y - y
-
-      // Only update children if there was actually a position change
-      if deltaX != 0 || deltaY != 0 then
-        for focus <- focusTree.focuses do
-          // Check if this focus has us as its relative position parent
-          focus.relativePositionFocus.value match
-            case Some(relParent) if relParent == this =>
-              focus.offsetXY(deltaX, deltaY)
-            case _ => // Do nothing
+      for focus <- focusTree.focuses do
+        // Check if this focus has us as its relative position parent
+        if focus.relativePositionFocus @== this then
+          focus.offsetXY tupled deltas
     prevAbsolute
 
   /**
@@ -161,10 +158,9 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
     setAbsoluteXY(xy.x, xy.y, updateChildRelativeOffsets)
 
   def offsetXY(x: Int, y: Int): Point =
-    val prev = new Point(this.x.getOrElse(0), this.y.getOrElse(0))
-    this.x @= (this.x.getOrElse(0) + x)
-    this.y @= (this.y.getOrElse(0) + y)
-    prev
+    this.x += x
+    this.y += y
+    xyPoint
 
   /**
    * Check if the focus is at the given relative position.
@@ -181,7 +177,7 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
    * @param y absolute y-coordinate
    * @return
    */
-  def hasAbsolutePosition(x: Int, y: Int): Boolean = absolutePosition == new Point(x, y)
+  def hasAbsolutePosition(x: Int, y: Int): Boolean = absolutePosition == Point(x, y)
 
   def selfAndRelativePositionedFocuses: List[Focus] =
     val focuses = ListBuffer[Focus]()
@@ -206,7 +202,7 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
   def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 
   def setCost(cost: Number): Unit =
-    this.cost.set(cost.doubleValue())
+    this.cost @= cost.doubleValue()
 
   def getDDSImage: Option[Image] =
     // bad code. it's fine for now.
@@ -235,7 +231,7 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
 
   def displayedCompletionTime(): Double = Math.floor(preciseCompletionTime())
 
-  def preciseCompletionTime(): Double = cost.getOrElse(DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
+  def preciseCompletionTime(): Double = (cost getOrElse DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
 
   override def getLocalizableProperties: mutable.Map[Property, String] =
     //mutable.Map(Property.NAME -> id.get().get, Property.DESCRIPTION -> s"${id.get().get}_desc")
@@ -363,12 +359,12 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
     override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
       val fullMessage = s"""Prerequisite Set - Unexpected Identifier Error:
                            |	Exception: ${exception.getMessage}
-                           |	Focus Tree ID: ${id.value.getOrElse("undefined")}
+                           |	Focus Tree ID: ${id.value getOrElse "undefined"}
                            |	Class: ${this.getClass.getSimpleName}
                            |	Node Identifier: ${node.identifier.getOrElse("none")}
                            |	Expected Identifiers: ${pdxIdentifiers.mkString("[", ", ", "]")}
-                           |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
-                           |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}""".stripMargin
+                           |	Node Value: ${Option(node.$).map(_.toString) getOrElse "null"}
+                           |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName) getOrElse "null"}""".stripMargin
 
       focusTreeErrors += fullMessage
 

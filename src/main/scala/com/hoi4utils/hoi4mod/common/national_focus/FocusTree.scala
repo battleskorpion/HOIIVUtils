@@ -239,3 +239,5 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
     focusTreeErrors += fullMessage
 //    logger.error("Focus Tree - Parser Exception (File):")
 //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
+
+case class Point(x: Int, y: Int)

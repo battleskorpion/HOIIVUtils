@@ -56,7 +56,7 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
   /**
    * @inheritdoc
    */
-  override def getOrElse(default: Int): Int = boundary {
+  override infix def getOrElse(default: Int): Int = boundary {
     val value = node.getOrElse(boundary.break(default)).value
     value match
       case Some(v) => v match

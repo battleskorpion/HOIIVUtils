@@ -64,7 +64,7 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
   /**
    * @inheritdoc
    */
-  override def getOrElse(default: Double): Double = boundary {
+  override infix def getOrElse(default: Double): Double = boundary {
     val value = node.getOrElse(boundary.break(default)).value
     value match {
       case Some(v) => v.match {

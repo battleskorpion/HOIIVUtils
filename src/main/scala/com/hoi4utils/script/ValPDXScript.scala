@@ -61,6 +61,16 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] with Comparable[T] {
   def @=(other: T): Unit = set(other)
 
   /**
+   * Sets the value of the script to the value of the given script.
+   *
+   * @param other
+   */
+  def @=(other: PDXScript[T]): Unit = other.value match {
+    case Some(v) => set(v)
+    case None => setNull()
+  }
+  
+  /**
    * Sets the value of the script to the given value. If the given value is the script's default value
    * and the script's value is empty, does nothing.
    */
@@ -69,15 +79,6 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] with Comparable[T] {
     set(other)
   }
   
-  /**
-   * Sets the value of the script to the value of the given script.
-   * @param other
-   */
-  def @=(other: PDXScript[T]): Unit = other.value match {
-    case Some(v) => set(v)
-    case None => setNull()
-  }
-
   @targetName("unaryPlus")
   def unary_+ : T
 

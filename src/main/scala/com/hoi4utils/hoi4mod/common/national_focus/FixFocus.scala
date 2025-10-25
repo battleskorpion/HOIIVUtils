@@ -67,7 +67,7 @@ object FixFocus extends LazyLogging {
    * @param locFile
    */
   private def setGeneratedNameLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
-    val focusName = extractFocusName(focus.id.getOrElse("Unnamed_Focus"))
+    val focusName = extractFocusName(focus.id getOrElse "Unnamed_Focus")
     // Format the focus name
     val formattedName = locManager.titleCapitalize(focusName.replaceAll("_+", " ").trim)
 

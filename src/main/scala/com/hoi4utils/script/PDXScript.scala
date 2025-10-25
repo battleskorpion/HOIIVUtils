@@ -133,7 +133,7 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
    * @param elseValue
    * @return
    */
-  def getOrElse(elseValue: V): V
+  infix def getOrElse(elseValue: V): V
   
   def isUndefined: Boolean
 
