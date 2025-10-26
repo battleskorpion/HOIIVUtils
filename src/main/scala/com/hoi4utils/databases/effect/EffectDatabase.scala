@@ -2,13 +2,14 @@ package com.hoi4utils.databases.effect
 
 import com.hoi4utils.shared.{BoolType, ExpectedRange, RichString}
 import com.hoi4utils.exceptions.InvalidParameterException
-import com.hoi4utils.hoi4mod.common.country_tags.CountryTag
-import com.hoi4utils.hoi4mod.common.idea.Idea
-import com.hoi4utils.hoi4mod.map.province.Province
-import com.hoi4utils.hoi4mod.map.state.State
-import com.hoi4utils.hoi4mod.scope.ScopeType
+import com.hoi4utils.hoi4.common.country_tags.CountryTag
+import com.hoi4utils.hoi4.common.idea.Idea
+import com.hoi4utils.hoi4.map.province.Province
+import com.hoi4utils.hoi4.map.state.State
+import com.hoi4utils.hoi4.scope.ScopeType
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
+import com.hoi4utils.script.datatype.StringPDX
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, IOException}
@@ -193,7 +194,7 @@ object EffectDatabase extends LazyLogging {
 
     paramValueType.getOrElse(boundary.break(None)) match {
       case ParameterValueType.country => Some(
-        new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country") with SimpleEffect {
+        new ReferencePDX[CountryTag](() => CountryTag.toList, "country") with SimpleEffect {
         })
       case ParameterValueType.cw_bool => Some(
         new BooleanPDX(pdxIdentifier, false, BoolType.TRUE_FALSE) with SimpleEffect {
@@ -208,13 +209,13 @@ object EffectDatabase extends LazyLogging {
         new StringPDX(pdxIdentifier) with SimpleEffect {
         })
       case ParameterValueType.idea => Some(
-        new ReferencePDX[Idea](() => Idea.listAllIdeas, _.id, pdxIdentifier) with SimpleEffect {  // in future: ReferencePDX[Idea]
+        new ReferencePDX[Idea](() => Idea.listAllIdeas, pdxIdentifier) with SimpleEffect {  // in future: ReferencePDX[Idea]
         })
       case ParameterValueType.state => Some(
-        new ReferencePDX[State](() => State.list, s => s.name.value, pdxIdentifier) with SimpleEffect {
+        new ReferencePDX[State](() => State.list, pdxIdentifier) with SimpleEffect {
         })
       case ParameterValueType.province => Some(
-        new ReferencePDX[Province](() => Province.list, p => Some(p.id.toString), pdxIdentifier) with SimpleEffect {
+        new ReferencePDX[Province](() => Province.list, pdxIdentifier) with SimpleEffect {
         })
       case _ =>
         None
@@ -288,7 +289,7 @@ object EffectDatabase extends LazyLogging {
         case (name, ParameterValueType.ace_type, _) => new StringPDX(name) // ex: type = fighter_genius
         case (name, ParameterValueType.ai_strategy, _) => new StringPDX(name) // ex: type = alliance
         case (name, ParameterValueType.character, _) => new StringPDX(name) // ex: character = OMA_sultan
-        case (name, ParameterValueType.country, _) => new ReferencePDX[CountryTag](() => CountryTag.toList, c => Some(c.get), "country")
+        case (name, ParameterValueType.country, _) => new ReferencePDX[CountryTag](() => CountryTag.toList, "country")
         case (name, ParameterValueType.cw_bool, _) => new BooleanPDX(name, false, BoolType.TRUE_FALSE)
         case (name, ParameterValueType.cw_float, _) => new DoublePDX(name)
         case (name, ParameterValueType.cw_int, _) => new IntPDX(name)
@@ -297,19 +298,19 @@ object EffectDatabase extends LazyLogging {
         case (name, ParameterValueType.decision, _) => new StringPDX(name) // ex: activate_decision = my_decision
         case (name, ParameterValueType.doctrine_category, _) => new StringPDX(name) // ex: category = land_doctrine
         case (name, ParameterValueType.flag, _) => new StringPDX(name) // ex: set_state_flag = my_flag
-        case (name, ParameterValueType.idea, false) => new ReferencePDX[Idea](() => Idea.listAllIdeas, idea => idea.id, name)
-        case (name, ParameterValueType.idea, true) => new ListPDX[ReferencePDX[Idea]](() => new ReferencePDX[Idea](() => Idea.listAllIdeas, idea => idea.id, name), name)
+        case (name, ParameterValueType.idea, false) => new ReferencePDX[Idea](() => Idea.listAllIdeas, name)
+        case (name, ParameterValueType.idea, true) => new ListPDX[ReferencePDX[Idea]](() => new ReferencePDX[Idea](() => Idea.listAllIdeas, name), name)
         case (name, ParameterValueType.mission, false) => new StringPDX(name) // ex: activate_mission = my_mission
         // Treat ParameterValueType.effect as a simple string here.
         case (name, ParameterValueType.effect, _) => new StringPDX(name) // ex: effect = my_effect
-        case (name, ParameterValueType.state, _) => new ReferencePDX[State](() => State.list, s => s.stateID.asSomeString, name)
+        case (name, ParameterValueType.state, _) => new ReferencePDX[State](() => State.list, name)
         case (name, ParameterValueType.equipment, _) => new StringPDX(name) // ex: type = fighter_equipment_0
         case (name, ParameterValueType.strategic_region, _) => new IntPDX(name, ExpectedRange.ofPositiveInt)
         case (name, ParameterValueType.building, _) => new StringPDX(name)
         case (name, ParameterValueType.operation_token, _) => new StringPDX(name)
         case (name, ParameterValueType.ideology, _) => new StringPDX(name)
         case (name, ParameterValueType.sub_ideology, _) => new StringPDX(name)
-        case (name, ParameterValueType.province, _) => new ReferencePDX[Province](() => Province.list, p => Some(p.id.toString), name)
+        case (name, ParameterValueType.province, _) => new ReferencePDX[Province](() => Province.list, name)
         case (name, ParameterValueType.resource, _) => new StringPDX(name)
         case (name, ParameterValueType.tech_category, _) => new StringPDX(name)
         case (name, ParameterValueType.advisor_slot, _) => new StringPDX(name)

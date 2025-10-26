@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.focus
 
-import com.hoi4utils.hoi4mod.common.national_focus.Focus
+import com.hoi4utils.hoi4.common.national_focus.Focus
 import com.hoi4utils.ui.javafx.scene.layout.PDXEditorPane
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform

@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.countries
 
-import com.hoi4utils.hoi4mod.history.countries.CountryFile
-import com.hoi4utils.hoi4mod.map.state.State
+import com.hoi4utils.hoi4.history.countries.CountryFile
+import com.hoi4utils.hoi4.map.state.State
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.parser.ClausewitzDate
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController2, JavaFXUIManager}

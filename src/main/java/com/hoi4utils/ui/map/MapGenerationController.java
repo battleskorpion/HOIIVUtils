@@ -1,9 +1,9 @@
 package com.hoi4utils.ui.map;
 
-import com.hoi4utils.hoi4mod.map.gen.Heightmap;
-import com.hoi4utils.hoi4mod.map.province.ProvinceGenConfig;
-import com.hoi4utils.hoi4mod.map.province.ProvinceGeneration;
-import com.hoi4utils.hoi4mod.map.province.ProvinceMap;
+import com.hoi4utils.hoi4.map.gen.Heightmap;
+import com.hoi4utils.hoi4.map.province.ProvinceGenConfig;
+import com.hoi4utils.hoi4.map.province.ProvinceGeneration;
+import com.hoi4utils.hoi4.map.province.ProvinceMap;
 import com.hoi4utils.main.HOIIVUtils;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.application.JavaFXUIManager;

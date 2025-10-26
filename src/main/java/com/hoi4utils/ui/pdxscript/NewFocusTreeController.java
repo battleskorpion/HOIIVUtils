@@ -1,8 +1,8 @@
 package com.hoi4utils.ui.pdxscript;
 
-import com.hoi4utils.hoi4mod.common.country_tags.CountryTag;
-import com.hoi4utils.hoi4mod.common.country_tags.CountryTag$;
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTree;
+import com.hoi4utils.hoi4.common.country_tags.CountryTag;
+import com.hoi4utils.hoi4.common.country_tags.CountryTag$;
+import com.hoi4utils.hoi4.common.national_focus.FocusTree;
 import com.hoi4utils.main.HOIIVUtils;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;

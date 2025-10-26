@@ -1,9 +1,9 @@
 package com.hoi4utils.ui.localization;
 
-import com.hoi4utils.hoi4mod.common.idea.Idea;
-import com.hoi4utils.hoi4mod.common.idea.IdeaFile;
-import com.hoi4utils.hoi4mod.localization.Localization;
-import com.hoi4utils.hoi4mod.localization.Property;
+import com.hoi4utils.hoi4.common.idea.Idea;
+import com.hoi4utils.hoi4.common.idea.IdeaFile;
+import com.hoi4utils.hoi4.localization.Localization;
+import com.hoi4utils.hoi4.localization.Property;
 import com.hoi4utils.main.HOIIVFiles;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.application.JavaFXUIManager;

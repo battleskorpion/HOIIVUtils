@@ -2,6 +2,8 @@ package com.hoi4utils.ui.javafx.scene.layout;
 
 import com.hoi4utils.main.HOIIVUtils;
 import com.hoi4utils.script.*;
+import com.hoi4utils.script.datatype.StringPDX;
+import com.hoi4utils.script.datatype.ValPDXScript;
 import com.hoi4utils.ui.pdxscript.CollectionPDXNewPDXController;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;

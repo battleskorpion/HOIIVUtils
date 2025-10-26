@@ -1,8 +1,8 @@
 package com.hoi4utils.ui.focus_view
 
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree}
-import com.hoi4utils.hoi4mod.localization.Property
+import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree}
+import com.hoi4utils.hoi4.localization.Property
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.pdxscript.PDXEditorController
 import com.typesafe.scalalogging.LazyLogging

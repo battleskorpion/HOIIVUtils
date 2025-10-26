@@ -1,6 +1,6 @@
 package com.hoi4utils.databases.effect
 
-import com.hoi4utils.hoi4mod.scope.ScopeType
+import com.hoi4utils.hoi4.scope.ScopeType
 
 //trait BlockEffect(private val structuredBlock: StructuredPDX) extends Effect with Cloneable {
 trait BlockEffect extends Effect {

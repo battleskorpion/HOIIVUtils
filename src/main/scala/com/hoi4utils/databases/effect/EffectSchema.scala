@@ -1,6 +1,6 @@
 package com.hoi4utils.databases.effect
 
-import com.hoi4utils.hoi4mod.scope.ScopeType
+import com.hoi4utils.hoi4.scope.ScopeType
 
 
 final class EffectSchema(pdxIdentifiers: List[String], supportedScopes: Set[ScopeType], supportedTargets: Set[ScopeType]) {

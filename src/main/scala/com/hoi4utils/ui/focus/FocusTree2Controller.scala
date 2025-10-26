@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.focus
 
-import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree, FocusTreesManager, Point, Focus as gridX}
+import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreesManager, Point, Focus as gridX}
 import com.hoi4utils.script.MultiPDX
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.control.ZoomableScrollPane

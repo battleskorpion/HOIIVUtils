@@ -19,15 +19,16 @@ import scala.collection.mutable.ListBuffer
  * @param referencePDXIdentifiers  the identifiers for the reference PDXScript
  * @tparam T the PDXScript type of the reference PDXScript objects
  */
-class MultiReferencePDX[T <: AbstractPDX[?]](protected var referenceCollectionSupplier: () => Iterable[T],
-                                             protected var idExtractor: T => Option[String], pdxIdentifiers: List[String],
+class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplier: () => Iterable[T],
+                                             pdxIdentifiers: List[String],
                                              referencePDXIdentifiers: List[String])
-  extends MultiPDX[ReferencePDX[T]](Some(() => new ReferencePDX(referenceCollectionSupplier, idExtractor, referencePDXIdentifiers)), None, pdxIdentifiers) with LazyLogging {
+  extends MultiPDX[ReferencePDX[T]](Some(() => new ReferencePDX(referenceCollectionSupplier, referencePDXIdentifiers)), None, pdxIdentifiers) with LazyLogging {
 
   final protected val referenceNames = new ListBuffer[String]
+  protected var idExtractor: T => Option[String] = (obj: T) => obj.referableID
 
-  def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => Option[String], pdxIdentifiers: String, referenceIdentifier: String) = {
-    this(referenceCollectionSupplier, idExtractor, List(pdxIdentifiers), List(referenceIdentifier))
+  def this(referenceCollectionSupplier: () => Iterable[T], pdxIdentifiers: String, referenceIdentifier: String) = {
+    this(referenceCollectionSupplier, List(pdxIdentifiers), List(referenceIdentifier))
   }
 
   /**

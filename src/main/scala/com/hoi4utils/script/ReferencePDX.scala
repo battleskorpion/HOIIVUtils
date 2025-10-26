@@ -2,6 +2,7 @@ package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
+import com.hoi4utils.script.datatype.StringPDX
 
 import scala.annotation.targetName
 import scala.compiletime.uninitialized
@@ -19,16 +20,17 @@ import scala.util.boundary
  */
 // removed T <: PDXScript[?]
 // but todo disallow string (and maybe other val types), and StringPDX, other primitive pdx
-class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Iterable[T],
-                                        final protected var idExtractor: T => Option[String], pdxIdentifiers: List[String])
+class ReferencePDX[T <: Referable](final protected var referenceCollectionSupplier: () => Iterable[T],
+                      pdxIdentifiers: List[String])
   extends AbstractPDX[T](pdxIdentifiers) {
 
   // the string identifier of the referenced PDXScript
   protected[script] var referenceName: String = uninitialized
   private var reference: Option[T] = None
+  final protected var idExtractor: T => Option[String] = (obj: T) => obj.referableID
 
-  def this(referenceCollectionSupplier: () => Iterable[T], idExtractor: T => Option[String], pdxIdentifiers: String*) = {
-    this(referenceCollectionSupplier, idExtractor, pdxIdentifiers.toList)
+  def this(referenceCollectionSupplier: () => Iterable[T], pdxIdentifiers: String*) = {
+    this(referenceCollectionSupplier, pdxIdentifiers.toList)
   }
 
   @throws[UnexpectedIdentifierException]
@@ -140,4 +142,8 @@ class ReferencePDX[T](final protected var referenceCollectionSupplier: () => Ite
   override def toString : String = {
     super.toString
   }
+}
+
+trait Referable {
+  def referableID: Option[String]
 }

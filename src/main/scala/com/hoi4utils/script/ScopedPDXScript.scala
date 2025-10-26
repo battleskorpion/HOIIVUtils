@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.hoi4mod.scope.{Scope, ScopeType}
+import com.hoi4utils.hoi4.scope.{Scope, ScopeType}
 
 trait ScopedPDXScript {
   def definitionScope: Option[Scope]

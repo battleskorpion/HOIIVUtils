@@ -1,9 +1,9 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTree
-import com.hoi4utils.hoi4mod.map.strategicregions.StrategicRegion
+import com.hoi4utils.hoi4.common.national_focus.FocusTree
+import com.hoi4utils.hoi4.map.strategicregions.StrategicRegion
 import com.hoi4utils.parser.{Node, Parser, Tokenizer}
-import com.hoi4utils.script.StringPDX
+import com.hoi4utils.script.datatype.StringPDX
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File

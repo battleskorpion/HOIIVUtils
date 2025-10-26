@@ -1,8 +1,8 @@
 package com.hoi4utils.ui.map;
 
-import com.hoi4utils.hoi4mod.map.province.ProvinceDeterminationType;
-import com.hoi4utils.hoi4mod.map.province.ProvinceGenConfig;
-import com.hoi4utils.hoi4mod.map.seed.SeedGenType;
+import com.hoi4utils.hoi4.map.province.ProvinceDeterminationType;
+import com.hoi4utils.hoi4.map.province.ProvinceGenConfig;
+import com.hoi4utils.hoi4.map.seed.SeedGenType;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;

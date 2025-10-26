@@ -2,13 +2,13 @@ package com.hoi4utils.ui.menus
 
 import com.hoi4utils.databases.effect.EffectDatabase.effectErrors
 import com.hoi4utils.extensions.*
-import com.hoi4utils.hoi4mod.common.idea.IdeasManager.ideaFileErrors
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager.focusTreeErrors
-import com.hoi4utils.hoi4mod.gfx.Interface.interfaceErrors
-import com.hoi4utils.hoi4mod.history.countries.CountryFile.countryErrors
-import com.hoi4utils.hoi4mod.localization.LocalizationManager.localizationErrors
-import com.hoi4utils.hoi4mod.map.resource.Resource.resourceErrors
-import com.hoi4utils.hoi4mod.map.state.State.stateErrors
+import com.hoi4utils.hoi4.common.idea.IdeasManager.ideaFileErrors
+import com.hoi4utils.hoi4.common.national_focus.FocusTreesManager.focusTreeErrors
+import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
+import com.hoi4utils.hoi4.history.countries.CountryFile.countryErrors
+import com.hoi4utils.hoi4.localization.LocalizationManager.localizationErrors
+import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
+import com.hoi4utils.hoi4.map.state.State.stateErrors
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import javafx.application.Platform

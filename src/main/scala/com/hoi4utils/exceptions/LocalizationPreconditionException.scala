@@ -1,6 +1,6 @@
 package com.hoi4utils.exceptions
 
-import com.hoi4utils.hoi4mod.localization.Localization
+import com.hoi4utils.hoi4.localization.Localization
 
 case class LocalizationPreconditionException(precondition: String, cause: Throwable = null)
   extends Exception(

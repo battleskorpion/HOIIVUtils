@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.pdxscript;
 
-import com.hoi4utils.hoi4mod.map.province.Province;
-import com.hoi4utils.hoi4mod.map.strategicregions.StrategicRegion;
+import com.hoi4utils.hoi4.map.province.Province;
+import com.hoi4utils.hoi4.map.strategicregions.StrategicRegion;
 import com.hoi4utils.script.DoublePDX;
 import com.hoi4utils.script.PDXScript;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;

@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.localization
 
-import com.hoi4utils.hoi4mod.tooltip.CustomTooltip
+import com.hoi4utils.hoi4.tooltip.CustomTooltip
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager}
 import com.hoi4utils.ui.javafx.scene.control.TableViewWindow

@@ -1,8 +1,8 @@
 package com.hoi4utils.ui.map;
 
-import com.hoi4utils.hoi4mod.map.province.DefinitionCSV;
-import com.hoi4utils.hoi4mod.map.province.Province;
-import com.hoi4utils.hoi4mod.map.state.State;
+import com.hoi4utils.hoi4.map.province.DefinitionCSV;
+import com.hoi4utils.hoi4.map.province.Province;
+import com.hoi4utils.hoi4.map.state.State;
 import com.hoi4utils.main.HOIIVFiles;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.scene.control.StateTable;

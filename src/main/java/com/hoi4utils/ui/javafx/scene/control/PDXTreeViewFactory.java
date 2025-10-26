@@ -1,8 +1,9 @@
 package com.hoi4utils.ui.javafx.scene.control;
 
-import com.hoi4utils.hoi4mod.localization.Localizable;
-import com.hoi4utils.hoi4mod.localization.Property;
+import com.hoi4utils.hoi4.localization.Localizable;
+import com.hoi4utils.hoi4.localization.Property;
 import com.hoi4utils.script.*;
+import com.hoi4utils.script.datatype.StringPDX;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;

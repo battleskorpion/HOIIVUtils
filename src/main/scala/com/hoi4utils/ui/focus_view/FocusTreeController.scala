@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.focus_view
 
-import com.hoi4utils.hoi4mod.common.national_focus.{Focus, FocusTree, FocusTreesManager}
+import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreesManager}
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import com.hoi4utils.ui.focus_view.FocusTreeController.updateLoadingStatus

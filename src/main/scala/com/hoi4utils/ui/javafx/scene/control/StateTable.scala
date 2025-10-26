@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.javafx.scene.control
 
-import com.hoi4utils.hoi4mod.map.state.State
+import com.hoi4utils.hoi4.map.state.State
 import com.hoi4utils.ui.javafx.application.JavaFXUIManager
 import com.typesafe.scalalogging.LazyLogging
 import javafx.beans.property.{IntegerProperty, ObjectProperty, ReadOnlyObjectWrapper, StringProperty}

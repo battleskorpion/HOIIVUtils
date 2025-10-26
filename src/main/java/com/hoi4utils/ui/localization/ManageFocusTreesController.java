@@ -1,11 +1,11 @@
 package com.hoi4utils.ui.localization;
 
-import com.hoi4utils.hoi4mod.common.national_focus.Focus;
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTree;
-import com.hoi4utils.hoi4mod.common.national_focus.FocusTreesManager;
-import com.hoi4utils.hoi4mod.localization.Localization;
-import com.hoi4utils.hoi4mod.localization.LocalizationManager;
-import com.hoi4utils.hoi4mod.localization.Property;
+import com.hoi4utils.hoi4.common.national_focus.Focus;
+import com.hoi4utils.hoi4.common.national_focus.FocusTree;
+import com.hoi4utils.hoi4.common.national_focus.FocusTreesManager;
+import com.hoi4utils.hoi4.localization.Localization;
+import com.hoi4utils.hoi4.localization.LocalizationManager;
+import com.hoi4utils.hoi4.localization.Property;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.scene.control.TableViewWindow;
 import javafx.collections.FXCollections;
