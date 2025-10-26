@@ -25,10 +25,12 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @throws UnexpectedIdentifierException if the expression is not a valid identifier
    */
   @throws[UnexpectedIdentifierException]
-  protected def usingIdentifier(expr: Node): Unit =
-//    if pdxIdentifiers.isEmpty
-//      // all good?
-    if pdxIdentifiers.indexWhere(expr.nameEquals) == -1 then throw new UnexpectedIdentifierException(expr)
+  protected def usingIdentifier(expr: Node): Unit = {
+    val index = pdxIdentifiers.indexWhere(expr.nameEquals)
+    if index == -1 then throw new UnexpectedIdentifierException(expr)
+    
+    activeIdentifier = index
+  }
 
   /**
    * @inheritdoc
