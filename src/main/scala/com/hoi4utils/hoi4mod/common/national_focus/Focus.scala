@@ -75,7 +75,7 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
      */
     @tailrec
     def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: Point = Point(0, 0)): Point = {
-      val nextPoint = new Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
+      val nextPoint = Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
       if focus.relativePositionFocus.isUndefined then
         return nextPoint
       // Check for self-reference
