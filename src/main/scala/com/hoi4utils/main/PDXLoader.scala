@@ -51,16 +51,25 @@ class PDXLoader extends LazyLogging:
     FocusTreesManager,
   )
 
-  def load(hProperties: Properties, loadingLabel: Label, isCancelled: () => Boolean = () => false): Unit =
+  def load(hProperties: Properties, loadingLabel: Label, isCancelled: () => Boolean = () => false,
+           onComponentComplete: (String, Double) => Unit = (_, _) => (),
+           onComponentStart: String => Unit = _ => ()): Unit =
     implicit val properties: Properties = hProperties
     implicit val label: Label = loadingLabel
     if isCancelled() then return
 
+    var startTime = System.nanoTime()
+    onComponentStart("ModifierDatabase")
     MenuController.updateLoadingStatus(loadingLabel, "Initializing ModifierDatabase...")
     ModifierDatabase.init()
+    onComponentComplete("ModifierDatabase", (System.nanoTime() - startTime) / 1_000_000_000.0)
     if isCancelled() then return
+
+    startTime = System.nanoTime()
+    onComponentStart("EffectDatabase")
     MenuController.updateLoadingStatus(loadingLabel, "Initializing EffectDatabase...")
     EffectDatabase.init()
+    onComponentComplete("EffectDatabase", (System.nanoTime() - startTime) / 1_000_000_000.0)
     if isCancelled() then return
 
     MenuController.updateLoadingStatus(loadingLabel, "Finding Paths...")
@@ -77,12 +86,25 @@ class PDXLoader extends LazyLogging:
     if isCancelled() then return
     changeNotifier.checkAndNotifyChanges()
 
+    startTime = System.nanoTime()
+    onComponentStart("Localization")
     MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
     LocalizationManager.getOrCreate(() => new EnglishLocalizationManager).reload()
+    onComponentComplete("Localization", (System.nanoTime() - startTime) / 1_000_000_000.0)
     if isCancelled() then return
-    
+
     pdxList.foreach(p =>
-      if !isCancelled() then readPDX(p, isCancelled)
+      if !isCancelled() then
+        val componentName = p.name match
+          case "ResourcesFile$" => "Resources"
+          case "CountryFile" => "Country"
+          case "IdeasManager" => "Ideas"
+          case "FocusTreesManager" => "FocusTrees"
+          case other => other
+        onComponentStart(componentName)
+        val componentStart = System.nanoTime()
+        readPDX(p, isCancelled)
+        onComponentComplete(componentName, (System.nanoTime() - componentStart) / 1_000_000_000.0)
     )
 
   def readPDX(pdx: PDXReadable, isCancelled: () => Boolean = () => false)(implicit properties: Properties, label: Label): Unit =
