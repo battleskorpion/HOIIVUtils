@@ -22,6 +22,8 @@ import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.stage.Stage
 import javafx.scene.input.MouseEvent
+import javafx.animation.{Timeline, KeyFrame}
+import javafx.util.Duration
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import javax.swing.*
@@ -70,6 +72,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   @FXML var loadingLabel: Label = uninitialized
   @FXML var mTitle: Label = uninitialized
   @FXML var mVersion: Label = uninitialized
+  @FXML var timer: Label = uninitialized
 
   @FXML var errorList: BorderPane = uninitialized
   @FXML var errorListController: ErrorListController = uninitialized
@@ -80,12 +83,31 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
 
   @FXML
   def initialize(): Unit =
+    // Start timing from the beginning of initialization
+    val initStartTime = System.nanoTime()
+    var modLoadStartTime: Long = 0
+    var modLoadEndTime: Long = 0
+    var fileCheckStartTime: Long = 0
+    var fileCheckEndTime: Long = 0
+
+    // Update timer display helper
+    def updateTimer(message: String): Unit =
+      Platform.runLater: () =>
+        if timer != null then
+          timer.setText(message)
+
+    updateTimer("Init: 0.00s")
+
     val task = new javafx.concurrent.Task[Unit]:
       override def call(): Unit =
         if isCancelled then return
 
         val pdxLoader = new PDXLoader()
         if isCancelled then return
+
+        val preLoadTime = System.nanoTime()
+        val preLoadElapsed = (preLoadTime - initStartTime) / 1_000_000_000.0
+        updateTimer(f"Init: $preLoadElapsed%.2fs | PDX setup complete")
 
         pdxLoader.clearPDX()
         pdxLoader.clearLB()
@@ -95,10 +117,21 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         /* ! loads whole program ! */
         // If PDXLoader.load is long/blocking you should make it responsive to interruption.
         // At minimum, check cancelled both before and after the call.
+        modLoadStartTime = System.nanoTime()
+        val modLoadStartElapsed = (modLoadStartTime - initStartTime) / 1_000_000_000.0
+        updateTimer(f"Init: $modLoadStartElapsed%.2fs | Starting mod load...")
+
         pdxLoader.load(config.getProperties, loadingLabel, () => isCancelled)
+
+        modLoadEndTime = System.nanoTime()
+        val modLoadTime = (modLoadEndTime - modLoadStartTime) / 1_000_000_000.0
+        val totalElapsed1 = (modLoadEndTime - initStartTime) / 1_000_000_000.0
+        updateTimer(f"Init: $totalElapsed1%.2fs | Mod Load: $modLoadTime%.2fs")
+
         if isCancelled then return
 
         MenuController.updateLoadingStatus(loadingLabel, "Checking for bad files...")
+        fileCheckStartTime = System.nanoTime()
 
         val badFiles = ListBuffer(
           "localization",
@@ -111,6 +144,12 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           "IdeaFile",
           "ResourcesFile$"
         ).flatMap(MenuController.checkFileError)
+
+        fileCheckEndTime = System.nanoTime()
+        val fileCheckTime = (fileCheckEndTime - fileCheckStartTime) / 1_000_000_000.0
+        val totalElapsed2 = (fileCheckEndTime - initStartTime) / 1_000_000_000.0
+        updateTimer(f"Init: $totalElapsed2%.2fs | Mod: $modLoadTime%.2fs | Check: $fileCheckTime%.2fs")
+
         if isCancelled then return
 
         if badFiles.isEmpty then
@@ -126,12 +165,19 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         MenuController.updateLoadingStatus(loadingLabel, "Showing Menu...")
 
     task.setOnSucceeded: _ =>
+      val totalTime = (System.nanoTime() - initStartTime) / 1_000_000_000.0
+      val modLoadTime = if modLoadEndTime > 0 then (modLoadEndTime - modLoadStartTime) / 1_000_000_000.0 else 0.0
+      val fileCheckTime = if fileCheckEndTime > 0 then (fileCheckEndTime - fileCheckStartTime) / 1_000_000_000.0 else 0.0
+      updateTimer(f"COMPLETE - Total: $totalTime%.2fs | Mod: $modLoadTime%.2fs | Check: $fileCheckTime%.2fs")
+      logger.info(f"Loading complete - Total: $totalTime%.2fs, Mod load: $modLoadTime%.2fs, File check: $fileCheckTime%.2fs")
       contentGrid.setVisible(true)
       blockButtons(false)
       loadingLabel.setVisible(false)
       vFocusTree.requestFocus()
 
     task.setOnCancelled: _ =>
+      val cancelTime = (System.nanoTime() - initStartTime) / 1_000_000_000.0
+      updateTimer(f"CANCELLED at $cancelTime%.2fs")
       Platform.runLater: () =>
         if loadingLabel != null then
           loadingLabel.setText("Operation cancelled")
