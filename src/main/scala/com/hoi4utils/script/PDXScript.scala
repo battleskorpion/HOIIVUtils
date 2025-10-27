@@ -1,12 +1,11 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.parser.{Node, NodeValue, PDXValueType}
+import com.hoi4utils.parser.{Node, PDXValueType}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, FileNotFoundException, PrintWriter}
 import java.time.LocalDateTime
 import javax.swing.JOptionPane
-import scala.collection.mutable.ListBuffer
 import scala.util.Using
 
 /**
