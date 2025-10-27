@@ -110,8 +110,7 @@ class ReferencePDX[T <: Referable](final protected var referenceCollectionSuppli
   def @== (other: T): Boolean = idExtractor(other).contains(referenceName)
 
   override def isUndefined: Boolean = {
-    resolveReference()
-    reference.isEmpty
+    value.isEmpty
   }
 
   override def set(obj: T): T = {
