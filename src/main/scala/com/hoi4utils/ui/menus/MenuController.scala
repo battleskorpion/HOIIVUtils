@@ -22,7 +22,7 @@ import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.stage.Stage
 import javafx.scene.input.MouseEvent
-import javafx.animation.{Timeline, KeyFrame}
+import javafx.animation.{Animation, Timeline, KeyFrame}
 import javafx.util.Duration
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
@@ -87,16 +87,43 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     val initStartTime = System.nanoTime()
     var modLoadStartTime: Long = 0
     var modLoadEndTime: Long = 0
-    var fileCheckStartTime: Long = 0
-    var fileCheckEndTime: Long = 0
+    var initEndTime: Long = 0
 
-    // Update timer display helper
-    def updateTimer(message: String): Unit =
-      Platform.runLater: () =>
-        if timer != null then
-          timer.setText(message)
+    @volatile var isModLoading = false
+    @volatile var isComplete = false
 
-    updateTimer("Init: 0.00s")
+    // Timeline for updating timer display in real-time
+    val timerTimeline = new Timeline(
+      new KeyFrame(Duration.millis(50), _ => {
+        if timer != null && !isComplete then
+          val currentTime = System.nanoTime()
+
+          val initTime = if initEndTime > 0 then (initEndTime - initStartTime) / 1_000_000_000.0
+                        else (currentTime - initStartTime) / 1_000_000_000.0
+
+          val modLoadTime = 
+            if isModLoading && modLoadEndTime == 0 then 
+              (currentTime - modLoadStartTime) / 1_000_000_000.0 
+            else if modLoadEndTime > 0 then 
+              (modLoadEndTime - modLoadStartTime) / 1_000_000_000.0 
+            else 0.0
+
+          val totalTime = (currentTime - initStartTime) / 1_000_000_000.0
+
+          val initLine = f"Init: $initTime%.2fs"
+          val modLoadLine = if modLoadStartTime > 0 then f"Mod Load: $modLoadTime%.2fs" else ""
+          val totalLine = f"Total: $totalTime%.2fs"
+
+          val display = if modLoadLine.nonEmpty then
+            s"$initLine\n$modLoadLine\n$totalLine"
+          else
+            s"$initLine\n$totalLine"
+
+          Platform.runLater(() => timer.setText(display))
+      })
+    )
+    timerTimeline.setCycleCount(Animation.INDEFINITE)
+    timerTimeline.play()
 
     val task = new javafx.concurrent.Task[Unit]:
       override def call(): Unit =
@@ -105,33 +132,26 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         val pdxLoader = new PDXLoader()
         if isCancelled then return
 
-        val preLoadTime = System.nanoTime()
-        val preLoadElapsed = (preLoadTime - initStartTime) / 1_000_000_000.0
-        updateTimer(f"Init: $preLoadElapsed%.2fs | PDX setup complete")
-
         pdxLoader.clearPDX()
         pdxLoader.clearLB()
         pdxLoader.closeDB()
         if isCancelled then return
 
+        // Init phase complete, start mod loading
+        initEndTime = System.nanoTime()
+        modLoadStartTime = System.nanoTime()
+        isModLoading = true
+
         /* ! loads whole program ! */
         // If PDXLoader.load is long/blocking you should make it responsive to interruption.
         // At minimum, check cancelled both before and after the call.
-        modLoadStartTime = System.nanoTime()
-        val modLoadStartElapsed = (modLoadStartTime - initStartTime) / 1_000_000_000.0
-        updateTimer(f"Init: $modLoadStartElapsed%.2fs | Starting mod load...")
-
         pdxLoader.load(config.getProperties, loadingLabel, () => isCancelled)
 
         modLoadEndTime = System.nanoTime()
-        val modLoadTime = (modLoadEndTime - modLoadStartTime) / 1_000_000_000.0
-        val totalElapsed1 = (modLoadEndTime - initStartTime) / 1_000_000_000.0
-        updateTimer(f"Init: $totalElapsed1%.2fs | Mod Load: $modLoadTime%.2fs")
-
+        isModLoading = false
         if isCancelled then return
 
         MenuController.updateLoadingStatus(loadingLabel, "Checking for bad files...")
-        fileCheckStartTime = System.nanoTime()
 
         val badFiles = ListBuffer(
           "localization",
@@ -144,11 +164,6 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           "IdeaFile",
           "ResourcesFile$"
         ).flatMap(MenuController.checkFileError)
-
-        fileCheckEndTime = System.nanoTime()
-        val fileCheckTime = (fileCheckEndTime - fileCheckStartTime) / 1_000_000_000.0
-        val totalElapsed2 = (fileCheckEndTime - initStartTime) / 1_000_000_000.0
-        updateTimer(f"Init: $totalElapsed2%.2fs | Mod: $modLoadTime%.2fs | Check: $fileCheckTime%.2fs")
 
         if isCancelled then return
 
@@ -165,20 +180,27 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         MenuController.updateLoadingStatus(loadingLabel, "Showing Menu...")
 
     task.setOnSucceeded: _ =>
+      isComplete = true
+      timerTimeline.stop()
       val totalTime = (System.nanoTime() - initStartTime) / 1_000_000_000.0
+      val initTime = (initEndTime - initStartTime) / 1_000_000_000.0
       val modLoadTime = if modLoadEndTime > 0 then (modLoadEndTime - modLoadStartTime) / 1_000_000_000.0 else 0.0
-      val fileCheckTime = if fileCheckEndTime > 0 then (fileCheckEndTime - fileCheckStartTime) / 1_000_000_000.0 else 0.0
-      updateTimer(f"COMPLETE - Total: $totalTime%.2fs | Mod: $modLoadTime%.2fs | Check: $fileCheckTime%.2fs")
-      logger.info(f"Loading complete - Total: $totalTime%.2fs, Mod load: $modLoadTime%.2fs, File check: $fileCheckTime%.2fs")
+
+      val display = f"Init: $initTime%.2fs\nMod Load: $modLoadTime%.2fs\nTotal: $totalTime%.2fs"
+      Platform.runLater(() => timer.setText(display))
+
+      logger.info(f"Loading complete - Total: $totalTime%.2fs, Init: $initTime%.2fs, Mod load: $modLoadTime%.2fs")
       contentGrid.setVisible(true)
       blockButtons(false)
       loadingLabel.setVisible(false)
       vFocusTree.requestFocus()
 
     task.setOnCancelled: _ =>
+      isComplete = true
+      timerTimeline.stop()
       val cancelTime = (System.nanoTime() - initStartTime) / 1_000_000_000.0
-      updateTimer(f"CANCELLED at $cancelTime%.2fs")
       Platform.runLater: () =>
+        timer.setText(f"CANCELLED\nTotal: $cancelTime%.2fs")
         if loadingLabel != null then
           loadingLabel.setText("Operation cancelled")
           loadingLabel.setVisible(false)
