@@ -229,6 +229,8 @@ class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("
 
   def hasPrerequisites: Boolean = prerequisites.nonEmpty
 
+  def dependents: List[Focus] = focusTree.focuses.filter(_.prerequisiteList.contains(this)).toList
+  
   def isMutuallyExclusive: Boolean = !(mutuallyExclusive.isUndefined || mutuallyExclusive.isEmpty)
 
   def displayedCompletionTime(): Double = Math.floor(preciseCompletionTime())
