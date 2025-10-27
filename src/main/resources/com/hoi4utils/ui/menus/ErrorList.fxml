@@ -43,33 +43,6 @@
               </AnchorPane>
             </content>
           </Tab>
-          <Tab text="Countries">
-            <content>
-              <AnchorPane>
-                <children>
-                  <ListView fx:id="countryEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
-                </children>
-              </AnchorPane>
-            </content>
-          </Tab>
-          <Tab text="Focus Trees">
-            <content>
-              <AnchorPane>
-                <children>
-                  <ListView fx:id="focusTreeEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
-                </children>
-              </AnchorPane>
-            </content>
-          </Tab>
-          <Tab text="Ideas">
-            <content>
-              <AnchorPane>
-                <children>
-                  <ListView fx:id="ideaEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
-                </children>
-              </AnchorPane>
-            </content>
-          </Tab>
           <Tab text="Resources">
             <content>
                 <AnchorPane>
@@ -84,6 +57,33 @@
               <AnchorPane>
                 <children>
                   <ListView fx:id="stateEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Countries">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="countryEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Ideas">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="ideaEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Focus Trees">
+            <content>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="focusTreeEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
                 </children>
               </AnchorPane>
             </content>
@@ -104,7 +104,7 @@
       </TabPane>
    </center>
    <top>
-     <GridPane pickOnBounds="false" >
+     <GridPane pickOnBounds="false">
        <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
          <GridPane.margin>
            <Insets right="60.0" />
