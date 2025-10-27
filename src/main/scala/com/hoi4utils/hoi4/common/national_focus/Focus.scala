@@ -414,7 +414,7 @@ object Focus:
       locOrMissing(Property.DESCRIPTION)
     )
 
-  def focusesWithPrerequisites(focuses: Iterable[Focus]): List[(Focus, List[Focus])] =
+  def focusesWithPrerequisitesMap(focuses: Iterable[Focus]): List[(Focus, List[Focus])] =
     focuses.filter(_.hasPrerequisites).map: f =>
       (f, f.prerequisiteSets.flatMap(_.references()))
     .toList

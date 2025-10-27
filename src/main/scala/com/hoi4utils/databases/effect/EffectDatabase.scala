@@ -194,7 +194,7 @@ object EffectDatabase extends LazyLogging {
 
     paramValueType.getOrElse(boundary.break(None)) match {
       case ParameterValueType.country => Some(
-        new ReferencePDX[CountryTag](() => CountryTag.toList, "country") with SimpleEffect {
+        new ReferencePDX[CountryTag](() => CountryTag.toList, pdxIdentifier) with SimpleEffect {
         })
       case ParameterValueType.cw_bool => Some(
         new BooleanPDX(pdxIdentifier, false, BoolType.TRUE_FALSE) with SimpleEffect {
@@ -209,7 +209,7 @@ object EffectDatabase extends LazyLogging {
         new StringPDX(pdxIdentifier) with SimpleEffect {
         })
       case ParameterValueType.idea => Some(
-        new ReferencePDX[Idea](() => Idea.listAllIdeas, pdxIdentifier) with SimpleEffect {  // in future: ReferencePDX[Idea]
+        new ReferencePDX[Idea](() => Idea.listAllIdeas, pdxIdentifier) with SimpleEffect {
         })
       case ParameterValueType.state => Some(
         new ReferencePDX[State](() => State.list, pdxIdentifier) with SimpleEffect {
