@@ -51,9 +51,35 @@ class PDXLoader extends LazyLogging:
     FocusTreesManager,
   )
 
-  def load(hProperties: Properties, loadingLabel: Label, isCancelled: () => Boolean = () => false,
-           onComponentComplete: (String, Double) => Unit = (_, _) => (),
-           onComponentStart: String => Unit = _ => ()): Unit =
+  /**
+   * Loads all HOI4 and mod data with optional timing callbacks for performance monitoring.
+   *
+   * Components are loaded in this order:
+   * 1. ModifierDatabase - Effect modifier definitions
+   * 2. EffectDatabase - Effect system initialization
+   * 3. Paths - HOI4 and mod directory validation
+   * 4. Localization - Text/translation files
+   * 5. Interface - UI definitions
+   * 6. Resources - Resource definitions
+   * 7. State - Map state files
+   * 8. Country - Country history files
+   * 9. CountryTag - Country tag definitions
+   * 10. Ideas - National ideas/spirits
+   * 11. FocusTrees - National focus trees
+   *
+   * @param hProperties Configuration properties containing paths and settings
+   * @param loadingLabel JavaFX label to update with loading status messages
+   * @param isCancelled Callback to check if loading should be cancelled
+   * @param onComponentComplete Callback invoked when a component finishes loading, receives (componentName, loadTimeSeconds)
+   * @param onComponentStart Callback invoked when a component begins loading, receives componentName
+   */
+  def load(
+            hProperties: Properties,
+            loadingLabel: Label,
+            isCancelled: () => Boolean = () => false,
+            onComponentComplete: (String, Double) => Unit = (_, _) => (),
+            onComponentStart: String => Unit = _ => ()
+          ): Unit =
     implicit val properties: Properties = hProperties
     implicit val label: Label = loadingLabel
     if isCancelled() then return

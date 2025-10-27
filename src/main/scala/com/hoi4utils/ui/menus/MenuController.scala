@@ -80,10 +80,9 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   private var currentTask: javafx.concurrent.Task[Unit] = null
 
   private var detailPanelManager: DetailPanelManager = uninitialized
-
+  
   @FXML
   def initialize(): Unit =
-    // Start timing from the beginning of initialization
     val initStartTime = System.nanoTime()
     var modLoadStartTime: Long = 0
     var modLoadEndTime: Long = 0
@@ -92,57 +91,70 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     @volatile var isModLoading = false
     @volatile var isComplete = false
 
-    // Component times - using LinkedHashMap to maintain insertion order
     val componentTimes = LinkedHashMap[String, Double]()
     val componentOrder = List(
       "ModifierDatabase", "EffectDatabase", "Paths", "Localization",
       "Interface", "Resources", "State", "Country", "CountryTag", "Ideas", "FocusTrees"
     )
-
-    // Track currently loading component
     @volatile var currentComponent: String = ""
     var currentComponentStartTime: Long = 0
 
-    // Timeline for updating timer display in real-time
+    def buildTimerDisplay(currentTime: Long): String =
+      val initTime = if initEndTime > 0 then (initEndTime - initStartTime) / 1_000_000_000.0
+                     else (currentTime - initStartTime) / 1_000_000_000.0
+
+      val modLoadTime =
+        if isModLoading && modLoadEndTime == 0 then (currentTime - modLoadStartTime) / 1_000_000_000.0
+        else if modLoadEndTime > 0 then (modLoadEndTime - modLoadStartTime) / 1_000_000_000.0
+        else 0.0
+
+      val totalTime = (currentTime - initStartTime) / 1_000_000_000.0
+
+      val lines = new StringBuilder()
+      lines.append(f"Init: $initTime%.2fs\n")
+
+      // Show individual component times if mod loading has started
+      if modLoadStartTime > 0 then
+        componentOrder.foreach { component =>
+          componentTimes.get(component) match
+            case Some(time) =>
+              // Component completed - show final time
+              lines.append(f"  $component: $time%.2fs\n")
+            case None =>
+              // Component not completed - show live timer if it's currently loading
+              if component == currentComponent && currentComponentStartTime > 0 then
+                val liveTime = (currentTime - currentComponentStartTime) / 1_000_000_000.0
+                lines.append(f"  $component: $liveTime%.2fs\n")
+        }
+        lines.append(f"Mod Load: $modLoadTime%.2fs\n")
+
+      lines.append(f"Total: $totalTime%.2fs")
+      lines.toString
+
+    def buildFinalTimerDisplay(
+        initTime: Double,
+        modLoadTime: Double,
+        totalTime: Double,
+        components: LinkedHashMap[String, Double],
+        order: List[String]
+    ): String =
+      val lines = new StringBuilder()
+      lines.append(f"Init: $initTime%.2fs\n")
+      order.foreach { component =>
+        components.get(component).foreach { time =>
+          lines.append(f"  $component: $time%.2fs\n")
+        }
+      }
+      lines.append(f"Mod Load: $modLoadTime%.2fs\n")
+      lines.append(f"Total: $totalTime%.2fs")
+      lines.toString
+
+    // ===== Real-time Timer Updates =====
     val timerTimeline = new Timeline(
       new KeyFrame(Duration.millis(50), _ => {
         if timer != null && !isComplete then
-          val currentTime = System.nanoTime()
-
-          val initTime = if initEndTime > 0 then (initEndTime - initStartTime) / 1_000_000_000.0
-                        else (currentTime - initStartTime) / 1_000_000_000.0
-
-          val modLoadTime =
-            if isModLoading && modLoadEndTime == 0 then
-              (currentTime - modLoadStartTime) / 1_000_000_000.0
-            else if modLoadEndTime > 0 then
-              (modLoadEndTime - modLoadStartTime) / 1_000_000_000.0
-            else 0.0
-
-          val totalTime = (currentTime - initStartTime) / 1_000_000_000.0
-
-          // Build display
-          val lines = new StringBuilder()
-          lines.append(f"Init: $initTime%.2fs\n")
-
-          if modLoadStartTime > 0 then
-            // Show component times
-            componentOrder.foreach { component =>
-              componentTimes.get(component) match
-                case Some(time) =>
-                  // Component completed
-                  lines.append(f"  $component: $time%.2fs\n")
-                case None =>
-                  // Check if this is the currently loading component
-                  if component == currentComponent && currentComponentStartTime > 0 then
-                    val currentComponentTime = (currentTime - currentComponentStartTime) / 1_000_000_000.0
-                    lines.append(f"  $component: $currentComponentTime%.2fs\n")
-            }
-            lines.append(f"Mod Load: $modLoadTime%.2fs\n")
-
-          lines.append(f"Total: $totalTime%.2fs")
-
-          Platform.runLater(() => timer.setText(lines.toString))
+          val display = buildTimerDisplay(System.nanoTime())
+          Platform.runLater(() => timer.setText(display))
       })
     )
     timerTimeline.setCycleCount(Animation.INDEFINITE)
@@ -160,28 +172,29 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         pdxLoader.closeDB()
         if isCancelled then return
 
-        // Init phase complete, start mod loading
         initEndTime = System.nanoTime()
         modLoadStartTime = System.nanoTime()
         isModLoading = true
 
-        // Callback for when component starts loading
         def onComponentStart(componentName: String): Unit =
           currentComponent = componentName
           currentComponentStartTime = System.nanoTime()
 
-        // Callback for component timing
+        // Callback: Called when a component finishes loading
         def onComponentComplete(componentName: String, time: Double): Unit =
           componentTimes.synchronized {
             componentTimes(componentName) = time
           }
           currentComponent = ""
           currentComponentStartTime = 0
-
-        /* ! loads whole program ! */
-        // If PDXLoader.load is long/blocking you should make it responsive to interruption.
-        // At minimum, check cancelled both before and after the call.
-        pdxLoader.load(config.getProperties, loadingLabel, () => isCancelled, onComponentComplete, onComponentStart)
+        
+        pdxLoader.load(
+          config.getProperties,
+          loadingLabel,
+          () => isCancelled,
+          onComponentComplete,
+          onComponentStart
+        )
 
         modLoadEndTime = System.nanoTime()
         isModLoading = false
@@ -214,28 +227,18 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
 
         HOIIVUtils.save()
         MenuController.updateLoadingStatus(loadingLabel, "Showing Menu...")
-
+    
     task.setOnSucceeded: _ =>
       isComplete = true
       timerTimeline.stop()
+      
       val totalTime = (System.nanoTime() - initStartTime) / 1_000_000_000.0
       val initTime = (initEndTime - initStartTime) / 1_000_000_000.0
       val modLoadTime = if modLoadEndTime > 0 then (modLoadEndTime - modLoadStartTime) / 1_000_000_000.0 else 0.0
-
-      // Build final display
-      val finalDisplay = new StringBuilder()
-      finalDisplay.append(f"Init: $initTime%.2fs\n")
-      componentOrder.foreach { component =>
-        componentTimes.get(component) match
-          case Some(time) => finalDisplay.append(f"  $component: $time%.2fs\n")
-          case None => // Component not loaded
-      }
-      finalDisplay.append(f"Mod Load: $modLoadTime%.2fs\n")
-      finalDisplay.append(f"Total: $totalTime%.2fs")
-
-      Platform.runLater(() => timer.setText(finalDisplay.toString))
-
-      // Log component times
+      
+      val finalDisplay = buildFinalTimerDisplay(initTime, modLoadTime, totalTime, componentTimes, componentOrder)
+      Platform.runLater(() => timer.setText(finalDisplay))
+      
       val componentLog = componentTimes.map { case (name, time) => f"$name: $time%.2fs" }.mkString(", ")
       logger.info(f"Loading complete - Total: $totalTime%.2fs, Init: $initTime%.2fs, Mod load: $modLoadTime%.2fs, Components: [$componentLog]")
 
@@ -257,7 +260,6 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           contentGrid.setVisible(true)
         blockButtons(false)
 
-    /* INITIALIZATION */
     detailPanelManager = new DetailPanelManager(detailContentPane)
     currentTask = task
     contentGrid.setVisible(false)
