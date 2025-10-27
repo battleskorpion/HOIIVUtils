@@ -4,6 +4,8 @@ import com.hoi4utils.shared.BoolType
 
 import scala.collection.mutable.ListBuffer
 
+type NodeValueType = PDXValueType | Comment
+
 // Consolidated Node class (no NodeValue) using rawValue directly.
 class Node (
              // Tokens that occurred before the "core" of this node.
@@ -14,15 +16,15 @@ class Node (
              var operatorToken: Option[Token] = None,
              // The node's value. This may be a literal (String, Int, Double, Boolean),
              // a list (block) of child nodes, or a Comment.
-             var rawValue: Option[String | Int | Double | Boolean | ListBuffer[Node] | Comment] = None,
+             var rawValue: Option[NodeValueType] = None,
              // Tokens that came after the node's core.
              var trailingTrivia: ListBuffer[Token] = ListBuffer()
            ) extends NodeIterable[Node]:
 
-  def this(value: String | Int | Double | Boolean | ListBuffer[Node] | Comment) =
+  def this(value: NodeValueType) =
     this(rawValue = Some(value))
 
-  def this(identifier: String, operator: String, value: String | Int | Double | Boolean | ListBuffer[Node] | Comment) =
+  def this(identifier: String, operator: String, value: NodeValueType) =
     this(
       leadingTrivia = ListBuffer(),
       identifierToken = Some(new Token(identifier, -1, TokenType.symbol)),
@@ -34,7 +36,7 @@ class Node (
   // Convenience getters extracting raw string representations from tokens.
   def identifier: Option[String] = identifierToken.map(_.value)
   def operator: Option[String]   = operatorToken.map(_.value)
-  def value: Option[String | Int | Double | Boolean | ListBuffer[Node] | Comment] = rawValue
+  def value: Option[NodeValueType] = rawValue
   def name: String = identifier.getOrElse("")
 
   /**
@@ -191,7 +193,7 @@ class Node (
   /**
    * Sets the node's value.
    */
-  def setValue(v: String | Int | Double | Boolean | ListBuffer[Node] | Comment | Null): Unit =
+  def setValue(v: NodeValueType | Null): Unit =
     v match
       case null => rawValue = None
       case _    => rawValue = Some(v)
@@ -222,7 +224,7 @@ class Node (
   def valueIsInstanceOf(clazz: Class[?]): Boolean = rawValue.exists(clazz.isInstance)
 
   // Shorthand methods using the raw value.
-  def $ : String | Int | Double | Boolean | ListBuffer[Node] | Null = rawValue match
+  def $ : PDXValueType | Null = rawValue match
     case Some(v: ListBuffer[Node]) => v.filter(_.nonComment)
     case Some(v: String)           => v
     case Some(v: Int)              => v
@@ -231,7 +233,7 @@ class Node (
     case Some(_: Comment)          => null
     case _                         => null
 
-  def $value : String | Int | Double | Boolean | ListBuffer[Node] | Comment | Null = rawValue.orNull
+  def $value : NodeValueType | Null = rawValue.orNull
 
   override def iterator: Iterator[Node] = rawValue match
     case Some(l: ListBuffer[Node]) => l.iterator
@@ -303,7 +305,7 @@ class Node (
     case _: String => true
     case _         => false
 
-  def valueEquals(value: String | Int | Double | Boolean | ListBuffer[Node]): Boolean =
+  def valueEquals(value: PDXValueType): Boolean =
     rawValue match
       case Some(v) => v == value
       case None     => false

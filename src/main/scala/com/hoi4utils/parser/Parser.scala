@@ -107,7 +107,7 @@ class Parser(pdx: String | File = null) {
       throw new ParserException("Unexpected end of input after identifier\nFound token: " + tokenIdentifier.value)
     )
     var operatorOpt: Option[Token] = None
-    var raw: Option[String | Int | Double | Boolean | ListBuffer[Node] | Comment] = None
+    var raw: Option[NodeValueType] = None
 
     if (nextToken.`type` != TokenType.operator || nextToken.value.matches("^[,;}]$")) {
       /*
@@ -148,7 +148,7 @@ class Parser(pdx: String | File = null) {
   }
 
   @throws[ParserException]
-  def parseNodeValue(): String | Int | Double | Boolean | ListBuffer[Node] | Comment = {
+  def parseNodeValue(): NodeValueType = {
     // Consume any trivia before the value.
     consumeTrivia()
     val nextToken = tokens.next.getOrElse(
@@ -190,7 +190,7 @@ class Parser(pdx: String | File = null) {
   }
 
   @throws[ParserException]
-  def parseThisTokenValue(token: Token): String | Int | Double | Boolean | ListBuffer[Node] | Comment = {
+  def parseThisTokenValue(token: Token): NodeValueType = {
     token.`type` match {
       case TokenType.string =>
         if (token.value.length > 2)

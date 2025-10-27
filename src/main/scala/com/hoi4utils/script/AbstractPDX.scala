@@ -1,7 +1,7 @@
 package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.{Node, Parser, ParserException}
+import com.hoi4utils.parser.{Node, PDXValueType, Parser, ParserException}
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
@@ -25,24 +25,20 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @throws UnexpectedIdentifierException if the expression is not a valid identifier
    */
   @throws[UnexpectedIdentifierException]
-  protected def usingIdentifier(expr: Node): Unit = {
+  protected def usingIdentifier(expr: Node): Unit =
     val index = pdxIdentifiers.indexWhere(expr.nameEquals)
     if index == -1 then throw new UnexpectedIdentifierException(expr)
-    
+
     activeIdentifier = index
-  }
 
   /**
    * @inheritdoc
    */
-  override protected def setNode(value: T | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit =
+  override protected def setNode(value: T | PDXValueType | Null): Unit =
     value match
-      case value if node.isEmpty =>
+      case value if node.isEmpty => ()
       case null => setNull()
-      case s: String => node.get.setValue(s)
-      case i: Int => node.get.setValue(i)
-      case d: Double => node.get.setValue(d)
-      case b: Boolean => node.get.setValue(b)
+      case s: (String | Int | Double | Boolean) => node.get.setValue(s)
       case l: ListBuffer[_] => try node.get.setValue(l.asInstanceOf[ListBuffer[Node]])
         catch case _: ClassCastException => throw new RuntimeException(s"Expected ListBuffer[Node], got ListBuffer with different element type")
       case _ => throw new RuntimeException(s"Unsupported type: ${value.getClass}")

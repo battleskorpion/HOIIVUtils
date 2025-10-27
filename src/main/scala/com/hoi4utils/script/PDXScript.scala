@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, NodeValue, PDXValueType}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, FileNotFoundException, PrintWriter}
@@ -26,7 +26,7 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
    * flexibility i.e. setting a PDX of type double with an int value, and this also matches
    * the underlying node class functionality.
    */
-  protected def setNode(value: V | String | Int | Double | Boolean | ListBuffer[Node] | Null): Unit
+  protected def setNode(value: V | PDXValueType | Null): Unit
 
   /**
    * Sets the node value to the given expression.
