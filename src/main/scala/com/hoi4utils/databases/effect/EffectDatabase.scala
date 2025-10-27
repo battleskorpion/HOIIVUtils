@@ -194,29 +194,21 @@ object EffectDatabase extends LazyLogging {
 
     paramValueType.getOrElse(boundary.break(None)) match {
       case ParameterValueType.country => Some(
-        new ReferencePDX[CountryTag](() => CountryTag.toList, pdxIdentifier) with SimpleEffect {
-        })
+        new ReferencePDX[CountryTag](() => CountryTag.toList, pdxIdentifier) with SimpleEffect)
       case ParameterValueType.cw_bool => Some(
-        new BooleanPDX(pdxIdentifier, false, BoolType.TRUE_FALSE) with SimpleEffect {
-        })
+        new BooleanPDX(pdxIdentifier, false, BoolType.TRUE_FALSE) with SimpleEffect)
       case ParameterValueType.cw_float => Some(
-        new DoublePDX(pdxIdentifier) with SimpleEffect {
-        })
+        new DoublePDX(pdxIdentifier) with SimpleEffect)
       case ParameterValueType.cw_int => Some(
-        new IntPDX(pdxIdentifier) with SimpleEffect {
-        })
+        new IntPDX(pdxIdentifier) with SimpleEffect)
       case ParameterValueType.cw_string => Some(
-        new StringPDX(pdxIdentifier) with SimpleEffect {
-        })
+        new StringPDX(pdxIdentifier) with SimpleEffect)
       case ParameterValueType.idea => Some(
-        new ReferencePDX[Idea](() => Idea.listAllIdeas, pdxIdentifier) with SimpleEffect {
-        })
+        new ReferencePDX[Idea](() => Idea.listAllIdeas, pdxIdentifier) with SimpleEffect)
       case ParameterValueType.state => Some(
-        new ReferencePDX[State](() => State.list, pdxIdentifier) with SimpleEffect {
-        })
+        new ReferencePDX[State](() => State.list, pdxIdentifier) with SimpleEffect)
       case ParameterValueType.province => Some(
-        new ReferencePDX[Province](() => Province.list, pdxIdentifier) with SimpleEffect {
-        })
+        new ReferencePDX[Province](() => Province.list, pdxIdentifier) with SimpleEffect)
       case _ =>
         None
     }
@@ -289,7 +281,7 @@ object EffectDatabase extends LazyLogging {
         case (name, ParameterValueType.ace_type, _) => new StringPDX(name) // ex: type = fighter_genius
         case (name, ParameterValueType.ai_strategy, _) => new StringPDX(name) // ex: type = alliance
         case (name, ParameterValueType.character, _) => new StringPDX(name) // ex: character = OMA_sultan
-        case (name, ParameterValueType.country, _) => new ReferencePDX[CountryTag](() => CountryTag.toList, "country")
+        case (name, ParameterValueType.country, _) => new ReferencePDX[CountryTag](() => CountryTag.toList, name)
         case (name, ParameterValueType.cw_bool, _) => new BooleanPDX(name, false, BoolType.TRUE_FALSE)
         case (name, ParameterValueType.cw_float, _) => new DoublePDX(name)
         case (name, ParameterValueType.cw_int, _) => new IntPDX(name)
