@@ -60,6 +60,7 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
       primaryStage.setTitle(title)
       decideScreen(primaryStage)
       preSetup()
+      ResizeHelper.addResizeListener(primaryStage)
       primaryStage.show()
     catch
       case e: IOException => handleJavaFXControllerIOError(e)

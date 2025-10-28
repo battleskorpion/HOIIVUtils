@@ -49,7 +49,8 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   private val parserViewer          = "/com/hoi4utils/ui/parser/ParserViewer.fxml" // todo scala, redesign WIP
   private val errors                = "/com/hoi4utils/ui/menus/ErrorList.fxml"
 
-  @FXML var mRoot: VBox = uninitialized
+  @FXML var mRoot: AnchorPane = uninitialized
+  @FXML var mVBox: VBox = uninitialized
   @FXML var contentStack: StackPane = uninitialized
   @FXML var contentGrid: GridPane = uninitialized
   @FXML var vSettings: Button = uninitialized
@@ -293,7 +294,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   
   override def fxmlSetResource(): Unit = fxmlLoader.setResources(getResourceBundle("i18n.menu"))
 
-  override def preSetup(): Unit = setupWindowControls(mRoot, contentGrid)
+  override def preSetup(): Unit = setupWindowControls(mVBox, contentGrid)
 
   /* fxml menu buttons */
   def openSettings(): Unit =

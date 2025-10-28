@@ -38,6 +38,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -45,113 +46,115 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="mRoot" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"> 
-  <children>
-    <GridPane maxHeight="30.0" minHeight="30.0" prefHeight="30.0">
-      <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      </columnConstraints>
-      <rowConstraints>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      </rowConstraints>
-      <children>
-        <Button fx:id="closeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
-          <font>
-            <Font name="System Bold" size="13.0" />
-          </font>
-        </Button>
-        <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
-          <GridPane.margin>
-            <Insets right="60.0" />
-          </GridPane.margin>
-        </Button>
-        <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
-          <GridPane.margin>
-            <Insets right="30.0" />
-          </GridPane.margin>
-        </Button>
-        <Label fx:id="mVersion" alignment="CENTER" contentDisplay="CENTER" text="Version" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
-          <GridPane.margin>
-            <Insets top="15.0" />
-          </GridPane.margin>
-        </Label>
-        <Label fx:id="mTitle" alignment="CENTER" contentDisplay="CENTER" text="Title" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
-          <font>
-            <Font size="14.0" />
-          </font>
-          <GridPane.margin>
-            <Insets top="-15.0" />
-          </GridPane.margin>
-        </Label>
-        <Button fx:id="vSettings" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openSettings" prefHeight="30.0" prefWidth="90.0" text="Settings">
-               <padding>
-                  <Insets left="20.0" />
-               </padding></Button>
-        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-          <Image url="@../../../../icons/settings-icon-gray-gear48.png" />
-               <GridPane.margin>
-                  <Insets />
-               </GridPane.margin>
-        </ImageView>
-      </children>
-    </GridPane>
-    <SplitPane dividerPositions="0.3" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
-      <items>
-        <StackPane fx:id="contentStack" maxWidth="450.0" minHeight="-Infinity" minWidth="450.0">
-          <Label fx:id="loadingLabel" alignment="TOP_CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textAlignment="CENTER" wrapText="true">
+<AnchorPane fx:id="mRoot" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+  <VBox fx:id="mVBox" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+    <children>
+      <GridPane maxHeight="30.0" minHeight="30.0" prefHeight="30.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <children>
+          <Button fx:id="closeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
             <font>
-              <Font size="18.0" />
+              <Font name="System Bold" size="13.0" />
             </font>
-            <StackPane.margin>
-              <Insets />
-            </StackPane.margin>
+          </Button>
+          <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
+            <GridPane.margin>
+              <Insets right="60.0" />
+            </GridPane.margin>
+          </Button>
+          <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
+            <GridPane.margin>
+              <Insets right="30.0" />
+            </GridPane.margin>
+          </Button>
+          <Label fx:id="mVersion" alignment="CENTER" contentDisplay="CENTER" text="Version" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+            <GridPane.margin>
+              <Insets top="15.0" />
+            </GridPane.margin>
           </Label>
-          
-          <GridPane fx:id="contentGrid" gridLinesVisible="true" maxHeight="560.0" maxWidth="450.0" minHeight="560.0" minWidth="450.0" prefHeight="560.0" prefWidth="450.0" StackPane.alignment="TOP_CENTER">
-            <columnConstraints>
-              <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
-            </columnConstraints>
-            <rowConstraints>
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-            <children>
-              <Button fx:id="vFocusTree" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleFocusTreeViewerClick" prefHeight="30.0" prefWidth="425.0" text="%focus_tree.view" GridPane.halignment="CENTER" />
-              <Button fx:id="vFocusTreeLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleFocusTreeLocalizationClick" prefHeight="30.0" prefWidth="425.0" text="%focus.localization" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-              <Button fx:id="vManageFocusTrees" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleManageFocusTreesClick" prefHeight="30.0" prefWidth="425.0" text="%focus.find_no_localization" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-              <Button fx:id="vIdeasLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleIdeaLocalizationClick" prefHeight="30.0" prefWidth="425.0" text="%idea.localization" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-              <Button fx:id="vCustomTooltipLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleCustomTooltipClick" prefHeight="30.0" prefWidth="425.0" text="%tooltip.localization" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-              <Button fx:id="vBuildingsByCountry" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleBuildingsByCountryClick" prefHeight="30.0" prefWidth="425.0" text="%country.data.view" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-              <Button fx:id="vGFXInterface" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleInterfaceClick" prefHeight="30.0" prefWidth="425.0" text="%gfx.view" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
-              <Button fx:id="vUnitComparison" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleUnitComparisonClick" prefHeight="30.0" prefWidth="425.0" text="%units.view" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
-              <Button fx:id="vProvinceColors" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleProvinceColorsClick" prefHeight="30.0" prefWidth="425.0" text="%map.gen.province.colors" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
-              <Button fx:id="vMapGenerator" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleMapGenerationClick" prefHeight="30.0" prefWidth="425.0" text="%map.gen" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
-              <Button fx:id="vMapEditor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleMapEditorClick" prefHeight="30.0" prefWidth="425.0" text="%map.editor" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
-              <Button fx:id="vParser" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleParserViewerClick" prefHeight="30.0" prefWidth="425.0" text="%parser.view" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
-              <Button fx:id="vErrors" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleErrorsClick" prefHeight="30.0" prefWidth="425.0" text="Errors WIP" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
-            </children>
+          <Label fx:id="mTitle" alignment="CENTER" contentDisplay="CENTER" text="Title" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+            <font>
+              <Font size="14.0" />
+            </font>
+            <GridPane.margin>
+              <Insets top="-15.0" />
+            </GridPane.margin>
+          </Label>
+          <Button fx:id="vSettings" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#openSettings" prefHeight="30.0" prefWidth="90.0" text="Settings">
             <padding>
-              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-            </padding>
-          </GridPane>
-               <Label fx:id="timer" text="timer" StackPane.alignment="BOTTOM_CENTER" />
-        </StackPane>
-        <StackPane fx:id="detailContentPane" prefHeight="-1.0" prefWidth="-1.0">
-        </StackPane>
-      </items>
-    </SplitPane>
-  </children>
-</VBox>
+              <Insets left="20.0" />
+            </padding></Button>
+          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@../../../../icons/settings-icon-gray-gear48.png" />
+            <GridPane.margin>
+              <Insets />
+            </GridPane.margin>
+          </ImageView>
+        </children>
+      </GridPane>
+      <SplitPane dividerPositions="0.3" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+        <items>
+          <StackPane fx:id="contentStack" maxWidth="450.0" minHeight="-Infinity" minWidth="450.0">
+            <Label fx:id="loadingLabel" alignment="TOP_CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textAlignment="CENTER" wrapText="true">
+              <font>
+                <Font size="18.0" />
+              </font>
+              <StackPane.margin>
+                <Insets />
+              </StackPane.margin>
+            </Label>
+            
+            <GridPane fx:id="contentGrid" gridLinesVisible="true" maxHeight="560.0" maxWidth="450.0" minHeight="560.0" minWidth="450.0" prefHeight="560.0" prefWidth="450.0" StackPane.alignment="TOP_CENTER">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+              <children>
+                <Button fx:id="vFocusTree" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleFocusTreeViewerClick" prefHeight="30.0" prefWidth="425.0" text="%focus_tree.view" GridPane.halignment="CENTER" />
+                <Button fx:id="vFocusTreeLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleFocusTreeLocalizationClick" prefHeight="30.0" prefWidth="425.0" text="%focus.localization" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                <Button fx:id="vManageFocusTrees" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleManageFocusTreesClick" prefHeight="30.0" prefWidth="425.0" text="%focus.find_no_localization" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                <Button fx:id="vIdeasLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleIdeaLocalizationClick" prefHeight="30.0" prefWidth="425.0" text="%idea.localization" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                <Button fx:id="vCustomTooltipLoc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleCustomTooltipClick" prefHeight="30.0" prefWidth="425.0" text="%tooltip.localization" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+                <Button fx:id="vBuildingsByCountry" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleBuildingsByCountryClick" prefHeight="30.0" prefWidth="425.0" text="%country.data.view" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                <Button fx:id="vGFXInterface" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleInterfaceClick" prefHeight="30.0" prefWidth="425.0" text="%gfx.view" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+                <Button fx:id="vUnitComparison" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleUnitComparisonClick" prefHeight="30.0" prefWidth="425.0" text="%units.view" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+                <Button fx:id="vProvinceColors" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleProvinceColorsClick" prefHeight="30.0" prefWidth="425.0" text="%map.gen.province.colors" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+                <Button fx:id="vMapGenerator" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleMapGenerationClick" prefHeight="30.0" prefWidth="425.0" text="%map.gen" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
+                <Button fx:id="vMapEditor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleMapEditorClick" prefHeight="30.0" prefWidth="425.0" text="%map.editor" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
+                <Button fx:id="vParser" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleParserViewerClick" prefHeight="30.0" prefWidth="425.0" text="%parser.view" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+                <Button fx:id="vErrors" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="425.0" mnemonicParsing="false" onMouseClicked="#handleErrorsClick" prefHeight="30.0" prefWidth="425.0" text="Errors WIP" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
+              </children>
+              <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+              </padding>
+            </GridPane>
+            <Label fx:id="timer" text="timer" StackPane.alignment="BOTTOM_CENTER" />
+          </StackPane>
+          <StackPane fx:id="detailContentPane" prefHeight="-1.0" prefWidth="-1.0">
+          </StackPane>
+        </items>
+      </SplitPane>
+    </children>
+  </VBox>
+</AnchorPane>
