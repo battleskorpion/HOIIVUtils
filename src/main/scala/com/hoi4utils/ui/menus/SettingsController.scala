@@ -53,7 +53,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
     // after loading, set saved settings
     loadUIWithSavedSettings()
 
-  override def preSetup(): Unit = setupWindowControls(contentContainer)
+  override def preSetup(): Unit = setupWindowControls(contentContainer, settingsTabPane)
 
   private def loadMonitor(): Unit =
     preferredMonitorComboBox.getItems.setAll(Screen.getScreens.asScala.toSeq*)
