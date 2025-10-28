@@ -38,11 +38,12 @@ HOIIVUtils Official Discord: [https://discord.gg/dyakcKQZk9](https://discord.gg/
 - Parser View
 - Everything :D
 
-![image](./images/menu.png)
-![image](./images/settings.png)
-![image](./images/mangen1.png)
-![image](./images/mapgen2.png)
-![image](./images/focustree.png)
+![image](/images/focustree.gif)
+![image](/images/mapgeneration.gif)
+![image](/images/parserview.gif)
+![image](/images/countrydata.gif)
+![image](/images/settings.png)
+
 
 ## Technical
 Primarily written in Scala, as well as Java. Includes a Clauzewitz scripting language parser, and intermediate 'PDXScript' 
