@@ -28,8 +28,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private val focusGridColumnsSize: Int = 100
   private val focusGridRowSize: Int = 200
   private val welcomeMessage: String = s"Welcome to the Focus Tree Viewer 2!"
-  @FXML var focusTree2: VBox = uninitialized
-  @FXML var menuBar: MenuBar = uninitialized
+  @FXML var focusTree2: AnchorPane = uninitialized
+  @FXML var toolBar: ToolBar = uninitialized
   @FXML var focusTreeView: GridPane = uninitialized
   @FXML var focusSelection: ScrollPane = uninitialized
   @FXML var focusTreeScrollPane: ScrollPane = uninitialized
@@ -461,7 +461,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     if resetZoomButton != null then resetZoomButton.setOnAction(_ => zoomableScrollPane.resetZoom())
   }
 
-  override def preSetup(): Unit = setupWindowControls(focusTree2, menuBar)
+  override def preSetup(): Unit = setupWindowControls(focusTree2, toolBar)
 
   @FXML def handleWelcome(): Unit =
     focusCountLabel.setText("")
