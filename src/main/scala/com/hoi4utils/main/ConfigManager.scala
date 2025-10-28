@@ -1,9 +1,11 @@
 package com.hoi4utils.main
 
+import com.hoi4utils.internal.ConfigException
 import com.typesafe.scalalogging.LazyLogging
+import dotty.tools.sjs.ir.Trees.JSUnaryOp.!
 
 import java.io.*
-import java.nio.file.Paths
+import java.nio.file.{Path, Paths}
 import java.util.Properties
 import scala.util.Try
 
@@ -13,7 +15,8 @@ class ConfigManager extends LazyLogging:
   /**
    * @return Configured HOIIVUtils configuration for use by the application
    */
-  def createConfig: Option[Config] =
+  @throws[ConfigException]
+  def createConfig: Config =
     val jarPath = Paths.get(this.getClass.getProtectionDomain.getCodeSource.getLocation.toURI).toAbsolutePath
     val hDir = jarPath.getParent.getParent
     val hPropertiesPath = Paths.get(s"$hDir${File.separator}HOIIVUtils.properties").toAbsolutePath
@@ -21,19 +24,35 @@ class ConfigManager extends LazyLogging:
     val hVersionTempPath = Paths.get(s"$hDir${File.separator}version.properties").toAbsolutePath
     val hVersionJarResource = this.getClass.getClassLoader.getResourceAsStream("version.properties")
     val hProperties = new Properties()
-    if hDir == null || hPropertiesPath == null || hPropertiesJarResource == null
-    || hVersionTempPath == null || hProperties == null then
-      val message = s"Failed to create Config: One or more required resources are null\n " +
-        s"hDir: $hDir\n" +
-        s"hPropertiesPath: $hPropertiesPath\n" +
-        s"hPropertiesJarResource: $hPropertiesJarResource\n" +
-        s"hVersionTempPath: $hVersionTempPath\n" +
-        s"hProperties: $hProperties"
-      logger.error(message)
-      None
-    else Some(
-      new Config(hDir, hPropertiesPath, hPropertiesJarResource, hVersionTempPath, hVersionJarResource, hProperties)
+
+    validateConfigResources(
+      hDir,
+      hPropertiesPath,
+      hPropertiesJarResource,
+      hVersionTempPath,
+      hVersionJarResource,
+      hProperties
     )
+    new Config(hDir, hPropertiesPath, hPropertiesJarResource, hVersionTempPath, hVersionJarResource, hProperties)
+
+  @throws[ConfigException]
+  def validateConfigResources(hDir: Path, hPropertiesPath: Path, hPropertiesJarResource: InputStream, hVersionTempPath: Path, hVersionJarResource: InputStream, hProperties: Properties): Unit =
+    val errorPrefix = "Config creation error"
+
+    val problems = List(
+      Option.when(hDir == null)("hDir is null"),
+      Option.when(hPropertiesPath == null)("hPropertiesPath is null"),
+      Option.when(hPropertiesJarResource == null)("missing hPropertiesJarResource"),
+      Option.when(hVersionTempPath == null)("hVersionTempPath is null"),
+      Option.when(hVersionJarResource == null)("missing hVersionJarResource"),
+      Option.when(hProperties == null)("hProperties is null")
+    ).flatten
+  
+    if (problems.nonEmpty) {
+      problems.foreach(p => logger.error(s"$errorPrefix: $p"))
+      val msg = errorPrefix + ":\n - " + problems.mkString("\n - ")
+      throw new ConfigException(msg)
+    }
 
   def saveProperties(config: Config): Unit =
     val defaultProperties = config.getPropertiesJarResource
