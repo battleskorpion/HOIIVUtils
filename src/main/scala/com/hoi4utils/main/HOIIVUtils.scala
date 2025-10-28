@@ -21,30 +21,37 @@ import javax.swing.*
  * HOIIVUtils\\HOIIVUtils.sh
  */
 object HOIIVUtils extends LazyLogging:
-  val config: Config = new ConfigManager().createConfig
+  var config: Option[Config] = None
   def main(args: Array[String]): Unit = Application.launch(classOf[App], args*)
 
+  def getConfig: Config =
+    config match
+      case Some(c) => c
+      case None => throw new RuntimeException("Configuration not initialized")
+      
+  def setConfig(newConfig: Option[Config]): Unit = config = newConfig
+  
   /**
    * Get a user saved property from property class saved properties, NOT from HOIIVUtils.properties.
    * We get saved HOIIVUtils.properties data only when the Menu is opened
    * @param key Property name
    * @return Property value or null if not found
    */
-  def get(key: String): String = config.getProperties.getProperty(key)
+  def get(key: String): String = getConfig.getProperties.getProperty(key)
 
   /**
    * Set a user saved property that will be saved to HOIIVUtils.properties on save() call
    * @param key   Property key
    * @param value Property value
    */
-  def set(key: String, value: String): Unit = config.getProperties.setProperty(key, value)
+  def set(key: String, value: String): Unit = getConfig.getProperties.setProperty(key, value)
 
   /**
    * Save the current configuration to HOIIVUtils.properties
    */
   def save(): Unit =
-    try ConfigManager().saveProperties(config)
+    try ConfigManager().saveProperties(getConfig)
     catch case e: Exception =>
-        logger.error(s"v${config.getProperties.getProperty("version")} Failed to save configuration: ${e.getMessage}")
-        JOptionPane.showMessageDialog(null, s"version: ${config.getProperties.getProperty("version")} Failed to save configuration: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
+        logger.error(s"v${getConfig.getProperties.getProperty("version")} Failed to save configuration: ${e.getMessage}")
+        JOptionPane.showMessageDialog(null, s"version: ${getConfig.getProperties.getProperty("version")} Failed to save configuration: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
         throw new Exception(e)

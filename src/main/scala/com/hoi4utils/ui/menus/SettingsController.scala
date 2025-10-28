@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.menus
 
-import com.hoi4utils.main.HOIIVUtils
+import com.hoi4utils.main.HOIIVUtils._
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager, RootWindows}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
@@ -25,7 +25,7 @@ import scala.jdk.CollectionConverters.*
  */
 class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows with LazyLogging:
   setFxmlFile("Settings.fxml")
-  setTitle(s"HOIIVUtils Settings ${HOIIVUtils.get("version")}")
+  setTitle(s"HOIIVUtils Settings ${get("version")}")
 
   @FXML var contentContainer: GridPane = uninitialized
   @FXML var versionLabel: Label = uninitialized
@@ -47,7 +47,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
 
   @FXML
   def initialize(): Unit =
-    versionLabel.setText(HOIIVUtils.get("version").toString)
+    versionLabel.setText(get("version"))
     loadMonitor()
     loadLanguages()
     // after loading, set saved settings
@@ -100,7 +100,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
     languageComboBox.setButtonCell(languageComboBox.getCellFactory.call(null))
 
     // 3) pre-select saved or default Locale
-    val savedTag = Option(HOIIVUtils.config.getProperties.getProperty("locale")).getOrElse(Locale.getDefault.toLanguageTag)
+    val savedTag = Option(getConfig.getProperties.getProperty("locale")).getOrElse(Locale.getDefault.toLanguageTag)
     locales.find(_.toLanguageTag == savedTag).foreach(languageComboBox.getSelectionModel.select)
 
   /**
@@ -148,26 +148,26 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
 
   private def loadUIWithSavedSettings(): Unit =
     modPathTextField.clear()
-    if !"null".equals(HOIIVUtils.get("mod.path")) then modPathTextField.setText(HOIIVUtils.get("mod.path"))
+    if !"null".equals(get("mod.path")) then modPathTextField.setText(get("mod.path"))
 
     hoi4PathTextField.clear()
-    if !"null".equals(HOIIVUtils.get("hoi4.path")) then hoi4PathTextField.setText(HOIIVUtils.get("hoi4.path"))
+    if !"null".equals(get("hoi4.path")) then hoi4PathTextField.setText(get("hoi4.path"))
 
-    darkTheme.setSelected(HOIIVUtils.get("theme") == "dark")
-    lightTheme.setSelected(HOIIVUtils.get("theme") == "light")
+    darkTheme.setSelected(get("theme") == "dark")
+    lightTheme.setSelected(get("theme") == "light")
 
     preferredMonitorComboBox.getSelectionModel.select(validateAndGetPreferredScreen())
 
     //languageComboBox.getSelectionModel.select()
 
-    debugColorsTButton.setSelected(HOIIVUtils.get("debug.colors").toBoolean)
+    debugColorsTButton.setSelected(get("debug.colors").toBoolean)
     debugColorsTButton.setText(if debugColorsTButton.isSelected then "ON" else "OFF")
 
-    maxXTF.setText(HOIIVUtils.get("canvas.max.width"))
-    maxYTF.setText(HOIIVUtils.get("canvas.max.height"))
+    maxXTF.setText(get("canvas.max.width"))
+    maxYTF.setText(get("canvas.max.height"))
 
     // parser settings:
-    parserIgnoreCommentsCheckBox.setSelected(HOIIVUtils.get("parser.ignore.comments").toBoolean)
+    parserIgnoreCommentsCheckBox.setSelected(get("parser.ignore.comments").toBoolean)
 
   def handleModPathTextField(): Unit = validateAndSetPath(modPathTextField.getText, "mod.path")
 
@@ -225,7 +225,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
   def handleLanguageSelection(): Unit =
     val newLoc = languageComboBox.getValue
     if newLoc != null then
-      HOIIVUtils.config.getProperties.setProperty("locale", newLoc.toLanguageTag)
+      getConfig.getProperties.setProperty("locale", newLoc.toLanguageTag)
       logger.debug(s"Locale set to ${newLoc.toLanguageTag}")
 
   def handleDebugColorsAction(): Unit =
@@ -283,8 +283,6 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
    * User Interactive Button in Settings Window Closes Settings Window Opens Menu Window
    */
   def handleOkButtonAction(): Unit =
-    HOIIVUtils.save()
+    save()
     hideWindow(idOkButton)
     new MenuController().open()
-
-  private def set = HOIIVUtils.set

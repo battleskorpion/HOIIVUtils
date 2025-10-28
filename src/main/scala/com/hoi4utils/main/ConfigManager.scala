@@ -5,6 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import java.io.*
 import java.nio.file.Paths
 import java.util.Properties
+import scala.util.Try
 
 class ConfigManager extends LazyLogging:
   val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
@@ -12,7 +13,7 @@ class ConfigManager extends LazyLogging:
   /**
    * @return Configured HOIIVUtils configuration for use by the application
    */
-  def createConfig: Config =
+  def createConfig: Option[Config] =
     val jarPath = Paths.get(this.getClass.getProtectionDomain.getCodeSource.getLocation.toURI).toAbsolutePath
     val hDir = jarPath.getParent.getParent
     val hPropertiesPath = Paths.get(s"$hDir${File.separator}HOIIVUtils.properties").toAbsolutePath
@@ -20,7 +21,19 @@ class ConfigManager extends LazyLogging:
     val hVersionTempPath = Paths.get(s"$hDir${File.separator}version.properties").toAbsolutePath
     val hVersionJarResource = this.getClass.getClassLoader.getResourceAsStream("version.properties")
     val hProperties = new Properties()
-    new Config(hDir, hPropertiesPath, hPropertiesJarResource, hVersionTempPath, hVersionJarResource, hProperties)
+    if hDir == null || hPropertiesPath == null || hPropertiesJarResource == null
+    || hVersionTempPath == null || hProperties == null then
+      val message = s"Failed to create Config: One or more required resources are null\n " +
+        s"hDir: $hDir\n" +
+        s"hPropertiesPath: $hPropertiesPath\n" +
+        s"hPropertiesJarResource: $hPropertiesJarResource\n" +
+        s"hVersionTempPath: $hVersionTempPath\n" +
+        s"hProperties: $hProperties"
+      logger.error(message)
+      None
+    else Some(
+      new Config(hDir, hPropertiesPath, hPropertiesJarResource, hVersionTempPath, hVersionJarResource, hProperties)
+    )
 
   def saveProperties(config: Config): Unit =
     val defaultProperties = config.getPropertiesJarResource

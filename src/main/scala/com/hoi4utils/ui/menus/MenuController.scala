@@ -2,7 +2,7 @@ package com.hoi4utils.ui.menus
 
 import com.hoi4utils.*
 import com.hoi4utils.main.*
-import com.hoi4utils.main.HOIIVUtils.config
+import com.hoi4utils.main.HOIIVUtils._
 import com.hoi4utils.ui.countries.BuildingsByCountryController2
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, RootWindows}
 import com.hoi4utils.ui.focus.FocusTree2Controller
@@ -84,7 +84,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   
   @FXML
   def initialize(): Unit =
-    val initStartTime = System.nanoTime()
+    val initStartTime = MenuController.getProgramStartTime
     var modLoadStartTime: Long = 0
     var modLoadEndTime: Long = 0
     var initEndTime: Long = 0
@@ -190,7 +190,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           currentComponentStartTime = 0
         
         pdxLoader.load(
-          config.getProperties,
+          getConfig.getProperties,
           loadingLabel,
           () => isCancelled,
           onComponentComplete,
@@ -221,12 +221,12 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           MenuController.updateLoadingStatus(loadingLabel, "All files loaded successfully")
         else
           MenuController.updateLoadingStatus(loadingLabel, "Some files are not loaded correctly, please check the settings")
-          logger.warn(s"version: ${Version.getVersion(config.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
+          logger.warn(s"version: ${Version.getVersion(getConfig.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
           showFilesErrorDialog(badFiles, vSettings)
           blockButtons(true)
         if isCancelled then return
 
-        HOIIVUtils.save()
+        save()
         MenuController.updateLoadingStatus(loadingLabel, "Showing Menu...")
     
     task.setOnSucceeded: _ =>
@@ -265,16 +265,18 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     currentTask = task
     contentGrid.setVisible(false)
     loadingLabel.setVisible(true)
+    
+    setConfig(new ConfigManager().createConfig)
 
-    try new Initializer().initialize(config)
+    try new Initializer().initialize(getConfig)
     catch case e: Exception => handleMInitError("Skipping mod loading because of unsuccessful initialization", e)
 
     try
-      val version = Version.getVersion(config.getProperties)
-      new Updater().updateCheck(version, config.getDir)
-      logger.info(s"Loading mod: ${config.getProperties.getProperty("mod.path")}")
-      updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${config.getProperties.getProperty("mod.path")}\"")
-      mVersion.setText(s"v${config.getProperties.getProperty("version")}")
+      val version = Version.getVersion(getConfig.getProperties)
+      new Updater().updateCheck(version, getConfig.getDir)
+      logger.info(s"Loading mod: ${getConfig.getProperties.getProperty("mod.path")}")
+      updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${getConfig.getProperties.getProperty("mod.path")}\"")
+      mVersion.setText(s"v${getConfig.getProperties.getProperty("version")}")
       mTitle.setText(s"HOIIVUtils")
       new Thread(task).start()
     catch case e: Exception => handleMInitError("Error starting program", e)
@@ -337,7 +339,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
     JOptionPane.showMessageDialog(
       null,
-      s"version: ${config.getProperties.getProperty("version")} Unit folders not found. Please check your HOI4 installation or the chosen mod directory.",
+      s"version: ${getConfig.getProperties.getProperty("version")} Unit folders not found. Please check your HOI4 installation or the chosen mod directory.",
       "Error",
       JOptionPane.WARNING_MESSAGE
     )
@@ -361,6 +363,12 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         button.setDisable(b)
 
 object MenuController extends LazyLogging:
+  private var programStartTime: Long = 0
+
+  def setProgramStartTime(time: Long): Unit =
+    programStartTime = time
+
+  def getProgramStartTime: Long = programStartTime
 
   def updateLoadingStatus(loadingLabel: Label, status: String): Unit =
     Platform.runLater: () =>
@@ -380,9 +388,9 @@ object MenuController extends LazyLogging:
   private def showFilesErrorDialog(badFiles: ListBuffer[String], button: Button): Unit =
     val warningMessageBuffer = new StringBuilder("")
     warningMessageBuffer.append(badFiles.mkString(
-      "The following settings need to be configured:\n\n",
+      "The following settings need to be getConfigured:\n\n",
       " directory(ies)\n",
-      " directory(ies)\n\nPlease go to Settings to configure these paths."
+      " directory(ies)\n\nPlease go to Settings to getConfigure these paths."
     ))
     warningMessageBuffer.append(get("hoi4.path.status") match
       case "failed" => "\n• HOI4 installation path not found (REQUIRED)"
@@ -434,5 +442,3 @@ object MenuController extends LazyLogging:
     dialog.setSize(450, 300)
     dialog.setLocationRelativeTo(null)
     dialog.setVisible(true)
-
-  private def get(prop: String): String = HOIIVUtils.get(prop)

@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.javafx.application
 
-import com.hoi4utils.main.HOIIVUtils.config
+import com.hoi4utils.main.HOIIVUtils._
 import com.hoi4utils.main.{HOIIVUtils, Initializer, Version}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController
 import com.typesafe.scalalogging.LazyLogging
@@ -69,8 +69,8 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
       case e: Exception => handleJavaFXControllerError(e)
 
   private def version =
-    new Initializer().initialize(config)
-    try Version.getVersion(config.getProperties)
+    new Initializer().initialize(getConfig)
+    try Version.getVersion(getConfig.getProperties)
     catch case e: Exception => 
       logger.error("Failed to get application version", e)
       Version.DEFAULT
