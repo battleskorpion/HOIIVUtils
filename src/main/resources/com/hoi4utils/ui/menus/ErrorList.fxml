@@ -11,18 +11,18 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
-
-<BorderPane fx:id="contentContainer" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <center>
+<AnchorPane prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+  <BorderPane fx:id="contentContainer" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+    <center>
       <TabPane fx:id="errorListTabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
           <Tab text="Effects">
             <content>
               <AnchorPane>
-                     <children>
-                        <ListView fx:id="effectsEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
-                     </children>
-                  </AnchorPane>
+                <children>
+                  <ListView fx:id="effectsEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
             </content>
           </Tab>
           <Tab text="Localization">
@@ -45,11 +45,11 @@
           </Tab>
           <Tab text="Resources">
             <content>
-                <AnchorPane>
-                    <children>
-                        <ListView fx:id="resourceEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
-                    </children>
-                </AnchorPane>
+              <AnchorPane>
+                <children>
+                  <ListView fx:id="resourceEL" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                </children>
+              </AnchorPane>
             </content>
           </Tab>
           <Tab text="States">
@@ -98,34 +98,35 @@
             </content>
           </Tab>
         </tabs>
-         <BorderPane.margin>
-            <Insets top="-30.0" />
-         </BorderPane.margin>
+        <BorderPane.margin>
+          <Insets top="-30.0" />
+        </BorderPane.margin>
       </TabPane>
-   </center>
-   <top>
-     <GridPane pickOnBounds="false">
-       <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
-         <GridPane.margin>
-           <Insets right="60.0" />
-         </GridPane.margin>
-       </Button>
-       <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
-         <GridPane.margin>
-           <Insets right="30.0" />
-         </GridPane.margin>
-       </Button>
-       <Button fx:id="closeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
-         <font>
-           <Font name="System Bold" size="13.0" />
-         </font>
-       </Button>
-         <columnConstraints>
-            <ColumnConstraints hgrow="ALWAYS" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints />
-         </rowConstraints>
-     </GridPane>
-   </top>
-</BorderPane>
+    </center>
+    <top>
+      <GridPane pickOnBounds="false">
+        <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+          <GridPane.margin>
+            <Insets right="60.0" />
+          </GridPane.margin>
+        </Button>
+        <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+          <GridPane.margin>
+            <Insets right="30.0" />
+          </GridPane.margin>
+        </Button>
+        <Button fx:id="closeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+          <font>
+            <Font name="System Bold" size="13.0" />
+          </font>
+        </Button>
+        <columnConstraints>
+          <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints />
+        </rowConstraints>
+      </GridPane>
+    </top>
+  </BorderPane>
+</AnchorPane>
