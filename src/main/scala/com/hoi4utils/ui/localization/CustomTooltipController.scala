@@ -21,11 +21,9 @@ class CustomTooltipController extends HOIIVUtilsAbstractController2 with TableVi
   setFxmlFile("CustomTooltip.fxml")
   setTitle("Custom Tooltips")
 
-  @FXML var contentContainer: GridPane = uninitialized
+  @FXML var contentContainer: AnchorPane = uninitialized
+  @FXML var toolBar: ToolBar = uninitialized
   @FXML var tooltipAnchorPane: AnchorPane = uninitialized
-  @FXML var ctClose: Button = uninitialized
-  @FXML var ctSquare: Button = uninitialized
-  @FXML var ctMinimize: Button = uninitialized
 
   @FXML var idVersion: Label = uninitialized
   @FXML var tooltipIdTableColumn: TableColumn[CustomTooltip,String] = uninitialized
@@ -43,6 +41,7 @@ class CustomTooltipController extends HOIIVUtilsAbstractController2 with TableVi
 
   override def initialize(location: URL, resources: ResourceBundle): Unit =
     setWindowControlsVisibility()
+
     val loadTootipsTask = new Task[Unit]():
       override def call(): Unit =
         idVersion.setText(HOIIVUtils.get("version"))
@@ -53,7 +52,7 @@ class CustomTooltipController extends HOIIVUtilsAbstractController2 with TableVi
     // wire up the JavaFX TableView using your existing helper:
     loadTableView(this, customTooltipTableView, customTooltipBuf, CustomTooltip.dataFunctions())
 
-  override def preSetup(): Unit = setupWindowControls(contentContainer, ctClose, ctSquare, ctMinimize, tooltipAnchorPane)
+  override def preSetup(): Unit = setupWindowControls(contentContainer, toolBar)
   // --- action handlers ---
   @FXML def handleTooltipFileBrowseAction(): Unit =
     val initial = HOIIVFiles.Mod.common_folder
