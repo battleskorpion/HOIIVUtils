@@ -29,7 +29,7 @@ object HOIIVUtils extends LazyLogging:
       case Some(c) => c
       case None => throw new RuntimeException("Configuration not initialized")
       
-  def setConfig(newConfig: Config): Unit = config = Some(newConfig)
+  def setConfig(newConfig: Option[Config]): Unit = config = newConfig
   
   /**
    * Get a user saved property from property class saved properties, NOT from HOIIVUtils.properties.
