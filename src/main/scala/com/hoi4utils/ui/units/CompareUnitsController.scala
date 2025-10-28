@@ -30,10 +30,6 @@ class CompareUnitsController extends HOIIVUtilsAbstractController2:
     unitsDiffViewPane = new DiffViewPane("Base Unit Details", "Custom Unit Details")
     rootAnchorPane.getChildren.add(unitsDiffViewPane)
     // set anchors
-    AnchorPane.setTopAnchor(unitsDiffViewPane, 30.0)
-    AnchorPane.setBottomAnchor(unitsDiffViewPane, 0.0)
-    AnchorPane.setLeftAnchor(unitsDiffViewPane, 0.0)
-    AnchorPane.setRightAnchor(unitsDiffViewPane, 0.0)
 
     val loadUnitsTask = new javafx.concurrent.Task[Unit]() {
       override def call(): Unit =

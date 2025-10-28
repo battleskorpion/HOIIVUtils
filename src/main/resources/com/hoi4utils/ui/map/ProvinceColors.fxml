@@ -54,7 +54,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <VBox fx:id="pcVboxRoot" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
     <children>
       <GridPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0">
@@ -146,7 +147,7 @@
                   <VBox alignment="CENTER" prefHeight="730.0" prefWidth="400.0" spacing="10.0">
                     
                     <!-- Title and Version -->
-                    <Label fx:id="idWindowName" prefHeight="62.0" prefWidth="289.0" style="-fx-font-size: 18; -fx-font-weight: bold;" text="Province Colors - Unique Color Generator" textAlignment="CENTER" wrapText="true" />
+                    <Label fx:id="idWindowName" style="-fx-font-size: 18; -fx-font-weight: bold;" text="Province Colors - Unique Color Generator WIP" textAlignment="CENTER" wrapText="true" />
                     <Label text="Enter a number" />
                     
                     <!-- User Input Section -->

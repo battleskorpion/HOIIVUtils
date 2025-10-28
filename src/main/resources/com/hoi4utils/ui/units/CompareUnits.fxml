@@ -8,39 +8,40 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
-
-<GridPane fx:id="rootGridPane" pickOnBounds="false" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
-  <Button fx:id="closeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
-    <font>
-      <Font name="System Bold" size="13.0" />
-    </font>
-  </Button>
-  <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
-    <GridPane.margin>
-      <Insets right="60.0" />
-    </GridPane.margin>
-  </Button>
-  <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
-    <GridPane.margin>
-      <Insets right="30.0" />
-    </GridPane.margin>
-  </Button>
-  <AnchorPane fx:id="rootAnchorPane" prefHeight="370.0" prefWidth="600.0" GridPane.rowIndex="1">
-  
-  </AnchorPane>
-   <Label text="HOIIVUtils Unit Comparison">
+<AnchorPane prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+  <GridPane fx:id="rootGridPane" pickOnBounds="false" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+    <Button fx:id="closeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+      <font>
+        <Font name="System Bold" size="13.0" />
+      </font>
+    </Button>
+    <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
       <GridPane.margin>
-         <Insets left="30.0" />
+        <Insets right="60.0" />
+      </GridPane.margin>
+    </Button>
+    <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+      <GridPane.margin>
+        <Insets right="30.0" />
+      </GridPane.margin>
+    </Button>
+    <AnchorPane fx:id="rootAnchorPane" prefHeight="370.0" prefWidth="600.0" GridPane.rowIndex="1">
+    
+    </AnchorPane>
+    <Label text="HOIIVUtils Unit Comparison">
+      <GridPane.margin>
+        <Insets left="30.0" />
       </GridPane.margin>
       <font>
-         <Font size="16.0" />
+        <Font size="16.0" />
       </font>
-   </Label>
-   <columnConstraints>
+    </Label>
+    <columnConstraints>
       <ColumnConstraints />
-   </columnConstraints>
-   <rowConstraints>
+    </columnConstraints>
+    <rowConstraints>
       <RowConstraints minHeight="10.0" prefHeight="30.0" />
       <RowConstraints />
-   </rowConstraints>
-</GridPane>
+    </rowConstraints>
+  </GridPane>
+</AnchorPane>
