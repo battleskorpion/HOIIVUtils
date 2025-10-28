@@ -5,6 +5,7 @@ import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import com.hoi4utils.ui.javafx.scene.layout.DiffViewPane
 import javafx.fxml.FXML
+import javafx.scene.control.{SplitPane, ToolBar}
 import javafx.scene.layout.{AnchorPane, GridPane}
 
 import scala.collection.mutable
@@ -15,8 +16,9 @@ class CompareUnitsController extends HOIIVUtilsAbstractController2:
   setFxmlFile("CompareUnits.fxml")
   setTitle("Compare Units")
 
-  @FXML var rootGridPane: GridPane = uninitialized
+  @FXML var toolBar: ToolBar = uninitialized
   @FXML var rootAnchorPane: AnchorPane = uninitialized
+  @FXML var tempViewPane: AnchorPane = uninitialized
   private var unitsDiffViewPane: DiffViewPane = uninitialized
   private val skipNullProperties = true
 
@@ -28,7 +30,11 @@ class CompareUnitsController extends HOIIVUtilsAbstractController2:
     val baseUnits = SubUnit.read(HOIIVFiles.HOI4.units_folder).asJava
 
     unitsDiffViewPane = new DiffViewPane("Base Unit Details", "Custom Unit Details")
-    rootAnchorPane.getChildren.add(unitsDiffViewPane)
+    AnchorPane.setTopAnchor(unitsDiffViewPane, 0.0)
+    AnchorPane.setBottomAnchor(unitsDiffViewPane, 0.0)
+    AnchorPane.setLeftAnchor(unitsDiffViewPane, 0.0)
+    AnchorPane.setRightAnchor(unitsDiffViewPane, 0.0)
+    tempViewPane.getChildren.add(unitsDiffViewPane)
     // set anchors
 
     val loadUnitsTask = new javafx.concurrent.Task[Unit]() {
@@ -52,7 +58,7 @@ class CompareUnitsController extends HOIIVUtilsAbstractController2:
     }
     new Thread(loadUnitsTask).start()
 
-  override def preSetup(): Unit = setupWindowControls(rootGridPane)
+  override def preSetup(): Unit = setupWindowControls(rootAnchorPane, toolBar)
 
   private def appendUnitDetails(unitText: collection.mutable.Buffer[String], unit: SubUnit): Unit =
     val df = SubUnit.dataFunctions()

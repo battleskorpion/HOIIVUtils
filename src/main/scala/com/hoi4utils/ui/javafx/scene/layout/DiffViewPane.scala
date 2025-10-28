@@ -24,6 +24,7 @@ class DiffViewPane(private val leftTitle: String, private val rightTitle: String
   private var leftData: util.Collection[String] = uninitialized
   private var rightData: util.Collection[String] = uninitialized
 
+
   private val splitPane = SplitPane()
   this.getChildren.add(splitPane)
   AnchorPane.setTopAnchor(splitPane, 0.0)
