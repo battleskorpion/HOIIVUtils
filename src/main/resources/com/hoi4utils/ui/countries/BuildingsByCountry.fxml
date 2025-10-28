@@ -43,33 +43,37 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.layout.AnchorPane?>
+
 <AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
-  <VBox fx:id="bbccRoot" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
-    <children>
-      <ToolBar>
+   <AnchorPane fx:id="bbccRoot" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+      <children>
+      <ToolBar fx:id="toolBar" prefHeight="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="128.0" AnchorPane.topAnchor="0.0">
         <items>
           <Button fx:id="exportToExcelButton" onAction="#handleExportToExcelAction" text="Export to Excel" />
           <Separator orientation="VERTICAL" />
           <CheckBox fx:id="percentageCheckBox" onAction="#handlePercentageCheckBoxAction" text="Show Percentages" />
           <Separator orientation="VERTICAL" />
           <Label fx:id="versionLabel" text="Version: Loading..." />
-          <Separator orientation="VERTICAL" prefWidth="1475.0" />
-          <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" />
-          <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" />
+        </items>
+      </ToolBar>
+         <ToolBar fx:id="toolBar2" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="128.0" AnchorPane.rightAnchor="0.0">
+            <items>
           <Button fx:id="closeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER">
             <font>
               <Font name="System Bold" size="13.0" />
             </font>
           </Button>
-        </items>
-      </ToolBar>
-      <SplitPane fx:id="mainSplitPane" dividerPositions="0.5" focusTraversable="true" orientation="VERTICAL" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+          <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" />
+          <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" />
+            </items>
+         </ToolBar>
+      <SplitPane fx:id="mainSplitPane" dividerPositions="0.5" focusTraversable="true" orientation="VERTICAL" prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
         <items>
           <TableView fx:id="countryDataTable">
             <columns>
@@ -115,7 +119,7 @@
           </VBox>
         </items>
       </SplitPane>
-      <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+      <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" AnchorPane.bottomAnchor="0.0">
         <children>
           <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Left status" HBox.hgrow="ALWAYS">
             <font>
@@ -133,6 +137,6 @@
           <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
         </padding>
       </HBox>
-    </children>
-  </VBox>
+      </children>
+   </AnchorPane>
 </AnchorPane>
