@@ -1,8 +1,9 @@
 package com.hoi4utils.ui.menus
 
 import com.hoi4utils.*
+import com.hoi4utils.internal.ConfigException
 import com.hoi4utils.main.*
-import com.hoi4utils.main.HOIIVUtils._
+import com.hoi4utils.main.HOIIVUtils.*
 import com.hoi4utils.ui.countries.BuildingsByCountryController2
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, RootWindows}
 import com.hoi4utils.ui.focus.FocusTree2Controller
@@ -22,12 +23,12 @@ import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.stage.Stage
 import javafx.scene.input.MouseEvent
-import javafx.animation.{Animation, Timeline, KeyFrame}
+import javafx.animation.{Animation, KeyFrame, Timeline}
 import javafx.util.Duration
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import javax.swing.*
-import scala.collection.mutable.{ListBuffer, LinkedHashMap}
+import scala.collection.mutable.{LinkedHashMap, ListBuffer}
 import scala.compiletime.uninitialized
 
 class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with LazyLogging:
@@ -265,13 +266,10 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     currentTask = task
     contentGrid.setVisible(false)
     loadingLabel.setVisible(true)
-    
-    setConfig(new ConfigManager().createConfig)
-
-    try new Initializer().initialize(getConfig)
-    catch case e: Exception => handleMInitError("Skipping mod loading because of unsuccessful initialization", e)
 
     try
+      setConfig(new ConfigManager().createConfig)
+      val initializer: Unit = new Initializer().initialize(getConfig)
       val version = Version.getVersion(getConfig.getProperties)
       new Updater().updateCheck(version, getConfig.getDir)
       logger.info(s"Loading mod: ${getConfig.getProperties.getProperty("mod.path")}")
@@ -279,7 +277,11 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
       mVersion.setText(s"v${getConfig.getProperties.getProperty("version")}")
       mTitle.setText(s"HOIIVUtils")
       new Thread(task).start()
-    catch case e: Exception => handleMInitError("Error starting program", e)
+    catch
+      case e: ConfigException => handleMInitError("Configuration error during initialization", e)
+      case e: IllegalArgumentException => handleMInitError("Error determining program version", e)
+      case e: IllegalStateException => handleMInitError("Skipping mod loading because of unsuccessful initialization", e)
+      case e: Exception => handleMInitError("Error during mod loading", e)
 
   private def handleMInitError(msg: String, exception: Exception): Unit =
     logger.error(msg, exception)

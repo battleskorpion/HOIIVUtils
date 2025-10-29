@@ -16,6 +16,7 @@ import scala.util.boundary
  */
 class Initializer extends LazyLogging:
 
+  @throws[IllegalStateException]
   def initialize(config: Config): Unit =
     ConfigManager().loadProperties(config)
 
@@ -27,6 +28,7 @@ class Initializer extends LazyLogging:
 
     ConfigManager().saveProperties(config)
 
+  @throws[IllegalStateException]
   private def autoSetHOIIVPath(p: Properties): Unit =
     val hoi4Path = Option(p.getProperty("hoi4.path")).getOrElse("")
     if hoi4Path.nonEmpty && hoi4Path.trim.nonEmpty then
@@ -42,7 +44,7 @@ class Initializer extends LazyLogging:
           logger.info("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath)
           p.setProperty("hoi4.path.status", "found")
         case None =>
-          logger.warn("⚠\uFE0FCould not find HOI4 install folder. User must set it manually in *settings*.⚠\uFE0F")
+          logger.error("⚠\uFE0FCould not find HOI4 install folder. User must set it manually in *settings*.⚠\uFE0F")
           JOptionPane.showMessageDialog(
             null,
             s"⚠️version: ${Version.getVersion(p)} Could not find Hearts Of Iron 4 default steam installation folder, please go to the settings page and add it (REQUIRED)⚠️",
@@ -50,7 +52,7 @@ class Initializer extends LazyLogging:
             JOptionPane.WARNING_MESSAGE
           )
           p.setProperty("hoi4.path.status", "failed")
-          throw new Exception("Could not find HOI4 install folder")
+          throw new IllegalStateException("HOI4 path not set and could not be auto-detected.")
 
   private def getPossibleHOIIVPaths: Seq[String] =
     val os = System.getProperty("os.name").toLowerCase
@@ -78,13 +80,12 @@ class Initializer extends LazyLogging:
     if modPath.isBlank then
       p.setProperty("mod.path", demoModPath)
       logger.info("Auto-set mod path to demo_mod")
-      return ()
-
-    val isDemoMod = try
-      Paths.get(modPath).getFileName.toString == "demo_mod"
-    catch
-      case e: Exception =>
-        logger.error("Error checking mod path: {}", e.getMessage)
-        false
-
-    if isDemoMod then p.setProperty("mod.path", demoModPath)
+    else
+      val isDemoMod = try
+        Paths.get(modPath).getFileName.toString == "demo_mod"
+      catch
+        case e: Exception =>
+          logger.error("Error checking mod path: {}", e.getMessage)
+          false
+  
+      if isDemoMod then p.setProperty("mod.path", demoModPath)

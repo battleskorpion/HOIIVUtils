@@ -39,12 +39,12 @@ class ConfigManager extends LazyLogging:
   def validateConfigResources(hDir: Path, hPropertiesPath: Path, hPropertiesJarResource: InputStream, hVersionTempPath: Path, hVersionJarResource: InputStream, hProperties: Properties): Unit =
     val errorPrefix = "Config creation error"
 
+    // we don't check hVersionJarResource
     val problems = List(
       Option.when(hDir == null)("hDir is null"),
       Option.when(hPropertiesPath == null)("hPropertiesPath is null"),
       Option.when(hPropertiesJarResource == null)("missing hPropertiesJarResource"),
       Option.when(hVersionTempPath == null)("hVersionTempPath is null"),
-//      Option.when(hVersionJarResource == null)("missing hVersionJarResource"),  // check wasnt there before and breaks stuff but?
       Option.when(hProperties == null)("hProperties is null")
     ).flatten
   

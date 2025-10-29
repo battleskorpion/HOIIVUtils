@@ -12,6 +12,7 @@ case class Version(major: Int, minor: Int, patch: Int) extends Ordered[Version]:
 
 object Version:
   /** Parses strings like "1.2.3" (and will throw on malformed input) */
+  @throws[IllegalArgumentException]
   def apply(s: String): Version =
     s match
       case s: String if s.endsWith(".version}") => throw new IllegalArgumentException(s"Version string is property name -> \"$s\"\nHOIIVUtils.properties Resource was compiled without maven\nProbably compiled by IntelliJ\n\nPLEASE RECOMPILE WITH MAVEN @SKORP! THE PROGRAM WILL NOT LAUNCH UNTIL THIS YOU FIXED IT\n\nIf you are not skorp please report this to the discord!")
@@ -23,6 +24,7 @@ object Version:
 
   val DEFAULT: Version = Version(0, 0, 0)
 
+  @throws[IllegalArgumentException]
   def getVersion(hProperties: Properties): Version =
     val versionString = hProperties.getProperty("version")
     try Version(versionString)
