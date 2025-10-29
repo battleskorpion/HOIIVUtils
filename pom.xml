@@ -212,6 +212,35 @@
         </configuration>
       </plugin>
 
+      <!-- Disable Surefire (use ScalaTest plugin instead) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+
+      <!-- ScalaTest Maven Plugin -->
+      <plugin>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest-maven-plugin</artifactId>
+        <version>2.2.0</version>
+        <configuration>
+          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+          <junitxml>.</junitxml>
+          <filereports>TestSuiteReport.txt</filereports>
+        </configuration>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- Clean plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

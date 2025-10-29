@@ -4,7 +4,7 @@
   <groupId>com.hoi4utils</groupId>
   <artifactId>HOIIVUtils</artifactId>
   <name>HOIIVUtils</name>
-  <version>14.9.3</version>
+  <version>15.0.1</version>
   <description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
   <url>https://github.com/battleskorpion/HOIIVUtils</url>
   <issueManagement>
@@ -173,6 +173,30 @@
         <artifactId>maven-resources-plugin</artifactId>
         <configuration>
           <propertiesEncoding>UTF-8</propertiesEncoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest-maven-plugin</artifactId>
+        <version>2.2.0</version>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+          <junitxml>.</junitxml>
+          <filereports>TestSuiteReport.txt</filereports>
         </configuration>
       </plugin>
       <plugin>

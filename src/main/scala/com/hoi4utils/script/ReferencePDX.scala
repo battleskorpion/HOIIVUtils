@@ -72,8 +72,7 @@ class ReferencePDX[T <: Referable](final protected var referenceCollectionSuppli
     other match {
       case referencePDX: ReferencePDX[?] =>
         (referencePDX @== referenceName) &&
-          this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier &&
-          this.idExtractor == referencePDX.idExtractor
+          this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier
       case _ => false
     }
   }

@@ -3,7 +3,7 @@ package com.hoi4utils.hoi4.common.focus
 import com.hoi4utils.hoi4.common.national_focus.{FocusTree, FocusTreesManager}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.shared.ParserTestBase
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions._
 import org.junit.jupiter.api.{AfterEach, BeforeEach, DisplayName, Test}
 
 import java.io.File

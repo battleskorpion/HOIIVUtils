@@ -6,7 +6,9 @@ import com.hoi4utils.script.ReferencePDX
 import org.scalatest.funsuite.AnyFunSuite
 
 // A simple dummy PDX object with an identifier.
-case class DummyPDX(id: String)
+case class DummyPDX(id: String) extends Referable {
+  override def referableID: Option[String] = Some(id)
+}
 
 class ReferencePDXTests extends AnyFunSuite {
 
@@ -17,12 +19,11 @@ class ReferencePDXTests extends AnyFunSuite {
     DummyPDX("dummy3")
   )
   val dummySupplier: () => Iterable[DummyPDX] = () => dummyCollection
-  val dummyIdExtractor: DummyPDX => Option[String] = (d: DummyPDX) => Some(d.id)
 
   test("set() with valid string sets referenceName and resolves reference") {
     // Create a node with identifier "ref", operator "=", and value "dummy1"
     val node = new Node("ref", "=", "dummy1")
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
     referencePDX.set(node)
 
     // Check that the reference name was set to the value ("dummy1")
@@ -37,7 +38,7 @@ class ReferencePDXTests extends AnyFunSuite {
     // Create a node with identifier "ref" but with a Double value,
     // which is not allowed (only String or Int is accepted).
     val node = new Node("ref", "=", 123.45)
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
 
     intercept[NodeValueTypeException] {
       referencePDX.set(node)
@@ -47,7 +48,7 @@ class ReferencePDXTests extends AnyFunSuite {
   test("isUndefined returns true when reference is not found") {
     // Create a node with identifier "ref" and a value that doesn't match any DummyPDX.
     val node = new Node("ref", "=", "nonexistent")
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
 
     referencePDX.set(node)
     // Because there is no DummyPDX with id "nonexistent", value should be empty.
@@ -56,7 +57,7 @@ class ReferencePDXTests extends AnyFunSuite {
   }
 
   test("Overloaded @= operator with String sets reference correctly") {
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
     // Use the overloaded operator that takes a String.
     referencePDX @= "dummy2"
 
@@ -67,7 +68,7 @@ class ReferencePDXTests extends AnyFunSuite {
   }
 
   test("Overloaded @= operator with T sets reference correctly") {
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
     val dummy = DummyPDX("dummy3")
 
     // Use the overloaded operator that takes a T.
@@ -79,7 +80,7 @@ class ReferencePDXTests extends AnyFunSuite {
   }
 
   test("@== operator works for comparing with a String") {
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
     referencePDX @= "dummy1"
 
     assert(referencePDX @== "dummy1")
@@ -87,24 +88,24 @@ class ReferencePDXTests extends AnyFunSuite {
   }
 
   test("@== operator works for comparing with T using the extractor") {
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
     referencePDX @= "dummy1"
     val dummy = DummyPDX("dummy1")
     assert(referencePDX @== dummy)
   }
 
   test("equals method returns true when reference names and suppliers match") {
-    val referencePDX1 = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
-    val referencePDX2 = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX1 = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
+    val referencePDX2 = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
 
     referencePDX1 @= "dummy1"
     referencePDX2 @= "dummy1"
 
-    assert(referencePDX1 == referencePDX2)
+    assert(referencePDX1.equals(referencePDX2))
   }
 
   test("setNull clears reference and referenceName") {
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
     referencePDX @= "dummy1"
     assert(referencePDX.getReferenceName == "dummy1")
     assert(referencePDX.value.isDefined)
@@ -150,13 +151,13 @@ class ReferencePDXTests extends AnyFunSuite {
 //  }
 
   test("getReferenceCollection returns the complete collection") {
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
     val collection = referencePDX.getReferenceCollection
     assert(collection.toList == dummyCollection)
   }
 
   test("getReferenceCollectionNames returns all identifiers") {
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
     val names = referencePDX.getReferenceCollectionNames.toList
     assert(names.sorted == dummyCollection.map(_.id).sorted)
   }
@@ -168,7 +169,7 @@ class ReferencePDXTests extends AnyFunSuite {
       DummyPDX("dummy1")
     )
     val supplier: () => Iterable[DummyPDX] = () => mutableDummyCollection
-    val referencePDX = new ReferencePDX[DummyPDX](supplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](supplier, List("ref"))
     val node = new Node("ref", "=", 123)
     referencePDX.set(node)
 
@@ -182,7 +183,7 @@ class ReferencePDXTests extends AnyFunSuite {
     // Here we assume that ReferencePDX checks that the node's identifier matches one of the allowed identifiers.
     // Creating a node with a wrong identifier should trigger an exception.
     val node = new Node("wrong", "=", "dummy1")
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
     intercept[UnexpectedIdentifierException] {
       referencePDX.set(node)
     }
@@ -190,13 +191,13 @@ class ReferencePDXTests extends AnyFunSuite {
 
   test("value caches the resolved reference") {
     val node = new Node("ref", "=", "dummy1")
-    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, dummyIdExtractor, List("ref"))
+    val referencePDX = new ReferencePDX[DummyPDX](dummySupplier, List("ref"))
     referencePDX.set(node)
 
     val firstResolution = referencePDX.value
     val secondResolution = referencePDX.value
     assert(firstResolution.isDefined && secondResolution.isDefined)
     // Verify that the same instance is returned.
-    assert(firstResolution.get eq secondResolution.get)
+    assert(firstResolution.get.eq(secondResolution.get))
   }
 }
