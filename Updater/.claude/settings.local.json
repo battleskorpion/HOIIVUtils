@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(java -jar:*)",
+      "Bash(mvn clean package:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
