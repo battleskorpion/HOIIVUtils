@@ -9,135 +9,242 @@ import scala.sys.process.*
 import javax.swing.JOptionPane
 
 object Updater:
-  var succ = true
-
   def main(args: Array[String]): Unit =
-    //    // test:
     println("Updating... This might take a second...")
 
-    var hDir = "C:\\Users\\Chris\\Documents\\GitHub\\HOIIVUtils"
-    var lV = "14.9.0"
+    try
+      runUpdate(args)
+    catch
+      case e: UpdateException =>
+        println(s"ERROR: ${e.getMessage}")
+        e.getCause match
+          case null => // No underlying cause
+          case cause =>
+            println(s"Caused by: ${cause.getClass.getSimpleName}: ${cause.getMessage}")
+            cause.printStackTrace()
+        JOptionPane.showMessageDialog(null, s"Update failed:\n${e.getMessage}", "Error", JOptionPane.ERROR_MESSAGE)
+        System.exit(1)
+      case e: Exception =>
+        println(s"UNEXPECTED ERROR: ${e.getMessage}")
+        e.printStackTrace()
+        JOptionPane.showMessageDialog(null, s"Unexpected error during update:\n${e.getMessage}", "Error", JOptionPane.ERROR_MESSAGE)
+        System.exit(1)
+
+  private def runUpdate(args: Array[String]): Unit =
+    var succ = true
+    val testHDir = "C:\\Users\\Chris\\Documents\\GitHub\\HOIIVUtils"
+    val testLV = "15.0.2"
+
+    var hDir = testHDir
+    var lV = testLV
 
     if args.length > 0 && args(0) != null then hDir = args(0)
     if args.length > 1 && args(1) != null then lV = args(1)
 
-    if hDir == "C:\\Users\\User\\Documents\\GitHub\\HOIIVUtils" then
-      println("Fatal error: Failed to get Users HOIIVUtils location")
-      println("Stopping Update, Please let us know in the discord if you see this")
-      System.exit(1)
+    // Validate version format
+    if !lV.matches("\\d+\\.\\d+\\.\\d+") then
+      throw new UpdateException(s"Invalid version format: $lV (expected format: X.Y.Z)")
+
+    if hDir == testHDir && !lV.equals(testLV) then
+      throw new UpdateException("Failed to get Users HOIIVUtils location. Please provide the correct path as the first argument.")
 
     println(s"Received hDir: $hDir")
     println(s"Received lastestVersion: $lV")
+
+    // Validate that hDir exists and is a directory
+    val hDirFile = new File(hDir)
+    if !hDirFile.exists() then
+      throw new UpdateException(s"HOIIVUtils directory does not exist: $hDir")
+    if !hDirFile.isDirectory then
+      throw new UpdateException(s"HOIIVUtils path is not a directory: $hDir")
 
     // create a temporary directory to download the latest release to
     val tempDir = new File(s"$hDir${File.separator}temp")
 
     if tempDir.exists() && tempDir.isDirectory then
-      println("temp folder already made")
+      println("Temp folder already exists, will reuse it")
+    else if tempDir.exists() && !tempDir.isDirectory then
+      throw new UpdateException(s"Cannot create temp directory: a file with that name already exists at ${tempDir.getAbsolutePath}")
     else
+      println("Creating temp directory...")
       if !tempDir.mkdirs() then
-        println("Failed to make temp dir")
-        succ = false
+        throw new UpdateException(s"Failed to create temp directory at ${tempDir.getAbsolutePath}. Check permissions.")
 
     // download the latest release and extract it
     val zipPath = new File(s"${tempDir.getAbsolutePath}${File.separator}HOIIVUtils.zip")
     val lrUrl = s"https://github.com/battleskorpion/HOIIVUtils/releases/download/$lV/HOIIVUtils.zip"
 
-    println(s"Downloading latest release...")
+    println(s"Downloading from: $lrUrl")
 
-    downloadReleaseAsset(lrUrl, zipPath.getAbsolutePath)
+    try
+      downloadReleaseAsset(lrUrl, zipPath.getAbsolutePath)
+    catch
+      case e: Exception =>
+        throw new UpdateException(s"Failed to download release $lV from GitHub. Check internet connection and verify version exists.", e)
 
     if !zipPath.exists() then
-      println("zip file failed to download")
-      succ = false
+      throw new UpdateException(s"Download appeared to succeed but zip file not found at ${zipPath.getAbsolutePath}")
+
+    val zipSize = zipPath.length()
+    println(s"Downloaded ${zipSize / 1024 / 1024}MB successfully")
+
+    // Validate zip file is not empty and is reasonable size
+    if zipSize < 1024 then
+      throw new UpdateException(s"Downloaded zip file is suspiciously small (${zipSize} bytes). The download may have failed.")
+    if zipSize > 500 * 1024 * 1024 then
+      throw new UpdateException(s"Downloaded zip file is suspiciously large (${zipSize / 1024 / 1024}MB). Verify version is correct.")
 
     println("Extracting zip file...")
 
-    extractZip(zipPath.getAbsolutePath, tempDir.getAbsolutePath)
+    try
+      extractZip(zipPath.getAbsolutePath, tempDir.getAbsolutePath)
+    catch
+      case e: Exception =>
+        throw new UpdateException(s"Failed to extract zip file. The download may be corrupted.", e)
 
     val newHOIIVUtils = s"${tempDir.getAbsolutePath}${File.separator}HOIIVUtils${File.separator}"
 
-    if !new File(newHOIIVUtils).exists() && !new File(newHOIIVUtils).isDirectory then
-      println("zip file failed to extract")
-      succ = false
+    // Check if HOIIVUtils folder exists in the zip, if not create it and move files
+    if !new File(newHOIIVUtils).exists() || !new File(newHOIIVUtils).isDirectory then
+      println("Zip does not contain HOIIVUtils folder, restructuring...")
+      val hoiivUtilsFolder = new File(newHOIIVUtils)
+      if !hoiivUtilsFolder.mkdirs() then
+        throw new UpdateException(s"Failed to create HOIIVUtils folder at ${hoiivUtilsFolder.getAbsolutePath}")
 
-    println("Extracted zip file")
+      try
+        // Move all extracted files (except the zip file itself) into HOIIVUtils folder
+        val filesToMove = tempDir.listFiles().filter(f => f.getName != "HOIIVUtils.zip" && f.getName != "HOIIVUtils")
+        if filesToMove.isEmpty then
+          throw new UpdateException("No files found in extracted zip to restructure")
 
-    def replace(pathStr: String): Boolean =
+        filesToMove.foreach: file =>
+          val dest = new File(hoiivUtilsFolder, file.getName)
+          try
+            if file.isDirectory then
+              copyDirectoryRecursively(file.toPath, dest.toPath)
+              safeDeleteRecursively(file.toPath)
+            else
+              Files.move(file.toPath, dest.toPath)
+          catch
+            case e: Exception =>
+              throw new UpdateException(s"Failed to move ${file.getName} during restructuring", e)
+
+        println("Restructured zip contents into HOIIVUtils folder")
+      catch
+        case e: UpdateException => throw e
+        case e: Exception =>
+          throw new UpdateException("Error during zip restructuring", e)
+
+    if !new File(newHOIIVUtils).exists() || !new File(newHOIIVUtils).isDirectory then
+      throw new UpdateException(s"Extraction failed: HOIIVUtils folder not found at ${newHOIIVUtils}")
+
+    println("Extracted zip file successfully")
+
+    def replace(pathStr: String): Unit =
       val fCurrent = new File(s"$hDir${File.separator}$pathStr")
       val fNew = new File(s"$newHOIIVUtils${File.separator}$pathStr")
 
-      if fCurrent.isDirectory then
-        safeDeleteRecursively(fCurrent.toPath) // in case of any child items that are not replaced
-        if fCurrent.exists() then
-          println(s"$pathStr directory failed to delete")
-          return false
-        copyDirectoryRecursively(fNew.toPath, fCurrent.toPath)
-        if !fCurrent.exists() then
-          println(s"$pathStr directory failed to copy")
-          false
+      // Validate source file/directory exists
+      if !fNew.exists() then
+        throw new UpdateException(s"Source file/directory not found in update: $pathStr at ${fNew.getAbsolutePath}")
+
+      println(s"  Replacing: $pathStr")
+
+      try
+        if fNew.isDirectory then
+          // For directories, delete old and copy new
+          if fCurrent.exists() then
+            safeDeleteRecursively(fCurrent.toPath)
+            if fCurrent.exists() then
+              throw new UpdateException(s"Failed to delete old directory: $pathStr at ${fCurrent.getAbsolutePath}")
+
+          copyDirectoryRecursively(fNew.toPath, fCurrent.toPath)
+
+          if !fCurrent.exists() then
+            throw new UpdateException(s"Failed to copy new directory: $pathStr to ${fCurrent.getAbsolutePath}")
         else
-          true
-      else
-        val f = Files.copy(fNew.toPath, fCurrent.toPath, StandardCopyOption.REPLACE_EXISTING) //scary
-        if !fCurrent.exists() && f != fCurrent.toPath then
-          println(s"$pathStr file failed to copy")
-          false
-        else
-          true
+          // For files, use REPLACE_EXISTING
+          Files.copy(fNew.toPath, fCurrent.toPath, StandardCopyOption.REPLACE_EXISTING)
+
+          if !fCurrent.exists() then
+            throw new UpdateException(s"Failed to copy new file: $pathStr to ${fCurrent.getAbsolutePath}")
+      catch
+        case e: UpdateException => throw e
+        case e: Exception =>
+          throw new UpdateException(s"Error replacing $pathStr", e)
 
     println("Updating files...")
 
-    List(
+    val filesToUpdate = List(
       "maps",
       "demo_mod",
       s"target${File.separator}HOIIVUtils.jar",
       "HOIIVUtils.bat",
       "HOIIVUtils.sh"
-    ).foreach: path =>
-      if !replace(path) then
-        succ = false
-        throw new Exception(s"Failed to replace $path")
-        System.exit(1)
+    )
 
-    println("Updated files")
+    filesToUpdate.foreach: path =>
+      replace(path)
 
+    println("Updated all files successfully")
+
+    // Handle updater jar update if it exists
     val uprJarl = s"${File.separator}Updater${File.separator}target${File.separator}updater.jar.temp"
     val uprJar = new File(hDir + uprJarl)
     val uprJarNew = new File(newHOIIVUtils + uprJarl)
 
     if uprJarNew.exists() then
-      Files.move(uprJarNew.toPath, uprJar.toPath)
-      if !uprJar.exists() then
-        println("updater jar file failed to copy")
-        succ = false
+      println("Updating updater jar...")
+      try
+        Files.move(uprJarNew.toPath, uprJar.toPath, StandardCopyOption.REPLACE_EXISTING)
+        if !uprJar.exists() then
+          throw new UpdateException(s"Failed to move updater jar to ${uprJar.getAbsolutePath}")
+      catch
+        case e: UpdateException => throw e
+        case e: Exception =>
+          throw new UpdateException("Failed to update updater jar", e)
 
-    safeDeleteRecursively(tempDir.toPath)
+    // Clean up temp directory
+    println("Cleaning up temp directory...")
+    try
+      safeDeleteRecursively(tempDir.toPath)
+      if tempDir.exists() then
+        println("Warning: temp directory still exists, but continuing anyway")
+    catch
+      case e: Exception =>
+        println(s"Warning: Failed to delete temp directory: ${e.getMessage}")
+        // Don't fail the update if cleanup fails
 
-    if tempDir.exists() then
-      println("temp dir failed to delete")
-      succ = false
-
+    // Delete properties file to force regeneration
     val propF = new File(s"$hDir${File.separator}HOIIVUtils.properties")
+    if propF.exists() then
+      try
+        if !propF.delete() then
+          println("Warning: Failed to delete properties file, but continuing anyway")
+      catch
+        case e: Exception =>
+          println(s"Warning: Error deleting properties file: ${e.getMessage}")
 
-    if !propF.delete() then println("Failed to delete properties file")
+    println("\n====================================")
+    println("Update completed successfully!")
+    println("====================================\n")
 
-    if succ then
-      println("Update successful: ")
-    else
-      println("Update failed: ")
-      JOptionPane.showMessageDialog(null, "Update failed.", "Error", JOptionPane.ERROR_MESSAGE)
-
+    // Start HOIIVUtils
     print("Starting HOIIVUtils. This might take a second...")
     try
-      val updaterJar = s"$hDir${File.separator}target${File.separator}HOIIVUtils.jar"
-      val command = Seq("cmd", "/c", "start", "cmd", "/k", "java", "-jar", updaterJar)
+      val hoiivJar = new File(s"$hDir${File.separator}target${File.separator}HOIIVUtils.jar")
+      if !hoiivJar.exists() then
+        throw new UpdateException(s"HOIIVUtils.jar not found at ${hoiivJar.getAbsolutePath}")
+
+      val command = Seq("cmd", "/c", "start", "cmd", "/k", "java", "-jar", hoiivJar.getAbsolutePath)
       Process(command).run()
+      println(" Started!")
       println("Please close this window")
       sys.exit(0)
     catch
+      case e: UpdateException => throw e
       case e: Exception =>
-        e.printStackTrace()
+        throw new UpdateException("Failed to start HOIIVUtils", e)
 
   private def downloadReleaseAsset(url: String, outputFilePath: String): Unit =
     val connection = new URL(url).openConnection()
@@ -161,8 +268,14 @@ object Updater:
     try
       var entry: ZipEntry = zipInputStream.getNextEntry
       while entry != null do
-        val newFile = new File(destDir, entry.getName)
-        if entry.isDirectory then
+        // Normalize path separators - replace backslashes with forward slashes
+        val normalizedName = entry.getName.replace('\\', '/')
+        val newFile = new File(destDir, normalizedName)
+
+        // Check if entry is a directory (either by isDirectory or ends with /)
+        val isDir = entry.isDirectory || normalizedName.endsWith("/")
+
+        if isDir then
           newFile.mkdirs()
         else
           new File(newFile.getParent).mkdirs()
@@ -193,13 +306,30 @@ object Updater:
     )
 
   private def safeDeleteRecursively(path: Path): Unit =
-    if !Files.exists(path) then println(s"Directory does not exist: $path")
+    if !Files.exists(path) then
+      return // Silently return if path doesn't exist
+
     Files.walkFileTree(path, new SimpleFileVisitor[Path]:
       override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult =
-        Files.delete(file)
-        FileVisitResult.CONTINUE
+        try
+          Files.delete(file)
+          FileVisitResult.CONTINUE
+        catch
+          case e: Exception =>
+            println(s"Warning: Failed to delete file ${file}: ${e.getMessage}")
+            FileVisitResult.CONTINUE
 
       override def postVisitDirectory(dir: Path, exc: IOException): FileVisitResult =
-        Files.delete(dir)
-        FileVisitResult.CONTINUE
+        if exc != null then
+          println(s"Warning: Error accessing directory ${dir}: ${exc.getMessage}")
+        try
+          Files.delete(dir)
+          FileVisitResult.CONTINUE
+        catch
+          case e: Exception =>
+            println(s"Warning: Failed to delete directory ${dir}: ${e.getMessage}")
+            FileVisitResult.CONTINUE
     )
+
+// Custom exception class for update-specific errors
+class UpdateException(message: String, cause: Throwable = null) extends Exception(message, cause)
