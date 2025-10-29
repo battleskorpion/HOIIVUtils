@@ -1,6 +1,5 @@
 package com.hoi4utils.databases.effect
 
-import com.hoi4utils.shared.{BoolType, ExpectedRange, RichString}
 import com.hoi4utils.exceptions.InvalidParameterException
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
 import com.hoi4utils.hoi4.common.idea.Idea
@@ -10,6 +9,7 @@ import com.hoi4utils.hoi4.scope.ScopeType
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
 import com.hoi4utils.script.datatype.StringPDX
+import com.hoi4utils.shared.{BoolType, ExpectedRange, RichString}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, IOException}

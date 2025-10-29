@@ -5,18 +5,18 @@ import com.hoi4utils.hoi4.map.state.State
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.parser.ClausewitzDate
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController2, JavaFXUIManager}
-import com.hoi4utils.ui.javafx.scene.control.{DoubleOrPercentTableCell, DoubleTableCell, ExcelExport, StateTable, TableViewWindow2}
+import com.hoi4utils.ui.javafx.scene.control.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, CheckBox, Label, ScrollPane, SplitPane, TableColumn, TableView, ToolBar}
+import javafx.scene.control.*
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.{AnchorPane, VBox}
 
+import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
 import scala.jdk.javaapi.CollectionConverters
-import javax.swing.JOptionPane
 
 class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with TableViewWindow2 with LazyLogging:
   setFxmlFile("/com/hoi4utils/ui/countries/BuildingsByCountry.fxml")

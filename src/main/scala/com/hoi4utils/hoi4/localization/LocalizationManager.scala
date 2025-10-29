@@ -1,9 +1,9 @@
 package com.hoi4utils.hoi4.localization
 
-import com.hoi4utils.shared.RichString
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
 import com.hoi4utils.hoi4.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.main.HOIIVFiles
+import com.hoi4utils.shared.RichString
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.*

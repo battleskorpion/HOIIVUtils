@@ -1,9 +1,9 @@
 package com.hoi4utils.ui.menus
 
 import com.hoi4utils.ui.countries.BuildingsByCountryController2
-import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.hoi4utils.ui.gfx.InterfaceController
+import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.localization.CustomTooltipController
 import com.hoi4utils.ui.map.ProvinceColorsController
 import com.hoi4utils.ui.units.CompareUnitsController

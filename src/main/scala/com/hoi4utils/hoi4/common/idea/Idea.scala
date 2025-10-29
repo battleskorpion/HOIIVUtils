@@ -1,10 +1,10 @@
 package com.hoi4utils.hoi4.common.idea
 
-import com.hoi4utils.shared.ExpectedRange
 import com.hoi4utils.databases.modifier.{Modifier, ModifierDatabase}
 import com.hoi4utils.hoi4.localization.{Localizable, Property}
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
+import com.hoi4utils.shared.ExpectedRange
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
 

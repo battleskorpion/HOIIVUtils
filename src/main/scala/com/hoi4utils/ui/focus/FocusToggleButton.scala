@@ -5,9 +5,8 @@ import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.geometry.Pos
 import javafx.scene.control.*
+import javafx.scene.image.{Image, ImageView}
 import javafx.scene.layout.*
-import javafx.scene.image.Image
-import javafx.scene.image.ImageView
 
 class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double) extends ToggleButton with LazyLogging:
 

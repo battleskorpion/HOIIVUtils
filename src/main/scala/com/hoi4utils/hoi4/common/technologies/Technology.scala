@@ -2,7 +2,6 @@ package com.hoi4utils.hoi4.common.technologies
 
 import com.hoi4utils.hoi4.localization.{Localizable, Property}
 import com.hoi4utils.parser.ClausewitzDate
-import com.hoi4utils.parser.ClausewitzDate
 import org.jetbrains.annotations.NotNull
 
 import scala.collection.mutable

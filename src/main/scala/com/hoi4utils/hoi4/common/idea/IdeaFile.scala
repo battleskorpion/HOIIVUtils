@@ -4,7 +4,7 @@ import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4.localization.Localizable
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Node, ParserException}
-import com.hoi4utils.script.{CollectionPDX, PDXFile, PDXReadable, PDXScript, StructuredPDX}
+import com.hoi4utils.script.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 

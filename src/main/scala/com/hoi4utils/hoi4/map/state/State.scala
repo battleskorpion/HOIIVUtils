@@ -1,7 +1,6 @@
 package com.hoi4utils.hoi4.map.state
 
 import com.hoi4utils.*
-import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
 import com.hoi4utils.hoi4.history.countries.CountryFile
 import com.hoi4utils.hoi4.localization.*
@@ -15,6 +14,7 @@ import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
 import com.hoi4utils.script.datatype.StringPDX
+import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 import org.jetbrains.annotations.NotNull

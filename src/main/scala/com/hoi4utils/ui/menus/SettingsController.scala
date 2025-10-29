@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.menus
 
-import com.hoi4utils.main.HOIIVUtils._
+import com.hoi4utils.main.HOIIVUtils.*
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager, RootWindows}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML

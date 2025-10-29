@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.javafx.application
 
-import com.hoi4utils.main.HOIIVUtils._
+import com.hoi4utils.main.HOIIVUtils.*
 import com.hoi4utils.main.{HOIIVUtils, Initializer, Version}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController
 import com.typesafe.scalalogging.LazyLogging

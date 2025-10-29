@@ -1,8 +1,8 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.shared.BoolType
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
+import com.hoi4utils.shared.BoolType
 
 class BooleanPDX(pdxIdentifiers: List[String], final private var defaultValue: Boolean, final private var boolType: BoolType) extends AbstractPDX[Boolean](pdxIdentifiers):
 

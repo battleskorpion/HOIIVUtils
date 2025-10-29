@@ -5,25 +5,24 @@ import com.hoi4utils.internal.ConfigException
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.*
 import com.hoi4utils.ui.countries.BuildingsByCountryController2
-import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, RootWindows}
 import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.gfx.InterfaceController
+import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, RootWindows}
 import com.hoi4utils.ui.localization.*
-import com.hoi4utils.ui.localization.CustomTooltipController
 import com.hoi4utils.ui.map.{MapEditorController, MapGenerationController, ProvinceColorsController}
 import com.hoi4utils.ui.menus.SettingsController
 import com.hoi4utils.ui.parser.ParserViewerController
 import com.hoi4utils.ui.units.CompareUnitsController
 import com.typesafe.scalalogging.LazyLogging
+import javafx.animation.{Animation, KeyFrame, Timeline}
 import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.*
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.*
 import javafx.stage.Stage
-import javafx.scene.input.MouseEvent
-import javafx.animation.{Animation, KeyFrame, Timeline}
 import javafx.util.Duration
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
