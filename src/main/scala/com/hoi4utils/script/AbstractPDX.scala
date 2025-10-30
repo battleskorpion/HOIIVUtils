@@ -300,4 +300,6 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
       s"""Parser Exception (File):
          |	Exception Message: ${exception.getMessage}
          |${allContext.map { case (k, v) => s"\t$k: $v" }.mkString("\n")}""".stripMargin)
+    exception.printStackTrace()
+
   }

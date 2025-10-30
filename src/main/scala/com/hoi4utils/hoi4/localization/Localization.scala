@@ -39,7 +39,7 @@ case class Localization(
   /** Can this localization be replaced by *any* new one? */
   def isReplaceable: Boolean = status match
     case Status.NEW | Status.EXISTS | Status.UPDATED => true
-    case Status.VANILLA | Status.MISSING               => false
+    case Status.VANILLA | Status.MISSING             => false
 
   def isNew: Boolean = status == Status.NEW
 
@@ -56,7 +56,7 @@ case class Localization(
       case Status.NEW     => Status.NEW
       case Status.EXISTS  => Status.UPDATED
       case Status.UPDATED => Status.UPDATED
-      case _               => throw UnexpectedLocalizationStatusException(this)
+      case _              => throw UnexpectedLocalizationStatusException(this)
     copy(version = newVersion, text = newText, status = newStatus)
   }
 

@@ -1,7 +1,7 @@
 package com.hoi4utils.shared
 
 import com.hoi4utils.hoi4.common.national_focus
-import com.hoi4utils.hoi4.common.national_focus.{FocusTree, FocusTreesManager}
+import com.hoi4utils.hoi4.common.national_focus.{FocusTree, FocusTreeManager}
 import com.hoi4utils.parser.{Node, Parser}
 import org.junit.jupiter.api.{AfterEach, BeforeEach}
 
@@ -22,7 +22,7 @@ abstract class ParserTestBase {
   @BeforeEach
   def setUpParserTest(): Unit = {
     // Clear any global state from previous tests
-    FocusTreesManager.clear()
+    FocusTreeManager.clear()
 
     // Get paths to test resources
     testModPath = getTestResourcePath("test_mods/demo_mod")
@@ -31,7 +31,7 @@ abstract class ParserTestBase {
   @AfterEach
   def tearDownParserTest(): Unit = {
     // Clear global state after test
-    FocusTreesManager.clear()
+    FocusTreeManager.clear()
   }
 
   /**

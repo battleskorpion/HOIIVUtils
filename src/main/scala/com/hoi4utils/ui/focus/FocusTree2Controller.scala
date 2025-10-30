@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.focus
 
-import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreesManager, Point, Focus as gridX}
+import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager, Point, Focus as gridX}
 import com.hoi4utils.script.MultiPDX
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.control.ZoomableScrollPane
@@ -122,7 +122,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 
   private def populateFocusSelection(): Unit =
     focusTreeView.setGridLinesVisible(lines)
-    Some(FocusTreesManager.observeFocusTrees).foreach(trees =>
+    Some(FocusTreeManager.observeFocusTrees).foreach(trees =>
       trees.forEach(someFocusTree =>
         val toggleButton = ToggleButton(someFocusTree.toString)
         focusTreesToggleButtons += toggleButton

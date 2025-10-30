@@ -1,12 +1,13 @@
 package com.hoi4utils.hoi4.common.national_focus
 
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
-import com.hoi4utils.hoi4.common.national_focus.FocusTreesManager.*
+import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.*
 import com.hoi4utils.hoi4.localization.{Localizable, Property}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
 import com.hoi4utils.script.datatype.StringPDX
+import com.hoi4utils.shared.BoolType
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 
@@ -16,17 +17,33 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 import scala.util.boundary
 
+val focusTreeIdentifier = "focus_tree"
+
 /**
  * Represents a focus tree, which is a collection of focuses.
  *
  * @note Do not create instances of this class directly, unless a few focus tree is being created or loaded.
  *       Use FocusTree.get(File) instead.
  */
-class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile:
+class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile:
   //final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
-  final var country = new FocusTreeCountryPDX
-  final var focuses = new MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
-  final var id = new StringPDX("id")
+
+  /* PDX attributes */
+  val id = 
+    StringPDX("id")
+  val country = 
+    FocusTreeCountryPDX()
+  val focuses: MultiPDX[Focus] = 
+    MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
+  /* less used */
+  val default = 
+    BooleanPDX("default")
+  val reset_on_civilwar = 
+    BooleanPDX("reset_on_civilwar")
+  val shared_focus: ReferencePDX[SharedFocus] = 
+    ReferencePDX[SharedFocus](() => FocusTreeManager.sharedFocuses, "shared_focus")
+
+
   var name: String = ""
   var columns: Int = 1
   var rows: Int = 1
@@ -37,7 +54,7 @@ class FocusTree(file: File = null) extends StructuredPDX("focus_tree") with Loca
   private var _commentedFocuses: ListBuffer[String] = ListBuffer.empty
 
   /* default */
-  FocusTreesManager.add(this)
+  FocusTreeManager.add(this)
 
   file match
     case null => // create empty focus tree

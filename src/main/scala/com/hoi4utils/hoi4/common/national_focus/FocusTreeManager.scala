@@ -2,6 +2,7 @@ package com.hoi4utils.hoi4.common.national_focus
 
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
 import com.hoi4utils.main.HOIIVFiles
+import com.hoi4utils.parser.{Parser, ParserException}
 import com.hoi4utils.script.PDXReadable
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
@@ -16,10 +17,13 @@ import scala.util.boundary
  * ALL the FocusTree/FocusTrees
  * Localizable data: focus tree name. Each focus is its own localizable data.
  */
-object FocusTreesManager extends LazyLogging with PDXReadable:
+object FocusTreeManager extends LazyLogging with PDXReadable:
   val focusTrees = new ListBuffer[FocusTree]()
   val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
   var focusTreeErrors: ListBuffer[String] = ListBuffer.empty
+
+  /* other */
+  val _sharedFocuses = new ListBuffer[SharedFocus]()
 
   def observeFocusTrees: ObservableList[FocusTree] = FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
 
@@ -34,7 +38,11 @@ object FocusTreesManager extends LazyLogging with PDXReadable:
     else
       // create focus trees from files
       HOIIVFiles.Mod.focus_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach: f =>
-        new FocusTree(f)
+        if (hasFocusTreeHeader(f))
+          new FocusTree(f)
+        else
+          new SharedFocusFile(f)
+      System.err.println(s"Shared focuses: ${_sharedFocuses.size}")
       true
 
   /** Clears all focus trees and any other relevant values. */
@@ -59,3 +67,16 @@ object FocusTreesManager extends LazyLogging with PDXReadable:
     tag match
       case t: CountryTag => focusTrees.find(_.countryTag == t)
       case f: File => focusTreeFileMap.get(f)
+
+  def sharedFocuses: Iterable[SharedFocus] = _sharedFocuses
+
+  def hasFocusTreeHeader(file: File): Boolean =
+    val parser = Parser(file)
+    try {
+      val rootNode = parser.parse
+      rootNode.contains(focusTreeIdentifier)
+    } catch {
+      case e: ParserException =>
+        logger.error(s"Error parsing file ${file.getName} when determining if it is a focus tree file.")
+        false
+    }

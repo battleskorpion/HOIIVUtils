@@ -3,7 +3,7 @@ package com.hoi4utils.hoi4.common.national_focus
 import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
-import com.hoi4utils.hoi4.common.national_focus.FocusTreesManager.focusTreeErrors
+import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
 import com.hoi4utils.hoi4.gfx.Interface
 import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Localization, Property}
 import com.hoi4utils.hoi4.scope.Scope
@@ -22,26 +22,38 @@ import scala.collection.mutable.ListBuffer
 
 
 @lombok.extern.slf4j.Slf4j
-class Focus(var focusTree: FocusTree, node: Node = null) extends StructuredPDX("focus") with Localizable with HasDesc with Referable:
+class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String = "focus") extends StructuredPDX(pdxIdentifier) with Localizable with HasDesc with Referable:
 
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
 
   /* attributes */
-  val id                      = StringPDX("id")
-  val icon                    = MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
+  val id = 
+    StringPDX("id")
+  val icon = 
+    MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
   /** If relative positioning, relative x */
-  final val x                 = IntPDX("x")
+  final val x = 
+    IntPDX("x")
   /** If relative positioning, relative y */
-  final val y                 = IntPDX("y", ExpectedRange.ofPositiveInt)
-  val prerequisites           = MultiPDX[PrerequisiteSet](None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
-  val mutuallyExclusive       = MultiPDX[MutuallyExclusiveSet](None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
-  val relativePositionFocus   = ReferencePDX[Focus](() => focusTree.focuses, "relative_position_id")
-  val cost                    = DoublePDX("cost", ExpectedRange.ofPositiveInfinite(-1))
-  val availableIfCapitulated  = BooleanPDX("available_if_capitulated")
-  val cancelIfInvalid         = BooleanPDX("cancel_if_invalid", true)
-  val continueIfInvalid       = BooleanPDX("continue_if_invalid")
-  val ai_will_do              = AIWillDoPDX()
+  final val y = 
+    IntPDX("y", ExpectedRange.ofPositiveInt)
+  val prerequisites: MultiPDX[PrerequisiteSet] = 
+    MultiPDX[PrerequisiteSet](None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
+  val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] = 
+    MultiPDX[MutuallyExclusiveSet](None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
+  val relativePositionFocus: ReferencePDX[Focus] = 
+    ReferencePDX[Focus](() => focusTree.focuses, "relative_position_id")
+  val cost = 
+    DoublePDX("cost", ExpectedRange.ofPositiveInfinite(-1))
+  val availableIfCapitulated = 
+    BooleanPDX("available_if_capitulated")
+  val cancelIfInvalid = 
+    BooleanPDX("cancel_if_invalid", true)
+  val continueIfInvalid = 
+    BooleanPDX("continue_if_invalid")
+  val ai_will_do = 
+    AIWillDoPDX()
   /** completion reward */
   //  final val completionReward: CompletionReward = new CompletionReward()
 
