@@ -1,0 +1,46 @@
+l_english:
+ # Shared Focuses
+ shared_diplomatic_preparations:0 "Diplomatic Preparations"
+ shared_diplomatic_preparations_desc:0 "We must prepare our diplomatic corps for the challenges ahead. This shared focus can be completed by any nation and used as a prerequisite."
+ shared_economic_reform:0 "Economic Reform Package"
+ shared_economic_reform_desc:0 "A comprehensive economic reform package that can benefit multiple national strategies."
+
+ # Main Tree
+ demo_start:0 "Begin National Focus"
+ demo_start_desc:0 "Our nation stands at a crossroads. We must choose our path forward."
+
+ # Initial Branches
+ demo_political_reforms:0 "Political Reforms"
+ demo_political_reforms_desc:0 "Focus on political development and stability. Completing this will reveal a hidden political tree!"
+ demo_military_buildup:0 "Military Buildup"
+ demo_military_buildup_desc:0 "Focus on military expansion and readiness. Completing this will reveal a hidden military tree!"
+
+ # Hidden Political Tree
+ demo_hidden_democracy:0 "Strengthen Democracy"
+ demo_hidden_democracy_desc:0 "This focus was hidden until you completed Political Reforms! It strengthens our democratic institutions."
+ demo_hidden_diplomacy:0 "Expand Diplomatic Network"
+ demo_hidden_diplomacy_desc:0 "This hidden focus improves our diplomatic capabilities."
+ demo_political_use_shared_diplo:0 "Leverage Diplomatic Preparations"
+ demo_political_use_shared_diplo_desc:0 "This focus uses the shared diplomatic preparations focus as a prerequisite, demonstrating shared_focus functionality."
+
+ # Hidden Military Tree
+ demo_hidden_army_expansion:0 "Army Expansion Program"
+ demo_hidden_army_expansion_desc:0 "This focus was hidden until you completed Military Buildup! It expands our armed forces."
+ demo_hidden_war_economy:0 "War Economy"
+ demo_hidden_war_economy_desc:0 "This hidden focus transitions us to a war economy."
+ demo_military_use_shared_economy:0 "Implement Economic Reforms"
+ demo_military_use_shared_economy_desc:0 "This focus uses the shared economic reform focus as a prerequisite, demonstrating shared_focus functionality."
+
+ # Super Hidden Tree
+ demo_super_hidden_convergence:0 "Political-Military Convergence"
+ demo_super_hidden_convergence_desc:0 "This super-hidden focus only appears when you've progressed in BOTH the political and military trees! It represents the convergence of both paths."
+ demo_ultimate_hidden_power:0 "Ultimate National Power"
+ demo_ultimate_hidden_power_desc:0 "The ultimate hidden focus, only revealed after achieving convergence. This represents the pinnacle of our national development."
+
+ # Secondary Tree
+ secondary_start:0 "Alternative Beginning"
+ secondary_start_desc:0 "An alternative focus tree that also uses the shared focuses."
+ secondary_also_uses_shared_diplo:0 "Diplomatic Cooperation"
+ secondary_also_uses_shared_diplo_desc:0 "This focus in a different tree also uses the shared diplomatic preparations focus!"
+ secondary_also_uses_shared_economy:0 "Economic Integration"
+ secondary_also_uses_shared_economy_desc:0 "This focus in a different tree also uses the shared economic reform focus!"

@@ -1,0 +1,328 @@
+# Demo focus tree showcasing Hidden Trees and Shared Focus
+# This demonstrates how to create focus trees that reveal new branches and use shared focuses
+
+### SHARED FOCUS - Can be used by multiple focus trees ###
+shared_focus = {
+	id = shared_diplomatic_preparations
+	icon = GFX_goal_unknown
+	cost = 10
+
+	# Shared focuses are available to any tree that references them
+	# They appear in multiple trees and only need to be completed once
+
+	completion_reward = {
+		add_political_power = 50
+		add_stability = 0.05
+	}
+}
+
+shared_focus = {
+	id = shared_economic_reform
+	icon = GFX_goal_unknown
+	cost = 10
+
+	completion_reward = {
+		add_political_power = 100
+		add_war_support = 0.05
+	}
+}
+
+### MAIN FOCUS TREE ###
+focus_tree = {
+	id = hidden_tree_demo
+	country = {
+		factor = 0
+		modifier = {
+			add = 10
+			tag = SCA  # California
+		}
+	}
+
+	continuous_focus_position = { x = 50 y = 1500 }
+
+	# === INITIAL VISIBLE TREE ===
+
+	focus = {
+		id = demo_start
+		icon = GFX_goal_unknown
+		cost = 10
+		x = 10
+		y = 0
+
+		completion_reward = {
+			add_political_power = 50
+		}
+	}
+
+	# Branch 1: Political Path
+	focus = {
+		id = demo_political_reforms
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = demo_start }
+		mutually_exclusive = { focus = demo_military_buildup }
+		x = 5
+		y = 1
+
+		completion_reward = {
+			add_political_power = 100
+			# Unlocks the political hidden tree
+			set_country_flag = hidden_political_tree_unlocked
+		}
+	}
+
+	# Branch 2: Military Path
+	focus = {
+		id = demo_military_buildup
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = demo_start }
+		mutually_exclusive = { focus = demo_political_reforms }
+		x = 15
+		y = 1
+
+		completion_reward = {
+			army_experience = 10
+			# Unlocks the military hidden tree
+			set_country_flag = hidden_military_tree_unlocked
+		}
+	}
+
+	# === HIDDEN TREE 1: POLITICAL PATH ===
+	# These focuses are only visible/available after completing demo_political_reforms
+
+	focus = {
+		id = demo_hidden_democracy
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = demo_political_reforms }
+
+		# This focus is hidden until the flag is set
+		available = {
+			has_country_flag = hidden_political_tree_unlocked
+		}
+
+		x = 3
+		y = 2
+
+		completion_reward = {
+			add_political_power = 75
+			add_stability = 0.05
+		}
+	}
+
+	focus = {
+		id = demo_hidden_diplomacy
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = demo_political_reforms }
+
+		available = {
+			has_country_flag = hidden_political_tree_unlocked
+		}
+
+		x = 7
+		y = 2
+
+		completion_reward = {
+			add_political_power = 75
+		}
+	}
+
+	# Reference to SHARED FOCUS from political tree
+	focus = {
+		id = demo_political_use_shared_diplo
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = demo_hidden_diplomacy }
+		prerequisite = {
+			focus = shared_diplomatic_preparations  # Using the shared focus
+		}
+
+		available = {
+			has_country_flag = hidden_political_tree_unlocked
+		}
+
+		x = 5
+		y = 3
+
+		completion_reward = {
+			add_ideas = democratic_influence
+		}
+	}
+
+	# === HIDDEN TREE 2: MILITARY PATH ===
+	# These focuses are only visible/available after completing demo_military_buildup
+
+	focus = {
+		id = demo_hidden_army_expansion
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = demo_military_buildup }
+
+		# This focus is hidden until the flag is set
+		available = {
+			has_country_flag = hidden_military_tree_unlocked
+		}
+
+		x = 13
+		y = 2
+
+		completion_reward = {
+			army_experience = 25
+		}
+	}
+
+	focus = {
+		id = demo_hidden_war_economy
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = demo_military_buildup }
+
+		available = {
+			has_country_flag = hidden_military_tree_unlocked
+		}
+
+		x = 17
+		y = 2
+
+		completion_reward = {
+			add_ideas = war_economy
+		}
+	}
+
+	# Reference to SHARED FOCUS from military tree
+	focus = {
+		id = demo_military_use_shared_economy
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = demo_hidden_war_economy }
+		prerequisite = {
+			focus = shared_economic_reform  # Using the shared focus
+		}
+
+		available = {
+			has_country_flag = hidden_military_tree_unlocked
+		}
+
+		x = 15
+		y = 3
+
+		completion_reward = {
+			add_war_support = 0.10
+		}
+	}
+
+	# === SUPER HIDDEN TREE ===
+	# This tree only appears after BOTH political and military paths are partially completed
+
+	focus = {
+		id = demo_super_hidden_convergence
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = {
+			focus = demo_political_use_shared_diplo
+		}
+		prerequisite = {
+			focus = demo_military_use_shared_economy
+		}
+
+		# Only available if BOTH hidden trees are unlocked
+		available = {
+			has_country_flag = hidden_political_tree_unlocked
+			has_country_flag = hidden_military_tree_unlocked
+		}
+
+		x = 10
+		y = 4
+
+		completion_reward = {
+			add_political_power = 200
+			army_experience = 50
+			add_stability = 0.10
+			add_war_support = 0.10
+			# Unlock the ultimate hidden tree
+			set_country_flag = ultimate_tree_unlocked
+		}
+	}
+
+	focus = {
+		id = demo_ultimate_hidden_power
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = demo_super_hidden_convergence }
+
+		# Only visible after convergence
+		available = {
+			has_country_flag = ultimate_tree_unlocked
+		}
+
+		x = 10
+		y = 5
+
+		completion_reward = {
+			add_political_power = 500
+			army_experience = 100
+			add_ideas = fascism_idea
+		}
+	}
+}
+
+### SECONDARY FOCUS TREE - Demonstrates sharing focuses across different trees ###
+focus_tree = {
+	id = secondary_demo_tree
+	country = {
+		factor = 0
+		modifier = {
+			add = 5
+			tag = TST  # Test country
+		}
+	}
+
+	continuous_focus_position = { x = 50 y = 1500 }
+
+	focus = {
+		id = secondary_start
+		icon = GFX_goal_unknown
+		cost = 10
+		x = 5
+		y = 0
+
+		completion_reward = {
+			add_political_power = 50
+		}
+	}
+
+	# This tree also uses the SHARED FOCUS
+	focus = {
+		id = secondary_also_uses_shared_diplo
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = secondary_start }
+		prerequisite = {
+			focus = shared_diplomatic_preparations  # Same shared focus!
+		}
+		x = 3
+		y = 1
+
+		completion_reward = {
+			add_political_power = 150
+		}
+	}
+
+	focus = {
+		id = secondary_also_uses_shared_economy
+		icon = GFX_goal_unknown
+		cost = 10
+		prerequisite = { focus = secondary_start }
+		prerequisite = {
+			focus = shared_economic_reform  # Same shared focus!
+		}
+		x = 7
+		y = 1
+
+		completion_reward = {
+			add_stability = 0.10
+		}
+	}
+}
