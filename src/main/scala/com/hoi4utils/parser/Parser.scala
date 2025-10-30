@@ -38,7 +38,7 @@ class Parser(pdx: String | File = null) {
     val leading = consumeTrivia()
 
     // Parse the block content that forms the root node.
-    val blockContent = parseBlockContent()
+    val blockContent = parseBlockContent()  // todo fix 
     if (blockContent.isEmpty)
       throw new ParserException("Parsed block content was empty")
     // Consume any trailing trivia.
