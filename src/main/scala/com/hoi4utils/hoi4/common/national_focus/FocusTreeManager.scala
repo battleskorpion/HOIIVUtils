@@ -23,7 +23,7 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
   var focusTreeErrors: ListBuffer[String] = ListBuffer.empty
 
   /* other */
-  val _sharedFocuses = new ListBuffer[SharedFocus]()
+  val _sharedFocusFiles = new ListBuffer[SharedFocusFile]()
 
   def observeFocusTrees: ObservableList[FocusTree] = FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
 
@@ -41,8 +41,9 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
         if (hasFocusTreeHeader(f))
           new FocusTree(f)
         else
-          new SharedFocusFile(f)
-      System.err.println(s"Shared focuses: ${_sharedFocuses.size}")
+          add(new SharedFocusFile(f))
+      System.err.println(s"Shared focus files: ${_sharedFocusFiles.size}")
+      System.err.println(s"Shared focuses: ${_sharedFocusFiles.map(_.sharedFocuses.size).sum}")
       true
 
   /** Clears all focus trees and any other relevant values. */
@@ -62,13 +63,26 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
       case None =>
     focusTrees
 
+  /**
+   * Adds a shared focus file to the list of shared focus files.
+   *
+   * @param sharedFocusFile the shared focus file to add
+   * @return the updated list of focus trees
+   */
+  def add(sharedFocusFile: SharedFocusFile): Iterable[SharedFocusFile] =
+    _sharedFocusFiles += sharedFocusFile
+    _sharedFocusFiles
+
   /** Returns focus tree corresponding to the tag, if it exists*/
   def get(tag: CountryTag | File): Option[FocusTree] =
     tag match
       case t: CountryTag => focusTrees.find(_.countryTag == t)
       case f: File => focusTreeFileMap.get(f)
 
-  def sharedFocuses: Iterable[SharedFocus] = _sharedFocuses
+  def sharedFocusFiles: Iterable[SharedFocusFile] = _sharedFocusFiles.toList
+
+  def sharedFocuses: Iterable[SharedFocus] =
+    _sharedFocusFiles.flatMap(_.sharedFocuses)
 
   def hasFocusTreeHeader(file: File): Boolean =
     val parser = Parser(file)
