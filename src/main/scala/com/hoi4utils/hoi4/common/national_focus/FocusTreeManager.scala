@@ -23,7 +23,7 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
   var focusTreeErrors: ListBuffer[String] = ListBuffer.empty
 
   /* other */
-  val _sharedFocusFiles = new ListBuffer[SharedFocusFile]()
+  private val _sharedFocusFiles = new ListBuffer[SharedFocusFile]()
 
   def observeFocusTrees: ObservableList[FocusTree] = FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
 
@@ -80,6 +80,9 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
       case f: File => focusTreeFileMap.get(f)
 
   def sharedFocusFiles: Iterable[SharedFocusFile] = _sharedFocusFiles.toList
+
+  def sharedFocusFilesAsPseudoTrees: Iterable[PseudoSharedFocusTree] =
+    _sharedFocusFiles.map(sff => PseudoSharedFocusTree.forFocuses(sff.sharedFocuses.toList, s"${sff.fileName}"))
 
   def sharedFocuses: Iterable[SharedFocus] =
     _sharedFocusFiles.flatMap(_.sharedFocuses)

@@ -23,8 +23,6 @@ import scala.compiletime.uninitialized
 import scala.jdk.javaapi.CollectionConverters
 
 class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLogging:
-  setFxmlFile("/com/hoi4utils/ui/focus/FocusTree2.fxml")
-  setTitle("Focus Tree Viewer 2: Electric Boogaloo")
   private val focusGridColumnsSize: Int = 100
   private val focusGridRowSize: Int = 200
   private val welcomeMessage: String = s"Welcome to the Focus Tree Viewer 2!"
@@ -66,6 +64,10 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private var dragHighlight: Region = uninitialized
   private var currentHighlightedCell: Option[(Int, Int)] = None
   private var dragImageView: ImageView = uninitialized
+
+  /* init */
+  setFxmlFile("/com/hoi4utils/ui/focus/FocusTree2.fxml")
+  setTitle("Focus Tree Viewer 2: Electric Boogaloo")
 
   @FXML def initialize(): Unit =
     setWindowControlsVisibility()
@@ -146,6 +148,28 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         vbox.getChildren.add(toggleButton)
       )
       focusTreesCount.setText(s"Focus Trees: ${trees.size()}")
+    )
+    FocusTreeManager.sharedFocusFilesAsPseudoTrees.foreach(pseudoTree =>
+      val toggleButton = ToggleButton(pseudoTree.toString)
+      focusTreesToggleButtons += toggleButton
+      toggleButton.setToggleGroup(toggleGroup)
+      toggleButton.setOnAction(_ => {
+        if toggleButton.isSelected then
+          // Manually deselect all other buttons
+          focusTreesToggleButtons.foreach(btn =>
+            if btn != toggleButton then
+              btn.setSelected(false)
+              welcome.setSelected(false)
+          )
+          welcome.setSelected(false)
+          loadFocusTreeView(pseudoTree)
+        else
+          toggleButton.setSelected(false)
+          toggleButton.setSelected(true)
+          loadFocusTreeView(pseudoTree)
+      })
+      toggleButton.setPadding(Insets(5, 10, 5, 10))
+      vbox.getChildren.add(toggleButton)
     )
 
   /** Loads the given FocusTreeFile into the focusTreeView GridPane by creating it in a separate thread */

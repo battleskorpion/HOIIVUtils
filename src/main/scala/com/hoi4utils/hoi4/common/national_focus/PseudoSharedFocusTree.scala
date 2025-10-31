@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.common.national_focus
 
 case class PseudoSharedFocusTree() extends FocusTree {
-
+	override def toString: String = s"[Shared Focuses] ${super.toString}"
 }
 
 object PseudoSharedFocusTree {
@@ -16,4 +16,10 @@ object PseudoSharedFocusTree {
 			trees = newTree :: trees
 			newTree
 
+	def forFocuses(focuses: List[SharedFocus], id: String): PseudoSharedFocusTree = {
+		val newTree = new PseudoSharedFocusTree()
+		newTree.id @= id
+		focuses.foreach(newTree.addNewFocus)
+		newTree
+	}
 }
