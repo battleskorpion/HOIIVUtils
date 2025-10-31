@@ -9,7 +9,7 @@ import scala.util.{Try, Failure, Success}
 
 class ParserTest extends AnyFunSuiteLike {
 
-  private val testPath = "src/test/resources/clausewitz_parser/"
+  private val testPath = "src/test/resources/pdx/"
   private val multiPDXFilesToTest = List(
     new File(testPath + "shared_focuses_1_shortest.txt"),
     new File(testPath + "shared_focuses_1_shorter.txt"),

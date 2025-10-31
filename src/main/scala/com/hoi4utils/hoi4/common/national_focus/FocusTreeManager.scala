@@ -77,6 +77,6 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
       rootNode.contains(focusTreeIdentifier)
     } catch {
       case e: ParserException =>
-        logger.error(s"Error parsing file ${file.getName} when determining if it is a focus tree file.")
+        logger.error(s"Error parsing file ${file.getName} when determining if it is a focus tree file: ${e.getMessage}")
         false
     }

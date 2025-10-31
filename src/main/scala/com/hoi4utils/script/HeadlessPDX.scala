@@ -6,6 +6,9 @@ import com.hoi4utils.parser.Node
 import scala.collection.mutable.ListBuffer
 
 trait HeadlessPDX { this: StructuredPDX =>
+
+  override def isValidIdentifier(node: Node): Boolean = true
+  
   /**
    * Overrides the default set behavior to ignore the identifier check.
    * This is useful for headless files where there is no top-level key.
@@ -17,9 +20,10 @@ trait HeadlessPDX { this: StructuredPDX =>
     expression.$ match {
       case l: ListBuffer[Node] =>
         // then load each sub-PDXScript
-        for (pdxScript <- childScripts) {
-          pdxScript.loadPDX(l)
-        }
+        var remainingNodes = Iterable.from(l)
+        for pdxScript <- childScripts do
+          remainingNodes = pdxScript.loadPDX(remainingNodes)
+        badNodesList = remainingNodes
       case _ =>
         throw new NodeValueTypeException(expression, "list", this.getClass)
     }

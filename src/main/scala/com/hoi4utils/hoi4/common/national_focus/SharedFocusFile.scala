@@ -9,6 +9,10 @@ import scala.collection.mutable.ListBuffer
 
 class SharedFocusFile(_file: Option[File]) extends StructuredPDX with HeadlessPDX with PDXFile {
 
+	/* PDX attributes */
+	val sharedFocuses: MultiPDX[SharedFocus] = MultiPDX[SharedFocus](None, Some(() => SharedFocus()), "shared_focus")
+
+
 	/* init */
 	_file match
 		case Some(f) =>
@@ -18,8 +22,6 @@ class SharedFocusFile(_file: Option[File]) extends StructuredPDX with HeadlessPD
 
 	def this(file: File) = this(Some(file))
 
-	/* PDX attributes */
-	val sharedFocuses: MultiPDX[SharedFocus] = MultiPDX[SharedFocus](None, Some(() => SharedFocus()), "shared_focus")
 
 	override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(sharedFocuses)
 

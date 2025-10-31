@@ -52,7 +52,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
    */
   override def loadPDX(expression: Node): Unit = expression.identifier match
     case None => expression.$ match
-      case l: ListBuffer[Node] => loadPDX(l)
+      case  l: ListBuffer[Node] => loadPDX(l)
       case _ => handleNodeValueTypeError(expression, NodeValueTypeException("PDXScript.loadPDX: Expected list of nodes, got: \n" + expression))
     case Some(_) =>
       super.loadPDX(expression)
