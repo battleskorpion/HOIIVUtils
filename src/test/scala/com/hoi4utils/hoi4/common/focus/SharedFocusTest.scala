@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4.common.focus
 
-import com.hoi4utils.hoi4.common.national_focus.{FocusTree, SharedFocusFile}
+import com.hoi4utils.hoi4.common.national_focus.{FocusTree, PseudoSharedFocusTree, SharedFocusFile}
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.hasFocusTreeHeader
 import com.hoi4utils.shared.TestBase
 import org.scalatest.funsuite.AnyFunSuiteLike
@@ -57,10 +57,17 @@ class SharedFocusTest extends AnyFunSuiteLike {
 
 	test("Shared focus files parse without exceptions") {
 		withPureSharedFocusFiles { sharedFocusFile =>
-			// Just parsing without exceptions is the test
 			assert(sharedFocusFile.sharedFocuses.nonEmpty, s"No shared focuses found in file: ${sharedFocusFile.fileNameOrElse("[unknown]")}")
+			assert(sharedFocusFile.sharedFocuses.head.id.isDefined)
 
 			info(s"Successfully parsed ${sharedFocusFile.sharedFocuses.size} shared focuses from file: ${sharedFocusFile.fileNameOrElse("[unknown]")}")
+		}
+	}
+
+	test("Shared focus files contribute to Pseudo Shared Focus Tree") {
+		withPureSharedFocusFiles { sharedFocusFile =>
+			assert(sharedFocusFile.sharedFocuses.nonEmpty, s"No shared focuses found in file: ${sharedFocusFile.fileNameOrElse("[unknown]")}")
+			assert(PseudoSharedFocusTree().listFocuses.toSet.subsetOf(sharedFocusFile.sharedFocuses.toSet), s"Not all shared focuses of SharedFocusFile file ${sharedFocusFile.fileNameOrElse("[unknown]")} are present in PseudoSharedFocusTree")
 		}
 	}
 
