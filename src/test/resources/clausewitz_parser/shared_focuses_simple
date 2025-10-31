@@ -1,0 +1,53 @@
+shared_focus = {
+    id = SHR_focus_1
+    icon = GFX_goal_1
+    cost = 1
+    ai_will_do = {
+        factor = 90
+    }
+    x = 10
+    y = 0
+	available = {
+
+	}
+    completion_reward = {
+
+    }
+    search_filters = { }
+}
+
+shared_focus = {
+    id = SHR_focus_2
+    icon = GFX_goal_2
+    cost = 0
+    ai_will_do = {
+        factor = 90
+    }
+    x = 5
+    y = 0
+	available = {
+		controls_province = 7304
+	}
+    completion_reward = {
+
+    }
+    search_filters = { }
+}
+
+shared_focus = {
+    id = SHR_focus_3
+    icon = GFX_goal_3
+    cost = 0
+    ai_will_do = {
+        factor = 90
+    }
+    x = 15
+    y = 0
+	available = {
+		controls_province = 7134
+	}
+    completion_reward = {
+
+    }
+    search_filters = { }
+}

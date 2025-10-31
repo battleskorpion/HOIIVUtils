@@ -15,21 +15,21 @@ import scala.util.{Try, Using}
 /**
  * Base class for parser tests providing utilities to work with test mod files
  */
-abstract class ParserTestBase {
+abstract class TestBase {
 
   protected var testModPath: Path = uninitialized
 
+  // Get paths to test resources
+  testModPath = getTestResourcePath("test_mods/demo_mod")
+
   @BeforeEach
-  def setUpParserTest(): Unit = {
+  def setUpFocusTreeTest(): Unit = {
     // Clear any global state from previous tests
     FocusTreeManager.clear()
-
-    // Get paths to test resources
-    testModPath = getTestResourcePath("test_mods/demo_mod")
   }
 
   @AfterEach
-  def tearDownParserTest(): Unit = {
+  def tearDownFocusTreeTest(): Unit = {
     // Clear global state after test
     FocusTreeManager.clear()
   }

@@ -2,18 +2,18 @@ package com.hoi4utils.hoi4.common.focus
 
 import com.hoi4utils.hoi4.common.national_focus.{FocusTree, FocusTreeManager}
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.shared.ParserTestBase
-import org.junit.jupiter.api.Assertions._
+import com.hoi4utils.shared.TestBase
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.{AfterEach, BeforeEach, DisplayName, Test}
 
 import java.io.File
 import scala.util.{Failure, Success, Try, boundary}
 
-class FocusTreeIntegrationTest extends ParserTestBase {
+class FocusTreeIntegrationTest extends TestBase {
 
   @BeforeEach
-  override def setUpParserTest(): Unit = {
-    super.setUpParserTest()
+  def setUpTest(): Unit = {
+    super.setUpFocusTreeTest()
 
     // Clear any existing focus trees before each test
     FocusTreeManager.clear()
@@ -24,7 +24,7 @@ class FocusTreeIntegrationTest extends ParserTestBase {
   }
 
   @AfterEach
-  def tearDownIntegrationTest(): Unit = {
+  def tearDownTest(): Unit = {
     // Clean up after each test
     FocusTreeManager.clear()
   }

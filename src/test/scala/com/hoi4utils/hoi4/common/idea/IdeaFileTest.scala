@@ -1,25 +1,23 @@
 package com.hoi4utils.hoi4.common.idea
 
 import com.hoi4utils.hoi4.common.idea.IdeaFile
-import com.hoi4utils.shared.ParserTestBase
+import com.hoi4utils.shared.TestBase
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.{AfterEach, BeforeEach, DisplayName, Test}
 
 import java.io.File
 import scala.util.{Failure, Success, Try}
 
-class IdeaFileTest extends ParserTestBase {
+class IdeaFileTest extends TestBase {
 
   @BeforeEach
-  override def setUpParserTest(): Unit = {
-    super.setUpParserTest()
-
+  def setUpTest(): Unit = {
     // Clear any existing idea files before each test
     IdeasManager.clear()
   }
 
   @AfterEach
-  def tearDownIdeaFileTest(): Unit = {
+  def tearDownTest(): Unit = {
     // Clean up after each test
     IdeasManager.clear()
   }

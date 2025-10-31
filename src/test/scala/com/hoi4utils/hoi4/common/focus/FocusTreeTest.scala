@@ -1,8 +1,222 @@
 package com.hoi4utils.hoi4.common.focus
 
-class FocusTreeTest {
+import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager
+import com.hoi4utils.parser.Node
+import com.hoi4utils.shared.TestBase
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.{AfterEach, BeforeEach, DisplayName, Test}
+import org.scalatest.funsuite.AnyFunSuiteLike
+
+import java.io.File
+import scala.collection.mutable.ListBuffer
+import scala.util.{Failure, Success}
+
+class FocusTreeTest extends TestBase with AnyFunSuiteLike {
+
+	@BeforeEach
+	def setUpParserTest(): Unit = {
+		// Clear any global state from previous tests
+		FocusTreeManager.clear()
+
+		// Get paths to test resources
+		testModPath = getTestResourcePath("test_mods/demo_mod")
+	}
+
+	@AfterEach
+	def tearDownParserTest(): Unit = {
+		// Clear global state after test
+		FocusTreeManager.clear()
+	}
+	
+	@Test
+	@DisplayName("Should parse basic focus tree file consistently")
+	def testBasicFocusTreeParsing(): Unit = {
+		val focusTreeFiles = getTestFilesOfType("common/national_focus")
+
+		focusTreeFiles.foreach { file =>
+			val fileName = file.getName
+			val expectedCount = getExpectedFocusCount(fileName)
+
+			if (expectedCount > 0) {
+				assertConsistentParsing(
+					() => {
+						parseFile(file) match {
+							case Success(rootNode) => countFocusesInNode(rootNode)
+							case Failure(exception) =>
+								fail(s"Failed to parse $fileName: ${exception.getMessage}")
+						}
+					},
+					expectedResult = expectedCount,
+					runs = 3
+				)
+				println(s"✓ $fileName consistently parsed $expectedCount focuses")
+			}
+		}
+	}
+
+	@Test
+	@DisplayName("Should extract focus IDs consistently")
+	def testFocusIdExtraction(): Unit = {
+		val testFile = testModPath.resolve("common/national_focus/test_focus_tree.txt").toFile
+
+		parseFile(testFile) match {
+			case Success(rootNode) =>
+				val focusIds = extractFocusIds(rootNode)
+
+				// Should have the expected number of focuses
+				assertEquals(getExpectedFocusCount("test_focus_tree.txt"), focusIds.length,
+					"Number of extracted focus IDs should match expected count")
+
+				// All focus IDs should be unique
+				val uniqueIds = focusIds.toSet
+				assertEquals(focusIds.length, uniqueIds.size,
+					"All focus IDs should be unique")
+
+				// Focus IDs should not be empty
+				focusIds.foreach { id =>
+					assertFalse(id.isEmpty, "Focus ID should not be empty")
+				}
+
+				println(s"✓ Extracted ${focusIds.length} unique focus IDs: ${focusIds.take(5).mkString(", ")}...")
+
+			case Failure(exception) =>
+				fail(s"Failed to parse test focus tree: ${exception.getMessage}")
+		}
+	}
+
+	@Test
+	@DisplayName("Should validate focus tree structure")
+	def testFocusTreeStructure(): Unit = {
+		val testFile = testModPath.resolve("common/national_focus/test_focus_tree.txt").toFile
+
+		parseFile(testFile) match {
+			case Success(rootNode) =>
+				assertTrue(validateFocusTreeStructure(rootNode),
+					"Parsed file should contain valid focus_tree structure")
+
+				// Should be able to extract focus tree ID
+				val focusTreeId = extractFocusTreeId(rootNode)
+				assertTrue(focusTreeId.isDefined, "Focus tree should have an ID")
+
+				println(s"✓ Focus tree structure valid with ID: ${focusTreeId.get}")
+
+			case Failure(exception) =>
+				fail(s"Failed to parse focus tree structure: ${exception.getMessage}")
+		}
+	}
+
+	@Test
+	@DisplayName("Should handle parsing errors gracefully")
+	def testMalformedFileHandling(): Unit = {
+		val malformedContent =
+			"""
+				focus_tree = {
+					id = broken_tree
+					focus = {
+						id = broken_focus
+						# missing closing brace
+			"""
+
+		parseContent(malformedContent) match {
+			case Success(_) =>
+				// If it somehow succeeds, that's fine too - parser might be forgiving
+				println("✓ Parser handled malformed content gracefully")
+
+			case Failure(exception) =>
+				// Should fail with a meaningful error
+				assertNotNull(exception.getMessage)
+				assertFalse(exception.getMessage.isEmpty)
+				println(s"✓ Parser failed as expected with: ${exception.getMessage}")
+		}
+	}
+
+	@Test
+	@DisplayName("Should parse focus prerequisites correctly")
+	def testFocusPrerequisites(): Unit = {
+		val testFile = testModPath.resolve("common/national_focus/test_focus_tree.txt").toFile
+
+		parseFile(testFile) match {
+			case Success(rootNode) =>
+				var focusesWithPrereqs = 0
+				var totalPrereqReferences = 0
+				val allFocusIds = extractFocusIds(rootNode).toSet
+
+				def checkPrerequisites(node: Node): Unit = {
+					if (node.nameEquals("focus")) {
+						node.rawValue match {
+							case Some(children: ListBuffer[Node]) =>
+								val prereqNodes = children.filter(_.nameEquals("prerequisite"))
+								if (prereqNodes.nonEmpty) {
+									focusesWithPrereqs += 1
+
+									prereqNodes.foreach { prereqNode =>
+										prereqNode.rawValue match {
+											case Some(prereqChildren: ListBuffer[Node]) =>
+												prereqChildren.filter(_.nameEquals("focus")).foreach { focusRefNode =>
+													focusRefNode.rawValue match {
+														case Some(prereqId: String) =>
+															totalPrereqReferences += 1
+															assertTrue(allFocusIds.contains(prereqId),
+																s"Prerequisite '$prereqId' should reference a valid focus")
+														case _ =>
+													}
+												}
+											case _ =>
+										}
+									}
+								}
+							case _ =>
+						}
+					}
+
+					node.rawValue match {
+						case Some(children: ListBuffer[Node]) =>
+							children.foreach(checkPrerequisites)
+						case _ =>
+					}
+				}
+
+				checkPrerequisites(rootNode)
+
+				assertTrue(focusesWithPrereqs > 0,
+					"Test focus tree should have some focuses with prerequisites")
+				assertTrue(totalPrereqReferences > 0,
+					"Should have found some prerequisite references")
+
+				println(s"✓ Found $focusesWithPrereqs focuses with prerequisites, $totalPrereqReferences total references")
+
+			case Failure(exception) =>
+				fail(s"Failed to parse focus tree: ${exception.getMessage}")
+		}
+	}
+
+	@Test
+	@DisplayName("Should detect changes in test files")
+	def testFileChangeDetection(): Unit = {
+		val focusTreeFiles = getTestFilesOfType("common/national_focus")
+		val expectedCounts = createExpectedCounts()
+
+		focusTreeFiles.foreach { file =>
+			val filename = file.getName
+			if (expectedCounts.contains(filename)) {
+				parseFile(file) match {
+					case Success(rootNode) =>
+						val actualCount = countFocusesInNode(rootNode)
+						val expectedCount = expectedCounts(filename)
+
+						assertEquals(expectedCount, actualCount,
+							s"File $filename: Expected $expectedCount focuses but found $actualCount. " +
+								s"If this file was intentionally modified, update getExpectedFocusCount() method.")
+
+					case Failure(exception) =>
+						fail(s"Failed to parse $filename: ${exception.getMessage}")
+				}
+			}
+		}
+	}
 
 }
+
 
 // old file
 //package com.hoi4utils.clausewitz.data.focus

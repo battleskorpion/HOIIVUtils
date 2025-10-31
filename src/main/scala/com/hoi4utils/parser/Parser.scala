@@ -11,6 +11,9 @@ class Parser(pdx: String | File = null) {
   private var tokens: Tokenizer = uninitialized
   private var _rootNode: Node = uninitialized
 
+  /* for ParserExceptions, would have been a lot to pass every time */
+  given currentPdx: File | String = pdx
+
   tokens = new Tokenizer(pdx match
     // EOF indicator is appended so tokenizer can mark the end.
     case pdx: File => new String(Files.readAllBytes(pdx.toPath)).concat(Token.EOF_INDICATOR)
@@ -40,16 +43,16 @@ class Parser(pdx: String | File = null) {
     // Parse the block content that forms the root node.
     val blockContent = parseBlockContent()  // todo fix
     if (blockContent.isEmpty)
-      throw new ParserException("Parsed block content was empty")
+      throw ParserException("Parsed block content was empty")
     // Consume any trailing trivia.
     val trailing = consumeTrivia()
     tokens.peek match {
       case Some(token) =>
         token.`type` match {
           case TokenType.eof => // OK
-          case _ => throw new ParserException("Input not completely parsed. Last token: " + token.value)
+          case _ => throw ParserException("Input not completely parsed. Last token: " + token.value)
         }
-      case None => throw new ParserException(s"Input not completely parsed. Tokens: ${tokens}")
+      case None => throw ParserException(s"Input not completely parsed. Tokens: ${tokens}")
     }
     // Create the root node using the parsed children (a ListBuffer[Node]) as its raw value.
     _rootNode = new Node(
@@ -83,9 +86,10 @@ class Parser(pdx: String | File = null) {
     // Capture leading trivia for this node.
     val leading = consumeTrivia()
 
-    val tokenIdentifier = tokens.next.getOrElse(
-      throw new ParserException("Unexpected end of input while parsing node identifier")
-    )
+    val tokenIdentifier = tokens.next match
+      case Some(token) => token
+      case None =>
+        throw ParserException("Unexpected end of input while parsing node identifier")
 
     // If the token is a comment, create a node that holds it.
     if (tokenIdentifier.`type` == TokenType.comment) {
@@ -99,12 +103,12 @@ class Parser(pdx: String | File = null) {
 
     // Ensure the token is a valid identifier.
     if (tokenIdentifier.`type` != TokenType.string && tokenIdentifier.`type` != TokenType.symbol && !tokenIdentifier.isNumber)
-      throw new ParserException("Parser: incorrect token type " + tokenIdentifier.`type` + " at index " + tokenIdentifier.start + " for: " + tokenIdentifier.value)
+      throw ParserException("Parser: incorrect token type " + tokenIdentifier.`type` + " at index " + tokenIdentifier.start + " for: " + tokenIdentifier.value)
 
     // Consume any trivia after the identifier.
     consumeTrivia()
     var nextToken = tokens.peek.getOrElse(
-      throw new ParserException("Unexpected end of input after identifier\nFound token: " + tokenIdentifier.value)
+      throw ParserException("Unexpected end of input after identifier\nFound token: " + tokenIdentifier.value)
     )
     var operatorOpt: Option[Token] = None
     var raw: Option[NodeValueType] = None
