@@ -11,8 +11,15 @@ class ParserTest extends AnyFunSuiteLike {
 
   private val testPath = "src/test/resources/clausewitz_parser/"
   private val multiPDXFilesToTest = List(
-    new File(testPath + "shared_focuses_multiple.txt"),
-    new File(testPath + "shared_focuses_simple.txt")
+    new File(testPath + "shared_focuses_1_shortest.txt"),
+    new File(testPath + "shared_focuses_1_shorter.txt"),
+    new File(testPath + "shared_focuses_1_short.txt"),
+    new File(testPath + "shared_focuses_1_longer.txt"),
+    new File(testPath + "shared_focuses_1_longerer.txt"),
+    new File(testPath + "shared_focuses_1_longererer.txt"),
+    new File(testPath + "shared_focuses_1_longerererer.txt"),
+    new File(testPath + "shared_focuses_1_longy.txt"),
+    new File(testPath + "shared_focuses_1_long.txt"),
   )
   private val filesToTest: List[File] = List(
     new File(testPath + "minimichigantest.txt"),

@@ -1,0 +1,195 @@
+shared_focus = {
+    id = SHR_focus_1
+    icon = GFX_goal_1
+    cost = 1
+    ai_will_do = {
+        factor = 90
+    }
+    x = 10
+    y = 0
+	available = {
+
+	}
+    completion_reward = {
+
+    }
+    search_filters = { }
+}
+
+shared_focus = {
+    id = SHR_focus_2
+    icon = GFX_goal_2
+    cost = 0
+    ai_will_do = {
+        factor = 90
+    }
+    x = 5
+    y = 0
+	available = {
+		controls_province = 7304
+	}
+    completion_reward = {
+
+    }
+    search_filters = { }
+}
+
+shared_focus = {
+    id = SHR_focus_3
+    icon = GFX_goal_3
+    cost = 0
+    ai_will_do = {
+        factor = 90
+    }
+    x = 15
+    y = 0
+	available = {
+		controls_province = 7134
+	}
+    completion_reward = {
+
+    }
+    search_filters = { }
+}
+
+
+
+###
+
+shared_focus = {
+    id = SHR_focus_4
+    icon = GFX_goal_4
+    cost = 2
+    ai_will_do = {
+        factor = 90
+    }
+    prerequisite = {
+        focus = AWW_start
+    }
+    relative_position_id = AWW_start
+    x = -2
+    y = 1
+	available = {
+	}
+    completion_reward = {
+		add_offsite_building = {
+			type = arms_factory
+			level = 4
+		}
+    }
+    search_filters = { }
+}
+
+shared_focus = {
+    id = SHR_focus_5
+    icon = GFX_goal_5
+    cost = 2
+    ai_will_do = {
+        factor = 90
+    }
+    prerequisite = {
+        focus = AWW_start
+    }
+    relative_position_id = AWW_start
+    x = 2
+    y = 1
+	available = {
+	}
+    completion_reward = {
+		add_offsite_building = {
+			type = industrial_complex
+			level = 4
+		}
+    }
+    search_filters = { }
+}
+
+shared_focus = {
+    id = SHR_focus_6
+    icon = GFX_goal_6
+    cost = 2
+    ai_will_do = {
+        factor = 90
+    }
+    prerequisite = {
+        focus = AWW_start
+    }
+    relative_position_id = AWW_start
+    x = -3
+    y = 2
+	available = {
+	}
+    completion_reward = {
+		add_equipment_to_stockpile = {
+			type = 	infantry_equipment
+			amount = 5000
+		}
+		add_equipment_to_stockpile = {
+			type = 	artillery_equipment
+			amount = 500
+		}
+		add_equipment_to_stockpile = {
+			type = 	motorized_equipment
+			amount = 1000
+		}
+		add_equipment_to_stockpile = {
+			type = 	modern_tank_equipment_0
+			amount = 100
+		}
+    }
+    search_filters = { }
+}
+
+shared_focus = {
+    id = SHR_focus_7
+    icon = GFX_goal_7
+    cost = 2
+    ai_will_do = {
+        factor = 90
+    }
+    prerequisite = {
+        focus = AWW_start
+    }
+    relative_position_id = AWW_start
+    x = 3
+    y = 2
+	available = {
+	}
+    completion_reward = {
+		add_political_power = 300
+    }
+    search_filters = { }
+}
+
+shared_focus = {
+    id = SHR_focus_8
+    icon = GFX_goal_8
+    cost = 2
+    ai_will_do = {
+        factor = 90
+    }
+    prerequisite = {
+        focus = AWW_start
+    }
+	available = {
+		controls_state = 272
+	}
+    relative_position_id = AWW_start
+    x = 0
+    y = 2
+	available = {
+	}
+    completion_reward = {
+		add_manpower = 5000
+		every_possible_country = {
+			limit = {
+				has_character = BLK_artur_fleming
+			}
+			random_character = {
+				limit = { is_character = BLK_artur_fleming }
+				set_nationality = AWW
+			}
+		}
+    }
+    search_filters = { }
+}

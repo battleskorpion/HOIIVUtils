@@ -14,10 +14,12 @@ class Parser(pdx: String | File = null) {
   /* for ParserExceptions, would have been a lot to pass every time */
   given currentPdx: File | String = pdx
 
-  tokens = new Tokenizer(pdx match
-    // EOF indicator is appended so tokenizer can mark the end.
-    case pdx: File => new String(Files.readAllBytes(pdx.toPath)).concat(Token.EOF_INDICATOR)
-    case pdx: String => pdx.concat(Token.EOF_INDICATOR)
+  tokens = new Tokenizer(
+    s"${
+      pdx match
+        case f: File => Files.readString(f.toPath)
+        case s: String => s
+    }${System.lineSeparator()}${Token.EOF_INDICATOR}"
   )
 
   /**
@@ -69,7 +71,7 @@ class Parser(pdx: String | File = null) {
     var cont = true
     while (cont) {
       // Consume any trivia before each node.
-      consumeTrivia()
+      val t = consumeTrivia()
       tokens.peek match {
         case Some(token) if token.`type` == TokenType.eof || token.value == "}" =>
           cont = false
