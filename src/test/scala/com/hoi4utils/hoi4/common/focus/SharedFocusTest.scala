@@ -55,6 +55,19 @@ class SharedFocusTest extends AnyFunSuiteLike {
 		}
 	}
 
+	test("Determing focus tree header works correctly") {
+		withFocusTreeFiles { focusTree =>
+			assert(!sharedFocusFilesToTest.contains(focusTree.getFile))
+
+			info(s"Successfully verified focus tree header detection for file: ${focusTree.getFile.map(_.getName).getOrElse("[unknown]")}")
+		}
+		withPureSharedFocusFiles { sharedFocusFile =>
+			assert(sharedFocusFilesToTest.contains(sharedFocusFile.getFile.getOrElse(false)))
+
+			info(s"Successfully verified focus tree header detection for file: ${sharedFocusFile.getFile.map(_.getName).getOrElse("[unknown]")}")
+		}
+	}
+
 	test("Shared focus files parse without exceptions") {
 		withPureSharedFocusFiles { sharedFocusFile =>
 			assert(sharedFocusFile.sharedFocuses.nonEmpty, s"No shared focuses found in file: ${sharedFocusFile.fileNameOrElse("[unknown]")}")
