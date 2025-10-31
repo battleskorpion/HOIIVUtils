@@ -67,7 +67,11 @@ class SharedFocusTest extends AnyFunSuiteLike {
 	test("Shared focus files contribute to Pseudo Shared Focus Tree") {
 		withPureSharedFocusFiles { sharedFocusFile =>
 			assert(sharedFocusFile.sharedFocuses.nonEmpty, s"No shared focuses found in file: ${sharedFocusFile.fileNameOrElse("[unknown]")}")
-			assert(PseudoSharedFocusTree().listFocuses.toSet.subsetOf(sharedFocusFile.sharedFocuses.toSet), s"Not all shared focuses of SharedFocusFile file ${sharedFocusFile.fileNameOrElse("[unknown]")} are present in PseudoSharedFocusTree")
+			val pseudoTreeFocuses = PseudoSharedFocusTree().listFocuses
+			assert(pseudoTreeFocuses.nonEmpty, s"No focuses found in PseudoSharedFocusTree after loading SharedFocusFile file: ${sharedFocusFile.fileNameOrElse("[unknown]")}")
+			assert(sharedFocusFile.sharedFocuses.forall(pseudoTreeFocuses.contains), s"Not all shared focuses of SharedFocusFile file ${sharedFocusFile.fileNameOrElse("[unknown]")} are present in PseudoSharedFocusTree")
+
+			info(s"Successfully verified that ${sharedFocusFile.sharedFocuses.size} shared focuses from file: ${sharedFocusFile.fileNameOrElse("[unknown]")} are present in PseudoSharedFocusTree")
 		}
 	}
 
