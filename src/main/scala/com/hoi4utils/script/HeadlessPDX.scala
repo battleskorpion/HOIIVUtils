@@ -7,8 +7,6 @@ import scala.collection.mutable.ListBuffer
 
 trait HeadlessPDX { this: StructuredPDX =>
 
-  override def isValidIdentifier(node: Node): Boolean = true
-  
   /**
    * Overrides the default set behavior to ignore the identifier check.
    * This is useful for headless files where there is no top-level key.
@@ -28,6 +26,10 @@ trait HeadlessPDX { this: StructuredPDX =>
         throw new NodeValueTypeException(expression, "list", this.getClass)
     }
   }
+
+  override def isValidIdentifier(node: Node): Boolean = true
+
+  override def isExpressionIdentifierExpected: Boolean = false
 
   /**
    * Optionally, override loadPDX if you want to further simplify handling of headless files.

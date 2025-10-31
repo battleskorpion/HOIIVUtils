@@ -59,6 +59,8 @@ class SharedFocusTest extends AnyFunSuiteLike {
 		withPureSharedFocusFiles { sharedFocusFile =>
 			// Just parsing without exceptions is the test
 			assert(sharedFocusFile.sharedFocuses.nonEmpty, s"No shared focuses found in file: ${sharedFocusFile.fileNameOrElse("[unknown]")}")
+
+			info(s"Successfully parsed ${sharedFocusFile.sharedFocuses.size} shared focuses from file: ${sharedFocusFile.fileNameOrElse("[unknown]")}")
 		}
 	}
 
