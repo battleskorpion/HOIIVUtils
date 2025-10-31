@@ -10,7 +10,7 @@ import java.io.File
 
 class PDXScriptTests extends AnyFunSuiteLike {
 
-  private val testPath = "src/test/resources/clausewitz_parser/"
+  private val testPath = "src/test/resources/pdx/"
   private val validFocusTreeTestFiles = List(
     new File(testPath + "minimichigantest.txt"),
     new File(testPath + "minimichigantest2.txt"),
