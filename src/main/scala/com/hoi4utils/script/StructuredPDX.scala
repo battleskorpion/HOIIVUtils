@@ -7,11 +7,12 @@ import com.typesafe.scalalogging.LazyLogging
 import scala.collection.mutable.ListBuffer
 
 abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) with LazyLogging {
+
+  var badNodesList: Iterable[Node] = ListBuffer.empty
+
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
   }
-
-  var badNodesList: Iterable[Node] = ListBuffer.empty
 
   protected def childScripts: collection.mutable.Iterable[? <: PDXScript[?]]
 
