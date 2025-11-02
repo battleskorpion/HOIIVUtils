@@ -7,6 +7,7 @@ import com.hoi4utils.hoi4.map.buildings.Infrastructure
 import com.hoi4utils.hoi4.map.resource.Resource
 import com.hoi4utils.hoi4.map.state.{InfrastructureData, State}
 import com.hoi4utils.main.HOIIVFiles
+import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
@@ -58,9 +59,14 @@ class CountryFile extends StructuredPDX with HeadlessPDX with Comparable[Country
     _countryTag = Some(countryTag)
   }
 
-  override def handleParserException(file: File, exception: Exception): Unit = 
-    val message = s"Parser exception:\n File: ${file.getAbsolutePath}.\n Exception: \"${exception.getMessage}\""
-    CountryFile.countryErrors += message
+  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+    val pdxError = new PDXError(
+      exception = exception,
+      errorNode = node,
+      file = Option(file),
+      pdxScript = this
+    ).addInfo("context", "Country file error")
+    CountryFile.countryErrors += pdxError
 
   def setFile(file: File): Unit = {
     _file = Some(file)
@@ -139,7 +145,7 @@ class CountryFile extends StructuredPDX with HeadlessPDX with Comparable[Country
 object CountryFile extends LazyLogging with PDXReadable {
 
   private val countries = new ListBuffer[CountryFile]()
-  var countryErrors: ListBuffer[String] = ListBuffer.empty[String]
+  var countryErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
 
   def list: List[CountryFile] = countries.toList
 

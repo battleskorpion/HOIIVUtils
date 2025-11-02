@@ -3,6 +3,7 @@ package com.hoi4utils.script
 import com.hoi4utils.parser.Node
 
 import java.io.File
+import scala.collection.mutable.ListBuffer
 
 /**
  * PDXError represents an error encountered while parsing or processing
@@ -16,6 +17,14 @@ class PDXError(
                 var additionalInfo: Map[String, String] = Map.empty
               ):
 
+  def addInfo(key: String, value: String): PDXError =
+    additionalInfo = additionalInfo + (key -> value)
+    this
+
+  def addInfo(info: Map[String, String]): PDXError =
+    additionalInfo = additionalInfo ++ info
+    this
+
   private def nodeContext = Map(
     "Node Identifier" -> errorNode.identifier.getOrElse("none"),
     "Node Value" -> Option(errorNode.$).map(_.toString).getOrElse("null"),
@@ -23,22 +32,58 @@ class PDXError(
   )
 
   override def toString: String =
-    val fileInfo =
-      file match
-        case Some(f) => s"File: ${f.getAbsolutePath}\n"
-    
-    val nodeInfo =
-      if errorNode != null then
-        s"Node Context:\n" +
-        nodeContext.map { case (k, v) => s"  $k: $v" }.mkString("\n") + "\n"
+    val parts = ListBuffer[String]()
 
-    val exceptionInfo =
-      if exception != null then
-        s"Exception Message: ${exception.getMessage}\n"
+    // Exception info first
+    if exception != null then
+      parts += s"${exception.getClass.getSimpleName}:"
+      parts += s"\t${exception.getMessage}"
+    else
+      parts += "No Exception"
 
-    val additionalInfoStr =
-      if additionalInfo.nonEmpty then
-        s"Additional Info:\n" +
-        additionalInfo.map { case (k, v) => s"  $k: $v" }.mkString("\n") + "\n"
+    // Node info
+    if errorNode != null then
+      parts += "Node Info:"
+      nodeContext.foreach { case (k, v) => parts += s"\t$k: $v" }
+    else
+      parts += "Node Info: None"
 
-    s"${fileInfo}${nodeInfo}${exceptionInfo}${additionalInfoStr}"
+    // File path
+    file match
+      case Some(f) => parts += s"File: ${f.getAbsolutePath}"
+      case None => parts += "File: None"
+
+    // Class name (if pdxScript is set)
+    if pdxScript != null then
+      parts += pdxScript.getClass.getSimpleName
+    else
+      parts += "Class: None"
+
+    // Additional info
+    if additionalInfo.nonEmpty then
+      additionalInfo.foreach { case (k, v) => parts += s"\t$k: $v" }
+    else
+      parts += "Additional Info: None"
+
+    parts.mkString("\n")
+
+/**
+ * Wrapper for Focus errors - groups all errors for a single Focus
+ */
+class FocusErrorGroup(val focusId: String, val errors: ListBuffer[PDXError]):
+  override def toString: String =
+    if errors.isEmpty then
+      s"\tFocus: $focusId\n\t\tNo errors"
+    else
+      val errorStrings = errors.map(_.toString.split("\n").map(line => s"\t\t$line").mkString("\n"))
+      s"\tFocus: $focusId\n${errorStrings.mkString("\n")}"
+
+/**
+ * Wrapper for FocusTree errors - groups all focus errors for a tree
+ */
+class FocusTreeErrorGroup(val focusTreeId: String, val focusErrors: ListBuffer[FocusErrorGroup]):
+  override def toString: String =
+    if focusErrors.isEmpty then
+      s"FocusTree: $focusTreeId\n\tNo focus errors"
+    else
+      s"FocusTree: $focusTreeId\n${focusErrors.mkString("\n")}"

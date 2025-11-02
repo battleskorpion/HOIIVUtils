@@ -3,7 +3,7 @@ package com.hoi4utils.hoi4.common.country_tags
 import com.hoi4utils.hoi4.history.countries.CountryFile
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.Parser
-import com.hoi4utils.script.{PDXReadable, Referable}
+import com.hoi4utils.script.{PDXError, PDXReadable, Referable}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, IOException}
@@ -104,8 +104,15 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
       if (countryTag.file.isEmpty)
         countryTag.file = Some(file)
       else if (countryTag.file.get != file)
-        val message = s"Tag '$tag' from file '$file' already found in loaded tags, file: ${countryTag.file}"
-        CountryFile.countryErrors += message
+        val pdxError = new PDXError(
+          file = Some(file),
+          additionalInfo = Map(
+            "context" -> "Duplicate country tag found",
+            "tag" -> tag,
+            "existingFile" -> countryTag.file.get.toString
+          )
+        )
+        CountryFile.countryErrors += pdxError
       countryTag
 
   override def iterator: Iterator[CountryTag] = _tagList.iterator

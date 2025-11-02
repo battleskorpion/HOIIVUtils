@@ -10,6 +10,7 @@ import com.hoi4utils.hoi4.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4.map.state.State.stateErrors
 import com.hoi4utils.main.HOIIVUtils
+import com.hoi4utils.script.{FocusTreeErrorGroup, PDXError}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import javafx.application.Platform
 import javafx.concurrent.Task
@@ -32,17 +33,17 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
   @FXML var contentContainer: BorderPane = uninitialized
   @FXML var errorListTabPane: TabPane = uninitialized
 
-  @FXML var effectsEL: ListView[String] = uninitialized
-  @FXML var localizationEL: ListView[String] = uninitialized
-  @FXML var interfaceEL: ListView[String] = uninitialized
-  @FXML var countryEL: ListView[String] = uninitialized
-  @FXML var focusTreeEL: ListView[String] = uninitialized
-  @FXML var ideaEL: ListView[String] = uninitialized
-  @FXML var resourceEL: ListView[String] = uninitialized
-  @FXML var stateEL: ListView[String] = uninitialized
+  @FXML var effectsEL: ListView[PDXError] = uninitialized
+  @FXML var localizationEL: ListView[PDXError] = uninitialized
+  @FXML var interfaceEL: ListView[PDXError] = uninitialized
+  @FXML var countryEL: ListView[PDXError] = uninitialized
+  @FXML var focusTreeEL: ListView[FocusTreeErrorGroup] = uninitialized
+  @FXML var ideaEL: ListView[PDXError] = uninitialized
+  @FXML var resourceEL: ListView[PDXError] = uninitialized
+  @FXML var stateEL: ListView[PDXError] = uninitialized
   @FXML var statesThatChangedList: ListView[String] = uninitialized
 
-  val testList: ListBuffer[String] = ListBuffer.empty[String]
+  val testList: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
 
   @FXML
   def initialize(): Unit =
@@ -61,40 +62,80 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
       (localizationEL, localizationErrors),
       (interfaceEL, interfaceErrors),
       (countryEL, countryErrors),
-      (focusTreeEL, focusTreeErrors),
       (ideaEL, ideaFileErrors),
       (resourceEL, resourceErrors),
       (stateEL, stateErrors)
     )
 
-    listViewsWithErrors.foreach((listView, errors) => setListViewItems(listView, errors)) 
-    statesThatChangedList.setItems(getListOrDefaultMessage(null, "No States Changed")) // null is statesThatChanged
-    listViewsWithErrors.addOne(statesThatChangedList, null) // null is statesThatChanged
+    listViewsWithErrors.foreach((listView, errors) => setListViewItems(listView, errors))
     listViewsWithErrors.map(_._1).foreach(setupAlternatingListView)
 
-  private def setListViewItems(listView: ListView[String], errors: ListBuffer[String]): Unit =
+    // Handle focusTreeEL separately due to different type
+    setFocusTreeListViewItems(focusTreeEL, focusTreeErrors)
+    setupAlternatingFocusTreeListView(focusTreeEL)
+
+  private def setListViewItems(listView: ListView[PDXError], errors: ListBuffer[PDXError]): Unit =
     listView.setItems(getListOrDefaultMessage(errors))
 
-  private def getListOrDefaultMessage(listBuffer: ListBuffer[String], message: String = "No Problems Found") =
+  private def getListOrDefaultMessage(listBuffer: ListBuffer[PDXError], message: String = "No Problems Found") =
     listBuffer match
-      case null | Nil => ListBuffer(message).toObservableList
+      case null | Nil => ListBuffer(new PDXError(additionalInfo = Map("message" -> message))).toObservableList
       case _ => listBuffer.toObservableList
 
-  private def setupAlternatingListView(listView: ListView[String]): Unit =
-    listView.setCellFactory: (_: ListView[String]) =>
-      new ListCell[String]:
+  private def setupAlternatingListView(listView: ListView[PDXError]): Unit =
+    listView.setCellFactory: (_: ListView[PDXError]) =>
+      new ListCell[PDXError]:
         private val label = new Label()
         setWrapText(true)
         label.setWrapText(true)
         setGraphic(label)
 
-        override def updateItem(item: String, empty: Boolean): Unit =
+        override def updateItem(item: PDXError, empty: Boolean): Unit =
           super.updateItem(item, empty)
           if empty || item == null then
             label.setText(null)
             setStyle("")
           else
-            label.setText(item)
+            label.setText(item.toString)
+            val isEven = getIndex % 2 == 0
+            if HOIIVUtils.get("theme").equals("dark") then
+              // Dark mode colors
+              setWrapText(true)
+              label.setWrapText(true)
+              val bgColor = if isEven then "#2E2E2E" else "#3A3A3A" // dark gray
+              setStyle(s"-fx-background-color: $bgColor; -fx-wrap-text: true;")
+              label.setStyle(s"-fx-text-fill: lightgrey; -fx-wrap-text: true;") // text color based on background
+            else
+              // Light mode colors
+              setWrapText(true)
+              label.setWrapText(true)
+              val bgColor = if isEven then "#FFFFFF" else "#D3D3D3" // white or light gray
+              setStyle(s"-fx-background-color: $bgColor; -fx-wrap-text: true;")
+              label.setStyle(s"-fx-text-fill: black; -fx-wrap-text: true;") // text color based on background
+
+  private def setFocusTreeListViewItems(listView: ListView[FocusTreeErrorGroup], errors: ListBuffer[FocusTreeErrorGroup]): Unit =
+    listView.setItems(getFocusTreeListOrDefaultMessage(errors))
+
+  private def getFocusTreeListOrDefaultMessage(listBuffer: ListBuffer[FocusTreeErrorGroup], message: String = "No Problems Found") =
+    listBuffer match
+      case null | Nil => ListBuffer(new FocusTreeErrorGroup("No errors", ListBuffer.empty)).toObservableList
+      case _ => listBuffer.toObservableList
+
+  private def setupAlternatingFocusTreeListView(listView: ListView[FocusTreeErrorGroup]): Unit =
+    listView.setCellFactory: (_: ListView[FocusTreeErrorGroup]) =>
+      new ListCell[FocusTreeErrorGroup]:
+        private val label = new Label()
+        setWrapText(true)
+        label.setWrapText(true)
+        setGraphic(label)
+
+        override def updateItem(item: FocusTreeErrorGroup, empty: Boolean): Unit =
+          super.updateItem(item, empty)
+          if empty || item == null then
+            label.setText(null)
+            setStyle("")
+          else
+            label.setText(item.toString)
             val isEven = getIndex % 2 == 0
             if HOIIVUtils.get("theme").equals("dark") then
               // Dark mode colors

@@ -3,7 +3,7 @@ package com.hoi4utils.hoi4.gfx
 import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Parser, ParserException}
-import com.hoi4utils.script.PDXReadable
+import com.hoi4utils.script.{PDXError, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.File
@@ -19,7 +19,7 @@ import scala.util.boundary
 object Interface extends PDXReadable with LazyLogging {
   private val gfxMap: mutable.Map[String, SpriteType] = new mutable.HashMap
   private var interfaceFiles: mutable.Map[File, Interface] = new mutable.HashMap
-  var interfaceErrors: ListBuffer[String] = ListBuffer.empty[String]
+  var interfaceErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
 
   def getGFX(icon: String): Option[String] = {
     getSpriteType(icon) match {
@@ -123,8 +123,12 @@ class Interface(private val file: File) extends LazyLogging {
       parser.parse
     } catch {
       case e: ParserException =>
-        interfaceErrors += s"Error parsing interface .gfx file,\n\t$file\n\tException: $e"
-//        logger.error(s"Error parsing interface .gfx file, $file.\nException: $e")
+        val pdxError = new PDXError(
+          exception = e,
+          file = Some(file),
+          additionalInfo = Map("context" -> "Error parsing interface .gfx file")
+        )
+        interfaceErrors += pdxError
         return ()
     }
 
@@ -133,8 +137,14 @@ class Interface(private val file: File) extends LazyLogging {
       parser.rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
     }
     if (spriteTypeNodes == null) {
-      interfaceErrors += s"No SpriteTypes defined in interface .gfx file,\n\t$file\n\tException: spriteTypeNodes can't be null."
-//      logger.warn(s"No SpriteTypes defined in interface .gfx file, $file")
+      val pdxError = new PDXError(
+        file = Some(file),
+        additionalInfo = Map(
+          "context" -> "No SpriteTypes defined in interface .gfx file",
+          "reason" -> "spriteTypeNodes is null"
+        )
+      )
+      interfaceErrors += pdxError
       return ()
     }
 
@@ -144,8 +154,15 @@ class Interface(private val file: File) extends LazyLogging {
         val name = spriteType.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
         val filename = spriteType.getValueCaseInsensitive("texturefile").$stringOrElse("").replace("\"", "")
         if (name.isEmpty || filename.isEmpty) {
-          interfaceErrors += s"SpriteType in interface .gfx file\n\t$file\n\tException: has empty name or texturefile."
-//          logger.warn(s"SpriteType in interface .gfx file, $file, has empty name or texturefile.")
+          val pdxError = new PDXError(
+            file = Some(file),
+            additionalInfo = Map(
+              "context" -> "SpriteType in interface .gfx file has empty name or texturefile",
+              "name" -> name,
+              "filename" -> filename
+            )
+          )
+          interfaceErrors += pdxError
         }
         else {
           val gfx = new SpriteType(name, filename, basepath = file.getParentFile.getParentFile)
@@ -154,8 +171,12 @@ class Interface(private val file: File) extends LazyLogging {
         }
       } catch {
         case e: ParserException =>
-          interfaceErrors += s"Error parsing SpriteType in interface .gfx file\n\t$file\n\tException: $e"
-//          logger.error(s"Error parsing SpriteType in interface .gfx file, $file")
+          val pdxError = new PDXError(
+            exception = e,
+            file = Some(file),
+            additionalInfo = Map("context" -> "Error parsing SpriteType in interface .gfx file")
+          )
+          interfaceErrors += pdxError
       }
     }
   }

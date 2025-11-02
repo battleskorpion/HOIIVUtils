@@ -3,7 +3,7 @@ package com.hoi4utils.hoi4.common.national_focus
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Parser, ParserException}
-import com.hoi4utils.script.{PDXError, PDXReadable}
+import com.hoi4utils.script.{FocusTreeErrorGroup, PDXError, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 
@@ -20,7 +20,7 @@ import scala.util.boundary
 object FocusTreeManager extends LazyLogging with PDXReadable:
   val focusTrees = new ListBuffer[FocusTree]()
   val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
-  var focusTreeErrors: ListBuffer[PDXError] = ListBuffer.empty
+  var focusTreeErrors: ListBuffer[FocusTreeErrorGroup] = ListBuffer.empty
 
   /* other */
   private val _sharedFocusFiles = new ListBuffer[SharedFocusFile]()

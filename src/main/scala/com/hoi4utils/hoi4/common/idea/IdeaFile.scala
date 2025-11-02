@@ -37,16 +37,14 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
       setFile(file)
       _file.foreach(file => IdeasManager.ideaFileFileMap.put(file, this))
 
-  override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
-    val message = s"Unexpected identifier in idea file ${fileNameOrElse("[Unknown file]")}: ${node.identifier}"
-    IdeasManager.ideaFileErrors += message
-//    logger.error(message)
-
-
-  override def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
-    val message = s"Node value type error in idea file ${fileNameOrElse("[Unknown file]")}: ${exception.getMessage}"
-    IdeasManager.ideaFileErrors += message
-//    logger.error(message)
+  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+    val pdxError = new PDXError(
+      exception = exception,
+      errorNode = node,
+      file = if file != null then Some(file) else _file,
+      pdxScript = this
+    ).addInfo("context", "Idea file error")
+    IdeasManager.ideaFileErrors += pdxError
 
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
     ListBuffer(countryIdeas)

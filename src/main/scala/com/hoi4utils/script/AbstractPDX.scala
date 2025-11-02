@@ -78,11 +78,11 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
     if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then
       logger.error("Error loading PDX script: " + expression)
     else 
-      try 
+      try
         set(expression)
       catch
         case e: Exception =>
-          handlePDXError(node = expression, exception = e)
+          handlePDXError(e, expression)
           node = Some(expression)
 
   /**
@@ -165,11 +165,11 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @param expression The node expression to load into the collection
    */
   protected def loadPDXCollection(expression: Node): Unit = {
-    try 
+    try
       addToCollection(expression)
     catch {
       case e: Exception =>
-        handlePDXError(node = expression, exception = e)
+        handlePDXError(e, expression)
         node = Some(expression)
     }
   }
@@ -181,20 +181,6 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @param expression The node expression to add to the collection
    */
   protected def addToCollection(expression: Node): Unit = throw new UnsupportedOperationException("addToCollection must be implemented by collection-based PDX classes")
-
-  /**
-   * Provides enhanced error context for debugging.
-   * Can be overridden by subclasses to add domain-specific context.
-   *
-   * @return Map of context information for error reporting
-   */
-  protected def getErrorContext: Map[String, String] = Map(
-    "PDX Type" -> Option(pdxIdentifier).getOrElse("undefined"),
-    "Node Has Value" -> node.exists(_.$ != null).toString,
-    "Node Is Empty" -> node.exists(_.isEmpty).toString,
-    "Active Identifier Index" -> activeIdentifier.toString,
-    "Expected Identifiers" -> (if pdxIdentifiers.nonEmpty then pdxIdentifiers.mkString("[", ", ", "]") else "any")
-  )
 
   /**
    * Generates the script output.
@@ -246,7 +232,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
     null.asInstanceOf[PDXSchema[T]]  // todo no
 
   /* Error handling methods */
-    
+
   def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
     if exception.getClass == classOf[UnsupportedOperationException] then throw exception
     val pdxError = new PDXError(

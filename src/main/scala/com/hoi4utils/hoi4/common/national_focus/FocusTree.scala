@@ -48,9 +48,6 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
   // todo handle specially
   val sharedFocuses: ReferencePDX[SharedFocus] =
     ReferencePDX[SharedFocus](() => FocusTreeManager.sharedFocuses, "shared_focus")
-  var focusTreesErrors = new ListBuffer[String]()
-
-
 
   var name: String = ""
   var columns: Int = 1
@@ -70,6 +67,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
       require(file.exists && file.isFile, s"Focus tree file $file does not exist or is not a file.")
       loadPDX(file)
       setFile(file)
+      collectAndRegisterErrors()
 
   
   def width: Int = focuses.map(_.absoluteX).maxOption.getOrElse(0)
@@ -122,6 +120,21 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
 
   def addNewFocus(f: Focus): Unit =
     focuses += f
+
+  /**
+   * Collects all focus errors from this tree and registers them with FocusTreeManager
+   */
+  def collectAndRegisterErrors(): Unit =
+    val focusErrorGroups = ListBuffer[FocusErrorGroup]()
+
+    focuses.foreach { focus =>
+      if focus.focusErrors.nonEmpty then
+        focusErrorGroups += new FocusErrorGroup(focus.id.str, focus.focusErrors)
+    }
+
+    if focusErrorGroups.nonEmpty then
+      val treeErrorGroup = new FocusTreeErrorGroup(id.str, focusErrorGroups)
+      FocusTreeManager.focusTreeErrors += treeErrorGroup
 
   /**
    * Get the next temporary focus ID.
@@ -235,44 +248,5 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
       val focus: ReferencePDX[Focus] = ReferencePDX[Focus](() => focuses.toList, "focus")
 
       override def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(focus)
-
-  /* Error handling overrides to log detailed information about issues encountered during parsing. */
-
-  override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
-    focusTreeErrors += new PDXError(exception, node)
-  //    logger.error("Focus Tree - Unexpected Identifier Error:")
-  //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
-
-  override def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
-    val fullMessage =
-      s"""Focus Tree - Node Value Type Error:
-         |	Exception: ${exception.getMessage}
-         |	Focus Tree ID: ${id.value.getOrElse("undefined")}
-         |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
-         |	Focus Count: ${focuses.size}
-         |	Node Identifier: ${node.identifier.getOrElse("none")}
-         |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
-         |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
-         |	File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}""".stripMargin
-
-    focusTreesErrors += fullMessage
-  //    logger.error("Focus Tree - Node Value Type Error:")
-  //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
-
-  override def handleParserException(file: File, exception: Exception): Unit =
-    val fullMessage =
-      s"""Focus Tree - Parser Exception (File):
-         |	Exception: ${exception.getMessage}
-         |	Focus Tree ID: ${id.value.getOrElse("undefined")}
-         |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
-         |	Focus Count: ${focuses.size}
-         |	Current Focuses: ${if focuses.nonEmpty then focuses.flatMap(_.id.value).take(5).mkString("[", ", ", if focuses.size > 5 then ", ...]" else "]") else "none"}
-         |	Total Focus Trees Loaded: ${focusTrees.size}
-         |	File Last Modified: ${if file.exists() then new java.util.Date(file.lastModified()).toString else "N/A"}
-         |	File Path: ${file.getAbsolutePath}""".stripMargin
-
-    focusTreesErrors += fullMessage
-//    logger.error("Focus Tree - Parser Exception (File):")
-//    errorDetails.foreach(detail => logger.error(s"\t$detail"))
 
 case class Point(x: Int, y: Int)

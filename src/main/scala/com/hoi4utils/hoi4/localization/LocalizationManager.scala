@@ -3,6 +3,7 @@ package com.hoi4utils.hoi4.localization
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
 import com.hoi4utils.hoi4.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.main.HOIIVFiles
+import com.hoi4utils.script.PDXError
 import com.hoi4utils.shared.RichString
 import com.typesafe.scalalogging.LazyLogging
 
@@ -17,7 +18,7 @@ import scala.util.boundary
 
 object LocalizationManager {
   private var primaryManager: Option[LocalizationManager] = None
-  val localizationErrors: ListBuffer[String] = ListBuffer.empty[String]
+  val localizationErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
 
   def getLocalizationFile(key: String): File = get.localizations.getLocalizationFile(key)
 
@@ -318,12 +319,15 @@ abstract class LocalizationManager extends LazyLogging {
         if (line.startsWith("\uFEFF")) line = line.substring(1)
         if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
           if (!line.trim.startsWith(language_def)) {
-            localizationErrors +=
-              s"""Localization file is not in English
-                 |    File Path: "${file.getAbsolutePath}"
-                 |    Expected Language Definition: "$language_def"
-                 |    Found Language Definition: "$line"""".stripMargin
-//            logger.error("Localization file is not in English: " + file.getAbsolutePath)
+            val pdxError = new PDXError(
+              file = Some(file),
+              additionalInfo = Map(
+                "context" -> "Localization file is not in English",
+                "expected" -> language_def,
+                "found" -> line
+              )
+            )
+            localizationErrors += pdxError
             return ()
           }
           else languageFound = true
@@ -331,11 +335,14 @@ abstract class LocalizationManager extends LazyLogging {
       }
 
       if (!languageFound) {
-        localizationErrors +=
-          s"""Localization file does not have a language definition
-             |    File Path: "${file.getAbsolutePath}"
-             |    Expected Language Definition: "$language_def"""".stripMargin
-//        logger.error("Localization file does not have a language definition: " + file.getAbsolutePath)
+        val pdxError = new PDXError(
+          file = Some(file),
+          additionalInfo = Map(
+            "context" -> "Localization file does not have a language definition",
+            "expected" -> language_def
+          )
+        )
+        localizationErrors += pdxError
         return ()
       }
 
@@ -344,12 +351,15 @@ abstract class LocalizationManager extends LazyLogging {
         if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
           val data = line.splitWithDelimiters(versionNumberRegex, 2)
           if (data.length != 3) {
-            localizationErrors +=
-              s"""Invalid localization file format
-                 |    File Path: "${file.getAbsolutePath}"
-                 |    Line: "$line"
-                 |    Reason: incorrect number of line elements""".stripMargin
-//            logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: incorrect number of line elements")
+            val pdxError = new PDXError(
+              file = Some(file),
+              additionalInfo = Map(
+                "context" -> "Invalid localization file format",
+                "line" -> line,
+                "reason" -> "incorrect number of line elements"
+              )
+            )
+            localizationErrors += pdxError
           } else {
             // trim whitespace
             data mapInPlace (s => s.trim)
@@ -363,21 +373,28 @@ abstract class LocalizationManager extends LazyLogging {
             val extra = data(2).substring(endQuote + 1).trim
             var invalid = false
             if (extra.nonEmpty && !extra.startsWith("#")) {
-              localizationErrors +=
-                s"""Invalid localization file format
-                   |    File Path: "${file.getAbsolutePath}"
-                   |    Line: "$line"
-                   |    Reason: extraneous non-comment data after localization entry: "$extra"""".stripMargin
-//              logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: extraneous non-comment data after localization entry: " + extra)
+              val pdxError = new PDXError(
+                file = Some(file),
+                additionalInfo = Map(
+                  "context" -> "Invalid localization file format",
+                  "line" -> line,
+                  "reason" -> "extraneous non-comment data after localization entry",
+                  "extra" -> extra
+                )
+              )
+              localizationErrors += pdxError
               invalid = true
             }
             if (startQuote != 0 || endQuote == -1 || startQuote == endQuote) {
-              localizationErrors +=
-                s"""Invalid localization file format
-                   |    File Path: "${file.getAbsolutePath}"
-                   |    Line: "$line"
-                   |    Reason: localization value is not correctly enclosed in quotes""".stripMargin
-//              logger.error("Invalid localization file format: " + file.getAbsolutePath + "\n\tline: " + line + "\n\tReason: localization value is not correctly enclosed in quotes")
+              val pdxError = new PDXError(
+                file = Some(file),
+                additionalInfo = Map(
+                  "context" -> "Invalid localization file format",
+                  "line" -> line,
+                  "reason" -> "localization value is not correctly enclosed in quotes"
+                )
+              )
+              localizationErrors += pdxError
               invalid = true
             }
             if (!invalid) {
