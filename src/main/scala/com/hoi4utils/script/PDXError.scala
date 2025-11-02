@@ -32,6 +32,11 @@ class PDXError(
   )
 
   override def toString: String =
+    // Special case: if this is just a placeholder message with no actual error data
+    if exception == null && errorNode == null && file.isEmpty && pdxScript == null &&
+       additionalInfo.size == 1 && additionalInfo.contains("message") then
+      return additionalInfo("message")
+
     val parts = ListBuffer[String]()
 
     // Exception info first
@@ -83,7 +88,10 @@ class FocusErrorGroup(val focusId: String, val errors: ListBuffer[PDXError]):
  */
 class FocusTreeErrorGroup(val focusTreeId: String, val focusErrors: ListBuffer[FocusErrorGroup]):
   override def toString: String =
-    if focusErrors.isEmpty then
+    // Special case: if this is a placeholder with empty errors, just show the message
+    if focusErrors.isEmpty && focusTreeId == "No errors" then
+      "No Problems Found"
+    else if focusErrors.isEmpty then
       s"FocusTree: $focusTreeId\n\tNo focus errors"
     else
       s"FocusTree: $focusTreeId\n${focusErrors.mkString("\n")}"

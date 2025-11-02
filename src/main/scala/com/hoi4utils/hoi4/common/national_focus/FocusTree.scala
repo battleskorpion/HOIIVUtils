@@ -49,6 +49,9 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
   val sharedFocuses: ReferencePDX[SharedFocus] =
     ReferencePDX[SharedFocus](() => FocusTreeManager.sharedFocuses, "shared_focus")
 
+  // File-level errors (parse errors, etc.)
+  var treeErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
+
   var name: String = ""
   var columns: Int = 1
   var rows: Int = 1
@@ -78,6 +81,15 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
   // todo: add default, continuous focus position
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] =
     ListBuffer(id, country, focuses)
+
+  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+    val pdxError = new PDXError(
+      exception = exception,
+      errorNode = node,
+      file = if file != null then Some(file) else _focusFile,
+      pdxScript = this
+    ).addInfo("focusTreeId", id.str)
+    treeErrors += pdxError
 
   /**
    * List of all focus IDs in this focus tree.
@@ -127,6 +139,11 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
   def collectAndRegisterErrors(): Unit =
     val focusErrorGroups = ListBuffer[FocusErrorGroup]()
 
+    // Add tree-level errors as a special "File Errors" group
+    if treeErrors.nonEmpty then
+      focusErrorGroups += new FocusErrorGroup("File Errors", treeErrors)
+
+    // Add errors from individual focuses
     focuses.foreach { focus =>
       if focus.focusErrors.nonEmpty then
         focusErrorGroups += new FocusErrorGroup(focus.id.str, focus.focusErrors)

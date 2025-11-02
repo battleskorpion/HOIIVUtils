@@ -64,9 +64,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
       errorNode = node,
       file = if file != null then Some(file) else focusTree.focusFile,
       pdxScript = this
-    ).addInfo("context", "Focus error")
-      .addInfo("focusId", id.str)
-      .addInfo("focusTreeId", focusTree.id.str)
+    ).addInfo("focusId", id.str)
     focusErrors += pdxError
 
   /**

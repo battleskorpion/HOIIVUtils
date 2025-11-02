@@ -73,8 +73,7 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
       errorNode = node,
       file = if file != null then Some(file) else _stateFile,
       pdxScript = this
-    ).addInfo("context", "State file error")
-      .addInfo("stateID", stateID.asOptionalString.getOrElse("unknown"))
+    ).addInfo("stateID", stateID.asOptionalString.getOrElse("unknown"))
     State.stateErrors += pdxError
 
   /**

@@ -68,8 +68,7 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
         errorNode = node,
         file = if file != null then Some(file) else _ideaFile.flatMap(_.getFile),
         pdxScript = this
-      ).addInfo("context", "Idea modifier error")
-        .addInfo("idea", Idea.this.toString)
+      ).addInfo("idea", Idea.this.toString)
       IdeasManager.ideaFileErrors += pdxError
 
     override def getPDXTypeName: String = "Modifiers"

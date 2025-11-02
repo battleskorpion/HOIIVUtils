@@ -43,7 +43,7 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
       errorNode = node,
       file = if file != null then Some(file) else _file,
       pdxScript = this
-    ).addInfo("context", "Idea file error")
+    )
     IdeasManager.ideaFileErrors += pdxError
 
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {

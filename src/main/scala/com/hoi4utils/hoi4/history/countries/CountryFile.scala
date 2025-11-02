@@ -65,7 +65,7 @@ class CountryFile extends StructuredPDX with HeadlessPDX with Comparable[Country
       errorNode = node,
       file = Option(file),
       pdxScript = this
-    ).addInfo("context", "Country file error")
+    )
     CountryFile.countryErrors += pdxError
 
   def setFile(file: File): Unit = {

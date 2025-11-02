@@ -37,8 +37,7 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDefinition
       errorNode = node,
       file = Option(file),
       pdxScript = this
-    ).addInfo("context", "Resource error")
-      .addInfo("resourceName", name)
+    ).addInfo("resourceName", name)
     Resource.resourceErrors += pdxError
 
   infix def isResource(resource: Resource): Boolean = this.name == resource.name
