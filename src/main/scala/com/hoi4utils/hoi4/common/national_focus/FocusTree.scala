@@ -6,7 +6,7 @@ import com.hoi4utils.hoi4.localization.{Localizable, Property}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
-import com.hoi4utils.script.datatype.StringPDX
+import com.hoi4utils.script.datatype.*
 import com.hoi4utils.shared.BoolType
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
@@ -32,16 +32,24 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
   val id = 
     StringPDX("id")
   val country = 
-    FocusTreeCountryPDX()
+    FocusTreeCountry()
   val focuses: MultiPDX[Focus] = 
     MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   /* less used */
   val default = 
     BooleanPDX("default")
-  val reset_on_civilwar = 
+  val reset_on_civilwar =
     BooleanPDX("reset_on_civilwar")
-  val shared_focus: ReferencePDX[SharedFocus] = 
+  val continuousFocusPosition = 
+    PointPDX("continuous_focus_position")
+  val initialShowPosition =
+    InitialShowPosition("initial_show_position")
+  /* special cases - requires special handling :) */
+  // todo handle specially
+  val sharedFocuses: ReferencePDX[SharedFocus] =
     ReferencePDX[SharedFocus](() => FocusTreeManager.sharedFocuses, "shared_focus")
+
+
 
 
   var name: String = ""
@@ -187,17 +195,17 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
     if other.isInstanceOf[FocusTree] then return this == other
     false
 
-  class FocusTreeCountryPDX extends StructuredPDX("country"):
+  class FocusTreeCountry extends StructuredPDX("country"):
     final val base = new DoublePDX("base")
     final val factor = new DoublePDX("factor")
     final val add = new DoublePDX("add")
-    final val modifier = new MultiPDX[TagModifierPDX](None, Some(() => new TagModifierPDX), "modifier")
+    final val modifier = new MultiPDX[TagModifier](None, Some(() => new TagModifier), "modifier")
 
     override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add, modifier)
 
     override def getPDXTypeName: String = "AI Willingness"
 
-    class TagModifierPDX extends StructuredPDX("modifier"):
+    class TagModifier extends StructuredPDX("modifier"):
       final val base = new DoublePDX("base")
       final val factor = new DoublePDX("factor")
       final val add = new DoublePDX("add")
@@ -206,6 +214,26 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
       override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add, tag)
 
       override def getPDXTypeName: String = "Modifier"
+
+  class InitialShowPosition(pdxIdentifier: String) extends UnionPDX[StructuredPDX](pdxIdentifier):
+
+    override protected def schemas: Seq[() => InitialShowPositionSchema] = Seq(
+      () => new InitialShowPosition_Pos,
+      () => new InitialShowPosition_Focus,
+    )
+
+    trait InitialShowPositionSchema extends StructuredPDX
+    
+    class InitialShowPosition_Pos extends PointPDX(pdxIdentifier) with InitialShowPositionSchema:
+      val offset: PointPDX = PointPDX("offset")
+//        val trigger: TriggerPDX
+
+      override def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(offset) ++ super.childScripts
+      
+    class InitialShowPosition_Focus extends StructuredPDX(pdxIdentifier) with InitialShowPositionSchema:
+      val focus: ReferencePDX[Focus] = ReferencePDX[Focus](() => focuses.toList, "focus")
+
+      override def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(focus)
 
   /* Error handling overrides to log detailed information about issues encountered during parsing. */
 

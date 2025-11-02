@@ -2,7 +2,6 @@ package com.hoi4utils.hoi4.common.national_focus
 
 import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
 import com.hoi4utils.hoi4.gfx.Interface
 import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Localization, Property}
@@ -10,10 +9,8 @@ import com.hoi4utils.hoi4.scope.Scope
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
 import com.hoi4utils.script.datatype.StringPDX
-import com.hoi4utils.script.shared.AIWillDoPDX
+import com.hoi4utils.script.shared.AIWillDo
 import com.hoi4utils.shared.{BoolType, ExpectedRange}
-import dotty.tools.sjs.ir.Trees.JSBinaryOp.&&
-import dotty.tools.sjs.ir.Trees.JSUnaryOp.!
 import javafx.scene.image.Image
 
 import scala.annotation.tailrec
@@ -53,7 +50,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
   val continueIfInvalid = 
     BooleanPDX("continue_if_invalid")
   val ai_will_do = 
-    AIWillDoPDX()
+    AIWillDo()
   /** completion reward */
   //  final val completionReward: CompletionReward = new CompletionReward()
 
