@@ -261,8 +261,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
               val focusId = parts(0)
               val isShiftDown = parts(1).contains("true")
 
-              // Find the focus by ID
-              someFocusTree.focuses.find(_.id.str == focusId).foreach { focus =>
+              // Find the focus and update its position
+              someFocusTree.focuses.find(_.id @== focusId).foreach { focus =>
                 val newFocusPos = gridToFocusXY(targetGridX, targetGridY, someFocusTree)
                 updateFocusPosition(focus, newFocusPos, isShiftDown)
                 logger.info(s"Dropped focus $focusId at grid ($targetGridX, $targetGridY) -> focus coords $newFocusPos")
