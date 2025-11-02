@@ -26,6 +26,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private val focusGridColumnsSize: Int = 100
   private val focusGridRowSize: Int = 200
   private val welcomeMessage: String = s"Welcome to the Focus Tree Viewer 2!"
+  
   @FXML var focusTree2: AnchorPane = uninitialized
   @FXML var toolBar: ToolBar = uninitialized
   @FXML var focusTreeView: GridPane = uninitialized
@@ -46,6 +47,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   @FXML var zoomOutButton: Button = uninitialized
   @FXML var resetZoomButton: Button = uninitialized
   @FXML var gridlines: ToggleButton = uninitialized
+  
   private var focusGridColumns: Int = 0
   private var focusGridRows: Int = 0
   private var lines: Boolean = false

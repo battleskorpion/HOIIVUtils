@@ -48,8 +48,8 @@ class FocusConnectionPathCalculator(
       calculatePathGoingDown(exitPoint, entryPoint, fromGridX, toGridX)
 
   /**
-   * Calculate path when prerequisite is ABOVE the focus.
-   * Pattern: Horizontal first (at focus exit level), then vertical up.
+   * Calculate path when prerequisite (entry focus) is ABOVE the focus (exit focus).
+   * Pattern: Vertical up, then horizontal, then up to the entry focus.
    */
   private def calculatePathGoingUp(
                                     exitPoint: Point,
@@ -57,15 +57,17 @@ class FocusConnectionPathCalculator(
                                     fromCol: Int,
                                     toCol: Int
                                   ): List[PathSegment] =
-    if (fromCol == toCol) then
+    if fromCol == toCol then
       // Same column: straight line up
       List(PathSegment(exitPoint, entryPoint))
     else
-      // Different column: horizontal then vertical
-      val corner = Point(entryPoint.x, exitPoint.y)
+      // Different column: vertical then horizontal, then up to the entry focus
+      val corner = Point(exitPoint.x, entryPoint.y - 1)
+      val belowEntry = Point(entryPoint.x, entryPoint.y - 1)
       List(
-        PathSegment(exitPoint, corner),      // Horizontal at focus level
-        PathSegment(corner, entryPoint)       // Vertical up to prerequisite
+        PathSegment(exitPoint, corner),       // Vertical almost up to entry focus
+        PathSegment(corner, belowEntry),      // Horizontal from corner to below entry focus
+        PathSegment(belowEntry, entryPoint)   // Vertical up into entry focus
       )
 
   /**
