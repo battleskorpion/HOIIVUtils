@@ -5,7 +5,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.layout.AnchorPane
 
 class ErrorIconPane(
-                     val errorIcon: ImageView = new ImageView("/com/hoi4utils/ui/icons/error_icon.png"),
+                     val errorIcon: ImageView = new ImageView("icons/error_icon.png"),
                      val iconSize: Double = 512,
                      val errorNumberCount: Integer = 0,
                      val onDoubleClick: Option[() => Unit] = None,
@@ -19,21 +19,37 @@ class ErrorIconPane(
     this.setMouseTransparent(false)
 
   def build(): Unit =
+    // Set the pane to match toggle button height (prevent vertical spacing issues)
+    this.setPrefHeight(iconSize)
+    this.setMaxHeight(iconSize)
+
+    // Configure icon for better quality
     errorIcon.setFitWidth(iconSize)
     errorIcon.setFitHeight(iconSize)
+    errorIcon.setPreserveRatio(true)
+    errorIcon.setSmooth(true)
+
+    // Position icon on the left, vertically centered
     AnchorPane.setTopAnchor(errorIcon, 0.0)
     AnchorPane.setLeftAnchor(errorIcon, 0.0)
-    AnchorPane.setRightAnchor(errorIcon, 0.0)
+    AnchorPane.setBottomAnchor(errorIcon, 0.0)
     this.getChildren.add(errorIcon)
+
     if errorNumberCount != 0 then
-      // error count below the icon
+      // error count to the right of the icon
       val errorCountLabel = new Label(errorNumberCount.toString)
+      errorCountLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 12px;")
       this.getChildren.add(errorCountLabel)
-      AnchorPane.setTopAnchor(errorCountLabel, iconSize + 5.0)
-      AnchorPane.setLeftAnchor(errorCountLabel, 0.0)
-      AnchorPane.setRightAnchor(errorCountLabel, 0.0)
+
+      // Position label to the right of the icon, vertically centered
+      AnchorPane.setLeftAnchor(errorCountLabel, iconSize + 3.0)
+      AnchorPane.setTopAnchor(errorCountLabel, (iconSize - 14.0) / 2.0) // Center vertically (approximate font height)
+
+      // Set pane width to accommodate icon + spacing + label (estimate ~20px for 1-2 digit numbers)
+      this.setPrefWidth(iconSize + 3.0 + 20.0)
     else
-      AnchorPane.setBottomAnchor(errorIcon, 0.0)
+      // Just the icon width
+      this.setPrefWidth(iconSize)
 
     // Set up double-click handler if provided
     onDoubleClick.foreach { handler =>

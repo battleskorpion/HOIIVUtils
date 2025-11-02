@@ -2,6 +2,7 @@ package com.hoi4utils.ui.focus
 
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree}
+import com.hoi4utils.ui.javafx.scene.layout.ErrorIconPane
 import com.typesafe.scalalogging.LazyLogging
 import javafx.geometry.Pos
 import javafx.scene.control.*
@@ -25,6 +26,46 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
     val cleanNameBackGround = new ImageView(gfxFocusUnavailable)
     val stackPane = new StackPane(cleanNameBackGround, cleanName)
     stackPane.setAlignment(Pos.CENTER)
+
+    // Add error icon if this focus has errors
+    if _focus.focusErrors.nonEmpty then
+      val errorIconPane = new ErrorIconPane(
+        iconSize = 20,
+        errorNumberCount = _focus.focusErrors.size,
+        onDoubleClick = Some(() => {
+          // TODO: Open error details for this focus
+          logger.info(s"Error icon clicked for focus: ${_focus.id.str}")
+        }),
+        tooltipText = Some(s"${_focus.focusErrors.size} error(s) in this focus")
+      )
+      errorIconPane.build()
+
+      // Prevent ALL mouse events from propagating to the focus button
+      errorIconPane.setOnMousePressed(event => event.consume())
+      errorIconPane.setOnMouseReleased(event => event.consume())
+      errorIconPane.setOnMouseClicked(event => {
+        event.consume()
+        if event.getClickCount == 2 then
+          // Double-click: show error details
+          //todo add error details window
+          logger.info(s"Double-clicked error icon for focus: ${_focus.id.str}")
+        else
+          // Single click: log or do nothing
+          ()
+      })
+      errorIconPane.setOnMouseDragged(event => event.consume())
+      errorIconPane.setOnMouseEntered(event => event.consume())
+      errorIconPane.setOnMouseExited(event => event.consume())
+
+      // Prevent the error icon from being transparent to mouse events
+      errorIconPane.setMouseTransparent(false)
+
+      // Position in top-right corner of the stackPane
+      StackPane.setAlignment(errorIconPane, Pos.TOP_RIGHT)
+      StackPane.setMargin(errorIconPane, new javafx.geometry.Insets(2, 2, 0, 0))
+
+      stackPane.getChildren.add(errorIconPane)
+
     val iconView = new ImageView(focusIcon)
     val vbox = new VBox(-127, stackPane, iconView)
     vbox.setAlignment(Pos.CENTER) // Optional: center the items in the VBox
