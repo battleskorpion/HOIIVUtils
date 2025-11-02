@@ -215,6 +215,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
 
       override def getPDXTypeName: String = "Modifier"
 
+  // TODO: make sure this is all good and implemented once UnionPDX is implemented
   class InitialShowPosition(pdxIdentifier: String) extends UnionPDX[StructuredPDX](pdxIdentifier):
 
     override protected def schemas: Seq[() => InitialShowPositionSchema] = Seq(
@@ -223,7 +224,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
     )
 
     trait InitialShowPositionSchema extends StructuredPDX
-    
+
     class InitialShowPosition_Pos extends PointPDX(pdxIdentifier) with InitialShowPositionSchema:
       val offset: PointPDX = PointPDX("offset")
 //        val trigger: TriggerPDX
