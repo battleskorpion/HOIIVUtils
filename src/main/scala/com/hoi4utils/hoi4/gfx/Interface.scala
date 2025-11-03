@@ -11,79 +11,83 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.util.boundary
 
+import scala.collection.parallel.CollectionConverters._
 
 /**
  * Represents a .gfx file in interface folder
  * Contains a set of SpriteTypes
  */
 object Interface extends PDXReadable with LazyLogging {
-  private val gfxMap: mutable.Map[String, SpriteType] = new mutable.HashMap
-  private var interfaceFiles: mutable.Map[File, Interface] = new mutable.HashMap
-  var interfaceErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
+	private val gfxMap: mutable.Map[String, SpriteType] = new mutable.HashMap
+	private var interfaceFiles: mutable.Map[File, Interface] = new mutable.HashMap
+	var interfaceErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
 
-  def getGFX(icon: String): Option[String] = {
-    getSpriteType(icon) match {
-      case Some(spriteType) => Some(spriteType.gfx)
-      case None => None
-    }
-  }
+	def getGFX(icon: String): Option[String] = {
+		getSpriteType(icon) match {
+			case Some(spriteType) => Some(spriteType.gfx)
+			case None => None
+		}
+	}
 
-  def getSpriteType(icon: String): Option[SpriteType] = gfxMap.get(icon)
+	def getSpriteType(icon: String): Option[SpriteType] = gfxMap.get(icon)
 
-  def numGFX: Int = gfxMap.size
+	def numGFX: Int = gfxMap.size
 
-  /** Lists all SpriteType objects found in interface files */
-  def listGFX: Iterable[SpriteType] = gfxMap.values
+	/** Lists all SpriteType objects found in interface files */
+	def listGFX: Iterable[SpriteType] = gfxMap.values
 
-  /** Returns all .gfx files parsed */
-  def listGFXFiles: Iterable[Interface] = interfaceFiles.values
+	/** Returns all .gfx files parsed */
+	def listGFXFiles: Iterable[Interface] = interfaceFiles.values
 
-  /** Lists .gfx files which Interface class represents and which have been read in. */
-  def list: Iterable[Interface] = listGFXFiles
+	/** Lists .gfx files which Interface class represents and which have been read in. */
+	def list: Iterable[Interface] = listGFXFiles
 
-  /** Returns the number of .gfx interface files read */
-  def numFiles: Int = interfaceFiles.size
+	/** Returns the number of .gfx interface files read */
+	def numFiles: Int = interfaceFiles.size
 
-  private def readMod(): Boolean = {
-    if (!HOIIVFiles.Mod.interface_folder.exists || !HOIIVFiles.Mod.interface_folder.isDirectory) {
-      logger.error("Warning: mod interface directory does not exist")
-      false
-    } else if (HOIIVFiles.Mod.interface_folder.listFiles == null || HOIIVFiles.Mod.interface_folder.listFiles.isEmpty) {
-      logger.error("Warning: mod interface directory is empty")
-      false
-    } else {
-      for (file <- HOIIVFiles.Mod.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))) {
-        interfaceFiles.put(file, new Interface(file))
-      }
-      true
-    }
-  }
+	private def readMod(): Boolean = {
+		if (!HOIIVFiles.Mod.interface_folder.exists || !HOIIVFiles.Mod.interface_folder.isDirectory) {
+			logger.error("Warning: mod interface directory does not exist")
+			false
+		} else if (HOIIVFiles.Mod.interface_folder.listFiles == null || HOIIVFiles.Mod.interface_folder.listFiles.isEmpty) {
+			logger.error("Warning: mod interface directory is empty")
+			false
+		} else {
+			for (file <- HOIIVFiles.Mod.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))) {
+				interfaceFiles.put(file, new Interface(file))
+			}
+			true
+		}
+	}
 
-  private def readHoi4(): Boolean = {
-    if (!HOIIVFiles.HOI4.interface_folder.exists || !HOIIVFiles.HOI4.interface_folder.isDirectory) {
-      logger.error("HOI4 interface directory does not exist")
-      false
-    } else if (HOIIVFiles.HOI4.interface_folder.listFiles == null || HOIIVFiles.HOI4.interface_folder.listFiles.isEmpty) {
-      logger.error("HOI4 interface directory is empty")
-      false
-    } else {
-      for (file <- HOIIVFiles.HOI4.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))) {
-        interfaceFiles.put(file, new Interface(file))
-      }
-      true
-    }
-  }
+	private def readHoi4(): Boolean = {
+		if (!HOIIVFiles.HOI4.interface_folder.exists || !HOIIVFiles.HOI4.interface_folder.isDirectory) {
+			logger.error("HOI4 interface directory does not exist")
+			false
+		} else if (HOIIVFiles.HOI4.interface_folder.listFiles == null || HOIIVFiles.HOI4.interface_folder.listFiles.isEmpty) {
+			logger.error("HOI4 interface directory is empty")
+			false
+		} else {
+			val gfxFiles = HOIIVFiles.HOI4.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))
+			val interfaceFilesMap = gfxFiles.par.map(f => f -> new Interface(f)).seq
 
-  def read(): Boolean = {
-    val modSuccess = readMod()
-    val hoi4Success = readHoi4()
-    modSuccess && hoi4Success
-  }
+			interfaceFilesMap.foreach { (f, interface) =>
+				interfaceFiles.put(f, interface)
+			}
+			true
+		}
+	}
 
-  override def clear(): Unit = {
-    gfxMap.clear()
-    interfaceFiles.clear()
-  }
+	def read(): Boolean = {
+		val modSuccess = readMod()
+		val hoi4Success = readHoi4()
+		modSuccess && hoi4Success
+	}
+
+	override def clear(): Unit = {
+		gfxMap.clear()
+		interfaceFiles.clear()
+	}
 }
 
 /**
@@ -110,90 +114,90 @@ object Interface extends PDXReadable with LazyLogging {
  * } </pre>
 */
 class Interface(private val file: File) extends LazyLogging {
-  private var spriteTypes: mutable.Set[SpriteType] = new mutable.HashSet
+	private var spriteTypes: mutable.Set[SpriteType] = new mutable.HashSet
 
-  /* init */
-  readGFXFile(file)
+	/* init */
+	readGFXFile(file)
 
-  private def readGFXFile(file: File): Unit = {
-    spriteTypes.clear()
+	private def readGFXFile(file: File): Unit = {
+		spriteTypes.clear()
 
-    val parser = new Parser(file)
-    try {
-      parser.parse
-    } catch {
-      case e: ParserException =>
-        val pdxError = new PDXError(
-          exception = e,
-          file = Some(file),
-          additionalInfo = Map("context" -> "Error parsing interface .gfx file")
-        )
-        interfaceErrors += pdxError
-        return ()
-    }
+		val parser = new Parser(file)
+		try {
+			parser.parse
+		} catch {
+			case e: ParserException =>
+				val pdxError = new PDXError(
+					exception = e,
+					file = Some(file),
+					additionalInfo = Map("context" -> "Error parsing interface .gfx file")
+				)
+				interfaceErrors += pdxError
+				return ()
+		}
 
-    /* load listed sprites */
-    val spriteTypeNodes = {
-      parser.rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
-    }
-    if (spriteTypeNodes == null) {
-      val pdxError = new PDXError(
-        file = Some(file),
-        additionalInfo = Map(
-          "context" -> "No SpriteTypes defined in interface .gfx file",
-          "reason" -> "spriteTypeNodes is null"
-        )
-      )
-      interfaceErrors += pdxError
-      return ()
-    }
+		/* load listed sprites */
+		val spriteTypeNodes = {
+			parser.rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
+		}
+		if (spriteTypeNodes == null) {
+			val pdxError = new PDXError(
+				file = Some(file),
+				additionalInfo = Map(
+					"context" -> "No SpriteTypes defined in interface .gfx file",
+					"reason" -> "spriteTypeNodes is null"
+				)
+			)
+			interfaceErrors += pdxError
+			return ()
+		}
 
-    val validSpriteTypes = spriteTypeNodes.filter(_.containsAllCaseInsensitive("name", "texturefile"))
-    for (spriteType <- validSpriteTypes) {
-      try {
-        val name = spriteType.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
-        val filename = spriteType.getValueCaseInsensitive("texturefile").$stringOrElse("").replace("\"", "")
-        if (name.isEmpty || filename.isEmpty) {
-          val pdxError = new PDXError(
-            file = Some(file),
-            additionalInfo = Map(
-              "context" -> "SpriteType in interface .gfx file has empty name or texturefile",
-              "name" -> name,
-              "filename" -> filename
-            )
-          )
-          interfaceErrors += pdxError
-        }
-        else {
-          val gfx = new SpriteType(name, filename, basepath = file.getParentFile.getParentFile)
-          spriteTypes.add(gfx)
-          Interface.gfxMap.put(name, gfx)
-        }
-      } catch {
-        case e: ParserException =>
-          val pdxError = new PDXError(
-            exception = e,
-            file = Some(file),
-            additionalInfo = Map("context" -> "Error parsing SpriteType in interface .gfx file")
-          )
-          interfaceErrors += pdxError
-      }
-    }
-  }
+		val validSpriteTypes = spriteTypeNodes.filter(_.containsAllCaseInsensitive("name", "texturefile"))
+		for (spriteType <- validSpriteTypes) {
+			try {
+				val name = spriteType.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
+				val filename = spriteType.getValueCaseInsensitive("texturefile").$stringOrElse("").replace("\"", "")
+				if (name.isEmpty || filename.isEmpty) {
+					val pdxError = new PDXError(
+						file = Some(file),
+						additionalInfo = Map(
+							"context" -> "SpriteType in interface .gfx file has empty name or texturefile",
+							"name" -> name,
+							"filename" -> filename
+						)
+					)
+					interfaceErrors += pdxError
+				}
+				else {
+					val gfx = new SpriteType(name, filename, basepath = file.getParentFile.getParentFile)
+					spriteTypes.add(gfx)
+					Interface.gfxMap.put(name, gfx)
+				}
+			} catch {
+				case e: ParserException =>
+					val pdxError = new PDXError(
+						exception = e,
+						file = Some(file),
+						additionalInfo = Map("context" -> "Error parsing SpriteType in interface .gfx file")
+					)
+					interfaceErrors += pdxError
+			}
+		}
+	}
 
-  /**
-   * Returns the name of the file represented by an instance of the Interface class
-   *
-   * @return name of this Interface file
-   */
-  def getName = file.getName
+	/**
+	 * Returns the name of the file represented by an instance of the Interface class
+	 *
+	 * @return name of this Interface file
+	 */
+	def getName = file.getName
 
-  /**
-   * Returns the path for the file represented by an instance of the Interface class
-   *
-   * @return filepath for this Interface file
-   */
-  def getPath = file.getPath
-  
-  def getGFXMAP: mutable.Map[String, SpriteType] = Interface.gfxMap
+	/**
+	 * Returns the path for the file represented by an instance of the Interface class
+	 *
+	 * @return filepath for this Interface file
+	 */
+	def getPath = file.getPath
+	
+	def getGFXMAP: mutable.Map[String, SpriteType] = Interface.gfxMap
 }
