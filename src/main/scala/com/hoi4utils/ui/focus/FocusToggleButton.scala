@@ -2,6 +2,8 @@ package com.hoi4utils.ui.focus
 
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree}
+import com.hoi4utils.main.HOIIVUtils.logger
+import com.hoi4utils.ui.focus.FocusToggleButton.gfxFocusUnavailable
 import com.hoi4utils.ui.javafx.scene.layout.ErrorIconPane
 import com.typesafe.scalalogging.LazyLogging
 import javafx.geometry.Pos
@@ -11,7 +13,6 @@ import javafx.scene.layout.*
 
 class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double) extends ToggleButton with LazyLogging:
 
-  private val gfxFocusUnavailable: Image = loadFocusUnavailableImage("focus_unavailable_bg.dds")
   private val focusIcon: Image = loadFocusIcon()
   private val cleanName: Label = Label(_focus.locName.getOrElse(_focus.id.str))
 
@@ -22,7 +23,7 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
   getStyleClass.add("focus-toggle-button")
   setStyle("-fx-font-size: 14px; -fx-padding: 6px; -fx-background-color: transparent; -fx-border-color: transparent;")
 
-  if gfxFocusUnavailable != null then
+  if FocusToggleButton.gfxFocusUnavailable != null then
     val cleanNameBackGround = new ImageView(gfxFocusUnavailable)
     val stackPane = new StackPane(cleanNameBackGround, cleanName)
     stackPane.setAlignment(Pos.CENTER)
@@ -84,24 +85,6 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
 
   def setHelpTooltip(text: String): Unit = setTooltip(new Tooltip(text))
 
-  private def loadFocusUnavailableImage(focusUnavailablePath: String): Image =
-    val inputStream =
-      try getClass.getClassLoader.getResourceAsStream(focusUnavailablePath)
-      catch
-        case e: Exception =>
-          logger.error(s"Failed to load focus unavailable image from $focusUnavailablePath", e)
-          return null
-    val buffer = new Array[Byte](inputStream.available)
-    inputStream.read(buffer)
-    inputStream.close()
-    DDSReader.imageFromDDS(
-      DDSReader.read(buffer, DDSReader.ARGB, 0) match
-        case Some(value) => value
-        case None => return null,
-      DDSReader.getWidth(buffer),
-      DDSReader.getHeight(buffer)
-    )
-
   private def loadFocusIcon(): Image = {
     _focus.getDDSImage match
       case Some(ddsImage) =>
@@ -114,3 +97,25 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
   def focus: Focus = _focus
 
   def focusTree: FocusTree = _focus.focusTree
+
+object FocusToggleButton:
+	private val gfxFocusUnavailable: Image = loadFocusUnavailableImage("focus_unavailable_bg.dds")
+
+	private def loadFocusUnavailableImage(focusUnavailablePath: String): Image =
+		val inputStream =
+			try getClass.getClassLoader.getResourceAsStream(focusUnavailablePath)
+			catch
+				case e: Exception =>
+//					logger.error(s"Failed to load focus unavailable image from $focusUnavailablePath", e) // TODO: i forgor how to get a logger oops
+					return null
+		val buffer = new Array[Byte](inputStream.available)
+		inputStream.read(buffer)
+		inputStream.close()
+		DDSReader.imageFromDDS(
+			DDSReader.read(buffer, DDSReader.ARGB, 0) match
+				case Some(value) => value
+				case None => return null,
+			DDSReader.getWidth(buffer),
+			DDSReader.getHeight(buffer)
+		)
+
