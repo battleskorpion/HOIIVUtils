@@ -15,8 +15,7 @@ import org.jetbrains.annotations.NotNull
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-
-import scala.collection.parallel.CollectionConverters._
+import scala.collection.parallel.CollectionConverters.*
 
 class CountryFile extends StructuredPDX with HeadlessPDX with Comparable[CountryFile] with InfrastructureData {
 	/* data */
@@ -169,7 +168,7 @@ object CountryFile extends LazyLogging with PDXReadable {
 	}
 
 	/**
-	 * Clears all countries and any other relevant values. 
+	 * Clears all countries and any other relevant values.
 	 */
 	override def clear(): Unit = {
 		countries.clear()

@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.common.national_focus
 
 import com.hoi4utils.parser.Node
-import com.hoi4utils.script.{FocusErrorGroup, HeadlessPDX, MultiPDX, PDXError, PDXFile, PDXScript, StructuredPDX}
+import com.hoi4utils.script.*
 import dotty.tools.sjs.ir.Trees.JSBinaryOp.&&
 
 import java.io.File

@@ -9,9 +9,8 @@ import com.typesafe.scalalogging.LazyLogging
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.collection.parallel.CollectionConverters.*
 import scala.util.boundary
-
-import scala.collection.parallel.CollectionConverters._
 
 /**
  * Represents a .gfx file in interface folder

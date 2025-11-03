@@ -30,8 +30,7 @@ import java.beans.PropertyChangeListener
 import java.io.File
 import java.util.Properties
 import scala.collection.mutable.ListBuffer
-
-import scala.collection.parallel.CollectionConverters._
+import scala.collection.parallel.CollectionConverters.*
 
 /**
  * Loads in the mod and hoi4 together

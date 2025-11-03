@@ -1,8 +1,8 @@
 package com.hoi4utils.hoi4.common.national_focus
 
+import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
 import com.hoi4utils.script.datatype.*
-import com.hoi4utils.parser.Node
 
 import java.io.File
 

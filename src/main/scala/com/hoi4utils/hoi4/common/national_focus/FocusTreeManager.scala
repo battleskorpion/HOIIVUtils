@@ -10,11 +10,10 @@ import javafx.collections.{FXCollections, ObservableList}
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.collection.parallel.CollectionConverters.*
 import scala.concurrent.ExecutionContext
 import scala.jdk.javaapi.CollectionConverters
 import scala.util.boundary
-
-import scala.collection.parallel.CollectionConverters._
 
 /**
  * ALL the FocusTree/FocusTrees

@@ -1,0 +1,35 @@
+# EditorConfig helps maintain consistent coding styles
+# https://editorconfig.org
+
+root = true
+
+# Default settings for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Scala files - 2 spaces
+[*.scala]
+indent_style = space
+indent_size = 2
+
+# Java files - tabs
+[*.java]
+indent_style = tab
+indent_size = 4
+
+# Build files
+[*.{gradle,gradle.kts,sbt}]
+indent_style = space
+indent_size = 2
+
+# XML, JSON, YAML
+[*.{xml,json,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false

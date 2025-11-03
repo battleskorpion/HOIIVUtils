@@ -17,7 +17,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.{DragEvent, Dragboard, MouseEvent, TransferMode}
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import javafx.scene.shape.{Circle, Line, LineTo, MoveTo, Path}
+import javafx.scene.shape.*
 import scalafx.scene.input.ClipboardContent
 
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
