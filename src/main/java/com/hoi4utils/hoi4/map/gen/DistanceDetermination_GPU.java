@@ -35,7 +35,7 @@ public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGe
         final int offsetPotential = 4;
         final int[] rgb_values = new int[heightmap.width() * heightmap.height()];
         System.out.println("Initializing distance kernel...");
-        DistanceKernel kernel = new DistanceKernel(rgb_values);
+        DistanceKernel kernel = new DistanceKernel(rgb_values, 48);
         Range range = Range.create2D(heightmap.width(), heightmap.height(), 16, 16);
         kernel.execute(range);
         System.out.println("Distance kernel executed.");
@@ -57,9 +57,10 @@ public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGe
         final int[] stateBorderValues;
         final int numSeeds;
         final int heightmap_width = heightmap.width();
-        //final int heightmap_height = heightmap.height();
+	    final int seaLevel;
+	    //final int heightmap_height = heightmap.height();
 
-        public DistanceKernel(final int[] rgb_values) {
+        public DistanceKernel(final int[] rgb_values, final int seaLevel) {
             // heightmap
             byte[][] heightmap2D = heightmap.heightmap();
             int height = heightmap2D.length;
@@ -69,6 +70,7 @@ public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGe
                 System.arraycopy(heightmap2D[i], 0, heightmap_values, i * width, width);
             }
             this.rgb_values = rgb_values;
+			this.seaLevel = seaLevel;
             //final Collection<P> seeds = stateMapList.seedsList(stateBorderValue, type);
             var seeds = stateMapList.seedsList();
             numSeeds = seeds.size();
@@ -99,7 +101,8 @@ public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGe
             final int x = getGlobalId(0);
             final int y = getGlobalId(1);
             //final int heightmapHeight = heightmap_values[y][x] & 0xFF; //todo also no 2d
-            //final int stateBorderValue = stateBorderMap.getRGB(x, y);
+	        final int heightmapHeight = heightmap_values[y * heightmap_width + x];
+	        //final int stateBorderValue = stateBorderMap.getRGB(x, y);
             //final int type = provinceType(heightmapHeight, properties.seaLevel()); todo
 
             //int xOffset = offsetWithNoise(offsetPotential, seed, x, y);
@@ -113,19 +116,23 @@ public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGe
             int dist = Integer.MAX_VALUE;
 
             for (int i = 0; i < numSeeds; i++) {
-                // calculate the difference in x and y direction
-                int xdiff = seedsX[i] - x;
-                int ydiff = seedsY[i] - y;
+	            int seedHeightmapHeight = seedsRGB[i] & 0xFF;
+				int pointHeightmapHeight = heightmap_values[y * heightmap_width + x];
+	            boolean sameType = (seedHeightmapHeight < seaLevel) == (pointHeightmapHeight < seaLevel);
+	            // only consider same state, only consider same province type (land, sea, ocean)
+				if (stateBorderValues[y * heightmap_width + x] == borderAreas[i] && sameType) {
+					// calculate the difference in x and y direction
+					int xdiff = seedsX[i] - x;
+					int ydiff = seedsY[i] - y;
 
-                // calculate current squared Euclidean distance, for comparing only
-                int cdist = xdiff * xdiff + ydiff * ydiff;
-                // only consider same state
-                dist = stateBorderValues[y * heightmap_width + x] != borderAreas[i] ? Integer.MAX_VALUE : dist;
+					// calculate current squared Euclidean distance, for comparing only
+					int cdist = xdiff * xdiff + ydiff * ydiff;
 
-                if (cdist < dist) {
-                    nearestColor = seedsRGB[i];
-                    dist = cdist;
-                }
+					if (cdist < dist) {
+						nearestColor = seedsRGB[i];
+						dist = cdist;
+					}
+				}
             }
 
             rgb_values[y * heightmap_width + x] = nearestColor;
