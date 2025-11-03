@@ -14,6 +14,8 @@ import scala.concurrent.ExecutionContext
 import scala.jdk.javaapi.CollectionConverters
 import scala.util.boundary
 
+import scala.collection.parallel.CollectionConverters._
+
 /**
  * ALL the FocusTree/FocusTrees
  * Localizable data: focus tree name. Each focus is its own localizable data.
@@ -30,7 +32,6 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
 
 	/** Reads all focus trees from the focus trees folder, creating FocusTree instances for each. */
 	def read(): Boolean = {
-		
 		val modFocusFolder = HOIIVFiles.Mod.focus_folder
 		if !modFocusFolder.exists || !modFocusFolder.isDirectory then
 			logger.error(s"In ${this.getClass.getSimpleName} - ${modFocusFolder} is not a directory, or it does not exist.")
@@ -40,7 +41,7 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
 			false
 		else
 			// create focus trees from files
-			modFocusFolder.listFiles().filter(_.getName.endsWith(".txt")).foreach: f =>
+			modFocusFolder.listFiles().filter(_.getName.endsWith(".txt")).par.foreach: f =>
 				if (hasFocusTreeHeader(f))
 					new FocusTree(f)
 				else
