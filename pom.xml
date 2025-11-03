@@ -293,6 +293,11 @@
       <artifactId>scala3-compiler_3</artifactId>
       <version>${scala.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.scala-lang.modules</groupId>
+      <artifactId>scala-parallel-collections_3</artifactId>
+      <version>1.2.0</version>
+    </dependency>
     
     <!-- JSON Processing -->
     <dependency>
