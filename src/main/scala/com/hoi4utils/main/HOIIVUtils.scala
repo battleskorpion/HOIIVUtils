@@ -21,7 +21,7 @@ import javax.swing.*
  * HOIIVUtils\\HOIIVUtils.sh
  */
 object HOIIVUtils extends LazyLogging:
-  var config: Option[Config] = None
+  private var config: Option[Config] = None
   def main(args: Array[String]): Unit = Application.launch(classOf[App], args*)
 
   def getConfig: Config =

@@ -39,8 +39,6 @@ import scala.collection.parallel.CollectionConverters._
  * TODO: @Skorp Update the ChangeNotifier and FileWatcher or delete this todo if working as intended
  */
 class PDXLoader extends LazyLogging:
-	val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
-	private var stateFilesWatcher: FileWatcher = null
 
 	/* LOAD ORDER IMPORTANT (depending on the class) */
 	val pdxList: List[List[PDXReadable]] = List(
@@ -108,7 +106,6 @@ class PDXLoader extends LazyLogging:
 			logger.error("Failed to create HOIIV file paths")
 			hProperties.setProperty("valid.HOIIVFilePaths", "false")
 		if isCancelled() then return
-		changeNotifier.checkAndNotifyChanges()
 
 		startTime = System.nanoTime()
 		onComponentStart("Localization")
@@ -177,47 +174,3 @@ class PDXLoader extends LazyLogging:
 	def closeDB(): Unit =
 		ModifierDatabase.close()
 		EffectDatabase.close()
-
-	/**
-	 * Watches the state files in the given directory.
-	 *
-	 * @param stateFiles The directory containing state files.
-	 */
-	def watchStateFiles(stateFiles: File): Unit =
-		if stateFiles == null || !validateDirectoryPath(stateFiles.getPath, "State files directory") then return
-
-		stateFilesWatcher = new FileWatcher(stateFiles)
-		stateFilesWatcher.addListener(new FileAdapter:
-			override def onCreated(event: FileEvent): Unit =
-				handleStateFileEvent(event, "created/loaded", file => State.readState(file))
-
-			override def onModified(event: FileEvent): Unit =
-				handleStateFileEvent(event, "modified", file => State.readState(file))
-
-			override def onDeleted(event: FileEvent): Unit =
-				handleStateFileEvent(event, "deleted", file => State.removeState(file))
-		)
-		stateFilesWatcher.watch()
-
-	/**
-	 * Handles state file events.
-	 *
-	 * @param event       File event that occurred.
-	 * @param actionName  Name of the action performed.
-	 * @param stateAction Function to apply to the file.
-	 */
-	private def handleStateFileEvent(event: FileEvent, actionName: String, stateAction: File => Unit): Unit =
-		EventQueue.invokeLater(() =>
-			stateFilesWatcher.listenerPerformAction = stateFilesWatcher.listenerPerformAction + 1
-			val file = event.getFile
-			if file != null then
-				stateAction(file)
-			stateFilesWatcher.listenerPerformAction = stateFilesWatcher.listenerPerformAction - 1
-			logger.debug(s"State was $actionName: ${State.get(file)}")
-		)
-
-	def addPropertyChangeListener(listener: PropertyChangeListener): Unit =
-		changeNotifier.addPropertyChangeListener(listener)
-
-	def removePropertyChangeListener(listener: PropertyChangeListener): Unit =
-		changeNotifier.removePropertyChangeListener(listener)

@@ -10,8 +10,6 @@ import java.util.Properties
 import scala.util.Try
 
 class ConfigManager extends LazyLogging:
-  val changeNotifier = new PublicFieldChangeNotifier(this.getClass)
-
   /**
    * @return Configured HOIIVUtils configuration for use by the application
    */
