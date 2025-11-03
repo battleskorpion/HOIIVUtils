@@ -51,8 +51,8 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
   val sharedFocuses: ReferencePDX[SharedFocus] =
     ReferencePDX[SharedFocus](() => FocusTreeManager.sharedFocuses, "shared_focus")
 
-
-
+  // File-level errors (parse errors, etc.)
+  var treeErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
 
   var name: String = ""
   var columns: Int = 1
@@ -72,6 +72,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
       require(file.exists && file.isFile, s"Focus tree file $file does not exist or is not a file.")
       loadPDX(file)
       setFile(file)
+      collectAndRegisterErrors()
 
   
   def width: Int = focuses.map(_.absoluteX).maxOption.getOrElse(0)
@@ -82,6 +83,15 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
   // todo: add default, continuous focus position
   override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] =
     ListBuffer(id, country, focuses)
+
+  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+    val pdxError = new PDXError(
+      exception = exception,
+      errorNode = node,
+      file = if file != null then Some(file) else _focusFile,
+      pdxScript = this
+    ).addInfo("focusTreeId", id.str)
+    treeErrors += pdxError
 
   /**
    * List of all focus IDs in this focus tree.
@@ -124,6 +134,26 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
 
   def addNewFocus(f: Focus): Unit =
     focuses += f
+
+  /**
+   * Collects all focus errors from this tree and registers them with FocusTreeManager
+   */
+  def collectAndRegisterErrors(): Unit =
+    val focusErrorGroups = ListBuffer[FocusErrorGroup]()
+
+    // Add tree-level errors as a special "File Errors" group
+    if treeErrors.nonEmpty then
+      focusErrorGroups += new FocusErrorGroup("File Errors", treeErrors)
+
+    // Add errors from individual focuses
+    focuses.foreach { focus =>
+      if focus.focusErrors.nonEmpty then
+        focusErrorGroups += new FocusErrorGroup(focus.id.str, focus.focusErrors)
+    }
+
+    if focusErrorGroups.nonEmpty then
+      val treeErrorGroup = new FocusTreeErrorGroup(id.str, focusErrorGroups)
+      FocusTreeManager.focusTreeErrors += treeErrorGroup
 
   /**
    * Get the next temporary focus ID.

@@ -31,21 +31,14 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDefinition
     this.set(amt)
   }
 
-  override def handleNodeValueTypeError(node: Node, exception: Exception): Unit = {
-    val msg = s"In ${this.getClass.getSimpleName} - Error parsing resource '${node.name}': ${exception.getMessage}"
-    Resource.resourceErrors += msg
-    super.handleNodeValueTypeError(node, exception)
-  }
-
-  override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
-    val msg = s"In ${this.getClass.getSimpleName} - Unexpected identifier '${node.identifier.getOrElse("none")}' in resource '${node.name}': ${exception.getMessage}"
-    Resource.resourceErrors += msg
-    super.handleUnexpectedIdentifier(node, exception)
-
-  override def handleParserException(file: File, exception: Exception): Unit =
-    val msg = s"In ${this.getClass.getSimpleName} - Error parsing resource in file '${file.getPath}': ${exception.getMessage}"
-    Resource.resourceErrors += msg
-    super.handleParserException(file, exception)
+  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+    val pdxError = new PDXError(
+      exception = exception,
+      errorNode = node,
+      file = Option(file),
+      pdxScript = this
+    ).addInfo("resourceName", name)
+    Resource.resourceErrors += pdxError
 
   infix def isResource(resource: Resource): Boolean = this.name == resource.name
 
@@ -71,7 +64,7 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDefinition
 
 object Resource {
   private var resourceIdentifiers = Array("aluminium", "chromium", "oil", "rubber", "steel", "tungsten") // default: aluminium, chromium, oil, rubber, steel, tungsten todo load in resources if modified.
-  var resourceErrors: ListBuffer[String] = ListBuffer().empty
+  var resourceErrors: ListBuffer[PDXError] = ListBuffer().empty
 
   private def setResourceIdentifiers(identifiers: Array[String]): Unit = {
     Resource.resourceIdentifiers = identifiers

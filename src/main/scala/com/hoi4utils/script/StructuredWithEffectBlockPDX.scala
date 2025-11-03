@@ -39,22 +39,18 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
     } catch {
       case e: UnexpectedIdentifierException =>
         // Instead of failing, we log and store the node as an effect.
-        handleUnexpectedIdentifier(expression, e)
+        val message = s"Not a structured property, treating as effect: $node"
+        logger.warn(message)
+        handlePDXError(e, expression)
         effectNodes += expression
       case e: NodeValueTypeException =>
         // Likewise, if the node value type is not as expected, add it to the effect nodes.
-        handleNodeValueTypeError(expression, e)
+        val message = s"Node value type error, treating as effect: ${e.getMessage}\n\t$node"
+        logger.warn(message)
+        handlePDXError(e, expression)
         effectNodes += expression
     }
   }
-
-  override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
-    val message = s"Not a structured property, treating as effect: $node"
-    logger.warn(message)
-  
-  override def handleNodeValueTypeError(node: Node, exception: Exception): Unit = 
-    val message = s"Node value type error, treating as effect: ${exception.getMessage}\n\t$node"
-    logger.warn(message)
 
   /**
    * Override loadPDX for a single node.

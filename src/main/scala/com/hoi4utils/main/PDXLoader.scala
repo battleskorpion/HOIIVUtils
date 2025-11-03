@@ -125,7 +125,7 @@ class PDXLoader extends LazyLogging:
           case "ResourcesFile$" => "Resources"
           case "CountryFile" => "Country"
           case "IdeasManager" => "Ideas"
-          case "FocusTreesManager" => "FocusTrees"
+          case "FocusTreeManager" => "FocusTrees"
           case other => other
         onComponentStart(componentName)
         val componentStart = System.nanoTime()

@@ -13,6 +13,7 @@ import com.hoi4utils.script.shared.AIWillDo
 import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import javafx.scene.image.Image
 
+import java.io.File
 import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -53,8 +54,18 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
     AIWillDo()
   /** completion reward */
   //  final val completionReward: CompletionReward = new CompletionReward()
+  var focusErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
 
   if node != null then loadPDX(node)
+
+  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+    val pdxError = new PDXError(
+      exception = exception,
+      errorNode = node,
+      file = if file != null then Some(file) else focusTree.focusFile,
+      pdxScript = this
+    ).addInfo("focusId", id.str)
+    focusErrors += pdxError
 
   /**
    * @inheritdoc
@@ -368,20 +379,17 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
     ()
 
   override def referableID: Option[String] = id.value
-
+  
   class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus] = () => focusTree.focuses)
     extends MultiReferencePDX[Focus](referenceFocusesSupplier, "prerequisite", "focus"):
-    override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
-      val fullMessage = s"""Prerequisite Set - Unexpected Identifier Error:
-                           |	Exception: ${exception.getMessage}
-                           |	Focus Tree ID: ${id.value getOrElse "undefined"}
-                           |	Class: ${this.getClass.getSimpleName}
-                           |	Node Identifier: ${node.identifier.getOrElse("none")}
-                           |	Expected Identifiers: ${pdxIdentifiers.mkString("[", ", ", "]")}
-                           |	Node Value: ${Option(node.$).map(_.toString) getOrElse "null"}
-                           |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName) getOrElse "null"}""".stripMargin
-
-      focusTreeErrors += fullMessage
+    override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+      val pdxError = new PDXError(
+        exception = exception,
+        errorNode = node,
+        pdxScript = this,
+        additionalInfo = Map("Focus ID" -> id.getOrElse("[Unknown]"))
+      )
+      focusErrors += pdxError
 
   /** mutually exclusive is a multi-reference of focuses */
   class MutuallyExclusiveSet(referenceFocusesSupplier: () => Iterable[Focus])

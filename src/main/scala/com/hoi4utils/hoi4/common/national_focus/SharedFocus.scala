@@ -1,7 +1,8 @@
 package com.hoi4utils.hoi4.common.national_focus
 
-import com.hoi4utils.script.{PDXScript, StructuredPDX, TriggerPDX}
-import com.hoi4utils.script.datatype.{PointPDX, StringPDX}
+import com.hoi4utils.script.*
+import com.hoi4utils.script.datatype.*
+import com.hoi4utils.parser.Node
 
 import java.io.File
 
@@ -11,6 +12,15 @@ class SharedFocus extends Focus(PseudoSharedFocusTree(), pdxIdentifier = "shared
 
 	/* init */
 	PseudoSharedFocusTree().addNewFocus(this)
+
+	override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+		val pdxError = new PDXError(
+			exception = exception,
+			errorNode = node,
+			file = if file != null then Some(file) else focusTree.focusFile,
+			pdxScript = this
+		).addInfo("focusId", id.str)
+		focusErrors += pdxError
 
 	class Offset extends PointPDX("offset") {
 		val trigger = TriggerPDX()

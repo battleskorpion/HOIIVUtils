@@ -8,6 +8,7 @@ import com.hoi4utils.shared.ExpectedRange
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
 
+import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
@@ -61,11 +62,14 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
       super.loadPDX(expr)
     }
 
-    override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
-      // TODO add line number to message also fix not being able to get file name
-      val message = s"Unexpected identifier:\n Idea: ${Idea.this.toString}\n Idea file: ${_ideaFile.flatMap(_.getFile).map(_.getName).getOrElse("[Unknown file]")}\n pdxIdentifier: ${this.pdxIdentifier} / ${node.identifier} \n Exception: ${exception.getMessage}"
-      IdeasManager.ideaFileErrors += message
-//      logger.error(message)
+    override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+      val pdxError = new PDXError(
+        exception = exception,
+        errorNode = node,
+        file = if file != null then Some(file) else _ideaFile.flatMap(_.getFile),
+        pdxScript = this
+      ).addInfo("idea", Idea.this.toString)
+      IdeasManager.ideaFileErrors += pdxError
 
     override def getPDXTypeName: String = "Modifiers"
   }

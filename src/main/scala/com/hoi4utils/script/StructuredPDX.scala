@@ -56,7 +56,8 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
       expression.identifier match
         case None => expression.$ match
           case l: ListBuffer[Node] => loadPDX(l)
-          case _ => handleNodeValueTypeError(expression, NodeValueTypeException("PDXScript.loadPDX: Expected list of nodes, got: \n" + expression))
+          case _ => 
+            handlePDXError(NodeValueTypeException("PDXScript.loadPDX: Expected list of nodes, got: \n" + expression), expression, null)
         case Some(_) =>
           super.loadPDX(expression)
     else

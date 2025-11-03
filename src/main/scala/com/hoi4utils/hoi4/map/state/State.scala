@@ -67,17 +67,14 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
       loadPDX(file)
       setFile(file)
 
-  override def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
-    val msg = s"Error in state file ${_stateFile.map(_.getName).getOrElse("[Unknown file]")}: ${exception.getMessage}"
-    State.stateErrors += msg
-
-  override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
-    val msg = s"Unexpected identifier in state file ${_stateFile.map(_.getName).getOrElse("[Unknown file]")}: ${exception.getMessage}"
-    State.stateErrors += msg
-
-  override def handleParserException(file: File, exception: Exception): Unit =
-    val msg = s"Error parsing state file ${file.getName}: ${exception.getMessage}"
-    State.stateErrors += msg
+  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+    val pdxError = new PDXError(
+      exception = exception,
+      errorNode = node,
+      file = if file != null then Some(file) else _stateFile,
+      pdxScript = this
+    ).addInfo("stateID", stateID.asOptionalString.getOrElse("unknown"))
+    State.stateErrors += pdxError
 
   /**
    * @inheritdoc
@@ -317,7 +314,7 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
 object State extends Iterable[State] with PDXReadable with LazyLogging:
 
   private val states = new ListBuffer[State]
-  var stateErrors: ListBuffer[String] = ListBuffer().empty
+  var stateErrors: ListBuffer[PDXError] = ListBuffer().empty
 
   def get(file: File): Option[State] =
     if file == null then return None
