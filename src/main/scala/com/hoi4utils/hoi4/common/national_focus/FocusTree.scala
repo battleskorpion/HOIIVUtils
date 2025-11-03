@@ -280,53 +280,53 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
 
   /* Error handling overrides to log detailed information about issues encountered during parsing. */
 
-  override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
-    val fullMessage =
-      s"""Focus Tree - Unexpected Identifier Error:
-         |	Exception: ${exception.getMessage}
-         |	Focus Tree ID: ${id.value.getOrElse("undefined")}
-         |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
-         |	Focus Count: ${focuses.size}
-         |	Node Identifier: ${node.identifier.getOrElse("none")}
-         |	Expected Identifiers: ${pdxIdentifiers.mkString("[", ", ", "]")}
-         |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
-         |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
-         |	File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}""".stripMargin
-
-    focusTreeErrors += fullMessage
-  //    logger.error("Focus Tree - Unexpected Identifier Error:")
-  //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
-
-  override def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
-    val fullMessage =
-      s"""Focus Tree - Node Value Type Error:
-         |	Exception: ${exception.getMessage}
-         |	Focus Tree ID: ${id.value.getOrElse("undefined")}
-         |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
-         |	Focus Count: ${focuses.size}
-         |	Node Identifier: ${node.identifier.getOrElse("none")}
-         |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
-         |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
-         |	File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}""".stripMargin
-
-    focusTreeErrors += fullMessage
-  //    logger.error("Focus Tree - Node Value Type Error:")
-  //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
-
-  override def handleParserException(file: File, exception: Exception): Unit =
-    val fullMessage =
-      s"""Focus Tree - Parser Exception (File):
-         |	Exception: ${exception.getMessage}
-         |	Focus Tree ID: ${id.value.getOrElse("undefined")}
-         |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
-         |	Focus Count: ${focuses.size}
-         |	Current Focuses: ${if focuses.nonEmpty then focuses.flatMap(_.id.value).take(5).mkString("[", ", ", if focuses.size > 5 then ", ...]" else "]") else "none"}
-         |	Total Focus Trees Loaded: ${focusTrees.size}
-         |	File Last Modified: ${if file.exists() then new java.util.Date(file.lastModified()).toString else "N/A"}
-         |	File Path: ${file.getAbsolutePath}""".stripMargin
-
-    focusTreeErrors += fullMessage
-//    logger.error("Focus Tree - Parser Exception (File):")
-//    errorDetails.foreach(detail => logger.error(s"\t$detail"))
+//  override def handleUnexpectedIdentifier(node: Node, exception: Exception): Unit =
+//    val fullMessage =
+//      s"""Focus Tree - Unexpected Identifier Error:
+//         |	Exception: ${exception.getMessage}
+//         |	Focus Tree ID: ${id.value.getOrElse("undefined")}
+//         |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
+//         |	Focus Count: ${focuses.size}
+//         |	Node Identifier: ${node.identifier.getOrElse("none")}
+//         |	Expected Identifiers: ${pdxIdentifiers.mkString("[", ", ", "]")}
+//         |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
+//         |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
+//         |	File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}""".stripMargin
+//
+//    focusTreeErrors += fullMessage
+//  //    logger.error("Focus Tree - Unexpected Identifier Error:")
+//  //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
+//
+//  override def handleNodeValueTypeError(node: Node, exception: Exception): Unit =
+//    val fullMessage =
+//      s"""Focus Tree - Node Value Type Error:
+//         |	Exception: ${exception.getMessage}
+//         |	Focus Tree ID: ${id.value.getOrElse("undefined")}
+//         |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
+//         |	Focus Count: ${focuses.size}
+//         |	Node Identifier: ${node.identifier.getOrElse("none")}
+//         |	Node Value: ${Option(node.$).map(_.toString).getOrElse("null")}
+//         |	Node Type: ${Option(node.$).map(_.getClass.getSimpleName).getOrElse("null")}
+//         |	File Path: ${_focusFile.map(_.getAbsolutePath).getOrElse("N/A")}""".stripMargin
+//
+//    focusTreeErrors += fullMessage
+//  //    logger.error("Focus Tree - Node Value Type Error:")
+//  //    errorDetails.foreach(detail => logger.error(s"\t$detail"))
+//
+//  override def handleParserException(file: File, exception: Exception): Unit =
+//    val fullMessage =
+//      s"""Focus Tree - Parser Exception (File):
+//         |	Exception: ${exception.getMessage}
+//         |	Focus Tree ID: ${id.value.getOrElse("undefined")}
+//         |	Country Tag: ${countryTag.map(_.toString).getOrElse("undefined")}
+//         |	Focus Count: ${focuses.size}
+//         |	Current Focuses: ${if focuses.nonEmpty then focuses.flatMap(_.id.value).take(5).mkString("[", ", ", if focuses.size > 5 then ", ...]" else "]") else "none"}
+//         |	Total Focus Trees Loaded: ${focusTrees.size}
+//         |	File Last Modified: ${if file.exists() then new java.util.Date(file.lastModified()).toString else "N/A"}
+//         |	File Path: ${file.getAbsolutePath}""".stripMargin
+//
+//    focusTreeErrors += fullMessage
+////    logger.error("Focus Tree - Parser Exception (File):")
+////    errorDetails.foreach(detail => logger.error(s"\t$detail"))
 
 case class Point(x: Int, y: Int)
