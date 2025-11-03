@@ -11,6 +11,7 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
 object IdeasManager extends PDXReadable with LazyLogging:
+  override val cleanName: String = "Ideas"
   val ideaFileFileMap = new mutable.HashMap[File, IdeaFile]()
   val ideaFiles = new ListBuffer[IdeaFile]()
   var ideaFileErrors: ListBuffer[PDXError] = ListBuffer.empty

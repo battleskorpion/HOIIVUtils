@@ -34,7 +34,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   import MenuController.*
   setFxmlFile("/com/hoi4utils/ui/menus/Menu2.fxml")
   setTitle("HOIIVUtils")
-  
+
   private val focusTreeViewer       = "/com/hoi4utils/ui/focus/FocusTree2.fxml"
   private val focusTreeLocalization = "/com/hoi4utils/ui/localization/FocusTreeLocalization.fxml" // todo scala, redesign
   private val ideaLocalization      = "/com/hoi4utils/ui/localization/IdeaLocalization.fxml" // todo scala, redesign
@@ -81,7 +81,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   private var currentTask: javafx.concurrent.Task[Unit] = null
 
   private var detailPanelManager: DetailPanelManager = uninitialized
-  
+
   @FXML
   def initialize(): Unit =
     val initStartTime = MenuController.getProgramStartTime
@@ -95,7 +95,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     val componentTimes = LinkedHashMap[String, Double]()
     val componentOrder = List(
       "ModifierDatabase", "EffectDatabase", "Paths", "Localization",
-      "Interface", "Resources", "State", "Country", "CountryTag", "Ideas", "FocusTrees"
+      "InterfaceGFX", "Resources", "States", "Countries", "CountryTags", "Ideas", "FocusTrees"
     )
     @volatile var currentComponent: String = ""
     var currentComponentStartTime: Long = 0
@@ -188,7 +188,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           }
           currentComponent = ""
           currentComponentStartTime = 0
-        
+
         pdxLoader.load(
           getConfig.getProperties,
           loadingLabel,
@@ -206,13 +206,13 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         val badFiles = ListBuffer(
           "localization",
           "HOIIVFilePaths",
-          "Interface",
-          "State",
-          "Country",
-          "CountryTag",
-          "FocusTree",
-          "IdeaFile",
-          "ResourcesFile$"
+          "InterfaceGFX",
+          "States",
+          "Countries",
+          "CountryTags",
+          "FocusTrees",
+          "Ideas",
+          "Resources"
         ).flatMap(MenuController.checkFileError)
 
         if isCancelled then return
@@ -228,18 +228,18 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
 
         save()
         MenuController.updateLoadingStatus(loadingLabel, "Showing Menu...")
-    
+
     task.setOnSucceeded: _ =>
       isComplete = true
       timerTimeline.stop()
-      
+
       val totalTime = (System.nanoTime() - initStartTime) / 1_000_000_000.0
       val initTime = (initEndTime - initStartTime) / 1_000_000_000.0
       val modLoadTime = if modLoadEndTime > 0 then (modLoadEndTime - modLoadStartTime) / 1_000_000_000.0 else 0.0
-      
+
       val finalDisplay = buildFinalTimerDisplay(initTime, modLoadTime, totalTime, componentTimes, componentOrder)
       Platform.runLater(() => timer.setText(finalDisplay))
-      
+
       val componentLog = componentTimes.map { case (name, time) => f"$name: $time%.2fs" }.mkString(", ")
       logger.info(f"Loading complete - Total: $totalTime%.2fs, Init: $initTime%.2fs, Mod load: $modLoadTime%.2fs, Components: [$componentLog]")
 
@@ -294,7 +294,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   def start(stage: Stage): Unit =
     primaryStage = stage
     open()
-  
+
   override def fxmlSetResource(): Unit = fxmlLoader.setResources(getResourceBundle("i18n.menu"))
 
   override def preSetup(): Unit = setupWindowControls(mVBox, contentGrid)

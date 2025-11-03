@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
 trait PDXReadable:
+  val cleanName: String = "UnnamedPDXReadable"
   def read(): Boolean
-  def name: String = this.getClass.getSimpleName.replaceAll("\\$", "")
   def clear(): Unit = {}

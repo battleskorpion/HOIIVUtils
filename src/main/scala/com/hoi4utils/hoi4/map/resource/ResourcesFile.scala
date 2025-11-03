@@ -41,6 +41,7 @@ class ResourcesFile(file: File = null) extends CollectionPDX[ResourceDefinition]
 }
 
 object ResourcesFile extends PDXReadable with LazyLogging {
+  override val cleanName: String = "Resources"
   //  private var _resources: List[Resource] = List()
   private var _resourcesPDX: Option[ResourcesFile] = None
 
@@ -76,10 +77,6 @@ object ResourcesFile extends PDXReadable with LazyLogging {
     case None =>
       logger.warn("Tried to obtain resources list but valid Resources info not loaded.")
       List()
-
-  override def name: String = {
-    this.getClass.getSimpleName
-  }
 
   // todo move both?
   def primaryResourcesFile: Option[File] = {

@@ -312,6 +312,7 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
  * I apologize in advance.
  */
 object State extends Iterable[State] with PDXReadable with LazyLogging:
+  override val cleanName: String = "States"
 
   private val states = new ListBuffer[State]
   var stateErrors: ListBuffer[PDXError] = ListBuffer().empty

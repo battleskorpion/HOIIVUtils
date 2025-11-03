@@ -42,6 +42,7 @@ class CountryTag private(val tag: String, var file: Option[File] = None) extends
 }
 
 object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable {
+  override val cleanName: String = "CountryTags"
   val NULL_TAG: CountryTag = CountryTag("###")
   val COUNTRY_TAG_LENGTH = 3 // standard country tag length (for a normal country tag)private final String tag;
   // scala... (this is null (????????????) if you dont use 'lazy')
