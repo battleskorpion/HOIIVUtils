@@ -14,7 +14,7 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
    *
    * @return the next token from the tokenizer, or None if there are no more tokens
    */
-  def next: Option[Token] = {
+  @inline def next: Option[Token] = {
     matcher.nextOption().map(m => Token(m.matched, m.start))
   }
 
@@ -23,7 +23,7 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
    *
    * @return Next token from matcher
    */
-  def peek: Option[Token] = {
+  @inline def peek: Option[Token] = {
     matcher.headOption.map(m => Token(m.matched, m.start))
   }
 

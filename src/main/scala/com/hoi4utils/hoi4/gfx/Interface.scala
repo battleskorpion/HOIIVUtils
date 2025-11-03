@@ -53,8 +53,11 @@ object Interface extends PDXReadable with LazyLogging {
 			logger.error("Warning: mod interface directory is empty")
 			false
 		} else {
-			for (file <- HOIIVFiles.Mod.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))) {
-				interfaceFiles.put(file, new Interface(file))
+			val gfxFiles = HOIIVFiles.Mod.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))
+			val interfaceFilesMap = gfxFiles.par.map(f => f -> new Interface(f)).seq
+
+			interfaceFilesMap.foreach { (f, interface) =>
+				interfaceFiles.put(f, interface)
 			}
 			true
 		}
@@ -198,6 +201,6 @@ class Interface(private val file: File) extends LazyLogging {
 	 * @return filepath for this Interface file
 	 */
 	def getPath = file.getPath
-	
+
 	def getGFXMAP: mutable.Map[String, SpriteType] = Interface.gfxMap
 }
