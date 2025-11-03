@@ -35,7 +35,7 @@ public class DistanceDetermination_GPU<P extends MapPoint> extends AbstractMapGe
         final int offsetPotential = 4;
         final int[] rgb_values = new int[heightmap.width() * heightmap.height()];
         System.out.println("Initializing distance kernel...");
-        DistanceKernel kernel = new DistanceKernel(rgb_values, 48);
+        DistanceKernel kernel = new DistanceKernel(rgb_values, properties.seaLevel());
         Range range = Range.create2D(heightmap.width(), heightmap.height(), 16, 16);
         kernel.execute(range);
         System.out.println("Distance kernel executed.");
