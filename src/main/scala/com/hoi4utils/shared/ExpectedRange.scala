@@ -38,3 +38,7 @@ object ExpectedRange:
   def ofPositiveInfinite(min: Double): ExpectedRange[Double] = new ExpectedRange[Double](min, Double.PositiveInfinity)
 
   def ofNegativeInfinite(max: Double): ExpectedRange[Double] = new ExpectedRange[Double](Double.NegativeInfinity, max)
+  
+  def ofUnitInterval: ExpectedRange[Double] = new ExpectedRange[Double](0.0, 1.0)
+  
+  

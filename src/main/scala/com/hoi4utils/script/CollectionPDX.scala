@@ -43,10 +43,9 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
-  override def value: Option[ListBuffer[T]] = {
+  override def value: Option[ListBuffer[T]] =
     if (pdxList.isEmpty) None
     else Some(pdxList)
-  }
 
   /**
    * Implementation of addToCollection for CollectionPDX.

@@ -7,7 +7,7 @@ import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.*
 import com.hoi4utils.script.datatype.*
-import com.hoi4utils.shared.BoolType
+import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 
@@ -44,6 +44,8 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
     PointPDX("continuous_focus_position")
   val initialShowPosition =
     InitialShowPosition("initial_show_position")
+  val shortcut =
+    Shortcut()
   /* special cases - requires special handling :) */
   // todo handle specially
   val sharedFocuses: ReferencePDX[SharedFocus] =
@@ -235,6 +237,16 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
       val focus: ReferencePDX[Focus] = ReferencePDX[Focus](() => focuses.toList, "focus")
 
       override def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(focus)
+
+  class Shortcut extends StructuredPDX("shortcut"):
+    val name = StringPDX("name")  // loc_key
+    val target = ReferencePDX[Focus](() => listFocuses, "target")
+    /** Controls zoom */
+    val scrollWheelFactor = DoublePDX("scroll_wheel_factor", ExpectedRange.ofUnitInterval)
+//    val trigger = TriggerPDX("trigger") // TODO IMPL TRIGGER PDX
+    
+    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] =
+      ListBuffer(name, target, scrollWheelFactor)
 
   /* Error handling overrides to log detailed information about issues encountered during parsing. */
 

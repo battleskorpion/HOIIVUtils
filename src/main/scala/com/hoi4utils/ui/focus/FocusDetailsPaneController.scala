@@ -26,6 +26,8 @@ class FocusDetailsPaneController extends LazyLogging:
 
   private var currentLoadTask: Option[Task[PDXEditorPane]] = None
   private var currentFocus: Option[Focus] = None
+  private var pdxEditorPane: Option[PDXEditorPane] = None
+  var onUpdate: Option[() => Unit] = None
 
   @FXML
   def initialize(): Unit =
@@ -49,7 +51,10 @@ class FocusDetailsPaneController extends LazyLogging:
 
         val editorPane = new PDXEditorPane(
           focus.asInstanceOf[com.hoi4utils.script.PDXScript[?]],
-          () => onFocusUpdate()
+          () => {
+            onFocusUpdate()
+            if onUpdate.isDefined then onUpdate.get()
+          }
         )
 
         editorPane
@@ -61,10 +66,10 @@ class FocusDetailsPaneController extends LazyLogging:
         case Some(task) if task == loadTask =>
           Platform.runLater(() => {
             try {
-              val editorPane = loadTask.getValue
+              pdxEditorPane = Some(loadTask.getValue)
 
               editorContainer.getChildren.clear()
-              editorContainer.getChildren.add(editorPane)
+              editorContainer.getChildren.add(pdxEditorPane.get)
 
               actionButtonsHBox.setVisible(true)
 

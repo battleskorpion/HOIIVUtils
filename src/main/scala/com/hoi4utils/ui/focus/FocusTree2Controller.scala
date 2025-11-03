@@ -88,6 +88,13 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     welcome.fire()
     focusTreeView.setGridLinesVisible(lines)
     populateFocusSelection()
+    focusDetailsPaneController.onUpdate = Some(() =>
+      this.currentFocusTree match
+        case Some(focusTree) =>
+          // Reload the focus tree to reflect any changes
+          loadFocusTreeView(focusTree)
+        case None => ()
+    )
     Platform.runLater(() => if progressIndicator != null then progressIndicator.setVisible(false))
 
   private def replaceWithZoomableScrollPane(): Unit =
@@ -307,7 +314,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
             var workDone = 0
             var cuteFocusCounter = 0
 
-            // Add focus buttons
             focuses.foreach { focus =>
               if (!isCancelled) {
                 val gridX = focus.absoluteX + offsetX
@@ -543,7 +549,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     // Create new highlight
     dragHighlight = new Region()
     dragHighlight.setStyle(
-      "-fx-background-color: rgba(139, 92, 246, 0.3); " +
+      "-fx-background-color: rgba(117,71,222,0.3); " +
         "-fx-border-color: rgba(139, 92, 246, 0.8); " +
         "-fx-border-width: 2px;"
     )

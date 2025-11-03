@@ -2,7 +2,7 @@
   <configuration default="false" name="HOIIVUtils" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.hoi4utils.main.HOIIVUtils" />
     <module name="HOIIVUtils" />
-    <option name="PROGRAM_PARAMETERS" value="-deprecation -Dscala.args=&quot;-deprecation -unchecked -feature&quot; -Dcompiler.compilerArgs=&quot;-Xlint:all&quot;" />
+    <option name="PROGRAM_PARAMETERS" value="-deprecation -Dscala.args=&quot;-deprecation -unchecked -feature&quot; -Dcompiler.compilerArgs=&quot;-Xlint:all&quot; -XX:+EnableDynamicAgentLoading" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
