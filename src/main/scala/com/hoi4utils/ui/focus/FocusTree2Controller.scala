@@ -28,6 +28,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 	private val focusGridColumnsSize: Int = 100
 	private val focusGridRowSize: Int = 200
 	private val welcomeMessage: String = s"Welcome to the Focus Tree Viewer 2!"
+	private val PURPLE_LINE_COLOR: Color = Color.rgb(139, 92, 246)
+	private val LINE_STROKE_WIDTH: Double = 2.0
 
 	@FXML var focusTree2: AnchorPane = uninitialized
 	@FXML var toolBar: ToolBar = uninitialized
@@ -680,14 +682,14 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 		val segments = pathCalculator.calculatePath(fromButton, toButton)
 
 		val path = new Path()
-		path.setStrokeWidth(1.0)
-		path.setStroke(javafx.scene.paint.Color.BLACK)
+		path.setStrokeWidth(LINE_STROKE_WIDTH)
+		path.setStroke(PURPLE_LINE_COLOR)
 		path.setMouseTransparent(true)
 
 		segments.foreach { s =>
 			path.getElements.addAll(new MoveTo(s.from.x, s.from.y), new LineTo(s.to.x, s.to.y))
 		}
-		lineLayer.getChildren.setAll(path) // single node
+		lineLayer.getChildren.addAll(path) // single node
 
 		// Draw junction points at corners (optional, for visual clarity)
 		segments.tail.foreach { segment =>
@@ -704,8 +706,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 		val toScene = gridToScene(segment.to)
 
 		val line = new Line(fromScene.x, fromScene.y, toScene.x, toScene.y)
-		line.setStroke(Color.rgb(139, 92, 246)) // Purple color like the game
-		line.setStrokeWidth(2.0)
+		line.setStroke(PURPLE_LINE_COLOR) // Purple color like the game
+		line.setStrokeWidth(LINE_STROKE_WIDTH)
 		line.setMouseTransparent(true)
 		line
 
@@ -715,7 +717,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 	private def createCornerCircle(point: FocusConnectionPathCalculator#Point): Circle =
 		val scenePoint = gridToScene(point)
 		val circle = new Circle(scenePoint.x, scenePoint.y, 3.0)
-		circle.setFill(Color.rgb(139, 92, 246))
+		circle.setFill(PURPLE_LINE_COLOR)
 		circle.setMouseTransparent(true)
 		circle
 
