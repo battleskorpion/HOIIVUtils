@@ -37,8 +37,8 @@ class Parser(pdx: String | File = null) {
       case Some(token) =>
         token.`type` match
           case TokenType.eof => // OK
-          case _ => throw ParserException("Input not completely parsed. Last token: " + token.value)
-      case None => throw ParserException(s"Input not completely parsed. Tokens: ${tokens}")
+          case _ => throw ParserException("Input not completely parsed", token)
+      case None => throw ParserException("Input not completely parsed - no tokens remaining")
     // Create the root node using the parsed children (a ListBuffer[Node]) as its raw value.
     _rootNode = new Node(
       leadingTrivia = leading,
@@ -81,12 +81,12 @@ class Parser(pdx: String | File = null) {
 
     // Ensure the token is a valid identifier.
     if (tokenIdentifier.`type` != TokenType.string && tokenIdentifier.`type` != TokenType.symbol && !tokenIdentifier.isNumber)
-      throw ParserException("Parser: incorrect token type " + tokenIdentifier.`type` + " at index " + tokenIdentifier.start + " for: " + tokenIdentifier.value)
+      throw ParserException("Incorrect token type for identifier", tokenIdentifier)
 
     // Consume any trivia after the identifier.
     consumeTrivia()
     var nextToken = tokens.peek.getOrElse(
-      throw ParserException("Unexpected end of input after identifier\nFound token: " + tokenIdentifier.value)
+      throw ParserException("Unexpected end of input after identifier", tokenIdentifier)
     )
     var operatorOpt: Option[Token] = None
     var raw: Option[NodeValueType] = None
@@ -100,7 +100,7 @@ class Parser(pdx: String | File = null) {
        */
       while (nextToken.value.matches("^[,;]$")) {
         tokens.next
-        nextToken = tokens.peek.getOrElse(throw new ParserException("Unexpected null next token\nFound token: " + tokenIdentifier.value))
+        nextToken = tokens.peek.getOrElse(throw ParserException("Unexpected end of input after separator", tokenIdentifier))
       }
       // No proper operator: treat this node as a value-only node.
       raw = Some(parseThisTokenValue(tokenIdentifier))
@@ -134,7 +134,7 @@ class Parser(pdx: String | File = null) {
     consumeTrivia()
 
     val token = tokens.next.getOrElse(
-      throw new ParserException("Unexpected end of input while parsing node value")
+      throw ParserException("Unexpected end of input while parsing node value")
     )
     val value = token.value
 
@@ -144,7 +144,7 @@ class Parser(pdx: String | File = null) {
       case TokenType.int => parseIntValue(value)
       case TokenType.symbol => value
       case TokenType.operator if value == "{" => parseEnclosedBlockContent("}")
-      case _ => throw new ParserException("Unexpected token type in node value: " + token.`type`)
+      case _ => throw ParserException("Unexpected token type in node value", token)
 
   @throws[ParserException]
   def parseThisTokenValue(token: Token): NodeValueType =
@@ -154,7 +154,7 @@ class Parser(pdx: String | File = null) {
       case TokenType.float => value.toDouble
       case TokenType.int => parseIntValue(value)
       case TokenType.symbol => value
-      case _ => throw new ParserException("Unexpected token type: " + token.`type`)
+      case _ => throw ParserException("Unexpected token type", token)
 
   /**
    * Parses block content that has been identified as a block enclosed by defined opening and closing operators.
@@ -167,10 +167,10 @@ class Parser(pdx: String | File = null) {
   private def parseEnclosedBlockContent(closingOp: String) =
     val children = parseBlockContent()
     val closing = tokens.next.getOrElse(
-      throw new ParserException(s"Expected closing '$closingOp'")
+      throw ParserException(s"Expected closing '$closingOp'")
     )
     if (closing.value != closingOp)
-      throw new ParserException(s"Expected closing '$closingOp', got " + closing.value)
+      throw ParserException(s"Expected closing '$closingOp'", closing)
     children
 
   private def parseIntValue(value: String) =

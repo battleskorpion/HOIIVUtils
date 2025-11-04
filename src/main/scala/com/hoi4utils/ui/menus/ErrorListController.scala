@@ -20,12 +20,15 @@ import javafx.scene.layout.BorderPane
 
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
-import javafx.scene.control.{Label, TreeCell, TreeItem, TreeView}
+import javafx.scene.control.{Button, Label, TreeCell, TreeItem, TreeView}
+import javafx.scene.layout.HBox
 import javafx.util.Callback
+import javafx.geometry.Insets
 
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 import java.io.File
+import java.awt.Desktop
 
 class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging:
   setTitle("LB Reader")
@@ -172,7 +175,43 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
       0
 
   /**
-   * Sets up custom cell factory for TreeView with styling
+   * Opens a file in the system default editor
+   */
+  private def openFile(file: File): Unit =
+    try
+      if Desktop.isDesktopSupported then
+        Desktop.getDesktop.open(file)
+    catch
+      case e: Exception => logger.error(s"Failed to open file: ${file.getAbsolutePath}", e)
+
+  /**
+   * Opens the folder containing the file
+   */
+  private def openFolder(file: File): Unit =
+    try
+      if Desktop.isDesktopSupported then
+        val folder = if file.isDirectory then file else file.getParentFile
+        Desktop.getDesktop.open(folder)
+    catch
+      case e: Exception => logger.error(s"Failed to open folder: ${file.getAbsolutePath}", e)
+
+  /**
+   * Parses and handles clicks on stack trace lines
+   */
+  private def handleStackTraceClick(stackTraceLine: String): Unit =
+    // Parse stack trace line format: "at package.Class.method(FileName.scala:123)"
+    val pattern = """at\s+[\w\.$]+\(([\w\.]+):(\d+)\)""".r
+    pattern.findFirstMatchIn(stackTraceLine) match
+      case Some(m) =>
+        val fileName = m.group(1)
+        val lineNumber = m.group(2).toInt
+        logger.info(s"Stack trace click: $fileName:$lineNumber")
+        // TODO: Open file in editor at line number (requires editor integration)
+      case None =>
+        logger.warn(s"Could not parse stack trace line: $stackTraceLine")
+
+  /**
+   * Sets up custom cell factory for TreeView with styling, buttons, and clickable stack traces
    */
   private def setupTreeViewCellFactory(treeView: TreeView[ErrorTreeItem]): Unit =
     // Load CSS for arrow styling
@@ -195,9 +234,6 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
             setGraphic(null)
             setStyle("")
           else
-            setText(item.displayText)
-            setGraphic(getTreeItem.getGraphic)
-
             // Apply theme-based styling
             val isDarkMode = HOIIVUtils.get("theme").equals("dark")
             val textColor = if isDarkMode then "lightgrey" else "black"
@@ -210,16 +246,51 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
             else
               if isEven then "#F5F5F5" else "#E8E8E8" // Lighter light mode colors
 
-            // Different styling based on item type with larger fonts
+            // Different styling based on item type
             val baseStyle = s"-fx-background-color: $bgColor; -fx-padding: 4 4 4 4;"
 
-            item.itemType match
-              case ErrorTreeItemType.FileGroup | ErrorTreeItemType.FocusTreeGroup =>
-                setStyle(s"$baseStyle -fx-font-weight: bold; -fx-text-fill: $textColor; -fx-font-size: 14px;")
-              case ErrorTreeItemType.FocusGroup =>
-                setStyle(s"$baseStyle -fx-font-style: italic; -fx-text-fill: $textColor; -fx-font-size: 13px;")
-              case ErrorTreeItemType.ErrorDetail =>
-                val errorColor = if isDarkMode then "#FF8A8A" else "#E53935"
-                setStyle(s"$baseStyle -fx-text-fill: $errorColor; -fx-font-size: 13px;")
-              case ErrorTreeItemType.ErrorSection =>
-                setStyle(s"$baseStyle -fx-text-fill: $textColor; -fx-font-size: 12px;")
+            // Check if this is a file/focus tree group that needs buttons
+            if (item.itemType == ErrorTreeItemType.FileGroup || item.itemType == ErrorTreeItemType.FocusTreeGroup) && item.filePath.isDefined then
+              // Create HBox with text and buttons
+              val hbox = new HBox(10)
+              hbox.setPadding(new Insets(2, 5, 2, 5))
+
+              val label = new Label(item.displayText)
+              label.setStyle(s"-fx-text-fill: $textColor; -fx-font-size: 14px; -fx-font-weight: bold;")
+
+              val openFolderBtn = new Button("Open Folder")
+              openFolderBtn.setStyle(s"-fx-font-size: 11px; -fx-padding: 2 8 2 8;")
+              openFolderBtn.setOnAction(_ => openFolder(item.filePath.get))
+
+              val openFileBtn = new Button("Open File")
+              openFileBtn.setStyle(s"-fx-font-size: 11px; -fx-padding: 2 8 2 8;")
+              openFileBtn.setOnAction(_ => openFile(item.filePath.get))
+
+              hbox.getChildren.addAll(label, openFolderBtn, openFileBtn)
+              setGraphic(hbox)
+              setText(null)
+              setStyle(baseStyle)
+
+            // Check if this is a clickable stack trace line
+            else if item.isStackTraceLine then
+              setText(item.displayText)
+              setGraphic(null)
+              setStyle(s"$baseStyle -fx-text-fill: #4A9EFF; -fx-underline: true; -fx-cursor: hand; -fx-font-size: 12px;")
+              setOnMouseClicked(_ => handleStackTraceClick(item.displayText))
+
+            // Regular item
+            else
+              setText(item.displayText)
+              setGraphic(null)
+              setOnMouseClicked(null)
+
+              item.itemType match
+                case ErrorTreeItemType.FileGroup | ErrorTreeItemType.FocusTreeGroup =>
+                  setStyle(s"$baseStyle -fx-font-weight: bold; -fx-text-fill: $textColor; -fx-font-size: 14px;")
+                case ErrorTreeItemType.FocusGroup =>
+                  setStyle(s"$baseStyle -fx-font-style: italic; -fx-text-fill: $textColor; -fx-font-size: 13px;")
+                case ErrorTreeItemType.ErrorDetail =>
+                  val errorColor = if isDarkMode then "#FF8A8A" else "#E53935"
+                  setStyle(s"$baseStyle -fx-text-fill: $errorColor; -fx-font-size: 13px;")
+                case ErrorTreeItemType.ErrorSection =>
+                  setStyle(s"$baseStyle -fx-text-fill: $textColor; -fx-font-size: 12px;")

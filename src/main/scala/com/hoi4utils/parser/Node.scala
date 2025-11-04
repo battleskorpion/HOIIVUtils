@@ -63,7 +63,11 @@ class Node (
   def asBool(boolType: BoolType): Boolean = rawValue match
     case Some(s: String) => java.lang.Boolean.valueOf(s == boolType.trueResponse)
     case Some(b: Boolean) => java.lang.Boolean.valueOf(b)
-    case _ => throw new ParserException("Expected a Boolean or String for boolean conversion. Found: " + rawValue)
+    case _ =>
+      // Try to pass the identifier token if available for better error context
+      identifierToken match
+        case Some(token) => throw new ParserException("Expected a Boolean or String for boolean conversion", token = Some(token))
+        case None => throw new ParserException("Expected a Boolean or String for boolean conversion")
 
   /**
    * Reconstructs the original file text by concatenating:
