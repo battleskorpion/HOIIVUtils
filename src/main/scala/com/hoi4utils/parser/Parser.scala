@@ -26,16 +26,16 @@ class Parser(pdx: String | File = null) {
    * Consumes and returns any tokens that are “trivia” (e.g., whitespace, comments).
    */
   private def consumeTrivia(): ListBuffer[Token] = {
-    val trivia = ListBuffer[Token]()
-    while (tokens.peek.exists(t =>
-      t.`type` == TokenType.whitespace ||
-        t.`type` == TokenType.comment ||
-        (t.value.length == 1 && (t.value == "," || t.value == ";"))
-    )) {
+    val trivia = ListBuffer.empty[Token]
+    while tokens.peek.exists(isTrivia) do
       trivia += tokens.next.get
-    }
     trivia
   }
+
+  private def isTrivia(t: Token): Boolean =
+    t.`type` == TokenType.whitespace || t.`type` == TokenType.comment ||
+      (t.value.length == 1 && (t.value == "," || t.value == ";"))
+
 
   @throws[ParserException]
   def parse: Node = {
@@ -90,8 +90,7 @@ class Parser(pdx: String | File = null) {
 
     val tokenIdentifier = tokens.next match
       case Some(token) => token
-      case None =>
-        throw ParserException("Unexpected end of input while parsing node identifier")
+      case None => throw ParserException("Unexpected end of input while parsing node identifier")
 
     // If the token is a comment, create a node that holds it.
     if (tokenIdentifier.`type` == TokenType.comment) {
@@ -157,63 +156,61 @@ class Parser(pdx: String | File = null) {
   def parseNodeValue(): NodeValueType = {
     // Consume any trivia before the value.
     consumeTrivia()
-    val nextToken = tokens.next.getOrElse(
+
+    val token = tokens.next.getOrElse(
       throw new ParserException("Unexpected end of input while parsing node value")
     )
-    nextToken.`type` match {
-      case TokenType.string =>
-        if (nextToken.value.length > 2)
-          try {
-            nextToken.value.substring(1, nextToken.value.length - 1)
-              .replaceAll(escape_quote_regex, "\"")
-              .replaceAll(escape_backslash_regex, java.util.regex.Matcher.quoteReplacement("\\"))
-          } catch {
-            case _: IllegalArgumentException =>
-              println("Illegal argument exception while parsing string: " + nextToken.value)
-              nextToken.value
-          }
-        else nextToken.value
-      case TokenType.float =>
-        nextToken.value.toDouble
-      case TokenType.int =>
-        if (nextToken.value.startsWith("0x"))
-          Integer.parseInt(nextToken.value.substring(2), 16)
-        else nextToken.value.toInt
-      case TokenType.symbol =>
-        nextToken.value
-      case TokenType.operator if nextToken.value == "{" =>
-        // If the operator indicates a block, parse the block content.
-        val children = parseBlockContent()
-        val closing = tokens.next.getOrElse(
-          throw new ParserException("Expected closing '}'")
-        )
-        if (closing.value != "}")
-          throw new ParserException("Expected closing '}', got " + closing.value)
-        children
-      case _ =>
-        throw new ParserException("Unexpected token type in node value: " + nextToken.`type`)
-    }
+    val value = token.value
+
+    token.`type` match
+      case TokenType.string => parseStringValue(value)
+      case TokenType.float => value.toDouble
+      case TokenType.int => parseIntValue(value)
+      case TokenType.symbol => value
+      case TokenType.operator if value == "{" => parseEnclosedBlockContent("}")
+      case _ => throw new ParserException("Unexpected token type in node value: " + token.`type`)
+  }
+
+  private def parseEnclosedBlockContent(closingOp: String) = {
+    // If the operator indicates a block, parse the block content.
+    val children = parseBlockContent()
+    val closing = tokens.next.getOrElse(
+      throw new ParserException(s"Expected closing '$closingOp'")
+    )
+    if (closing.value != closingOp)
+      throw new ParserException(s"Expected closing '$closingOp', got " + closing.value)
+    children
+  }
+
+  private def parseIntValue(value: String) = {
+    if (value.startsWith("0x"))
+      Integer.parseInt(value.substring(2), 16)
+    else value.toInt
+  }
+
+  private def parseStringValue(value: String) = {
+    if (value.length > 2)
+      try {
+        value.substring(1, value.length - 1)
+          .replaceAll(escape_quote_regex, "\"")
+          .replaceAll(escape_backslash_regex, java.util.regex.Matcher.quoteReplacement("\\"))
+      } catch {
+        case _: IllegalArgumentException =>
+          println("Illegal argument exception while parsing string: " + value)
+          value
+      }
+    else value
   }
 
   @throws[ParserException]
   def parseThisTokenValue(token: Token): NodeValueType = {
+    val value = token.value
     token.`type` match {
-      case TokenType.string =>
-        if (token.value.length > 2)
-          token.value.substring(1, token.value.length - 1)
-            .replaceAll(escape_quote_regex, "\"")
-            .replaceAll(escape_backslash_regex, "\\")
-        else token.value
-      case TokenType.float =>
-        token.value.toDouble
-      case TokenType.int =>
-        if (token.value.startsWith("0x"))
-          Integer.parseInt(token.value.substring(2), 16)
-        else token.value.toInt
-      case TokenType.symbol =>
-        token.value
-      case _ =>
-        throw new ParserException("Unexpected token type: " + token.`type`)
+      case TokenType.string => parseStringValue(value)
+      case TokenType.float => value.toDouble
+      case TokenType.int => parseIntValue(value)
+      case TokenType.symbol => value
+      case _ => throw new ParserException("Unexpected token type: " + token.`type`)
     }
   }
 
