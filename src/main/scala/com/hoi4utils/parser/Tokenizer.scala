@@ -1,12 +1,51 @@
 package com.hoi4utils.parser
 
 import scala.collection.BufferedIterator
+import scala.collection.mutable.ArrayBuffer
 import scala.util.matching.Regex
 
 class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
   private val pattern: Regex = createPattern
   private val matcher: BufferedIterator[Regex.Match] = pattern.findAllMatchIn(_input).buffered
-  //private var currentMatch: Option[Regex.Match] = None
+
+  // Build line offset table once - O(n) where n = input length
+  private val lineOffsets: Array[Int] = {
+    val offsets = ArrayBuffer(0) // Line 1 starts at position 0
+    for (i <- 0 until _input.length) {
+      if (_input.charAt(i) == '\n') {
+        offsets += (i + 1) // Next line starts after newline
+      }
+    }
+    offsets.toArray
+  }
+
+  /**
+   * Calculates line and column number for a given character position.
+   * Uses binary search on pre-built line offset table - O(log n) where n = number of lines
+   *
+   * @param position Character position in the input string
+   * @return Tuple of (line number, column number), both 1-indexed
+   */
+  private def getLineAndColumn(position: Int): (Int, Int) = {
+    // Binary search to find which line this position is on
+    var left = 0
+    var right = lineOffsets.length - 1
+    var lineIndex = 0
+
+    while (left <= right) {
+      val mid = (left + right) / 2
+      if (lineOffsets(mid) <= position) {
+        lineIndex = mid
+        left = mid + 1
+      } else {
+        right = mid - 1
+      }
+    }
+
+    val line = lineIndex + 1
+    val column = position - lineOffsets(lineIndex) + 1
+    (line, column)
+  }
 
   /**
    * Returns the next token from the tokenizer, or None if there are no more
@@ -15,7 +54,13 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
    * @return the next token from the tokenizer, or None if there are no more tokens
    */
   @inline def next: Option[Token] = {
-    matcher.nextOption().map(m => Token(m.matched, m.start))
+    matcher.nextOption().map { m =>
+      val (line, column) = getLineAndColumn(m.start)
+      val token = new Token(m.matched, m.start)
+      token.line = line
+      token.column = column
+      token
+    }
   }
 
   /**
@@ -24,7 +69,13 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
    * @return Next token from matcher
    */
   @inline def peek: Option[Token] = {
-    matcher.headOption.map(m => Token(m.matched, m.start))
+    matcher.headOption.map { m =>
+      val (line, column) = getLineAndColumn(m.start)
+      val token = new Token(m.matched, m.start)
+      token.line = line
+      token.column = column
+      token
+    }
   }
 
   /**

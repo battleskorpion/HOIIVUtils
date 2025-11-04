@@ -86,6 +86,7 @@ object ErrorTreeItem:
     // Create child sections for expandable details
     val sections = List(
       createExceptionSection(error),
+      createTokenInfoSection(error),
       createNodeInfoSection(error),
       createFileSection(error),
       createStackTraceSection(error),
@@ -101,6 +102,26 @@ object ErrorTreeItem:
     if error.exception != null then
       val exceptionText = s"${error.exception.getClass.getSimpleName}: ${error.exception.getMessage}"
       Some(new ErrorTreeItem(s"Exception: $exceptionText", ErrorTreeItemType.ErrorSection, Some(error)))
+    else
+      None
+
+  /**
+   * Creates the token info section if this is a ParserException with token data
+   */
+  private def createTokenInfoSection(error: PDXError): Option[ErrorTreeItem] =
+    if error.hasTokenInfo then
+      val lineCol = (error.getLine, error.getColumn) match
+        case (Some(line), Some(col)) => s"Line $line, Column $col"
+        case (Some(line), None) => s"Line $line"
+        case (None, Some(col)) => s"Column $col"
+        case _ => "Unknown location"
+
+      error.exception match
+        case parserEx: com.hoi4utils.parser.ParserException if parserEx.token.isDefined =>
+          val token = parserEx.token.get
+          val tokenText = s"'${token.value}' (${token.`type`}) at $lineCol"
+          Some(new ErrorTreeItem(s"Token: $tokenText", ErrorTreeItemType.ErrorSection, Some(error)))
+        case _ => None
     else
       None
 

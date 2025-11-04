@@ -48,6 +48,49 @@ class PDXError(
     "Node Type" -> Option(errorNode.$).map(_.getClass.getSimpleName).getOrElse("null")
   )
 
+  /**
+   * Extracts token context from ParserException if available.
+   * Similar to nodeContext but for token-based parser errors.
+   */
+  private def tokenContext: Map[String, String] = exception match
+    case parserEx: com.hoi4utils.parser.ParserException if parserEx.token.isDefined =>
+      val token = parserEx.token.get
+      Map(
+        "Token Value" -> token.value,
+        "Token Type" -> token.`type`.toString,
+        "Line" -> token.line.toString,
+        "Column" -> token.column.toString,
+        "Character Position" -> token.start.toString
+      )
+    case _ => Map.empty
+
+  /**
+   * Returns true if this error has token information from a ParserException
+   */
+  def hasTokenInfo: Boolean = exception match
+    case parserEx: com.hoi4utils.parser.ParserException => parserEx.token.isDefined
+    case _ => false
+
+  /**
+   * Gets the line number from either the token (if ParserException) or node
+   */
+  def getLine: Option[Int] = exception match
+    case parserEx: com.hoi4utils.parser.ParserException if parserEx.token.isDefined =>
+      Some(parserEx.token.get.line)
+    case _ if errorNode != null && errorNode.identifierToken.isDefined =>
+      Some(errorNode.identifierToken.get.line)
+    case _ => None
+
+  /**
+   * Gets the column number from either the token (if ParserException) or node
+   */
+  def getColumn: Option[Int] = exception match
+    case parserEx: com.hoi4utils.parser.ParserException if parserEx.token.isDefined =>
+      Some(parserEx.token.get.column)
+    case _ if errorNode != null && errorNode.identifierToken.isDefined =>
+      Some(errorNode.identifierToken.get.column)
+    case _ => None
+
   override def toString: String =
     // Special case: if this is just a placeholder message with no actual error data
     if exception == null && errorNode == null && file.isEmpty && pdxScript == null &&
@@ -63,11 +106,16 @@ class PDXError(
     else
       parts += "No Exception"
 
+    // Token info (if ParserException with token)
+    if tokenContext.nonEmpty then
+      parts += "Token Info:"
+      tokenContext.foreach { case (k, v) => parts += s"\t$k: $v" }
+
     // Node info
     if errorNode != null then
       parts += "Node Info:"
       nodeContext.foreach { case (k, v) => parts += s"\t$k: $v" }
-    else
+    else if tokenContext.isEmpty then
       parts += "Node Info: None"
 
     // File path

@@ -15,12 +15,16 @@ class Token {
 	var value: String = uninitialized
 	var `type`: TokenType = uninitialized
 	var start = 0
+	var line = 1      // Line number (1-indexed)
+	var column = 1    // Column number (1-indexed)
 
-	def this(value: String, start: Int, `type`: TokenType) = {
+	def this(value: String, start: Int, `type`: TokenType, line: Int = 1, column: Int = 1) = {
 		this()
 		this.value = value
 		this.start = start
 		this.`type` = `type`
+		this.line = line
+		this.column = column
 	}
 
 	def this(value: String, start: Int) = {
@@ -28,6 +32,7 @@ class Token {
 		this.value = value
 		this.start = start
 		this.`type` = determineTokenType(value)
+		// line and column will be set by Tokenizer
 	}
 
 	private def determineTokenType(value: String): TokenType = boundary {
