@@ -146,9 +146,20 @@ class Parser(pdx: String | File = null) {
       case TokenType.operator if value == "{" => parseEnclosedBlockContent("}")
       case _ => throw new ParserException("Unexpected token type in node value: " + token.`type`)
 
+  @throws[ParserException]
+  def parseThisTokenValue(token: Token): NodeValueType =
+    val value = token.value
+    token.`type` match
+      case TokenType.string => parseStringValue(value)
+      case TokenType.float => value.toDouble
+      case TokenType.int => parseIntValue(value)
+      case TokenType.symbol => value
+      case _ => throw new ParserException("Unexpected token type: " + token.`type`)
+
   /**
    * Parses block content that has been identified as a block enclosed by defined opening and closing operators.
    * Ensures the parsed block content is closed with the expected closing operator.
+   *
    * @param closingOp
    * @return
    * @throws ParserException if the parsed block content is not closed with the expected closing operator, or a syntax issue leads to this state.
@@ -172,16 +183,6 @@ class Parser(pdx: String | File = null) {
         .replaceAll(escape_quote_regex, "\"")
         .replaceAll(escape_backslash_regex, java.util.regex.Matcher.quoteReplacement("\\"))
     else value
-
-  @throws[ParserException]
-  def parseThisTokenValue(token: Token): NodeValueType =
-    val value = token.value
-    token.`type` match
-      case TokenType.string => parseStringValue(value)
-      case TokenType.float => value.toDouble
-      case TokenType.int => parseIntValue(value)
-      case TokenType.symbol => value
-      case _ => throw new ParserException("Unexpected token type: " + token.`type`)
 
   /**
    * Consumes and returns any tokens that are “trivia” (e.g., whitespace, comments).
