@@ -94,10 +94,10 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
     case null => ListBuffer.empty
     case _ =>
       val remaining = ListBuffer.from(expressions)
-      expressions.filter(this.isValidIdentifier).foreach(expression =>
+      expressions filter isValidIdentifier foreach { expression =>
         loadPDX(expression)
         remaining -= expression
-      )
+      }
       remaining
 
   protected def loadPDX(file: File): Unit =
