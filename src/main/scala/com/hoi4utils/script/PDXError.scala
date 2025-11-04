@@ -2,7 +2,7 @@ package com.hoi4utils.script
 
 import com.hoi4utils.parser.Node
 
-import java.io.File
+import java.io.{File, PrintWriter, StringWriter}
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -24,6 +24,23 @@ class PDXError(
   def addInfo(info: Map[String, String]): PDXError =
     additionalInfo = additionalInfo ++ info
     this
+
+  /**
+   * Returns the stack trace of the exception in standard format.
+   * Format: "at package.Class.method(FileName.scala:lineNumber)"
+   * This format is parseable for future clickable editor links (similar to console output).
+   *
+   * @return Stack trace as a string, or "No stack trace available" if no exception exists
+   */
+  def getStackTrace: String =
+    if exception == null then
+      "No stack trace available"
+    else
+      val stringWriter = new StringWriter()
+      val printWriter = new PrintWriter(stringWriter)
+      exception.printStackTrace(printWriter)
+      printWriter.flush()
+      stringWriter.toString
 
   private def nodeContext = Map(
     "Node Identifier" -> errorNode.identifier.getOrElse("none"),
