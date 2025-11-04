@@ -1,0 +1,16 @@
+/* Error List TreeView Styling */
+
+/* Brighter arrows for tree disclosure nodes */
+.tree-view .tree-disclosure-node > .arrow {
+    -fx-background-color: #D0D0D0;
+}
+
+/* Dark mode arrow styling */
+.tree-view.dark-mode .tree-disclosure-node > .arrow {
+    -fx-background-color: #D0D0D0;
+}
+
+/* Light mode arrow styling */
+.tree-view.light-mode .tree-disclosure-node > .arrow {
+    -fx-background-color: #505050;
+}

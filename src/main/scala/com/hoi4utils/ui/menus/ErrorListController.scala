@@ -20,11 +20,12 @@ import javafx.scene.layout.BorderPane
 
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
-import javafx.scene.control.{Label, ListCell, ListView}
+import javafx.scene.control.{Label, TreeCell, TreeItem, TreeView}
 import javafx.util.Callback
 
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
+import java.io.File
 
 class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging:
   setTitle("LB Reader")
@@ -33,17 +34,14 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
   @FXML var contentContainer: BorderPane = uninitialized
   @FXML var errorListTabPane: TabPane = uninitialized
 
-  @FXML var effectsEL: ListView[PDXError] = uninitialized
-  @FXML var localizationEL: ListView[PDXError] = uninitialized
-  @FXML var interfaceEL: ListView[PDXError] = uninitialized
-  @FXML var countryEL: ListView[PDXError] = uninitialized
-  @FXML var focusTreeEL: ListView[FocusTreeErrorGroup] = uninitialized
-  @FXML var ideaEL: ListView[PDXError] = uninitialized
-  @FXML var resourceEL: ListView[PDXError] = uninitialized
-  @FXML var stateEL: ListView[PDXError] = uninitialized
-  @FXML var statesThatChangedList: ListView[String] = uninitialized
-
-  val testList: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
+  @FXML var effectsEL: TreeView[ErrorTreeItem] = uninitialized
+  @FXML var localizationEL: TreeView[ErrorTreeItem] = uninitialized
+  @FXML var interfaceEL: TreeView[ErrorTreeItem] = uninitialized
+  @FXML var countryEL: TreeView[ErrorTreeItem] = uninitialized
+  @FXML var focusTreeEL: TreeView[ErrorTreeItem] = uninitialized
+  @FXML var ideaEL: TreeView[ErrorTreeItem] = uninitialized
+  @FXML var resourceEL: TreeView[ErrorTreeItem] = uninitialized
+  @FXML var stateEL: TreeView[ErrorTreeItem] = uninitialized
 
   @FXML
   def initialize(): Unit =
@@ -57,7 +55,7 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
   override def preSetup(): Unit = setupWindowControls(contentContainer, errorListTabPane)
 
   private def update(): Unit =
-    val listViewsWithErrors = ListBuffer(
+    val treeViewsWithErrors = ListBuffer(
       (effectsEL, effectErrors),
       (localizationEL, localizationErrors),
       (interfaceEL, interfaceErrors),
@@ -67,87 +65,161 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
       (stateEL, stateErrors)
     )
 
-    listViewsWithErrors.foreach((listView, errors) => setListViewItems(listView, errors))
-    listViewsWithErrors.map(_._1).foreach(setupAlternatingListView)
+    // Set up each TreeView with grouped errors
+    treeViewsWithErrors.foreach((treeView, errors) => setTreeViewItems(treeView, errors))
+    treeViewsWithErrors.map(_._1).foreach(setupTreeViewCellFactory)
 
-    // Handle focusTreeEL separately due to different type
-    setFocusTreeListViewItems(focusTreeEL, focusTreeErrors)
-    setupAlternatingFocusTreeListView(focusTreeEL)
+    // Handle focusTreeEL separately due to hierarchical structure
+    setFocusTreeViewItems(focusTreeEL, focusTreeErrors)
+    setupTreeViewCellFactory(focusTreeEL)
 
-  private def setListViewItems(listView: ListView[PDXError], errors: ListBuffer[PDXError]): Unit =
-    listView.setItems(getListOrDefaultMessage(errors))
+  /**
+   * Groups errors by file and creates a tree hierarchy
+   */
+  private def setTreeViewItems(treeView: TreeView[ErrorTreeItem], errors: ListBuffer[PDXError]): Unit =
+    val root = createRootNode(errors)
+    Platform.runLater(() => {
+      treeView.setRoot(root)
+      treeView.setShowRoot(false) // Hide the root node
+    })
 
-  private def getListOrDefaultMessage(listBuffer: ListBuffer[PDXError], message: String = "No Problems Found") =
-    listBuffer match
-      case null | Nil => ListBuffer(new PDXError(additionalInfo = Map("message" -> message))).toObservableList
-      case _ => listBuffer.toObservableList
+  /**
+   * Creates a root node with errors grouped by file
+   */
+  private def createRootNode(errors: ListBuffer[PDXError]): TreeItem[ErrorTreeItem] =
+    val rootItem = new TreeItem(new ErrorTreeItem("Root", ErrorTreeItemType.FileGroup))
 
-  private def setupAlternatingListView(listView: ListView[PDXError]): Unit =
-    listView.setCellFactory: (_: ListView[PDXError]) =>
-      new ListCell[PDXError]:
-        private val label = new Label()
-        setWrapText(true)
-        label.setWrapText(true)
-        setGraphic(label)
+    if errors.isEmpty || errors == null then
+      val noErrorsItem = new TreeItem(new ErrorTreeItem("No Problems Found", ErrorTreeItemType.ErrorDetail))
+      rootItem.getChildren.add(noErrorsItem)
+    else
+      // Group errors by file
+      val errorsByFile = errors.groupBy(_.file)
 
-        override def updateItem(item: PDXError, empty: Boolean): Unit =
+      errorsByFile.foreach {
+        case (Some(file), fileErrors) =>
+          val fileGroupItem = ErrorTreeItem.fromFileGroup(file, fileErrors.toList)
+          val fileTreeItem = buildTreeItem(fileGroupItem)
+          rootItem.getChildren.add(fileTreeItem)
+        case (None, fileErrors) =>
+          // Errors without a file - create a generic group
+          val noFileGroup = new ErrorTreeItem(
+            s"Unknown File (${fileErrors.size} ${if fileErrors.size == 1 then "error" else "errors"})",
+            ErrorTreeItemType.FileGroup,
+            None,
+            fileErrors.map(ErrorTreeItem.fromPDXError).toList
+          )
+          val noFileTreeItem = buildTreeItem(noFileGroup)
+          rootItem.getChildren.add(noFileTreeItem)
+      }
+
+    rootItem
+
+  /**
+   * Creates tree items for focus tree errors with their hierarchical structure
+   */
+  private def setFocusTreeViewItems(treeView: TreeView[ErrorTreeItem], errors: ListBuffer[FocusTreeErrorGroup]): Unit =
+    val root = createFocusTreeRootNode(errors)
+    Platform.runLater(() => {
+      treeView.setRoot(root)
+      treeView.setShowRoot(false)
+    })
+
+  /**
+   * Creates a root node for focus tree errors
+   */
+  private def createFocusTreeRootNode(errors: ListBuffer[FocusTreeErrorGroup]): TreeItem[ErrorTreeItem] =
+    val rootItem = new TreeItem(new ErrorTreeItem("Root", ErrorTreeItemType.FocusTreeGroup))
+
+    if errors.isEmpty || errors == null then
+      val noErrorsItem = new TreeItem(new ErrorTreeItem("No Problems Found", ErrorTreeItemType.ErrorDetail))
+      rootItem.getChildren.add(noErrorsItem)
+    else
+      errors.foreach { focusTreeGroup =>
+        val focusTreeItem = ErrorTreeItem.fromFocusTreeErrorGroup(focusTreeGroup)
+        val treeItem = buildTreeItem(focusTreeItem)
+        rootItem.getChildren.add(treeItem)
+      }
+
+    rootItem
+
+  /**
+   * Recursively builds TreeItem hierarchy from ErrorTreeItem
+   */
+  private def buildTreeItem(errorTreeItem: ErrorTreeItem): TreeItem[ErrorTreeItem] =
+    val treeItem = new TreeItem(errorTreeItem)
+
+    // Add children recursively
+    errorTreeItem.children.foreach { child =>
+      treeItem.getChildren.add(buildTreeItem(child))
+    }
+
+    treeItem
+
+  /**
+   * Finds the root item index for a given TreeItem
+   */
+  private def getRootItemIndex(treeView: TreeView[ErrorTreeItem], item: TreeItem[ErrorTreeItem]): Int =
+    if item == null || treeView.getRoot == null then return 0
+
+    var current = item
+    while current.getParent != null && current.getParent != treeView.getRoot do
+      current = current.getParent
+
+    if current.getParent == treeView.getRoot then
+      treeView.getRoot.getChildren.indexOf(current)
+    else
+      0
+
+  /**
+   * Sets up custom cell factory for TreeView with styling
+   */
+  private def setupTreeViewCellFactory(treeView: TreeView[ErrorTreeItem]): Unit =
+    // Load CSS for arrow styling
+    val cssUrl = getClass.getResource("/com/hoi4utils/ui/css/error-list.css")
+    if cssUrl != null then
+      treeView.getStylesheets.add(cssUrl.toExternalForm)
+
+    // Add theme-specific style class
+    val isDarkMode = HOIIVUtils.get("theme").equals("dark")
+    val themeClass = if isDarkMode then "dark-mode" else "light-mode"
+    treeView.getStyleClass.add(themeClass)
+
+    treeView.setCellFactory: (_: TreeView[ErrorTreeItem]) =>
+      new TreeCell[ErrorTreeItem]:
+        override def updateItem(item: ErrorTreeItem, empty: Boolean): Unit =
           super.updateItem(item, empty)
+
           if empty || item == null then
-            label.setText(null)
+            setText(null)
+            setGraphic(null)
             setStyle("")
           else
-            label.setText(item.toString)
-            val isEven = getIndex % 2 == 0
-            if HOIIVUtils.get("theme").equals("dark") then
-              // Dark mode colors
-              setWrapText(true)
-              label.setWrapText(true)
-              val bgColor = if isEven then "#2E2E2E" else "#3A3A3A" // dark gray
-              setStyle(s"-fx-background-color: $bgColor; -fx-wrap-text: true;")
-              label.setStyle(s"-fx-text-fill: lightgrey; -fx-wrap-text: true;") // text color based on background
+            setText(item.displayText)
+            setGraphic(getTreeItem.getGraphic)
+
+            // Apply theme-based styling
+            val isDarkMode = HOIIVUtils.get("theme").equals("dark")
+            val textColor = if isDarkMode then "lightgrey" else "black"
+
+            // Alternating background colors based on root item index
+            val rootIndex = getRootItemIndex(treeView, getTreeItem)
+            val isEven = rootIndex % 2 == 0
+            val bgColor = if isDarkMode then
+              if isEven then "#3A3A3A" else "#424242" // Lighter dark mode colors
             else
-              // Light mode colors
-              setWrapText(true)
-              label.setWrapText(true)
-              val bgColor = if isEven then "#FFFFFF" else "#D3D3D3" // white or light gray
-              setStyle(s"-fx-background-color: $bgColor; -fx-wrap-text: true;")
-              label.setStyle(s"-fx-text-fill: black; -fx-wrap-text: true;") // text color based on background
+              if isEven then "#F5F5F5" else "#E8E8E8" // Lighter light mode colors
 
-  private def setFocusTreeListViewItems(listView: ListView[FocusTreeErrorGroup], errors: ListBuffer[FocusTreeErrorGroup]): Unit =
-    listView.setItems(getFocusTreeListOrDefaultMessage(errors))
+            // Different styling based on item type with larger fonts
+            val baseStyle = s"-fx-background-color: $bgColor; -fx-padding: 4 4 4 4;"
 
-  private def getFocusTreeListOrDefaultMessage(listBuffer: ListBuffer[FocusTreeErrorGroup], message: String = "No Problems Found") =
-    listBuffer match
-      case null | Nil => ListBuffer(new FocusTreeErrorGroup("No errors", ListBuffer.empty)).toObservableList
-      case _ => listBuffer.toObservableList
-
-  private def setupAlternatingFocusTreeListView(listView: ListView[FocusTreeErrorGroup]): Unit =
-    listView.setCellFactory: (_: ListView[FocusTreeErrorGroup]) =>
-      new ListCell[FocusTreeErrorGroup]:
-        private val label = new Label()
-        setWrapText(true)
-        label.setWrapText(true)
-        setGraphic(label)
-
-        override def updateItem(item: FocusTreeErrorGroup, empty: Boolean): Unit =
-          super.updateItem(item, empty)
-          if empty || item == null then
-            label.setText(null)
-            setStyle("")
-          else
-            label.setText(item.toString)
-            val isEven = getIndex % 2 == 0
-            if HOIIVUtils.get("theme").equals("dark") then
-              // Dark mode colors
-              setWrapText(true)
-              label.setWrapText(true)
-              val bgColor = if isEven then "#2E2E2E" else "#3A3A3A" // dark gray
-              setStyle(s"-fx-background-color: $bgColor; -fx-wrap-text: true;")
-              label.setStyle(s"-fx-text-fill: lightgrey; -fx-wrap-text: true;") // text color based on background
-            else
-              // Light mode colors
-              setWrapText(true)
-              label.setWrapText(true)
-              val bgColor = if isEven then "#FFFFFF" else "#D3D3D3" // white or light gray
-              setStyle(s"-fx-background-color: $bgColor; -fx-wrap-text: true;")
-              label.setStyle(s"-fx-text-fill: black; -fx-wrap-text: true;") // text color based on background
+            item.itemType match
+              case ErrorTreeItemType.FileGroup | ErrorTreeItemType.FocusTreeGroup =>
+                setStyle(s"$baseStyle -fx-font-weight: bold; -fx-text-fill: $textColor; -fx-font-size: 14px;")
+              case ErrorTreeItemType.FocusGroup =>
+                setStyle(s"$baseStyle -fx-font-style: italic; -fx-text-fill: $textColor; -fx-font-size: 13px;")
+              case ErrorTreeItemType.ErrorDetail =>
+                val errorColor = if isDarkMode then "#FF8A8A" else "#E53935"
+                setStyle(s"$baseStyle -fx-text-fill: $errorColor; -fx-font-size: 13px;")
+              case ErrorTreeItemType.ErrorSection =>
+                setStyle(s"$baseStyle -fx-text-fill: $textColor; -fx-font-size: 12px;")
