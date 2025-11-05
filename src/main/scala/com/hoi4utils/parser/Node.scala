@@ -85,20 +85,20 @@ class Node (
       sb.append(indent).append(t.value.replaceAll("\\t+", ""))
 
     // Append the identifier and operator (if any)
-    identifier.foreach: id =>
+    identifier.foreach { id =>
       sb.append(indent).append(id)
       operator.foreach(op => sb.append(" ").append(op))
       sb.append(" ") // separate identifier/operator from the value
+    }
 
     /* value */
     rawValue match
       case Some(children: ListBuffer[Node]) =>
-        if children.forall(_.identifier.isEmpty) &&
-          children.forall(_.operator.isEmpty) &&
-          children.forall(n => n.rawValue.exists {
+        if children.forall { n => n.identifier.isEmpty && n.operator.isEmpty
+          && n.rawValue.exists {
             case _: Int | _: Double => true
             case _ => false
-          }) then
+          }} then
           sb.append("{ ")
           sb.append(children.map(_.asString).mkString(" "))
           sb.append(" }").append('\n')
