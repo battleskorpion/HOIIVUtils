@@ -27,8 +27,8 @@ class Node (
   def this(identifier: String, operator: String, value: NodeValueType) =
     this(
       leadingTrivia = ListBuffer(),
-      identifierToken = Some(new Token(identifier, -1, TokenType.symbol)),
-      operatorToken = Some(new Token(operator, -1, TokenType.operator)),
+      identifierToken = Some(new Token(identifier, TokenType.symbol)),
+      operatorToken = Some(new Token(operator, TokenType.operator)),
       rawValue = Some(value),
       trailingTrivia = ListBuffer()
     )
