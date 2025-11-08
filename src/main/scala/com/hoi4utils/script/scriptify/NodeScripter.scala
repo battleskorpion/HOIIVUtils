@@ -106,11 +106,11 @@ trait NodeScripter {
   protected def appendTrivia(using sb: StringBuilder)(trivia: Iterable[Token], indent: String): Unit =
     for t <- trivia do sb.append(indent).append(t.value.replaceAll("\\t+", ""))
 
-  protected def isNumberBlock(children: Iterable[Node]) =
+  protected def isNumberBlock(children: Iterable[Node]): Boolean =
     children.forall(n =>
       n.identifier.isEmpty &&
         n.operator.isEmpty &&
-        n.rawValue.exists { case _: Int | _: Double => true }
+        n.rawValue.exists(_.isInstanceOf[Int | Double])
     )
 
 }
