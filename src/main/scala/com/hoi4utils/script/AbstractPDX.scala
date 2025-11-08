@@ -2,6 +2,7 @@ package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.{Node, PDXValueType, Parser, ParserException}
+import com.hoi4utils.script.scriptify.DefaultNodeScripter
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
@@ -77,7 +78,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   override def loadPDX(expression: Node): Unit =
     if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then
       logger.error("Error loading PDX script: " + expression)
-    else 
+    else
       try
         set(expression)
       catch
@@ -188,7 +189,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    */
   override def toScript: String =
     updateNodeTree()
-    node.map(_.toScript).getOrElse("")
+    node.map(DefaultNodeScripter.toScript).getOrElse("")
 
   override def equals(other: PDXScript[?]): Boolean =
     other match

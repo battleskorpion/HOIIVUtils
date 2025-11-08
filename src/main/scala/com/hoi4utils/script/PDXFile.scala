@@ -1,13 +1,15 @@
 package com.hoi4utils.script
 
+import com.hoi4utils.script.scriptify.DefaultNodeScripter
 import java.io.{File, FileNotFoundException, PrintWriter}
 import java.time.LocalDateTime
 import javax.swing.JOptionPane
 import scala.util.Using
 
 trait PDXFile extends PDXScript[?] {
-  def getFile: Option[File]
   
+  def getFile: Option[File]
+
   def fileName: String = getFile match {
     case Some(file) => file.getName
     case None => getClass.getSimpleName + ".txt"

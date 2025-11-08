@@ -8,16 +8,16 @@ type NodeValueType = PDXValueType | Comment
 
 // Consolidated Node class (no NodeValue) using rawValue directly.
 class Node (
-             // Tokens that occurred before the "core" of this node.
+             /** Tokens that occurred before the "core" of this node. */
              var leadingTrivia: ListBuffer[Token] = ListBuffer(),
-             // The main identifier token (if any)
+             /** The main identifier token (if any). */
              var identifierToken: Option[Token] = None,
-             // The operator token (if any, e.g. "=")
+             /** The operator token (if any, e.g. "="). */
              var operatorToken: Option[Token] = None,
-             // The node's value. This may be a literal (String, Int, Double, Boolean),
-             // a list (block) of child nodes, or a Comment.
+             /** The node's value. This may be a literal (String, Int, Double, Boolean),
+                 a list (block) of child nodes, or a Comment. */
              var rawValue: Option[NodeValueType] = None,
-             // Tokens that came after the node's core.
+             /** Tokens that came after the node's core. */
              var trailingTrivia: ListBuffer[Token] = ListBuffer()
            ) extends NodeIterable[Node]:
 
@@ -34,10 +34,10 @@ class Node (
     )
 
   // Convenience getters extracting raw string representations from tokens.
-  def identifier: Option[String] = identifierToken.map(_.value)
-  def operator: Option[String]   = operatorToken.map(_.value)
-  def value: Option[NodeValueType] = rawValue
-  def name: String = identifier.getOrElse("")
+  def identifier: Option[String]    = identifierToken.map(_.value)
+  def operator: Option[String]      = operatorToken.map(_.value)
+  def value: Option[NodeValueType]  = rawValue
+  def name: String                  = identifier.getOrElse("")
 
   /**
    * Converts the node's raw value to a String representation.
@@ -68,74 +68,6 @@ class Node (
       identifierToken match
         case Some(token) => throw new ParserException("Expected a Boolean or String for boolean conversion", token = Some(token))
         case None => throw new ParserException("Expected a Boolean or String for boolean conversion")
-
-  /**
-   * Reconstructs the original file text by concatenating:
-   * - leading trivia (whitespace/comments)
-   * - the identifier and operator tokens
-   * - the node's value (or nested children, if a block)
-   * - trailing trivia
-   */
-  def toScript(indent: String = ""): String =
-    val sb = new StringBuilder
-
-    // Append all leading trivia on its own line(s) (preserving comments/whitespace)
-    for t <- leadingTrivia do
-      // replace all whitespace
-      sb.append(indent).append(t.value.replaceAll("\\t+", ""))
-
-    // Append the identifier and operator (if any)
-    identifier.foreach { id =>
-      sb.append(indent).append(id)
-      operator.foreach(op => sb.append(" ").append(op))
-      sb.append(" ") // separate identifier/operator from the value
-    }
-
-    /* value */
-    rawValue match
-      case Some(children: ListBuffer[Node]) =>
-        if children.forall { n => n.identifier.isEmpty && n.operator.isEmpty
-          && n.rawValue.exists {
-            case _: Int | _: Double => true
-            case _ => false
-          }} then
-          sb.append("{ ")
-          sb.append(children.map(_.asString).mkString(" "))
-          sb.append(" }").append('\n')
-        else
-          // For a block of child nodes, open a brace and newline
-          if identifier.nonEmpty then sb.append("{\n")
-          // Increase indent for children
-          val childIndent =
-            if identifier.nonEmpty then indent + "\t"
-            else indent
-          for child <- children do
-            // Recursively call toScript on each child with increased indent
-            var childToScript = child.toScript(childIndent)
-            if !childToScript.contains("\n") then childToScript = childToScript + "\n"
-            sb.append(childToScript)
-          // Ensure each child ends with a newline
-          //if (!child.toScript(childIndent).endsWith("\n")) sb.append("\n")
-          //if (sb.nonEmpty) sb.deleteCharAt(sb.length - 1)
-          if identifier.nonEmpty then
-            // Remove all trailing whitespace from the StringBuilder
-            while sb.nonEmpty && sb.charAt(sb.length - 1).isWhitespace do
-              sb.deleteCharAt(sb.length - 1)
-            sb.append('\n').append(indent).append("}")
-          else sb.append('\n')
-      case Some(v) =>
-        // For a literal value, simply append its string form
-        sb.append(v.toString)
-      case None =>
-        if identifier.nonEmpty && operator.nonEmpty then
-          sb.append("[null]")
-
-    // Append trailing trivia (e.g. comments that came after the node)
-    for t <- trailingTrivia do
-      sb.append(indent).append(t.value.replaceAll("\\t+", ""))
-    sb.toString()
-
-  def toScript: String = toScript("")
 
   /**
    * Generates a canonical "pretty print" version.
