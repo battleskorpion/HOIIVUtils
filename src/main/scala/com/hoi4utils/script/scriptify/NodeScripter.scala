@@ -41,7 +41,7 @@ trait NodeScripter {
    * @param children
    * @return
    */
-  protected def appendNumberBlock(using sb: StringBuilder)(children: Iterable[Node]) =
+  protected def appendNumberBlock(using sb: StringBuilder)(children: Iterable[Node]): Unit =
     sb.append("{ ")
     sb.append(children.map(_.asString).mkString(" "))
     sb.append(" }").append('\n')
