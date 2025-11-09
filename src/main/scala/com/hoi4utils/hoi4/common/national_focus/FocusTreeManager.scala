@@ -21,12 +21,12 @@ import scala.util.boundary
  */
 object FocusTreeManager extends LazyLogging with PDXReadable:
   override val cleanName: String = "FocusTrees"
-  val focusTrees = new ListBuffer[FocusTree]()
+  val focusTrees = new mutable.HashSet[FocusTree]()
   val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
   var focusTreeErrors: ListBuffer[FocusTreeErrorGroup] = ListBuffer.empty
 
   /* other */
-  private val _sharedFocusFiles = new ListBuffer[SharedFocusFile]()
+  private val _sharedFocusFiles = new mutable.HashSet[SharedFocusFile]()
 
   def observeFocusTrees: ObservableList[FocusTree] = FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
 
@@ -89,8 +89,8 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
   def sharedFocusFilesAsPseudoTrees: Iterable[PseudoSharedFocusTree] =
     _sharedFocusFiles.map(sff => PseudoSharedFocusTree.forFocuses(sff.sharedFocuses.toList, s"${sff.fileName}"))
 
-  def sharedFocuses: Iterable[SharedFocus] =
-    _sharedFocusFiles.flatMap(_.sharedFocuses)
+  def sharedFocuses: Set[SharedFocus] =
+    _sharedFocusFiles.flatMap(_.sharedFocuses).toSet
 
   def hasFocusTreeHeader(file: File): Boolean =
     val parser = Parser(file)
