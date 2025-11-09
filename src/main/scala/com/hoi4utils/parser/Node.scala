@@ -80,23 +80,20 @@ class Node (
     asString
 
   // Helper methods to find child nodes (assuming NodeIterable provides find and findCaseInsensitive).
-  def getValue(id: String): Node =
-    find(id) match
-      case Some(node) => node
-      case None       => null
+  def getValue(id: String): Node = find(id) match
+    case Some(node) => node
+    case None       => null
 
-  def getValueCaseInsensitive(id: String): Node =
-    findCaseInsensitive(id) match
-      case Some(node) => node
-      case None       => null
+  def getValueCaseInsensitive(id: String): Node = findCaseInsensitive(id) match
+    case Some(node) => node
+    case None       => null
 
   /**
    * Sets the node's value.
    */
-  def setValue(v: NodeValueType | Null): Unit =
-    v match
-      case null => rawValue = None
-      case _    => rawValue = Some(v)
+  def setValue(v: NodeValueType | Null): Unit = v match
+    case null => rawValue = None
+    case _    => rawValue = Some(v)
 
   def isParent: Boolean = rawValue match
     case Some(list: ListBuffer[Node]) => true
@@ -131,7 +128,7 @@ class Node (
     case Some(v: Double)           => v
     case Some(v: Boolean)          => v
     case Some(_: Comment)          => null
-    case _                         => null
+    case None                      => null
 
   def $value : NodeValueType | Null = rawValue.orNull
 
@@ -205,7 +202,6 @@ class Node (
     case _: String => true
     case _         => false
 
-  def valueEquals(value: PDXValueType): Boolean =
-    rawValue match
+  def valueEquals(value: PDXValueType): Boolean = rawValue match
       case Some(v) => v == value
-      case None     => false
+      case None    => false
