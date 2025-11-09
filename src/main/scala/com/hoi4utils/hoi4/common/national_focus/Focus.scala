@@ -165,10 +165,12 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
         // No relative positioning, so just set directly
         setXY(x, y)
     if updateChildRelativeOffsets then
-      for focus <- focusTree.focuses do
-        // Check if this focus has us as its relative position parent
-        if focus.relativePositionFocus @== this then
-          focus.offsetXY tupled deltas
+      // Update focuses that has us as its relative position parent
+      for
+        focus <- focusTree.focuses
+        if focus.relativePositionFocus @== this
+      do
+        focus.offsetXY tupled deltas
     prevAbsolute
 
   /**
