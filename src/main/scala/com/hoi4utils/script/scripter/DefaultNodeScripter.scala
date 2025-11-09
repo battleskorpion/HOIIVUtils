@@ -23,4 +23,5 @@ object DefaultNodeScripter extends NodeScripter {
   override protected def modifiedChildScript(childScript: String): String =
     if childScript.contains("\n") then childScript
     else childScript + "\n"
+
 }

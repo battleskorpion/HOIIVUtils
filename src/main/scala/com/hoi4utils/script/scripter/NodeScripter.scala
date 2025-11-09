@@ -11,7 +11,7 @@ trait NodeScripter {
 
   protected def isAppendTrivia: Boolean = true
 
-  protected def isAutoIndent: Boolean = true  
+  protected def isAutoIndent: Boolean = true
 
   /**
    * Reconstructs the original file text by concatenating:
