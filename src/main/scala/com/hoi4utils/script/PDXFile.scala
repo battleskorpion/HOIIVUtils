@@ -1,6 +1,6 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.script.scriptify.DefaultNodeScripter
+import com.hoi4utils.script.scripter.DefaultNodeScripter
 import java.io.{File, FileNotFoundException, PrintWriter}
 import java.time.LocalDateTime
 import javax.swing.JOptionPane

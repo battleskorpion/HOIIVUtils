@@ -2,7 +2,7 @@ package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.{Node, PDXValueType, Parser, ParserException}
-import com.hoi4utils.script.scriptify.DefaultNodeScripter
+import com.hoi4utils.script.scripter.DefaultNodeScripter
 
 import java.io.File
 import scala.collection.mutable.ListBuffer

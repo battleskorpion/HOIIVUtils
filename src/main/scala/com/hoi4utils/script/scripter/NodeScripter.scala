@@ -1,7 +1,7 @@
-package com.hoi4utils.script.scriptify
+package com.hoi4utils.script.scripter
 
 import com.hoi4utils.parser.{Node, NodeValueType, Token}
-import com.hoi4utils.script.scriptify.DefaultNodeScripter.{appendChildrenBlock, appendLiteral, appendMissingValue, appendNumberBlock, appendTrivia, isNumberBlock, toScriptAcc}
+import com.hoi4utils.script.scripter.DefaultNodeScripter.{appendChildrenBlock, appendLiteral, appendMissingValue, appendNumberBlock, appendTrivia, isNumberBlock, toScriptAcc}
 
 import scala.collection.mutable.ListBuffer
 

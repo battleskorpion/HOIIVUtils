@@ -1,4 +1,4 @@
-package com.hoi4utils.script.scriptify
+package com.hoi4utils.script.scripter
 
 import com.hoi4utils.parser.{Comment, Node, NodeValueType, Token}
 import dotty.tools.dotc.config.ScalaSettings.indent

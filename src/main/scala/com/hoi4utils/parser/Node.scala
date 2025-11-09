@@ -1,6 +1,6 @@
 package com.hoi4utils.parser
 
-import com.hoi4utils.script.scriptify.SimpleNodeScripter
+import com.hoi4utils.script.scripter.SimpleNodeScripter
 import com.hoi4utils.shared.BoolType
 
 import scala.collection.mutable.ListBuffer
