@@ -124,10 +124,9 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
     absolutePosition(this)
   }
 
-  override def toString: String =
-    id.value match
-      case Some(id) => id
-      case None => "[Unknown]"
+  override def toString: String = id.value match
+    case Some(id) => id
+    case None => "[Unknown]"
 
   def setID(s: String): Unit =
     this.id.set(s)
