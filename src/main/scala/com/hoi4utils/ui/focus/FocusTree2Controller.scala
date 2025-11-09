@@ -137,7 +137,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 
 	private def populateFocusTreeSelection(): Unit =
 		focusTreeView.setGridLinesVisible(lines)
-		Some(FocusTreeManager.observeFocusTrees).foreach(trees =>
+		Some(FocusTreeManager.observeFocusTrees.sorted()).foreach(trees =>
 			trees.forEach(someFocusTree =>
 				val toggleButton = ToggleButton(someFocusTree.toString)
 				focusTreesToggleButtons += toggleButton

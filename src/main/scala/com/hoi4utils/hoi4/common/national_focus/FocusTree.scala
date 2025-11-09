@@ -15,6 +15,7 @@ import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
+import scala.math.Ordered.orderingToOrdered
 import scala.util.boundary
 
 val focusTreeIdentifier = "focus_tree"
@@ -29,18 +30,18 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
   //final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
 
   /* PDX attributes */
-  val id = 
+  val id =
     StringPDX("id")
-  val country = 
+  val country =
     FocusTreeCountry()
-  val focuses: MultiPDX[Focus] = 
+  val focuses: MultiPDX[Focus] =
     MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   /* less used */
-  val default = 
+  val default =
     BooleanPDX("default")
   val reset_on_civilwar =
     BooleanPDX("reset_on_civilwar")
-  val continuousFocusPosition = 
+  val continuousFocusPosition =
     PointPDX("continuous_focus_position")
   val initialShowPosition =
     InitialShowPosition("initial_show_position")
@@ -74,7 +75,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
       setFile(file)
       collectAndRegisterErrors()
 
-  
+
   def width: Int = focuses.map(_.absoluteX).maxOption.getOrElse(0)
   def height: Int = focuses.map(_.absoluteY).maxOption.getOrElse(0)
   columns = width + 1
@@ -196,15 +197,11 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
 
   def hasFocuses: Boolean = focuses.nonEmpty
 
-  override def compareTo(o: FocusTree): Int =
-    (this.countryTag, this.id.value) match
-      case (Some(countryTag), Some(id)) =>
-        (o.countryTag, o.id.value) match
-          case (Some(otherCountryTag), Some(otherID)) =>
-            val c = countryTag.compareTo(otherCountryTag)
-            if c == 0 then id.compareTo(otherID) else c
-          case _ => 0
-      case _ => 0
+  private def sortKey(tree: FocusTree): (Boolean, String, String) =
+    (tree.id.value.isEmpty, tree.id.value.getOrElse(""), tree.countryTag.map(_.toString).getOrElse(""))
+
+  override def compareTo(other: FocusTree): Int =
+    sortKey(this).compare(sortKey(other))
 
   override def iterator: Iterator[Focus] = focuses.iterator
 
@@ -262,7 +259,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
 //        val trigger: TriggerPDX
 
       override def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(offset) ++ super.childScripts
-      
+
     class InitialShowPosition_Focus extends StructuredPDX(pdxIdentifier) with InitialShowPositionSchema:
       val focus: ReferencePDX[Focus] = ReferencePDX[Focus](() => focuses.toList, "focus")
 
@@ -274,7 +271,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
     /** Controls zoom */
     val scrollWheelFactor = DoublePDX("scroll_wheel_factor", ExpectedRange.ofUnitInterval)
 //    val trigger = TriggerPDX("trigger") // TODO IMPL TRIGGER PDX
-    
+
     override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] =
       ListBuffer(name, target, scrollWheelFactor)
 
@@ -328,5 +325,10 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
 //    focusTreeErrors += fullMessage
 ////    logger.error("Focus Tree - Parser Exception (File):")
 ////    errorDetails.foreach(detail => logger.error(s"\t$detail"))
+
+object FocusTree:
+  given Ordering[FocusTree] with
+    def compare(a: FocusTree, b: FocusTree): Int =
+      a.compareTo(b)
 
 case class Point(x: Int, y: Int)
