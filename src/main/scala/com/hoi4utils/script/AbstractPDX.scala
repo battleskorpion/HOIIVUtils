@@ -143,21 +143,16 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @param identifier Optional identifier for the parent node (defaults to pdxIdentifier)
    * @tparam U Type of PDXScript items in the collection
    */
-  protected def updateCollectionNodeTree[U <: PDXScript[?]](
-    items: Iterable[U],
-    identifier: String = pdxIdentifier
-  ): Unit = {
+  protected def updateCollectionNodeTree[U <: PDXScript[?]](items: Iterable[U], identifier: String = pdxIdentifier): Unit =
     items.foreach(_.updateNodeTree())
     val childNodes: ListBuffer[Node] = items.flatMap(_.getNode).to(ListBuffer)
-    node match {
+    node match
       case Some(n) => n.setValue(childNodes)
       case None =>
-        if (childNodes.nonEmpty) {
+        if (childNodes.nonEmpty)
           node = if (identifier != null && identifier.nonEmpty) Some(Node(identifier, "=", childNodes))
                  else Some(Node(childNodes))
-        } else node = None
-    }
-  }
+        else node = None
 
   /**
    * Template method for loading PDX collections with standardized error handling.
@@ -165,7 +160,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    *
    * @param expression The node expression to load into the collection
    */
-  protected def loadPDXCollection(expression: Node): Unit = {
+  protected def loadPDXCollection(expression: Node): Unit =
     try
       addToCollection(expression)
     catch {
@@ -173,7 +168,6 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
         handlePDXError(e, expression)
         node = Some(expression)
     }
-  }
 
   /**
    * Abstract method for adding expressions to collections.
@@ -181,7 +175,8 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    *
    * @param expression The node expression to add to the collection
    */
-  protected def addToCollection(expression: Node): Unit = throw new UnsupportedOperationException("addToCollection must be implemented by collection-based PDX classes")
+  protected def addToCollection(expression: Node): Unit =
+    throw new UnsupportedOperationException("addToCollection must be implemented by collection-based PDX classes")
 
   /**
    * Generates the script output.
