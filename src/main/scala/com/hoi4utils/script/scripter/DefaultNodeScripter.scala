@@ -17,10 +17,9 @@ object DefaultNodeScripter extends NodeScripter {
       sb.append(" ") // separate id/op from the value
     }
 
-  // Ensure each child ends with a newline
-  //if (!child.toScript(childIndent).endsWith("\n")) sb.append("\n")
-  //if (sb.nonEmpty) sb.deleteCharAt(sb.length - 1)
-
+  /**
+   * @inheritdoc
+   */
   override protected def modifiedChildScript(childScript: String): String =
     if childScript.contains("\n") then childScript
     else childScript + "\n"
