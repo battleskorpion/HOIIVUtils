@@ -1,5 +1,6 @@
 package com.hoi4utils.parser
 
+import com.hoi4utils.script.scriptify.SimpleNodeScripter
 import com.hoi4utils.shared.BoolType
 
 import scala.collection.mutable.ListBuffer
@@ -49,9 +50,10 @@ class Node (
     case Some(b: Boolean)  => b.toString
     case Some(list: ListBuffer[Node]) =>
       val sb = new StringBuilder
+      val scripter = SimpleNodeScripter
       sb.append("{")
       for i <- list.indices do
-        sb.append(list(i).toScriptSimple)
+        sb.append(scripter.toScript(list(i)))
         if i < list.size - 1 then sb.append(" ")
       sb.append("}")
       sb.toString()
@@ -68,44 +70,6 @@ class Node (
       identifierToken match
         case Some(token) => throw new ParserException("Expected a Boolean or String for boolean conversion", token = Some(token))
         case None => throw new ParserException("Expected a Boolean or String for boolean conversion")
-
-  /**
-   * Generates a canonical "pretty print" version.
-   * This method produces a normalized output rather than preserving every original space.
-   */
-  def toScriptSimple: String =
-    val sb = new StringBuilder
-    if identifier.nonEmpty then sb.append(identifier.get).append(" ")
-    if operator.nonEmpty then sb.append(operator.get).append(" ")
-
-    rawValue match
-      case Some(children: ListBuffer[Node]) =>
-        // Special handling if the block is a list of numbers.
-        if children.forall(_.identifier.isEmpty) &&
-          children.forall(_.operator.isEmpty) &&
-          children.forall(n => n.rawValue.exists {
-            case _: Int | _: Double => true
-            case _ => false
-          }) then
-          sb.append("{ ")
-          sb.append(children.map(_.asString).mkString(" "))
-          sb.append(" }").append('\n')
-        else
-          if identifier.nonEmpty then sb.append("{\n\t")
-          for child <- children do
-            var sScript = child.toScriptSimple
-            if sScript != null && sScript.nonEmpty then
-              // Add an extra tab to subsequent lines.
-              sScript = sScript.replace("\n", "\n\t")
-              sb.append(sScript)
-          if sb.nonEmpty then sb.deleteCharAt(sb.length - 1)
-          if identifier.nonEmpty then sb.append("}").append('\n')
-      case Some(v) =>
-        sb.append(asString).append('\n')
-      case None =>
-        if identifier.nonEmpty && operator.nonEmpty then
-          sb.append(identifier.get).append(" ").append(operator.get).append(" [null]").append('\n')
-    sb.toString()
 
   override def toString: String =
     //    val sb = new StringBuilder
