@@ -17,6 +17,7 @@ import scalafx.scene.image.Image
 import scalafx.scene.input.{MouseButton, MouseEvent}
 import scalafx.scene.layout.AnchorPane
 import scalafx.scene.paint.Color
+import sun.jvm.hotspot.HelloWorld.e
 
 import javax.swing.JOptionPane
 import scala.collection.mutable.ListBuffer
@@ -446,10 +447,7 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
         _focusTree.foreach: tree =>
           val newFocus = new Focus(tree)
           tree.addNewFocus(newFocus)
-          val absPosition = Point(
-            canvasToFocusX(e.getX),
-            canvasToFocusY(e.getY)
-          )
+          val absPosition = canvasEventToFocusPoint(e)
           newFocus.setAbsoluteXY(absPosition, false)
           newFocus.setID(tree.nextTempFocusID())
           openPDXEditor(newFocus, () => drawFocusTree()) // TODO TODO TODO
@@ -587,3 +585,9 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
   private def openPDXEditor(pdxScript: PDXScript[?], onUpdate: Runnable = null): Unit =
     val editor = PDXEditorController()
     if onUpdate != null then editor.open(pdxScript, onUpdate) else editor.open(pdxScript)
+
+  private def canvasEventToFocusPoint(e: MouseEvent): Point =
+    Point(
+      canvasToFocusX(e.getX),
+      canvasToFocusY(e.getY)
+    )
