@@ -142,51 +142,38 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
    * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
    * that position, but its absolute coordinates are always the same.
    *
-   * @param x                          absolute x-coordinate
-   * @param y                          absolute y-coordinate
+   * @param newPos                     absolute x- and y-coordinates
    * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
    *                                   in the same position even though the position of this focus changes
    * @return the previous absolute position
    */
-  def setAbsoluteXY(x: Int, y: Int, updateChildRelativeOffsets: Boolean): Point =
+  def setAbsoluteXY(newPos: Point, updateChildRelativeOffsets: Boolean): Point =
     val prevAbsolute = absolutePosition
-    val deltas = (x - prevAbsolute.x, y - prevAbsolute.y)
-    if deltas == (0, 0) then
-      // No position change, so nothing to do
-      return prevAbsolute
-
-    relativePositionFocus.value match
-      case Some(f) =>
-        // keep relative to the focus, but absolute coordinates are always the same
-        val rp = f.absolutePosition
-        setXY(x - rp.x, y - rp.y)
-      case None =>
-        // No relative positioning, so just set directly
-        setXY(x, y)
-    if updateChildRelativeOffsets then
-      // Update focuses that has us as its relative position parent
-      for
-        focus <- focusTree.focuses
-        if focus.relativePositionFocus @== this
-      do
-        focus.offsetXY tupled deltas
+    
+    val deltas = newPos - prevAbsolute
+    // If there is no position change, nothing to do
+    if !deltas.isZero then
+      relativePositionFocus.value match
+        case Some(f) =>
+          // keep relative to the focus, but absolute coordinates are always the same
+          val relPos = f.absolutePosition
+          setXY(newPos - relPos)
+        case None =>
+          // No relative positioning, so just set directly
+          setXY(newPos)
+      if updateChildRelativeOffsets then
+        // Update focuses that has us as its relative position parent
+        for
+          focus <- focusTree.focuses
+          if focus.relativePositionFocus @== this
+        do
+          focus.offsetXY(deltas)
+          
     prevAbsolute
 
-  /**
-   * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
-   * that position, but its absolute coordinates are always the same.
-   *
-   * @param xy                         absolute x- and y-coordinates
-   * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
-   *                                   in the same position even though the position of this focus changes
-   * @return the previous absolute position
-   */
-  def setAbsoluteXY(xy: Point, updateChildRelativeOffsets: Boolean): Point =
-    setAbsoluteXY(xy.x, xy.y, updateChildRelativeOffsets)
-
-  def offsetXY(x: Int, y: Int): Point =
-    this.x += x
-    this.y += y
+  def offsetXY(offset: Point): Point =
+    this.x += offset.x
+    this.y += offset.y
     xyPoint
 
   /**
@@ -195,7 +182,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
    * @param y relative y coordinate
    * @return
    */
-  def hasRelativePosition(x: Int, y: Int): Boolean = (this.x @== x) && (this.y @== y)
+  def hasRelativePosition(pos: Point): Boolean = (this.x @== pos.x) && (this.y @== pos.y)
 
   /**
    * Check if the focus is at the given absolute position.
@@ -204,7 +191,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
    * @param y absolute y-coordinate
    * @return
    */
-  def hasAbsolutePosition(x: Int, y: Int): Boolean = absolutePosition == Point(x, y)
+  def hasAbsolutePosition(pos: Point): Boolean = absolutePosition == pos
 
   def selfAndRelativePositionedFocuses: List[Focus] =
     val focuses = ListBuffer[Focus]()

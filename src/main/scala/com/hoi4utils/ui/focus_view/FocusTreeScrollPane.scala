@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.focus_view
 
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree}
+import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, Point}
 import com.hoi4utils.hoi4.localization.Property
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.pdxscript.PDXEditorController
@@ -343,10 +343,12 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
 
   def getFocusHover(p: Point2D): Option[Focus] =
     _focusTree.flatMap: tree =>
-      val x = (p.getX / FOCUS_X_SCALE).toInt + tree.minX
-      val y = (p.getY / FOCUS_Y_SCALE).toInt
+      val pos = Point(
+        (p.getX / FOCUS_X_SCALE).toInt + tree.minX,
+        (p.getY / FOCUS_Y_SCALE).toInt
+      )
 
-      tree.focuses.find(_.hasAbsolutePosition(x, y))
+      tree.focuses.find(_.hasAbsolutePosition(pos))
 
   @FXML
   def selectClosestMatch(comboBox: ComboBox[FocusTree], typedText: String): Unit =
@@ -444,7 +446,11 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
         _focusTree.foreach: tree =>
           val newFocus = new Focus(tree)
           tree.addNewFocus(newFocus)
-          newFocus.setAbsoluteXY(canvasToFocusX(e.getX), canvasToFocusY(e.getY), false)
+          val absPosition = Point(
+            canvasToFocusX(e.getX),
+            canvasToFocusY(e.getY)
+          )
+          newFocus.setAbsoluteXY(absPosition, false)
           newFocus.setID(tree.nextTempFocusID())
           openPDXEditor(newFocus, () => drawFocusTree()) // TODO TODO TODO
 
@@ -458,16 +464,18 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
   @FXML
   def handleFocusTreeViewMouseDragged(e: MouseEvent): Unit =
     if e.isPrimaryButtonDown && draggedFocus.isDefined then
-      val newX = limitFocusMoveX(canvasToFocusX(e.getX))
-      val newY = limitFocusMoveY(canvasToFocusY(e.getY))
+      val newPos = Point(
+        limitFocusMoveX(canvasToFocusX(e.getX)),
+        limitFocusMoveY(canvasToFocusY(e.getY))
+      )
 
       draggedFocus.foreach: focus =>
-        if !focus.hasRelativePosition(newX, newY) then
+        if !focus.hasRelativePosition(newPos) then
           val prevDim = focusTreeViewDimension()
-          val prev = focus.setAbsoluteXY(newX, newY, e.isShiftDown)
+          val prev = focus.setAbsoluteXY(newPos, e.isShiftDown)
 
           if !prev.equals(focus.relativePosition) then
-            logger.info(s"Focus $focus moved to $newX, $newY")
+            logger.info(s"Focus $focus moved to ${newPos.x}, ${newPos.y}")
 
           drawFocusTree()
           adjustFocusTreeViewport(prevDim)

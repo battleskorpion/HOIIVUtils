@@ -331,4 +331,20 @@ object FocusTree:
     def compare(a: FocusTree, b: FocusTree): Int =
       a.compareTo(b)
 
-case class Point(x: Int, y: Int)
+case class Point(x: Int, y: Int):
+  def +(other: Point): Point = Point(this.x + other.x, this.y + other.y)
+  def -(other: Point): Point = Point(this.x - other.x, this.y - other.y)
+
+  def unary_- : Point = Point(-x, -y)
+
+  def manhattanDistance(p: Point): Int =
+    math.abs(x - p.x) + math.abs(y - p.y)
+    
+  def isZero: Boolean = this == Point.Zero
+
+object Point:
+  val Up    = Point(0, -1)
+  val Down  = Point(0, 1)
+  val Left  = Point(-1, 0)
+  val Right = Point(1, 0)
+  val Zero = Point(0, 0)
