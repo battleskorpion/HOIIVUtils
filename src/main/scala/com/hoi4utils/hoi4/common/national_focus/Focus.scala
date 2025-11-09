@@ -22,445 +22,446 @@ import scala.collection.mutable.ListBuffer
 @lombok.extern.slf4j.Slf4j
 class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String = "focus") extends StructuredPDX(pdxIdentifier) with Localizable with HasDesc with Referable:
 
-	private val FOCUS_COST_FACTOR = 7
-	private val DEFAULT_FOCUS_COST = 10.0
+  private val FOCUS_COST_FACTOR = 7
+  private val DEFAULT_FOCUS_COST = 10.0
 
-	/* attributes */
-	val id =
-		StringPDX("id")
-	val icon =
-		MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
-	/** If relative positioning, relative x */
-	final val x =
-		IntPDX("x")
-	/** If relative positioning, relative y */
-	final val y =
-		IntPDX("y", ExpectedRange.ofPositiveInt)
-	val prerequisites: MultiPDX[PrerequisiteSet] =
-		MultiPDX[PrerequisiteSet](None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
-	val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] =
-		MultiPDX[MutuallyExclusiveSet](None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
-	val relativePositionFocus: ReferencePDX[Focus] =
-		ReferencePDX[Focus](() => focusTree.focuses, "relative_position_id")
-	val cost =
-		DoublePDX("cost", ExpectedRange.ofPositiveInfinite(-1))
-	val availableIfCapitulated =
-		BooleanPDX("available_if_capitulated")
-	val cancelIfInvalid =
-		BooleanPDX("cancel_if_invalid", true)
-	val continueIfInvalid =
-		BooleanPDX("continue_if_invalid")
-	val ai_will_do =
-		AIWillDo()
-	/** completion reward */
-	//  final val completionReward: CompletionReward = new CompletionReward()
+  /* attributes */
+  val id =
+    StringPDX("id")
+  val icon =
+    MultiPDX(Some(() => new SimpleIcon()), Some(() => new BlockIcon()), "icon")
+  /** If relative positioning, relative x */
+  final val x =
+    IntPDX("x")
+  /** If relative positioning, relative y */
+  final val y =
+    IntPDX("y", ExpectedRange.ofPositiveInt)
+  val prerequisites: MultiPDX[PrerequisiteSet] =
+    MultiPDX[PrerequisiteSet](None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
+  val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] =
+    MultiPDX[MutuallyExclusiveSet](None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
+  val relativePositionFocus: ReferencePDX[Focus] =
+    ReferencePDX[Focus](() => focusTree.focuses, "relative_position_id")
+  val cost =
+    DoublePDX("cost", ExpectedRange.ofPositiveInfinite(-1))
+  val availableIfCapitulated =
+    BooleanPDX("available_if_capitulated")
+  val cancelIfInvalid =
+    BooleanPDX("cancel_if_invalid", true)
+  val continueIfInvalid =
+    BooleanPDX("continue_if_invalid")
+  val ai_will_do =
+    AIWillDo()
+  /** completion reward */
+  //  final val completionReward: CompletionReward = new CompletionReward()
 
-	var focusErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
-	var _ddsImage: Option[Image] = None  // TODO: ultimately i dont want this here BUT im being lazy and improving performance.
-	var _ddsImageGFX: String = "[<none>]"
+  var focusErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
+  var _ddsImage: Option[Image] = None  // TODO: ultimately i dont want this here BUT im being lazy and improving performance.
+  var _ddsImageGFX: String = "[<none>]"
 
-	if node != null then loadPDX(node)
+  if node != null then loadPDX(node)
 
-	override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-		val pdxError = new PDXError(
-			exception = exception,
-			errorNode = node,
-			file = if file != null then Some(file) else focusTree.focusFile,
-			pdxScript = this
-		).addInfo("focusId", id.str)
-		focusErrors += pdxError
+  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+    val pdxError = new PDXError(
+      exception = exception,
+      errorNode = node,
+      file = if file != null then Some(file) else focusTree.focusFile,
+      pdxScript = this
+    ).addInfo("focusId", id.str)
+    focusErrors += pdxError
 
-	/**
-	 * @inheritdoc
-	 */
-	override protected def childScripts: mutable.Iterable[PDXScript[?]] =
-		ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost,
-			availableIfCapitulated, cancelIfInvalid, continueIfInvalid, ai_will_do)
+  /**
+   * @inheritdoc
+   */
+  override protected def childScripts: mutable.Iterable[PDXScript[?]] =
+    ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost,
+      availableIfCapitulated, cancelIfInvalid, continueIfInvalid, ai_will_do)
 
-	def absoluteX: Int = absolutePosition.x
+  def absoluteX: Int = absolutePosition.x
 
-	def absoluteY: Int = absolutePosition.y
+  def absoluteY: Int = absolutePosition.y
 
-	def relativePosition: Point = Point(x getOrElse 0, y getOrElse 0)
+  def relativePosition: Point = Point(x getOrElse 0, y getOrElse 0)
 
-	def xyPoint: Point = relativePosition
+  def xyPoint: Point = relativePosition
 
-	/**
-	 * Calculates and returns the absolute position of the focus, taking into account any relative positioning.
-	 * @return The absolute position of the focus, as it would be rendered on the focus tree.
-	 */
-	def absolutePosition: Point = {
-		/**
-		 * Recursively calculate the absolute position of a focus, taking into account relative positions.
-		 *
-		 * @param focus     the focus to calculate the absolute position of
-		 * @param visited   set of focus ids that have been visited to detect circular references
-		 * @param offsetAcc accumulated point adjustment
-		 * @return the absolute position of the focus
-		 */
-		@tailrec
-		def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: Point = Point(0, 0)): Point = {
-			val nextPoint = Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
-			if focus.relativePositionFocus.isUndefined then
-				return nextPoint
-			// Check for self-reference
-			if focus.relativePositionFocus @== focus.id then
-				logger.error(s"Relative position id same as focus id for $this")
-				return nextPoint
-			// Check for circular references
-			if visited(focus.id.str) then
-				logger.error(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
-				return nextPoint
+  /**
+   * Calculates and returns the absolute position of the focus, taking into account any relative positioning.
+   * @return The absolute position of the focus, as it would be rendered on the focus tree.
+   */
+  def absolutePosition: Point = {
+    /**
+     * Recursively calculate the absolute position of a focus, taking into account relative positions.
+     *
+     * @param focus     the focus to calculate the absolute position of
+     * @param visited   set of focus ids that have been visited to detect circular references
+     * @param offsetAcc accumulated point adjustment
+     * @return the absolute position of the focus
+     */
+    @tailrec
+    def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: Point = Point(0, 0)): Point = {
+      val nextPoint = Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
 
-			focus.relativePositionFocus.value match
-				case Some(relativeFocus: Focus) =>
-					// Tail call: pass nextFocus, the updated visited set, and the new accumulated offset.
-					absolutePosition(relativeFocus, visited + focus.id.str, nextPoint)
-				case None =>
-					logger.error(s"Focus id ${focus.relativePositionFocus.getReferenceName} not a valid focus")
-					nextPoint
-		}
+      if focus.relativePositionFocus.isUndefined then
+        nextPoint
+      else if focus.relativePositionFocus @== focus.id then
+        // self-reference detected
+        logger.error(s"Relative position id same as focus id for $this")
+        nextPoint
+      else if visited(focus.id.str) then
+        // circular reference detected
+        logger.error(s"Circular reference detected involving focus id: ${id.str} in file ${focusTree.focusFile}")
+        nextPoint
+      else focus.relativePositionFocus.value match
+        case Some(relativeFocus: Focus) =>
+          // Tail call: pass nextFocus, the updated visited set, and the new accumulated offset.
+          absolutePosition(relativeFocus, visited + focus.id.str, nextPoint)
+        case None =>
+          logger.error(s"Focus id ${focus.relativePositionFocus.getReferenceName} not a valid focus")
+          nextPoint
+    }
 
-		absolutePosition(this)
-	}
+    absolutePosition(this)
+  }
 
-	override def toString: String =
-		id.value match
-			case Some(id) => id
-			case None => "[Unknown]"
+  override def toString: String =
+    id.value match
+      case Some(id) => id
+      case None => "[Unknown]"
 
-	def setID(s: String): Unit =
-		this.id.set(s)
+  def setID(s: String): Unit =
+    this.id.set(s)
 
-	def setXY(x: Int, y: Int): Point =
-		this.x @= x
-		this.y @= y
-		relativePosition
+  def setXY(x: Int, y: Int): Point =
+    this.x @= x
+    this.y @= y
+    relativePosition
 
-	def setXY(xy: Point): Point = setXY(xy.x, xy.y)
+  def setXY(xy: Point): Point = setXY(xy.x, xy.y)
 
-	/**
-	 * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
-	 * that position, but its absolute coordinates are always the same.
-	 *
-	 * @param x                          absolute x-coordinate
-	 * @param y                          absolute y-coordinate
-	 * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
-	 *                                   in the same position even though the position of this focus changes
-	 * @return the previous absolute position
-	 */
-	def setAbsoluteXY(x: Int, y: Int, updateChildRelativeOffsets: Boolean): Point =
-		val prevAbsolute = absolutePosition
-		val deltas = (x - prevAbsolute.x, y - prevAbsolute.y)
-		if deltas == (0, 0) then
-			// No position change, so nothing to do
-			return prevAbsolute
-		relativePositionFocus.value match
-			case Some(f) =>
-				// keep relative to the focus, but absolute coordinates are always the same
-				val rp = f.absolutePosition
-				setXY(x - rp.x, y - rp.y)
-			case None =>
-				// No relative positioning, so just set directly
-				setXY(x, y)
-		if updateChildRelativeOffsets then
-			for focus <- focusTree.focuses do
-				// Check if this focus has us as its relative position parent
-				if focus.relativePositionFocus @== this then
-					focus.offsetXY tupled deltas
-		prevAbsolute
+  /**
+   * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
+   * that position, but its absolute coordinates are always the same.
+   *
+   * @param x                          absolute x-coordinate
+   * @param y                          absolute y-coordinate
+   * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
+   *                                   in the same position even though the position of this focus changes
+   * @return the previous absolute position
+   */
+  def setAbsoluteXY(x: Int, y: Int, updateChildRelativeOffsets: Boolean): Point =
+    val prevAbsolute = absolutePosition
+    val deltas = (x - prevAbsolute.x, y - prevAbsolute.y)
+    if deltas == (0, 0) then
+      // No position change, so nothing to do
+      return prevAbsolute
 
-	/**
-	 * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
-	 * that position, but its absolute coordinates are always the same.
-	 *
-	 * @param xy                         absolute x- and y-coordinates
-	 * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
-	 *                                   in the same position even though the position of this focus changes
-	 * @return the previous absolute position
-	 */
-	def setAbsoluteXY(xy: Point, updateChildRelativeOffsets: Boolean): Point =
-		setAbsoluteXY(xy.x, xy.y, updateChildRelativeOffsets)
+    relativePositionFocus.value match
+      case Some(f) =>
+        // keep relative to the focus, but absolute coordinates are always the same
+        val rp = f.absolutePosition
+        offsetXY(-rp.x, -rp.y)
+      case None =>
+        // No relative positioning, so just set directly
+        setXY(x, y)
+    if updateChildRelativeOffsets then
+      for focus <- focusTree.focuses do
+        // Check if this focus has us as its relative position parent
+        if focus.relativePositionFocus @== this then
+          focus.offsetXY tupled deltas
+    prevAbsolute
 
-	def offsetXY(x: Int, y: Int): Point =
-		this.x += x
-		this.y += y
-		xyPoint
+  /**
+   * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
+   * that position, but its absolute coordinates are always the same.
+   *
+   * @param xy                         absolute x- and y-coordinates
+   * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
+   *                                   in the same position even though the position of this focus changes
+   * @return the previous absolute position
+   */
+  def setAbsoluteXY(xy: Point, updateChildRelativeOffsets: Boolean): Point =
+    setAbsoluteXY(xy.x, xy.y, updateChildRelativeOffsets)
 
-	/**
-	 * Check if the focus is at the given relative position.
-	 * @param x relative x coordinate
-	 * @param y relative y coordinate
-	 * @return
-	 */
-	def hasRelativePosition(x: Int, y: Int): Boolean = (this.x @== x) && (this.y @== y)
+  def offsetXY(x: Int, y: Int): Point =
+    this.x += x
+    this.y += y
+    xyPoint
 
-	/**
-	 * Check if the focus is at the given absolute position.
-	 *
-	 * @param x absolute x-coordinate
-	 * @param y absolute y-coordinate
-	 * @return
-	 */
-	def hasAbsolutePosition(x: Int, y: Int): Boolean = absolutePosition == Point(x, y)
+  /**
+   * Check if the focus is at the given relative position.
+   * @param x relative x coordinate
+   * @param y relative y coordinate
+   * @return
+   */
+  def hasRelativePosition(x: Int, y: Int): Boolean = (this.x @== x) && (this.y @== y)
 
-	def selfAndRelativePositionedFocuses: List[Focus] =
-		val focuses = ListBuffer[Focus]()
-		focuses += this
+  /**
+   * Check if the focus is at the given absolute position.
+   *
+   * @param x absolute x-coordinate
+   * @param y absolute y-coordinate
+   * @return
+   */
+  def hasAbsolutePosition(x: Int, y: Int): Boolean = absolutePosition == Point(x, y)
 
-		@tailrec
-		def gatherRelativeFocuses(currentFocuses: List[Focus]): Unit =
-			val newlyFoundFocuses = ListBuffer[Focus]()
-			for
-				focus <- focusTree.focuses
-				currentFocus <- currentFocuses
-				if (focus.relativePositionFocus @== currentFocus) && !focuses.contains(focus)
-			do
-				focuses += focus
-				newlyFoundFocuses += focus
-			if newlyFoundFocuses.nonEmpty then
-				gatherRelativeFocuses(newlyFoundFocuses.toList)
+  def selfAndRelativePositionedFocuses: List[Focus] =
+    val focuses = ListBuffer[Focus]()
+    focuses += this
 
-		gatherRelativeFocuses(List(this))
-		focuses.toList
+    @tailrec
+    def gatherRelativeFocuses(currentFocuses: List[Focus]): Unit =
+      val newlyFoundFocuses = ListBuffer[Focus]()
+      for
+        focus <- focusTree.focuses
+        currentFocus <- currentFocuses
+        if (focus.relativePositionFocus @== currentFocus) && !focuses.contains(focus)
+      do
+        focuses += focus
+        newlyFoundFocuses += focus
+      if newlyFoundFocuses.nonEmpty then
+        gatherRelativeFocuses(newlyFoundFocuses.toList)
 
-	def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
+    gatherRelativeFocuses(List(this))
+    focuses.toList
 
-	def setCost(cost: Number): Unit =
-		this.cost @= cost.doubleValue()
+  def setCost(): Unit = setCost(DEFAULT_FOCUS_COST)
 
-	def getDDSImage: Option[Image] = {
-		// bad code. it's fine for now.
-		// Updated code, now its very bad code. its really not fine but its staying for now.
-		if icon.isDefined then
-			var img: Option[Image] = None
-			for i <- icon do i match
-				case simpleIcon: SimpleIcon => simpleIcon.value match
-					case Some(iconName) =>
-						Interface.getGFX(iconName) match
-							case Some(gfx) =>
-								_ddsImage match
-									case Some(ddsImage) => img =
-										if _ddsImageGFX == gfx then _ddsImage
-										else
-											_ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-											_ddsImageGFX = gfx
-											_ddsImage
-									case None => img =
-										_ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-										_ddsImageGFX = gfx
-										_ddsImage
-							case None => None
-					case None => None
-				case blockIcon: BlockIcon => blockIcon.iconName match
-					case Some(iconName) =>
-						Interface.getGFX(iconName) match
-							case Some(gfx) =>
-								_ddsImage match
-									case Some(ddsImage) => img =
-										if _ddsImageGFX == gfx then _ddsImage
-										else
-											_ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-											_ddsImageGFX = gfx
-											_ddsImage
-									case None => img =
-										_ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-										_ddsImageGFX = gfx
-										_ddsImage
-							case None => None
-					case None => None
-				case _ => None
-			img
-		else None
-	}
+  def setCost(cost: Number): Unit =
+    this.cost @= cost.doubleValue()
 
-	def hasPrerequisites: Boolean = prerequisites.nonEmpty
+  def getDDSImage: Option[Image] = {
+    // bad code. it's fine for now.
+    // Updated code, now its very bad code. its really not fine but its staying for now.
+    if icon.isDefined then
+      var img: Option[Image] = None
+      for i <- icon do i match
+        case simpleIcon: SimpleIcon => simpleIcon.value match
+          case Some(iconName) =>
+            Interface.getGFX(iconName) match
+              case Some(gfx) =>
+                _ddsImage match
+                  case Some(ddsImage) => img =
+                    if _ddsImageGFX == gfx then _ddsImage
+                    else
+                      _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
+                      _ddsImageGFX = gfx
+                      _ddsImage
+                  case None => img =
+                    _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
+                    _ddsImageGFX = gfx
+                    _ddsImage
+              case None => None
+          case None => None
+        case blockIcon: BlockIcon => blockIcon.iconName match
+          case Some(iconName) =>
+            Interface.getGFX(iconName) match
+              case Some(gfx) =>
+                _ddsImage match
+                  case Some(ddsImage) => img =
+                    if _ddsImageGFX == gfx then _ddsImage
+                    else
+                      _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
+                      _ddsImageGFX = gfx
+                      _ddsImage
+                  case None => img =
+                    _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
+                    _ddsImageGFX = gfx
+                    _ddsImage
+              case None => None
+          case None => None
+        case _ => None
+      img
+    else None
+  }
 
-	def dependents: List[Focus] = focusTree.focuses.filter(_.prerequisiteList.contains(this)).toList
+  def hasPrerequisites: Boolean = prerequisites.nonEmpty
 
-	def isMutuallyExclusive: Boolean = !(mutuallyExclusive.isUndefined || mutuallyExclusive.isEmpty)
+  def dependents: List[Focus] = focusTree.focuses.filter(_.prerequisiteList.contains(this)).toList
 
-	def displayedCompletionTime(): Double = Math.floor(preciseCompletionTime())
+  def isMutuallyExclusive: Boolean = !(mutuallyExclusive.isUndefined || mutuallyExclusive.isEmpty)
 
-	def preciseCompletionTime(): Double = (cost getOrElse DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
+  def displayedCompletionTime(): Double = Math.floor(preciseCompletionTime())
 
-	override def getLocalizableProperties: mutable.Map[Property, String] =
-		//mutable.Map(Property.NAME -> id.get().get, Property.DESCRIPTION -> s"${id.get().get}_desc")
-		val id = this.id.getOrElse("")
-		mutable.Map(Property.NAME -> id, Property.DESCRIPTION -> s"${id}_desc")
+  def preciseCompletionTime(): Double = (cost getOrElse DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
 
-	override def getLocalizableGroup: Iterable[Localizable] =
-		if focusTree == null then
-			Iterable(this)
-		else
-			focusTree.getLocalizableGroup
+  override def getLocalizableProperties: mutable.Map[Property, String] =
+    //mutable.Map(Property.NAME -> id.get().get, Property.DESCRIPTION -> s"${id.get().get}_desc")
+    val id = this.id.getOrElse("")
+    mutable.Map(Property.NAME -> id, Property.DESCRIPTION -> s"${id}_desc")
 
-	def isLocalized: Boolean = localizationStatus(Property.NAME) != Localization.Status.MISSING
+  override def getLocalizableGroup: Iterable[Localizable] =
+    if focusTree == null then
+      Iterable(this)
+    else
+      focusTree.getLocalizableGroup
 
-	def isLocalized(property: Property): Boolean = localization(property) match
-		case Some(_) => true
-		case None => false
+  def isLocalized: Boolean = localizationStatus(Property.NAME) != Localization.Status.MISSING
 
-	def isUnlocalized(property: Property): Boolean = !isLocalized(property)
+  def isLocalized(property: Property): Boolean = localization(property) match
+    case Some(_) => true
+    case None => false
 
-	//  def getCompletionReward: CompletionReward = completionReward
+  def isUnlocalized(property: Property): Boolean = !isLocalized(property)
 
-	//  def setCompletionReward(completionReward: List[Effect]): Unit = {
-	//    this.completionReward = completionReward
-	//  }
+  //  def getCompletionReward: CompletionReward = completionReward
 
-	//  def setCompletionReward(completionRewardNode: Node): Unit = {
-	//    completionReward = ListBuffer()
-	//    if (completionRewardNode.valueIsNull) {
-	//      return
-	//    }
-	//
-	//    setCompletionRewardsOfNode(completionRewardNode)
-	//  }
+  //  def setCompletionReward(completionReward: List[Effect]): Unit = {
+  //    this.completionReward = completionReward
+  //  }
 
-	private def setCompletionRewardsOfNode(completionRewardNode: Node): Unit =
-		focusTree.countryTag match
-			case Some(tag) =>
-				setCompletionRewardsOfNode(completionRewardNode, Scope.of(tag))
-			case None =>
-				setCompletionRewardsOfNode(completionRewardNode, null)
+  //  def setCompletionReward(completionRewardNode: Node): Unit = {
+  //    completionReward = ListBuffer()
+  //    if (completionRewardNode.valueIsNull) {
+  //      return
+  //    }
+  //
+  //    setCompletionRewardsOfNode(completionRewardNode)
+  //  }
 
-	def mutuallyExclusiveList: List[Focus] = mutuallyExclusive.flatMap(_.references()).toList
+  private def setCompletionRewardsOfNode(completionRewardNode: Node): Unit =
+    focusTree.countryTag match
+      case Some(tag) =>
+        setCompletionRewardsOfNode(completionRewardNode, Scope.of(tag))
+      case None =>
+        setCompletionRewardsOfNode(completionRewardNode, null)
 
-	def prerequisiteList: List[Focus] = prerequisites.flatMap(_.references()).toList
+  def mutuallyExclusiveList: List[Focus] = mutuallyExclusive.flatMap(_.references()).toList
 
-	def prerequisiteSets: List[PrerequisiteSet] = prerequisites.toList
+  def prerequisiteList: List[Focus] = prerequisites.flatMap(_.references()).toList
 
-	private def setCompletionRewardsOfNode(completionRewardNode: Node, scope: Scope): Unit =
-		//    completionRewardNode.$ match {
-		//      case l: ListBuffer[Node] => for(n <- l) {
-		//        if (n.value().isList) {
-		//          var s: Scope = null
-		//          if (CountryTagsManager.exists(n.name())) {
-		//            s = Scope.of(CountryTagsManager.get(n.name()))
-		//          } else {
-		//            try {
-		//              s = Scope.of(n.name(), scope)
-		//            } catch {
-		//              case e: NotPermittedInScopeException =>
-		//                println(e.getMessage)
-		//            }
-		//          }
-		//
-		//          if (s == null || s.scopeCategory == ScopeCategory.EFFECT) {
-		//            var effect: Effect = null
-		//            try {
-		//              effect = Effect.of(n.name(), scope, n.value())
-		//            } catch {
-		//              case e: InvalidEffectParameterException =>
-		//                println(e.getMessage)
-		//              case e: NotPermittedInScopeException =>
-		//                println(e.getMessage + ", scope: " + scope + ", list? " + n.name())
-		//            }
-		//            if (effect != null) {
-		//              completionReward += effect
-		//            } else {
-		//              println("Scope " + n.name() + " unknown.")
-		//            }
-		//          } else {
-		//            setCompletionRewardsOfNode(n, s)
-		//          }
-		//        } else if (!n.valueIsNull) {
-		//          var effect: Effect = null
-		//          try {
-		//            effect = Effect.of(n.name(), scope, n.value())
-		//          } catch {
-		//            case e: InvalidEffectParameterException =>
-		//              println(e.getMessage)
-		//            case e: NotPermittedInScopeException =>
-		//              println(e.getMessage + ", scope: " + scope)
-		//          }
-		//          if (effect == null) {
-		//            logger.error("effect not found: " + n.name())
-		//          } else {
-		//            if (effect.hasSupportedTargets) {
-		//              try {
-		//                effect.setTarget(n.value().string(), scope)
-		//              } catch {
-		//                case e: IllegalStateException =>
-		//                  e.printStackTrace()
-		//              }
-		//            }
-		//            completionReward += effect
-		//          }
-		//        } else {
-		//          var effect: Effect = null
-		//          try {
-		//            effect = Effect.of(n.name(), scope)
-		//          } catch {
-		//            case e: NotPermittedInScopeException =>
-		//              println(e.getMessage)
-		//          }
-		//          if (effect != null) {
-		//            completionReward += effect
-		//          }
-		//        }
-		//      }
-		//      case _ =>
-		//    }
-		()
+  def prerequisiteSets: List[PrerequisiteSet] = prerequisites.toList
 
-	override def referableID: Option[String] = id.value
+  private def setCompletionRewardsOfNode(completionRewardNode: Node, scope: Scope): Unit =
+    //    completionRewardNode.$ match {
+    //      case l: ListBuffer[Node] => for(n <- l) {
+    //        if (n.value().isList) {
+    //          var s: Scope = null
+    //          if (CountryTagsManager.exists(n.name())) {
+    //            s = Scope.of(CountryTagsManager.get(n.name()))
+    //          } else {
+    //            try {
+    //              s = Scope.of(n.name(), scope)
+    //            } catch {
+    //              case e: NotPermittedInScopeException =>
+    //                println(e.getMessage)
+    //            }
+    //          }
+    //
+    //          if (s == null || s.scopeCategory == ScopeCategory.EFFECT) {
+    //            var effect: Effect = null
+    //            try {
+    //              effect = Effect.of(n.name(), scope, n.value())
+    //            } catch {
+    //              case e: InvalidEffectParameterException =>
+    //                println(e.getMessage)
+    //              case e: NotPermittedInScopeException =>
+    //                println(e.getMessage + ", scope: " + scope + ", list? " + n.name())
+    //            }
+    //            if (effect != null) {
+    //              completionReward += effect
+    //            } else {
+    //              println("Scope " + n.name() + " unknown.")
+    //            }
+    //          } else {
+    //            setCompletionRewardsOfNode(n, s)
+    //          }
+    //        } else if (!n.valueIsNull) {
+    //          var effect: Effect = null
+    //          try {
+    //            effect = Effect.of(n.name(), scope, n.value())
+    //          } catch {
+    //            case e: InvalidEffectParameterException =>
+    //              println(e.getMessage)
+    //            case e: NotPermittedInScopeException =>
+    //              println(e.getMessage + ", scope: " + scope)
+    //          }
+    //          if (effect == null) {
+    //            logger.error("effect not found: " + n.name())
+    //          } else {
+    //            if (effect.hasSupportedTargets) {
+    //              try {
+    //                effect.setTarget(n.value().string(), scope)
+    //              } catch {
+    //                case e: IllegalStateException =>
+    //                  e.printStackTrace()
+    //              }
+    //            }
+    //            completionReward += effect
+    //          }
+    //        } else {
+    //          var effect: Effect = null
+    //          try {
+    //            effect = Effect.of(n.name(), scope)
+    //          } catch {
+    //            case e: NotPermittedInScopeException =>
+    //              println(e.getMessage)
+    //          }
+    //          if (effect != null) {
+    //            completionReward += effect
+    //          }
+    //        }
+    //      }
+    //      case _ =>
+    //    }
+    ()
 
-	class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus] = () => focusTree.focuses)
-		extends MultiReferencePDX[Focus](referenceFocusesSupplier, "prerequisite", "focus"):
-		override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-			val pdxError = new PDXError(
-				exception = exception,
-				errorNode = node,
-				pdxScript = this,
-				additionalInfo = Map("Focus ID" -> id.getOrElse("[Unknown]"))
-			)
-			focusErrors += pdxError
+  override def referableID: Option[String] = id.value
 
-	/** mutually exclusive is a multi-reference of focuses */
-	class MutuallyExclusiveSet(referenceFocusesSupplier: () => Iterable[Focus])
-		extends MultiReferencePDX[Focus](referenceFocusesSupplier, "mutually_exclusive", "focus")
+  class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus] = () => focusTree.focuses)
+    extends MultiReferencePDX[Focus](referenceFocusesSupplier, "prerequisite", "focus"):
+    override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+      val pdxError = new PDXError(
+        exception = exception,
+        errorNode = node,
+        pdxScript = this,
+        additionalInfo = Map("Focus ID" -> id.getOrElse("[Unknown]"))
+      )
+      focusErrors += pdxError
 
-	trait Icon extends PDXScript[?]
+  /** mutually exclusive is a multi-reference of focuses */
+  class MutuallyExclusiveSet(referenceFocusesSupplier: () => Iterable[Focus])
+    extends MultiReferencePDX[Focus](referenceFocusesSupplier, "mutually_exclusive", "focus")
 
-	class SimpleIcon extends StringPDX("icon") with Icon
+  trait Icon extends PDXScript[?]
 
-	class BlockIcon extends StructuredPDX("icon") with Icon:
+  class SimpleIcon extends StringPDX("icon") with Icon
 
-		final private val `value`: StringPDX = new StringPDX("value")
+  class BlockIcon extends StructuredPDX("icon") with Icon:
 
-		override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(`value`)
+    final private val `value`: StringPDX = new StringPDX("value")
 
-		override def equals(other: PDXScript[?]): Boolean = other match
-			case icon: Focus#Icon => `value`.equals(icon.value) // todo :(
-			case _ => false
+    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(`value`)
 
-		def iconName: Option[String] = `value`.value
+    override def equals(other: PDXScript[?]): Boolean = other match
+      case icon: Focus#Icon => `value`.equals(icon.value) // todo :(
+      case _ => false
 
-	// This is breaking my brain because the loadpdx call here is the most confusing to keep track of with it being a: inner class + override + super. + child child child class
-	// like wtf or how the fuck am I suppose to figure out and clean it up so I can log errors and metadata without breaking the whole program like before
-	// it so such tightly knitted rat nest of fuck ass object oriented code.
-	// trait class and abstracts shouldn't handle exceptions / errors / user expected errors!
-	//      cuz the generic code means its hard to get metadata, log, debug etc
-	class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward"):
+    def iconName: Option[String] = `value`.value
 
-		override def getPDXTypeName: String = "Completion Reward"
+  // This is breaking my brain because the loadpdx call here is the most confusing to keep track of with it being a: inner class + override + super. + child child child class
+  // like wtf or how the fuck am I suppose to figure out and clean it up so I can log errors and metadata without breaking the whole program like before
+  // it so such tightly knitted rat nest of fuck ass object oriented code.
+  // trait class and abstracts shouldn't handle exceptions / errors / user expected errors!
+  //      cuz the generic code means its hard to get metadata, log, debug etc
+  class CompletionReward extends CollectionPDX[Effect](EffectDatabase(), "completion_reward"):
+
+    override def getPDXTypeName: String = "Completion Reward"
 
 object Focus:
-	def getDataFunctions: Iterable[Focus => ?] =
-		def locOrMissing(p: Property): Focus => String =
-			f => f.localizationText(p).getOrElse("[Localization missing]")
+  def getDataFunctions: Iterable[Focus => ?] =
+    def locOrMissing(p: Property): Focus => String =
+      f => f.localizationText(p).getOrElse("[Localization missing]")
 
-		List[Focus => ?](
-			f => f.id.getOrElse(s"[Focus missing id, focus tree: ${f.focusTree}, file: ${f.focusTree.fileName}]"),
-			locOrMissing(Property.NAME),
-			locOrMissing(Property.DESCRIPTION)
-		)
+    List[Focus => ?](
+      f => f.id.getOrElse(s"[Focus missing id, focus tree: ${f.focusTree}, file: ${f.focusTree.fileName}]"),
+      locOrMissing(Property.NAME),
+      locOrMissing(Property.DESCRIPTION)
+    )
 
-	def focusesWithPrerequisitesMap(focuses: Iterable[Focus]): List[(Focus, List[Focus])] =
-		focuses.filter(_.hasPrerequisites).map: f =>
-			(f, f.prerequisiteSets.flatMap(_.references()))
-		.toList
+  def focusesWithPrerequisitesMap(focuses: Iterable[Focus]): List[(Focus, List[Focus])] =
+    focuses.filter(_.hasPrerequisites).map: f =>
+      (f, f.prerequisiteSets.flatMap(_.references()))
+    .toList
 
 //  def schema = new PDXSchema()
