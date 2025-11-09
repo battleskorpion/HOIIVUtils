@@ -2,6 +2,7 @@ package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
+import org.apache.poi.ss.formula.functions.T
 
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
@@ -20,7 +21,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
-  
+
   def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T], pdxIdentifiers: String*) = {
     this(simpleSupplier, blockSupplier, pdxIdentifiers.toList)
   }
@@ -28,7 +29,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T]) = {
     this(simpleSupplier, blockSupplier, List.empty)
   }
-  
+
   /**
    * @inheritdoc
    */
@@ -47,11 +48,11 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override protected def addToCollection(expression: Node): Unit = {
+  override protected def addToCollection(expression: Node): Unit =
     usingIdentifier(expression)
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
-    expression.$ match {
+    expression.$ match
       case l: ListBuffer[Node] =>
         val childScript = applySupplier(expression)
         childScript.loadPDX(expression)
@@ -61,47 +62,40 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(expression)
         pdxList.addOne(childScript)
-    }
-  }
 
-  def removeIf(p: T => Boolean): ListBuffer[T] = {
-    for (i <- pdxList.indices.reverse) {
-      if (p(pdxList(i))) {
-        pdxList(i).getNode match {
-          case Some(node) => node.clear()
-          case _          => // do nothing
-        }
-        pdxList(i).clearNode()
-        pdxList.remove(i)
-      }
-    }
+  def removeIf(p: T => Boolean): ListBuffer[T] =
+    for
+      i <- pdxList.indices.reverse
+      if p(pdxList(i))
+    do
+      pdxList(i).getNode match
+        case Some(node) => node.clear()
+        case _          => // do nothing
+      pdxList(i).clearNode()
+      pdxList.remove(i)
     pdxList
-  }
 
-  def filterInPlace(p: T => Boolean): ListBuffer[T] = {
+  def filterInPlace(p: T => Boolean): ListBuffer[T] =
     this.removeIf(p andThen(!_))
-  }
 
   /**
    * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.
    * @param pdxScript
    */
   @targetName("add")
-  def +=(pdxScript: T): Unit = {
+  def +=(pdxScript: T): Unit =
     pdxList += pdxScript
     // TODO TODO add to node
-  }
 
   /**
    * Removes a PDXScript from the list of PDXScripts.
    * @param pdxScript
    */
-  def -=(pdxScript: T): this.type = {
+  def -=(pdxScript: T): this.type =
     val index = pdxList.indexOf(pdxScript)
     pdxList -= pdxScript
     pdxScript.clearNode()
     this
-  }
 
   /**
    * Removes a PDXScript from the list of PDXScripts.
@@ -109,19 +103,16 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    * @note Java was *struggling* with 'this.type' return type. Use '-=' otherwise.
    * @return
    */
-  def remove(pdxScript: T): Unit = {
+  def remove(pdxScript: T): Unit =
     this -= pdxScript
-  }
 
-  def clear(): Unit = {
+  def clear(): Unit =
     node.foreach { n =>
-      n.$ match {
+      n.$ match
         case l: ListBuffer[T] => l.clear()
         case _                => // do nothing
-      }
     }
     pdxList.clear()
-  }
 
   override def isEmpty: Boolean = value.isEmpty
 
@@ -140,42 +131,34 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     obj
   }
 
-  protected def applySupplier(expression: Node): T = {
-    (simpleSupplier, blockSupplier) match {
+  protected def applySupplier(expression: Node): T =
+    (simpleSupplier, blockSupplier) match
       case (Some(s), None) => s()
       case (None, Some(b)) => b()
       case (Some(s), Some(b)) =>
-        expression.$ match {
+        expression.$ match
           case l: ListBuffer[Node] =>
             b()
           case _ => s()
-        }
       case (None, None) => throw new RuntimeException("Both suppliers are null")
-    }
-  }
 
-  def applySomeSupplier(): T = {
-    (simpleSupplier, blockSupplier) match {
+  def applySomeSupplier(): T =
+    (simpleSupplier, blockSupplier) match
       case (Some(s), None) => s()
       case (None, Some(b)) => b()
       case (Some(s), Some(b)) => s()
       case (None, None) => throw new RuntimeException("Both suppliers are null")
-    }
-  }
 
-  def addNewPDX(): T = {
+  def addNewPDX(): T =
     val pdx = applySomeSupplier()
     this += pdx
     pdx
-  }
 
-  override def clearNode(): Unit = {
+  override def clearNode(): Unit =
     pdxList.foreach(_.clearNode())
-  }
 
-  override def getNodes: List[Node] = {
+  override def getNodes: List[Node] =
     pdxList.flatMap(_.getNode).toList
-  }
 
   /**
    * Rebuilds the underlying Node tree for MultiPDX from the current collection of child nodes.

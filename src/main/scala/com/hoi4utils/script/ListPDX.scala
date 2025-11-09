@@ -43,7 +43,7 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
    * @inheritdoc
    */
   override def loadPDX(expression: Node): Unit = loadPDXCollection(expression)
-  
+
   override def equals(other: PDXScript[?]) = false // todo? well.
 
   override def value: Option[ListBuffer[T]] = {
@@ -76,32 +76,28 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
    * Removes elements matching the predicate.
    * Also removes the corresponding node(s) from the underlying Node.
    */
-  def removeIf(p: T => Boolean): ListBuffer[T] = {
-    for (i <- pdxList.indices.reverse) {
-      if (p(pdxList(i))) {
-        pdxList.remove(i)
-        node match {
-          case Some(n) => n.remove(i)
-          case None => // do nothing
-        }
-      }
-    }
+  def removeIf(p: T => Boolean): ListBuffer[T] =
+    for 
+      i <- pdxList.indices.reverse
+      if p(pdxList(i))
+    do
+      pdxList.remove(i)
+      node match
+        case Some(n) => n.remove(i)
+        case None => // do nothing
+    
     pdxList
-  }
-  
-  protected def useSupplierFunction(expression: Node): T = {
-    simpleSupplier()
-  }
 
-  def clear(): Unit = {
+  protected def useSupplierFunction(expression: Node): T =
+    simpleSupplier()
+
+  def clear(): Unit =
     pdxList.clear()
     node.foreach { n =>
-      n.$ match {
+      n.$ match
         case l: ListBuffer[?] => l.clear()
         case _ => // do nothing
-      }
     }
-  }
 
   override def isEmpty: Boolean = pdxList.isEmpty
 
@@ -141,12 +137,10 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
   // todo @skorp implement?
   override def set(obj: ListBuffer[T]): ListBuffer[T] = obj
 
-  def headOrElse[U](default: U)(implicit ev: T <:< PDXScript[U]): U = {
-    pdxList.headOption match {
+  def headOrElse[U](default: U)(implicit ev: T <:< PDXScript[U]): U =
+    pdxList.headOption match
       case Some(pdx) => ev(pdx).getOrElse(default)
       case None => default
-    }
-  }
 
   /**
    * Rebuilds the underlying Node tree from the current list of child PDXScript nodes.

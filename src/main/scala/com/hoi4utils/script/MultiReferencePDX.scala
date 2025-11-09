@@ -27,9 +27,8 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
   final protected val referenceNames = new ListBuffer[String]
   protected var idExtractor: T => Option[String] = (obj: T) => obj.referableID
 
-  def this(referenceCollectionSupplier: () => Iterable[T], pdxIdentifiers: String, referenceIdentifier: String) = {
+  def this(referenceCollectionSupplier: () => Iterable[T], pdxIdentifiers: String, referenceIdentifier: String) =
     this(referenceCollectionSupplier, List(pdxIdentifiers), List(referenceIdentifier))
-  }
 
   /**
    * Load the PDX script from the given expression. If the expression is a list, then each element of the list will be
@@ -37,32 +36,25 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
    * @param expression
    * @throws UnexpectedIdentifierException
    */
-  override def loadPDX(expression: Node): Unit = {
-    expression.$ match {
+  override def loadPDX(expression: Node): Unit =
+    expression.$ match
       case list: ListBuffer[Node] =>
         usingIdentifier(expression)
 
-        for (child <- list) {
-          super.loadPDX(child)
-        }
+        for (child <- list) super.loadPDX(child)
         this.node = Some(expression)
       case _ => super.loadPDX(expression)
-    }
-  }
 
-  def validReferences: Option[ListBuffer[T]] = references() match {
+  def validReferences: Option[ListBuffer[T]] = references() match
     case list if list.isEmpty => None
     case list => Some(list)
-  }
-  
-  override def iterator: Iterator[ReferencePDX[T]] = {
+
+  override def iterator: Iterator[ReferencePDX[T]] =
     resolveReferences()
     super.iterator
-  }
 
-  def references(): ListBuffer[T] = {
+  def references(): ListBuffer[T] =
     resolveReferences()
-  }
 
 //  @throws[UnexpectedIdentifierException]
 //  @throws[NodeValueTypeException]
@@ -79,9 +71,9 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override protected def addToCollection(expression: Node): Unit = {
+  override protected def addToCollection(expression: Node): Unit =
     checkReferenceIdentifier(expression)
-    expression.$ match {
+    expression.$ match
       case str: String =>
         if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
         val childScript = simpleSupplier.get.apply()
@@ -99,22 +91,20 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
         referenceNames.addOne(preservedValue)
         // Then throw the exception so that callers are aware of the issue.
         throw new NodeValueTypeException(expression, "string", this.getClass)
-    }
-  }
 
   /**
    * Removes a reference (wrapper) that matches the given predicate.
    */
-  override def removeIf(p: ReferencePDX[T] => Boolean): ListBuffer[ReferencePDX[T]] = {
-    for (i <- pdxList.indices.reverse) {
-      if (p(pdxList(i))) {
-        pdxList(i).clearNode()
-        pdxList.remove(i)
-        referenceNames.remove(i)
-      }
-    }
+  override def removeIf(p: ReferencePDX[T] => Boolean): ListBuffer[ReferencePDX[T]] =
+    for
+      i <- pdxList.indices.reverse
+      if p(pdxList(i))
+    do
+      pdxList(i).clearNode()
+      pdxList.remove(i)
+      referenceNames.remove(i)
+
     pdxList
-  }
 
   /**
    * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.
@@ -122,57 +112,51 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
    * @param referencePDX
    */
   @targetName("add")
-  override def +=(referencePDX: ReferencePDX[T]): Unit = {
+  override def +=(referencePDX: ReferencePDX[T]): Unit =
     pdxList += referencePDX
     referenceNames.addOne(referencePDX.referenceName)   // todo throw error instead and check this first
-  }
 
   /**
    * Adds a new reference by providing a candidate of type T.
    * This wraps the candidate in a ReferencePDX and adds its identifier to referenceNames.
    */
-  def addReferenceTo(pdxScript: T): Unit = {
+  def addReferenceTo(pdxScript: T): Unit =
     val idOpt = idExtractor(pdxScript)
-    if (idOpt.isEmpty) {
+    if (idOpt.isEmpty)
       throw new NodeValueTypeException(new Node(""), "Unable to extract reference identifier", this.getClass)
-    }
     // Create a new ReferencePDX[T] using the supplier.
     val wrapper: ReferencePDX[T] = simpleSupplier.get.apply()
     // Set the value of the wrapper to the candidate.
     wrapper.set(pdxScript)
     pdxList += wrapper
     referenceNames.addOne(idOpt.get)
-  }
 
   /**
    * Removes a PDXScript from the list of PDXScripts.
    *
    * @param referencePDX
    */
-  override def -=(referencePDX: ReferencePDX[T]): this.type = {
+  override def -=(referencePDX: ReferencePDX[T]): this.type =
     val index = pdxList.indexOf(referencePDX)
     pdxList -= referencePDX
     referencePDX.clearNode()
     referenceNames.remove(index)
     this
-  }
 
   /**
    * Removes a reference by candidate.
    */
-  def removeReferenceTo(pdxScript: T): this.type = {
+  def removeReferenceTo(pdxScript: T): this.type =
     // Find the wrapper whose extracted id matches the candidate.
     val idOpt = idExtractor(pdxScript)
     idOpt.foreach { id =>
       val idx = referenceNames.indexOf(id)
-      if (idx >= 0) {
+      if (idx >= 0)
         pdxList(idx).clearNode()
         pdxList.remove(idx)
         referenceNames.remove(idx)
-      }
     }
     this
-  }
 
   /**
    * Removes a PDXScript from the list of PDXScripts.
@@ -181,26 +165,22 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
    * @note Java was *struggling* with 'this.type' return type. Use '-=' otherwise.
    * @return
    */
-  override def remove(pdxScript: ReferencePDX[T]): Unit = {
+  override def remove(pdxScript: ReferencePDX[T]): Unit =
     this -= pdxScript
-  }
 
-  override def clear(): Unit = {
+  override def clear(): Unit =
     node.foreach { n =>
-      n.$ match {
+      n.$ match
         case l: ListBuffer[T] => l.clear()
         case _ => // do nothing
-      }
     }
     pdxList.clear()
     referenceNames.clear()
-  }
 
-  override def addNewPDX(): ReferencePDX[T] = {
+  override def addNewPDX(): ReferencePDX[T] =
     super.addNewPDX() // no override necessary.
-  }
 
-  private def resolveReferences(): ListBuffer[T] = {
+  private def resolveReferences(): ListBuffer[T] =
 //    // clear previous references (suboptimal but simple)
 //    resolvedReferences.clear()
     val resolvedReferences = new ListBuffer[T]
@@ -211,105 +191,84 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
       idExtractor(reference).exists(referenceNames.contains)
     }
     resolvedReferences
-  }
 
-  def setReferenceName(index: Int, value: String): Unit = {
+  def setReferenceName(index: Int, value: String): Unit =
     referenceNames.update(index, value)
-  }
 
   def getReferenceName(i: Int): String = referenceNames(i)
 
   def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().flatMap(idExtractor) //referenceCollectionSupplier().map(idExtractor).filter(_.isDefined).map(_.get)
 
-  def addReferenceName(newValue: String): Unit = {
+  def addReferenceName(newValue: String): Unit =
     referenceNames.addOne(newValue)
     resolveReferences()
-  }
 
-  def addReference(reference: T, index: Int): Unit = {
+  def addReference(reference: T, index: Int): Unit =
     val id = idExtractor(reference)
-    if (id.isDefined) {
+    if (id.isDefined)
       referenceNames.insert(index, id.get)
       resolveReferences()
-    }
-  }
 
-  def addReference(reference: T): Unit = {
+  def addReference(reference: T): Unit =
     val id = idExtractor(reference)
-    if (id.isDefined) {
+    if (id.isDefined)
       referenceNames.addOne(id.get)
       resolveReferences()
-    }
-  }
 
-  def removeReference(index: Int): Unit = {
+  def removeReference(index: Int): Unit =
     referenceNames.remove(index)
     resolveReferences()
-  }
 
-  def removeReference(reference: T): Unit = {
+  def removeReference(reference: T): Unit =
     val id = idExtractor(reference)
-    if (id.isDefined) {
+    if (id.isDefined)
       referenceNames.remove(referenceNames.indexOf(id.get))
       resolveReferences()
-    }
-  }
 
-  def removeReference(referenceName: String): Unit = {
+  def removeReference(referenceName: String): Unit =
     val i = referenceNames.indexOf(referenceName)
-    if (i >= 0) {
+    if (i >= 0)
       referenceNames.remove(i)
       resolveReferences()
-    } 
-  }
 
-  def containsReference(reference: T): Boolean = {
+  def containsReference(reference: T): Boolean =
     val id = idExtractor(reference)
-    id match {
+    id match
       case Some(value) => referenceNames.contains(value)
       case None => false
-    }
-  }
 
-  def containsReferenceName(referenceName: String): Boolean = {
+  def containsReferenceName(referenceName: String): Boolean =
     referenceNames.contains(referenceName)
-  }
 
-  def changeReference(oldName: String, newName: String): Unit = {
+  def changeReference(oldName: String, newName: String): Unit =
     val index = referenceNames.indexOf(oldName)
-    if (index != -1) {
+    if (index != -1)
       referenceNames.update(index, newName)
       resolveReferences()
-    }
-  }
 
-  private def checkReferenceIdentifier(exp: Node): Unit = {
+  private def checkReferenceIdentifier(exp: Node): Unit =
     if (!referencePDXIdentifiers.contains(exp.name))
       throw new UnexpectedIdentifierException(exp)
-  }
 
   /**
    * Size of actively valid references (resolved PDXScript object references)
    *
    * @return
    */
-  override def length: Int = validReferences match {
+  override def length: Int = validReferences match
     case Some(list) => list.size
     case None => 0
-  }
 
   override def isUndefined: Boolean = referenceNames.isEmpty
 
   def numReferences: Int = referenceNames.size
 
-  override def clearNode(): Unit = {
+  override def clearNode(): Unit =
     super.clearNode()
-  }
 
   /**
    * On-demand Node rebuilding: rebuild the underlying node from the current list of reference names.
    */
-  override def updateNodeTree(): Unit = {
+  override def updateNodeTree(): Unit =
     super.updateNodeTree() // shouldn't need override
-  }
 }
