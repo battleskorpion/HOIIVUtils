@@ -56,7 +56,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
       expression.identifier match
         case None => expression.$ match
           case l: ListBuffer[Node] => loadPDX(l)
-          case _ => 
+          case _ =>
             handlePDXError(NodeValueTypeException("PDXScript.loadPDX: Expected list of nodes, got: \n" + expression), expression, null)
         case Some(_) =>
           super.loadPDX(expression)
@@ -119,7 +119,9 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     val originalPositions: Map[String, Int] = node match
       case Some(n) =>
         n.$ match
-          case lb: ListBuffer[Node] => lb.zipWithIndex.map { case (n, i) => n.identifier.getOrElse("") -> i }.toMap
+          case lb: ListBuffer[Node] => lb.zipWithIndex.map { case (n, i) =>
+            n.identifier.getOrElse(s"__NO_ID_$i") -> i
+          }.toMap
           case _ => Map.empty
       case None => Map.empty
 
