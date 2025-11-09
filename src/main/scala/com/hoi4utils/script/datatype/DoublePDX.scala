@@ -9,57 +9,47 @@ import scala.annotation.targetName
 import scala.util.boundary
 
 class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = ExpectedRange.ofDouble) extends AbstractPDX[Double](pdxIdentifiers) with ValPDXScript[Double] {
-  def this(pdxIdentifiers: String*) = {
+  def this(pdxIdentifiers: String*) =
     this(pdxIdentifiers.toList)
-  }
 
-  def this(pdxIdentifier: String) = {
+  def this(pdxIdentifier: String) =
     this(List(pdxIdentifier))
-  }
 
-  def this(pdxIdentifier: String, range: ExpectedRange[Double]) = {
+  def this(pdxIdentifier: String, range: ExpectedRange[Double]) =
     this(List(pdxIdentifier), range)
-  }
+
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def set(expression: Node): Unit = {
+  override def set(expression: Node): Unit =
     usingIdentifier(expression)
     this.node = Some(expression)
-    expression.$ match {
+    expression.$ match
       case _: Double =>
       case _: Int =>
       case _ =>throw new NodeValueTypeException(expression, "Number (as a Double)", this.getClass)
-    }
-  }
-  
-  override def set(value: Double): Double = {
-    if (this.node.nonEmpty)
-      this.node.get.setValue(value)
-    else
-      this.node = Some(Node(value))
-    value
-  }
 
-  override def equals(other: PDXScript[?]): Boolean = {
-    other match {
-      case x: DoublePDX =>
-        if (this.node.isEmpty || x.node.isEmpty) {
-          return false
-        }
-        node.get.$.equals(x.node.get.$)
-      case _ => false
-    }
-  }
+  override def set(value: Double): Double =
+    node match
+      case Some(n) => n.setValue(value)
+      case None => this.node = Some(Node(value))
+    value
+
+  override def equals(other: PDXScript[?]): Boolean = other match
+    case x: DoublePDX =>
+      if (this.node.isEmpty || x.node.isEmpty) {
+        return false
+      }
+      node.get.$.equals(x.node.get.$)
+    case _ => false
 
   override def value: Option[Double] = boundary {
-    node.getOrElse(boundary.break(None)).$ match {
+    node.getOrElse(boundary.break(None)).$ match
       case value: Double => Some(value)
       case value: Int => Some(value.toDouble)
       case null => None
       case _ =>
         logger.warn(s"Expected double value for pdx double")
         None
-    }
   }
 
   /**
@@ -67,16 +57,14 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
    */
   override infix def getOrElse(default: Double): Double = boundary {
     val value = node.getOrElse(boundary.break(default)).value
-    value match {
-      case Some(v) => v.match {
+    value match
+      case Some(v) => v.match
         case d: Double => d
         case i: Int => i.toDouble
         case _ =>
           logger.warn(s"Expected double value for pdx double, got ${value}")
           default
-      }
       case None => default
-    }
   }
 
   override def isDefaultRange: Boolean = range == ExpectedRange.ofDouble
