@@ -46,7 +46,7 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
     )
     IdeasManager.ideaFileErrors += pdxError
 
-  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
+  override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = {
     ListBuffer(countryIdeas)
   }
 

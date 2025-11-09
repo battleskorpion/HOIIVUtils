@@ -16,7 +16,7 @@ private class ResourceDefinition(pdxIdentifier: String) extends StructuredPDX(pd
     loadPDX(node)
   }
 
-  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
+  override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = {
     ListBuffer(iconFrame, cic, convoys)
   }
 

@@ -25,7 +25,7 @@ class SharedFocus extends Focus(PseudoSharedFocusTree(), pdxIdentifier = "shared
 	class Offset extends PointPDX("offset") {
 		val trigger = TriggerPDX()
 
-		override def childScripts: collection.mutable.Iterable[? <: PDXScript[?]] = super.childScripts ++ List(trigger)
+		override def childScripts: collection.mutable.Seq[? <: PDXScript[?]] = super.childScripts ++ List(trigger)
 	}
 
 }

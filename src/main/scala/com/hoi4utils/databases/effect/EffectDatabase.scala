@@ -317,11 +317,11 @@ object EffectDatabase extends LazyLogging {
 
       val structuredEffectBlock = if (useWithEffects) {
         new StructuredWithEffectBlockPDX(pdxIdentifier) with BlockEffect {
-          override protected def childScripts: mutable.Iterable[PDXScript[?]] = effectPDXParameters
+          override protected def childScripts: mutable.Seq[PDXScript[?]] = effectPDXParameters
         }
       } else {
         new StructuredPDX(pdxIdentifier) with BlockEffect {
-          override protected def childScripts: mutable.Iterable[PDXScript[?]] = effectPDXParameters
+          override protected def childScripts: mutable.Seq[PDXScript[?]] = effectPDXParameters
         }
       }
       Some(structuredEffectBlock)

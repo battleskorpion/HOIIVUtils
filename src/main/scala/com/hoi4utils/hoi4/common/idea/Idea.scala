@@ -93,7 +93,7 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
   /**
    * @inheritdoc
    */
-  override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
+  override protected def childScripts: mutable.Seq[PDXScript[?]] = {
     ListBuffer(removalCost, modifiers)
   }
 

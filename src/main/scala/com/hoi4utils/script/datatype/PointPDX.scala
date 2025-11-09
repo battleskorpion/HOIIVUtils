@@ -12,6 +12,6 @@ class PointPDX(pdxIdentifiers: List[String], xID: String = "x", yID: String = "y
 	def this(pdxIdentifiers: String) =
 		this(List(pdxIdentifiers))
 
-	protected def childScripts: collection.mutable.Iterable[? <: PDXScript[?]] = ListBuffer(x, y)
+	protected def childScripts: collection.mutable.Seq[? <: PDXScript[?]] = ListBuffer(x, y)
 
 }

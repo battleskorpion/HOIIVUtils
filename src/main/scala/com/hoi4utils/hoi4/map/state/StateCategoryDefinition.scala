@@ -15,7 +15,7 @@ class StateCategoryDefinition(pdxIdentifier: String) extends StructuredPDX(pdxId
     loadPDX(node)
   }
 
-  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
+  override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = {
     ListBuffer(local_building_slots)
   }
 

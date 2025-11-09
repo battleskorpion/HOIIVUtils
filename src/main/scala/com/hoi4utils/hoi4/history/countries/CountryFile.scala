@@ -135,7 +135,7 @@ class CountryFile extends StructuredPDX with HeadlessPDX with Comparable[Country
 
   override def toString: String = _countryTag.toString + " " + "[country tag]"
 
-  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = {
+  override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = {
     ListBuffer(oob, capital)
   }
 }

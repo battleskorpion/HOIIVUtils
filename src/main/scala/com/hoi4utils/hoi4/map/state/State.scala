@@ -79,7 +79,7 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
   /**
    * @inheritdoc
    */
-  override protected def childScripts: mutable.Iterable[PDXScript[?]] =
+  override protected def childScripts: mutable.Seq[PDXScript[?]] =
     ListBuffer(stateID, name, resources, history, provinces, manpower, buildingsMaxLevelFactor,
       state_category, local_supplies, impassible)
 
@@ -513,7 +513,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging:
     /**
      * @inheritdoc
      */
-    override protected def childScripts: mutable.Iterable[PDXScript[?]] =
+    override protected def childScripts: mutable.Seq[PDXScript[?]] =
       ListBuffer(owner, buildings, controller, victoryPoints, startDateScopes)
 
     override def getPDXTypeName: String = "History"
@@ -531,7 +531,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging:
     /**
      * @inheritdoc
      */
-    override protected def childScripts: mutable.Iterable[PDXScript[?]] =
+    override protected def childScripts: mutable.Seq[PDXScript[?]] =
       ListBuffer(infrastructure, civilianFactories, militaryFactories, navalDockyards, airBase)
 
   class VictoryPointPDX extends ListPDX[IntPDX](() => new IntPDX(), "victory_points"):

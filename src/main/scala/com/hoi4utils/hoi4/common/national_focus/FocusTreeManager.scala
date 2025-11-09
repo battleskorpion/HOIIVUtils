@@ -61,12 +61,12 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
    * @param focusTree the focus tree to add
    * @return the updated list of focus trees
    */
-  def add(focusTree: FocusTree): Iterable[FocusTree] =
+  def add(focusTree: FocusTree): Set[FocusTree] =
     focusTrees += focusTree
     focusTree.focusFile match
       case Some(file) => focusTreeFileMap.put(file, focusTree)
       case None =>
-    focusTrees
+    focusTrees.toSet
 
   /**
    * Adds a shared focus file to the list of shared focus files.
@@ -74,9 +74,9 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
    * @param sharedFocusFile the shared focus file to add
    * @return the updated list of focus trees
    */
-  def add(sharedFocusFile: SharedFocusFile): Iterable[SharedFocusFile] =
+  def add(sharedFocusFile: SharedFocusFile): Set[SharedFocusFile] =
     _sharedFocusFiles += sharedFocusFile
-    _sharedFocusFiles
+    _sharedFocusFiles.toSet
 
   /** Returns focus tree corresponding to the tag, if it exists*/
   def get(tag: CountryTag | File): Option[FocusTree] =
@@ -84,10 +84,10 @@ object FocusTreeManager extends LazyLogging with PDXReadable:
       case t: CountryTag => focusTrees.find(_.countryTag == t)
       case f: File => focusTreeFileMap.get(f)
 
-  def sharedFocusFiles: Iterable[SharedFocusFile] = _sharedFocusFiles.toList
+  def sharedFocusFiles: Set[SharedFocusFile] = _sharedFocusFiles.toSet
 
-  def sharedFocusFilesAsPseudoTrees: Iterable[PseudoSharedFocusTree] =
-    _sharedFocusFiles.map(sff => PseudoSharedFocusTree.forFocuses(sff.sharedFocuses.toList, s"${sff.fileName}"))
+  def sharedFocusFilesAsPseudoTrees: Set[PseudoSharedFocusTree] =
+    _sharedFocusFiles.map(sff => PseudoSharedFocusTree.forFocuses(sff.sharedFocuses.toList, s"${sff.fileName}")).toSet
 
   def sharedFocuses: Set[SharedFocus] =
     _sharedFocusFiles.flatMap(_.sharedFocuses).toSet

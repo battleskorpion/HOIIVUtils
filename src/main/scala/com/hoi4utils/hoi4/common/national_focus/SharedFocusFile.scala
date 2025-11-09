@@ -60,7 +60,7 @@ class SharedFocusFile(_file: Option[File]) extends StructuredPDX with HeadlessPD
 			FocusTreeManager.focusTreeErrors += treeErrorGroup
 
 
-	override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(sharedFocuses)
+	override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(sharedFocuses)
 
 	override def getFile: Option[File] = _file
 

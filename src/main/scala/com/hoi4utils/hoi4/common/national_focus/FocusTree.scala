@@ -82,7 +82,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
   rows = height + 1
 
   // todo: add default, continuous focus position
-  override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] =
+  override protected def childScripts: mutable.Seq[? <: PDXScript[?]] =
     ListBuffer(id, country, focuses)
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
@@ -230,7 +230,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
     final val add = new DoublePDX("add")
     final val modifier = new MultiPDX[TagModifier](None, Some(() => new TagModifier), "modifier")
 
-    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add, modifier)
+    override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(base, factor, add, modifier)
 
     override def getPDXTypeName: String = "AI Willingness"
 
@@ -240,7 +240,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
       final val add = new DoublePDX("add")
       final val tag = new ReferencePDX[CountryTag](() => CountryTag.toList, "country")
 
-      override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(base, factor, add, tag)
+      override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(base, factor, add, tag)
 
       override def getPDXTypeName: String = "Modifier"
 
@@ -258,12 +258,12 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
       val offset: PointPDX = PointPDX("offset")
 //        val trigger: TriggerPDX
 
-      override def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(offset) ++ super.childScripts
+      override def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(offset) ++ super.childScripts
 
     class InitialShowPosition_Focus extends StructuredPDX(pdxIdentifier) with InitialShowPositionSchema:
       val focus: ReferencePDX[Focus] = ReferencePDX[Focus](() => focuses.toList, "focus")
 
-      override def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(focus)
+      override def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(focus)
 
   class Shortcut extends StructuredPDX("shortcut"):
     val name = StringPDX("name")  // loc_key
@@ -272,7 +272,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
     val scrollWheelFactor = DoublePDX("scroll_wheel_factor", ExpectedRange.ofUnitInterval)
 //    val trigger = TriggerPDX("trigger") // TODO IMPL TRIGGER PDX
 
-    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] =
+    override protected def childScripts: mutable.Seq[? <: PDXScript[?]] =
       ListBuffer(name, target, scrollWheelFactor)
 
   /* Error handling overrides to log detailed information about issues encountered during parsing. */

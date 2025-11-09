@@ -14,7 +14,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     this(pdxIdentifiers.toList)
   }
 
-  protected def childScripts: collection.mutable.Iterable[? <: PDXScript[?]]
+  protected def childScripts: collection.mutable.Seq[? <: PDXScript[?]]
 
   /**
    * Sets the current node to the provided expression and processes it based on its type.

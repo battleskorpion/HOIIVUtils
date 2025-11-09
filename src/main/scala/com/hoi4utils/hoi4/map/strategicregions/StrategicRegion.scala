@@ -38,13 +38,11 @@ class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region
   /**
    * @inheritdoc
    */
-  override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
+  override protected def childScripts: mutable.Seq[PDXScript[?]] =
     ListBuffer(id, name, provinces, weather)
-  }
 
-  def setFile(file: File): Unit = {
+  def setFile(file: File): Unit =
     _strategicRegionFile = Some(file)
-  }
 
   override def getFile: Option[File] = _strategicRegionFile
 
@@ -54,9 +52,8 @@ class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region
     /**
      * @inheritdoc
      */
-    override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
+    override protected def childScripts: mutable.Seq[PDXScript[?]] =
       ListBuffer(period)
-    }
 
     class WeatherPeriod extends StructuredPDX("period") {
       final val between = new ListPDX[DoublePDX](() => new DoublePDX(), "between")
@@ -74,9 +71,8 @@ class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region
       /**
        * @inheritdoc
        */
-      override protected def childScripts: mutable.Iterable[PDXScript[?]] = {
+      override protected def childScripts: mutable.Seq[PDXScript[?]] = 
         ListBuffer(between, temperature, no_phenomenon, rain_light, rain_heavy, snow, blizzard, arctic_water, mud, sandstorm, min_snow_level)
-      }
     }
   }
 
@@ -85,22 +81,17 @@ class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region
 object StrategicRegion extends LazyLogging {
   private val strategicRegions = new ListBuffer[StrategicRegion]
 
-  def get(file: File): Option[StrategicRegion] = {
+  def get(file: File): Option[StrategicRegion] =
     if (file == null) return None
     if (!strategicRegions.exists(_._strategicRegionFile.contains(file))) new StrategicRegion(file)
     strategicRegions.find(_._strategicRegionFile.contains(file))
-  }
 
-  def observeStratRegions: ObservableList[StrategicRegion] = {
+  def observeStratRegions: ObservableList[StrategicRegion] =
     FXCollections.observableArrayList(CollectionConverters.asJava(strategicRegions))
-  }
 
-  def clear(): Unit = {
-    strategicRegions.clear()
-  }
+  def clear(): Unit = strategicRegions.clear()
 
-  def add(stratRegion: StrategicRegion): Iterable[StrategicRegion] = {
+  def add(stratRegion: StrategicRegion): Iterable[StrategicRegion] =
     strategicRegions += stratRegion
     strategicRegions
-  }
 }

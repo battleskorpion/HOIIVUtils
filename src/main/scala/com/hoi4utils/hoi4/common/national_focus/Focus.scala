@@ -73,7 +73,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
   /**
    * @inheritdoc
    */
-  override protected def childScripts: mutable.Iterable[PDXScript[?]] =
+  override protected def childScripts: mutable.Seq[PDXScript[?]] =
     ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost,
       availableIfCapitulated, cancelIfInvalid, continueIfInvalid, ai_will_do)
 
@@ -429,7 +429,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
 
     final private val `value`: StringPDX = new StringPDX("value")
 
-    override protected def childScripts: mutable.Iterable[? <: PDXScript[?]] = ListBuffer(`value`)
+    override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(`value`)
 
     override def equals(other: PDXScript[?]): Boolean = other match
       case icon: Focus#Icon => `value`.equals(icon.value) // todo :(
