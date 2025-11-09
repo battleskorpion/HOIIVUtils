@@ -91,7 +91,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 		welcome.setToggleGroup(toggleGroup)
 		welcome.fire()
 		focusTreeView.setGridLinesVisible(lines)
-		populateFocusSelection()
+		populateFocusTreeSelection()
 		focusDetailsPaneController.onUpdate = Some(() =>
 			this.currentFocusTree match
 				case Some(focusTree) =>
@@ -135,7 +135,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 		else
 			logger.error("splitPane is null - check FXML fx:id")
 
-	private def populateFocusSelection(): Unit =
+	private def populateFocusTreeSelection(): Unit =
 		focusTreeView.setGridLinesVisible(lines)
 		Some(FocusTreeManager.observeFocusTrees).foreach(trees =>
 			trees.forEach(someFocusTree =>
