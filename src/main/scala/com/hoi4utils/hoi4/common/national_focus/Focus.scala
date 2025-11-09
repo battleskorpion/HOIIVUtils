@@ -321,11 +321,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
   //  }
 
   private def setCompletionRewardsOfNode(completionRewardNode: Node): Unit =
-    focusTree.countryTag match
-      case Some(tag) =>
-        setCompletionRewardsOfNode(completionRewardNode, Scope.of(tag))
-      case None =>
-        setCompletionRewardsOfNode(completionRewardNode, null)
+    setCompletionRewardsOfNode(completionRewardNode, focusTree.countryTag.map(Scope.of))
 
   def mutuallyExclusiveList: List[Focus] = mutuallyExclusive.flatMap(_.references()).toList
 
@@ -333,7 +329,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
 
   def prerequisiteSets: List[PrerequisiteSet] = prerequisites.toList
 
-  private def setCompletionRewardsOfNode(completionRewardNode: Node, scope: Scope): Unit =
+  private def setCompletionRewardsOfNode(completionRewardNode: Node, scope: Option[Scope]): Unit =
     //    completionRewardNode.$ match {
     //      case l: ListBuffer[Node] => for(n <- l) {
     //        if (n.value().isList) {
