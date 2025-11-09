@@ -159,7 +159,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
       case Some(f) =>
         // keep relative to the focus, but absolute coordinates are always the same
         val rp = f.absolutePosition
-        offsetXY(-rp.x, -rp.y)
+        setXY(x - rp.x, y - rp.y)
       case None =>
         // No relative positioning, so just set directly
         setXY(x, y)
