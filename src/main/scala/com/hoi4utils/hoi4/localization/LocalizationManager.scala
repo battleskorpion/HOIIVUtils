@@ -2,7 +2,7 @@ package com.hoi4utils.hoi4.localization
 
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
 import com.hoi4utils.hoi4.localization.LocalizationManager.localizationErrors
-import com.hoi4utils.main.HOIIVFiles
+import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.script.PDXError
 import com.hoi4utils.shared.RichString
 import com.typesafe.scalalogging.LazyLogging
@@ -11,25 +11,36 @@ import java.io.*
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import java.util.Scanner
+import scala.::
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
+import scala.reflect.ClassTag
 import scala.util.boundary
 
 
 object LocalizationManager {
   private var primaryManager: Option[LocalizationManager] = None
+  private var managers: Map[Class[? <: LocalizationManager], LocalizationManager] = Map.empty
   val localizationErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
 
   def getLocalizationFile(key: String): File = get.localizations.getLocalizationFile(key)
 
   @throws[NoLocalizationManagerException]
   def get: LocalizationManager = primaryManager match
-      case Some(mgr) => mgr
-      case None => throw new NoLocalizationManagerException
-  
-  def getOrCreate(createManager: () => LocalizationManager): LocalizationManager = primaryManager match
     case Some(mgr) => mgr
-    case None => createManager()
+    case None => throw new NoLocalizationManagerException
+
+  def getOrCreate[T <: LocalizationManager](create: () => T)(using ct: ClassTag[T]): T =
+    val clazz = ct.runtimeClass.asInstanceOf[Class[T]]
+    managers.get(clazz).map(_.asInstanceOf[T]).getOrElse {
+      val mgr = create()
+      add(mgr)
+      mgr
+    }
+
+  private def add[T <: LocalizationManager](mgr: T)(using ct: ClassTag[T]): Unit =
+    val clazz = ct.runtimeClass.asInstanceOf[Class[T]]
+    managers = managers + (clazz -> mgr)
 
   def get(key: String): Option[Localization] = get.getLocalization(key)
 
@@ -39,10 +50,35 @@ object LocalizationManager {
   def find(key: String): Option[Localization] = get.getLocalization(key)
 
   private[localization] def numCapitalLetters(word: String): Int =
-    if (word == null || word.isBlank) return 0
-    word count (_.isUpper)
+    if word == null || word.isBlank then 0
+    else word count (_.isUpper)
 
   def isAcronym(word: String): Boolean = numCapitalLetters(word) == word.trim.length
+
+  /**
+   * Sets the primary manager for localization management.
+   *
+   * @param manager the LocalizationManager to set as the primary manager
+   */
+  private def setManager(manager: LocalizationManager): Unit = primaryManager = Some(manager)
+
+  private def setManager: Unit = HOIIVUtils.get("localization.primaryLanguage") match
+    case "english" => setManager(EnglishLocalizationManager())
+    case "russian" => setManager(RussianLocalizationManager())
+    case other =>
+      // TODO: logger log
+      setManager(EnglishLocalizationManager())
+
+
+  def reload(): Unit =
+    requiredLocalizationManagers map LocalizationManager.getOrCreate
+
+
+  def requiredLocalizationManagers: List[() => LocalizationManager] =
+    List(
+      () => new EnglishLocalizationManager,
+      () => new RussianLocalizationManager,
+    )
 }
 
 /**
@@ -54,13 +90,6 @@ abstract class LocalizationManager extends LazyLogging {
 
   // Group a base localization and its optional description together.
   case class LocalizationGroup(base: Option[Localization], desc: Option[Localization])
-  
-  /**
-   * Sets the primary manager for localization management.
-   *
-   * @param manager the LocalizationManager to set as the primary manager
-   */
-  final def setManager(manager: LocalizationManager): Unit = LocalizationManager.primaryManager = Some(manager)
 
   /**
    * Reloads the localizations. The specific behavior of this method
@@ -74,7 +103,7 @@ abstract class LocalizationManager extends LazyLogging {
    * Retrieves the localization for the given key.
    *
    * @param key the key for the localization to retrieve
-   * @return an Option containing the Localization for the given key, 
+   * @return an Option containing the Localization for the given key,
    *         or None if the localization does not exist
    * @throws IllegalArgumentException if the key is null
    */
@@ -429,9 +458,9 @@ abstract class LocalizationManager extends LazyLogging {
         exc.printStackTrace()
     } finally if (scanner != null) scanner.close()
   }
-  
-  def language_def: String 
-  
+
+  def language_def: String
+
   def versionNumberRegex = ":(\\d*)" //  (version number is optional)
 
   /**
@@ -618,4 +647,3 @@ object LocalizationParser:
         sb.append(s(i))
         i += 1
     throw new Exception("No closing quote found in input")
-    

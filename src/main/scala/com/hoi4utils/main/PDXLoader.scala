@@ -109,7 +109,7 @@ class PDXLoader extends LazyLogging:
     startTime = System.nanoTime()
     onComponentStart("Localization")
     MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
-    LocalizationManager.getOrCreate(() => new EnglishLocalizationManager).reload()
+    LocalizationManager.reload()
     onComponentComplete("Localization", (System.nanoTime() - startTime) / 1_000_000_000.0)
     if isCancelled() then return
 
