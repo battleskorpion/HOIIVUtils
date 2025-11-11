@@ -5,13 +5,16 @@ import com.hoi4utils.hoi4.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.script.PDXError
 import com.hoi4utils.shared.RichString
+import com.sun.tools.javac.resources.ct
 import com.typesafe.scalalogging.LazyLogging
+import dotty.tools.sjs.ir.Trees.ClassOf
 
 import java.io.*
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import java.util.Scanner
 import scala.::
+import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 import scala.reflect.ClassTag
@@ -60,19 +63,22 @@ object LocalizationManager {
    *
    * @param manager the LocalizationManager to set as the primary manager
    */
-  private def setManager(manager: LocalizationManager): Unit = primaryManager = Some(manager)
+  private def selectPrimaryManager[T <: LocalizationManager: ClassTag](): Unit =
+    val clazz = summon[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]]
+    managers(clazz) match
+      case mgr: T => primaryManager = Some(mgr)
+      case _ => throw new IllegalStateException(s"Localization manager of type ${clazz.getName} not found.")
 
-  private def setManager: Unit = HOIIVUtils.get("localization.primaryLanguage") match
-    case "english" => setManager(EnglishLocalizationManager())
-    case "russian" => setManager(RussianLocalizationManager())
+  private def setManager(): Unit = HOIIVUtils.get("localization.primaryLanguage") match
+    case "english" => selectPrimaryManager[EnglishLocalizationManager]()
+    case "russian" => selectPrimaryManager[RussianLocalizationManager]()
     case other =>
       // TODO: logger log
-      setManager(EnglishLocalizationManager())
-
+      selectPrimaryManager[EnglishLocalizationManager]()
 
   def reload(): Unit =
     requiredLocalizationManagers map LocalizationManager.getOrCreate
-
+    setManager()
 
   def requiredLocalizationManagers: List[() => LocalizationManager] =
     List(
