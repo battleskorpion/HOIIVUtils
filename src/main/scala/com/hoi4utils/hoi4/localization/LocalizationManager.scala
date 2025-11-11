@@ -65,9 +65,14 @@ object LocalizationManager {
    */
   private def selectPrimaryManager[T <: LocalizationManager: ClassTag](): Unit =
     val clazz = summon[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]]
-    managers(clazz) match
-      case mgr: T => primaryManager = Some(mgr)
-      case _ => throw new IllegalStateException(s"Localization manager of type ${clazz.getName} not found.")
+    System.err.println("test 3")
+    managers.get(clazz) match
+      case Some(mgr) =>
+        System.err.println("test 4")
+        primaryManager = Some(mgr)
+      case None =>
+        System.err.println("test 5")
+        throw new IllegalStateException(s"Localization manager of type ${clazz.getName} not found.")
 
   private def setManager(): Unit = HOIIVUtils.get("localization.primaryLanguage") match
     case "english" => selectPrimaryManager[EnglishLocalizationManager]()
@@ -77,8 +82,11 @@ object LocalizationManager {
       selectPrimaryManager[EnglishLocalizationManager]()
 
   def reload(): Unit =
+    System.err.println("test 1")
     requiredLocalizationManagers map LocalizationManager.getOrCreate
+    System.err.println("test 2")
     setManager()
+    System.err.println("test 10")
 
   def requiredLocalizationManagers: List[() => LocalizationManager] =
     List(
