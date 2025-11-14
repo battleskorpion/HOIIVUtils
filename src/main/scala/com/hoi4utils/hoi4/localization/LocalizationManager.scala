@@ -521,9 +521,9 @@ abstract class LocalizationManager extends LazyLogging {
 
     /* --- Ordering --- */
     val groupList: List[(String, LocalizationGroup)] = {
-      if (sortAlphabetically) {
+      if (sortAlphabetically)
         mergedGroups.toList.sortBy(_._1)
-      } else {
+      else
         // Determine the order from the existing file: use the first occurrence of each base key.
         val existingOrder: List[String] = existingLocalization.map(_.baseKey).distinct
         val inFileGroups = existingOrder.flatMap { key =>
@@ -532,7 +532,6 @@ abstract class LocalizationManager extends LazyLogging {
         // Append any new groups
         val newKeys = mergedGroups.keys.toList.filterNot(existingOrder.toSet)
         inFileGroups ++ newKeys.map(key => key -> mergedGroups(key))
-      }
     }
 
     // --- Build new file content ---
@@ -540,11 +539,11 @@ abstract class LocalizationManager extends LazyLogging {
     newContent.append(header).append("\n")
 
     // For each group, print the base loc and then the description loc (if any).
-    for ((_, group) <- groupList) {
-      group.base.foreach(loc => newContent.append("\t").append(formatLocalization(loc)).append("\n"))
-      group.desc.foreach(loc => newContent.append("\t").append(formatLocalization(loc)).append("\n"))
+    for ((_, group) <- groupList)
+      val func = (loc: Localization) => newContent.append("\t").append(formatLocalization(loc)).append("\n")
+      group.base.foreach(func)
+      group.desc.foreach(func)
       newContent.append("\n") // empty line between groups
-    }
 
     // Write the updated content back to the file.
     Files.write(file.toPath, newContent.toString.getBytes(StandardCharsets.UTF_8))
