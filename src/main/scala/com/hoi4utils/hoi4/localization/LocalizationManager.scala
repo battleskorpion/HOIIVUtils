@@ -77,22 +77,25 @@ object LocalizationManager {
   private def setManager(): Unit = HOIIVUtils.get("localization.primaryLanguage") match
     case "english" => selectPrimaryManager[EnglishLocalizationManager]()
     case "russian" => selectPrimaryManager[RussianLocalizationManager]()
+    case "spanish" => selectPrimaryManager[SpanishLocalizationManager]()
     case other =>
       // TODO: logger log
       selectPrimaryManager[EnglishLocalizationManager]()
 
   def reload(): Unit =
     System.err.println("test 1")
-    requiredLocalizationManagers map LocalizationManager.getOrCreate
+    requiredLocalizationManagers foreach (_.reload())
     System.err.println("test 2")
     setManager()
     System.err.println("test 10")
 
-  def requiredLocalizationManagers: List[() => LocalizationManager] =
+  def requiredLocalizationManagers: List[LocalizationManager] = {
     List(
-      () => new EnglishLocalizationManager,
-      () => new RussianLocalizationManager,
+      getOrCreate(() => new EnglishLocalizationManager),
+      getOrCreate(() => new RussianLocalizationManager),
+      getOrCreate(() => new SpanishLocalizationManager)
     )
+  }
 }
 
 /**

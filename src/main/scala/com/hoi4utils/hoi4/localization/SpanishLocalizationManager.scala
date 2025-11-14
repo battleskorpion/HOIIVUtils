@@ -2,10 +2,10 @@ package com.hoi4utils.hoi4.localization
 
 import com.typesafe.scalalogging.LazyLogging
 
-class RussianLocalizationManager extends LocalizationManager with LazyLogging {
+class SpanishLocalizationManager extends LocalizationManager with LazyLogging {
 
   /**
-   * Localization collection for all Russian localization.
+   * Localization collection for all Spanish localization.
    */
   final protected val localizationCollection = new LocalizationCollection
 
@@ -14,11 +14,11 @@ class RussianLocalizationManager extends LocalizationManager with LazyLogging {
   // todo let user change?
   /**
    * @inheritdoc
-   * for Russian, capitalization is only for the first letter, and for nouns
+   * TODO: figure out what to do for spanish
    */
   override def capitalizationWhitelist: Set[String] = Set.empty
 
-  override def language_def: String = "l_russian"
+  override def language_def: String = "l_spanish"
 
   override def toString: String = s"${getClass.getName}{" + "localizations=" + localizationCollection + "}"
 }
