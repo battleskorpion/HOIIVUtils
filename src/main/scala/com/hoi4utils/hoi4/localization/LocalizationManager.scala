@@ -314,20 +314,13 @@ abstract class LocalizationManager extends LazyLogging {
       loadLocalization(HOIIVFiles.Mod.localization_folder, Localization.Status.EXISTS)
   }
 
-  protected def loadLocalization(localizationFolder: File, status: Localization.Status): Unit = {
-    val locFiles: Seq[File] =
-      Files.walk(localizationFolder.toPath)
-        .toScala(Seq)
-        .filter(Files.isRegularFile(_))
-        .filter(path => path.getFileName.endsWith(".yml"))
-        .map(_.toFile)
-    if (locFiles == null) return
+  protected def loadLocalization(localizationFolder: File, status: Localization.Status): Unit =
+    val files = localizationFolder.listFiles
+    if (files == null) return
 
-    for (file <- locFiles) {
+    for (file <- files)
       if (file.isDirectory) loadLocalization(file, status)
       else if (file.getName.endsWith(".yml")) loadLocalizationFile(file, status)
-    }
-  }
 
   // todo wow :(
   protected def loadLocalizationFile(file: File, Status: Localization.Status): Unit = {
