@@ -86,13 +86,13 @@ object LocalizationManager extends LazyLogging {
     setManager()
     logger.info("Localization managers reloaded. Primary manager: " + primaryManager.get.getClass.getSimpleName)
 
-  def requiredLocalizationManagers: List[LocalizationManager] = {
+  def requiredLocalizationManagers: List[LocalizationManager] =
     List(
       getOrCreate(() => new EnglishLocalizationManager),
       getOrCreate(() => new RussianLocalizationManager),
       getOrCreate(() => new SpanishLocalizationManager)
     )
-  }
+
 }
 
 /**
@@ -109,9 +109,8 @@ abstract class LocalizationManager extends LazyLogging {
    * Reloads the localizations. The specific behavior of this method
    * depends on the implementation.
    */
-  def reload(): Unit = {
+  def reload(): Unit =
     loadLocalization()
-  }
 
   /**
    * Retrieves the localization for the given key.
@@ -122,10 +121,9 @@ abstract class LocalizationManager extends LazyLogging {
    * @throws IllegalArgumentException if the key is null
    */
   @throws[IllegalArgumentException]
-  def getLocalization(key: String): Option[Localization] = {
+  def getLocalization(key: String): Option[Localization] =
     if (key == null) throw new IllegalArgumentException("localization ID cannot be null")
     localizations.get(key)
-  }
 
   /**
    * Sets the localization for the given key.
@@ -138,10 +136,10 @@ abstract class LocalizationManager extends LazyLogging {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def setLocalization(key: String, localization: Localization): Option[Localization] = {
+  def setLocalization(key: String, localization: Localization): Option[Localization] =
     require(key != null, "Key cannot be null.")
     require (localization != null, "Localization cannot be null.")
-    localizations.get(key) match {
+    localizations.get(key) match
       case Some(prevLocalization) =>
         if (prevLocalization.isReplaceableBy(localization)) return localizations.replace(key, localization)
         else throw new UnexpectedLocalizationStatusException(prevLocalization, localization)
@@ -150,9 +148,8 @@ abstract class LocalizationManager extends LazyLogging {
           // todo
         }
         else throw new IllegalArgumentException("Localization is not new, but there is no existing mod localization for the given key.")
-    }
+
     null
-  }
 
   /**
    * Sets the localization for the given key, with the given text.
@@ -165,9 +162,8 @@ abstract class LocalizationManager extends LazyLogging {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def setLocalization(key: String, text: String, file: File): Option[Localization] = {
+  def setLocalization(key: String, text: String, file: File): Option[Localization] =
     setLocalization(key, None, text, file)
-  }
 
   /**
    * Sets the localization for the given key, with the given text.
@@ -180,9 +176,9 @@ abstract class LocalizationManager extends LazyLogging {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def setLocalization(key: String, version: Option[Int], text: String, file: File): Option[Localization] = {
+  def setLocalization(key: String, version: Option[Int], text: String, file: File): Option[Localization] =
     require(key != null, "Key cannot be null.")
-    localizations.get(key) match {
+    localizations.get(key) match
       case Some(prevLocalization) =>
         val localization = prevLocalization.replaceWith(text, version, file)
         localizations.replace(key, localization)
@@ -190,8 +186,6 @@ abstract class LocalizationManager extends LazyLogging {
         val localization = new Localization(key, version, text, Localization.Status.NEW)
         localizations.add(localization, file)
         Some(localization)
-    }
-  }
 
   /**
    * Replaces the localization for the given key with the given text.
@@ -202,17 +196,15 @@ abstract class LocalizationManager extends LazyLogging {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def replaceLocalization(key: String, text: String): Option[Localization] = {
+  def replaceLocalization(key: String, text: String): Option[Localization] =
     require(key != null, "Key cannot be null.")
-    localizations.get(key) match {
+    localizations.get(key) match
       case Some(prevLocalization) =>
         val localization = prevLocalization.replaceWith(text)
         // there are maps that support mapping to null, which is why the null check is necessary.
         // (read the docs for the replace method)
         localizations.replace(key, localization)
       case None => throw new IllegalArgumentException("Localization with the given key does not exist.")
-    }
-  }
 
   /**
    * Adds a new localization to the localization list if it does not already exist.
@@ -220,16 +212,14 @@ abstract class LocalizationManager extends LazyLogging {
    * @param localization the localization to add
    */
   @throws[LocalizationExistsException]
-  def addLocalization(localization: Localization, localizationCollection: LocalizationCollection, file: File): Unit = {
+  def addLocalization(localization: Localization, localizationCollection: LocalizationCollection, file: File): Unit =
     if (localization == null) return
     if (localizationCollection.containsLocKey(localization.id)) throw new LocalizationExistsException(localization)
     localizationCollection.add(localization, file)
-  }
 
   @throws[LocalizationExistsException]
-  def addLocalization(localization: Localization, file: File): Unit = {
+  def addLocalization(localization: Localization, file: File): Unit =
     addLocalization(localization, localizations, file)
-  }
 
   /**
    * Checks if the given localization ID is localized (has a localization entry).
