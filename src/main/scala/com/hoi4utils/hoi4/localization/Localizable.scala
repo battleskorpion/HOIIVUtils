@@ -32,7 +32,7 @@ trait Localizable {
 
   def getLocalizationKeys: Iterable[String] = localizableProperties.values
 
-//  /** 
+//  /**
 //   * Add a localizable property using the specified key.
 //   *
 //   * @param property        the localized property to add.
@@ -87,12 +87,11 @@ trait Localizable {
   //		setLocalization(property, text, primaryLocalizationFile());
   //	}
 
-  def primaryLocalizationFile: Option[File] = {
+  def primaryLocalizationFile: Option[File] =
     val localizableGroup = getLocalizableGroup
     localizableGroup.flatMap(ll => ll.getLocalizationKeys).map(LocalizationManager.getLocalizationFile).find(_ != null) match
       case Some(f) => Some(f)
       case None => None
-  }
 
   /**
    * Gets the localizable group of objects that this object is a part of.
@@ -104,12 +103,11 @@ trait Localizable {
    * Asks the user to determine the localization file to use.
    * @return the localization file to use.
    */
-  def askUserForLocalizationFile: File = {
+  def askUserForLocalizationFile: File =
     val initialDirectory = HOIIVFiles.Mod.localization_folder
     var file = JavaFXUIManager.openChooser(initialDirectory, false)
     if (file == null) file = new File(HOIIVFiles.Mod.localization_folder, "HOIIVUtils_extra_localization.yml")
     file
-  }
 
   /**
    * Sets the localization for the given property to the new value, or creates a new localization if none exists.
@@ -118,9 +116,8 @@ trait Localizable {
    * @param text     the new localization text.
    * @param file     the file the localization belongs in.
    */
-  def setLocalization(property: Property, text: String, file: File): Unit = {
+  def setLocalization(property: Property, text: String, file: File): Unit =
     setLocalization(property, None, text, file)
-  }
 
   /**
    * Sets the localization for the given property to the new value
@@ -130,14 +127,11 @@ trait Localizable {
    * @param text     the new localization text.
    * @param file     the file the localization belongs in.
    */
-  def setLocalization(property: Property, version: Option[Int], text: String, file: File): Unit = {
-    val key = localizableProperties.get(property)
-    key match {
+  def setLocalization(property: Property, version: Option[Int], text: String, file: File): Unit =
+    localizableProperties.get(property) match
       case Some(k) =>
         LocalizationManager.get.setLocalization(k, version, text, file)
       case None => throw new LocalizationPropertyException(property, this)
-    }
-  }
 
   /**
    * Sets the localization for the given property to the new value.
@@ -145,13 +139,10 @@ trait Localizable {
    * @param property the localizable property to set.
    * @param text     the new localization text.
    */
-  def replaceLocalization(property: Property, text: String): Unit = {
-    val key = localizableProperties.get(property)
-    key match {
+  def replaceLocalization(property: Property, text: String): Unit =
+    localizableProperties.get(property) match
       case Some(k) => LocalizationManager.get.replaceLocalization(k, text)
       case None =>
-    }
-  }
 
   /**
    * Sets the name localization to the new value.
