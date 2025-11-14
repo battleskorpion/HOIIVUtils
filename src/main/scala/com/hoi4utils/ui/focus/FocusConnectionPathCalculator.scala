@@ -19,10 +19,10 @@ class FocusConnectionPathCalculator(
    * Calculate the path from a focus to one of its prerequisites.
    *
    * @param fromButton The source focus button
-   * @param toButton The prerequisite focus button  
+   * @param toButton The prerequisite focus button
    * @return List of line segments forming the path
    */
-  def calculatePath(fromButton: FocusToggleButton, toButton: FocusToggleButton): List[PathSegment] =
+  def calculatePrereqPath(fromButton: FocusToggleButton, toButton: FocusToggleButton): List[PathSegment] =
     val fromGridX = fromButton.getColumnIndex
     val fromGridY = fromButton.getRowIndex
     val toGridX = toButton.getColumnIndex
@@ -33,19 +33,47 @@ class FocusConnectionPathCalculator(
       fromGridX * cellWidth + cellWidth / 2,
       fromGridY * cellHeight + lineOffset
     )
-
     // Entry point: SOUTH (bottom center) of prerequisite
     val entryPoint = Point(
       toGridX * cellWidth + cellWidth / 2,
       toGridY * cellHeight + cellHeight - lineOffset
     )
 
-    if (toGridY < fromGridY) then
+    if toGridY < fromGridY then
       // Prerequisite is ABOVE
       calculatePathGoingUp(exitPoint, entryPoint, fromGridX, toGridX)
     else
       // Prerequisite is BELOW
       calculatePathGoingDown(exitPoint, entryPoint, fromGridX, toGridX)
+
+  /**
+   * Calculate the path from a focus to one of its mutually exclusive focuses.
+   *
+   * @param fromButton The source focus button
+   * @param toButton   The mutually exclusive focus button
+   * @return List of line segments forming the path
+   */
+  def calculateMutuallyExclusivePath(fromButton: FocusToggleButton, toButton: FocusToggleButton): List[PathSegment] =
+    val fromGridX = fromButton.getColumnIndex
+    val fromGridY = fromButton.getRowIndex
+    val toGridX = toButton.getColumnIndex
+    val toGridY = toButton.getRowIndex
+
+    if (fromGridY == toGridY)
+      // Exit point: text center of source focus
+      val exitPoint = Point(
+        fromGridX * cellWidth + cellWidth / 2,
+        (fromGridY + 1) * cellHeight - (cellHeight * 0.45) + lineOffset
+      )
+      // Entry point: text center of mutually exclusive focus
+      val entryPoint = Point(
+        toGridX * cellWidth + cellWidth / 2,
+        (toGridY + 1) * cellHeight - (cellHeight * 0.45) + lineOffset
+      )
+
+      calculatePathDirect(exitPoint, entryPoint, fromGridX, toGridX)
+    else
+      List() // do nothing
 
   /**
    * Calculate path when prerequisite (entry focus) is ABOVE the focus (exit focus).
@@ -90,6 +118,25 @@ class FocusConnectionPathCalculator(
         PathSegment(exitPoint, corner),       // Vertical down
         PathSegment(corner, entryPoint)       // Horizontal at prerequisite level
       )
+
+  /**
+   * Calculate path when prerequisite (entry focus) is ABOVE the focus (exit focus).
+   * Pattern: Vertical up, then horizontal, then up to the entry focus.
+   */
+  private def calculatePathDirect(
+                                    exitPoint: Point,
+                                    entryPoint: Point,
+                                    fromCol: Int,
+                                    toCol: Int
+                                  ): List[PathSegment] =
+  if fromCol == toCol then
+    // Same column: do nothing (not across)
+    List()
+  else
+    // Different column: across to the entry focus
+    List(
+      PathSegment(exitPoint, entryPoint)
+    )
 
 /**
  * Extension methods for FocusToggleButton to get grid indices.

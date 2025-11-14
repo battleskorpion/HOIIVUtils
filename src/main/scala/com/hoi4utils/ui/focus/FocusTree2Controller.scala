@@ -29,6 +29,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private val focusGridRowSize: Int = 200
   private val welcomeMessage: String = s"Welcome to the Focus Tree Viewer 2!"
   private val PURPLE_LINE_COLOR: Color = Color.rgb(139, 92, 246)
+  private val RED_LINE_COLOR: Color = Color.rgb(255, 0, 0)
   private val LINE_STROKE_WIDTH: Double = 2.0
 
   @FXML var focusTree2: AnchorPane = uninitialized
@@ -59,7 +60,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private var focusTreesToggleButtons: ListBuffer[ToggleButton] = ListBuffer.empty
   private var currentLoadTask: Option[Task[GridPane]] = None
   private var focusGridToggleGroup: ToggleGroup = new ToggleGroup()
-  private var pathCalculator: FocusConnectionPathCalculator = uninitialized
 
   // Store the current offset for coordinate conversions
   private var currentOffsetX: Int = 0
@@ -71,6 +71,13 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private var currentHighlightedCell: Option[(Int, Int)] = None
   private var dragImageView: ImageView = uninitialized
 
+  // Initialize path calculator with grid dimensions
+  private var pathCalculator: FocusConnectionPathCalculator = new FocusConnectionPathCalculator(
+    cellWidth = focusGridColumnsSize.toDouble,
+    cellHeight = focusGridRowSize.toDouble,
+    lineOffset = 15.0
+  )
+
   /* init */
   setFxmlFile("/com/hoi4utils/ui/focus/FocusTree2.fxml")
   setTitle("Focus Tree Viewer 2: Electric Boogaloo")
@@ -79,13 +86,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     setWindowControlsVisibility()
     replaceWithZoomableScrollPane()
     setupZoomButtons()
-
-    // Initialize path calculator with grid dimensions
-    pathCalculator = new FocusConnectionPathCalculator(
-      cellWidth = focusGridColumnsSize.toDouble,
-      cellHeight = focusGridRowSize.toDouble,
-      lineOffset = 15.0
-    )
 
     clear()
     welcome.setToggleGroup(toggleGroup)
@@ -661,13 +661,23 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     // Build a map of Focus -> FocusToggleButton for quick lookup
     val buttonMap = buttons.map(b => b.focus -> b).toMap
 
-    // For each button, draw paths to its prerequisites
+    // draw focus prerequisite paths
     buttons.foreach { sourceButton =>
       val prereqFocuses = sourceButton.focus.prerequisiteList
-
       prereqFocuses.foreach { prereqFocus =>
         buttonMap.get(prereqFocus).foreach { prereqButton =>
-          drawConnection(sourceButton, prereqButton)
+          drawPrereqConnection(sourceButton, prereqButton)
+        }
+      }
+    }
+
+    // draw focus mutual exclusivity
+    buttons.foreach { sourceButton =>
+      // todo only draw for one. but im being so lazy.
+      val mutexclFocuses = sourceButton.focus.mutuallyExclusiveList
+      mutexclFocuses.foreach { meFocus =>
+        buttonMap.get(meFocus).foreach { meButton =>
+          drawMutuallyExclusiveConnection(sourceButton, meButton)
         }
       }
     }
@@ -675,8 +685,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   /**
    * Draw a single connection from source focus to prerequisite.
    */
-  private def drawConnection(fromButton: FocusToggleButton, toButton: FocusToggleButton): Unit =
-    val segments = pathCalculator.calculatePath(fromButton, toButton)
+  private def drawPrereqConnection(fromButton: FocusToggleButton, toButton: FocusToggleButton): Unit =
+    val segments = pathCalculator.calculatePrereqPath(fromButton, toButton)
 
     val path = new Path()
     path.setStrokeWidth(LINE_STROKE_WIDTH)
@@ -693,6 +703,22 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       val corner = createCornerCircle(segment.from)
       lineLayer.getChildren.add(corner)
     }
+
+  /**
+   * Draw a single connection from source focus to prerequisite.
+   */
+  private def drawMutuallyExclusiveConnection(fromButton: FocusToggleButton, toButton: FocusToggleButton): Unit =
+    val segments = pathCalculator.calculateMutuallyExclusivePath(fromButton, toButton)
+
+    val path = new Path()
+    path.setStrokeWidth(LINE_STROKE_WIDTH)
+    path.setStroke(RED_LINE_COLOR)
+    path.setMouseTransparent(true)
+
+    segments.foreach { s =>
+      path.getElements.addAll(new MoveTo(s.from.x, s.from.y), new LineTo(s.to.x, s.to.y))
+    }
+    lineLayer.getChildren.addAll(path) // single node
 
   /**
    * Create a JavaFX Line from a path segment, converting to scene coordinates.
