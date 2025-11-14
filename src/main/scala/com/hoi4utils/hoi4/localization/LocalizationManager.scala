@@ -23,7 +23,7 @@ import scala.reflect.ClassTag
 import scala.util.boundary
 
 
-object LocalizationManager {
+object LocalizationManager extends LazyLogging {
   private var primaryManager: Option[LocalizationManager] = None
   private var managers: Map[Class[? <: LocalizationManager], LocalizationManager] = Map.empty
   val localizationErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
@@ -78,12 +78,13 @@ object LocalizationManager {
     case "russian" => selectPrimaryManager[RussianLocalizationManager]()
     case "spanish" => selectPrimaryManager[SpanishLocalizationManager]()
     case other =>
-      // TODO: logger log
+      logger.error("Unknown primary localization manager setting: " + other + ". Defaulting to English localization manager.")
       selectPrimaryManager[EnglishLocalizationManager]()
 
   def reload(): Unit =
     requiredLocalizationManagers foreach (_.reload())
     setManager()
+    logger.info("Localization managers reloaded. Primary manager: " + primaryManager.get.getClass.getSimpleName)
 
   def requiredLocalizationManagers: List[LocalizationManager] = {
     List(
