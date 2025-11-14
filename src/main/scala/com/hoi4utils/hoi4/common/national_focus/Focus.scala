@@ -273,10 +273,10 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
 
   def preciseCompletionTime(): Double = (cost getOrElse DEFAULT_FOCUS_COST) * FOCUS_COST_FACTOR
 
-  override def getLocalizableProperties: mutable.Map[Property, String] =
+  override def localizableProperties: Map[Property, String] =
     //mutable.Map(Property.NAME -> id.get().get, Property.DESCRIPTION -> s"${id.get().get}_desc")
     val id = this.id.getOrElse("")
-    mutable.Map(Property.NAME -> id, Property.DESCRIPTION -> s"${id}_desc")
+    Map(Property.NAME -> id, Property.DESCRIPTION -> s"${id}_desc")
 
   override def getLocalizableGroup: Iterable[Localizable] =
     if focusTree == null then

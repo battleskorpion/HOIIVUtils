@@ -137,9 +137,9 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
     }
   }
 
-  @NotNull override def getLocalizableProperties: mutable.Map[Property, String] = {
+  @NotNull override def localizableProperties: Map[Property, String] = {
     val id = this.id.getOrElse("")
-    mutable.Map(Property.NAME -> id, Property.DESCRIPTION -> s"${id}_desc")
+    Map(Property.NAME -> id, Property.DESCRIPTION -> s"${id}_desc")
   }
 
   @NotNull override def getLocalizableGroup: Iterable[? <: Localizable] = {

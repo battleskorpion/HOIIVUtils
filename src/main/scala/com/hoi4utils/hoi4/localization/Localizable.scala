@@ -19,35 +19,34 @@ trait Localizable {
    * @note this method should not usually be overwritten.
    * @return the number of localizable properties.
    */
-  def numLocalizableProperties: Int = getLocalizableProperties.size
+  def numLocalizableProperties: Int = localizableProperties.size
 
   /**
    * Default method to get the localizable property identifiers and keys.
    *
    * @return a map of localizable property identifiers and keys.
    */
-  def getLocalizableProperties: mutable.Map[Property, String]
+  def localizableProperties: Map[Property, String]
 
-  def localizableProperty(property: Property): Option[String] = getLocalizableProperties.get(property)
+  def localizableProperty(property: Property): Option[String] = localizableProperties.get(property)
 
-  def getLocalizationKeys: Iterable[String] = getLocalizableProperties.values
+  def getLocalizationKeys: Iterable[String] = localizableProperties.values
 
-  /**
-   * Add a localizable property using the specified key.
-   *
-   * @param property        the localized property to add.
-   * @param localizationKey the property localization key to add.
-   */
-  def addLocalizableProperty(property: Property, localizationKey: String): Unit = {
-    getLocalizableProperties.put(property, localizationKey)
-  }
+//  /** 
+//   * Add a localizable property using the specified key.
+//   *
+//   * @param property        the localized property to add.
+//   * @param localizationKey the property localization key to add.
+//   */
+//  def addLocalizableProperty(property: Property, localizationKey: String): Unit = {
+//    localizableProperties.put(property, localizationKey)
+//  }
 
-  /**
-   * Default method to clear the localizable properties.
-   */
-  def clearLocalizableProperties(): Unit = {
-    getLocalizableProperties.clear()
-  }
+//  /**
+//   * Default method to clear the localizable properties.
+//   */
+//  def clearLocalizableProperties(): Unit =
+//    localizableProperties.clear()
 
   def getLocalization: Iterable[Localization] = LocalizationManager.getAll(getLocalizationKeys)
 
@@ -57,11 +56,9 @@ trait Localizable {
    * @param property the localizable property to get localization for.
    * @return the localization for the given property.
    */
-  def localization(property: Property): Option[Localization] = {
-    getLocalizableProperties.get(property) match
-      case Some(k) => LocalizationManager.get(k)
-      case None => None
-  }
+  def localization(property: Property): Option[Localization] = localizableProperties.get(property) match
+    case Some(k) => LocalizationManager.get(k)
+    case None => None
 
   /**
    * Gets the localization text for the given property.
@@ -134,7 +131,7 @@ trait Localizable {
    * @param file     the file the localization belongs in.
    */
   def setLocalization(property: Property, version: Option[Int], text: String, file: File): Unit = {
-    val key = getLocalizableProperties.get(property)
+    val key = localizableProperties.get(property)
     key match {
       case Some(k) =>
         LocalizationManager.get.setLocalization(k, version, text, file)
@@ -149,7 +146,7 @@ trait Localizable {
    * @param text     the new localization text.
    */
   def replaceLocalization(property: Property, text: String): Unit = {
-    val key = getLocalizableProperties.get(property)
+    val key = localizableProperties.get(property)
     key match {
       case Some(k) => LocalizationManager.get.replaceLocalization(k, text)
       case None =>

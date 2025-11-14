@@ -127,7 +127,7 @@ class IdeaFileTest extends TestBase {
         var ideasWithLocalization = 0
 
         allIdeas.foreach { idea =>
-          val localizableProps = idea.getLocalizableProperties
+          val localizableProps = idea.localizableProperties
           if (localizableProps.nonEmpty) {
             ideasWithLocalization += 1
           }
@@ -138,7 +138,7 @@ class IdeaFileTest extends TestBase {
         // Test specific idea if it exists
         allIdeas.find(_.id.contains("SCA_political_focus")) match {
           case Some(idea) =>
-            val props = idea.getLocalizableProperties
+            val props = idea.localizableProperties
             assertTrue(props.nonEmpty, "Specific idea should have localization properties")
             println(s"Found test idea '${idea.id.get}' with localization properties")
           case None =>

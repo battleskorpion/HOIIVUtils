@@ -18,7 +18,7 @@ class VictoryPoint protected(province: Int, var value: Int) extends Localizable 
    *
    * @return a map of localizable property identifiers and keys.
    */
-  override def getLocalizableProperties: mutable.Map[Property, String] = ???
+  override def localizableProperties: Map[Property, String] = ???
 
   /**
    * Gets the localizable group of objects that this object is a part of.

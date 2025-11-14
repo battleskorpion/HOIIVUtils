@@ -20,7 +20,7 @@ class Technology extends Localizable {
 	var paths: List[TechPath] = Nil
 
 	// ai_will_do
-	@NotNull override def getLocalizableProperties: mutable.Map[Property, String] = mutable.Map(Property.NAME -> id)
+	@NotNull override def localizableProperties: Map[Property, String] = Map(Property.NAME -> id)
 
 	// todo this can be more inclusive
 	@NotNull override def getLocalizableGroup: Iterable[? <: Localizable] = List(this)

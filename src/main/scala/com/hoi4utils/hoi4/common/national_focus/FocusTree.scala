@@ -205,13 +205,10 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
 
   override def iterator: Iterator[Focus] = focuses.iterator
 
-  override def getLocalizableProperties: mutable.HashMap[Property, String] =
-    // lets us map null if we use hashmap instead of generic of() method
-    val properties = new mutable.HashMap[Property, String]
+  override def localizableProperties: Map[Property, String] =
     id.value match
-      case Some(id) => properties.put(Property.NAME, id)
-      case None => //properties.put(Property.NAME, null)
-    properties
+      case Some(id) => Map(Property.NAME -> id)
+      case None => Map() //properties.put(Property.NAME, null)
 
   /**
    * Get the localizable group of this focus tree, which is the list of focuses.

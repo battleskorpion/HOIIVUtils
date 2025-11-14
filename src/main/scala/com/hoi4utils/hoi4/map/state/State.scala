@@ -291,11 +291,11 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
     case Some(v) => v
     case None => throw new NullPointerException("State has no ID")
 
-  @NotNull override def getLocalizableProperties: mutable.Map[Property, String] =
+  @NotNull override def localizableProperties: Map[Property, String] =
     val id = this.stateID.value match
       case Some(i) => i.toString
       case None => ""
-    mutable.Map(Property.NAME -> id)
+    Map(Property.NAME -> id)
 
   @NotNull override def getLocalizableGroup: Iterable[? <: Localizable] = State.states
 
