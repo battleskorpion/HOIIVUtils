@@ -251,23 +251,21 @@ abstract class LocalizationManager extends LazyLogging {
 
     if (words.head.length == 1) words(0) = Character.toUpperCase(words.head.charAt(0)) + ""
     else if (words.head.length > 1) words(0) = Character.toUpperCase(words.head.charAt(0)) + words.head.substring(1)
-    else {
+    else
       // todo this should never happen now right?
       logger.error("first word length < 1")
-    }
 
     logger.debug("num words: " + words.size)
-    for (i <- 1 until words.size) {
-      if (!LocalizationManager.isAcronym(words(i)) && !whitelist.contains(words(i))) {
-        if (words(i).length == 1) {
-          words(i) = Character.toUpperCase(words(i).charAt(0)) + ""
-        }
-        else if (words(i).length > 1) {
-          logger.debug("working cap")
-          words(i) = Character.toUpperCase(words(i).charAt(0)) + words(i).substring(1)
-        }
-      }
-    }
+    for
+      i <- 1 until words.size
+      if !LocalizationManager.isAcronym(words(i))
+      if !whitelist.contains(words(i))
+    do
+      if (words(i).length == 1)
+        words(i) = words(i).charAt(0).toUpper + ""
+      else if (words(i).length > 1)
+        logger.debug("working cap")
+        words(i) = words(i).charAt(0).toUpper + words(i).substring(1)
 
     logger.debug("capitalized: " + String.join(" ", CollectionConverters.asJava(words)))
     String.join(" ", CollectionConverters.asJava(words))
