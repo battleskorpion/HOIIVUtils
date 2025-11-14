@@ -5,6 +5,7 @@ import com.hoi4utils.hoi4.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.script.PDXError
 import com.typesafe.scalalogging.LazyLogging
+import scalafx.beans.value
 
 import java.io.*
 import java.nio.charset.StandardCharsets
@@ -321,7 +322,7 @@ abstract class LocalizationManager extends LazyLogging {
       else if (file.getName.endsWith(".yml")) loadLocalizationFile(file, status)
 
   // todo wow :(
-  protected def loadLocalizationFile(file: File, Status: Localization.Status): Unit = {
+  protected def loadLocalizationFile(file: File, status: Localization.Status): Unit = {
     val scanner = new Scanner(file)
     try {
       // check language
@@ -332,15 +333,6 @@ abstract class LocalizationManager extends LazyLogging {
         if (line.startsWith("\uFEFF")) line = line.substring(1)
         if (line.trim.nonEmpty && line.trim.charAt(0) != '#') {
           if (!line.trim.startsWith(language_def)) {
-            val pdxError = new PDXError(
-              file = Some(file),
-              additionalInfo = Map(
-                "context" -> "Localization file is not in English",
-                "expected" -> language_def,
-                "found" -> line
-              )
-            )
-            localizationErrors += pdxError
             return ()
           }
           else languageFound = true
@@ -418,20 +410,14 @@ abstract class LocalizationManager extends LazyLogging {
               CONTROLS_GREECE: "Controls all states in the §Y$strategic_region_greece$§! strategic region"
               CONTROLS_ASIA_MINOR:1 "Controls all states in the §Y$strategic_region_asia_minor$§! strategic region"
               */
-              var key: String = null
-              var version: Option[Int] = None
-              var value: String = null
-              if (data(1).isBlank)
-                key = data(0).trim
-                version = None
-                value = data(2).trim
-              else
-                key = data(0).trim
-                version = data(1).trim.toIntOption
-                value = data(2).trim
-              // fix file format issues (as it is a UTF-8 BOM file)
-              value = value.replaceAll("(Â§)", "§")
-              val localization = new Localization(key, version, value, Status)
+              val localization = {
+                // fix file format issues (as it is a UTF-8 BOM file)
+                val value = data(2).trim.replaceAll("(Â§)", "§")
+                if (data(1).isBlank)
+                  new Localization(data(0).trim, None, value, status)
+                else
+                  new Localization(data(0).trim, data(1).trim.toIntOption, value, status)
+              }
               localizations.add(localization, file)
             }
           }
