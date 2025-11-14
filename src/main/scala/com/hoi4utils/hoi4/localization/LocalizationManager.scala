@@ -368,14 +368,16 @@ abstract class LocalizationManager extends LazyLogging {
           } else {
             // trim whitespace
             data mapInPlace (s => s.trim)
-            // ignore ":" before version number
-            data(1) = data(1).substring(1)
 
+            val key = data(0)
+            // ignore ":" before version number
+            val version = data(1).substring(1)
             // ignore escaped quotes
-            data(2) = data(2).replaceAll("//\"", "\u0000")
-            val startQuote = data(2).indexOf("\"")
-            val endQuote = data(2).lastIndexOf("\"")
-            val extra = data(2).substring(endQuote + 1).trim
+            var value = data(2).replaceAll("//\"", "\u0000")
+
+            val startQuote = value.indexOf("\"")
+            val endQuote = value.lastIndexOf("\"")
+            val extra = value.substring(endQuote + 1).trim
             var invalid = false
             if (extra.nonEmpty && !extra.startsWith("#")) {
               val pdxError = new PDXError(
@@ -404,20 +406,15 @@ abstract class LocalizationManager extends LazyLogging {
             }
             if (!invalid) {
               // remove leading/trailing quotes (and any comments)
-              data(2) = data(2).substring(startQuote + 1, endQuote)
+              value = value.substring(startQuote + 1, endQuote)
+              // fix file format issues (as it is a UTF-8 BOM file)
+              value = value.trim.replaceAll("(Â§)", "§")
               /*
               .yml example format:
               CONTROLS_GREECE: "Controls all states in the §Y$strategic_region_greece$§! strategic region"
               CONTROLS_ASIA_MINOR:1 "Controls all states in the §Y$strategic_region_asia_minor$§! strategic region"
               */
-              val localization = {
-                // fix file format issues (as it is a UTF-8 BOM file)
-                val value = data(2).trim.replaceAll("(Â§)", "§")
-                if (data(1).isBlank)
-                  new Localization(data(0).trim, None, value, status)
-                else
-                  new Localization(data(0).trim, data(1).trim.toIntOption, value, status)
-              }
+              val localization = new Localization(key, if (version.isBlank) None else version.trim.toIntOption, value, status)
               localizations.add(localization, file)
             }
           }
