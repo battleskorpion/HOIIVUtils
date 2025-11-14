@@ -4,23 +4,16 @@ import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationMana
 import com.hoi4utils.hoi4.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.script.PDXError
-import com.hoi4utils.shared.RichString
-import com.sun.tools.javac.resources.ct
 import com.typesafe.scalalogging.LazyLogging
-import dotty.tools.sjs.ir.Trees.ClassOf
-import dotty.tools.sjs.ir.Trees.JSUnaryOp.!
 
 import java.io.*
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import java.util.Scanner
-import scala.::
-import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 import scala.jdk.StreamConverters.StreamHasToScala
 import scala.jdk.javaapi.CollectionConverters
 import scala.reflect.ClassTag
-import scala.util.boundary
 
 
 object LocalizationManager extends LazyLogging {
