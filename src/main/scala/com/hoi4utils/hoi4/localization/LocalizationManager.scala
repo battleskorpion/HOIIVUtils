@@ -8,6 +8,7 @@ import com.hoi4utils.shared.RichString
 import com.sun.tools.javac.resources.ct
 import com.typesafe.scalalogging.LazyLogging
 import dotty.tools.sjs.ir.Trees.ClassOf
+import dotty.tools.sjs.ir.Trees.JSUnaryOp.!
 
 import java.io.*
 import java.nio.charset.StandardCharsets
@@ -16,6 +17,7 @@ import java.util.Scanner
 import scala.::
 import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
+import scala.jdk.StreamConverters.StreamHasToScala
 import scala.jdk.javaapi.CollectionConverters
 import scala.reflect.ClassTag
 import scala.util.boundary
@@ -217,27 +219,6 @@ abstract class LocalizationManager extends LazyLogging {
     }
   }
 
-  def saveLocalization(): Unit = {
-    val localizationFolder = HOIIVFiles.Mod.localization_folder
-    val files = localizationFolder.listFiles
-    if (files == null) return
-    // Separate new and changed localizations
-    val changedLocalizations = localizations.filterByStatus(Localization.Status.UPDATED)
-    val newLocalizations = localizations.filterByStatus(Localization.Status.NEW)
-    // Merge the maps: for every file, combine the two lists (or use one if the file exists only in one map)
-    val mergedLocalizations: Map[File, List[Localization]] =
-      (changedLocalizations ++ newLocalizations)
-        .groupBy(_._1)
-        .view
-        .mapValues(_.flatMap(_._2).toList)
-        .toMap
-
-    val sortAlphabetically = false
-    mergedLocalizations.foreach { case (file, locList) =>
-      updateLocalizationFile(file, locList, sortAlphabetically)
-    }
-  }
-
   /**
    * Adds a new localization to the localization list if it does not already exist.
    *
@@ -269,6 +250,13 @@ abstract class LocalizationManager extends LazyLogging {
   protected def localizations: LocalizationCollection
 
   def localizationList: Iterable[Localization] = localizations.getAll
+
+  /**
+   * Gets all localization files managed by this manager.
+   *
+   * @return all localization files.
+   */
+  def localizationFiles: Iterable[File] = localizations.getLocalizationFiles
 
   /**
    * Capitalizes every word in a string with a pre-set whitelist
@@ -317,6 +305,10 @@ abstract class LocalizationManager extends LazyLogging {
     entry.replaceAll("§", "Â§") // necessary with UTF-8 BOM
   }
 
+  def language_def: String
+
+  def versionNumberRegex = ":(\\d*)" //  (version number is optional)
+
   /**
    * Loads localization. Loads mod localization after vanilla to give mod localizations priority
    */
@@ -345,9 +337,15 @@ abstract class LocalizationManager extends LazyLogging {
   }
 
   protected def loadLocalization(localizationFolder: File, status: Localization.Status): Unit = {
-    val files = localizationFolder.listFiles
-    if (files == null) return
-    for (file <- files) {
+    val locFiles: Seq[File] =
+      Files.walk(localizationFolder.toPath)
+        .toScala(Seq)
+        .filter(Files.isRegularFile(_))
+        .filter(path => path.getFileName.endsWith(".yml"))
+        .map(_.toFile)
+    if (locFiles == null) return
+
+    for (file <- locFiles) {
       if (file.isDirectory) loadLocalization(file, status)
       else if (file.getName.endsWith(".yml")) loadLocalizationFile(file, status)
     }
@@ -476,9 +474,33 @@ abstract class LocalizationManager extends LazyLogging {
     } finally if (scanner != null) scanner.close()
   }
 
-  def language_def: String
+  def saveLocalization(): Unit = {
+    val localizationFolder = HOIIVFiles.Mod.localization_folder
+    val locFiles: Seq[File] =
+      Files.walk(localizationFolder.toPath)
+        .toScala(Seq)
+        .filter(Files.isRegularFile(_))
+        .filter(path => path.getFileName.endsWith(".yml"))
+        .map(_.toFile)
 
-  def versionNumberRegex = ":(\\d*)" //  (version number is optional)
+    if (locFiles == null) return
+
+    // Separate new and changed localizations
+    val changedLocalizations = localizations.filterByStatus(Localization.Status.UPDATED)
+    val newLocalizations = localizations.filterByStatus(Localization.Status.NEW)
+    // Merge the maps: for every file, combine the two lists (or use one if the file exists only in one map)
+    val mergedLocalizations: Map[File, List[Localization]] =
+      (changedLocalizations ++ newLocalizations)
+        .groupBy(_._1)
+        .view
+        .mapValues(_.flatMap(_._2).toList)
+        .toMap
+
+    val sortAlphabetically = false
+    mergedLocalizations.foreach { case (file, locList) =>
+      updateLocalizationFile(file, locList, sortAlphabetically)
+    }
+  }
 
   /**
    * Updates a localization file by merging new localizations with existing ones.
@@ -608,12 +630,6 @@ abstract class LocalizationManager extends LazyLogging {
 
   @throws[IOException]
   protected def getLocalizationWriter(file: File, append: Boolean) = new PrintWriter(new BufferedWriter(new FileWriter(file, append)))
-
-  /**
-   * Gets all localization files managed by this manager.
-   * @return all localization files.
-   */
-  def localizationFiles: Iterable[File] = localizations.getLocalizationFiles
 
 }
 

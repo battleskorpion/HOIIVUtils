@@ -51,7 +51,7 @@ public class HOIIVFiles {
 		Mod.ideas_folder = new File(modPath, "common\\ideas");
 		Mod.units_folder = new File(modPath,"common\\units");
 		Mod.states_folder = new File(modPath, "history\\states");
-		Mod.localization_folder = new File(modPath, "localisation\\english"); // 's' vs 'z' note in the original comment
+		Mod.localization_folder = new File(modPath, "localisation"); // 's' vs 'z' note in the original comment
 		Mod.strat_region_dir = new File(modPath, "map\\strategicregions");
 		Mod.interface_folder = new File(modPath, "interface");
 		Mod.resources_file = new File(modPath, "common\\resources\\00_resources.txt");
@@ -64,7 +64,7 @@ public class HOIIVFiles {
 
 	public static void setHoi4PathChildDirs(String hoi4Path) {
 		HOI4.folder = new File(hoi4Path);
-		HOI4.localization_folder = new File(hoi4Path, "localisation\\english");
+		HOI4.localization_folder = new File(hoi4Path, "localisation");
 		HOI4.units_folder = new File(hoi4Path, "common\\units");
 		HOI4.interface_folder = new File(hoi4Path, "interface");
 		HOI4.resources_file = new File(hoi4Path, "common\\resources\\00_resources.txt");

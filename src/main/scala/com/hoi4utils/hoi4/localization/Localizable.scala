@@ -27,7 +27,7 @@ trait Localizable {
    * @return a map of localizable property identifiers and keys.
    */
   def getLocalizableProperties: mutable.Map[Property, String]
-  
+
   def localizableProperty(property: Property): Option[String] = getLocalizableProperties.get(property)
 
   def getLocalizationKeys: Iterable[String] = getLocalizableProperties.values
@@ -75,7 +75,7 @@ trait Localizable {
     case None => None
 
   def locName: Option[String] = this.localizationText(NAME)
-  
+
   def localizationStatus(property: Property): Localization.Status = localization(property) match
     case Some(l) => l.status
     case None => Localization.Status.MISSING
@@ -110,7 +110,7 @@ trait Localizable {
   def askUserForLocalizationFile: File = {
     val initialDirectory = HOIIVFiles.Mod.localization_folder
     var file = JavaFXUIManager.openChooser(initialDirectory, false)
-    if (file == null) file = new File(HOIIVFiles.Mod.localization_folder, "HOIUtils_extra_localization.yml")
+    if (file == null) file = new File(HOIIVFiles.Mod.localization_folder, "HOIIVUtils_extra_localization.yml")
     file
   }
 
@@ -162,5 +162,5 @@ trait Localizable {
    * @param text     the new localization text.
    */
   def replaceName(text: String): Unit = replaceLocalization(Property.NAME, text)
-  
+
 }
