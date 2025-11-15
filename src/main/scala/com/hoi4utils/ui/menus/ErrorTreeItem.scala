@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.menus
 
-import com.hoi4utils.script.{FocusErrorGroup, FocusTreeErrorGroup, PDXError}
+import com.hoi4utils.parser.ParsingError
+import com.hoi4utils.script.{FocusErrorGroup, FocusTreeErrorGroup, PDXFileError}
 
 import java.io.File
 
@@ -18,7 +19,7 @@ import java.io.File
 class ErrorTreeItem(
                      val displayText: String,
                      val itemType: ErrorTreeItemType,
-                     val pdxError: Option[PDXError] = None,
+                     val pdxError: Option[PDXFileError | ParsingError] = None,
                      val children: List[ErrorTreeItem] = List.empty,
                      val filePath: Option[File] = None,
                      val isStackTraceLine: Boolean = false
@@ -44,7 +45,7 @@ object ErrorTreeItem:
   /**
    * Creates a file group node with all errors from that file
    */
-  def fromFileGroup(file: File, errors: List[PDXError]): ErrorTreeItem =
+  def fromFileGroup(file: File, errors: List[PDXFileError]): ErrorTreeItem =
     val fileName = file.getName
     val errorCount = errors.size
     val fullPath = file.getAbsolutePath
@@ -89,7 +90,7 @@ object ErrorTreeItem:
   /**
    * Creates an error detail node with expandable sections
    */
-  def fromPDXError(error: PDXError): ErrorTreeItem =
+  def fromPDXError(error: PDXFileError): ErrorTreeItem =
     // Exception name as the main node
     val exceptionName = if error.exception != null then
       s"${error.exception.getClass.getSimpleName}:"
@@ -105,12 +106,12 @@ object ErrorTreeItem:
       createStackTraceDetailSection(error)
     ).flatten
 
-    new ErrorTreeItem(exceptionName, ErrorTreeItemType.ErrorDetail, Some(error), children, error.file)
+    new ErrorTreeItem(exceptionName, ErrorTreeItemType.ErrorDetail, Some(error), children, Some(error.file))
 
   /**
    * Creates the exception message node
    */
-  private def createExceptionMessageSection(error: PDXError): Option[ErrorTreeItem] =
+  private def createExceptionMessageSection(error: PDXFileError): Option[ErrorTreeItem] =
     if error.exception != null && error.exception.getMessage != null then
       Some(new ErrorTreeItem(error.exception.getMessage, ErrorTreeItemType.ErrorSection, Some(error)))
     else
@@ -119,7 +120,7 @@ object ErrorTreeItem:
   /**
    * Creates the token detail section with child nodes for each token property
    */
-  private def createTokenDetailSection(error: PDXError): Option[ErrorTreeItem] =
+  private def createTokenDetailSection(error: PDXFileError): Option[ErrorTreeItem] =
     error.exception match
       case parserEx: com.hoi4utils.parser.ParserException if parserEx.token.isDefined =>
         val token = parserEx.token.get
@@ -140,7 +141,7 @@ object ErrorTreeItem:
   /**
    * Creates the node detail section with child nodes for each node property
    */
-  private def createNodeDetailSection(error: PDXError): Option[ErrorTreeItem] =
+  private def createNodeDetailSection(error: PDXFileError): Option[ErrorTreeItem] =
     if error.errorNode != null then
       val nodeLabel = s"Node: ${error.errorNode.identifier.getOrElse("(no identifier)")}"
 
@@ -158,7 +159,7 @@ object ErrorTreeItem:
   /**
    * Creates additional info section with child nodes for each info entry
    */
-  private def createAdditionalInfoDetailSection(error: PDXError): Option[ErrorTreeItem] =
+  private def createAdditionalInfoDetailSection(error: PDXFileError): Option[ErrorTreeItem] =
     if error.additionalInfo.nonEmpty && !(error.additionalInfo.size == 1 && error.additionalInfo.contains("message")) then
       val filteredInfo = error.additionalInfo.filterNot(_._1 == "message")
 
@@ -177,7 +178,7 @@ object ErrorTreeItem:
   /**
    * Creates the stack trace section with clickable child nodes for each stack trace line
    */
-  private def createStackTraceDetailSection(error: PDXError): Option[ErrorTreeItem] =
+  private def createStackTraceDetailSection(error: PDXFileError): Option[ErrorTreeItem] =
     if error.exception != null then
       val stackTrace = error.getStackTrace
 

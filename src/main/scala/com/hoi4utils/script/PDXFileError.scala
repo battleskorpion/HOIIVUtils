@@ -1,27 +1,30 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, ParsingContext}
 
 import java.io.{File, PrintWriter, StringWriter}
 import scala.collection.mutable.ListBuffer
 
 /**
- * PDXError represents an error encountered while parsing or processing
+ * PDXError represents an error encountered while parsing or processing a script file
  * todo add more details later
  */
-class PDXError(
+class PDXFileError(
                 var exception: Exception = null,
                 var errorNode: Node = null,
                 var pdxScript: PDXScript[?] = null,
-                var file: Option[File] = None,
                 var additionalInfo: Map[String, String] = Map.empty
-              ):
+              )(using context: ParsingContext):
 
-  def addInfo(key: String, value: String): PDXError =
+  def file: File = context.file
+  def line: Option[Int] = context.line
+  def column: Option[Int] = context.column
+
+  def addInfo(key: String, value: String): PDXFileError =
     additionalInfo = additionalInfo + (key -> value)
     this
 
-  def addInfo(info: Map[String, String]): PDXError =
+  def addInfo(info: Map[String, String]): PDXFileError =
     additionalInfo = additionalInfo ++ info
     this
 
@@ -93,7 +96,7 @@ class PDXError(
 
   override def toString: String =
     // Special case: if this is just a placeholder message with no actual error data
-    if exception == null && errorNode == null && file.isEmpty && pdxScript == null &&
+    if exception == null && errorNode == null && pdxScript == null &&
        additionalInfo.size == 1 && additionalInfo.contains("message") then
       return additionalInfo("message")
 
@@ -119,9 +122,7 @@ class PDXError(
       parts += "Node Info: None"
 
     // File path
-    file match
-      case Some(f) => parts += s"File: ${f.getAbsolutePath}"
-      case None => parts += "File: None"
+    parts += s"File: ${file.getAbsolutePath}"
 
     // Class name (if pdxScript is set)
     if pdxScript != null then
@@ -140,7 +141,7 @@ class PDXError(
 /**
  * Wrapper for Focus errors - groups all errors for a single Focus
  */
-class FocusErrorGroup(val focusId: String, val errors: ListBuffer[PDXError]):
+class FocusErrorGroup(val focusId: String, val errors: ListBuffer[PDXFileError]):
   override def toString: String =
     if errors.isEmpty then
       s"\tFocus: $focusId\n\t\tNo errors"

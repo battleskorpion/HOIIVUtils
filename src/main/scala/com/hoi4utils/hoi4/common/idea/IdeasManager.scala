@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.common.idea
 
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.script.{PDXError, PDXReadable}
+import com.hoi4utils.script.{PDXFileError, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 
@@ -14,7 +14,7 @@ object IdeasManager extends PDXReadable with LazyLogging:
   override val cleanName: String = "Ideas"
   val ideaFileFileMap = new mutable.HashMap[File, IdeaFile]()
   val ideaFiles = new ListBuffer[IdeaFile]()
-  var ideaFileErrors: ListBuffer[PDXError] = ListBuffer.empty
+  var ideaFileErrors: ListBuffer[PDXFileError] = ListBuffer.empty
 
   def get(idea_file: File): Option[IdeaFile] = {
     if (!ideaFileFileMap.contains(idea_file)) new IdeaFile(idea_file)

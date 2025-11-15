@@ -2,7 +2,7 @@ package com.hoi4utils.hoi4.map.resource
 
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.{Node, ParserException}
+import com.hoi4utils.parser.{Node, ParserException, ParsingContext}
 import com.hoi4utils.script.*
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.logging.log4j.{LogManager, Logger}
@@ -32,10 +32,10 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDefinition
   }
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-    val pdxError = new PDXError(
+    given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
+    val pdxError = new PDXFileError(
       exception = exception,
       errorNode = node,
-      file = Option(file),
       pdxScript = this
     ).addInfo("resourceName", name)
     Resource.resourceErrors += pdxError
@@ -64,7 +64,7 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDefinition
 
 object Resource {
   private var resourceIdentifiers = Array("aluminium", "chromium", "oil", "rubber", "steel", "tungsten") // default: aluminium, chromium, oil, rubber, steel, tungsten todo load in resources if modified.
-  var resourceErrors: ListBuffer[PDXError] = ListBuffer().empty
+  var resourceErrors: ListBuffer[PDXFileError] = ListBuffer().empty
 
   private def setResourceIdentifiers(identifiers: Array[String]): Unit = {
     Resource.resourceIdentifiers = identifiers
@@ -77,7 +77,7 @@ object Resource {
   def newList(): List[Resource] = {
     resourceIdentifiers.map(name => new Resource(name)).toList
   }
-  
+
   def apply(): PDXSupplier[Resource] = {
     new PDXSupplier[Resource] {
       override def simplePDXSupplier(): Option[Node => Option[Resource]] = {

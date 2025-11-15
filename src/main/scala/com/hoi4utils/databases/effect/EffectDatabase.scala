@@ -31,7 +31,7 @@ object EffectDatabase extends LazyLogging {
   private val edb: String = "databases/effects.db"
   private var _connection: Connection = uninitialized
   private var _effects: List[Effect] = List()
-  var effectErrors: ListBuffer[PDXError] = ListBuffer()
+  var effectErrors: ListBuffer[PDXFileError] = ListBuffer()
 
   def init(): Unit = {
     val url = getClass.getClassLoader.getResource(edb)
@@ -113,17 +113,17 @@ object EffectDatabase extends LazyLogging {
 
           loadedEffects ++= effects
         } else {
-          val pdxError = new PDXError(
-            additionalInfo = Map(
-              "context" -> "No parameters for effect in database",
-              "pdxIdentifier" -> pdxIdentifier,
-              "supported_scopes" -> supportedScopes_str,
-              "supported_targets" -> supportedTargets_str,
-              "required_parameters_full" -> requiredParametersFull_str,
-              "required_parameters_simple" -> requiredParametersSimple_str
-            )
-          )
-          effectErrors += pdxError
+//          val pdxError = new PDXFileError(
+//            additionalInfo = Map(
+//              "context" -> "No parameters for effect in database",
+//              "pdxIdentifier" -> pdxIdentifier,
+//              "supported_scopes" -> supportedScopes_str,
+//              "supported_targets" -> supportedTargets_str,
+//              "required_parameters_full" -> requiredParametersFull_str,
+//              "required_parameters_simple" -> requiredParametersSimple_str
+//            )
+//          )
+//          effectErrors += pdxError
         }
       }
     } catch {

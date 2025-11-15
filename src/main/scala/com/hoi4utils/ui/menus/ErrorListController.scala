@@ -10,7 +10,7 @@ import com.hoi4utils.hoi4.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4.map.state.State.stateErrors
 import com.hoi4utils.main.HOIIVUtils
-import com.hoi4utils.script.{FocusTreeErrorGroup, PDXError}
+import com.hoi4utils.script.{FocusTreeErrorGroup, PDXFileError}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import javafx.application.Platform
 import javafx.concurrent.Task
@@ -60,7 +60,7 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
   private def update(): Unit =
     val treeViewsWithErrors = ListBuffer(
       (effectsEL, effectErrors),
-      (localizationEL, localizationErrors),
+//      (localizationEL, localizationErrors),
       (interfaceEL, interfaceErrors),
       (countryEL, countryErrors),
       (ideaEL, ideaFileErrors),
@@ -79,7 +79,7 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
   /**
    * Groups errors by file and creates a tree hierarchy
    */
-  private def setTreeViewItems(treeView: TreeView[ErrorTreeItem], errors: ListBuffer[PDXError]): Unit =
+  private def setTreeViewItems(treeView: TreeView[ErrorTreeItem], errors: ListBuffer[PDXFileError]): Unit =
     val root = createRootNode(errors)
     Platform.runLater(() => {
       treeView.setRoot(root)
@@ -89,7 +89,7 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
   /**
    * Creates a root node with errors grouped by file
    */
-  private def createRootNode(errors: ListBuffer[PDXError]): TreeItem[ErrorTreeItem] =
+  private def createRootNode(errors: ListBuffer[PDXFileError]): TreeItem[ErrorTreeItem] =
     val rootItem = new TreeItem(new ErrorTreeItem("Root", ErrorTreeItemType.FileGroup))
 
     if errors.isEmpty || errors == null then
@@ -99,21 +99,25 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
       // Group errors by file
       val errorsByFile = errors.groupBy(_.file)
 
-      errorsByFile.foreach {
-        case (Some(file), fileErrors) =>
-          val fileGroupItem = ErrorTreeItem.fromFileGroup(file, fileErrors.toList)
-          val fileTreeItem = buildTreeItem(fileGroupItem)
-          rootItem.getChildren.add(fileTreeItem)
-        case (None, fileErrors) =>
-          // Errors without a file - create a generic group
-          val noFileGroup = new ErrorTreeItem(
-            s"Unknown File (${fileErrors.size} ${if fileErrors.size == 1 then "error" else "errors"})",
-            ErrorTreeItemType.FileGroup,
-            None,
-            fileErrors.map(ErrorTreeItem.fromPDXError).toList
-          )
-          val noFileTreeItem = buildTreeItem(noFileGroup)
-          rootItem.getChildren.add(noFileTreeItem)
+      errorsByFile.foreach { (file, fileErrors) => 
+        // cant really map with Nones 
+//        case (Some(file), fileErrors) =>
+//          val fileGroupItem = ErrorTreeItem.fromFileGroup(file, fileErrors.toList)
+//          val fileTreeItem = buildTreeItem(fileGroupItem)
+//          rootItem.getChildren.add(fileTreeItem)
+//        case (None, fileErrors) =>
+//          // Errors without a file - create a generic group
+//          val noFileGroup = new ErrorTreeItem(
+//            s"Unknown File (${fileErrors.size} ${if fileErrors.size == 1 then "error" else "errors"})",
+//            ErrorTreeItemType.FileGroup,
+//            None,
+//            fileErrors.map(ErrorTreeItem.fromPDXError).toList
+//          )
+//          val noFileTreeItem = buildTreeItem(noFileGroup)
+//          rootItem.getChildren.add(noFileTreeItem)
+        val fileGroupItem = ErrorTreeItem.fromFileGroup(file, fileErrors.toList)
+        val fileTreeItem = buildTreeItem(fileGroupItem)
+        rootItem.getChildren.add(fileTreeItem)
       }
 
     rootItem

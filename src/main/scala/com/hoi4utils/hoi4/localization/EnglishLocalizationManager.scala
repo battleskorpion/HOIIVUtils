@@ -16,7 +16,7 @@ class EnglishLocalizationManager extends LocalizationManager with LazyLogging {
     Set("a", "above", "after", "among", // among us
       "an", "and", "around", "as", "at", "below", "beneath", "beside", "between", "but", "by", "for", "from", "if", "in", "into", "nor", "of", "off", "on", "onto", "or", "over", "since", "the", "through", "throughout", "to", "under", "underneath", "until", "up", "with")
 
-  override def language_def: String = "l_english"
+  override def languageId: String = "english"
 
   override def toString: String = s"${getClass.getName}{" + "localizations=" + localizationCollection + "}"
 }

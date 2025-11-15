@@ -18,7 +18,7 @@ class SpanishLocalizationManager extends LocalizationManager with LazyLogging {
    */
   override def capitalizationWhitelist: Set[String] = Set.empty
 
-  override def language_def: String = "l_spanish"
+  override def languageId: String = "spanish"
 
   override def toString: String = s"${getClass.getName}{" + "localizations=" + localizationCollection + "}"
 }

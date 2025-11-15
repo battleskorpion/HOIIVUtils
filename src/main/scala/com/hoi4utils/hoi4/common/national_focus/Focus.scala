@@ -6,7 +6,7 @@ import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
 import com.hoi4utils.hoi4.gfx.Interface
 import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Localization, Property}
 import com.hoi4utils.hoi4.scope.Scope
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, ParsingContext}
 import com.hoi4utils.script.*
 import com.hoi4utils.script.datatype.StringPDX
 import com.hoi4utils.script.shared.AIWillDo
@@ -55,17 +55,17 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
   /** completion reward */
   //  final val completionReward: CompletionReward = new CompletionReward()
 
-  var focusErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
+  var focusErrors: ListBuffer[PDXFileError] = ListBuffer.empty[PDXFileError]
   var _ddsImage: Option[Image] = None  // TODO: ultimately i dont want this here BUT im being lazy and improving performance.
   var _ddsImageGFX: String = "[<none>]"
 
   if node != null then loadPDX(node)
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-    val pdxError = new PDXError(
+    given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
+    val pdxError = new PDXFileError(
       exception = exception,
       errorNode = node,
-      file = if file != null then Some(file) else focusTree.focusFile,
       pdxScript = this
     ).addInfo("focusId", id.str)
     focusErrors += pdxError
@@ -149,7 +149,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
    */
   def setAbsoluteXY(newPos: Point, updateChildRelativeOffsets: Boolean): Point =
     val prevAbsolute = absolutePosition
-    
+
     val deltas = newPos - prevAbsolute
     // If there is no position change, nothing to do
     if !deltas.isZero then
@@ -168,7 +168,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
           if focus.relativePositionFocus @== this
         do
           focus.offsetXY(deltas)
-          
+
     prevAbsolute
 
   def offsetXY(offset: Point): Point =
@@ -396,7 +396,8 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
     extends MultiReferencePDX[Focus](referenceFocusesSupplier, "prerequisite", "focus"):
 
     override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-      val pdxError = new PDXError(
+      given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
+      val pdxError = new PDXFileError(
         exception = exception,
         errorNode = node,
         pdxScript = this,

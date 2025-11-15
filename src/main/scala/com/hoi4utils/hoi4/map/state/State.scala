@@ -68,10 +68,10 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
       setFile(file)
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-    val pdxError = new PDXError(
+    given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
+    val pdxError = new PDXFileError(
       exception = exception,
       errorNode = node,
-      file = if file != null then Some(file) else _stateFile,
       pdxScript = this
     ).addInfo("stateID", stateID.asOptionalString.getOrElse("unknown"))
     State.stateErrors += pdxError
@@ -315,7 +315,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging:
   override val cleanName: String = "States"
 
   private val states = new ListBuffer[State]
-  var stateErrors: ListBuffer[PDXError] = ListBuffer().empty
+  var stateErrors: ListBuffer[PDXFileError] = ListBuffer().empty
 
   def get(file: File): Option[State] =
     if file == null then return None

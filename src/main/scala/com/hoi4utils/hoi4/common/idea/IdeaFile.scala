@@ -3,7 +3,7 @@ package com.hoi4utils.hoi4.common.idea
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4.localization.Localizable
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.{Node, ParserException}
+import com.hoi4utils.parser.{Node, ParserException, ParsingContext}
 import com.hoi4utils.script.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
@@ -38,10 +38,10 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
       _file.foreach(file => IdeasManager.ideaFileFileMap.put(file, this))
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-    val pdxError = new PDXError(
+    given ParsingContext(file, node)
+    val pdxError = new PDXFileError(
       exception = exception,
       errorNode = node,
-      file = if file != null then Some(file) else _file,
       pdxScript = this
     )
     IdeasManager.ideaFileErrors += pdxError

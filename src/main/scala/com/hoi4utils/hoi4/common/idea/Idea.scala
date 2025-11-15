@@ -2,7 +2,7 @@ package com.hoi4utils.hoi4.common.idea
 
 import com.hoi4utils.databases.modifier.{Modifier, ModifierDatabase}
 import com.hoi4utils.hoi4.localization.{Localizable, Property}
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, ParsingContext}
 import com.hoi4utils.script.*
 import com.hoi4utils.shared.ExpectedRange
 import com.typesafe.scalalogging.LazyLogging
@@ -63,10 +63,11 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
     }
 
     override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-      val pdxError = new PDXError(
+      val errFile = if file != null then file else _ideaFile.flatMap(_.getFile).orNull
+      given ParsingContext(errFile, node)
+      val pdxError = new PDXFileError(
         exception = exception,
         errorNode = node,
-        file = if file != null then Some(file) else _ideaFile.flatMap(_.getFile),
         pdxScript = this
       ).addInfo("idea", Idea.this.toString)
       IdeasManager.ideaFileErrors += pdxError

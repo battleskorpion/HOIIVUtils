@@ -18,7 +18,7 @@ class RussianLocalizationManager extends LocalizationManager with LazyLogging {
    */
   override def capitalizationWhitelist: Set[String] = Set.empty
 
-  override def language_def: String = "l_russian"
+  override def languageId: String = "russian"
 
   override def toString: String = s"${getClass.getName}{" + "localizations=" + localizationCollection + "}"
 }

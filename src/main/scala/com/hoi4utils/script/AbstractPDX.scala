@@ -1,7 +1,7 @@
 package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.{Node, PDXValueType, Parser, ParserException}
+import com.hoi4utils.parser.{Node, PDXValueType, Parser, ParserException, ParsingContext}
 import com.hoi4utils.script.scripter.DefaultNodeScripter
 
 import java.io.File
@@ -230,11 +230,11 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   /* Error handling methods */
 
   def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+    given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
     if exception.getClass == classOf[UnsupportedOperationException] then throw exception
-    val pdxError = new PDXError(
+    val pdxError = new PDXFileError(
       exception = exception,
       errorNode = node,
-      file = Option(file),
       pdxScript = this,
     )
     logger.error(pdxError.toString)

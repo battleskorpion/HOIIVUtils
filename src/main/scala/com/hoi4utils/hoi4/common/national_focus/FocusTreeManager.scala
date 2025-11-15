@@ -3,7 +3,7 @@ package com.hoi4utils.hoi4.common.national_focus
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Parser, ParserException}
-import com.hoi4utils.script.{FocusTreeErrorGroup, PDXError, PDXReadable}
+import com.hoi4utils.script.{FocusTreeErrorGroup, PDXFileError, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 

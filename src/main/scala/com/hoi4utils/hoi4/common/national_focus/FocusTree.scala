@@ -4,7 +4,7 @@ import com.hoi4utils.hoi4.common.country_tags.CountryTag
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.*
 import com.hoi4utils.hoi4.localization.{Localizable, Property}
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, ParsingContext}
 import com.hoi4utils.script.*
 import com.hoi4utils.script.datatype.*
 import com.hoi4utils.shared.{BoolType, ExpectedRange}
@@ -53,7 +53,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
     ReferencePDX[SharedFocus](() => FocusTreeManager.sharedFocuses, "shared_focus")
 
   // File-level errors (parse errors, etc.)
-  var treeErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
+  var treeErrors: ListBuffer[PDXFileError] = ListBuffer.empty[PDXFileError]
 
   var name: String = ""
   var columns: Int = 1
@@ -86,10 +86,11 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
     ListBuffer(id, country, focuses)
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-    val pdxError = new PDXError(
+    val errFile = if file != null then file else _focusFile.orNull
+    given ParsingContext = if node != null then new ParsingContext(errFile, node) else ParsingContext(errFile)
+    val pdxError = new PDXFileError(
       exception = exception,
       errorNode = node,
-      file = if file != null then Some(file) else _focusFile,
       pdxScript = this
     ).addInfo("focusTreeId", id.str)
     treeErrors += pdxError
@@ -336,7 +337,7 @@ case class Point(x: Int, y: Int):
 
   def manhattanDistance(p: Point): Int =
     math.abs(x - p.x) + math.abs(y - p.y)
-    
+
   def isZero: Boolean = this == Point.Zero
 
 object Point:

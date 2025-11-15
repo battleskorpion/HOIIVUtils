@@ -2,8 +2,8 @@ package com.hoi4utils.hoi4.common.country_tags
 
 import com.hoi4utils.hoi4.history.countries.CountryFile
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.Parser
-import com.hoi4utils.script.{PDXError, PDXReadable, Referable}
+import com.hoi4utils.parser.{Parser, ParsingContext}
+import com.hoi4utils.script.{PDXFileError, PDXReadable, Referable}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, IOException}
@@ -22,11 +22,11 @@ class CountryTag private(val tag: String, var file: Option[File] = None) extends
   CountryTag.addTag(this)
 
   def get: String = tag
-  
+
   override def toString: String = {
     tag
   }
-  
+
   override def equals(obj: Any): Boolean = obj match
     case other: CountryTag => tag == other.tag
     case str: String => tag == str
@@ -58,7 +58,7 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
     _tagList.addAll(tags)
     true
   }
-  
+
   override def clear(): Unit = _tagList.clear()
 
   @throws[IOException]
@@ -74,9 +74,11 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
         val rootNode = parser.parse
 
         rootNode.foreach(node => {
+          given ParsingContext(file, node)
           CountryTag(node.name.trim, file)
         })
         Using.resource(Source.fromFile(file)) { source =>
+          given ParsingContext(file)
           source
             .getLines()
             .map(_.replaceAll("\\s", ""))
@@ -95,26 +97,37 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
     tagsBuf.toList
   }
 
+  /**
+   * Creates or retrieves a CountryTag for the given tag string.
+   * @param tag the country tag string
+   * @return the CountryTag instance
+   */
   def apply(tag: String): CountryTag = _tagList.find(_.get == tag) match
     case None => new CountryTag(tag)
     case Some(countryTag) => countryTag
 
-  def apply(tag: String, file: File): CountryTag = _tagList.find(t => t.get == tag) match
-    case None => new CountryTag(tag, Some(file))
-    case Some(countryTag) =>
-      if (countryTag.file.isEmpty)
-        countryTag.file = Some(file)
-      else if (countryTag.file.get != file)
-        val pdxError = new PDXError(
-          file = Some(file),
-          additionalInfo = Map(
-            "context" -> "Duplicate country tag found",
-            "tag" -> tag,
-            "existingFile" -> countryTag.file.get.toString
+  /**
+   * Creates or retrieves a CountryTag for the given tag string, associating it with the provided file.
+   * @param tag the country tag string
+   * @param file the file where the tag is defined
+   * @return
+   * @note `using` has to specified as second parameter list to avoid ambiguous overload issues
+   */
+  def apply(tag: String, file: File)(using ParsingContext): CountryTag =
+    _tagList.find(t => t.get == tag) match
+      case None => new CountryTag(tag, Some(file))
+      case Some(countryTag) =>
+        if (countryTag.file.isEmpty)
+          countryTag.file = Some(file)
+        else if (countryTag.file.get != file)
+          val pdxError = new PDXFileError(
+            additionalInfo = Map(
+              "context" -> "Duplicate country tag found",
+              "tag" -> tag,
+            )
           )
-        )
-        CountryFile.countryErrors += pdxError
-      countryTag
+          CountryFile.countryErrors += pdxError
+        countryTag
 
   override def iterator: Iterator[CountryTag] = _tagList.iterator
 

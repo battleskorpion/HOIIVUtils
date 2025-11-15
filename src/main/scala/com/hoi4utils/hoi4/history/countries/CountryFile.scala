@@ -7,7 +7,7 @@ import com.hoi4utils.hoi4.map.buildings.Infrastructure
 import com.hoi4utils.hoi4.map.resource.Resource
 import com.hoi4utils.hoi4.map.state.{InfrastructureData, State}
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, ParsingContext}
 import com.hoi4utils.script.*
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
@@ -61,10 +61,10 @@ class CountryFile extends StructuredPDX with HeadlessPDX with Comparable[Country
   }
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-    val pdxError = new PDXError(
+    given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
+    val pdxError = new PDXFileError(
       exception = exception,
       errorNode = node,
-      file = Option(file),
       pdxScript = this
     )
     CountryFile.countryErrors += pdxError
@@ -147,7 +147,7 @@ object CountryFile extends LazyLogging with PDXReadable {
   override val cleanName: String = "Countries"
 
   private val countries = new ListBuffer[CountryFile]()
-  var countryErrors: ListBuffer[PDXError] = ListBuffer.empty[PDXError]
+  var countryErrors: ListBuffer[PDXFileError] = ListBuffer.empty[PDXFileError]
 
   def list: List[CountryFile] = countries.toList
 
@@ -161,9 +161,13 @@ object CountryFile extends LazyLogging with PDXReadable {
     } else {
       // create focus trees from files
       val countryFiles = HOIIVFiles.Mod.country_folder.listFiles().filter(_.getName.endsWith(".txt"))
-      countryFiles.map(f => (f, CountryTag(f.getName.split(" ")(0), f))).par.foreach { (f, tag) =>
-        new CountryFile(f, tag)
-      }
+      countryFiles
+        .map(f =>
+          given ParsingContext(f)
+          (f, CountryTag(f.getName.split(" ")(0), f))
+        )
+        .par
+        .foreach { (f, tag) => new CountryFile(f, tag) }
       true
     }
   }
