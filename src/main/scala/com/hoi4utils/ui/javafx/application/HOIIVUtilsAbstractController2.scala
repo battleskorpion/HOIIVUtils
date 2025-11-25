@@ -141,8 +141,8 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
   protected def getResourceBundle(resourceFileName: String): ResourceBundle =
     val utf8Control = UTF8ResourceBundleControl()
     val resourceBundle: ResourceBundle =
-      val currentLocale = new Locale("ru") // Russian locale
-//      val currentLocale = Locale.getDefault
+//      val currentLocale = new Locale("ru") // Russian locale
+      val currentLocale = Locale.getDefault
       try
         val bundle = ResourceBundle.getBundle(resourceFileName, currentLocale, utf8Control)
         bundle
