@@ -1,5 +1,6 @@
 package com.hoi4utils.ui.javafx.application
 
+import com.hoi4utils.internal.UTF8ResourceBundleControl
 import com.hoi4utils.main.HOIIVUtils.*
 import com.hoi4utils.main.{HOIIVUtils, Initializer, Version}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController
@@ -71,7 +72,7 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
   private def version =
     new Initializer().initialize(getConfig)
     try Version.getVersion(getConfig.getProperties)
-    catch case e: Exception => 
+    catch case e: Exception =>
       logger.error("Failed to get application version", e)
       Version.DEFAULT
 
@@ -82,12 +83,12 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
       isEmbedded = primaryScene == null
       Seq(closeButton, minimizeButton, maximizeButton).foreach(b => if b != null then b.setVisible(!isEmbedded))
     )
-  
+
   protected def preSetup(): Unit = ()
 
   protected def setupWindowControls(container: Pane, additionalDraggableNodes: javafx.scene.Node*): Unit =
     setupWindowDrag(container, additionalDraggableNodes*)
-    
+
     // Made a method to be overrided by RootWindows
     setCloseButtonAction()
 
@@ -138,16 +139,17 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
   }
 
   protected def getResourceBundle(resourceFileName: String): ResourceBundle =
+    val utf8Control = UTF8ResourceBundleControl()
     val resourceBundle: ResourceBundle =
-      //    val currentLocale = new Locale("tr", "TR") // Turkish locale
-      val currentLocale = Locale.getDefault
+      val currentLocale = new Locale("ru") // Russian locale
+//      val currentLocale = Locale.getDefault
       try
-        val bundle = ResourceBundle.getBundle(resourceFileName, currentLocale)
+        val bundle = ResourceBundle.getBundle(resourceFileName, currentLocale, utf8Control)
         bundle
       catch
         case _: MissingResourceException =>
           logger.error(s"Could not find ResourceBundle for locale $currentLocale. Falling back to English.")
-          val fallbackBundle = ResourceBundle.getBundle("i18n.menu", Locale.US)
+          val fallbackBundle = ResourceBundle.getBundle("i18n.menu", Locale.US, utf8Control)
           logger.error(s"Fallback ResourceBundle loaded: ${fallbackBundle.getLocale}")
           fallbackBundle
     if resourceBundle == null then
