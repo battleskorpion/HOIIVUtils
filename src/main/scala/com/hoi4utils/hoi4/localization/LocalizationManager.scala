@@ -114,11 +114,10 @@ abstract class LocalizationManager extends LazyLogging {
    * @param key the key for the localization to retrieve
    * @return an Option containing the Localization for the given key,
    *         or None if the localization does not exist
-   * @throws IllegalArgumentException if the key is null
    */
   @throws[IllegalArgumentException]
   def getLocalization(key: String): Option[Localization] =
-    if (key == null) throw new IllegalArgumentException("localization ID cannot be null")
+    require(key != null, "Localization ID cannot be null.")
     localizations.get(key)
 
   /**
@@ -133,8 +132,8 @@ abstract class LocalizationManager extends LazyLogging {
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
   def setLocalization(key: String, localization: Localization): Option[Localization] =
-    require(key != null, "Key cannot be null.")
-    require (localization != null, "Localization cannot be null.")
+    require(key != null, "Localization ID cannot be null.")
+    require(localization != null, "Localization cannot be null.")
     localizations.get(key) match
       case Some(prevLocalization) =>
         if (prevLocalization.isReplaceableBy(localization)) return localizations.replace(key, localization)
