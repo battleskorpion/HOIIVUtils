@@ -340,91 +340,12 @@ abstract class LocalizationManager extends LazyLogging {
           parseLine(line, file, status)
         true
     }
-//    try {
-//
-//      while (scanner.hasNextLine) {
-//        val line = scanner.nextLine
-//        if (line.trim.nonEmpty && line.trim.charAt(0) != '#')
-//          val data = line.splitWithDelimiters(versionNumberRegex, 2)
-//          if (data.length != 3)
-//            val pdxError = new PDXError(
-//              file = Some(file),
-//              additionalInfo = Map(
-//                "context" -> "Invalid localization file format",
-//                "line" -> line,
-//                "reason" -> "incorrect number of line elements"
-//              )
-//            )
-//            localizationErrors += pdxError
-//          else
-//            // trim whitespace
-//            data mapInPlace (s => s.trim)
-//
-//            val key = data(0)
-//            // ignore ":" before version number
-//            val version = data(1).substring(1)
-//            // ignore escaped quotes
-//            var value = data(2).replaceAll("//\"", "\u0000")
-//
-//            val startQuote = value.indexOf("\"")
-//            val endQuote = value.lastIndexOf("\"")
-//            val extra = value.substring(endQuote + 1).trim
-//            var invalid = false
-//            if (extra.nonEmpty && !extra.startsWith("#"))
-//              val pdxError = new PDXError(
-//                file = Some(file),
-//                additionalInfo = Map(
-//                  "context" -> "Invalid localization file format",
-//                  "line" -> line,
-//                  "reason" -> "extraneous non-comment data after localization entry",
-//                  "extra" -> extra
-//                )
-//              )
-//              localizationErrors += pdxError
-//              invalid = true
-//            if (startQuote != 0 || endQuote == -1 || startQuote == endQuote)
-//              val pdxError = new PDXError(
-//                file = Some(file),
-//                additionalInfo = Map(
-//                  "context" -> "Invalid localization file format",
-//                  "line" -> line,
-//                  "reason" -> "localization value is not correctly enclosed in quotes"
-//                )
-//              )
-//              localizationErrors += pdxError
-//              invalid = true
-//            if (!invalid)
-//              // remove leading/trailing quotes (and any comments)
-//              value = value.substring(startQuote + 1, endQuote)
-//              // fix file format issues (as it is a UTF-8 BOM file)
-//              value = value.trim.replaceAll("(Â§)", "§")
-//              /*
-//              .yml example format:
-//              CONTROLS_GREECE: "Controls all states in the §Y$strategic_region_greece$§! strategic region"
-//              CONTROLS_ASIA_MINOR:1 "Controls all states in the §Y$strategic_region_asia_minor$§! strategic region"
-//              */
-//              val localization = new Localization(key, if (version.isBlank) None else version.trim.toIntOption, value, status)
-//              localizations.add(localization, file)
-//      }
-//    } catch {
-//      case exc: IOException =>
-//        exc.printStackTrace()
-//    } finally if (scanner != null) scanner.close()
   }
 
   /**
    * Reads the header (`l_<language`> line). Returns `true` if the correct language was found.
    */
   private def readLanguageHeader(scanner: Scanner, file: File, languageId: String): Boolean =
-    //      while (scanner.hasNextLine && !languageFound) {
-    //        var line = scanner.nextLine
-    //        /* ignore BOM */
-    //        if (line.startsWith("\uFEFF")) line = line.substring(1)
-    //        if (line.trim.nonEmpty && line.trim.charAt(0) != '#')
-    //          if (!line.trim.startsWith(language_def))
-    //            return ()
-    //          else languageFound = true
-    //      }
     var languageFound = false
     var continue = true
 
