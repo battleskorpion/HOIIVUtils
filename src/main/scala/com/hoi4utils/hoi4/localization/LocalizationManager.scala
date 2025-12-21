@@ -12,6 +12,7 @@ import java.io.*
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import java.util.Scanner
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.StreamConverters.StreamHasToScala
 import scala.jdk.javaapi.CollectionConverters
@@ -245,17 +246,13 @@ abstract class LocalizationManager extends LazyLogging {
    * @return Returns the edited string unless the string has no words
    */
   def titleCapitalize(title: String): String = {
-    if (title == null) return null
-    if (title.trim.isEmpty) return title
+    if (title.isBlank) return title
 
-    val words = title.split(" ").toBuffer
+    val words = title.split(" ").filter(w => !w.isBlank).toBuffer
     val whitelist = capitalizationWhitelist
 
-    if (words.head.length == 1) words(0) = Character.toUpperCase(words.head.charAt(0)) + ""
-    else if (words.head.length > 1) words(0) = Character.toUpperCase(words.head.charAt(0)) + words.head.substring(1)
-    else
-      // todo this should never happen now right?
-      logger.error("first word length < 1")
+    // capitalize first word
+    capitalizeWord(words.head)
 
     logger.debug("num words: " + words.size)
     for
@@ -271,6 +268,19 @@ abstract class LocalizationManager extends LazyLogging {
 
     logger.debug("capitalized: " + String.join(" ", CollectionConverters.asJava(words)))
     String.join(" ", CollectionConverters.asJava(words))
+  }
+
+  private def capitalizeWord(word: String): String = {
+    if (word.length == 1) capitalizeStartOfTitle(word).toString + ""
+    else if (word.length > 1) capitalizeStartOfTitle(word).toString + word.substring(1)
+    else
+      // todo this should never happen now right?
+      logger.error("first word length < 1")
+      ""  // todo?
+  }
+
+  private def capitalizeStartOfTitle(str: String) = {
+    Character.toUpperCase(str.head)
   }
 
   // todo let user change?
@@ -622,7 +632,8 @@ object LocalizationParser:
         catch
           case _: Exception => None
 
-  /** Parses a quoted string starting at startIndex (which should point to a double quote).
+  /**
+   * Parses a quoted string starting at startIndex (which should point to a double quote).
    * It handles inner escaped quotes represented by a double double-quote.
    * Returns a tuple with the parsed string and the index immediately after the closing quote.
    */
