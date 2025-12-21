@@ -6,7 +6,9 @@ import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
 import com.hoi4utils.script.PDXFileError
 import com.typesafe.scalalogging.LazyLogging
+import dotty.tools.dotc.core.StdNames.str
 import scalafx.beans.value
+import scalafx.scene.text
 
 import java.io.*
 import java.nio.charset.StandardCharsets
@@ -135,17 +137,14 @@ abstract class LocalizationManager extends LazyLogging {
   def setLocalization(key: String, localization: Localization): Option[Localization] =
     require(key != null, "Localization ID cannot be null.")
     require(localization != null, "Localization cannot be null.")
-    localizations.get(key) match
-      case Some(prevLocalization) =>
-        if (prevLocalization.isReplaceableBy(localization)) return localizations.replace(key, localization)
-        else throw new UnexpectedLocalizationStatusException(prevLocalization, localization)
-      case None =>
-        if (localization.isNew) {
-          // todo
-        }
-        else throw new IllegalArgumentException("Localization is not new, but there is no existing mod localization for the given key.")
-
-    null
+    if localizations.containsKey(key) then replacePrevious(key, localization)
+    else
+      if (localization.isNew) {
+//        localizations.add(localization, file)
+//        Some(localization)
+      }
+      else throw new IllegalArgumentException("Localization is not new, but there is no existing mod localization for the given key.")
+    None
 
   /**
    * Sets the localization for the given key, with the given text.
@@ -158,7 +157,7 @@ abstract class LocalizationManager extends LazyLogging {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def setLocalization(key: String, text: String, file: File): Option[Localization] =
+  def setLocalization(key: String, text: String, file: File): Option[Localization] = 
     setLocalization(key, None, text, file)
 
   /**
@@ -176,7 +175,7 @@ abstract class LocalizationManager extends LazyLogging {
     require(key != null, "Key cannot be null.")
     localizations.get(key) match
       case Some(prevLocalization) =>
-        val localization = prevLocalization.replaceWith(text, version, file)
+        val localization = prevLocalization.copyForReplace(text, version, file)
         localizations.replace(key, localization)
       case None =>
         val localization = new Localization(key, version, text, Localization.Status.NEW)
@@ -196,11 +195,27 @@ abstract class LocalizationManager extends LazyLogging {
     require(key != null, "Key cannot be null.")
     localizations.get(key) match
       case Some(prevLocalization) =>
-        val localization = prevLocalization.replaceWith(text)
+        val localization = prevLocalization.copyForReplace(text)
         // there are maps that support mapping to null, which is why the null check is necessary.
         // (read the docs for the replace method)
         localizations.replace(key, localization)
       case None => throw new IllegalArgumentException("Localization with the given key does not exist.")
+
+  private def replacePrevious(key: String, localization: Localization): Option[Localization] =
+    if localizations.containsKey(key) then replace(key, localization)
+    else throw new IllegalArgumentException("Localization is not new, but there is no existing mod localization for the given key.")
+
+  private def replace(key: String, localization: Localization) =
+    localizations.get(key) match
+      case Some(prevLocalization) =>
+        if prevLocalization.isReplaceableBy(localization) then 
+          localizations.replace(key, localization)
+        else throw new UnexpectedLocalizationStatusException(prevLocalization, localization)
+      case None => throw new IllegalArgumentException("There is no existing mod localization to replace for the given key.")
+
+  @throws[LocalizationExistsException]
+  def addLocalization(localization: Localization, file: File): Unit =
+    addLocalization(localization, localizations, file)
 
   /**
    * Adds a new localization to the localization list if it does not already exist.
@@ -208,14 +223,10 @@ abstract class LocalizationManager extends LazyLogging {
    * @param localization the localization to add
    */
   @throws[LocalizationExistsException]
-  def addLocalization(localization: Localization, localizationCollection: LocalizationCollection, file: File): Unit =
-    if (localization == null) return
-    if (localizationCollection.containsLocKey(localization.id)) throw new LocalizationExistsException(localization)
+  protected def addLocalization(localization: Localization, localizationCollection: LocalizationCollection, file: File): Unit =
+    require(localization != null, "Localization cannot be null.")
+    if (localizationCollection.containsKey(localization.id)) throw new LocalizationExistsException(localization)
     localizationCollection.add(localization, file)
-
-  @throws[LocalizationExistsException]
-  def addLocalization(localization: Localization, file: File): Unit =
-    addLocalization(localization, localizations, file)
 
   /**
    * Checks if the given localization ID is localized (has a localization entry).
@@ -260,27 +271,16 @@ abstract class LocalizationManager extends LazyLogging {
       if !LocalizationManager.isAcronym(words(i))
       if !whitelist.contains(words(i))
     do
-      if (words(i).length == 1)
-        words(i) = words(i).charAt(0).toUpper + ""
-      else if (words(i).length > 1)
-        logger.debug("working cap")
-        words(i) = words(i).charAt(0).toUpper + words(i).substring(1)
+      words(i) = capitalizeWord(words(i))
 
     logger.debug("capitalized: " + String.join(" ", CollectionConverters.asJava(words)))
     String.join(" ", CollectionConverters.asJava(words))
   }
 
   private def capitalizeWord(word: String): String = {
-    if (word.length == 1) capitalizeStartOfTitle(word).toString + ""
-    else if (word.length > 1) capitalizeStartOfTitle(word).toString + word.substring(1)
-    else
-      // todo this should never happen now right?
-      logger.error("first word length < 1")
-      ""  // todo?
-  }
-
-  private def capitalizeStartOfTitle(str: String) = {
-    Character.toUpperCase(str.head)
+    if (word.isBlank) word
+    else if (word.length == 1) word.head.toUpper.toString
+    else word.head.toUpper.toString + word.substring(1)
   }
 
   // todo let user change?

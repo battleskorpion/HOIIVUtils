@@ -81,7 +81,7 @@ class LocalizationCollection extends mutable.HashMap[File, ListBuffer[Localizati
    * @param id the ID of the localization to check
    * @return true if the localization is localized, false otherwise
    */
-  def containsLocKey(id: String): Boolean = {
+  def containsKey(id: String): Boolean = {
     // Fast lookup from index
     localizationKeyMap.keySet.contains(id)
     // localizationKeyMap.containsKey(id)

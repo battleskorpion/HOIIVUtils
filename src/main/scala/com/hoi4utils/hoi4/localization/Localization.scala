@@ -7,7 +7,7 @@ import java.io.File
 
 case class Localization(
                          id: String,
-                         version: Option[Int],
+                         version: Option[Int] = Some(0),
                          text: String,
                          status: Localization.Status
                        ) {
@@ -18,17 +18,17 @@ case class Localization(
   @throws[UnexpectedLocalizationStatusException]
   def isReplaceableBy(other: Localization): Boolean = status match {
     case Status.NEW =>
-      if other.status != Status.NEW then
+      if other.status != Status.NEW then 
         throw UnexpectedLocalizationStatusException(this, other)
       else true
 
     case Status.EXISTS =>
-      if other.status != Status.UPDATED then
+      if other.status != Status.UPDATED then 
         throw UnexpectedLocalizationStatusException(this, other)
       else true
 
     case Status.UPDATED =>
-      if other.status != Status.UPDATED && other.status != Status.EXISTS then
+      if other.status != Status.UPDATED && other.status != Status.EXISTS then 
         throw UnexpectedLocalizationStatusException(this, other)
       else true
 
@@ -44,14 +44,13 @@ case class Localization(
   def isNew: Boolean = status == Status.NEW
 
   /** Copy with new text; always bumps you to UPDATED. */
-  def replaceWith(newText: String): Localization =
-    copy(text = newText, status = Status.UPDATED)
+  def copyForReplace(newText: String): Localization = copy(text = newText, status = Status.UPDATED)
 
   /**
    * Copy with new text and version, preserving NEW→NEW but EXISTS→UPDATED, etc.
    */
   @throws[UnexpectedLocalizationStatusException]
-  def replaceWith(newText: String, newVersion: Option[Int], file: File): Localization = {
+  def copyForReplace(newText: String, newVersion: Option[Int], file: File): Localization = {
     val newStatus = status match
       case Status.NEW     => Status.NEW
       case Status.EXISTS  => Status.UPDATED
