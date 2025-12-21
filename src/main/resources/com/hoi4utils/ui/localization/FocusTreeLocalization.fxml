@@ -36,7 +36,7 @@
             <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
          </GridPane.margin></Label>
 	  <Label GridPane.rowIndex="4" />
-	  <Label fx:id="numLocAddedLabel" maxHeight="-Infinity" maxWidth="-Infinity" text="Added localization to x focuses" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+	  <Label fx:id="numLocAddedLabel" maxHeight="-Infinity" maxWidth="-Infinity" text="Added auto-generated localization to x focuses" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
       <Label maxWidth="1.7976931348623157E308" text="Focus Tree:">
          <GridPane.margin>
             <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
