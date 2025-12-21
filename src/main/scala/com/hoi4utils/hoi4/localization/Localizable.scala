@@ -76,6 +76,9 @@ trait Localizable {
   def localizationStatus(property: Property): Localization.Status = localization(property) match
     case Some(l) => l.status
     case None => Localization.Status.MISSING
+    
+  def localizationStatuses: Map[Property, Localization.Status] =
+    localizableProperties.iterator.map(m => (m._1, localizationStatus(m._1))).toMap
 
   // todo may bring back at some point
   //	/**
@@ -151,4 +154,5 @@ trait Localizable {
    */
   def replaceName(text: String): Unit = replaceLocalization(Property.NAME, text)
 
+  def hasNewLocalization: Boolean = this.
 }

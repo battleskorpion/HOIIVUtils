@@ -189,9 +189,9 @@ public class IdeaLocalizationController extends HOIIVUtilsAbstractController imp
         }
     }
 
-    private void updateNumLocalizedIdeaes(int numLocalizedIdeaes) {
+    private void updateNumLocalizedIdeas(int numLocalizedIdeas) {
         numLocAddedLabel.setText(numLocAddedLabel.getText()
-                .replace("x", String.valueOf(numLocalizedIdeaes)));
+	        .replace("x", String.valueOf(numLocalizedIdeas)));
     }
 
     /**

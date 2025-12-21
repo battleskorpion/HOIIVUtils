@@ -126,11 +126,11 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
             JOptionPane.showMessageDialog(null, "Error: Focus tree not properly initialized.");
             return;
         }
-        
+
         /* load focus loc */
         try {
             FixFocus.fixLocalization(focusTreeFile, generateDummyDescriptions);
-            updateNumLocalizedFocuses(focusTreeFile.listFocuses().count(Focus::isLocalized));
+            updateNumAddedLocalization(focusTreeFile.listFocuses().count(Focus::isLocalized));
         } catch (IOException | LocalizationPreconditionException e) {
             openError(e);
             return;
@@ -170,7 +170,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
                 "Attempted to update focus " + focus + " in focus observable list, but it was not found in the list.");
     }
 
-    private void updateNumLocalizedFocuses(int numLocalizedFocuses) {
+    private void updateNumAddedLocalization(int numLocalizedFocuses) {
         numLocAddedLabel.setText(numLocAddedLabel.getText()
                 .replace("x", String.valueOf(numLocalizedFocuses)));
     }
@@ -211,7 +211,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
                     setGraphic(null); // Clear any previous content
                 } else {
                     Localization.Status textStatus = focus.localizationStatus(Property.valueOf("NAME"));
-                    Localization.Status descStatus = focus.localizationStatus(Property.valueOf("DESCRIPTION")); 
+                    Localization.Status descStatus = focus.localizationStatus(Property.valueOf("DESCRIPTION"));
 
                     boolean hasStatusUpdated = textStatus == Localization.Status.valueOf("UPDATED")
                             || descStatus == Localization.Status.valueOf("UPDATED");

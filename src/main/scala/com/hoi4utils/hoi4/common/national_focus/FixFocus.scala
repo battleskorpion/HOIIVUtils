@@ -23,7 +23,7 @@ object FixFocus extends LazyLogging {
    */
   @throws[IOException]
   @throws[LocalizationPreconditionException]
-  def fixLocalization(focusTree: FocusTree, generateDefaultDescs: Boolean): Unit = {
+  def fixLocalization(focusTree: FocusTree, generateDefaultDescs: Boolean): Int = {
     logger.debug(s"Starting fixLocalization for FocusTree: $focusTree")
     requireLocalizableFocusTree(focusTree)
 
@@ -34,11 +34,12 @@ object FixFocus extends LazyLogging {
     logger.debug("Localization Manager loaded.")
     logger.debug(s"Primary localization file: ${locFile.getAbsolutePath}")
     logger.debug(s"Total focuses in tree: ${focuses.size}")
-
+    
     // add name localization if missing
     focuses filter (_.isUnlocalized(Property.NAME)) foreach { focus =>
       logger.debug(s"Missing localization for focus: ${focus.id.str}")
       setGeneratedNameLocalization(focus, locManager, locFile)
+      logger.debug("TEST 1")
     }
 
     // add desc localization if missing
@@ -46,7 +47,10 @@ object FixFocus extends LazyLogging {
       logger.debug(s"Missing localization for focus: ${focus.id.str}")
       if (generateDefaultDescs) setGeneratedDescLocalization(focus, locManager, locFile)
       else setEmptyDescLocalization(focus, locManager, locFile)
+      logger.debug("TEST 2")
     }
+    
+    focuses.count(f => f.hasNewLocalization)
 
     logger.debug("Finished fixing focus localization.")
   }
