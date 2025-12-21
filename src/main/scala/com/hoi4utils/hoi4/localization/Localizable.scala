@@ -154,5 +154,5 @@ trait Localizable {
    */
   def replaceName(text: String): Unit = replaceLocalization(Property.NAME, text)
 
-  def hasNewLocalization: Boolean = this.
+  def hasNewLocalization: Boolean = this.localizationStatuses.values.exists(s => s == Localization.Status.NEW)
 }
