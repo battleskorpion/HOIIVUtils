@@ -34,7 +34,7 @@ object FixFocus extends LazyLogging {
     logger.debug("Localization Manager loaded.")
     logger.debug(s"Primary localization file: ${locFile.getAbsolutePath}")
     logger.debug(s"Total focuses in tree: ${focuses.size}")
-    
+
     // add name localization if missing
     focuses filter (_.isUnlocalized(Property.NAME)) foreach { focus =>
       logger.debug(s"Missing localization for focus: ${focus.id.str}")
@@ -49,10 +49,9 @@ object FixFocus extends LazyLogging {
       else setEmptyDescLocalization(focus, locManager, locFile)
       logger.debug("TEST 2")
     }
-    
-    focuses.count(f => f.hasNewLocalization)
 
     logger.debug("Finished fixing focus localization.")
+    focuses.count(f => f.hasNewLocalization)
   }
 
   @throws[IllegalArgumentException]

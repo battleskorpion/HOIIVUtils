@@ -129,8 +129,8 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
 
         /* load focus loc */
         try {
-            FixFocus.fixLocalization(focusTreeFile, generateDummyDescriptions);
-            updateNumAddedLocalization(focusTreeFile.listFocuses().count(Focus::isLocalized));
+            int numUpdated = FixFocus.fixLocalization(focusTreeFile, generateDummyDescriptions);
+            updateNumAddedLocalization(numUpdated);
         } catch (IOException | LocalizationPreconditionException e) {
             openError(e);
             return;
