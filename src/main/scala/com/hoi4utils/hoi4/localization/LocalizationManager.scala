@@ -263,7 +263,7 @@ abstract class LocalizationManager extends LazyLogging {
     val whitelist = capitalizationWhitelist
 
     // capitalize first word
-    capitalizeWord(words.head)
+    words(0) = capitalizeWord(words.head)
 
     logger.debug("num words: " + words.size)
     for
