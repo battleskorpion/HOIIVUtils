@@ -61,15 +61,6 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
 
   if node != null then loadPDX(node)
 
-  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-    given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
-    val pdxError = new PDXFileError(
-      exception = exception,
-      errorNode = node,
-      pdxScript = this
-    ).addInfo("focusId", id.str)
-    focusErrors += pdxError
-
   /**
    * @inheritdoc
    */
@@ -391,6 +382,15 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
     ()
 
   override def referableID: Option[String] = id.value
+
+  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+    given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
+    val pdxError = new PDXFileError(
+      exception = exception,
+      errorNode = node,
+      pdxScript = this
+    ).addInfo("focusId", id.str)
+    focusErrors += pdxError
 
   class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus] = () => focusTree.focuses)
     extends MultiReferencePDX[Focus](referenceFocusesSupplier, "prerequisite", "focus"):
