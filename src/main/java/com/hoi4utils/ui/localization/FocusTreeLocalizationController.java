@@ -81,7 +81,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
         focusLocStatusColumn.setCellValueFactory(JavaFXUIManager.tableCellDataCallback(dataFunction));
 
         /* load data */
-        focusTreeComboBox.setItems(FocusTreeManager.observeFocusTrees());
+        focusTreeComboBox.setItems(FocusTreeManager.observeFocusTrees().sorted());
 
         /* buttons */
         saveButton.setDisable(true);
