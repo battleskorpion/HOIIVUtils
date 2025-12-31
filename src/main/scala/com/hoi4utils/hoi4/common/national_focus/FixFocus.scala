@@ -2,7 +2,7 @@ package com.hoi4utils.hoi4.common.national_focus
 
 import com.hoi4utils.exceptions.LocalizationPreconditionException
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
-import com.hoi4utils.hoi4.localization.{LocalizationManager, Property}
+import com.hoi4utils.hoi4.localization.{LocalizationFormatter, LocalizationManager, Property}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, IOException}
@@ -27,7 +27,8 @@ object FixFocus extends LazyLogging {
     logger.debug(s"Starting fixLocalization for FocusTree: $focusTree")
     requireLocalizableFocusTree(focusTree)
 
-    val locManager = LocalizationManager.get
+//    val locManager = LocalizationManager.get
+    val locFormatter = new LocalizationFormatter
     val locFile = focusTree.primaryLocalizationFile.get
     val focuses = focusTree.focuses
 
@@ -38,15 +39,15 @@ object FixFocus extends LazyLogging {
     // add name localization if missing
     focuses filter (_.isUnlocalized(Property.NAME)) foreach { focus =>
       logger.debug(s"Missing localization for focus: ${focus.id.str}")
-      setGeneratedNameLocalization(focus, locManager, locFile)
+      setGeneratedNameLocalization(focus, locFormatter, locFile)
       logger.debug("TEST 1")
     }
 
     // add desc localization if missing
     focuses filter (_.isUnlocalized(Property.DESCRIPTION)) foreach { focus =>
       logger.debug(s"Missing localization for focus: ${focus.id.str}")
-      if (generateDefaultDescs) setGeneratedDescLocalization(focus, locManager, locFile)
-      else setEmptyDescLocalization(focus, locManager, locFile)
+      if (generateDefaultDescs) setGeneratedDescLocalization(focus, locFormatter, locFile)
+      else setEmptyDescLocalization(focus, locFormatter, locFile)
       logger.debug("TEST 2")
     }
 
@@ -69,20 +70,20 @@ object FixFocus extends LazyLogging {
    * @param locManager
    * @param locFile
    */
-  private def setGeneratedNameLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
+  private def setGeneratedNameLocalization(focus: Focus, locFormatter: LocalizationFormatter, locFile: File): Unit = {
     val focusName = extractFocusName(focus.id getOrElse "Unnamed_Focus")
     // Format the focus name
-    val formattedName = locManager.titleCapitalize(focusName.replaceAll("_+", " ").trim)
+    val formattedName = locFormatter.titleCapitalize(focusName.replaceAll("_+", " ").trim)
 
     // Set missing localizations
     focus.setLocalization(Property.NAME, formattedName, locFile)
   }
 
-  private def setGeneratedDescLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
+  private def setGeneratedDescLocalization(focus: Focus, locFormatter: LocalizationFormatter, locFile: File): Unit = {
     focus.setLocalization(Property.DESCRIPTION, generateDescription, locFile)
   }
 
-  private def setEmptyDescLocalization(focus: Focus, locManager: LocalizationManager, locFile: File): Unit = {
+  private def setEmptyDescLocalization(focus: Focus, locFormatter: LocalizationFormatter, locFile: File): Unit = {
     focus.setLocalization(Property.DESCRIPTION, "", locFile)
   }
 

@@ -59,7 +59,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
   var _ddsImage: Option[Image] = None  // TODO: ultimately i dont want this here BUT im being lazy and improving performance.
   var _ddsImageGFX: String = "[<none>]"
 
-  if node != null then loadPDX(node)
+  if node != null then loadPDX(node, focusTree.getFile)
 
   /**
    * @inheritdoc

@@ -4,6 +4,7 @@ import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierExc
 import com.hoi4utils.parser.Node
 import com.typesafe.scalalogging.LazyLogging
 
+import java.io.File
 import scala.collection.mutable.ListBuffer
 
 abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) with LazyLogging {
@@ -51,17 +52,17 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
   /**
    * @inheritdoc
    */
-  override def loadPDX(expression: Node): Unit = {
+  override def loadPDX(expression: Node, file: Option[File]): Unit = {
     if isExpressionIdentifierExpected then
       expression.identifier match
         case None => expression.$ match
           case l: ListBuffer[Node] => loadPDX(l)
           case _ =>
-            handlePDXError(NodeValueTypeException("PDXScript.loadPDX: Expected list of nodes, got: \n" + expression), expression, null)
+            handlePDXError(NodeValueTypeException("PDXScript.loadPDX: Expected list of nodes, got: \n" + expression), expression, file.orNull)
         case Some(_) =>
-          super.loadPDX(expression)
+          super.loadPDX(expression, file)
     else
-      super.loadPDX(expression)
+      super.loadPDX(expression, file)
   }
 
   /**

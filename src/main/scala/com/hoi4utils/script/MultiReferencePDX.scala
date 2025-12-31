@@ -4,6 +4,7 @@ import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierExc
 import com.hoi4utils.parser.Node
 import com.typesafe.scalalogging.LazyLogging
 
+import java.io.File
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
@@ -36,14 +37,14 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
    * @param expression
    * @throws UnexpectedIdentifierException
    */
-  override def loadPDX(expression: Node): Unit =
+  override def loadPDX(expression: Node, file: Option[File]): Unit =
     expression.$ match
       case list: ListBuffer[Node] =>
         usingIdentifier(expression)
 
-        for (child <- list) super.loadPDX(child)
+        for (child <- list) super.loadPDX(child, file)
         this.node = Some(expression)
-      case _ => super.loadPDX(expression)
+      case _ => super.loadPDX(expression, file)
 
   def validReferences: Option[ListBuffer[T]] = references() match
     case list if list.isEmpty => None
@@ -71,13 +72,13 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override protected def addToCollection(expression: Node): Unit =
+  override protected def addToCollection(expression: Node, file: Option[File]): Unit =
     checkReferenceIdentifier(expression)
     expression.$ match
       case str: String =>
         if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
         val childScript = simpleSupplier.get.apply()
-        childScript.loadPDX(expression)
+        childScript.loadPDX(expression, file)
         pdxList.addOne(childScript)
         referenceNames.addOne(str)
       case other =>
@@ -86,7 +87,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
         val preservedValue = other.toString
         if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
         val childScript = simpleSupplier.get.apply()
-        childScript.loadPDX(new Node(preservedValue))
+        childScript.loadPDX(new Node(preservedValue), file)
         pdxList.addOne(childScript)
         referenceNames.addOne(preservedValue)
         // Then throw the exception so that callers are aware of the issue.

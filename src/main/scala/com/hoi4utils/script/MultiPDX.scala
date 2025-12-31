@@ -4,6 +4,7 @@ import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierExc
 import com.hoi4utils.parser.Node
 import org.apache.poi.ss.formula.functions.T
 
+import java.io.File
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
@@ -33,7 +34,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   /**
    * @inheritdoc
    */
-  override def loadPDX(expression: Node): Unit = loadPDXCollection(expression)
+  override def loadPDX(expression: Node, file: Option[File]): Unit = loadPDXCollection(expression, file)
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
@@ -48,19 +49,19 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override protected def addToCollection(expression: Node): Unit =
+  override protected def addToCollection(expression: Node, file: Option[File]): Unit =
     usingIdentifier(expression)
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     expression.$ match
       case l: ListBuffer[Node] =>
         val childScript = applySupplier(expression)
-        childScript.loadPDX(expression)
+        childScript.loadPDX(expression, file)
         pdxList.addOne(childScript)
       case _ =>
         if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "not a list", this.getClass)
         val childScript = simpleSupplier.get.apply()
-        childScript.loadPDX(expression)
+        childScript.loadPDX(expression, file)
         pdxList.addOne(childScript)
 
   def removeIf(p: T => Boolean): ListBuffer[T] =

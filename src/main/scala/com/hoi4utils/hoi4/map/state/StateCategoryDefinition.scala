@@ -12,7 +12,8 @@ class StateCategoryDefinition(pdxIdentifier: String) extends StructuredPDX(pdxId
 
   def this(node: Node) = {
     this(node.name)
-    loadPDX(node)
+    var file = None
+    loadPDX(node, file)
   }
 
   override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = {

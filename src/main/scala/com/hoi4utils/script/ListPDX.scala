@@ -3,6 +3,7 @@ package com.hoi4utils.script
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 
+import java.io.File
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -42,7 +43,7 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
   /**
    * @inheritdoc
    */
-  override def loadPDX(expression: Node): Unit = loadPDXCollection(expression)
+  override def loadPDX(expression: Node, file: Option[File]): Unit = loadPDXCollection(expression, file)
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
@@ -57,17 +58,17 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override protected def addToCollection(expression: Node): Unit = {
+  override protected def addToCollection(expression: Node, file: Option[File]): Unit = {
     expression.$ match {
       case l: ListBuffer[Node] =>
         for (childExpr <- l) {
           val childScript = useSupplierFunction(childExpr)
-          childScript.loadPDX(childExpr)
+          childScript.loadPDX(childExpr, file)
           pdxList += childScript
         }
       case _ =>
         val childScript = useSupplierFunction(expression)
-        childScript.loadPDX(expression)
+        childScript.loadPDX(expression, file)
         pdxList += childScript
     }
   }
@@ -77,7 +78,7 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
    * Also removes the corresponding node(s) from the underlying Node.
    */
   def removeIf(p: T => Boolean): ListBuffer[T] =
-    for 
+    for
       i <- pdxList.indices.reverse
       if p(pdxList(i))
     do
@@ -85,7 +86,7 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
       node match
         case Some(n) => n.remove(i)
         case None => // do nothing
-    
+
     pdxList
 
   protected def useSupplierFunction(expression: Node): T =

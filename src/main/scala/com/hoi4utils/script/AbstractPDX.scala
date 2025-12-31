@@ -75,7 +75,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   /**
    * @inheritdoc
    */
-  override def loadPDX(expression: Node): Unit =
+  override def loadPDX(expression: Node, file: Option[File]): Unit =
     if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then
       logger.error("Error loading PDX script: " + expression)
     else
@@ -83,7 +83,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
         set(expression)
       catch
         case e: Exception =>
-          handlePDXError(e, expression)
+          handlePDXError(e, expression, file.orNull)
           node = Some(expression)
 
   /**
@@ -96,7 +96,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
     case _ =>
       val remaining = ListBuffer.from(expressions)
       expressions filter isValidIdentifier foreach { expression =>
-        loadPDX(expression)
+        loadPDX(expression, None)
         remaining -= expression
       }
       remaining
@@ -104,7 +104,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   protected def loadPDX(file: File): Unit =
     require(file.exists && file.isFile, s"File $file does not exist or is not a file.")
     val pdxParser = new Parser(file)
-    try loadPDX(pdxParser.parse)
+    try loadPDX(pdxParser.parse, Some(file))
     catch case e: ParserException => handlePDXError(e, file = file)
 
   /**
@@ -125,7 +125,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
   override def setNull(): Unit = node.foreach(_.setNull())
 
   override def loadOrElse(exp: Node, value: T): Unit =
-    loadPDX(exp)
+    loadPDX(exp, None)
     if node.get.valueIsNull then set(value)
 
   /**
@@ -160,12 +160,12 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    *
    * @param expression The node expression to load into the collection
    */
-  protected def loadPDXCollection(expression: Node): Unit =
+  protected def loadPDXCollection(expression: Node, file: Option[File]): Unit =
     try
-      addToCollection(expression)
+      addToCollection(expression, file)
     catch {
       case e: Exception =>
-        handlePDXError(e, expression)
+        handlePDXError(e, expression, file.orNull)
         node = Some(expression)
     }
 
@@ -175,7 +175,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    *
    * @param expression The node expression to add to the collection
    */
-  protected def addToCollection(expression: Node): Unit =
+  protected def addToCollection(expression: Node, file: Option[File]): Unit =
     throw new UnsupportedOperationException("addToCollection must be implemented by collection-based PDX classes")
 
   /**

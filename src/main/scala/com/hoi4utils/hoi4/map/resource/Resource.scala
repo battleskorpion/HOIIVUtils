@@ -23,7 +23,8 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDefinition
 
   def this(node: Node) = {
     this(node.name)
-    loadPDX(node)
+    var file = None
+    loadPDX(node, file)
   }
 
   def this(id: String, amt: Double) = {

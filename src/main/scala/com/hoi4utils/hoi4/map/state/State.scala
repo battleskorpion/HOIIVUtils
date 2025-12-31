@@ -498,7 +498,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging:
   @NotNull override def iterator: Iterator[State] = states.iterator
 
   // todo fix structured effect block later when i can read
-  class History(pdxIdentifier: String = "history", node: Node = null) extends StructuredPDX(pdxIdentifier):
+  class History(pdxIdentifier: String = "history", node: Node = null, file: Option[File] = None) extends StructuredPDX(pdxIdentifier):
     final val owner = new ReferencePDX[CountryTag](() => CountryTag.toList, "owner")
     final val controller = new ReferencePDX[CountryTag](() => CountryTag.toList, "controller")
     final val buildings = new BuildingsPDX
@@ -507,7 +507,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging:
       with ProceduralIdentifierPDX(ClausewitzDate.validDate)
 
     /* constructor */
-    if node != null then loadPDX(node)
+    if node != null then loadPDX(node, file)
 
     // Re-throw exceptions to bubble up to State
     /**
@@ -518,7 +518,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging:
 
     override def getPDXTypeName: String = "History"
 
-  class BuildingsPDX(node: Node = null) extends StructuredPDX("buildings"):
+  class BuildingsPDX(node: Node = null, file: Option[File] = None) extends StructuredPDX("buildings"):
     final val infrastructure = new IntPDX("infrastructure", ExpectedRange.ofPositiveInt)
     final val civilianFactories = new IntPDX("industrial_complex", ExpectedRange.ofPositiveInt)
     final val militaryFactories = new IntPDX("arms_factory", ExpectedRange.ofPositiveInt)
@@ -526,7 +526,7 @@ object State extends Iterable[State] with PDXReadable with LazyLogging:
     final val airBase = new IntPDX("air_base", ExpectedRange.ofPositiveInt)
 
     /* constructor */
-    if node != null then loadPDX(node)
+    if node != null then loadPDX(node, file)
 
     /**
      * @inheritdoc

@@ -22,8 +22,8 @@ class StateCategoryFile(file: File = null) extends CollectionPDX[StateCategoryDe
   }
 
   @throws[UnexpectedIdentifierException]
-  override def loadPDX(expression: Node): Unit = {
-    super.loadPDX(expression)
+  override def loadPDX(expression: Node, file: Option[File]): Unit = {
+    super.loadPDX(expression, file)
   }
 
   override def getPDXTypeName: String = "State Category"

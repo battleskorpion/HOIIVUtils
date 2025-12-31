@@ -3,6 +3,7 @@ package com.hoi4utils.script
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 
+import java.io.File
 import scala.annotation.targetName
 import scala.collection.mutable.ListBuffer
 
@@ -39,7 +40,7 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
   /**
    * @inheritdoc
    */
-  override def loadPDX(expression: Node): Unit = loadPDXCollection(expression)
+  override def loadPDX(expression: Node, file: Option[File]): Unit = loadPDXCollection(expression, file)
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
@@ -53,16 +54,16 @@ abstract class CollectionPDX[T <: PDXScript[?]](pdxSupplier: PDXSupplier[T], pdx
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override protected def addToCollection(expression: Node): Unit = expression.$ match
+  override protected def addToCollection(expression: Node, file: Option[File]): Unit = expression.$ match
     case l: ListBuffer[Node] =>
       for (childExpr <- l) {
         val childScript = useSupplierFunction(childExpr)
-        childScript.loadPDX(childExpr)
+        childScript.loadPDX(childExpr, file)
         pdxList += childScript
       }
     case _ =>
       val childScript = useSupplierFunction(expression)
-      childScript.loadPDX(expression)
+      childScript.loadPDX(expression, file)
       pdxList += childScript
 
   /**

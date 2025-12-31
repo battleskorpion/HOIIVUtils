@@ -122,7 +122,10 @@ class PDXFileError(
       parts += "Node Info: None"
 
     // File path
-    parts += s"File: ${file.getAbsolutePath}"
+    if file != null then
+      parts += s"File: ${file.getAbsolutePath}"
+    else
+      parts += "File: N/A"
 
     // Class name (if pdxScript is set)
     if pdxScript != null then

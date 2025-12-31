@@ -54,8 +54,9 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
    * Loads the PDXScript as represented by the given expression.
    *
    * @param expression The node expression to load
+   * @param file The file from which the expression was loaded. This is used to log errors.
    */
-  def loadPDX(expression: Node): Unit
+  def loadPDX(expression: Node, file: Option[File]): Unit
 
   /**
    * Loads the PDXScript as represented by the given expressions.

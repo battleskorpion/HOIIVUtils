@@ -14,7 +14,8 @@ class StateCategory(id: String) extends ReferencePDX[StateCategoryDefinition](()
 
   def this(node: Node) = {
     this(node.name)
-    loadPDX(node)
+    var file = None
+    loadPDX(node, None)
   }
 
   def this(stateCategoryDef: StateCategoryDefinition) = {

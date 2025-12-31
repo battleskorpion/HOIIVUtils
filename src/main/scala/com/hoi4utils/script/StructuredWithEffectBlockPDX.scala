@@ -3,6 +3,7 @@ package com.hoi4utils.script
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.Node
 
+import java.io.File
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -57,11 +58,11 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
    * If the node’s identifier is not recognized among the structured child scripts,
    * it is assumed to be an effect.
    */
-  override def loadPDX(expression: Node): Unit = expression.identifier match
-    case None => super.loadPDX(expression)
+  override def loadPDX(expression: Node, file: Option[File]): Unit = expression.identifier match
+    case None => super.loadPDX(expression, file)
     case Some(_) =>
       // If the identifier is not among the expected structured ones, add it as an effect.
-      if this.isValidIdentifier(expression) then super.loadPDX(expression) else effectNodes += expression
+      if this.isValidIdentifier(expression) then super.loadPDX(expression, file) else effectNodes += expression
 
 
   /**

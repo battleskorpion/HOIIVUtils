@@ -16,8 +16,8 @@ import scala.jdk.javaapi.CollectionConverters
 class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[Idea] with PDXFile {
   /* pdxscript */
   final var countryIdeas = new CollectionPDX[Idea](Idea.pdxSupplier(), "country") {
-    override def loadPDX(expr: Node): Unit = {
-      super.loadPDX(expr)
+    override def loadPDX(expr: Node, file: Option[File]): Unit = {
+      super.loadPDX(expr, file)
       pdxList.foreach(idea => idea.setIdeaFile(IdeaFile.this))
     }
 

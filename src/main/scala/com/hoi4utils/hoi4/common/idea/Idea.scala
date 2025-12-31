@@ -58,8 +58,8 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
 
   /* idea */
   final val modifiers = new CollectionPDX[Modifier](ModifierDatabase(), "modifier") {
-    override def loadPDX(expr: Node): Unit = {
-      super.loadPDX(expr)
+    override def loadPDX(expr: Node, file: Option[File]): Unit = {
+      super.loadPDX(expr, file)
     }
 
     override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
@@ -78,7 +78,7 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
 
   def this(node: Node) = {
     this(node.name)
-    loadPDX(node)
+    loadPDX(node, _ideaFile.flatMap(_.getFile))
   }
 
   def this(ideaFile: IdeaFile, identifier: String) = {

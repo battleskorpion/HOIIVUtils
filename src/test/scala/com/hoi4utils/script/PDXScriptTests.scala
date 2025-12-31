@@ -54,7 +54,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
       val node = parser.parse
       assert(node != null, s"Failed to parse $file")
       val focusTree = new FocusTree()
-      focusTree.loadPDX(node)
+      focusTree.loadPDX(node, Some(file))
       testFunction(focusTree)
     })
   }
@@ -66,7 +66,7 @@ class PDXScriptTests extends AnyFunSuiteLike {
       val node = parser.parse
       assert(node != null, s"Failed to parse $file")
       val stratRegion = new StrategicRegion()
-      stratRegion.loadPDX(node)
+      stratRegion.loadPDX(node, Some(file))
       testFunction(stratRegion)
     })
   }
