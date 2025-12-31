@@ -2,13 +2,16 @@ package com.hoi4utils.ui.localization
 
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager}
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
-import com.hoi4utils.hoi4.localization.LocalizationManager
+import com.hoi4utils.hoi4.localization.{Localization, LocalizationManager, Property}
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.layout.ErrorIconPane
+import javafx.collections.{FXCollections, ObservableList}
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, CheckBox, Label, ProgressIndicator, RadioMenuItem, TableColumn, TableView, ToggleButton, ToggleGroup, ToolBar}
+import javafx.scene.control.cell.TextFieldTableCell
+import javafx.scene.control.{Button, CheckBox, Label, ProgressIndicator, RadioMenuItem, TableColumn, TableRow, TableView, ToggleButton, ToggleGroup, ToolBar}
 import javafx.scene.layout.{AnchorPane, HBox, VBox}
+import javafx.scene.paint.Color
 import scalafx.geometry.Insets
 
 import scala.collection.mutable.ListBuffer
@@ -170,6 +173,130 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
   @FXML def handleSaveButtonAction(): Unit =
     LocalizationManager.get.saveLocalization()
 
-
+  /**
+   * takes the focuses in the focustree and list them in the table
+   * @param someFocusTree
+   */
   def loadFocusTree(someFocusTree: FocusTree): Unit =
-    
+    // Set up cell value factories for each column if not already set
+    if focusIDColumn.getCellValueFactory == null then
+      setupTableColumns()
+      setupCellFactories()
+      setupRowFactory()
+  
+    // Create an observable list from the focuses
+    val focusList: ObservableList[Focus] = FXCollections.observableArrayList()
+    someFocusTree.listFocuses.foreach(focus => focusList.add(focus))
+  
+    // Set the items in the table
+    focusListTable.setItems(focusList)
+  
+    // Update the progress indicator based on localization completeness
+    updateProgressIndicator(focusList)
+  
+  /**
+   * Sets up the cell value factories for all table columns
+   */
+  private def setupTableColumns(): Unit =
+    // ID Column - not editable
+    focusIDColumn.setCellValueFactory(cellData => {
+      new javafx.beans.property.SimpleStringProperty(
+        cellData.getValue.id.value.getOrElse("")
+      )
+    })
+  
+    // Name Column - editable
+    focusNameColumn.setCellValueFactory(cellData => {
+      new javafx.beans.property.SimpleStringProperty(
+        LocalizationManager.get.getLocalization(cellData.getValue.id.str).map(l ⇒ l.text).getOrElse("")
+      )
+    })
+  
+    // Description Column - editable
+    focusDescColumn.setCellValueFactory(cellData => {
+      new javafx.beans.property.SimpleStringProperty(
+        LocalizationManager.get.getLocalization(cellData.getValue.id.str + "_desc").map(l ⇒ l.text).getOrElse("")
+      )
+    })
+  
+    // Localization Status Column
+    focusLocStatusColumn.setCellValueFactory(cellData => {
+      val focus = cellData.getValue
+      val nameStatus = focus.localizationStatus(Property.NAME)
+      val descStatus = focus.localizationStatus(Property.DESCRIPTION)
+  
+      val statusText = s"Name: $nameStatus, Desc: $descStatus"
+      new javafx.beans.property.SimpleStringProperty(statusText)
+    })
+  
+  /**
+   * Sets up the cell factories to make columns editable
+   */
+  private def setupCellFactories(): Unit =
+    // Make name and description columns editable
+    focusNameColumn.setCellFactory(TextFieldTableCell.forTableColumn())
+    focusDescColumn.setCellFactory(TextFieldTableCell.forTableColumn())
+    focusLocStatusColumn.setCellFactory(TextFieldTableCell.forTableColumn())
+  
+    // Set up edit commit handlers
+    focusNameColumn.setOnEditCommit(event => {
+      val focus = event.getRowValue
+      focus.replaceName(event.getNewValue)
+      focusListTable.refresh() // Force update of the table view
+    })
+  
+    focusDescColumn.setOnEditCommit(event => {
+      val focus = event.getRowValue
+      focus.replaceLocalization(Property.DESCRIPTION, event.getNewValue)
+      focusListTable.refresh() // Force update of the table view
+    })
+  
+  /**
+   * Sets up the row factory to color-code rows based on localization status
+   */
+  private def setupRowFactory(): Unit =
+    focusListTable.setRowFactory(_ => new TableRow[Focus]() {
+      override protected def updateItem(focus: Focus, empty: Boolean): Unit = {
+        super.updateItem(focus, empty)
+  
+        if (focus == null || empty) {
+          setGraphic(null)
+          setStyle("")
+        } else {
+          val nameStatus = focus.localizationStatus(Property.NAME)
+          val descStatus = focus.localizationStatus(Property.DESCRIPTION)
+  
+          val hasUpdated = nameStatus == Localization.Status.UPDATED ||
+            descStatus == Localization.Status.UPDATED
+          val hasNew = nameStatus == Localization.Status.NEW ||
+            descStatus == Localization.Status.NEW
+  
+          if (hasUpdated || hasNew) {
+            setTextFill(Color.BLACK)
+            setStyle("-fx-font-weight: bold; -fx-background-color: #328fa8;")
+          } else {
+            setTextFill(Color.BLACK)
+            setStyle("-fx-background-color: transparent;")
+          }
+        }
+      }
+    })
+  
+  /**
+   * Updates the progress indicator based on localization completeness
+   */
+  private def updateProgressIndicator(focusList: ObservableList[Focus]): Unit =
+    val totalFocuses = focusList.size()
+    if totalFocuses > 0 then
+      val localizedCount = focusList.stream()
+        .filter(focus => {
+          val hasName = LocalizationManager.get.getLocalization(focus.id.str).isDefined
+          val hasDesc = LocalizationManager.get.getLocalization(focus.id.str + "_desc").isDefined
+          hasName && hasDesc
+        })
+        .count()
+  
+      val progress = localizedCount.toDouble / totalFocuses.toDouble
+      progressIndicator.setProgress(progress)
+    else
+      progressIndicator.setProgress(0.0)
