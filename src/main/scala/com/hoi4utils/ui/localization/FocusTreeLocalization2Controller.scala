@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.localization
 
-import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTreeManager}
+import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager}
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
 import com.hoi4utils.hoi4.localization.LocalizationManager
 import com.hoi4utils.main.HOIIVUtils
@@ -43,7 +43,9 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
   @FXML def initialize(): Unit =
     setWindowControlsVisibility()
     versionLabel.setText(s"Version: ${HOIIVUtils.get("version")}")
-    handleWelcome()
+    welcome.setToggleGroup(toggleGroup)
+    welcome.fire()
+    populateFocusTreeSelection()
 
   override def preSetup(): Unit = setupWindowControls(ftlRoot, toolBar, toolBar2)
 
@@ -79,11 +81,11 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
                 welcome.setSelected(false)
             )
             welcome.setSelected(false)
-//            loadFocusTreeView(someFocusTree)
+            loadFocusTree(someFocusTree)
           else
             toggleButton.setSelected(false)
             toggleButton.setSelected(true)
-//            loadFocusTreeView(someFocusTree)
+            loadFocusTree(someFocusTree)
         })
         toggleButton.setPadding(Insets(5, 10, 5, 10))
         // Check if this focus tree has errors
@@ -129,11 +131,11 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
               welcome.setSelected(false)
           )
           welcome.setSelected(false)
-//          loadFocusTreeView(pseudoTree)
+          loadFocusTree(pseudoTree)
         else
           toggleButton.setSelected(false)
           toggleButton.setSelected(true)
-//          loadFocusTreeView(pseudoTree)
+          loadFocusTree(pseudoTree)
       })
       toggleButton.setPadding(Insets(5, 10, 5, 10))
       // Check if this shared focus tree has errors
@@ -167,3 +169,7 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
 
   @FXML def handleSaveButtonAction(): Unit =
     LocalizationManager.get.saveLocalization()
+
+
+  def loadFocusTree(someFocusTree: FocusTree): Unit =
+    
