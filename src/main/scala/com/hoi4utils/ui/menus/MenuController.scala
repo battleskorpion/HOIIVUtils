@@ -36,7 +36,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   setTitle("HOIIVUtils")
 
   private val focusTreeViewer       = "/com/hoi4utils/ui/focus/FocusTree2.fxml"
-  private val focusTreeLocalization = "/com/hoi4utils/ui/localization/FocusTreeLocalization.fxml" // todo scala, redesign
+  private val focusTreeLocalization = "/com/hoi4utils/ui/localization/FocusTreeLocalization2.fxml" // todo scala, redesign, yep
   private val ideaLocalization      = "/com/hoi4utils/ui/localization/IdeaLocalization.fxml" // todo scala, redesign
   private val manageFocusTrees      = "/com/hoi4utils/ui/localization/ManageFocusTrees.fxml"
   private val customTooltip         = "/com/hoi4utils/ui/localization/CustomTooltip.fxml"
@@ -306,7 +306,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     new SettingsController().open()
 
   @FXML def handleFocusTreeViewerClick(event: MouseEvent): Unit = openWindow(event, classOf[FocusTree2Controller], focusTreeViewer)
-  @FXML def handleFocusTreeLocalizationClick(event: MouseEvent): Unit = openWindow(event, classOf[FocusTreeLocalizationController], focusTreeLocalization)
+  @FXML def handleFocusTreeLocalizationClick(event: MouseEvent): Unit = openWindow(event, classOf[FocusTreeLocalization2Controller], focusTreeLocalization)
   @FXML def handleIdeaLocalizationClick(event: MouseEvent): Unit = openWindow(event, classOf[IdeaLocalizationController], ideaLocalization)
   @FXML def handleManageFocusTreesClick(event: MouseEvent): Unit = openWindow(event, classOf[ManageFocusTreesController], manageFocusTrees)
   @FXML def handleCustomTooltipClick(event: MouseEvent): Unit = openWindow(event, classOf[CustomTooltipController], customTooltip)
