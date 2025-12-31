@@ -87,7 +87,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     replaceWithZoomableScrollPane()
     setupZoomButtons()
 
-    clear()
+    clearFocusTreeView()
     welcome.setToggleGroup(toggleGroup)
     welcome.fire()
     focusTreeView.setGridLinesVisible(lines)
@@ -249,7 +249,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private def loadFocusTreeView(someFocusTree: FocusTree): Unit = {
     focusCountLabel.setText("Focuses: 0")
     cancelCurrentTask()
-    clear()
+    clearFocusTreeView()
     focusGridToggleGroup = new ToggleGroup()
     val focuses: MultiPDX[Focus] = someFocusTree.focuses
 
@@ -538,7 +538,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   }
 
   /** Clears the focus tree view in the middle */
-  private def clear(): Unit =
+  private def clearFocusTreeView(): Unit =
     removeDragHighlight()
     focusTreeView.getChildren.clear()
     focusTreeView.getColumnConstraints.clear()
@@ -561,7 +561,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       btn.setSelected(false)
     )
     cancelCurrentTask()
-    clear()
+    clearFocusTreeView()
     setCC()
     setRC()
     focusTreeView.add(Label(welcomeMessage), 0, 0)
