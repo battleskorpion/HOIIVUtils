@@ -61,6 +61,10 @@ class PDXLoader extends LazyLogging:
    * 9. CountryTag - Country tag definitions
    * 10. Ideas - National ideas/spirits
    * 11. FocusTrees - National focus trees
+   * 8. FocusTrees - National focus trees
+   * 9. Resources - Resource definitions
+   * 10. State - Map state files
+   * 11. Country - Country history files
    *
    * @param hProperties Configuration properties containing paths and settings
    * @param loadingLabel JavaFX label to update with loading status messages
