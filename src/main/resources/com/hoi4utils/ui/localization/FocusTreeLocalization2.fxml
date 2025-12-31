@@ -127,7 +127,7 @@
             <Color red="0.625" green="0.625" blue="0.625" fx:id="x4" />
           </textFill>
         </Label>
-            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSaveButtonAction" onMouseClicked="#handleLoadButtonAction" prefHeight="25.0" prefWidth="86.0" text="Save" />
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSaveButtonAction" prefHeight="25.0" prefWidth="86.0" text="Save" />
         <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
         <Label font="$x3" maxWidth="-1.0" text="Right status" textFill="$x4" HBox.hgrow="NEVER" />
       </children>

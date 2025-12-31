@@ -2,6 +2,7 @@ package com.hoi4utils.ui.localization
 
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
+import com.hoi4utils.hoi4.localization.LocalizationManager
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.layout.ErrorIconPane
@@ -13,7 +14,7 @@ import scalafx.geometry.Insets
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
 
-class FocusTreeLocalization2 extends HOIIVUtilsAbstractController2:
+class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
 
   @FXML private var ftlRoot: AnchorPane = uninitialized
   @FXML private var toolBar: ToolBar = uninitialized
@@ -34,8 +35,22 @@ class FocusTreeLocalization2 extends HOIIVUtilsAbstractController2:
   @FXML def initialize(): Unit =
     setWindowControlsVisibility()
     versionLabel.setText(s"Version: ${HOIIVUtils.get("version")}")
+    handleWelcome()
 
   override def preSetup(): Unit = setupWindowControls(ftlRoot, toolBar, toolBar2)
+
+  @FXML def handleWelcome(): Unit =
+    welcome.setSelected(true)
+    focusTreesToggleButtons.foreach(btn =>
+      btn.setSelected(false)
+    )
+//    clearFocusTreeView()
+//    setCC()
+//    setRC()
+//    focusTreeView.add(Label(welcomeMessage), 0, 0)
+//    focusTreeView.setGridLinesVisible(lines)
+//    if focusDetailsPaneController != null then
+//      focusDetailsPaneController.clear()
 
   private def populateFocusTreeSelection(): Unit =
     Some(FocusTreeManager.observeFocusTrees.sorted()).foreach(trees =>
@@ -137,3 +152,6 @@ class FocusTreeLocalization2 extends HOIIVUtilsAbstractController2:
       else
         vbox.getChildren.add(toggleButton)
     )
+
+  @FXML def handleSaveButtonAction(): Unit =
+    LocalizationManager.get.saveLocalization()
