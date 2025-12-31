@@ -36,7 +36,6 @@ object EffectDatabase extends LazyLogging {
   def init(): Unit = {
     val url = getClass.getClassLoader.getResource(edb)
     if (url == null) throw new SQLException(s"Unable to find '$edb'")
-
     val tempFile = File.createTempFile("effects", ".db")
     tempFile.deleteOnExit()
 
