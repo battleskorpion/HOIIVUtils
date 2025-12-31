@@ -6,6 +6,7 @@ import com.hoi4utils.hoi4.common.national_focus.Focus;
 import com.hoi4utils.hoi4.common.national_focus.FocusTree;
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager;
 import com.hoi4utils.hoi4.localization.Localization;
+import com.hoi4utils.hoi4.localization.LocalizationController;
 import com.hoi4utils.hoi4.localization.LocalizationManager;
 import com.hoi4utils.hoi4.localization.Property;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
@@ -18,6 +19,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
 import scala.jdk.javaapi.CollectionConverters;
+import wvlet.airframe.Design;
+import wvlet.airframe.Session;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -58,6 +61,8 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
     private boolean generateDummyDescriptions = false;
     //private FocusLocalizationFile focusLocFile;
     private final ObservableList<Focus> focusObservableList;
+
+	private final LocalizationController localizationController = com.hoi4utils.Registry.getLocalizationController();
 
     public FocusTreeLocalizationController() {
         /* window */
@@ -185,7 +190,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
 //        }
 //
 //        focusLocFile.writeLocalization();
-        LocalizationManager.get().saveLocalization();
+		localizationController.saveLocalization(); 
     }
 
     @FXML

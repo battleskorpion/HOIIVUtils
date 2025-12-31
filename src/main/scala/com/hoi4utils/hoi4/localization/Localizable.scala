@@ -13,6 +13,7 @@ import scala.collection.mutable
  * Clausewitz-engine localization, and not general localization/i18n
  */
 trait Localizable {
+  
   /**
    * Default method to get the number of localizable properties.
    *
