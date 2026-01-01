@@ -456,17 +456,17 @@ abstract class LocalizationService extends LazyLogging {
     }.toMap
 
     /* --- Ordering --- */
-    val groupList: List[(String, LocalizationGroup)] = {
+    val groupList: Seq[(String, LocalizationGroup)] = {
       if (sortAlphabetically)
-        mergedGroups.toList.sortBy(_._1)
+        mergedGroups.toSeq.sortBy(_._1)
       else
         // Determine the order from the existing file: use the first occurrence of each base key.
-        val existingOrder: List[String] = existingLocalization.map(_.baseKey).distinct
+        val existingOrder: Seq[String] = existingLocalization.map(_.baseKey).distinct
         val inFileGroups = existingOrder.flatMap { key =>
           mergedGroups.get(key).map(group => key -> group)
         }
         // Append any new groups
-        val newKeys = mergedGroups.keys.toList.filterNot(existingOrder.toSet)
+        val newKeys = mergedGroups.keys.toSeq.filterNot(existingOrder.toSet)
         inFileGroups ++ newKeys.map(key => key -> mergedGroups(key))
     }
 
