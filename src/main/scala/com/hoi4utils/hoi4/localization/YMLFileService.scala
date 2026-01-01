@@ -4,7 +4,6 @@ import com.hoi4utils.Providers.{Provider, provide}
 
 import java.io.File
 import java.nio.file.Files
-import scala.jdk.javaapi.CollectionConverters
 
 /**
  * Service for reading and writing to .yml (YAML) files.
