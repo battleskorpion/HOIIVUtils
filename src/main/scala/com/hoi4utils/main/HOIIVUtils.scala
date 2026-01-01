@@ -8,7 +8,7 @@ import javax.swing.*
 /**
  * HOIIVUtils.java main method is here
  * <p>
- * HOIIVUTILS Directory Layout:
+ * HOIIVUTILS Directory Layout:z
  * <p>
  * HOIIVUtils\\target\\HOIIVUtils.jar
  * <p>
@@ -22,6 +22,7 @@ import javax.swing.*
  */
 object HOIIVUtils extends LazyLogging:
   private var config: Option[Config] = None
+  
   def main(args: Array[String]): Unit = Application.launch(classOf[App], args*)
 
   def getConfig: Config =

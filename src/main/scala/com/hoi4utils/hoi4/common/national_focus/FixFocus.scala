@@ -14,6 +14,10 @@ import java.time.LocalDateTime
  * It ensures that all focuses have proper localization for their names and descriptions.
  */
 object FixFocus extends LazyLogging {
+  import com.hoi4utils.Providers.*
+
+  given Provider[LocalizationManager] = provide(LocalizationManager.get)
+  given Provider[LocalizationFormatter] = provide(LocalizationFormatter())
 
   /**
    * Fixes localization if necessary (who could've guessed).
@@ -28,7 +32,7 @@ object FixFocus extends LazyLogging {
     requireLocalizableFocusTree(focusTree)
 
 //    val locManager = LocalizationManager.get
-    val locFormatter = new LocalizationFormatter
+    val locFormatter = provided[LocalizationFormatter]
     val locFile = focusTree.primaryLocalizationFile.get
     val focuses = focusTree.focuses
 

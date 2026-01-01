@@ -4,20 +4,14 @@ import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationMana
 import com.hoi4utils.hoi4.localization.LocalizationManager.localizationErrors
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
-import com.hoi4utils.script.PDXFileError
 import com.typesafe.scalalogging.LazyLogging
-import dotty.tools.dotc.core.StdNames.str
-import scalafx.beans.value
-import scalafx.scene.text
 
 import java.io.*
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import java.util.Scanner
-import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.StreamConverters.StreamHasToScala
-import scala.jdk.javaapi.CollectionConverters
 import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Using}
 
@@ -52,12 +46,6 @@ object LocalizationManager extends LazyLogging {
 
   @throws[IllegalArgumentException]
   def find(key: String): Option[Localization] = get.getLocalization(key)
-
-  private[localization] def numCapitalLetters(word: String): Int =
-    if word == null || word.isBlank then 0
-    else word count (_.isUpper)
-
-  def isAcronym(word: String): Boolean = numCapitalLetters(word) == word.trim.length
 
   /**
    * Sets the primary manager for localization management.
@@ -100,6 +88,17 @@ object LocalizationManager extends LazyLogging {
  * It also allows reloading and saving localizations.
  */
 abstract class LocalizationManager extends LazyLogging {
+  import com.hoi4utils.Providers.*
+
+  given Provider[LocalizationManager] = provide(LocalizationManager.get)
+  given Provider[LocalizationFormatter] = provide(LocalizationFormatter())
+
+  /**
+   * @return map of localizations and their keys.
+   */
+  protected def localizations: LocalizationCollection
+  // todo let user change?
+  private[localization] def capitalizationWhitelist: Set[String]
 
   // Group a base localization and its optional description together.
   case class LocalizationGroup(base: Option[Localization], desc: Option[Localization])
@@ -108,8 +107,7 @@ abstract class LocalizationManager extends LazyLogging {
    * Reloads the localizations. The specific behavior of this method
    * depends on the implementation.
    */
-  def reload(): Unit =
-    loadLocalization()
+  def reload(): Unit = loadLocalization()
 
   /**
    * Retrieves the localization for the given key.
@@ -119,9 +117,7 @@ abstract class LocalizationManager extends LazyLogging {
    *         or None if the localization does not exist
    */
   @throws[IllegalArgumentException]
-  def getLocalization(key: String): Option[Localization] =
-    require(key != null, "Localization ID cannot be null.")
-    localizations.get(key)
+  def getLocalization(key: String): Option[Localization] = localizations.get(key)
 
   /**
    * Sets the localization for the given key.
@@ -135,8 +131,6 @@ abstract class LocalizationManager extends LazyLogging {
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
   def setLocalization(key: String, localization: Localization): Option[Localization] =
-    require(key != null, "Localization ID cannot be null.")
-    require(localization != null, "Localization cannot be null.")
     if localizations.containsKey(key) then replacePrevious(key, localization)
     else
       if (localization.isNew) {
@@ -157,22 +151,7 @@ abstract class LocalizationManager extends LazyLogging {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def setLocalization(key: String, text: String, file: File): Option[Localization] = 
-    setLocalization(key, None, text, file)
-
-  /**
-   * Sets the localization for the given key, with the given text.
-   *
-   * @param key  the key of the localization
-   * @param text the text of the localization
-   * @return the previous localization for the given key, or null if there was no previous localization.
-   * @throws IllegalArgumentException              if the key or localization is null.
-   * @throws UnexpectedLocalizationStatusException if the localization is not replaceable
-   */
-  @throws[IllegalArgumentException]
-  @throws[UnexpectedLocalizationStatusException]
-  def setLocalization(key: String, version: Option[Int], text: String, file: File): Option[Localization] =
-    require(key != null, "Key cannot be null.")
+  def setLocalization(key: String, version: Option[Int] = None, text: String, file: File): Option[Localization] =
     localizations.get(key) match
       case Some(prevLocalization) =>
         val localization = prevLocalization.copyForReplace(text, version, file)
@@ -208,7 +187,7 @@ abstract class LocalizationManager extends LazyLogging {
   private def replace(key: String, localization: Localization) =
     localizations.get(key) match
       case Some(prevLocalization) =>
-        if prevLocalization.isReplaceableBy(localization) then 
+        if prevLocalization.isReplaceableBy(localization) then
           localizations.replace(key, localization)
         else throw new UnexpectedLocalizationStatusException(prevLocalization, localization)
       case None => throw new IllegalArgumentException("There is no existing mod localization to replace for the given key.")
@@ -236,11 +215,6 @@ abstract class LocalizationManager extends LazyLogging {
    */
   def isLocalized(localizationId: String): Boolean = getLocalization(localizationId).nonEmpty
 
-  /**
-   * @return map of localizations and their keys.
-   */
-  protected def localizations: LocalizationCollection
-
   def localizationList: Iterable[Localization] = localizations.getAll
 
   /**
@@ -249,16 +223,6 @@ abstract class LocalizationManager extends LazyLogging {
    * @return all localization files.
    */
   def localizationFiles: Iterable[File] = localizations.getLocalizationFiles
-
-  // todo let user change?
-  private[localization] def capitalizationWhitelist: Set[String]
-
-  /** Formats a Localization into a file line. */
-  def formatLocalization(loc: Localization): String = {
-    // Build the entry string
-    val entry = s"${loc.id}:${loc.versionStr} \"${loc.text}\""
-    entry.replaceAll("§", "Â§") // necessary with UTF-8 BOM
-  }
 
   def languageId: String
 
@@ -510,9 +474,10 @@ abstract class LocalizationManager extends LazyLogging {
     val newContent = new StringBuilder
     newContent.append(header).append("\n")
 
+    val formatter: LocalizationFormatter = provided[LocalizationFormatter]
     // For each group, print the base loc and then the description loc (if any).
     for ((_, group) <- groupList)
-      val func = (loc: Localization) => newContent.append("\t").append(formatLocalization(loc)).append("\n")
+      val func = (loc: Localization) => newContent.append("\t").append(formatter.formatLocalization(loc)).append("\n")
       group.base.foreach(func)
       group.desc.foreach(func)
       newContent.append("\n") // empty line between groups

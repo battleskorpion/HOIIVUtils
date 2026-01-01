@@ -1,11 +1,19 @@
 package com.hoi4utils.hoi4.localization
 
+import com.hoi4utils.Providers.*
 import com.typesafe.scalalogging.LazyLogging
 import com.hoi4utils.hoi4.localization.LocalizationManager
 
 import scala.jdk.javaapi.CollectionConverters
 
-class LocalizationFormatter extends LazyLogging {
+class LocalizationFormatter(using Provider[(LocalizationManager)]) extends LazyLogging {
+
+  /** Formats a Localization into a file line. */
+  def formatLocalization(loc: Localization): String = {
+    // Build the entry string
+    val entry = s"${loc.id}:${loc.versionStr} \"${loc.text}\""
+    entry.replaceAll("§", "Â§") // necessary with UTF-8 BOM
+  }
   
   /**
    * Capitalizes every word in a string with a pre-set whitelist
@@ -17,7 +25,7 @@ class LocalizationFormatter extends LazyLogging {
     if (title.isBlank) return title
 
     val words = title.split(" ").filter(w => !w.isBlank).toBuffer
-    val whitelist = LocalizationManager.get.capitalizationWhitelist
+    val whitelist = provided[LocalizationManager].capitalizationWhitelist
 
     // capitalize first word
     words(0) = capitalizeWord(words.head)
@@ -25,7 +33,7 @@ class LocalizationFormatter extends LazyLogging {
     logger.debug("num words: " + words.size)
     for
       i <- 1 until words.size
-      if !LocalizationManager.isAcronym(words(i))
+      if !isAcronym(words(i))
       if !whitelist.contains(words(i))
     do
       words(i) = capitalizeWord(words(i))
@@ -39,5 +47,11 @@ class LocalizationFormatter extends LazyLogging {
     else if (word.length == 1) word.head.toUpper.toString
     else word.head.toUpper.toString + word.substring(1)
   }
+
+  def isAcronym(word: String): Boolean = numCapitalLetters(word) == word.trim.length
+
+  def numCapitalLetters(word: String): Int =
+    if word.isBlank then 0
+    else word count (_.isUpper)
   
 }
