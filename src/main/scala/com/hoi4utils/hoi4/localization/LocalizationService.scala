@@ -93,9 +93,6 @@ object LocalizationService extends LazyLogging {
  */
 abstract class LocalizationService extends LazyLogging {
 
-//  given Provider[LocalizationService] = provide(LocalizationService.get)
-//  given Provider[LocalizationFormatter] = provide(LocalizationFormatter())
-
   /**
    * @return map of localizations and their keys.
    */

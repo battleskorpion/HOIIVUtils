@@ -16,9 +16,6 @@ import java.time.LocalDateTime
 object FixFocus extends LazyLogging {
   import com.hoi4utils.Providers.*
 
-//  given Provider[LocalizationService] = provide(LocalizationService.get)
-//  given Provider[LocalizationFormatter] = provide(LocalizationFormatter())
-
   /**
    * Fixes localization if necessary (who could've guessed).
    *
