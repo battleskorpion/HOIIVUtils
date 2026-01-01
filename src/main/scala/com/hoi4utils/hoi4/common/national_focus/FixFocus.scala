@@ -2,7 +2,7 @@ package com.hoi4utils.hoi4.common.national_focus
 
 import com.hoi4utils.exceptions.LocalizationPreconditionException
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
-import com.hoi4utils.hoi4.localization.{LocalizationFormatter, LocalizationManager, Property}
+import com.hoi4utils.hoi4.localization.{LocalizationFormatter, LocalizationService, Property}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, IOException}
@@ -16,8 +16,8 @@ import java.time.LocalDateTime
 object FixFocus extends LazyLogging {
   import com.hoi4utils.Providers.*
 
-  given Provider[LocalizationManager] = provide(LocalizationManager.get)
-  given Provider[LocalizationFormatter] = provide(LocalizationFormatter())
+//  given Provider[LocalizationService] = provide(LocalizationService.get)
+//  given Provider[LocalizationFormatter] = provide(LocalizationFormatter())
 
   /**
    * Fixes localization if necessary (who could've guessed).

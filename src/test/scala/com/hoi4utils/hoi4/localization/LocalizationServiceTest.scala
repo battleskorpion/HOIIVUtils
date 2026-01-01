@@ -4,7 +4,7 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.io.File
 
-class LocalizationManagerTest extends AnyFunSuiteLike {
+class LocalizationServiceTest extends AnyFunSuiteLike {
   private val testPath = "src/test/resources/clausewitz/localization/"
   private val validFocusTreeLocFiles = List(
     new File(testPath + "focus_Alaska_l_english.yml"),

@@ -2,7 +2,7 @@ package com.hoi4utils.hoi4.localization
 
 import com.typesafe.scalalogging.LazyLogging
 
-class SpanishLocalizationManager extends LocalizationManager with LazyLogging {
+class SpanishLocalizationService extends LocalizationService with LazyLogging {
 
   /**
    * Localization collection for all Spanish localization.

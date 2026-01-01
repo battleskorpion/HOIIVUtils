@@ -7,7 +7,6 @@ import com.hoi4utils.hoi4.common.national_focus.FocusTree;
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager;
 import com.hoi4utils.hoi4.localization.Localization;
 import com.hoi4utils.hoi4.localization.LocalizationController;
-import com.hoi4utils.hoi4.localization.LocalizationManager;
 import com.hoi4utils.hoi4.localization.Property;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.application.JavaFXUIManager;
@@ -19,8 +18,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
 import scala.jdk.javaapi.CollectionConverters;
-import wvlet.airframe.Design;
-import wvlet.airframe.Session;
 
 import javax.swing.*;
 import java.io.IOException;

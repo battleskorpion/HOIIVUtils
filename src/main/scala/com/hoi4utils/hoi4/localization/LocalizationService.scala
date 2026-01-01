@@ -1,9 +1,11 @@
 package com.hoi4utils.hoi4.localization
 
+import com.hoi4utils.Providers.Provider
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
-import com.hoi4utils.hoi4.localization.LocalizationManager.localizationErrors
+import com.hoi4utils.hoi4.localization.LocalizationService.localizationErrors
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
+import com.hoi4utils.Providers.*
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.*
@@ -16,19 +18,21 @@ import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Using}
 
 
-object LocalizationManager extends LazyLogging {
-  private var primaryManager: Option[LocalizationManager] = None
-  private var managers: Map[Class[? <: LocalizationManager], LocalizationManager] = Map.empty
+object LocalizationService extends LazyLogging {
+  private var primaryManager: Option[LocalizationService] = None
+  private var managers: Map[Class[? <: LocalizationService], LocalizationService] = Map.empty
   val localizationErrors: ListBuffer[ParsingError] = ListBuffer.empty[ParsingError]
+
+  given Provider[LocalizationService] = provide(LocalizationService.get)
 
   def getLocalizationFile(key: String): File = get.localizations.getLocalizationFile(key)
 
   @throws[NoLocalizationManagerException]
-  def get: LocalizationManager = primaryManager match
+  def get: LocalizationService = primaryManager match
     case Some(mgr) => mgr
     case None => throw new NoLocalizationManagerException
 
-  def getOrCreate[T <: LocalizationManager](create: () => T)(using ct: ClassTag[T]): T =
+  def getOrCreate[T <: LocalizationService](create: () => T)(using ct: ClassTag[T]): T =
     val clazz = ct.runtimeClass.asInstanceOf[Class[T]]
     managers.get(clazz).map(_.asInstanceOf[T]).getOrElse {
       val mgr = create()
@@ -36,7 +40,7 @@ object LocalizationManager extends LazyLogging {
       mgr
     }
 
-  private def add[T <: LocalizationManager](mgr: T)(using ct: ClassTag[T]): Unit =
+  private def add[T <: LocalizationService](mgr: T)(using ct: ClassTag[T]): Unit =
     val clazz = ct.runtimeClass.asInstanceOf[Class[T]]
     managers = managers + (clazz -> mgr)
 
@@ -52,7 +56,7 @@ object LocalizationManager extends LazyLogging {
    *
    * @param manager the LocalizationManager to set as the primary manager
    */
-  private def selectPrimaryManager[T <: LocalizationManager: ClassTag](): Unit =
+  private def selectPrimaryManager[T <: LocalizationService: ClassTag](): Unit =
     val clazz = summon[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]]
     managers.get(clazz) match
       case Some(mgr) =>
@@ -61,23 +65,23 @@ object LocalizationManager extends LazyLogging {
         throw new IllegalStateException(s"Localization manager of type ${clazz.getName} not found.")
 
   private def setManager(): Unit = HOIIVUtils.get("localization.primaryLanguage") match
-    case "english" => selectPrimaryManager[EnglishLocalizationManager]()
-    case "russian" => selectPrimaryManager[RussianLocalizationManager]()
-    case "spanish" => selectPrimaryManager[SpanishLocalizationManager]()
+    case "english" => selectPrimaryManager[EnglishLocalizationService]()
+    case "russian" => selectPrimaryManager[RussianLocalizationService]()
+    case "spanish" => selectPrimaryManager[SpanishLocalizationService]()
     case other =>
       logger.error("Unknown primary localization manager setting: " + other + ". Defaulting to English localization manager.")
-      selectPrimaryManager[EnglishLocalizationManager]()
+      selectPrimaryManager[EnglishLocalizationService]()
 
   def reload(): Unit =
     requiredLocalizationManagers foreach (_.reload())
     setManager()
     logger.info("Localization managers reloaded. Primary manager: " + primaryManager.get.getClass.getSimpleName)
 
-  def requiredLocalizationManagers: List[LocalizationManager] =
+  def requiredLocalizationManagers: List[LocalizationService] =
     List(
-      getOrCreate(() => new EnglishLocalizationManager),
-      getOrCreate(() => new RussianLocalizationManager),
-      getOrCreate(() => new SpanishLocalizationManager)
+      getOrCreate(() => new EnglishLocalizationService),
+      getOrCreate(() => new RussianLocalizationService),
+      getOrCreate(() => new SpanishLocalizationService)
     )
 
 }
@@ -87,11 +91,10 @@ object LocalizationManager extends LazyLogging {
  * This class provides functionality to set, get, replace, and manage localizations by key.
  * It also allows reloading and saving localizations.
  */
-abstract class LocalizationManager extends LazyLogging {
-  import com.hoi4utils.Providers.*
+abstract class LocalizationService extends LazyLogging {
 
-  given Provider[LocalizationManager] = provide(LocalizationManager.get)
-  given Provider[LocalizationFormatter] = provide(LocalizationFormatter())
+//  given Provider[LocalizationService] = provide(LocalizationService.get)
+//  given Provider[LocalizationFormatter] = provide(LocalizationFormatter())
 
   /**
    * @return map of localizations and their keys.

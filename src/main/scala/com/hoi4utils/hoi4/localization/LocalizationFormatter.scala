@@ -2,11 +2,11 @@ package com.hoi4utils.hoi4.localization
 
 import com.hoi4utils.Providers.*
 import com.typesafe.scalalogging.LazyLogging
-import com.hoi4utils.hoi4.localization.LocalizationManager
+import com.hoi4utils.hoi4.localization.LocalizationService
 
 import scala.jdk.javaapi.CollectionConverters
 
-class LocalizationFormatter(using Provider[(LocalizationManager)]) extends LazyLogging {
+class LocalizationFormatter(localizationSvc: LocalizationService) extends LazyLogging {
 
   /** Formats a Localization into a file line. */
   def formatLocalization(loc: Localization): String = {
@@ -14,7 +14,7 @@ class LocalizationFormatter(using Provider[(LocalizationManager)]) extends LazyL
     val entry = s"${loc.id}:${loc.versionStr} \"${loc.text}\""
     entry.replaceAll("§", "Â§") // necessary with UTF-8 BOM
   }
-  
+
   /**
    * Capitalizes every word in a string with a pre-set whitelist
    *
@@ -25,7 +25,7 @@ class LocalizationFormatter(using Provider[(LocalizationManager)]) extends LazyL
     if (title.isBlank) return title
 
     val words = title.split(" ").filter(w => !w.isBlank).toBuffer
-    val whitelist = provided[LocalizationManager].capitalizationWhitelist
+    val whitelist = localizationSvc.capitalizationWhitelist
 
     // capitalize first word
     words(0) = capitalizeWord(words.head)
@@ -53,5 +53,9 @@ class LocalizationFormatter(using Provider[(LocalizationManager)]) extends LazyL
   def numCapitalLetters(word: String): Int =
     if word.isBlank then 0
     else word count (_.isUpper)
-  
+
 }
+
+object LocalizationFormatter:
+  given (using Provider[LocalizationService]): Provider[LocalizationFormatter] = 
+    provide(LocalizationFormatter(provided[LocalizationService]))
