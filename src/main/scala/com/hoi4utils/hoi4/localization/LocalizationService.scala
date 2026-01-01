@@ -414,15 +414,15 @@ abstract class LocalizationService extends LazyLogging {
    * @param localizationList   The list of new or updated localizations.
    * @param sortAlphabetically If true, groups are sorted alphabetically; if false, new entries are appended.
    */
-  def updateLocalizationFile(file: File, localizationList: List[Localization], sortAlphabetically: Boolean): Unit = {
+  def updateLocalizationFile(file: File, localizationList: Seq[Localization], sortAlphabetically: Boolean): Unit = {
     // Read the entire file as lines.
-    val fileLines = Files.readAllLines(file.toPath).toArray.mkString("\n")
+    val ymlFileService = provided[YMLFileService] 
 
     // Assume the first non-empty line is a header (for example, "l_english:")
-    val lines = fileLines.split("\n").toList
+    val lines = ymlFileService.readLines(file)
     val header = lines.headOption.getOrElse("")
 
-    val existingLocalization: List[Localization] =
+    val existingLocalization: Seq[Localization] =
       lines.flatMap(LocalizationParser.parseLine)
     logger.debug(s"File: ${file.getName}, Existing localizations: ${existingLocalization.size}")
 
