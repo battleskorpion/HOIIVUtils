@@ -2,7 +2,6 @@ package com.hoi4utils.hoi4.localization
 
 import com.hoi4utils.Providers.*
 import com.typesafe.scalalogging.LazyLogging
-import com.hoi4utils.hoi4.localization.BaseLocalizationService
 
 import scala.jdk.javaapi.CollectionConverters
 

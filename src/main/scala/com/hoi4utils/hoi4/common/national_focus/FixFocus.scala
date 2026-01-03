@@ -2,7 +2,7 @@ package com.hoi4utils.hoi4.common.national_focus
 
 import com.hoi4utils.exceptions.LocalizationPreconditionException
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
-import com.hoi4utils.hoi4.localization.{LocalizationFormatter, BaseLocalizationService, Property}
+import com.hoi4utils.hoi4.localization.{LocalizationFormatter, Property}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.{File, IOException}

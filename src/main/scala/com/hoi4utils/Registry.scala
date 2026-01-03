@@ -1,6 +1,6 @@
 package com.hoi4utils
 
-import com.hoi4utils.hoi4.localization.{BaseLocalizationService, LocalizationController, LocalizationService}
+import com.hoi4utils.hoi4.localization.{LocalizationController, LocalizationService}
 import wvlet.airframe.*
 
 // todo remove airframe lol

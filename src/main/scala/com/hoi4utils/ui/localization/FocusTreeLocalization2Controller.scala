@@ -2,7 +2,7 @@ package com.hoi4utils.ui.localization
 
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager}
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
-import com.hoi4utils.hoi4.localization.{BaseLocalizationService, Localization, LocalizationService, Property}
+import com.hoi4utils.hoi4.localization.{Localization, LocalizationService, Property}
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.layout.ErrorIconPane
