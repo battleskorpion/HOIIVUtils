@@ -13,8 +13,8 @@ import com.hoi4utils.hoi4.gfx.Interface
 import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4.history.countries.CountryFile
 import com.hoi4utils.hoi4.history.countries.CountryFile.countryErrors
-import com.hoi4utils.hoi4.localization.BaseLocalizationService.localizationErrors
-import com.hoi4utils.hoi4.localization.{EnglishLocalizationService, BaseLocalizationService}
+import com.hoi4utils.hoi4.localization.LocalizationService.localizationErrors
+import com.hoi4utils.hoi4.localization.{BaseLocalizationService, EnglishLocalizationService, LocalizationService}
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4.map.resource.ResourcesFile
 import com.hoi4utils.hoi4.map.state.State
@@ -113,7 +113,7 @@ class PDXLoader extends LazyLogging:
     startTime = System.nanoTime()
     onComponentStart("Localization")
     MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
-    BaseLocalizationService.reload()
+    LocalizationService.reload()
     onComponentComplete("Localization", (System.nanoTime() - startTime) / 1_000_000_000.0)
     if isCancelled() then return
 

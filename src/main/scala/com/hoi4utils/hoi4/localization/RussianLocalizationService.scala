@@ -2,7 +2,7 @@ package com.hoi4utils.hoi4.localization
 
 import com.typesafe.scalalogging.LazyLogging
 
-class RussianLocalizationService extends BaseLocalizationService with LazyLogging {
+class RussianLocalizationService(locFileService: LocalizationFileService) extends BaseLocalizationService(locFileService) with LazyLogging {
 
   /**
    * Localization collection for all Russian localization.

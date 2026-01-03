@@ -1,13 +1,13 @@
 package com.hoi4utils
 
-import com.hoi4utils.hoi4.localization.{LocalizationController, BaseLocalizationService}
+import com.hoi4utils.hoi4.localization.{BaseLocalizationService, LocalizationController, LocalizationService}
 import wvlet.airframe.*
 
 // todo remove airframe lol
 object Registry {
   // Define the design once
   val design: Design = newDesign
-    .bind[BaseLocalizationService].toInstance(BaseLocalizationService.get)
+    .bind[LocalizationService].toInstance(LocalizationService.get)
 
   // Start the session once for the lifetime of the app
   val session: Session = design.newSession

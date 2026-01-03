@@ -6,6 +6,7 @@ import com.hoi4utils.hoi4.localization.LocalizationService.localizationErrors
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
 import com.hoi4utils.Providers.*
+import com.hoi4utils.main.HOIIVUtils.logger
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.*
@@ -79,9 +80,19 @@ object LocalizationService extends LazyLogging {
 
   def requiredLocalizationManagers: List[LocalizationService] =
     List(
-      getOrCreate(() => new EnglishLocalizationService),
-      getOrCreate(() => new RussianLocalizationService),
-      getOrCreate(() => new SpanishLocalizationService)
+      getOrCreate(() => {
+        val locFileService = provided[LocalizationFileService]
+        new EnglishLocalizationService(locFileService)
+      }),
+      getOrCreate(() => {
+        val locFileService = provided[LocalizationFileService]
+        new RussianLocalizationService(locFileService)
+      }),
+      getOrCreate(() => {
+        val locFileService = provided[LocalizationFileService]
+        new SpanishLocalizationService(locFileService)
+      })
+
     )
 
 }
@@ -89,7 +100,7 @@ object LocalizationService extends LazyLogging {
 // Group a base localization and its optional description together.
 case class LocalizationGroup(base: Option[Localization], desc: Option[Localization])
 
-trait LocalizationService {
+trait LocalizationService(locFileService: LocalizationFileService) {
   /**
    * @return map of localizations and their keys.
    */
@@ -151,7 +162,8 @@ trait LocalizationService {
   def replaceLocalization(key: String, text: String): Option[Localization]
 
   @throws[LocalizationExistsException]
-  def addLocalization(localization: Localization, file: File): Unit
+  def addLocalization(localization: Localization, file: File): Unit =
+    addLocalization(localization, localizations, file)
 
   /**
    * Checks if the given localization ID is localized (has a localization entry).
@@ -161,7 +173,7 @@ trait LocalizationService {
    */
   def isLocalized(localizationId: String): Boolean = getLocalization(localizationId).nonEmpty
 
-  def localizationList: Iterable[Localization] = localizations.getAll
+  def getLocalizations: Iterable[Localization] = localizations.getAll
 
   /**
    * Gets all localization files managed by this manager.
@@ -194,7 +206,23 @@ trait LocalizationService {
     if (localizationCollection.containsKey(localization.id)) throw new LocalizationExistsException(localization)
     localizationCollection.add(localization, file)
 
-  protected def versionNumberRegex = ":(\\d*)" //  (version number is optional)
+  /**
+   * Loads localization. Loads mod localization after vanilla to give mod localizations priority
+   */
+  protected def loadLocalization(): Unit =
+    localizations.clear()
+    locFileService.loadLocalization()
+
+  def saveLocalization(): Unit =
+    locFileService.saveLocalization(localizations)
+
+  /**
+   *
+   * @param file
+   * @param localization
+   */
+  protected def writeLocalization(file: File, localization: Localization): Unit =
+    locFileService.writeLocalization(file, localization)
 
 }
 
@@ -203,7 +231,7 @@ trait LocalizationService {
  * This class provides functionality to set, get, replace, and manage localizations by key.
  * It also allows reloading and saving localizations.
  */
-abstract class BaseLocalizationService extends LocalizationService with LazyLogging {
+abstract class BaseLocalizationService(locFileService: LocalizationFileService) extends LocalizationService(locFileService) with LazyLogging {
 
   /**
    * @inheritdoc
@@ -259,240 +287,6 @@ abstract class BaseLocalizationService extends LocalizationService with LazyLogg
         // (read the docs for the replace method)
         localizations.replace(key, localization)
       case None => throw new IllegalArgumentException("Localization with the given key does not exist.")
-
-  @throws[LocalizationExistsException]
-  override def addLocalization(localization: Localization, file: File): Unit =
-    addLocalization(localization, localizations, file)
-
-  /**
-   * Loads localization. Loads mod localization after vanilla to give mod localizations priority
-   */
-  protected def loadLocalization(): Unit = {
-    localizations.clear()
-
-    // vanilla
-    if (HOIIVFiles.HOI4.localization_folder == null)
-      logger.error("'HOI4 localization folder' is null.")
-    else if (!HOIIVFiles.HOI4.localization_folder.exists)
-      logger.error("'HOI4 localization folder' does not exist.")
-    else if (!HOIIVFiles.HOI4.localization_folder.isDirectory)
-      logger.error("'HOI4 localization folder' is not a directory.")
-    else
-      loadLocalization(HOIIVFiles.HOI4.localization_folder, Localization.Status.VANILLA)
-
-    // mod
-    if (HOIIVFiles.Mod.localization_folder == null)
-      logger.error("'Mod localization folder' is null.")
-    else if (!HOIIVFiles.Mod.localization_folder.exists)
-      logger.error("'Mod localization folder' does not exist.")
-    else if (!HOIIVFiles.Mod.localization_folder.isDirectory)
-      logger.error("'Mod localization folder' is not a directory.")
-    else
-      loadLocalization(HOIIVFiles.Mod.localization_folder, Localization.Status.EXISTS)
-  }
-
-  protected def loadLocalization(localizationFolder: File, status: Localization.Status): Unit =
-    val files = localizationFolder.listFiles
-    if (files == null) return
-
-    for (file <- files)
-      if (file.isDirectory) loadLocalization(file, status)
-      else if (file.getName.endsWith(".yml")) loadLocalizationFile(file, status)
-
-  // todo wow :(
-  protected def loadLocalizationFile(file: File, status: Localization.Status): Boolean = {
-    Using.resource(new Scanner(file)) { scanner =>
-      // check language
-      if !readLanguageHeader(scanner, file, languageId) then
-        // either wrong language or missing header, error already recorded
-        false
-      else
-        // read localization file
-        var lineNumber = 0
-        while scanner.hasNextLine do
-          lineNumber += 1
-          given ParsingContext(file, Some(lineNumber))
-          val line = scanner.nextLine()
-          parseLine(line, file, status)
-        true
-    }
-  }
-
-  /**
-   * Reads the header (`l_<language`> line). Returns `true` if the correct language was found.
-   */
-  private def readLanguageHeader(scanner: Scanner, file: File, languageId: String): Boolean =
-    var languageFound = false
-    var continue = true
-
-    var lineNumber = 0
-    while scanner.hasNextLine && !languageFound && continue do
-      lineNumber += 1
-      given ParsingContext(file, Some(lineNumber))
-      var line = scanner.nextLine()
-      // ignore BOM
-      if line.startsWith("\uFEFF") then line = line.substring(1)
-
-      val trimmed = line.trim
-      if trimmed.nonEmpty && !trimmed.startsWith("#") then
-        if !trimmed.startsWith(s"l_$languageId") then
-          if !trimmed.startsWith("l_") then
-            // not language we want, ignore file
-            continue = false
-          else
-            // improper format
-            val pdxError = new ParsingError("Localization file is malformed", ExpectedCause(languageId), s"$trimmed")
-            localizationErrors += pdxError
-            continue = false
-        else
-          languageFound = true
-          continue = false
-
-    // if false: there was no text to trigger a fail earlier, meaning everything is commented out or there's nothing,
-    // so don't worry and ignore file.
-    languageFound
-
-  private def parseLine(using ParsingContext)(line: String, file: File, status: Localization.Status): Unit=
-    val trimmed = line.trim
-    // ignore other lines
-    if trimmed.nonEmpty && !trimmed.startsWith("#") then parseLocalizationLine(trimmed, file, status)
-
-  /**
-   * Parses one non-empty, non-comment line.
-   */
-  private def parseLocalizationLine(using ParsingContext)(line: String, file: File, status: Localization.Status): Unit =
-    val data = line.splitWithDelimiters(versionNumberRegex, 2)
-
-    if data.length != 3 then
-      val pdxError = new ParsingError("Invalid localization file format", "incorrect number of line elements", line)
-      localizationErrors += pdxError
-      return
-
-    // trim whitespace
-    data mapInPlace (_.trim)
-
-    val key = data(0)
-    // ignore ":" before version number
-    val version = {
-      val v = data(1).substring(1).trim
-      if v.isBlank then None else v.toIntOption
-    }
-    // ignore escaped quotes
-    var value = data(2).replaceAll("//\"", "\u0000")
-
-    val startQuote = value.indexOf("\"")
-    val endQuote = value.lastIndexOf("\"")
-
-    if validateLocalizationDef(startQuote, endQuote, value) then
-      // remove leading/trailing quotes (and any comments)
-      value = value.substring(startQuote + 1, endQuote)
-      // fix file format issues (as it is a UTF-8 BOM file)
-      value = value.trim.replaceAll("(Â§)", "§")
-
-      /**
-       * .yml example format:
-       * CONTROLS_GREECE: "Controls all states in the §Y$strategic_region_greece$§! strategic region"
-       * CONTROLS_ASIA_MINOR:1 "Controls all states in the §Y$strategic_region_asia_minor$§! strategic region"
-       */
-      val localization = new Localization(key, version, value, status)
-      localizations.add(localization, file)
-
-  def validateLocalizationDef(using ParsingContext)(startQuoteIndex: Int, endQuoteIndex: Int, value: String): Boolean =
-    val extra = if startQuoteIndex >= 0 && endQuoteIndex + 1 <= value.length then value.substring(endQuoteIndex + 1).trim else ""
-    // Validate
-    val hasExtraInvalid = extra.nonEmpty && !extra.startsWith("#")
-    val quotesInvalid = startQuoteIndex != 0 || endQuoteIndex == -1 || startQuoteIndex == endQuoteIndex
-
-    if hasExtraInvalid || quotesInvalid then
-      val causes =
-        Seq(
-          Option.when(hasExtraInvalid)("extraneous non-comment data after localization entry: expected comment, whitespace, or end of line"),
-          Option.when(quotesInvalid)("localization value is not enclosed in quotes")
-        ).flatten
-
-      val parseError = new ParsingError("Invalid localization file format", causes.mkString("; "), extra)
-      localizationErrors += parseError
-      false
-    else true
-
-  def saveLocalization(): Unit = {
-    val locFileService = provided[LocalizationFileService]
-
-    val localizationFolder = HOIIVFiles.Mod.localization_folder
-    val locFiles: Seq[File] =
-      Files.walk(localizationFolder.toPath)
-        .toScala(Seq)
-        .filter(Files.isRegularFile(_))
-        .filter(path => path.getFileName.endsWith(".yml"))
-        .map(_.toFile)
-
-    if (locFiles == null) return
-
-    // Separate new and changed localizations
-    val changedLocalizations = localizations.filterByStatus(Localization.Status.UPDATED)
-    val newLocalizations = localizations.filterByStatus(Localization.Status.NEW)
-    // Merge the maps: for every file, combine the two lists (or use one if the file exists only in one map)
-    val mergedLocalizations: Map[File, List[Localization]] =
-      (changedLocalizations ++ newLocalizations)
-        .groupBy(_._1)
-        .view
-        .mapValues(_.flatMap(_._2).toList)
-        .toMap
-
-    val sortAlphabetically = false
-    mergedLocalizations.foreach { case (file, locList) =>
-      locFileService.updateLocalizationFile(file, locList, sortAlphabetically)
-    }
-  }
-
-  /**
-   *
-   * @param file
-   * @param localization
-   */
-  protected def writeLocalization(file: File, localization: Localization): Unit = {
-    /* localization */
-    val entry = localization.toString.replaceAll("§", "Â§")
-    val writer: PrintWriter = getLocalizationWriter(file, true)
-    /* append is a quick add to end no more logic needed */
-    val append = localization.status match {
-      case Localization.Status.NEW => true
-      case Localization.Status.UPDATED => false
-      case _ => throw new IllegalStateException("Unexpected value: " + localization.status)
-    }
-
-    if (append) try {
-      writer.println(entry)
-    } catch {
-      case exc: IOException =>
-        logger.error("Failed to write new localization to file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
-    } finally {
-      if (writer != null) writer.close()
-    } else try {
-      var lineReplaced = false
-      val lines = Files.readAllLines(Paths.get(file.getAbsolutePath))
-      for (i <- 0 until lines.size) {
-        var continue = true
-        //        if (lines.get(i).trim.startsWith(key) && continue) {
-
-        //        }
-        if (lines.get(i).filter(c => !c.isWhitespace).startsWith(localization.key + ":") && continue) {
-          lines.set(i, entry)
-          lineReplaced = true
-          logger.debug("Replaced localization " + localization.key)
-          continue = false
-        }
-      }
-      if (!lineReplaced) throw new IOException // todo better exception
-      Files.write(Paths.get(file.getAbsolutePath), lines)
-    } catch {
-      case exc: IOException =>
-        logger.error("Failed to update localization in file. " + "\n\tLocalization: " + entry + "\n\tFile: " + file.getAbsolutePath)
-    }
-  }
-
-  @throws[IOException]
-  protected def getLocalizationWriter(file: File, append: Boolean) = new PrintWriter(new BufferedWriter(new FileWriter(file, append)))
 
 }
 

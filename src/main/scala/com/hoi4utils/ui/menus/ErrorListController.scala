@@ -6,7 +6,7 @@ import com.hoi4utils.hoi4.common.idea.IdeasManager.ideaFileErrors
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
 import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4.history.countries.CountryFile.countryErrors
-import com.hoi4utils.hoi4.localization.BaseLocalizationService.localizationErrors
+import com.hoi4utils.hoi4.localization.LocalizationService.localizationErrors
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4.map.state.State.stateErrors
 import com.hoi4utils.main.HOIIVUtils
@@ -33,7 +33,7 @@ import java.awt.Desktop
 class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging:
   setTitle("LB Reader")
   setFxmlFile("ErrorList.fxml")
-  
+
   @FXML var contentContainer: BorderPane = uninitialized
   @FXML var errorListTabPane: TabPane = uninitialized
 
@@ -99,8 +99,8 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
       // Group errors by file
       val errorsByFile = errors.groupBy(_.file)
 
-      errorsByFile.foreach { (file, fileErrors) => 
-        // cant really map with Nones 
+      errorsByFile.foreach { (file, fileErrors) =>
+        // cant really map with Nones
 //        case (Some(file), fileErrors) =>
 //          val fileGroupItem = ErrorTreeItem.fromFileGroup(file, fileErrors.toList)
 //          val fileTreeItem = buildTreeItem(fileGroupItem)

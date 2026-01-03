@@ -6,7 +6,7 @@ import com.hoi4utils.hoi4.localization.BaseLocalizationService
 
 import scala.jdk.javaapi.CollectionConverters
 
-class LocalizationFormatter(localizationSvc: BaseLocalizationService) extends LazyLogging {
+class LocalizationFormatter(localizationSvc: LocalizationService) extends LazyLogging {
 
   /** Formats a Localization into a file line. */
   def formatLocalization(loc: Localization): String = {
@@ -57,5 +57,5 @@ class LocalizationFormatter(localizationSvc: BaseLocalizationService) extends La
 }
 
 object LocalizationFormatter:
-  given (using Provider[BaseLocalizationService]): Provider[LocalizationFormatter] = 
-    provide(LocalizationFormatter(provided[BaseLocalizationService]))
+  given (using Provider[LocalizationService]): Provider[LocalizationFormatter] =
+    provide(LocalizationFormatter(provided[LocalizationService]))
