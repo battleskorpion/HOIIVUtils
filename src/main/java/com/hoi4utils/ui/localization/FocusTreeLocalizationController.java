@@ -28,6 +28,7 @@ import java.util.function.Function;
 /**
  * TODO: have to redo some methods/design to fit with the new localization system
  */
+@Deprecated
 public class FocusTreeLocalizationController extends HOIIVUtilsAbstractController implements TableViewWindow {
 
     /* ui components */
@@ -187,7 +188,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
 //        }
 //
 //        focusLocFile.writeLocalization();
-		localizationController.saveLocalization(); 
+		localizationController.saveLocalization();
     }
 
     @FXML
