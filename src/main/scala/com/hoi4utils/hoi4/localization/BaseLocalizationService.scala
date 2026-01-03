@@ -2,21 +2,14 @@ package com.hoi4utils.hoi4.localization
 
 import com.hoi4utils.Providers.Provider
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
-import com.hoi4utils.hoi4.localization.LocalizationService.localizationErrors
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
 import com.hoi4utils.Providers.*
-import com.hoi4utils.main.HOIIVUtils.logger
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.*
-import java.nio.charset.StandardCharsets
-import java.nio.file.{Files, Paths}
-import java.util.Scanner
 import scala.collection.mutable.ListBuffer
-import scala.jdk.StreamConverters.StreamHasToScala
 import scala.reflect.ClassTag
-import scala.util.{Failure, Success, Using}
 
 
 object LocalizationService extends LazyLogging {
