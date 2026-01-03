@@ -2,7 +2,7 @@ package com.hoi4utils.ui.localization
 
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager}
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
-import com.hoi4utils.hoi4.localization.{Localization, LocalizationService, Property}
+import com.hoi4utils.hoi4.localization.{Localization, BaseLocalizationService, Property}
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.layout.ErrorIconPane
@@ -171,7 +171,7 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
     )
 
   @FXML def handleSaveButtonAction(): Unit =
-    LocalizationService.get.saveLocalization()
+    BaseLocalizationService.get.saveLocalization()
 
   /**
    * takes the focuses in the focustree and list them in the table
@@ -208,14 +208,14 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
     // Name Column - editable
     focusNameColumn.setCellValueFactory(cellData => {
       new javafx.beans.property.SimpleStringProperty(
-        LocalizationService.get.getLocalization(cellData.getValue.id.str).map(l ⇒ l.text).getOrElse("")
+        BaseLocalizationService.get.getLocalization(cellData.getValue.id.str).map(l ⇒ l.text).getOrElse("")
       )
     })
   
     // Description Column - editable
     focusDescColumn.setCellValueFactory(cellData => {
       new javafx.beans.property.SimpleStringProperty(
-        LocalizationService.get.getLocalization(cellData.getValue.id.str + "_desc").map(l ⇒ l.text).getOrElse("")
+        BaseLocalizationService.get.getLocalization(cellData.getValue.id.str + "_desc").map(l ⇒ l.text).getOrElse("")
       )
     })
   
@@ -290,8 +290,8 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
     if totalFocuses > 0 then
       val localizedCount = focusList.stream()
         .filter(focus => {
-          val hasName = LocalizationService.get.getLocalization(focus.id.str).isDefined
-          val hasDesc = LocalizationService.get.getLocalization(focus.id.str + "_desc").isDefined
+          val hasName = BaseLocalizationService.get.getLocalization(focus.id.str).isDefined
+          val hasDesc = BaseLocalizationService.get.getLocalization(focus.id.str + "_desc").isDefined
           hasName && hasDesc
         })
         .count()

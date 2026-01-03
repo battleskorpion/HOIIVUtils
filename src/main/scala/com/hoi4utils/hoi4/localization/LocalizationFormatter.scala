@@ -2,11 +2,11 @@ package com.hoi4utils.hoi4.localization
 
 import com.hoi4utils.Providers.*
 import com.typesafe.scalalogging.LazyLogging
-import com.hoi4utils.hoi4.localization.LocalizationService
+import com.hoi4utils.hoi4.localization.BaseLocalizationService
 
 import scala.jdk.javaapi.CollectionConverters
 
-class LocalizationFormatter(localizationSvc: LocalizationService) extends LazyLogging {
+class LocalizationFormatter(localizationSvc: BaseLocalizationService) extends LazyLogging {
 
   /** Formats a Localization into a file line. */
   def formatLocalization(loc: Localization): String = {
@@ -57,5 +57,5 @@ class LocalizationFormatter(localizationSvc: LocalizationService) extends LazyLo
 }
 
 object LocalizationFormatter:
-  given (using Provider[LocalizationService]): Provider[LocalizationFormatter] = 
-    provide(LocalizationFormatter(provided[LocalizationService]))
+  given (using Provider[BaseLocalizationService]): Provider[LocalizationFormatter] = 
+    provide(LocalizationFormatter(provided[BaseLocalizationService]))

@@ -49,7 +49,7 @@ trait Localizable {
 //  def clearLocalizableProperties(): Unit =
 //    localizableProperties.clear()
 
-  def getLocalization: Iterable[Localization] = LocalizationService.getAll(getLocalizationKeys)
+  def getLocalization: Iterable[Localization] = BaseLocalizationService.getAll(getLocalizationKeys)
 
   /**
    * Gets the localization for the given property.
@@ -58,7 +58,7 @@ trait Localizable {
    * @return the localization for the given property.
    */
   def localization(property: Property): Option[Localization] = localizableProperties.get(property) match
-    case Some(k) => LocalizationService.get(k)
+    case Some(k) => BaseLocalizationService.get(k)
     case None => None
 
   /**
@@ -93,7 +93,7 @@ trait Localizable {
 
   def primaryLocalizationFile: Option[File] =
     val localizableGroup = getLocalizableGroup
-    localizableGroup.flatMap(ll => ll.getLocalizationKeys).map(LocalizationService.getLocalizationFile).find(_ != null) match
+    localizableGroup.flatMap(ll => ll.getLocalizationKeys).map(BaseLocalizationService.getLocalizationFile).find(_ != null) match
       case Some(f) => Some(f)
       case None => None
 
@@ -134,7 +134,7 @@ trait Localizable {
   def setLocalization(property: Property, version: Option[Int], text: String, file: File): Unit =
     localizableProperties.get(property) match
       case Some(k) =>
-        LocalizationService.get.setLocalization(k, version, text, file)
+        BaseLocalizationService.get.setLocalization(k, version, text, file)
       case None => throw new LocalizationPropertyException(property, this)
 
   /**
@@ -145,7 +145,7 @@ trait Localizable {
    */
   def replaceLocalization(property: Property, text: String): Unit =
     localizableProperties.get(property) match
-      case Some(k) => LocalizationService.get.replaceLocalization(k, text)
+      case Some(k) => BaseLocalizationService.get.replaceLocalization(k, text)
       case None =>
 
   /**
