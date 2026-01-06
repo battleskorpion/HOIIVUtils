@@ -3,9 +3,9 @@ package com.hoi4utils.hoi4.localization
 import com.hoi4utils.Providers.*
 import com.hoi4utils.hoi4.localization.LocalizationService.localizationErrors
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.main.HOIIVUtils.logger
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
 import com.typesafe.scalalogging.LazyLogging
+import com.hoi4utils.extensions.validateFolder
 
 import java.io.*
 import java.nio.charset.StandardCharsets
@@ -98,31 +98,25 @@ class LocalizationFileService(locService: LocalizationService) extends LazyLoggi
   /**
    * Loads localization. Loads mod localization after vanilla to give mod localizations priority
    */
-  def loadLocalization(): Unit = {
+  def loadLocalization(): Unit =
     // vanilla
-    if (HOIIVFiles.HOI4.localization_folder == null)
-      logger.error("'HOI4 localization folder' is null.")
-    else if (!HOIIVFiles.HOI4.localization_folder.exists)
-      logger.error("'HOI4 localization folder' does not exist.")
-    else if (!HOIIVFiles.HOI4.localization_folder.isDirectory)
-      logger.error("'HOI4 localization folder' is not a directory.")
-    else
-      loadLocalization(HOIIVFiles.HOI4.localization_folder, Localization.Status.VANILLA)
+    HOIIVFiles.HOI4.localization_folder
+      .validateFolder("HOI4 localization folder")
+      .fold(
+        logger.error,
+        loadLocalization(_, Localization.Status.VANILLA)
+      )
 
     // mod
-    if (HOIIVFiles.Mod.localization_folder == null)
-      logger.error("'Mod localization folder' is null.")
-    else if (!HOIIVFiles.Mod.localization_folder.exists)
-      logger.error("'Mod localization folder' does not exist.")
-    else if (!HOIIVFiles.Mod.localization_folder.isDirectory)
-      logger.error("'Mod localization folder' is not a directory.")
-    else
-      loadLocalization(HOIIVFiles.Mod.localization_folder, Localization.Status.EXISTS)
-  }
+    HOIIVFiles.Mod.localization_folder
+      .validateFolder("Mod localization folder")
+      .fold(
+        logger.error,
+        loadLocalization(_, Localization.Status.EXISTS)
+      )
 
   protected def loadLocalization(localizationFolder: File, status: Localization.Status): Unit =
     val files = localizationFolder.listFiles
-    if (files == null) return
 
     for (file <- files)
       if (file.isDirectory) loadLocalization(file, status)
