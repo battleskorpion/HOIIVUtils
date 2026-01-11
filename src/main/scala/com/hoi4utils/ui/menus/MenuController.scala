@@ -194,7 +194,6 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         zio.Unsafe.unsafe { implicit unsafe =>
           ZHOIIVUtils.getActiveRuntime.unsafe.run(
             pdxLoader.load(
-              getConfig.getProperties,
               loadingLabel,
               () => isCancelled,
               onComponentComplete,

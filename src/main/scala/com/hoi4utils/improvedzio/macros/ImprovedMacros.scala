@@ -15,17 +15,21 @@ object ImprovedMacros {
      */
     def reloadable(implicit
       tag: zio.Tag[Service],
-      tagR: zio.Tag[R],
       isReloadable: IsReloadable[Service],
       trace: zio.Trace
     ): ZLayer[R & ServiceReloader, ServiceReloader.Error, Service] =
-//      ZLayer.fromZIO(ServiceReloader.register(layer))
       ZLayer.fromZIO {
-        ZIO.serviceWithZIO[R] { r =>
-          // We provide the requirement R to the layer to turn it into ZLayer[Any, E, Service]
-          val closedLayer: ZLayer[Any, Any, Service] = ZLayer.succeedEnvironment(ZEnvironment(r)) >>> layer
-          ServiceReloader.register(closedLayer)
-        }
+        for {
+          rEnv <- ZIO.environment[R]
+          closedLayer = ZLayer.succeedEnvironment(rEnv) >>> layer
+          service <- ServiceReloader.register(closedLayer)
+        } yield service 
+        
+//        ZIO.serviceWithZIO[R] { r =>
+//          // We provide the requirement R to the layer to turn it into ZLayer[Any, E, Service]
+//          val closedLayer: ZLayer[Any, Any, Service] = ZLayer.succeedEnvironment(ZEnvironment(r)) >>> layer
+//          ServiceReloader.register(closedLayer)
+//        }
       }
   }
 }
