@@ -22,3 +22,20 @@ class Config(
   def getVersionTempPath: Path = hVersionTempPath
   def getVersionJarResource: InputStream = hVersionJarResource
   def getProperties: Properties = hProperties
+
+  /**
+   * Get a user saved property from property class saved properties, NOT from HOIIVUtils.properties.
+   * We get saved HOIIVUtils.properties data only when the Menu is opened
+   *
+   * @param key Property name
+   * @return Property value or null if not found
+   */
+  def getProperty(key: String): String = getProperties.getProperty(key)
+
+  /**
+   * Set a user saved property that will be saved to HOIIVUtils.properties on save() call
+   *
+   * @param key   Property key
+   * @param value Property value
+   */
+  def setProperty(key: String, value: String) = getProperties.setProperty(key, value)

@@ -13,9 +13,9 @@ object ImprovedMacros {
      * Returns a layer that constructs a version of the service output by this
      * layer that can be dynamically reloaded with `ServiceReloader.reload`.
      */
-    def reloadable(implicit 
+    def reloadable(implicit
       tag: zio.Tag[Service],
-      tagR: zio.Tag[R],             
+      tagR: zio.Tag[R],
       isReloadable: IsReloadable[Service],
       trace: zio.Trace
     ): ZLayer[R & ServiceReloader, ServiceReloader.Error, Service] =

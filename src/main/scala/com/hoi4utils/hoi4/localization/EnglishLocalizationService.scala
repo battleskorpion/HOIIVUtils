@@ -1,5 +1,6 @@
 package com.hoi4utils.hoi4.localization
 
+import com.hoi4utils.main.Config
 import com.typesafe.scalalogging.LazyLogging
 import zio.{UIO, URLayer, ZIO, ZLayer}
 

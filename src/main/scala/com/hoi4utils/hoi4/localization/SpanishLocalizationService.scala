@@ -1,7 +1,8 @@
 package com.hoi4utils.hoi4.localization
 
+import com.hoi4utils.main.Config
 import com.typesafe.scalalogging.LazyLogging
-import zio.{UIO, ZIO}
+import zio.{UIO, URLayer, ZIO, ZLayer}
 
 class SpanishLocalizationService(locFileService: LocalizationFileService) extends BaseLocalizationService(locFileService) with LazyLogging {
 
@@ -23,4 +24,9 @@ class SpanishLocalizationService(locFileService: LocalizationFileService) extend
   override def languageId: UIO[String] = ZIO.succeed { "spanish" }
 
   override def toString: String = s"${getClass.getName}{" + "localizations=" + localizationCollection + "}"
+}
+
+object SpanishLocalizationService {
+  val live: URLayer[LocalizationFileService, LocalizationService] =
+    ZLayer.fromFunction(SpanishLocalizationService(_))
 }

@@ -9,14 +9,23 @@ import scala.annotation.experimental
 
 object ZHOIIVUtils extends ZIOAppDefault {
 
-  private type ROut = LocalizationService & ServiceReloader
+  private type ROut = com.hoi4utils.main.Config & ServiceReloader 
+    & LocalizationService
 
   //  private var _runtime: Runtime[LocalizationService] = null
   def getActiveRuntime: Runtime[ROut] = runtime
 
+  val configLayer: ZLayer[Any, Throwable, com.hoi4utils.main.Config] = ZLayer.fromZIO {
+    ZIO.attempt(new com.hoi4utils.main.ConfigManager().createConfig).tap { config =>
+      // Bridge: Sync the legacy static object for non-ZIO code
+      ZIO.succeed(HOIIVUtils.setConfig(config))
+    }
+  }
+
   // Define the environment for your application
-  val appLayer: ZLayer[Any, ServiceReloader.Error, ROut] = {
+  val appLayer: ZLayer[Any, Throwable, ROut] = {
     ZLayer.make[ROut](
+      configLayer,
       ZLayer.succeed(Set.empty[String]),
       YMLFileService.live,
       LocalizationFormatter.live,

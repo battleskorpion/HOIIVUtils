@@ -1,9 +1,11 @@
 package com.hoi4utils.hoi4.localization
 
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
-import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.main.{Config, HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
 import com.hoi4utils.improvedzio.macros.ImprovedMacros.ImprovedReloadableSyntax
+import com.hoi4utils.main.HOIIVUtils.logger
+import com.hoi4utils.main.ZHOIIVUtils.configLayer
 import com.typesafe.scalalogging.LazyLogging
 import zio.macros.ServiceReloader
 import zio.{Reloadable, Task, UIO, URIO, URLayer, ZIO, ZLayer}
@@ -106,30 +108,30 @@ trait LocalizationService {
    */
   def localizationFiles: UIO[Iterable[File]] = localizations.map(_.getLocalizationFiles)
 
-  def languageId: UIO[String] 
+  def languageId: UIO[String]
 
   protected def replacePrevious(key: String, localization: Localization): Task[Option[Localization]] = {
     for {
       locs <- localizations
       exists = locs.containsKey(key)
       result <- if exists then replace(key, localization)
-                else ZIO.fail(new IllegalArgumentException("Localization is not new, but there is no existing mod localization for the given key.")) 
-    } yield result 
+                else ZIO.fail(new IllegalArgumentException("Localization is not new, but there is no existing mod localization for the given key."))
+    } yield result
   }
 
   protected def replace(key: String, localization: Localization): Task[Option[Localization]] = {
     for {
-      locs <- localizations  
+      locs <- localizations
       result <- ZIO.attempt {
         locs.get(key) match
           case Some(prevLocalization) =>
             if prevLocalization.isReplaceableBy(localization) then
               locs.replace(key, localization)
             else throw new UnexpectedLocalizationStatusException(prevLocalization, localization)
-          case None => 
+          case None =>
             throw new IllegalArgumentException("There is no existing mod localization to replace for the given key.")
       }
-    } yield result 
+    } yield result
 
   }
 
@@ -156,9 +158,29 @@ trait LocalizationService {
 
 }
 
-object LocalizationService {
-  val live: URLayer[LocalizationFileService, LocalizationService] =
-    ZLayer.fromFunction(EnglishLocalizationService(_))
+object LocalizationService extends LazyLogging {
+  // TODO move object?
+  val live: URLayer[com.hoi4utils.main.Config & LocalizationFileService, LocalizationService] = {
+    ZLayer.service[com.hoi4utils.main.Config].flatMap { env => 
+      val config = env.get[com.hoi4utils.main.Config] 
+      val lang = config.getProperty("localization.primaryLanguage")
+
+      lang match
+        case "english" => EnglishLocalizationService.live
+        case "russian" => RussianLocalizationService.live
+        case "spanish" => SpanishLocalizationService.live
+        case other =>
+          logger.error("Unknown primary localization manager setting: " + other + ". Defaulting to English localization manager.")
+          EnglishLocalizationService.live
+      //    ZLayer.fromFunction(EnglishLocalizationService(_))
+    }
+//    for {
+//      config <- ZIO.service[Config]
+//      locFileService <- ZIO.service[LocalizationFileService]
+//      
+//
+//    } yield service
+  }
 
   // TODO
   val reloadable =  // ZLayer[ServiceReloader & LocalizationFileService, ServiceReloader.Error, LocalizationService] ???
@@ -199,26 +221,17 @@ abstract case class BaseLocalizationService(locFileService: LocalizationFileServ
 
   def getLocalizationFile(key: String): UIO[File] =
     localizations map(_.getLocalizationFile(key))
-//    for {
-//      locs <- localizations
-//      result <- ZIO.succeed(locs.getLocalizationFile(key))
-//    } yield result
 
 
-  override def getAll(localizationKeys: Iterable[String]): UIO[Iterable[Localization]] = {
+  override def getAll(localizationKeys: Iterable[String]): UIO[Iterable[Localization]] =
     localizations map(_.getAll(localizationKeys))
-//    for {
-//      locs <- localizations
-//      result <- ZIO.succeed(locs.getAll(localizationKeys))
-//    } yield result
-  }
 
   /**
    * @inheritdoc
    */
   override def setLocalization(key: String, localization: Localization): Task[Option[Localization]] =
     for {
-      locs <- localizations 
+      locs <- localizations
       result <- ZIO.attempt {
         if locs.containsKey(key) then replacePrevious(key, localization)
         else if (localization.isNew) {
@@ -253,7 +266,7 @@ abstract case class BaseLocalizationService(locFileService: LocalizationFileServ
    */
   override def replaceLocalization(key: String, text: String): Task[Option[Localization]] = {
     for {
-      locs <- localizations 
+      locs <- localizations
       result <- ZIO.attempt {
         require(key != null, "Key cannot be null.")
         locs.get(key) match

@@ -73,14 +73,17 @@ class PDXLoader extends LazyLogging:
    * @param onComponentStart Callback invoked when a component begins loading, receives componentName
    */
   def load(
-            hProperties: Properties,
+//            hProperties: Properties,
             loadingLabel: Label,
             isCancelled: () => Boolean = () => false,
             onComponentComplete: (String, Double) => Unit = (_, _) => (),
             onComponentStart: String => Unit = _ => ()
-          ): RIO[LocalizationService, Unit] =
-    ZIO.serviceWithZIO[LocalizationService] { service =>
-      ZIO.attempt {
+          ): RIO[LocalizationService & Config, Unit] = {
+    for {
+      service <- ZIO.service[LocalizationService]
+      config <- ZIO.service[Config]
+      hProperties = config.getProperties
+      _ <- ZIO.attempt {
         implicit val properties: Properties = hProperties
         implicit val label: Label = loadingLabel
         //        if isCancelled() then return
@@ -122,21 +125,23 @@ class PDXLoader extends LazyLogging:
             onComponentComplete("Localization", 0.0) // TODO TODO Timing could be improved here if needed
           }
         ) *>
-        // Parallel PDX Loading
-        ZIO.attempt {
-          implicit val properties: Properties = hProperties
-          implicit val label: Label = loadingLabel
-          pdxList.par.foreach(l =>
-            l.foreach(p =>
-              if !isCancelled() then
-                val componentName = p.cleanName
-                onComponentStart(componentName)
-                val componentStart = System.nanoTime()
-                readPDX(p, isCancelled)
-                onComponentComplete(componentName, (System.nanoTime() - componentStart) / 1_000_000_000.0)
+          // Parallel PDX Loading
+          ZIO.attempt {
+            implicit val properties: Properties = hProperties
+            implicit val label: Label = loadingLabel
+            pdxList.par.foreach(l =>
+              l.foreach(p =>
+                if !isCancelled() then
+                  val componentName = p.cleanName
+                  onComponentStart(componentName)
+                  val componentStart = System.nanoTime()
+                  readPDX(p, isCancelled)
+                  onComponentComplete(componentName, (System.nanoTime() - componentStart) / 1_000_000_000.0)
+              )
             )
-          )
-        }
+          }
+    } yield () 
+      
 //        if !isCancelled() then
 //          startTime = System.nanoTime()
 //          onComponentStart("Localization")
@@ -162,7 +167,7 @@ class PDXLoader extends LazyLogging:
 //            )
 //          )
 //      }
-    }
+  }
 
   def readPDX(pdx: PDXReadable, isCancelled: () => Boolean = () => false)(implicit properties: Properties, label: Label): Unit =
     val property = s"valid.${pdx.cleanName}"
