@@ -104,22 +104,24 @@ case class LocalizationFileServiceImpl(ymlFileService: YMLFileService, locFormat
   /**
    * Loads localization. Loads mod localization after vanilla to give mod localizations priority
    */
-  def loadLocalization(): Unit =
-    // vanilla
-    HOIIVFiles.HOI4.localization_folder
-      .validateFolder("HOI4 localization folder")
-      .fold(
-        logger.error,
-        loadLocalization(_, Localization.Status.VANILLA)
-      )
+  def load(localizations: LocalizationCollection, languageId: String): Task[Unit] =
+    ZIO.attemptBlocking {
+      // vanilla
+      HOIIVFiles.HOI4.localization_folder
+        .validateFolder("HOI4 localization folder")
+        .fold(
+          logger.error,
+          loadLocalization(localizations, _, Localization.Status.VANILLA, languageId)
+        )
 
-    // mod
-    HOIIVFiles.Mod.localization_folder
-      .validateFolder("Mod localization folder")
-      .fold(
-        logger.error,
-        loadLocalization(_, Localization.Status.EXISTS)
-      )
+      // mod
+      HOIIVFiles.Mod.localization_folder
+        .validateFolder("Mod localization folder")
+        .fold(
+          logger.error,
+          loadLocalization(localizations, _, Localization.Status.EXISTS, languageId)
+        )
+    }
 
   protected def loadLocalization(localizations: LocalizationCollection, localizationFolder: File, status: Localization.Status, languageId: String): Unit =
     val files = localizationFolder.listFiles
