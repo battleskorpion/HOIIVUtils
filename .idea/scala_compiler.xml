@@ -2,6 +2,10 @@
 <project version="4">
   <component name="ScalaCompilerConfiguration">
     <option name="experimental" value="true" />
-    <profile name="Maven 1" modules="HOIIVUtils" />
+    <profile name="Maven 1" modules="HOIIVUtils">
+      <parameters>
+        <parameter value="-experimental" />
+      </parameters>
+    </profile>
   </component>
 </project>

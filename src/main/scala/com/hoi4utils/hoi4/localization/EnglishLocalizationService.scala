@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.localization
 
 import com.typesafe.scalalogging.LazyLogging
-import zio.{URLayer, ZLayer}
+import zio.{UIO, URLayer, ZIO, ZLayer}
 
 class EnglishLocalizationService(locFileService: LocalizationFileService) extends BaseLocalizationService(locFileService) with LazyLogging {
 
@@ -10,14 +10,17 @@ class EnglishLocalizationService(locFileService: LocalizationFileService) extend
    */
   final protected val localizationCollection = new LocalizationCollection
 
-  override def localizations: LocalizationCollection = localizationCollection
+  override def localizations: UIO[LocalizationCollection] = 
+    ZIO.succeed(localizationCollection)
 
   // todo let user change?
-  override def capitalizationWhitelist: Set[String] =
-    Set("a", "above", "after", "among", // among us
-      "an", "and", "around", "as", "at", "below", "beneath", "beside", "between", "but", "by", "for", "from", "if", "in", "into", "nor", "of", "off", "on", "onto", "or", "over", "since", "the", "through", "throughout", "to", "under", "underneath", "until", "up", "with")
+  override def capitalizationWhitelist: UIO[Set[String]] =
+    ZIO.succeed {
+      Set("a", "above", "after", "among", // among us
+        "an", "and", "around", "as", "at", "below", "beneath", "beside", "between", "but", "by", "for", "from", "if", "in", "into", "nor", "of", "off", "on", "onto", "or", "over", "since", "the", "through", "throughout", "to", "under", "underneath", "until", "up", "with")
+    }
 
-  override def languageId: String = "english"
+  override def languageId: UIO[String] = ZIO.succeed { "english" } 
 
   override def toString: String = s"${getClass.getName}{" + "localizations=" + localizationCollection + "}"
 }

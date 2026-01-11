@@ -107,6 +107,11 @@
           <groupId>net.alchim31.maven</groupId>
           <artifactId>scala-maven-plugin</artifactId>
           <version>4.9.6</version>
+          <configuration>
+            <args>
+              <arg>-experimental</arg>
+            </args>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.openjfx</groupId>

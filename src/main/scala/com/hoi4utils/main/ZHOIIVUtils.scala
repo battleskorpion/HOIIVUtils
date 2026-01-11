@@ -5,6 +5,8 @@ import javafx.application.Application
 import zio.*
 import zio.macros.ServiceReloader
 
+import scala.annotation.experimental
+
 object ZHOIIVUtils extends ZIOAppDefault {
 
   private type ROut = LocalizationService & ServiceReloader
@@ -13,13 +15,13 @@ object ZHOIIVUtils extends ZIOAppDefault {
   def getActiveRuntime: Runtime[ROut] = runtime
 
   // Define the environment for your application
-  val appLayer: ZLayer[Any, Nothing, ROut] = {
+  val appLayer: ZLayer[Any, ServiceReloader.Error, ROut] = {
     ZLayer.make[ROut](
       ZLayer.succeed(Set.empty[String]),
       YMLFileService.live,
       LocalizationFormatter.live,
       LocalizationFileService.live,
-      EnglishLocalizationService.live,
+      LocalizationService.reloadable,
       ServiceReloader.live
     )
   }
@@ -30,10 +32,14 @@ object ZHOIIVUtils extends ZIOAppDefault {
     }
 
   override def run =
+    app.provideSome[ZIOAppArgs](appLayer)
+
+  private def app: ZIO[ZIOAppArgs & ROut, Throwable, Unit] =
     for {
-//      rt   <- ZIO.runtime[LocalizationService].provide(appLayer)
-//      _    <- ZIO.succeed { _runtime = rt }
+      //      rt   <- ZIO.runtime[LocalizationService].provide(appLayer)
+      //      _    <- ZIO.succeed { _runtime = rt }
       args <- getArgs
       _ <- ZIO.attemptBlocking(Application.launch(classOf[App], args.toArray *))
     } yield ()
+
 }
