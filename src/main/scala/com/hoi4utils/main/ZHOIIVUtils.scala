@@ -6,16 +6,8 @@ import zio.*
 
 object ZHOIIVUtils extends ZIOAppDefault {
 
-  private var _runtime: Runtime[LocalizationService] = null
-  def getActiveRuntime: Runtime[LocalizationService] = _runtime
-
-  override def run =
-    for {
-      rt   <- ZIO.runtime[LocalizationService].provide(appLayer)
-      _    <- ZIO.succeed { _runtime = rt }
-      args <- getArgs
-      _ <- ZIO.attemptBlocking(Application.launch(classOf[App], args.toArray *))
-    } yield ()
+//  private var _runtime: Runtime[LocalizationService] = null
+  def getActiveRuntime: Runtime[LocalizationService] = runtime
 
   // Define the environment for your application
   val appLayer: ZLayer[Any, Nothing, LocalizationService] = {
@@ -27,4 +19,17 @@ object ZHOIIVUtils extends ZIOAppDefault {
       EnglishLocalizationService.live
     )
   }
+  
+  override val runtime: Runtime[LocalizationService] =
+    Unsafe.unsafe { implicit unsafe =>
+      Runtime.unsafe.fromLayer(appLayer)
+    }
+
+  override def run =
+    for {
+//      rt   <- ZIO.runtime[LocalizationService].provide(appLayer)
+//      _    <- ZIO.succeed { _runtime = rt }
+      args <- getArgs
+      _ <- ZIO.attemptBlocking(Application.launch(classOf[App], args.toArray *))
+    } yield ()
 }
