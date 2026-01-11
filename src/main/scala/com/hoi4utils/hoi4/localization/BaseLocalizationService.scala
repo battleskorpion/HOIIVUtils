@@ -161,8 +161,8 @@ trait LocalizationService {
 object LocalizationService extends LazyLogging {
   // TODO move object?
   val live: URLayer[com.hoi4utils.main.Config & LocalizationFileService, LocalizationService] = {
-    ZLayer.service[com.hoi4utils.main.Config].flatMap { env => 
-      val config = env.get[com.hoi4utils.main.Config] 
+    ZLayer.service[com.hoi4utils.main.Config].flatMap { env =>
+      val config = env.get[com.hoi4utils.main.Config]
       val lang = config.getProperty("localization.primaryLanguage")
 
       lang match
@@ -172,18 +172,11 @@ object LocalizationService extends LazyLogging {
         case other =>
           logger.error("Unknown primary localization manager setting: " + other + ". Defaulting to English localization manager.")
           EnglishLocalizationService.live
-      //    ZLayer.fromFunction(EnglishLocalizationService(_))
     }
-//    for {
-//      config <- ZIO.service[Config]
-//      locFileService <- ZIO.service[LocalizationFileService]
-//      
-//
-//    } yield service
   }
 
   // TODO
-  val reloadable =  // ZLayer[ServiceReloader & LocalizationFileService, ServiceReloader.Error, LocalizationService] ???
+  val reloadable =
     live.reloadable
 }
 
