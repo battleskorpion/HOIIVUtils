@@ -3,24 +3,28 @@ package com.hoi4utils.main
 import com.hoi4utils.hoi4.localization.{BaseLocalizationService, EnglishLocalizationService, LocalizationFileService, LocalizationFormatter, LocalizationService, YMLFileService}
 import javafx.application.Application
 import zio.*
+import zio.macros.ServiceReloader
 
 object ZHOIIVUtils extends ZIOAppDefault {
 
-//  private var _runtime: Runtime[LocalizationService] = null
-  def getActiveRuntime: Runtime[LocalizationService] = runtime
+  private type ROut = LocalizationService & ServiceReloader
+
+  //  private var _runtime: Runtime[LocalizationService] = null
+  def getActiveRuntime: Runtime[ROut] = runtime
 
   // Define the environment for your application
-  val appLayer: ZLayer[Any, Nothing, LocalizationService] = {
-    ZLayer.make[LocalizationService](
+  val appLayer: ZLayer[Any, Nothing, ROut] = {
+    ZLayer.make[ROut](
       ZLayer.succeed(Set.empty[String]),
       YMLFileService.live,
       LocalizationFormatter.live,
       LocalizationFileService.live,
-      EnglishLocalizationService.live
+      EnglishLocalizationService.live,
+      ServiceReloader.live
     )
   }
-  
-  override val runtime: Runtime[LocalizationService] =
+
+  override val runtime: Runtime[ROut] =
     Unsafe.unsafe { implicit unsafe =>
       Runtime.unsafe.fromLayer(appLayer)
     }

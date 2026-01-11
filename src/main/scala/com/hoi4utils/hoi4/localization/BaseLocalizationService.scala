@@ -4,7 +4,7 @@ import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationMana
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
 import com.typesafe.scalalogging.LazyLogging
-import zio.{Task, UIO, URIO, URLayer, ZIO, ZLayer}
+import zio.{Reloadable, Task, UIO, URIO, URLayer, ZIO, ZLayer}
 
 import java.io.*
 import scala.collection.mutable.ListBuffer
