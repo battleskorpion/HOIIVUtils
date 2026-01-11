@@ -151,10 +151,12 @@ abstract case class BaseLocalizationService(locFileService: LocalizationFileServ
   /**
    * @inheritdoc
    */
-  override def reload(): Task[Unit] = ZIO.attempt {
-    localizations.clear()
-    locFileService.load(localizations, languageId)
-  }
+  override def reload(): Task[Unit] =
+//    ZIO.attempt {
+//      localizations.clear()
+//      locFileService.load(localizations, languageId)
+//    }
+    ZIO.succeed(localizations.clear()) *> locFileService.load(localizations, languageId)
 
   /**
    * @inheritdoc
