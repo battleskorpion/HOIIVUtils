@@ -1,10 +1,10 @@
 package com.hoi4utils.hoi4.localization
 
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.main.HOIIVUtils.logger
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
 import com.typesafe.scalalogging.LazyLogging
 import zio.{Task, ZIO, ZLayer}
+import com.hoi4utils.extensions.validateFolder
 
 import java.io.*
 import java.nio.charset.StandardCharsets
@@ -104,33 +104,25 @@ case class LocalizationFileServiceImpl(ymlFileService: YMLFileService, locFormat
   /**
    * Loads localization. Loads mod localization after vanilla to give mod localizations priority
    */
-  // TODO: do zio stuff with errors? etc. to cleanup if statemment ugliness #wecandobetter
-  override def load(localizations: LocalizationCollection, languageId: String): Task[Unit] =
-    ZIO.attemptBlocking {
-      // vanilla
-      if (HOIIVFiles.HOI4.localization_folder == null)
-        logger.error("'HOI4 localization folder' is null.")
-      else if (!HOIIVFiles.HOI4.localization_folder.exists)
-        logger.error("'HOI4 localization folder' does not exist.")
-      else if (!HOIIVFiles.HOI4.localization_folder.isDirectory)
-        logger.error("'HOI4 localization folder' is not a directory.")
-      else
-        loadLocalization(localizations, HOIIVFiles.HOI4.localization_folder, Localization.Status.VANILLA, languageId)
+  def loadLocalization(): Unit =
+    // vanilla
+    HOIIVFiles.HOI4.localization_folder
+      .validateFolder("HOI4 localization folder")
+      .fold(
+        logger.error,
+        loadLocalization(_, Localization.Status.VANILLA)
+      )
 
-      // mod
-      if (HOIIVFiles.Mod.localization_folder == null)
-        logger.error("'Mod localization folder' is null.")
-      else if (!HOIIVFiles.Mod.localization_folder.exists)
-        logger.error("'Mod localization folder' does not exist.")
-      else if (!HOIIVFiles.Mod.localization_folder.isDirectory)
-        logger.error("'Mod localization folder' is not a directory.")
-      else
-        loadLocalization(localizations, HOIIVFiles.Mod.localization_folder, Localization.Status.EXISTS, languageId)
-    }
+    // mod
+    HOIIVFiles.Mod.localization_folder
+      .validateFolder("Mod localization folder")
+      .fold(
+        logger.error,
+        loadLocalization(_, Localization.Status.EXISTS)
+      )
 
   protected def loadLocalization(localizations: LocalizationCollection, localizationFolder: File, status: Localization.Status, languageId: String): Unit =
     val files = localizationFolder.listFiles
-    if (files == null) return
 
     for (file <- files)
       if (file.isDirectory) loadLocalization(localizations, file, status, languageId)
