@@ -461,12 +461,6 @@
       <artifactId>airframe_3</artifactId>
       <version>2025.1.22</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.wvlet.airframe/airframe-log -->
-    <dependency>
-      <groupId>org.wvlet.airframe</groupId>
-      <artifactId>airframe-log_3</artifactId>
-      <version>2025.1.22</version>
-    </dependency>
     <!-- https://mvnrepository.com/artifact/dev.zio/zio -->
     <dependency>
       <groupId>dev.zio</groupId>
