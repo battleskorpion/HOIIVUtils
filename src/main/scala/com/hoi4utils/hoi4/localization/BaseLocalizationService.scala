@@ -4,18 +4,12 @@ import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationMana
 import com.hoi4utils.main.{Config, HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
 import com.hoi4utils.improvedzio.macros.ImprovedMacros.ImprovedReloadableSyntax
-import com.hoi4utils.main.HOIIVUtils.logger
-import com.hoi4utils.main.ZHOIIVUtils.configLayer
 import com.typesafe.scalalogging.LazyLogging
-import zio.macros.ServiceReloader
-import zio.{Reloadable, Task, UIO, URIO, URLayer, ZIO, ZLayer}
-import zio.macros.*
+import zio.{Task, UIO, URIO, URLayer, ZIO, ZLayer}
 import zio.*
 
 import java.io.*
 import scala.annotation.experimental
-import scala.collection.mutable.ListBuffer
-import scala.reflect.ClassTag
 
 // Group a base localization and its optional description together.
 case class LocalizationGroup(base: Option[Localization], desc: Option[Localization])
