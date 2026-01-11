@@ -87,5 +87,5 @@ class Initializer extends LazyLogging:
         case e: Exception =>
           logger.error("Error checking mod path: {}", e.getMessage)
           false
-  
+
       if isDemoMod then p.setProperty("mod.path", demoModPath)

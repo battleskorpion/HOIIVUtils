@@ -6,7 +6,6 @@ import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.*
 import com.hoi4utils.ui.countries.BuildingsByCountryController2
 import com.hoi4utils.ui.focus.FocusTree2Controller
-import com.hoi4utils.ui.focus_view.FocusTreeController
 import com.hoi4utils.ui.gfx.InterfaceController
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, RootWindows}
 import com.hoi4utils.ui.localization.*
@@ -24,7 +23,6 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.*
 import javafx.stage.Stage
 import javafx.util.Duration
-import zio.ZIO
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import javax.swing.*
@@ -272,8 +270,8 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     loadingLabel.setVisible(true)
 
     try
-      setConfig(new ConfigManager().createConfig)
-      val initializer: Unit = new Initializer().initialize(getConfig)
+//      setConfig(new ConfigManager().createConfig)
+//      val initializer: Unit = new Initializer().initialize(getConfig)
       val version = Version.getVersion(getConfig.getProperties)
       new Updater().updateCheck(version, getConfig.getDir)
       logger.info(s"Loading mod: ${getConfig.getProperties.getProperty("mod.path")}")

@@ -1,15 +1,16 @@
 package com.hoi4utils.main
 
 import com.hoi4utils.hoi4.localization.{BaseLocalizationService, EnglishLocalizationService, LocalizationFileService, LocalizationFormatter, LocalizationService, YMLFileService}
+import com.hoi4utils.main.HOIIVUtils.getConfig
 import javafx.application.Application
-import zio.*
+import zio.{ZIO, *}
 import zio.macros.ServiceReloader
 
 import scala.annotation.experimental
 
 object ZHOIIVUtils extends ZIOAppDefault {
 
-  private type ROut = com.hoi4utils.main.Config & ServiceReloader 
+  private type ROut = com.hoi4utils.main.Config & ServiceReloader
     & LocalizationService
 
   //  private var _runtime: Runtime[LocalizationService] = null
@@ -18,7 +19,10 @@ object ZHOIIVUtils extends ZIOAppDefault {
   val configLayer: ZLayer[Any, Throwable, com.hoi4utils.main.Config] = ZLayer.fromZIO {
     ZIO.attempt(new com.hoi4utils.main.ConfigManager().createConfig).tap { config =>
       // Bridge: Sync the legacy static object for non-ZIO code
-      ZIO.succeed(HOIIVUtils.setConfig(config))
+      ZIO.attempt {
+        HOIIVUtils.setConfig(config)
+        val initializer: Unit = new Initializer().initialize(config)
+      }
     }
   }
 
