@@ -13,8 +13,7 @@ import com.hoi4utils.hoi4.gfx.Interface
 import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4.history.countries.CountryFile
 import com.hoi4utils.hoi4.history.countries.CountryFile.countryErrors
-import com.hoi4utils.hoi4.localization.LocalizationService.localizationErrors
-import com.hoi4utils.hoi4.localization.{LocalizationService}
+import com.hoi4utils.hoi4.localization.LocalizationService
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4.map.resource.ResourcesFile
 import com.hoi4utils.hoi4.map.state.State
@@ -24,6 +23,7 @@ import com.hoi4utils.script.PDXReadable
 import com.hoi4utils.ui.menus.MenuController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.Label
+import zio.{Unsafe, ZIO}
 
 import java.awt.EventQueue
 import java.beans.PropertyChangeListener
@@ -113,7 +113,12 @@ class PDXLoader extends LazyLogging:
     startTime = System.nanoTime()
     onComponentStart("Localization")
     MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
-    LocalizationService.reload()
+    Unsafe.unsafe { implicit unsafe => 
+      ZHOIIVUtils.getActiveRuntime.unsafe.run(
+        ZIO.serviceWithZIO[LocalizationService](_.reload())
+      ).getOrThrow()
+    }
+//    LocalizationService.reload()  // TODO TODO TODO !!!!!
     onComponentComplete("Localization", (System.nanoTime() - startTime) / 1_000_000_000.0)
     if isCancelled() then return
 
@@ -160,7 +165,7 @@ class PDXLoader extends LazyLogging:
   def clearLB(): Unit =
     ListBuffer(
       effectErrors,
-      localizationErrors,
+//      localizationErrors,   // TODO
       interfaceErrors,
       countryErrors,
       focusTreeErrors,

@@ -2,8 +2,9 @@ package com.hoi4utils.hoi4.localization
 
 import com.hoi4utils.exceptions.LocalizationPropertyException
 import com.hoi4utils.hoi4.localization.Property.{DESCRIPTION, NAME}
-import com.hoi4utils.main.HOIIVFiles
+import com.hoi4utils.main.{HOIIVFiles, ZHOIIVUtils}
 import com.hoi4utils.ui.javafx.application.JavaFXUIManager
+import zio.{Unsafe, ZIO}
 
 import java.io.File
 import scala.collection.mutable
@@ -13,7 +14,12 @@ import scala.collection.mutable
  * Clausewitz-engine localization, and not general localization/i18n
  */
 trait Localizable {
-  
+
+  private def runZIO[A](effect: ZIO[LocalizationService, Throwable, A]): A =
+    Unsafe.unsafe { implicit unsafe =>
+      ZHOIIVUtils.getActiveRuntime.unsafe.run(effect).getOrThrow()
+    }
+
   /**
    * Default method to get the number of localizable properties.
    *
@@ -49,7 +55,9 @@ trait Localizable {
 //  def clearLocalizableProperties(): Unit =
 //    localizableProperties.clear()
 
-  def getLocalization: Iterable[Localization] = LocalizationService.getAll(getLocalizationKeys)
+  def getLocalization: Iterable[Localization] = {
+    runZIO(ZIO.serviceWithZIO[LocalizationService](_.getAll(getLocalizationKeys)))
+  }
 
   /**
    * Gets the localization for the given property.
@@ -58,7 +66,7 @@ trait Localizable {
    * @return the localization for the given property.
    */
   def localization(property: Property): Option[Localization] = localizableProperties.get(property) match
-    case Some(k) => LocalizationService.get(k)
+    case Some(k) => runZIO(ZIO.serviceWithZIO[LocalizationService](_.getLocalization(k)))
     case None => None
 
   /**
@@ -77,7 +85,7 @@ trait Localizable {
   def localizationStatus(property: Property): Localization.Status = localization(property) match
     case Some(l) => l.status
     case None => Localization.Status.MISSING
-    
+
   def localizationStatuses: Map[Property, Localization.Status] =
     localizableProperties.iterator.map(m => (m._1, localizationStatus(m._1))).toMap
 
@@ -91,11 +99,17 @@ trait Localizable {
   //		setLocalization(property, text, primaryLocalizationFile());
   //	}
 
-  def primaryLocalizationFile: Option[File] =
-    val localizableGroup = getLocalizableGroup
-    localizableGroup.flatMap(ll => ll.getLocalizationKeys).map(LocalizationService.getLocalizationFile).find(_ != null) match
-      case Some(f) => Some(f)
-      case None => None
+  def primaryLocalizationFile: ZIO[LocalizationService, Nothing, Option[File]] =
+    val keys = getLocalizableGroup.flatMap(_.getLocalizationKeys).toList
+    ZIO.serviceWithZIO[LocalizationService] { service =>
+      ZIO.foreach(keys)(service.getLocalizationFile)
+        .map(_.find(_ != null))
+    }
+    
+//    val localizableGroup = getLocalizableGroup
+//    localizableGroup.flatMap(ll => ll.getLocalizationKeys).map(ZIO.serviceWithZIO[LocalizationService](_.getLocalizationFile)).find(_ != null) match
+//      case Some(f) => Some(f)
+//      case None => None
 
   /**
    * Gets the localizable group of objects that this object is a part of.
@@ -133,8 +147,7 @@ trait Localizable {
    */
   def setLocalization(property: Property, version: Option[Int], text: String, file: File): Unit =
     localizableProperties.get(property) match
-      case Some(k) =>
-        LocalizationService.get.setLocalization(k, version, text, file)
+      case Some(k) => runZIO(ZIO.serviceWithZIO[LocalizationService](_.setLocalization(k, version, text, file)))
       case None => throw new LocalizationPropertyException(property, this)
 
   /**
@@ -145,7 +158,7 @@ trait Localizable {
    */
   def replaceLocalization(property: Property, text: String): Unit =
     localizableProperties.get(property) match
-      case Some(k) => LocalizationService.get.replaceLocalization(k, text)
+      case Some(k) => runZIO(ZIO.serviceWithZIO[LocalizationService](_.replaceLocalization(k, text)))
       case None =>
 
   /**

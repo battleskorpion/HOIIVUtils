@@ -59,7 +59,7 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
     //private FocusLocalizationFile focusLocFile;
     private final ObservableList<Focus> focusObservableList;
 
-	private final LocalizationController localizationController = com.hoi4utils.Registry.getLocalizationController();
+//	private final LocalizationController localizationController = com.hoi4utils.Registry.getLocalizationController();
 
     public FocusTreeLocalizationController() {
         /* window */
@@ -131,7 +131,8 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
 
         /* load focus loc */
         try {
-            int numUpdated = FixFocus.fixLocalization(focusTreeFile, generateDummyDescriptions);
+			FixFocus fixFocus = new FixFocus(null); // TODO TODO TODO
+            int numUpdated = fixFocus.fixLocalization(focusTreeFile, generateDummyDescriptions);
             updateNumAddedLocalization(numUpdated);
         } catch (IOException | LocalizationPreconditionException e) {
             openError(e);
@@ -187,7 +188,9 @@ public class FocusTreeLocalizationController extends HOIIVUtilsAbstractControlle
 //        }
 //
 //        focusLocFile.writeLocalization();
-		localizationController.saveLocalization(); 
+
+	    // TODO sorry.
+//		localizationController.saveLocalization();
     }
 
     @FXML

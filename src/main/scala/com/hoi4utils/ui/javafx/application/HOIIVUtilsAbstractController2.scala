@@ -2,7 +2,8 @@ package com.hoi4utils.ui.javafx.application
 
 import com.hoi4utils.internal.UTF8ResourceBundleControl
 import com.hoi4utils.main.HOIIVUtils.*
-import com.hoi4utils.main.{HOIIVUtils, Initializer, Version}
+import com.hoi4utils.main.ZHOIIVUtils.validateEnv
+import com.hoi4utils.main.{HOIIVUtils, Initializer, Version, ZHOIIVUtils}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
@@ -12,6 +13,7 @@ import javafx.scene.image.Image
 import javafx.scene.layout.{GridPane, Pane}
 import javafx.scene.{Parent, Scene}
 import javafx.stage.{Stage, StageStyle}
+import zio.ZIO
 
 import java.io.IOException
 import java.util.{Locale, MissingResourceException, ResourceBundle}

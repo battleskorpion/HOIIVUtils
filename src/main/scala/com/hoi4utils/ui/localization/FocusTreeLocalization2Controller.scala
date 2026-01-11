@@ -3,7 +3,7 @@ package com.hoi4utils.ui.localization
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager}
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
 import com.hoi4utils.hoi4.localization.{Localization, LocalizationService, Property}
-import com.hoi4utils.main.HOIIVUtils
+import com.hoi4utils.main.{HOIIVUtils, ZHOIIVUtils}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.layout.ErrorIconPane
 import javafx.collections.{FXCollections, ObservableList}
@@ -13,6 +13,7 @@ import javafx.scene.control.{Button, CheckBox, Label, ProgressIndicator, RadioMe
 import javafx.scene.layout.{AnchorPane, HBox, VBox}
 import javafx.scene.paint.Color
 import scalafx.geometry.Insets
+import zio.ZIO
 
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized
@@ -170,8 +171,11 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
         vbox.getChildren.add(toggleButton)
     )
 
-  @FXML def handleSaveButtonAction(): Unit =
-    LocalizationService.get.saveLocalization()
+  @FXML def handleSaveButtonAction(): Unit = {
+    ZIO.serviceWithZIO[LocalizationService] { service =>
+      service.saveLocalization()
+    }
+  }
 
   /**
    * takes the focuses in the focustree and list them in the table
@@ -208,14 +212,24 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
     // Name Column - editable
     focusNameColumn.setCellValueFactory(cellData => {
       new javafx.beans.property.SimpleStringProperty(
-        LocalizationService.get.getLocalization(cellData.getValue.id.str).map(l ⇒ l.text).getOrElse("")
+        zio.Unsafe.unsafe { implicit unsafe =>
+          ZHOIIVUtils.getActiveRuntime.unsafe.run(
+            ZIO.serviceWithZIO[LocalizationService](_.getLocalization(cellData.getValue.id.str))
+              .map(_.fold("")(_.text))
+          ).getOrThrow()
+        }
       )
     })
 
     // Description Column - editable
     focusDescColumn.setCellValueFactory(cellData => {
       new javafx.beans.property.SimpleStringProperty(
-        LocalizationService.get.getLocalization(cellData.getValue.id.str + "_desc").map(l ⇒ l.text).getOrElse("")
+        zio.Unsafe.unsafe { implicit unsafe =>
+          ZHOIIVUtils.getActiveRuntime.unsafe.run(
+            ZIO.serviceWithZIO[LocalizationService](_.getLocalization(cellData.getValue.id.str + "_desc"))
+              .map(_.fold("")(_.text))
+          ).getOrThrow()
+        }
       )
     })
 
@@ -290,9 +304,29 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
     if totalFocuses > 0 then
       val localizedCount = focusList.stream()
         .filter(focus => {
-          val hasName = LocalizationService.get.getLocalization(focus.id.str).isDefined
-          val hasDesc = LocalizationService.get.getLocalization(focus.id.str + "_desc").isDefined
-          hasName && hasDesc
+//          ZIO.serviceWithZIO[LocalizationService] { service =>
+//            ZIO.foreach(keys)(service.getLocalizationFile)
+//              .map(_.find(_ != null))
+//          }
+//          ZIO.serviceWithZIO[LocalizationService] { service =>
+//            val hasName = service.getLocalization(focus.id.str).map(_.isDefined)
+//            val hasDesc = service.getLocalization(focus.id.str + "_desc").map(_.isDefined)
+//            hasName && hasDesc
+//          }
+//          for { 
+//            service <- ZIO.service[LocalizationService]
+//            hasName <- service.isLocalized(focus.id.str)
+//            hasDesc <- service.isLocalized(focus.id.str + "_desc")
+//          } yield hasName && hasDesc
+          zio.Unsafe.unsafe { implicit unsafe =>
+            ZHOIIVUtils.getActiveRuntime.unsafe.run(
+              for {
+                service <- ZIO.service[LocalizationService]
+                hasName <- service.isLocalized(focus.id.str)
+                hasDesc <- service.isLocalized(focus.id.str + "_desc")
+              } yield hasName && hasDesc
+            ).getOrThrow()
+          }
         })
         .count()
 

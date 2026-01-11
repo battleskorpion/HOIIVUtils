@@ -1,11 +1,11 @@
 package com.hoi4utils.hoi4.localization
 
-import com.hoi4utils.Providers.*
 import com.typesafe.scalalogging.LazyLogging
+import zio.ZLayer
 
 import scala.jdk.javaapi.CollectionConverters
 
-class LocalizationFormatter(localizationSvc: LocalizationService) extends LazyLogging {
+class LocalizationFormatter(capitalizationWhitelist: Set[String]) extends LazyLogging {
 
   /** Formats a Localization into a file line. */
   def formatLocalization(loc: Localization): String = {
@@ -24,7 +24,7 @@ class LocalizationFormatter(localizationSvc: LocalizationService) extends LazyLo
     if (title.isBlank) return title
 
     val words = title.split(" ").filter(w => !w.isBlank).toBuffer
-    val whitelist = localizationSvc.capitalizationWhitelist
+    val whitelist = capitalizationWhitelist
 
     // capitalize first word
     words(0) = capitalizeWord(words.head)
@@ -55,6 +55,7 @@ class LocalizationFormatter(localizationSvc: LocalizationService) extends LazyLo
 
 }
 
-object LocalizationFormatter:
-  given (using Provider[LocalizationService]): Provider[LocalizationFormatter] =
-    provide(LocalizationFormatter(provided[LocalizationService]))
+object LocalizationFormatter {
+  val live: ZLayer[Set[String], Nothing, LocalizationFormatter] =
+    ZLayer.fromFunction(LocalizationFormatter.apply)
+}

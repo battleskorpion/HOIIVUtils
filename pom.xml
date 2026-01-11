@@ -467,6 +467,12 @@
       <artifactId>airframe-log_3</artifactId>
       <version>2025.1.22</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/dev.zio/zio -->
+    <dependency>
+      <groupId>dev.zio</groupId>
+      <artifactId>zio_3</artifactId>
+      <version>2.1.24</version>
+    </dependency>
   </dependencies>
 
 </project>

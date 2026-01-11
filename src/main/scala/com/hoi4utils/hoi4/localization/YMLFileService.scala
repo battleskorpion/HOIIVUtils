@@ -1,6 +1,7 @@
 package com.hoi4utils.hoi4.localization
 
-import com.hoi4utils.Providers.{Provider, provide}
+
+import zio.ZLayer
 
 import java.io.File
 import java.nio.file.Files
@@ -16,5 +17,5 @@ class YMLFileService {
 }
 
 object YMLFileService {
-  given Provider[YMLFileService] = provide(YMLFileService())
+  val live: ZLayer[Any, Nothing, YMLFileService] = ZLayer.succeed(new YMLFileService)
 }

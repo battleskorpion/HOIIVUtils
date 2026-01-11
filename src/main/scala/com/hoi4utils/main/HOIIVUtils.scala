@@ -22,16 +22,18 @@ import javax.swing.*
  */
 object HOIIVUtils extends LazyLogging:
   private var config: Option[Config] = None
-  
-  def main(args: Array[String]): Unit = Application.launch(classOf[App], args*)
+
+  def main(args: Array[String]): Unit = {
+    Application.launch(classOf[App], args*)
+  }
 
   def getConfig: Config =
     config match
       case Some(c) => c
       case None => throw new RuntimeException("Configuration not initialized")
-      
+
   def setConfig(newConfig: Config): Unit = config = Some(newConfig)
-  
+
   /**
    * Get a user saved property from property class saved properties, NOT from HOIIVUtils.properties.
    * We get saved HOIIVUtils.properties data only when the Menu is opened

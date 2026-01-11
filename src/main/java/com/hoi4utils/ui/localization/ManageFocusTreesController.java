@@ -6,6 +6,7 @@ import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager;
 import com.hoi4utils.hoi4.localization.Localization;
 import com.hoi4utils.hoi4.localization.LocalizationService;
 import com.hoi4utils.hoi4.localization.Property;
+import com.hoi4utils.main.ZHOIIVUtils;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import com.hoi4utils.ui.javafx.scene.control.TableViewWindow;
 import javafx.collections.FXCollections;
@@ -17,6 +18,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
 import scala.jdk.javaapi.CollectionConverters;
+import zio.ZIO;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -185,7 +187,7 @@ public class ManageFocusTreesController extends HOIIVUtilsAbstractController imp
 		// todo handle any exceptions?
 		if (onSaveActions.isEmpty()) return;
 		onSaveActions.forEach(Runnable::run);
-		LocalizationService.get().saveLocalization();
+//		LocalizationService.get().saveLocalization();       // TODO TODO sorry 
 		onSaveActions.clear();
 	}
 }

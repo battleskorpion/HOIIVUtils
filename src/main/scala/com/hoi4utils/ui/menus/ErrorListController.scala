@@ -6,7 +6,6 @@ import com.hoi4utils.hoi4.common.idea.IdeasManager.ideaFileErrors
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
 import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4.history.countries.CountryFile.countryErrors
-import com.hoi4utils.hoi4.localization.LocalizationService.localizationErrors
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4.map.state.State.stateErrors
 import com.hoi4utils.main.HOIIVUtils

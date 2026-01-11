@@ -1,99 +1,19 @@
 package com.hoi4utils.hoi4.localization
 
-import com.hoi4utils.Providers.Provider
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
-import com.hoi4utils.Providers.*
 import com.typesafe.scalalogging.LazyLogging
+import zio.{Task, UIO, URIO, URLayer, ZIO, ZLayer}
 
 import java.io.*
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 
-
-object LocalizationService extends LazyLogging {
-  private var primaryManager: Option[LocalizationService] = None
-  private var managers: Map[Class[? <: LocalizationService], LocalizationService] = Map.empty
-  val localizationErrors: ListBuffer[ParsingError] = ListBuffer.empty[ParsingError]
-
-  given Provider[LocalizationService] = provide(LocalizationService.get)
-
-  def getLocalizationFile(key: String): File = get.localizations.getLocalizationFile(key)
-
-  @throws[NoLocalizationManagerException]
-  def get: LocalizationService = primaryManager match
-    case Some(mgr) => mgr
-    case None => throw new NoLocalizationManagerException
-
-  def getOrCreate[T <: LocalizationService](create: () => T)(using ct: ClassTag[T]): T =
-    val clazz = ct.runtimeClass.asInstanceOf[Class[T]]
-    managers.get(clazz).map(_.asInstanceOf[T]).getOrElse {
-      val mgr = create()
-      add(mgr)
-      mgr
-    }
-
-  private def add[T <: LocalizationService](mgr: T)(using ct: ClassTag[T]): Unit =
-    val clazz = ct.runtimeClass.asInstanceOf[Class[T]]
-    managers = managers + (clazz -> mgr)
-
-  def get(key: String): Option[Localization] = get.getLocalization(key)
-
-  def getAll(localizationKeys: Iterable[String]): Iterable[Localization] = get.localizations.getAll(localizationKeys)
-
-  @throws[IllegalArgumentException]
-  def find(key: String): Option[Localization] = get.getLocalization(key)
-
-  /**
-   * Sets the primary manager for localization management.
-   *
-   * @param manager the LocalizationManager to set as the primary manager
-   */
-  private def selectPrimaryManager[T <: LocalizationService: ClassTag](): Unit =
-    val clazz = summon[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]]
-    managers.get(clazz) match
-      case Some(mgr) =>
-        primaryManager = Some(mgr)
-      case None =>
-        throw new IllegalStateException(s"Localization manager of type ${clazz.getName} not found.")
-
-  private def setManager(): Unit = HOIIVUtils.get("localization.primaryLanguage") match
-    case "english" => selectPrimaryManager[EnglishLocalizationService]()
-    case "russian" => selectPrimaryManager[RussianLocalizationService]()
-    case "spanish" => selectPrimaryManager[SpanishLocalizationService]()
-    case other =>
-      logger.error("Unknown primary localization manager setting: " + other + ". Defaulting to English localization manager.")
-      selectPrimaryManager[EnglishLocalizationService]()
-
-  def reload(): Unit =
-    requiredLocalizationManagers foreach (_.reload())
-    setManager()
-    logger.info("Localization managers reloaded. Primary manager: " + primaryManager.get.getClass.getSimpleName)
-
-  def requiredLocalizationManagers: List[LocalizationService] =
-    List(
-      getOrCreate(() => {
-        val locFileService = provided[LocalizationFileService]
-        new EnglishLocalizationService(locFileService)
-      }),
-      getOrCreate(() => {
-        val locFileService = provided[LocalizationFileService]
-        new RussianLocalizationService(locFileService)
-      }),
-      getOrCreate(() => {
-        val locFileService = provided[LocalizationFileService]
-        new SpanishLocalizationService(locFileService)
-      })
-
-    )
-
-}
-
 // Group a base localization and its optional description together.
 case class LocalizationGroup(base: Option[Localization], desc: Option[Localization])
 
-trait LocalizationService(locFileService: LocalizationFileService) {
+trait LocalizationService {
   /**
    * @return map of localizations and their keys.
    */
@@ -102,10 +22,9 @@ trait LocalizationService(locFileService: LocalizationFileService) {
   private[localization] def capitalizationWhitelist: Set[String]
 
   /**
-   * Reloads the localizations. The specific behavior of this method
-   * depends on the implementation.
+   * Reloads localization.
    */
-  def reload(): Unit
+  def reload(): Task[Unit]
 
   /**
    * Retrieves the localization for the given key.
@@ -115,7 +34,9 @@ trait LocalizationService(locFileService: LocalizationFileService) {
    *         or None if the localization does not exist
    */
   @throws[IllegalArgumentException]
-  def getLocalization(key: String): Option[Localization]
+  def getLocalization(key: String): UIO[Option[Localization]]
+
+  def getLocalizationFile(key: String): UIO[File]
 
   /**
    * Sets the localization for the given key.
@@ -128,7 +49,7 @@ trait LocalizationService(locFileService: LocalizationFileService) {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def setLocalization(key: String, localization: Localization): Option[Localization]
+  def setLocalization(key: String, localization: Localization): Task[Option[Localization]]
 
   /**
    * Sets the localization for the given key, with the given text.
@@ -141,7 +62,7 @@ trait LocalizationService(locFileService: LocalizationFileService) {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def setLocalization(key: String, version: Option[Int] = None, text: String, file: File): Option[Localization]
+  def setLocalization(key: String, version: Option[Int] = None, text: String, file: File): Task[Option[Localization]]
 
   /**
    * Replaces the localization for the given key with the given text.
@@ -152,11 +73,13 @@ trait LocalizationService(locFileService: LocalizationFileService) {
    */
   @throws[IllegalArgumentException]
   @throws[UnexpectedLocalizationStatusException]
-  def replaceLocalization(key: String, text: String): Option[Localization]
+  def replaceLocalization(key: String, text: String): Task[Option[Localization]]
 
   @throws[LocalizationExistsException]
-  def addLocalization(localization: Localization, file: File): Unit =
-    addLocalization(localization, localizations, file)
+  def addLocalization(localization: Localization, file: File): Task[Unit] =
+    ZIO.attempt {
+      addLocalization(localization, localizations, file)
+    }
 
   /**
    * Checks if the given localization ID is localized (has a localization entry).
@@ -164,16 +87,18 @@ trait LocalizationService(locFileService: LocalizationFileService) {
    * @param localizationId the ID of the localization to check
    * @return true if the localization is localized, false otherwise
    */
-  def isLocalized(localizationId: String): Boolean = getLocalization(localizationId).nonEmpty
+  def isLocalized(localizationId: String): UIO[Boolean] = getLocalization(localizationId).map(_.nonEmpty)
 
-  def getLocalizations: Iterable[Localization] = localizations.getAll
+  def getLocalizations: UIO[Iterable[Localization]] = ZIO.succeed(localizations.getAll)
+
+  def getAll(locs: Iterable[String]): UIO[Iterable[Localization]]
 
   /**
    * Gets all localization files managed by this manager.
    *
    * @return all localization files.
    */
-  def localizationFiles: Iterable[File] = localizations.getLocalizationFiles
+  def localizationFiles: UIO[Iterable[File]] = ZIO.succeed(localizations.getLocalizationFiles)
 
   def languageId: String
 
@@ -199,23 +124,14 @@ trait LocalizationService(locFileService: LocalizationFileService) {
     if (localizationCollection.containsKey(localization.id)) throw new LocalizationExistsException(localization)
     localizationCollection.add(localization, file)
 
-  /**
-   * Loads localization. Loads mod localization after vanilla to give mod localizations priority
-   */
-  protected def loadLocalization(): Unit =
-    localizations.clear()
-    locFileService.loadLocalization()
-
-  def saveLocalization(): Unit =
-    locFileService.saveLocalization(localizations)
+  def saveLocalization(): Task[Unit]
 
   /**
    *
    * @param file
    * @param localization
    */
-  protected def writeLocalization(file: File, localization: Localization): Unit =
-    locFileService.writeLocalization(file, localization)
+  protected def writeLocalization(file: File, localization: Localization): Unit
 
 }
 
@@ -224,7 +140,7 @@ trait LocalizationService(locFileService: LocalizationFileService) {
  * This class provides functionality to set, get, replace, and manage localizations by key.
  * It also allows reloading and saving localizations.
  */
-abstract class BaseLocalizationService(locFileService: LocalizationFileService) extends LocalizationService(locFileService) with LazyLogging {
+abstract case class BaseLocalizationService(locFileService: LocalizationFileService) extends LocalizationService with LazyLogging {
 
   /**
    * @inheritdoc
@@ -235,52 +151,84 @@ abstract class BaseLocalizationService(locFileService: LocalizationFileService) 
   /**
    * @inheritdoc
    */
-  override def reload(): Unit = loadLocalization()
+  override def reload(): Task[Unit] = ZIO.attempt {
+    localizations.clear()
+    locFileService.load(localizations, languageId)
+  }
 
   /**
    * @inheritdoc
    */
-  override def getLocalization(key: String): Option[Localization] = localizations.get(key)
+  override def getLocalization(key: String): UIO[Option[Localization]] =
+    ZIO.succeed(localizations.get(key))
+
+  def getLocalizationFile(key: String): UIO[File] =
+    ZIO.succeed(localizations.getLocalizationFile(key))
+
+  override def getAll(locs: Iterable[String]): UIO[Iterable[Localization]] =
+    ZIO.succeed(localizations.getAll(locs))
 
   /**
    * @inheritdoc
    */
-  override def setLocalization(key: String, localization: Localization): Option[Localization] =
-    if localizations.containsKey(key) then replacePrevious(key, localization)
-    else
-      if (localization.isNew) {
-//        localizations.add(localization, file)
-//        Some(localization)
+  override def setLocalization(key: String, localization: Localization): Task[Option[Localization]] =
+    ZIO.attempt {
+      if localizations.containsKey(key) then replacePrevious(key, localization)
+      else if (localization.isNew) {
+        //        localizations.add(localization, file)
+        //        Some(localization)
       }
       else throw new IllegalArgumentException("Localization is not new, but there is no existing mod localization for the given key.")
-    None
+      None
+    }
 
   /**
    * @inheritdoc
    */
-  override def setLocalization(key: String, version: Option[Int] = None, text: String, file: File): Option[Localization] =
-    localizations.get(key) match
-      case Some(prevLocalization) =>
-        val localization = prevLocalization.copyForReplace(text, version, file)
-        localizations.replace(key, localization)
-      case None =>
-        val localization = new Localization(key, version, text, Localization.Status.NEW)
-        localizations.add(localization, file)
-        Some(localization)
+  override def setLocalization(key: String, version: Option[Int] = None, text: String, file: File): Task[Option[Localization]] =
+    ZIO.attempt {
+      localizations.get(key) match
+        case Some(prevLocalization) =>
+          val localization = prevLocalization.copyForReplace(text, version, file)
+          localizations.replace(key, localization)
+        case None =>
+          val localization = new Localization(key, version, text, Localization.Status.NEW)
+          localizations.add(localization, file)
+          Some(localization)
+    }
 
   /**
    * @inheritdoc
    */
-  override def replaceLocalization(key: String, text: String): Option[Localization] =
-    require(key != null, "Key cannot be null.")
-    localizations.get(key) match
-      case Some(prevLocalization) =>
-        val localization = prevLocalization.copyForReplace(text)
-        // there are maps that support mapping to null, which is why the null check is necessary.
-        // (read the docs for the replace method)
-        localizations.replace(key, localization)
-      case None => throw new IllegalArgumentException("Localization with the given key does not exist.")
+  override def replaceLocalization(key: String, text: String): Task[Option[Localization]] =
+    ZIO.attempt {
+      require(key != null, "Key cannot be null.")
+      localizations.get(key) match
+        case Some(prevLocalization) =>
+          val localization = prevLocalization.copyForReplace(text)
+          // there are maps that support mapping to null, which is why the null check is necessary.
+          // (read the docs for the replace method)
+          localizations.replace(key, localization)
+        case None => throw new IllegalArgumentException("Localization with the given key does not exist.")
+    }
 
+  override def saveLocalization(): Task[Unit] =
+    ZIO.attempt {
+      locFileService.save(localizations)
+    }
+
+  /**
+   * @inheritdoc
+   */
+  override protected def writeLocalization(file: File, localization: Localization): Unit =
+    locFileService.write(file, localization)
+
+}
+
+object BaseLocalizationService {
+//  // Define the Layer: This says "I need a LocalizationFileService to create a LocalizationService"
+//  val live: URLayer[LocalizationFileService, LocalizationService] =
+//    ZLayer.fromFunction(BaseLocalizationService(_))
 }
 
 object LocalizationParser:

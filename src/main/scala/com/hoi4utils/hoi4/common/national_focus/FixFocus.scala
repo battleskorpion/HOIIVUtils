@@ -3,7 +3,9 @@ package com.hoi4utils.hoi4.common.national_focus
 import com.hoi4utils.exceptions.LocalizationPreconditionException
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
 import com.hoi4utils.hoi4.localization.{LocalizationFormatter, Property}
+import com.hoi4utils.main.ZHOIIVUtils
 import com.typesafe.scalalogging.LazyLogging
+import zio.ZIO
 
 import java.io.{File, IOException}
 import java.time.LocalDateTime
@@ -13,9 +15,7 @@ import java.time.LocalDateTime
  * FixFocus is a utility class for fixing focus localization in a focus tree.
  * It ensures that all focuses have proper localization for their names and descriptions.
  */
-object FixFocus extends LazyLogging {
-  import com.hoi4utils.Providers.*
-
+class FixFocus(locFormatter: LocalizationFormatter) extends LazyLogging {
   /**
    * Fixes localization if necessary (who could've guessed).
    *
@@ -29,12 +29,14 @@ object FixFocus extends LazyLogging {
     requireLocalizableFocusTree(focusTree)
 
 //    val locManager = LocalizationManager.get
-    val locFormatter = provided[LocalizationFormatter]
-    val locFile = focusTree.primaryLocalizationFile.get
+//    val locFile = focusTree.primaryLocalizationFile.map(_.get)  //    val locFile = focusTree.primaryLocalizationFile.get
+    val locFile = zio.Unsafe.unsafe { implicit unsafe =>
+      ZHOIIVUtils.getActiveRuntime.unsafe.run(focusTree.primaryLocalizationFile.map(_.get)).getOrThrow()
+    }
     val focuses = focusTree.focuses
 
     logger.debug("Localization Manager loaded.")
-    logger.debug(s"Primary localization file: ${locFile.getAbsolutePath}")
+    logger.debug(s"Primary localization file: ${locFile.getPath}")
     logger.debug(s"Total focuses in tree: ${focuses.size}")
 
     // add name localization if missing
@@ -61,7 +63,10 @@ object FixFocus extends LazyLogging {
   private def requireLocalizableFocusTree(focusTree: FocusTree): Unit = {
     if (focusTree == null) throw new IllegalArgumentException("Focus tree is null.")
     if (!focusTree.hasFocuses) throw LocalizationPreconditionException(s"Focus tree $focusTree has localizable focuses.")
-    if (focusTree.primaryLocalizationFile.isEmpty) throw LocalizationPreconditionException(s"Focus tree $focusTree has a known primary localization file.")
+    val primaryLocalizationFile = zio.Unsafe.unsafe { implicit unsafe =>
+      ZHOIIVUtils.getActiveRuntime.unsafe.run(focusTree.primaryLocalizationFile).getOrThrow()
+    }
+    if (primaryLocalizationFile.isEmpty) throw LocalizationPreconditionException(s"Focus tree $focusTree has a known primary localization file.")
   }
 
   /**
