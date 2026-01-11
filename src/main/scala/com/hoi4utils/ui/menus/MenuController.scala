@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.menus
 
 import com.hoi4utils.*
+import com.hoi4utils.hoi4.localization.LocalizationService
 import com.hoi4utils.internal.ConfigException
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.*
@@ -16,6 +17,7 @@ import com.hoi4utils.ui.units.CompareUnitsController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.animation.{Animation, KeyFrame, Timeline}
 import javafx.application.Platform
+import javafx.collections.FXCollections
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.*
@@ -23,11 +25,15 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.*
 import javafx.stage.Stage
 import javafx.util.Duration
+import zio.ZIO
+import zio.macros.ServiceReloader
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import javax.swing.*
 import scala.collection.mutable.{LinkedHashMap, ListBuffer}
+import scala.compiletime.ops.double
 import scala.compiletime.uninitialized
+import scala.jdk.javaapi.CollectionConverters
 
 class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with LazyLogging:
   import MenuController.*
@@ -53,6 +59,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   @FXML var contentStack: StackPane = uninitialized
   @FXML var contentGrid: GridPane = uninitialized
   @FXML var vSettings: Button = uninitialized
+  @FXML var vPDXLocalizationLanguage: ComboBox[String] = uninitialized
   @FXML var vLogs: Button = uninitialized
   @FXML var vFocusTree: Button = uninitialized
   @FXML var vFocusTreeLoc: Button = uninitialized
@@ -98,6 +105,30 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     )
     @volatile var currentComponent: String = ""
     var currentComponentStartTime: Long = 0
+
+    val config = zio.Unsafe.unsafe { implicit unsafe =>
+      ZHOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[com.hoi4utils.main.Config]).getOrThrowFiberFailure()
+    }
+    val pdxLocLanguage = config.getProperty("localization.primaryLanguage")
+    // todo in future should be able to grab full list from localization service obj or something.
+    // todo figure out how to like yknow make this nice
+    val pdxLocLanguagesDisplayMapping: Map[String, String] = Map(
+      "english" -> "l_english",
+      "spanish" -> "l_spanish",
+      "russian" -> "l_russian",
+    )
+    val pdxLocLanguagesValueMapping: Map[String, String] = Map(
+      "l_english" -> "english",
+      "l_spanish" -> "spanish",
+      "l_russian" -> "russian",
+    )
+    vPDXLocalizationLanguage.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdxLocLanguagesDisplayMapping.values)))
+    vPDXLocalizationLanguage.setValue(pdxLocLanguagesDisplayMapping.getOrElse(pdxLocLanguage, "<Error>"))
+    vPDXLocalizationLanguage.getSelectionModel.selectedItemProperty().addListener: (_, _, newValue) =>
+      Option(newValue).foreach: locLanguage =>
+        logger.debug(s"PDX localization language selected: $locLanguage")
+        config.setProperty("localization.primaryLanguage", pdxLocLanguagesValueMapping.getOrElse(newValue, ""))
+        triggerLocalizationReload()
 
     def buildTimerDisplay(currentTime: Long): String =
       val initTime = if initEndTime > 0 then (initEndTime - initStartTime) / 1_000_000_000.0
@@ -181,9 +212,10 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           currentComponentStartTime = System.nanoTime()
 
         // Callback: Called when a component finishes loading
-        def onComponentComplete(componentName: String, time: Double): Unit =
+        def onComponentComplete(componentName: String, nanoseconds: Long): Unit =
+          val duration = nanoseconds / 1_000_000_000.0
           componentTimes.synchronized {
-            componentTimes(componentName) = time
+            componentTimes(componentName) = duration
           }
           currentComponent = ""
           currentComponentStartTime = 0
@@ -446,3 +478,31 @@ object MenuController extends LazyLogging:
     dialog.setSize(450, 300)
     dialog.setLocationRelativeTo(null)
     dialog.setVisible(true)
+
+  def triggerLocalizationReload(): Unit =
+    // TODO simplify this mess
+    logger.debug("Reloading PDX Localization...")
+    val serviceReloader = zio.Unsafe.unsafe { implicit unsafe =>
+      ZHOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[ServiceReloader]).getOrThrowFiberFailure()
+    }
+    zio.Unsafe.unsafe { implicit unsafe =>
+      ZHOIIVUtils.getActiveRuntime.unsafe.run(
+        serviceReloader.reload[LocalizationService].debug("Localization Reload Debug") <* ZIO.serviceWithZIO[LocalizationService](_.reload())
+      ).getOrThrowFiberFailure()
+    }
+//    // for debugging lolz
+//    val lang = zio.Unsafe.unsafe { implicit unsafe =>
+//      ZHOIIVUtils.getActiveRuntime.unsafe.run(
+//        ZIO.serviceWithZIO[LocalizationService](_.languageId)
+//      ).getOrThrowFiberFailure()
+//    }
+//    println(lang)
+//    val countLoc = zio.Unsafe.unsafe { implicit unsafe =>
+//      ZHOIIVUtils.getActiveRuntime.unsafe.run(
+//        ZIO.serviceWithZIO[LocalizationService](_.getLocalizations.map(_.size))
+//      ).getOrThrowFiberFailure()
+//    }
+//    println(countLoc)
+    logger.debug("PDX Localization reloaded")
+
+

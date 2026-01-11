@@ -154,10 +154,11 @@ trait LocalizationService {
 
 object LocalizationService extends LazyLogging {
   // TODO move object?
-  val live: URLayer[com.hoi4utils.main.Config & LocalizationFileService, LocalizationService] = {
+  def live: URLayer[com.hoi4utils.main.Config & LocalizationFileService, LocalizationService] = {
     ZLayer.service[com.hoi4utils.main.Config].flatMap { env =>
       val config = env.get[com.hoi4utils.main.Config]
       val lang = config.getProperty("localization.primaryLanguage")
+      ZIO.logInfo(s"Initializing LocalizationService for language: $lang")
 
       lang match
         case "english" => EnglishLocalizationService.live
@@ -170,7 +171,7 @@ object LocalizationService extends LazyLogging {
   }
 
   // TODO
-  val reloadable =
+  def reloadable =
     live.reloadable
 }
 

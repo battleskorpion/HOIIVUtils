@@ -35,7 +35,8 @@ object ZHOIIVUtils extends ZIOAppDefault {
       LocalizationFormatter.live,
       LocalizationFileService.live,
       LocalizationService.reloadable,
-      ServiceReloader.live
+      ServiceReloader.live,
+      ZLayer.Debug.tree 
     )
   }
 

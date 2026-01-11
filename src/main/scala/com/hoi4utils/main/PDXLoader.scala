@@ -76,7 +76,7 @@ class PDXLoader extends LazyLogging:
 //            hProperties: Properties,
             loadingLabel: Label,
             isCancelled: () => Boolean = () => false,
-            onComponentComplete: (String, Double) => Unit = (_, _) => (),
+            onComponentComplete: (String, Long) => Unit = (_, _) => (),
             onComponentStart: String => Unit = _ => ()
           ): RIO[LocalizationService & Config, Unit] = {
     for {
@@ -93,14 +93,14 @@ class PDXLoader extends LazyLogging:
           onComponentStart("ModifierDatabase")
           MenuController.updateLoadingStatus(loadingLabel, "Initializing ModifierDatabase...")
           ModifierDatabase.init()
-          onComponentComplete("ModifierDatabase", (System.nanoTime() - startTime) / 1_000_000_000.0)
+          onComponentComplete("ModifierDatabase", System.nanoTime() - startTime)
 
         if !isCancelled() then
           val startTime = System.nanoTime()
           onComponentStart("EffectDatabase")
           MenuController.updateLoadingStatus(loadingLabel, "Initializing EffectDatabase...")
           EffectDatabase.init()
-          onComponentComplete("EffectDatabase", (System.nanoTime() - startTime) / 1_000_000_000.0)
+          onComponentComplete("EffectDatabase", System.nanoTime() - startTime)
 
         if !isCancelled() then
           MenuController.updateLoadingStatus(loadingLabel, "Finding Paths...")
@@ -121,9 +121,18 @@ class PDXLoader extends LazyLogging:
           ZIO.attempt {
             onComponentStart("Localization")
             MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
-          } *> service.reload() *> ZIO.attempt {
-            onComponentComplete("Localization", 0.0) // TODO TODO Timing could be improved here if needed
+          } *> {
+            for
+              timedResult <- service.reload().timed
+              (duration, _) = timedResult
+              _ <- ZIO.attempt {
+                onComponentComplete("Localization", duration.toNanos)
+              }
+            yield ()
           }
+//          } *> service.reload().timed *> ZIO.attempt {
+//            onComponentComplete("Localization", 0.0) // TODO TODO Timing could be improved here if needed
+//          }
         ) *>
           // Parallel PDX Loading
           ZIO.attempt {
@@ -136,12 +145,12 @@ class PDXLoader extends LazyLogging:
                   onComponentStart(componentName)
                   val componentStart = System.nanoTime()
                   readPDX(p, isCancelled)
-                  onComponentComplete(componentName, (System.nanoTime() - componentStart) / 1_000_000_000.0)
+                  onComponentComplete(componentName, System.nanoTime() - componentStart)
               )
             )
           }
-    } yield () 
-      
+    } yield ()
+
 //        if !isCancelled() then
 //          startTime = System.nanoTime()
 //          onComponentStart("Localization")
