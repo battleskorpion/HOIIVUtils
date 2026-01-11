@@ -70,7 +70,7 @@ class FixFocus(locFormatter: LocalizationFormatter) extends LazyLogging {
   }
 
   /**
-   *
+   * 
    *
    * @param focus
    * @param locManager
