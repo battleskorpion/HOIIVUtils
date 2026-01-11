@@ -24,6 +24,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.*
 import javafx.stage.Stage
 import javafx.util.Duration
+import zio.ZIO
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
 import javax.swing.*
@@ -189,13 +190,18 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           currentComponent = ""
           currentComponentStartTime = 0
 
-        pdxLoader.load(
-          getConfig.getProperties,
-          loadingLabel,
-          () => isCancelled,
-          onComponentComplete,
-          onComponentStart
-        )
+        // TODO find how this is written nicer im sure it can be?
+        zio.Unsafe.unsafe { implicit unsafe =>
+          ZHOIIVUtils.getActiveRuntime.unsafe.run(
+            pdxLoader.load(
+              getConfig.getProperties,
+              loadingLabel,
+              () => isCancelled,
+              onComponentComplete,
+              onComponentStart
+            )
+          ).getOrThrow()
+        }
 
         modLoadEndTime = System.nanoTime()
         isModLoading = false

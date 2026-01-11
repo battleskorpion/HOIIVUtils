@@ -23,7 +23,7 @@ import com.hoi4utils.script.PDXReadable
 import com.hoi4utils.ui.menus.MenuController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.Label
-import zio.{Unsafe, ZIO}
+import zio.{RIO, UIO, Unsafe, ZIO}
 
 import java.awt.EventQueue
 import java.beans.PropertyChangeListener
@@ -78,60 +78,91 @@ class PDXLoader extends LazyLogging:
             isCancelled: () => Boolean = () => false,
             onComponentComplete: (String, Double) => Unit = (_, _) => (),
             onComponentStart: String => Unit = _ => ()
-          ): Unit =
-    implicit val properties: Properties = hProperties
-    implicit val label: Label = loadingLabel
-    if isCancelled() then return
+          ): RIO[LocalizationService, Unit] =
+    ZIO.serviceWithZIO[LocalizationService] { service =>
+      ZIO.attempt {
+        implicit val properties: Properties = hProperties
+        implicit val label: Label = loadingLabel
+        //        if isCancelled() then return
 
-    var startTime = System.nanoTime()
-    onComponentStart("ModifierDatabase")
-    MenuController.updateLoadingStatus(loadingLabel, "Initializing ModifierDatabase...")
-    ModifierDatabase.init()
-    onComponentComplete("ModifierDatabase", (System.nanoTime() - startTime) / 1_000_000_000.0)
-    if isCancelled() then return
-
-    startTime = System.nanoTime()
-    onComponentStart("EffectDatabase")
-    MenuController.updateLoadingStatus(loadingLabel, "Initializing EffectDatabase...")
-    EffectDatabase.init()
-    onComponentComplete("EffectDatabase", (System.nanoTime() - startTime) / 1_000_000_000.0)
-    if isCancelled() then return
-
-    MenuController.updateLoadingStatus(loadingLabel, "Finding Paths...")
-    val hoi4Path = hProperties.getProperty("hoi4.path")
-    val modPath = hProperties.getProperty("mod.path")
-    if isCancelled() then return
-    if validateDirectoryPath(hoi4Path, "hoi4.path") && validateDirectoryPath(modPath, "mod.path") then
-      HOIIVFiles.setHoi4PathChildDirs(hoi4Path)
-      HOIIVFiles.setModPathChildDirs(modPath)
-      hProperties.setProperty("valid.HOIIVFilePaths", "true")
-    else
-      logger.error("Failed to create HOIIV file paths")
-      hProperties.setProperty("valid.HOIIVFilePaths", "false")
-    if isCancelled() then return
-
-    startTime = System.nanoTime()
-    onComponentStart("Localization")
-    MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
-    Unsafe.unsafe { implicit unsafe => 
-      ZHOIIVUtils.getActiveRuntime.unsafe.run(
-        ZIO.serviceWithZIO[LocalizationService](_.reload())
-      ).getOrThrow()
-    }
-//    LocalizationService.reload()  // TODO TODO TODO !!!!!
-    onComponentComplete("Localization", (System.nanoTime() - startTime) / 1_000_000_000.0)
-    if isCancelled() then return
-
-    pdxList.par.foreach(l =>
-      l.foreach(p =>
         if !isCancelled() then
-          val componentName = p.cleanName
-          onComponentStart(componentName)
-          val componentStart = System.nanoTime()
-          readPDX(p, isCancelled)
-          onComponentComplete(componentName, (System.nanoTime() - componentStart) / 1_000_000_000.0)
-      )
-    )
+          val startTime = System.nanoTime()
+          onComponentStart("ModifierDatabase")
+          MenuController.updateLoadingStatus(loadingLabel, "Initializing ModifierDatabase...")
+          ModifierDatabase.init()
+          onComponentComplete("ModifierDatabase", (System.nanoTime() - startTime) / 1_000_000_000.0)
+
+        if !isCancelled() then
+          val startTime = System.nanoTime()
+          onComponentStart("EffectDatabase")
+          MenuController.updateLoadingStatus(loadingLabel, "Initializing EffectDatabase...")
+          EffectDatabase.init()
+          onComponentComplete("EffectDatabase", (System.nanoTime() - startTime) / 1_000_000_000.0)
+
+        if !isCancelled() then
+          MenuController.updateLoadingStatus(loadingLabel, "Finding Paths...")
+          val hoi4Path = hProperties.getProperty("hoi4.path")
+          val modPath = hProperties.getProperty("mod.path")
+          if !isCancelled() then
+            if validateDirectoryPath(hoi4Path, "hoi4.path") && validateDirectoryPath(modPath, "mod.path") then
+              HOIIVFiles.setHoi4PathChildDirs(hoi4Path)
+              HOIIVFiles.setModPathChildDirs(modPath)
+              hProperties.setProperty("valid.HOIIVFilePaths", "true")
+            else
+              logger.error("Failed to create HOIIV file paths")
+              hProperties.setProperty("valid.HOIIVFilePaths", "false")
+      } *>
+        // Localization Reload
+        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
+          ZIO.unit,
+          ZIO.attempt {
+            onComponentStart("Localization")
+            MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
+          } *> service.reload() *> ZIO.attempt {
+            onComponentComplete("Localization", 0.0) // TODO TODO Timing could be improved here if needed
+          }
+        ) *>
+        // Parallel PDX Loading
+        ZIO.attempt {
+          implicit val properties: Properties = hProperties
+          implicit val label: Label = loadingLabel
+          pdxList.par.foreach(l =>
+            l.foreach(p =>
+              if !isCancelled() then
+                val componentName = p.cleanName
+                onComponentStart(componentName)
+                val componentStart = System.nanoTime()
+                readPDX(p, isCancelled)
+                onComponentComplete(componentName, (System.nanoTime() - componentStart) / 1_000_000_000.0)
+            )
+          )
+        }
+//        if !isCancelled() then
+//          startTime = System.nanoTime()
+//          onComponentStart("Localization")
+//          MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
+//          //    Unsafe.unsafe { implicit unsafe =>
+//          //      ZHOIIVUtils.getActiveRuntime.unsafe.run(
+//          //        ZIO.serviceWithZIO[LocalizationService](_.reload())
+//          //      ).getOrThrow()
+//          //    }
+//          ZIO.serviceWithZIO[LocalizationService](_.reload())
+//          //    LocalizationService.reload()  // TODO TODO TODO !!!!!
+//          onComponentComplete("Localization", (System.nanoTime() - startTime) / 1_000_000_000.0)
+//
+//        if isCancelled() then
+//          pdxList.par.foreach(l =>
+//            l.foreach(p =>
+//              if !isCancelled() then
+//                val componentName = p.cleanName
+//                onComponentStart(componentName)
+//                val componentStart = System.nanoTime()
+//                readPDX(p, isCancelled)
+//                onComponentComplete(componentName, (System.nanoTime() - componentStart) / 1_000_000_000.0)
+//            )
+//          )
+//      }
+    }
 
   def readPDX(pdx: PDXReadable, isCancelled: () => Boolean = () => false)(implicit properties: Properties, label: Label): Unit =
     val property = s"valid.${pdx.cleanName}"

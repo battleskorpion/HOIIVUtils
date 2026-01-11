@@ -106,7 +106,7 @@ case class LocalizationFileServiceImpl(ymlFileService: YMLFileService, locFormat
    */
   // TODO: do zio stuff with errors? etc. to cleanup if statemment ugliness #wecandobetter
   override def load(localizations: LocalizationCollection, languageId: String): Task[Unit] =
-    ZIO.attempt {
+    ZIO.attemptBlocking {
       // vanilla
       if (HOIIVFiles.HOI4.localization_folder == null)
         logger.error("'HOI4 localization folder' is null.")
@@ -257,14 +257,14 @@ case class LocalizationFileServiceImpl(ymlFileService: YMLFileService, locFormat
   override def save(localizations: LocalizationCollection): Task[Unit] =
     ZIO.attempt {
       val localizationFolder = HOIIVFiles.Mod.localization_folder
-      if localizationFolder.exists() then 
+      if localizationFolder.exists() then
         val locFiles: Seq[File] =
           Files.walk(localizationFolder.toPath)
             .toScala(Seq)
             .filter(Files.isRegularFile(_))
             .filter(path => path.getFileName.endsWith(".yml"))
             .map(_.toFile)
-            
+
         if locFiles != null then
           // Separate new and changed localizations
           val changedLocalizations = localizations.filterByStatus(Localization.Status.UPDATED)
@@ -281,7 +281,7 @@ case class LocalizationFileServiceImpl(ymlFileService: YMLFileService, locFormat
           mergedLocalizations.foreach { case (file, locList) =>
             updateLocalizationFile(file, locList, sortAlphabetically)
           }
-        else ()  
+        else ()
     }
 
   /**
