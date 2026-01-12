@@ -1,5 +1,7 @@
-package com.hoi4utils.hoi4.localization
+package com.hoi4utils.hoi4.localization.service
 
+import com.hoi4utils.hoi4.localization.LocalizationCollection
+import com.hoi4utils.hoi4.localization.service.{BaseLocalizationService, LocalizationFileService, LocalizationService}
 import com.hoi4utils.main.Config
 import com.typesafe.scalalogging.LazyLogging
 import zio.{UIO, URLayer, ZIO, ZLayer}

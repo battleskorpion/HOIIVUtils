@@ -13,7 +13,7 @@ import com.hoi4utils.hoi4.gfx.Interface
 import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4.history.countries.CountryFile
 import com.hoi4utils.hoi4.history.countries.CountryFile.countryErrors
-import com.hoi4utils.hoi4.localization.LocalizationService
+import com.hoi4utils.hoi4.localization.service.LocalizationService
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4.map.resource.ResourcesFile
 import com.hoi4utils.hoi4.map.state.State

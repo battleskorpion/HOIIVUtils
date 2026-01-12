@@ -2,6 +2,7 @@ package com.hoi4utils.hoi4.localization
 
 import com.hoi4utils.exceptions.LocalizationPropertyException
 import com.hoi4utils.hoi4.localization.Property.{DESCRIPTION, NAME}
+import com.hoi4utils.hoi4.localization.service.LocalizationService
 import com.hoi4utils.main.{HOIIVFiles, ZHOIIVUtils}
 import com.hoi4utils.ui.javafx.application.JavaFXUIManager
 import zio.{Unsafe, ZIO}

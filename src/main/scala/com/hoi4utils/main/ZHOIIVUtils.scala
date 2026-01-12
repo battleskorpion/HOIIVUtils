@@ -1,6 +1,7 @@
 package com.hoi4utils.main
 
-import com.hoi4utils.hoi4.localization.{BaseLocalizationService, EnglishLocalizationService, LocalizationFileService, LocalizationFormatter, LocalizationService, YMLFileService}
+import com.hoi4utils.hoi4.localization.service.{BaseLocalizationService, EnglishLocalizationService, LocalizationFileService, LocalizationService}
+import com.hoi4utils.hoi4.localization.{LocalizationFormatter, YMLFileService}
 import com.hoi4utils.main.HOIIVUtils.getConfig
 import javafx.application.Application
 import zio.{ZIO, *}

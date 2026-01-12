@@ -1,10 +1,12 @@
-package com.hoi4utils.hoi4.localization
+package com.hoi4utils.hoi4.localization.service
 
+import com.hoi4utils.extensions.validateFolder
+import com.hoi4utils.hoi4.localization.service.{LocalizationGroup, LocalizationParser}
+import com.hoi4utils.hoi4.localization.*
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
 import com.typesafe.scalalogging.LazyLogging
 import zio.{Task, ZIO, ZLayer}
-import com.hoi4utils.extensions.validateFolder
 
 import java.io.*
 import java.nio.charset.StandardCharsets

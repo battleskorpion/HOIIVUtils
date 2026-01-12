@@ -1,11 +1,11 @@
-package com.hoi4utils.hoi4.localization
+package com.hoi4utils.hoi4.localization.service
 
 import com.hoi4utils.exceptions.{LocalizationExistsException, NoLocalizationManagerException, UnexpectedLocalizationStatusException}
+import com.hoi4utils.hoi4.localization.*
+import com.hoi4utils.improvedzio.macros.ImprovedMacros.ImprovedReloadableSyntax
 import com.hoi4utils.main.{Config, HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{ExpectedCause, ParsingContext, ParsingError}
-import com.hoi4utils.improvedzio.macros.ImprovedMacros.ImprovedReloadableSyntax
 import com.typesafe.scalalogging.LazyLogging
-import zio.{Task, UIO, URIO, URLayer, ZIO, ZLayer}
 import zio.*
 
 import java.io.*
@@ -162,7 +162,14 @@ object LocalizationService extends LazyLogging {
 
       lang match
         case "english" => EnglishLocalizationService.live
+        case "braz_por" => PortugueseLocalizationService.live
+        case "french" => FrenchLocalizationService.live
+        case "german" => GermanLocalizationService.live
+        case "japanese" => JapaneseLocalizationService.live
+        case "korean" => KoreanLocalizationService.live
+        case "polish" => PolishLocalizationService.live
         case "russian" => RussianLocalizationService.live
+        case "simp_chinese" => SimplifiedChineseLocalizationService.live
         case "spanish" => SpanishLocalizationService.live
         case other =>
           logger.error("Unknown primary localization manager setting: " + other + ". Defaulting to English localization manager.")

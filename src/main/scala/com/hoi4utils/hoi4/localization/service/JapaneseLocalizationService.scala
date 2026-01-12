@@ -1,10 +1,12 @@
-package com.hoi4utils.hoi4.localization
+package com.hoi4utils.hoi4.localization.service
 
+import com.hoi4utils.hoi4.localization.LocalizationCollection
+import com.hoi4utils.hoi4.localization.service.{BaseLocalizationService, LocalizationService}
 import com.hoi4utils.main.Config
 import com.typesafe.scalalogging.LazyLogging
 import zio.{UIO, URLayer, ZIO, ZLayer}
 
-class RussianLocalizationService(locFileService: LocalizationFileService) extends BaseLocalizationService(locFileService) with LazyLogging {
+class JapaneseLocalizationService(locFileService: LocalizationFileService) extends BaseLocalizationService(locFileService) with LazyLogging {
 
   /**
    * Localization collection for all Russian localization.
@@ -22,12 +24,12 @@ class RussianLocalizationService(locFileService: LocalizationFileService) extend
   override def capitalizationWhitelist: UIO[Set[String]] =
     ZIO.succeed {Set.empty}
 
-  override def languageId: UIO[String] = ZIO.succeed { "russian" }
+  override def languageId: UIO[String] = ZIO.succeed { "japanese" }
 
   override def toString: String = s"${getClass.getName}{" + "localizations=" + localizationCollection + "}"
 }
 
-object RussianLocalizationService {
+object JapaneseLocalizationService {
   val live: URLayer[LocalizationFileService, LocalizationService] =
-    ZLayer.fromFunction(RussianLocalizationService(_))
+    ZLayer.fromFunction(JapaneseLocalizationService(_))
 }

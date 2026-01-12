@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.menus
 
 import com.hoi4utils.*
-import com.hoi4utils.hoi4.localization.LocalizationService
+import com.hoi4utils.hoi4.localization.service.LocalizationService
 import com.hoi4utils.internal.ConfigException
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.*
@@ -114,13 +114,27 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     // todo figure out how to like yknow make this nice
     val pdxLocLanguagesDisplayMapping: Map[String, String] = Map(
       "english" -> "l_english",
-      "spanish" -> "l_spanish",
+      "braz_por" -> "l_braz_por",
+      "french" -> "l_french",
+      "german" -> "l_german",
+      "japanese" -> "l_japanese",
+      "korean" -> "l_korean",
+      "polish" -> "l_polish",
       "russian" -> "l_russian",
+      "simp_chinese" -> "l_simp_chinese",
+      "spanish" -> "l_spanish",
     )
     val pdxLocLanguagesValueMapping: Map[String, String] = Map(
       "l_english" -> "english",
-      "l_spanish" -> "spanish",
+      "l_braz_por" -> "braz_por",
+      "l_french" -> "french",
+      "l_german" -> "german",
+      "l_japanese" -> "japanese",
+      "l_korean" -> "korean",
+      "l_polish" -> "polish",
       "l_russian" -> "russian",
+      "l_simp_chinese" -> "simp_chinese",
+      "l_spanish" -> "spanish",
     )
     vPDXLocalizationLanguage.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdxLocLanguagesDisplayMapping.values)))
     vPDXLocalizationLanguage.setValue(pdxLocLanguagesDisplayMapping.getOrElse(pdxLocLanguage, "<Error>"))
