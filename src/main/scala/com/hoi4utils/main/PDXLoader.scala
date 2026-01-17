@@ -130,9 +130,6 @@ class PDXLoader extends LazyLogging:
               }
             yield ()
           }
-//          } *> service.reload().timed *> ZIO.attempt {
-//            onComponentComplete("Localization", 0.0) // TODO TODO Timing could be improved here if needed
-//          }
         ) *>
           // Parallel PDX Loading
           ZIO.attempt {
