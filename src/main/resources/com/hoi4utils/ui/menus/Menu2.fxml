@@ -91,7 +91,7 @@
           </Label>
                <HBox spacing="4.0">
                   <children>
-                     <GridPane prefHeight="30.0" prefWidth="704.0">
+                     <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="40.0" minWidth="635.0" prefHeight="40.0" prefWidth="635.0">
                        <columnConstraints>
                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="598.0" minWidth="10.0" prefWidth="451.0" />
                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="191.0" minWidth="0.0" prefWidth="184.0" />
