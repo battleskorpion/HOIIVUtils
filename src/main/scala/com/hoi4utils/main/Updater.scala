@@ -79,7 +79,7 @@ class Updater extends LazyLogging:
         + File.separator + "target"
         + File.separator + "Updater.jar"
       val javaCmd = s"""java -jar "$updaterJar" "${hDir.getAbsolutePath}" "$lV""""
-      val command = Seq("cmd", "/c", "start", "cmd", "/k", javaCmd)
+      val command = Seq("cmd", "/c", "start", "cmd", "/c", javaCmd)
       Process(command).run()
       sys.exit(0)
     catch

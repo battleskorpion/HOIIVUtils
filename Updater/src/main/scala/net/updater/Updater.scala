@@ -236,7 +236,7 @@ object Updater:
       if !hoiivJar.exists() then
         throw new UpdateException(s"HOIIVUtils.jar not found at ${hoiivJar.getAbsolutePath}")
 
-      val command = Seq("cmd", "/c", "start", "cmd", "/k", "java", "-jar", hoiivJar.getAbsolutePath)
+      val command = Seq("cmd", "/c", "start", "cmd", "/c", "java", "-jar", hoiivJar.getAbsolutePath)
       Process(command).run()
       println(" Started!")
       println("Please close this window")
