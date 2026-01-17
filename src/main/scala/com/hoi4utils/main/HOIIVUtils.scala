@@ -57,6 +57,7 @@ object HOIIVUtils extends ZIOAppDefault {
       //      _    <- ZIO.succeed { _runtime = rt }
       args <- getArgs
       _ <- ZIO.attemptBlocking(Application.launch(classOf[App], args.toArray *))
+      _ <- ZIO.logInfo("Application window closed, shutting down...")
     } yield ()
 
 }
