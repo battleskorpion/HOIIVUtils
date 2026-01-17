@@ -107,27 +107,7 @@
                         </padding>
                       </Label>
                       <ComboBox fx:id="languageComboBox" maxWidth="-Infinity" onAction="#handleLanguageSelection" prefHeight="25.0" prefWidth="190.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-                      <Label alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Focus Tree View" textOverrun="CLIP" wrapText="true" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="5">
-                        <GridPane.margin>
-                          <Insets />
-                        </GridPane.margin>
-                        <padding>
-                          <Insets right="4.0" />
-                        </padding>
-                      </Label>
-                      <Label alignment="BOTTOM_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Max Size" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-                      <TextField fx:id="maxXTF" onAction="#handleMaxXTF" onMouseClicked="#handleMaxXTF" promptText="Width" text="4000.0" GridPane.columnIndex="3" GridPane.rowIndex="6">
-                        <GridPane.margin>
-                          <Insets left="15.0" right="15.0" />
-                        </GridPane.margin>
-                      </TextField>
-                      <TextField fx:id="maxYTF" onAction="#handleMaxYTF" onMouseClicked="#handleMaxYTF" promptText="Height" text="4000.0" GridPane.columnIndex="4" GridPane.rowIndex="6">
-                        <GridPane.margin>
-                          <Insets left="15.0" right="15.0" />
-                        </GridPane.margin>
-                      </TextField>
-                      <Label text="X:" GridPane.columnIndex="3" GridPane.rowIndex="6" />
-                      <Label text="Y:" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+
                       <Label fx:id="errorLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="test" textAlignment="CENTER" textFill="RED" textOverrun="CLIP" visible="false" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="7" GridPane.rowSpan="2" />
                       <Label fx:id="versionLabel" text="Label" GridPane.rowIndex="1" />
                     </children>
