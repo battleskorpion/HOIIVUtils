@@ -76,6 +76,22 @@
               <Insets right="30.0" />
             </GridPane.margin>
           </Button>
+               <Button fx:id="lightButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#lightButton" text="*" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER">
+                  <font>
+                     <Font name="System Bold" size="13.0" />
+                  </font>
+                  <GridPane.margin>
+                     <Insets left="30.0" />
+                  </GridPane.margin>
+               </Button>
+               <Button fx:id="darkButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#darkButton" text="c" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER">
+                  <font>
+                     <Font name="System Bold" size="13.0" />
+                  </font>
+                  <GridPane.margin>
+                     <Insets right="30.0" />
+                  </GridPane.margin>
+               </Button>
           <Label fx:id="mVersion" alignment="CENTER" contentDisplay="CENTER" text="Version" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
             <GridPane.margin>
               <Insets top="15.0" />

@@ -352,6 +352,16 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
 
   override def preSetup(): Unit = setupWindowControls(mVBox, contentGrid)
 
+  @FXML def lightButton(): Unit =
+    switchToLightTheme()
+    HOIIVUtilsConfig.set("theme", "light")
+    HOIIVUtilsConfig.save()
+
+  @FXML def darkButton(): Unit =
+    switchToDarkTheme()
+    HOIIVUtilsConfig.set("theme", "dark")
+    HOIIVUtilsConfig.save()
+
   /* fxml menu buttons */
   def openSettings(): Unit =
     cancelTask()

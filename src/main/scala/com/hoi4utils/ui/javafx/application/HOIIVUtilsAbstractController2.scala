@@ -27,6 +27,9 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
   protected var xOffset: Double = 0
   protected var yOffset: Double = 0
   protected var isEmbedded: Boolean = false
+  protected var isDarkMode: Boolean = false
+  protected var darkModeCSS: String = "/com/hoi4utils/ui/css/javafx_dark.css"
+  protected var lightModeCSS: String = "/com/hoi4utils/ui/css/highlight-background.css"
 
   // Generic window control buttons - use these fx:ids in all FXMLs
   @FXML protected var closeButton: Button = uninitialized
@@ -51,13 +54,12 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
       primaryScene = scene
 
       /* theme */
-      val cssPath = Option(HOIIVUtilsConfig.get("theme")).getOrElse("light") match
-        case "dark" => "/com/hoi4utils/ui/css/javafx_dark.css"
-        case _ => "/com/hoi4utils/ui/css/highlight-background.css"
+      Option(HOIIVUtilsConfig.get("theme")).getOrElse("light") match
+        case "dark" => isDarkMode = true
+        case _ => isDarkMode = false
 
-      Option(getClass.getResource(cssPath)) match
-        case Some(_) => scene.getStylesheets.add(cssPath)
-        case None => logger.warn(s"CSS file not found: $cssPath, continuing without theme")
+      if isDarkMode then switchToDarkTheme()
+      else switchToLightTheme()
 
       primaryStage.setScene(scene)
       primaryStage.setTitle(title)
@@ -85,6 +87,24 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
       isEmbedded = primaryScene == null
       Seq(closeButton, minimizeButton, maximizeButton).foreach(b => if b != null then b.setVisible(!isEmbedded))
     )
+
+  protected def switchToLightTheme(): Unit =
+    println("Switching to light theme")
+    if primaryScene != null then
+      println("Primary scene is not null, applying light theme")
+      primaryScene.getStylesheets.clear()
+      Option(getClass.getResource(lightModeCSS)) match
+        case Some(_) => primaryScene.getStylesheets.add(lightModeCSS)
+        case None => logger.warn(s"CSS file not found: $lightModeCSS, continuing without theme")
+      isDarkMode = false
+
+  protected def switchToDarkTheme(): Unit =
+    if primaryScene != null then
+      primaryScene.getStylesheets.clear()
+      Option(getClass.getResource(darkModeCSS)) match
+        case Some(_) => primaryScene.getStylesheets.add(darkModeCSS)
+        case None => logger.warn(s"CSS file not found: $darkModeCSS, continuing without theme")
+      isDarkMode = true
 
   protected def preSetup(): Unit = ()
 
