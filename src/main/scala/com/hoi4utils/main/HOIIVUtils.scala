@@ -3,6 +3,7 @@ package com.hoi4utils.main
 
 import com.hoi4utils.hoi4.localization.service.{BaseLocalizationService, EnglishLocalizationService, LocalizationFileService, LocalizationService}
 import com.hoi4utils.hoi4.localization.{LocalizationFormatter, YMLFileService}
+import com.hoi4utils.main.HOIIVUtilsConfig.getConfig
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Application
 import zio.{ZIO, *}
@@ -20,12 +21,10 @@ object HOIIVUtils extends ZIOAppDefault {
   def getActiveRuntime: Runtime[ROut] = runtime
 
   val configLayer: ZLayer[Any, Throwable, com.hoi4utils.main.Config] = ZLayer.fromZIO {
-    ZIO.attempt(new com.hoi4utils.main.ConfigManager().createConfig).tap { config =>
-      // Bridge: Sync the legacy static object for non-ZIO code
-      ZIO.attempt {
-        HOIIVUtilsConfig.setConfig(config)
-        val initializer: Unit = new Initializer().initialize(config)
-      }
+    ZIO.attempt(new com.hoi4utils.main.ConfigManager().createConfig).map { config =>
+      HOIIVUtilsConfig.setConfig(config)
+      val initializer: Unit = new Initializer().initialize(config)
+      config
     }
   }
 
@@ -49,7 +48,8 @@ object HOIIVUtils extends ZIOAppDefault {
     }
 
   override def run =
-    app.provideSome[ZIOAppArgs](appLayer)
+//    app.provideSome[ZIOAppArgs](appLayer)
+    app.provideSomeEnvironment[ZIOAppArgs](runtime.environment ++ _)
 
   private def app: ZIO[ZIOAppArgs & ROut, Throwable, Unit] =
     for {
@@ -79,14 +79,14 @@ object HOIIVUtilsConfig extends LazyLogging:
    * @param key Property name
    * @return Property value or null if not found
    */
-  def get(key: String): String = getConfig.getProperties.getProperty(key)
+  def get(key: String): String = getConfig.getProperty(key)
 
   /**
    * Set a user saved property that will be saved to HOIIVUtils.properties on save() call
    * @param key   Property key
    * @param value Property value
    */
-  def set(key: String, value: String): Unit = getConfig.getProperties.setProperty(key, value)
+  def set(key: String, value: String): Unit = getConfig.setProperty(key, value)
 
   /**
    * Save the current configuration to HOIIVUtils.properties
@@ -94,8 +94,8 @@ object HOIIVUtilsConfig extends LazyLogging:
   def save(): Unit =
     try ConfigManager().saveProperties(getConfig)
     catch case e: Exception =>
-      logger.error(s"v${getConfig.getProperties.getProperty("version")} Failed to save configuration: ${e.getMessage}")
-      JOptionPane.showMessageDialog(null, s"version: ${getConfig.getProperties.getProperty("version")} Failed to save configuration: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
+      logger.error(s"v${get("version")} Failed to save configuration: ${e.getMessage}")
+      JOptionPane.showMessageDialog(null, s"version: ${get("version")} Failed to save configuration: " + e.getMessage, "Critical Error", JOptionPane.ERROR_MESSAGE)
       throw new Exception(e)
 
 

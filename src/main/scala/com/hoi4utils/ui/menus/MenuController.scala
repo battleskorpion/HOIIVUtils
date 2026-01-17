@@ -90,6 +90,8 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
 
   @FXML
   def initialize(): Unit =
+    logger.debug("Initializing main menu.")
+
     val initStartTime = MenuController.getProgramStartTime
     var modLoadStartTime: Long = 0
     var modLoadEndTime: Long = 0
@@ -109,6 +111,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     val config = zio.Unsafe.unsafe { implicit unsafe =>
       HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[com.hoi4utils.main.Config]).getOrThrowFiberFailure()
     }
+    logger.error("mod.path: " + config.getProperty("mod.path"))
     val pdxLocLanguage = config.getProperty("localization.primaryLanguage")
     // todo in future should be able to grab full list from localization service obj or something.
     // todo figure out how to like yknow make this nice
@@ -142,6 +145,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
       Option(newValue).foreach: locLanguage =>
         logger.debug(s"PDX localization language selected: $locLanguage")
         config.setProperty("localization.primaryLanguage", pdxLocLanguagesValueMapping.getOrElse(newValue, ""))
+        // TODO save!!!!
         triggerLocalizationReload()
 
     def buildTimerDisplay(currentTime: Long): String =
@@ -320,9 +324,9 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
 //      val initializer: Unit = new Initializer().initialize(getConfig)
       val version = Version.getVersion(HOIIVUtilsConfig.getConfig.getProperties)
       new Updater().updateCheck(version, HOIIVUtilsConfig.getConfig.getDir)
-      logger.info(s"Loading mod: ${HOIIVUtilsConfig.getConfig.getProperties.getProperty("mod.path")}")
-      updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${HOIIVUtilsConfig.getConfig.getProperties.getProperty("mod.path")}\"")
-      mVersion.setText(s"v${HOIIVUtilsConfig.getConfig.getProperties.getProperty("version")}")
+      logger.info(s"Loading mod: ${HOIIVUtilsConfig.get("mod.path")}")
+      updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${HOIIVUtilsConfig.get("mod.path")}\"")
+      mVersion.setText(s"v${HOIIVUtilsConfig.get("version")}")
       mTitle.setText(s"HOIIVUtils")
       new Thread(task).start()
     catch
@@ -389,7 +393,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
     JOptionPane.showMessageDialog(
       null,
-      s"version: ${HOIIVUtilsConfig.getConfig.getProperties.getProperty("version")} Unit folders not found. Please check your HOI4 installation or the chosen mod directory.",
+      s"version: ${HOIIVUtilsConfig.get("version")} Unit folders not found. Please check your HOI4 installation or the chosen mod directory.",
       "Error",
       JOptionPane.WARNING_MESSAGE
     )

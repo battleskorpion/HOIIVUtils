@@ -101,7 +101,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
     languageComboBox.setButtonCell(languageComboBox.getCellFactory.call(null))
 
     // 3) pre-select saved or default Locale
-    val savedTag = Option(HOIIVUtilsConfig.getConfig.getProperties.getProperty("locale")).getOrElse(Locale.getDefault.toLanguageTag)
+    val savedTag = Option(HOIIVUtilsConfig.get("locale")).getOrElse(Locale.getDefault.toLanguageTag)
     locales.find(_.toLanguageTag == savedTag).foreach(languageComboBox.getSelectionModel.select)
 
   /**

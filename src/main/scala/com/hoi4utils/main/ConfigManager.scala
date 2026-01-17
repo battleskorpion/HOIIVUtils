@@ -71,7 +71,7 @@ class ConfigManager extends LazyLogging:
       .foreach(bytesRead => stream.write(buffer, 0, bytesRead))
     val input = new FileInputStream(hVersionTempPath)
     config.getProperties.load(input)
-    val version: String = config.getProperties.getProperty("version")
+    val version: String = config.getProperty("version")
     input.close()
     stream.close()
     if !hPropertiesFile.exists then createHOIIVUtilsPropertiesFile(config, defaultProperties)
