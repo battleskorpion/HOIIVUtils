@@ -114,7 +114,7 @@ class PDXLoader extends LazyLogging:
             else
               logger.error("Failed to create HOIIV file paths")
               hProperties.setProperty("valid.HOIIVFilePaths", "false")
-      } *>
+      } *> {
         // Localization Reload
         ZIO.ifZIO(ZIO.succeed(isCancelled()))(
           ZIO.unit,
@@ -130,22 +130,23 @@ class PDXLoader extends LazyLogging:
               }
             yield ()
           }
-        ) *>
-          // Parallel PDX Loading
-          ZIO.attempt {
-            implicit val properties: Properties = hProperties
-            implicit val label: Label = loadingLabel
-            pdxList.par.foreach(l =>
-              l.foreach(p =>
-                if !isCancelled() then
-                  val componentName = p.cleanName
-                  onComponentStart(componentName)
-                  val componentStart = System.nanoTime()
-                  readPDX(p, isCancelled)
-                  onComponentComplete(componentName, System.nanoTime() - componentStart)
-              )
+        ) &>
+        // Parallel PDX Loading
+        ZIO.attempt {
+          implicit val properties: Properties = hProperties
+          implicit val label: Label = loadingLabel
+          pdxList.par.foreach(l =>
+            l.foreach(p =>
+              if !isCancelled() then
+                val componentName = p.cleanName
+                onComponentStart(componentName)
+                val componentStart = System.nanoTime()
+                readPDX(p, isCancelled)
+                onComponentComplete(componentName, System.nanoTime() - componentStart)
             )
-          }
+          )
+        }
+      }
     } yield ()
 
 //        if !isCancelled() then
