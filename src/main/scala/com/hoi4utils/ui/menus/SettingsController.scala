@@ -164,9 +164,6 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
     debugColorsTButton.setSelected(HOIIVUtilsConfig.get("debug.colors").toBoolean)
     debugColorsTButton.setText(if debugColorsTButton.isSelected then "ON" else "OFF")
 
-    maxXTF.setText(HOIIVUtilsConfig.get("canvas.max.width"))
-    maxYTF.setText(HOIIVUtilsConfig.get("canvas.max.height"))
-
     // parser settings:
     parserIgnoreCommentsCheckBox.setSelected(HOIIVUtilsConfig.get("parser.ignore.comments").toBoolean)
 
@@ -239,44 +236,8 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
 
   def handleParserIgnoreCommentsAction(): Unit = HOIIVUtilsConfig.set("parser.ignore.comments", parserIgnoreCommentsCheckBox.isSelected.toString)
 
-  def handleMaxXTF(): Unit =
-    var maxX = maxXTF.getText
-    try
-      if maxX == null || maxX == "" then maxX = "0"
-      val maxXValue = maxX.toDouble
-      maxXTF.setText(maxXValue.toString)
-      if maxXValue < 1000 && maxXValue > -1000 then throw new NumberFormatException("Max X value can't be between -1000 and 1000.")
-      HOIIVUtilsConfig.set("canvas.max.width", maxXValue.toString)
-      errorLabel.setVisible(false)
-      idOkButton.setDisable(false)
-    catch
-      case e: NumberFormatException =>
-        logger.error(s"Invalid canvas.max.width value: ${e.getMessage}")
-        errorLabel.setVisible(true)
-        idOkButton.setDisable(true)
-        errorLabel.setText(s"Invalid canvas.max.width value. Please enter a valid integer. ${e.getMessage}")
-
-  def handleMaxYTF(): Unit =
-    var maxY = maxYTF.getText
-    try
-      if maxY == null || maxY == "" then maxY = "0"
-      val maxYValue = maxY.toDouble
-      maxYTF.setText(maxYValue.toString)
-      if maxYValue < 1000 && maxYValue > -1000 then throw new NumberFormatException("Max Y value can't be between -1000 and 1000.")
-      HOIIVUtilsConfig.set("canvas.max.height", maxYValue.toString)
-      idOkButton.setDisable(false)
-      errorLabel.setVisible(false)
-    catch
-      case e: NumberFormatException =>
-        logger.error(s"Invalid canvas.max.height value: ${e.getMessage}")
-        errorLabel.setVisible(true)
-        errorLabel.setText(s"Invalid canvas.max.height value. Please enter a valid integer. ${e.getMessage}")
-        idOkButton.setDisable(true)
-
   // This method is called when the user clicks on an empty area of the settings window.
   def handleEmptyClick(): Unit =
-    handleMaxYTF()
-    handleMaxXTF()
     handleHOIIVPathTextField()
     handleModPathTextField()
 
