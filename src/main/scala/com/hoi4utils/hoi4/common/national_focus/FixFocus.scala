@@ -3,7 +3,7 @@ package com.hoi4utils.hoi4.common.national_focus
 import com.hoi4utils.exceptions.LocalizationPreconditionException
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
 import com.hoi4utils.hoi4.localization.{LocalizationFormatter, Property}
-import com.hoi4utils.main.ZHOIIVUtils
+import com.hoi4utils.main.HOIIVUtils
 import com.typesafe.scalalogging.LazyLogging
 import zio.ZIO
 
@@ -31,7 +31,7 @@ class FixFocus(locFormatter: LocalizationFormatter) extends LazyLogging {
 //    val locManager = LocalizationManager.get
 //    val locFile = focusTree.primaryLocalizationFile.map(_.get)  //    val locFile = focusTree.primaryLocalizationFile.get
     val locFile = zio.Unsafe.unsafe { implicit unsafe =>
-      ZHOIIVUtils.getActiveRuntime.unsafe.run(focusTree.primaryLocalizationFile.map(_.get)).getOrThrow()
+      HOIIVUtils.getActiveRuntime.unsafe.run(focusTree.primaryLocalizationFile.map(_.get)).getOrThrow()
     }
     val focuses = focusTree.focuses
 
@@ -64,7 +64,7 @@ class FixFocus(locFormatter: LocalizationFormatter) extends LazyLogging {
     if (focusTree == null) throw new IllegalArgumentException("Focus tree is null.")
     if (!focusTree.hasFocuses) throw LocalizationPreconditionException(s"Focus tree $focusTree has localizable focuses.")
     val primaryLocalizationFile = zio.Unsafe.unsafe { implicit unsafe =>
-      ZHOIIVUtils.getActiveRuntime.unsafe.run(focusTree.primaryLocalizationFile).getOrThrow()
+      HOIIVUtils.getActiveRuntime.unsafe.run(focusTree.primaryLocalizationFile).getOrThrow()
     }
     if (primaryLocalizationFile.isEmpty) throw LocalizationPreconditionException(s"Focus tree $focusTree has a known primary localization file.")
   }

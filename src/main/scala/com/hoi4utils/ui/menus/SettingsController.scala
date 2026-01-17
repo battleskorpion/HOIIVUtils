@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.menus
 
 import com.hoi4utils.main.HOIIVUtils.*
+import com.hoi4utils.main.HOIIVUtilsConfig
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager, RootWindows}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
@@ -25,7 +26,7 @@ import scala.jdk.CollectionConverters.*
  */
 class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows with LazyLogging:
   setFxmlFile("Settings.fxml")
-  setTitle(s"HOIIVUtils Settings ${get("version")}")
+  setTitle(s"HOIIVUtils Settings ${HOIIVUtilsConfig.get("version")}")
 
   @FXML var contentContainer: GridPane = uninitialized
   @FXML var versionLabel: Label = uninitialized
@@ -47,7 +48,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
 
   @FXML
   def initialize(): Unit =
-    versionLabel.setText(get("version"))
+    versionLabel.setText(HOIIVUtilsConfig.get("version"))
     loadMonitor()
     loadLanguages()
     // after loading, set saved settings
@@ -100,7 +101,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
     languageComboBox.setButtonCell(languageComboBox.getCellFactory.call(null))
 
     // 3) pre-select saved or default Locale
-    val savedTag = Option(getConfig.getProperties.getProperty("locale")).getOrElse(Locale.getDefault.toLanguageTag)
+    val savedTag = Option(HOIIVUtilsConfig.getConfig.getProperties.getProperty("locale")).getOrElse(Locale.getDefault.toLanguageTag)
     locales.find(_.toLanguageTag == savedTag).foreach(languageComboBox.getSelectionModel.select)
 
   /**
@@ -148,26 +149,26 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
 
   private def loadUIWithSavedSettings(): Unit =
     modPathTextField.clear()
-    if !"null".equals(get("mod.path")) then modPathTextField.setText(get("mod.path"))
+    if !"null".equals(HOIIVUtilsConfig.get("mod.path")) then modPathTextField.setText(HOIIVUtilsConfig.get("mod.path"))
 
     hoi4PathTextField.clear()
-    if !"null".equals(get("hoi4.path")) then hoi4PathTextField.setText(get("hoi4.path"))
+    if !"null".equals(HOIIVUtilsConfig.get("hoi4.path")) then hoi4PathTextField.setText(HOIIVUtilsConfig.get("hoi4.path"))
 
-    darkTheme.setSelected(get("theme") == "dark")
-    lightTheme.setSelected(get("theme") == "light")
+    darkTheme.setSelected(HOIIVUtilsConfig.get("theme") == "dark")
+    lightTheme.setSelected(HOIIVUtilsConfig.get("theme") == "light")
 
     preferredMonitorComboBox.getSelectionModel.select(validateAndGetPreferredScreen())
 
     //languageComboBox.getSelectionModel.select()
 
-    debugColorsTButton.setSelected(get("debug.colors").toBoolean)
+    debugColorsTButton.setSelected(HOIIVUtilsConfig.get("debug.colors").toBoolean)
     debugColorsTButton.setText(if debugColorsTButton.isSelected then "ON" else "OFF")
 
-    maxXTF.setText(get("canvas.max.width"))
-    maxYTF.setText(get("canvas.max.height"))
+    maxXTF.setText(HOIIVUtilsConfig.get("canvas.max.width"))
+    maxYTF.setText(HOIIVUtilsConfig.get("canvas.max.height"))
 
     // parser settings:
-    parserIgnoreCommentsCheckBox.setSelected(get("parser.ignore.comments").toBoolean)
+    parserIgnoreCommentsCheckBox.setSelected(HOIIVUtilsConfig.get("parser.ignore.comments").toBoolean)
 
   def handleModPathTextField(): Unit = validateAndSetPath(modPathTextField.getText, "mod.path")
 
@@ -189,7 +190,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
     if path.isEmpty then return
     val file = new File(path)
     val isValidFile = file.exists && file.isDirectory
-    if isValidFile then set(settingKey, file.toString)
+    if isValidFile then HOIIVUtilsConfig.set(settingKey, file.toString)
 
   private def handleFileBrowseAction(
                                     textField: TextField,
@@ -206,12 +207,12 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
           JavaFXUIManager.openChooser(browseButton, true)
       if selectedFile == null then return
       val isValidFile = selectedFile.exists && selectedFile.isDirectory
-      if isValidFile then set(settingKey, selectedFile.toString)
+      if isValidFile then HOIIVUtilsConfig.set(settingKey, selectedFile.toString)
       textField.setText(selectedFile.getAbsolutePath)
 
-  def handleDarkThemeRadioAction(): Unit = if darkTheme.isSelected then set("theme", "dark")
+  def handleDarkThemeRadioAction(): Unit = if darkTheme.isSelected then HOIIVUtilsConfig.set("theme", "dark")
 
-  def handleLightThemeRadioAction(): Unit = if lightTheme.isSelected then set("theme", "light")
+  def handleLightThemeRadioAction(): Unit = if lightTheme.isSelected then HOIIVUtilsConfig.set("theme", "light")
 
   /**
    * change preferred monitor setting.
@@ -220,23 +221,23 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
    * interpret index of selection as monitor selection
    */
   def handlePreferredMonitorSelection(): Unit =
-    set("preferred.screen", preferredMonitorComboBox.getSelectionModel.getSelectedIndex.toString)
+    HOIIVUtilsConfig.set("preferred.screen", preferredMonitorComboBox.getSelectionModel.getSelectedIndex.toString)
 
   def handleLanguageSelection(): Unit =
     val newLoc = languageComboBox.getValue
     if newLoc != null then
-      getConfig.getProperties.setProperty("locale", newLoc.toLanguageTag)
+      HOIIVUtilsConfig.getConfig.getProperties.setProperty("locale", newLoc.toLanguageTag)
       logger.debug(s"Locale set to ${newLoc.toLanguageTag}")
 
   def handleDebugColorsAction(): Unit =
     if debugColorsTButton.isSelected then
-      set("debug.colors", "true")
+      HOIIVUtilsConfig.set("debug.colors", "true")
       debugColorsTButton.setText("ON")
     else
-      set("debug.colors", "false")
+      HOIIVUtilsConfig.set("debug.colors", "false")
       debugColorsTButton.setText("OFF")
 
-  def handleParserIgnoreCommentsAction(): Unit = set("parser.ignore.comments", parserIgnoreCommentsCheckBox.isSelected.toString)
+  def handleParserIgnoreCommentsAction(): Unit = HOIIVUtilsConfig.set("parser.ignore.comments", parserIgnoreCommentsCheckBox.isSelected.toString)
 
   def handleMaxXTF(): Unit =
     var maxX = maxXTF.getText
@@ -245,7 +246,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
       val maxXValue = maxX.toDouble
       maxXTF.setText(maxXValue.toString)
       if maxXValue < 1000 && maxXValue > -1000 then throw new NumberFormatException("Max X value can't be between -1000 and 1000.")
-      set("canvas.max.width", maxXValue.toString)
+      HOIIVUtilsConfig.set("canvas.max.width", maxXValue.toString)
       errorLabel.setVisible(false)
       idOkButton.setDisable(false)
     catch
@@ -262,7 +263,7 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
       val maxYValue = maxY.toDouble
       maxYTF.setText(maxYValue.toString)
       if maxYValue < 1000 && maxYValue > -1000 then throw new NumberFormatException("Max Y value can't be between -1000 and 1000.")
-      set("canvas.max.height", maxYValue.toString)
+      HOIIVUtilsConfig.set("canvas.max.height", maxYValue.toString)
       idOkButton.setDisable(false)
       errorLabel.setVisible(false)
     catch
@@ -283,6 +284,6 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
    * User Interactive Button in Settings Window Closes Settings Window Opens Menu Window
    */
   def handleOkButtonAction(): Unit =
-    save()
+    HOIIVUtilsConfig.save()
     hideWindow(idOkButton)
     new MenuController().open()

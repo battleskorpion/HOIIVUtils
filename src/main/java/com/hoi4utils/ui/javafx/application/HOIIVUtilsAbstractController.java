@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.javafx.application;
 
 import com.hoi4utils.main.HOIIVUtils;
+import com.hoi4utils.main.HOIIVUtilsConfig;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -44,7 +45,7 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 			Parent root = fxml.load();
 			Scene scene = new Scene(root);
 			this.scene = scene;
-			if (Objects.equals(HOIIVUtils.get("theme"), "dark")) {
+			if (Objects.equals(HOIIVUtilsConfig.get("theme"), "dark")) {
 				scene.getStylesheets().add(darkCss);
 			} else {
 				scene.getStylesheets().add(lightCss);
@@ -124,7 +125,7 @@ public abstract class HOIIVUtilsAbstractController implements JavaFXUIManager {
 			hierarchyAndInterfaces.addAll(newInterfaces);
 		} while (hierarchyAndInterfaces.size() > prevSize); // Stop when no new interfaces are added
 	}
-	
+
 	private List<List<Class<?>>> generateCombinations(List<List<Class<?>>> classHierarchies, int index) {
 		if (index == classHierarchies.size()) {
 			return List.of(new ArrayList<>()); // Base case: return a list with an empty list

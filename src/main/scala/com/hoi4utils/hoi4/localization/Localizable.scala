@@ -3,7 +3,7 @@ package com.hoi4utils.hoi4.localization
 import com.hoi4utils.exceptions.LocalizationPropertyException
 import com.hoi4utils.hoi4.localization.Property.{DESCRIPTION, NAME}
 import com.hoi4utils.hoi4.localization.service.LocalizationService
-import com.hoi4utils.main.{HOIIVFiles, ZHOIIVUtils}
+import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.ui.javafx.application.JavaFXUIManager
 import zio.{Unsafe, ZIO}
 
@@ -18,7 +18,7 @@ trait Localizable {
 
   private def runZIO[A](effect: ZIO[LocalizationService, Throwable, A]): A =
     Unsafe.unsafe { implicit unsafe =>
-      ZHOIIVUtils.getActiveRuntime.unsafe.run(effect).getOrThrow()
+      HOIIVUtils.getActiveRuntime.unsafe.run(effect).getOrThrow()
     }
 
   /**

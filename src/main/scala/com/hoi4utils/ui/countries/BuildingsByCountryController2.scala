@@ -2,7 +2,7 @@ package com.hoi4utils.ui.countries
 
 import com.hoi4utils.hoi4.history.countries.CountryFile
 import com.hoi4utils.hoi4.map.state.State
-import com.hoi4utils.main.HOIIVUtils
+import com.hoi4utils.main.{HOIIVUtils, HOIIVUtilsConfig}
 import com.hoi4utils.parser.ClausewitzDate
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController2, JavaFXUIManager}
 import com.hoi4utils.ui.javafx.scene.control.*
@@ -71,7 +71,7 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
 
   @FXML def initialize(): Unit =
     setWindowControlsVisibility()
-    versionLabel.setText(s"Version: ${HOIIVUtils.get("version")}")
+    versionLabel.setText(s"Version: ${HOIIVUtilsConfig.get("version")}")
     loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(_resourcesPercent))
 
     closeDetailsPane()

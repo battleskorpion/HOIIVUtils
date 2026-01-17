@@ -107,7 +107,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     var currentComponentStartTime: Long = 0
 
     val config = zio.Unsafe.unsafe { implicit unsafe =>
-      ZHOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[com.hoi4utils.main.Config]).getOrThrowFiberFailure()
+      HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[com.hoi4utils.main.Config]).getOrThrowFiberFailure()
     }
     val pdxLocLanguage = config.getProperty("localization.primaryLanguage")
     // todo in future should be able to grab full list from localization service obj or something.
@@ -236,7 +236,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
 
         // TODO find how this is written nicer im sure it can be?
         zio.Unsafe.unsafe { implicit unsafe =>
-          ZHOIIVUtils.getActiveRuntime.unsafe.run(
+          HOIIVUtils.getActiveRuntime.unsafe.run(
             pdxLoader.load(
               loadingLabel,
               () => isCancelled,
@@ -270,12 +270,12 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           MenuController.updateLoadingStatus(loadingLabel, "All files loaded successfully")
         else
           MenuController.updateLoadingStatus(loadingLabel, "Some files are not loaded correctly, please check the settings")
-          logger.warn(s"version: ${Version.getVersion(getConfig.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
+          logger.warn(s"version: ${Version.getVersion(HOIIVUtilsConfig.getConfig.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
           showFilesErrorDialog(badFiles, vSettings)
           blockButtons(true)
         if isCancelled then return
 
-        save()
+        HOIIVUtilsConfig.save()
         MenuController.updateLoadingStatus(loadingLabel, "Showing Menu...")
 
     task.setOnSucceeded: _ =>
@@ -318,11 +318,11 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     try
 //      setConfig(new ConfigManager().createConfig)
 //      val initializer: Unit = new Initializer().initialize(getConfig)
-      val version = Version.getVersion(getConfig.getProperties)
-      new Updater().updateCheck(version, getConfig.getDir)
-      logger.info(s"Loading mod: ${getConfig.getProperties.getProperty("mod.path")}")
-      updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${getConfig.getProperties.getProperty("mod.path")}\"")
-      mVersion.setText(s"v${getConfig.getProperties.getProperty("version")}")
+      val version = Version.getVersion(HOIIVUtilsConfig.getConfig.getProperties)
+      new Updater().updateCheck(version, HOIIVUtilsConfig.getConfig.getDir)
+      logger.info(s"Loading mod: ${HOIIVUtilsConfig.getConfig.getProperties.getProperty("mod.path")}")
+      updateLoadingStatus(loadingLabel, s"Starting HOIIVUtils $version, Loading mod: \"${HOIIVUtilsConfig.getConfig.getProperties.getProperty("mod.path")}\"")
+      mVersion.setText(s"v${HOIIVUtilsConfig.getConfig.getProperties.getProperty("version")}")
       mTitle.setText(s"HOIIVUtils")
       new Thread(task).start()
     catch
@@ -389,7 +389,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     logger.warn("Unit comparison view cannot open: missing base or mod units folder.")
     JOptionPane.showMessageDialog(
       null,
-      s"version: ${getConfig.getProperties.getProperty("version")} Unit folders not found. Please check your HOI4 installation or the chosen mod directory.",
+      s"version: ${HOIIVUtilsConfig.getConfig.getProperties.getProperty("version")} Unit folders not found. Please check your HOI4 installation or the chosen mod directory.",
       "Error",
       JOptionPane.WARNING_MESSAGE
     )
@@ -427,7 +427,7 @@ object MenuController extends LazyLogging:
         loadingLabel.setText(if currentText.isEmpty then status else s"$currentText\n$status")
 
   private def checkFileError(file: String): Option[String] =
-    if get(s"valid.$file") == "false" then Some(s"• $file") else None
+    if HOIIVUtilsConfig.get(s"valid.$file") == "false" then Some(s"• $file") else None
 
   /**
    * Shows a dialog listing the bad files and provides a button to open the settings.
@@ -442,7 +442,7 @@ object MenuController extends LazyLogging:
       " directory(ies)\n",
       " directory(ies)\n\nPlease go to Settings to getConfigure these paths."
     ))
-    warningMessageBuffer.append(get("hoi4.path.status") match
+    warningMessageBuffer.append(HOIIVUtilsConfig.get("hoi4.path.status") match
       case "failed" => "\n• HOI4 installation path not found (REQUIRED)"
     )
 
@@ -497,10 +497,10 @@ object MenuController extends LazyLogging:
     // TODO simplify this mess
     logger.debug("Reloading PDX Localization...")
     val serviceReloader = zio.Unsafe.unsafe { implicit unsafe =>
-      ZHOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[ServiceReloader]).getOrThrowFiberFailure()
+      HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[ServiceReloader]).getOrThrowFiberFailure()
     }
     zio.Unsafe.unsafe { implicit unsafe =>
-      ZHOIIVUtils.getActiveRuntime.unsafe.run(
+      HOIIVUtils.getActiveRuntime.unsafe.run(
         serviceReloader.reload[LocalizationService].debug("Localization Reload Debug") <* ZIO.serviceWithZIO[LocalizationService](_.reload())
       ).getOrThrowFiberFailure()
     }

@@ -9,6 +9,7 @@ import com.hoi4utils.hoi4.map.state.State;
 import com.hoi4utils.hoi4.map.strategicregions.StrategicRegion;
 import com.hoi4utils.main.HOIIVFiles;
 import com.hoi4utils.main.HOIIVUtils;
+import com.hoi4utils.main.HOIIVUtilsConfig;
 import com.hoi4utils.parser.Node;
 import com.hoi4utils.parser.Parser;
 import com.hoi4utils.parser.ParserException;
@@ -50,9 +51,9 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	private TextArea pdxNodeTextArea;
 	@FXML
 	private MenuItem saveMenuItem;
-	
+
 	private final List<PDXScript<?>> pdxScripts = new ArrayList<>();
-	
+
 	public ParserViewerController() {
 		setFxmlFile("ParserViewer.fxml");
 		setTitle("HOIIVUtils Parser Viewer");
@@ -92,7 +93,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	}
 
 	private void includeVersion() {
-		idVersion.setText(HOIIVUtils.get("version").toString());
+		idVersion.setText(HOIIVUtilsConfig.get("version").toString());
 	}
 
 	@FXML
@@ -116,7 +117,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 						// Identify if it’s a strategic_region, state, focus_tree, etc.
 //						var firstChild = rootNode.nodeValue().list().apply(0);
-						var firstChild = rootNode.toList().apply(0); 
+						var firstChild = rootNode.toList().apply(0);
 						String pdxIdentifier = firstChild.name();
 
 						AbstractPDX<?> pdx = switch (pdxIdentifier) {
@@ -240,7 +241,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 //	@FXML
 //	private void handleOpenReplAction() {
 //		// Launch an Ammonite REPL, passing in the pdxScripts list
-//		new ReplUIController().open(pdxScripts); 
+//		new ReplUIController().open(pdxScripts);
 //	}
 
 	@FXML

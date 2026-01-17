@@ -8,7 +8,7 @@ import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4.history.countries.CountryFile.countryErrors
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4.map.state.State.stateErrors
-import com.hoi4utils.main.HOIIVUtils
+import com.hoi4utils.main.{HOIIVUtils, HOIIVUtilsConfig}
 import com.hoi4utils.script.{FocusTreeErrorGroup, PDXFileError}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import javafx.application.Platform
@@ -223,7 +223,7 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
       treeView.getStylesheets.add(cssUrl.toExternalForm)
 
     // Add theme-specific style class
-    val isDarkMode = HOIIVUtils.get("theme").equals("dark")
+    val isDarkMode = HOIIVUtilsConfig.get("theme").equals("dark")
     val themeClass = if isDarkMode then "dark-mode" else "light-mode"
     treeView.getStyleClass.add(themeClass)
 
@@ -238,7 +238,7 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
             setStyle("")
           else
             // Apply theme-based styling
-            val isDarkMode = HOIIVUtils.get("theme").equals("dark")
+            val isDarkMode = HOIIVUtilsConfig.get("theme").equals("dark")
             val textColor = if isDarkMode then "lightgrey" else "black"
 
             // Alternating background colors based on root item index

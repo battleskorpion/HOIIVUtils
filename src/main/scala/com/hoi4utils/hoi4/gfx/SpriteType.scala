@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4.gfx
 
-import com.hoi4utils.main.HOIIVUtils
+import com.hoi4utils.main.{HOIIVUtils, HOIIVUtilsConfig}
 
 import java.io.File
 
@@ -32,7 +32,7 @@ class SpriteType(private[gfx] var _name: String, private[gfx] var _textureFile: 
    *
    * @return absolute path texturefile for the gfx
    */
-  def textureFileAbsolutePath = new File(HOIIVUtils.get("mod.path") + "\\" + _textureFile.getPath)
+  def textureFileAbsolutePath = new File(HOIIVUtilsConfig.get("mod.path") + "\\" + _textureFile.getPath)
 
   /**
    * Returns the absolute filepath of the texturefile for this spriteType/gfx.

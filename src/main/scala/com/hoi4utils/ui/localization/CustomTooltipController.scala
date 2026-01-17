@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.localization
 
 import com.hoi4utils.hoi4.tooltip.CustomTooltip
-import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
+import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils, HOIIVUtilsConfig}
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager}
 import com.hoi4utils.ui.javafx.scene.control.TableViewWindow
 import javafx.application.Platform
@@ -44,7 +44,7 @@ class CustomTooltipController extends HOIIVUtilsAbstractController2 with TableVi
 
     val loadTootipsTask = new Task[Unit]():
       override def call(): Unit =
-        idVersion.setText(HOIIVUtils.get("version"))
+        idVersion.setText(HOIIVUtilsConfig.get("version"))
         load()
     new Thread(loadTootipsTask).start()
 

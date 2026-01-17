@@ -4,6 +4,7 @@ import com.hoi4utils.hoi4.common.country_tags.CountryTag;
 import com.hoi4utils.hoi4.common.country_tags.CountryTag$;
 import com.hoi4utils.hoi4.common.national_focus.FocusTree;
 import com.hoi4utils.main.HOIIVUtils;
+import com.hoi4utils.main.HOIIVUtilsConfig;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -64,7 +65,7 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
                     JOptionPane.ERROR_MESSAGE);
         }
 
-        File focusFile = new File(HOIIVUtils.get("mod.path") + "/common/national_focus/" + id + "_" + "temp_HOIIVUtils"+ ".txt");
+        File focusFile = new File(HOIIVUtilsConfig.get("mod.path") + "/common/national_focus/" + id + "_" + "temp_HOIIVUtils"+ ".txt");
         FocusTree focusTreeFile = new FocusTree(null);
         focusTreeFile.setID(id);
         focusTreeFile.setCountryTag(countryTag);

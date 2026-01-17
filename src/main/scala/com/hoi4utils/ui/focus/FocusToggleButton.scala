@@ -2,7 +2,6 @@ package com.hoi4utils.ui.focus
 
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree}
-import com.hoi4utils.main.HOIIVUtils.logger
 import com.hoi4utils.ui.focus.FocusToggleButton.gfxFocusUnavailable
 import com.hoi4utils.ui.javafx.scene.layout.ErrorIconPane
 import com.typesafe.scalalogging.LazyLogging

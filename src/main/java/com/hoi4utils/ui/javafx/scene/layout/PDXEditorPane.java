@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.javafx.scene.layout;
 
 import com.hoi4utils.main.HOIIVUtils;
+import com.hoi4utils.main.HOIIVUtilsConfig;
 import com.hoi4utils.script.*;
 import com.hoi4utils.script.datatype.StringPDX;
 import com.hoi4utils.script.datatype.ValPDXScript;
@@ -89,7 +90,7 @@ public class PDXEditorPane extends AnchorPane {
         }
 
         /* post ui construction */
-        if (HOIIVUtils.get("debug.colors").equals("true")) applyDebugBorders(pane);
+        if (HOIIVUtilsConfig.get("debug.colors").equals("true")) applyDebugBorders(pane);
     }
 
     // todo remove allowNull? since now have separate

@@ -12,7 +12,7 @@ class App extends javafx.application.Application:
 
     // You can now run ZIO effects here if needed
     Unsafe.unsafe { implicit unsafe =>
-      ZHOIIVUtils.runtime.unsafe.run(
+      HOIIVUtils.runtime.unsafe.run(
         ZIO.succeed(MenuController.setProgramStartTime(System.nanoTime())) *>
           ZIO.attempt {
             val controller = new MenuController

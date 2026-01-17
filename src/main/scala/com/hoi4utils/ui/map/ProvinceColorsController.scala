@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.map
 
 import com.hoi4utils.hoi4.map.gen.ColorGenerator
-import com.hoi4utils.main.HOIIVUtils
+import com.hoi4utils.main.{HOIIVUtils, HOIIVUtilsConfig}
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
@@ -47,7 +47,7 @@ class ProvinceColorsController extends HOIIVUtilsAbstractController2 with LazyLo
 
   private var input: String = "65536"
 
-  private val outputPath: String = HOIIVUtils.get("hDir") + File.separator + "Generated Province Colors.bmp"
+  private val outputPath: String = HOIIVUtilsConfig.get("hDir") + File.separator + "Generated Province Colors.bmp"
 
   // Color constraints from old code
   case class IntRange(var min: Int, var max: Int)

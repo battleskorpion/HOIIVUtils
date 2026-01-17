@@ -2,8 +2,8 @@ package com.hoi4utils.ui.javafx.application
 
 import com.hoi4utils.internal.UTF8ResourceBundleControl
 import com.hoi4utils.main.HOIIVUtils.*
-import com.hoi4utils.main.ZHOIIVUtils.validateEnv
-import com.hoi4utils.main.{HOIIVUtils, Initializer, Version, ZHOIIVUtils}
+import com.hoi4utils.main.HOIIVUtils.validateEnv
+import com.hoi4utils.main.{HOIIVUtils, HOIIVUtilsConfig, Initializer, Version}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
@@ -51,7 +51,7 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
       primaryScene = scene
 
       /* theme */
-      val cssPath = Option(HOIIVUtils.get("theme")).getOrElse("light") match
+      val cssPath = Option(HOIIVUtilsConfig.get("theme")).getOrElse("light") match
         case "dark" => "/com/hoi4utils/ui/css/javafx_dark.css"
         case _ => "/com/hoi4utils/ui/css/highlight-background.css"
 
@@ -72,8 +72,8 @@ abstract class HOIIVUtilsAbstractController2 extends HOIIVUtilsAbstractControlle
       case e: Exception => handleJavaFXControllerError(e)
 
   private def version =
-    new Initializer().initialize(getConfig)
-    try Version.getVersion(getConfig.getProperties)
+    new Initializer().initialize(HOIIVUtilsConfig.getConfig)
+    try Version.getVersion(HOIIVUtilsConfig.getConfig.getProperties)
     catch case e: Exception =>
       logger.error("Failed to get application version", e)
       Version.DEFAULT

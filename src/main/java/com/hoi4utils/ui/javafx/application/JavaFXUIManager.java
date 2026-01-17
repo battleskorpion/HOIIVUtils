@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.javafx.application;
 
 import com.hoi4utils.main.HOIIVUtils;
+import com.hoi4utils.main.HOIIVUtilsConfig;
 import com.hoi4utils.ui.javafx.scene.control.DoubleOrPercentTableCell;
 import com.hoi4utils.ui.javafx.scene.control.TableViewWindow;
 import javafx.beans.property.SimpleObjectProperty;
@@ -108,31 +109,31 @@ public interface JavaFXUIManager {
 		if (screen == null) {
 			return;
 		}
-		
+
 		Rectangle2D bounds = screen.getVisualBounds();
 		stage.setX(bounds.getMinX() + 200);
 		stage.setY(bounds.getMinY() + 200);
 	}
-	
+
 	default Screen validateAndGetPreferredScreen() {
 		int preferredScreen = -1;
 		try {
-			preferredScreen = Integer.parseInt(HOIIVUtils.get("preferred.screen"));
+			preferredScreen = Integer.parseInt(HOIIVUtilsConfig.get("preferred.screen"));
 		} catch (NumberFormatException e) {
 			return null;
 		}
 
 		ObservableList<Screen> screens = Screen.getScreens();
-		
+
 		if (preferredScreen > screens.size() - 1) {
 			return null;
 		}
-		
+
 		Screen screen = screens.get(preferredScreen);
 		if (screen == null) {
 			return null;
 		}
-		
+
 		return screen;
 	}
 
@@ -171,10 +172,10 @@ public interface JavaFXUIManager {
 	void setTitle(String title);
 
 	/**
-	 * 
+	 *
 	 * @param window
 	 * @param table
-	 * @param data 
+	 * @param data
 	 * @param dataFunctions
 	 * @param <S>
 	 */
@@ -195,7 +196,7 @@ public interface JavaFXUIManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param window
 	 * @param table
 	 * @param data
@@ -203,8 +204,8 @@ public interface JavaFXUIManager {
 	 * @param <S>
 	 */
 	default <S> void loadTableView(
-			TableViewWindow window, 
-			TableView<S> table, 
+			TableViewWindow window,
+			TableView<S> table,
 			ObservableList<S> data,
 			Iterable<Function1<S,?>> dataFunctions
 	) {
@@ -213,8 +214,8 @@ public interface JavaFXUIManager {
 		fns.forEach((x) -> fnsJava.add(FunctionConverters.asJavaFunction(x)));
 		loadTableView(window, table, data, fnsJava);
 	}
-	
-	
+
+
 //	default <S> void loadTreeTableView(TableViewWindow window, TreeTableView<S> table, ObservableList<S> data,
 //	                                   List<Function<S, ?>> dataFunctions, Function<S, ?> parentingFunction) {
 //		window.setDataTableCellFactories();
@@ -225,7 +226,7 @@ public interface JavaFXUIManager {
 
 	/**
 	 * Set the cell value factories for the table columns
-	 * 
+	 *
 	 * @param <S>           the type of the table row
 	 * @param dataFunctions a list of functions that take a table row and return the
 	 *                      value
@@ -314,14 +315,14 @@ public interface JavaFXUIManager {
 
 	/**
 	 * Update cell behavior within a column
-	 * 
+	 *
 	 * This method updates the cell behavior of a given column within a table
 	 * view to either display the values as integers or as a percentage of the
 	 * total value of the column.
-	 * 
+	 *
 	 * @param column        the table column to update
 	 * @param displayPercentages whether to display the values as percentages or not
-	 * 
+	 *
 	 * @see DoubleOrPercentTableCell
 	 */
 	static <S> void updateColumnPercentBehavior(TableColumn<S, Double> column,

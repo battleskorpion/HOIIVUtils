@@ -4,7 +4,7 @@ import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeMana
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
 import com.hoi4utils.hoi4.localization.service.LocalizationService
 import com.hoi4utils.hoi4.localization.{Localization, Property}
-import com.hoi4utils.main.{HOIIVUtils, ZHOIIVUtils}
+import com.hoi4utils.main.{HOIIVUtils, HOIIVUtilsConfig}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.layout.ErrorIconPane
 import javafx.collections.{FXCollections, ObservableList}
@@ -47,7 +47,7 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
 
   @FXML def initialize(): Unit =
     setWindowControlsVisibility()
-    versionLabel.setText(s"Version: ${HOIIVUtils.get("version")}")
+    versionLabel.setText(s"Version: ${HOIIVUtilsConfig.get("version")}")
     welcome.setToggleGroup(toggleGroup)
     welcome.fire()
     populateFocusTreeSelection()
@@ -214,7 +214,7 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
     focusNameColumn.setCellValueFactory(cellData => {
       new javafx.beans.property.SimpleStringProperty(
         zio.Unsafe.unsafe { implicit unsafe =>
-          ZHOIIVUtils.getActiveRuntime.unsafe.run(
+          HOIIVUtils.getActiveRuntime.unsafe.run(
             ZIO.serviceWithZIO[LocalizationService](_.getLocalization(cellData.getValue.id.str))
               .map(_.fold("")(_.text))
           ).getOrThrow()
@@ -226,7 +226,7 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
     focusDescColumn.setCellValueFactory(cellData => {
       new javafx.beans.property.SimpleStringProperty(
         zio.Unsafe.unsafe { implicit unsafe =>
-          ZHOIIVUtils.getActiveRuntime.unsafe.run(
+          HOIIVUtils.getActiveRuntime.unsafe.run(
             ZIO.serviceWithZIO[LocalizationService](_.getLocalization(cellData.getValue.id.str + "_desc"))
               .map(_.fold("")(_.text))
           ).getOrThrow()
@@ -320,7 +320,7 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
 //            hasDesc <- service.isLocalized(focus.id.str + "_desc")
 //          } yield hasName && hasDesc
           zio.Unsafe.unsafe { implicit unsafe =>
-            ZHOIIVUtils.getActiveRuntime.unsafe.run(
+            HOIIVUtils.getActiveRuntime.unsafe.run(
               for {
                 service <- ZIO.service[LocalizationService]
                 hasName <- service.isLocalized(focus.id.str)
