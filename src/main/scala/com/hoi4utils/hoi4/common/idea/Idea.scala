@@ -2,11 +2,13 @@ package com.hoi4utils.hoi4.common.idea
 
 import com.hoi4utils.databases.modifier.{Modifier, ModifierDatabase}
 import com.hoi4utils.hoi4.localization.{Localizable, Property}
+import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.parser.{Node, ParsingContext}
 import com.hoi4utils.script.*
 import com.hoi4utils.shared.ExpectedRange
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
+import zio.ZIO
 
 import java.io.File
 import scala.collection.mutable
@@ -24,10 +26,6 @@ object Idea extends LazyLogging {
     dataFunctions += (idea => idea.localizationText(Property.NAME))
     dataFunctions += (idea => idea.localizationText(Property.DESCRIPTION))
     dataFunctions
-  }
-
-  def listAllIdeas: List[Idea] = {
-    IdeasManager.listIdeasFromAllIdeaFiles
   }
 
   def pdxSupplier(): PDXSupplier[Idea] = {
@@ -70,7 +68,10 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
         errorNode = node,
         pdxScript = this
       ).addInfo("idea", Idea.this.toString)
-      IdeasManager.ideaFileErrors += pdxError
+      val ideasManager: IdeasManager = zio.Unsafe.unsafe { implicit unsafe =>
+        HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[IdeasManager]).getOrThrowFiberFailure()
+      }
+      ideasManager.ideaFileErrors += pdxError
 
     override def getPDXTypeName: String = "Modifiers"
   }

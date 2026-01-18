@@ -1,5 +1,6 @@
 package com.hoi4utils.ui.focus
 
+import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager, Point, PseudoSharedFocusTree, Focus as gridX}
 import com.hoi4utils.script.MultiPDX
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
@@ -135,11 +136,11 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     else
       logger.error("splitPane is null - check FXML fx:id")
 
-  private def populateFocusTreeSelection(): URIO[FocusTreeManager, Unit] =
+  private def populateFocusTreeSelection(): URIO[FocusTreeManager & CountryTagService, Unit] =
     ZIO.serviceWith[FocusTreeManager] { manager =>
       focusTreeView.setGridLinesVisible(lines)
       Some(manager.observeFocusTrees.sorted()).foreach(trees =>
-        trees.forEach(someFocusTree => 
+        trees.forEach(someFocusTree =>
           val toggleButton = ToggleButton(someFocusTree.toString)
           focusTreesToggleButtons += toggleButton
           toggleButton.setToggleGroup(toggleGroup)
@@ -249,7 +250,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         errorIcon.build()
         hbox.getChildren.add(errorIcon)
         vbox.getChildren.add(hbox)
-        () 
+        ()
       else
         vbox.getChildren.add(toggleButton)
         ()

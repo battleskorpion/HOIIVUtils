@@ -1,5 +1,6 @@
 package com.hoi4utils.hoi4.common.national_focus
 
+import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 import com.hoi4utils.parser.{Node, ParsingContext}
 import com.hoi4utils.script.*
 import dotty.tools.sjs.ir.Trees.JSBinaryOp.&&
@@ -8,10 +9,10 @@ import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-class SharedFocusFile(_file: Option[File])(manager: FocusTreeManager) extends StructuredPDX with HeadlessPDX with PDXFile {
+class SharedFocusFile(_file: Option[File])(manager: FocusTreeManager, countryTagService: CountryTagService) extends StructuredPDX with HeadlessPDX with PDXFile {
 
   /* PDX attributes */
-  val sharedFocuses: MultiPDX[SharedFocus] = MultiPDX[SharedFocus](None, Some(() => SharedFocus(PseudoSharedFocusTree(manager))), "shared_focus")
+  val sharedFocuses: MultiPDX[SharedFocus] = MultiPDX[SharedFocus](None, Some(() => SharedFocus(PseudoSharedFocusTree(manager, countryTagService))), "shared_focus")
 
   // File-level errors (parse errors, etc.)
   var fileErrors: ListBuffer[PDXFileError] = ListBuffer.empty[PDXFileError]
@@ -26,7 +27,7 @@ class SharedFocusFile(_file: Option[File])(manager: FocusTreeManager) extends St
       collectAndRegisterSharedFocusErrors()
     case None =>
 
-  def this(file: File)(manager: FocusTreeManager) = this(Some(file))(manager)
+  def this(file: File)(manager: FocusTreeManager, countryTagService: CountryTagService) = this(Some(file))(manager, countryTagService)
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
     given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)

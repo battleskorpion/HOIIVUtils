@@ -1,7 +1,8 @@
 package com.hoi4utils.ui.countries
 
 import com.hoi4utils.hoi4.history.countries.CountryFile
-import com.hoi4utils.hoi4.map.state.State
+import com.hoi4utils.hoi4.history.countries.service.CountryService
+import com.hoi4utils.hoi4.map.state.{State, StateService}
 import com.hoi4utils.main.{HOIIVUtils, HOIIVUtilsConfig}
 import com.hoi4utils.parser.ClausewitzDate
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController2, JavaFXUIManager}
@@ -13,6 +14,7 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.{AnchorPane, VBox}
+import zio.ZIO
 
 import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
@@ -63,8 +65,12 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
   private var stateList: ObservableList[State] = FXCollections.observableArrayList()
   private var selectedCountry: CountryFile = uninitialized
 
-  private val countryList: ObservableList[CountryFile] =
-    FXCollections.observableArrayList(CollectionConverters.asJava(CountryFile.list))
+  private val countryList: ObservableList[CountryFile] = {
+    val countryService: CountryService = zio.Unsafe.unsafe { implicit unsafe =>
+      HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[CountryService]).getOrThrowFiberFailure()
+    }
+    FXCollections.observableArrayList(CollectionConverters.asJava(countryService.list))
+  }
 
   // Constructor initialization
   logger.info(s"Countries loaded: ${countryList.size()}")
@@ -72,7 +78,10 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
   @FXML def initialize(): Unit =
     setWindowControlsVisibility()
     versionLabel.setText(s"Version: ${HOIIVUtilsConfig.get("version")}")
-    loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(_resourcesPercent))
+    val dataFunctions = zio.Unsafe.unsafe(implicit unsafe =>
+      HOIIVUtils.getActiveRuntime.unsafe.run(CountryFile.getDataFunctions(_resourcesPercent)).getOrThrowFiberFailure()
+    )
+    loadTableView(this, countryDataTable, countryList, dataFunctions)
 
     closeDetailsPane()
 
@@ -84,7 +93,10 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
   override def preSetup(): Unit = setupWindowControls(bbccRoot, toolBar, toolBar2)
 
   private def updateResourcesColumnsPercentBehavior(): Unit =
-    loadTableView(this, countryDataTable, countryList, CountryFile.getDataFunctions(_resourcesPercent))
+    val dataFunctions = zio.Unsafe.unsafe(implicit unsafe =>
+      HOIIVUtils.getActiveRuntime.unsafe.run(CountryFile.getDataFunctions(_resourcesPercent)).getOrThrowFiberFailure()
+    )
+    loadTableView(this, countryDataTable, countryList, dataFunctions)
     JavaFXUIManager.updateColumnPercentBehavior(countryDataTableAluminiumColumn, _resourcesPercent)
     JavaFXUIManager.updateColumnPercentBehavior(countryDataTableChromiumColumn, _resourcesPercent)
     JavaFXUIManager.updateColumnPercentBehavior(countryDataTableOilColumn, _resourcesPercent)
@@ -140,8 +152,11 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
       stateDataTable.setEditableColumns(true)
 
     selectedCountry = country
-    stateList = FXCollections.observableArrayList(CollectionConverters.asJava(State.ownedStatesOfCountry(country)))
-    loadTableView(this, stateDataTable, stateList, State.getDataFunctions(_stateResourcesPercent))
+    val stateService: StateService = zio.Unsafe.unsafe { implicit unsafe =>
+      HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[StateService]).getOrThrowFiberFailure()
+    }
+    stateList = FXCollections.observableArrayList(CollectionConverters.asJava(stateService.ownedStatesOfCountry(country)))
+    loadTableView(this, stateDataTable, stateList, stateService.getDataFunctions(_stateResourcesPercent))
 
     openDetailsPane()
 
@@ -164,7 +179,10 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
   def setStateResourcesPercent(stateResourcesPercent: Boolean): Unit =
     this._stateResourcesPercent = stateResourcesPercent
     if stateDataTable != null && stateList != null then
-      loadTableView(this, stateDataTable, stateList, State.getDataFunctions(_stateResourcesPercent))
+      val stateService: StateService = zio.Unsafe.unsafe { implicit unsafe =>
+        HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[StateService]).getOrThrowFiberFailure()
+      }
+      loadTableView(this, stateDataTable, stateList, stateService.getDataFunctions(_stateResourcesPercent))
       stateDataTable.updateResourcesColumnsPercentBehavior(_stateResourcesPercent)
 
   /**

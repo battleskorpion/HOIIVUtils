@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4.common.national_focus
 
-import com.hoi4utils.hoi4.common.country_tags.CountryTag
+import com.hoi4utils.hoi4.common.country_tags.{CountryTag, CountryTagService}
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.*
 import com.hoi4utils.hoi4.localization.{Localizable, Property}
 import com.hoi4utils.main.HOIIVFiles
@@ -27,14 +27,14 @@ val focusTreeIdentifier = "focus_tree"
  * @note Do not create instances of this class directly, unless a few focus tree is being created or loaded.
  *       Use FocusTree.get(File) instead.
  */
-class FocusTree(file: File = null)(manager: FocusTreeManager) extends StructuredPDX(focusTreeIdentifier) with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile:
+class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService: CountryTagService) extends StructuredPDX(focusTreeIdentifier) with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile:
   //final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
 
   /* PDX attributes */
   val id =
     StringPDX("id")
   val country =
-    FocusTreeCountry()
+    FocusTreeCountry(countryTagService)
   val focuses: MultiPDX[Focus] =
     MultiPDX[Focus](None, Some(() => new Focus(this)), "focus")
   /* less used */
@@ -224,21 +224,21 @@ class FocusTree(file: File = null)(manager: FocusTreeManager) extends Structured
     if other.isInstanceOf[FocusTree] then return this == other
     false
 
-  class FocusTreeCountry extends StructuredPDX("country"):
+  class FocusTreeCountry(countryTagService: CountryTagService) extends StructuredPDX("country"):
     final val base = new DoublePDX("base")
     final val factor = new DoublePDX("factor")
     final val add = new DoublePDX("add")
-    final val modifier = new MultiPDX[TagModifier](None, Some(() => new TagModifier), "modifier")
+    final val modifier = new MultiPDX[TagModifier](None, Some(() => new TagModifier(countryTagService)), "modifier")
 
     override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(base, factor, add, modifier)
 
     override def getPDXTypeName: String = "AI Willingness"
 
-    class TagModifier extends StructuredPDX("modifier"):
+    class TagModifier(countryTagService: CountryTagService) extends StructuredPDX("modifier"):
       final val base = new DoublePDX("base")
       final val factor = new DoublePDX("factor")
       final val add = new DoublePDX("add")
-      final val tag = new ReferencePDX[CountryTag](() => CountryTag.toList, "country")
+      final val tag = new ReferencePDX[CountryTag](() => countryTagService.list, "country")
 
       override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(base, factor, add, tag)
 

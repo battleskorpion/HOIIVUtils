@@ -18,6 +18,7 @@ import scalafx.scene.input.{MouseButton, MouseEvent}
 import scalafx.scene.layout.AnchorPane
 import scalafx.scene.paint.Color
 import sun.jvm.hotspot.HelloWorld.e
+import zio.ZIO
 
 import javax.swing.JOptionPane
 import scala.collection.mutable.ListBuffer
@@ -328,7 +329,11 @@ class FocusTreeScrollPane(private var _focusTree: Option[FocusTree]) extends Scr
         gc2D.drawImage(img, x1 - 32, y1 + yAdj1)
 
     // Focus icon
-    focus.getDDSImage.foreach(img => gc2D.drawImage(img, x1, y1))
+    for {
+      ddsImage <- focus.getDDSImage
+      _ <- 
+        ZIO.succeed(ddsImage.foreach(img => gc2D.drawImage(img, x1, y1))) 
+    } yield ()
 
     // Focus name text
     val locName = focus.localizationText(Property.NAME)

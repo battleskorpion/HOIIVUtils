@@ -53,7 +53,8 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
 
     @FXML
     void initialize() {
-        countryTagComboBox.getItems().addAll(CollectionConverters.asJava(CountryTag$.MODULE$.toList()));
+//        countryTagComboBox.getItems().addAll(CollectionConverters.asJava(CountryTag$.MODULE$.toList()));
+	    logger.error("Sorry, must update to scala!!!");
     }
 
     @FXML

@@ -4,25 +4,22 @@ import com.hoi4utils.databases.effect.EffectDatabase
 import com.hoi4utils.databases.effect.EffectDatabase.effectErrors
 import com.hoi4utils.databases.modifier.ModifierDatabase
 import com.hoi4utils.file.file_listener.{FileAdapter, FileEvent, FileWatcher}
-import com.hoi4utils.hoi4.common.country_tags.CountryTag
-import com.hoi4utils.hoi4.common.idea.IdeasManager.ideaFileErrors
+import com.hoi4utils.hoi4.common.country_tags.{CountryTag, CountryTagService}
 import com.hoi4utils.hoi4.common.idea.{IdeaFile, IdeasManager}
 import com.hoi4utils.hoi4.common.national_focus.{FocusTree, FocusTreeManager}
-import com.hoi4utils.hoi4.gfx.Interface
-import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
+import com.hoi4utils.hoi4.gfx.{Interface, InterfaceService}
 import com.hoi4utils.hoi4.history.countries.CountryFile
-import com.hoi4utils.hoi4.history.countries.CountryFile.countryErrors
+import com.hoi4utils.hoi4.history.countries.service.CountryService
 import com.hoi4utils.hoi4.localization.service.{LocalizationFileService, LocalizationService}
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
-import com.hoi4utils.hoi4.map.resource.ResourcesFile
-import com.hoi4utils.hoi4.map.state.State
-import com.hoi4utils.hoi4.map.state.State.stateErrors
+import com.hoi4utils.hoi4.map.resource.{ResourcesFile, ResourcesFileService}
+import com.hoi4utils.hoi4.map.state.{State, StateService}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.script.PDXReadable
 import com.hoi4utils.ui.menus.MenuController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.Label
-import zio.{RIO, UIO, Unsafe, ZIO}
+import zio.{RIO, Reloadable, Tag, Task, UIO, Unsafe, ZIO, ZLayer}
 
 import java.awt.EventQueue
 import java.beans.PropertyChangeListener
@@ -38,12 +35,34 @@ import scala.collection.parallel.CollectionConverters.*
  */
 class PDXLoader extends LazyLogging:
 
-  /* LOAD ORDER IMPORTANT (depending on the class) */
-  val pdxList: List[List[PDXReadable]] = List(
-    List(Interface),
-    List(CountryTag, IdeasManager),             // , FocusTreeManager
-    List(ResourcesFile, State, CountryFile),
-  )
+//  /* LOAD ORDER IMPORTANT (depending on the class) */
+//  val pdxList: List[List[PDXReadable]] = List(
+//    List(Interface),
+//    List(CountryTag, IdeasManager),             // , FocusTreeManager
+//    List(ResourcesFile, State, CountryFile),
+//  )
+  type AppPDXEnv = InterfaceService & CountryTagService & IdeasManager & FocusTreeManager & ResourcesFileService & StateService & CountryService
+
+  /**
+   * Generates the load order list by applying the given 'action' to every service.
+   * @param action A function that takes a PDXReadable service and returns a Task (Boolean, Unit, etc.)
+   */
+  def applyToPDXServices[A](action: PDXReadable => Task[A]): List[List[ZIO[AppPDXEnv, Throwable, A]]] = {
+    // This is the trick: Create a local "partial" version of the helper
+    // that already knows about 'action' and 'A'.
+    def step[T <: PDXReadable : Tag]: ZIO[T, Throwable, A] =
+      callOnZIOService[T, A](action)
+
+    List(
+      List(step[InterfaceService]),
+      List(step[CountryTagService], step[IdeasManager], step[FocusTreeManager]),
+      List(step[ResourcesFileService], step[StateService], step[CountryService])
+    )
+  }
+
+  // Helper: T is the service type, R is the return type of the method
+  def callOnZIOService[T : zio.Tag, A](fn: T => RIO[Any, A]): ZIO[T, Throwable, A] =
+    ZIO.serviceWithZIO[T](fn)
 
   /**
    * Loads all HOI4 and mod data with optional timing callbacks for performance monitoring.
@@ -77,10 +96,17 @@ class PDXLoader extends LazyLogging:
             isCancelled: () => Boolean = () => false,
             onComponentComplete: (String, Long) => Unit = (_, _) => (),
             onComponentStart: String => Unit = _ => ()
-          ): RIO[LocalizationService & Config, Unit] = {
+          ): RIO[LocalizationService & Config & InterfaceService & CountryTagService & IdeasManager & FocusTreeManager & ResourcesFileService & StateService & CountryService, Unit] = {
     for {
-      service <- ZIO.service[LocalizationService]
+      localizationService <- ZIO.service[LocalizationService]
       config <- ZIO.service[Config]
+      interfaceService <- ZIO.service[InterfaceService]
+      countryTagService <- ZIO.service[CountryTagService]
+      ideasManager <- ZIO.service[IdeasManager]
+      focusTreeManager <- ZIO.service[FocusTreeManager]
+      resourcesFileService <- ZIO.service[ResourcesFileService]
+      stateService <- ZIO.service[StateService]
+      countryService <- ZIO.service[CountryService]
       hProperties = config.getProperties
       _ <- ZIO.attempt {
         implicit val properties: Properties = hProperties
@@ -122,7 +148,7 @@ class PDXLoader extends LazyLogging:
             MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
           } *> {
             for
-              timedResult <- service.reload().timed
+              timedResult <- localizationService.reload().timed
               (duration, _) = timedResult
               _ <- ZIO.attempt {
                 onComponentComplete("Localization", duration.toNanos)
@@ -130,21 +156,134 @@ class PDXLoader extends LazyLogging:
             yield ()
           }
         ) &>
-        // Parallel PDX Loading
-        ZIO.attempt {
-          implicit val properties: Properties = hProperties
-          implicit val label: Label = loadingLabel
-          pdxList.par.foreach(l =>
-            l.foreach(p =>
-              if !isCancelled() then
-                val componentName = p.cleanName
-                onComponentStart(componentName)
-                val componentStart = System.nanoTime()
-                readPDX(p, isCancelled)
-                onComponentComplete(componentName, System.nanoTime() - componentStart)
-            )
-          )
-        }
+        // Interface reload
+        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
+          ZIO.unit,
+          ZIO.attempt {
+            onComponentStart(interfaceService.cleanName)
+            MenuController.updateLoadingStatus(loadingLabel, "Loading Interface...")
+          } *> {
+            for
+              timedResult <- interfaceService.read().timed
+              (duration, _) = timedResult
+              _ <- ZIO.attempt {
+                onComponentComplete(interfaceService.cleanName, duration.toNanos)
+              }
+            yield ()
+          }
+        ) &>
+        // CountryTag reload
+        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
+          ZIO.unit,
+          ZIO.attempt {
+            onComponentStart(countryTagService.cleanName)
+            MenuController.updateLoadingStatus(loadingLabel, "Loading Country Tags...")
+          } *> {
+            for
+              timedResult <- countryTagService.read().timed
+              (duration, _) = timedResult
+              _ <- ZIO.attempt {
+                onComponentComplete(countryTagService.cleanName, duration.toNanos)
+              }
+            yield ()
+          }
+        ) &>
+        // Ideas reload
+        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
+          ZIO.unit,
+          ZIO.attempt {
+            onComponentStart(ideasManager.cleanName)
+            MenuController.updateLoadingStatus(loadingLabel, "Loading National Ideas...")
+          } *> {
+            for
+              timedResult <- ideasManager.read().timed
+              (duration, _) = timedResult
+              _ <- ZIO.attempt {
+                onComponentComplete(ideasManager.cleanName, duration.toNanos)
+              }
+            yield ()
+          }
+        ) &>
+        // Focus trees reload
+        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
+          ZIO.unit,
+          ZIO.attempt {
+            onComponentStart(focusTreeManager.cleanName)
+            MenuController.updateLoadingStatus(loadingLabel, "Loading Focus Trees...")
+          } *> {
+            for
+              timedResult <- focusTreeManager.read().timed
+              (duration, _) = timedResult
+              _ <- ZIO.attempt {
+                onComponentComplete(focusTreeManager.cleanName, duration.toNanos)
+              }
+            yield ()
+          }
+        ) &>
+        // Resources reload
+        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
+          ZIO.unit,
+          ZIO.attempt {
+            onComponentStart(resourcesFileService.cleanName)
+            MenuController.updateLoadingStatus(loadingLabel, "Loading Resource Files...")
+          } *> {
+            for
+              timedResult <- resourcesFileService.read().timed
+              (duration, _) = timedResult
+              _ <- ZIO.attempt {
+                onComponentComplete(resourcesFileService.cleanName, duration.toNanos)
+              }
+            yield ()
+          }
+        ) &>
+        // State reload
+        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
+          ZIO.unit,
+          ZIO.attempt {
+            onComponentStart(stateService.cleanName)
+            MenuController.updateLoadingStatus(loadingLabel, "Loading States...")
+          } *> {
+            for
+              timedResult <- stateService.read().timed
+              (duration, _) = timedResult
+              _ <- ZIO.attempt {
+                onComponentComplete(stateService.cleanName, duration.toNanos)
+              }
+            yield ()
+          }
+        ) &>
+        // Ideas reload
+        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
+          ZIO.unit,
+          ZIO.attempt {
+            onComponentStart(countryService.cleanName)
+            MenuController.updateLoadingStatus(loadingLabel, "Loading Countries...")
+          } *> {
+            for
+              timedResult <- countryService.read().timed
+              (duration, _) = timedResult
+              _ <- ZIO.attempt {
+                onComponentComplete(countryService.cleanName, duration.toNanos)
+              }
+            yield ()
+          }
+        )
+//        ) &>
+//          // Parallel PDX Loading
+//        ZIO.attempt {
+//          implicit val properties: Properties = hProperties
+//          implicit val label: Label = loadingLabel
+//          pdxList.par.foreach(l =>
+//            l.foreach(p =>
+//              if !isCancelled() then
+//                val componentName = p.cleanName
+//                onComponentStart(componentName)
+//                val componentStart = System.nanoTime()
+//                readPDX(p, isCancelled)
+//                onComponentComplete(componentName, System.nanoTime() - componentStart)
+//            )
+//          )
+//        }
       }
     } yield ()
 
@@ -175,23 +314,26 @@ class PDXLoader extends LazyLogging:
 //      }
   }
 
-  def readPDX(pdx: PDXReadable, isCancelled: () => Boolean = () => false)(implicit properties: Properties, label: Label): Unit =
+  def readPDX(pdx: PDXReadable, isCancelled: () => Boolean = () => false)(implicit properties: Properties, label: Label): Task[Unit] =
     val property = s"valid.${pdx.cleanName}"
 
     MenuController.updateLoadingStatus(label, s"Loading ${pdx.cleanName} files...")
-    if isCancelled() then return
-    try {
-      ZIO.ifZIO(pdx.read())(
-        onTrue = ZIO.succeed(properties.setProperty(property, "true")),
-        onFalse = ZIO.succeed {
-          properties.setProperty(property, "false")
-          logger.error(s"Exception while reading for ${pdx.cleanName}")
-        }
-      )
-    } catch
-      case e: Exception =>
-        properties.setProperty(property, "false")
-        logger.error(s"Exception while reading for ${pdx.cleanName}", e)
+    ZIO.succeed {
+      if isCancelled() then ()
+      else
+        try {
+          ZIO.ifZIO(pdx.read())(
+            onTrue = ZIO.succeed(properties.setProperty(property, "true")),
+            onFalse = ZIO.succeed {
+              properties.setProperty(property, "false")
+              logger.error(s"Exception while reading for ${pdx.cleanName}")
+            }
+          )
+        } catch
+          case e: Exception =>
+            properties.setProperty(property, "false")
+            logger.error(s"Exception while reading for ${pdx.cleanName}", e)
+    }
 
   /** Validates whether the provided directory path is valid */
   private def validateDirectoryPath(path: String, keyName: String): Boolean =
@@ -205,21 +347,27 @@ class PDXLoader extends LazyLogging:
     true
 
   /** Clears loaded PDX data. */
-  def clearPDX(): Unit = pdxList.foreach(_.foreach(_.clear()))
+  def clearPDX(): Unit =
+    applyToPDXServices(_.clear())
+//    pdxList.foreach(_.foreach(_.clear()))
 
-  def clearLB(): RIO[LocalizationFileService & FocusTreeManager, Unit] = {
+  def clearLB(): RIO[LocalizationFileService & AppPDXEnv, Unit] = {
     for {
       locFileService <- ZIO.service[LocalizationFileService]
+      interfaceService <- ZIO.service[InterfaceService]
       focusTreeManager <- ZIO.service[FocusTreeManager]
+      ideasManager <- ZIO.service[IdeasManager]
+      stateService <- ZIO.service[StateService]
+      countryService <- ZIO.service[CountryService]
       errorsList = ListBuffer(
         effectErrors,
         //      localizationErrors,   // TODO
-        interfaceErrors,
-        countryErrors,
+        interfaceService.interfaceErrors,
+        countryService.countryErrors,
         focusTreeManager.focusTreeErrors,
-        ideaFileErrors,
+        ideasManager.ideaFileErrors,
         resourceErrors,
-        stateErrors
+        stateService.stateErrors
       )
       _ <- ZIO.succeed(errorsList.foreach(_.clear()))
     } yield ()

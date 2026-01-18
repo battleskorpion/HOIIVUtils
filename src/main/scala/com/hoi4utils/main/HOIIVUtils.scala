@@ -1,9 +1,15 @@
 
 package com.hoi4utils.main
 
+import com.hoi4utils.hoi4.common.country_tags.CountryTagService
+import com.hoi4utils.hoi4.common.idea.IdeasManager
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager
+import com.hoi4utils.hoi4.gfx.InterfaceService
+import com.hoi4utils.hoi4.history.countries.service.CountryService
 import com.hoi4utils.hoi4.localization.service.{BaseLocalizationService, EnglishLocalizationService, LocalizationFileService, LocalizationService}
 import com.hoi4utils.hoi4.localization.{LocalizationFormatter, YMLFileService}
+import com.hoi4utils.hoi4.map.resource.ResourcesFileService
+import com.hoi4utils.hoi4.map.state.StateService
 import com.hoi4utils.main.HOIIVUtilsConfig.getConfig
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Application
@@ -16,7 +22,8 @@ import scala.annotation.experimental
 object HOIIVUtils extends ZIOAppDefault {
 
   private type ROut = com.hoi4utils.main.Config & ServiceReloader
-    & LocalizationService & FocusTreeManager
+    & LocalizationService & InterfaceService & CountryTagService & IdeasManager & FocusTreeManager 
+    & ResourcesFileService & StateService & CountryService
 
   //  private var _runtime: Runtime[LocalizationService] = null
   def getActiveRuntime: Runtime[ROut] = runtime
@@ -33,13 +40,19 @@ object HOIIVUtils extends ZIOAppDefault {
   val appLayer: ZLayer[Any, Throwable, ROut] = {
     ZLayer.make[ROut](
       configLayer,
+      ServiceReloader.live,
       ZLayer.succeed(Set.empty[String]),
       YMLFileService.live,
       LocalizationFormatter.live,
       LocalizationFileService.live,
       LocalizationService.reloadable,
-      FocusTreeManager.live, 
-      ServiceReloader.live,
+      InterfaceService.live,
+      CountryTagService.live,
+      IdeasManager.live,
+      FocusTreeManager.live,
+      ResourcesFileService.live,
+      StateService.live,
+      CountryService.live,
       ZLayer.Debug.tree
     )
   }

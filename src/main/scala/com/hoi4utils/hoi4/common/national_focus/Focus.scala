@@ -2,7 +2,7 @@ package com.hoi4utils.hoi4.common.national_focus
 
 import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.hoi4.gfx.Interface
+import com.hoi4utils.hoi4.gfx.{Interface, InterfaceService}
 import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Localization, Property}
 import com.hoi4utils.hoi4.scope.Scope
 import com.hoi4utils.parser.{Node, ParsingContext}
@@ -11,6 +11,7 @@ import com.hoi4utils.script.datatype.StringPDX
 import com.hoi4utils.script.shared.AIWillDo
 import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import javafx.scene.image.Image
+import zio.{URIO, ZIO}
 
 import java.io.File
 import scala.annotation.tailrec
@@ -208,49 +209,60 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
   def setCost(cost: Number): Unit =
     this.cost @= cost.doubleValue()
 
-  def getDDSImage: Option[Image] = {
-    // bad code. it's fine for now.
-    // Updated code, now its very bad code. its really not fine but its staying for now.
-    if icon.isDefined then
-      var img: Option[Image] = None
-      for i <- icon do i match
-        case simpleIcon: SimpleIcon => simpleIcon.value match
-          case Some(iconName) =>
-            Interface.getGFX(iconName) match
-              case Some(gfx) =>
-                _ddsImage match
-                  case Some(ddsImage) => img =
-                    if _ddsImageGFX == gfx then _ddsImage
-                    else
-                      _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-                      _ddsImageGFX = gfx
-                      _ddsImage
-                  case None => img =
-                    _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-                    _ddsImageGFX = gfx
-                    _ddsImage
+  def getDDSImage: URIO[InterfaceService, Option[Image]] = {
+    for {
+      interfaceService <- ZIO.service[InterfaceService]
+      result: Option[Image] =
+        // bad code. it's fine for now.
+        // Updated code, now its very bad code. its really not fine but its staying for now.
+        if icon.isDefined then
+          var img: Option[Image] = None
+          for i <- icon do i match
+            case simpleIcon: SimpleIcon => simpleIcon.value match
+              case Some(iconName) =>
+                for {
+                  gfx <- interfaceService.getGFX(iconName)
+                  result = gfx match
+                    case Some(gfx) => 
+                      _ddsImage match
+                        case Some(ddsImage) => img =
+                          if _ddsImageGFX == gfx then _ddsImage
+                          else
+                            _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
+                            _ddsImageGFX = gfx
+                            _ddsImage
+                        case None => img =
+                          _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
+                          _ddsImageGFX = gfx
+                          _ddsImage
+                    case None => None
+                } yield result
               case None => None
-          case None => None
-        case blockIcon: BlockIcon => blockIcon.iconName match
-          case Some(iconName) =>
-            Interface.getGFX(iconName) match
-              case Some(gfx) =>
-                _ddsImage match
-                  case Some(ddsImage) => img =
-                    if _ddsImageGFX == gfx then _ddsImage
-                    else
-                      _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-                      _ddsImageGFX = gfx
-                      _ddsImage
-                  case None => img =
-                    _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-                    _ddsImageGFX = gfx
-                    _ddsImage
+            case blockIcon: BlockIcon => blockIcon.iconName match
+              case Some(iconName) =>
+                for {
+                  gfx <- interfaceService.getGFX(iconName)
+                  result = gfx match
+                    case Some(gfx) => 
+                      _ddsImage match 
+                        case Some(ddsImage) => img = 
+                          if _ddsImageGFX == gfx then _ddsImage
+                          else
+                            _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
+                            _ddsImageGFX = gfx
+                            _ddsImage
+                        case None => img =
+                          _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
+                          _ddsImageGFX = gfx
+                          _ddsImage
+                    case None => None 
+                } yield result
               case None => None
-          case None => None
-        case _ => None
-      img
-    else None
+            case _ => None
+          img
+        else None
+    } yield result
+    
   }
 
   def hasPrerequisites: Boolean = prerequisites.nonEmpty

@@ -2,12 +2,12 @@ package com.hoi4utils.ui.menus
 
 import com.hoi4utils.databases.effect.EffectDatabase.effectErrors
 import com.hoi4utils.extensions.*
-import com.hoi4utils.hoi4.common.idea.IdeasManager.ideaFileErrors
+import com.hoi4utils.hoi4.common.idea.IdeasManager
 import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager
-import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
-import com.hoi4utils.hoi4.history.countries.CountryFile.countryErrors
+import com.hoi4utils.hoi4.gfx.InterfaceService
+import com.hoi4utils.hoi4.history.countries.service.CountryService
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
-import com.hoi4utils.hoi4.map.state.State.stateErrors
+import com.hoi4utils.hoi4.map.state.StateService
 import com.hoi4utils.main.{HOIIVUtils, HOIIVUtilsConfig}
 import com.hoi4utils.script.{FocusTreeErrorGroup, PDXFileError}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
@@ -57,12 +57,17 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
 
   override def preSetup(): Unit = setupWindowControls(contentContainer, errorListTabPane)
 
-  private def update(): URIO[FocusTreeManager, Unit] =
+  private def update(): URIO[FocusTreeManager & InterfaceService & CountryService & IdeasManager & StateService, Unit] =
     for {
       focusTreeErrors <- ZIO.service[FocusTreeManager].map(_.focusTreeErrors)
+//      localizationErrors <- ZIO.service[LocalizationService].map(_.localizationErrors)
+      interfaceErrors <- ZIO.service[InterfaceService].map(_.interfaceErrors)
+      countryErrors <- ZIO.service[CountryService].map(_.countryErrors)
+      ideaFileErrors <- ZIO.service[IdeasManager].map(_.ideaFileErrors)
+      stateErrors <- ZIO.service[StateService].map(_.stateErrors)
       treeViewsWithErrors = ListBuffer(
         (effectsEL, effectErrors),
-  //      (localizationEL, localizationErrors),
+//        (localizationEL, localizationErrors),
         (interfaceEL, interfaceErrors),
         (countryEL, countryErrors),
         (ideaEL, ideaFileErrors),
