@@ -83,14 +83,15 @@ case class InterfaceServiceImpl() extends InterfaceService {
         for {
           interface <- ZIO.succeed(new Interface(f))
           itemsToAdd <- interface.readGFXFile(interfaceErrors)
-        } yield (f, interface, itemsToAdd)
-      }
-      .map { results =>
-        results.foreach { (f, interface, items) =>
-          interfaceFiles.put(f, interface)
-          items.foreach { case (name, gfx) =>
+          _ <- ZIO.foreachDiscard(itemsToAdd) { case (name, gfx) =>
             addSpriteType(name, gfx)
           }
+        } yield (f, interface)
+      }
+      .withParallelism(8)
+      .map { interfaceFilesMap =>
+        interfaceFilesMap.foreach { (f, interface) =>
+          interfaceFiles.put(f, interface)
         }
         true
       }
@@ -107,20 +108,20 @@ case class InterfaceServiceImpl() extends InterfaceService {
       val gfxFiles = folder.listFiles.filter(_.getName.endsWith(".gfx"))
 
       ZIO.foreachPar(gfxFiles) { f =>
-          for {
-            interface <- ZIO.succeed(new Interface(f))
-            itemsToAdd <- interface.readGFXFile(interfaceErrors)
-          } yield (f, interface, itemsToAdd)
-        }
-        .map { results =>
-          results.foreach { (f, interface, items) =>
-            interfaceFiles.put(f, interface)
-            items.foreach { case (name, gfx) =>
-              addSpriteType(name, gfx)
-            }
+        for {
+          interface <- ZIO.succeed(new Interface(f))
+          itemsToAdd <- interface.readGFXFile(interfaceErrors)
+          _ <- ZIO.foreachDiscard(itemsToAdd) { case (name, gfx) =>
+            addSpriteType(name, gfx)
           }
-          true
+//          _ <- ZIO.logError(s"read $f")
+        } yield (f, interface)
+      }.map { interfaceFilesMap =>
+        interfaceFilesMap.foreach { (f, interface) =>
+          interfaceFiles.put(f, interface)
         }
+        true
+      }
     } <* ZIO.logInfo(s"Read Interface files from $folder")
   }
 
