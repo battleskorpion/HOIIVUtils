@@ -2,6 +2,8 @@ package com.hoi4utils.ui.focus
 
 import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager, Point, PseudoSharedFocusTree, Focus as gridX}
+import com.hoi4utils.hoi4.map.state.StateService
+import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.script.MultiPDX
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.control.ZoomableScrollPane
@@ -92,7 +94,10 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     welcome.setToggleGroup(toggleGroup)
     welcome.fire()
     focusTreeView.setGridLinesVisible(lines)
-    populateFocusTreeSelection()
+    zio.Unsafe.unsafe { implicit unsafe =>
+      System.err.print("Test 2")
+      HOIIVUtils.getActiveRuntime.unsafe.run(populateFocusTreeSelection()).getOrThrowFiberFailure()
+    }
     focusDetailsPaneController.onUpdate = Some(() =>
       this.currentFocusTree match
         case Some(focusTree) =>
@@ -137,9 +142,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       logger.error("splitPane is null - check FXML fx:id")
 
   private def populateFocusTreeSelection(): URIO[FocusTreeManager & CountryTagService, Unit] =
+    System.err.print("Test 2.1")
     ZIO.serviceWith[FocusTreeManager] { manager =>
       focusTreeView.setGridLinesVisible(lines)
+      System.err.print("Test 3")
       Some(manager.observeFocusTrees.sorted()).foreach(trees =>
+        System.err.print("Test 4: " + trees.size())
         trees.forEach(someFocusTree =>
           val toggleButton = ToggleButton(someFocusTree.toString)
           focusTreesToggleButtons += toggleButton

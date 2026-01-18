@@ -155,119 +155,26 @@ class PDXLoader extends LazyLogging:
               }
             yield ()
           }
-        ) &>
+        ) *>
         // Interface reload
-        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
-          ZIO.unit,
-          ZIO.attempt {
-            onComponentStart(interfaceService.cleanName)
-            MenuController.updateLoadingStatus(loadingLabel, "Loading Interface...")
-          } *> {
-            for
-              timedResult <- interfaceService.read().timed
-              (duration, _) = timedResult
-              _ <- ZIO.attempt {
-                onComponentComplete(interfaceService.cleanName, duration.toNanos)
-              }
-            yield ()
-          }
-        ) &>
-        // CountryTag reload
-        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
-          ZIO.unit,
-          ZIO.attempt {
-            onComponentStart(countryTagService.cleanName)
-            MenuController.updateLoadingStatus(loadingLabel, "Loading Country Tags...")
-          } *> {
-            for
-              timedResult <- countryTagService.read().timed
-              (duration, _) = timedResult
-              _ <- ZIO.attempt {
-                onComponentComplete(countryTagService.cleanName, duration.toNanos)
-              }
-            yield ()
-          }
-        ) &>
-        // Ideas reload
-        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
-          ZIO.unit,
-          ZIO.attempt {
-            onComponentStart(ideasManager.cleanName)
-            MenuController.updateLoadingStatus(loadingLabel, "Loading National Ideas...")
-          } *> {
-            for
-              timedResult <- ideasManager.read().timed
-              (duration, _) = timedResult
-              _ <- ZIO.attempt {
-                onComponentComplete(ideasManager.cleanName, duration.toNanos)
-              }
-            yield ()
-          }
-        ) &>
-        // Focus trees reload
-        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
-          ZIO.unit,
-          ZIO.attempt {
-            onComponentStart(focusTreeManager.cleanName)
-            MenuController.updateLoadingStatus(loadingLabel, "Loading Focus Trees...")
-          } *> {
-            for
-              timedResult <- focusTreeManager.read().timed
-              (duration, _) = timedResult
-              _ <- ZIO.attempt {
-                onComponentComplete(focusTreeManager.cleanName, duration.toNanos)
-              }
-            yield ()
-          }
-        ) &>
-        // Resources reload
-        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
-          ZIO.unit,
-          ZIO.attempt {
-            onComponentStart(resourcesFileService.cleanName)
-            MenuController.updateLoadingStatus(loadingLabel, "Loading Resource Files...")
-          } *> {
-            for
-              timedResult <- resourcesFileService.read().timed
-              (duration, _) = timedResult
-              _ <- ZIO.attempt {
-                onComponentComplete(resourcesFileService.cleanName, duration.toNanos)
-              }
-            yield ()
-          }
-        ) &>
-        // State reload
-        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
-          ZIO.unit,
-          ZIO.attempt {
-            onComponentStart(stateService.cleanName)
-            MenuController.updateLoadingStatus(loadingLabel, "Loading States...")
-          } *> {
-            for
-              timedResult <- stateService.read().timed
-              (duration, _) = timedResult
-              _ <- ZIO.attempt {
-                onComponentComplete(stateService.cleanName, duration.toNanos)
-              }
-            yield ()
-          }
-        ) &>
-        // Ideas reload
-        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
-          ZIO.unit,
-          ZIO.attempt {
-            onComponentStart(countryService.cleanName)
-            MenuController.updateLoadingStatus(loadingLabel, "Loading Countries...")
-          } *> {
-            for
-              timedResult <- countryService.read().timed
-              (duration, _) = timedResult
-              _ <- ZIO.attempt {
-                onComponentComplete(countryService.cleanName, duration.toNanos)
-              }
-            yield ()
-          }
-        )
+        reloadService(loadingLabel, interfaceService, isCancelled, onComponentStart, onComponentComplete) *>
+          (
+            // CountryTag reload
+            reloadService(loadingLabel, countryTagService, isCancelled, onComponentStart, onComponentComplete) &>
+            // Ideas reload
+            reloadService(loadingLabel, ideasManager, isCancelled, onComponentStart, onComponentComplete) &>
+            // Focus trees reload
+            reloadService(loadingLabel, focusTreeManager, isCancelled, onComponentStart, onComponentComplete)
+          )
+          *>
+          (
+            // Resources reload
+            reloadService(loadingLabel, resourcesFileService, isCancelled, onComponentStart, onComponentComplete) &>
+            // State reload
+            reloadService(loadingLabel, stateService, isCancelled, onComponentStart, onComponentComplete) &>
+            // Country reload
+            reloadService(loadingLabel, countryService, isCancelled, onComponentStart, onComponentComplete)
+          )
 //        ) &>
 //          // Parallel PDX Loading
 //        ZIO.attempt {
@@ -312,6 +219,28 @@ class PDXLoader extends LazyLogging:
 //            )
 //          )
 //      }
+  }
+
+  private def reloadService(loadingLabel: Label,
+                            service: PDXReadable,
+                            isCancelled: () => Boolean = () => false,
+                            onComponentStart: String => Unit = _ => (),
+                            onComponentComplete: (String, Long) => Unit = (_, _) => ()) = {
+    ZIO.ifZIO(ZIO.succeed(isCancelled()))(
+      ZIO.unit,
+      ZIO.attempt {
+        onComponentStart(service.cleanName)
+        MenuController.updateLoadingStatus(loadingLabel, s"Loading ${service.cleanName}...")
+      } *> {
+        for
+          timedResult <- service.read().timed
+          (duration, _) = timedResult
+          _ <- ZIO.attempt {
+            onComponentComplete(service.cleanName, duration.toNanos)
+          }
+        yield ()
+      }
+    )
   }
 
   def readPDX(pdx: PDXReadable, isCancelled: () => Boolean = () => false)(implicit properties: Properties, label: Label): Task[Unit] =
