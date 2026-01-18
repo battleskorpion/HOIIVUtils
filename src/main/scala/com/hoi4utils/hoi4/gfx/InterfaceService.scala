@@ -10,6 +10,7 @@ import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.collection.parallel.CollectionConverters.*
+import scala.collection.concurrent.TrieMap
 
 trait InterfaceService extends PDXReadable with LazyLogging {
   var interfaceErrors: ListBuffer[PDXFileError]
@@ -36,17 +37,14 @@ object InterfaceService {
  */
 case class InterfaceServiceImpl() extends InterfaceService {
   override val cleanName: String = "InterfaceGFX"
-  private val gfxMap: mutable.Map[String, SpriteType] = new mutable.HashMap
-  private var interfaceFiles: mutable.Map[File, Interface] = new mutable.HashMap
+  private val gfxMap: TrieMap[String, SpriteType] = new TrieMap
+  private var interfaceFiles: TrieMap[File, Interface] = new TrieMap
   var interfaceErrors: ListBuffer[PDXFileError] = ListBuffer.empty[PDXFileError]
 
-  override def getGFX(icon: String): URIO[InterfaceService, Option[String]] = {
+  override def getGFX(icon: String): UIO[Option[String]] = {
     for {
       spriteType <- getSpriteType(icon)
-      result = spriteType match {
-        case Some(spriteType) => Some(spriteType.gfx)
-        case None => None
-      }
+      result = spriteType.map(_.gfx)
     } yield result
   }
 
@@ -72,43 +70,62 @@ case class InterfaceServiceImpl() extends InterfaceService {
   /** Returns the number of .gfx interface files read */
   override def numFiles: Int = interfaceFiles.size
 
-  private def readMod(): Boolean = {
-    if (!HOIIVFiles.Mod.interface_folder.exists || !HOIIVFiles.Mod.interface_folder.isDirectory) {
-      logger.error("Warning: mod interface directory does not exist")
-      false
-    } else if (HOIIVFiles.Mod.interface_folder.listFiles == null || HOIIVFiles.Mod.interface_folder.listFiles.isEmpty) {
-      logger.error("Warning: mod interface directory is empty")
-      false
+  private def readMod(): Task[Boolean] = {
+    val folder = HOIIVFiles.Mod.interface_folder
+    if (!folder.exists || !folder.isDirectory) {
+      ZIO.logError("Warning: mod interface directory does not exist").as(false)
+    } else if (folder.listFiles == null || folder.listFiles.isEmpty) {
+      ZIO.logError("Warning: mod interface directory is empty").as(false)
     } else {
-      val gfxFiles = HOIIVFiles.Mod.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))
-      val interfaceFilesMap = gfxFiles.par.map(f => f -> new Interface(f)).seq
+      val gfxFiles = folder.listFiles.filter(_.getName.endsWith(".gfx")).toList
 
-      interfaceFilesMap.foreach { (f, interface) =>
-        interfaceFiles.put(f, interface)
+      ZIO.foreachPar(gfxFiles) { f =>
+        for {
+          interface <- ZIO.succeed(new Interface(f))
+          itemsToAdd <- interface.readGFXFile(interfaceErrors)
+          _ <- ZIO.foreachDiscard(itemsToAdd) { case (name, gfx) =>
+            addSpriteType(name, gfx)
+          }
+        } yield (f, interface)
       }
-      true
-    }
+      .withParallelism(8)
+      .map { interfaceFilesMap =>
+        interfaceFilesMap.foreach { (f, interface) =>
+          interfaceFiles.put(f, interface)
+        }
+        true
+      }
+    } <* ZIO.logInfo(s"Read Interface files from $folder")
   }
 
-  private def readHoi4(): Boolean = {
-    if (!HOIIVFiles.HOI4.interface_folder.exists || !HOIIVFiles.HOI4.interface_folder.isDirectory) {
-      logger.error("HOI4 interface directory does not exist")
-      false
-    } else if (HOIIVFiles.HOI4.interface_folder.listFiles == null || HOIIVFiles.HOI4.interface_folder.listFiles.isEmpty) {
-      logger.error("HOI4 interface directory is empty")
-      false
+  private def readHoi4(): Task[Boolean] = {
+    val folder = HOIIVFiles.HOI4.interface_folder
+    if (!folder.exists || !folder.isDirectory) {
+      ZIO.logError("Warning: HOI4 interface directory does not exist").as(false)
+    } else if (folder.listFiles == null || folder.listFiles.isEmpty) {
+      ZIO.logError("Warning: HOI4 interface directory is empty").as(false)
     } else {
-      val gfxFiles = HOIIVFiles.HOI4.interface_folder.listFiles.filter(_.getName.endsWith(".gfx"))
-      val interfaceFilesMap = gfxFiles.par.map(f => f -> new Interface(f)).seq
+      val gfxFiles = folder.listFiles.filter(_.getName.endsWith(".gfx"))
 
-      interfaceFilesMap.foreach { (f, interface) =>
-        interfaceFiles.put(f, interface)
+      ZIO.foreachPar(gfxFiles) { f =>
+        for {
+          interface <- ZIO.succeed(new Interface(f))
+          itemsToAdd <- interface.readGFXFile(interfaceErrors)
+          _ <- ZIO.foreachDiscard(itemsToAdd) { case (name, gfx) =>
+            addSpriteType(name, gfx)
+          }
+//          _ <- ZIO.logError(s"read $f")
+        } yield (f, interface)
+      }.map { interfaceFilesMap =>
+        interfaceFilesMap.foreach { (f, interface) =>
+          interfaceFiles.put(f, interface)
+        }
+        true
       }
-      true
-    }
+    } <* ZIO.logInfo(s"Read Interface files from $folder")
   }
 
-  def read(): Task[Boolean] = ZIO.succeed(readMod() && readHoi4())
+  def read(): Task[Boolean] = readMod() && readHoi4()
 
   override def clear(): Task[Unit] =
     ZIO.succeed(gfxMap.clear()) &> ZIO.succeed(interfaceFiles.clear())

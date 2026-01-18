@@ -1,7 +1,6 @@
 package com.hoi4utils.hoi4.gfx
 
 import com.hoi4utils.hoi4.common.country_tags.CountryTagService
-import com.hoi4utils.hoi4.scope.ScopeType.root
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Parser, ParserException, ParsingContext}
 import com.hoi4utils.script.{PDXFileError, PDXReadable}
@@ -40,77 +39,66 @@ import scala.util.boundary
 class Interface(private val file: File) {
   private var spriteTypes: mutable.Set[SpriteType] = new mutable.HashSet
 
-  /* init */
-  readGFXFile(file)
-
-  private def readGFXFile(file: File): RIO[InterfaceService, Unit] = {
+  def readGFXFile(interfaceErrors: ListBuffer[PDXFileError]): Task[Iterable[(String, SpriteType)]] = {
     spriteTypes.clear()
 
     for {
-      service <- ZIO.service[InterfaceService]
-      interfaceErrors = service.interfaceErrors
-      _ <- ZIO.attempt {
+      itemsToAdd: Iterable[(String, SpriteType)] <- ZIO.attempt {
         val parser = new Parser(file)
         given ParsingContext(file)
 
-        val rootNode = try {
-          parser.parse
-        } catch {
+        val rootNode = try { parser.parse } catch {
           case e: ParserException =>
-            val pdxError = new PDXFileError(
+            interfaceErrors += new PDXFileError(
               exception = e,
               additionalInfo = Map("context" -> "Error parsing interface .gfx file")
             )
-            interfaceErrors += pdxError
-            null 
+            null
         }
-        
-        if (root != null) {
+
+        if (rootNode != null) {
           /* load listed sprites */
-          val spriteTypeNodes =
-            rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
-            
-          if (spriteTypeNodes == null)
-            val pdxError = new PDXFileError(
+          val spriteTypeNodes = rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
+
+          if (spriteTypeNodes == null) {
+            interfaceErrors += new PDXFileError(
               additionalInfo = Map(
                 "context" -> "No SpriteTypes defined in interface .gfx file",
                 "reason" -> "spriteTypeNodes is null"
               )
             )
-            interfaceErrors += pdxError
-          else
+            List.empty[(String, SpriteType)]
+          } else
             val validSpriteTypes = spriteTypeNodes.filter(_.containsAllCaseInsensitive("name", "texturefile"))
-            for (spriteType <- validSpriteTypes) {
+            validSpriteTypes.flatMap { spriteType =>
               try {
                 val name = spriteType.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
                 val filename = spriteType.getValueCaseInsensitive("texturefile").$stringOrElse("").replace("\"", "")
-                if (name.isEmpty || filename.isEmpty) {
-                  val pdxError = new PDXFileError(
+                if name.isEmpty || filename.isEmpty then
+                  interfaceErrors += new PDXFileError(
                     additionalInfo = Map(
                       "context" -> "SpriteType in interface .gfx file has empty name or texturefile",
                       "name" -> name,
                       "filename" -> filename
                     )
                   )
-                  interfaceErrors += pdxError
-                }
-                else {
+                  None
+                else
                   val gfx = new SpriteType(name, filename, basepath = file.getParentFile.getParentFile)
                   spriteTypes.add(gfx)
-                  service.addSpriteType(name, gfx)
-                }
+                  Some(name -> gfx)
               } catch {
                 case e: ParserException =>
-                  val pdxError = new PDXFileError(
+                  interfaceErrors += new PDXFileError(
                     exception = e,
                     additionalInfo = Map("context" -> "Error parsing SpriteType in interface .gfx file")
                   )
-                  interfaceErrors += pdxError
+                  None
               }
             }
-        }
+        } else List.empty[(String, SpriteType)]
       }
-    } yield ()
+    } yield itemsToAdd
   }
 
   /**
