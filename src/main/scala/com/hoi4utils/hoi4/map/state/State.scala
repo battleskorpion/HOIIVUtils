@@ -18,6 +18,7 @@ import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 import org.jetbrains.annotations.NotNull
+import zio.{Task, ZIO}
 
 import java.io.File
 import scala.collection.mutable
@@ -328,20 +329,22 @@ object State extends Iterable[State] with PDXReadable with LazyLogging:
   /**
    * Creates States from reading files
    */
-  def read(): Boolean =
-    if !HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory then
-      logger.error(s"In State.java - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
-      false
-    else if HOIIVFiles.Mod.states_folder.listFiles == null || HOIIVFiles.Mod.states_folder.listFiles.isEmpty then
-      logger.error(s"No states found in ${HOIIVFiles.Mod.states_folder}")
-      false
-    else
-      HOIIVFiles.Mod.states_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach: f =>
-        new State(true, f)
-      true
+  def read(): Task[Boolean] =
+    ZIO.succeed {
+      if !HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory then
+        logger.error(s"In State.java - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
+        false
+      else if HOIIVFiles.Mod.states_folder.listFiles == null || HOIIVFiles.Mod.states_folder.listFiles.isEmpty then
+        logger.error(s"No states found in ${HOIIVFiles.Mod.states_folder}")
+        false
+      else
+        HOIIVFiles.Mod.states_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach: f =>
+          new State(true, f)
+        true
+    }
 
-  override def clear(): Unit =
-    states.clear()
+  override def clear(): Task[Unit] =
+    ZIO.succeed(states.clear())
 
   def add(state: State): Iterable[State] =
     states += state

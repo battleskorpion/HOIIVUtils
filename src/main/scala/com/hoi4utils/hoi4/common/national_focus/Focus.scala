@@ -2,7 +2,6 @@ package com.hoi4utils.hoi4.common.national_focus
 
 import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
 import com.hoi4utils.hoi4.gfx.Interface
 import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Localization, Property}
 import com.hoi4utils.hoi4.scope.Scope

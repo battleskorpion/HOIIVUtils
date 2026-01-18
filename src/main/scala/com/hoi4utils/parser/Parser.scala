@@ -1,6 +1,7 @@
 package com.hoi4utils.parser
 
 import java.io.File
+import java.lang.AutoCloseable
 import java.nio.file.Files
 import scala.collection.mutable.ListBuffer
 import scala.compiletime.uninitialized

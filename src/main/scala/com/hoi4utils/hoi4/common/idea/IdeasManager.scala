@@ -4,6 +4,7 @@ import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.script.{PDXFileError, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
+import zio.{Task, ZIO}
 
 import java.io.File
 import scala.collection.mutable
@@ -28,30 +29,29 @@ object IdeasManager extends PDXReadable with LazyLogging:
   /**
    * Reads all focus trees from the focus trees folder, creating FocusTree instances for each.
    */
-  def read(): Boolean = {
-    if (!HOIIVFiles.Mod.ideas_folder.exists || !HOIIVFiles.Mod.ideas_folder.isDirectory) {
-      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
-      false
-    } else if (HOIIVFiles.Mod.ideas_folder.listFiles == null || HOIIVFiles.Mod.ideas_folder.listFiles.length == 0) {
-      logger.warn(s"No ideas found in ${HOIIVFiles.Mod.ideas_folder}")
-      false
-    } else {
+  def read(): Task[Boolean] =
+    ZIO.succeed {
+      if (!HOIIVFiles.Mod.ideas_folder.exists || !HOIIVFiles.Mod.ideas_folder.isDirectory) {
+        logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.focus_folder} is not a directory, or it does not exist.")
+        false
+      } else if (HOIIVFiles.Mod.ideas_folder.listFiles == null || HOIIVFiles.Mod.ideas_folder.listFiles.length == 0) {
+        logger.warn(s"No ideas found in ${HOIIVFiles.Mod.ideas_folder}")
+        false
+      } else {
 
-      // create focus trees from files
-      HOIIVFiles.Mod.ideas_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
-        new IdeaFile(f)
+        // create focus trees from files
+        HOIIVFiles.Mod.ideas_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
+          new IdeaFile(f)
+        }
+        true
       }
-      true
     }
-  }
 
   /**
    * Clears all idea files and any other relevant values.
    */
-  override def clear(): Unit = {
-    ideaFiles.clear()
-    ideaFileFileMap.clear()
-  }
+  override def clear(): Task[Unit] =
+    ZIO.succeed(ideaFiles.clear()) &> ZIO.succeed(ideaFileFileMap.clear())
 
   def add(ideaFile: IdeaFile): Iterable[IdeaFile] = {
     ideaFiles += ideaFile

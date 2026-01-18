@@ -5,6 +5,7 @@ import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Parser, ParserException, ParsingContext}
 import com.hoi4utils.script.{PDXFileError, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
+import zio.{Task, ZIO}
 
 import java.io.File
 import scala.collection.mutable
@@ -81,16 +82,11 @@ object Interface extends PDXReadable with LazyLogging {
     }
   }
 
-  def read(): Boolean = {
-    val modSuccess = readMod()
-    val hoi4Success = readHoi4()
-    modSuccess && hoi4Success
-  }
+  def read(): Task[Boolean] = ZIO.succeed(readMod() && readHoi4())
 
-  override def clear(): Unit = {
-    gfxMap.clear()
-    interfaceFiles.clear()
-  }
+  override def clear(): Task[Unit] =
+    ZIO.succeed(gfxMap.clear()) &> ZIO.succeed(interfaceFiles.clear())
+    
 }
 
 /**

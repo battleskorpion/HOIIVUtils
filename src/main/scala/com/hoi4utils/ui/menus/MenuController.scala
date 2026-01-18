@@ -25,7 +25,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.*
 import javafx.stage.Stage
 import javafx.util.Duration
-import zio.ZIO
+import zio.{Unsafe, ZIO}
 import zio.macros.ServiceReloader
 
 import java.awt.{BorderLayout, Dialog, FlowLayout, Font}
@@ -239,7 +239,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
           currentComponentStartTime = 0
 
         // TODO find how this is written nicer im sure it can be?
-        zio.Unsafe.unsafe { implicit unsafe =>
+        Unsafe.unsafe { implicit unsafe =>
           HOIIVUtils.getActiveRuntime.unsafe.run(
             pdxLoader.load(
               loadingLabel,

@@ -8,10 +8,10 @@ import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-class SharedFocusFile(_file: Option[File]) extends StructuredPDX with HeadlessPDX with PDXFile {
+class SharedFocusFile(_file: Option[File])(manager: FocusTreeManager) extends StructuredPDX with HeadlessPDX with PDXFile {
 
   /* PDX attributes */
-  val sharedFocuses: MultiPDX[SharedFocus] = MultiPDX[SharedFocus](None, Some(() => SharedFocus()), "shared_focus")
+  val sharedFocuses: MultiPDX[SharedFocus] = MultiPDX[SharedFocus](None, Some(() => SharedFocus(PseudoSharedFocusTree(manager))), "shared_focus")
 
   // File-level errors (parse errors, etc.)
   var fileErrors: ListBuffer[PDXFileError] = ListBuffer.empty[PDXFileError]
@@ -26,7 +26,7 @@ class SharedFocusFile(_file: Option[File]) extends StructuredPDX with HeadlessPD
       collectAndRegisterSharedFocusErrors()
     case None =>
 
-  def this(file: File) = this(Some(file))
+  def this(file: File)(manager: FocusTreeManager) = this(Some(file))(manager)
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
     given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
@@ -57,7 +57,7 @@ class SharedFocusFile(_file: Option[File]) extends StructuredPDX with HeadlessPD
     if focusErrorGroups.nonEmpty then
       val fileName = _file.map(_.getName).getOrElse("Shared Focuses")
       val treeErrorGroup = new com.hoi4utils.script.FocusTreeErrorGroup(s"[Shared Focuses] $fileName", focusErrorGroups)
-      FocusTreeManager.focusTreeErrors += treeErrorGroup
+      manager.focusTreeErrors += treeErrorGroup
 
 
   override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(sharedFocuses)

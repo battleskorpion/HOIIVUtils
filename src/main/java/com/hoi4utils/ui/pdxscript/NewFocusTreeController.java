@@ -66,13 +66,14 @@ public class NewFocusTreeController extends HOIIVUtilsAbstractController {
         }
 
         File focusFile = new File(HOIIVUtilsConfig.get("mod.path") + "/common/national_focus/" + id + "_" + "temp_HOIIVUtils"+ ".txt");
-        FocusTree focusTreeFile = new FocusTree(null);
-        focusTreeFile.setID(id);
-        focusTreeFile.setCountryTag(countryTag);
-        focusTreeFile.setFile(focusFile);
-        if (onCreate != null) {
-            onCreate.accept(focusTreeFile);
-        }
+		logger.error("sorry, must update to scala!!!!!"); // TODO
+		//        FocusTree focusTreeFile = new FocusTree(null);
+//        focusTreeFile.setID(id);
+//        focusTreeFile.setCountryTag(countryTag);
+//        focusTreeFile.setFile(focusFile);
+//        if (onCreate != null) {
+//            onCreate.accept(focusTreeFile);
+//        }
         closeWindow(createFocusTreeButton);
     }
 

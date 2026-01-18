@@ -11,6 +11,7 @@ import com.hoi4utils.parser.{Node, ParsingContext}
 import com.hoi4utils.script.*
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
+import zio.{Task, ZIO}
 
 import java.io.File
 import scala.collection.mutable
@@ -151,33 +152,33 @@ object CountryFile extends LazyLogging with PDXReadable {
 
   def list: List[CountryFile] = countries.toList
 
-  def read(): Boolean = {
-    if (!HOIIVFiles.Mod.country_folder.exists || !HOIIVFiles.Mod.country_folder.isDirectory) {
-      logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_folder} is not a directory, or it does not exist.")
-      false
-    } else if (HOIIVFiles.Mod.country_folder.listFiles == null || HOIIVFiles.Mod.country_folder.listFiles.length == 0) {
-      logger.warn(s"No focuses found in ${HOIIVFiles.Mod.country_folder}")
-      false
-    } else {
-      // create focus trees from files
-      val countryFiles = HOIIVFiles.Mod.country_folder.listFiles().filter(_.getName.endsWith(".txt"))
-      countryFiles
-        .map(f =>
-          given ParsingContext(f)
-          (f, CountryTag(f.getName.split(" ")(0), f))
-        )
-        .par
-        .foreach { (f, tag) => new CountryFile(f, tag) }
-      true
+  def read(): Task[Boolean] = {
+    ZIO.succeed {
+      if (!HOIIVFiles.Mod.country_folder.exists || !HOIIVFiles.Mod.country_folder.isDirectory) {
+        logger.error(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.country_folder} is not a directory, or it does not exist.")
+        false
+      } else if (HOIIVFiles.Mod.country_folder.listFiles == null || HOIIVFiles.Mod.country_folder.listFiles.length == 0) {
+        logger.warn(s"No focuses found in ${HOIIVFiles.Mod.country_folder}")
+        false
+      } else {
+        // create focus trees from files
+        val countryFiles = HOIIVFiles.Mod.country_folder.listFiles().filter(_.getName.endsWith(".txt"))
+        countryFiles
+          .map(f =>
+            given ParsingContext(f)
+            (f, CountryTag(f.getName.split(" ")(0), f))
+          )
+          .par
+          .foreach { (f, tag) => new CountryFile(f, tag) }
+        true
+      }
     }
   }
 
   /**
    * Clears all countries and any other relevant values.
    */
-  override def clear(): Unit = {
-    countries.clear()
-  }
+  override def clear(): Task[Unit] = ZIO.succeed(countries.clear())
 
   /**
    * Adds a focus tree to the list of focus trees.

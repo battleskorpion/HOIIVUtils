@@ -1,6 +1,7 @@
 package com.hoi4utils.ui.focus_view
 
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager}
+import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.focus_view.FocusTreeController.updateLoadingStatus
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2}
@@ -13,6 +14,7 @@ import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.{AnchorPane, GridPane}
+import zio.{Task, URIO, Unsafe, ZIO}
 
 import java.io.*
 import java.time.LocalDateTime
@@ -51,37 +53,56 @@ class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging
   @FXML
   def initialize(): Unit =
     // Start background initialization
-    val task = new javafx.concurrent.Task[InitializationResult]:
-      override def call(): InitializationResult =
-        try
-          performBackgroundInitialization()
-        catch
-          case e: Exception =>
-            logger.error("Background initialization failed", e)
-            InitializationResult(success = false, error = Some(e.getMessage), focusTree = None, focusTrees = None)
-
-    task.setOnSucceeded(_ =>
-      val result = task.getValue
-      handleInitializationResult(result)
-    )
-
-    task.setOnFailed(_ =>
-      logger.error("Initialization task failed", task.getException)
-      Platform.runLater(() =>
-        loadingLabel.setText(s"Initialization failed: ${task.getException.getMessage}")
-        initFailed.set(true)
-        showErrorDialog("Initialization Error", s"Failed to initialize: ${task.getException.getMessage}")
-      )
-    )
-
-    task.setOnCancelled(_ =>
-      logger.warn("Initialization was cancelled")
-      Platform.runLater(() =>
-        loadingLabel.setText("Initialization was cancelled")
-        initFailed.set(true)
-        showWarningDialog("Cancelled", "Focus Tree initialization was cancelled.")
-      )
-    )
+    val backgroundInit = for {
+      result <- performBackgroundInitialization()
+      _ <- ZIO.succeed {
+        Platform.runLater { () =>
+          if (result.success)
+            handleInitializationResult(result)
+          else
+            val errorMsg = result.error.getOrElse("Unknown error")
+            logger.error("Initialization task failed", errorMsg)
+            loadingLabel.setText(s"Initialization failed: ${errorMsg}")
+            initFailed.set(true)
+            showErrorDialog("Initialization Error", s"Failed to initialize: ${errorMsg}")
+        }
+      }
+    } yield ()
+//
+//
+//    val task = new javafx.concurrent.Task[InitializationResult]:
+//      override def call(): InitializationResult =
+//        try {
+//          zio.Unsafe.unsafe { implicit unsafe =>
+//            HOIIVUtils.getActiveRuntime.unsafe.run(performBackgroundInitialization()).getOrThrowFiberFailure()
+//          }
+//        } catch
+//          case e: Exception =>
+//            logger.error("Background initialization failed", e)
+//            InitializationResult(success = false, error = Some(e.getMessage), focusTree = None, focusTrees = None)
+//
+//    task.setOnSucceeded(_ =>
+//      val result = task.getValue
+//      handleInitializationResult(result)
+//    )
+//
+//    task.setOnFailed(_ =>
+//      logger.error("Initialization task failed", task.getException)
+//      Platform.runLater(() =>
+//        loadingLabel.setText(s"Initialization failed: ${task.getException.getMessage}")
+//        initFailed.set(true)
+//        showErrorDialog("Initialization Error", s"Failed to initialize: ${task.getException.getMessage}")
+//      )
+//    )
+//
+//    task.setOnCancelled(_ =>
+//      logger.warn("Initialization was cancelled")
+//      Platform.runLater(() =>
+//        loadingLabel.setText("Initialization was cancelled")
+//        initFailed.set(true)
+//        showWarningDialog("Cancelled", "Focus Tree initialization was cancelled.")
+//      )
+//    )
 
 
     // Set initial UI state on FX thread
@@ -96,14 +117,18 @@ class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging
         loadingLabel.setText("Error: Required UI components not loaded")
         initFailed.set(true)
       )
-    else
+    else {
       // Setup UI components that don't require background loading
       setupUIComponents()
 
       // Start the task in a new thread
-      val thread = new Thread(task)
-      thread.setDaemon(true)
-      thread.start()
+//      val thread = new Thread(task)
+//      thread.setDaemon(true)
+//      thread.start()
+      Unsafe.unsafe { implicit unsafe =>
+        HOIIVUtils.getActiveRuntime.unsafe.fork(backgroundInit)
+      }
+    }
 
   override def preSetup(): Unit = setupWindowControls(contentContainer, mClose, mSquare, mMinimize)
 
@@ -116,42 +141,46 @@ class FocusTreeController extends HOIIVUtilsAbstractController2 with LazyLogging
 
     focusTreeViewSplitPane.getItems.add(focusTreePane)
 
-  private def performBackgroundInitialization(): InitializationResult =
+  private def performBackgroundInitialization(): URIO[FocusTreeManager, InitializationResult]  =
 
-    def updateStatus(status: String): Unit =
-      Platform.runLater(() => updateLoadingStatus(loadingLabel, status))
+    def updateStatus(status: String): Task[Unit] =
+      ZIO.succeed(Platform.runLater(() => updateLoadingStatus(loadingLabel, status)))
 
     // Load available focus trees
     updateStatus("Loading focus trees...")
-    val trees: ObservableList[FocusTree] = FocusTreeManager.observeFocusTrees
 
-    if trees == null then
-      updateStatus("Focus trees list is null. Ensure mod files are loaded correctly.")
-      logger.error("Focus trees list is null. Ensure mod files are loaded correctly.")
-      return InitializationResult(success = false, error = Some("Focus trees list is null"), focusTree = None, focusTrees = None)
+    ZIO.serviceWith[FocusTreeManager] { manager =>
+      val trees: ObservableList[FocusTree] = manager.observeFocusTrees
 
-    if trees.isEmpty then
-      updateStatus("Focus trees list is empty. Ensure mod files are loaded correctly.")
-      logger.warn("Focus trees list is empty. Ensure mod files are loaded correctly.")
-      return InitializationResult(success = false, error = Some("No focus trees found"), focusTree = None, focusTrees = Some(trees))
+      if trees == null then
+        updateStatus("Focus trees list is null. Ensure mod files are loaded correctly.")
+        logger.error("Focus trees list is null. Ensure mod files are loaded correctly.")
+        InitializationResult(success = false, error = Some("Focus trees list is null"), focusTree = None, focusTrees = None)
 
-    updateStatus(s"${trees.size()} Focus trees loaded successfully.")
-    logger.info(s"${trees.size()} Focus trees loaded successfully.")
+      else if trees.isEmpty then
+        updateStatus("Focus trees list is empty. Ensure mod files are loaded correctly.")
+        logger.warn("Focus trees list is empty. Ensure mod files are loaded correctly.")
+        InitializationResult(success = false, error = Some("No focus trees found"), focusTree = None, focusTrees = Some(trees))
 
-    // Try loading a specific focus tree
-    updateStatus("Loading focus tree...")
-    val loadedFocusTree = getFocusTree("SMA", "massachusetts.txt")
+      else
+        updateStatus(s"${trees.size()} Focus trees loaded successfully.")
+        logger.info(s"${trees.size()} Focus trees loaded successfully.")
 
-    loadedFocusTree match
-      case None =>
-        updateStatus("No valid Focus Tree found. Ensure mod files are loaded correctly.")
-        logger.error("Failed to load a valid focus tree. This may indicate an issue with mod loading.")
-        InitializationResult(success = false, error = Some("No valid Focus Tree found"), focusTree = None, focusTrees = Some(trees))
-      case Some(tree) =>
-        updateStatus("Focus tree loaded successfully.")
-        logger.info(s"Loaded focus tree: $tree")
-        updateStatus("Initialization completed successfully. Drawing focus tree to canvas and displaying...")
-        InitializationResult(success = true, error = None, focusTree = Some(tree), focusTrees = Some(trees))
+        // Try loading a specific focus tree
+        updateStatus("Loading focus tree...")
+        val loadedFocusTree = getFocusTree("SMA", "massachusetts.txt")
+
+        loadedFocusTree match
+          case None =>
+            updateStatus("No valid Focus Tree found. Ensure mod files are loaded correctly.")
+            logger.error("Failed to load a valid focus tree. This may indicate an issue with mod loading.")
+            InitializationResult(success = false, error = Some("No valid Focus Tree found"), focusTree = None, focusTrees = Some(trees))
+          case Some(tree) =>
+            updateStatus("Focus tree loaded successfully.")
+            logger.info(s"Loaded focus tree: $tree")
+            updateStatus("Initialization completed successfully. Drawing focus tree to canvas and displaying...")
+            InitializationResult(success = true, error = None, focusTree = Some(tree), focusTrees = Some(trees))
+    }
 
   private def handleInitializationResult(result: InitializationResult): Unit =
     Platform.runLater(() =>

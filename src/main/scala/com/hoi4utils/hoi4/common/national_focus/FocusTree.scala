@@ -10,6 +10,7 @@ import com.hoi4utils.script.datatype.*
 import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
+import zio.ZIO
 
 import java.io.File
 import scala.collection.mutable
@@ -26,7 +27,7 @@ val focusTreeIdentifier = "focus_tree"
  * @note Do not create instances of this class directly, unless a few focus tree is being created or loaded.
  *       Use FocusTree.get(File) instead.
  */
-class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile:
+class FocusTree(file: File = null)(manager: FocusTreeManager) extends StructuredPDX(focusTreeIdentifier) with Localizable with Comparable[FocusTree] with Iterable[Focus] with PDXFile:
   //final var country = new ReferencePDX[CountryTag](() => CountryTag.toList, tag => Some(tag.get), "country")
 
   /* PDX attributes */
@@ -50,7 +51,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
   /* special cases - requires special handling :) */
   // todo handle specially
   val sharedFocuses: ReferencePDX[SharedFocus] =
-    ReferencePDX[SharedFocus](() => FocusTreeManager.sharedFocuses, "shared_focus")
+    ReferencePDX[SharedFocus](() => manager.sharedFocuses, "shared_focus")
 
   // File-level errors (parse errors, etc.)
   var treeErrors: ListBuffer[PDXFileError] = ListBuffer.empty[PDXFileError]
@@ -65,7 +66,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
   private var _commentedFocuses: ListBuffer[String] = ListBuffer.empty
 
   /* default */
-  FocusTreeManager.add(this)
+  manager.add(this)
 
   file match
     case null => // create empty focus tree
@@ -155,7 +156,7 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
 
     if focusErrorGroups.nonEmpty then
       val treeErrorGroup = new FocusTreeErrorGroup(id.str, focusErrorGroups)
-      FocusTreeManager.focusTreeErrors += treeErrorGroup
+      manager.focusTreeErrors += treeErrorGroup
 
   /**
    * Get the next temporary focus ID.
@@ -185,8 +186,9 @@ class FocusTree(file: File = null) extends StructuredPDX(focusTreeIdentifier) wi
       case _ => country.modifier.head.tag.set(tag)
 
   def setFile(file: File): Unit =
+    _focusFile.foreach(prevFile => manager.removeFromFileMap(prevFile))
     _focusFile = Some(file)
-    _focusFile.foreach(file => focusTreeFileMap.put(file, this))
+    _focusFile.foreach(file => manager.addToFileMap(file, this))
 
   override def getFile: Option[File] =
     _focusFile

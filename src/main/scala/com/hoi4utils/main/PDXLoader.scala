@@ -7,13 +7,12 @@ import com.hoi4utils.file.file_listener.{FileAdapter, FileEvent, FileWatcher}
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
 import com.hoi4utils.hoi4.common.idea.IdeasManager.ideaFileErrors
 import com.hoi4utils.hoi4.common.idea.{IdeaFile, IdeasManager}
-import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
 import com.hoi4utils.hoi4.common.national_focus.{FocusTree, FocusTreeManager}
 import com.hoi4utils.hoi4.gfx.Interface
 import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
 import com.hoi4utils.hoi4.history.countries.CountryFile
 import com.hoi4utils.hoi4.history.countries.CountryFile.countryErrors
-import com.hoi4utils.hoi4.localization.service.LocalizationService
+import com.hoi4utils.hoi4.localization.service.{LocalizationFileService, LocalizationService}
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
 import com.hoi4utils.hoi4.map.resource.ResourcesFile
 import com.hoi4utils.hoi4.map.state.State
@@ -42,7 +41,7 @@ class PDXLoader extends LazyLogging:
   /* LOAD ORDER IMPORTANT (depending on the class) */
   val pdxList: List[List[PDXReadable]] = List(
     List(Interface),
-    List(CountryTag, IdeasManager, FocusTreeManager),
+    List(CountryTag, IdeasManager),             // , FocusTreeManager
     List(ResourcesFile, State, CountryFile),
   )
 
@@ -181,12 +180,15 @@ class PDXLoader extends LazyLogging:
 
     MenuController.updateLoadingStatus(label, s"Loading ${pdx.cleanName} files...")
     if isCancelled() then return
-    try
-      if pdx.read() then properties.setProperty(property, "true")
-      else
-        properties.setProperty(property, "false")
-        logger.error(s"Exception while reading for ${pdx.cleanName}")
-    catch
+    try {
+      ZIO.ifZIO(pdx.read())(
+        onTrue = ZIO.succeed(properties.setProperty(property, "true")),
+        onFalse = ZIO.succeed {
+          properties.setProperty(property, "false")
+          logger.error(s"Exception while reading for ${pdx.cleanName}")
+        }
+      )
+    } catch
       case e: Exception =>
         properties.setProperty(property, "false")
         logger.error(s"Exception while reading for ${pdx.cleanName}", e)
@@ -205,17 +207,33 @@ class PDXLoader extends LazyLogging:
   /** Clears loaded PDX data. */
   def clearPDX(): Unit = pdxList.foreach(_.foreach(_.clear()))
 
-  def clearLB(): Unit =
-    ListBuffer(
-      effectErrors,
-//      localizationErrors,   // TODO
-      interfaceErrors,
-      countryErrors,
-      focusTreeErrors,
-      ideaFileErrors,
-      resourceErrors,
-      stateErrors
-    ).foreach(_.clear())
+  def clearLB(): RIO[LocalizationFileService & FocusTreeManager, Unit] = {
+    for {
+      locFileService <- ZIO.service[LocalizationFileService]
+      focusTreeManager <- ZIO.service[FocusTreeManager]
+      errorsList = ListBuffer(
+        effectErrors,
+        //      localizationErrors,   // TODO
+        interfaceErrors,
+        countryErrors,
+        focusTreeManager.focusTreeErrors,
+        ideaFileErrors,
+        resourceErrors,
+        stateErrors
+      )
+      _ <- ZIO.succeed(errorsList.foreach(_.clear()))
+    } yield ()
+//    ListBuffer(
+//      effectErrors,
+////      localizationErrors,   // TODO
+//      interfaceErrors,
+//      countryErrors,
+//      focusTreeErrors,
+//      ideaFileErrors,
+//      resourceErrors,
+//      stateErrors
+//    ).foreach(_.clear())
+  }
 
   def closeDB(): Unit =
     ModifierDatabase.close()

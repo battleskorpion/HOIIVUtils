@@ -1,6 +1,7 @@
 
 package com.hoi4utils.main
 
+import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager
 import com.hoi4utils.hoi4.localization.service.{BaseLocalizationService, EnglishLocalizationService, LocalizationFileService, LocalizationService}
 import com.hoi4utils.hoi4.localization.{LocalizationFormatter, YMLFileService}
 import com.hoi4utils.main.HOIIVUtilsConfig.getConfig
@@ -15,7 +16,7 @@ import scala.annotation.experimental
 object HOIIVUtils extends ZIOAppDefault {
 
   private type ROut = com.hoi4utils.main.Config & ServiceReloader
-    & LocalizationService
+    & LocalizationService & FocusTreeManager
 
   //  private var _runtime: Runtime[LocalizationService] = null
   def getActiveRuntime: Runtime[ROut] = runtime
@@ -37,6 +38,7 @@ object HOIIVUtils extends ZIOAppDefault {
       LocalizationFormatter.live,
       LocalizationFileService.live,
       LocalizationService.reloadable,
+      FocusTreeManager.live, 
       ServiceReloader.live,
       ZLayer.Debug.tree
     )
@@ -59,7 +61,6 @@ object HOIIVUtils extends ZIOAppDefault {
       _ <- ZIO.attemptBlocking(Application.launch(classOf[App], args.toArray *))
       _ <- ZIO.logInfo("Application window closed, shutting down...")
     } yield ()
-
 }
 
 /** lol */

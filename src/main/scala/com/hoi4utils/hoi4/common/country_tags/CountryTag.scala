@@ -5,6 +5,7 @@ import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Parser, ParsingContext}
 import com.hoi4utils.script.{PDXFileError, PDXReadable, Referable}
 import com.typesafe.scalalogging.LazyLogging
+import zio.{Task, ZIO}
 
 import java.io.{File, IOException}
 import java.nio.file.Files
@@ -50,16 +51,19 @@ object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable
     ListBuffer[CountryTag]()
   }
 
-  def read(): Boolean = {
-    val tags = loadCountryTags()
-    if (tags.isEmpty)
-      logger.error(s"No country tags loaded!?")
-      return false
-    _tagList.addAll(tags)
-    true
-  }
+  def read(): Task[Boolean] =
+    ZIO.succeed {
+      val tags = loadCountryTags()
+      if (tags.isEmpty)
+        logger.error(s"No country tags loaded!?")
+        false
+      else
+        _tagList.addAll(tags)
+        true
+    }
 
-  override def clear(): Unit = _tagList.clear()
+  override def clear(): Task[Unit] =
+    ZIO.succeed(_tagList.clear())
 
   @throws[IOException]
   private def loadCountryTags(): Seq[CountryTag] = {
