@@ -40,10 +40,12 @@ class Interface(private val file: File) {
   private var spriteTypes: mutable.Set[SpriteType] = new mutable.HashSet
 
   def readGFXFile(interfaceErrors: ListBuffer[PDXFileError]): Task[Iterable[(String, SpriteType)]] = {
+    // pre-calculating for time efficiency
+    val baseFolder = file.getParentFile.getParentFile
     spriteTypes.clear()
 
     for {
-      itemsToAdd: Iterable[(String, SpriteType)] <- ZIO.attempt {
+      itemsToAdd: Iterable[(String, SpriteType)] <- ZIO.attemptBlocking {
         val parser = new Parser(file)
         given ParsingContext(file)
 
@@ -84,7 +86,7 @@ class Interface(private val file: File) {
                   )
                   None
                 else
-                  val gfx = new SpriteType(name, filename, basepath = file.getParentFile.getParentFile)
+                  val gfx = new SpriteType(name, filename, basepath = baseFolder)
                   spriteTypes.add(gfx)
                   Some(name -> gfx)
               } catch {
