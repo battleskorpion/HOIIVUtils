@@ -71,7 +71,7 @@ class Interface(private val file: File) {
             )
             List.empty[(String, SpriteType)]
           } else
-            val validSpriteTypes = spriteTypeNodes.filter(_.containsAllCaseInsensitive("name", "texturefile"))
+            val validSpriteTypes = spriteTypeNodes.view.filter(_.containsAllCaseInsensitive("name", "texturefile"))
             validSpriteTypes.flatMap { spriteType =>
               try {
                 val name = spriteType.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
@@ -97,7 +97,7 @@ class Interface(private val file: File) {
                   )
                   None
               }
-            }
+            }.toList
         } else List.empty[(String, SpriteType)]
       }
     } yield itemsToAdd
