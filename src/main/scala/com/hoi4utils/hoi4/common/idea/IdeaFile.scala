@@ -30,13 +30,10 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
   file match
     case null => // create empty idea
     case _ =>
-      val ideasManager: IdeasManager = zio.Unsafe.unsafe { implicit unsafe =>
-        HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[IdeasManager]).getOrThrowFiberFailure()
-      }
       require(file.exists && file.isFile, s"Idea file $file does not exist or is not a file.")
       loadPDX(file)
       setFile(file)
-      _file.foreach(file => ideasManager.addToFileMap(file, this))
+//      _file.foreach(file => ideasManager.addToFileMap(file, this))  // done in Ideas mgr now 
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
     given ParsingContext(file, node)

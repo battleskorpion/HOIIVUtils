@@ -11,10 +11,8 @@ import zio.{Chunk, Task, UIO, URIO, URLayer, ZIO, ZLayer}
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.collection.parallel.CollectionConverters.*
 import scala.concurrent.ExecutionContext
 import scala.jdk.javaapi.CollectionConverters
-import scala.util.boundary
 
 trait FocusTreeManager extends PDXReadable with LazyLogging  {
   var focusTreeErrors: ListBuffer[FocusTreeErrorGroup]
@@ -63,11 +61,11 @@ case class FocusTreeManagerImpl(countryTagService: CountryTagService) extends Fo
       val files = modFocusFolder.listFiles().filter(_.getName.endsWith(".txt")).toList
 
       for {
-        _ <- ZIO.foreachPar(files) { f =>
-          ZIO.ifZIO(hasFocusTreeHeader(f))(
-            onTrue  = ZIO.succeed(new FocusTree(f)(this, countryTagService)),
-            onFalse = add(new SharedFocusFile(f)(this, countryTagService))
-          )
+        _ <- ZIO.foreachParDiscard(files) { f =>
+            ZIO.ifZIO(hasFocusTreeHeader(f))(
+              onTrue = add(new FocusTree(f)(this, countryTagService)),
+              onFalse = add(new SharedFocusFile(f)(this, countryTagService))
+            )
         }
         _ <- ZIO.succeed {
           System.err.println(s"Shared focus files: ${_sharedFocusFiles.size}")

@@ -62,7 +62,8 @@ case class IdeasManagerImpl() extends IdeasManager:
 
         // create focus trees from files
         HOIIVFiles.Mod.ideas_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach { f =>
-          new IdeaFile(f)
+          val ideaFile = new IdeaFile(f)
+          addToFileMap(f, ideaFile)
         }
         true
       }
