@@ -5,7 +5,7 @@ import com.hoi4utils.hoi4.map.province.Province;
 import com.hoi4utils.hoi4.map.state.State;
 import com.hoi4utils.main.HOIIVFiles;
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
-import com.hoi4utils.ui.javafx.scene.control.StateTable;
+import com.hoi4utils.ui.countries.StateTable;
 import com.hoi4utils.ui.javafx.scene.layout.PDXEditorPane;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

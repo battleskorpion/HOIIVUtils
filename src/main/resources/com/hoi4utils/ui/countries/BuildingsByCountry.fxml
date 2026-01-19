@@ -38,8 +38,8 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <AnchorPane fx:id="bbccRoot" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
-      <children>
+  <AnchorPane fx:id="bbccRoot" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+    <children>
       <ToolBar fx:id="toolBar" prefHeight="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="128.0" AnchorPane.topAnchor="0.0">
         <items>
           <Button fx:id="exportToExcelButton" onAction="#handleExportToExcelAction" text="Export to Excel" />
@@ -49,8 +49,8 @@
           <Label fx:id="versionLabel" text="Version: Loading..." />
         </items>
       </ToolBar>
-         <ToolBar fx:id="toolBar2" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="128.0" AnchorPane.rightAnchor="0.0">
-            <items>
+      <ToolBar fx:id="toolBar2" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="128.0" AnchorPane.rightAnchor="0.0">
+        <items>
           <Button fx:id="closeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="X" textAlignment="CENTER">
             <font>
               <Font name="System Bold" size="13.0" />
@@ -58,8 +58,8 @@
           </Button>
           <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="□" textAlignment="CENTER" />
           <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="__" textAlignment="CENTER" />
-            </items>
-         </ToolBar>
+        </items>
+      </ToolBar>
       <SplitPane fx:id="mainSplitPane" dividerPositions="0.5" focusTraversable="true" orientation="VERTICAL" prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
         <items>
           <TableView fx:id="countryDataTable">
@@ -70,18 +70,18 @@
               <TableColumn fx:id="countryDataTableMilFactoryColumn" prefWidth="106.0" text="Military Factories" />
               <TableColumn fx:id="countryDataTableDockyardsColumn" prefWidth="106.0" text="Dockyards" />
               <TableColumn fx:id="countryDataTableAirfieldsColumn" prefWidth="106.0" text="Airfields" />
-              <TableColumn fx:id="countryDataTableCivMilRatioColumn" prefWidth="106.0" text="Civ/Mil Ratio" />
-              <TableColumn fx:id="countryDataTablePopFactoryRatioColumn" prefWidth="106.0" text="Pop / Factory" />
-              <TableColumn fx:id="countryDataTablePopCivRatioColumn" prefWidth="106.0" text="Pop / Civ Ratio" />
-              <TableColumn fx:id="countryDataTablePopMilRatioColumn" prefWidth="106.0" text="Pop / Mil Ratio" />
-              <TableColumn fx:id="countryDataTablePopAirCapacityRatioColumn" prefWidth="116.0" text="Pop / Air Capacity" />
-              <TableColumn fx:id="countryDataTablePopNumStatesRatioColumn" prefWidth="106.0" text="Pop / State" />
               <TableColumn fx:id="countryDataTableAluminiumColumn" prefWidth="106.0" text="Aluminum" />
               <TableColumn fx:id="countryDataTableChromiumColumn" prefWidth="106.0" text="Chromium" />
               <TableColumn fx:id="countryDataTableOilColumn" prefWidth="106.0" text="Oil" />
               <TableColumn fx:id="countryDataTableRubberColumn" prefWidth="106.0" text="Rubber" />
               <TableColumn fx:id="countryDataTableSteelColumn" prefWidth="106.0" text="Steel" />
               <TableColumn fx:id="countryDataTableTungstenColumn" prefWidth="106.0" text="Tungsten" />
+              <TableColumn fx:id="countryDataTableCivMilRatioColumn" prefWidth="106.0" text="Civ/Mil Ratio" />
+              <TableColumn fx:id="countryDataTablePopFactoryRatioColumn" prefWidth="106.0" text="Pop / Factory" />
+              <TableColumn fx:id="countryDataTablePopCivRatioColumn" prefWidth="106.0" text="Pop / Civ Ratio" />
+              <TableColumn fx:id="countryDataTablePopMilRatioColumn" prefWidth="106.0" text="Pop / Mil Ratio" />
+              <TableColumn fx:id="countryDataTablePopAirCapacityRatioColumn" prefWidth="116.0" text="Pop / Air Capacity" />
+              <TableColumn fx:id="countryDataTablePopNumStatesRatioColumn" prefWidth="106.0" text="Pop / State" />
             </columns>
           </TableView>
           <VBox fx:id="detailsPane">
@@ -124,6 +124,6 @@
           <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
         </padding>
       </HBox>
-      </children>
-   </AnchorPane>
+    </children>
+  </AnchorPane>
 </AnchorPane>

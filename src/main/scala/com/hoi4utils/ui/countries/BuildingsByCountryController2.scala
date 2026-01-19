@@ -35,25 +35,25 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
   @FXML private var closeDetailsButton: Button = uninitialized
   @FXML private var statePercentageCheckBox: CheckBox = uninitialized
   @FXML private var stateTableScrollPane: ScrollPane = uninitialized
-  @FXML private var stateDataTablePlaceholder: TableView[_] = uninitialized
+  @FXML private var stateDataTablePlaceholder: TableView[?] = uninitialized
   @FXML private var countryDataTableCountryColumn: TableColumn[CountryFile, String] = uninitialized
   @FXML private var countryDataTablePopulationColumn: TableColumn[CountryFile, Integer] = uninitialized
   @FXML private var countryDataTableCivFactoryColumn: TableColumn[CountryFile, Integer] = uninitialized
   @FXML private var countryDataTableMilFactoryColumn: TableColumn[CountryFile, Integer] = uninitialized
   @FXML private var countryDataTableDockyardsColumn: TableColumn[CountryFile, Integer] = uninitialized
   @FXML private var countryDataTableAirfieldsColumn: TableColumn[CountryFile, Integer] = uninitialized
-  @FXML private var countryDataTableCivMilRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
-  @FXML private var countryDataTablePopFactoryRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
-  @FXML private var countryDataTablePopCivRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
-  @FXML private var countryDataTablePopMilRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
-  @FXML private var countryDataTablePopAirCapacityRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
-  @FXML private var countryDataTablePopNumStatesRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
   @FXML private var countryDataTableAluminiumColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
   @FXML private var countryDataTableChromiumColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
   @FXML private var countryDataTableOilColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
   @FXML private var countryDataTableRubberColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
   @FXML private var countryDataTableSteelColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
   @FXML private var countryDataTableTungstenColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+  @FXML private var countryDataTableCivMilRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+  @FXML private var countryDataTablePopFactoryRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+  @FXML private var countryDataTablePopCivRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+  @FXML private var countryDataTablePopMilRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+  @FXML private var countryDataTablePopAirCapacityRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
+  @FXML private var countryDataTablePopNumStatesRatioColumn: TableColumn[CountryFile, java.lang.Double] = uninitialized
 
   private var _resourcesPercent = false
   private var _stateResourcesPercent = false
@@ -95,18 +95,18 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
   override def setDataTableCellFactories(): Unit =
     // table cell factories
     // todo these should also consider column percent behavior (percenttablecell)
-    countryDataTableCivMilRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
-    countryDataTablePopFactoryRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
-    countryDataTablePopCivRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
-    countryDataTablePopMilRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
-    countryDataTablePopAirCapacityRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
-    countryDataTablePopNumStatesRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
     countryDataTableAluminiumColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
     countryDataTableChromiumColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
     countryDataTableOilColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
     countryDataTableRubberColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
     countryDataTableSteelColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
     countryDataTableTungstenColumn.setCellFactory(_ => new DoubleOrPercentTableCell[CountryFile])
+    countryDataTableCivMilRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
+    countryDataTablePopFactoryRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
+    countryDataTablePopCivRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
+    countryDataTablePopMilRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
+    countryDataTablePopAirCapacityRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
+    countryDataTablePopNumStatesRatioColumn.setCellFactory(_ => new DoubleTableCell[CountryFile])
 
   @FXML def handleExportToExcelAction(): Unit =
     val excelExport = new ExcelExport[CountryFile]
