@@ -95,7 +95,6 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     welcome.fire()
     focusTreeView.setGridLinesVisible(lines)
     zio.Unsafe.unsafe { implicit unsafe =>
-      System.err.print("Test 2")
       HOIIVUtils.getActiveRuntime.unsafe.run(populateFocusTreeSelection()).getOrThrowFiberFailure()
     }
     focusDetailsPaneController.onUpdate = Some(() =>
@@ -142,12 +141,9 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       logger.error("splitPane is null - check FXML fx:id")
 
   private def populateFocusTreeSelection(): URIO[FocusTreeManager & CountryTagService, Unit] =
-    System.err.print("Test 2.1")
     ZIO.serviceWith[FocusTreeManager] { manager =>
       focusTreeView.setGridLinesVisible(lines)
-      System.err.print("Test 3")
       Some(manager.observeFocusTrees.sorted()).foreach(trees =>
-        System.err.print("Test 4: " + trees.size())
         trees.forEach(someFocusTree =>
           val toggleButton = ToggleButton(someFocusTree.toString)
           focusTreesToggleButtons += toggleButton

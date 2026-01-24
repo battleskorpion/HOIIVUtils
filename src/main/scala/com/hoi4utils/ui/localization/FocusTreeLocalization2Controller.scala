@@ -49,7 +49,9 @@ class FocusTreeLocalization2Controller extends HOIIVUtilsAbstractController2:
     versionLabel.setText(s"Version: ${HOIIVUtilsConfig.get("version")}")
     welcome.setToggleGroup(toggleGroup)
     welcome.fire()
-    populateFocusTreeSelection()
+    zio.Unsafe.unsafe { implicit unsafe =>
+      HOIIVUtils.getActiveRuntime.unsafe.run(populateFocusTreeSelection()).getOrThrowFiberFailure()
+    }
 
   override def preSetup(): Unit = setupWindowControls(ftlRoot, toolBar, toolBar2)
 
