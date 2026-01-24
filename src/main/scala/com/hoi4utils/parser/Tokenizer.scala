@@ -8,16 +8,16 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
   private val pattern: Regex = createPattern
   private val matcher: BufferedIterator[Regex.Match] = pattern.findAllMatchIn(_input).buffered
 
+  private var peekedToken: Option[Token] = None
+
   // Build line offset table once - O(n) where n = input length
-  private val lineOffsets: Array[Int] = {
-    val offsets = ArrayBuffer(0) // Line 1 starts at position 0
-    for (i <- 0 until _input.length) {
-      if (_input.charAt(i) == '\n') {
-        offsets += (i + 1) // Next line starts after newline
-      }
-    }
+  private val lineOffsets: Array[Int] =
+    val charsWithIndices = _input.toCharArray.zipWithIndex        // don't have to check if each index is safe for charAt(i)
+    val offsets = ArrayBuffer(0)          // Line 1 starts at position 0
+    offsets.sizeHint(charsWithIndices.length / 30)   // scripting files usually small and have some blank lines too
+
+    offsets ++ (charsWithIndices filter ((char, index) => char == '\n') map (_._2 + 1))  // +1 since next line starts after newline
     offsets.toArray
-  }
 
   /**
    * Calculates line and column number for a given character position.
@@ -53,46 +53,48 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
    *
    * @return the next token from the tokenizer, or None if there are no more tokens
    */
-  @inline def next: Option[Token] = {
-    matcher.nextOption().map { m =>
-      val (line, column) = getLineAndColumn(m.start)
-      val token = new Token(m.matched, m.start)
-      token.line = line
-      token.column = column
-      token
-    }
-  }
+  @inline def next: Option[Token] = peekedToken match
+    case Some(token) =>
+      matcher.next()  // iterate matcher
+      val nextToken = peekedToken
+      peekedToken = None
+      nextToken
+    case None =>
+      createToken(() => matcher.nextOption())
 
   /**
    * Returns the next token from matcher without advancing the iterator.
    *
    * @return Next token from matcher
    */
-  @inline def peek: Option[Token] = {
-    matcher.headOption.map { m =>
+  @inline def peek: Option[Token] =
+    if peekedToken.isEmpty then
+      peekedToken = peekNextToken()
+    peekedToken
+
+  private def peekNextToken(): Option[Token] =
+    createToken(() => matcher.headOption)
+
+  private def createToken(matchSupplier: () => Option[Regex.Match]): Option[Token] =
+    matchSupplier().map { m =>
       val (line, column) = getLineAndColumn(m.start)
-      val token = new Token(m.matched, m.start)
-      token.line = line
-      token.column = column
-      token
+      new Token(m.matched, m.start, line, column)
     }
-  }
 
   /**
    * Creates a pattern that matches the tokens in the text.
    *
    * @return a pattern that matches the tokens in the text
    */
-  private def createPattern = {
+  private def createPattern =
     val patternBuilder = new StringBuilder
-    for (tokenType <- TokenType.values) {
+    for (
+      tokenType <- TokenType.values
+    ) do
       val tokenRegex = Token.tokenRegex.get(tokenType)
-      tokenRegex match {
+      tokenRegex match
         case Some(value) => patternBuilder.append(s"|(?<$tokenType>${value.pattern})")
         case None =>
-      }
-    }
     if (patternBuilder.nonEmpty) new Regex(patternBuilder.substring(1)) // Skip the leading "|"
     else throw new IllegalStateException("No patterns found for token types.")
-  }
 }
