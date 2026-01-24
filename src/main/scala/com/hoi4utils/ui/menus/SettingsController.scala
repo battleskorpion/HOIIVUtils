@@ -1,5 +1,6 @@
 package com.hoi4utils.ui.menus
 
+import com.hoi4utils.extensions.validateFolder
 import com.hoi4utils.main.HOIIVUtils.*
 import com.hoi4utils.main.HOIIVUtilsConfig
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager, RootWindows}
@@ -171,41 +172,105 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
 
   def handleHOIIVPathTextField(): Unit = validateAndSetPath(hoi4PathTextField.getText, "hoi4.path")
 
+  /**
+   * Handle mod folder browse button action.
+   * Uses standard Paradox Interactive mod directory as preferred location.
+   */
   def handleModFileBrowseAction(): Unit =
-    val usersDocuments = s"${System.getProperty("user.home")}${File.separator}Documents"
-    val initialModDir = new File(s"$usersDocuments${File.separator}${File.separator + "Paradox Interactive" + File.separator + "Hearts of Iron IV" + File.separator + "mod"}")
-    handleFileBrowseAction(modPathTextField, modFolderBrowseButton, initialModDir, "mod.path")
+    val preferredDir = getParadoxModDirectory()
+    selectAndUpdatePath(modPathTextField, modFolderBrowseButton, preferredDir, "mod.path")
 
+  /**
+   * Handle HOI4 installation folder browse button action.
+   * Uses standard Steam installation path as preferred location.
+   */
   def handleHOIIVFileBrowseAction(): Unit =
-    val steamHOI4LocalPath = s"Steam${File.separator}steamapps${File.separator}common${File.separator}Hearts of Iron IV"
+    val preferredDir = getSteamHOI4Directory()
+    selectAndUpdatePath(hoi4PathTextField, hoi4FolderBrowseButton, preferredDir, "hoi4.path")
+
+  /**
+   * Generic method to select a directory and update the associated text field and config.
+   *
+   * @param textField    The text field to update with the selected path
+   * @param browseButton The button that triggered the action (for stage ownership)
+   * @param preferredDir Optional preferred initial directory
+   * @param configKey    The configuration key to save the path to
+   */
+  private def selectAndUpdatePath(
+                                   textField: TextField,
+                                   browseButton: Node,
+                                   preferredDir: Option[File],
+                                   configKey: String
+                                 ): Unit =
+    selectDirectory(browseButton, preferredDir) match
+      case Some(selectedDir) =>
+        HOIIVUtilsConfig.set(configKey, selectedDir.getAbsolutePath)
+        textField.setText(selectedDir.getAbsolutePath)
+        logger.debug(s"Updated $configKey to: ${selectedDir.getAbsolutePath}")
+      case None =>
+        logger.debug(s"Directory selection cancelled for $configKey")
+
+  /**
+   * Validates and saves a path from a text field to config.
+   * Called when user manually types a path.
+   *
+   * @param path      The path string to validate
+   * @param configKey The configuration key to save to
+   */
+  private def validateAndSetPath(path: String, configKey: String): Unit =
+    validateDirectoryPath(path) match
+      case Some(validDir) =>
+        HOIIVUtilsConfig.set(configKey, validDir.getAbsolutePath)
+        logger.debug(s"Validated and saved $configKey: ${validDir.getAbsolutePath}")
+      case None if path.nonEmpty =>
+        logger.warn(s"Invalid directory path for $configKey: $path")
+        errorLabel.setText(s"Invalid directory: $path")
+      case None => // Empty path, do nothing
+
+  /**
+   * Gets the standard Paradox Interactive Hearts of Iron IV mod directory.
+   * Falls back through common locations if primary location doesn't exist.
+   *
+   * @return Option containing the mod directory if found
+   */
+  private def getParadoxModDirectory(): Option[File] =
+    val userHome = getSystemDirectory("user.home")
+    val candidates = Seq(
+      userHome.map(home => buildPath(home.getPath, "Documents", "Paradox Interactive", "Hearts of Iron IV", "mod")),
+      userHome.map(home => buildPath(home.getPath, "OneDrive", "Documents", "Paradox Interactive", "Hearts of Iron IV", "mod")),
+      userHome.map(home => buildPath(home.getPath, "Paradox Interactive", "Hearts of Iron IV", "mod"))
+    ).flatten
+    candidates.find(f => f.validateFolder("mod").isRight) match
+      case found@Some(dir) =>
+        logger.debug(s"Found mod directory: ${dir.getAbsolutePath}")
+        found
+      case None =>
+        logger.debug("Could not find Paradox mod directory, will use default location")
+        None
+
+  /**
+   * Gets the standard Steam Hearts of Iron IV installation directory.
+   * Checks common Steam installation locations across different drive configurations.
+   *
+   * @return Option containing the HOI4 directory if found
+   */
+  private def getSteamHOI4Directory(): Option[File] =
+    val steamPath = Seq("Steam", "steamapps", "common", "Hearts of Iron IV")
     val programFilesX86 = Option(System.getenv("ProgramFiles(x86)")).map(new File(_))
-    val initialHoi4Dir = programFilesX86.map(file => new File(s"$file${File.separator}$steamHOI4LocalPath")).orNull
-    handleFileBrowseAction(hoi4PathTextField, hoi4FolderBrowseButton, initialHoi4Dir, "hoi4.path")
-
-  // Generic method to validate a directory path and set it to settings
-  private def validateAndSetPath(path: String, settingKey: String): Unit =
-    if path.isEmpty then return
-    val file = new File(path)
-    val isValidFile = file.exists && file.isDirectory
-    if isValidFile then HOIIVUtilsConfig.set(settingKey, file.toString)
-
-  private def handleFileBrowseAction(
-                                    textField: TextField,
-                                    browseButton: Node,
-                                    initialDirectory: File,
-                                    settingKey: String
-                                    ): Unit =
-    if initialDirectory == null || !initialDirectory.exists || !initialDirectory.isDirectory then logger.warn(s"Initial directory for $settingKey is invalid: ${initialDirectory.getAbsolutePath}")
-    else
-      val selectedFile = try JavaFXUIManager.openChooser(browseButton, initialDirectory, true)
-      catch
-        case e: Exception =>
-          logger.error(s"Error opening file chooser for $settingKey: ${e.getMessage}", e)
-          JavaFXUIManager.openChooser(browseButton, true)
-      if selectedFile == null then return
-      val isValidFile = selectedFile.exists && selectedFile.isDirectory
-      if isValidFile then HOIIVUtilsConfig.set(settingKey, selectedFile.toString)
-      textField.setText(selectedFile.getAbsolutePath)
+    val programFiles = Option(System.getenv("ProgramFiles")).map(new File(_))
+    val candidates = Seq(
+      programFilesX86.map(base => buildPath((base.getPath +: steamPath) *)),
+      programFiles.map(base => buildPath((base.getPath +: steamPath) *)),
+      Some(buildPath(("C:" +: steamPath) *)),
+      Some(buildPath(("D:" +: steamPath) *))
+    ).flatten
+    candidates.find(f => f.validateFolder("HOI4").isRight) match
+      case found@Some(dir) =>
+        logger.debug(s"Found HOI4 installation: ${dir.getAbsolutePath}")
+        found
+      case None =>
+        logger.debug("Could not find Steam HOI4 installation, will use default location")
+        None
 
   def handleDarkThemeRadioAction(): Unit = if darkTheme.isSelected then HOIIVUtilsConfig.set("theme", "dark")
 
