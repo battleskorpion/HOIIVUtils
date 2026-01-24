@@ -12,7 +12,7 @@ import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVU
 import com.hoi4utils.ui.localization.*
 import com.hoi4utils.ui.map.{MapEditorController, MapGenerationController, ProvinceColorsController}
 import com.hoi4utils.ui.menus.SettingsController
-import com.hoi4utils.ui.parser.ParserViewerController
+import com.hoi4utils.ui.parser.{ParserViewer2Controller, ParserViewerController}
 import com.hoi4utils.ui.units.CompareUnitsController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.animation.{Animation, KeyFrame, Timeline}
@@ -51,7 +51,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   private val provinceColors        = "/com/hoi4utils/ui/map/ProvinceColors.fxml"
   private val mapGeneration         = "/com/hoi4utils/ui/map/MapGeneration.fxml" // todo scala, redesign
   private val mapEditor             = "/com/hoi4utils/ui/map/MapEditor.fxml" // todo scala, redesign
-  private val parserViewer          = "/com/hoi4utils/ui/parser/ParserViewer.fxml" // todo scala, redesign WIP
+  private val parserViewer          = "/com/hoi4utils/ui/parser/ParserViewer2.fxml" // todo scala, redesign WIP
   private val errors                = "/com/hoi4utils/ui/menus/ErrorList.fxml"
 
   @FXML var mRoot: AnchorPane = uninitialized
@@ -384,7 +384,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
   @FXML def handleProvinceColorsClick(event: MouseEvent): Unit = openWindow(event, classOf[ProvinceColorsController], provinceColors)
   @FXML def handleMapGenerationClick(event: MouseEvent): Unit = openWindow(event, classOf[MapGenerationController], mapGeneration)
   @FXML def handleMapEditorClick(event: MouseEvent): Unit = openWindow(event, classOf[MapEditorController], mapEditor)
-  @FXML def handleParserViewerClick(event: MouseEvent): Unit = openWindow(event, classOf[ParserViewerController], parserViewer)
+  @FXML def handleParserViewerClick(event: MouseEvent): Unit = openWindow(event, classOf[ParserViewer2Controller], parserViewer)
   @FXML def handleErrorsClick(event: MouseEvent): Unit = openWindow(event, classOf[ErrorListController], errors)
 
   private def openWindow(event: MouseEvent, controller: Class[? <: HOIIVUtilsAbstractController2 | HOIIVUtilsAbstractController], fxml: String): Unit =

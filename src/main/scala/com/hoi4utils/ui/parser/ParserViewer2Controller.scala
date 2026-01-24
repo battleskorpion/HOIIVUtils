@@ -15,7 +15,7 @@ import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 import scala.util.{Failure, Success, Try}
 
-class ParserViewerController2 extends HOIIVUtilsAbstractController2 with LazyLogging:
+class ParserViewer2Controller extends HOIIVUtilsAbstractController2 with LazyLogging:
   setFxmlFile("/com/hoi4utils/ui/parser/ParserViewer2.fxml")
   setTitle("Parser Viewer 2")
 
