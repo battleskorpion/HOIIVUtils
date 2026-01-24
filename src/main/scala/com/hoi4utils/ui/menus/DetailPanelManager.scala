@@ -6,6 +6,7 @@ import com.hoi4utils.ui.gfx.InterfaceController
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.localization.{CustomTooltipController, FocusTreeLocalization2Controller}
 import com.hoi4utils.ui.map.ProvinceColorsController
+import com.hoi4utils.ui.parser.ParserViewer2Controller
 import com.hoi4utils.ui.units.CompareUnitsController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXMLLoader
@@ -132,6 +133,7 @@ class DetailPanelManager(val contentPane: StackPane) extends LazyLogging:
       case "/com/hoi4utils/ui/gfx/Interface.fxml" ⇒ new InterfaceController()
       case "/com/hoi4utils/ui/units/CompareUnits.fxml" ⇒ new CompareUnitsController()
       case "/com/hoi4utils/ui/map/ProvinceColors.fxml" ⇒ new ProvinceColorsController()
+      case "/com/hoi4utils/ui/parser/ParserViewer2.fxml" ⇒ new ParserViewer2Controller()
       case "/com/hoi4utils/ui/menus/ErrorList.fxml" ⇒ new ErrorListController()
       case _ ⇒
         logger.warn(s"No specific controller mapping for: $fxmlPath")

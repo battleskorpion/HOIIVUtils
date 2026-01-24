@@ -6,11 +6,12 @@ import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, Label, ToolBar, TreeCell, TreeItem, TreeView}
+import javafx.scene.control.{Button, Label, TextArea, ToolBar, TreeCell, TreeItem, TreeView}
 import javafx.scene.image.ImageView
 import javafx.scene.layout.VBox
 
 import java.io.File
+import java.nio.file.Files
 import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
 import scala.util.{Failure, Success, Try}
@@ -25,6 +26,8 @@ class ParserViewer2Controller extends HOIIVUtilsAbstractController2 with LazyLog
   @FXML var refreshTreeButton: Button = uninitialized
   @FXML var statusLabel: Label = uninitialized
   @FXML var fileCountLabel: Label = uninitialized
+  @FXML var filePathLabel: Label = uninitialized
+  @FXML var fileContentArea: TextArea = uninitialized
 
   var modFolder: File = HOIIVFiles.Mod.folder
 
@@ -34,8 +37,7 @@ class ParserViewer2Controller extends HOIIVUtilsAbstractController2 with LazyLog
     setupButtons()
     loadModFolder()
 
-  override def preSetup(): Unit =
-    setupWindowControls(root, toolBar)
+  override def preSetup(): Unit = setupWindowControls(root, toolBar)
 
   private def setupFileTree(): Unit =
     // Setup custom cell factory to display file names with icons
