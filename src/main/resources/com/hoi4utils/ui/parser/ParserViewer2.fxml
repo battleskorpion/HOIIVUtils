@@ -83,14 +83,31 @@
         <items>
           <AnchorPane>
             <children>
-              <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Master" textAlignment="CENTER" wrapText="false">
-                <font>
-                  <Font size="18.0" fx:id="x1" />
-                </font>
-                <textFill>
-                  <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
-                </textFill>
-              </Label>
+              <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <children>
+                  <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <children>
+                      <Label alignment="CENTER" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Mod Files" textAlignment="CENTER" wrapText="false">
+                        <font>
+                          <Font size="16.0" fx:id="x1" />
+                        </font>
+                        <textFill>
+                          <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
+                        </textFill>
+                      </Label>
+                      <Button fx:id="refreshTreeButton" text="Refresh" />
+                    </children>
+                    <padding>
+                      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                    </padding>
+                  </HBox>
+                  <TreeView fx:id="fileTreeView" VBox.vgrow="ALWAYS">
+                    <VBox.margin>
+                      <Insets bottom="8.0" left="8.0" right="8.0" top="0.0" />
+                    </VBox.margin>
+                  </TreeView>
+                </children>
+              </VBox>
             </children>
           </AnchorPane>
           <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
@@ -111,7 +128,7 @@
       </SplitPane>
       <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
         <children>
-          <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Left status" HBox.hgrow="ALWAYS">
+          <Label fx:id="statusLabel" maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Ready" HBox.hgrow="ALWAYS">
             <font>
               <Font size="11.0" fx:id="x3" />
             </font>
@@ -120,7 +137,7 @@
             </textFill>
           </Label>
           <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-          <Label font="$x3" maxWidth="-1.0" text="Right status" textFill="$x4" HBox.hgrow="NEVER" />
+          <Label fx:id="fileCountLabel" font="$x3" maxWidth="-1.0" text="0 files" textFill="$x4" HBox.hgrow="NEVER" />
         </children>
         <padding>
           <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
