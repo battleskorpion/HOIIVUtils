@@ -2,13 +2,19 @@ package com.hoi4utils.ui.parser
 
 import com.hoi4utils.extensions.validateFolder
 import com.hoi4utils.main.HOIIVFiles
+import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
+import com.hoi4utils.ui.javafx.scene.control.PDXTreeViewFactory
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
+import javafx.beans.value.ObservableValue
+import javafx.event.ActionEvent
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, Label, TextArea, ToolBar, TreeCell, TreeItem, TreeView}
+import javafx.scene.Node
+import javafx.scene.control.{Button, Label, TextArea, TextField, ToolBar, TreeCell, TreeItem, TreeView}
 import javafx.scene.image.ImageView
-import javafx.scene.layout.VBox
+import javafx.scene.input.MouseEvent
+import javafx.scene.layout.{AnchorPane, VBox}
 
 import java.io.File
 import java.nio.file.Files
@@ -28,6 +34,9 @@ class ParserViewer2Controller extends HOIIVUtilsAbstractController2 with LazyLog
   @FXML var fileCountLabel: Label = uninitialized
   @FXML var filePathLabel: Label = uninitialized
   @FXML var fileContentArea: TextArea = uninitialized
+  @FXML var pdxTreeViewPane: AnchorPane = uninitialized
+  @FXML var searchTextField: TextField = uninitialized
+  @FXML var pdxNodeTextArea: TextArea = uninitialized
 
   var modFolder: File = HOIIVFiles.Mod.folder
 
@@ -36,6 +45,27 @@ class ParserViewer2Controller extends HOIIVUtilsAbstractController2 with LazyLog
     setupFileTree()
     setupButtons()
     loadModFolder()
+//    fileTreeView.getSelectionModel.selectedItemProperty.addListener((obs: ObservableValue[_ <: PDXScript[_]], oldVal: PDXScript[_], newVal: PDXScript[_]) => {
+//      if (newVal != null) {
+//        // Create a tree view for the newly selected script
+//        val pdxTreeView = PDXTreeViewFactory.createPDXTreeView(newVal)
+//        pdxTreeViewPane.getChildren.removeIf((node: Node) => node.isInstanceOf[TreeView[_]])
+//        pdxTreeViewPane.getChildren.add(pdxTreeView)
+//        AnchorPane.setTopAnchor(pdxTreeView, 25.0)
+//        AnchorPane.setBottomAnchor(pdxTreeView, 0.0)
+//        AnchorPane.setLeftAnchor(pdxTreeView, 0.0)
+//        AnchorPane.setRightAnchor(pdxTreeView, 0.0)
+//        searchTextField.setOnAction((event: ActionEvent) => {
+//          val searchTerm = searchTextField.getText
+//          PDXTreeViewFactory.searchAndSelect(pdxTreeView, searchTerm)
+//        })
+//        pdxTreeView.setOnMouseClicked((event: MouseEvent) => {
+//          // todo improve visual?
+//          val selectedPDX = pdxTreeView.getSelectionModel.getSelectedItem.getValue
+//          if (selectedPDX != null) pdxNodeTextArea.setText(selectedPDX.toScript)
+//        })
+//      }
+//    })
 
   override def preSetup(): Unit = setupWindowControls(root, toolBar)
 
@@ -133,9 +163,31 @@ class ParserViewer2Controller extends HOIIVUtilsAbstractController2 with LazyLog
    * @param file The selected file
    */
   protected def onFileSelected(file: File): Unit =
-    // Default implementation - override in subclass or add logic here
     logger.debug(s"File selected: ${file.getName}")
-  // Example: Parse the file, display contents, etc.
+    displayFileContents(file)
+
+  /**
+   * Reads and displays the contents of a file in the content area.
+   * This is the hook point for customizing what happens when a file is clicked.
+   *
+   * @param file The file to display
+   */
+  private def displayFileContents(file: File): Unit =
+    Try {
+      val content = Files.readString(file.toPath)
+      Platform.runLater(() => {
+        filePathLabel.setText(file.getAbsolutePath)
+        fileContentArea.setText(content)
+      })
+    } match
+      case Success(_) =>
+        logger.info(s"Displayed file contents: ${file.getName}")
+      case Failure(ex) =>
+        logger.error(s"Failed to read file ${file.getName}: ${ex.getMessage}", ex)
+        Platform.runLater(() => {
+          filePathLabel.setText(file.getAbsolutePath)
+          fileContentArea.setText(s"Error reading file: ${ex.getMessage}")
+        })
 
   /**
    * Called when a directory is selected.
@@ -144,8 +196,11 @@ class ParserViewer2Controller extends HOIIVUtilsAbstractController2 with LazyLog
    * @param directory The selected directory
    */
   protected def onDirectorySelected(directory: File): Unit =
-    // Default implementation - override in subclass or add logic here
     logger.debug(s"Directory selected: ${directory.getName}")
+    Platform.runLater(() => {
+      filePathLabel.setText(directory.getAbsolutePath)
+      fileContentArea.setText(s"[Directory: ${directory.getName}]\n\nDouble-click to expand and browse files.")
+    })
 
   private def updateFileCount(rootItem: TreeItem[File]): Unit =
     val count = countFiles(rootItem)
