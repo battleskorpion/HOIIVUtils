@@ -26,26 +26,23 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
    * @param position Character position in the input string
    * @return Tuple of (line number, column number), both 1-indexed
    */
-  private def getLineAndColumn(position: Int): (Int, Int) = {
+  private def getLineAndColumn(position: Int): (Int, Int) =
     // Binary search to find which line this position is on
     var left = 0
     var right = lineOffsets.length - 1
     var lineIndex = 0
 
-    while (left <= right) {
+    while (left <= right)
       val mid = (left + right) / 2
-      if (lineOffsets(mid) <= position) {
+      if (lineOffsets(mid) <= position)
         lineIndex = mid
         left = mid + 1
-      } else {
+      else
         right = mid - 1
-      }
-    }
 
     val line = lineIndex + 1
     val column = position - lineOffsets(lineIndex) + 1
     (line, column)
-  }
 
   /**
    * Returns the next token from the tokenizer, or None if there are no more
