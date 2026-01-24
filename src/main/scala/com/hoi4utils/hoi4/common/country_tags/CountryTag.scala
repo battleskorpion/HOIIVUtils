@@ -5,6 +5,7 @@ import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Parser, ParsingContext}
 import com.hoi4utils.script.{PDXFileError, PDXReadable, Referable}
 import com.typesafe.scalalogging.LazyLogging
+import zio.{Task, URIO, ZIO}
 
 import java.io.{File, IOException}
 import java.nio.file.Files
@@ -18,9 +19,7 @@ import scala.util.Using
  * @param file if this tag is defined in the mod's (or vanilla's) country tags files, file it is defined in,
  *             or should be defined in.
  */
-class CountryTag private(val tag: String, var file: Option[File] = None) extends Comparable[CountryTag] with Referable {
-  CountryTag.addTag(this)
-
+class CountryTag private[country_tags](val tag: String, var file: Option[File] = None) extends Comparable[CountryTag] with Referable {
   def get: String = tag
 
   override def toString: String = {
@@ -41,107 +40,58 @@ class CountryTag private(val tag: String, var file: Option[File] = None) extends
   override def referableID: Option[String] = Some(tag)
 }
 
-object CountryTag extends Iterable[CountryTag] with LazyLogging with PDXReadable {
-  override val cleanName: String = "CountryTags"
-  val NULL_TAG: CountryTag = CountryTag("###")
-  val COUNTRY_TAG_LENGTH = 3 // standard country tag length (for a normal country tag)private final String tag;
-  // scala... (this is null (????????????) if you dont use 'lazy')
-  private lazy val _tagList: ListBuffer[CountryTag] = {
-    ListBuffer[CountryTag]()
-  }
-
-  def read(): Boolean = {
-    val tags = loadCountryTags()
-    if (tags.isEmpty)
-      logger.error(s"No country tags loaded!?")
-      return false
-    _tagList.addAll(tags)
-    true
-  }
-
-  override def clear(): Unit = _tagList.clear()
-
-  @throws[IOException]
-  private def loadCountryTags(): Seq[CountryTag] = {
-    val tagsBuf = ListBuffer.empty[CountryTag]
-
-    val modFiles = listTagFiles(HOIIVFiles.Mod.country_tags_folder).filterNot(_.getName.contains("dynamic_countries"))
-    val baseFiles = listTagFiles(HOIIVFiles.HOI4.country_tags_folder).filterNot(_.getName.contains("dynamic_countries"))
-
-    def readFiles(files: Seq[File], skipDuplicates: Boolean): Unit = {
-      for (file <- files) {
-        val parser = new Parser(file)
-        val rootNode = parser.parse
-
-        rootNode.foreach(node => {
-          given ParsingContext(file, node)
-          CountryTag(node.name.trim, file)
-        })
-        Using.resource(Source.fromFile(file)) { source =>
-          given ParsingContext(file)
-          source
-            .getLines()
-            .map(_.replaceAll("\\s", ""))
-            .filter(data => data.nonEmpty && data.head != '#')
-            .map(data => CountryTag(data.takeWhile(_ != '=').trim, file))
-            .filter(_ != CountryTag.NULL_TAG)
-            .filter(tag => !skipDuplicates || !tagsBuf.contains(tag))
-            .foreach(tagsBuf += _)
-        }
-      }
-    }
-
-    readFiles(modFiles, skipDuplicates = false)
-    readFiles(baseFiles, skipDuplicates = true)
-
-    tagsBuf.toList
-  }
+object CountryTag {
+  val NULL_TAG: CountryTag = new CountryTag("###")
 
   /**
    * Creates or retrieves a CountryTag for the given tag string.
+   *
    * @param tag the country tag string
    * @return the CountryTag instance
    */
-  def apply(tag: String): CountryTag = _tagList.find(_.get == tag) match
-    case None => new CountryTag(tag)
-    case Some(countryTag) => countryTag
+  def apply(tag: String): URIO[CountryTagService, CountryTag] = {
+    for {
+      service <- ZIO.service[CountryTagService]
+      existingTag <- service.findExisting(tag)
+      result = existingTag match {
+        case Some(countryTag) => countryTag
+        case None             =>
+          val newTag = new CountryTag(tag)
+          service.addTag(newTag)
+          newTag
+      }
+    } yield result
+  }
 
   /**
    * Creates or retrieves a CountryTag for the given tag string, associating it with the provided file.
-   * @param tag the country tag string
+   *
+   * @param tag  the country tag string
    * @param file the file where the tag is defined
    * @return
    * @note `using` has to specified as second parameter list to avoid ambiguous overload issues
    */
-  def apply(tag: String, file: File)(using ParsingContext): CountryTag =
-    _tagList.find(t => t.get == tag) match
-      case None => new CountryTag(tag, Some(file))
-      case Some(countryTag) =>
-        if (countryTag.file.isEmpty)
-          countryTag.file = Some(file)
-        else if (countryTag.file.get != file)
-          val pdxError = new PDXFileError(
-            additionalInfo = Map(
-              "context" -> "Duplicate country tag found",
-              "tag" -> tag,
+  def apply(tag: String, file: File)(using ParsingContext): URIO[CountryTagService, CountryTag] =
+    for {
+      service <- ZIO.service[CountryTagService]
+      existingTag <- service.findExisting(tag)
+      result = existingTag match {
+        case Some(countryTag) =>
+          if (countryTag.file.isEmpty)
+            countryTag.file = Some(file)
+          else if (countryTag.file.get != file)
+            val pdxError = new PDXFileError(
+              additionalInfo = Map(
+                "context" -> "Duplicate country tag found",
+                "tag" -> tag,
+              )
             )
-          )
-          CountryFile.countryErrors += pdxError
-        countryTag
-
-  override def iterator: Iterator[CountryTag] = _tagList.iterator
-
-  //  def tagList(): List[CountryTag] = _tagList
-  def addTag(tag: CountryTag): Unit = _tagList.addOne(tag)
-
-  private def listTagFiles(folder: File): Seq[File] = {
-    if (folder.exists() && folder.isDirectory) {
-      Option(folder.listFiles()).map(_.toList).getOrElse(Nil)
-    } else Nil
-  }
-
-  /** Returns all loaded country tags, loading on first access. */
-  def countryTags: Seq[CountryTag] = _tagList.toList
-
-  def exists(tag: String): Boolean = _tagList.exists(_.equals(tag))
+            service.errors += pdxError
+          countryTag
+        case None =>
+          val newTag = new CountryTag(tag, Some(file))
+          service.addTag(newTag)
+          newTag
+      }
+    } yield result
 }

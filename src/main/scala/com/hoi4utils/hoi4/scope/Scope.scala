@@ -3,8 +3,10 @@ package com.hoi4utils.hoi4.scope
 import com.hoi4utils.databases.effect.Effect
 import com.hoi4utils.exceptions.NotPermittedInScopeException
 import com.hoi4utils.hoi4.common.country_tags.CountryTag
-import com.hoi4utils.hoi4.map.state.State
+import com.hoi4utils.hoi4.map.state.{State, StateService}
+import com.hoi4utils.main.HOIIVUtils
 import com.typesafe.scalalogging.LazyLogging
+import zio.{RIO, Task, UIO, URIO, URLayer, ZIO, ZLayer}
 
 import scala.collection.mutable
 
@@ -20,7 +22,11 @@ object Scope extends LazyLogging {
         // state?
         // State.isValidStateID(id)
         logger.debug(name + ", ?");
-        val state = State.get(id)
+
+        val stateService: StateService = zio.Unsafe.unsafe { implicit unsafe =>
+          HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[StateService]).getOrThrowFiberFailure()
+        }
+        val state = stateService.get(id)
         if (state.isEmpty) return null
         val state_scope = of(state.get)
         if (state_scope == null) {

@@ -2,11 +2,12 @@ package com.hoi4utils.hoi4.common.idea
 
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4.localization.Localizable
-import com.hoi4utils.main.HOIIVFiles
+import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{Node, ParserException, ParsingContext}
 import com.hoi4utils.script.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
+import zio.ZIO
 
 import java.io.File
 import scala.collection.mutable
@@ -26,25 +27,25 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
 
   private var _file: Option[File] = None
 
-  /* default */
-  IdeasManager.add(this)
-
   file match
     case null => // create empty idea
     case _ =>
       require(file.exists && file.isFile, s"Idea file $file does not exist or is not a file.")
       loadPDX(file)
       setFile(file)
-      _file.foreach(file => IdeasManager.ideaFileFileMap.put(file, this))
+//      _file.foreach(file => ideasManager.addToFileMap(file, this))  // done in Ideas mgr now 
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
     given ParsingContext(file, node)
+    val ideasManager: IdeasManager = zio.Unsafe.unsafe { implicit unsafe =>
+      HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[IdeasManager]).getOrThrowFiberFailure()
+    }
     val pdxError = new PDXFileError(
       exception = exception,
       errorNode = node,
       pdxScript = this
     )
-    IdeasManager.ideaFileErrors += pdxError
+    ideasManager.ideaFileErrors += pdxError
 
   override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = {
     ListBuffer(countryIdeas)
@@ -57,7 +58,7 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
   def setFile(file: File): Unit = {
     _file = Some(file)
   }
-  
+
   override def getFile: Option[File] = _file
 
   override def iterator: Iterator[Idea] = listIdeas.iterator

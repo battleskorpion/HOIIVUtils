@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.common.national_focus
 
 import com.hoi4utils.exceptions.LocalizationPreconditionException
-import com.hoi4utils.hoi4.common.country_tags.CountryTag
+import com.hoi4utils.hoi4.common.country_tags.{CountryTag, CountryTagService}
 import com.hoi4utils.hoi4.localization.{LocalizationFormatter, Property}
 import com.hoi4utils.main.HOIIVUtils
 import com.typesafe.scalalogging.LazyLogging
@@ -70,7 +70,7 @@ class FixFocus(locFormatter: LocalizationFormatter) extends LazyLogging {
   }
 
   /**
-   * 
+   *
    *
    * @param focus
    * @param locManager
@@ -98,7 +98,10 @@ class FixFocus(locFormatter: LocalizationFormatter) extends LazyLogging {
     val underscoreIndex = _focusName.indexOf('_')
     if (underscoreIndex >= 0) {
       val maybeTag = _focusName.substring(0, underscoreIndex)
-      if (CountryTag.exists(maybeTag)) _focusName = _focusName.substring(underscoreIndex + 1)
+      val tagExists: Boolean = zio.Unsafe.unsafe { implicit unsafe =>
+        HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[CountryTagService].flatMap(_.exists(maybeTag))).getOrThrowFiberFailure()
+      }
+      if (tagExists) _focusName = _focusName.substring(underscoreIndex + 1)
     }
     _focusName
   }

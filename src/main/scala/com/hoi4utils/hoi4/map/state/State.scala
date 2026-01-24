@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.map.state
 
 import com.hoi4utils.*
-import com.hoi4utils.hoi4.common.country_tags.CountryTag
+import com.hoi4utils.hoi4.common.country_tags.{CountryTag, CountryTagService}
 import com.hoi4utils.hoi4.history.countries.CountryFile
 import com.hoi4utils.hoi4.localization.*
 import com.hoi4utils.hoi4.map.buildings.Infrastructure
@@ -10,7 +10,7 @@ import com.hoi4utils.hoi4.map.resource.Resource
 import com.hoi4utils.hoi4.map.state
 import com.hoi4utils.hoi4.map.state.InfrastructureData
 import com.hoi4utils.hoi4.map.state.State.History
-import com.hoi4utils.main.HOIIVFiles
+import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
 import com.hoi4utils.script.datatype.StringPDX
@@ -18,6 +18,7 @@ import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 import org.jetbrains.annotations.NotNull
+import zio.{Task, URIO, ZIO}
 
 import java.io.File
 import scala.collection.mutable
@@ -30,7 +31,7 @@ import scala.util.boundary
  * @param stateFile state file
  * @param addToStatesList if true, adds the state to the list of states
  */
-class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("state") with InfrastructureData
+class State(file: File = null)(countryTagService: CountryTagService) extends StructuredPDX("state") with InfrastructureData
   with Localizable with Iterable[Province] with Comparable[State] with PDXFile with Referable with LazyLogging:
 
   final val stateID = new IntPDX("id")
@@ -42,7 +43,7 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
   final val resources = new CollectionPDX[Resource](Resource(), "resources") {
     override def getPDXTypeName: String = "Resources"
   }
-  final val history = new History()
+  final val history = new History()(countryTagService)
   final val provinces =
     val loadNewProvince = () =>
       val p = new Province()
@@ -56,9 +57,6 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
   final val impassible = new BooleanPDX("impassible", false, BoolType.YES_NO)
 
   private var _stateFile: Option[File] = None
-
-  /* init */
-  if addToStatesList then State.add(this)
 
   file match
     case null => // create empty state
@@ -74,7 +72,10 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
       errorNode = node,
       pdxScript = this
     ).addInfo("stateID", stateID.asOptionalString.getOrElse("unknown"))
-    State.stateErrors += pdxError
+    val stateService: StateService = zio.Unsafe.unsafe { implicit unsafe =>
+      HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[StateService]).getOrThrowFiberFailure()
+    }
+    stateService.stateErrors += pdxError
 
   /**
    * @inheritdoc
@@ -297,7 +298,11 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
       case None => ""
     Map(Property.NAME -> id)
 
-  @NotNull override def getLocalizableGroup: Iterable[? <: Localizable] = State.states
+  @NotNull override def getLocalizableGroup: Iterable[? <: Localizable] =
+    val stateService: StateService = zio.Unsafe.unsafe { implicit unsafe =>
+      HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[StateService]).getOrThrowFiberFailure()
+    }
+    stateService.list
 
   override def iterator: Iterator[Province] = provinces.iterator
 
@@ -311,199 +316,22 @@ class State(addToStatesList: Boolean, file: File = null) extends StructuredPDX("
  *
  * I apologize in advance.
  */
-object State extends Iterable[State] with PDXReadable with LazyLogging:
-  override val cleanName: String = "States"
+object State extends LazyLogging:
 
-  private val states = new ListBuffer[State]
-  var stateErrors: ListBuffer[PDXFileError] = ListBuffer().empty
-
-  def get(file: File): Option[State] =
-    if file == null then return None
-    if !states.exists(_.stateFile.contains(file)) then new State(true, file)
-    states.find(_.stateFile.contains(file))
-
+  // TODO for java compatibility
   def observeStates: ObservableList[State] =
-    FXCollections.observableArrayList(CollectionConverters.asJava(states))
-
-  /**
-   * Creates States from reading files
-   */
-  def read(): Boolean =
-    if !HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory then
-      logger.error(s"In State.java - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
-      false
-    else if HOIIVFiles.Mod.states_folder.listFiles == null || HOIIVFiles.Mod.states_folder.listFiles.isEmpty then
-      logger.error(s"No states found in ${HOIIVFiles.Mod.states_folder}")
-      false
-    else
-      HOIIVFiles.Mod.states_folder.listFiles().filter(_.getName.endsWith(".txt")).foreach: f =>
-        new State(true, f)
-      true
-
-  override def clear(): Unit =
-    states.clear()
-
-  def add(state: State): Iterable[State] =
-    states += state
-    states
-
-  def list: List[State] = states.toList
-
-  def get(id: Int): Option[State] =
-    states.find(_.stateID @== id)
-
-  def get(state_name: String): Option[State] =
-    states.find(_.name @== state_name)
-
-  def ownedStatesOfCountry(country: CountryFile): ListBuffer[State] = ownedStatesOfCountry(country.countryTag)
-
-  def ownedStatesOfCountry(tag: CountryTag): ListBuffer[State] =
-    states filter(state => state.owner(ClausewitzDate.defaulty).exists(_.equals(tag)))
-
-  def infrastructureOfStates(states: ListBuffer[State]): Infrastructure =
-    var infrastructure = 0
-    var population = 0
-    var civilianFactories = 0
-    var militaryFactories = 0
-    var dockyards = 0
-    var airfields = 0
-    for state <- states do
-      val stateData = state.getStateInfrastructure
-      infrastructure += stateData.infrastructure
-      population += stateData.population
-      civilianFactories += stateData.civilianFactories
-      militaryFactories += stateData.militaryFactories
-      dockyards += stateData.navalDockyards
-      airfields += stateData.airfields
-    new Infrastructure(population, infrastructure, civilianFactories, militaryFactories, dockyards, 0, airfields)
-
-  // todo this is called and ran lots of times, optimize?
-  def resourcesOfStates(states: ListBuffer[State]): List[Resource] =
-    //    val resourcesOfStates = new Resources
-    //    for (state <- states) {
-    //      val resources = state.getResources
-    //      resourcesOfStates.add(resources)
-    //    }
-    //    //return new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
-    //    logger.debug(resourcesOfStates.get("aluminum").amt)
-    //    resourcesOfStates
-    if states.isEmpty then Resource.newList()
-    else
-      states
-        .flatMap(_.listResources).groupBy(_.pdxTypeIdentifier).values.map: resources =>
-          new Resource(resources.head.pdxTypeIdentifier, resources.map(_.getOrElse(0)).sum)
-        .toList
-
-  def resourcesOfStates: List[Resource] = resourcesOfStates(states)
-
-  def numStates(country: CountryTag): Int = ownedStatesOfCountry(country).size
-
-  implicit def globalResources: List[Resource] = states.flatMap(_.listResources).toList
-
-  /**
-   * If the state represented by file is not in the list of states, creates the
-   * new state.
-   * If the state already exists, overwrites the state.
-   *
-   * @param file state file
-   */
-  def readState(file: File): Boolean =
-    if file == null || !file.exists || file.isDirectory then
-      logger.error(s"In State.java - ${file} is a directory, or it does not exist.")
-      false
-    else
-      new State(true, file)
-      true
-
-  /**
-   * If the state represented by the file exists in states list, removes the state
-   * from the states list
-   *
-   * @param file state file
-   */
-  def removeState(file: File): Boolean = boundary:
-    val tempState = new State(false)
-    for state <- states do
-      if state.stateID == tempState.stateID then
-        states -= state
-        logger.debug("Removed state " + tempState)
-        boundary.break(true)
-    false
-
-  /**
-   * TODO fix this java doc @ skorp
-   * Returns a list of functions that return data about a state
-   * @param resourcePercentages if <code>true</code>, returns resource percentages of global instead of resource amounts
-   * @return list of functions that return data about a state
-   */
-  def getDataFunctions(resourcePercentages: Boolean = false): Iterable[State => ?] =
-    val dataFunctions = ListBuffer[State => ?]()
-
-    dataFunctions += (s => s.id)
-    dataFunctions += (s => s.population)
-    dataFunctions += (s => s.civilianFactories)
-    dataFunctions += (s => s.militaryFactories)
-    dataFunctions += (s => s.navalDockyards)
-    dataFunctions += (s => s.airfields)
-    dataFunctions += (s => s.civMilFactoryRatio)
-    dataFunctions += (s => s.populationFactoryRatio)
-    dataFunctions += (s => s.populationCivFactoryRatio)
-    dataFunctions += (s => s.populationMilFactoryRatio)
-    dataFunctions += (s => s.populationAirCapacityRatio)
-    // todo better way to do this obv! plz fix :( with (wrapper function that returns either or depndent on resourcesPerfcentages boolean value ofc
-    // also if we're gonna have different resources able to load in down the line... it'll break this.
-    if !resourcePercentages then
-      dataFunctions += (s => s.resourceAmount("aluminium"))
-      dataFunctions += (s => s.resourceAmount("chromium"))
-      dataFunctions += (s => s.resourceAmount("oil"))
-      dataFunctions += (s => s.resourceAmount("rubber"))
-      dataFunctions += (s => s.resourceAmount("steel"))
-      dataFunctions += (s => s.resourceAmount("tungsten"))
-    else
-      dataFunctions += (s => s.resource("aluminium").percentOfGlobal)
-      dataFunctions += (s => s.resource("chromium").percentOfGlobal)
-      dataFunctions += (s => s.resource("oil").percentOfGlobal)
-      dataFunctions += (s => s.resource("rubber").percentOfGlobal)
-      dataFunctions += (s => s.resource("steel").percentOfGlobal)
-      dataFunctions += (s => s.resource("tungsten").percentOfGlobal)
-    dataFunctions
-
-  def infrastructureOfCountries: ListBuffer[Infrastructure] =
-    val countryList = CountryTag.countryTags
-    val countriesInfrastructureList = new ListBuffer[Infrastructure]
-    for tag <- countryList do
-      countriesInfrastructureList.addOne(infrastructureOfCountry(tag))
-    countriesInfrastructureList
-
-  def infrastructureOfCountry(tag: CountryTag) = infrastructureOfStates(ownedStatesOfCountry(tag))
-
-  def infrastructureOfCountry(country: CountryFile) = infrastructureOfStates(ownedStatesOfCountry(country))
-
-  // ! todo test if working
-  def resourcesOfCountries: List[List[Resource]] =
-    val countryList = CountryTag.countryTags
-    val countriesResourcesList = new ListBuffer[List[Resource]]
-    for tag <- countryList do
-      countriesResourcesList.addOne(resourcesOfCountry(tag))
-    countriesResourcesList.toList
-
-  def resourcesOfCountry(tag: CountryTag): List[Resource] = resourcesOfStates(ownedStatesOfCountry(tag))
-
-  def resourcesOfCountry(country: CountryFile): List[Resource] = resourcesOfStates(ownedStatesOfCountry(country))
-
-  protected def usefulData(data: String): Boolean = if data.nonEmpty then if data.trim.charAt(0) == '#' then false
-  else true
-  else false
-
-  @NotNull override def iterator: Iterator[State] = states.iterator
+    val stateService: StateService = zio.Unsafe.unsafe { implicit unsafe =>
+      HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[StateService]).getOrThrowFiberFailure()
+    }
+    stateService.observeStates
 
   // todo fix structured effect block later when i can read
-  class History(pdxIdentifier: String = "history", node: Node = null, file: Option[File] = None) extends StructuredPDX(pdxIdentifier):
-    final val owner = new ReferencePDX[CountryTag](() => CountryTag.toList, "owner")
-    final val controller = new ReferencePDX[CountryTag](() => CountryTag.toList, "controller")
+  class History(pdxIdentifier: String = "history", node: Node = null, file: Option[File] = None)(countryTagService: CountryTagService) extends StructuredPDX(pdxIdentifier):
+    final val owner = new ReferencePDX[CountryTag](() => countryTagService.list, "owner")
+    final val controller = new ReferencePDX[CountryTag](() => countryTagService.list, "controller")
     final val buildings = new BuildingsPDX
     final val victoryPoints = new MultiPDX[VictoryPointPDX](None, Some(() => new VictoryPointPDX), "victory_points")
-    final val startDateScopes = new MultiPDX[StartDateScopePDX](None, Some(() => new StartDateScopePDX))
+    final val startDateScopes = new MultiPDX[StartDateScopePDX](None, Some(() => new StartDateScopePDX()(countryTagService)))
       with ProceduralIdentifierPDX(ClausewitzDate.validDate)
 
     /* constructor */
@@ -537,6 +365,6 @@ object State extends Iterable[State] with PDXReadable with LazyLogging:
   class VictoryPointPDX extends ListPDX[IntPDX](() => new IntPDX(), "victory_points"):
     override def getPDXTypeName: String = "Victory Point"
 
-  class StartDateScopePDX(date: ClausewitzDate = ClausewitzDate.defaulty) extends History() with ProceduralIdentifierPDX(ClausewitzDate.validDate):
+  class StartDateScopePDX(date: ClausewitzDate = ClausewitzDate.defaulty)(countryTagService: CountryTagService) extends History()(countryTagService) with ProceduralIdentifierPDX(ClausewitzDate.validDate):
     // Re-throw exceptions to bubble up to State (inherited from History which already overrides loadPDX)
     override def getPDXTypeName: String = "Start Date History"

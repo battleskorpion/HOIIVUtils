@@ -2,8 +2,7 @@ package com.hoi4utils.hoi4.common.national_focus
 
 import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
-import com.hoi4utils.hoi4.gfx.Interface
+import com.hoi4utils.hoi4.gfx.{Interface, InterfaceService}
 import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Localization, Property}
 import com.hoi4utils.hoi4.scope.Scope
 import com.hoi4utils.parser.{Node, ParsingContext}
@@ -12,6 +11,7 @@ import com.hoi4utils.script.datatype.StringPDX
 import com.hoi4utils.script.shared.AIWillDo
 import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import javafx.scene.image.Image
+import zio.{URIO, ZIO}
 
 import java.io.File
 import scala.annotation.tailrec
@@ -209,49 +209,32 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
   def setCost(cost: Number): Unit =
     this.cost @= cost.doubleValue()
 
-  def getDDSImage: Option[Image] = {
+  def getDDSImage: URIO[InterfaceService, Option[Image]] = {
     // bad code. it's fine for now.
     // Updated code, now its very bad code. its really not fine but its staying for now.
-    if icon.isDefined then
-      var img: Option[Image] = None
-      for i <- icon do i match
-        case simpleIcon: SimpleIcon => simpleIcon.value match
-          case Some(iconName) =>
-            Interface.getGFX(iconName) match
-              case Some(gfx) =>
-                _ddsImage match
-                  case Some(ddsImage) => img =
-                    if _ddsImageGFX == gfx then _ddsImage
-                    else
-                      _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-                      _ddsImageGFX = gfx
-                      _ddsImage
-                  case None => img =
-                    _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-                    _ddsImageGFX = gfx
-                    _ddsImage
-              case None => None
-          case None => None
-        case blockIcon: BlockIcon => blockIcon.iconName match
-          case Some(iconName) =>
-            Interface.getGFX(iconName) match
-              case Some(gfx) =>
-                _ddsImage match
-                  case Some(ddsImage) => img =
-                    if _ddsImageGFX == gfx then _ddsImage
-                    else
-                      _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-                      _ddsImageGFX = gfx
-                      _ddsImage
-                  case None => img =
-                    _ddsImage = Some(DDSReader.readDDSImage(gfx).get)
-                    _ddsImageGFX = gfx
-                    _ddsImage
-              case None => None
-          case None => None
-        case _ => None
-      img
-    else None
+    // Updated again, its still very bad but shorter so better?
+    for {
+      interfaceService <- ZIO.service[InterfaceService]
+      iconName: Option[String] = icon.headOption.map {
+        case SimpleIcon(name) => name
+        case BlockIcon(name) => name
+      }
+      gfxPath <- iconName match
+        case Some(name) => interfaceService.getGFX(name)
+        case None => ZIO.none
+
+      result = gfxPath.flatMap { gfx =>
+        if (_ddsImage.isDefined && _ddsImageGFX == gfx) {
+          _ddsImage
+        } else {
+          val newImage = Some(DDSReader.readDDSImage(gfx).get)
+          _ddsImage = newImage
+          _ddsImageGFX = gfx
+          newImage
+        }
+      }
+    } yield result
+
   }
 
   def hasPrerequisites: Boolean = prerequisites.nonEmpty
@@ -413,8 +396,11 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
 
   class SimpleIcon extends StringPDX("icon") with Icon
 
-  class BlockIcon extends StructuredPDX("icon") with Icon:
+  object SimpleIcon:
+    def unapply(icon: SimpleIcon): Option[String] =
+      icon.value
 
+  class BlockIcon extends StructuredPDX("icon") with Icon:
     final private val `value`: StringPDX = new StringPDX("value")
 
     override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(`value`)
@@ -424,6 +410,10 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
       case _ => false
 
     def iconName: Option[String] = `value`.value
+
+  object BlockIcon:
+    def unapply(icon: BlockIcon): Option[String] =
+      icon.iconName
 
   // This is breaking my brain because the loadpdx call here is the most confusing to keep track of with it being a: inner class + override + super. + child child child class
   // like wtf or how the fuck am I suppose to figure out and clean it up so I can log errors and metadata without breaking the whole program like before

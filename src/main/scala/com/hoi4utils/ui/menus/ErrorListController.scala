@@ -2,12 +2,12 @@ package com.hoi4utils.ui.menus
 
 import com.hoi4utils.databases.effect.EffectDatabase.effectErrors
 import com.hoi4utils.extensions.*
-import com.hoi4utils.hoi4.common.idea.IdeasManager.ideaFileErrors
-import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
-import com.hoi4utils.hoi4.gfx.Interface.interfaceErrors
-import com.hoi4utils.hoi4.history.countries.CountryFile.countryErrors
+import com.hoi4utils.hoi4.common.idea.IdeasManager
+import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager
+import com.hoi4utils.hoi4.gfx.InterfaceService
+import com.hoi4utils.hoi4.history.countries.service.CountryService
 import com.hoi4utils.hoi4.map.resource.Resource.resourceErrors
-import com.hoi4utils.hoi4.map.state.State.stateErrors
+import com.hoi4utils.hoi4.map.state.StateService
 import com.hoi4utils.main.{HOIIVUtils, HOIIVUtilsConfig}
 import com.hoi4utils.script.{FocusTreeErrorGroup, PDXFileError}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
@@ -15,6 +15,7 @@ import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.scene.control.{Button, TabPane}
 import javafx.scene.layout.BorderPane
+import zio.{URIO, ZIO}
 //import com.hoi4utils.StateFilesWatcher.statesThatChanged
 
 import com.typesafe.scalalogging.LazyLogging
@@ -56,24 +57,47 @@ class ErrorListController extends HOIIVUtilsAbstractController2 with LazyLogging
 
   override def preSetup(): Unit = setupWindowControls(contentContainer, errorListTabPane)
 
-  private def update(): Unit =
-    val treeViewsWithErrors = ListBuffer(
-      (effectsEL, effectErrors),
-//      (localizationEL, localizationErrors),
-      (interfaceEL, interfaceErrors),
-      (countryEL, countryErrors),
-      (ideaEL, ideaFileErrors),
-      (resourceEL, resourceErrors),
-      (stateEL, stateErrors)
-    )
-
-    // Set up each TreeView with grouped errors
-    treeViewsWithErrors.foreach((treeView, errors) => setTreeViewItems(treeView, errors))
-    treeViewsWithErrors.map(_._1).foreach(setupTreeViewCellFactory)
-
-    // Handle focusTreeEL separately due to hierarchical structure
-    setFocusTreeViewItems(focusTreeEL, focusTreeErrors)
-    setupTreeViewCellFactory(focusTreeEL)
+  private def update(): URIO[FocusTreeManager & InterfaceService & CountryService & IdeasManager & StateService, Unit] =
+    for {
+      focusTreeErrors <- ZIO.service[FocusTreeManager].map(_.focusTreeErrors)
+//      localizationErrors <- ZIO.service[LocalizationService].map(_.localizationErrors)
+      interfaceErrors <- ZIO.service[InterfaceService].map(_.interfaceErrors)
+      countryErrors <- ZIO.service[CountryService].map(_.countryErrors)
+      ideaFileErrors <- ZIO.service[IdeasManager].map(_.ideaFileErrors)
+      stateErrors <- ZIO.service[StateService].map(_.stateErrors)
+      treeViewsWithErrors = ListBuffer(
+        (effectsEL, effectErrors),
+//        (localizationEL, localizationErrors),
+        (interfaceEL, interfaceErrors),
+        (countryEL, countryErrors),
+        (ideaEL, ideaFileErrors),
+        (resourceEL, resourceErrors),
+        (stateEL, stateErrors)
+      )
+      // Set up each TreeView with grouped errors
+      _ <- ZIO.succeed(treeViewsWithErrors.foreach((treeView, errors) => setTreeViewItems(treeView, errors)))
+      _ <- ZIO.succeed(treeViewsWithErrors.map(_._1).foreach(setupTreeViewCellFactory))
+      // Handle focusTreeEL separately due to hierarchical structure
+      _ <- ZIO.succeed(setFocusTreeViewItems(focusTreeEL, focusTreeErrors))
+      _ <- ZIO.succeed(setupTreeViewCellFactory(focusTreeEL))
+    } yield ()
+//    val treeViewsWithErrors = ListBuffer(
+//      (effectsEL, effectErrors),
+////      (localizationEL, localizationErrors),
+//      (interfaceEL, interfaceErrors),
+//      (countryEL, countryErrors),
+//      (ideaEL, ideaFileErrors),
+//      (resourceEL, resourceErrors),
+//      (stateEL, stateErrors)
+//    )
+//
+//    // Set up each TreeView with grouped errors
+//    treeViewsWithErrors.foreach((treeView, errors) => setTreeViewItems(treeView, errors))
+//    treeViewsWithErrors.map(_._1).foreach(setupTreeViewCellFactory)
+//
+//    // Handle focusTreeEL separately due to hierarchical structure
+//    setFocusTreeViewItems(focusTreeEL, focusTreeErrors)
+//    setupTreeViewCellFactory(focusTreeEL)
 
   /**
    * Groups errors by file and creates a tree hierarchy

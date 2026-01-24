@@ -2,6 +2,8 @@ package com.hoi4utils.ui.focus
 
 import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree}
+import com.hoi4utils.hoi4.gfx.InterfaceService
+import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.ui.focus.FocusToggleButton.gfxFocusUnavailable
 import com.hoi4utils.ui.javafx.scene.layout.ErrorIconPane
 import com.typesafe.scalalogging.LazyLogging
@@ -9,10 +11,13 @@ import javafx.geometry.Pos
 import javafx.scene.control.*
 import javafx.scene.image.{Image, ImageView}
 import javafx.scene.layout.*
+import zio.{UIO, URIO}
 
 class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double) extends ToggleButton with LazyLogging:
-
-  private val focusIcon: Image = loadFocusIcon()
+  
+  private val focusIcon: Image = zio.Unsafe.unsafe { implicit unsafe =>
+    HOIIVUtils.getActiveRuntime.unsafe.run(loadFocusIcon()).getOrThrowFiberFailure()
+  }
   private val cleanName: Label = Label(_focus.locName.getOrElse(_focus.id.str))
 
   setPrefSize(prefW, prefH)
@@ -84,13 +89,16 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
 
   def setHelpTooltip(text: String): Unit = setTooltip(new Tooltip(text))
 
-  private def loadFocusIcon(): Image = {
-    _focus.getDDSImage match
-      case Some(ddsImage) =>
-        ddsImage
-      case None =>
-        logger.warn(s"No DDS image found for focus: ${_focus.id}")
-        null
+  private def loadFocusIcon(): URIO[InterfaceService, Image] = {
+    for {
+      ddsImage <- _focus.getDDSImage
+      image = ddsImage match
+        case Some(ddsImage) =>
+          ddsImage
+        case None =>
+          logger.warn(s"No DDS image found for focus: ${_focus.id}")
+          null
+    } yield image
   }
 
   def focus: Focus = _focus

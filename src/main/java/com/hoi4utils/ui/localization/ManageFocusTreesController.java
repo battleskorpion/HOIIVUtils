@@ -81,7 +81,7 @@ public class ManageFocusTreesController extends HOIIVUtilsAbstractController imp
 					boolean hasStatusNew = descStatus == Localization.Status.valueOf("NEW")
 							|| textStatus == Localization.Status.valueOf("NEW");
 					boolean isVanilla = textStatus == Localization.Status.valueOf("VANILLA");
-					
+
 					if (hasStatusUpdated || hasStatusNew) {
 						setTextFill(Color.BLACK); // Set text color to black
 						setStyle("-fx-font-weight: bold; -fx-background-color: #328fa8;"); // Apply bold text using CSS
@@ -102,14 +102,15 @@ public class ManageFocusTreesController extends HOIIVUtilsAbstractController imp
 	}
 
 	private void updateObservableFocusList() {
-		focusObservableList.clear();
-		Iterable<FocusTree> focuses = CollectionConverters.asJava(FocusTreeManager.focusTrees());
-		for (FocusTree focusTreeFile : focuses) {
-			if (focusTreeFile != null) {
-				focusObservableList.addAll(CollectionConverters.asJava(focusTreeFile.listFocuses()));
-			}
-		}
-		
+		// this section is because sory java todo todo :9
+//		focusObservableList.clear();
+//		Iterable<FocusTree> focuses = CollectionConverters.asJava(FocusTreeManager.focusTrees());
+//		for (FocusTree focusTreeFile : focuses) {
+//			if (focusTreeFile != null) {
+//				focusObservableList.addAll(CollectionConverters.asJava(focusTreeFile.listFocuses()));
+//			}
+//		}
+
 //		var list = FocusTree.listFocusTrees();
 //		if (!list.isEmpty()) {
 //			list.find(FocusTree::nonEmpty).getOrElse(null)
@@ -184,7 +185,7 @@ public class ManageFocusTreesController extends HOIIVUtilsAbstractController imp
 		// todo handle any exceptions?
 		if (onSaveActions.isEmpty()) return;
 		onSaveActions.forEach(Runnable::run);
-//		LocalizationService.get().saveLocalization();       // TODO TODO sorry 
+//		LocalizationService.get().saveLocalization();       // TODO TODO sorry
 		onSaveActions.clear();
 	}
 }

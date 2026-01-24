@@ -120,9 +120,13 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 						var firstChild = rootNode.toList().apply(0);
 						String pdxIdentifier = firstChild.name();
 
+						logger.error("sorry. must update this to Scala. may or may not work");
 						AbstractPDX<?> pdx = switch (pdxIdentifier) {
-							case "focus_tree"       -> new FocusTree(file);
-							case "state"            -> new State(false, file);
+							case "focus_tree"       ->
+								null; //new FocusTree(file);    // TODO
+							case "state"            ->
+								null;
+//								new State(file);        // TODO sorry
 							case "strategic_region" -> new StrategicRegion(file);
 
 							// ...
@@ -169,12 +173,15 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 
 						AbstractPDX<?> pdx = null;
 						if (pdxIdentifier.equals("focus_tree")) {
-							pdx = new FocusTree(selected);
+//							pdx = new FocusTree(selected);
+							logger.error("sorry, must update to scala!!!!!!");// TODO
 						} else if (pdxIdentifier.equals("state")) {
-							pdx = new State(false, selected);
+//							pdx = new State(selected);
+							logger.error("sorry, must update to scala!!!!!!"); // TODO
 						} else if (selected.getParent().endsWith("countries")
 								&& selected.getParentFile().getParent().endsWith("history")) {
-							pdx = new CountryFile(selected, CountryTag$.MODULE$.apply(selected.getName().substring(0, 3)));
+//							pdx = new CountryFile(selected, CountryTag$.MODULE$.apply(selected.getName().substring(0, 3)));
+							logger.error("sorry, must update to scala!!!!!!");
 						} else if (pdxIdentifier.equals("resources")) {
 							pdx = new ResourcesFile(selected);
 						} else if (pdxIdentifier.equals("strategic_region")) {

@@ -1,7 +1,9 @@
 package com.hoi4utils.ui.focus
 
-import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager.focusTreeErrors
-import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager, Point, Focus as gridX}
+import com.hoi4utils.hoi4.common.country_tags.CountryTagService
+import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager, Point, PseudoSharedFocusTree, Focus as gridX}
+import com.hoi4utils.hoi4.map.state.StateService
+import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.script.MultiPDX
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.control.ZoomableScrollPane
@@ -19,6 +21,7 @@ import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.*
 import scalafx.scene.input.ClipboardContent
+import zio.{UIO, URIO, ZIO}
 
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.compiletime.uninitialized
@@ -91,7 +94,10 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     welcome.setToggleGroup(toggleGroup)
     welcome.fire()
     focusTreeView.setGridLinesVisible(lines)
-    populateFocusTreeSelection()
+    zio.Unsafe.unsafe { implicit unsafe =>
+      System.err.print("Test 2")
+      HOIIVUtils.getActiveRuntime.unsafe.run(populateFocusTreeSelection()).getOrThrowFiberFailure()
+    }
     focusDetailsPaneController.onUpdate = Some(() =>
       this.currentFocusTree match
         case Some(focusTree) =>
@@ -135,65 +141,76 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     else
       logger.error("splitPane is null - check FXML fx:id")
 
-  private def populateFocusTreeSelection(): Unit =
-    focusTreeView.setGridLinesVisible(lines)
-    Some(FocusTreeManager.observeFocusTrees.sorted()).foreach(trees =>
-      trees.forEach(someFocusTree =>
-        val toggleButton = ToggleButton(someFocusTree.toString)
-        focusTreesToggleButtons += toggleButton
-        toggleButton.setToggleGroup(toggleGroup)
-        toggleButton.setOnAction(_ => {
-          if toggleButton.isSelected then
-            // Manually deselect all other buttons
-            focusTreesToggleButtons.foreach(btn =>
-              if btn != toggleButton then
-                btn.setSelected(false)
-                welcome.setSelected(false)
+  private def populateFocusTreeSelection(): URIO[FocusTreeManager & CountryTagService, Unit] =
+    System.err.print("Test 2.1")
+    ZIO.serviceWith[FocusTreeManager] { manager =>
+      focusTreeView.setGridLinesVisible(lines)
+      System.err.print("Test 3")
+      Some(manager.observeFocusTrees.sorted()).foreach(trees =>
+        System.err.print("Test 4: " + trees.size())
+        trees.forEach(someFocusTree =>
+          val toggleButton = ToggleButton(someFocusTree.toString)
+          focusTreesToggleButtons += toggleButton
+          toggleButton.setToggleGroup(toggleGroup)
+          toggleButton.setOnAction(_ => {
+            if toggleButton.isSelected then
+              // Manually deselect all other buttons
+              focusTreesToggleButtons.foreach(btn =>
+                if btn != toggleButton then
+                  btn.setSelected(false)
+                  welcome.setSelected(false)
+              )
+              welcome.setSelected(false)
+              loadFocusTreeView(someFocusTree)
+            else
+              toggleButton.setSelected(false)
+              toggleButton.setSelected(true)
+              loadFocusTreeView(someFocusTree)
+          })
+          toggleButton.setPadding(Insets(5, 10, 5, 10))
+
+          // Check if this focus tree has errors
+          val hasErrors = manager.focusTreeErrors.exists(_.focusTreeId == someFocusTree.id.str)
+
+          if hasErrors then
+            // Create HBox to hold toggle button and error icon
+            val hbox = new HBox(5)
+            hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT)
+            hbox.getChildren.add(toggleButton)
+
+            // Get the error count for this focus tree
+            val errorCount = manager.focusTreeErrors
+              .find(_.focusTreeId == someFocusTree.id.str)
+              .map(_.focusErrors.map(_.errors.size).sum)
+              .getOrElse(0)
+
+            // Create error icon pane
+            val errorIcon = new ErrorIconPane(
+              iconSize = 24,
+              errorNumberCount = errorCount,
+              onDoubleClick = Some(() => {
+                // TODO: Open error details dialog or navigate to error list
+                logger.info(s"Double-clicked error icon for ${someFocusTree.id.str}")
+              }),
+              tooltipText = Some(s"$errorCount error(s) in this focus tree")
             )
-            welcome.setSelected(false)
-            loadFocusTreeView(someFocusTree)
+            errorIcon.build()
+            hbox.getChildren.add(errorIcon)
+            vbox.getChildren.add(hbox)
           else
-            toggleButton.setSelected(false)
-            toggleButton.setSelected(true)
-            loadFocusTreeView(someFocusTree)
-        })
-        toggleButton.setPadding(Insets(5, 10, 5, 10))
-
-        // Check if this focus tree has errors
-        val hasErrors = focusTreeErrors.exists(_.focusTreeId == someFocusTree.id.str)
-
-        if hasErrors then
-          // Create HBox to hold toggle button and error icon
-          val hbox = new HBox(5)
-          hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT)
-          hbox.getChildren.add(toggleButton)
-
-          // Get the error count for this focus tree
-          val errorCount = focusTreeErrors
-            .find(_.focusTreeId == someFocusTree.id.str)
-            .map(_.focusErrors.map(_.errors.size).sum)
-            .getOrElse(0)
-
-          // Create error icon pane
-          val errorIcon = new ErrorIconPane(
-            iconSize = 24,
-            errorNumberCount = errorCount,
-            onDoubleClick = Some(() => {
-              // TODO: Open error details dialog or navigate to error list
-              logger.info(s"Double-clicked error icon for ${someFocusTree.id.str}")
-            }),
-            tooltipText = Some(s"$errorCount error(s) in this focus tree")
-          )
-          errorIcon.build()
-          hbox.getChildren.add(errorIcon)
-          vbox.getChildren.add(hbox)
-        else
-          vbox.getChildren.add(toggleButton)
+            vbox.getChildren.add(toggleButton)
+        )
+        focusTreesCount.setText(s"Focus Trees: ${trees.size()}")
       )
-      focusTreesCount.setText(s"Focus Trees: ${trees.size()}")
-    )
-    FocusTreeManager.sharedFocusFilesAsPseudoTrees.foreach(pseudoTree =>
-      val toggleButton = ToggleButton(pseudoTree.toString)
+      for {
+        pseudoTrees <- manager.sharedFocusFilesAsPseudoTrees
+        _ <- ZIO.foreachDiscard(pseudoTrees)(randomCode1)
+      } yield ()
+    }
+
+  private def randomCode1(tree: FocusTree): URIO[FocusTreeManager, Unit] = {
+    ZIO.serviceWith[FocusTreeManager] { manager =>
+      val toggleButton = ToggleButton(tree.toString)
       focusTreesToggleButtons += toggleButton
       toggleButton.setToggleGroup(toggleGroup)
       toggleButton.setOnAction(_ => {
@@ -205,16 +222,16 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
               welcome.setSelected(false)
           )
           welcome.setSelected(false)
-          loadFocusTreeView(pseudoTree)
+          loadFocusTreeView(tree)
         else
           toggleButton.setSelected(false)
           toggleButton.setSelected(true)
-          loadFocusTreeView(pseudoTree)
+          loadFocusTreeView(tree)
       })
       toggleButton.setPadding(Insets(5, 10, 5, 10))
 
       // Check if this shared focus tree has errors
-      val hasErrors = focusTreeErrors.exists(_.focusTreeId == s"[Shared Focuses] ${pseudoTree.id.str}")
+      val hasErrors = manager.focusTreeErrors.exists(_.focusTreeId == s"[Shared Focuses] ${tree.id.str}")
 
       if hasErrors then
         // Create HBox to hold toggle button and error icon
@@ -223,8 +240,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
         hbox.getChildren.add(toggleButton)
 
         // Get the error count for this shared focus tree
-        val errorCount = focusTreeErrors
-          .find(_.focusTreeId == s"[Shared Focuses] ${pseudoTree.id.str}")
+        val errorCount = manager.focusTreeErrors
+          .find(_.focusTreeId == s"[Shared Focuses] ${tree.id.str}")
           .map(_.focusErrors.map(_.errors.size).sum)
           .getOrElse(0)
 
@@ -234,16 +251,19 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
           errorNumberCount = errorCount,
           onDoubleClick = Some(() => {
             // TODO: Open error details dialog or navigate to error list
-            logger.info(s"Double-clicked error icon for shared focuses ${pseudoTree.id.str}")
+            logger.info(s"Double-clicked error icon for shared focuses ${tree.id.str}")
           }),
           tooltipText = Some(s"$errorCount error(s) in this shared focus file")
         )
         errorIcon.build()
         hbox.getChildren.add(errorIcon)
         vbox.getChildren.add(hbox)
+        ()
       else
         vbox.getChildren.add(toggleButton)
-    )
+        ()
+    }
+  }
 
   /** Loads the given FocusTreeFile into the focusTreeView GridPane by creating it in a separate thread */
   private def loadFocusTreeView(someFocusTree: FocusTree): Unit = {

@@ -6,6 +6,7 @@ import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.Node
 import com.hoi4utils.script.{CollectionPDX, PDXReadable, PDXSupplier}
 import com.typesafe.scalalogging.LazyLogging
+import zio.{Task, ZIO}
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
@@ -45,16 +46,22 @@ object ResourcesFile extends PDXReadable with LazyLogging {
   //  private var _resources: List[Resource] = List()
   private var _resourcesPDX: Option[ResourcesFile] = None
 
-  def read(): Boolean = primaryResourcesFile match
-    case Some(file) =>
-      _resourcesPDX = Some(new ResourcesFile(file))
-      true
-    case None =>
-      logger.error(s"In ${this.getClass.getSimpleName} - Resources file is not a directory, " +
-        s"or it does not exist (No resources file found).")
-      false
+  def read(): Task[Boolean] =
+    ZIO.succeed {
+      primaryResourcesFile match
+        case Some(file) =>
+          _resourcesPDX = Some(new ResourcesFile(file))
+          true
+        case None =>
+          logger.error(s"In ${this.getClass.getSimpleName} - Resources file is not a directory, " +
+            s"or it does not exist (No resources file found).")
+          false
+    }
 
-  override def clear(): Unit = _resourcesPDX = None
+  override def clear(): Task[Unit] =
+    ZIO.succeed {
+      _resourcesPDX = None
+    }
 
   def pdxSupplier(): PDXSupplier[ResourceDefinition] = {
     new PDXSupplier[ResourceDefinition] {
