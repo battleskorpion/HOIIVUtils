@@ -6,7 +6,7 @@ import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, Label, TreeCell, TreeItem, TreeView}
+import javafx.scene.control.{Button, Label, ToolBar, TreeCell, TreeItem, TreeView}
 import javafx.scene.image.ImageView
 import javafx.scene.layout.VBox
 
@@ -20,6 +20,7 @@ class ParserViewer2Controller extends HOIIVUtilsAbstractController2 with LazyLog
   setTitle("Parser Viewer 2")
 
   @FXML var root: VBox = uninitialized
+  @FXML var toolBar: ToolBar = uninitialized
   @FXML var fileTreeView: TreeView[File] = uninitialized
   @FXML var refreshTreeButton: Button = uninitialized
   @FXML var statusLabel: Label = uninitialized
