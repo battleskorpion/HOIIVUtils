@@ -45,7 +45,7 @@ class ParserViewer2Controller extends HOIIVUtilsAbstractController2 with LazyLog
     setupFileTree()
     setupButtons()
     loadModFolder()
-//    fileTreeView.getSelectionModel.selectedItemProperty.addListener((obs: ObservableValue[_ <: PDXScript[_]], oldVal: PDXScript[_], newVal: PDXScript[_]) => {
+//    fileTreeView.getSelectionModel.selectedItemProperty.addListener((obs, oldVal, newVal) => {
 //      if (newVal != null) {
 //        // Create a tree view for the newly selected script
 //        val pdxTreeView = PDXTreeViewFactory.createPDXTreeView(newVal)
