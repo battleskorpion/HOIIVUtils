@@ -35,7 +35,7 @@ class ParserViewer2Controller extends HOIIVUtilsAbstractController2 with LazyLog
     loadModFolder()
 
   override def preSetup(): Unit =
-    setupWindowControls(root)
+    setupWindowControls(root, toolBar)
 
   private def setupFileTree(): Unit =
     // Setup custom cell factory to display file names with icons
