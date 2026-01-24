@@ -193,42 +193,46 @@ class CountryFile(countryErrors: ListBuffer[PDXFileError], stateService: StateSe
 // todo localizable data?
 object CountryFile extends LazyLogging {
 
-  def getDataFunctions(resourcePercentages: Boolean): URIO[StateService, Iterable[CountryFile => ?]] = {
-    ZIO.succeed {
-      val dataFunctions = ListBuffer[CountryFile => ?]()
+  def getDataFunctions(resourcePercentages: Boolean): URIO[StateService, Iterable[CountryFile => Int | String | Double]] =
+    // Helper to run the effect using the local Runtime or Unsafe
+    def resolve[T](effect: ZIO[StateService, ?, T]): T =
+      zio.Unsafe.unsafe { implicit unsafe =>
+        // We use the existing active runtime to block and get the value
+        HOIIVUtils.getActiveRuntime.unsafe.run(effect).getOrThrowFiberFailure()
+      }
+
+    ZIO.serviceWith[StateService] { service =>
+      val dataFunctions = ListBuffer[CountryFile => Int | String | Double]()
 
       dataFunctions += (c => c.name)
-      dataFunctions += (c => c.infrastructure.map(_.population))
-      dataFunctions += (c => c.infrastructure.map(_.civilianFactories))
-      dataFunctions += (c => c.infrastructure.map(_.militaryFactories))
-      dataFunctions += (c => c.infrastructure.map(_.navalDockyards))
-      dataFunctions += (c => c.infrastructure.map(_.airfields))
-      dataFunctions += (c => c.infrastructure.map(_.civMilRatio))
-      dataFunctions += (c => c.infrastructure.map(_.popPerFactoryRatio))
-      dataFunctions += (c => c.infrastructure.map(_.popPerCivRatio))
-      dataFunctions += (c => c.infrastructure.map(_.popPerMilRatio))
-      dataFunctions += (c => c.infrastructure.map(_.popAirportCapacityRatio))
-      dataFunctions += (c => c.infrastructure.map(_.popPerStateRatio(c.numOwnedStates)))
+      dataFunctions += (c => resolve(c.infrastructure.map(_.population)))
+      dataFunctions += (c => resolve(c.infrastructure.map(_.civilianFactories)))
+      dataFunctions += (c => resolve(c.infrastructure.map(_.militaryFactories)))
+      dataFunctions += (c => resolve(c.infrastructure.map(_.navalDockyards)))
+      dataFunctions += (c => resolve(c.infrastructure.map(_.airfields)))
+      dataFunctions += (c => resolve(c.infrastructure.map(_.civMilRatio)))
+      dataFunctions += (c => resolve(c.infrastructure.map(_.popPerFactoryRatio)))
+      dataFunctions += (c => resolve(c.infrastructure.map(_.popPerCivRatio)))
+      dataFunctions += (c => resolve(c.infrastructure.map(_.popPerMilRatio)))
+      dataFunctions += (c => resolve(c.infrastructure.map(_.popAirportCapacityRatio)))
+      dataFunctions += (c => resolve(c.infrastructure.map(_.popPerStateRatio(c.numOwnedStates))))
       // again, this resource code is not expandable. fix sometime :(
-      if (resourcePercentages) {
-        dataFunctions += (c => c.aluminumPercentOfGlobal)
-        dataFunctions += (c => c.chromiumPercentOfGlobal)
-        dataFunctions += (c => c.oilPercentOfGlobal)
-        dataFunctions += (c => c.rubberPercentOfGlobal)
-        dataFunctions += (c => c.steelPercentOfGlobal)
-        dataFunctions += (c => c.tungstenPercentOfGlobal)
-      }
-      else {
-        dataFunctions += (c => c.aluminum)
-        dataFunctions += (c => c.chromium)
-        dataFunctions += (c => c.oil)
-        dataFunctions += (c => c.rubber)
-        dataFunctions += (c => c.steel)
-        dataFunctions += (c => c.tungsten)
-      }
+      if (resourcePercentages)
+        dataFunctions += (c => resolve(c.aluminumPercentOfGlobal))
+        dataFunctions += (c => resolve(c.chromiumPercentOfGlobal))
+        dataFunctions += (c => resolve(c.oilPercentOfGlobal))
+        dataFunctions += (c => resolve(c.rubberPercentOfGlobal))
+        dataFunctions += (c => resolve(c.steelPercentOfGlobal))
+        dataFunctions += (c => resolve(c.tungstenPercentOfGlobal))
+      else
+        dataFunctions += (c => resolve(c.aluminum))
+        dataFunctions += (c => resolve(c.chromium))
+        dataFunctions += (c => resolve(c.oil))
+        dataFunctions += (c => resolve(c.rubber))
+        dataFunctions += (c => resolve(c.steel))
+        dataFunctions += (c => resolve(c.tungsten))
       dataFunctions
     }
-  }
 
   //  def loadCountries[T](list: List[T]): List[Country] = {
   //    countryList.clear()
