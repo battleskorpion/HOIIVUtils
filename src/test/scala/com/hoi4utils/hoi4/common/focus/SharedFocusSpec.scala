@@ -14,7 +14,7 @@ import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
 // i had junit extended first followed by scalamock but it was not working anyways and causing issues not letting me even run this properly
-object SharedFocusTest extends ScalamockZIOSpec {
+object SharedFocusSpec extends ScalamockZIOSpec {
 
   private val testPath = "src/test/resources/pdx/"
   private val sharedFocusFilesToTest = List(

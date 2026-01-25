@@ -13,7 +13,7 @@ import zio.test.{Spec, TestEnvironment, TestResult, assertCompletes, assertTrue}
 
 import java.io.File
 
-object PDXScriptTests extends ScalamockZIOSpec {
+object PDXScriptSpec extends ScalamockZIOSpec {
 
   private val testPath = "src/test/resources/pdx/"
   private val validFocusTreeTestFiles = List(
