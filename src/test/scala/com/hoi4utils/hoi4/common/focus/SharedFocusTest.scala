@@ -4,17 +4,17 @@ import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 import com.hoi4utils.hoi4.common.national_focus.{FocusTree, FocusTreeManager, PseudoSharedFocusTree, SharedFocusFile}
 import com.hoi4utils.parser.ZIOParser
 import com.hoi4utils.script.PDXScriptTests.validFocusTreeTestFiles
-import com.hoi4utils.shared.TestBase
 import org.scalamock.ziotest.ScalamockZIOSpec
 import org.scalatest.funsuite.AnyFunSuiteLike
 import zio.{Scope, ZIO}
 import zio.test.{Spec, TestEnvironment, TestResult, assertTrue}
+import zio.test.junit.JUnitRunnableSpec
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
-object SharedFocusTest extends ScalamockZIOSpec {
+object SharedFocusTest extends JUnitRunnableSpec with ScalamockZIOSpec {
 
   private val testPath = "src/test/resources/pdx/"
   private val sharedFocusFilesToTest = List(
@@ -101,10 +101,10 @@ object SharedFocusTest extends ScalamockZIOSpec {
                 s"Not all shared focuses of SharedFocusFile file ${sharedFocusFile.fileNameOrElse("[unknown]")} are present in PseudoSharedFocusTree")
           }
         } yield result
-      } 
+      }
     ).provide(
       FocusTreeManager.live,
-      CountryTagService.live 
+      CountryTagService.live
     )
 }
 

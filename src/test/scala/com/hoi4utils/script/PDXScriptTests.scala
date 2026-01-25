@@ -7,12 +7,13 @@ import com.hoi4utils.parser.{Node, Parser, Tokenizer, ZIOParser}
 import com.hoi4utils.script.datatype.StringPDX
 import org.scalamock.ziotest.ScalamockZIOSpec
 import org.scalatest.funsuite.AnyFunSuiteLike
+import zio.test.junit.JUnitRunnableSpec
 import zio.{Scope, ZIO}
 import zio.test.{Spec, TestEnvironment, TestResult, assertTrue}
 
 import java.io.File
 
-object PDXScriptTests extends ScalamockZIOSpec {
+object PDXScriptTests extends JUnitRunnableSpec with ScalamockZIOSpec {
 
   private val testPath = "src/test/resources/pdx/"
   private val validFocusTreeTestFiles = List(
@@ -119,19 +120,27 @@ object PDXScriptTests extends ScalamockZIOSpec {
       },
       test("Strategic region has findable between") {
         foreachStratRegion() { stratRegion =>
+          val periods = stratRegion.weather.period
+
+          val hasProps = stratRegion.pdxProperties.nonEmpty
+          val hasPeriod = periods.nonEmpty
+          val checkBetween = periods.exists(_.between.exists(_ @== 4.11))
+          val correctSize = periods.size == 13
           assertTrue(
-            stratRegion.pdxProperties.nonEmpty,
-            stratRegion.weather.period.nonEmpty,
-            stratRegion.weather.period.exists(_.between.exists(_ @== 4.11)),
-            stratRegion.weather.period.size == 13
+            hasProps,
+            hasPeriod,
+            checkBetween,
+            correctSize
           )
         }
       },
       test("remove region") {
         foreachStratRegion() { stratRegion =>
+          val hasProps = stratRegion.pdxProperties.nonEmpty
+          val filteredSize = stratRegion.weather.period.filterNot(_.between.exists(_ @== 4.11)).size
           assertTrue(
-            stratRegion.pdxProperties.nonEmpty,
-            stratRegion.weather.period.filterNot(_.between.exists(_ @== 4.11)).size == 12
+            hasProps,
+            filteredSize == 12
           )
         }
       },
@@ -240,7 +249,7 @@ object PDXScriptTests extends ScalamockZIOSpec {
 
         TestResult.allSuccesses(parseCheck :: nonEmptyCheck :: spriteResults.toList)
       }
-      // TODO? 
+      // TODO?
 //      test("SMA Simple") {
 //        val file = new File(testPath + "Massachusetts_focus_simple.txt")
 //        val treeSMA = new FocusTree(file)
