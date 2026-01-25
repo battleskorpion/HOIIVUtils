@@ -28,9 +28,12 @@ class ZIOParser(pdx: String | File = null) {
 
   def parse: ZIO[Any, ParserException, Node] =
     for {
+      _ <- ZIO.succeed(System.err.println(s"[DEBUG] ZIOParser.parse starting for $pdx"))
       // Capture any leading trivia for the whole file.
       leading <- consumeTrivia()
+      _ <- ZIO.succeed(System.err.println(s"[DEBUG] ZIOParser.parse consumed leading trivia for $pdx"))
       blockContent <- parseBlockContent()
+      _ <- ZIO.succeed(System.err.println(s"[DEBUG] ZIOParser.parse parsed block content for $pdx, nodes: ${blockContent.size}"))
       _ <- ZIO.cond(blockContent.nonEmpty, (), ParserException("Parsed block content was empty"))
       trailing <- consumeTrivia()
       _ <- tokens.peek match
@@ -161,7 +164,6 @@ class ZIOParser(pdx: String | File = null) {
    * Consumes and returns any tokens that are “trivia” (e.g., whitespace, comments).
    */
   private def consumeTrivia(): UIO[Seq[Token]] = ZIO.suspendSucceed {
-    System.err.println(s"test $pdx")
     tokens.peek match
       case Some(t) if isTrivia(t) =>
         ZIO.succeed(tokens.next) *> consumeTrivia().map(t +: _)
