@@ -102,6 +102,9 @@ object SharedFocusTest extends ScalamockZIOSpec {
           }
         } yield result
       } 
+    ).provide(
+      FocusTreeManager.live,
+      CountryTagService.live 
     )
 }
 

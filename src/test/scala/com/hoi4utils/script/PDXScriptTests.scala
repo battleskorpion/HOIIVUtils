@@ -251,6 +251,9 @@ object PDXScriptTests extends ScalamockZIOSpec {
 //        val treeSMA = new FocusTree(file)
 //        assertTrue(treeSMA.pdxProperties.nonEmpty)
 //      }
+    ).provide(
+      FocusTreeManager.live,
+      CountryTagService.live
     )
 
 //  test("MultiPDX should be defined when there is some PDXScript it can load") {
