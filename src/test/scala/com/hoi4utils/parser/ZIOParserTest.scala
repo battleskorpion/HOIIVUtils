@@ -10,7 +10,8 @@ import java.io.File
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
-object ZIOParserTest extends JUnitRunnableSpec with ScalamockZIOSpec {
+// again i had JunitRunnableSpec extended then with scalamock but issues and didnt work anyways
+object ZIOParserTest extends ScalamockZIOSpec {
 
   private val testPath = "src/test/resources/pdx/"
   private val multiPDXFilesToTest = List(
