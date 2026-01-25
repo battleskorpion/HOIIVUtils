@@ -3,7 +3,6 @@ package com.hoi4utils.hoi4.common.focus
 import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 import com.hoi4utils.hoi4.common.national_focus.{FocusTree, FocusTreeManager, PseudoSharedFocusTree, SharedFocusFile}
 import com.hoi4utils.parser.ZIOParser
-import com.hoi4utils.script.PDXScriptTests.validFocusTreeTestFiles
 import org.scalamock.ziotest.ScalamockZIOSpec
 import org.scalatest.funsuite.AnyFunSuiteLike
 import zio.{Scope, ZIO}
@@ -14,7 +13,8 @@ import java.io.File
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
-object SharedFocusTest extends JUnitRunnableSpec with ScalamockZIOSpec {
+// i had junit extended first followed by scalamock but it was not working anyways and causing issues not letting me even run this properly
+object SharedFocusTest extends ScalamockZIOSpec {
 
   private val testPath = "src/test/resources/pdx/"
   private val sharedFocusFilesToTest = List(
