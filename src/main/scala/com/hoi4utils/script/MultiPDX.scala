@@ -104,9 +104,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     this -= pdxScript
 
   def clear(): Unit =
-    node.foreach { n =>
-      n.clearIfBlock()
-    }
+    node.foreach { _.clearIfBlock() }
     pdxSeq = Seq.empty 
 
   override def isEmpty: Boolean = value.isEmpty

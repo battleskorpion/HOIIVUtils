@@ -9,7 +9,7 @@ import org.scalamock.ziotest.ScalamockZIOSpec
 import org.scalatest.funsuite.AnyFunSuiteLike
 import zio.test.junit.JUnitRunnableSpec
 import zio.{Scope, ZIO}
-import zio.test.{Spec, TestEnvironment, TestResult, assertTrue}
+import zio.test.{Spec, TestEnvironment, TestResult, assertCompletes, assertTrue}
 
 import java.io.File
 
@@ -97,6 +97,20 @@ object PDXScriptTests extends JUnitRunnableSpec with ScalamockZIOSpec {
           assertTrue(focusTree.id.value.nonEmpty)
         }
       },
+      test("DoublePDX should @== itself") {
+        foreachFocusTree() { focusTree =>
+          val focuses = focusTree.listFocuses
+
+          val assertions = focuses.flatMap { focus =>
+            focus.cost.value.map { c =>
+              assertTrue(focus.cost @== c) ?? s"DoublePDX comparison error for focus: ${focus.id.getOrElse("unknown")}"
+            }
+          }
+
+          if (assertions.isEmpty) assertCompletes
+          else TestResult.allSuccesses(assertions)
+        }
+      },
       test("StringPDX test") {
         foreachFocusTree() { focusTree =>
           assertTrue(
@@ -136,12 +150,15 @@ object PDXScriptTests extends JUnitRunnableSpec with ScalamockZIOSpec {
       },
       test("remove region") {
         foreachStratRegion() { stratRegion =>
-          val hasProps = stratRegion.pdxProperties.nonEmpty
-          val filteredSize = stratRegion.weather.period.filterNot(_.between.exists(_ @== 4.11)).size
+          val weatherPeriod = stratRegion.weather.period
+          val target = 4.11
+          val filteredWeatherPeriod = weatherPeriod.filterNot(_.between.exists(_ @== target))
           assertTrue(
-            hasProps,
-            filteredSize == 12
-          )
+            stratRegion.pdxProperties.nonEmpty,
+            weatherPeriod.exists(_.between.exists(_ @== target)),
+            filteredWeatherPeriod.size == weatherPeriod.size - 1,
+            filteredWeatherPeriod.forall(!_.between.exists(_ @== target))
+          ) ?? s"Strat Region: ${stratRegion.name}, File: ${stratRegion.getFile}"
         }
       },
       test("peek does not advance the tokenizer") {

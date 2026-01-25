@@ -27,10 +27,16 @@ trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScrip
    */
   @throws[UnexpectedIdentifierException]
   protected def usingIdentifier(expr: Node): Unit =
-    val index = pdxIdentifiers.indexWhere(expr.nameEquals)
-    if index == -1 then throw new UnexpectedIdentifierException(expr)
+    if (pdxIdentifiers.nonEmpty)
+      val index = pdxIdentifiers.indexWhere(expr.nameEquals)
+      if index == -1 then throw new UnexpectedIdentifierException(expr)
 
-    activeIdentifier = index
+      activeIdentifier = index
+    else
+      // identifiers empty: assume to be purposeful and to mean *no* identifier by default
+      expr.identifier match
+        case Some(_) => throw new UnexpectedIdentifierException(expr, "Expected no identifier")
+        case None => ()
 
   /**
    * @inheritdoc
@@ -94,7 +100,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScrip
   def loadPDX(expressions: Seq[Node]): Seq[Node] = expressions match
     case null => Seq.empty
     case _ =>
-      val remaining = ListBuffer.from(expressions)  // TODO fp 
+      val remaining = ListBuffer.from(expressions)  // TODO fp
       expressions filter isValidIdentifier foreach { expression =>
         loadPDX(expression, None)
         remaining -= expression
@@ -208,7 +214,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScrip
     if node.isEmpty || node.get.isEmpty then
       if value.isEmpty then super.toString
       else value.get.toString
-    else node.toString
+    else node.get.toString
 
   override def isUndefined: Boolean = node.isEmpty || node.get.valueIsNull
 

@@ -60,7 +60,7 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
   @throws[NodeValueTypeException]
   override protected def addToCollection(expression: Node, file: Option[File]): Unit = {
     expression.$ match {
-      case l: ListBuffer[Node] =>
+      case l: Seq[Node] =>
         for (childExpr <- l) {
           val childScript = useSupplierFunction(childExpr)
           childScript.loadPDX(childExpr, file)
@@ -93,12 +93,8 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
     simpleSupplier()
 
   def clear(): Unit =
+    node.foreach { _.clearIfBlock() }
     pdxList.clear()
-    node.foreach { n =>
-      n.$ match
-        case l: ListBuffer[?] => l.clear()
-        case _ => // do nothing
-    }
 
   override def isEmpty: Boolean = pdxList.isEmpty
 
@@ -149,4 +145,9 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
    */
   override def updateNodeTree(): Unit = updateCollectionNodeTree(pdxList)
 
+  override def toString: String =
+    if node.isEmpty || node.get.isEmpty then
+      if value.isEmpty then super.toString
+      else value.get.toString
+    else node.get.toString
 }

@@ -118,7 +118,7 @@ class Node (
     
   def clearIfBlock(): Unit =
     rawValue match
-      case s: NodeSeq => rawValue = Some(Seq.empty) 
+      case Some(s: NodeSeq) => rawValue = Some(Seq.empty) 
       case _ => // do nothing
 
   def valueIsInstanceOf(clazz: Class[?]): Boolean = rawValue.exists(clazz.isInstance)
