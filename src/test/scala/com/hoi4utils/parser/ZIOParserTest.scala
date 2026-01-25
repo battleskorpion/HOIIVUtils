@@ -2,6 +2,7 @@ package com.hoi4utils.parser
 
 import org.scalamock.ziotest.ScalamockZIOSpec
 import zio.test.Result.fail
+import zio.test.junit.JUnitRunnableSpec
 import zio.{Scope, Task, ZIO}
 import zio.test.{Spec, TestEnvironment, TestFailure, TestResult, assertTrue}
 
@@ -9,7 +10,7 @@ import java.io.File
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
-object ZIOParserTest extends ScalamockZIOSpec {
+object ZIOParserTest extends JUnitRunnableSpec with ScalamockZIOSpec {
 
   private val testPath = "src/test/resources/pdx/"
   private val multiPDXFilesToTest = List(
@@ -110,7 +111,7 @@ object ZIOParserTest extends ScalamockZIOSpec {
                 noOfFrames.contains("1") &&
                 effectFile.contains("gfx/FX/buttonstate.lua")
             }
-          }) 
+          })
         }
       },
       test("focus id line is parsed correctly") {
@@ -123,7 +124,7 @@ object ZIOParserTest extends ScalamockZIOSpec {
 
         val parser = new ZIOParser(input)
         for {
-          rootNode <- parser.parse 
+          rootNode <- parser.parse
           focusNode = rootNode.find("focus")
           idNode = focusNode.flatMap(_.find("id"))
         } yield {
@@ -131,10 +132,10 @@ object ZIOParserTest extends ScalamockZIOSpec {
             rootNode.nonEmpty,
             rootNode.contains("focus"),
             focusNode.exists(_.identifier.isDefined),
-            idNode.exists(_.valueAsString == "SMA_Maryland"), 
-            idNode.exists(_.identifier.isDefined), 
-            idNode.exists(_.valueAsString == "SMA_Maryland"), 
-            idNode.exists(_.identifier.isDefined), 
+            idNode.exists(_.valueAsString == "SMA_Maryland"),
+            idNode.exists(_.identifier.isDefined),
+            idNode.exists(_.valueAsString == "SMA_Maryland"),
+            idNode.exists(_.identifier.isDefined),
             idNode.exists(_.identifier.get == "id")
           )
         }
