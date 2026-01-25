@@ -15,7 +15,7 @@ import scala.util.boundary
  * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
  * <p>
  */
-trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScript[T]:
+trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScript[T]:
   private[script] var activeIdentifier = 0
   protected[script] var node: Option[Node] = None
 
@@ -39,9 +39,9 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
     value match
       case value if node.isEmpty => ()
       case null => setNull()
-      case s: (String | Int | Double | Boolean) => node.get.setValue(s)
-      case l: ListBuffer[_] => try node.get.setValue(l.asInstanceOf[ListBuffer[Node]])
-        catch case _: ClassCastException => throw new RuntimeException(s"Expected ListBuffer[Node], got ListBuffer with different element type")
+      case v: (String | Int | Double | Boolean) => node.get.setValue(v)
+      case s: Seq[_] => try node.get.setValue(s.asInstanceOf[Seq[Node]])
+        catch case _: ClassCastException => throw new RuntimeException(s"Expected Seq[Node], got Seq with different element type")
       case _ => throw new RuntimeException(s"Unsupported type: ${value.getClass}")
 
   /**
@@ -91,15 +91,15 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    * @param expressions pdx node that is iterable
    * @return remaining unloaded expressions
    */
-  def loadPDX(expressions: Iterable[Node]): Iterable[Node] = expressions match
-    case null => ListBuffer.empty
+  def loadPDX(expressions: Seq[Node]): Seq[Node] = expressions match
+    case null => Seq.empty
     case _ =>
-      val remaining = ListBuffer.from(expressions)
+      val remaining = ListBuffer.from(expressions)  // TODO fp 
       expressions filter isValidIdentifier foreach { expression =>
         loadPDX(expression, None)
         remaining -= expression
       }
-      remaining
+      remaining.toSeq
 
   protected def loadPDX(file: File): Unit =
     require(file.exists && file.isFile, s"File $file does not exist or is not a file.")
@@ -145,7 +145,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: List[String]) extends PDXScri
    */
   protected def updateCollectionNodeTree[U <: PDXScript[?]](items: Iterable[U], identifier: String = pdxIdentifier): Unit =
     items.foreach(_.updateNodeTree())
-    val childNodes: ListBuffer[Node] = items.flatMap(_.getNode).to(ListBuffer)
+    val childNodes: Seq[Node] = items.flatMap(_.getNode).to(Seq)
     node match
       case Some(n) => n.setValue(childNodes)
       case None =>

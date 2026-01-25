@@ -69,14 +69,14 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
    * Override loadPDX for an iterable collection.
    * For each node, process structured properties and treat unknown nodes as effects.
    */
-  override def loadPDX(expressions: Iterable[Node]): Iterable[Node] = {
-    if (expressions == null) return ListBuffer.empty
+  override def loadPDX(expressions: Seq[Node]): Seq[Node] = {
+    if (expressions == null) return Seq.empty
     super.loadPDX(expressions.filter(this.isValidIdentifier))
 
     // Collect effect nodes
     effectNodes ++= expressions.filterNot(this.isValidIdentifier)
 
-    ListBuffer.from(expressions).filterNot(this.isValidIdentifier)
+    expressions.filterNot(this.isValidIdentifier)
   }
 
   /**
@@ -95,11 +95,11 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
             lb ++= effectNodes
           case _ =>
             // If the current value is not a ListBuffer, set it to the effect nodes.
-            n.setValue(effectNodes)
+            n.setValue(effectNodes.toSeq)
         }
       case None =>
         // If there is no node yet, create one using the pdxIdentifier and effect nodes.
-        node = Some(new Node(pdxIdentifier, "=", effectNodes))
+        node = Some(new Node(pdxIdentifier, "=", effectNodes.toSeq))
     }
   }
 

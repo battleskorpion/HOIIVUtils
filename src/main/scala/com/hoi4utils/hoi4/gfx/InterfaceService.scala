@@ -82,7 +82,7 @@ case class InterfaceServiceImpl() extends InterfaceService {
       ZIO.foreachPar(gfxFiles) { f =>
         for {
           interface <- ZIO.succeed(new Interface(f))
-          itemsToAdd <- interface.readGFXFile(interfaceErrors)
+          InterfaceParseResult(errors, itemsToAdd) <- interface.readGFXFile()
           _ <- ZIO.foreachDiscard(itemsToAdd) { case (name, gfx) =>
             addSpriteType(name, gfx)
           }
@@ -110,7 +110,7 @@ case class InterfaceServiceImpl() extends InterfaceService {
       ZIO.foreachPar(gfxFiles) { f =>
         for {
           interface <- ZIO.succeed(new Interface(f))
-          itemsToAdd <- interface.readGFXFile(interfaceErrors)
+          InterfaceParseResult(errors, itemsToAdd) <- interface.readGFXFile()
           _ <- ZIO.foreachDiscard(itemsToAdd) { case (name, gfx) =>
             addSpriteType(name, gfx)
           }

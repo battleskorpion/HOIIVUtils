@@ -42,14 +42,14 @@ class Parser(pdx: String | File = null) {
       case None => throw ParserException("Input not completely parsed - no tokens remaining")
     // Create the root node using the parsed children (a ListBuffer[Node]) as its raw value.
     _rootNode = new Node(
-      leadingTrivia = leading,
-      rawValue = Some(blockContent),
-      trailingTrivia = trailing
+      leadingTrivia = leading.toSeq,
+      rawValue = Some(blockContent.toSeq),
+      trailingTrivia = trailing.toSeq
     )
     _rootNode
 
   @throws[ParserException]
-  def parseBlockContent(): ListBuffer[Node] =
+  def parseBlockContent(): Seq[Node] =
     val nodes = ListBuffer[Node]()
     var cont = true
     while (cont)
@@ -61,7 +61,7 @@ class Parser(pdx: String | File = null) {
         case _ =>
           val node = parseNode()
           nodes += node
-    nodes
+    nodes.toSeq
 
   @throws[ParserException]
   def parseNode(): Node =
@@ -74,10 +74,10 @@ class Parser(pdx: String | File = null) {
 
     // If the token is a comment, create a node that holds it.
     if tokenIdentifier.`type` == TokenType.comment then return new Node(
-      leadingTrivia = leading,
+      leadingTrivia = leading.toSeq,
       identifierToken = Some(tokenIdentifier),
       rawValue = Some(new Comment(tokenIdentifier.value)),
-      trailingTrivia = consumeTrivia()
+      trailingTrivia = consumeTrivia().toSeq
     )
 
     // Ensure the token is a valid identifier.
@@ -106,9 +106,9 @@ class Parser(pdx: String | File = null) {
       // No proper operator: treat this node as a value-only node.
       raw = Some(parseThisTokenValue(tokenIdentifier))
       return new Node(
-        leadingTrivia = leading,
+        leadingTrivia = leading.toSeq,
         rawValue = raw,
-        trailingTrivia = consumeTrivia()
+        trailingTrivia = consumeTrivia().toSeq
       )
     } else {
       // Consume the operator token.
@@ -122,11 +122,11 @@ class Parser(pdx: String | File = null) {
     val trailing = consumeTrivia()
     // Create and return the new node with all CST information attached.
     new Node(
-      leadingTrivia = leading,
+      leadingTrivia = leading.toSeq,
       identifierToken = Some(tokenIdentifier),
       operatorToken = operatorOpt,
       rawValue = raw,
-      trailingTrivia = trailing
+      trailingTrivia = trailing.toSeq
     )
 
   @throws[ParserException]

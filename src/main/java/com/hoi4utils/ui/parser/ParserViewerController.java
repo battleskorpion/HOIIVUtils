@@ -1,14 +1,9 @@
 package com.hoi4utils.ui.parser;
 
 
-import com.hoi4utils.hoi4.common.country_tags.CountryTag$;
-import com.hoi4utils.hoi4.common.national_focus.FocusTree;
-import com.hoi4utils.hoi4.history.countries.CountryFile;
 import com.hoi4utils.hoi4.map.resource.ResourcesFile;
-import com.hoi4utils.hoi4.map.state.State;
 import com.hoi4utils.hoi4.map.strategicregions.StrategicRegion;
 import com.hoi4utils.main.HOIIVFiles;
-import com.hoi4utils.main.HOIIVUtils;
 import com.hoi4utils.main.HOIIVUtilsConfig;
 import com.hoi4utils.parser.Node;
 import com.hoi4utils.parser.Parser;
@@ -160,9 +155,9 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 					}
 
 					// Get the child list from the root node’s raw value.
-					scala.Option<scala.collection.mutable.ListBuffer<Node>> maybeList = rootNode.$list();
+					scala.Option<scala.collection.immutable.Seq<Node>> maybeList = rootNode.$seq();
 					if (maybeList.isDefined()) {
-						scala.collection.mutable.ListBuffer<Node> childList = maybeList.get();
+						scala.collection.immutable.Seq<Node> childList = maybeList.get();
 						Node childPDXNode = childList.apply(0); // Scala's apply(0) returns the first element.
 						String pdxIdentifier = childPDXNode.name();
 						if (childList.length() == 1) {

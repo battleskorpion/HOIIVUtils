@@ -2,13 +2,16 @@ package com.hoi4utils.script
 
 import com.hoi4utils.hoi4.common.national_focus.FocusTree
 import com.hoi4utils.hoi4.map.strategicregions.StrategicRegion
-import com.hoi4utils.parser.{Node, Parser, Tokenizer}
+import com.hoi4utils.parser.{Node, Parser, Tokenizer, ZIOParser}
 import com.hoi4utils.script.datatype.StringPDX
+import org.scalamock.ziotest.ScalamockZIOSpec
 import org.scalatest.funsuite.AnyFunSuiteLike
+import zio.{Scope, ZIO}
+import zio.test.{Spec, TestEnvironment, TestResult, assertTrue}
 
 import java.io.File
 
-class PDXScriptTests extends AnyFunSuiteLike {
+object PDXScriptTests extends ScalamockZIOSpec {
 
   private val testPath = "src/test/resources/pdx/"
   private val validFocusTreeTestFiles = List(
@@ -32,274 +35,263 @@ class PDXScriptTests extends AnyFunSuiteLike {
     .appendedAll(validFocusTestFiles)
     .appendedAll(validStratRegionTestFiles)
 
-  def withParsedFiles(testFunction: Node => Unit): Unit = {
-    filesToTest.foreach { file =>
-      val parser = new Parser(file)
-      val node = parser.parse
-      assert(node != null, s"Failed to parse $file")
-      testFunction(node)
+  def foreachParsed(files: List[File] = filesToTest)(f: Node => TestResult): ZIO[Any, Throwable, TestResult] =
+    ZIO.foreach(files)(new ZIOParser(_).parse).map { nodes =>
+      TestResult.allSuccesses(nodes.map(f))
     }
-  }
 
-  def withParsedFile(testFunction: Node => Unit, file: File): Unit = {
-    val parser = new Parser(file)
-    val node = parser.parse
-    assert(node != null, s"Failed to parse $file")
-    testFunction(node)
-  }
+  def withParsedFile(file: File)(testFunction: Node => TestResult): ZIO[Any, Throwable, TestResult] =
+    val parser = new ZIOParser(file)
+    parser.parse.map(testFunction)
 
-  def withValidFocusTrees(testFunction: FocusTree => Unit): Unit = {
-    validFocusTreeTestFiles.foreach(file => {
-      val parser = new Parser(file)
-      val node = parser.parse
-      assert(node != null, s"Failed to parse $file")
-      val focusTree = new FocusTree()
-      focusTree.loadPDX(node, Some(file))
-      testFunction(focusTree)
-    })
-  }
-
-
-  def withValidStratRegions(testFunction: StrategicRegion => Unit): Unit = {
-    validStratRegionTestFiles.foreach(file => {
-      val parser = new Parser(file)
-      val node = parser.parse
-      assert(node != null, s"Failed to parse $file")
-      val stratRegion = new StrategicRegion()
-      stratRegion.loadPDX(node, Some(file))
-      testFunction(stratRegion)
-    })
-  }
-
-
-  test("Some PDXScript objects should be loaded through loadPDX() when present") {
-    withValidFocusTrees { focusTree =>
-      assert(focusTree.pdxProperties.nonEmpty)
+  def foreachFocusTree(files: List[File] = validFocusTreeTestFiles)(f: FocusTree => TestResult): ZIO[Any, Throwable, TestResult] =
+    ZIO.foreach(files) { file =>
+      new ZIOParser(file).parse.flatMap { node =>
+        ZIO.attempt {
+          val focusTree = new FocusTree()
+          focusTree.loadPDX(node, Some(file))
+          focusTree
+        }
+      }
+    }.map { pdxs =>
+      TestResult.allSuccesses(pdxs.map(f))
     }
-  }
 
-  test("MultiPDX should load PDXScript objects") {
-    withValidFocusTrees { focusTree =>
-      assert(focusTree.focuses.nonEmpty)
+  def foreachStratRegion(files: List[File] = validStratRegionTestFiles)(f: StrategicRegion => TestResult): ZIO[Any, Throwable, TestResult] =
+    ZIO.foreach(files) { file =>
+      new ZIOParser(file).parse.flatMap { node =>
+        ZIO.attempt {
+          val stratRegion = new StrategicRegion()
+          stratRegion.loadPDX(node, Some(file))
+          stratRegion
+        }
+      }
+    }.map { pdxs =>
+      TestResult.allSuccesses(pdxs.map(f))
     }
-  }
+
+  override def spec: Spec[TestEnvironment & Scope, Any] =
+    suite("PDXScript")(
+      test("Some PDXScript objects should be loaded through loadPDX() when present") {
+        foreachFocusTree() { focusTree =>
+          assertTrue(focusTree.pdxProperties.nonEmpty)
+        }
+      },
+      test("MultiPDX should load PDXScript objects") {
+        foreachFocusTree() { focusTree =>
+          assertTrue(focusTree.focuses.nonEmpty)
+        }
+      },
+      test("StringPDX should be defined when present") {
+        foreachFocusTree() { focusTree =>
+          assertTrue(focusTree.id.isDefined)
+        }
+      },
+      test("StringPDX should have an obtainable value when applicable") {
+        foreachFocusTree() { focusTree =>
+          assertTrue(focusTree.id.value.nonEmpty)
+        }
+      },
+      test("StringPDX test") {
+        foreachFocusTree() { focusTree =>
+          assertTrue(
+            focusTree.focuses
+              .flatMap(_.pdxProperties)
+              .forall {
+                case s: StringPDX =>
+                  s.getOrElse("").isInstanceOf[String]
+                case _ => true
+              }
+          )
+        }
+      },
+      test("StringPDX value instance test") {
+        foreachFocusTree() { focusTree =>
+          focusTree.pdxProperties.foreach {
+            case s: StringPDX =>
+              if (s.isDefined) {
+                assertTrue(s.valueIsInstanceOf[String], s"Expected StringPDX to have a String value, but got ${s.value}")
+              }
+            case _ => // do nothing
+          }
+        }
+      },
+      test("Strategic region has findable between") {
+        foreachStratRegion() { stratRegion =>
+          assertTrue(
+            stratRegion.pdxProperties.nonEmpty,
+            stratRegion.weather.period.nonEmpty,
+            stratRegion.weather.period.exists(_.between.exists(_ @== 4.11)),
+            stratRegion.weather.period.size == 13)
+          )
+        }
+      },
+      test("remove region") {
+        foreachStratRegion() { stratRegion =>
+          assertTrue(
+            stratRegion.pdxProperties.nonEmpty,
+            stratRegion.weather.period.filterNot(_.between.exists(_ @== 4.11)).size == 12)
+          )
+        }
+      },
+      test("peek does not advance the tokenizer") {
+        for {
+          tokenizer <- ZIO.succeed(new Tokenizer("abc"))
+          firstPeek  = tokenizer.peek
+          secondPeek = tokenizer.peek
+          _          = tokenizer.next // side effect
+          nextPeek   = tokenizer.peek
+        } yield {
+          assertTrue(
+            firstPeek.isDefined,
+            secondPeek.isDefined,
+            firstPeek == secondPeek,
+            tokenizer.peek != firstPeek
+          )
+        }
+      },
+      test("tokens are returned in order") {
+        // Input with a few tokens separated by whitespace.
+        val input = "a b c"
+        val tokenizer = new Tokenizer(input)
+
+        // Collect all tokens until the iterator is exhausted.
+        val tokens = Iterator.continually(tokenizer.next).takeWhile(_.isDefined).flatten.toList
+        val assertNonEmpty = assertTrue(tokens.nonEmpty) ?? "Expected some tokens to be returned"
+
+        // Verify that the tokens appear in increasing order by their starting index.
+        val orderChecks = tokens.sliding(2).map {
+          case List(prev, current) =>
+            assertTrue(current.start >= prev.start) ?? s"Order violation: ${prev.value} -> ${current.value}"
+          case _ => assertTrue(true)
+        }.toList
+
+        TestResult.allSuccesses(assertNonEmpty :: orderChecks)
+      },
+      test("peek returns same token repeatedly and next advances") {
+        val input = "hello world"
+        val tokenizer = new Tokenizer(input)
+
+        // Peek several times before consuming.
+        val peek1 = tokenizer.peek
+        val peek2 = tokenizer.peek
+        val sameCheck = assertTrue(peek1 == peek2, "Multiple peek calls should return the same token")
+
+        // Consume first token.
+        val firstToken = tokenizer.next
+        // Now, a subsequent peek should return the second token.
+        val secondToken = tokenizer.peek
+        val tokenCheck = assertTrue(firstToken != secondToken) ?? "After next, peek should return a new token different from the previously consumed one"
+        TestResult.allSuccesses(sameCheck :: tokenCheck :: Nil)
+      },
+      test("returns None when no tokens remain") {
+        val input = "" // empty input should produce no tokens.
+        val tokenizer = new Tokenizer(input)
+        // next and peek should return None.
+        assertTrue(tokenizer.peek.isEmpty) ?? "Peek should return None for empty input" &&
+        assertTrue(tokenizer.next.isEmpty) ?? "Next should return None for empty input"
+      },
+      test("SpriteType objects are loaded with correct properties") {
+        // Assumes a test file "sprite_types.txt" exists under testPath containing the SpriteType definitions.
+        val spriteFile = new File(testPath + "sprite_types.txt")
+        val parser = new Parser(spriteFile)
+        val node = parser.parse
+        val parseCheck = assertTrue(node != null, s"Failed to parse ${spriteFile.getName}")
+
+        // Filter nodes with the name "SpriteType"
+        val spriteNodes = node.filter(_.name == "SpriteType")
+        val nonEmptyCheck = assertTrue(spriteNodes.nonEmpty, "Expected at least one SpriteType definition")
+
+        val spriteResults = spriteNodes.map { sprite =>
+          val nameOpt = sprite.find("name")
+          assertTrue(nameOpt.isDefined, "SpriteType should have a name")
+          val name = nameOpt.get
+
+          val assertBasicProps = assertTrue(
+            nameOpt.isDefined,
+            sprite.find("texturefile").isDefined,
+            sprite.find("effectFile").isDefined
+          ) ?? s"Basic property missing in SpriteType '$name'"
+
+          // Each SpriteType should have exactly two animation blocks.
+          val animations = sprite.filter(_.name == "animation")
+          val animSizeCheck = assertTrue(animations.size == 2) ?? s"Expected exactly two animation blocks for SpriteType '$name', but found ${animations.size}"
+
+          val animChecks = animations.map { anim =>
+            // Verify required fields exist within each animation block.
+            assertTrue(
+              anim.find("animationmaskfile").isDefined,
+              anim.find("animationtexturefile").isDefined,
+              anim.find("animationrotation").isDefined,
+              anim.find("animationlooping").isDefined,
+              anim.find("animationtime").isDefined,
+              anim.find("animationdelay").isDefined,
+              anim.find("animationblendmode").isDefined,
+              anim.find("animationtype").isDefined,
+              anim.find("animationrotationoffset").isDefined,
+              anim.find("animationtexturescale").isDefined,
+            ) ?? s"Animation block field missing in '$name'"
+          }
+
+          val legacyLazyLoad = sprite.find("legacy_lazy_load")
+          assertTrue(legacyLazyLoad.exists(_.valueContains("no")), s"Expected legacy_lazy_load to be 'no' for SpriteType '$name'")
+        }
+      },
+      test("SpriteType animations have distinct rotation values") {
+        // Assumes a test file "sprite_types.txt" exists under testPath containing the SpriteType definitions.
+        val spriteFile = new File(testPath + "sprite_types.txt")
+        val parser = new Parser(spriteFile)
+        val node = parser.parse
+        assertTrue(node != null, s"Failed to parse ${spriteFile.getName}")
+
+        val spriteNodes = node.filter(_.name == "SpriteType")
+        assertTrue(spriteNodes.nonEmpty, "Expected at least one SpriteType definition")
+
+        spriteNodes.foreach { sprite =>
+          val nameOpt = sprite.find("name")
+          assertTrue(nameOpt.isDefined, "SpriteType should have a name")
+          val name = nameOpt.get
+
+          // Each SpriteType is expected to have exactly two animation blocks.
+          val animations = sprite.filter(_.name == "animation")
+          assertTrue(animations.size == 2, s"Expected two animation blocks for SpriteType '$name'")
+
+          val rotations = animations.flatMap(_.find("animationrotation").toSeq)
+          // Check that the two rotation values are opposites (i.e. one is -90.0 and the other is 90.0).
+          //      assertTrue(
+          //        rotations.contains("-90.0") && rotations.contains("90.0"),
+          //        s"Expected animation rotations '-90.0' and '90.0' for SpriteType '$name', but got: ${rotations.mkString(", ")}"
+          //      )
+        }
+
+      },
+      test("SMA Simple") {
+        val file = new File(testPath + "Massachusetts_focus_simple.txt")
+        val treeSMA = new FocusTree(file)
+        println(treeSMA.toScript)
+        assertTrue(treeSMA.pdxProperties.nonEmpty)
+      },
+      test("SMA") {
+        val file = new File(testPath + "Massachusetts_focus.txt")
+        val treeSMA = new FocusTree(file)
+        println(treeSMA.toScript)
+        assertTrue(treeSMA.pdxProperties.nonEmpty)
+      }
+    )
+
+
 
 //  test("MultiPDX should be defined when there is some PDXScript it can load") {
 //    withFocusTrees { focusTree =>
-//      assert(focusTree.focuses.isDefined)
+//      assertTrue(focusTree.focuses.isDefined)
 //    }
 //  }
-
-  test("StringPDX should be defined when present") {
-    withValidFocusTrees { focusTree =>
-      assert(focusTree.id.isDefined)
-    }
-  }
-
-  test("StringPDX should have an obtainable value when applicable") {
-    withValidFocusTrees { focusTree =>
-      assert(focusTree.id.value.nonEmpty)
-    }
-  }
-
-  test("StringPDX test") {
-    withValidFocusTrees { focusTree =>
-      assert(focusTree.focuses
-        .flatMap(_.pdxProperties)
-        .forall(_ match {
-          case s: StringPDX =>
-            s.getOrElse("").isInstanceOf[String]
-          case _ => true
-        })
-      )
-    }
-  }
-
-  test("StringPDX value instance test") {
-    withValidFocusTrees { focusTree =>
-      focusTree.pdxProperties.foreach {
-        case s: StringPDX =>
-          if (s.isDefined) {
-            assert(s.valueIsInstanceOf[String], s"Expected StringPDX to have a String value, but got ${s.value}")
-          }
-        case _ => // do nothing
-      }
-    }
-  }
-
-
 
   //  test("ReferencePDX test") {
-//    withValidFocusTrees { focusTree =>
-//      assert(focusTree.country.isDefined, s"Country is not defined: ${focusTree.country}, focus tree: ${focusTree}")
-//      assert(focusTree.country.value.nonEmpty)
-//      assert(focusTree.country.referenceName.nonEmpty)
+//    foreachFocusTree { focusTree =>
+//      assertTrue(focusTree.country.isDefined, s"Country is not defined: ${focusTree.country}, focus tree: ${focusTree}")
+//      assertTrue(focusTree.country.value.nonEmpty)
+//      assertTrue(focusTree.country.referenceName.nonEmpty)
 //    }
 //  }
-
-  test("Strategic region has findable between") {
-    withValidStratRegions { stratRegion =>
-      assert(stratRegion.pdxProperties.nonEmpty)
-      assert(stratRegion.weather.period.nonEmpty)
-      assert(stratRegion.weather.period.exists(_.between.exists(_ @== 4.11)))
-      assert(stratRegion.weather.period.size == 13)
-    }
-  }
-
-  test("remove region") {
-    withValidStratRegions { stratRegion =>
-      assert(stratRegion.pdxProperties.nonEmpty)
-      stratRegion.weather.period.removeIf(_.between.exists(_ @== 4.11))
-      assert(stratRegion.weather.period.size == 12)
-      stratRegion.saveToPDXScriptsDir()
-    }
-  }
-
-  test("peek does not advance the tokenizer") {
-    val input = "abc" // simple input; token types depend on your regex definitions.
-    val tokenizer = new Tokenizer(input)
-    val firstPeek = tokenizer.peek
-    val secondPeek = tokenizer.peek
-    assert(firstPeek.isDefined, "Peek should return a token")
-    assert(secondPeek.isDefined, "Second peek should also return a token")
-    // Both peeks should return the same token (without advancing).
-    assert(firstPeek == secondPeek, "Consecutive peek calls should return the same token")
-
-    // Now call next and then peek; they should match the token that was peeked.
-    val firstNext = tokenizer.next
-    val nextPeek = tokenizer.peek
-    // The token returned by next should equal the one we saw with peek.
-    assert(firstNext == firstPeek, "next should return the same token as peek did")
-  }
-
-  test("tokens are returned in order") {
-    // Input with a few tokens separated by whitespace.
-    val input = "a b c"
-    val tokenizer = new Tokenizer(input)
-
-    // Collect all tokens until the iterator is exhausted.
-    val tokens = Iterator.continually(tokenizer.next).takeWhile(_.isDefined).flatten.toList
-    assert(tokens.nonEmpty, "Expected some tokens to be returned")
-
-    // Verify that the tokens appear in increasing order by their starting index.
-    for (i <- 1 until tokens.length) {
-      assert(tokens(i).start >= tokens(i - 1).start,
-        s"Token at index $i has start ${tokens(i).start}, which is less than previous token start ${tokens(i - 1).start}")
-    }
-  }
-
-  test("peek returns same token repeatedly and next advances") {
-    val input = "hello world"
-    val tokenizer = new Tokenizer(input)
-
-    // Peek several times before consuming.
-    val peek1 = tokenizer.peek
-    val peek2 = tokenizer.peek
-    assert(peek1 == peek2, "Multiple peek calls should return the same token")
-
-    // Consume first token.
-    val firstToken = tokenizer.next
-    // Now, a subsequent peek should return the second token.
-    val secondToken = tokenizer.peek
-    assert(firstToken != secondToken, "After next, peek should return a new token different from the previously consumed one")
-  }
-
-  test("returns None when no tokens remain") {
-    val input = "" // empty input should produce no tokens.
-    val tokenizer = new Tokenizer(input)
-    // next and peek should return None.
-    assert(tokenizer.peek.isEmpty, "Peek should return None for empty input")
-    assert(tokenizer.next.isEmpty, "Next should return None for empty input")
-  }
-
-  test("SpriteType objects are loaded with correct properties") {
-    // Assumes a test file "sprite_types.txt" exists under testPath containing the SpriteType definitions.
-    val spriteFile = new File(testPath + "sprite_types.txt")
-    val parser = new Parser(spriteFile)
-    val node = parser.parse
-    assert(node != null, s"Failed to parse ${spriteFile.getName}")
-
-    // Filter nodes with the name "SpriteType"
-    val spriteNodes = node.filter(_.name == "SpriteType")
-    assert(spriteNodes.nonEmpty, "Expected at least one SpriteType definition")
-
-    spriteNodes.foreach { sprite =>
-      val nameOpt = sprite.find("name")
-      assert(nameOpt.isDefined, "SpriteType should have a name")
-      val name = nameOpt.get
-
-      val texturefile = sprite.find("texturefile")
-      assert(texturefile.isDefined, s"SpriteType '$name' should have a texturefile")
-
-      val effectFile = sprite.find("effectFile")
-      assert(effectFile.isDefined, s"SpriteType '$name' should have an effectFile")
-
-      // Each SpriteType should have exactly two animation blocks.
-      val animations = sprite.filter(_.name == "animation")
-      assert(
-        animations.size == 2,
-        s"Expected exactly two animation blocks for SpriteType '$name', but found ${animations.size}"
-      )
-
-      animations.foreach { anim =>
-        // Verify required fields exist within each animation block.
-        assert(anim.find("animationmaskfile").isDefined, s"Animation in SpriteType '$name' should have an animationmaskfile")
-        assert(anim.find("animationtexturefile").isDefined, s"Animation in SpriteType '$name' should have an animationtexturefile")
-        assert(anim.find("animationrotation").isDefined, s"Animation in SpriteType '$name' should have an animationrotation")
-        assert(anim.find("animationlooping").isDefined, s"Animation in SpriteType '$name' should have an animationlooping")
-        assert(anim.find("animationtime").isDefined, s"Animation in SpriteType '$name' should have an animationtime")
-        assert(anim.find("animationdelay").isDefined, s"Animation in SpriteType '$name' should have an animationdelay")
-        assert(anim.find("animationblendmode").isDefined, s"Animation in SpriteType '$name' should have an animationblendmode")
-        assert(anim.find("animationtype").isDefined, s"Animation in SpriteType '$name' should have an animationtype")
-        assert(anim.find("animationrotationoffset").isDefined, s"Animation in SpriteType '$name' should have an animationrotationoffset")
-        assert(anim.find("animationtexturescale").isDefined, s"Animation in SpriteType '$name' should have an animationtexturescale")
-      }
-
-      val legacyLazyLoad = sprite.find("legacy_lazy_load")
-      assert(legacyLazyLoad.exists(_.valueContains("no")), s"Expected legacy_lazy_load to be 'no' for SpriteType '$name'")
-    }
-  }
-
-  test("SpriteType animations have distinct rotation values") {
-    // Assumes a test file "sprite_types.txt" exists under testPath containing the SpriteType definitions.
-    val spriteFile = new File(testPath + "sprite_types.txt")
-    val parser = new Parser(spriteFile)
-    val node = parser.parse
-    assert(node != null, s"Failed to parse ${spriteFile.getName}")
-
-    val spriteNodes = node.filter(_.name == "SpriteType")
-    assert(spriteNodes.nonEmpty, "Expected at least one SpriteType definition")
-
-    spriteNodes.foreach { sprite =>
-      val nameOpt = sprite.find("name")
-      assert(nameOpt.isDefined, "SpriteType should have a name")
-      val name = nameOpt.get
-
-      // Each SpriteType is expected to have exactly two animation blocks.
-      val animations = sprite.filter(_.name == "animation")
-      assert(animations.size == 2, s"Expected two animation blocks for SpriteType '$name'")
-
-      val rotations = animations.flatMap(_.find("animationrotation").toSeq)
-      // Check that the two rotation values are opposites (i.e. one is -90.0 and the other is 90.0).
-//      assert(
-//        rotations.contains("-90.0") && rotations.contains("90.0"),
-//        s"Expected animation rotations '-90.0' and '90.0' for SpriteType '$name', but got: ${rotations.mkString(", ")}"
-//      )
-    }
-
-  }
-
-  test("SMA Simple") {
-    val file = new File(testPath + "Massachusetts_focus_simple.txt")
-    val treeSMA = new FocusTree(file)
-    println(treeSMA.toScript)
-    assert(treeSMA.pdxProperties.nonEmpty)
-  }
-
-  test("SMA") {
-    val file = new File(testPath + "Massachusetts_focus.txt")
-    val treeSMA = new FocusTree(file)
-    println(treeSMA.toScript)
-    assert(treeSMA.pdxProperties.nonEmpty)
-  }
 }

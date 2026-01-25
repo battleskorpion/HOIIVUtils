@@ -3,14 +3,12 @@ package com.hoi4utils.parser
 import com.hoi4utils.script.scripter.SimpleNodeScripter
 import com.hoi4utils.shared.BoolType
 
-import scala.collection.mutable.ListBuffer
-
 type NodeValueType = PDXValueType | Comment
 
 // Consolidated Node class (no NodeValue) using rawValue directly.
 class Node (
              /** Tokens that occurred before the "core" of this node. */
-             var leadingTrivia: ListBuffer[Token] = ListBuffer(),
+             var leadingTrivia: Seq[Token] = Seq.empty,
              /** The main identifier token (if any). */
              var identifierToken: Option[Token] = None,
              /** The operator token (if any, e.g. "="). */
@@ -19,7 +17,7 @@ class Node (
                  a list (block) of child nodes, or a Comment. */
              var rawValue: Option[NodeValueType] = None,
              /** Tokens that came after the node's core. */
-             var trailingTrivia: ListBuffer[Token] = ListBuffer()
+             var trailingTrivia: Seq[Token] = Seq.empty
            ) extends NodeIterable[Node]:
 
   def this(value: NodeValueType) =
@@ -27,11 +25,11 @@ class Node (
 
   def this(identifier: String, operator: String, value: NodeValueType) =
     this(
-      leadingTrivia = ListBuffer(),
+      leadingTrivia = Seq.empty,
       identifierToken = Some(new Token(identifier, TokenType.symbol)),
       operatorToken = Some(new Token(operator, TokenType.operator)),
       rawValue = Some(value),
-      trailingTrivia = ListBuffer()
+      trailingTrivia = Seq.empty
     )
 
   // Convenience getters extracting raw string representations from tokens.
@@ -48,7 +46,7 @@ class Node (
     case Some(i: Int)      => i.toString
     case Some(d: Double)   => d.toString
     case Some(b: Boolean)  => b.toString
-    case Some(list: ListBuffer[Node]) =>
+    case Some(list: Seq[Node]) =>
       val sb = new StringBuilder
       val scripter = SimpleNodeScripter
       sb.append("{")
@@ -96,7 +94,7 @@ class Node (
     case _    => rawValue = Some(v)
 
   def isParent: Boolean = rawValue match
-    case Some(list: ListBuffer[Node]) => true
+    case Some(list: Seq[Node]) => true
     case _                            => false
 
   def valueIsNull: Boolean = rawValue.isEmpty
@@ -117,12 +115,17 @@ class Node (
     identifierToken = None
     operatorToken = None
     rawValue = None
+    
+  def clearIfBlock(): Unit =
+    rawValue match
+      case s: NodeSeq => rawValue = Some(Seq.empty) 
+      case _ => // do nothing
 
   def valueIsInstanceOf(clazz: Class[?]): Boolean = rawValue.exists(clazz.isInstance)
 
   // Shorthand methods using the raw value.
   def $ : PDXValueType | Null = rawValue match
-    case Some(v: ListBuffer[Node]) => v.filter(_.nonComment)
+    case Some(v: Seq[Node]) => v.filter(_.nonComment)
     case Some(v: String)           => v
     case Some(v: Int)              => v
     case Some(v: Double)           => v
@@ -133,15 +136,15 @@ class Node (
   def $value : NodeValueType | Null = rawValue.orNull
 
   override def iterator: Iterator[Node] = rawValue match
-    case Some(l: ListBuffer[Node]) => l.iterator
+    case Some(l: Seq[Node]) => l.iterator
     case _ => List(this).iterator //Iterator.empty
 
-  def $list(): Option[ListBuffer[Node]] = rawValue match
-    case Some(l: ListBuffer[Node]) => Some(l)
+  def $seq(): Option[Seq[Node]] = rawValue match
+    case Some(s: Seq[Node]) => Some(s)
     case _ => None
 
-  def $listOrElse(x: ListBuffer[Node]): ListBuffer[Node] = rawValue match
-    case Some(l: ListBuffer[Node]) => l
+  def $seqOrElse(x: Seq[Node]): Seq[Node] = rawValue match
+    case Some(s: Seq[Node]) => s
     case _ => x
 
   def $string: Option[String] = $ match
@@ -181,7 +184,9 @@ class Node (
   def start: Int = identifierToken.map(_.start).getOrElse(0)
 
   def remove(i: Int): Unit = $ match
-    case l: ListBuffer[Node] => l.remove(i)
+    case l: Seq[Node] => 
+      val updated = l.take(i) ++ l.drop(i + 1)
+      setValue(updated)
     case _                   =>
 
   def isComment: Boolean = rawValue.exists:

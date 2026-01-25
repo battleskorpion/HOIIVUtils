@@ -7,7 +7,7 @@ import com.typesafe.scalalogging.LazyLogging
 import java.io.File
 import scala.collection.mutable.ListBuffer
 
-abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[Node]](pdxIdentifiers) with LazyLogging {
+abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[Seq[Node]](pdxIdentifiers) with LazyLogging {
 
   var badNodesList: Iterable[Node] = ListBuffer.empty
 
@@ -19,12 +19,12 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
 
   /**
    * Sets the current node to the provided expression and processes it based on its type.
-   * If the expression is a ListBuffer of nodes, it will load each sub-PDXScript for processing.
+   * If the expression is a Seq of nodes, it will load each sub-PDXScript for processing.
    * Otherwise, an exception will be thrown indicating the mismatch in expected node value type.
    *
    * @param expression the node expression to set.
    * @throws UnexpectedIdentifierException if the identifier used in the expression is unexpected.
-   * @throws NodeValueTypeException        if the expression is not of type ListBuffer[Node], but was expected to be.
+   * @throws NodeValueTypeException        if the expression is not of type Seq[Node], but was expected to be.
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
@@ -32,9 +32,9 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     usingIdentifier(expression)
     this.node = Some(expression)
     expression.$ match {
-      case l: ListBuffer[Node] =>
+      case l: Seq[Node] =>
         // then load each sub-PDXScript
-        var remainingNodes = Iterable.from(l)
+        var remainingNodes = Seq.from(l)
         for pdxScript <- childScripts do
           remainingNodes = pdxScript.loadPDX(remainingNodes)
         badNodesList = remainingNodes
@@ -43,7 +43,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     }
   }
 
-  override def set(value: ListBuffer[Node]): ListBuffer[Node] = {
+  override def set(value: Seq[Node]): Seq[Node] = {
     // TODO: Consider if this implementation is complete // second TODO: ?
     super.setNode(value)
     value
@@ -56,7 +56,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     if isExpressionIdentifierExpected then
       expression.identifier match
         case None => expression.$ match
-          case l: ListBuffer[Node] => loadPDX(l)
+          case l: Seq[Node] => loadPDX(l)
           case _ =>
             handlePDXError(NodeValueTypeException("PDXScript.loadPDX: Expected list of nodes, got: \n" + expression), expression, file.orNull)
         case Some(_) =>
@@ -120,7 +120,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     val originalPositions: Map[String, Int] = node match
       case Some(n) =>
         n.$ match
-          case lb: ListBuffer[Node] => lb.zipWithIndex.map { case (n, i) =>
+          case lb: Seq[Node] => lb.zipWithIndex.map { case (n, i) =>
             n.identifier.getOrElse(s"__NO_ID_$i") -> i
           }.toMap
           case _ => Map.empty
@@ -130,7 +130,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
     childScripts.foreach(_.updateNodeTree())
 
     // Get the loaded child nodes.
-    val loadedChildNodes = childScripts.flatMap(_.getNodes).to(ListBuffer)
+    val loadedChildNodes = childScripts.flatMap(_.getNodes).to(Seq)
 
     // Sort the loaded nodes based on their original positions.
     val sortedLoadedNodes = loadedChildNodes.sortBy { child =>
@@ -169,7 +169,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[L
 
   override def clone(): AnyRef = {
     val clone = super.clone().asInstanceOf[StructuredPDX]
-    clone.node = Some(Node(pdxIdentifier, "=", ListBuffer.empty))
+    clone.node = Some(Node(pdxIdentifier, "=", Seq.empty))
     clone.badNodesList = this.badNodesList
     clone
   }

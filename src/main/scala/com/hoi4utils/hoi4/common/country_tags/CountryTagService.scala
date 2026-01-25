@@ -16,7 +16,7 @@ import scala.util.Using
 trait CountryTagService extends PDXReadable with LazyLogging {
   var errors: ListBuffer[PDXFileError]
 
-  def list: List[CountryTag]
+  def tags: Set[CountryTag]
   def addTag(tag: CountryTag): Unit
   def countryTags: Seq[CountryTag]
   def exists(tag: String): UIO[Boolean]
@@ -95,7 +95,7 @@ case class CountryTagServiceImpl() extends CountryTagService {
     } yield tagsBuf.toList
   }
 
-  override def list: List[CountryTag] = _tagList.toList
+  override def tags: Set[CountryTag] = _tagList.toSet
 
   //  def tagList(): List[CountryTag] = _tagList
   override def addTag(tag: CountryTag): Unit = _tagList.addOne(tag)

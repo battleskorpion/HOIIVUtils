@@ -12,11 +12,11 @@ class Tokenizer(@SuppressWarnings(Array("unused")) private val _input: String) {
 
   // Build line offset table once - O(n) where n = input length
   private val lineOffsets: Array[Int] =
-    val charsWithIndices = _input.toCharArray.zipWithIndex        // don't have to check if each index is safe for charAt(i)
+    val charsWithIndices = _input.toCharArray.zipWithIndex        // don't have to check if each index is safe for charAt(i) (screw ur memory :))
     val offsets = ArrayBuffer(0)                      // Line 1 starts at position 0
     offsets.sizeHint(charsWithIndices.length / 30)    // scripting files usually small and have some blank lines too
 
-    offsets ++ (charsWithIndices filter ((char, index) => char == '\n') map (_._2 + 1))  // +1 since next line starts after newline
+    offsets ++= (charsWithIndices filter ((char, index) => char == '\n') map (_._2 + 1))  // +1 since next line starts after newline
     offsets.toArray
 
   /**

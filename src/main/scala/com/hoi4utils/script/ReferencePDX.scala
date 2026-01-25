@@ -136,7 +136,7 @@ class ReferencePDX[T <: Referable](final protected var referenceCollectionSuppli
     }
     else node.foreach(_.setValue(referenceName))
   }
-  
+
   override def toString : String = {
     super.toString
   }

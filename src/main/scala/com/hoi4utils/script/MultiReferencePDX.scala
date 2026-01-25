@@ -39,16 +39,16 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
    */
   override def loadPDX(expression: Node, file: Option[File]): Unit =
     expression.$ match
-      case list: ListBuffer[Node] =>
+      case list: Seq[Node] =>
         usingIdentifier(expression)
 
         for (child <- list) super.loadPDX(child, file)
         this.node = Some(expression)
       case _ => super.loadPDX(expression, file)
 
-  def validReferences: Option[ListBuffer[T]] = references() match
+  def validReferences: Option[List[T]] = references() match
     case list if list.isEmpty => None
-    case list => Some(list)
+    case list => Some(list.toList)
 
   override def iterator: Iterator[ReferencePDX[T]] =
     resolveReferences()
@@ -79,7 +79,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
         if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(expression, file)
-        pdxList.addOne(childScript)
+        pdxSeq :+= childScript
         referenceNames.addOne(str)
       case other =>
         logger.warn(s"Expected string value for pdx reference identifier, got ${other}. Preserving node using its string representation.")
@@ -88,7 +88,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
         if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(new Node(preservedValue), file)
-        pdxList.addOne(childScript)
+        pdxSeq :+= childScript
         referenceNames.addOne(preservedValue)
         // Then throw the exception so that callers are aware of the issue.
         throw new NodeValueTypeException(expression, "string", this.getClass)
@@ -96,16 +96,17 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
   /**
    * Removes a reference (wrapper) that matches the given predicate.
    */
-  override def removeIf(p: ReferencePDX[T] => Boolean): ListBuffer[ReferencePDX[T]] =
+  override def removeIf(p: ReferencePDX[T] => Boolean): Seq[ReferencePDX[T]] =
+    // 1. Iterate backwards through indices to prevent shifting issues
     for
-      i <- pdxList.indices.reverse
-      if p(pdxList(i))
+      i <- pdxSeq.indices.reverse
+      item = pdxSeq(i)
+      if p(item)
     do
-      pdxList(i).clearNode()
-      pdxList.remove(i)
+      item.clearNode()
       referenceNames.remove(i)
-
-    pdxList
+      pdxSeq = pdxSeq.take(i) ++ pdxSeq.drop(i + 1)
+    pdxSeq
 
   /**
    * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.
@@ -114,7 +115,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
    */
   @targetName("add")
   override def +=(referencePDX: ReferencePDX[T]): Unit =
-    pdxList += referencePDX
+    pdxSeq :+= referencePDX
     referenceNames.addOne(referencePDX.referenceName)   // todo throw error instead and check this first
 
   /**
@@ -129,7 +130,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
     val wrapper: ReferencePDX[T] = simpleSupplier.get.apply()
     // Set the value of the wrapper to the candidate.
     wrapper.set(pdxScript)
-    pdxList += wrapper
+    pdxSeq :+= wrapper
     referenceNames.addOne(idOpt.get)
 
   /**
@@ -138,10 +139,12 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
    * @param referencePDX
    */
   override def -=(referencePDX: ReferencePDX[T]): this.type =
-    val index = pdxList.indexOf(referencePDX)
-    pdxList -= referencePDX
-    referencePDX.clearNode()
-    referenceNames.remove(index)
+    val index = pdxSeq.indexOf(referencePDX)
+    if (index != -1) {
+      referencePDX.clearNode()
+      referenceNames.remove(index)
+      pdxSeq = pdxSeq.take(index) ++ pdxSeq.drop(index + 1)
+    }
     this
 
   /**
@@ -151,11 +154,11 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
     // Find the wrapper whose extracted id matches the candidate.
     val idOpt = idExtractor(pdxScript)
     idOpt.foreach { id =>
-      val idx = referenceNames.indexOf(id)
-      if (idx >= 0)
-        pdxList(idx).clearNode()
-        pdxList.remove(idx)
-        referenceNames.remove(idx)
+      val index = referenceNames.indexOf(id)
+      if (index >= 0)
+        pdxSeq(index).clearNode()
+        pdxSeq = pdxSeq.take(index) ++ pdxSeq.drop(index + 1)
+        referenceNames.remove(index)
     }
     this
 
@@ -175,7 +178,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
         case l: ListBuffer[T] => l.clear()
         case _ => // do nothing
     }
-    pdxList.clear()
+    pdxSeq = Seq.empty
     referenceNames.clear()
 
   override def addNewPDX(): ReferencePDX[T] =

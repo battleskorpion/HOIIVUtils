@@ -327,8 +327,8 @@ object State extends LazyLogging:
 
   // todo fix structured effect block later when i can read
   class History(pdxIdentifier: String = "history", node: Node = null, file: Option[File] = None)(countryTagService: CountryTagService) extends StructuredPDX(pdxIdentifier):
-    final val owner = new ReferencePDX[CountryTag](() => countryTagService.list, "owner")
-    final val controller = new ReferencePDX[CountryTag](() => countryTagService.list, "controller")
+    final val owner = new ReferencePDX[CountryTag](() => countryTagService.tags, "owner")
+    final val controller = new ReferencePDX[CountryTag](() => countryTagService.tags, "controller")
     final val buildings = new BuildingsPDX
     final val victoryPoints = new MultiPDX[VictoryPointPDX](None, Some(() => new VictoryPointPDX), "victory_points")
     final val startDateScopes = new MultiPDX[StartDateScopePDX](None, Some(() => new StartDateScopePDX()(countryTagService)))

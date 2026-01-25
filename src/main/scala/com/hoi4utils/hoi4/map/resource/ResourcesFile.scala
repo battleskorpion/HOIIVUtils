@@ -29,7 +29,7 @@ class ResourcesFile(file: File = null) extends CollectionPDX[ResourceDefinition]
   override def loadPDX(expression: Node, file: Option[File]): Unit = {
     if (expression.identifier.isEmpty) {
       expression.$ match {
-        case l: ListBuffer[Node] =>
+        case l: Seq[Node] =>
           loadPDX(l)
         case _ =>
           logger.error("Error loading PDX script: " + expression)

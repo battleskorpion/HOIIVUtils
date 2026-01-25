@@ -16,9 +16,9 @@ trait HeadlessPDX { this: StructuredPDX =>
     // Skip identifier checking since headless files do not have a named header.
     this.node = Some(expression)
     expression.$ match {
-      case l: ListBuffer[Node] =>
+      case l: Seq[Node] =>
         // then load each sub-PDXScript
-        var remainingNodes = Iterable.from(l)
+        var remainingNodes = Seq.from(l)
         for pdxScript <- childScripts do
           remainingNodes = pdxScript.loadPDX(remainingNodes)
         badNodesList = remainingNodes

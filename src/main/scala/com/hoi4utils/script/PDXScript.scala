@@ -63,7 +63,7 @@ trait PDXScript[V] extends Cloneable with LazyLogging {
    *
    * @param expressions The node expressions to load
    */
-  def loadPDX(expressions: Iterable[Node]): Iterable[Node]
+  def loadPDX(expressions: Seq[Node]): Seq[Node]
 
   /**
    * Checks if the given node matches any valid identifier for this PDX script.

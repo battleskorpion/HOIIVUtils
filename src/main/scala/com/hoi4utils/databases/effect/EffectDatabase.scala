@@ -202,7 +202,7 @@ object EffectDatabase extends LazyLogging {
           HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[CountryTagService]).getOrThrowFiberFailure()
         }
         Some(
-          new ReferencePDX[CountryTag](() => countryTagService.list, pdxIdentifier) with SimpleEffect
+          new ReferencePDX[CountryTag](() => countryTagService.tags, pdxIdentifier) with SimpleEffect
         )
       case ParameterValueType.cw_bool => Some(
         new BooleanPDX(pdxIdentifier, false, BoolType.TRUE_FALSE) with SimpleEffect)
@@ -309,7 +309,7 @@ object EffectDatabase extends LazyLogging {
         case (name, ParameterValueType.ace_type, _) => new StringPDX(name) // ex: type = fighter_genius
         case (name, ParameterValueType.ai_strategy, _) => new StringPDX(name) // ex: type = alliance
         case (name, ParameterValueType.character, _) => new StringPDX(name) // ex: character = OMA_sultan
-        case (name, ParameterValueType.country, _) => new ReferencePDX[CountryTag](() => countryTagService.list, name)
+        case (name, ParameterValueType.country, _) => new ReferencePDX[CountryTag](() => countryTagService.tags, name)
         case (name, ParameterValueType.cw_bool, _) => new BooleanPDX(name, false, BoolType.TRUE_FALSE)
         case (name, ParameterValueType.cw_float, _) => new DoublePDX(name)
         case (name, ParameterValueType.cw_int, _) => new IntPDX(name)

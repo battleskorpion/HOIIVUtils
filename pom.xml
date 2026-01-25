@@ -478,6 +478,19 @@
       <version>2.1.24</version>
       <scope>compile</scope>
     </dependency>
+    <!-- scalamock core -->
+    <dependency>
+      <groupId>org.scalamock</groupId>
+      <artifactId>scalamock_3</artifactId>
+      <version>7.5.4</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- zio integration -->
+    <dependency>
+      <groupId>org.scalamock</groupId>
+      <artifactId>scalamock-zio_3</artifactId>
+      <version>7.5.4</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-
 </project>

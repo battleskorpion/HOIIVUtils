@@ -238,7 +238,7 @@ class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService:
       final val base = new DoublePDX("base")
       final val factor = new DoublePDX("factor")
       final val add = new DoublePDX("add")
-      final val tag = new ReferencePDX[CountryTag](() => countryTagService.list, "country")
+      final val tag = new ReferencePDX[CountryTag](() => countryTagService.tags, "country")
 
       override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(base, factor, add, tag)
 

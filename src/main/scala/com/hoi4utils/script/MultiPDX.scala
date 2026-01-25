@@ -5,8 +5,8 @@ import com.hoi4utils.parser.Node
 import org.apache.poi.ss.formula.functions.T
 
 import java.io.File
+import scala.::
 import scala.annotation.targetName
-import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 
 /**
@@ -19,9 +19,9 @@ import scala.language.implicitConversions
  * @param pdxIdentifiers the identifiers for the PDXScript objects
  */
 class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String])
-  extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
+  extends AbstractPDX[Seq[T]](pdxIdentifiers) with Seq[T] {
 
-  protected var pdxList: ListBuffer[T] = ListBuffer.empty
+  protected var pdxSeq: Seq[T] = Seq.empty
 
   def this(simpleSupplier: Option[() => T], blockSupplier: Option[() => T], pdxIdentifiers: String*) = {
     this(simpleSupplier, blockSupplier, pdxIdentifiers.toList)
@@ -38,9 +38,9 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   override def equals(other: PDXScript[?]) = false // todo? well.
 
-  override def value: Option[ListBuffer[T]] = {
-    if (pdxList.isEmpty) None
-    else Some(pdxList)
+  override def value: Option[Seq[T]] = {
+    if (pdxSeq.isEmpty) None
+    else Some(pdxSeq)
   }
 
   /**
@@ -54,29 +54,26 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     expression.$ match
-      case l: ListBuffer[Node] =>
+      case l: Seq[Node] =>
         val childScript = applySupplier(expression)
         childScript.loadPDX(expression, file)
-        pdxList.addOne(childScript)
+        pdxSeq :+= childScript
       case _ =>
         if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "not a list", this.getClass)
         val childScript = simpleSupplier.get.apply()
         childScript.loadPDX(expression, file)
-        pdxList.addOne(childScript)
+        pdxSeq :+= childScript
 
-  def removeIf(p: T => Boolean): ListBuffer[T] =
-    for
-      i <- pdxList.indices.reverse
-      if p(pdxList(i))
-    do
-      pdxList(i).getNode match
-        case Some(node) => node.clear()
-        case _          => // do nothing
-      pdxList(i).clearNode()
-      pdxList.remove(i)
-    pdxList
+  def removeIf(p: T => Boolean): Seq[T] =
+    val (toRemove, toKeep) = pdxSeq.partition(p)
+    toRemove.foreach { item =>
+      item.getNode.foreach(_.clear())
+      item.clearNode()
+    }
+    pdxSeq = toKeep
+    pdxSeq
 
-  def filterInPlace(p: T => Boolean): ListBuffer[T] =
+  def filterInPlace(p: T => Boolean): Seq[T] =
     this.removeIf(p andThen(!_))
 
   /**
@@ -85,7 +82,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    */
   @targetName("add")
   def +=(pdxScript: T): Unit =
-    pdxList += pdxScript
+    pdxSeq :+= pdxScript
     // TODO TODO add to node
 
   /**
@@ -93,8 +90,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    * @param pdxScript
    */
   def -=(pdxScript: T): this.type =
-    val index = pdxList.indexOf(pdxScript)
-    pdxList -= pdxScript
+    pdxSeq = pdxSeq.filterNot(_ == pdxScript)
     pdxScript.clearNode()
     this
 
@@ -109,26 +105,24 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
 
   def clear(): Unit =
     node.foreach { n =>
-      n.$ match
-        case l: ListBuffer[T] => l.clear()
-        case _                => // do nothing
+      n.clearIfBlock()
     }
-    pdxList.clear()
+    pdxSeq = Seq.empty 
 
   override def isEmpty: Boolean = value.isEmpty
 
-  override def iterator: Iterator[T] = pdxList.iterator
+  override def iterator: Iterator[T] = pdxSeq.iterator
 
-  override def foreach[U](f: T => U): Unit = pdxList.foreach(f)
+  override def foreach[U](f: T => U): Unit = pdxSeq.foreach(f)
 
-  override def length: Int = pdxList.length
+  override def length: Int = pdxSeq.length
 
-  override def apply(idx: Int): T = pdxList(idx)
+  override def apply(idx: Int): T = pdxSeq(idx)
 
-  override def isUndefined: Boolean = pdxList.forall(_.isUndefined) || pdxList.isEmpty
+  override def isUndefined: Boolean = pdxSeq.forall(_.isUndefined) || pdxSeq.isEmpty
 
   // todo no. in general multi. would be more than one node.
-  override def set(obj: ListBuffer[T]): ListBuffer[T] = {
+  override def set(obj: Seq[T]): Seq[T] = {
     obj
   }
 
@@ -138,7 +132,7 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
       case (None, Some(b)) => b()
       case (Some(s), Some(b)) =>
         expression.$ match
-          case l: ListBuffer[Node] =>
+          case l: Seq[Node] =>
             b()
           case _ => s()
       case (None, None) => throw new RuntimeException("Both suppliers are null")
@@ -156,16 +150,16 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     pdx
 
   override def clearNode(): Unit =
-    pdxList.foreach(_.clearNode())
+    pdxSeq.foreach(_.clearNode())
 
   override def getNodes: List[Node] =
-    pdxList.flatMap(_.getNode).toList
+    pdxSeq.flatMap(_.getNode).toList
 
   /**
    * Rebuilds the underlying Node tree for MultiPDX from the current collection of child nodes.
    * Uses the abstracted collection node tree management from AbstractPDX.
    */
-  override def updateNodeTree(): Unit = updateCollectionNodeTree(pdxList)
+  override def updateNodeTree(): Unit = updateCollectionNodeTree(pdxSeq)
 
 }
 

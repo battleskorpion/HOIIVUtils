@@ -2,10 +2,10 @@ package com.hoi4utils.hoi4.gfx
 
 import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.{Parser, ParserException, ParsingContext}
+import com.hoi4utils.parser.{Node, Parser, ParserException, ParsingContext, ZIOParser}
 import com.hoi4utils.script.{PDXFileError, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
-import zio.{RIO, Task, ZIO}
+import zio.{Cause, RIO, Task, ZIO}
 
 import java.io.File
 import scala.collection.mutable
@@ -39,69 +39,43 @@ import scala.util.boundary
 class Interface(private val file: File) {
   private var spriteTypes: mutable.Set[SpriteType] = new mutable.HashSet
 
-  def readGFXFile(interfaceErrors: ListBuffer[PDXFileError]): Task[Iterable[(String, SpriteType)]] = {
+  def readGFXFile(): Task[InterfaceParseResult] =
     // pre-calculating for time efficiency
     val baseFolder = file.getParentFile.getParentFile
     spriteTypes.clear()
+    readGFXFiles(baseFolder)
+
+  private def readGFXFiles(baseFolder: File): ZIO[Any, ParserException, InterfaceParseResult] =
+    val parser = new ZIOParser(file)
+    given ParsingContext(file)
 
     for {
-      itemsToAdd: Iterable[(String, SpriteType)] <- ZIO.attemptBlocking {
-        val parser = new Parser(file)
-        given ParsingContext(file)
+      rootNode <- parser.parse
+      spriteTypeNodes = rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
+      validSpriteTypes = spriteTypeNodes.view.filter(_.containsAllCaseInsensitive("name", "texturefile")) // TODO can filter out invalid nodes
 
-        val rootNode = try { parser.parse } catch {
-          case e: ParserException =>
-            interfaceErrors += new PDXFileError(
-              exception = e,
-              additionalInfo = Map("context" -> "Error parsing interface .gfx file")
-            )
-            null
-        }
-
-        if (rootNode != null) {
-          /* load listed sprites */
-          val spriteTypeNodes = rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
-
-          if (spriteTypeNodes == null) {
-            interfaceErrors += new PDXFileError(
-              additionalInfo = Map(
-                "context" -> "No SpriteTypes defined in interface .gfx file",
-                "reason" -> "spriteTypeNodes is null"
-              )
-            )
-            List.empty[(String, SpriteType)]
-          } else
-            val validSpriteTypes = spriteTypeNodes.view.filter(_.containsAllCaseInsensitive("name", "texturefile"))
-            validSpriteTypes.flatMap { spriteType =>
-              try {
-                val name = spriteType.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
-                val filename = spriteType.getValueCaseInsensitive("texturefile").$stringOrElse("").replace("\"", "")
-                if name.isEmpty || filename.isEmpty then
-                  interfaceErrors += new PDXFileError(
-                    additionalInfo = Map(
-                      "context" -> "SpriteType in interface .gfx file has empty name or texturefile",
-                      "name" -> name,
-                      "filename" -> filename
-                    )
-                  )
-                  None
-                else
-                  val gfx = new SpriteType(name, filename, basepath = baseFolder)
-                  spriteTypes.add(gfx)
-                  Some(name -> gfx)
-              } catch {
-                case e: ParserException =>
-                  interfaceErrors += new PDXFileError(
-                    exception = e,
-                    additionalInfo = Map("context" -> "Error parsing SpriteType in interface .gfx file")
-                  )
-                  None
-              }
-            }.toList
-        } else List.empty[(String, SpriteType)]
+      (errors, results) <- ZIO.partition(validSpriteTypes) { spriteNode =>
+        processSpriteNode(spriteNode, baseFolder)
       }
-    } yield itemsToAdd
-  }
+    } yield InterfaceParseResult(errors.toList, results.toList)
+
+  private def processSpriteNode(spriteTypeNode: Node, baseFolder: File)(using ctx: ParsingContext): ZIO[Any, InterfaceError, (String, SpriteType)] =
+    ZIO.logAnnotate("node", spriteTypeNode.name) {
+      val name = spriteTypeNode.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
+      val filename = spriteTypeNode.getValueCaseInsensitive("texturefile").$stringOrElse("").replace("\"", "")
+
+      if name.isEmpty || filename.isEmpty then
+        val err = InterfaceError.MissingField(
+          node = spriteTypeNode,
+          fieldName = if name.isEmpty then "name" else "texturefile"
+        )
+        // Log it using ZIO's structured logger
+        ZIO.logErrorCause(err.message, Cause.fail(err)) *> ZIO.fail(err)
+      else
+        val gfx = new SpriteType(name, filename, basepath = baseFolder)
+        spriteTypes.add(gfx)
+        ZIO.succeed(name -> gfx)
+    }
 
   /**
    * Returns the name of the file represented by an instance of the Interface class
@@ -117,3 +91,21 @@ class Interface(private val file: File) {
    */
   def getPath = file.getPath
 }
+
+case class InterfaceParseResult(errors: List[InterfaceError], sprites: List[(String, SpriteType)])
+
+sealed trait InterfaceError extends Throwable:
+  def message: String
+  override def getMessage: String = message
+
+object InterfaceError:
+  case class MissingField(nodeName: String, fieldName: String, file: File, line: Option[Int], column: Option[Int] = None) extends InterfaceError:
+    val message: String = (line, column) match
+      case (Some(l), Some(c)) => s"Node '$nodeName' is missing required field '$fieldName' in $file:$line:$column"
+      case (Some(l), None) => s"Node '$nodeName' is missing required field '$fieldName' in $file:$line"
+
+  object MissingField:
+    def apply(node: Node, fieldName: String)(using ctx: ParsingContext): MissingField =
+      new MissingField(nodeName = node.name, fieldName = fieldName, file = ctx.file, line = ctx.line, column = ctx.column)
+
+  case class InitializationError(message: String, cause: Throwable) extends InterfaceError
