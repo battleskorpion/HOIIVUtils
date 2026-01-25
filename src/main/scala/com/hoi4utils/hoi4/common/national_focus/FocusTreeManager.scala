@@ -27,6 +27,7 @@ trait FocusTreeManager extends PDXReadable with LazyLogging  {
   def sharedFocusFilesAsPseudoTrees: URIO[FocusTreeManager & CountryTagService, Set[PseudoSharedFocusTree]]
   def sharedFocuses: Set[SharedFocus]
   def observeFocusTrees: ObservableList[FocusTree]
+  def hasFocusTreeHeader(file: File): Task[Boolean]
 }
 
 object FocusTreeManager {
