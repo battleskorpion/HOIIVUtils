@@ -255,12 +255,6 @@
       <artifactId>testfx-junit5</artifactId>
       <version>4.0.18</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>hamcrest</artifactId>
-          <groupId>org.hamcrest</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -307,12 +301,6 @@
       <artifactId>assertj-core</artifactId>
       <version>3.26.3</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>byte-buddy</artifactId>
-          <groupId>net.bytebuddy</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
@@ -374,6 +362,24 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.scalamock</groupId>
+      <artifactId>scalamock_3</artifactId>
+      <version>7.5.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scalamock</groupId>
+      <artifactId>scalamock-zio_3</artifactId>
+      <version>7.5.4</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>zio-test_3</artifactId>
+          <groupId>dev.zio</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>
@@ -387,11 +393,11 @@
     </dependencies>
   </dependencyManagement>
   <properties>
-    <maven.compiler.release>24</maven.compiler.release>
     <project.organization.name>battleskorpion</project.organization.name>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.inceptionYear>2022</project.inceptionYear>
-    <scala.version>3.7.3</scala.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.release>24</maven.compiler.release>
+    <scala.version>3.7.3</scala.version>
   </properties>
 </project>

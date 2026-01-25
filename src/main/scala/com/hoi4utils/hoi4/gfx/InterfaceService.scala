@@ -72,17 +72,24 @@ case class InterfaceServiceImpl() extends InterfaceService {
 
   private def readMod(): Task[Boolean] = {
     val folder = HOIIVFiles.Mod.interface_folder
+    System.err.println(s"[DEBUG] readMod starting, folder: $folder")
     if (!folder.exists || !folder.isDirectory) {
+      System.err.println(s"[DEBUG] readMod: folder doesn't exist")
       ZIO.logError("Warning: mod interface directory does not exist").as(false)
     } else if (folder.listFiles == null || folder.listFiles.isEmpty) {
+      System.err.println(s"[DEBUG] readMod: folder is empty")
       ZIO.logError("Warning: mod interface directory is empty").as(false)
     } else {
       val gfxFiles = folder.listFiles.filter(_.getName.endsWith(".gfx")).toList
+      System.err.println(s"[DEBUG] readMod: found ${gfxFiles.size} gfx files")
 
       ZIO.foreachPar(gfxFiles) { f =>
         for {
+          _ <- ZIO.succeed(System.err.println(s"[DEBUG] readMod: processing ${f.getName}"))
           interface <- ZIO.succeed(new Interface(f))
+          _ <- ZIO.succeed(System.err.println(s"[DEBUG] readMod: created Interface for ${f.getName}"))
           InterfaceParseResult(errors, itemsToAdd) <- interface.readGFXFile()
+          _ <- ZIO.succeed(System.err.println(s"[DEBUG] readMod: parsed ${f.getName}, got ${itemsToAdd.size} sprites"))
           _ <- ZIO.foreachDiscard(itemsToAdd) { case (name, gfx) =>
             addSpriteType(name, gfx)
           }
@@ -90,6 +97,7 @@ case class InterfaceServiceImpl() extends InterfaceService {
       }
       .withParallelism(8)
       .map { interfaceFilesMap =>
+        System.err.println(s"[DEBUG] readMod: all files processed, count: ${interfaceFilesMap.size}")
         interfaceFilesMap.foreach { (f, interface) =>
           interfaceFiles.put(f, interface)
         }
@@ -100,23 +108,29 @@ case class InterfaceServiceImpl() extends InterfaceService {
 
   private def readHoi4(): Task[Boolean] = {
     val folder = HOIIVFiles.HOI4.interface_folder
+    System.err.println(s"[DEBUG] readHoi4 starting, folder: $folder")
     if (!folder.exists || !folder.isDirectory) {
+      System.err.println(s"[DEBUG] readHoi4: folder doesn't exist")
       ZIO.logError("Warning: HOI4 interface directory does not exist").as(false)
     } else if (folder.listFiles == null || folder.listFiles.isEmpty) {
+      System.err.println(s"[DEBUG] readHoi4: folder is empty")
       ZIO.logError("Warning: HOI4 interface directory is empty").as(false)
     } else {
       val gfxFiles = folder.listFiles.filter(_.getName.endsWith(".gfx"))
+      System.err.println(s"[DEBUG] readHoi4: found ${gfxFiles.size} gfx files")
 
       ZIO.foreachPar(gfxFiles) { f =>
         for {
+          _ <- ZIO.succeed(System.err.println(s"[DEBUG] readHoi4: processing ${f.getName}"))
           interface <- ZIO.succeed(new Interface(f))
           InterfaceParseResult(errors, itemsToAdd) <- interface.readGFXFile()
+          _ <- ZIO.succeed(System.err.println(s"[DEBUG] readHoi4: parsed ${f.getName}, got ${itemsToAdd.size} sprites"))
           _ <- ZIO.foreachDiscard(itemsToAdd) { case (name, gfx) =>
             addSpriteType(name, gfx)
           }
-//          _ <- ZIO.logError(s"read $f")
         } yield (f, interface)
       }.map { interfaceFilesMap =>
+        System.err.println(s"[DEBUG] readHoi4: all files processed, count: ${interfaceFilesMap.size}")
         interfaceFilesMap.foreach { (f, interface) =>
           interfaceFiles.put(f, interface)
         }
@@ -125,7 +139,11 @@ case class InterfaceServiceImpl() extends InterfaceService {
     } <* ZIO.logInfo(s"Read Interface files from $folder")
   }
 
-  def read(): Task[Boolean] = readMod() && readHoi4()
+  def read(): Task[Boolean] =
+    for {
+      modResult <- readMod()
+      hoi4Result <- readHoi4()
+    } yield modResult && hoi4Result
 
   override def clear(): Task[Unit] =
     ZIO.succeed(gfxMap.clear()) &> ZIO.succeed(interfaceFiles.clear())

@@ -45,11 +45,12 @@ class Interface(private val file: File) {
     spriteTypes.clear()
     readGFXFiles(baseFolder)
 
-  private def readGFXFiles(baseFolder: File): ZIO[Any, ParserException, InterfaceParseResult] =
-    val parser = new ZIOParser(file)
+  private def readGFXFiles(baseFolder: File): ZIO[Any, Throwable, InterfaceParseResult] =
     given ParsingContext(file)
 
-    for {
+    val parseEffect = for {
+      // ZIOParser constructor does blocking file I/O, so wrap in attemptBlocking
+      parser <- ZIO.attemptBlocking(new ZIOParser(file))
       rootNode <- parser.parse
       spriteTypeNodes = rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
       validSpriteTypes = spriteTypeNodes.view.filter(_.containsAllCaseInsensitive("name", "texturefile")) // TODO can filter out invalid nodes
@@ -58,6 +59,14 @@ class Interface(private val file: File) {
         processSpriteNode(spriteNode, baseFolder)
       }
     } yield InterfaceParseResult(errors.toList, results.toList)
+
+    // Handle parsing errors gracefully - return empty result instead of failing
+    parseEffect.catchAll { error =>
+      ZIO.succeed {
+        System.err.println(s"[WARN] Failed to parse ${file.getName}: ${error.getMessage}")
+        InterfaceParseResult(List(InterfaceError.InitializationError(s"Parse error: ${error.getMessage}", error)), List.empty)
+      }
+    }
 
   private def processSpriteNode(spriteTypeNode: Node, baseFolder: File)(using ctx: ParsingContext): ZIO[Any, InterfaceError, (String, SpriteType)] =
     ZIO.logAnnotate("node", spriteTypeNode.name) {
