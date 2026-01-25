@@ -25,7 +25,7 @@ trait NodeIterable[NodeType <: Node] extends Iterable[NodeType]:
         case _ =>
           node.identifier.isDefined && node.name.equals(str)
     )
-  
+
   def findCaseInsensitive(str: String): Option[NodeType] =
     find((node: NodeType) =>
       node.$ match
@@ -88,6 +88,10 @@ trait NodeIterable[NodeType <: Node] extends Iterable[NodeType]:
         node.filter((n: Node) => widened(n)).toSeq.collect { case n: NodeType => n }
       }
     )
+
+  def filterHead(str: String): NodeType = filterName(str).head
+  
+  def filterHeadOption(str: String): Option[NodeType] = filterName(str).headOption
 
   def contains(str: String): Boolean = filter(str).toList.nonEmpty
 
