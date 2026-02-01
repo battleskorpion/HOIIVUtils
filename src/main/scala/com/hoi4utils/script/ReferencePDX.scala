@@ -1,7 +1,7 @@
 package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, PDXValueNode}
 import com.hoi4utils.script.datatype.StringPDX
 
 import scala.annotation.targetName
@@ -20,14 +20,14 @@ import scala.util.boundary
  */
 // removed T <: PDXScript[?]
 // but todo disallow string (and maybe other val types), and StringPDX, other primitive pdx
-class ReferencePDX[T <: Referable](final protected var referenceCollectionSupplier: () => Iterable[T],
+class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollectionSupplier: () => Iterable[T],
                       pdxIdentifiers: List[String])
-  extends AbstractPDX[T](pdxIdentifiers) {
+  extends AbstractPDX[T, V](pdxIdentifiers) {
 
   // the string identifier of the referenced PDXScript
-  protected[script] var referenceName: String = uninitialized
+  protected[script] var referenceName: V = uninitialized
   private var reference: Option[T] = None
-  final protected var idExtractor: T => Option[String] = (obj: T) => obj.referableID
+  final protected var idExtractor: T => Option[V] = (obj: T) => obj.referableID
 
   def this(referenceCollectionSupplier: () => Iterable[T], pdxIdentifiers: String*) = {
     this(referenceCollectionSupplier, pdxIdentifiers.toList)
@@ -35,20 +35,11 @@ class ReferencePDX[T <: Referable](final protected var referenceCollectionSuppli
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def set(expression: Node): Unit = {
+  override def set(expression: PDXValueNode[V]): Unit = {
     usingIdentifier(expression)
     // Always preserve the original node.
     this.node = Some(expression)
-    expression.$ match {
-      case s: String =>
-        referenceName = s
-      case s: Int =>
-        referenceName = s.toString
-      case other =>
-        // Log a warning, preserve the node, then throw the exception.
-        logger.warn(s"Expected a string or int for a reference identifier, but got ${other.getClass.getSimpleName}. Preserving original node.")
-        throw new NodeValueTypeException(expression, "string | int", this.getClass)
-    }
+    referenceName = expression.$
   }
 
   override def value: Option[T] = {
@@ -68,9 +59,9 @@ class ReferencePDX[T <: Referable](final protected var referenceCollectionSuppli
     None
   }
 
-  override def equals(other: PDXScript[?]): Boolean = {
+  override def equals(other: PDXScript[?, ?]): Boolean = {
     other match {
-      case referencePDX: ReferencePDX[?] =>
+      case referencePDX: ReferencePDX[?, ?] =>
         (referencePDX @== referenceName) &&
           this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier
       case _ => false
@@ -79,17 +70,16 @@ class ReferencePDX[T <: Referable](final protected var referenceCollectionSuppli
 
   def getReferenceName: String = referenceName
 
-  def setReferenceName(str: String): Unit = {
-    referenceName = str
-    node.foreach(_.setValue(str))
-  }
+  def setReferenceName(name: V): Unit =
+    referenceName = name
+    node.foreach(_.setValue(name))
 
   def getReferenceCollection: Iterable[T] = referenceCollectionSupplier()
 
   def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().flatMap(idExtractor)
 
   @targetName("setReference")
-  def @= (str: String): Unit = {
+  def @= (str: V): Unit = {
     setReferenceName(str)
   }
 
@@ -132,7 +122,7 @@ class ReferencePDX[T <: Referable](final protected var referenceCollectionSuppli
    */
   override def updateNodeTree(): Unit = {
     if (node.isEmpty && referenceName != null) {
-      node = Some(new Node(pdxIdentifier, "=", referenceName))
+      node = Some(new PDXValueNode[V](pdxIdentifier, "=", referenceName))
     }
     else node.foreach(_.setValue(referenceName))
   }
@@ -142,6 +132,7 @@ class ReferencePDX[T <: Referable](final protected var referenceCollectionSuppli
   }
 }
 
-trait Referable {
-  def referableID: Option[String]
+trait Referable[V <: String | Int] {
+  type Value = V
+  def referableID: Option[V]
 }

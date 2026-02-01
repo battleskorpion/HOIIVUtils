@@ -1,7 +1,7 @@
 package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, NodeSeq, SeqNode}
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
@@ -27,13 +27,13 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
   def this(pdxIdentifiers: String*) = this(pdxIdentifiers.toList)
 
   // Holds extra nodes that are not valid structured properties and are assumed to be effects.
-  var effectNodes: ListBuffer[Node] = ListBuffer.empty
+  var effectNodes: ListBuffer[Node[?]] = ListBuffer.empty
 
   /**
    * Override the set method to catch identifiers that aren’t recognized.
    * If a node cannot be loaded as a structured property, we store it as an effect.
    */
-  override def set(expression: Node): Unit = {
+  override def set(expression: SeqNode): Unit = {
     // Try to process as normal structured node.
     try {
       super.set(expression)
@@ -58,7 +58,7 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
    * If the node’s identifier is not recognized among the structured child scripts,
    * it is assumed to be an effect.
    */
-  override def loadPDX(expression: Node, file: Option[File]): Unit = expression.identifier match
+  override def loadPDX(expression: NodeType, file: Option[File]): Unit = expression.identifier match
     case None => super.loadPDX(expression, file)
     case Some(_) =>
       // If the identifier is not among the expected structured ones, add it as an effect.
@@ -69,7 +69,7 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
    * Override loadPDX for an iterable collection.
    * For each node, process structured properties and treat unknown nodes as effects.
    */
-  override def loadPDX(expressions: Seq[Node]): Seq[Node] = {
+  override def loadPDX(expressions: NodeSeq): NodeSeq = {
     if (expressions == null) return Seq.empty
     super.loadPDX(expressions.filter(this.isValidIdentifier))
 

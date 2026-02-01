@@ -37,7 +37,7 @@ class BuildingsByCountryController2 extends HOIIVUtilsAbstractController2 with T
   @FXML private var closeDetailsButton: Button = uninitialized
   @FXML private var statePercentageCheckBox: CheckBox = uninitialized
   @FXML private var stateTableScrollPane: ScrollPane = uninitialized
-  @FXML private var stateDataTablePlaceholder: TableView[_] = uninitialized
+  @FXML private var stateDataTablePlaceholder: TableView[?] = uninitialized
   @FXML private var countryDataTableCountryColumn: TableColumn[CountryFile, String] = uninitialized
   @FXML private var countryDataTablePopulationColumn: TableColumn[CountryFile, Integer] = uninitialized
   @FXML private var countryDataTableCivFactoryColumn: TableColumn[CountryFile, Integer] = uninitialized

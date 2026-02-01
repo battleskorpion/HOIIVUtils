@@ -13,7 +13,8 @@ import com.hoi4utils.hoi4.map.state.State.History
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
-import com.hoi4utils.script.datatype.StringPDX
+import com.hoi4utils.script.datatype.{BooleanPDX, StringPDX}
+import com.hoi4utils.script.seq.{CollectionPDX, ListPDX, MultiPDX}
 import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
@@ -32,7 +33,7 @@ import scala.util.boundary
  * @param addToStatesList if true, adds the state to the list of states
  */
 class State(file: File = null)(countryTagService: CountryTagService) extends StructuredPDX("state") with InfrastructureData
-  with Localizable with Iterable[Province] with Comparable[State] with PDXFile with Referable with LazyLogging:
+  with Localizable with Iterable[Province] with Comparable[State] with PDXFile with Referable[Int] with LazyLogging:
 
   final val stateID = new IntPDX("id")
   final val name = new StringPDX("name")
@@ -65,7 +66,7 @@ class State(file: File = null)(countryTagService: CountryTagService) extends Str
       loadPDX(file)
       setFile(file)
 
-  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+  override def handlePDXError(exception: Exception = null, node: Node[?] = null, file: File = null): Unit =
     given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
     val pdxError = new PDXFileError(
       exception = exception,
@@ -80,7 +81,7 @@ class State(file: File = null)(countryTagService: CountryTagService) extends Str
   /**
    * @inheritdoc
    */
-  override protected def childScripts: mutable.Seq[PDXScript[?]] =
+  override protected def childScripts: mutable.Seq[PDXScript[?, ?]] =
     ListBuffer(stateID, name, resources, history, provinces, manpower, buildingsMaxLevelFactor,
       state_category, local_supplies, impassible)
 
@@ -326,7 +327,7 @@ object State extends LazyLogging:
     stateService.observeStates
 
   // todo fix structured effect block later when i can read
-  class History(pdxIdentifier: String = "history", node: Node = null, file: Option[File] = None)(countryTagService: CountryTagService) extends StructuredPDX(pdxIdentifier):
+  class History(pdxIdentifier: String = "history", node: SeqNode = null, file: Option[File] = None)(countryTagService: CountryTagService) extends StructuredPDX(pdxIdentifier):
     final val owner = new ReferencePDX[CountryTag](() => countryTagService.tags, "owner")
     final val controller = new ReferencePDX[CountryTag](() => countryTagService.tags, "controller")
     final val buildings = new BuildingsPDX
@@ -341,7 +342,7 @@ object State extends LazyLogging:
     /**
      * @inheritdoc
      */
-    override protected def childScripts: mutable.Seq[PDXScript[?]] =
+    override protected def childScripts: mutable.Seq[PDXScript[?, ?]] =
       ListBuffer(owner, buildings, controller, victoryPoints, startDateScopes)
 
     override def getPDXTypeName: String = "History"
@@ -359,7 +360,7 @@ object State extends LazyLogging:
     /**
      * @inheritdoc
      */
-    override protected def childScripts: mutable.Seq[PDXScript[?]] =
+    override protected def childScripts: mutable.Seq[PDXScript[?, ?]] =
       ListBuffer(infrastructure, civilianFactories, militaryFactories, navalDockyards, airBase)
 
   class VictoryPointPDX extends ListPDX[IntPDX](() => new IntPDX(), "victory_points"):

@@ -1,21 +1,22 @@
 package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, NodeSeq, SeqNode}
+import com.hoi4utils.script.seq.SeqPDX
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
 
-abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[Seq[Node]](pdxIdentifiers) with LazyLogging {
+abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[NodeSeq, Node[?]](pdxIdentifiers) with LazyLogging {
 
-  var badNodesList: Iterable[Node] = ListBuffer.empty
+  var badNodesList: Iterable[Node[?]] = ListBuffer.empty
 
   def this(pdxIdentifiers: String*) = {
     this(pdxIdentifiers.toList)
   }
 
-  protected def childScripts: collection.mutable.Seq[? <: PDXScript[?]]
+  protected def childScripts: collection.mutable.Seq[? <: PDXScript[?, ?]]
 
   /**
    * Sets the current node to the provided expression and processes it based on its type.
@@ -24,46 +25,47 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[S
    *
    * @param expression the node expression to set.
    * @throws UnexpectedIdentifierException if the identifier used in the expression is unexpected.
-   * @throws NodeValueTypeException        if the expression is not of type Seq[Node], but was expected to be.
+   * @throws NodeValueTypeException        if the expression is not of type NodeSeq, but was expected to be.
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def set(expression: Node): Unit = {
+  override def set(expression: SeqNode): Unit =
     usingIdentifier(expression)
     this.node = Some(expression)
-    expression.$ match {
-      case l: Seq[Node] =>
-        // then load each sub-PDXScript
-        var remainingNodes = Seq.from(l)
-        for pdxScript <- childScripts do
-          remainingNodes = pdxScript.loadPDX(remainingNodes)
-        badNodesList = remainingNodes
-      case _ =>
-        throw new NodeValueTypeException(expression, "list", this.getClass)
-    }
-  }
+    // then load each sub-PDXScript
+    var remainingNodes: NodeSeq = Seq.from(expression.$)
+    for pdxScript <- childScripts do
+      remainingNodes = pdxScript.loadPDX(remainingNodes)
+    badNodesList = remainingNodes
 
-  override def set(value: Seq[Node]): Seq[Node] = {
+  override def set(value: NodeSeq): NodeSeq =
     // TODO: Consider if this implementation is complete // second TODO: ?
     super.setNode(value)
     value
-  }
 
   /**
    * @inheritdoc
    */
-  override def loadPDX(expression: Node, file: Option[File]): Unit = {
+  override def loadPDX(expression: NodeType, file: Option[File]): Unit =
     if isExpressionIdentifierExpected then
       expression.identifier match
-        case None => expression.$ match
-          case l: Seq[Node] => loadPDX(l)
-          case _ =>
-            handlePDXError(NodeValueTypeException("PDXScript.loadPDX: Expected list of nodes, got: \n" + expression), expression, file.orNull)
+        case None =>
+          loadPDX(expression.$)
+//          expression.$ match
+//            case l: Seq[Node] => loadPDX(l)
+//          case _ =>
+//            handlePDXError(NodeValueTypeException("PDXScript.loadPDX: Expected list of nodes, got: \n" + expression), expression, file.orNull)
         case Some(_) =>
           super.loadPDX(expression, file)
     else
       super.loadPDX(expression, file)
-  }
+
+  // todo?
+  protected def loadPDX(file: File): Unit =
+    require(file.exists && file.isFile, s"File $file does not exist or is not a file.")
+    val pdxParser = new Parser(file)
+    try loadPDX(pdxParser.parse, Some(file))
+    catch case e: ParserException => handlePDXError(e, file = file)
 
   /**
    * Gets the child pdx property with the current identifier matching
@@ -71,7 +73,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[S
    *
    * @param identifier
    */
-  def getPDXProperty(identifier: String): Option[PDXScript[?]] = childScripts.find(_.pdxIdentifier == identifier)
+  def getPDXProperty(identifier: String): Option[PDXScript[?, ?]] = childScripts.find(_.pdxIdentifier == identifier)
 
   /**
    * Gets the child pdx property with the current identifier matching
@@ -79,7 +81,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[S
    *
    * @param identifiers
    */
-  def getPDXProperty(identifiers: List[String]): Option[PDXScript[?]] =
+  def getPDXProperty(identifiers: List[String]): Option[PDXScript[?, ?]] =
     identifiers.view
       .map(getPDXProperty)
       .find(_.isDefined)
@@ -91,9 +93,9 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[S
    *
    * @param identifier
    */
-  def getPDXPropertyOfType[R](identifier: String): Option[PDXScript[R]] =
+  def getPDXPropertyOfType[R](identifier: String): Option[PDXScript[R, ?]] =
     childScripts.collectFirst {
-      case pdxScript: PDXScript[R] if pdxScript.pdxIdentifier == identifier => pdxScript
+      case pdxScript: PDXScript[R, ?] if pdxScript.pdxIdentifier == identifier => pdxScript
     }
 
   /**
@@ -102,13 +104,13 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[S
    *
    * @param identifiers
    */
-  def getPDXPropertyOfType[R](identifiers: List[String]): Option[PDXScript[R]] =
+  def getPDXPropertyOfType[R](identifiers: List[String]): Option[PDXScript[R, ?]] =
     identifiers.view
       .map(getPDXPropertyOfType[R])
       .find(_.isDefined)
       .flatten
 
-  def pdxProperties: Iterable[? <: PDXScript[?]] =
+  def pdxProperties: Iterable[? <: PDXScript[?, ?]] =
     Option(childScripts).getOrElse(Nil)
 
   /**
@@ -120,7 +122,7 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[S
     val originalPositions: Map[String, Int] = node match
       case Some(n) =>
         n.$ match
-          case lb: Seq[Node] => lb.zipWithIndex.map { case (n, i) =>
+          case lb: NodeSeq => lb.zipWithIndex.map { case (n, i) =>
             n.identifier.getOrElse(s"__NO_ID_$i") -> i
           }.toMap
           case _ => Map.empty
@@ -154,22 +156,22 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[S
 
     val preservedNodes = badNodesList
     // Merge the loaded nodes and preserved nodes, then re-sort by the original order.
-    val combinedNodes = (sortedLoadedNodes ++ preservedNodes)
+    val combinedNodes: NodeSeq = (sortedLoadedNodes ++ preservedNodes)
       .sortBy(node =>
         node.identifier.fold(Int.MaxValue)(originalPositions.getOrElse(_, Int.MaxValue))
       )
 
 
     // Update the current node's value.
-    if (combinedNodes.nonEmpty) then node match
+    if combinedNodes.nonEmpty then node match
       case Some(n) => n.setValue(combinedNodes)
-      case None    => node = Some(Node(pdxIdentifier, "=", combinedNodes))
+      case None    => node = Some(SeqNode(pdxIdentifier, "=", combinedNodes))
     else node = None
   }
 
   override def clone(): AnyRef = {
     val clone = super.clone().asInstanceOf[StructuredPDX]
-    clone.node = Some(Node(pdxIdentifier, "=", Seq.empty))
+    clone.node = Some(SeqNode(pdxIdentifier, "=", Seq.empty))
     clone.badNodesList = this.badNodesList
     clone
   }

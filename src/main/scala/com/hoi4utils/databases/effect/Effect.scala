@@ -7,7 +7,7 @@ import scala.annotation.nowarn
 
 // todo should be sealed? 
 // todo  with AbstractPDX[Effect](identifiers) ????
-trait Effect extends ScopedPDXScript with PDXScript[?] with Cloneable {
+trait Effect extends ScopedPDXScript with PDXScript[?, ?] with Cloneable {
   protected var _definitionScope: Option[Scope] = None
   protected var _targetScope: Option[Scope] = None
   protected var _supportedScopes: Set[ScopeType] = Set.empty

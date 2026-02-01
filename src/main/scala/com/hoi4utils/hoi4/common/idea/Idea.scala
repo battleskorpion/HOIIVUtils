@@ -3,8 +3,9 @@ package com.hoi4utils.hoi4.common.idea
 import com.hoi4utils.databases.modifier.{Modifier, ModifierDatabase}
 import com.hoi4utils.hoi4.localization.{Localizable, Property}
 import com.hoi4utils.main.HOIIVUtils
-import com.hoi4utils.parser.{Node, ParsingContext}
+import com.hoi4utils.parser.{Node, PDXValueNode, ParsingContext, SeqNode}
 import com.hoi4utils.script.*
+import com.hoi4utils.script.seq.CollectionPDX
 import com.hoi4utils.shared.ExpectedRange
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
@@ -30,14 +31,14 @@ object Idea extends LazyLogging {
 
   def pdxSupplier(): PDXSupplier[Idea] = {
     new PDXSupplier[Idea] {
-      override def simplePDXSupplier(): Option[Node => Option[Idea]] = {
-        Some((expr: Node) => {
+      override def simplePDXSupplier(): Option[PDXValueNode[?] => Option[Idea]] = {
+        Some((expr: PDXValueNode[?]) => {
             Some(new Idea(expr)) // todo check if this is correct? or nah?
         })
       }
 
-      override def blockPDXSupplier(): Option[Node => Option[Idea]] = {
-        Some((expr: Node) => {
+      override def blockPDXSupplier(): Option[SeqNode => Option[Idea]] = {
+        Some((expr: SeqNode) => {
           Some(new Idea(expr))
         })
       }
@@ -51,16 +52,16 @@ object Idea extends LazyLogging {
  *
  * @note Since name is not declared val or var, it will not become a field of Idea.
  */
-class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Localizable with Iterable[Modifier] with Referable {
+class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Localizable with Iterable[Modifier] with Referable[String] {
   private var _ideaFile: Option[IdeaFile] = None
 
   /* idea */
   final val modifiers = new CollectionPDX[Modifier](ModifierDatabase(), "modifier") {
-    override def loadPDX(expr: Node, file: Option[File]): Unit = {
+    override def loadPDX(expr: NodeType, file: Option[File]): Unit = {
       super.loadPDX(expr, file)
     }
 
-    override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+    override def handlePDXError(exception: Exception = null, node: Node[?] = null, file: File = null): Unit =
       val errFile = if file != null then file else _ideaFile.flatMap(_.getFile).orNull
       given ParsingContext(errFile, node)
       val pdxError = new PDXFileError(
@@ -77,27 +78,23 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
   }
   final val removalCost = new DoublePDX("cost", ExpectedRange(-1.0, Double.PositiveInfinity))
 
-  def this(node: Node) = {
+  def this(node: SeqNode) =
     this(node.name)
     loadPDX(node, _ideaFile.flatMap(_.getFile))
-  }
 
-  def this(ideaFile: IdeaFile, identifier: String) = {
+  def this(ideaFile: IdeaFile, identifier: String) =
     this(identifier)
     this._ideaFile = Some(ideaFile)
-  }
 
-  def this(ideaFile: IdeaFile, node: Node) = {
+  def this(ideaFile: IdeaFile, node: SeqNode) =
     this(node)
     this._ideaFile = Some(ideaFile)
-  }
 
   /**
    * @inheritdoc
    */
-  override protected def childScripts: mutable.Seq[PDXScript[?]] = {
+  override protected def childScripts: mutable.Seq[PDXScript[?, ?]] =
     ListBuffer(removalCost, modifiers)
-  }
 
 //  protected def addModifier(modifier: Modifier): Unit = {
 //    modifiers.add(modifier)

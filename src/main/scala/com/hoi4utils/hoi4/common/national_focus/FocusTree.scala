@@ -7,6 +7,7 @@ import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Node, ParsingContext}
 import com.hoi4utils.script.*
 import com.hoi4utils.script.datatype.*
+import com.hoi4utils.script.seq.MultiPDX
 import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
@@ -83,7 +84,7 @@ class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService:
   rows = height + 1
 
   // todo: add default, continuous focus position
-  override protected def childScripts: mutable.Seq[? <: PDXScript[?]] =
+  override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] =
     ListBuffer(id, country, focuses)
 
   override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
@@ -220,7 +221,7 @@ class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService:
    */
   override def getLocalizableGroup: Iterable[? <: Localizable] = focuses
 
-  override def equals(other: PDXScript[?]): Boolean =
+  override def equals(other: PDXScript[?, ?]): Boolean =
     if other.isInstanceOf[FocusTree] then return this == other
     false
 
@@ -230,7 +231,7 @@ class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService:
     final val add = new DoublePDX("add")
     final val modifier = new MultiPDX[TagModifier](None, Some(() => new TagModifier(countryTagService)), "modifier")
 
-    override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(base, factor, add, modifier)
+    override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = ListBuffer(base, factor, add, modifier)
 
     override def getPDXTypeName: String = "AI Willingness"
 
@@ -240,7 +241,7 @@ class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService:
       final val add = new DoublePDX("add")
       final val tag = new ReferencePDX[CountryTag](() => countryTagService.tags, "country")
 
-      override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(base, factor, add, tag)
+      override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = ListBuffer(base, factor, add, tag)
 
       override def getPDXTypeName: String = "Modifier"
 
@@ -258,12 +259,12 @@ class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService:
       val offset: PointPDX = PointPDX("offset")
 //        val trigger: TriggerPDX
 
-      override def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(offset) ++ super.childScripts
+      override def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = ListBuffer(offset) ++ super.childScripts
 
     class InitialShowPosition_Focus extends StructuredPDX(pdxIdentifier) with InitialShowPositionSchema:
       val focus: ReferencePDX[Focus] = ReferencePDX[Focus](() => focuses.toList, "focus")
 
-      override def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(focus)
+      override def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = ListBuffer(focus)
 
   class Shortcut extends StructuredPDX("shortcut"):
     val name = StringPDX("name")  // loc_key
@@ -272,7 +273,7 @@ class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService:
     val scrollWheelFactor = DoublePDX("scroll_wheel_factor", ExpectedRange.ofUnitInterval)
 //    val trigger = TriggerPDX("trigger") // TODO IMPL TRIGGER PDX
 
-    override protected def childScripts: mutable.Seq[? <: PDXScript[?]] =
+    override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] =
       ListBuffer(name, target, scrollWheelFactor)
 
   /* Error handling overrides to log detailed information about issues encountered during parsing. */

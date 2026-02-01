@@ -10,10 +10,10 @@ import scala.collection.mutable.ListBuffer
  * todo add more details later
  */
 class PDXFileError(
-                var exception: Exception = null,
-                var errorNode: Node = null,
-                var pdxScript: PDXScript[?] = null,
-                var additionalInfo: Map[String, String] = Map.empty
+                    var exception: Exception = null,
+                    var errorNode: Node[?] = null,
+                    var pdxScript: PDXScript[?, ?] = null,
+                    var additionalInfo: Map[String, String] = Map.empty
               )(using context: ParsingContext):
 
   def file: File = context.file

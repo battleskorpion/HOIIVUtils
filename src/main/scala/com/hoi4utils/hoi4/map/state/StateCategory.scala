@@ -1,18 +1,18 @@
 package com.hoi4utils.hoi4.map.state
 
 import com.hoi4utils.hoi4.map.state.StateCategoryDefinition
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, PDXValueNode, SeqNode}
 import com.hoi4utils.script.*
 /**
  * Represents a valid state category.
  *
  * @param id
  */
-class StateCategory(id: String) extends ReferencePDX[StateCategoryDefinition](() => StateCategories.list, id) {
+class StateCategory(id: String) extends ReferencePDX[StateCategoryDefinition, String](() => StateCategories.list, id) {
   /* init */
   require(isValidID(id), s"Invalid state category identifier: $id")
 
-  def this(node: Node) = {
+  def this(node: PDXValueNode[?]) = {
     this(node.name)
     var file = None
     loadPDX(node, None)
@@ -41,14 +41,14 @@ object StateCategory {
 
   def apply(): PDXSupplier[StateCategory] = {
     new PDXSupplier[StateCategory] {
-      override def simplePDXSupplier(): Option[Node => Option[StateCategory]] = {
-        Some((expr: Node) => {
+      override def simplePDXSupplier(): Option[PDXValueNode[?] => Option[StateCategory]] = {
+        Some((expr: PDXValueNode[?]) => {
           Some(new StateCategory(expr))
         })
       }
 
-      override def blockPDXSupplier(): Option[Node => Option[StateCategory]] = {
-        Some((expr: Node) => {
+      override def blockPDXSupplier(): Option[SeqNode => Option[StateCategory]] = {
+        Some((expr: SeqNode) => {
           Some(new StateCategory(expr))
         })
       }

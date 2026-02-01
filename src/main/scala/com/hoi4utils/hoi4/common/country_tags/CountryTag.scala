@@ -19,7 +19,7 @@ import scala.util.Using
  * @param file if this tag is defined in the mod's (or vanilla's) country tags files, file it is defined in,
  *             or should be defined in.
  */
-class CountryTag private[country_tags](val tag: String, var file: Option[File] = None) extends Comparable[CountryTag] with Referable {
+class CountryTag private[country_tags](val tag: String, var file: Option[File] = None) extends Comparable[CountryTag] with Referable[String] {
   def get: String = tag
 
   override def toString: String = {

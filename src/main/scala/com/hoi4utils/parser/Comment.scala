@@ -7,3 +7,6 @@ class Comment(private var _comment: String):
   def comment: String = _comment
 
   override def toString: String = _comment
+  
+object Comment: 
+  val empty: Comment = Comment("")

@@ -3,6 +3,7 @@ package com.hoi4utils.hoi4.map.strategicregions
 import com.hoi4utils.hoi4.map.province.Province
 import com.hoi4utils.script.*
 import com.hoi4utils.script.datatype.StringPDX
+import com.hoi4utils.script.seq.{ListPDX, MultiPDX}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 
@@ -38,7 +39,7 @@ class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region
   /**
    * @inheritdoc
    */
-  override protected def childScripts: mutable.Seq[PDXScript[?]] =
+  override protected def childScripts: mutable.Seq[PDXScript[?, ?]] =
     ListBuffer(id, name, provinces, weather)
 
   def setFile(file: File): Unit =
@@ -52,7 +53,7 @@ class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region
     /**
      * @inheritdoc
      */
-    override protected def childScripts: mutable.Seq[PDXScript[?]] =
+    override protected def childScripts: mutable.Seq[PDXScript[?, ?]] =
       ListBuffer(period)
 
     class WeatherPeriod extends StructuredPDX("period") {
@@ -71,7 +72,7 @@ class StrategicRegion(file: File = null) extends StructuredPDX("strategic_region
       /**
        * @inheritdoc
        */
-      override protected def childScripts: mutable.Seq[PDXScript[?]] = 
+      override protected def childScripts: mutable.Seq[PDXScript[?, ?]] = 
         ListBuffer(between, temperature, no_phenomenon, rain_light, rain_heavy, snow, blizzard, arctic_water, mud, sandstorm, min_snow_level)
     }
   }

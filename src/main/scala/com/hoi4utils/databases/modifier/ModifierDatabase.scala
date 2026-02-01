@@ -1,6 +1,6 @@
 package com.hoi4utils.databases.modifier
 
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, PDXValueNode, SeqNode}
 import com.hoi4utils.script.PDXSupplier
 
 import java.io.{File, IOException}
@@ -51,16 +51,16 @@ object ModifierDatabase {
 
   def apply(): PDXSupplier[Modifier] = {
     new PDXSupplier[Modifier] {
-      override def simplePDXSupplier(): Option[Node => Option[Modifier]] = {
-        Some((expr: Node) => {
+      override def simplePDXSupplier(): Option[PDXValueNode[?] => Option[Modifier]] = {
+        Some((expr: PDXValueNode[?]) => {
           _modifiers.filter(_.isInstanceOf[Modifier]) // todo? 
             .find(_.pdxIdentifier == expr.name)
             .map(_.clone().asInstanceOf[Modifier])
         })
       }
 
-      override def blockPDXSupplier(): Option[Node => Option[Modifier]] = {
-        Some((expr: Node) => {
+      override def blockPDXSupplier(): Option[SeqNode => Option[Modifier]] = {
+        Some((expr: SeqNode) => {
           _modifiers.filter(_.isInstanceOf[Modifier])
             .find(_.pdxIdentifier == expr.name)
             .map(_.clone().asInstanceOf[Modifier])

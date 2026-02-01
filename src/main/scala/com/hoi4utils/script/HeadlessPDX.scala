@@ -1,7 +1,7 @@
 package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, NodeSeq, SeqNode}
 
 import scala.collection.mutable.ListBuffer
 
@@ -12,22 +12,16 @@ trait HeadlessPDX { this: StructuredPDX =>
    * This is useful for headless files where there is no top-level key.
    */
   @throws[NodeValueTypeException]
-  override def set(expression: Node): Unit = {
+  override def set(expression: SeqNode): Unit =
     // Skip identifier checking since headless files do not have a named header.
     this.node = Some(expression)
-    expression.$ match {
-      case l: Seq[Node] =>
-        // then load each sub-PDXScript
-        var remainingNodes = Seq.from(l)
-        for pdxScript <- childScripts do
-          remainingNodes = pdxScript.loadPDX(remainingNodes)
-        badNodesList = remainingNodes
-      case _ =>
-        throw new NodeValueTypeException(expression, "list", this.getClass)
-    }
-  }
+    // then load each sub-PDXScript
+    var remainingNodes: NodeSeq = Seq.from(expression.$)
+    for pdxScript <- childScripts do
+      remainingNodes = pdxScript.loadPDX(remainingNodes)
+    badNodesList = remainingNodes
 
-  override def isValidIdentifier(node: Node): Boolean = true
+  override def isValidIdentifier(node: Node[?]): Boolean = true
 
   override def isExpressionIdentifierExpected: Boolean = false
 

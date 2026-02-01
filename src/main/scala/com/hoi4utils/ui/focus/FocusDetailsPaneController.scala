@@ -50,7 +50,7 @@ class FocusDetailsPaneController extends LazyLogging:
         logger.info(s"Loading PDXEditor for focus: ${focus.id}")
 
         val editorPane = new PDXEditorPane(
-          focus.asInstanceOf[com.hoi4utils.script.PDXScript[?]],
+          focus.asInstanceOf[com.hoi4utils.script.PDXScript[?, ?]],
           () => {
             onFocusUpdate()
             if onUpdate.isDefined then onUpdate.get()

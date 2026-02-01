@@ -10,7 +10,7 @@ class Parser(pdx: String | File = null) {
   private val escape_backslash_regex = "\\\\"
   private val escape_quote_regex = "\\\\\""
   private var tokens: Tokenizer = uninitialized
-  private var _rootNode: Node = uninitialized
+  private var _rootNode: SeqNode = uninitialized
 
   /* for ParserExceptions, would have been a lot to pass every time */
   given currentPdx: File | String = pdx
@@ -24,12 +24,12 @@ class Parser(pdx: String | File = null) {
   )
 
   @throws[ParserException]
-  def parse: Node =
+  def parse: SeqNode =
     // Capture any leading trivia for the whole file.
     val leading = consumeTrivia()
 
     // Parse the block content that forms the root node.
-    val blockContent = parseBlockContent()  // todo fix
+    val blockContent: Seq[Node[?] | CommentNode] = parseBlockContent()  // todo fix
     if (blockContent.isEmpty)
       throw ParserException("Parsed block content was empty")
     // Consume any trailing trivia.
@@ -41,16 +41,17 @@ class Parser(pdx: String | File = null) {
           case _ => throw ParserException("Input not completely parsed", token)
       case None => throw ParserException("Input not completely parsed - no tokens remaining")
     // Create the root node using the parsed children (a ListBuffer[Node]) as its raw value.
-    _rootNode = new Node(
+    val v: NodeSeq = blockContent.collect { case n: Node[?] => n } // TODO TODO ignoring comments !!!!
+    _rootNode = new SeqNode(
       leadingTrivia = leading.toSeq,
-      rawValue = Some(blockContent.toSeq),
+      rawValue = v,
       trailingTrivia = trailing.toSeq
     )
     _rootNode
 
   @throws[ParserException]
-  def parseBlockContent(): Seq[Node] =
-    val nodes = ListBuffer[Node]()
+  def parseBlockContent(): Seq[Node[?] | CommentNode] =
+    val nodes = ListBuffer[Node[?] | CommentNode]()
     var cont = true
     while (cont)
       // Consume any trivia before each node.
@@ -64,7 +65,7 @@ class Parser(pdx: String | File = null) {
     nodes.toSeq
 
   @throws[ParserException]
-  def parseNode(): Node =
+  def parseNode(): Node[?] | CommentNode =
     // Capture leading trivia for this node.
     val leading = consumeTrivia()
 
@@ -73,10 +74,10 @@ class Parser(pdx: String | File = null) {
       case None => throw ParserException("Unexpected end of input while parsing node identifier")
 
     // If the token is a comment, create a node that holds it.
-    if tokenIdentifier.`type` == TokenType.comment then return new Node(
+    if tokenIdentifier.`type` == TokenType.comment then return new CommentNode(
       leadingTrivia = leading.toSeq,
-      identifierToken = Some(tokenIdentifier),
-      rawValue = Some(new Comment(tokenIdentifier.value)),
+//      identifierToken = Some(tokenIdentifier),  // todo removing hope this doesnt break it shouldnt
+      rawValue = new Comment(tokenIdentifier.value),
       trailingTrivia = consumeTrivia().toSeq
     )
 
@@ -90,7 +91,6 @@ class Parser(pdx: String | File = null) {
       throw ParserException("Unexpected end of input after identifier", tokenIdentifier)
     )
     var operatorOpt: Option[Token] = None
-    var raw: Option[NodeValueType] = None
 
     if (nextToken.`type` != TokenType.operator || nextToken.value.matches("^[,;}]$")) {
       /*
@@ -104,8 +104,8 @@ class Parser(pdx: String | File = null) {
         nextToken = tokens.peek.getOrElse(throw ParserException("Unexpected end of input after separator", tokenIdentifier))
       }
       // No proper operator: treat this node as a value-only node.
-      raw = Some(parseThisTokenValue(tokenIdentifier))
-      return new Node(
+      val raw: PDXValueType = parseThisTokenValue(tokenIdentifier)
+      return new PDXValueNode[PDXValueType](   // todo todo
         leadingTrivia = leading.toSeq,
         rawValue = raw,
         trailingTrivia = consumeTrivia().toSeq
@@ -116,21 +116,34 @@ class Parser(pdx: String | File = null) {
       // Consume any trivia after the operator.
       consumeTrivia()
       // Parse the node’s value.
-      raw = Some(parseNodeValue())
+      val raw: PDXValueType | Seq[Node[?] | CommentNode] = parseNodeValue()
+
+      // Consume trailing trivia.
+      val trailing = consumeTrivia()
+      raw match
+        case v: PDXValueType =>
+          // Create and return the new node with all CST information attached.
+          new PDXValueNode[PDXValueType](
+            leadingTrivia = leading.toSeq,
+            identifierToken = Some(tokenIdentifier),
+            operatorToken = operatorOpt,
+            rawValue = v,
+            trailingTrivia = trailing.toSeq
+          )
+        case s: Seq[Node[?] | CommentNode] =>
+          val v: NodeSeq = s.collect { case n: Node[?] => n } // TODO TODO ignoring comments !!!!
+          // Create and return the new node with all CST information attached.
+          new SeqNode(
+            leadingTrivia = leading.toSeq,
+            identifierToken = Some(tokenIdentifier),
+            operatorToken = operatorOpt,
+            rawValue = v,
+            trailingTrivia = trailing.toSeq
+          )
     }
-    // Consume trailing trivia.
-    val trailing = consumeTrivia()
-    // Create and return the new node with all CST information attached.
-    new Node(
-      leadingTrivia = leading.toSeq,
-      identifierToken = Some(tokenIdentifier),
-      operatorToken = operatorOpt,
-      rawValue = raw,
-      trailingTrivia = trailing.toSeq
-    )
 
   @throws[ParserException]
-  def parseNodeValue(): NodeValueType =
+  def parseNodeValue(): PDXValueType | Seq[Node[?] | CommentNode] =
     // Consume any trivia before the value.
     consumeTrivia()
 
@@ -148,7 +161,7 @@ class Parser(pdx: String | File = null) {
       case _ => throw ParserException("Unexpected token type in node value", token)
 
   @throws[ParserException]
-  def parseThisTokenValue(token: Token): NodeValueType =
+  def parseThisTokenValue(token: Token): PDXValueType =
     val value = token.value
     token.`type` match
       case TokenType.string => parseStringValue(value)
@@ -165,8 +178,8 @@ class Parser(pdx: String | File = null) {
    * @return
    * @throws ParserException if the parsed block content is not closed with the expected closing operator, or a syntax issue leads to this state.
    */
-  private def parseEnclosedBlockContent(closingOp: String) =
-    val children = parseBlockContent()
+  private def parseEnclosedBlockContent(closingOp: String): Seq[Node[?] | CommentNode] =
+    val children: Seq[Node[?] | CommentNode] = parseBlockContent()
     val closing = tokens.next.getOrElse(
       throw ParserException(s"Expected closing '$closingOp'")
     )
@@ -204,5 +217,5 @@ class Parser(pdx: String | File = null) {
     t.`type` == TokenType.whitespace || t.`type` == TokenType.comment ||
       (t.value.length == 1 && (t.value == "," || t.value == ";"))
 
-  def rootNode: Node = _rootNode
+  def rootNode: SeqNode = _rootNode
 }

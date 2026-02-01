@@ -2,7 +2,7 @@ package com.hoi4utils.databases.trigger
 
 import com.hoi4utils.databases.effect.EffectDatabase._effects
 import com.hoi4utils.databases.effect.{BlockEffect, SimpleEffect}
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, PDXValueNode, SeqNode}
 import com.hoi4utils.script.PDXSupplier
 
 object TriggerDatabase:
@@ -15,16 +15,16 @@ object TriggerDatabase:
 
 	def apply(): PDXSupplier[Trigger] =
 		new PDXSupplier[Trigger] {
-			override def simplePDXSupplier(): Option[Node => Option[SimpleTrigger]] = {
-				Some((expr: Node) => {
+			override def simplePDXSupplier(): Option[PDXValueNode[?] => Option[SimpleTrigger]] = {
+				Some((expr: PDXValueNode[?]) => {
 					_triggers.filter(_.isInstanceOf[SimpleTrigger])
 						.find(_.pdxIdentifier == expr.name)
 						.map(_.clone().asInstanceOf[SimpleTrigger])
 				})
 			}
 
-			override def blockPDXSupplier(): Option[Node => Option[BlockTrigger]] = {
-				Some((expr: Node) => {
+			override def blockPDXSupplier(): Option[SeqNode => Option[BlockTrigger]] = {
+				Some((expr: SeqNode) => {
 					_triggers.filter(_.isInstanceOf[BlockTrigger])
 						.find(_.pdxIdentifier == expr.name)
 						.map(_.clone().asInstanceOf[BlockTrigger])

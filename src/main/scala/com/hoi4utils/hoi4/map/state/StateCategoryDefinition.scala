@@ -1,22 +1,22 @@
 package com.hoi4utils.hoi4.map.state
 
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, SeqNode}
 import com.hoi4utils.script.{IntPDX, PDXScript, Referable, StructuredPDX}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-class StateCategoryDefinition(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Referable {
+class StateCategoryDefinition(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Referable[String] {
   final var local_building_slots = new IntPDX("local_building_slots")
   //final var color = new ColorPDX("color") // todo :D
 
-  def this(node: Node) = {
+  def this(node: SeqNode) = {
     this(node.name)
     var file = None
     loadPDX(node, file)
   }
 
-  override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = {
+  override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = {
     ListBuffer(local_building_slots)
   }
 

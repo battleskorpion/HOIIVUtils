@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4.map.resource
 
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, SeqNode}
 import com.hoi4utils.script.{DoublePDX, IntPDX, PDXScript, StructuredPDX}
 
 import scala.collection.mutable
@@ -11,13 +11,13 @@ private class ResourceDefinition(pdxIdentifier: String) extends StructuredPDX(pd
   final var cic = new DoublePDX("cic")
   final var convoys = new DoublePDX("convoys")
 
-  def this(node: Node) = {
+  def this(node: SeqNode) = {
     this(node.name)
     val file = None
     loadPDX(node, file)
   }
 
-  override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = {
+  override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = {
     ListBuffer(iconFrame, cic, convoys)
   }
 

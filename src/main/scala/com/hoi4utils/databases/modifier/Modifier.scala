@@ -48,7 +48,7 @@ object Modifier {
 trait Modifier protected[modifier](private val _colorType: Modifier.ColorType, private val _valueType: Modifier.ValueType,
                          private[modifier] var _precision: Int, private val _postfix: Modifier.ValuePostfix,
                          private val _category: Set[ModifierCategory])
-  extends PDXScript[?] with Cloneable {
+  extends PDXScript[?, ?] with Cloneable {
 
   /**
    * Returns the category of the modifier

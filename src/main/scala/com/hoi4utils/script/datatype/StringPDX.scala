@@ -1,13 +1,13 @@
 package com.hoi4utils.script.datatype
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, PDXValueNode}
 import com.hoi4utils.script.{AbstractPDX, PDXScript}
 
 import scala.annotation.targetName
 
 
-class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIdentifiers)
+class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String, String](pdxIdentifiers)
   with Comparable[StringPDX]:
 
   def this(pdxIdentifiers: String*) =
@@ -15,7 +15,7 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def set(expression: Node): Unit =
+  override def set(expression: Node[String]): Unit =
     usingIdentifier(expression)
     this.node = Some(expression)
     this.node.get.$ match
@@ -25,10 +25,10 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
   override def set(s: String): String =
     this.node match
       case Some(node) => node.setValue(s)
-      case None => this.node = Some(Node(pdxIdentifiers.head, "=", s))
+      case None => this.node = Some(PDXValueNode[String](pdxIdentifiers.head, "=", s))
     s
 
-  override def equals(other: PDXScript[?]): Boolean = other match
+  override def equals(other: PDXScript[?, ?]): Boolean = other match
     case other: StringPDX =>
       if (this.node.isEmpty || other.node.isEmpty) then
         return false
@@ -84,7 +84,7 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String](pdxIde
    *
    * @param other
    */
-  def @=(other: PDXScript[String]): Unit = other.value match
+  def @=(other: PDXScript[String, String]): Unit = other.value match
     case Some(v) => set(v)
     case None => setNull()
 

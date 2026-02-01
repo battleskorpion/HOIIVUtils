@@ -1,7 +1,9 @@
-package com.hoi4utils.script
+package com.hoi4utils.script.seq
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, NodeSeq}
+import com.hoi4utils.script.seq.MultiPDX
+import com.hoi4utils.script.{Referable, ReferencePDX}
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.File
@@ -20,10 +22,10 @@ import scala.collection.mutable.ListBuffer
  * @param referencePDXIdentifiers  the identifiers for the reference PDXScript
  * @tparam T the PDXScript type of the reference PDXScript objects
  */
-class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplier: () => Iterable[T],
+class MultiReferencePDX[V <: String | Int, T <: Referable[V]](protected var referenceCollectionSupplier: () => Iterable[T],
                                              pdxIdentifiers: List[String],
                                              referencePDXIdentifiers: List[String])
-  extends MultiPDX[ReferencePDX[T]](Some(() => new ReferencePDX(referenceCollectionSupplier, referencePDXIdentifiers)), None, pdxIdentifiers) with LazyLogging {
+  extends MultiPDX[ReferencePDX[V, T]](Some(() => new ReferencePDX(referenceCollectionSupplier, referencePDXIdentifiers)), None, pdxIdentifiers) with LazyLogging {
 
   final protected val referenceNames = new ListBuffer[String]
   protected var idExtractor: T => Option[String] = (obj: T) => obj.referableID
@@ -37,9 +39,9 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
    * @param expression
    * @throws UnexpectedIdentifierException
    */
-  override def loadPDX(expression: Node, file: Option[File]): Unit =
+  override def loadPDX(expression: Node[?], file: Option[File]): Unit =
     expression.$ match
-      case list: Seq[Node] =>
+      case list: NodeSeq =>
         usingIdentifier(expression)
 
         for (child <- list) super.loadPDX(child, file)
@@ -50,7 +52,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
     case list if list.isEmpty => None
     case list => Some(list.toList)
 
-  override def iterator: Iterator[ReferencePDX[T]] =
+  override def iterator: Iterator[ReferencePDX[T, V]] =
     resolveReferences()
     super.iterator
 
@@ -96,7 +98,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
   /**
    * Removes a reference (wrapper) that matches the given predicate.
    */
-  override def removeIf(p: ReferencePDX[T] => Boolean): Seq[ReferencePDX[T]] =
+  override def removeIf(p: ReferencePDX[T, V] => Boolean): Seq[ReferencePDX[T, V]] =
     // 1. Iterate backwards through indices to prevent shifting issues
     for
       i <- pdxSeq.indices.reverse
@@ -114,7 +116,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
    * @param referencePDX
    */
   @targetName("add")
-  override def +=(referencePDX: ReferencePDX[T]): Unit =
+  override def +=(referencePDX: ReferencePDX[T, V]): Unit =
     pdxSeq :+= referencePDX
     referenceNames.addOne(referencePDX.referenceName)   // todo throw error instead and check this first
 
@@ -125,9 +127,9 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
   def addReferenceTo(pdxScript: T): Unit =
     val idOpt = idExtractor(pdxScript)
     if (idOpt.isEmpty)
-      throw new NodeValueTypeException(new Node(""), "Unable to extract reference identifier", this.getClass)
-    // Create a new ReferencePDX[T] using the supplier.
-    val wrapper: ReferencePDX[T] = simpleSupplier.get.apply()
+      throw new NodeValueTypeException("Unable to extract reference identifier", this.getClass)
+    // Create a new ReferencePDX[T, V] using the supplier.
+    val wrapper: ReferencePDX[T, V] = simpleSupplier.get.apply()
     // Set the value of the wrapper to the candidate.
     wrapper.set(pdxScript)
     pdxSeq :+= wrapper
@@ -138,7 +140,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
    *
    * @param referencePDX
    */
-  override def -=(referencePDX: ReferencePDX[T]): this.type =
+  override def -=(referencePDX: ReferencePDX[T, V]): this.type =
     val index = pdxSeq.indexOf(referencePDX)
     if (index != -1) {
       referencePDX.clearNode()
@@ -169,7 +171,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
    * @note Java was *struggling* with 'this.type' return type. Use '-=' otherwise.
    * @return
    */
-  override def remove(pdxScript: ReferencePDX[T]): Unit =
+  override def remove(pdxScript: ReferencePDX[T, V]): Unit =
     this -= pdxScript
 
   override def clear(): Unit =
@@ -181,7 +183,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
     pdxSeq = Seq.empty
     referenceNames.clear()
 
-  override def addNewPDX(): ReferencePDX[T] =
+  override def addNewPDX(): ReferencePDX[T, V] =
     super.addNewPDX() // no override necessary.
 
   private def resolveReferences(): ListBuffer[T] =
@@ -250,7 +252,7 @@ class MultiReferencePDX[T <: Referable](protected var referenceCollectionSupplie
       referenceNames.update(index, newName)
       resolveReferences()
 
-  private def checkReferenceIdentifier(exp: Node): Unit =
+  private def checkReferenceIdentifier(exp: Node[?]): Unit =
     if (!referencePDXIdentifiers.contains(exp.name))
       throw new UnexpectedIdentifierException(exp)
 

@@ -1,7 +1,7 @@
 package com.hoi4utils.script
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.{Node, PDXValueType, Parser, ParserException, ParsingContext}
+import com.hoi4utils.parser.{Node, NodeSeq, NodeValueType, PDXValueNode, PDXValueType, Parser, ParserException, ParsingContext, SeqNode}
 import com.hoi4utils.script.scripter.DefaultNodeScripter
 
 import java.io.File
@@ -15,47 +15,29 @@ import scala.util.boundary
  * PDX = Paradox Interactive Clauswitz Engine Modding/Scripting Language
  * <p>
  */
-trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScript[T]:
-  private[script] var activeIdentifier = 0
-  protected[script] var node: Option[Node] = None
+abstract class AbstractPDX[T, NodeValue <: NodeValueType](protected var pdxIdentifiers: Seq[String])
+  extends VeryAbstractPDX[T, NodeValue](pdxIdentifiers):
 
-  /**
-   * Sets the active identifier to match the given expression,
-   * if it is a valid identifier. Otherwise, throws exception.
-   * @param expr the expression to check, and set the active identifier to the identifier of the expression
-   * @throws UnexpectedIdentifierException if the expression is not a valid identifier
-   */
-  @throws[UnexpectedIdentifierException]
-  protected def usingIdentifier(expr: Node): Unit =
-    if (pdxIdentifiers.nonEmpty)
-      val index = pdxIdentifiers.indexWhere(expr.nameEquals)
-      if index == -1 then throw new UnexpectedIdentifierException(expr)
+  type NodeType = Node[NodeValue]
+  type SeqNodeType = Seq[NodeType]
 
-      activeIdentifier = index
-    else
-      // identifiers empty: assume to be purposeful and to mean *no* identifier by default
-      expr.identifier match
-        case Some(_) => throw new UnexpectedIdentifierException(expr, "Expected no identifier")
-        case None => ()
+  protected[script] var node: Option[NodeType] = None
 
   /**
    * @inheritdoc
    */
-  override protected def setNode(value: T | PDXValueType | Null): Unit =
+  override protected def setNode(value: NodeValue): Unit =
     value match
       case value if node.isEmpty => ()
-      case null => setNull()
-      case v: (String | Int | Double | Boolean) => node.get.setValue(v)
-      case s: Seq[_] => try node.get.setValue(s.asInstanceOf[Seq[Node]])
-        catch case _: ClassCastException => throw new RuntimeException(s"Expected Seq[Node], got Seq with different element type")
-      case _ => throw new RuntimeException(s"Unsupported type: ${value.getClass}")
+      case v: NodeValue => node.get.setValue(v)
+//      case _ => throw new RuntimeException(s"Unsupported type: ${value.getClass}")
 
   /**
    * @inheritdoc
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def set(expression: Node): Unit =
+  override def set(expression: NodeType): Unit =
     usingIdentifier(expression)
     setNode(expression.$)
 
@@ -72,16 +54,17 @@ trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScrip
   /**
    * @inheritdoc
    */
-  override def getNode: Option[Node] = node
+  override def getNode: Option[NodeType] = node
 
-  override def getNodes: List[Node] = getNode match
+  // TODO TOOD fix lol
+  override def getNodes: List[NodeType] = getNode match
     case Some(node) => List(node)
     case None => List.empty
 
   /**
    * @inheritdoc
    */
-  override def loadPDX(expression: Node, file: Option[File]): Unit =
+  override def loadPDX(expression: NodeType, file: Option[File]): Unit =
     if expression.identifier.isEmpty && (pdxIdentifiers.nonEmpty || expression.isEmpty) then
       logger.error("Error loading PDX script: " + expression)
     else
@@ -93,30 +76,9 @@ trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScrip
           node = Some(expression)
 
   /**
-   *
-   * @param expressions pdx node that is iterable
-   * @return remaining unloaded expressions
-   */
-  def loadPDX(expressions: Seq[Node]): Seq[Node] = expressions match
-    case null => Seq.empty
-    case _ =>
-      val remaining = ListBuffer.from(expressions)  // TODO fp
-      expressions filter isValidIdentifier foreach { expression =>
-        loadPDX(expression, None)
-        remaining -= expression
-      }
-      remaining.toSeq
-
-  protected def loadPDX(file: File): Unit =
-    require(file.exists && file.isFile, s"File $file does not exist or is not a file.")
-    val pdxParser = new Parser(file)
-    try loadPDX(pdxParser.parse, Some(file))
-    catch case e: ParserException => handlePDXError(e, file = file)
-
-  /**
    * @inheritdoc
    */
-  override def isValidIdentifier(node: Node): Boolean = isValidID(node.name)
+  override def isValidIdentifier(node: Node[?]): Boolean = isValidID(node.name)
 
   override def isValidID(identifier: String): Boolean = pdxIdentifiers.contains(identifier)
 
@@ -125,12 +87,7 @@ trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScrip
    */
   override def clearNode(): Unit = node = None
 
-  /**
-   * @inheritdoc
-   */
-  override def setNull(): Unit = node.foreach(_.setNull())
-
-  override def loadOrElse(exp: Node, value: T): Unit =
+  override def loadOrElse(exp: NodeType, value: T): Unit =
     loadPDX(exp, None)
     if node.get.valueIsNull then set(value)
 
@@ -139,50 +96,9 @@ trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScrip
    * For simple leaf nodes, this is a no-op.
    * Composite types (e.g. StructuredPDX) should override this method to rebuild their Node tree.
    */
-  override def updateNodeTree(): Unit = node.foreach(n => setNode(value.orNull)) // Default behavior for leaf nodes: update the node's value from the current state.
-
-  /**
-   * Updates the node tree for collection-based PDX scripts.
-   * This method handles the common pattern of updating child nodes and rebuilding the parent node.
-   *
-   * @param items Collection of PDXScript items to process
-   * @param identifier Optional identifier for the parent node (defaults to pdxIdentifier)
-   * @tparam U Type of PDXScript items in the collection
-   */
-  protected def updateCollectionNodeTree[U <: PDXScript[?]](items: Iterable[U], identifier: String = pdxIdentifier): Unit =
-    items.foreach(_.updateNodeTree())
-    val childNodes: Seq[Node] = items.flatMap(_.getNode).to(Seq)
-    node match
-      case Some(n) => n.setValue(childNodes)
-      case None =>
-        if (childNodes.nonEmpty)
-          node = if (identifier != null && identifier.nonEmpty) Some(Node(identifier, "=", childNodes))
-                 else Some(Node(childNodes))
-        else node = None
-
-  /**
-   * Template method for loading PDX collections with standardized error handling.
-   * Subclasses should implement addToCollection to define collection-specific behavior.
-   *
-   * @param expression The node expression to load into the collection
-   */
-  protected def loadPDXCollection(expression: Node, file: Option[File]): Unit =
-    try
-      addToCollection(expression, file)
-    catch {
-      case e: Exception =>
-        handlePDXError(e, expression, file.orNull)
-        node = Some(expression)
-    }
-
-  /**
-   * Abstract method for adding expressions to collections.
-   * Must be implemented by collection-based PDX classes.
-   *
-   * @param expression The node expression to add to the collection
-   */
-  protected def addToCollection(expression: Node, file: Option[File]): Unit =
-    throw new UnsupportedOperationException("addToCollection must be implemented by collection-based PDX classes")
+  override def updateNodeTree(): Unit =
+    node.foreach(n => setNode(value))
+    // Default behavior for leaf nodes: update the node's value from the current state.
 
   /**
    * Generates the script output.
@@ -191,14 +107,6 @@ trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScrip
   override def toScript: String =
     updateNodeTree()
     node.map(DefaultNodeScripter.toScript).getOrElse("")
-
-  override def equals(other: PDXScript[?]): Boolean =
-    other match
-      case pdx: AbstractPDX[?] =>
-        if node == null then return false
-        if pdx.node == null then return false
-        node.equals(pdx.node)
-      case _ => false
 
   /**
    * @inheritdoc
@@ -209,6 +117,14 @@ trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScrip
       case Some(t) => t.asInstanceOf[T]
       case _ => elseValue
   }
+
+  override def equals(other: PDXScript[?, ?]): Boolean =
+    other match
+      case pdx: AbstractPDX[?, ?] =>
+        if node == null then return false
+        if pdx.node == null then return false
+        node.equals(pdx.node)
+      case _ => false
 
   override def toString: String =
     if node.isEmpty || node.get.isEmpty then
@@ -233,15 +149,3 @@ trait AbstractPDX[T](protected var pdxIdentifiers: Seq[String]) extends PDXScrip
     var schema = new PDXSchema[T](pdxIdentifiers*)
     null.asInstanceOf[PDXSchema[T]]  // todo no
 
-  /* Error handling methods */
-
-  def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
-    given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
-    if exception.getClass == classOf[UnsupportedOperationException] then throw exception
-    val pdxError = new PDXFileError(
-      exception = exception,
-      errorNode = node,
-      pdxScript = this,
-    )
-    logger.error(pdxError.toString)
-    exception.printStackTrace()

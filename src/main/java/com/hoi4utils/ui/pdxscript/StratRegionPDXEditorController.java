@@ -34,7 +34,7 @@ public class StratRegionPDXEditorController extends HOIIVUtilsAbstractController
     @FXML
     private Accordion weatherAccordion;
 
-    private final List<PDXScript<?>> pdxScripts = new ArrayList<>();
+    private final List<PDXScript<?, ?>> pdxScripts = new ArrayList<>();
 
 
     public StratRegionPDXEditorController() {

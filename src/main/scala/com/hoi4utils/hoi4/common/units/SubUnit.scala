@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi4.common.units
 
-import com.hoi4utils.parser.{Node, Parser, ParserException}
+import com.hoi4utils.parser.{Node, NodeSeq, Parser, ParserException, SeqNode, NodeExtensions}
 import com.hoi4utils.shared.BoolType
 
 import java.io.File
@@ -60,15 +60,15 @@ object SubUnit {
     val buf = ListBuffer.empty[SubUnit]
 
     files.foreach { file =>
-      val root = try new Parser(file).parse
+      val root: SeqNode = try new Parser(file).parse
       catch {
         case e: ParserException =>
           JOptionPane.showMessageDialog(null,
             s"[SubUnit] Error parsing ${file.getName}: ${e.getMessage}")
           boundary.break(buf.toList)   // or simply skip this file
       }
-      
-      val nodes: Seq[Node] = root.find("sub_units").toSeq
+
+      val nodes: NodeSeq = root.find("sub_units").toSeq
       if (nodes.isEmpty) {
         println(s"No sub_units found in ${file.getName}")
       } else {
@@ -80,31 +80,33 @@ object SubUnit {
   }
 
   /** Convert parsed nodes into SubUnit instances. */
-  private def createSubUnits(nodes: Seq[Node]): Seq[SubUnit] = {
-    nodes.map { node =>
-      SubUnit(
-        node.name,
-        if (node.contains("abbreviation")) Some(node.getValue("abbreviation").asString) else None,
-        if (node.contains("sprite")) Some(node.getValue("sprite").asString) else None,
-        if (node.contains("map_icon_category")) Some(node.getValue("map_icon_category").asString) else None,
-        if (node.contains("priority")) Some(node.getValue("priority").$intOrElse(0)) else None,
-        if (node.contains("ai_priority")) Some(node.getValue("ai_priority").$intOrElse(0)) else None,
-        if (node.contains("active")) Some(node.getValue("active").asBool(BoolType.YES_NO)) else None,
-        //subUnit.type//subUnit.type
-        if (node.contains("group")) Some(node.getValue("group").asString) else None,
-        //subUnit.categories//subUnit.categories
-        if (node.contains("combat_width")) Some(node.getValue("combat_width").$intOrElse(0)) else None,
-        //subUnit.need//subUnit.need
-        if (node.contains("manpower")) Some(node.getValue("manpower").$intOrElse(0)) else None,
-        if (node.contains("max_organization")) Some(node.getValue("max_organization").$intOrElse(0)) else None,
-        if (node.contains("default_morale")) Some(node.getValue("default_morale").$intOrElse(0)) else None,
-        if (node.contains("max_strength")) Some(node.getValue("max_strength").$intOrElse(0)) else None,
-        if (node.contains("training_time")) Some(node.getValue("training_time").$intOrElse(0)) else None,
-        if (node.contains("weight")) Some(node.getValue("weight").$doubleOrElse(0.0)) else None,
-        if (node.contains("supply_consumption")) Some(node.getValue("supply_consumption").$doubleOrElse(0.0)) else None
-      )
+  private def createSubUnits(nodes: NodeSeq): Seq[SubUnit] =
+    nodes.map {
+      case subNode: SeqNode => createSubUnit(subNode)
     }
-  }
+
+  private def createSubUnit(node: SeqNode): SubUnit =
+    SubUnit(
+      node.name,
+      if (node.contains("abbreviation")) Some(node.getValue("abbreviation").asString) else None,
+      if (node.contains("sprite")) Some(node.getValue("sprite").asString) else None,
+      if (node.contains("map_icon_category")) Some(node.getValue("map_icon_category").asString) else None,
+      if (node.contains("priority")) Some(node.getValue("priority").$intOrElse(0)) else None,
+      if (node.contains("ai_priority")) Some(node.getValue("ai_priority").$intOrElse(0)) else None,
+      if (node.contains("active")) Some(node.getValue("active").asBool(BoolType.YES_NO)) else None,
+      //subUnit.type//subUnit.type
+      if (node.contains("group")) Some(node.getValue("group").asString) else None,
+      //subUnit.categories//subUnit.categories
+      if (node.contains("combat_width")) Some(node.getValue("combat_width").$intOrElse(0)) else None,
+      //subUnit.need//subUnit.need
+      if (node.contains("manpower")) Some(node.getValue("manpower").$intOrElse(0)) else None,
+      if (node.contains("max_organization")) Some(node.getValue("max_organization").$intOrElse(0)) else None,
+      if (node.contains("default_morale")) Some(node.getValue("default_morale").$intOrElse(0)) else None,
+      if (node.contains("max_strength")) Some(node.getValue("max_strength").$intOrElse(0)) else None,
+      if (node.contains("training_time")) Some(node.getValue("training_time").$intOrElse(0)) else None,
+      if (node.contains("weight")) Some(node.getValue("weight").$doubleOrElse(0.0)) else None,
+      if (node.contains("supply_consumption")) Some(node.getValue("supply_consumption").$doubleOrElse(0.0)) else None
+    )
 
   /** Data accessor functions, for table display: each SubUnit → a field value. */
   def dataFunctions(): Seq[SubUnit => Any] = Seq(

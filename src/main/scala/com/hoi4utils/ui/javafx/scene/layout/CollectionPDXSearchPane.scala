@@ -1,7 +1,8 @@
 package com.hoi4utils.ui.javafx.scene.layout
 
 import com.hoi4utils.databases.effect.{Effect, EffectDatabase}
-import com.hoi4utils.script.{CollectionPDX, PDXScript}
+import com.hoi4utils.script.PDXScript
+import com.hoi4utils.script.seq.CollectionPDX
 import com.typesafe.scalalogging.LazyLogging
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable
  * A Pane that displays an editor for a PDXScript.
  */
 // todo may make abstract instead of type Effect
-class CollectionPDXSearchPane[T <: PDXScript[?]](private val pdxScript: CollectionPDX[T]) extends AnchorPane with LazyLogging:
+class CollectionPDXSearchPane[T <: PDXScript[?, ?]](private val pdxScript: CollectionPDX[T]) extends AnchorPane with LazyLogging:
   /* UI */
   private val showDebugBorders = false // todo
 

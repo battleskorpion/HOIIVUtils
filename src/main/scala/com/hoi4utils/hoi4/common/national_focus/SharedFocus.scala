@@ -17,7 +17,7 @@ class SharedFocus(focusTree: FocusTree) extends Focus(focusTree, pdxIdentifier =
     _ <- ZIO.succeed(pseudoTree.addNewFocus(this))
   } yield ()
 
-  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+  override def handlePDXError(exception: Exception = null, node: Node[?] = null, file: File = null): Unit =
     given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
     val pdxError = new PDXFileError(
       exception = exception,
@@ -29,7 +29,7 @@ class SharedFocus(focusTree: FocusTree) extends Focus(focusTree, pdxIdentifier =
   class Offset extends PointPDX("offset") {
     val trigger = TriggerPDX()
 
-    override def childScripts: collection.mutable.Seq[? <: PDXScript[?]] = super.childScripts ++ List(trigger)
+    override def childScripts: collection.mutable.Seq[? <: PDXScript[?, ?]] = super.childScripts ++ List(trigger)
   }
 
 }

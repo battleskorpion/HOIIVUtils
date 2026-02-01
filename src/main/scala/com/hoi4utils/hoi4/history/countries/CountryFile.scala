@@ -183,7 +183,7 @@ class CountryFile(countryErrors: ListBuffer[PDXFileError], stateService: StateSe
 
   override def toString: String = _countryTag.toString + " " + "[country tag]"
 
-  override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = {
+  override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = {
     ListBuffer(oob, capital)
   }
 }

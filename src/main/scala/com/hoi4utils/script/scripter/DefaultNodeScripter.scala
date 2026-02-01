@@ -10,7 +10,7 @@ object DefaultNodeScripter extends NodeScripter {
   /**
    * @inheritdoc
    */
-  override def appendPrefix(using sb: StringBuilder)(node: Node, indent: String): Unit =
+  override def appendPrefix(using sb: StringBuilder)(node: Node[?], indent: String): Unit =
     node.identifier.foreach { id =>
       sb.append(indent).append(id)
       node.operator.foreach(op => sb.append(" ").append(op))

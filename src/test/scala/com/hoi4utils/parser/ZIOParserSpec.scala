@@ -95,16 +95,16 @@ object ZIOParserSpec extends ScalamockZIOSpec {
       val parser = new ZIOParser(input)
       for {
         rootNode <- parser.parse
-        textSprite = rootNode.find("textSpriteType")
+        textSprite = rootNode.headOption("textSpriteType")
       } yield {
         // Find the textSpriteType node.
         assertTrue(textSprite.isDefined, {
           textSprite.exists { node =>
             // Verify child nodes are present.
-            val name = node.find("name").map(_.valueAsString)
-            val texturefile = node.find("texturefile").map(_.valueAsString)
-            val noOfFrames = node.find("noOfFrames").map(_.valueAsString)
-            val effectFile = node.find("effectFile").map(_.valueAsString)
+            val name: String = node.get("name").map(_.valueAsString) 
+            val texturefile = node.get("texturefile").map(_.valueAsString)
+            val noOfFrames = node.get("noOfFrames").map(_.valueAsString)
+            val effectFile = node.get("effectFile").map(_.valueAsString)
 
             name.contains("largefloaterbutton") &&
               texturefile.contains("gfx//interface//button_type_1.tga") &&
@@ -125,7 +125,7 @@ object ZIOParserSpec extends ScalamockZIOSpec {
       val parser = new ZIOParser(input)
       for {
         rootNode <- parser.parse
-        focusNode = rootNode.find("focus")
+        focusNode = rootNode.get("focus")
         idNode = focusNode.flatMap(_.find("id"))
       } yield {
         assertTrue(

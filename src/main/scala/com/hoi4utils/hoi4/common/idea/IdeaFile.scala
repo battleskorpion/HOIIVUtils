@@ -3,8 +3,9 @@ package com.hoi4utils.hoi4.common.idea
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.hoi4.localization.Localizable
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
-import com.hoi4utils.parser.{Node, ParserException, ParsingContext}
+import com.hoi4utils.parser.{Node, ParserException, ParsingContext, SeqNode}
 import com.hoi4utils.script.*
+import com.hoi4utils.script.seq.CollectionPDX
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.{FXCollections, ObservableList}
 import zio.ZIO
@@ -17,7 +18,7 @@ import scala.jdk.javaapi.CollectionConverters
 class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[Idea] with PDXFile {
   /* pdxscript */
   final var countryIdeas = new CollectionPDX[Idea](Idea.pdxSupplier(), "country") {
-    override def loadPDX(expr: Node, file: Option[File]): Unit = {
+    override def loadPDX(expr: NodeType, file: Option[File]): Unit = {
       super.loadPDX(expr, file)
       pdxList.foreach(idea => idea.setIdeaFile(IdeaFile.this))
     }
@@ -35,7 +36,7 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
       setFile(file)
 //      _file.foreach(file => ideasManager.addToFileMap(file, this))  // done in Ideas mgr now 
 
-  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+  override def handlePDXError(exception: Exception = null, node: Node[?] = null, file: File = null): Unit =
     given ParsingContext(file, node)
     val ideasManager: IdeasManager = zio.Unsafe.unsafe { implicit unsafe =>
       HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[IdeasManager]).getOrThrowFiberFailure()
@@ -47,7 +48,7 @@ class IdeaFile(file: File = null) extends StructuredPDX("ideas") with Iterable[I
     )
     ideasManager.ideaFileErrors += pdxError
 
-  override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = {
+  override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = {
     ListBuffer(countryIdeas)
   }
 

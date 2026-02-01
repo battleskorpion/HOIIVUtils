@@ -1,7 +1,9 @@
-package com.hoi4utils.script
+package com.hoi4utils.script.seq
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, NodeSeq, SeqNode}
+import com.hoi4utils.script.PDXScript
+import com.hoi4utils.script.seq.SeqPDX
 import org.apache.poi.ss.formula.functions.T
 
 import java.io.File
@@ -18,8 +20,8 @@ import scala.language.implicitConversions
  * @param blockSupplier  the supplier for block PDXScript objects
  * @param pdxIdentifiers the identifiers for the PDXScript objects
  */
-class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String])
-  extends AbstractPDX[Seq[T]](pdxIdentifiers) with Seq[T] {
+class MultiPDX[T <: PDXScript[?, ?]](var simpleSupplier: Option[() => T], var blockSupplier: Option[() => T], pdxIdentifiers: List[String])
+  extends SeqPDX[T](pdxIdentifiers){
 
   protected var pdxSeq: Seq[T] = Seq.empty
 
@@ -34,9 +36,9 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   /**
    * @inheritdoc
    */
-  override def loadPDX(expression: Node, file: Option[File]): Unit = loadPDXCollection(expression, file)
+  override def loadPDX(expression: NodeType, file: Option[File]): Unit = loadPDXCollection(expression, file)
 
-  override def equals(other: PDXScript[?]) = false // todo? well.
+  override def equals(other: PDXScript[?, ?]) = false // todo? well.
 
   override def value: Option[Seq[T]] = {
     if (pdxSeq.isEmpty) None
@@ -49,12 +51,12 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override protected def addToCollection(expression: Node, file: Option[File]): Unit =
+  override protected def addToCollection(expression: Node[?], file: Option[File]): Unit =
     usingIdentifier(expression)
     // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
     // then load each sub-PDXScript
     expression.$ match
-      case l: Seq[Node] =>
+      case l: NodeSeq =>
         val childScript = applySupplier(expression)
         childScript.loadPDX(expression, file)
         pdxSeq :+= childScript
@@ -67,7 +69,10 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   def removeIf(p: T => Boolean): Seq[T] =
     val (toRemove, toKeep) = pdxSeq.partition(p)
     toRemove.foreach { item =>
-      item.getNode.foreach(_.clear())
+      item.getNode.match {
+        case s: SeqNode => s.clear()
+        case _ => ()
+      }
       item.clearNode()
     }
     pdxSeq = toKeep
@@ -104,8 +109,10 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     this -= pdxScript
 
   def clear(): Unit =
-    node.foreach { _.clearIfBlock() }
-    pdxSeq = Seq.empty 
+    node match
+      case s: SeqNode => s.clear()
+      case _ => () 
+    pdxSeq = Seq.empty
 
   override def isEmpty: Boolean = value.isEmpty
 
@@ -124,13 +131,13 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
     obj
   }
 
-  protected def applySupplier(expression: Node): T =
+  protected def applySupplier(expression: Node[?]): T =
     (simpleSupplier, blockSupplier) match
       case (Some(s), None) => s()
       case (None, Some(b)) => b()
       case (Some(s), Some(b)) =>
         expression.$ match
-          case l: Seq[Node] =>
+          case l: NodeSeq =>
             b()
           case _ => s()
       case (None, None) => throw new RuntimeException("Both suppliers are null")
@@ -150,7 +157,8 @@ class MultiPDX[T <: PDXScript[?]](var simpleSupplier: Option[() => T], var block
   override def clearNode(): Unit =
     pdxSeq.foreach(_.clearNode())
 
-  override def getNodes: List[Node] =
+  // TODO TOOD fix lol
+  override def getNodes: List[Node[?]] =
     pdxSeq.flatMap(_.getNode).toList
 
   /**

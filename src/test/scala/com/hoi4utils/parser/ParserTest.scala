@@ -183,12 +183,12 @@ class ParserTest extends AnyFunSuiteLike {
 
     assert(root.nonEmpty, "Root node is empty")
     assert(root.contains("focus"), "Root node does not contain 'focus'")
-    assert(root.filterHead("focus").identifier.isDefined, "Root node does not have an identifier")
-    assert(root.filterHead("focus").find("id").get.valueAsString == "SMA_Maryland", "Root node identifier is not 'SMA_Maryland'")
-    assert(root.filterHead("focus").find("id").isDefined, "ID node not found")
-    assert(root.filterHead("focus").find("id").get.valueAsString == "SMA_Maryland", "ID node value is not 'SMA_Maryland'")
-    assert(root.filterHead("focus").find("id").get.identifier.isDefined, "ID node does not have an identifier")
-    assert(root.filterHead("focus").find("id").get.identifier.get == "id", "ID node identifier is not 'SMA_Maryland'")
+    assert(root.get("focus").identifier.isDefined, "Root node does not have an identifier")
+    assert(root.get("focus").find("id").get.valueAsString == "SMA_Maryland", "Root node identifier is not 'SMA_Maryland'")
+    assert(root.get("focus").find("id").isDefined, "ID node not found")
+    assert(root.get("focus").find("id").get.valueAsString == "SMA_Maryland", "ID node value is not 'SMA_Maryland'")
+    assert(root.get("focus").find("id").get.identifier.isDefined, "ID node does not have an identifier")
+    assert(root.get("focus").find("id").get.identifier.get == "id", "ID node identifier is not 'SMA_Maryland'")
     //assert(root.toScript == input, "Output does not match input")
   }
 

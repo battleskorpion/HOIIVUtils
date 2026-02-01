@@ -1,5 +1,6 @@
 package com.hoi4utils.script.datatype
 
+import com.hoi4utils.parser.PDXValueType
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.shared.ExpectedRange
 
@@ -10,7 +11,7 @@ import scala.annotation.targetName
  * Allows shi**y clausewitz engine numbers to be used in a more sane way.
  * @tparam T
  */
-trait ValPDXScript[T <: AnyVal] extends PDXScript[T] with Comparable[T] {
+trait ValPDXScript[T <: PDXValueType] extends PDXScript[T, T] with Comparable[T] {
   def isDefaultRange: Boolean
 
   def defaultRange: ExpectedRange[T]
@@ -64,7 +65,7 @@ trait ValPDXScript[T <: AnyVal] extends PDXScript[T] with Comparable[T] {
    *
    * @param other
    */
-  def @=(other: PDXScript[T]): Unit = other.value match
+  def @=(other: PDXScript[T, T]): Unit = other.value match
     case Some(v) => set(v)
     case None => setNull()
 

@@ -3,14 +3,14 @@ package com.hoi4utils.script
 import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.parser.Node
 
-trait ProceduralIdentifierPDX(p: String => Boolean) { self: AbstractPDX[?] =>
+trait ProceduralIdentifierPDX(p: String => Boolean) { self: AbstractPDX[?, ?] =>
 
   clearIdentifiers()
 
   def clearIdentifiers(): Unit = pdxIdentifiers = List.empty
 
   @throws[UnexpectedIdentifierException]
-  override protected def usingIdentifier(expr: Node): Unit = {
+  override protected def usingIdentifier(expr: Node[?]): Unit = {
     if (pdxIdentifiers.isEmpty) expr.identifier match {
       case Some(id) =>
         if (p(id)) {
@@ -29,7 +29,7 @@ trait ProceduralIdentifierPDX(p: String => Boolean) { self: AbstractPDX[?] =>
   /**
    * @inheritdoc
    */
-  override def isValidIdentifier(node: Node): Boolean = {
+  override def isValidIdentifier(node: Node[?]): Boolean = {
     if (pdxIdentifiers.isEmpty) node.identifier match {
       case Some(id) => p(id)
       case None => false

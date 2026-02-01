@@ -1,6 +1,6 @@
 package com.hoi4utils.ui.javafx.scene.layout;
 
-import com.hoi4utils.script.MultiReferencePDX;
+import com.hoi4utils.script.seq.MultiReferencePDX;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -13,10 +13,10 @@ import scala.jdk.javaapi.CollectionConverters;
 
 public class MultiReferencePDXVBox extends VBox {
 
-    private final MultiReferencePDX<?> pdx;
+    private final MultiReferencePDX<?, ?> pdx;
     private final Runnable reloadAction;
 
-    public MultiReferencePDXVBox(MultiReferencePDX<?> pdx, Runnable reloadAction) {
+    public MultiReferencePDXVBox(MultiReferencePDX<?, ?> pdx, Runnable reloadAction) {
         super();
         this.pdx = pdx;
         this.reloadAction = reloadAction;

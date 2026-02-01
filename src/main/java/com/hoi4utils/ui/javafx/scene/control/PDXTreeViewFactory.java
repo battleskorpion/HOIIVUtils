@@ -3,7 +3,11 @@ package com.hoi4utils.ui.javafx.scene.control;
 import com.hoi4utils.hoi4.localization.Localizable;
 import com.hoi4utils.hoi4.localization.Property;
 import com.hoi4utils.script.*;
+import com.hoi4utils.script.datatype.BooleanPDX;
 import com.hoi4utils.script.datatype.StringPDX;
+import com.hoi4utils.script.seq.CollectionPDX;
+import com.hoi4utils.script.seq.ListPDX;
+import com.hoi4utils.script.seq.MultiPDX;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -20,12 +24,12 @@ public class PDXTreeViewFactory {
      * @param rootScript The root PDXScript (e.g., a StructuredPDX or CollectionPDX).
      * @return A fully populated TreeView<PDXScript<?>>.
      */
-    public static TreeView<PDXScript<?>> createPDXTreeView(PDXScript<?> rootScript) {
+    public static TreeView<PDXScript<?, ?>> createPDXTreeView(PDXScript<?, ?> rootScript) {
         // Recursively build the TreeItem hierarchy
-        TreeItem<PDXScript<?>> rootItem = buildTreeItem(rootScript);
+        TreeItem<PDXScript<?, ?>> rootItem = buildTreeItem(rootScript);
 
         // Create the TreeView with the root item
-        TreeView<PDXScript<?>> treeView = new TreeView<>(rootItem);
+        TreeView<PDXScript<?, ?>> treeView = new TreeView<>(rootItem);
         treeView.setShowRoot(true);
         treeView.setMaxWidth(Double.MAX_VALUE);
         treeView.setMaxHeight(Double.MAX_VALUE);
@@ -33,10 +37,10 @@ public class PDXTreeViewFactory {
         // Customize how each cell is displayed
         treeView.setCellFactory(new Callback<>() {
             @Override
-            public TreeCell<PDXScript<?>> call(TreeView<PDXScript<?>> param) {
+            public TreeCell<PDXScript<?, ?>> call(TreeView<PDXScript<?, ?>> param) {
                 return new TreeCell<>() {
                     @Override
-                    protected void updateItem(PDXScript<?> item, boolean empty) {
+                    protected void updateItem(PDXScript<?, ?> item, boolean empty) {
                         super.updateItem(item, empty);
                         if (empty || item == null) {
                             setText(null);
@@ -57,14 +61,14 @@ public class PDXTreeViewFactory {
     /**
      * Recursively creates a TreeItem for the given script and its children.
      */
-    private static TreeItem<PDXScript<?>> buildTreeItem(PDXScript<?> script) {
-        TreeItem<PDXScript<?>> item = new TreeItem<>(script);
+    private static TreeItem<PDXScript<?, ?>> buildTreeItem(PDXScript<?, ?> script) {
+        TreeItem<PDXScript<?, ?>> item = new TreeItem<>(script);
 
         // Depending on the concrete type, add children
         if (script instanceof CollectionPDX<?> pdx) {
             // "CollectionPDX" might hold a list of children
             pdx.foreach(childPDX -> {
-                item.getChildren().add(buildTreeItem((PDXScript<?>) childPDX));
+                item.getChildren().add(buildTreeItem((PDXScript<?, ?>) childPDX));
                 return null;
             });
         } else if (script instanceof StructuredPDX pdx) {
@@ -76,13 +80,13 @@ public class PDXTreeViewFactory {
         } else if (script instanceof ListPDX<?> pdx) {
             // "ListPDX" has items
             pdx.foreach(childPDX -> {
-                item.getChildren().add(buildTreeItem((PDXScript<?>) childPDX));
+                item.getChildren().add(buildTreeItem((PDXScript<?, ?>) childPDX));
                 return null;
             });
         }
         else if (script instanceof MultiPDX<?> multiPDX) {
             multiPDX.foreach(childPDX -> {
-                item.getChildren().add(buildTreeItem((PDXScript<?>) childPDX));
+                item.getChildren().add(buildTreeItem((PDXScript<?, ?>) childPDX));
                 return null;
             });
         }
@@ -96,7 +100,7 @@ public class PDXTreeViewFactory {
     /**
      * Produces a display string depending on the type of script.
      */
-    private static String generateCellText(PDXScript<?> script) {
+    private static String generateCellText(PDXScript<?, ?> script) {
         // Customize how each subclass is shown in the tree cell
         if (script instanceof IntPDX pdx) {
             return pdx.pdxIdentifier() + ": " + pdx + "  (IntPDX)"
@@ -142,17 +146,17 @@ public class PDXTreeViewFactory {
      * Searches the given TreeView for the first node whose text contains the searchText.
      * If found, expands all parents, selects the node, and scrolls to it.
      */
-    public static void searchAndSelect(TreeView<PDXScript<?>> treeView, String searchText) {
+    public static void searchAndSelect(TreeView<PDXScript<?, ?>> treeView, String searchText) {
         if (searchText == null || searchText.isBlank()) return;
 
         // Convert to lower case for case-insensitive matching
         searchText = searchText.toLowerCase();
 
-        TreeItem<PDXScript<?>> rootItem = treeView.getRoot();
+        TreeItem<PDXScript<?, ?>> rootItem = treeView.getRoot();
         if (rootItem == null) return;
 
         // Do a DFS to find the first matching node
-        TreeItem<PDXScript<?>> foundItem = findInTree(rootItem, searchText);
+        TreeItem<PDXScript<?, ?>> foundItem = findInTree(rootItem, searchText);
         if (foundItem != null) {
             // Expand all parent nodes so the found item is visible
             expandAllParents(foundItem);
@@ -172,11 +176,11 @@ public class PDXTreeViewFactory {
      * Recursively searches the tree (DFS) for a node whose text matches searchText.
      * Returns the first match found or null if none.
      */
-    private static TreeItem<PDXScript<?>> findInTree(TreeItem<PDXScript<?>> currentItem, String searchText) {
+    private static TreeItem<PDXScript<?, ?>> findInTree(TreeItem<PDXScript<?, ?>> currentItem, String searchText) {
         if (currentItem == null) return null;
 
         // Check if this node’s text contains the search string
-        PDXScript<?> script = currentItem.getValue();
+        PDXScript<?, ?> script = currentItem.getValue();
         if (script != null) {
             String nodeText = generateCellText(script).toLowerCase();
             if (nodeText.contains(searchText)) {
@@ -185,8 +189,8 @@ public class PDXTreeViewFactory {
         }
 
         // Otherwise, search children
-        for (TreeItem<PDXScript<?>> child : currentItem.getChildren()) {
-            TreeItem<PDXScript<?>> match = findInTree(child, searchText);
+        for (TreeItem<PDXScript<?, ?>> child : currentItem.getChildren()) {
+            TreeItem<PDXScript<?, ?>> match = findInTree(child, searchText);
             if (match != null) {
                 return match;
             }
@@ -198,8 +202,8 @@ public class PDXTreeViewFactory {
     /**
      * Expands all parent items so that the given item is visible.
      */
-    private static void expandAllParents(TreeItem<PDXScript<?>> item) {
-        TreeItem<PDXScript<?>> parent = item.getParent();
+    private static void expandAllParents(TreeItem<PDXScript<?, ?>> item) {
+        TreeItem<PDXScript<?, ?>> parent = item.getParent();
         while (parent != null) {
             parent.setExpanded(true);
             parent = parent.getParent();

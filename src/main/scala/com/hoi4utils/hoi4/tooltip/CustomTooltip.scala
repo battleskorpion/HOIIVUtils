@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.tooltip
 
 import com.hoi4utils.hoi4.localization.Localization
-import com.hoi4utils.parser.{Node, Parser, ParserException}
+import com.hoi4utils.parser.{Node, NodeSeq, Parser, ParserException, SeqNode}
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
@@ -53,8 +53,8 @@ object CustomTooltip {
     }
 
     // collect all tooltip IDs
-    val expressions: List[Node] =
-      rootNode.filter("custom_trigger_tooltip").toList
+    val expressions: NodeSeq =
+      rootNode.filter("custom_trigger_tooltip")
 
     for {
       exp   <- expressions

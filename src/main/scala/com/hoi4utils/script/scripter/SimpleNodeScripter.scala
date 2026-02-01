@@ -51,7 +51,7 @@ object SimpleNodeScripter extends NodeScripter {
   /**
    * @inheritdoc
    */
-  override protected def appendChildren(using sb: StringBuilder)(children: Iterable[Node], indent: String): Unit =
+  override protected def appendChildren(using sb: StringBuilder)(children: Iterable[Node[?]], indent: String): Unit =
     super.appendChildren(children, indent)
     if sb.nonEmpty then sb.deleteCharAt(sb.length - 1)
 

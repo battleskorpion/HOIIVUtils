@@ -4,7 +4,7 @@ import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 import com.hoi4utils.hoi4.common.national_focus.{Focus, FocusTree, FocusTreeManager, Point, PseudoSharedFocusTree, Focus as gridX}
 import com.hoi4utils.hoi4.map.state.StateService
 import com.hoi4utils.main.HOIIVUtils
-import com.hoi4utils.script.MultiPDX
+import com.hoi4utils.script.seq.MultiPDX
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.control.ZoomableScrollPane
 import com.hoi4utils.ui.javafx.scene.layout.ErrorIconPane

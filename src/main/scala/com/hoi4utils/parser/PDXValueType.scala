@@ -2,6 +2,4 @@ package com.hoi4utils.parser
 
 import scala.collection.mutable.ListBuffer
 
-type PDXValueType = String | Int | Double | Boolean | NodeSeq
-
-type NodeSeq = Seq[Node]
+type PDXValueType = String | Int | Double | Boolean

@@ -3,8 +3,9 @@ package com.hoi4utils.hoi4.map.resource
 import com.hoi4utils.hoi4.map.resource.ResourcesFile
 import com.hoi4utils.hoi4.map.resource.ResourcesFile.logger
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.Node
-import com.hoi4utils.script.{CollectionPDX, PDXReadable, PDXSupplier}
+import com.hoi4utils.parser.{Node, NodeSeq}
+import com.hoi4utils.script.seq.CollectionPDX
+import com.hoi4utils.script.{PDXReadable, PDXSupplier}
 import com.typesafe.scalalogging.LazyLogging
 import zio.{Task, ZIO}
 
@@ -29,7 +30,7 @@ class ResourcesFile(file: File = null) extends CollectionPDX[ResourceDefinition]
   override def loadPDX(expression: Node, file: Option[File]): Unit = {
     if (expression.identifier.isEmpty) {
       expression.$ match {
-        case l: Seq[Node] =>
+        case l: NodeSeq =>
           loadPDX(l)
         case _ =>
           logger.error("Error loading PDX script: " + expression)

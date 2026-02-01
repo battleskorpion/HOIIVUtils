@@ -1,10 +1,13 @@
 package com.hoi4utils.ui.javafx.scene.layout;
 
-import com.hoi4utils.main.HOIIVUtils;
 import com.hoi4utils.main.HOIIVUtilsConfig;
 import com.hoi4utils.script.*;
+import com.hoi4utils.script.datatype.BooleanPDX;
 import com.hoi4utils.script.datatype.StringPDX;
 import com.hoi4utils.script.datatype.ValPDXScript;
+import com.hoi4utils.script.seq.CollectionPDX;
+import com.hoi4utils.script.seq.MultiPDX;
+import com.hoi4utils.script.seq.MultiReferencePDX;
 import com.hoi4utils.ui.pdxscript.CollectionPDXNewPDXController;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -31,14 +34,14 @@ import java.util.List;
 public class PDXEditorPane extends AnchorPane {
     public static final Logger logger = LogManager.getLogger(PDXEditorPane.class);
     
-    private final PDXScript<?> pdxScript;
+    private final PDXScript<?, ?> pdxScript;
     private final VBox rootVBox;
-    private final List<PDXScript<?>> nullProperties = new ArrayList<>();
+    private final List<PDXScript<?, ?>> nullProperties = new ArrayList<>();
     private final List<Node> nullPropertyNodes = new ArrayList<>();
     private boolean displayNullProperties = false;
     private Runnable onUpdate = null;
 
-    public PDXEditorPane(PDXScript<?> pdxScript) {
+    public PDXEditorPane(PDXScript<?, ?> pdxScript) {
         this.pdxScript = pdxScript;
         this.rootVBox = new VBox();
         this.getChildren().add(rootVBox);
@@ -57,12 +60,12 @@ public class PDXEditorPane extends AnchorPane {
         drawEditor(pdxScript, rootVBox);
     }
 
-    public PDXEditorPane(PDXScript<?> pdxScript, Runnable onUpdate) {
+    public PDXEditorPane(PDXScript<?, ?> pdxScript, Runnable onUpdate) {
         this(pdxScript);
         this.onUpdate = onUpdate;
     }
 
-    private void drawEditor(PDXScript<?> pdxScript, Pane pane) {
+    private void drawEditor(PDXScript<?, ?> pdxScript, Pane pane) {
         var editorPDXNode = createEditorPDXNode(pdxScript, false, true);
         
         if (editorPDXNode != null) {
@@ -94,7 +97,7 @@ public class PDXEditorPane extends AnchorPane {
     }
 
     // todo remove allowNull? since now have separate
-    private Node createEditorPDXNode(PDXScript<?> property, boolean allowNull, boolean withLabel) {
+    private Node createEditorPDXNode(PDXScript<?, ?> property, boolean allowNull, boolean withLabel) {
         Pane editorPropertyPane = switch(property) {
             case CollectionPDX<?> pdx -> {
                 var vbox = new VBox();
@@ -139,10 +142,10 @@ public class PDXEditorPane extends AnchorPane {
             case DoublePDX pdx -> (pdx.value() == null && !allowNull)
                     ? null
                     : visualizeDoublePDX(pdx);
-            case ReferencePDX<?> pdx -> (pdx.value() == null && !allowNull)
+            case ReferencePDX<?, ?> pdx -> (pdx.value() == null && !allowNull)
                     ? null
                     : visualizeReferencePDX(pdx);
-            case MultiReferencePDX<?> pdx -> (pdx.isUndefined() && !allowNull)
+            case MultiReferencePDX<?, ?> pdx -> (pdx.isUndefined() && !allowNull)
                     ? null
                     : visualizeMultiReferencePDX(pdx);
             case MultiPDX<?> pdx -> (pdx.isUndefined() && !allowNull)
@@ -165,7 +168,7 @@ public class PDXEditorPane extends AnchorPane {
         else return null;
     }
 
-    private Node createEditorNullPDXNode(PDXScript<?> property) {
+    private Node createEditorNullPDXNode(PDXScript<?, ?> property) {
         HBox editorNullPropertyHBox = new HBox();
         editorNullPropertyHBox.setSpacing(10);
         editorNullPropertyHBox.setPadding(new Insets(6, 6, 6, 20)); // Indent the null properties
@@ -186,10 +189,10 @@ public class PDXEditorPane extends AnchorPane {
             case DoublePDX pdx -> (pdx.value() == null && !allowNull)
                     ? null
                     : visualizeDoublePDX(pdx);
-            case ReferencePDX<?> pdx -> (pdx.value() == null && !allowNull)
+            case ReferencePDX<?, ?> pdx -> (pdx.value() == null && !allowNull)
                     ? null
                     : visualizeReferencePDX(pdx);
-            case MultiReferencePDX<?> pdx -> (pdx.isUndefined() && !allowNull)
+            case MultiReferencePDX<?, ?> pdx -> (pdx.isUndefined() && !allowNull)
                     ? null
                     : visualizeMultiReferencePDX(pdx);
             case MultiPDX<?> pdx -> (pdx.isUndefined() && !allowNull)
@@ -212,7 +215,7 @@ public class PDXEditorPane extends AnchorPane {
         else return null;
     }
 
-    private @Nullable <T extends PDXScript<?>> Node visualizeMultiPDX(MultiPDX<T> pdx, boolean allowNull) {
+    private @Nullable <T extends PDXScript<?, ?>> Node visualizeMultiPDX(MultiPDX<T> pdx, boolean allowNull) {
         VBox subVBox = new VBox();
         subVBox.setSpacing(10);
         if (!pdx.isEmpty()) {
@@ -253,7 +256,7 @@ public class PDXEditorPane extends AnchorPane {
             return subVBox;
         } else if (allowNull) {
             var newPDX = pdx.applySomeSupplier();
-            return createEditorPDXNode((PDXScript<?>) newPDX, allowNull, false);
+            return createEditorPDXNode((PDXScript<?, ?>) newPDX, allowNull, false);
         } else {
             /* modify sub pdx buttons */
             HBox modifySubPDXHBox = new HBox();
@@ -263,7 +266,7 @@ public class PDXEditorPane extends AnchorPane {
             addPDXButton.setOnAction(event -> {
                 var newPDX = pdx.applySomeSupplier();
                 // always allow null child to appear visually
-                var newPDXNode = createEditorPDXNode((PDXScript<?>) newPDX, true, false);
+                var newPDXNode = createEditorPDXNode((PDXScript<?, ?>) newPDX, true, false);
                 if (newPDXNode != null) {
                     subVBox.getChildren().add(subVBox.getChildren().size() - 1, newPDXNode); // Add before the add button
                 }
@@ -285,7 +288,7 @@ public class PDXEditorPane extends AnchorPane {
         VBox subVBox = new VBox();
         subVBox.setSpacing(10);
         pdx.foreach(pdxScript -> {
-            var subNode = createEditorPDXNode((PDXScript<?>) pdxScript, allowNull, true);
+            var subNode = createEditorPDXNode((PDXScript<?, ?>) pdxScript, allowNull, true);
             if (subNode != null) subVBox.getChildren().add(subNode);
             return null;
         });
@@ -316,7 +319,7 @@ public class PDXEditorPane extends AnchorPane {
         VBox subVBox = new VBox();
         subVBox.setPadding(new Insets(6));
         subVBox.setSpacing(6);
-        Collection<? extends PDXScript<?>> pdxProperties = CollectionConverters.asJavaCollection(
+        Collection<? extends PDXScript<?, ?>> pdxProperties = CollectionConverters.asJavaCollection(
                 pdx.pdxProperties());
         for (var property : pdxProperties) {
             Node editorPDXNode = createEditorPDXNode(property, false, true);
@@ -332,7 +335,7 @@ public class PDXEditorPane extends AnchorPane {
         return subVBox;
     }
 
-    private @NotNull HBox visualizeStringPDX(PDXScript<?> property,StringPDX pdx) {
+    private @NotNull HBox visualizeStringPDX(PDXScript<?, ?> property,StringPDX pdx) {
         HBox hbox = new HBox();
         TextField textField = new TextField(pdx.getOrElse(""));
         textField.setPrefWidth(200);
@@ -349,7 +352,7 @@ public class PDXEditorPane extends AnchorPane {
         return hbox;
     }
 
-    private @NotNull ComboBox<String> visualizeReferencePDX(ReferencePDX<?> pdx) {
+    private @NotNull ComboBox<String> visualizeReferencePDX(ReferencePDX<?, ?> pdx) {
         var comboBox = new SearchableComboBox<String>();
         comboBox.setPrefWidth(200);
         comboBox.setPrefHeight(25);
@@ -367,7 +370,7 @@ public class PDXEditorPane extends AnchorPane {
         return comboBox;
     }
 
-    private @NotNull VBox visualizeMultiReferencePDX(MultiReferencePDX<?> pdx) {
+    private @NotNull VBox visualizeMultiReferencePDX(MultiReferencePDX<?, ?> pdx) {
         VBox subVBox = new MultiReferencePDXVBox(pdx, this::reloadEditor);
         subVBox.setSpacing(2);
         return subVBox;
@@ -402,7 +405,7 @@ public class PDXEditorPane extends AnchorPane {
         }
     }
 
-    private static void addLabelToHBox(PDXScript<?> pdx, HBox hbox) {
+    private static void addLabelToHBox(PDXScript<?, ?> pdx, HBox hbox) {
         Label label = new Label(pdx.pdxIdentifier() + " =");
         label.setFont(Font.font("Monospaced"));
         label.setMinWidth(10);
@@ -410,7 +413,7 @@ public class PDXEditorPane extends AnchorPane {
         hbox.getChildren().add(label);
     }
 
-    private Node createSubNode(boolean allowNull, PDXScript<?> pdxScript) {
+    private Node createSubNode(boolean allowNull, PDXScript<?, ?> pdxScript) {
         return createEditorPDXNode(pdxScript, allowNull, false);
     }
 

@@ -1,10 +1,11 @@
 package com.hoi4utils.script
 
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, PDXValueNode, SeqNode}
 
 import scala.collection.mutable.ListBuffer
 
-trait PDXSupplier[T <: PDXScript[?]] {
+trait PDXSupplier[T <: PDXScript[?, ?]] {
+  // TODO lol 
   def apply(expression: Node): Option[T] = {
     (simplePDXSupplier(), blockPDXSupplier()) match {
       case (Some(s), None) => s.apply(expression)
@@ -19,7 +20,7 @@ trait PDXSupplier[T <: PDXScript[?]] {
     }
   }
 
-  def simplePDXSupplier(): Option[Node => Option[T]] = None
+  def simplePDXSupplier(): Option[PDXValueNode[?] => Option[T]] = None
 
-  def blockPDXSupplier(): Option[Node => Option[T]] = None
+  def blockPDXSupplier(): Option[SeqNode => Option[T]] = None
 }

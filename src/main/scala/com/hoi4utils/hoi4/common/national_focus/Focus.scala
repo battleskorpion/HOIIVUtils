@@ -5,9 +5,10 @@ import com.hoi4utils.ddsreader.DDSReader
 import com.hoi4utils.hoi4.gfx.{Interface, InterfaceService}
 import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Localization, Property}
 import com.hoi4utils.hoi4.scope.Scope
-import com.hoi4utils.parser.{Node, ParsingContext}
+import com.hoi4utils.parser.{Node, ParsingContext, SeqNode}
 import com.hoi4utils.script.*
-import com.hoi4utils.script.datatype.StringPDX
+import com.hoi4utils.script.datatype.{BooleanPDX, StringPDX}
+import com.hoi4utils.script.seq.{CollectionPDX, MultiPDX, MultiReferencePDX}
 import com.hoi4utils.script.shared.AIWillDo
 import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import javafx.scene.image.Image
@@ -20,7 +21,7 @@ import scala.collection.mutable.ListBuffer
 
 
 @lombok.extern.slf4j.Slf4j
-class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String = "focus") extends StructuredPDX(pdxIdentifier) with Localizable with HasDesc with Referable:
+class Focus(var focusTree: FocusTree, node: SeqNode = null, pdxIdentifier: String = "focus") extends StructuredPDX(pdxIdentifier) with Localizable with HasDesc with Referable[String]:
 
   private val FOCUS_COST_FACTOR = 7
   private val DEFAULT_FOCUS_COST = 10.0
@@ -40,8 +41,8 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
     MultiPDX[PrerequisiteSet](None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
   val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] =
     MultiPDX[MutuallyExclusiveSet](None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
-  val relativePositionFocus: ReferencePDX[Focus] =
-    ReferencePDX[Focus](() => focusTree.focuses, "relative_position_id")
+  val relativePositionFocus: ReferencePDX[Focus, String] =
+    ReferencePDX[Focus, String](() => focusTree.focuses, "relative_position_id")
   val cost =
     DoublePDX("cost", ExpectedRange.ofPositiveInfinite(-1))
   val availableIfCapitulated =
@@ -64,7 +65,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
   /**
    * @inheritdoc
    */
-  override protected def childScripts: mutable.Seq[PDXScript[?]] =
+  override protected def childScripts: mutable.Seq[PDXScript[?, ?]] =
     ListBuffer(id, icon, x, y, prerequisites, mutuallyExclusive, relativePositionFocus, cost,
       availableIfCapitulated, cancelIfInvalid, continueIfInvalid, ai_will_do)
 
@@ -281,7 +282,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
   //    setCompletionRewardsOfNode(completionRewardNode)
   //  }
 
-  private def setCompletionRewardsOfNode(completionRewardNode: Node): Unit =
+  private def setCompletionRewardsOfNode(completionRewardNode: SeqNode): Unit =
     setCompletionRewardsOfNode(completionRewardNode, focusTree.countryTag.map(Scope.of))
 
   def mutuallyExclusiveList: List[Focus] = mutuallyExclusive.flatMap(_.references()).toList
@@ -290,7 +291,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
 
   def prerequisiteSets: List[PrerequisiteSet] = prerequisites.toList
 
-  private def setCompletionRewardsOfNode(completionRewardNode: Node, scope: Option[Scope]): Unit =
+  private def setCompletionRewardsOfNode(completionRewardNode: SeqNode, scope: Option[Scope]): Unit =
     //    completionRewardNode.$ match {
     //      case l: ListBuffer[Node] => for(n <- l) {
     //        if (n.value().isList) {
@@ -376,7 +377,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
     focusErrors += pdxError
 
   class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus] = () => focusTree.focuses)
-    extends MultiReferencePDX[Focus](referenceFocusesSupplier, "prerequisite", "focus"):
+    extends MultiReferencePDX[Focus, String](referenceFocusesSupplier, "prerequisite", "focus"):
 
     override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
       given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
@@ -392,7 +393,7 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
   class MutuallyExclusiveSet(referenceFocusesSupplier: () => Iterable[Focus])
     extends MultiReferencePDX[Focus](referenceFocusesSupplier, "mutually_exclusive", "focus")
 
-  trait Icon extends PDXScript[?]
+  trait Icon extends PDXScript[?, ?]
 
   class SimpleIcon extends StringPDX("icon") with Icon
 
@@ -403,9 +404,9 @@ class Focus(var focusTree: FocusTree, node: Node = null, pdxIdentifier: String =
   class BlockIcon extends StructuredPDX("icon") with Icon:
     final private val `value`: StringPDX = new StringPDX("value")
 
-    override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(`value`)
+    override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = ListBuffer(`value`)
 
-    override def equals(other: PDXScript[?]): Boolean = other match
+    override def equals(other: PDXScript[?, ?]): Boolean = other match
       case icon: Focus#Icon => `value`.equals(icon.value) // todo :(
       case _ => false
 

@@ -1,7 +1,9 @@
-package com.hoi4utils.script
+package com.hoi4utils.script.seq
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
-import com.hoi4utils.parser.Node
+import com.hoi4utils.parser.{Node, NodeSeq, NodeValueType, SeqNode}
+import com.hoi4utils.script.PDXScript
+import com.hoi4utils.script.seq.{CollectionPDX, SeqPDX}
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
@@ -32,7 +34,7 @@ import scala.collection.mutable.ListBuffer
  * @param pdxIdentifiers List of identifiers this collection can handle
  * @tparam T The type of objects this collection contains
  */
-class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: List[String]) extends AbstractPDX[ListBuffer[T]](pdxIdentifiers) with Seq[T] {
+class ListPDX[T <: PDXScript[?, ?]](var simpleSupplier: () => T, pdxIdentifiers: List[String]) extends SeqPDX[T](pdxIdentifiers) {
 
   protected var pdxList: ListBuffer[T] = ListBuffer.empty
 
@@ -43,9 +45,9 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
   /**
    * @inheritdoc
    */
-  override def loadPDX(expression: Node, file: Option[File]): Unit = loadPDXCollection(expression, file)
+  override def loadPDX(expression: NodeType, file: Option[File]): Unit = loadPDXCollection(expression, file)
 
-  override def equals(other: PDXScript[?]) = false // todo? well.
+  override def equals(other: PDXScript[?, ?]) = false // todo? well.
 
   override def value: Option[ListBuffer[T]] = {
     if (pdxList.isEmpty) None
@@ -58,9 +60,9 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
    */
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override protected def addToCollection(expression: Node, file: Option[File]): Unit = {
+  override protected def addToCollection(expression: Node[?], file: Option[File]): Unit = {
     expression.$ match {
-      case l: Seq[Node] =>
+      case l: NodeSeq =>
         for (childExpr <- l) {
           val childScript = useSupplierFunction(childExpr)
           childScript.loadPDX(childExpr, file)
@@ -89,11 +91,13 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
 
     pdxList
 
-  protected def useSupplierFunction(expression: Node): T =
+  protected def useSupplierFunction(expression: Node[?]): T =
     simpleSupplier()
 
   def clear(): Unit =
-    node.foreach { _.clearIfBlock() }
+    node match
+      case s: SeqNode => s.clear()
+      case _ => ()
     pdxList.clear()
 
   override def isEmpty: Boolean = pdxList.isEmpty
@@ -124,7 +128,7 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
 //    null
 //  }
 
-  override def set(expression: Node): Unit = {
+  override def set(expression: NodeType): Unit = {
     usingIdentifier(expression)
     this.node = Some(expression)
     val value = expression.$
@@ -134,16 +138,16 @@ class ListPDX[T <: PDXScript[?]](var simpleSupplier: () => T, pdxIdentifiers: Li
   // todo @skorp implement?
   override def set(obj: ListBuffer[T]): ListBuffer[T] = obj
 
-  def headOrElse[U](default: U)(implicit ev: T <:< PDXScript[U]): U =
+  def headOrElse[U](default: U)(implicit ev: T <:< PDXScript[U, ?]): U =
     pdxList.headOption match
       case Some(pdx) => ev(pdx).getOrElse(default)
       case None => default
 
-  /**
-   * Rebuilds the underlying Node tree from the current list of child PDXScript nodes.
-   * Uses the abstracted collection node tree management from AbstractPDX.
-   */
-  override def updateNodeTree(): Unit = updateCollectionNodeTree(pdxList)
+//  /**
+//   * Rebuilds the underlying Node tree from the current list of child PDXScript nodes.
+//   * Uses the abstracted collection node tree management from AbstractPDX.
+//   */
+//  override def updateNodeTree(): Unit = updateCollectionNodeTree(pdxList)
 
   override def toString: String =
     if node.isEmpty || node.get.isEmpty then

@@ -1,6 +1,6 @@
 package com.hoi4utils.script.scripter
 
-import com.hoi4utils.parser.{Node, NodeValueType, Token}
+import com.hoi4utils.parser.{Node, NodeSeq, NodeValueType, PDXValueType, Token}
 import com.hoi4utils.script.scripter.DefaultNodeScripter.{appendChildrenBlock, appendLiteral, appendMissingValue, appendNumberBlock, appendTrivia, isNumberBlock, toScriptAcc}
 
 import scala.collection.mutable.ListBuffer
@@ -20,9 +20,9 @@ trait NodeScripter {
    * - the node's value (or nested children, if a block)
    * - trailing trivia
    */
-  def toScript(node: Node): String = toScriptAcc(node, "")
+  def toScript(node: Node[?]): String = toScriptAcc(node, "")
 
-    protected def toScriptAcc(node: Node, indent: String): String =
+    protected def toScriptAcc(node: Node[?], indent: String): String =
       given sb: StringBuilder = new StringBuilder
 
       appendTrivia(node.leadingTrivia, indent)
@@ -38,16 +38,16 @@ trait NodeScripter {
    * @param indent
    * @return
    */
-  protected def appendRhs(using sb: StringBuilder)(node: Node, indent: String): Unit =
+  protected def appendRhs(using sb: StringBuilder)(node: Node[?], indent: String): Unit =
     // append value
     node.rawValue match
-      case Some(children: ListBuffer[Node]) =>
+      case children: NodeSeq =>
         if isNumberBlock(children) then appendNumberBlock(children)
         else appendChildrenBlock(node, indent, children)
-      case Some(literal) => appendLiteral(literal)
-      case None =>
-        if node.identifier.nonEmpty && node.operator.nonEmpty then appendMissingValue()
-        else () // explicitly do nothing, maybe log this? TODO
+      case literal: PDXValueType => appendLiteral(literal)
+//      case None =>
+//        if node.identifier.nonEmpty && node.operator.nonEmpty then appendMissingValue()
+//        else () // explicitly do nothing, maybe log this? TODO
     // Append trailing trivia (e.g. comments that came after the node)
     appendTrivia(node.trailingTrivia, indent)
 
@@ -56,7 +56,7 @@ trait NodeScripter {
    * @param sb String builder to append to
    * @param node
    */
-  protected def appendPrefix(using sb: StringBuilder)(node: Node, indent: String): Unit =
+  protected def appendPrefix(using sb: StringBuilder)(node: Node[?], indent: String): Unit =
     node.identifier.foreach(id => sb.append(id).append(" "))
     node.operator.foreach(op => sb.append(op).append(" "))
 
@@ -66,7 +66,7 @@ trait NodeScripter {
    * @param children
    * @return
    */
-  protected def appendNumberBlock(using sb: StringBuilder)(children: Iterable[Node]): Unit =
+  protected def appendNumberBlock(using sb: StringBuilder)(children: Iterable[Node[?]]): Unit =
     sb.append("{ ")
     sb.append(children.map(_.asString).mkString(" "))
     sb.append(" }").append('\n')
@@ -80,7 +80,7 @@ trait NodeScripter {
    * @return
    */
   protected def appendChildrenBlock(using sb: StringBuilder)
-                                   (node: Node, indent: String, children: Iterable[Node]): Unit =
+                                   (node: Node[?], indent: String, children: Iterable[Node[?]]): Unit =
     val hasHeader = node.identifier.nonEmpty
 
     // For a block of child nodes, open a brace and newline
@@ -117,7 +117,7 @@ trait NodeScripter {
   /**
    * @inheritdoc
    */
-  protected def appendChildren(using sb: StringBuilder)(children: Iterable[Node], indent: String): Unit =
+  protected def appendChildren(using sb: StringBuilder)(children: Iterable[Node[?]], indent: String): Unit =
     for child <- children do
       sb.append(modifiedChildScript(toScriptAcc(child, indent)))
 
@@ -128,7 +128,7 @@ trait NodeScripter {
    * @param sb
    * @param literal
    */
-  protected def appendLiteral(using sb: StringBuilder)(literal: NodeValueType): Unit =
+  protected def appendLiteral(using sb: StringBuilder)(literal: PDXValueType): Unit =
     sb.append(literal.toString)
 
   /**
@@ -145,11 +145,11 @@ trait NodeScripter {
   protected def appendMissingValue(using sb: StringBuilder)(): Unit =
     sb.append(nullStr)
 
-  protected def isNumberBlock(children: Iterable[Node]): Boolean =
+  protected def isNumberBlock(children: Iterable[Node[?]]): Boolean =
     children.forall(n =>
       n.identifier.isEmpty &&
         n.operator.isEmpty &&
-        n.rawValue.exists(_.isInstanceOf[Int | Double])
+        n.rawValue.isInstanceOf[Int | Double]
     )
 
 }

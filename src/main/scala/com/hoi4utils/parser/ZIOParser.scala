@@ -142,7 +142,7 @@ class ZIOParser(pdx: String | File = null) {
    * @return
    * @throws ParserException if the parsed block content is not closed with the expected closing operator, or a syntax issue leads to this state.
    */
-  private def parseEnclosedBlockContent(terminator: String): ZIO[Any, ParserException, Seq[Node]] =
+  private def parseEnclosedBlockContent(terminator: String): ZIO[Any, ParserException, NodeSeq] =
     for {
       content <- parseBlockContent()
       closingToken <- ZIO.fromOption(tokens.next).orElseFail(ParserException(s"Expected block terminator '$terminator'"))

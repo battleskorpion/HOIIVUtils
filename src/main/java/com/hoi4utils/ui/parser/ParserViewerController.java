@@ -41,13 +41,13 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 	private TextField searchTextField;  // user enters search text here
 	// Suppose we have a ListView
 	@FXML
-	private ListView<PDXScript<?>> filesListView;
+	private ListView<PDXScript<?, ?>> filesListView;
 	@FXML
 	private TextArea pdxNodeTextArea;
 	@FXML
 	private MenuItem saveMenuItem;
 
-	private final List<PDXScript<?>> pdxScripts = new ArrayList<>();
+	private final List<PDXScript<?, ?>> pdxScripts = new ArrayList<>();
 
 	public ParserViewerController() {
 		setFxmlFile("ParserViewer.fxml");
@@ -62,7 +62,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 		filesListView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal != null) {
 				// Create a tree view for the newly selected script
-				TreeView<PDXScript<?>> pdxTreeView = PDXTreeViewFactory.createPDXTreeView(newVal);
+				TreeView<PDXScript<?, ?>> pdxTreeView = PDXTreeViewFactory.createPDXTreeView(newVal);
 				pdxTreeViewPane.getChildren().removeIf(node -> node instanceof TreeView);
 				pdxTreeViewPane.getChildren().add(pdxTreeView);
 
@@ -116,7 +116,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 						String pdxIdentifier = firstChild.name();
 
 						logger.error("sorry. must update this to Scala. may or may not work");
-						AbstractPDX<?> pdx = switch (pdxIdentifier) {
+						AbstractPDX<?, ?> pdx = switch (pdxIdentifier) {
 							case "focus_tree"       ->
 								null; //new FocusTree(file);    // TODO
 							case "state"            ->
@@ -155,10 +155,10 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 					}
 
 					// Get the child list from the root node’s raw value.
-					scala.Option<scala.collection.immutable.Seq<Node>> maybeList = rootNode.$seq();
+					scala.Option<scala.collection.immutable.Seq<Node<?>> maybeList = rootNode.$seq();
 					if (maybeList.isDefined()) {
-						scala.collection.immutable.Seq<Node> childList = maybeList.get();
-						Node childPDXNode = childList.apply(0); // Scala's apply(0) returns the first element.
+						scala.collection.immutable.Seq<Node<?>> childList = maybeList.get();
+						Node<?> childPDXNode = childList.apply(0); // Scala's apply(0) returns the first element.
 						String pdxIdentifier = childPDXNode.name();
 						if (childList.length() == 1) {
 							pdxIdentifierLabel.setText(pdxIdentifier);
@@ -212,7 +212,7 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 			filesListView.setItems(FXCollections.observableList(pdxScripts));
 			// show pdx's node in side view when pdx item is selected in list view
 			filesListView.setOnMouseClicked(event -> {
-				PDXScript<?> selectedPDX = filesListView.getSelectionModel().getSelectedItem();
+				PDXScript<?, ?> selectedPDX = filesListView.getSelectionModel().getSelectedItem();
 				if (selectedPDX != null) {
 					// todo improve visual?
 					pdxNodeTextArea.setText(selectedPDX.toScript());
@@ -234,8 +234,8 @@ public class ParserViewerController extends HOIIVUtilsAbstractController {
 		savePDX(this.pdxScripts);
 	}
 
-	private void savePDX(List<PDXScript<?>> pdxScripts) {
-		for (PDXScript<?> pdx : pdxScripts) {
+	private void savePDX(List<PDXScript<?, ?>> pdxScripts) {
+		for (PDXScript<?, ?> pdx : pdxScripts) {
 			pdx.saveInDir(new File("Parser Viewer PDXScripts"));
 		}
 	}

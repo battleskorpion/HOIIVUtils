@@ -68,7 +68,7 @@ class Interface(private val file: File) {
       }
     }
 
-  private def processSpriteNode(spriteTypeNode: Node, baseFolder: File)(using ctx: ParsingContext): ZIO[Any, InterfaceError, (String, SpriteType)] =
+  private def processSpriteNode(spriteTypeNode: Node[?], baseFolder: File)(using ctx: ParsingContext): ZIO[Any, InterfaceError, (String, SpriteType)] =
     ZIO.logAnnotate("node", spriteTypeNode.name) {
       val name = spriteTypeNode.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
       val filename = spriteTypeNode.getValueCaseInsensitive("texturefile").$stringOrElse("").replace("\"", "")
@@ -114,7 +114,7 @@ object InterfaceError:
       case (Some(l), None) => s"Node '$nodeName' is missing required field '$fieldName' in $file:$line"
 
   object MissingField:
-    def apply(node: Node, fieldName: String)(using ctx: ParsingContext): MissingField =
+    def apply(node: Node[?], fieldName: String)(using ctx: ParsingContext): MissingField =
       new MissingField(nodeName = node.name, fieldName = fieldName, file = ctx.file, line = ctx.line, column = ctx.column)
 
   case class InitializationError(message: String, cause: Throwable) extends InterfaceError

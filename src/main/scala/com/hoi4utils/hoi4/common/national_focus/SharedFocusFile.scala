@@ -3,6 +3,7 @@ package com.hoi4utils.hoi4.common.national_focus
 import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 import com.hoi4utils.parser.{Node, ParsingContext}
 import com.hoi4utils.script.*
+import com.hoi4utils.script.seq.MultiPDX
 import dotty.tools.sjs.ir.Trees.JSBinaryOp.&&
 
 import java.io.File
@@ -29,7 +30,7 @@ class SharedFocusFile(_file: Option[File])(manager: FocusTreeManager, countryTag
 
   def this(file: File)(manager: FocusTreeManager, countryTagService: CountryTagService) = this(Some(file))(manager, countryTagService)
 
-  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+  override def handlePDXError(exception: Exception = null, node: Node[?] = null, file: File = null): Unit =
     given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
     val pdxError = new PDXFileError(
       exception = exception,
@@ -61,7 +62,7 @@ class SharedFocusFile(_file: Option[File])(manager: FocusTreeManager, countryTag
       manager.focusTreeErrors += treeErrorGroup
 
 
-  override protected def childScripts: mutable.Seq[? <: PDXScript[?]] = ListBuffer(sharedFocuses)
+  override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = ListBuffer(sharedFocuses)
 
   override def getFile: Option[File] = _file
 
