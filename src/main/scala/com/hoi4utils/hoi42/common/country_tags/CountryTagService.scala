@@ -40,8 +40,8 @@ case class CountryTagServiceImpl() extends CountryTagService {
   private lazy val _tagList: ListBuffer[CountryTag] = {
     ListBuffer[CountryTag]()
   }
-  
-  private fileMap: ParTrieMap[CountryTag, File]() 
+
+  private val fileMap = ParTrieMap[CountryTag, File]()
 
   override def read(): Task[Boolean] = {
     for {
@@ -106,7 +106,7 @@ case class CountryTagServiceImpl() extends CountryTagService {
   //  def tagList(): List[CountryTag] = _tagList
   override def addTag(tag: CountryTag): Unit = _tagList.addOne(tag)
 
-  override def addTag(tag: CountryTag, file: File): Unit = 
+  override def addTag(tag: CountryTag, file: File): Unit =
     _tagList.addOne(tag)
     fileMap.add(tag, file)
 
@@ -124,10 +124,10 @@ case class CountryTagServiceImpl() extends CountryTagService {
   override def findExisting(tag: String): UIO[Option[CountryTag]] =
     ZIO.succeed(_tagList.find(_.get == tag))
 
-  override def findExisting(tag: String, file: File): UIO[Option[CountryTag]] = 
+  override def findExisting(tag: String, file: File): UIO[Option[CountryTag]] =
     ZIO.succeed {
       val tag = _tagList.find(_.get == tag)
       fileMap.add(tag, file)
-      tag 
+      tag
     }
 }

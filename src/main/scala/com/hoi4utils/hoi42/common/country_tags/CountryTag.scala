@@ -16,8 +16,6 @@ import scala.util.Using
 /**
  *
  * @param tag the country tag (generally a 3 letter code)
- * @param file if this tag is defined in the mod's (or vanilla's) country tags files, file it is defined in,
- *             or should be defined in.
  */
 class CountryTag private[country_tags](val tag: String) extends Comparable[CountryTag] with Referable[String] {
   def get: String = tag
@@ -34,8 +32,6 @@ class CountryTag private[country_tags](val tag: String) extends Comparable[Count
   override def compareTo(o: CountryTag): Int = {
     tag.compareTo(o.tag)
   }
-
-  def isFileDefined: Boolean = file.isDefined
 
   override def referableID: Option[String] = Some(tag)
 }
