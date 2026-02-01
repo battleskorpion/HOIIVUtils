@@ -14,39 +14,30 @@ import scala.util.Using
  * PDX = Paradox Interactive Clausewitz Engine Modding/Scripting Language
  * @tparam V
  */
-trait PDXScript[NodeValue <: NodeValueType] extends Cloneable with LazyLogging {
-  type NodeType = Node[NodeValue]
+trait PDXScript[Value <: NodeValueType] extends Cloneable with LazyLogging {
+  type NodeType = Node[Value]
   type SeqNodeType = Seq[NodeType]
 
-  def set(obj: NodeType): NodeValue 
-
   /**
-   * Sets the node value to the given value.
-   */
-  protected def setNode(value: NodeValue): Unit
-
-  /**
-   * Sets the node value to the given expression.
+   * Sets the value to the given expression.
    *
    * @param expression The node expression to set
    */
   def set(expression: NodeType): Unit
 
   /**
+   * Sets the value to the given value.
+   *
+   * @param value The value to set
+   */
+  def set(value: Value): Unit
+
+  /**
    * Gets the value of the PDXScript.
    *
    * @return Value of the PDXScript, or None if undefined
    */
-  def value: Option[V]
-
-  /**
-   * Get the node of the PDX script.
-   *
-   * @return The node of the PDX script, or None if undefined
-   */
-  def getNode : Option[NodeType]
-
-  def getNodes: List[NodeType]
+  def value: Option[Value]
 
   /**
    * Checks if the given node matches any valid identifier for this PDX script.
@@ -62,7 +53,7 @@ trait PDXScript[NodeValue <: NodeValueType] extends Cloneable with LazyLogging {
    * @param identifier The identifier to validate
    * @return True if the identifier matches a valid identifier, false otherwise
    */
-  def isValidID(identifier: String): Boolean = {
+  def matchesActiveIdentifier(identifier: String): Boolean = {
     pdxIdentifier.equals(identifier)
   }
 
@@ -80,7 +71,7 @@ trait PDXScript[NodeValue <: NodeValueType] extends Cloneable with LazyLogging {
    * @param exp The node expression to load
    * @param value The value to set if the expression's value loaded as null
    */
-  def loadOrElse(exp: NodeType, value: V): Unit
+  def loadOrElse(exp: NodeType, value: Value): Unit
 
   /**
    * Updates the internal node tree to reflect any changes made to the PDXScript's properties.
@@ -94,14 +85,14 @@ trait PDXScript[NodeValue <: NodeValueType] extends Cloneable with LazyLogging {
    * @param other The other PDXScript to compare to.
    * @return True if the two PDXScripts are considered equal, false otherwise.
    */
-  def equals(other: PDXScript[?, ?]): Boolean
+  def equals(other: PDXScript[?]): Boolean
 
   /**
    * Get the value of the PDX script, or the given value if the PDX script is undefined or has an incompatible type.
    * @param elseValue
    * @return
    */
-  infix def getOrElse(elseValue: V): V
+  infix def getOrElse(elseValue: Value): Value  
 
   def isUndefined: Boolean
 
@@ -139,7 +130,7 @@ trait PDXScript[NodeValue <: NodeValueType] extends Cloneable with LazyLogging {
    * that should remain shared between the original and the clone (for example, childScripts).
    */
   override def clone(): AnyRef = {
-    val cloned = super.clone().asInstanceOf[PDXScript[V, NodeValue]]
+    val cloned = super.clone().asInstanceOf[PDXScript[Value]]
     cloned
   }
 
