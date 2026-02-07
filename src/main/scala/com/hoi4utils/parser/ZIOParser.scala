@@ -26,7 +26,7 @@ class ZIOParser(pdx: String | File = null) {
     }${System.lineSeparator()}${Token.EOF_INDICATOR}"
   )
 
-  def parse: ZIO[Any, ParserException, Node] =
+  def parse: ZIO[Any, ParserException, SeqNode] =
     for {
       _ <- ZIO.succeed(System.err.println(s"[DEBUG] ZIOParser.parse starting for $pdx"))
       // Capture any leading trivia for the whole file.

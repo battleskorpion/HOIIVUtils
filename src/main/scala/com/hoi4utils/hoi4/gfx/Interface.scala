@@ -2,7 +2,8 @@ package com.hoi4utils.hoi4.gfx
 
 import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.{Node, Parser, ParserException, ParsingContext, ZIOParser}
+import com.hoi4utils.parser.{Node, NodeSeq, Parser, ParserException, ParsingContext, SeqNode, ZIOParser}
+import com.hoi4utils.parser.NodeExtensions.*
 import com.hoi4utils.script.{PDXFileError, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
 import zio.{Cause, RIO, Task, ZIO}
@@ -12,6 +13,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.collection.parallel.CollectionConverters.*
 import scala.util.boundary
+import scala.collection.View
 
 /**
  * interface file class
@@ -52,10 +54,10 @@ class Interface(private val file: File) {
       // ZIOParser constructor does blocking file I/O, so wrap in attemptBlocking
       parser <- ZIO.attemptBlocking(new ZIOParser(file))
       rootNode <- parser.parse
-      spriteTypeNodes = rootNode.filterCaseInsensitive("spriteTypes").subFilterCaseInsensitive("spriteType")
-      validSpriteTypes = spriteTypeNodes.view.filter(_.containsAllCaseInsensitive("name", "texturefile")) // TODO can filter out invalid nodes
+      spriteTypeNodes: Iterable[SeqNode] = rootNode.filterCaseInsensitiveTyped[SeqNode]("spriteTypes").flatMap(_.$.filterCaseInsensitiveTyped[SeqNode]("spriteType")).map(_.$)
+      validSpriteTypes: View[SeqNode] = spriteTypeNodes.view.filter(_.containsAllCaseInsensitive("name", "texturefile")) // TODO can filter out invalid nodes
 
-      (errors, results) <- ZIO.partition(validSpriteTypes) { spriteNode =>
+      (errors, results) <- ZIO.partition(validSpriteTypes) { (spriteNode: SeqNode) =>
         processSpriteNode(spriteNode, baseFolder)
       }
     } yield InterfaceParseResult(errors.toList, results.toList)
@@ -68,10 +70,10 @@ class Interface(private val file: File) {
       }
     }
 
-  private def processSpriteNode(spriteTypeNode: Node[?], baseFolder: File)(using ctx: ParsingContext): ZIO[Any, InterfaceError, (String, SpriteType)] =
+  private def processSpriteNode(spriteTypeNode: SeqNode, baseFolder: File)(using ctx: ParsingContext): ZIO[Any, InterfaceError, (String, SpriteType)] =
     ZIO.logAnnotate("node", spriteTypeNode.name) {
-      val name = spriteTypeNode.getValueCaseInsensitive("name").$stringOrElse("").replace("\"", "")
-      val filename = spriteTypeNode.getValueCaseInsensitive("texturefile").$stringOrElse("").replace("\"", "")
+      val name = spriteTypeNode.findCaseInsensitiveTyped[String]("name").map(_.$.replace("\"", "")).getOrElse("")
+      val filename = spriteTypeNode.findCaseInsensitiveTyped[String]("texturefile").map(_.$.replace("\"", "")).getOrElse("")
 
       if name.isEmpty || filename.isEmpty then
         val err = InterfaceError.MissingField(

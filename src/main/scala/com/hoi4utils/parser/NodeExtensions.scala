@@ -4,7 +4,7 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.util.NodeType
 
 import scala.reflect.ClassTag
 
-trait NodeExtensions {
+object NodeExtensions {
   extension (seqNode: SeqNode)
     def find(str: String): Option[Node[?]] =
       find(_.name.equals(str))
@@ -15,12 +15,30 @@ trait NodeExtensions {
     def findCaseInsensitive(str: String): Option[Node[?]] =
       find(_.name.equalsIgnoreCase(str))
 
+    /**
+     * Finds a node by name (case-insensitive) and ensures its value
+     * matches the expected type T.
+     */
+    def findCaseInsensitiveTyped[T: ClassTag](str: String): Option[Node[T]] =
+      seqNode.iterator.collectFirst {
+        case n: Node[?] if n.name.equalsIgnoreCase(str) =>
+          n.$ match
+            case _: T => n.asInstanceOf[Node[T]]
+      }
+
     def filter(str: String): Iterable[Node[?]] = filterName(str)
 
     def filter(p: Node[?] => Boolean): Iterable[Node[?]] =
       seqNode.iterator.filter(p).toSeq
 
     def filterCaseInsensitive(str: String): Iterable[Node[?]] = filterNameCaseInsensitive(str)
+
+    def filterCaseInsensitiveTyped[T: ClassTag](str: String): Iterable[Node[T]] =
+      seqNode.iterator.collect {
+        case n: Node[?] if n.name.equalsIgnoreCase(str) =>
+          n.$ match
+            case _: T => n.asInstanceOf[Node[T]]
+      }.toSeq
 
     def filterName(str: String): Iterable[Node[?]] =
       filter(node => node.name.equals(str))
