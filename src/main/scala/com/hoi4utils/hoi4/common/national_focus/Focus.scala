@@ -41,8 +41,8 @@ class Focus(var focusTree: FocusTree, node: SeqNode = null, pdxIdentifier: Strin
     MultiPDX[PrerequisiteSet](None, Some(() => new PrerequisiteSet(() => focusTree.focuses)), "prerequisite")
   val mutuallyExclusive: MultiPDX[MutuallyExclusiveSet] =
     MultiPDX[MutuallyExclusiveSet](None, Some(() => new MutuallyExclusiveSet(() => focusTree.focuses)), "mutually_exclusive")
-  val relativePositionFocus: ReferencePDX[Focus, String] =
-    ReferencePDX[Focus, String](() => focusTree.focuses, "relative_position_id")
+  val relativePositionFocus: ReferencePDX[String, Focus] =
+    ReferencePDX[String, Focus](() => focusTree.focuses, "relative_position_id")
   val cost =
     DoublePDX("cost", ExpectedRange.ofPositiveInfinite(-1))
   val availableIfCapitulated =
@@ -60,7 +60,9 @@ class Focus(var focusTree: FocusTree, node: SeqNode = null, pdxIdentifier: Strin
   var _ddsImage: Option[Image] = None  // TODO: ultimately i dont want this here BUT im being lazy and improving performance.
   var _ddsImageGFX: String = "[<none>]"
 
-  if node != null then loadPDX(node, focusTree.getFile)
+  if node != null then
+    () // TODO TODO
+//    loadPDX(node, focusTree.getFile)
 
   /**
    * @inheritdoc
@@ -287,7 +289,9 @@ class Focus(var focusTree: FocusTree, node: SeqNode = null, pdxIdentifier: Strin
 
   def mutuallyExclusiveList: List[Focus] = mutuallyExclusive.flatMap(_.references()).toList
 
-  def prerequisiteList: List[Focus] = prerequisites.flatMap(_.references()).toList
+  def prerequisiteList: List[Focus] =
+    List.empty // TODO
+//    prerequisites.flatMap(_.references()).toList
 
   def prerequisiteSets: List[PrerequisiteSet] = prerequisites.toList
 
@@ -365,9 +369,10 @@ class Focus(var focusTree: FocusTree, node: SeqNode = null, pdxIdentifier: Strin
     //    }
     ()
 
-  override def referableID: Option[String] = id.value
+  override def referableID: Option[String] =
+    id.value
 
-  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+  override def handlePDXError(exception: Exception = null, node: Node[?] = null, file: File = null): Unit =
     given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
     val pdxError = new PDXFileError(
       exception = exception,
@@ -377,7 +382,7 @@ class Focus(var focusTree: FocusTree, node: SeqNode = null, pdxIdentifier: Strin
     focusErrors += pdxError
 
   class PrerequisiteSet(referenceFocusesSupplier: () => Iterable[Focus] = () => focusTree.focuses)
-    extends MultiReferencePDX[Focus, String](referenceFocusesSupplier, "prerequisite", "focus"):
+    extends MultiReferencePDX[String, Focus](referenceFocusesSupplier, "prerequisite", "focus"):
 
     override def handlePDXError(exception: Exception = null, node: Node[?] = null, file: File = null): Unit =
       given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
@@ -391,7 +396,7 @@ class Focus(var focusTree: FocusTree, node: SeqNode = null, pdxIdentifier: Strin
 
   /** mutually exclusive is a multi-reference of focuses */
   class MutuallyExclusiveSet(referenceFocusesSupplier: () => Iterable[Focus])
-    extends MultiReferencePDX[Focus](referenceFocusesSupplier, "mutually_exclusive", "focus")
+    extends MultiReferencePDX[String, Focus](referenceFocusesSupplier, "mutually_exclusive", "focus")
 
   trait Icon extends PDXScript[?, ?]
 

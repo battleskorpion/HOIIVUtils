@@ -8,14 +8,15 @@ import com.hoi4utils.script.*
  *
  * @param id
  */
-class StateCategory(id: String) extends ReferencePDX[StateCategoryDefinition, String](() => StateCategories.list, id) {
+class StateCategory(id: String) extends ReferencePDX[String, StateCategoryDefinition](() => StateCategories.list, id) {
   /* init */
   require(isValidID(id), s"Invalid state category identifier: $id")
 
   def this(node: PDXValueNode[?]) = {
     this(node.name)
     var file = None
-    loadPDX(node, None)
+    // TODO TODO 
+//    loadPDX(node, None)
   }
 
   def this(stateCategoryDef: StateCategoryDefinition) = {
@@ -48,9 +49,11 @@ object StateCategory {
       }
 
       override def blockPDXSupplier(): Option[SeqNode => Option[StateCategory]] = {
-        Some((expr: SeqNode) => {
-          Some(new StateCategory(expr))
-        })
+        // TODO TODO 
+        None 
+//        Some((expr: SeqNode) => {
+//          Some(new StateCategory(expr))
+//        })
       }
     }
   }

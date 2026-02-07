@@ -61,18 +61,19 @@ class ListPDX[T <: PDXScript[?, ?]](var simpleSupplier: () => T, pdxIdentifiers:
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   override protected def addToCollection(expression: Node[?], file: Option[File]): Unit = {
-    expression.$ match {
-      case l: NodeSeq =>
-        for (childExpr <- l) {
-          val childScript = useSupplierFunction(childExpr)
-          childScript.loadPDX(childExpr, file)
-          pdxList += childScript
-        }
-      case _ =>
-        val childScript = useSupplierFunction(expression)
-        childScript.loadPDX(expression, file)
-        pdxList += childScript
-    }
+    // TODO TODO
+//    expression.$ match {
+//      case l: NodeSeq =>
+//        for (childExpr <- l) {
+//          val childScript = useSupplierFunction(childExpr)
+//          childScript.loadPDX(childExpr, file)
+//          pdxList += childScript
+//        }
+//      case _ =>
+//        val childScript = useSupplierFunction(expression)
+//        childScript.loadPDX(expression, file)
+//        pdxList += childScript
+//    }
   }
 
   /**
@@ -80,25 +81,29 @@ class ListPDX[T <: PDXScript[?, ?]](var simpleSupplier: () => T, pdxIdentifiers:
    * Also removes the corresponding node(s) from the underlying Node.
    */
   def removeIf(p: T => Boolean): ListBuffer[T] =
-    for
-      i <- pdxList.indices.reverse
-      if p(pdxList(i))
-    do
-      pdxList.remove(i)
-      node match
-        case Some(n) => n.remove(i)
-        case None => // do nothing
-
-    pdxList
+    ListBuffer.empty
+    // TODO TODO
+//    for
+//      i <- pdxList.indices.reverse
+//      if p(pdxList(i))
+//    do
+//      pdxList.remove(i)
+//      node match
+//        case Some(n) => n.remove(i)
+//        case None => // do nothing
+//
+//    pdxList
 
   protected def useSupplierFunction(expression: Node[?]): T =
     simpleSupplier()
 
   def clear(): Unit =
-    node match
-      case s: SeqNode => s.clear()
-      case _ => ()
-    pdxList.clear()
+    ()
+    // TODO TODO
+//    node match
+//      case s: SeqNode => s.clear()
+//      case _ => ()
+//    pdxList.clear()
 
   override def isEmpty: Boolean = pdxList.isEmpty
 
@@ -129,10 +134,11 @@ class ListPDX[T <: PDXScript[?, ?]](var simpleSupplier: () => T, pdxIdentifiers:
 //  }
 
   override def set(expression: NodeType): Unit = {
-    usingIdentifier(expression)
-    this.node = Some(expression)
-    val value = expression.$
-    setNode(value)
+    // TODO TODO
+//    usingIdentifier(expression)
+//    this.node = Some(expression)
+//    val value = expression.$
+//    setNode(value)
   }
 
   // todo @skorp implement?
@@ -150,8 +156,9 @@ class ListPDX[T <: PDXScript[?, ?]](var simpleSupplier: () => T, pdxIdentifiers:
 //  override def updateNodeTree(): Unit = updateCollectionNodeTree(pdxList)
 
   override def toString: String =
-    if node.isEmpty || node.get.isEmpty then
-      if value.isEmpty then super.toString
-      else value.get.toString
-    else node.get.toString
+    "sorry new program time (we're in list pdx right now) " + super.toString
+//    if node.isEmpty || node.get.isEmpty then
+//      if value.isEmpty then super.toString
+//      else value.get.toString
+//    else node.get.toString
 }

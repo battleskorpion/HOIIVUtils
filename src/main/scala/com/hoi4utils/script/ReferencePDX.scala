@@ -50,7 +50,7 @@ class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollection
   private def resolveReference(): Option[T] = boundary {
     val referenceCollection = referenceCollectionSupplier()
     for (ref <- referenceCollection) {
-      val referenceID: Option[String] = idExtractor.apply(ref)
+      val referenceID: Option[V] = idExtractor.apply(ref)
       if (referenceID.nonEmpty && referenceID.get.equals(referenceName)) {
         this.reference = Some(ref)
         boundary.break(this.reference)
@@ -62,13 +62,15 @@ class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollection
   override def equals(other: PDXScript[?, ?]): Boolean = {
     other match {
       case referencePDX: ReferencePDX[?, ?] =>
-        (referencePDX @== referenceName) &&
-          this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier
+        // TODO TODO
+        false
+//        (referencePDX @== referenceName) &&
+//          this.referenceCollectionSupplier == referencePDX.referenceCollectionSupplier
       case _ => false
     }
   }
 
-  def getReferenceName: String = referenceName
+  def getReferenceName: V = referenceName
 
   def setReferenceName(name: V): Unit =
     referenceName = name
@@ -76,7 +78,7 @@ class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollection
 
   def getReferenceCollection: Iterable[T] = referenceCollectionSupplier()
 
-  def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().flatMap(idExtractor)
+  def getReferenceCollectionNames: Iterable[V] = referenceCollectionSupplier().flatMap(idExtractor)
 
   @targetName("setReference")
   def @= (str: V): Unit = {
@@ -85,7 +87,7 @@ class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollection
 
   @targetName("setReference")
   def @= (other: T): Unit = {
-    referenceName = idExtractor(other).orNull
+    referenceName = idExtractor(other).getOrElse(throw new Exception(s"Cannot set reference to $other"))  // todo 
     reference = Some(other)
   }
 
@@ -104,7 +106,7 @@ class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollection
 
   override def set(obj: T): T = {
     reference = Some(obj)
-    referenceName = idExtractor(obj).orNull // sure
+    referenceName = idExtractor(obj).getOrElse(throw new Exception(s"Cannot set reference to $obj"))  // todo 
     obj
   }
 
@@ -114,17 +116,18 @@ class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollection
   override def setNull(): Unit = {
     super.setNull()
     reference = None
-    referenceName = null
+//    referenceName = null
   }
 
   /**
    * On-demand Node rebuilding: update the underlying node’s value to the current reference name.
    */
   override def updateNodeTree(): Unit = {
-    if (node.isEmpty && referenceName != null) {
-      node = Some(new PDXValueNode[V](pdxIdentifier, "=", referenceName))
-    }
-    else node.foreach(_.setValue(referenceName))
+    // TODO TODO 
+//    if (node.isEmpty && referenceName != null) {
+//      node = Some(new PDXValueNode[V](pdxIdentifier, "=", referenceName))
+//    }
+//    else node.foreach(_.setValue(referenceName))
   }
 
   override def toString : String = {

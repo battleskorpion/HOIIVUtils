@@ -14,7 +14,7 @@ private class ResourceDefinition(pdxIdentifier: String) extends StructuredPDX(pd
   def this(node: SeqNode) = {
     this(node.name)
     val file = None
-    loadPDX(node, file)
+//    loadPDX(node, file)     // TODO TODO
   }
 
   override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = {

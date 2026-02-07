@@ -70,13 +70,15 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
    * For each node, process structured properties and treat unknown nodes as effects.
    */
   override def loadPDX(expressions: NodeSeq): NodeSeq = {
-    if (expressions == null) return Seq.empty
-    super.loadPDX(expressions.filter(this.isValidIdentifier))
-
-    // Collect effect nodes
-    effectNodes ++= expressions.filterNot(this.isValidIdentifier)
-
-    expressions.filterNot(this.isValidIdentifier)
+    // TODO TODO
+//    if (expressions == null) return Seq.empty
+//    super.loadPDX(expressions.filter(this.isValidIdentifier))
+//
+//    // Collect effect nodes
+//    effectNodes ++= expressions.filterNot(this.isValidIdentifier)
+//
+//    expressions.filterNot(this.isValidIdentifier)
+    Seq.empty
   }
 
   /**
@@ -84,23 +86,25 @@ abstract class StructuredWithEffectBlockPDX(pdxIdentifiers: List[String])
    * In this example, the effect nodes are appended after the structured child nodes.
    */
   override def updateNodeTree(): Unit = {
-    // First update as usual so that the structured child scripts are processed.
-    super.updateNodeTree()
-
-    // Append any extra effect nodes.
-    node match {
-      case Some(n) =>
-        n.$ match {
-          case lb: ListBuffer[Node] =>
-            lb ++= effectNodes
-          case _ =>
-            // If the current value is not a ListBuffer, set it to the effect nodes.
-            n.setValue(effectNodes.toSeq)
-        }
-      case None =>
-        // If there is no node yet, create one using the pdxIdentifier and effect nodes.
-        node = Some(new Node(pdxIdentifier, "=", effectNodes.toSeq))
-    }
+    // TODO TODO
+//    // First update as usual so that the structured child scripts are processed.
+//    super.updateNodeTree()
+//
+//    // Append any extra effect nodes.
+//    node match {
+//      case Some(n) =>
+//        n.$ match {
+//          case lb: ListBuffer[Node] =>
+//            lb ++= effectNodes
+//          case _ =>
+//            // If the current value is not a ListBuffer, set it to the effect nodes.
+//            n.setValue(effectNodes.toSeq)
+//        }
+//      case None =>
+//        // If there is no node yet, create one using the pdxIdentifier and effect nodes.
+////        node = Some(new Node(pdxIdentifier, "=", effectNodes.toSeq)) TODO
+//        none = None // TODO TODO
+//    }
   }
 
   /**

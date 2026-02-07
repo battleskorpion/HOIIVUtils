@@ -16,15 +16,16 @@ abstract class SeqPDX[T](protected var pdxIdentifiers: Seq[String]) extends Very
    * @tparam U Type of PDXScript items in the collection
    */
   protected def updateCollectionNodeTree[U <: PDXScript[?, ?]](items: Iterable[U], identifier: String = pdxIdentifier): Unit =
-    items.foreach(_.updateNodeTree())
-    val childNodes: NodeSeq = items.flatMap(_.getNode).to(Seq)
-    node match
-      case Some(n) => n.setValue(childNodes)
-      case None =>
-        if (childNodes.nonEmpty)
-          node = if (identifier != null && identifier.nonEmpty) Some(SeqNode(identifier, "=", childNodes))
-          else Some(SeqNode(childNodes))
-        else node = None
+    () // TODO TODO 
+//    items.foreach(_.updateNodeTree())
+//    val childNodes: NodeSeq = items.flatMap(_.getNode).to(Seq)
+//    node match
+//      case Some(n) => n.setValue(childNodes)
+//      case None =>
+//        if (childNodes.nonEmpty)
+//          node = if (identifier != null && identifier.nonEmpty) Some(SeqNode(identifier, "=", childNodes))
+//          else Some(SeqNode(childNodes))
+//        else node = None
 
   /**
    * Template method for loading PDX collections with standardized error handling.
@@ -33,12 +34,14 @@ abstract class SeqPDX[T](protected var pdxIdentifiers: Seq[String]) extends Very
    * @param expression The node expression to load into the collection
    */
   protected def loadPDXCollection(expression: NodeType, file: Option[File]): Unit =
-    try
-      addToCollection(expression, file)
-    catch
-      case e: Exception =>
-        handlePDXError(e, expression, file.orNull)
-        node = Some(expression)
+    // TODO TODO 
+    () 
+//    try
+//      addToCollection(expression, file)
+//    catch
+//      case e: Exception =>
+//        handlePDXError(e, expression, file.orNull)
+//        node = Some(expression)
 
   /**
    * Abstract method for adding expressions to collections.

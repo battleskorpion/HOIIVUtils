@@ -32,15 +32,19 @@ object Idea extends LazyLogging {
   def pdxSupplier(): PDXSupplier[Idea] = {
     new PDXSupplier[Idea] {
       override def simplePDXSupplier(): Option[PDXValueNode[?] => Option[Idea]] = {
-        Some((expr: PDXValueNode[?]) => {
-            Some(new Idea(expr)) // todo check if this is correct? or nah?
-        })
+//        Some((expr: PDXValueNode[?]) => {
+//            Some(new Idea(expr)) // todo check if this is correct? or nah?
+//        })
+        // todo
+        None
       }
 
       override def blockPDXSupplier(): Option[SeqNode => Option[Idea]] = {
-        Some((expr: SeqNode) => {
-          Some(new Idea(expr))
-        })
+//        Some((expr: SeqNode) => {
+//          Some(new Idea(expr))
+//        })
+        // todo
+        None
       }
     }
   }
@@ -80,7 +84,7 @@ class Idea(pdxIdentifier: String) extends StructuredPDX(pdxIdentifier) with Loca
 
   def this(node: SeqNode) =
     this(node.name)
-    loadPDX(node, _ideaFile.flatMap(_.getFile))
+//    loadPDX(node, _ideaFile.flatMap(_.getFile)) TODO TODO
 
   def this(ideaFile: IdeaFile, identifier: String) =
     this(identifier)

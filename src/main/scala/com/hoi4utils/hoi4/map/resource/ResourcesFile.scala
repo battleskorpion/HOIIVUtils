@@ -27,16 +27,17 @@ class ResourcesFile(file: File = null) extends CollectionPDX[ResourceDefinition]
     _resourcesFile = Some(file)
   }
 
-  override def loadPDX(expression: Node, file: Option[File]): Unit = {
-    if (expression.identifier.isEmpty) {
-      expression.$ match {
-        case l: NodeSeq =>
-          loadPDX(l)
-        case _ =>
-          logger.error("Error loading PDX script: " + expression)
-      }
-    }
-    super.loadPDX(expression, file)
+  override def loadPDX(expression: Node[?], file: Option[File]): Unit = {
+    () // TODO TODO
+//    if (expression.identifier.isEmpty) {
+//      expression.$ match {
+//        case l: NodeSeq =>
+//          loadPDX(l)
+//        case _ =>
+//          logger.error("Error loading PDX script: " + expression)
+//      }
+//    }
+//    super.loadPDX(expression, file)
   }
 
   override def getPDXTypeName: String = "Resources"
@@ -66,16 +67,18 @@ object ResourcesFile extends PDXReadable with LazyLogging {
 
   def pdxSupplier(): PDXSupplier[ResourceDefinition] = {
     new PDXSupplier[ResourceDefinition] {
-      override def simplePDXSupplier(): Option[Node => Option[ResourceDefinition]] = {
-        Some((expr: Node) => {
-          Some(new ResourceDefinition(expr))
-        })
+      override def simplePDXSupplier(): Option[Node[?] => Option[ResourceDefinition]] = {
+        None // TODO TODO
+//        Some((expr: Node[?]) => {
+//          Some(new ResourceDefinition(expr))
+//        })
       }
 
-      override def blockPDXSupplier(): Option[Node => Option[ResourceDefinition]] = {
-        Some((expr: Node) => {
-          Some(new ResourceDefinition(expr))
-        })
+      override def blockPDXSupplier(): Option[Node[?] => Option[ResourceDefinition]] = {
+        None // TODO TODO
+//        Some((expr: Node[?]) => {
+//          Some(new ResourceDefinition(expr))
+//        })
       }
     }
   }

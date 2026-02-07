@@ -17,8 +17,8 @@ trait NodeExtensions {
 
     def filter(str: String): Iterable[Node[?]] = filterName(str)
 
-    def filter[T](p: Node[T] => Boolean): Iterable[Node[T]] =
-      seqNode.iterator.filter(p)
+    def filter(p: Node[?] => Boolean): Iterable[Node[?]] =
+      seqNode.iterator.filter(p).toSeq
 
     def filterCaseInsensitive(str: String): Iterable[Node[?]] = filterNameCaseInsensitive(str)
 

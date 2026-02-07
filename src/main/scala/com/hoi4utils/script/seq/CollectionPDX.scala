@@ -43,12 +43,14 @@ abstract class CollectionPDX[T <: PDXScript[?, ?]](pdxSupplier: PDXSupplier[T], 
    */
   override def loadPDX(expression: NodeType, file: Option[File]): Unit = loadPDXCollection(expression, file)
 
-  // todo? 
+  // todo?
   protected def loadPDX(file: File): Unit =
-    require(file.exists && file.isFile, s"File $file does not exist or is not a file.")
-    val pdxParser = new Parser(file)
-    try loadPDX(pdxParser.parse, Some(file))
-    catch case e: ParserException => handlePDXError(e, file = file)
+    ()
+    // TODO TODO
+//    require(file.exists && file.isFile, s"File $file does not exist or is not a file.")
+//    val pdxParser = new Parser(file)
+//    try loadPDX(pdxParser.parse, Some(file))
+//    catch case e: ParserException => handlePDXError(e, file = file)
 
   override def equals(other: PDXScript[?, ?]) = false // todo? well.
 
@@ -64,15 +66,17 @@ abstract class CollectionPDX[T <: PDXScript[?, ?]](pdxSupplier: PDXSupplier[T], 
   @throws[NodeValueTypeException]
   override protected def addToCollection(expression: Node[?], file: Option[File]): Unit = expression.$ match
     case l: NodeSeq =>
-      for (childExpr <- l) {
-        val childScript = useSupplierFunction(childExpr)
-        childScript.loadPDX(childExpr, file)
-        pdxList += childScript
-      }
+      () // TODO TODO
+//      for (childExpr <- l) {
+//        val childScript = useSupplierFunction(childExpr)
+//        childScript.loadPDX(childExpr, file)
+//        pdxList += childScript
+//      }
     case _ =>
-      val childScript = useSupplierFunction(expression)
-      childScript.loadPDX(expression, file)
-      pdxList += childScript
+      () // TODO TODO
+//      val childScript = useSupplierFunction(expression)
+//      childScript.loadPDX(expression, file)
+//      pdxList += childScript
 
   /**
    * Adds a PDXScript to the list of PDXScripts. Used for when the PDXScript is not loaded from a file.
@@ -87,13 +91,14 @@ abstract class CollectionPDX[T <: PDXScript[?, ?]](pdxSupplier: PDXSupplier[T], 
    * Also removes the corresponding node(s) from the underlying Node.
    */
   def removeIf(p: T => Boolean): ListBuffer[T] =
-    for
-      i <- pdxList.indices.reverse
-      if p(pdxList(i))
-    do // iterate backwards for safe removal
-      pdxList.remove(i)
-      node.foreach(_.remove(i))
-    pdxList
+    ListBuffer.empty // TODO TODO
+//    for
+//      i <- pdxList.indices.reverse
+//      if p(pdxList(i))
+//    do // iterate backwards for safe removal
+//      pdxList.remove(i)
+//      node.foreach(_.remove(i))
+//    pdxList
 
   protected def useSupplierFunction(expression: Node[?]): T = pdxSupplier(expression) match
     case Some(s) => s
@@ -103,12 +108,14 @@ abstract class CollectionPDX[T <: PDXScript[?, ?]](pdxSupplier: PDXSupplier[T], 
    * Clears the underlying collection and, if present, clears the corresponding node list.
    */
   def clear(): Unit =
-    pdxList.clear()
-    node.foreach { n =>
-      n.$ match
-        case l: ListBuffer[?] => l.clear()
-        case _ =>
-    }
+    ()
+    // TODO TODO
+//    pdxList.clear()
+//    node.foreach { n =>
+//      n.$ match
+//        case l: ListBuffer[?] => l.clear()
+//        case _ =>
+//    }
 
   override def isEmpty: Boolean = pdxList.isEmpty
 
@@ -125,10 +132,11 @@ abstract class CollectionPDX[T <: PDXScript[?, ?]](pdxSupplier: PDXSupplier[T], 
   override def isUndefined: Boolean = pdxList.forall(_.isUndefined) || pdxList.isEmpty
 
   override def set(expression: NodeType): Unit =
-    usingIdentifier(expression)
-    this.node = Some(expression)
-    val value = expression.$
-    setNode(value)
+    () // TODO TODO
+//    usingIdentifier(expression)
+//    this.node = Some(expression)
+//    val value = expression.$
+//    setNode(value)
 
   // todo @skorp implement?
   override def set(obj: ListBuffer[T]): ListBuffer[T] = obj

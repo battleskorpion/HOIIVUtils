@@ -42,25 +42,27 @@ object CustomTooltip {
 
   /** Load all `custom_trigger_tooltip` nodes from the given file. */
   def loadTooltips(file: File): Unit = {
-    tooltips = ListBuffer.empty[CustomTooltip]
-
-    if (!validFile(file)) return
-
-    val rootNode: Node = try {
-      new Parser(file).parse
-    } catch {
-      case e: ParserException => throw new RuntimeException(e)
-    }
-
-    // collect all tooltip IDs
-    val expressions: NodeSeq =
-      rootNode.filter("custom_trigger_tooltip")
-
-    for {
-      exp   <- expressions
-      if exp.contains("tooltip")                   // only those that define a tooltip
-      expID <- Option(exp.getValue("tooltip").$stringOrElse(null))
-    } tooltips += new CustomTooltip(expID)
+    // TODO TODO
+    ()
+//    tooltips = ListBuffer.empty[CustomTooltip]
+//
+//    if (!validFile(file)) return
+//
+//    val rootNode: Node[?] = try {
+//      new Parser(file).parse
+//    } catch {
+//      case e: ParserException => throw new RuntimeException(e)
+//    }
+//
+//    // collect all tooltip IDs
+//    val expressions: NodeSeq =
+//      rootNode.filter("custom_trigger_tooltip")
+//
+//    for {
+//      exp   <- expressions
+//      if exp.contains("tooltip")                   // only those that define a tooltip
+//      expID <- Option(exp.getValue("tooltip").$stringOrElse(null))
+//    } tooltips += new CustomTooltip(expID)
   }
 
   private def validFile(f: File): Boolean =

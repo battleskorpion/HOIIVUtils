@@ -157,13 +157,15 @@ case class FocusTreeManagerImpl(countryTagService: CountryTagService) extends Fo
     _sharedFocusFiles.flatMap(_.sharedFocuses).toSet
 
   def hasFocusTreeHeader(file: File): Task[Boolean] =
-    ZIO.attemptBlocking {
-      val parser = Parser(file)
-      val rootNode = parser.parse
-      rootNode.contains(focusTreeIdentifier)
-    }.catchAll {
-      case e: ParserException =>
-        ZIO.logError(s"Error parsing file ${file.getName}: ${e.getMessage}").as(false)
-      case e =>
-        ZIO.fail(e) // Let critical errors (like disk failure) actually fail the Task
-    }
+    // TODO TODO
+    ZIO.succeed(true)
+//    ZIO.attemptBlocking {
+//      val parser = Parser(file)
+//      val rootNode = parser.parse
+//      rootNode.contains(focusTreeIdentifier)
+//    }.catchAll {
+//      case e: ParserException =>
+//        ZIO.logError(s"Error parsing file ${file.getName}: ${e.getMessage}").as(false)
+//      case e =>
+//        ZIO.fail(e) // Let critical errors (like disk failure) actually fail the Task
+//    }

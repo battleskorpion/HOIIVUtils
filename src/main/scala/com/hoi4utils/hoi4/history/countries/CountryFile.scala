@@ -23,10 +23,10 @@ class CountryFile(countryErrors: ListBuffer[PDXFileError], stateService: StateSe
   /* data */
   private var _countryTag: Option[CountryTag] = None
 
-  private val oob = new ReferencePDX[OrdersOfBattle](() => OrdersOfBattle.list, "oob")
+  private val oob = new ReferencePDX[String, OrdersOfBattle](() => OrdersOfBattle.list, "oob")
   private val defaultResearchSlots = 0 // default research slots as defined in history/countries file or similar
   private val countryFlags: Set[CountryFlag] = null
-  private val capital = new ReferencePDX[State](() => stateService.list, "capital")
+  private val capital = new ReferencePDX[Int, State](() => stateService.list, "capital")
   private val stability = 0.0 // stability percentage defined from 0.0-1.0
   private val warSupport = 0.0 // war support percentage defined from 0.0-1.0
   private val startingTech: Set[Technology] = null // starting technology defined in history/countries file
@@ -62,7 +62,7 @@ class CountryFile(countryErrors: ListBuffer[PDXFileError], stateService: StateSe
     _countryTag = Some(countryTag)
   }
 
-  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+  override def handlePDXError(exception: Exception = null, node: Node[?] = null, file: File = null): Unit =
     ZIO.serviceWith[CountryService] { service =>
       given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
 

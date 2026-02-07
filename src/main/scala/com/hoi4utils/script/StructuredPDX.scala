@@ -30,18 +30,21 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[N
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   override def set(expression: SeqNode): Unit =
-    usingIdentifier(expression)
-    this.node = Some(expression)
-    // then load each sub-PDXScript
-    var remainingNodes: NodeSeq = Seq.from(expression.$)
-    for pdxScript <- childScripts do
-      remainingNodes = pdxScript.loadPDX(remainingNodes)
-    badNodesList = remainingNodes
+    ()
+    // TODO TODO
+//    usingIdentifier(expression)
+//    this.node = Some(expression)
+//    // then load each sub-PDXScript
+//    var remainingNodes: NodeSeq = Seq.from(expression.$)
+//    for pdxScript <- childScripts do
+//      remainingNodes = pdxScript.loadPDX(remainingNodes)
+//    badNodesList = remainingNodes
 
   override def set(value: NodeSeq): NodeSeq =
-    // TODO: Consider if this implementation is complete // second TODO: ?
-    super.setNode(value)
-    value
+    Seq.empty
+    // TODO TODO
+//    super.setNode(value)
+//    value
 
   /**
    * @inheritdoc
@@ -50,7 +53,8 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[N
     if isExpressionIdentifierExpected then
       expression.identifier match
         case None =>
-          loadPDX(expression.$)
+          () // TODO
+//          loadPDX(expression.$)
 //          expression.$ match
 //            case l: Seq[Node] => loadPDX(l)
 //          case _ =>
@@ -62,10 +66,11 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[N
 
   // todo?
   protected def loadPDX(file: File): Unit =
-    require(file.exists && file.isFile, s"File $file does not exist or is not a file.")
-    val pdxParser = new Parser(file)
-    try loadPDX(pdxParser.parse, Some(file))
-    catch case e: ParserException => handlePDXError(e, file = file)
+    () // TODO TODO
+//    require(file.exists && file.isFile, s"File $file does not exist or is not a file.")
+//    val pdxParser = new Parser(file)
+//    try loadPDX(pdxParser.parse, Some(file))
+//    catch case e: ParserException => handlePDXError(e, file = file)
 
   /**
    * Gets the child pdx property with the current identifier matching
@@ -164,14 +169,19 @@ abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[N
 
     // Update the current node's value.
     if combinedNodes.nonEmpty then node match
-      case Some(n) => n.setValue(combinedNodes)
-      case None    => node = Some(SeqNode(pdxIdentifier, "=", combinedNodes))
+      case Some(n) =>
+        () // TODO
+//        n.setValue(combinedNodes)
+      case None    =>
+        () // TODO
+//        node = Some(SeqNode(pdxIdentifier, "=", combinedNodes))
     else node = None
   }
 
   override def clone(): AnyRef = {
     val clone = super.clone().asInstanceOf[StructuredPDX]
-    clone.node = Some(SeqNode(pdxIdentifier, "=", Seq.empty))
+    // TODO
+//    clone.node = Some(SeqNode(pdxIdentifier, "=", Seq.empty))
     clone.badNodesList = this.badNodesList
     clone
   }

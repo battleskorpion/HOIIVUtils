@@ -13,13 +13,15 @@ trait HeadlessPDX { this: StructuredPDX =>
    */
   @throws[NodeValueTypeException]
   override def set(expression: SeqNode): Unit =
-    // Skip identifier checking since headless files do not have a named header.
-    this.node = Some(expression)
-    // then load each sub-PDXScript
-    var remainingNodes: NodeSeq = Seq.from(expression.$)
-    for pdxScript <- childScripts do
-      remainingNodes = pdxScript.loadPDX(remainingNodes)
-    badNodesList = remainingNodes
+    () 
+    // TODO TODO 
+//    // Skip identifier checking since headless files do not have a named header.
+//    this.node = Some(expression)
+//    // then load each sub-PDXScript
+//    var remainingNodes: NodeSeq = Seq.from(expression.$)
+//    for pdxScript <- childScripts do
+//      remainingNodes = pdxScript.loadPDX(remainingNodes)
+//    badNodesList = remainingNodes
 
   override def isValidIdentifier(node: Node[?]): Boolean = true
 

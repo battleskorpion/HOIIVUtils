@@ -27,8 +27,8 @@ class MultiReferencePDX[V <: String | Int, T <: Referable[V]](protected var refe
                                              referencePDXIdentifiers: List[String])
   extends MultiPDX[ReferencePDX[V, T]](Some(() => new ReferencePDX(referenceCollectionSupplier, referencePDXIdentifiers)), None, pdxIdentifiers) with LazyLogging {
 
-  final protected val referenceNames = new ListBuffer[String]
-  protected var idExtractor: T => Option[String] = (obj: T) => obj.referableID
+  final protected val referenceNames = new ListBuffer[V]
+  protected var idExtractor: T => Option[V] = (obj: T) => obj.referableID
 
   def this(referenceCollectionSupplier: () => Iterable[T], pdxIdentifiers: String, referenceIdentifier: String) =
     this(referenceCollectionSupplier, List(pdxIdentifiers), List(referenceIdentifier))
@@ -40,19 +40,21 @@ class MultiReferencePDX[V <: String | Int, T <: Referable[V]](protected var refe
    * @throws UnexpectedIdentifierException
    */
   override def loadPDX(expression: Node[?], file: Option[File]): Unit =
-    expression.$ match
-      case list: NodeSeq =>
-        usingIdentifier(expression)
-
-        for (child <- list) super.loadPDX(child, file)
-        this.node = Some(expression)
-      case _ => super.loadPDX(expression, file)
+    () 
+    // TODO TODO
+//    expression.$ match
+//      case list: NodeSeq =>
+//        usingIdentifier(expression)
+//
+//        for (child <- list) super.loadPDX(child, file)
+//        this.node = Some(expression)
+//      case _ => super.loadPDX(expression, file)
 
   def validReferences: Option[List[T]] = references() match
     case list if list.isEmpty => None
     case list => Some(list.toList)
 
-  override def iterator: Iterator[ReferencePDX[T, V]] =
+  override def iterator: Iterator[ReferencePDX[V, T]] =
     resolveReferences()
     super.iterator
 
@@ -74,31 +76,34 @@ class MultiReferencePDX[V <: String | Int, T <: Referable[V]](protected var refe
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override protected def addToCollection(expression: Node, file: Option[File]): Unit =
+  override protected def addToCollection(expression: Node[?], file: Option[File]): Unit =
     checkReferenceIdentifier(expression)
     expression.$ match
       case str: String =>
-        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
-        val childScript = simpleSupplier.get.apply()
-        childScript.loadPDX(expression, file)
-        pdxSeq :+= childScript
-        referenceNames.addOne(str)
+        () // TODO TODO 
+//        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
+//        val childScript = simpleSupplier.get.apply()
+//        childScript.loadPDX(expression, file)
+//        pdxSeq :+= childScript
+//        referenceNames.addOne(str)
       case other =>
         logger.warn(s"Expected string value for pdx reference identifier, got ${other}. Preserving node using its string representation.")
-        // Preserve the problematic node as a string.
-        val preservedValue = other.toString
-        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
-        val childScript = simpleSupplier.get.apply()
-        childScript.loadPDX(new Node(preservedValue), file)
-        pdxSeq :+= childScript
-        referenceNames.addOne(preservedValue)
-        // Then throw the exception so that callers are aware of the issue.
-        throw new NodeValueTypeException(expression, "string", this.getClass)
+        // TODO TODO
+//        // Preserve the problematic node as a string.
+//        val preservedValue = other.toString
+//        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "string", this.getClass)
+//        val childScript = simpleSupplier.get.apply()
+//        // TODO TODO
+////        childScript.loadPDX(new Node(preservedValue), file)
+////        pdxSeq :+= childScript
+//        referenceNames.addOne(preservedValue)
+//        // Then throw the exception so that callers are aware of the issue.
+//        throw new NodeValueTypeException(expression, "string", this.getClass)
 
   /**
    * Removes a reference (wrapper) that matches the given predicate.
    */
-  override def removeIf(p: ReferencePDX[T, V] => Boolean): Seq[ReferencePDX[T, V]] =
+  override def removeIf(p: ReferencePDX[V, T] => Boolean): Seq[ReferencePDX[V, T]] =
     // 1. Iterate backwards through indices to prevent shifting issues
     for
       i <- pdxSeq.indices.reverse
@@ -116,7 +121,7 @@ class MultiReferencePDX[V <: String | Int, T <: Referable[V]](protected var refe
    * @param referencePDX
    */
   @targetName("add")
-  override def +=(referencePDX: ReferencePDX[T, V]): Unit =
+  override def +=(referencePDX: ReferencePDX[V, T]): Unit =
     pdxSeq :+= referencePDX
     referenceNames.addOne(referencePDX.referenceName)   // todo throw error instead and check this first
 
@@ -127,9 +132,9 @@ class MultiReferencePDX[V <: String | Int, T <: Referable[V]](protected var refe
   def addReferenceTo(pdxScript: T): Unit =
     val idOpt = idExtractor(pdxScript)
     if (idOpt.isEmpty)
-      throw new NodeValueTypeException("Unable to extract reference identifier", this.getClass)
-    // Create a new ReferencePDX[T, V] using the supplier.
-    val wrapper: ReferencePDX[T, V] = simpleSupplier.get.apply()
+      throw new Exception("Unable to extract reference identifier")
+    // Create a new ReferencePDX[V, T] using the supplier.
+    val wrapper: ReferencePDX[V, T] = simpleSupplier.get.apply()
     // Set the value of the wrapper to the candidate.
     wrapper.set(pdxScript)
     pdxSeq :+= wrapper
@@ -140,7 +145,7 @@ class MultiReferencePDX[V <: String | Int, T <: Referable[V]](protected var refe
    *
    * @param referencePDX
    */
-  override def -=(referencePDX: ReferencePDX[T, V]): this.type =
+  override def -=(referencePDX: ReferencePDX[V, T]): this.type =
     val index = pdxSeq.indexOf(referencePDX)
     if (index != -1) {
       referencePDX.clearNode()
@@ -171,19 +176,20 @@ class MultiReferencePDX[V <: String | Int, T <: Referable[V]](protected var refe
    * @note Java was *struggling* with 'this.type' return type. Use '-=' otherwise.
    * @return
    */
-  override def remove(pdxScript: ReferencePDX[T, V]): Unit =
+  override def remove(pdxScript: ReferencePDX[V, T]): Unit =
     this -= pdxScript
 
   override def clear(): Unit =
-    node.foreach { n =>
-      n.$ match
-        case l: ListBuffer[T] => l.clear()
-        case _ => // do nothing
-    }
-    pdxSeq = Seq.empty
-    referenceNames.clear()
+    () // TODO TODO 
+//    node.foreach { n =>
+//      n.$ match
+//        case l: ListBuffer[T] => l.clear()
+//        case _ => // do nothing
+//    }
+//    pdxSeq = Seq.empty
+//    referenceNames.clear()
 
-  override def addNewPDX(): ReferencePDX[T, V] =
+  override def addNewPDX(): ReferencePDX[V, T] =
     super.addNewPDX() // no override necessary.
 
   private def resolveReferences(): ListBuffer[T] =
@@ -198,14 +204,14 @@ class MultiReferencePDX[V <: String | Int, T <: Referable[V]](protected var refe
     }
     resolvedReferences
 
-  def setReferenceName(index: Int, value: String): Unit =
+  def setReferenceName(index: Int, value: V): Unit =
     referenceNames.update(index, value)
 
-  def getReferenceName(i: Int): String = referenceNames(i)
+  def getReferenceName(i: Int): V = referenceNames(i)
 
-  def getReferenceCollectionNames: Iterable[String] = referenceCollectionSupplier().flatMap(idExtractor) //referenceCollectionSupplier().map(idExtractor).filter(_.isDefined).map(_.get)
+  def getReferenceCollectionNames: Iterable[V] = referenceCollectionSupplier().flatMap(idExtractor) //referenceCollectionSupplier().map(idExtractor).filter(_.isDefined).map(_.get)
 
-  def addReferenceName(newValue: String): Unit =
+  def addReferenceName(newValue: V): Unit =
     referenceNames.addOne(newValue)
     resolveReferences()
 
@@ -243,10 +249,10 @@ class MultiReferencePDX[V <: String | Int, T <: Referable[V]](protected var refe
       case Some(value) => referenceNames.contains(value)
       case None => false
 
-  def containsReferenceName(referenceName: String): Boolean =
+  def containsReferenceName(referenceName: V): Boolean =
     referenceNames.contains(referenceName)
 
-  def changeReference(oldName: String, newName: String): Unit =
+  def changeReference(oldName: V, newName: V): Unit =
     val index = referenceNames.indexOf(oldName)
     if (index != -1)
       referenceNames.update(index, newName)

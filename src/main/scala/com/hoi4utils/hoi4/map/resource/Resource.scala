@@ -21,10 +21,11 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDefinition
   /* init */
   require(isValidPDXTypeIdentifier(id), s"Invalid resource identifier: $id. Expected one of: ${Resource.resourceIdentifiers.mkString(", ")}")
 
-  def this(node: Node) = {
+  def this(node: Node[?]) = {
     this(node.name)
     var file = None
-    loadPDX(node, file)
+    // TODO TODO
+//    loadPDX(node, file)
   }
 
   def this(id: String, amt: Double) = {
@@ -32,7 +33,7 @@ class Resource(id: String) extends DoublePDX(id) with PDXType[ResourceDefinition
     this.set(amt)
   }
 
-  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+  override def handlePDXError(exception: Exception = null, node: Node[?] = null, file: File = null): Unit =
     given ParsingContext = if node != null then new ParsingContext(file, node) else ParsingContext(file)
     val pdxError = new PDXFileError(
       exception = exception,
@@ -81,14 +82,14 @@ object Resource {
 
   def apply(): PDXSupplier[Resource] = {
     new PDXSupplier[Resource] {
-      override def simplePDXSupplier(): Option[Node => Option[Resource]] = {
-        Some((expr: Node) => {
+      override def simplePDXSupplier(): Option[Node[?] => Option[Resource]] = {
+        Some((expr: Node[?]) => {
           Some(new Resource(expr))
         })
       }
 
-      override def blockPDXSupplier(): Option[Node => Option[Resource]] = {
-        Some((expr: Node) => {
+      override def blockPDXSupplier(): Option[Node[?] => Option[Resource]] = {
+        Some((expr: Node[?]) => {
           Some(new Resource(expr))
         })
       }

@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi4.map.state
 
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.{Node, PDXValueNode}
+import com.hoi4utils.parser.{Node, PDXValueNode, SeqNode}
 import com.hoi4utils.script.PDXSupplier
 import com.typesafe.scalalogging.LazyLogging
 
@@ -38,9 +38,10 @@ object StateCategories extends LazyLogging {
   def pdxSupplier(): PDXSupplier[StateCategoryDefinition] = {
     new PDXSupplier[StateCategoryDefinition] {
       override def simplePDXSupplier(): Option[PDXValueNode[?] => Option[StateCategoryDefinition]] = {
-        Some((expr: PDXValueNode[?]) => {
-          Some(new StateCategoryDefinition(expr))
-        })
+        None // TODO TODO
+//        Some((expr: PDXValueNode[?]) => {
+//          Some(new StateCategoryDefinition(expr))
+//        })
       }
 
       override def blockPDXSupplier(): Option[SeqNode => Option[StateCategoryDefinition]] = {

@@ -63,7 +63,7 @@ class State(file: File = null)(countryTagService: CountryTagService) extends Str
     case null => // create empty state
     case _ =>
       require(file.exists && file.isFile, s"State $file does not exist or is not a file.")
-      loadPDX(file)
+//      loadPDX(file)     // TODO TODO
       setFile(file)
 
   override def handlePDXError(exception: Exception = null, node: Node[?] = null, file: File = null): Unit =
@@ -328,15 +328,16 @@ object State extends LazyLogging:
 
   // todo fix structured effect block later when i can read
   class History(pdxIdentifier: String = "history", node: SeqNode = null, file: Option[File] = None)(countryTagService: CountryTagService) extends StructuredPDX(pdxIdentifier):
-    final val owner = new ReferencePDX[CountryTag](() => countryTagService.tags, "owner")
-    final val controller = new ReferencePDX[CountryTag](() => countryTagService.tags, "controller")
+    final val owner = new ReferencePDX[String, CountryTag](() => countryTagService.tags, "owner")
+    final val controller = new ReferencePDX[String, CountryTag](() => countryTagService.tags, "controller")
     final val buildings = new BuildingsPDX
     final val victoryPoints = new MultiPDX[VictoryPointPDX](None, Some(() => new VictoryPointPDX), "victory_points")
     final val startDateScopes = new MultiPDX[StartDateScopePDX](None, Some(() => new StartDateScopePDX()(countryTagService)))
       with ProceduralIdentifierPDX(ClausewitzDate.validDate)
 
     /* constructor */
-    if node != null then loadPDX(node, file)
+    // TODO TODO
+//    if node != null then loadPDX(node, file)
 
     // Re-throw exceptions to bubble up to State
     /**
@@ -347,7 +348,7 @@ object State extends LazyLogging:
 
     override def getPDXTypeName: String = "History"
 
-  class BuildingsPDX(node: Node = null, file: Option[File] = None) extends StructuredPDX("buildings"):
+  class BuildingsPDX(node: Node[?] = null, file: Option[File] = None) extends StructuredPDX("buildings"):
     final val infrastructure = new IntPDX("infrastructure", ExpectedRange.ofPositiveInt)
     final val civilianFactories = new IntPDX("industrial_complex", ExpectedRange.ofPositiveInt)
     final val militaryFactories = new IntPDX("arms_factory", ExpectedRange.ofPositiveInt)
@@ -355,7 +356,8 @@ object State extends LazyLogging:
     final val airBase = new IntPDX("air_base", ExpectedRange.ofPositiveInt)
 
     /* constructor */
-    if node != null then loadPDX(node, file)
+    // TODO TODO
+//    if node != null then loadPDX(node, file)
 
     /**
      * @inheritdoc

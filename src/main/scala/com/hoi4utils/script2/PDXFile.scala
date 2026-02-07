@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import javax.swing.JOptionPane
 import scala.util.Using
 
-trait PDXFile extends PDXScript[?, ?] {
+trait PDXFile extends PDXScript[?] {
   
   def getFile: Option[File]
 

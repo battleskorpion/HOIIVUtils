@@ -97,8 +97,10 @@ abstract class AbstractPDX[T, NodeValue <: NodeValueType](protected var pdxIdent
    * Composite types (e.g. StructuredPDX) should override this method to rebuild their Node tree.
    */
   override def updateNodeTree(): Unit =
-    node.foreach(n => setNode(value))
-    // Default behavior for leaf nodes: update the node's value from the current state.
+    ()
+    // TODO TODO
+//    node.foreach(n => setNode(value))
+//    // Default behavior for leaf nodes: update the node's value from the current state.
 
   /**
    * Generates the script output.

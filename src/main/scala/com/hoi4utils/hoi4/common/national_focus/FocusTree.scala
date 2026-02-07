@@ -51,8 +51,8 @@ class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService:
     Shortcut()
   /* special cases - requires special handling :) */
   // todo handle specially
-  val sharedFocuses: ReferencePDX[SharedFocus] =
-    ReferencePDX[SharedFocus](() => manager.sharedFocuses, "shared_focus")
+  val sharedFocuses: ReferencePDX[String, SharedFocus] =
+    ReferencePDX[String, SharedFocus](() => manager.sharedFocuses, "shared_focus")
 
   // File-level errors (parse errors, etc.)
   var treeErrors: ListBuffer[PDXFileError] = ListBuffer.empty[PDXFileError]
@@ -87,7 +87,7 @@ class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService:
   override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] =
     ListBuffer(id, country, focuses)
 
-  override def handlePDXError(exception: Exception = null, node: Node = null, file: File = null): Unit =
+  override def handlePDXError(exception: Exception = null, node: Node[?] = null, file: File = null): Unit =
     val errFile = if file != null then file else _focusFile.orNull
     given ParsingContext = if node != null then new ParsingContext(errFile, node) else ParsingContext(errFile)
     val pdxError = new PDXFileError(
@@ -239,7 +239,7 @@ class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService:
       final val base = new DoublePDX("base")
       final val factor = new DoublePDX("factor")
       final val add = new DoublePDX("add")
-      final val tag = new ReferencePDX[CountryTag](() => countryTagService.tags, "country")
+      final val tag = new ReferencePDX[String, CountryTag](() => countryTagService.tags, "country")
 
       override protected def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = ListBuffer(base, factor, add, tag)
 
@@ -262,13 +262,13 @@ class FocusTree(file: File = null)(manager: FocusTreeManager, countryTagService:
       override def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = ListBuffer(offset) ++ super.childScripts
 
     class InitialShowPosition_Focus extends StructuredPDX(pdxIdentifier) with InitialShowPositionSchema:
-      val focus: ReferencePDX[Focus] = ReferencePDX[Focus](() => focuses.toList, "focus")
+      val focus: ReferencePDX[String, Focus] = ReferencePDX[String, Focus](() => focuses.toList, "focus")
 
       override def childScripts: mutable.Seq[? <: PDXScript[?, ?]] = ListBuffer(focus)
 
   class Shortcut extends StructuredPDX("shortcut"):
     val name = StringPDX("name")  // loc_key
-    val target = ReferencePDX[Focus](() => listFocuses, "target")
+    val target = ReferencePDX[String, Focus](() => listFocuses, "target")
     /** Controls zoom */
     val scrollWheelFactor = DoublePDX("scroll_wheel_factor", ExpectedRange.ofUnitInterval)
 //    val trigger = TriggerPDX("trigger") // TODO IMPL TRIGGER PDX

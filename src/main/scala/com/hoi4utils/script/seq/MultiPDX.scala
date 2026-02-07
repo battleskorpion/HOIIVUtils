@@ -52,19 +52,21 @@ class MultiPDX[T <: PDXScript[?, ?]](var simpleSupplier: Option[() => T], var bl
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
   override protected def addToCollection(expression: Node[?], file: Option[File]): Unit =
-    usingIdentifier(expression)
-    // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
-    // then load each sub-PDXScript
-    expression.$ match
-      case l: NodeSeq =>
-        val childScript = applySupplier(expression)
-        childScript.loadPDX(expression, file)
-        pdxSeq :+= childScript
-      case _ =>
-        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "not a list", this.getClass)
-        val childScript = simpleSupplier.get.apply()
-        childScript.loadPDX(expression, file)
-        pdxSeq :+= childScript
+    () 
+    // TODO TODO
+//    usingIdentifier(expression)
+//    // if this PDXScript is an encapsulation of PDXScripts (such as Focus)
+//    // then load each sub-PDXScript
+//    expression.$ match
+//      case l: NodeSeq =>
+//        val childScript = applySupplier(expression)
+//        childScript.loadPDX(expression, file)
+//        pdxSeq :+= childScript
+//      case _ =>
+//        if (simpleSupplier.isEmpty) throw new NodeValueTypeException(expression, "not a list", this.getClass)
+//        val childScript = simpleSupplier.get.apply()
+//        childScript.loadPDX(expression, file)
+//        pdxSeq :+= childScript
 
   def removeIf(p: T => Boolean): Seq[T] =
     val (toRemove, toKeep) = pdxSeq.partition(p)
@@ -109,10 +111,12 @@ class MultiPDX[T <: PDXScript[?, ?]](var simpleSupplier: Option[() => T], var bl
     this -= pdxScript
 
   def clear(): Unit =
-    node match
-      case s: SeqNode => s.clear()
-      case _ => () 
-    pdxSeq = Seq.empty
+    () 
+    // TODO TODO
+//    node match
+//      case s: SeqNode => s.clear()
+//      case _ => ()
+//    pdxSeq = Seq.empty
 
   override def isEmpty: Boolean = value.isEmpty
 
