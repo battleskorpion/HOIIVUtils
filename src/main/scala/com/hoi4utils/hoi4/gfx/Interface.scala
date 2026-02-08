@@ -2,7 +2,7 @@ package com.hoi4utils.hoi4.gfx
 
 import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.{Node, NodeSeq, Parser, ParserException, ParsingContext, SeqNode, ZIOParser}
+import com.hoi4utils.parser.{Node, NodeSeq, PDXValueNode, Parser, ParserException, ParsingContext, SeqNode, ZIOParser}
 import com.hoi4utils.parser.NodeExtensions.*
 import com.hoi4utils.script.{PDXFileError, PDXReadable}
 import com.typesafe.scalalogging.LazyLogging
@@ -54,7 +54,9 @@ class Interface(private val file: File) {
       // ZIOParser constructor does blocking file I/O, so wrap in attemptBlocking
       parser <- ZIO.attemptBlocking(new ZIOParser(file))
       rootNode <- parser.parse
-      spriteTypeNodes: Iterable[SeqNode] = rootNode.filterCaseInsensitiveTyped[SeqNode]("spriteTypes").flatMap(_.$.filterCaseInsensitiveTyped[SeqNode]("spriteType")).map(_.$)
+//      spriteTypeNodes: Iterable[SeqNode] = rootNode.filterCaseInsensitiveTyped[NodeSeq]("spriteTypes").flatMap(_.$.filterCaseInsensitiveTyped[NodeSeq]("spriteType")).map(_.$)
+//      spriteTypeNodes: Iterable[SeqNode] = rootNode.filterCaseInsensitiveTyped[NodeSeq]("spriteTypes").flatMap(_.$.filterCaseInsensitiveTyped[NodeSeq]("spriteType")).map(_.$)
+      spriteTypeNodes: Iterable[SeqNode] = rootNode.filterCaseInsensitiveTyped[NodeSeq]("spriteTypes").filterCaseInsensitiveTyped[NodeSeq]("spriteType")
       validSpriteTypes: View[SeqNode] = spriteTypeNodes.view.filter(_.containsAllCaseInsensitive("name", "texturefile")) // TODO can filter out invalid nodes
 
       (errors, results) <- ZIO.partition(validSpriteTypes) { (spriteNode: SeqNode) =>

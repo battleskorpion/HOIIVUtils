@@ -93,11 +93,6 @@ trait PDXScript[V, NodeValue <: NodeValueType] extends Cloneable with LazyLoggin
   def clearNode(): Unit
 
   /**
-   * Sets the node value and any relevant PDX properties to null.
-   */
-  def setNull(): Unit
-
-  /**
    * Loads the PDXScript from the given expression, or sets the PDXScript's value to the given value if the value
    * from the expression is null.
    *

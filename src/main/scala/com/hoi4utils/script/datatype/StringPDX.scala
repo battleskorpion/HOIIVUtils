@@ -86,7 +86,7 @@ class StringPDX(pdxIdentifiers: List[String]) extends AbstractPDX[String, String
    */
   def @=(other: PDXScript[String, String]): Unit = other.value match
     case Some(v) => set(v)
-    case None => setNull()
+    case None => clearNode()
 
   def nonEmpty: Boolean = value match
     case Some(v) => v.nonEmpty

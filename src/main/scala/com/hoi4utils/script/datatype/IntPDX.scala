@@ -1,7 +1,8 @@
-package com.hoi4utils.script
+package com.hoi4utils.script.datatype
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.{Node, PDXValueNode}
+import com.hoi4utils.script.{AbstractPDX, PDXScript}
 import com.hoi4utils.script.datatype.ValPDXScript
 import com.hoi4utils.shared.ExpectedRange
 
@@ -9,7 +10,7 @@ import scala.annotation.targetName
 import scala.util.boundary
 
 class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedRange.ofInt) extends AbstractPDX[Int, Int](pdxIdentifiers)
-  with ValPDXScript[Int]:
+  with ValPDXScript[Int, Int]:
 
   def this(pdxIdentifiers: String*) =
     this(pdxIdentifiers.toList)
@@ -43,7 +44,7 @@ class IntPDX(pdxIdentifiers: List[String], range: ExpectedRange[Int] = ExpectedR
       case x: IntPDX => node.equals(x.node)
       case _ => false
 
-  override def value: Option[Int] = node.map(_.$) 
+  override def value: Option[Int] = node.map(_.$)
 
   /**
    * @inheritdoc

@@ -132,7 +132,6 @@ class Parser(pdx: String | File = null) {
           )
         case s: Seq[Node[?] | CommentNode] =>
           val v: NodeSeq = s.collect { case n: Node[?] => n } // TODO TODO ignoring comments !!!!
-          // Create and return the new node with all CST information attached.
           new SeqNode(
             leadingTrivia = leading.toSeq,
             identifierToken = Some(tokenIdentifier),

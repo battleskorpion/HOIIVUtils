@@ -1,5 +1,10 @@
 package com.hoi4utils.script2
 
+import com.hoi4utils.parser.SeqNode
+import com.hoi4utils.parser.NodeExtensions.find
+
+import java.io.File
+
 trait PDXEntity:
   // Recursive reflection to find fields in parent classes too
   private lazy val properties: List[PDXProperty[?]] =
@@ -15,18 +20,14 @@ trait PDXEntity:
 
     getFields(this.getClass)
 
-  def loadPDX(node: SeqNode, file: File): Unit =
-    val contextName = this.toString // Usually the Focus ID
-    for
-      prop <- properties
-      valueNode <- Option(node.find(prop.pdxKey))
-      // todo handle if was required
-    do
-      prop.loadFrom(valueNode, contextName)(err => handlePDXError(err))
+//  def loadPDX(node: SeqNode, file: File): Unit =
+//    val contextName = this.toString // Usually the Focus ID
+//    for
+//      prop <- properties
+//      valueNode <- Option(node.find(prop.pdxKey))
+//      // todo handle if was required
+//    do
+//      prop.loadFrom(valueNode, contextName)
 
-  def handlePDXError(error: PDXFileError): Unit =
-    // Your existing logging logic here
-    println(s"[PDX Error] ${error.message}")
-
-  def pdx[T](key: String)(using parser: PDXParser[T]): PDXProperty[T] =
+  def pdx[T](key: String): PDXProperty[T] =
     new PDXProperty[T](key, None)

@@ -14,7 +14,7 @@ import java.util
  * Refer to <url> <a href="https://hoi4.paradoxwikis.com/Division_modding">HOI4 Division Modding Wiki</a> </url>
  * todo
  */
-class OrdersOfBattle extends Referable {
+class OrdersOfBattle extends Referable[String] {
   // private Set<DivisionTemplate> divisionTemplates
   // set of division templates defined in oob
   // Set<effect> instantEffects

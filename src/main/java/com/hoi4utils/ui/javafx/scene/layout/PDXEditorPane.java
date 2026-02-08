@@ -2,9 +2,7 @@ package com.hoi4utils.ui.javafx.scene.layout;
 
 import com.hoi4utils.main.HOIIVUtilsConfig;
 import com.hoi4utils.script.*;
-import com.hoi4utils.script.datatype.BooleanPDX;
-import com.hoi4utils.script.datatype.StringPDX;
-import com.hoi4utils.script.datatype.ValPDXScript;
+import com.hoi4utils.script.datatype.*;
 import com.hoi4utils.script.seq.CollectionPDX;
 import com.hoi4utils.script.seq.MultiPDX;
 import com.hoi4utils.script.seq.MultiReferencePDX;
@@ -455,7 +453,7 @@ public class PDXEditorPane extends AnchorPane {
         nullPropertyNodes.clear();
     }
 
-    private <T> @NotNull HBox newSpinnerHBox(ValPDXScript<?> pdx, Spinner<T> spinner) {
+    private <T> @NotNull HBox newSpinnerHBox(ValPDXScript<?, ?> pdx, Spinner<T> spinner) {
         HBox hbox = new HBox();
         spinner.setPrefHeight(25);
         spinner.valueProperty().addListener((observable, oldValue, newValue) -> {

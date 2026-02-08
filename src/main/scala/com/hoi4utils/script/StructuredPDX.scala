@@ -8,7 +8,7 @@ import com.typesafe.scalalogging.LazyLogging
 import java.io.File
 import scala.collection.mutable.ListBuffer
 
-abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[NodeSeq, Node[?]](pdxIdentifiers) with LazyLogging {
+abstract class StructuredPDX(pdxIdentifiers: List[String]) extends AbstractPDX[NodeSeq, NodeSeq](pdxIdentifiers) with LazyLogging {
 
   var badNodesList: Iterable[Node[?]] = ListBuffer.empty
 

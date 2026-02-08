@@ -2,7 +2,8 @@ package com.hoi4utils.hoi4.map.province
 
 import com.hoi4utils.hoi4.map.province.Province
 import com.hoi4utils.parser.{Node, PDXValueNode}
-import com.hoi4utils.script.{IntPDX, Referable}
+import com.hoi4utils.script.datatype.IntPDX
+import com.hoi4utils.script.{Referable}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.logging.log4j.{LogManager, Logger}
 
@@ -17,9 +18,9 @@ class Province extends IntPDX with Referable[Int] {
 
   override def set(other: IntPDX): Unit =
     throw new UnsupportedOperationException("Cannot set a Province to another IntPDX")
-  
+
   def id: Option[Int] = value
-  
+
   override def referableID: Option[String] = asOptionalString
 }
 
@@ -31,7 +32,7 @@ object Province extends LazyLogging {
    */
   def clear(): Unit =
     provinces.clear()
-  
+
   private[map] def add(province: Province): List[Province] =
     // todo uhhhhhhhhhhhhhhhhhhhhh
     provinces += province
@@ -51,6 +52,6 @@ object Province extends LazyLogging {
 //        existing
 //      case None =>
 //        // Create and return a new Province
-//        
+//
 //    }
 }

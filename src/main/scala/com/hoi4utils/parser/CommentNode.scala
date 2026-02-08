@@ -12,7 +12,7 @@ class CommentNode
 ):
 
   def this(value: Comment) =
-    this(rawValue = Some(value))
+    this(rawValue = value)
   
   override def asString: String =
     rawValue.toString

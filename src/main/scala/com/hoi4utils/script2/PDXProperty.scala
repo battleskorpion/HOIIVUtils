@@ -8,7 +8,7 @@ class PDXProperty[T]
 (
   val pdxKey: String,
   private var _value: Option[T]
-)(using parser: PDXParser[T]):
+):
 
   private var _isRequired: Boolean = false
 
@@ -25,13 +25,3 @@ class PDXProperty[T]
   def isRequired: Boolean = _isRequired
 
   def validate(f: T => Boolean): PDXProperty[T] = { /* store validation logic */ this }
-
-  def loadFrom(node: Node, context: String)(handleError: PDXFileError => Unit): Unit =
-    parser.parse(node) match {
-      case Right(newValue) => _value = Some(newValue)
-      case Left(errorMsg)  =>
-        handleError(new PDXFileError(
-          message = s"Field '$pdxKey' in $context: $errorMsg",
-          errorNode = node
-        ))
-    }

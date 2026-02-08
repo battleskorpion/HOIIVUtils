@@ -1,7 +1,8 @@
 package com.hoi4utils.script.shared
 
+import com.hoi4utils.script.datatype.DoublePDX
 import com.hoi4utils.script.seq.MultiPDX
-import com.hoi4utils.script.{DoublePDX, PDXScript, StructuredPDX}
+import com.hoi4utils.script.{PDXScript, StructuredPDX}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

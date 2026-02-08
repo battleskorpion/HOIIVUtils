@@ -4,6 +4,11 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.util.NodeType
 
 import scala.reflect.ClassTag
 
+type NodeResult[T <: NodeValueType] =
+  T match
+    case NodeSeq => SeqNode
+    case _       => Node[T]
+
 object NodeExtensions {
   extension (seqNode: SeqNode)
     def find(str: String): Option[Node[?]] =
@@ -19,7 +24,7 @@ object NodeExtensions {
      * Finds a node by name (case-insensitive) and ensures its value
      * matches the expected type T.
      */
-    def findCaseInsensitiveTyped[T: ClassTag](str: String): Option[Node[T]] =
+    def findCaseInsensitiveTyped[T <: NodeValueType : ClassTag](str: String): Option[Node[T]] =
       seqNode.iterator.collectFirst {
         case n: Node[?] if n.name.equalsIgnoreCase(str) =>
           n.$ match
@@ -33,11 +38,20 @@ object NodeExtensions {
 
     def filterCaseInsensitive(str: String): Iterable[Node[?]] = filterNameCaseInsensitive(str)
 
-    def filterCaseInsensitiveTyped[T: ClassTag](str: String): Iterable[Node[T]] =
+    def filterCaseInsensitiveTyped[T <: NodeValueType : ClassTag](str: String): Iterable[NodeResult[T]] =
+      val ct = summon[ClassTag[T]]
+      
       seqNode.iterator.collect {
-        case n: Node[?] if n.name.equalsIgnoreCase(str) =>
-          n.$ match
-            case _: T => n.asInstanceOf[Node[T]]
+        case n if n.name.equalsIgnoreCase(str) =>
+//          n match
+//            case typed: T => typed
+          if ct.runtimeClass == classOf[NodeSeq] then
+            n match
+              case s: SeqNode => s.asInstanceOf[NodeResult[T]]
+          else
+            n match
+              case node: Node[?] if ct.runtimeClass.isInstance(node.$) =>
+                node.asInstanceOf[NodeResult[T]]
       }.toSeq
 
     def filterName(str: String): Iterable[Node[?]] =
@@ -136,4 +150,20 @@ object NodeExtensions {
   //
   //    def contains(str: String): Boolean = find(str).isDefined
 
+  extension (nodes: Iterable[Node[?]])
+    def filterCaseInsensitiveTyped[T <: NodeValueType : ClassTag](str: String): Iterable[NodeResult[T]] =
+      val ct = summon[ClassTag[T]]
+      
+      nodes.collect {
+        case n if n.name.equalsIgnoreCase(str) =>
+//          n match
+//            case typed: T => typed
+          if ct.runtimeClass == classOf[NodeSeq] then
+            n match
+              case s: SeqNode => s.asInstanceOf[NodeResult[T]]
+          else
+            n match
+              case node: Node[?] if ct.runtimeClass.isInstance(node.$) =>
+                node.asInstanceOf[NodeResult[T]]
+      }.toSeq
 }

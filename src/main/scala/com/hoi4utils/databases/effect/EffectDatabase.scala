@@ -10,7 +10,7 @@ import com.hoi4utils.hoi4.scope.ScopeType
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.parser.{Node, PDXValueNode, SeqNode}
 import com.hoi4utils.script.*
-import com.hoi4utils.script.datatype.{BooleanPDX, StringPDX}
+import com.hoi4utils.script.datatype.{BooleanPDX, DoublePDX, IntPDX, StringPDX}
 import com.hoi4utils.script.seq.ListPDX
 import com.hoi4utils.shared.{BoolType, ExpectedRange, RichString}
 import com.typesafe.scalalogging.LazyLogging

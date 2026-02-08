@@ -4,6 +4,7 @@ import com.hoi4utils.exceptions.UnexpectedIdentifierException
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Node, ParserException, ParsingContext}
 import com.hoi4utils.script.*
+import com.hoi4utils.script.datatype.DoublePDX
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.logging.log4j.{LogManager, Logger}
 

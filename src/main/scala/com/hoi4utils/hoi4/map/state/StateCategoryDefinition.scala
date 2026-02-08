@@ -1,7 +1,8 @@
 package com.hoi4utils.hoi4.map.state
 
 import com.hoi4utils.parser.{Node, SeqNode}
-import com.hoi4utils.script.{IntPDX, PDXScript, Referable, StructuredPDX}
+import com.hoi4utils.script.datatype.IntPDX
+import com.hoi4utils.script.{PDXScript, Referable, StructuredPDX}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

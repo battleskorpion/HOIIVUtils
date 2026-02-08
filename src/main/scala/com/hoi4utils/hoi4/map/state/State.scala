@@ -13,7 +13,7 @@ import com.hoi4utils.hoi4.map.state.State.History
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.*
 import com.hoi4utils.script.*
-import com.hoi4utils.script.datatype.{BooleanPDX, StringPDX}
+import com.hoi4utils.script.datatype.{BooleanPDX, DoublePDX, IntPDX, StringPDX}
 import com.hoi4utils.script.seq.{CollectionPDX, ListPDX, MultiPDX}
 import com.hoi4utils.shared.{BoolType, ExpectedRange}
 import com.typesafe.scalalogging.LazyLogging

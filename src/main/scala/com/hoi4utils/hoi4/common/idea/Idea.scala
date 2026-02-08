@@ -5,6 +5,7 @@ import com.hoi4utils.hoi4.localization.{Localizable, Property}
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.parser.{Node, PDXValueNode, ParsingContext, SeqNode}
 import com.hoi4utils.script.*
+import com.hoi4utils.script.datatype.DoublePDX
 import com.hoi4utils.script.seq.CollectionPDX
 import com.hoi4utils.shared.ExpectedRange
 import com.typesafe.scalalogging.LazyLogging

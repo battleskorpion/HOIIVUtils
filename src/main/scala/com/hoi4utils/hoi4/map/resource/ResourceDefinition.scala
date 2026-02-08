@@ -1,7 +1,8 @@
 package com.hoi4utils.hoi4.map.resource
 
 import com.hoi4utils.parser.{Node, SeqNode}
-import com.hoi4utils.script.{DoublePDX, IntPDX, PDXScript, StructuredPDX}
+import com.hoi4utils.script.{PDXScript, StructuredPDX}
+import com.hoi4utils.script.datatype.{DoublePDX, IntPDX}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

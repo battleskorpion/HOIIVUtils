@@ -7,7 +7,7 @@ import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Localization, Prop
 import com.hoi4utils.hoi4.scope.Scope
 import com.hoi4utils.parser.{Node, ParsingContext, SeqNode}
 import com.hoi4utils.script.*
-import com.hoi4utils.script.datatype.{BooleanPDX, StringPDX}
+import com.hoi4utils.script.datatype.{BooleanPDX, DoublePDX, IntPDX, StringPDX}
 import com.hoi4utils.script.seq.{CollectionPDX, MultiPDX, MultiReferencePDX}
 import com.hoi4utils.script.shared.AIWillDo
 import com.hoi4utils.shared.{BoolType, ExpectedRange}

@@ -11,7 +11,7 @@ import scala.annotation.targetName
  * Allows shi**y clausewitz engine numbers to be used in a more sane way.
  * @tparam T
  */
-trait ValPDXScript[T <: PDXValueType] extends PDXScript[T, T] with Comparable[T] {
+trait ValPDXScript[T <: PDXValueType & AnyVal, NodeV >: T <: PDXValueType] extends PDXScript[T, NodeV] with Comparable[T] {
   def isDefaultRange: Boolean
 
   def defaultRange: ExpectedRange[T]
@@ -42,7 +42,7 @@ trait ValPDXScript[T <: PDXValueType] extends PDXScript[T, T] with Comparable[T]
    * @return
    */
   @targetName("getEquals")
-  def @==(other: ValPDXScript[T]): Boolean = value match
+  def @==(other: ValPDXScript[T, ?]): Boolean = value match
     case Some(v) => other @== v
     case None => false
 
@@ -67,7 +67,7 @@ trait ValPDXScript[T <: PDXValueType] extends PDXScript[T, T] with Comparable[T]
    */
   def @=(other: PDXScript[T, T]): Unit = other.value match
     case Some(v) => set(v)
-    case None => setNull()
+    case None => clearNode()
 
   /**
    * Sets the value of the script to the given value. If the given value is the script's default value
@@ -117,7 +117,7 @@ trait ValPDXScript[T <: PDXValueType] extends PDXScript[T, T] with Comparable[T]
       case _ => throw new IllegalArgumentException(s"Cannot compare $v to $o")
     case None => throw new IllegalArgumentException("Cannot compare null to $o")
 
-  def compareTo(o: ValPDXScript[T]): Option[Int] =
+  def compareTo(o: ValPDXScript[T, NodeV]): Option[Int] =
     o.value match
       case Some(v) => Some(this.compareTo(v))
       case None => None

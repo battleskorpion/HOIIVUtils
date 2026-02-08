@@ -20,7 +20,7 @@ import scala.util.boundary
  */
 // removed T <: PDXScript[?]
 // but todo disallow string (and maybe other val types), and StringPDX, other primitive pdx
-class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollectionSupplier: () => Iterable[T],
+class ReferencePDX[V <: String | Int, T <: Referable[V]](final protected var referenceCollectionSupplier: () => Iterable[T],
                       pdxIdentifiers: List[String])
   extends AbstractPDX[T, V](pdxIdentifiers) {
 
@@ -35,7 +35,7 @@ class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollection
 
   @throws[UnexpectedIdentifierException]
   @throws[NodeValueTypeException]
-  override def set(expression: PDXValueNode[V]): Unit = {
+  override def set(expression: Node[V]): Unit = {
     usingIdentifier(expression)
     // Always preserve the original node.
     this.node = Some(expression)
@@ -87,7 +87,7 @@ class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollection
 
   @targetName("setReference")
   def @= (other: T): Unit = {
-    referenceName = idExtractor(other).getOrElse(throw new Exception(s"Cannot set reference to $other"))  // todo 
+    referenceName = idExtractor(other).getOrElse(throw new Exception(s"Cannot set reference to $other"))  // todo
     reference = Some(other)
   }
 
@@ -106,7 +106,7 @@ class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollection
 
   override def set(obj: T): T = {
     reference = Some(obj)
-    referenceName = idExtractor(obj).getOrElse(throw new Exception(s"Cannot set reference to $obj"))  // todo 
+    referenceName = idExtractor(obj).getOrElse(throw new Exception(s"Cannot set reference to $obj"))  // todo
     obj
   }
 
@@ -114,16 +114,18 @@ class ReferencePDX[V, T <: Referable[V]](final protected var referenceCollection
    * @inheritdoc
    */
   override def setNull(): Unit = {
-    super.setNull()
-    reference = None
-//    referenceName = null
+    // TODO TODO
+    ()
+//    super.setNull()
+//    reference = None
+////    referenceName = null
   }
 
   /**
    * On-demand Node rebuilding: update the underlying node’s value to the current reference name.
    */
   override def updateNodeTree(): Unit = {
-    // TODO TODO 
+    // TODO TODO
 //    if (node.isEmpty && referenceName != null) {
 //      node = Some(new PDXValueNode[V](pdxIdentifier, "=", referenceName))
 //    }

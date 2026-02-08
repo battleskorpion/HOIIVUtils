@@ -1,6 +1,6 @@
 package com.hoi4utils.script.datatype
 
-import com.hoi4utils.script.{DoublePDX, IntPDX, PDXScript, StructuredPDX}
+import com.hoi4utils.script.{PDXScript, StructuredPDX}
 
 import scala.collection.mutable.ListBuffer
 

@@ -1,14 +1,15 @@
-package com.hoi4utils.script
+package com.hoi4utils.script.datatype
 
 import com.hoi4utils.exceptions.{NodeValueTypeException, UnexpectedIdentifierException}
 import com.hoi4utils.parser.{Node, PDXValueNode}
+import com.hoi4utils.script.{AbstractPDX, PDXScript}
 import com.hoi4utils.script.datatype.ValPDXScript
 import com.hoi4utils.shared.ExpectedRange
 
 import scala.annotation.targetName
 import scala.util.boundary
 
-class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = ExpectedRange.ofDouble) extends AbstractPDX[Double, Double](pdxIdentifiers) with ValPDXScript[Double] {
+class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = ExpectedRange.ofDouble) extends AbstractPDX[Double, Double | Int](pdxIdentifiers) with ValPDXScript[Double, Double | Int] {
   def this(pdxIdentifiers: String*) =
     this(pdxIdentifiers.toList)
 
@@ -22,15 +23,15 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
   @throws[NodeValueTypeException]
   override def set(expression: Node[Double | Int]): Unit =
     usingIdentifier(expression)
-    expression.$ match 
-      case d: Double => this.node = Some(new PDXValueNode[Double](d))
-      case i: Int => this.node = Some(new PDXValueNode[Double](i.toDouble))
-    
+    expression.$ match
+      case d: Double => this.node = Some(new PDXValueNode[Double | Int](d))
+      case i: Int => this.node = Some(new PDXValueNode[Double | Int](i))
+
 
   override def set(value: Double): Double =
     node match
       case Some(n) => n.setValue(value)
-      case None => this.node = Some(PDXValueNode[Double](value))
+      case None => this.node = Some(PDXValueNode[Double | Int](value))
     value
 
   override def equals(other: PDXScript[?, ?]): Boolean = other match
@@ -41,14 +42,16 @@ class DoublePDX(pdxIdentifiers: List[String], range: ExpectedRange[Double] = Exp
       node.get.$.equals(x.node.get.$)
     case _ => false
 
-  override def value: Option[Double] = node.map(_.$)
+  override def value: Option[Double] = node.map(_.$) match
+    case d: Double => Some(d)
+    case i: Int => Some(i.toDouble)
+    case _ => None
 
   /**
    * @inheritdoc
    */
-  override infix def getOrElse(default: Double): Double = node match
-    case Some(n) => 
-      n.$.toDouble
+  override infix def getOrElse(default: Double): Double = value match
+    case Some(v) => v
     case _ => default
 
   override def isDefaultRange: Boolean = range == ExpectedRange.ofDouble
