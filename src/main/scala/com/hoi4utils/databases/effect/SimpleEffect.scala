@@ -1,16 +1,16 @@
-package com.hoi4utils.databases.effect
-
-import com.hoi4utils.hoi4.scope.ScopeType
-
-// private val tSupplier: () => Effect  // todo
-// extends AbstractPDX[T](identifiers)  todo? 
-// todo
-trait SimpleEffect extends Effect {
-  
-  _supportedScopes = Set(ScopeType.country, ScopeType.state) // Example scope types
-  _supportedTargets = Set(ScopeType.country) // Example target types
-
-  override def clone(): AnyRef = {
-    super.clone().asInstanceOf[SimpleEffect]
-  }
-}
+//package com.hoi4utils.databases.effect
+//
+//import com.hoi4utils.hoi4.scope.ScopeType
+//
+//// private val tSupplier: () => Effect  // todo
+//// extends AbstractPDX[T](identifiers)  todo? 
+//// todo
+//trait SimpleEffect extends Effect {
+//  
+//  _supportedScopes = Set(ScopeType.country, ScopeType.state) // Example scope types
+//  _supportedTargets = Set(ScopeType.country) // Example target types
+//
+//  override def clone(): AnyRef = {
+//    super.clone().asInstanceOf[SimpleEffect]
+//  }
+//}

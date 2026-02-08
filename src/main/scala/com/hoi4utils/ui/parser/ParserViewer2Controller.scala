@@ -4,7 +4,7 @@ import com.hoi4utils.extensions.validateFolder
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.script.PDXScript
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
-import com.hoi4utils.ui.javafx.scene.control.PDXTreeViewFactory
+//import com.hoi4utils.ui.javafx.scene.control.PDXTreeViewFactory
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.beans.value.ObservableValue

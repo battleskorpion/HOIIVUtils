@@ -1,6 +1,5 @@
 package com.hoi4utils.hoi4.gfx
 
-import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{Node, NodeSeq, PDXValueNode, Parser, ParserException, ParsingContext, SeqNode, ZIOParser}
 import com.hoi4utils.parser.NodeExtensions.*

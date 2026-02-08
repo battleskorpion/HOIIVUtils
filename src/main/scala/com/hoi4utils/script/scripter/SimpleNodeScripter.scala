@@ -1,6 +1,6 @@
 package com.hoi4utils.script.scripter
 
-import com.hoi4utils.parser.{Node, NodeValueType, Token}
+import com.hoi4utils.parser.{Node, NodeValueType, PDXValueType, Token}
 import com.hoi4utils.parser.TokenType.comment
 
 import scala.collection.mutable.ListBuffer
@@ -24,9 +24,8 @@ object SimpleNodeScripter extends NodeScripter {
   /**
    * @inheritdoc
    */
-  override protected def appendLiteral(using sb: StringBuilder)(literal: NodeValueType): Unit =
+  override protected def appendLiteral(using sb: StringBuilder)(literal: PDXValueType): Unit =
     sb.append(literal).append('\n')
-
 
   /**
    * @inheritdoc

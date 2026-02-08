@@ -6,17 +6,22 @@ import com.hoi4utils.shared.BoolType
 class PDXValueNode[T <: PDXValueType]
 (
   /** Tokens that occurred before the "core" of this node. */
-  var leadingTrivia: Seq[Token] = Seq.empty,
+  leadingTrivia: Seq[Token] = Seq.empty,
   /** The main identifier token (if any). */
-  var identifierToken: Option[Token] = None,
+  identifierToken: Option[Token] = None,
   /** The operator token (if any, e.g. "="). */
-  var operatorToken: Option[Token] = None,
+  operatorToken: Option[Token] = None,
   /** The node's value. This may be a literal (String, Int, Double, Boolean),
    a list (block) of child nodes, or a Comment. */
   var rawValue: T,
   /** Tokens that came after the node's core. */
-  var trailingTrivia: Seq[Token] = Seq.empty
+  trailingTrivia: Seq[Token] = Seq.empty
 ) extends Node[T]:
+
+  this.leadingTrivia = leadingTrivia
+  this.identifierToken = identifierToken
+  this.operatorToken = operatorToken
+  this.trailingTrivia = trailingTrivia
 
   def this(value: T) =
     this(rawValue = value)

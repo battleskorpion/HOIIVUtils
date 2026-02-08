@@ -14,7 +14,7 @@ class CommentNode
   def this(value: Comment) =
     this(rawValue = value)
   
-  override def asString: String =
+  def asString: String =
     rawValue.toString
 
   def clear(): Unit =
