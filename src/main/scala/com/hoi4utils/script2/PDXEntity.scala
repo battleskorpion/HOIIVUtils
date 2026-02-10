@@ -20,6 +20,9 @@ trait PDXEntity:
 
     getFields(this.getClass)
 
+  def pdx[T](key: String): PDXProperty[T] =
+    new PDXProperty[T](key, None)
+
 //  def loadPDX(node: SeqNode, file: File): Unit =
 //    val contextName = this.toString // Usually the Focus ID
 //    for
@@ -28,6 +31,3 @@ trait PDXEntity:
 //      // todo handle if was required
 //    do
 //      prop.loadFrom(valueNode, contextName)
-
-  def pdx[T](key: String): PDXProperty[T] =
-    new PDXProperty[T](key, None)

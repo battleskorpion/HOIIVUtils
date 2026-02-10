@@ -7,19 +7,23 @@ import scala.reflect.Selectable.reflectiveSelectable
 class PDXProperty[T]
 (
   val pdxKey: String,
-  private var _value: Option[T]
+  private var _value: Option[T] = None
 ):
 
   private var _isRequired: Boolean = false
+  private var _default: Option[T] = None
 
-  def apply(): T = _value.get
+  def apply(): Option[T] = _value.orElse(_default)
+  def $: T = apply().getOrElse(
+    throw new IllegalStateException(s"Property $pdxKey is empty and has no default.")
+  )
+
   def :=(newValue: T): Unit = _value = Some(newValue)
 
-  // Fluent API for configuration
-  // TODO bad default is if value is NONE, then return default value
   infix def default(v: T): PDXProperty[T] =
-    _value = Some(v);
+    _default = Some(v)
     this
+  def isDefault: Boolean = apply() == default 
 
   infix def required(v: Boolean): PDXProperty[T] = { _isRequired = v; this }
   def isRequired: Boolean = _isRequired

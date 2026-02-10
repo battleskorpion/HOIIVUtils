@@ -46,7 +46,7 @@
 //  val cost =
 //    DoublePDX("cost", ExpectedRange.ofPositiveInfinite(-1))
 //  val availableIfCapitulated =
-//    BooleanPDX("available_if_capitulated")
+//    BooleanPDX("available_if_capitulated")  
 //  val cancelIfInvalid =
 //    BooleanPDX("cancel_if_invalid", true)
 //  val continueIfInvalid =
