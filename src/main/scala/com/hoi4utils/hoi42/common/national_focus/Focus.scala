@@ -13,16 +13,16 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with Referable[String]:
   /** If relative positioning, relative y */
   val y     = pdx[Int]("y")
   val cost  = pdx[Double]("cost") default DEFAULT_COST
-  val prerequisites = pdx[PrerequisiteSet]("prerequisite") default Set.empty
-  val mutuallyExclusive = pdx[MutuallyExclusiveSet]("mutually_exclusive") default Set.empty
-  val relativePositionFocus = pdx[Reference[Focus]]("relative_position_id") default None
+  val prerequisites = pdx[PrerequisiteSet]("prerequisite")
+  val mutuallyExclusive = pdx[MutuallyExclusiveSet]("mutually_exclusive")
+  val relativePositionFocus = pdx[Reference[Focus]]("relative_position_id")
   val availableIfCapitulated = pdx[Boolean]("available_if_capitulated")
   val cancelIfInvalid = pdx[Boolean]("cancel_if_invalid") default true
   val continueIfInvalid = pdx[Boolean]("continue_if_invalid")
   val aiWillDo = pdx[AIWillDo]("ai_will_do")
 
 
-  override def idProperty: PDXProperty[String] = id 
+  override def idProperty: PDXProperty[String] = id
 
 
 class Icon(var spriteID: String) extends PDXEntity:
@@ -47,4 +47,9 @@ class AIWillDo() extends PDXEntity:
   val factor = pdx[Double]("factor")
   val add = pdx[Double]("add")
   val modifier = pdx[AIWillDoModifier]("modifier")
+
+class AIWillDoModifier() extends PDXEntity:
+  val factor = pdx[Double]("factor")
+  val add    = pdx[Double]("add")
+  // TODO add triggers/conditions here
 

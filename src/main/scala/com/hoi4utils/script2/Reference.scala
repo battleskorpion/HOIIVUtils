@@ -1,8 +1,11 @@
 package com.hoi4utils.script2
 
+import com.sun.crypto.provider.ML_KEM_Impls.K
 
-class Reference[K, T <: PDXEntity & Referable[K]](val id: K, val registry: Registry[K, T]):
 
+class Reference[T <: PDXEntity & Referable[?]](val id: T match { case Referable[k] => k }, val registry: Registry[T]):
+  type K = T match { case Referable[k] => k }
+  
   def value: Option[T] = registry resolve id
 
   def exists: Boolean = value.isDefined

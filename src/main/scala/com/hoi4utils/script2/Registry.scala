@@ -2,7 +2,9 @@ package com.hoi4utils.script2
 
 import scala.collection.mutable
 
-class Registry[K, T <: PDXEntity & Referable[K]] {
+class Registry[T <: PDXEntity & Referable[?]] {
+  type K = T match {case Referable[k] => k}
+  
   private val _referableEntities: mutable.Map[K, T] = mutable.Map.empty[K, T]
 
   // Incremented whenever the map changes
@@ -12,7 +14,7 @@ class Registry[K, T <: PDXEntity & Referable[K]] {
 
   infix def register(entity: T): Unit =
     entity.referableID match
-      case Some(actualKey) =>
+      case Some(actualKey: K) =>
         _referableEntities += (actualKey -> entity)
         _version += 1
       case None =>

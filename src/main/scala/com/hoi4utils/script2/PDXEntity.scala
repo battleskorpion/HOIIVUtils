@@ -7,16 +7,17 @@ import java.io.File
 
 trait PDXEntity:
   // Recursive reflection to find fields in parent classes too
-  private lazy val properties: List[PDXProperty[?]] =
-    def getFields(cls: Class[?]): List[PDXProperty[?]] =
+  private lazy val properties: Map[String, PDXProperty[?]] =
+    def getFields(cls: Class[?]): Map[String, PDXProperty[?]] =
       val local = cls.getDeclaredFields.toList
         .filter(f => classOf[PDXProperty[?]].isAssignableFrom(f.getType))
         .map { f =>
           f.setAccessible(true)
-          f.get(this).asInstanceOf[PDXProperty[?]]
-        }
-      val parent = Option(cls.getSuperclass).map(getFields).getOrElse(Nil)
-      local ++ parent
+          val p = f.get(this).asInstanceOf[PDXProperty[?]]
+          p.pdxKey -> p   // map from pdx script key (name) to property
+        }.toMap
+      val parent = Option(cls.getSuperclass).map(getFields).getOrElse(Map.empty)
+      parent ++ local // concat favors rhs (subclass)
 
     getFields(this.getClass)
 
