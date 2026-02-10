@@ -1,13 +1,8 @@
 package com.hoi4utils.script2
 
 import com.hoi4utils.parser.{Node, NodeValueType}
-import com.hoi4utils.script2.PDXFile
-import com.typesafe.scalalogging.LazyLogging
-import dotty.tools.dotc.semanticdb.TreeMessage.SealedValue.Empty.valueOption
 
 import java.io.{File, FileNotFoundException, PrintWriter}
-import java.time.LocalDateTime
-import javax.swing.JOptionPane
 import scala.util.Using
 
 /**
@@ -22,7 +17,7 @@ trait PDXScript[T] { //  extends Cloneable
    *
    * @return Value of the PDXScript, or None if undefined
    */
-  def apply: Option[T]
+  def apply(): Option[T]
 
 //  def toScript: String
 
