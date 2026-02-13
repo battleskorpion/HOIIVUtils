@@ -1,7 +1,5 @@
 package com.hoi4utils.script2
 
-import com.sun.crypto.provider.ML_KEM_Impls.K
-
 
 class Reference[T <: PDXEntity & Referable[?]](val id: T match { case Referable[k] => k }, val registry: Registry[T]):
   type K = T match { case Referable[k] => k }
