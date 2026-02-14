@@ -49,7 +49,7 @@ object ZIOParserSpec extends ScalamockZIOSpec {
   override def spec: Spec[TestEnvironment & Scope, Any] = suite("ZIOParser")(
     test("File root node should be nonempty") {
       foreachParsed() { node =>
-        assertTrue(node.isEmpty, node.$.nonEmpty)
+        assertTrue(node.nonEmpty, node.$.nonEmpty)
       }
     },
     test("Node should not include carriage returns") {
@@ -69,14 +69,13 @@ object ZIOParserSpec extends ScalamockZIOSpec {
     test("sub node using find(): specialinfantry.txt should have parsed sub_units") {
       withParsedFile(new File(testPath + "specialinfantry.txt")) { node =>
         val sprite = for {
-          // todo change to filterTyped
-          subunits <- node.filterCaseInsensitiveTyped[NodeSeq]("sub_units")
-          enforcer <- subunits.findCaseInsensitiveTyped[NodeSeq]("mobenforcer")
+          subunits <- node.filterCaseInsensitiveTyped[NodeSeq]("sub_units")         // todo change to filterTyped
+          enforcer <- subunits.findCaseInsensitiveTyped[NodeSeq]("mobenforcer")     // todo change to filterTyped
           sprite   <- enforcer.find("sprite")
         } yield sprite
 
         // Failure here tells you exactly what was missing in the path
-        assertTrue(sprite.nonEmpty)
+        assertTrue(sprite.nonEmpty) ?? s"Sprite not found. Node: $node"
       }
     },
     test("Ints should be read as ints and not as type double") {
@@ -146,7 +145,7 @@ object ZIOParserSpec extends ScalamockZIOSpec {
     },
     test("Multiple shared focuses are parsed correctly") {
       foreachParsed(multiPDXFilesToTest) { node =>
-        val sharedFocuses = node.filterCaseInsensitiveTyped[NodeSeq]("shared_focus") // TODO replace with filterTyped 
+        val sharedFocuses = node.filterCaseInsensitiveTyped[NodeSeq]("shared_focus") // TODO replace with filterTyped
         assertTrue(
           sharedFocuses.nonEmpty,
           sharedFocuses.forall(f =>

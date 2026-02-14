@@ -250,7 +250,7 @@ class ZIOParser(pdx: String | File = null) {
           val v: NodeSeq = s.collect { case n: Node[?] => n } // TODO TODO ignoring comments !!!!
           new SeqNode(
             leadingTrivia = leading,
-            identifierToken = Some(opToken),
+            identifierToken = Some(id),
             operatorToken = Some(opToken),
             rawValue = v,
             trailingTrivia = trailing
