@@ -56,6 +56,8 @@ class SeqNode
 
   override def isParent: Boolean = true
 
+  override def isEmpty: Boolean = rawValue.isEmpty && identifier.isEmpty && operator.isEmpty
+  
   def clear(): Unit =
     rawValue = Seq.empty
 

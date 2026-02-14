@@ -1,5 +1,7 @@
 package com.hoi4utils.parser
 
+import com.hoi4utils.parser.NodeExtensions.*
+
 import org.scalamock.ziotest.ScalamockZIOSpec
 import zio.test.Result.fail
 import zio.test.junit.JUnitRunnableSpec
@@ -35,11 +37,11 @@ object ZIOParserSpec extends ScalamockZIOSpec {
     new File(testPath + "specialinfantry.txt")
   ).appendedAll(multiPDXFilesToTest)
 
-  def withParsedFile(file: File)(testFunction: Node => TestResult): ZIO[Any, Throwable, TestResult] =
+  def withParsedFile(file: File)(testFunction: SeqNode => TestResult): ZIO[Any, Throwable, TestResult] =
     val parser = new ZIOParser(file)
     parser.parse.map(testFunction)
 
-  def foreachParsed(files: List[File] = filesToTest)(f: Node => TestResult): ZIO[Any, Throwable, TestResult] =
+  def foreachParsed(files: List[File] = filesToTest)(f: SeqNode => TestResult): ZIO[Any, Throwable, TestResult] =
     ZIO.foreach(files)(new ZIOParser(_).parse).map { nodes =>
       TestResult.allSuccesses(nodes.map(f))
     }
@@ -47,39 +49,40 @@ object ZIOParserSpec extends ScalamockZIOSpec {
   override def spec: Spec[TestEnvironment & Scope, Any] = suite("ZIOParser")(
     test("File root node should be nonempty") {
       foreachParsed() { node =>
-        assertTrue(node.nonEmpty, node.toList.nonEmpty)
+        assertTrue(node.isEmpty, node.$.nonEmpty)
       }
     },
     test("Node should not include carriage returns") {
       foreachParsed() { node =>
         assertTrue(
-          node.toList.forall(n => !n.name.contains("\r") && !n.valueAsString.contains("\r"))
+          node.$.forall(n => !n.name.contains("\r") && !n.valueAsString.contains("\r"))
         )
       }
     },
     test("the '=' operator should be with an identifier") {
       foreachParsed() { node =>
         TestResult.allSuccesses(
-          node.toList.map (n => assertTrue(n.identifier.nonEmpty && n.name.nonEmpty) ?? s"Node $n has no identifier")
+          node.$.map (n => assertTrue(n.identifier.nonEmpty && n.name.nonEmpty) ?? s"Node $n has no identifier")
         )
       }
     },
     test("sub node using find(): specialinfantry.txt should have parsed sub_units") {
       withParsedFile(new File(testPath + "specialinfantry.txt")) { node =>
         val sprite = for {
-          subunits <- node.find("sub_units")
-          enforcer <- subunits.find("mobenforcer")
+          // todo change to filterTyped
+          subunits <- node.filterCaseInsensitiveTyped[NodeSeq]("sub_units")
+          enforcer <- subunits.findCaseInsensitiveTyped[NodeSeq]("mobenforcer")
           sprite   <- enforcer.find("sprite")
         } yield sprite
 
         // Failure here tells you exactly what was missing in the path
-        assertTrue(sprite.isDefined, sprite.get.nonEmpty)
+        assertTrue(sprite.nonEmpty)
       }
     },
     test("Ints should be read as ints and not as type double") {
       withParsedFile(new File(testPath + "SMD_Maryland.txt")) { node =>
         val capital = node.find("capital")
-        assertTrue(capital.isDefined, capital.get.isInt)
+        assertTrue(capital.isDefined, capital.get.value.isInstanceOf[Int])
       }
     },
     test("textSpriteType block is parsed correctly") {
@@ -95,16 +98,16 @@ object ZIOParserSpec extends ScalamockZIOSpec {
       val parser = new ZIOParser(input)
       for {
         rootNode <- parser.parse
-        textSprite = rootNode.headOption("textSpriteType")
+        textSprite = rootNode.findCaseInsensitiveTyped[NodeSeq]("textSpriteType")  // todo switch to findTyped
       } yield {
         // Find the textSpriteType node.
         assertTrue(textSprite.isDefined, {
           textSprite.exists { node =>
             // Verify child nodes are present.
-            val name: String = node.get("name").map(_.valueAsString) 
-            val texturefile = node.get("texturefile").map(_.valueAsString)
-            val noOfFrames = node.get("noOfFrames").map(_.valueAsString)
-            val effectFile = node.get("effectFile").map(_.valueAsString)
+            val name: Option[String] = node.find("name").map(_.valueAsString)
+            val texturefile = node.find("texturefile").map(_.valueAsString)
+            val noOfFrames = node.find("noOfFrames").map(_.valueAsString)
+            val effectFile = node.find("effectFile").map(_.valueAsString)
 
             name.contains("largefloaterbutton") &&
               texturefile.contains("gfx//interface//button_type_1.tga") &&
@@ -125,13 +128,13 @@ object ZIOParserSpec extends ScalamockZIOSpec {
       val parser = new ZIOParser(input)
       for {
         rootNode <- parser.parse
-        focusNode = rootNode.get("focus")
-        idNode = focusNode.flatMap(_.find("id"))
+        focusNode = rootNode.getTyped[NodeSeq]("focus")
+        idNode = focusNode.find("id")
       } yield {
         assertTrue(
           rootNode.nonEmpty,
           rootNode.contains("focus"),
-          focusNode.exists(_.identifier.isDefined),
+          focusNode.identifier.isDefined,
           idNode.exists(_.valueAsString == "SMA_Maryland"),
           idNode.exists(_.identifier.isDefined),
           idNode.exists(_.valueAsString == "SMA_Maryland"),
@@ -143,7 +146,7 @@ object ZIOParserSpec extends ScalamockZIOSpec {
     },
     test("Multiple shared focuses are parsed correctly") {
       foreachParsed(multiPDXFilesToTest) { node =>
-        val sharedFocuses = node.filter("shared_focus")
+        val sharedFocuses = node.filterCaseInsensitiveTyped[NodeSeq]("shared_focus") // TODO replace with filterTyped 
         assertTrue(
           sharedFocuses.nonEmpty,
           sharedFocuses.forall(f =>

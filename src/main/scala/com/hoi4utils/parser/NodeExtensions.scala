@@ -24,12 +24,24 @@ object NodeExtensions {
      * Finds a node by name (case-insensitive) and ensures its value
      * matches the expected type T.
      */
-    def findCaseInsensitiveTyped[T <: NodeValueType : ClassTag](str: String): Option[Node[T]] =
+    def findCaseInsensitiveTyped[T <: NodeValueType : ClassTag](str: String): Option[NodeResult[T]] =
+      val ct = summon[ClassTag[T]]
+
       seqNode.iterator.collectFirst {
-        case n: Node[?] if n.name.equalsIgnoreCase(str) =>
-          n.$ match
-            case _: T => n.asInstanceOf[Node[T]]
+        case n if n.name.equalsIgnoreCase(str) =>
+          if ct.runtimeClass == classOf[NodeSeq] then
+            n match
+              case s: SeqNode => s.asInstanceOf[NodeResult[T]]
+          else
+            n match
+              case node: Node[?] if ct.runtimeClass.isInstance(node.$) =>
+                node.asInstanceOf[NodeResult[T]]
       }
+
+    def get(str: String): Node[?] = find(str).get
+
+    def getTyped[T <: NodeValueType : ClassTag](str: String): NodeResult[T] =
+      findCaseInsensitiveTyped[T](str).get // TODO replace with findTyped !!!! !!! TODO todo
 
     def filter(str: String): Iterable[Node[?]] = filterName(str)
 
@@ -40,7 +52,7 @@ object NodeExtensions {
 
     def filterCaseInsensitiveTyped[T <: NodeValueType : ClassTag](str: String): Iterable[NodeResult[T]] =
       val ct = summon[ClassTag[T]]
-      
+
       seqNode.iterator.collect {
         case n if n.name.equalsIgnoreCase(str) =>
 //          n match
@@ -153,7 +165,7 @@ object NodeExtensions {
   extension (nodes: Iterable[Node[?]])
     def filterCaseInsensitiveTyped[T <: NodeValueType : ClassTag](str: String): Iterable[NodeResult[T]] =
       val ct = summon[ClassTag[T]]
-      
+
       nodes.collect {
         case n if n.name.equalsIgnoreCase(str) =>
 //          n match

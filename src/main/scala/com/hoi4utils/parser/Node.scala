@@ -2,6 +2,7 @@ package com.hoi4utils.parser
 
 import com.hoi4utils.script.scripter.SimpleNodeScripter
 import com.hoi4utils.shared.BoolType
+import dotty.tools.sjs.ir.Trees.JSBinaryOp.&&
 
 type NodeValueType = PDXValueType | NodeSeq
 type NodeSeq = Seq[Node[?]]
@@ -16,7 +17,7 @@ trait Node[T <: NodeValueType]:
   /** The node's value. This may be a literal (String, Int, Double, Boolean),
    * a list (block) of child nodes, or a Comment. */
   var rawValue: T
-  /** Tokens that came after the node's core. */ 
+  /** Tokens that came after the node's core. */
   var trailingTrivia: Seq[Token] = Seq.empty
 
 
@@ -43,11 +44,10 @@ trait Node[T <: NodeValueType]:
 
   def start: Int = identifierToken.map(_.start).getOrElse(0)
 
-  def valueIsNull: Boolean = false
-
   def isParent: Boolean = false
 
-  def isEmpty: Boolean = valueIsNull && identifier.isEmpty && operator.isEmpty
+  def isEmpty: Boolean = false
+  def nonEmpty: Boolean = !isEmpty
 
   def valueAsString: String = asString
 

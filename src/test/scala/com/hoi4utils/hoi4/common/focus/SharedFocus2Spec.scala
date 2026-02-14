@@ -5,16 +5,16 @@
 //import com.hoi4utils.parser.ZIOParser
 //import org.scalamock.ziotest.ScalamockZIOSpec
 //import org.scalatest.funsuite.AnyFunSuiteLike
-//import zio.{Scope, ZIO}
-//import zio.test.{Spec, TestEnvironment, TestResult, assertTrue}
 //import zio.test.junit.JUnitRunnableSpec
+//import zio.test.{Spec, TestEnvironment, TestResult, assertTrue}
+//import zio.{Scope, ZIO}
 //
 //import java.io.File
 //import scala.collection.mutable.ListBuffer
 //import scala.util.{Failure, Success, Try}
 //
 //// i had junit extended first followed by scalamock but it was not working anyways and causing issues not letting me even run this properly
-//object SharedFocusSpec extends ScalamockZIOSpec {
+//object SharedFocus2Spec extends ScalamockZIOSpec {
 //
 //  private val testPath = "src/test/resources/pdx/"
 //  private val sharedFocusFilesToTest = List(
@@ -41,8 +41,12 @@
 //        tagsService <- ZIO.service[CountryTagService]
 //        node <- new ZIOParser(file).parse
 //        pdx <- ZIO.attempt {
-//          val focusTree = new FocusTree()(treeManager, tagsService)
-//          focusTree.loadPDX(node, Some(file))
+//          val focusTree = new FocusTree()
+//          val loader = new PDXLoader[FocusTree]()
+//          val errors = loader.load(node, focusTree, focusTree)
+//          if (errors.nonEmpty) {
+//            println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+//          }
 //          focusTree
 //        }
 //      } yield pdx
@@ -60,8 +64,12 @@
 //        for {
 //          node <- new ZIOParser(file).parse
 //          pdx <- ZIO.attempt {
-//            val focusTree = new SharedFocusFile(file)(treeManager, tagsService)
-//            focusTree.loadPDX(node, Some(file))
+//            val focusTree = new SharedFocusFile(file)
+//            val loader = new PDXLoader[SharedFocusFile]()
+//            val errors = loader.load(node, focusTree, focusTree)
+//            if (errors.nonEmpty) {
+//              println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+//            }
 //            focusTree
 //          }
 //        } yield pdx
