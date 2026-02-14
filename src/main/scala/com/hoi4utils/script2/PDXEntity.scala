@@ -1,13 +1,15 @@
 package com.hoi4utils.script2
 
-import com.hoi4utils.parser.SeqNode
+import com.hoi4utils.parser.{PDXValueType, SeqNode}
 import com.hoi4utils.parser.NodeExtensions.find
+import com.sun.tools.javac.code.TypeTag
 
 import java.io.File
+import scala.reflect.ClassTag
 
 trait PDXEntity:
   // Recursive reflection to find fields in parent classes too
-  private lazy val properties: Map[String, PDXScript[?]] =
+  lazy val properties: Map[String, PDXScript[?]] =
     def getFields(cls: Class[?]): Map[String, PDXScript[?]] =
       val local = cls.getDeclaredFields.toList
         .filter(f => classOf[PDXScript[?]].isAssignableFrom(f.getType))
@@ -20,9 +22,9 @@ trait PDXEntity:
       parent ++ local // concat favors rhs (subclass)
 
     getFields(this.getClass)
-
-  def pdx[T](key: String): PDXProperty[T] =
+  
+  def pdx[T <: PDXValueType | PDXEntity | Reference[?]](key: String)(using PDXDecoder[T], ClassTag[T]): PDXProperty[T] =
     new PDXProperty[T](key, None)
-    
-  def pdxList[T](key: String): PDXPropertyList[T] =
+
+  def pdxList[T <: PDXValueType | PDXEntity | Reference[?]](key: String)(using PDXDecoder[T], ClassTag[T]): PDXPropertyList[T] =
     new PDXPropertyList[T](key, None)

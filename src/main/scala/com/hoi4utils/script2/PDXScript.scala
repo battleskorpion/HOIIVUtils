@@ -1,8 +1,10 @@
 package com.hoi4utils.script2
 
 import com.hoi4utils.parser.{Node, NodeValueType}
+import com.sun.tools.javac.resources.ct
 
 import java.io.{File, FileNotFoundException, PrintWriter}
+import scala.reflect.ClassTag
 import scala.util.Using
 
 /**
@@ -11,6 +13,11 @@ import scala.util.Using
  * @tparam V
  */
 trait PDXScript[T] { //  extends Cloneable
+  
+//  /** The ClassTag of T (for Property) or the element T (for List) */
+//  def elementClassTag: ClassTag[?]
+//  /** Shortcut for the loader to get the runtime class */
+//  def runtimeClass: Class[?] = elementClassTag.runtimeClass
 
   /**
    * Gets the value of the PDXScript.
@@ -19,6 +26,9 @@ trait PDXScript[T] { //  extends Cloneable
    */
   def apply(): Option[T]
 
+  def set(value: T): Unit
+  def extractAndSet(nodeValue: NodeValueType): Either[String, Unit]
+  
 //  def toScript: String
 
 //  /**
@@ -41,6 +51,11 @@ trait PDXScript[T] { //  extends Cloneable
   def pdxDefinedValueOption: Option[T]
 
   def pdxKey: String
+
+  def decoder: PDXDecoder[T]
+
+  def getEmptyInstance(context: Any): Option[PDXEntity] =
+    decoder.createEmpty(context).collect { case e: PDXEntity => e }
 
 //  /**
 //   * A custom clone method for PDXScript.

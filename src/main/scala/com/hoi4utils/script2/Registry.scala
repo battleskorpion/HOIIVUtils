@@ -1,13 +1,17 @@
 package com.hoi4utils.script2
 
+import com.hoi4utils.parser.NodeValueType
+
 import scala.collection.mutable
+import scala.reflect.ClassTag
 
-class Registry[T <: PDXEntity & Referable[?]] {
-  type K = T match {case Referable[k] => k}
+abstract class Registry[T <: PDXEntity & Referable[?]]: 
+  self => 
   
-  private val _referableEntities: mutable.Map[K, T] = mutable.Map.empty[K, T]
+  type K = T match {case Referable[k] => k}
 
-  // Incremented whenever the map changes
+  private val _referableEntities: mutable.Map[K, T] = mutable.Map.empty[K, T]
+  /** Incremented whenever the map changes */
   private var _version: Int = 0
 
   def version: Int = _version
@@ -22,7 +26,11 @@ class Registry[T <: PDXEntity & Referable[?]] {
         throw new IllegalArgumentException(s"Cannot register entity without an ID.")
 
   infix def resolve(id: K): Option[T] = _referableEntities.get(id)
-
+  
   def referableEntities: Iterable[T] = _referableEntities.values
 
-}
+  /** The registry MUST provide a decoder for its specific ID type K */ 
+  def idDecoder: PDXDecoder[K]
+
+trait RegistryMember[T <: PDXEntity & Referable[?]](val registry: Registry[T]) extends PDXEntity:
+  given Registry[T] = registry

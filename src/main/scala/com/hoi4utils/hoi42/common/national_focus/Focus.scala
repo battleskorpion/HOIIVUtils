@@ -1,8 +1,8 @@
 package com.hoi4utils.hoi42.common.national_focus
 
-import com.hoi4utils.script2.{PDXEntity, PDXProperty, Referable, Reference}
+import com.hoi4utils.script2.{PDXEntity, PDXProperty, Referable, Reference, Registry, RegistryMember}
 
-class Focus(var focusTree: FocusTree) extends PDXEntity with Referable[String]:
+class Focus(var focusTree: FocusTree) extends PDXEntity with RegistryMember[Focus](focusTree) with Referable[String]:
   val DEFAULT_COST: Double = 10.0
 
   /* attributes */
@@ -13,13 +13,13 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with Referable[String]:
   /** If relative positioning, relative y */
   val y     = pdx[Int]("y")
   val cost  = pdx[Double]("cost") default DEFAULT_COST
-  val prerequisites = pdx[PrerequisiteSet]("prerequisite")
-  val mutuallyExclusive = pdx[MutuallyExclusiveSet]("mutually_exclusive")
+  val prerequisites = pdxList[PrerequisiteSet]("prerequisite")
+  val mutuallyExclusive = pdxList[MutuallyExclusiveSet]("mutually_exclusive")
   val relativePositionFocus = pdx[Reference[Focus]]("relative_position_id")
   val availableIfCapitulated = pdx[Boolean]("available_if_capitulated")
   val cancelIfInvalid = pdx[Boolean]("cancel_if_invalid") default true
   val continueIfInvalid = pdx[Boolean]("continue_if_invalid")
-  val aiWillDo = pdx[AIWillDo]("ai_will_do")
+  val aiWillDo = pdxList[AIWillDo]("ai_will_do")
 
 
   override def idProperty: PDXProperty[String] = id
@@ -33,13 +33,13 @@ class Icon(var spriteID: String) extends PDXEntity:
 /**
  * prerequisite = { focus = focus_id }
  */
-class PrerequisiteSet(tree: FocusTree) extends PDXEntity:
+class PrerequisiteSet(using Registry[Focus]) extends PDXEntity:
   val focus = pdx[Reference[Focus]]("focus")
 
 /**
  * mutually_exclusive = { focus = focus_id }
  */
-class MutuallyExclusiveSet(tree: FocusTree) extends PDXEntity:
+class MutuallyExclusiveSet(using Registry[Focus]) extends PDXEntity:
   val focus = pdx[Reference[Focus]]("focus")
 
 class AIWillDo() extends PDXEntity:
