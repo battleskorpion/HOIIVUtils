@@ -9,7 +9,9 @@ import scala.reflect.ClassTag
 import scala.reflect.Selectable.reflectiveSelectable
 
 class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
-                    (using override val decoder: PDXDecoder[T]) extends PDXScript[T]:
+                    (using override val decoder: PDXDecoder[T])
+                    (using override val ct: ClassTag[T]) 
+  extends PDXScript[T]:
 
   private var _isRequired: Boolean = false
   private var _default: Option[T] = None
@@ -53,6 +55,7 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
       
 class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]] = None)
                         (using override val decoder: PDXDecoder[List[T]], val elementDecoder: PDXDecoder[T])
+                        (using override val ct: ClassTag[T])
   extends PDXScript[List[T]]:
 
   private var _isRequired: Boolean = false
@@ -104,4 +107,5 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
           case _ => ()
         }
         Right(())
+
 

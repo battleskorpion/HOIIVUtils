@@ -6,7 +6,7 @@ import jdk.jpackage.internal.Arguments.CLIOptions.context
 import scala.collection.mutable.ListBuffer
 
 class PDXLoader[C]:
-  
+
   /**
    * Loads a SeqNode into an existing entity.
    *
@@ -34,6 +34,9 @@ class PDXLoader[C]:
             }
           case None => ()
     }
+    entity match
+      case registry: Registry[?] => registry.registerFrom(entity)
+      case _ => () 
     errors.toList
 
   private def instantiateEntity(clazz: Class[?], context: C): PDXEntity =
@@ -41,11 +44,11 @@ class PDXLoader[C]:
     val constructor = clazz.getConstructors.find { c =>
       c.getParameterTypes.exists(_.isAssignableFrom(context.getClass))
     }.getOrElse(clazz.getConstructor())
-  
+
     val instance = if (constructor.getParameterCount == 1)
       constructor.newInstance(context)
     else
       constructor.newInstance()
-  
+
     instance.asInstanceOf[PDXEntity]
 

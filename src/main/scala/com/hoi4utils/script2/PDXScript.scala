@@ -14,10 +14,10 @@ import scala.util.Using
  */
 trait PDXScript[T] { //  extends Cloneable
   
-//  /** The ClassTag of T (for Property) or the element T (for List) */
-//  def elementClassTag: ClassTag[?]
-//  /** Shortcut for the loader to get the runtime class */
-//  def runtimeClass: Class[?] = elementClassTag.runtimeClass
+  /** The ClassTag of T (for Property) or the element T (for List) */
+  def ct: ClassTag[?]
+  /** Shortcut for the loader to get the runtime class */
+  def runtimeClass: Class[?] = ct.runtimeClass
 
   /**
    * Gets the value of the PDXScript.
