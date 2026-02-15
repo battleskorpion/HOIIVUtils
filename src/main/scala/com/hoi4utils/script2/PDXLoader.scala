@@ -28,21 +28,10 @@ class PDXLoader[C]:
         val id = sn.identifierToken.map(_.value).getOrElse("")
         entity.properties.get(id) match
           case Some(script) =>
-            script.getEmptyInstance(context) match
-              case Some(childEntity) =>
-                // Recursively load the block
-                errors ++= load(sn, childEntity, context)
-                script match
-                  case s: PDXScript[t] =>
-                    // check if childEntity can actually be treated as 't'
-                    childEntity match
-                      case validChild: t => s.set(validChild)
-                      case _ => errors += s"Type mismatch: $id expects ${script.getClass.getSimpleName}, but got ${childEntity.getClass.getSimpleName}"
-              case None =>
-                sn.rawValue.foreach {
-                  case cvn: PDXValueNode[?] => script.extractAndSet(cvn.rawValue)
-                  case _ => ()
-                }
+            script.load(sn, context, load) match {
+              case Left(errs) => errors ++= errs
+              case Right(_) => ()
+            }
           case None => ()
     }
     errors.toList

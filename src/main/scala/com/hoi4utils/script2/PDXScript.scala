@@ -1,6 +1,6 @@
 package com.hoi4utils.script2
 
-import com.hoi4utils.parser.{Node, NodeValueType}
+import com.hoi4utils.parser.{Node, NodeValueType, SeqNode}
 import com.sun.tools.javac.resources.ct
 
 import java.io.{File, FileNotFoundException, PrintWriter}
@@ -28,8 +28,8 @@ trait PDXScript[T] { //  extends Cloneable
 
   def set(value: T): Unit
   def extractAndSet(nodeValue: NodeValueType): Either[String, Unit]
-  
-//  def toScript: String
+
+  //  def toScript: String
 
 //  /**
 //   * Compare this PDXScript to another PDXScript.
@@ -54,10 +54,13 @@ trait PDXScript[T] { //  extends Cloneable
 
   def decoder: PDXDecoder[T]
 
-  def getEmptyInstance(context: Any): Option[PDXEntity] =
-    decoder.createEmpty(context).collect { case e: PDXEntity => e }
+  def getEmptyInstance(context: Any): Option[T] =
+    decoder.createEmpty(context)
 
-//  /**
+  def load[C](node: SeqNode, context: C,
+              loadCallback: (SeqNode, PDXEntity, C) => List[String]): Either[List[String], Unit]
+
+  //  /**
 //   * A custom clone method for PDXScript.
 //   *
 //   * This performs a shallow clone (via super.clone) and then explicitly resets fields

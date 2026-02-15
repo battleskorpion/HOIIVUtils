@@ -47,6 +47,8 @@ class SeqNode
   override def asString: String =
     val sb = new StringBuilder
     val scripter = SimpleNodeScripter
+    identifierToken.foreach(id => { sb.append(id.value); sb.append(" ") })
+    operatorToken.foreach(op => { sb.append(op.value); sb.append(" ") })
     sb.append("{")
     for i <- rawValue.indices do
       sb.append(scripter.toScript(rawValue(i)))
@@ -57,7 +59,7 @@ class SeqNode
   override def isParent: Boolean = true
 
   override def isEmpty: Boolean = rawValue.isEmpty && identifier.isEmpty && operator.isEmpty
-  
+
   def clear(): Unit =
     rawValue = Seq.empty
 

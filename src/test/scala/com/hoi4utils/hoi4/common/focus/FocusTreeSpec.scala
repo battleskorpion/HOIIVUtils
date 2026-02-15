@@ -1,7 +1,8 @@
 package com.hoi4utils.hoi4.common.focus
 
 import com.hoi4utils.hoi42.common.national_focus.FocusTree
-import com.hoi4utils.parser.ZIOParser
+import com.hoi4utils.parser.NodeExtensions.*
+import com.hoi4utils.parser.{NodeSeq, ZIOParser}
 import com.hoi4utils.script2.PDXLoader
 import org.scalamock.ziotest.ScalamockZIOSpec
 import org.scalatest.funsuite.AnyFunSuiteLike
@@ -30,7 +31,8 @@ object FocusTreeSpec extends ScalamockZIOSpec {
         pdx <- ZIO.attempt {
           val focusTree = new FocusTree()
           val loader = new PDXLoader[FocusTree]()
-          val errors = loader.load(node, focusTree, focusTree)
+          val pdxNode = node.getTyped[NodeSeq]("focus_tree")
+          val errors = loader.load(pdxNode, focusTree, focusTree)
           if (errors.nonEmpty) {
             println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
           }
@@ -45,8 +47,18 @@ object FocusTreeSpec extends ScalamockZIOSpec {
     suite("FocusTree")(
       test("FocusTree should load and populate focus properties") {
         foreachFocusTree() { focusTree =>
-          val focuses = focusTree.referableEntities
+          val focuses = focusTree.focuses.$
           assertTrue(focuses.nonEmpty, focuses.forall(_.id.pdxDefinedValueOption.isDefined))
+        }
+      },
+      test("FocusTree should register focuses as a Registry") {
+        foreachFocusTree() { focusTree =>
+          val focuses = focusTree.referableEntities
+          assertTrue(
+            focuses.nonEmpty,
+            focuses.forall(_.id.pdxDefinedValueOption.isDefined),
+            focuses.size.equals(focusTree.focuses.$.size)
+          )
         }
       },
       test("Focus items should resolve references correctly") {
