@@ -5,7 +5,7 @@ import com.hoi4utils.parser.NodeValueType
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
-abstract class Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
+trait Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
   self =>
 
   type K = T match {case Referable[k] => k}
@@ -63,4 +63,5 @@ abstract class Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]
     this register entities
 
 trait RegistryMember[T <: PDXEntity & Referable[?]](val registry: Registry[T]) extends PDXEntity:
+//  self: Referable[T] =>
   given Registry[T] = registry

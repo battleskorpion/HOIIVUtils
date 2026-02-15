@@ -4,7 +4,7 @@ import com.hoi4utils.script2.{PDXDecoder, PDXEntity, Registry}
 
 import scala.reflect.ClassTag
 
-class FocusTree extends Registry[Focus] with PDXEntity {
+class FocusTree extends PDXEntity with Registry[Focus]: 
 
   val id = pdx[String]("id") required true
 //  val country = pdx[FocusTreeCountry]
@@ -19,4 +19,4 @@ class FocusTree extends Registry[Focus] with PDXEntity {
 
 
   override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
-}
+

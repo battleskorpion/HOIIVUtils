@@ -34,9 +34,21 @@ class PDXLoader[C]:
             }
           case None => ()
     }
+
     entity match
       case registry: Registry[?] => registry.registerFrom(entity)
-      case _ => () 
+      case _ => ()
+    node.identifier match
+      case Some(id) =>
+        entity match
+          case r: NameReferable[Int] => r.referableID = id.toInt  // TODO make sure this works right.
+          case r: NameReferable[String] => r.referableID = id
+          case _ => ()
+      case None =>
+        entity match
+          case r: NameReferable[?] => r.clearReferableID()
+          case _ => ()
+
     errors.toList
 
   private def instantiateEntity(clazz: Class[?], context: C): PDXEntity =

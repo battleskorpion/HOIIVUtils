@@ -1,8 +1,8 @@
 package com.hoi4utils.hoi42.common.national_focus
 
-import com.hoi4utils.script2.{PDXEntity, PDXProperty, Referable, Reference, Registry, RegistryMember}
+import com.hoi4utils.script2.{PDXEntity, PDXProperty, IDReferable, Reference, Registry, RegistryMember}
 
-class Focus(var focusTree: FocusTree) extends PDXEntity with RegistryMember[Focus](focusTree) with Referable[String]:
+class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String] with RegistryMember[Focus](focusTree):
   val DEFAULT_COST: Double = 10.0
 
   /* attributes */

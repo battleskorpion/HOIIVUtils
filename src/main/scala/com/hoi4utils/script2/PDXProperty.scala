@@ -44,7 +44,7 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
     getEmptyInstance(context) match
       case Some(child: PDXEntity) =>
         val errors: List[String] = loadCallback(node, child, context)
-        set(child) 
+        set(child)
         if errors.nonEmpty then Left(errors) else Right(())
       case _ =>
         node.rawValue.foreach {
@@ -107,5 +107,5 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
           case _ => ()
         }
         Right(())
-
+  
 
