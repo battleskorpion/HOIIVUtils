@@ -1,6 +1,7 @@
 package com.hoi4utils.script2
 
 import com.hoi4utils.parser.NodeValueType
+import zio.{Task, ZIO}
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
@@ -61,6 +62,8 @@ trait Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
         case _ => Nil
       }
     this register entities
+  
+  def clear(): Task[Unit] = ZIO.succeed { _referableEntities.clear() } 
 
 trait RegistryMember[T <: PDXEntity & Referable[?]](val registry: Registry[T]) extends PDXEntity:
 //  self: Referable[T] =>

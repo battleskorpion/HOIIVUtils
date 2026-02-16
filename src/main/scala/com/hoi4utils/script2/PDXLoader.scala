@@ -1,6 +1,6 @@
 package com.hoi4utils.script2
 
-import com.hoi4utils.parser.{PDXValueNode, SeqNode}
+import com.hoi4utils.parser.{Node, PDXValueNode, SeqNode}
 import jdk.jpackage.internal.Arguments.CLIOptions.context
 
 import scala.collection.mutable.ListBuffer
@@ -38,16 +38,30 @@ class PDXLoader[C]:
     entity match
       case registry: Registry[?] => registry.registerFrom(entity)
       case _ => ()
-    node.identifier match
-      case Some(id) =>
-        entity match
-          case r: NameReferable[Int] => r.referableID = id.toInt  // TODO make sure this works right.
-          case r: NameReferable[String] => r.referableID = id
-          case _ => ()
-      case None =>
-        entity match
-          case r: NameReferable[?] => r.clearReferableID()
-          case _ => ()
+    entity match
+      case referable: Referable[?] => handleReferable(node, referable)
+      case _ => () 
+
+    errors.toList
+
+  /**
+   * Loads a PDXValueNode into an existing entity.
+   *
+   * @param context The strictly typed context (e.g., a FocusTree or Registry)
+   */
+  def load(node: PDXValueNode[?], entity: PDXEntity, context: C): List[String] =
+    val errors = ListBuffer[String]()
+    
+    for {
+      id <- node.identifierToken.map(_.value)
+      script <- entity.properties.get(id)
+    } script.extractAndSet(node.rawValue) match
+      case Left(err) => errors += s"Error in ${entity.getClass.getSimpleName} at $id: $err"
+      case Right(_) => ()
+
+    entity match
+      case referable: Referable[?] => handleReferable(node, referable)
+      case _ => ()
 
     errors.toList
 
@@ -64,3 +78,14 @@ class PDXLoader[C]:
 
     instance.asInstanceOf[PDXEntity]
 
+  private def handleReferable(node: Node[?], referable: Referable[?]): Unit =
+    node.identifier match
+      case Some(id) =>
+        referable match
+          case r: NameReferable[Int] => r.referableID = id.toInt // TODO make sure this works right.
+          case r: NameReferable[String] => r.referableID = id
+          case _ => ()
+      case None =>
+        referable match
+          case r: NameReferable[?] => r.clearReferableID()
+          case _ => ()
