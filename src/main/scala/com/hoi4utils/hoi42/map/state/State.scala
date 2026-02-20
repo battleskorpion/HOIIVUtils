@@ -1,13 +1,16 @@
-package com.hoi4utils.hoi42.common.map.state
+package com.hoi4utils.hoi42.map.state
 
 import com.hoi4utils.hoi42.common.country_tags.{CountryTag, CountryTagRegistry}
-import com.hoi4utils.hoi42.common.map.province.Province
-import com.hoi4utils.hoi42.common.map.resource.Resource
+import com.hoi4utils.hoi42.map.province.Province
+import com.hoi4utils.hoi42.map.resource.Resource
 import com.hoi4utils.script2.*
 
-class State(var states: StateRegistry) extends PDXEntity with IDReferable[Int] with RegistryMember[State](states):
+import java.io.File
+
+// todo on the file will turn into trait thingy 
+class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity with IDReferable[Int] with RegistryMember[State](states):
   given Registry[CountryTag] = new CountryTagRegistry()
-  val id = pdx[Int]("id") required true
+  val stateID = pdx[Int]("id") required true
   val name = pdx[String]("name")
   val resources = pdxList[Resource]("resources")
   val history = pdx[History]("history")

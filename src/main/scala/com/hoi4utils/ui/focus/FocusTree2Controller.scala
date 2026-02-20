@@ -20,6 +20,7 @@ import javafx.scene.input.{DragEvent, Dragboard, MouseEvent, TransferMode}
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.*
+import scalafx.scene.effect.Light.Point
 import scalafx.scene.input.ClipboardContent
 import zio.{UIO, URIO, ZIO}
 

@@ -25,8 +25,6 @@ trait CountryTagService extends CountryTagRegistry with PDXReadable {
   override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
 
   override def clear(): Task[Unit] =
-    // This tells the compiler to use the implementation 
-    // you will define in the class (or you can implement logic here)
     super[CountryTagRegistry].clear()
 }
 

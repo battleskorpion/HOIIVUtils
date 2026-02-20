@@ -34,7 +34,7 @@ class FocusDetailsPaneController extends LazyLogging:
     if saveButton != null then
       saveButton.setOnAction(_ => handleSave())
     if revertButton != null then
-      revertButton.setOnAction(_ => handleRevert())
+      revertButton.setOnAction(_ => handleRevert()) 
 
   def loadFocus(focus: Focus): Unit =
     cancelCurrentTask()

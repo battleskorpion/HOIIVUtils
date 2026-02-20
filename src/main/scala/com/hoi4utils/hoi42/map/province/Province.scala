@@ -1,4 +1,4 @@
-package com.hoi4utils.hoi42.common.map.province
+package com.hoi4utils.hoi42.map.province
 
 import com.hoi4utils.script2.{IDReferable, NameReferable, PDXInlineEntity}
 
