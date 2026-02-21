@@ -6,7 +6,7 @@
   <artifactId>HOIIVUtils</artifactId>
   <name>HOIIVUtils</name>
   <version>16.0.1</version>
-  <description>This Java application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
+  <description>This application provides a user-friendly interface to interact with your Hearts of Iron 4 mod folder. It offers a variety of tools and utilities designed to enhance your modding experience, making it easier and more efficient.</description>
   <url>https://github.com/battleskorpion/HOIIVUtils</url>
 
   <issueManagement>
