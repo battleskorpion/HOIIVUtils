@@ -20,7 +20,7 @@ class Initializer extends LazyLogging:
   def initialize(config: Config): Unit =
     ConfigManager().loadProperties(config)
 
-    autoSetHOIIVPath(config.getProperties)
+    setHOIIVPath(config.getProperties)
 
     autoSetDemoModPath(config.getProperties, config.getDir)
 
@@ -28,11 +28,15 @@ class Initializer extends LazyLogging:
 
     ConfigManager().saveProperties(config)
 
-  @throws[IllegalStateException]
-  private def autoSetHOIIVPath(p: Properties): Unit =
+  def setHOIIVPath(p: Properties): Unit =
     val hoi4Path = Option(p.getProperty("hoi4.path")).getOrElse("")
     if hoi4Path.nonEmpty && hoi4Path.trim.nonEmpty then
-      p.setProperty("hoi4.path.status", "saved")
+      val savedDir = Paths.get(hoi4Path).toAbsolutePath.toFile
+      if savedDir.exists then
+        p.setProperty("hoi4.path.status", "saved")
+      else
+        logger.warn("Previously saved HOI4 path no longer exists: {}", hoi4Path)
+        p.setProperty("hoi4.path.status", "failed")
     else
       getPossibleHOIIVPaths.find { path =>
         val hoi4Dir = Paths.get(path).toAbsolutePath.toFile
@@ -43,16 +47,7 @@ class Initializer extends LazyLogging:
           p.setProperty("hoi4.path", hoi4Dir.getAbsolutePath)
           logger.info("Auto-set HOI4 path: {}", hoi4Dir.getAbsolutePath)
           p.setProperty("hoi4.path.status", "found")
-        case None =>
-          logger.error("⚠\uFE0FCould not find HOI4 install folder. User must set it manually in *settings*.⚠\uFE0F")
-          JOptionPane.showMessageDialog(
-            null,
-            s"⚠️version: ${Version.getVersion(p)} Could not find Hearts Of Iron 4 default steam installation folder, please go to the settings page and add it (REQUIRED)⚠️",
-            "⚠\uFE0FError Message",
-            JOptionPane.WARNING_MESSAGE
-          )
-          p.setProperty("hoi4.path.status", "failed")
-          throw new IllegalStateException("HOI4 path not set and could not be auto-detected.")
+        case None => p.setProperty("hoi4.path.status", "failed")
 
   private def getPossibleHOIIVPaths: Seq[String] =
     val os = System.getProperty("os.name").toLowerCase

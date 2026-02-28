@@ -2,7 +2,7 @@ package com.hoi4utils.ui.menus
 
 import com.hoi4utils.extensions.validateFolder
 import com.hoi4utils.main.HOIIVUtils.*
-import com.hoi4utils.main.HOIIVUtilsConfig
+import com.hoi4utils.main.{HOIIVUtilsConfig, Initializer}
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, JavaFXUIManager, RootWindows}
 import com.typesafe.scalalogging.LazyLogging
 import javafx.fxml.FXML
@@ -13,7 +13,7 @@ import javafx.stage.Screen
 
 import java.io.{File, FilenameFilter}
 import java.net.JarURLConnection
-import java.util.Locale
+import java.util.{Locale, Properties}
 import javax.swing.JOptionPane
 import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters.*
@@ -311,5 +311,6 @@ class SettingsController extends HOIIVUtilsAbstractController2 with RootWindows 
    */
   def handleOkButtonAction(): Unit =
     HOIIVUtilsConfig.save()
+    new Initializer().initialize(HOIIVUtilsConfig.getConfig)
     hideWindow(idOkButton)
     new MenuController().open()

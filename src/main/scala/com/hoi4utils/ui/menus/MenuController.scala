@@ -212,7 +212,10 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     val task = new javafx.concurrent.Task[Unit]:
       override def call(): Unit =
         if isCancelled then return
+        if (HOIIVUtilsConfig.get("hoi4.path.status") == "failed")
+            showFilesErrorDialog(null, vSettings)
 
+        println("wtest3")
         val pdxLoader = new PDXLoader()
         if isCancelled then return
 
@@ -451,11 +454,12 @@ object MenuController extends LazyLogging:
    */
   private def showFilesErrorDialog(badFiles: ListBuffer[String], button: Button): Unit =
     val warningMessageBuffer = new StringBuilder("")
-    warningMessageBuffer.append(badFiles.mkString(
-      "The following settings need to be getConfigured:\n\n",
-      " directory(ies)\n",
-      " directory(ies)\n\nPlease go to Settings to getConfigure these paths."
-    ))
+    if badFiles != null && badFiles.nonEmpty then
+      warningMessageBuffer.append(badFiles.mkString(
+        "The following settings need to be getConfigured:\n\n",
+        " directory(ies)\n",
+        " directory(ies)\n\nPlease go to Settings to getConfigure these paths."
+      ))
     warningMessageBuffer.append(HOIIVUtilsConfig.get("hoi4.path.status") match
       case "failed" => "\n• HOI4 installation path not found (REQUIRED)"
     )
@@ -505,6 +509,7 @@ object MenuController extends LazyLogging:
     dialog.pack()
     dialog.setSize(450, 300)
     dialog.setLocationRelativeTo(null)
+    dialog.setAlwaysOnTop(true)
     dialog.setVisible(true)
 
   def triggerLocalizationReload(): Unit =
