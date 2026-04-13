@@ -7,6 +7,10 @@ class CountryTag(var tags: CountryTagRegistry) extends PDXInlineEntityDynamicKey
 
 }
 
+object CountryTag:
+  // todo need some other way besides Loader to make things. such as NULL_TAG
+  val NULL_TAG: CountryTag = null 
+
 class CountryTagRegistry extends Registry[CountryTag] {
 
   override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]

@@ -2,16 +2,19 @@ package com.hoi4utils.hoi42.map.state
 
 import com.hoi4utils.hoi4.map.buildings.Infrastructure
 import com.hoi4utils.hoi42.common.country_tags.{CountryTag, CountryTagService}
+import com.hoi4utils.hoi42.history.countries.CountryFile
 import com.hoi4utils.hoi42.map.resource.Resource
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{ClausewitzDate, ZIOParser}
 import com.hoi4utils.script.PDXFileError
+import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 import com.hoi4utils.script2.{PDXLoader, PDXReadable}
 import javafx.collections.{FXCollections, ObservableList}
 import zio.{Task, URIO, URLayer, ZIO, ZLayer}
 
 import java.io.File
 import scala.collection.mutable.ListBuffer
+import scala.jdk.javaapi.CollectionConverters
 
 
 trait StateService extends StateRegistry with PDXReadable {
@@ -62,7 +65,7 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
           node <- new ZIOParser(file).parse
           pdx <- ZIO.attempt {
             val loader = new PDXLoader[State]()
-            val state = new State(this, Some(f))
+            val state = new State(this, Some(file))
             val errors = loader.load(node, state, state)
             if (errors.nonEmpty) {
               println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")

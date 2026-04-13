@@ -10,7 +10,7 @@ import scala.reflect.Selectable.reflectiveSelectable
 
 class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
                     (using override val decoder: PDXDecoder[T])
-                    (using override val ct: ClassTag[T]) 
+                    (using override val ct: ClassTag[T])
   extends PDXScript[T]:
 
   private var _isRequired: Boolean = false
@@ -22,9 +22,12 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
   )
   override def pdxDefinedValueOption: Option[T] = _value
 
-  def :=(newValue: T): Unit = _value = Some(newValue)
+  def :=(newValue: T): T =
+    _value = Some(newValue)
+    _value.get
+  def clear(): Unit = _value = None   // todo?
 
-  override def set(value: T): Unit = this := value
+  override def set(value: T): T = this := value
 
   override def extractAndSet(nodeValue: NodeValueType): Either[String, Unit] =
     decoder.decode(nodeValue).map(v => this := v)
@@ -33,13 +36,16 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
     _default = Some(v)
     this
   def isDefault: Boolean = apply() == default
+  def isDefault(v: T): Boolean = _default contains v
+
+  def isDefined: Boolean = _value.isDefined
 
   infix def required(v: Boolean): PDXProperty[T] = { _isRequired = v; this }
   def isRequired: Boolean = _isRequired
 
   def validate(f: T => Boolean): PDXProperty[T] = { /* store validation logic */ this }
 
-  override def load[C](node: SeqNode, context: C, 
+  override def load[C](node: SeqNode, context: C,
                        loadCallback: (SeqNode, PDXEntity, C) => List[String]): Either[List[String], Unit] =
     getEmptyInstance(context) match
       case Some(child: PDXEntity) =>
@@ -52,7 +58,7 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
           case _ => ()
         }
         Right(())
-      
+
 class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]] = None)
                         (using override val decoder: PDXDecoder[List[T]], val elementDecoder: PDXDecoder[T])
                         (using override val ct: ClassTag[T])
@@ -66,17 +72,21 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
     throw new IllegalStateException(s"Property $pdxKey is empty and has no default.")
   )
   override def pdxDefinedValueOption: Option[List[T]] = _values
-  
-  def :+(value: T): Unit = _values match
-    case Some(values) => _values = Some(value :: values)
-    case None => _values = Some(value :: Nil)
+
+  def :+(value: T): List[T] = 
+    _values match
+      case Some(values) => _values = Some(value :: values)
+      case None => _values = Some(value :: Nil)
+    _values.get
 
   /**
    * ``
    * @param value
    * @note Since apply() reverses, we must store this reversed so the final output is correct.
    */
-  override def set(value: List[T]): Unit = _values = Some(value.reverse)
+  override def set(value: List[T]): List[T] =
+    _values = Some(value.reverse)
+    _values.get
 
   override def extractAndSet(nodeValue: NodeValueType): Either[String, Unit] =
     elementDecoder.decode(nodeValue).map(v => this :+ v)
@@ -107,5 +117,5 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
           case _ => ()
         }
         Right(())
-  
+
 

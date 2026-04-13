@@ -21,7 +21,7 @@ class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity
   val localSupplies = pdx[Double]("local_supplies")
   val impassible = pdx[Boolean]("impassible") // TODO BoolType.YES_NO for validator
 
-  override def idProperty: PDXProperty[Int] = id 
+  override def idProperty: PDXProperty[Int] = stateID 
 
 object State { }
 
