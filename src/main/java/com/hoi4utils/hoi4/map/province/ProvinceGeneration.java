@@ -2,6 +2,7 @@ package com.hoi4utils.hoi4.map.province;
 
 import com.hoi4utils.hoi4.map.gen.*;
 import com.hoi4utils.hoi4.map.seed.*;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
@@ -14,6 +15,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	public BorderMap stateBorderMap; 		// heightmap of preferred borders
 	public String defaultStateBoarderMap = "map/state_borders_none.bmp";
 
+	@Getter
 	private ProvinceMap provinceMap;
 //	private ProvinceMapPointsList points;
 	private SeedsSet<MapPoint> seeds;
@@ -72,8 +74,7 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 	}
 
 	public void generate(String heightmapName) {
-		heightmap = loadHeightmap(heightmapName);
-		generate();
+		generate(loadHeightmap(heightmapName));
 	}
 
 	public void writeProvinceMap() {
@@ -128,9 +129,6 @@ public class ProvinceGeneration extends AbstractMapGeneration {
 		};
 	}
 
-	public ProvinceMap getProvinceMap() {
-		return provinceMap;
-	}
 }
 
 
