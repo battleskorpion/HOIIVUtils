@@ -119,9 +119,9 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
   override def observeStates: ObservableList[State] =
     FXCollections.observableArrayList(CollectionConverters.asJava(states))
 
-  override def ownedStatesOfCountry(country: CountryFile): ListBuffer[State] = ownedStatesOfCountry(country.countryTag)
+  override def ownedStatesOfCountry(country: CountryFile): Set[State] = ownedStatesOfCountry(country.countryTag)
 
-  override def ownedStatesOfCountry(tag: CountryTag): ListBuffer[State] =
+  override def ownedStatesOfCountry(tag: CountryTag): Set[State] =
     states filter (state => state.owner(ClausewitzDate.defaulty).exists(_.equals(tag)))
 
   override def infrastructureOfStates(states: ListBuffer[State]): Infrastructure =

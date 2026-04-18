@@ -3,11 +3,13 @@ package com.hoi4utils.hoi42.map.state
 import com.hoi4utils.hoi42.common.country_tags.{CountryTag, CountryTagRegistry}
 import com.hoi4utils.hoi42.map.province.Province
 import com.hoi4utils.hoi42.map.resource.Resource
+import com.hoi4utils.parser.ClausewitzDate
 import com.hoi4utils.script2.*
+import com.hoi4utils.script2.PDXPropertyValueExtensions.{flatMapRef, resolve}
 
 import java.io.File
 
-// todo on the file will turn into trait thingy 
+// todo on the file will turn into trait thingy
 class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity with IDReferable[Int] with RegistryMember[State](states):
   given Registry[CountryTag] = new CountryTagRegistry()
   val stateID = pdx[Int]("id") required true
@@ -21,7 +23,9 @@ class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity
   val localSupplies = pdx[Double]("local_supplies")
   val impassible = pdx[Boolean]("impassible") // TODO BoolType.YES_NO for validator
 
-  override def idProperty: PDXProperty[Int] = stateID 
+  override def idProperty: PDXProperty[Int] = stateID
+
+  def owner(date: ClausewitzDate): Option[CountryTag] = history.flatMapRef(_.owner)
 
 object State { }
 

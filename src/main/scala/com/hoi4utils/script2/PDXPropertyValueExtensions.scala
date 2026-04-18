@@ -121,4 +121,23 @@ object PDXPropertyValueExtensions {
 
     @targetName("divideEquals")
     def /=(other: N): N = pdxProperty.set(pdxProperty / other)
+
+  extension [T <: RegistryMember[T]](pdxProperty: PDXProperty[Reference[T]])
+    /**
+     * Directly accesses the underlying value of a Reference inside a PDXProperty.
+     * Handles both the Option of the property and the Option of the reference.
+     */
+    def resolve: Option[T] = pdxProperty().flatMap(_.value)
+
+  extension [E <: PDXEntity](pdxProperty: PDXProperty[E])
+    /** 
+     * Reach from a Property into a nested Property that holds a Reference
+     */
+    def flatMapRef[R <: RegistryMember[R]](f: E => PDXProperty[Reference[R]]): Option[R] =
+      for
+        entity <- pdxProperty() 
+        refProp = f(entity) 
+        ref <- refProp() 
+        value <- ref.value 
+      yield value
 }
