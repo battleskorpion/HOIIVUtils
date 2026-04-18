@@ -11,15 +11,20 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class ProvinceGenConfig implements MapGenProperties, SeedGenProperties {
-    protected SeedGenType generationType; // dynamic, GRID_SEED, PROBABILISTIC
-    protected ProvinceDeterminationType determinationType;
+    @Setter
+	protected SeedGenType generationType; // dynamic, GRID_SEED, PROBABILISTIC
+    @Setter
+	protected ProvinceDeterminationType determinationType;
     private byte HEIGHTMAP_SEA_LEVEL; // = 45 //95;
     // public static final int SEA_LEVEL_INT_RGB = ((SEA_LEVEL_RGB.getRed() << 8) +
     // SEA_LEVEL_RGB.getGreen()) << 8 + SEA_LEVEL_RGB.getBlue();
     protected int imageWidth; // 1024, 512, 256 works // 5632 - default // 4608 nad
-    protected int imageHeight; // 1024, 512, 256 works // 2048 - default // 2816 nad
-    protected int numSeedsY = 64;
-    protected int numSeedsX = 80;
+    @Setter
+	protected int imageHeight; // 1024, 512, 256 works // 2048 - default // 2816 nad
+    @Setter
+	protected int numSeedsY = 64;
+    @Setter
+	protected int numSeedsX = 80;
 
     /**
      * threadLimit = 0: max/no limit
@@ -155,19 +160,11 @@ public class ProvinceGenConfig implements MapGenProperties, SeedGenProperties {
         return generationType;
     }
 
-    public void setGenerationType(SeedGenType generationType) {
-        this.generationType = generationType;
-    }
-
-    public ProvinceDeterminationType determinationType() {
+	public ProvinceDeterminationType determinationType() {
         return determinationType;
     }
 
-    public void setDeterminationType(ProvinceDeterminationType determinationType) {
-        this.determinationType = determinationType;
-    }
-
-    public Color seaLevel_RGB() {
+	public Color seaLevel_RGB() {
         return new Color(HEIGHTMAP_SEA_LEVEL, HEIGHTMAP_SEA_LEVEL, HEIGHTMAP_SEA_LEVEL);
     }
 
@@ -204,23 +201,7 @@ public class ProvinceGenConfig implements MapGenProperties, SeedGenProperties {
         return numSeedsX;
     }
 
-    public void setImageWidth(int imageWidth) {
-        this.imageWidth = imageWidth;
-    }
-
-    public void setImageHeight(int imageHeight) {
-        this.imageHeight = imageHeight;
-    }
-
-    public void setNumSeedsY(int numSeedsY) {
-        this.numSeedsY = numSeedsY;
-    }
-
-    public void setNumSeedsX(int numSeedsX) {
-        this.numSeedsX = numSeedsX;
-    }
-
-    public void setNumSeeds(int numSeeds) {
+	public void setNumSeeds(int numSeeds) {
         int[] solution = solveNumSeedsXY(imageWidth, imageHeight, numSeeds);
         this.numSeedsY = solution[0];
         this.numSeedsX = solution[1];
