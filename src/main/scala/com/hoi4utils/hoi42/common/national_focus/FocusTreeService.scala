@@ -4,20 +4,26 @@ import com.hoi4utils.hoi42.common.country_tags.{CountryTag, CountryTagService}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.ZIOParser
 import com.hoi4utils.script2.*
-import javafx.collections.ObservableList
-import zio.{RIO, Task, UIO, URIO, URLayer, ZIO, ZLayer}
+import javafx.collections.{FXCollections, ObservableList}
+import zio.{Chunk, RIO, Task, UIO, URIO, URLayer, ZIO, ZLayer}
 
 import java.io.File
+import scala.annotation.targetName
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.jdk.javaapi.CollectionConverters
 
 
 trait FocusTreeService extends FocusTreeRegistry with PDXReadable  {
 
   override def read(): Task[Boolean]
   override def clear123(): Task[Unit]
-  def add(focusTree: FocusTree): UIO[Set[FocusTree]]
-  def add(sharedFocusFile: SharedFocusFile): UIO[Set[SharedFocusFile]]
+  @targetName("add")
+  override def +=(focusTree: FocusTree): UIO[Set[FocusTree]]
+  @targetName("addAll")
+  override def ++=(focusTrees: Iterable[FocusTree]): UIO[Set[FocusTree]]
+  @targetName("add")
+  def +=(sharedFocusFile: SharedFocusFile): UIO[Set[SharedFocusFile]]
 
   def addToFileMap(file: File, focusTree: FocusTree): Task[Unit]
   def removeFromFileMap(file: File): Task[Unit]
@@ -44,6 +50,8 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
   override val display: String = "Focus Trees"
 
   val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
+  val sharedFocusFileRegistry = new SharedFocusFileRegistry()
+  val pseudoSharedFocusTreeRegistry = new PseudoSharedFocusTreeRegistry()
 
   /* other */
   // TODO bring back after getting things working :)
@@ -58,11 +66,11 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
         ZIO.foreach(files) { file => // foreachParDiscard??
           for {
             node <- new ZIOParser(file).parse
-            pdx <- hasFocusTreeHeader(file).flatMap {
+            pdx <- hasFocusTreeHeader(file).flatMap[Registry[SharedFocus], Throwable, FocusTree | SharedFocusFile] {
               case true =>
                 ZIO.attempt {
                   val loader = new PDXLoader[FocusTree]()
-                  val tree = new FocusTree(this, file)(using sharedFocusRegistry)
+                  val tree = new FocusTree(this, Some(file))(using sharedFocusRegistry)
                   val errors = loader.load(node, tree, tree)
                   if (errors.nonEmpty) {
                     println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
@@ -72,7 +80,7 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
               case false =>
                 ZIO.attempt {
                   val loader = new PDXLoader[SharedFocusFile]()
-                  val sharedFocusFile = new SharedFocusFile(sharedFocusFileRegistry, file)
+                  val sharedFocusFile = new SharedFocusFile(sharedFocusFileRegistry, Some(file))
                   val errors = loader.load(node, sharedFocusFile, sharedFocusFile)
                   if (errors.nonEmpty) {
                     println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
@@ -100,8 +108,8 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
         for {
           trees <- readFocusTrees(files)
           _ <- ZIO.foreachDiscard(trees) {
-            case tree: FocusTree => add(tree)
-            case sff: SharedFocusFile => add(sff)
+            case tree: FocusTree => +=(tree)
+            case sff: SharedFocusFile => +=(sff)
           }
         } yield true
     }
@@ -120,14 +128,26 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
    * @param focusTree the focus tree to add
    * @return the updated list of focus trees
    */
-  override def add(focusTree: FocusTree): UIO[Set[FocusTree]] =
+  @targetName("add")
+  override def +=(focusTree: FocusTree): UIO[Set[FocusTree]] =
     ZIO.succeed {
       this register focusTree
       // TODO !!!!!
 //      focusTree.file match
 //        case Some(file) => focusTreeFileMap.put(file, focusTree)
 //        case None =>
-      focusTrees
+      this.focusTrees
+    }
+
+  @targetName("addAll")
+  override def ++=(focusTrees: Iterable[FocusTree]): UIO[Set[FocusTree]] =
+    ZIO.succeed {
+      this register focusTrees
+      // TODO !!!!!
+      //      focusTree.file match
+      //        case Some(file) => focusTreeFileMap.put(file, focusTree)
+      //        case None =>
+      this.focusTrees
     }
 
   /**
@@ -136,7 +156,8 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
    * @param sharedFocusFile the shared focus file to add
    * @return the updated list of focus trees
    */
-  def add(sharedFocusFile: SharedFocusFile): UIO[Set[SharedFocusFile]] =
+  @targetName("add")
+  def +=(sharedFocusFile: SharedFocusFile): UIO[Set[SharedFocusFile]] =
     ZIO.succeed {
       sharedFocusFileRegistry register sharedFocusFile
       sharedFocusFiles
@@ -158,14 +179,11 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
 
   override def observeFocusTrees: ObservableList[FocusTree] = FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
 
-  override def sharedFocusFiles: UIO[Set[SharedFocusFile]] =
-    ZIO.succeed(_sharedFocusFiles.toSet)
-
   override def sharedFocusFilesAsPseudoTrees: URIO[FocusTreeService & CountryTagService, Set[PseudoSharedFocusTree]] =
     for {
-      files <- ZIO.succeed(Chunk.fromIterable(_sharedFocusFiles))
+      files <- ZIO.succeed(Chunk.fromIterable(sharedFocusFiles))
       pseudoTrees <- ZIO.foreach(files) { sff =>
-        PseudoSharedFocusTree.forFocuses(sff.sharedFocuses.toList, sff.fileName)
+        PseudoSharedFocusTree.forFocuses(sff.sharedFocuses.list, sff.fileName.getOrElse(""), pseudoSharedFocusTreeRegistry, sff.file)
       }
     } yield pseudoTrees.toSet
   //    ZIO.succeed {
@@ -173,7 +191,7 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
   //    }
 
   def sharedFocuses: Set[SharedFocus] =
-    _sharedFocusFiles.flatMap(_.sharedFocuses).toSet
+    sharedFocusFiles.map(_.sharedFocuses).flatMap(_.list)
 
   def hasFocusTreeHeader(file: File): Task[Boolean] =
     // TODO TODO
@@ -192,6 +210,5 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
   def addNewFocus(f: Focus, tree: FocusTree): Unit =
     tree.focuses :+ f
 
-  def width(tree: FocusTree): Int = tree.focuses.flatMap(_.absoluteX).maxOption.getOrElse(0)
-  def height(tree: FocusTree): Int = tree.focuses().flatMap(_.absoluteY).maxOption.getOrElse(0)
-
+  def width(tree: FocusTree): Int = tree.focuses.map(_.absoluteX).flatMap(_.maxOption).getOrElse(0)
+  def height(tree: FocusTree): Int = tree.focuses.map(_.absoluteY).flatMap(_.maxOption).getOrElse(0)

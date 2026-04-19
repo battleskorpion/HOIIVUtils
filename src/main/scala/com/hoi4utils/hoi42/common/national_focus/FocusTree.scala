@@ -9,7 +9,9 @@ import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 import java.io.File
 import scala.reflect.ClassTag
 
-class FocusTree(var treeRegistry: FocusTreeRegistry, var f: File)(using Registry[SharedFocus]) extends PDXEntity with Registry[Focus] with IDReferable[String] with RegistryMember[FocusTree](treeRegistry):
+class FocusTree(var treeRegistry: FocusTreeRegistry, var file: Option[File])(using Registry[SharedFocus]) 
+  extends PDXEntity with FocusRegistry[Focus] with IDReferable[String] with RegistryMember[FocusTree](treeRegistry):
+  
   given Registry[CountryTag] = new CountryTagRegistry()
 
   val id = pdx[String]("id") required true

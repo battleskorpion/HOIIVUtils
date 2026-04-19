@@ -73,6 +73,7 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
     throw new IllegalStateException(s"Property $pdxKey is empty and has no default.")
   )
   override def pdxDefinedValueOption: Option[List[T]] = _values
+  def list: List[T] = apply().getOrElse(List.empty)
 
   def :+(value: T): List[T] =
     _values match
@@ -120,7 +121,9 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
         }
         Right(())
 
-  infix def flatMap[B](f: T => IterableOnce[B]): Option[List[B]] = pdxDefinedValueOption.map(_.flatMap(f))
+  infix def flatMap[B](f: T => IterableOnce[B]): Option[List[B]] = this() map(_.flatMap(f))
+
+  infix def map[B](f: T => B): Option[List[B]] = this() map(_.map(f))
 
 
 

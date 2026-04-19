@@ -75,7 +75,7 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String]
 
 object Focus { }
 
-class FocusRegistry extends Registry[Focus] {
+trait FocusRegistry[F <: Focus] extends Registry[F] {
 
   override def idDecoder: PDXDecoder[Int] = summon[PDXDecoder[Int]]
 }

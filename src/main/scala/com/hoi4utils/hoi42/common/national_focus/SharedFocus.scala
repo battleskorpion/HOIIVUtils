@@ -8,10 +8,11 @@ class SharedFocus(focusTree: FocusTree) extends Focus(focusTree) {
   val offset = pdx[Offset]("offset")
 
   /* init */
-  for {
-    pseudoTree <- PseudoSharedFocusTree()
-    _ <- ZIO.succeed(pseudoTree.addNewFocus(this))
-  } yield ()
+  // todo might have to do stuff later
+//  for {
+//    pseudoTree <- PseudoSharedFocusTree()
+//    _ <- ZIO.succeed(pseudoTree.addNewFocus(this))
+//  } yield ()
 
   override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
 }

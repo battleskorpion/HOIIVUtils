@@ -1,8 +1,9 @@
 package com.hoi4utils.script2
 
 import com.hoi4utils.parser.NodeValueType
-import zio.{Task, ZIO}
+import zio.{Task, UIO, ZIO}
 
+import scala.annotation.targetName
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
@@ -37,6 +38,19 @@ trait Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
     )
     _referableEntities ++= entries
     _version += 1
+
+  @targetName("add")
+  def +=(entity: T): UIO[Set[T]] = ZIO.succeed { 
+    this register entity 
+    referableEntities.toSet 
+  }
+    
+  @targetName("addAll")
+  def ++=(entities: Iterable[T]): UIO[Set[T]] = ZIO.succeed {
+    this register entities 
+    referableEntities.toSet
+  }
+    
     
   infix def deregister(entity: T): Unit =
     entity.referableID match
