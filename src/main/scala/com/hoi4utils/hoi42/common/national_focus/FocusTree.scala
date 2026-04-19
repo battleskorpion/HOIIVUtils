@@ -4,6 +4,7 @@ import com.hoi4utils.hoi42.common.country_tags.*
 import com.hoi4utils.script2.datatype.*
 import com.hoi4utils.hoi42.common.*
 import com.hoi4utils.script2.*
+import com.hoi4utils.script2.PDXPropertyValueExtensions.* 
 
 import scala.reflect.ClassTag
 
@@ -11,7 +12,7 @@ class FocusTree(var treeRegistry: FocusTreeRegistry)(using Registry[SharedFocus]
   given Registry[CountryTag] = new CountryTagRegistry()
 
   val id = pdx[String]("id") required true
-  val country = pdx[FocusTreeCountry]
+  val country = pdx[FocusTreeCountry]("country")
   val focuses = pdxList[Focus]("focus") required true
   val default = pdx[Boolean]("default")
   val resetOnCivilWar = pdx[Boolean]("reset_on_civil_war")
@@ -22,6 +23,12 @@ class FocusTree(var treeRegistry: FocusTreeRegistry)(using Registry[SharedFocus]
   val sharedFocuses = pdxList[Reference[SharedFocus]]("shared_focus")
 
   override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
+
+  // TODO fix code headOption is wrong but im lazy right now to do correct solution!!
+  def countryTag: Option[CountryTag] = country
+    .flatMap(_.modifier())
+    .flatMap(_.headOption)
+    .flatMap(_.tag.resolve)
 
 object FocusTree { }
 
