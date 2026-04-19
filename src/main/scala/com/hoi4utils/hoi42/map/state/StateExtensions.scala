@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi42.map.state
 
 object StateExtensions {
-  extension (state: State):
+  extension (state: State)
     def civMilFactoryRatio: Double =
       if state.civilianFactories == 0 then 0.0
       else state.militaryFactories.toDouble / state.civilianFactories
@@ -25,3 +25,5 @@ object StateExtensions {
     def infrastructureMaxLevel: Int =
       if state.buildingsMaxLevelFactor.getOrElse(0) == 0 then 0
       else (state.infrastructure * state.buildingsMaxLevelFactor.getOrElse(0)).toInt
+      
+} 

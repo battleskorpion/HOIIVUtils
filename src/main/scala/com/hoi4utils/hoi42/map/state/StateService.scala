@@ -169,12 +169,12 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
    * @param file state file
    */
   override def removeState(file: File): Boolean =
-    val tempState = new State(this.states, file)
-    states.find(_.stateID @== tempState.stateID)
-      .foreach(state =>
-        states -= state
-        ZIO.logDebug("Removed state " + state)
-      )
+    val tempState = new State(this, Some(file))
+    states.find(_.stateID @== tempState.stateID).exists(state =>
+      this deregister state
+      ZIO.logDebug("Removed state " + state)
+      true
+    )
 
   /**
    * TODO fix this java doc @ skorp
@@ -186,7 +186,7 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
   override def getDataFunctions(resourcePercentages: Boolean = false): Iterable[State => ?] =
     val dataFunctions = ListBuffer[State => ?]()
 
-    dataFunctions += (s => s.stateID().getOrElse("[Unknown]"))
+    dataFunctions += (s => s.stateID.getOrElse("[Unknown]"))
     dataFunctions += (s => s.population)
     dataFunctions += (s => s.civilianFactories)
     dataFunctions += (s => s.militaryFactories)
@@ -255,8 +255,8 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
 
   override def resourcesOfCountry(country: CountryFile): Set[Resource] = resourcesOfStates(ownedStatesOfCountry(country))
 
-  protected def usefulData(data: String): Boolean = 
-    if data.nonEmpty then 
+  protected def usefulData(data: String): Boolean =
+    if data.nonEmpty then
       if data.trim.charAt(0) == '#' then false
       else true
     else false

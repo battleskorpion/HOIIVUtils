@@ -37,6 +37,15 @@ trait Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
     )
     _referableEntities ++= entries
     _version += 1
+    
+  infix def deregister(entity: T): Unit =
+    entity.referableID match
+      case Some(actualKey: K) =>
+        _referableEntities -= actualKey 
+        _version += 1
+      case None =>
+        // TODO improve error handling in future
+        throw new IllegalArgumentException(s"Cannot deregister entity without an ID.")
 
   infix def resolve(id: K): Option[T] = _referableEntities.get(id)
 
