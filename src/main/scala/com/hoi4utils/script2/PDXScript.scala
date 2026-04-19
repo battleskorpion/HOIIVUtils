@@ -40,11 +40,11 @@ trait PDXScript[T] { //  extends Cloneable
 
   /**
    * Get the value of the PDX script, or the given value if the PDX script is undefined or has an incompatible type.
-   * 
+   *
    * @param elseValue
    * @return
    */
-  infix def getOrElse[B >: T](default: => T): T = pdxDefinedValueOption.getOrElse(default)
+  infix def getOrElse[B >: T](default: => B): B = pdxDefinedValueOption.getOrElse(default)
 
   /**
    * Get the value of the PDX script, or the given value if the PDX script is undefined or has an incompatible type.
