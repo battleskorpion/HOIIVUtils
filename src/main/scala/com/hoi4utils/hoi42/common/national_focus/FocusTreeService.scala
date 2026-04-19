@@ -7,6 +7,7 @@ import javafx.collections.ObservableList
 import zio.{Task, UIO, URIO, URLayer, ZIO, ZLayer}
 
 import java.io.File
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 
@@ -38,15 +39,17 @@ object FocusTreeService {
  * Localizable data: focus tree name. Each focus is its own localizable data.
  */
 case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends FocusTreeService:
-  override val cleanName: String = "FocusTrees"
-  val focusTrees = new mutable.HashSet[FocusTree]()
+  override val display: String = "Focus Trees"
+  
   val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
-//  var focusTreeErrors: ListBuffer[FocusTreeErrorGroup] = ListBuffer.empty
 
   /* other */
-  private val _sharedFocusFiles = new mutable.HashSet[SharedFocusFile]()
+  // TODO bring back after getting things working :)
+//  private val _sharedFocusFiles = new mutable.HashSet[SharedFocusFile]()
 
-  /** Reads all focus trees from the focus trees folder, creating FocusTree instances for each. */
+  /** 
+   * Reads all focus trees from the focus trees folder, creating a [[FocusTree]] for each. 
+   */
   override def read(): Task[Boolean] = {
     val modFocusFolder = HOIIVFiles.Mod.focus_folder
 

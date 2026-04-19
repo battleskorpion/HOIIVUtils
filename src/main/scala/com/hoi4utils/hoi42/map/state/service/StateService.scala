@@ -58,7 +58,7 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
   override val display: String = "States"
 
   /**
-   * Creates States from reading files
+   * Creates [[State States]] from reading files.
    */
   def read(): Task[Boolean] =
     def readStates(files: Seq[File], skipDuplicates: Boolean): Task[Seq[State]] = {
