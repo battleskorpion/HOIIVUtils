@@ -4,6 +4,7 @@ import com.hoi4utils.hoi4.map.buildings.Infrastructure
 import com.hoi4utils.hoi42.common.country_tags.{CountryTag, CountryTagService}
 import com.hoi4utils.hoi42.history.countries.CountryFile
 import com.hoi4utils.hoi42.map.resource.Resource
+import com.hoi4utils.hoi42.map.state.StateExtensions.*
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{ClausewitzDate, ZIOParser}
 import com.hoi4utils.script.PDXFileError
