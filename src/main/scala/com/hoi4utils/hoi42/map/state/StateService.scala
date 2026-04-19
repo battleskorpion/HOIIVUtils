@@ -171,7 +171,7 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
   override def removeState(file: File): Boolean =
     val tempState = new State(this.states, file)
     states.find(_.stateID @== tempState.stateID)
-      .foreach(state => 
+      .foreach(state =>
         states -= state
         ZIO.logDebug("Removed state " + state)
       )
@@ -186,7 +186,7 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
   override def getDataFunctions(resourcePercentages: Boolean = false): Iterable[State => ?] =
     val dataFunctions = ListBuffer[State => ?]()
 
-    dataFunctions += (s => s.id)
+    dataFunctions += (s => s.stateID().getOrElse("[Unknown]"))
     dataFunctions += (s => s.population)
     dataFunctions += (s => s.civilianFactories)
     dataFunctions += (s => s.militaryFactories)
@@ -200,19 +200,33 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
     // todo better way to do this obv! plz fix :( with (wrapper function that returns either or depndent on resourcesPerfcentages boolean value ofc
     // also if we're gonna have different resources able to load in down the line... it'll break this.
     if !resourcePercentages then
-      dataFunctions += (s => s.resourceAmount("aluminium"))
-      dataFunctions += (s => s.resourceAmount("chromium"))
-      dataFunctions += (s => s.resourceAmount("oil"))
-      dataFunctions += (s => s.resourceAmount("rubber"))
-      dataFunctions += (s => s.resourceAmount("steel"))
-      dataFunctions += (s => s.resourceAmount("tungsten"))
+//      dataFunctions += (s => s.resourceAmount("aluminium"))
+//      dataFunctions += (s => s.resourceAmount("chromium"))
+//      dataFunctions += (s => s.resourceAmount("oil"))
+//      dataFunctions += (s => s.resourceAmount("rubber"))
+//      dataFunctions += (s => s.resourceAmount("steel"))
+//      dataFunctions += (s => s.resourceAmount("tungsten"))
+      // todo
+      dataFunctions += (s => "TEMP - FIX")
+      dataFunctions += (s => "TEMP - FIX")
+      dataFunctions += (s => "TEMP - FIX")
+      dataFunctions += (s => "TEMP - FIX")
+      dataFunctions += (s => "TEMP - FIX")
+      dataFunctions += (s => "TEMP - FIX")
     else
-      dataFunctions += (s => s.resource("aluminium").percentOfGlobal)
-      dataFunctions += (s => s.resource("chromium").percentOfGlobal)
-      dataFunctions += (s => s.resource("oil").percentOfGlobal)
-      dataFunctions += (s => s.resource("rubber").percentOfGlobal)
-      dataFunctions += (s => s.resource("steel").percentOfGlobal)
-      dataFunctions += (s => s.resource("tungsten").percentOfGlobal)
+//      dataFunctions += (s => s.resource("aluminium").percentOfGlobal)
+//      dataFunctions += (s => s.resource("chromium").percentOfGlobal)
+//      dataFunctions += (s => s.resource("oil").percentOfGlobal)
+//      dataFunctions += (s => s.resource("rubber").percentOfGlobal)
+//      dataFunctions += (s => s.resource("steel").percentOfGlobal)
+//      dataFunctions += (s => s.resource("tungsten").percentOfGlobal)
+      // todo
+      dataFunctions += (s => "TEMP - FIX")
+      dataFunctions += (s => "TEMP - FIX")
+      dataFunctions += (s => "TEMP - FIX")
+      dataFunctions += (s => "TEMP - FIX")
+      dataFunctions += (s => "TEMP - FIX")
+      dataFunctions += (s => "TEMP - FIX")
     dataFunctions
 
   override def infrastructureOfCountries: ListBuffer[Infrastructure] =
@@ -237,11 +251,15 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
         countriesResourcesList.toList
     } yield list
 
-  override def resourcesOfCountry(tag: CountryTag): List[Resource] = resourcesOfStates(ownedStatesOfCountry(tag))
+  override def resourcesOfCountry(tag: CountryTag): Set[Resource] = resourcesOfStates(ownedStatesOfCountry(tag))
 
-  override def resourcesOfCountry(country: CountryFile): List[Resource] = resourcesOfStates(ownedStatesOfCountry(country))
+  override def resourcesOfCountry(country: CountryFile): Set[Resource] = resourcesOfStates(ownedStatesOfCountry(country))
 
-  protected def usefulData(data: String): Boolean = if data.nonEmpty then if data.trim.charAt(0) == '#' then false
-  else true
-  else false
+  protected def usefulData(data: String): Boolean = 
+    if data.nonEmpty then 
+      if data.trim.charAt(0) == '#' then false
+      else true
+    else false
 }
+
+

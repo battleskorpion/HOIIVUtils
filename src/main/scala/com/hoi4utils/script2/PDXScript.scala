@@ -13,7 +13,7 @@ import scala.util.Using
  * @tparam V
  */
 trait PDXScript[T] { //  extends Cloneable
-  
+
   /** The ClassTag of T (for Property) or the element T (for List) */
   def ct: ClassTag[?]
   /** Shortcut for the loader to get the runtime class */
@@ -40,10 +40,19 @@ trait PDXScript[T] { //  extends Cloneable
 
   /**
    * Get the value of the PDX script, or the given value if the PDX script is undefined or has an incompatible type.
+   * 
    * @param elseValue
    * @return
    */
   infix def getOrElse(default: T): T = pdxDefinedValueOption.getOrElse(default)
+
+  /**
+   * Get the value of the PDX script, or the given value if the PDX script is undefined or has an incompatible type.
+   *
+   * @param elseValue
+   * @return
+   */
+  infix def getAndMapOrElse(f: T => T, default: T): T = pdxDefinedValueOption.map(f).getOrElse(default)
 
   /** value is defined */
   def isDefined: Boolean = pdxDefinedValueOption.isDefined

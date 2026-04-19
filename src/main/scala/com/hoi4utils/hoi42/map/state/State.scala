@@ -13,7 +13,7 @@ import java.io.File
 // todo on the file will turn into trait thingy
 class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity with IDReferable[Int] with RegistryMember[State](states):
   given Registry[CountryTag] = new CountryTagRegistry()
-  val stateID = pdx[Int]("id") required true
+  val stateID: PDXProperty[Int] = displayPDX[Int]("id") 
   val name = pdx[String]("name")
   val resources = pdxList[Resource]("resources") default Resource.NONE.toList 
   val history = pdx[History]("history")

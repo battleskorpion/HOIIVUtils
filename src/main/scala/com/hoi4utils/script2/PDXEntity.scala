@@ -27,7 +27,7 @@ trait PDXEntity:
   
   def pdx[T <: PDXValueType | PDXEntity | Reference[?]](key: String)(using PDXDecoder[T], ClassTag[T]): PDXProperty[T] =
     new PDXProperty[T](key, None)
-    
+  
   def pdxList[T <: PDXValueType | PDXEntity | Reference[?]](key: String)(using PDXDecoder[T], ClassTag[T]): PDXPropertyList[T] =
     new PDXPropertyList[T](key, None)
     
