@@ -1,11 +1,12 @@
 package com.hoi4utils.hoi42.map.state
 
+import com.hoi4utils.hoi4.map.buildings.Infrastructure
 import com.hoi4utils.hoi42.common.country_tags.{CountryTag, CountryTagRegistry}
 import com.hoi4utils.hoi42.map.province.Province
 import com.hoi4utils.hoi42.map.resource.Resource
 import com.hoi4utils.parser.ClausewitzDate
 import com.hoi4utils.script2.*
-import com.hoi4utils.script2.PDXPropertyValueExtensions.{flatMapRef, resolve}
+import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 
 import java.io.File
 
@@ -14,7 +15,7 @@ class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity
   given Registry[CountryTag] = new CountryTagRegistry()
   val stateID = pdx[Int]("id") required true
   val name = pdx[String]("name")
-  val resources = pdxList[Resource]("resources")
+  val resources = pdxList[Resource]("resources") default Resource.NONE.toList 
   val history = pdx[History]("history")
   val provinces = pdxList[Province]("provinces")
   val manpower = pdx[Int]("manpower")
@@ -26,6 +27,39 @@ class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity
   override def idProperty: PDXProperty[Int] = stateID
 
   def owner(date: ClausewitzDate): Option[CountryTag] = history.flatMapRef(_.owner)
+  
+  def buildings: Option[Buildings] = history ~> (_.buildings)
+
+  def population: Int = manpower getOrElse 1
+  def population_=(pop: Int): Unit = manpower @= pop
+  def population_=?(pop: Int): Unit = manpower @=? pop
+
+  def infrastructure: Int = buildings / (_.infrastructure) getOrElse 0
+  def infrastructure_=(infrastructure: Int): Unit = buildings / (_.infrastructure) @= infrastructure
+  def infrastructure_=?(infrastructure: Int): Unit = (buildings / (_.infrastructure)) @=? infrastructure
+
+  def civilianFactories: Int = buildings / (_.civilianFactories) getOrElse 0
+  def civilianFactories_=(factories: Int): Unit = buildings / (_.civilianFactories) @= factories
+  def civilianFactories_=?(factories: Int): Unit = (buildings / (_.civilianFactories)) @=? factories
+
+  def militaryFactories: Int = buildings / (_.militaryFactories) getOrElse 0
+  def militaryFactories_=(factories: Int): Unit = buildings / (_.militaryFactories) @= factories
+  def militaryFactories_=?(factories: Int): Unit = (buildings / (_.militaryFactories)) @=? factories
+
+  def navalDockyards: Int = buildings / (_.navalDockyards) getOrElse 0
+  def navalDockyards_=(dockyards: Int): Unit = buildings / (_.navalDockyards) @= dockyards
+  def navalDockyards_=?(dockyards: Int): Unit = (buildings / (_.navalDockyards)) @=? dockyards
+
+  def navalPorts: Int = buildings / (_.navalDockyards) getOrElse 0
+  def navalPorts_=(ports: Int): Unit = buildings / (_.navalDockyards) @= ports
+  def navalPorts_=?(ports: Int): Unit = (buildings / (_.navalDockyards)) @=? ports
+
+  def airfields: Int = buildings / (_.airBase) getOrElse 0
+  def airfields_=(airfields: Int): Unit = buildings / (_.airBase) @= airfields
+  def airfields_=?(airfields: Int): Unit = (buildings / (_.airBase)) @=? airfields
+  
+  def stateInfrastructure: Infrastructure =
+    new Infrastructure(population, infrastructure, civilianFactories, militaryFactories, navalDockyards, navalPorts, airfields)
 
 object State { }
 

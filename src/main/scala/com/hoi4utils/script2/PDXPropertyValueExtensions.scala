@@ -1,8 +1,10 @@
 package com.hoi4utils.script2
 
 import com.hoi4utils.parser.PDXValueType
+import com.hoi4utils.script2.PDXPropertyValueExtensions.@=
 
 import scala.annotation.targetName
+import scala.reflect.ClassTag
 
 
 object PDXPropertyValueExtensions {
@@ -130,14 +132,46 @@ object PDXPropertyValueExtensions {
     def resolve: Option[T] = pdxProperty().flatMap(_.value)
 
   extension [E <: PDXEntity](pdxProperty: PDXProperty[E])
-    /** 
+    /**
      * Reach from a Property into a nested Property that holds a Reference
      */
     def flatMapRef[R <: RegistryMember[R]](f: E => PDXProperty[Reference[R]]): Option[R] =
       for
-        entity <- pdxProperty() 
-        refProp = f(entity) 
-        ref <- refProp() 
-        value <- ref.value 
+        entity <- pdxProperty()
+        refProp = f(entity)
+        ref <- refProp()
+        value <- ref.value
       yield value
+
+    /**
+     * allows `property ~> (_.subProperty)` returns optional sub-property 
+     * @param extractor
+     * @tparam C
+     * @return
+     */
+    infix def ~>[C](extractor: E => PDXProperty[C]): Option[C] =
+      pdxProperty().flatMap(e => extractor.apply(e).apply())
+
+  extension [P <: PDXEntity](parent: PDXProperty[P])
+    infix def /[C](extractor: P => PDXProperty[C])(using d: PDXDecoder[C], ct: ClassTag[C]): PDXProperty[C] =
+      new PDXProperty[C]("__virtual", None)(using d)(using ct):
+        override def apply(): Option[C] = parent().flatMap(p => extractor(p)())
+
+        override def set(v: C): C = {
+          parent().foreach(p => extractor(p).set(v)); v
+        }
+
+  extension [P <: PDXEntity](parentOpt: Option[P])
+    infix def /[C](extractor: P => PDXProperty[C])(using d: PDXDecoder[C], ct: ClassTag[C]): PDXProperty[C] =
+      new PDXProperty[C]("__virtual", None)(using d)(using ct):
+        override def apply(): Option[C] = parentOpt.flatMap(p => extractor(p)())
+
+        override def set(v: C): C = {
+          parentOpt.foreach(p => extractor(p).set(v)); v
+        }
+
+  extension [P](parentOpt: Option[P])
+    infix def ~>[C](extractor: P => Option[C]): Option[C] =
+      parentOpt.flatMap(extractor)
+
 }

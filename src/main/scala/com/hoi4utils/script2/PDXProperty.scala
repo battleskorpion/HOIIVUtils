@@ -73,7 +73,7 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
   )
   override def pdxDefinedValueOption: Option[List[T]] = _values
 
-  def :+(value: T): List[T] = 
+  def :+(value: T): List[T] =
     _values match
       case Some(values) => _values = Some(value :: values)
       case None => _values = Some(value :: Nil)
@@ -96,6 +96,7 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
     this
 
   def isDefault: Boolean = apply() == default
+  def isDefault(v: T): Boolean = _default contains v
 
   infix def required(v: Boolean): PDXPropertyList[T] =
     _isRequired = v

@@ -75,5 +75,11 @@ public record Infrastructure(int population, int infrastructure, int civilianFac
 	private double airfieldsCapacity() {
 		return airfields() * AIRFIELD_CAPACITY_PER_LEVEL;
 	}
+	
+	public static Infrastructure combine(Infrastructure i1,  Infrastructure i2) {
+		return new Infrastructure(i1.population + i2.population, i1.infrastructure + i2.infrastructure, 
+			i1.civilianFactories + i2.civilianFactories, i1.militaryFactories + i2.militaryFactories,
+			i1.navalDockyards + i2.navalDockyards, i1.navalPorts + i2.navalPorts, i1.airfields + i2.airfields);
+	}
 
 }

@@ -125,44 +125,25 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
     states filter (state => state.owner(ClausewitzDate.defaulty).exists(_.equals(tag)))
 
   override def infrastructureOfStates(states: ListBuffer[State]): Infrastructure =
-    var infrastructure = 0
-    var population = 0
-    var civilianFactories = 0
-    var militaryFactories = 0
-    var dockyards = 0
-    var airfields = 0
-    for state <- states do
-      val stateData = state.getStateInfrastructure
-      infrastructure += stateData.infrastructure
-      population += stateData.population
-      civilianFactories += stateData.civilianFactories
-      militaryFactories += stateData.militaryFactories
-      dockyards += stateData.navalDockyards
-      airfields += stateData.airfields
-    new Infrastructure(population, infrastructure, civilianFactories, militaryFactories, dockyards, 0, airfields)
+    states.map(s => s.stateInfrastructure)
+      .reduce((s1, s2) => Infrastructure.combine(s1, s2))
 
   // todo this is called and ran lots of times, optimize?
-  override def resourcesOfStates(states: ListBuffer[State]): List[Resource] =
-    //    val resourcesOfStates = new Resources
-    //    for (state <- states) {
-    //      val resources = state.getResources
-    //      resourcesOfStates.add(resources)
-    //    }
-    //    //return new Resources(aluminum, chromium, oil, rubber, steel, tungsten);
-    //    logger.debug(resourcesOfStates.get("aluminum").amt)
-    //    resourcesOfStates
-    if states.isEmpty then Resource.newList()
-    else
-      states
-        .flatMap(_.listResources).groupBy(_.pdxTypeIdentifier).values.map: resources =>
-          new Resource(resources.head.pdxTypeIdentifier, resources.map(_.getOrElse(0)).sum)
-        .toList
+  override def resourcesOfStates(states: Iterable[State]): Set[Resource] =
+//    if states.isEmpty then Resource.newList()
+//    else
+//      states
+//        .flatMap(_.listResources).groupBy(_.pdxTypeIdentifier).values.map: resources =>
+//          new Resource(resources.head.pdxTypeIdentifier, resources.map(_.getOrElse(0)).sum)
+//        .toList
+    // todo
+    Set.empty
 
-  def resourcesOfStates: List[Resource] = resourcesOfStates(states)
+  def resourcesOfStates: Set[Resource] = resourcesOfStates(states)
 
   def numStates(country: CountryTag): Int = ownedStatesOfCountry(country).size
 
-  implicit def globalResources: List[Resource] = states.flatMap(_.listResources).toList
+  implicit def globalResources: Set[Resource] = states.flatMap(_.resources.$)
 
   // todo idk if this is still needed seems duplicateish as well
 //  /**
@@ -187,14 +168,13 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
    *
    * @param file state file
    */
-  override def removeState(file: File): Boolean = boundary:
-    val tempState = new State()(countryTagService)
-    for state <- states do
-      if state.stateID == tempState.stateID then
+  override def removeState(file: File): Boolean =
+    val tempState = new State(this.states, file)
+    states.find(_.stateID @== tempState.stateID)
+      .foreach(state => 
         states -= state
-        ZIO.logDebug("Removed state " + tempState)
-        boundary.break(true)
-    false
+        ZIO.logDebug("Removed state " + state)
+      )
 
   /**
    * TODO fix this java doc @ skorp
