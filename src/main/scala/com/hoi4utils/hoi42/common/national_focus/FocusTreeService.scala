@@ -120,7 +120,7 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
       _sharedFocusFiles += sharedFocusFile
       _sharedFocusFiles.toSet
     }
-
+  
   /** Returns focus tree corresponding to the tag, if it exists*/
   def get(tag: CountryTag | File): UIO[Option[FocusTree]] =
     ZIO.succeed {
@@ -167,4 +167,10 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
 //      case e =>
 //        ZIO.fail(e) // Let critical errors (like disk failure) actually fail the Task
 //    }
+    
+  def addNewFocus(f: Focus, tree: FocusTree): Unit =
+    tree.focuses :+ f
+
+  def width(tree: FocusTree): Int = tree.focuses.flatMap(_.absoluteX).maxOption.getOrElse(0) 
+  def height(tree: FocusTree): Int = tree.focuses().flatMap(_.absoluteY).maxOption.getOrElse(0)
 

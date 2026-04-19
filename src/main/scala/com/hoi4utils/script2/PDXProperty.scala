@@ -39,6 +39,7 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
   def isDefault(v: T): Boolean = _default contains v
 
   def isDefined: Boolean = _value.isDefined
+  def isUndefined: Boolean = _value.isEmpty
 
   infix def required(v: Boolean): PDXProperty[T] = { _isRequired = v; this }
   def isRequired: Boolean = _isRequired
@@ -118,5 +119,8 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
           case _ => ()
         }
         Right(())
+
+  infix def flatMap[B](f: T => IterableOnce[B]): Option[List[B]] = pdxDefinedValueOption.map(_.flatMap(f))
+
 
 

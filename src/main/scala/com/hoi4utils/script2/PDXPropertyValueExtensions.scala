@@ -79,6 +79,11 @@ object PDXPropertyValueExtensions {
 
     override def toString: String = if asString == "" then "[null]" else asString
 
+  extension [TV <: PDXValueType](rawValue: TV)
+    @targetName("getEquals")
+    def @==(pdxProperty: PDXProperty[TV]): Boolean =
+      pdxProperty @== rawValue
+      
   extension [N <: Int | Double & PDXValueType](pdxProperty:  PDXProperty[N])(using num: Fractional[N] | Integral[N])
     @targetName("unaryPlus")
     def unary_+ : N = pdxProperty.value match
@@ -123,13 +128,19 @@ object PDXPropertyValueExtensions {
 
     @targetName("divideEquals")
     def /=(other: N): N = pdxProperty.set(pdxProperty / other)
-
+      
   extension [T <: RegistryMember[T]](pdxProperty: PDXProperty[Reference[T]])
     /**
      * Directly accesses the underlying value of a Reference inside a PDXProperty.
      * Handles both the Option of the property and the Option of the reference.
      */
     def resolve: Option[T] = pdxProperty().flatMap(_.value)
+    
+    /** 
+     * Shortcut for reference properties to obtain the reference ID. 
+     * Equivalent to `pdxProperty.$.id`
+     */
+    def $id: T match {case Referable[k] => k} = pdxProperty.$.id
 
   extension [E <: PDXEntity](pdxProperty: PDXProperty[E])
     /**

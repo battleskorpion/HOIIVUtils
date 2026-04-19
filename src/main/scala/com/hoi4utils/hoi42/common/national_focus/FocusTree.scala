@@ -1,12 +1,14 @@
 package com.hoi4utils.hoi42.common.national_focus
 
-import com.hoi4utils.hoi42.common.country_tags.CountryTagService
-import com.hoi4utils.script2.datatype.PointPDX
+import com.hoi4utils.hoi42.common.country_tags.*
+import com.hoi4utils.script2.datatype.*
+import com.hoi4utils.hoi42.common.*
 import com.hoi4utils.script2.*
 
 import scala.reflect.ClassTag
 
-class FocusTree extends PDXEntity with Registry[Focus]:
+class FocusTree(var treeRegistry: FocusTreeRegistry)(using Registry[SharedFocus]) extends PDXEntity with Registry[Focus] with IDReferable[String] with RegistryMember[FocusTree](treeRegistry):
+  given Registry[CountryTag] = new CountryTagRegistry()
 
   val id = pdx[String]("id") required true
   val country = pdx[FocusTreeCountry]
@@ -25,10 +27,10 @@ object FocusTree { }
 
 class FocusTreeRegistry extends Registry[FocusTree] {
 
-  override def idDecoder: PDXDecoder[Int] = summon[PDXDecoder[Int]]
+  override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
 }
 
-class FocusTreeCountry extends PDXEntity:
+class FocusTreeCountry(using Registry[CountryTag]) extends PDXEntity:
   val base = pdx[Double]("base")
   val factor = pdx[Double]("factor")
   val add = pdx[Double]("add")
@@ -36,7 +38,7 @@ class FocusTreeCountry extends PDXEntity:
 
 //  override def getPDXTypeName: String = "AI Willingness"
 
-class TagModifier(countryTagService: CountryTagService) extends PDXEntity:
+class TagModifier(using Registry[CountryTag]) extends PDXEntity:
   val base = pdx[Double]("base")
   val factor = pdx[Double]("factor")
   val add = pdx[Double]("add")
@@ -48,7 +50,7 @@ class TagModifier(countryTagService: CountryTagService) extends PDXEntity:
 
   */
 
-class Shortcut extends PDXEntity:
+class Shortcut(using Registry[CountryTag], Registry[Focus]) extends PDXEntity:
   val name = pdx[String]("name")
   val target = pdx[Reference[Focus]]("target")
   val scrollWheelFactor = pdx[Double]("scroll_wheel_factor") // TODO ExpectedRange.ofUnitInterval
