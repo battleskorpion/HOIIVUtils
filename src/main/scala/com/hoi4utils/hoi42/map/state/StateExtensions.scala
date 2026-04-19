@@ -24,6 +24,6 @@ object StateExtensions {
 
     def infrastructureMaxLevel: Int =
       if state.buildingsMaxLevelFactor.getOrElse(0) == 0 then 0
-      else (state.infrastructure * state.buildingsMaxLevelFactor.getOrElse(0)).toInt
+      else (state.infrastructure * state.buildingsMaxLevelFactor.getOrElse(0.0)).toInt
       
 } 
