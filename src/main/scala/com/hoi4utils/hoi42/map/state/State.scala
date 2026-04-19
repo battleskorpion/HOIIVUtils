@@ -13,9 +13,9 @@ import java.io.File
 // todo on the file will turn into trait thingy
 class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity with IDReferable[Int] with RegistryMember[State](states):
   given Registry[CountryTag] = new CountryTagRegistry()
-  val stateID: PDXProperty[Int] = displayPDX[Int]("id") 
+  val stateID: PDXProperty[Int] = pdx[Int]("id")
   val name = pdx[String]("name")
-  val resources = pdxList[Resource]("resources") default Resource.NONE.toList 
+  val resources = pdxList[Resource]("resources") default Resource.NONE.toList
   val history = pdx[History]("history")
   val provinces = pdxList[Province]("provinces")
   val manpower = pdx[Int]("manpower")
@@ -27,7 +27,7 @@ class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity
   override def idProperty: PDXProperty[Int] = stateID
 
   def owner(date: ClausewitzDate): Option[CountryTag] = history.flatMapRef(_.owner)
-  
+
   def buildings: Option[Buildings] = history ~> (_.buildings)
 
   def population: Int = manpower getOrElse 1
@@ -57,7 +57,7 @@ class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity
   def airfields: Int = buildings / (_.airBase) getOrElse 0
   def airfields_=(airfields: Int): Unit = buildings / (_.airBase) @= airfields
   def airfields_=?(airfields: Int): Unit = (buildings / (_.airBase)) @=? airfields
-  
+
   def stateInfrastructure: Infrastructure =
     new Infrastructure(population, infrastructure, civilianFactories, militaryFactories, navalDockyards, navalPorts, airfields)
 
