@@ -1,22 +1,58 @@
 package com.hoi4utils.hoi42.common.national_focus
 
-import com.hoi4utils.script2.{PDXDecoder, PDXEntity, Registry}
+import com.hoi4utils.hoi42.common.country_tags.CountryTagService
+import com.hoi4utils.script2.datatype.PointPDX
+import com.hoi4utils.script2.*
 
 import scala.reflect.ClassTag
 
-class FocusTree extends PDXEntity with Registry[Focus]: 
+class FocusTree extends PDXEntity with Registry[Focus]:
 
   val id = pdx[String]("id") required true
-//  val country = pdx[FocusTreeCountry]
+  val country = pdx[FocusTreeCountry]
   val focuses = pdxList[Focus]("focus") required true
   val default = pdx[Boolean]("default")
   val resetOnCivilWar = pdx[Boolean]("reset_on_civil_war")
-//  val continuousFocusPosition = pdx[PointPDX]("continuous_focus_position")
-//  val initialShowPosition = pdx[InitialShowPosition]("initial_show_position")
-//  val shortcut = pdx[Shortcut]("shortcut")
-//  /** special handling */ 
-//  val sharedFocuses = pdxList[Reference[SharedFocus]]("shared_focus")
-
+  val continuousFocusPosition = pdx[PointPDX]("continuous_focus_position")
+  //  val initialShowPosition = pdx[InitialShowPosition]("initial_show_position")
+  val shortcut = pdx[Shortcut]("shortcut")
+  //  /** special handling */
+  val sharedFocuses = pdxList[Reference[SharedFocus]]("shared_focus")
 
   override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
+
+object FocusTree { }
+
+class FocusTreeRegistry extends Registry[FocusTree] {
+
+  override def idDecoder: PDXDecoder[Int] = summon[PDXDecoder[Int]]
+}
+
+class FocusTreeCountry extends PDXEntity:
+  val base = pdx[Double]("base")
+  val factor = pdx[Double]("factor")
+  val add = pdx[Double]("add")
+  val modifier = pdxList[TagModifier]("modifier")
+
+//  override def getPDXTypeName: String = "AI Willingness"
+
+class TagModifier(countryTagService: CountryTagService) extends PDXEntity:
+  val base = pdx[Double]("base")
+  val factor = pdx[Double]("factor")
+  val add = pdx[Double]("add")
+  val tag = pdx[Reference[CountryTag]]("country")
+
+//      override def getPDXTypeName: String = "Modifier"
+
+/*class InitialShowPosition extends PDXEntity:
+
+  */
+
+class Shortcut extends PDXEntity:
+  val name = pdx[String]("name")
+  val target = pdx[Reference[Focus]]("target")
+  val scrollWheelFactor = pdx[Double]("scroll_wheel_factor") // TODO ExpectedRange.ofUnitInterval
+//  val trigger = pdx[TriggerPDX]("trigger")  // TODO IMPL TRIGGER PDX
+
+
 

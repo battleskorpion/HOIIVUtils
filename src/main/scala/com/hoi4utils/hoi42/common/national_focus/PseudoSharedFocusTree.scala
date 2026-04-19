@@ -1,5 +1,54 @@
 package com.hoi4utils.hoi42.common.national_focus
 
-class PseudoSharedFocusTree {
+import com.hoi4utils.hoi42.common.country_tags.CountryTagService
+import zio.{URIO, ZIO}
 
+class PseudoSharedFocusTree extends FocusTree() {
+  override def toString: String = s"[Shared Focuses] ${super.toString}"
 }
+
+object PseudoSharedFocusTree {
+  //	pseudoTreeHOI4ProjectMap: Map[]
+  // for now:
+  var trees: List[PseudoSharedFocusTree] = List()
+
+  def apply(): URIO[FocusTreeService & CountryTagService, PseudoSharedFocusTree] = {
+    for {
+      manager <- ZIO.service[FocusTreeService]
+      tagService <- ZIO.service[CountryTagService]
+      tree = trees.headOption match
+        case Some(tree) => tree
+        case None =>
+          val newTree = new PseudoSharedFocusTree(manager, tagService)
+          trees = newTree :: trees
+          newTree
+    } yield tree
+    //    ZIO.serviceWith[FocusTreeManager] { manager =>
+    //      trees.headOption match
+    //        case Some(tree) => tree
+    //        case None =>
+    //          val newTree = new PseudoSharedFocusTree(manager, countryTagService)
+    //          trees = newTree :: trees
+    //          newTree
+    //    }
+  }
+
+  def forFocuses(focuses: List[SharedFocus], id: String): URIO[FocusTreeService & CountryTagService, PseudoSharedFocusTree] =
+    for {
+      manager <- ZIO.service[FocusTreeService]
+      tagService <- ZIO.service[CountryTagService]
+      newTree =
+        val tree = new PseudoSharedFocusTree(manager, tagService)
+        tree.id @= id
+        focuses.foreach(tree.addNewFocus)     // TODO unused expression without side effects? 
+        tree
+    } yield newTree
+
+  //    ZIO.serviceWith[FocusTreeManager] { manager =>
+  //      val newTree = new PseudoSharedFocusTree(manager, countryTagService)
+  //      newTree.id @= id
+  //      focuses.foreach(newTree.addNewFocus)
+  //      newTree
+  //    }
+}
+  

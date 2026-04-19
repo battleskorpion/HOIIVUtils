@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi42.common.national_focus
 
-import com.hoi4utils.script2.{PDXEntity, PDXProperty, IDReferable, Reference, Registry, RegistryMember}
+import com.hoi4utils.script2.{IDReferable, PDXDecoder, PDXEntity, PDXProperty, Reference, Registry, RegistryMember}
 
 class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String] with RegistryMember[Focus](focusTree):
   val DEFAULT_COST: Double = 10.0
@@ -24,6 +24,12 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String]
 
   override def idProperty: PDXProperty[String] = id
 
+object Focus { }
+
+class FocusRegistry extends Registry[Focus] {
+
+  override def idDecoder: PDXDecoder[Int] = summon[PDXDecoder[Int]]
+}
 
 class Icon(var spriteID: String) extends PDXEntity:
   // You can later add a reference to the actual Image/Texture
