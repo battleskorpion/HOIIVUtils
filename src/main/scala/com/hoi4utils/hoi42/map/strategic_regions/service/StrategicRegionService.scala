@@ -1,9 +1,10 @@
-package com.hoi4utils.hoi42.map.strategic_regions
+package com.hoi4utils.hoi42.map.strategic_regions.service
 
 import com.hoi4utils.hoi42.common.country_tags.CountryTagService
+import com.hoi4utils.hoi42.map.strategic_regions.{StrategicRegion, StrategicRegionRegistry, StrategicRegionService, StrategicRegionServiceImpl}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.ZIOParser
-import com.hoi4utils.script2.PDXPropertyValueExtensions.* 
+import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 import com.hoi4utils.script2.{PDXLoader, PDXReadable}
 import zio.{Task, URIO, URLayer, ZIO, ZLayer}
 

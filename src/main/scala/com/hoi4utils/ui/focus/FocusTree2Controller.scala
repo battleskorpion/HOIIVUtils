@@ -2,7 +2,7 @@ package com.hoi4utils.ui.focus
 
 import com.hoi4utils.hoi42.common.country_tags.CountryTagService
 import com.hoi4utils.hoi42.common.national_focus.{Focus, FocusTree, FocusTreeManager, PseudoSharedFocusTree, Focus as gridX}
-import com.hoi4utils.hoi42.map.state.StateService
+import com.hoi4utils.hoi42.map.state.service.StateService
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.script2.PDXProperty
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
