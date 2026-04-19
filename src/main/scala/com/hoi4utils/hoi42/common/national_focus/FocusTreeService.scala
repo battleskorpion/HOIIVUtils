@@ -5,7 +5,7 @@ import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.ZIOParser
 import com.hoi4utils.script2.*
 import javafx.collections.ObservableList
-import zio.{Task, UIO, URIO, URLayer, ZIO, ZLayer}
+import zio.{RIO, Task, UIO, URIO, URLayer, ZIO, ZLayer}
 
 import java.io.File
 import scala.collection.mutable
@@ -52,57 +52,59 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
   /**
    * Reads all focus trees from the focus trees folder, creating a [[FocusTree]] for each.
    */
-  override def read(): Task[Boolean] = {
-    def readFocusTrees(files: Seq[File]): Task[Seq[FocusTree | SharedFocusFile]] =
-      ZIO.foreach(files) { file =>    // foreachParDiscard??
-        for {
-          node <- new ZIOParser(file).parse
-          pdx <- hasFocusTreeHeader(file).flatMap {
-            case true =>
-              ZIO.attempt {
-                val loader = new PDXLoader[FocusTree]()
-                val tree = new FocusTree(f)(this, countryTagService)
-                val errors = loader.load(node, tree, tree)
-                if (errors.nonEmpty) {
-                  println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+  override def read(): RIO[Registry[SharedFocus], Boolean] = {
+    ZIO.serviceWithZIO[Registry[SharedFocus]] { sharedFocusRegistry =>
+      def readFocusTrees(files: Seq[File]): RIO[Registry[SharedFocus], Seq[FocusTree | SharedFocusFile]] =
+        ZIO.foreach(files) { file => // foreachParDiscard??
+          for {
+            node <- new ZIOParser(file).parse
+            pdx <- hasFocusTreeHeader(file).flatMap {
+              case true =>
+                ZIO.attempt {
+                  val loader = new PDXLoader[FocusTree]()
+                  val tree = new FocusTree(this, file)(using sharedFocusRegistry)
+                  val errors = loader.load(node, tree, tree)
+                  if (errors.nonEmpty) {
+                    println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+                  }
+                  tree
                 }
-                tree
-              }
-            case false =>
-              ZIO.attempt {
-                val loader = new PDXLoader[SharedFocusFile]()
-                val sharedFocusFile = new SharedFocusFile(f)(this, countryTagService)
-                val errors = loader.load(node, sharedFocusFile, sharedFocusFile)
-                if (errors.nonEmpty) {
-                  println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+              case false =>
+                ZIO.attempt {
+                  val loader = new PDXLoader[SharedFocusFile]()
+                  val sharedFocusFile = new SharedFocusFile(sharedFocusFileRegistry, file)
+                  val errors = loader.load(node, sharedFocusFile, sharedFocusFile)
+                  if (errors.nonEmpty) {
+                    println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+                  }
+                  sharedFocusFile
                 }
-                sharedFocusFile
-              }
-          }
-          _ <- ZIO.logDebug(s"Successfully processed: ${file.getName}")
-        } yield pdx
-//        _ <- ZIO.log(s"Shared focus files: ${_sharedFocusFiles.size}")
-//        _ <- ZIO.log(s"Shared focuses: ${_sharedFocusFiles.map(_.sharedFocuses.size).sum}")
-      }
-
-    val modFocusFolder = HOIIVFiles.Mod.focus_folder
-
-    if !modFocusFolder.exists || !modFocusFolder.isDirectory then
-      ZIO.logError(s"In ${this.getClass.getSimpleName} - ${modFocusFolder} is not a directory, or it does not exist.")
-        .as(false)
-    else if modFocusFolder.listFiles == null || modFocusFolder.listFiles.length == 0 then
-      ZIO.logWarning(s"No focuses found in ${modFocusFolder}")
-        .as(false)
-    else
-      val files = modFocusFolder.listFiles().filter(_.getName.endsWith(".txt"))
-
-      for {
-        trees <- readFocusTrees(files, true)
-        _ <- ZIO.foreachDiscard(trees) {
-          case tree: FocusTree      => add(tree)
-          case sff: SharedFocusFile => add(sff)
+            }
+            _ <- ZIO.logDebug(s"Successfully processed: ${file.getName}")
+          } yield pdx
+          //        _ <- ZIO.log(s"Shared focus files: ${_sharedFocusFiles.size}")
+          //        _ <- ZIO.log(s"Shared focuses: ${_sharedFocusFiles.map(_.sharedFocuses.size).sum}")
         }
-      } yield true
+
+      val modFocusFolder = HOIIVFiles.Mod.focus_folder
+
+      if !modFocusFolder.exists || !modFocusFolder.isDirectory then
+        ZIO.logError(s"In ${this.getClass.getSimpleName} - ${modFocusFolder} is not a directory, or it does not exist.")
+          .as(false)
+      else if modFocusFolder.listFiles == null || modFocusFolder.listFiles.length == 0 then
+        ZIO.logWarning(s"No focuses found in ${modFocusFolder}")
+          .as(false)
+      else
+        val files = modFocusFolder.listFiles().filter(_.getName.endsWith(".txt"))
+
+        for {
+          trees <- readFocusTrees(files)
+          _ <- ZIO.foreachDiscard(trees) {
+            case tree: FocusTree => add(tree)
+            case sff: SharedFocusFile => add(sff)
+          }
+        } yield true
+    }
   }
 
   override def focusTrees: Set[FocusTree] = referableEntities.toSet
