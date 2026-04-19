@@ -120,10 +120,16 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
           case _ => ()
         }
         Right(())
-
+  
+  def isEmpty: Boolean = _values.isEmpty
+  def nonEmpty: Boolean = _values.nonEmpty
+  
   infix def flatMap[B](f: T => IterableOnce[B]): Option[List[B]] = this() map(_.flatMap(f))
 
   infix def map[B](f: T => B): Option[List[B]] = this() map(_.map(f))
+  
+  infix def foreach[B](f: T => B): Unit = this() foreach (_.foreach(f))
+  
 
 
 
