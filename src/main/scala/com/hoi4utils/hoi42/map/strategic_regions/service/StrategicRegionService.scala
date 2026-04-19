@@ -1,7 +1,7 @@
 package com.hoi4utils.hoi42.map.strategic_regions.service
 
 import com.hoi4utils.hoi42.common.country_tags.CountryTagService
-import com.hoi4utils.hoi42.map.strategic_regions.{StrategicRegion, StrategicRegionRegistry, StrategicRegionService, StrategicRegionServiceImpl}
+import com.hoi4utils.hoi42.map.strategic_regions.{StrategicRegion, StrategicRegionRegistry}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.ZIOParser
 import com.hoi4utils.script2.PDXPropertyValueExtensions.*
@@ -13,7 +13,7 @@ import java.io.File
 trait StrategicRegionService extends StrategicRegionRegistry with PDXReadable {
   def get(file: File): URIO[CountryTagService, Option[StrategicRegion]]
   def add(stratRegion: StrategicRegion): Iterable[StrategicRegion]
-  
+
   def list: Set[StrategicRegion] // todo rename lols
   def get(id: Int): Option[StrategicRegion]
   def get(stratRegionName: String): Option[StrategicRegion]
