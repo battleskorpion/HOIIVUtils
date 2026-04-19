@@ -242,12 +242,12 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
   override def infrastructureOfCountry(country: CountryFile): Infrastructure = infrastructureOfStates(ownedStatesOfCountry(country))
 
   // ! todo test if working
-  override def resourcesOfCountries: URIO[CountryTagService, List[List[Resource]]] =
+  override def resourcesOfCountries: URIO[CountryTagService, List[Set[Resource]]] =
     for {
       tagService <- ZIO.service[CountryTagService]
       list =
         val countryList = tagService.countryTags
-        val countriesResourcesList = new ListBuffer[List[Resource]]
+        val countriesResourcesList = new ListBuffer[Set[Resource]]
         for tag <- countryList do countriesResourcesList.addOne(resourcesOfCountry(tag))
         countriesResourcesList.toList
     } yield list
