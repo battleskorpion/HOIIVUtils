@@ -1,6 +1,6 @@
 package com.hoi4utils.hoi42.common.national_focus
 
-import com.hoi4utils.hoi42.common.country_tags.CountryTagService
+import com.hoi4utils.hoi42.common.country_tags.{CountryTag, CountryTagService}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.script2.*
 import javafx.collections.ObservableList
@@ -16,6 +16,7 @@ trait FocusTreeService extends FocusTreeRegistry with PDXReadable  {
   override def read(): Task[Boolean]
   override def clear123(): Task[Unit]
   def add(focusTree: FocusTree): UIO[Set[FocusTree]]
+  def add(sharedFocusFile: SharedFocusFile): UIO[Set[SharedFocusFile]]
 
   def addToFileMap(file: File, focusTree: FocusTree): Task[Unit]
   def removeFromFileMap(file: File): Task[Unit]
@@ -51,52 +52,65 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
    * Reads all focus trees from the focus trees folder, creating a [[FocusTree]] for each. 
    */
   override def read(): Task[Boolean] = {
+    def readFocusTrees(files: Seq[File]): Task[Seq[FocusTree | SharedFocusFile]]: 
+      ZIO.foreach(files) { file =>    // foreachParDiscard?? 
+        for {
+          node <- new ZIOParser(file).parse
+          pdx <- hasFocusTreeHeader(file).flatMap {
+            case true =>
+              ZIO.attempt {
+                val loader = new PDXLoader[FocusTree]()
+                val tree = new FocusTree(f)(this, countryTagService)
+                val errors = loader.load(node, tree, tree)
+                if (errors.nonEmpty) {
+                  println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+                }
+                tree
+              }
+            case false =>
+              ZIO.attempt {
+                val loader = new PDXLoader[SharedFocusFile]()
+                val sharedFocusFile = new SharedFocusFile(f)(this, countryTagService)
+                val errors = loader.load(node, sharedFocusFile, sharedFocusFile)
+                if (errors.nonEmpty) {
+                  println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+                }
+                sharedFocusFile
+              }
+          }
+          _ <- ZIO.logDebug(s"Successfully processed: ${file.getName}")
+        } yield pdx
+//        _ <- ZIO.log(s"Shared focus files: ${_sharedFocusFiles.size}")
+//        _ <- ZIO.log(s"Shared focuses: ${_sharedFocusFiles.map(_.sharedFocuses.size).sum}")
+      }
+    
     val modFocusFolder = HOIIVFiles.Mod.focus_folder
 
     if !modFocusFolder.exists || !modFocusFolder.isDirectory then
-      logger.error(s"In ${this.getClass.getSimpleName} - ${modFocusFolder} is not a directory, or it does not exist.")
-      ZIO.succeed(false)
+      ZIO.logError(s"In ${this.getClass.getSimpleName} - ${modFocusFolder} is not a directory, or it does not exist.")
+        .as(false)
     else if modFocusFolder.listFiles == null || modFocusFolder.listFiles.length == 0 then
-      logger.warn(s"No focuses found in ${modFocusFolder}")
-      ZIO.succeed(false)
+      ZIO.logWarning(s"No focuses found in ${modFocusFolder}")
+        .as(false)
     else
-      val files = modFocusFolder.listFiles().filter(_.getName.endsWith(".txt")).toList
-
+      val files = modFocusFolder.listFiles().filter(_.getName.endsWith(".txt"))
+      
       for {
-        _ <- ZIO.foreachParDiscard(files) { f =>
-          ZIO.ifZIO(hasFocusTreeHeader(f))(
-            onTrue = add(new FocusTree(f)(this, countryTagService)),
-            onFalse = add(new SharedFocusFile(f)(this, countryTagService))
-          )
-        }
-        _ <- ZIO.succeed {
-          System.err.println(s"Shared focus files: ${_sharedFocusFiles.size}")
-          System.err.println(s"Shared focuses: ${_sharedFocusFiles.map(_.sharedFocuses.size).sum}")
+        trees <- readFocusTrees(files, true)
+        _ <- ZIO.foreachDiscard(trees) {
+          case tree: FocusTree      => add(tree)
+          case sff: SharedFocusFile => add(sff)
         }
       } yield true
-    //    ZIO.succeed {
-    //      if !modFocusFolder.exists || !modFocusFolder.isDirectory then
-    //        logger.error(s"In ${this.getClass.getSimpleName} - ${modFocusFolder} is not a directory, or it does not exist.")
-    //        false
-    //      else if modFocusFolder.listFiles == null || modFocusFolder.listFiles.length == 0 then
-    //        logger.warn(s"No focuses found in ${modFocusFolder}")
-    //        false
-    //      else
-    //        // create focus trees from files
-    //        modFocusFolder.listFiles().filter(_.getName.endsWith(".txt")).par.foreach: f =>
-    //          ZIO.ifZIO(hasFocusTreeHeader(f))(
-    //            onTrue = ZIO.succeed(new FocusTree(f)(this)),
-    //            onFalse = add(new SharedFocusFile(f)(this))
-    //          )
-    //        System.err.println(s"Shared focus files: ${_sharedFocusFiles.size}")
-    //        System.err.println(s"Shared focuses: ${_sharedFocusFiles.map(_.sharedFocuses.size).sum}")
-    //        true
-    //    }
   }
+  
+  override def focusTrees: Set[FocusTree] = referableEntities.toSet
+
+  override def sharedFocusFiles: Set[SharedFocusFile] = sharedFocusFileRegistry.referableEntities.toSet
 
   /** Clears all focus trees and any other relevant values. */
   override def clear123(): Task[Unit] =
-    ZIO.succeed(focusTrees.clear()) &> ZIO.succeed(focusTreeFileMap.clear())
+    ZIO.succeed(this.clear()) &> ZIO.succeed(focusTreeFileMap.clear())
 
   /**
    * Adds a focus tree to the list of focus trees.
@@ -105,13 +119,14 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
    */
   override def add(focusTree: FocusTree): UIO[Set[FocusTree]] =
     ZIO.succeed {
-      focusTrees += focusTree
-      focusTree.focusFile match
-        case Some(file) => focusTreeFileMap.put(file, focusTree)
-        case None =>
-      focusTrees.toSet
+      this register focusTree
+      // TODO !!!!!
+//      focusTree.file match
+//        case Some(file) => focusTreeFileMap.put(file, focusTree)
+//        case None =>
+      focusTrees 
     }
-
+  
   /**
    * Adds a shared focus file to the list of shared focus files.
    *
@@ -120,8 +135,8 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
    */
   def add(sharedFocusFile: SharedFocusFile): UIO[Set[SharedFocusFile]] =
     ZIO.succeed {
-      _sharedFocusFiles += sharedFocusFile
-      _sharedFocusFiles.toSet
+      sharedFocusFileRegistry register sharedFocusFile
+      sharedFocusFiles 
     }
   
   /** Returns focus tree corresponding to the tag, if it exists*/

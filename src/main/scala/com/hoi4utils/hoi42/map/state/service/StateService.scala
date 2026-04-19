@@ -79,11 +79,11 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
     }
 
     if !HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory then
-      ZIO.logError(s"In State.java - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
-      ZIO.succeed(false)
+      ZIO.logError(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
+        .as(false)
     else if HOIIVFiles.Mod.states_folder.listFiles == null || HOIIVFiles.Mod.states_folder.listFiles.isEmpty then
-      ZIO.logError(s"No states found in ${HOIIVFiles.Mod.states_folder}")
-      ZIO.succeed(false)
+      ZIO.logWarning(s"No states found in ${HOIIVFiles.Mod.states_folder}")
+        .as(false)
     else
       val files = HOIIVFiles.Mod.states_folder.listFiles().filter(_.getName.endsWith(".txt"))
       for {
@@ -110,7 +110,7 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
     this register state
     states
 
-  override def list: Set[State] = states.toSet
+  override def list: Set[State] = states
 
   override def get(id: Int): Option[State] =
     states.find(_.stateID @== id)
