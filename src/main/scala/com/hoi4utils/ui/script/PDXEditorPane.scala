@@ -91,8 +91,8 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
           case pdx => pdx.pdxKey + " ="
         val label = new Label(labelText)
         label.setFont(Font.font("Monospaced"));
-        label.setMinWidth(10);
-        label.setPrefHeight(25);
+        label.setMinWidth(10)
+        label.setPrefHeight(25)
         Some(label)
       else None
 
@@ -100,7 +100,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
       case pdx: PDXPropertyList[?] => visualizePDXList(pdx)
       case pdx: PDXProperty[String] => visualizeStringPDX(pdx)
       case _ =>
-        logger.warn("Ui node unknown for property type: " + (property == null ? "[null]" : property.getClass()))
+        logger.warn("Ui node unknown for property type: " + property.getClass)
         HBox()
 
     label.map(l => editorPropertyPane.getChildren.add(l))
@@ -117,7 +117,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
       case pdx: PDXPropertyList[?] => visualizePDXList(pdx)
       case pdx: PDXProperty[String] => visualizeStringPDX(pdx)
       case _ =>
-        logger.warn("Ui node unknown for property type: " + (property == null ? "[null]" : property.getClass()))
+        logger.warn("Ui node unknown for property type: " + property.getClass)
         HBox()
 
     nullPropertyHBox.getChildren.add(editorNode)
@@ -147,7 +147,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
             container.getChildren.add(removeButton)
 
             subVBox.getChildren.add(container)
-          case None => _
+          case None => ()
       })
 
       /* new sub pdx button */
@@ -215,14 +215,14 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
     customCheckBox.setOnMouseClicked(event -> {
         pdx.invert()
         customCheckBox.setText(pdx.$() ? "yes" : "no")
-        if nullProperties contains pdx reloadEditor()
+        if nullProperties contains pdx then reloadEditor()
         else onPropertyUpdate()
     })
     hbox.getChildren.add(customCheckBox)
     hbox
 
   private def visualizeDoublePDX(pdx: PDXScript[Double]): HBox =
-    () 
+    ()
 //    double minValue = pdx.isDefaultRange() ? pdx.minValue() : pdx.minValueNonInfinite();    // todo simplify?
 //    double maxValue = pdx.isDefaultRange() ? pdx.maxValue() : pdx.maxValueNonInfinite();
 //    double value = pdx.getOrElse(pdx.defaultValue());

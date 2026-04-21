@@ -31,6 +31,15 @@ trait PDXEntity:
   def pdxList[T <: PDXValueType | PDXEntity | Reference[?]](key: String)(using PDXDecoder[T], ClassTag[T]): PDXPropertyList[T] =
     new PDXPropertyList[T](key, None)
     
+//  def selfPDX(key: String): PDXProperty[PDXEntity.this.type] = this.pdx[this.type](key)
+  def selfPDX(key: String)(using d: PDXDecoder[PDXEntity], ct: ClassTag[PDXEntity]): PDXProperty[this.type] = {
+    // 1. Declare the casted instances as local givens
+    given PDXDecoder[this.type] = d.asInstanceOf[PDXDecoder[this.type]]
+    given ClassTag[this.type] = ct.asInstanceOf[ClassTag[this.type]]
+  
+    // 2. Instantiate without the explicit '(using ...)' block
+    new PDXProperty[this.type](key, None)
+  }
 
 class PDXInlineEntity[T <: PDXValueType | PDXEntity | Reference[?]](pdxKey: String)
                                                                    (using override val decoder: PDXDecoder[T])

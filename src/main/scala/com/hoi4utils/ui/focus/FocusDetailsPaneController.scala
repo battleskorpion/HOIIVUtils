@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.focus
 
-import com.hoi4utils.hoi4.common.national_focus.Focus
-import com.hoi4utils.ui.javafx.scene.layout.PDXEditorPane
+import com.hoi4utils.ui.script.PDXEditorPane
+import com.hoi4utils.hoi42.common.national_focus.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.application.Platform
 import javafx.concurrent.Task
@@ -34,7 +34,7 @@ class FocusDetailsPaneController extends LazyLogging:
     if saveButton != null then
       saveButton.setOnAction(_ => handleSave())
     if revertButton != null then
-      revertButton.setOnAction(_ => handleRevert()) 
+      revertButton.setOnAction(_ => handleRevert())
 
   def loadFocus(focus: Focus): Unit =
     cancelCurrentTask()
@@ -50,11 +50,11 @@ class FocusDetailsPaneController extends LazyLogging:
         logger.info(s"Loading PDXEditor for focus: ${focus.id}")
 
         val editorPane = new PDXEditorPane(
-          focus.asInstanceOf[com.hoi4utils.script.PDXScript[?, ?]],
-          () => {
+          focus.selfPDX("focus"),
+          Some(() => {
             onFocusUpdate()
             if onUpdate.isDefined then onUpdate.get()
-          }
+          })
         )
 
         editorPane
