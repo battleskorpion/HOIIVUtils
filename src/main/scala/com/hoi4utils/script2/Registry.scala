@@ -39,23 +39,10 @@ trait Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
     _referableEntities ++= entries
     _version += 1
 
-  @targetName("add")
-  def +=(entity: T): UIO[Set[T]] = ZIO.succeed { 
-    this register entity 
-    referableEntities.toSet 
-  }
-    
-  @targetName("addAll")
-  def ++=(entities: Iterable[T]): UIO[Set[T]] = ZIO.succeed {
-    this register entities 
-    referableEntities.toSet
-  }
-    
-    
   infix def deregister(entity: T): Unit =
     entity.referableID match
       case Some(actualKey: K) =>
-        _referableEntities -= actualKey 
+        _referableEntities -= actualKey
         _version += 1
       case None =>
         // TODO improve error handling in future
@@ -64,6 +51,18 @@ trait Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
   infix def resolve(id: K): Option[T] = _referableEntities.get(id)
 
   def referableEntities: Iterable[T] = _referableEntities.values
+
+  override def add(entity: T): Iterable[T] =
+    this register entity
+    referableEntities
+
+  @inline final def +=(entity: T): Iterable[T] = add(entity)
+
+  override def addAll(entities: Iterable[T]): Iterable[T] =
+    this register entities
+    referableEntities
+
+  @inline final def ++=(entities: Iterable[T]): Iterable[T] = addAll(entities)
 
   /** The registry MUST provide a decoder for its specific ID type K */
   def idDecoder: PDXDecoder[K]
@@ -85,8 +84,8 @@ trait Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
         case _ => Nil
       }
     this register entities
-  
-  def clear(): Task[Unit] = ZIO.succeed { _referableEntities.clear() } 
+
+  override def clear(): Task[Unit] = ZIO.succeed(_referableEntities.clear())
 
 trait RegistryMember[T <: PDXEntity & Referable[?]](val registry: Registry[T]) extends PDXEntity:
 //  self: Referable[T] =>
