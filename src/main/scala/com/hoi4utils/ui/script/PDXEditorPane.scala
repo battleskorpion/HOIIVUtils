@@ -9,6 +9,7 @@ import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.*
 import javafx.scene.layout.*
+import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import org.controlsfx.control.SearchableComboBox
 
@@ -123,14 +124,14 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
     nullPropertyHBox.getChildren.add(editorNode)
     nullPropertyHBox
 
-  private def visualizePDXList[T <: PDXScript[?]](pdxList: PDXPropertyList[T], allowNull: Boolean): Option[Node] =
+  private def visualizePDXList[T](pdxList: PDXPropertyList[T], allowNull: Boolean = false): Node =
     val subVBox: VBox = VBox()
     subVBox.setSpacing(10)
     if pdxList.nonEmpty then
       /* sub PDX visualization */
-      pdxList.foreach(pdx -> {
+      pdxList.foreach { pdx => 
         // always allow null child to appear visually
-        val subNode = createSubNode(true, pdx.asInstanceOf[T])
+        val subNode = createSubNode(true, pdx)
         subNode match
           case Some(node) =>
             val container: HBox = HBox()
@@ -139,7 +140,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
 
             // Create the remove button for this sub-element.
             val removeButton: Button = Button("Remove")
-            removeButton.setOnAction(event -> {
+            removeButton.setOnAction(event => {
               // Remove this specific sub-element.
               pdxList.remove(pdx)
               reloadEditor()
@@ -148,12 +149,12 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
 
             subVBox.getChildren.add(container)
           case None => ()
-      })
+      }
 
       /* new sub pdx button */
-      val addPDXButton: Button = new Button("Add " + pdx.getPDXTypeName())
+      val addPDXButton: Button = new Button("Add " + pdxList.getPDXTypeName())
       addPDXButton.setPrefWidth(200)
-      addPDXButton.setOnAction(event -> {
+      addPDXButton.setOnAction(event => {
           pdx.addNewPDX()
           this.reloadEditor()
       })
@@ -168,7 +169,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
       /* modify sub pdx buttons */
       val modifySubPDXHBox = HBox()
       // add sub pdx
-      val addPDXButton: Button = Button("Add " + pdx.getPDXTypeName())
+      val addPDXButton: Button = Button("Add " + pdxList.getPDXTypeName())
       addPDXButton.setPrefWidth(200)
       addPDXButton.setOnAction(event => {
 //        val newPDX = pdx.applySomeSupplier()
@@ -195,9 +196,9 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
     val textField: TextField = TextField(pdx.getOrElse(""))
     textField.setPrefWidth(200)
     textField.setPrefHeight(25)
-    textField.textProperty().addListener((observable, oldValue, newValue) -> {
+    textField.textProperty().addListener((observable, oldValue, newValue) => {
         pdx.setNode(newValue)
-        if (!newValue.isEmpty() && nullProperties.contains(property)) {
+        if (newValue.nonEmpty && nullProperties.contains(property)) {
             reloadEditor()
         }
         else onPropertyUpdate()
@@ -222,7 +223,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
     hbox
 
   private def visualizeDoublePDX(pdx: PDXScript[Double]): HBox =
-    ()
+    new HBox() // todo
 //    double minValue = pdx.isDefaultRange() ? pdx.minValue() : pdx.minValueNonInfinite();    // todo simplify?
 //    double maxValue = pdx.isDefaultRange() ? pdx.maxValue() : pdx.maxValueNonInfinite();
 //    double value = pdx.getOrElse(pdx.defaultValue());
@@ -298,7 +299,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
     nullPropertyNodes.foreach(node => {
       rootVBox.getChildren.remove(node)
     })
-    nullPropertyNodes.clear();
+    nullPropertyNodes.clear()
 
 //  private HBox newSpinnerHBox[T](ValPDXScript<?, ?> pdx, Spinner<T> spinner): HBox =
 //    HBox hbox = new HBox();
@@ -312,6 +313,27 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
 //    })
 //    hbox.getChildren().add(spinner)
 //    hbox
+
+  private def applyDebugBorders(parent: Parent): Unit =
+    parent.getChildrenUnmodifiable.forEach {
+      case vbox: VBox => vbox.setBorder(Border.stroke(Paint.valueOf("blue")))
+      case hbox: HBox => hbox.setBorder(Border.stroke(Paint.valueOf("lightblue")))
+      case label: Label => label.setBorder(Border.stroke(Paint.valueOf("orange")))
+      case region: Region => region.setBorder(Border.stroke(Paint.valueOf("green")))
+      case childParent: Parent => applyDebugBorders(childParent)
+    }
+
+  def showSaveButton(): Unit =
+    val saveButton: Button = new Button("Save Script");
+    saveButton.setOnAction(event => {
+      logger.info("Saving PDXScript...")
+      pdxScript match
+        case pdxFile: PDXFile => pdxFile.save();
+        case _ =>
+          logger.warn("Cannot save PDXScript of type: " + pdxScript.getClass)
+    })
+    rootVBox.getChildren.add(saveButton)
+
 
 
 

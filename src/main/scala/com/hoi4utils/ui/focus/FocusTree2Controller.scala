@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.focus
 
 import com.hoi4utils.hoi42.common.country_tags.CountryTagService
-import com.hoi4utils.hoi42.common.national_focus.{Focus, FocusTree, FocusTreeManager, PseudoSharedFocusTree, Focus as gridX}
+import com.hoi4utils.hoi42.common.national_focus.{Focus, FocusTree, FocusTreeService, PseudoSharedFocusTree, Focus as gridX}
 import com.hoi4utils.hoi42.map.state.service.StateService
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.script2.PDXProperty
@@ -141,8 +141,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     else
       logger.error("splitPane is null - check FXML fx:id")
 
-  private def populateFocusTreeSelection(): URIO[FocusTreeManager & CountryTagService, Unit] =
-    ZIO.serviceWith[FocusTreeManager] { manager =>
+  private def populateFocusTreeSelection(): URIO[FocusTreeService & CountryTagService, Unit] =
+    ZIO.serviceWith[FocusTreeService] { manager =>
       focusTreeView.setGridLinesVisible(lines)
       Some(manager.observeFocusTrees.sorted()).foreach(trees =>
         trees.forEach(someFocusTree =>
@@ -205,8 +205,8 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       } yield ()
     }
 
-  private def randomCode1(tree: FocusTree): URIO[FocusTreeManager, Unit] = {
-    ZIO.serviceWith[FocusTreeManager] { manager =>
+  private def randomCode1(tree: FocusTree): URIO[FocusTreeService, Unit] = {
+    ZIO.serviceWith[FocusTreeService] { manager =>
       val toggleButton = ToggleButton(tree.toString)
       focusTreesToggleButtons += toggleButton
       toggleButton.setToggleGroup(toggleGroup)
