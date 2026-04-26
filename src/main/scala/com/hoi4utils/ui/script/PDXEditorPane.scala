@@ -2,6 +2,7 @@ package com.hoi4utils.ui.script
 
 import com.hoi4utils.main.HOIIVUtilsConfig
 import com.hoi4utils.script2.{PDXProperty, PDXPropertyList, PDXScript}
+import com.hoi4utils.script2.PDXPropertyValueExtensions.* 
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
@@ -155,7 +156,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
       val addPDXButton: Button = new Button("Add " + pdxList.getPDXTypeName())
       addPDXButton.setPrefWidth(200)
       addPDXButton.setOnAction(event => {
-          pdx.addNewPDX()
+//          pdxList.addNewPDX() todo todo ?? 
           this.reloadEditor()
       })
       subVBox.getChildren.add(addPDXButton)
@@ -169,7 +170,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
       /* modify sub pdx buttons */
       val modifySubPDXHBox = HBox()
       // add sub pdx
-      val addPDXButton: Button = Button("Add " + pdxList.getPDXTypeName())
+      val addPDXButton: Button = Button("Add " + pdxList.pdxKey)
       addPDXButton.setPrefWidth(200)
       addPDXButton.setOnAction(event => {
 //        val newPDX = pdx.applySomeSupplier()
