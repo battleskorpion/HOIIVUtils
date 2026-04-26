@@ -26,7 +26,9 @@ trait PDXScript[T] { //  extends Cloneable
    */
   def apply(): Option[T]
 
-  def set(value: T): Unit
+  def $: T
+
+  def set(value: T): T
   def extractAndSet(nodeValue: NodeValueType): Either[String, Unit]
 
   //  def toScript: String

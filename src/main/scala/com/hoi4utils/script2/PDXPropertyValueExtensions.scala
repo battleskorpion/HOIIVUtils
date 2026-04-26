@@ -141,6 +141,9 @@ object PDXPropertyValueExtensions {
      * Equivalent to `pdxProperty.$.id`
      */
     def $id: T match {case Referable[k] => k} = pdxProperty.$.id
+    
+  extension (pdxScript: PDXScript[Boolean])
+    def invert(): Option[Boolean] = pdxScript().map(b => !b).map(pdxScript.set)
 
   extension [E <: PDXEntity](pdxProperty: PDXProperty[E])
     /**

@@ -17,7 +17,7 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
   private var _default: Option[T] = None
 
   override def apply(): Option[T] = _value.orElse(_default)
-  def $: T = apply().getOrElse(
+  override def $: T = apply().getOrElse(
     throw new IllegalStateException(s"Property $pdxKey is empty and has no default.")
   )
   override def pdxDefinedValueOption: Option[T] = _value
@@ -76,10 +76,12 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
   def list: List[T] = apply().getOrElse(List.empty)
 
   def :+(value: T): List[T] =
-    _values match
-      case Some(values) => _values = Some(value :: values)
-      case None => _values = Some(value :: Nil)
+    _values = Some(value :: _values.getOrElse(Nil))
     _values.get
+
+  def remove(value: T): List[T] =
+    _values = Some(_values.getOrElse(Nil).filterNot(_ == value))
+    _values.get 
 
   /**
    * ``
@@ -120,16 +122,16 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
           case _ => ()
         }
         Right(())
-  
+
   def isEmpty: Boolean = _values.isEmpty
   def nonEmpty: Boolean = _values.nonEmpty
-  
+
   infix def flatMap[B](f: T => IterableOnce[B]): Option[List[B]] = this() map(_.flatMap(f))
 
   infix def map[B](f: T => B): Option[List[B]] = this() map(_.map(f))
-  
+
   infix def foreach[B](f: T => B): Unit = this() foreach (_.foreach(f))
-  
+
 
 
 

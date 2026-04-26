@@ -129,7 +129,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
     subVBox.setSpacing(10)
     if pdxList.nonEmpty then
       /* sub PDX visualization */
-      pdxList.foreach { pdx => 
+      pdxList.foreach { pdx =>
         // always allow null child to appear visually
         val subNode = createSubNode(true, pdx)
         subNode match
@@ -197,11 +197,11 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
     textField.setPrefWidth(200)
     textField.setPrefHeight(25)
     textField.textProperty().addListener((observable, oldValue, newValue) => {
-        pdx.setNode(newValue)
-        if (newValue.nonEmpty && nullProperties.contains(property)) {
-            reloadEditor()
-        }
-        else onPropertyUpdate()
+      pdx.set(newValue)
+      if (newValue.nonEmpty && nullProperties.contains(pdx)) {
+          reloadEditor()
+      }
+      else onPropertyUpdate()
     })
     hbox.getChildren.add(textField)
     hbox
@@ -209,13 +209,13 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
   private def visualizeBooleanPDX(pdx: PDXScript[Boolean]): HBox =
     val hbox: HBox = HBox()
     val customCheckBox: Label = Label()
-    customCheckBox.setText(pdx.$ ? "yes" : "no")
+    customCheckBox.setText(if pdx.$ then "yes" else "no")
     customCheckBox.setFont(Font.font("Monospaced"))
     customCheckBox.setPrefHeight(25)
     customCheckBox.getStyleClass.add("custom-check-box")
-    customCheckBox.setOnMouseClicked(event -> {
+    customCheckBox.setOnMouseClicked(event => {
         pdx.invert()
-        customCheckBox.setText(pdx.$() ? "yes" : "no")
+        customCheckBox.setText(if pdx.$ then "yes" else "no")
         if nullProperties contains pdx then reloadEditor()
         else onPropertyUpdate()
     })
@@ -232,23 +232,28 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
 //    return newSpinnerHBox(pdx, spinner);
 
   private def visualizeReferencePDX(pdx: PDXScript[Reference[?]]): ComboBox[String] =
-    pdx match
-      case pdx: PDXPropertyList[Reference[?]] =>
-        val subVBox: VBox = new ReferencePDXListVBox(pdx, this::reloadEditor)
-        subVBox.setSpacing(2)
-        subVBox
-      case _ =>
-        val comboBox = new SearchableComboBox[String]()
-        comboBox.setPrefWidth(200)
-        comboBox.setPrefHeight(25)
-        comboBox.getSelectionModel.select(pdx.getReferenceName())
-        comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())))
-        comboBox.valueProperty().addListener((observable, oldValue, newValue) => {
-          pdx.setReferenceName(newValue)
-          if nullProperties contains pdx then reloadEditor
-          else onPropertyUpdate()
-        })
-        comboBox
+    // todo, temp code: 
+    val comboBox = new SearchableComboBox[String]()
+    comboBox.setPrefWidth(200)
+    comboBox.setPrefHeight(25)
+    comboBox
+//    pdx match
+//      case pdx: PDXPropertyList[Reference[?]] =>
+//        val subVBox: VBox = new ReferencePDXListVBox(pdx, this::reloadEditor)
+//        subVBox.setSpacing(2)
+//        subVBox
+//      case _ =>
+//        val comboBox = new SearchableComboBox[String]()
+//        comboBox.setPrefWidth(200)
+//        comboBox.setPrefHeight(25)
+//        comboBox.getSelectionModel.select(pdx.getReferenceName())
+//        comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())))
+//        comboBox.valueProperty().addListener((observable, oldValue, newValue) => {
+//          pdx.setReferenceName(newValue)
+//          if nullProperties contains pdx then reloadEditor() 
+//          else onPropertyUpdate()
+//        })
+//        comboBox
 
   /**
    * Perform some onUpdate action when the properties may have been updated
@@ -257,7 +262,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
     onUpdate foreach(_.run())
 
   private def addLabelToHBox(pdx: PDXScript[?], hbox: HBox): Unit =
-    val label: Label = new Label(pdx.pdxIdentifier() + " =")
+    val label: Label = new Label(pdx.pdxKey + " =")
     label.setFont(Font.font("Monospaced"))
     label.setMinWidth(10)
     label.setPrefHeight(25)
@@ -291,7 +296,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
       if (editorPDXNode != null) {
         //                hbox.getChildren().addAll(label, editorPDXNode);
         rootVBox.getChildren.add(rootVBox.getChildren.size() - 1, editorPDXNode) // Add before the add button
-        nullPropertyNodes.add(editorPDXNode)
+        nullPropertyNodes += editorPDXNode
       }
     })
 
