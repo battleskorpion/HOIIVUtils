@@ -170,4 +170,12 @@ trait Localizable {
   def replaceName(text: String): Unit = replaceLocalization(Property.NAME, text)
 
   def hasNewLocalization: Boolean = this.localizationStatuses.values.exists(s => s == Localization.Status.NEW)
+
+  def isLocalized: Boolean = localizationStatus(Property.NAME) != Localization.Status.MISSING
+
+  def isLocalized(property: Property): Boolean = localization(property) match
+    case Some(_) => true
+    case None => false
+
+  def isUnlocalized(property: Property): Boolean = !isLocalized(property)
 }

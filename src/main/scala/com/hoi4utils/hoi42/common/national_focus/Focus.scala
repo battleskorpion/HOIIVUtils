@@ -2,12 +2,14 @@ package com.hoi4utils.hoi42.common.national_focus
 
 import com.hoi4utils.script2.{IDReferable, PDXDecoder, PDXEntity, PDXProperty, Reference, Registry, RegistryMember}
 import com.hoi4utils.Point
+import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Property}
 import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.annotation.tailrec
 
-class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String] with RegistryMember[Focus](focusTree) with LazyLogging:
+class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String] with RegistryMember[Focus](focusTree) 
+  with Localizable with HasDesc with LazyLogging:
   val DEFAULT_COST: Double = 10.0
 
   /* attributes */
@@ -72,6 +74,15 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String]
 
     absolutePosition(this)
   }
+
+  override def localizableProperties: Map[Property, String] = 
+    Map(Property.NAME -> this.id.getOrElse(""), Property.DESCRIPTION -> s"${id}_desc")
+
+  override def getLocalizableGroup: Iterable[Localizable] =
+    if focusTree == null then
+      Iterable(this)
+    else
+      focusTree.getLocalizableGroup
 
 object Focus { }
 

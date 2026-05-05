@@ -63,7 +63,7 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
 class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]] = None)
                         (using override val decoder: PDXDecoder[List[T]], val elementDecoder: PDXDecoder[T])
                         (using override val ct: ClassTag[T])
-  extends PDXScript[List[T]]:
+  extends PDXScript[List[T]] with Iterable[T]:
 
   private var _isRequired: Boolean = false
   private var _default: Option[List[T]] = None
@@ -81,7 +81,7 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
 
   def remove(value: T): List[T] =
     _values = Some(_values.getOrElse(Nil).filterNot(_ == value))
-    _values.get 
+    _values.get
 
   /**
    * ``

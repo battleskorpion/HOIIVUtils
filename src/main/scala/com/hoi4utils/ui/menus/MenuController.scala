@@ -5,14 +5,13 @@ import com.hoi4utils.hoi4.localization.service.LocalizationService
 import com.hoi4utils.internal.ConfigException
 import com.hoi4utils.main.*
 import com.hoi4utils.main.HOIIVUtils.*
-import com.hoi4utils.ui.countries.BuildingsByCountryController2
 import com.hoi4utils.ui.focus.FocusTree2Controller
 import com.hoi4utils.ui.gfx.InterfaceController
 import com.hoi4utils.ui.javafx.application.{HOIIVUtilsAbstractController, HOIIVUtilsAbstractController2, RootWindows}
 import com.hoi4utils.ui.localization.*
-import com.hoi4utils.ui.map.{MapEditorController, MapGenerationController, ProvinceColorsController}
+import com.hoi4utils.ui.map.{MapGenerationController, ProvinceColorsController}
 import com.hoi4utils.ui.menus.SettingsController
-import com.hoi4utils.ui.parser.{ParserViewer2Controller, ParserViewerController}
+import com.hoi4utils.ui.parser.{ParserViewer2Controller}
 import com.hoi4utils.ui.units.CompareUnitsController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.animation.{Animation, KeyFrame, Timeline}
@@ -369,11 +368,11 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     new SettingsController().open()
 
   @FXML def handleFocusTreeViewerClick(event: MouseEvent): Unit = openWindow(event, classOf[FocusTree2Controller], focusTreeViewer)
-  @FXML def handleFocusTreeLocalizationClick(event: MouseEvent): Unit = openWindow(event, classOf[FocusTreeLocalization2Controller], focusTreeLocalization)
-  @FXML def handleIdeaLocalizationClick(event: MouseEvent): Unit = openWindow(event, classOf[IdeaLocalizationController], ideaLocalization)
-  @FXML def handleManageFocusTreesClick(event: MouseEvent): Unit = openWindow(event, classOf[ManageFocusTreesController], manageFocusTrees)
+  @FXML def handleFocusTreeLocalizationClick(event: MouseEvent): Unit = () //openWindow(event, classOf[FocusTreeLocalization2Controller], focusTreeLocalization) // TODO 
+  @FXML def handleIdeaLocalizationClick(event: MouseEvent): Unit = () //openWindow(event, classOf[IdeaLocalizationController], ideaLocalization)
+  @FXML def handleManageFocusTreesClick(event: MouseEvent): Unit = () //openWindow(event, classOf[ManageFocusTreesController], manageFocusTrees)
   @FXML def handleCustomTooltipClick(event: MouseEvent): Unit = openWindow(event, classOf[CustomTooltipController], customTooltip)
-  @FXML def handleBuildingsByCountryClick(event: MouseEvent): Unit = openWindow(event, classOf[BuildingsByCountryController2], buildingsByCountry)
+  @FXML def handleBuildingsByCountryClick(event: MouseEvent): Unit = () //openWindow(event, classOf[BuildingsByCountryController2], buildingsByCountry) // TODO 
   @FXML def handleInterfaceClick(event: MouseEvent): Unit = openWindow(event, classOf[InterfaceController], interface)
 
   @FXML def handleUnitComparisonClick(event: MouseEvent): Unit =
@@ -383,7 +382,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
 
   @FXML def handleProvinceColorsClick(event: MouseEvent): Unit = openWindow(event, classOf[ProvinceColorsController], provinceColors)
   @FXML def handleMapGenerationClick(event: MouseEvent): Unit = openWindow(event, classOf[MapGenerationController], mapGeneration)
-  @FXML def handleMapEditorClick(event: MouseEvent): Unit = openWindow(event, classOf[MapEditorController], mapEditor)
+  @FXML def handleMapEditorClick(event: MouseEvent): Unit = () // openWindow(event, classOf[MapEditorController], mapEditor) // TODO
   @FXML def handleParserViewerClick(event: MouseEvent): Unit = openWindow(event, classOf[ParserViewer2Controller], parserViewer)
   @FXML def handleErrorsClick(event: MouseEvent): Unit = openWindow(event, classOf[ErrorListController], errors)
 
