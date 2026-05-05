@@ -57,11 +57,11 @@ trait PDXScript[T] { //  extends Cloneable
   infix def getAndMapOrElse[B >: T](f: T => B, default: => B): B = pdxDefinedValueOption map f getOrElse default
 
   infix def map[B](f: T => B): Option[B] = this() map f
-  
+
   infix def flatMap[B](f: T => Option[B]): Option[B] = this() flatMap f
-  
+
   infix def exists(p: T => Boolean): Boolean = this() exists p
-  
+
   /** value is defined */
   def isDefined: Boolean = pdxDefinedValueOption.isDefined
 
@@ -78,7 +78,7 @@ trait PDXScript[T] { //  extends Cloneable
               loadCallback: (SeqNode, PDXEntity, C) => List[String]): Either[List[String], Unit]
 
   def display: String = this() map(_.toString) getOrElse "[undefined]"
-  
+
   //  /**
 //   * A custom clone method for PDXScript.
 //   *

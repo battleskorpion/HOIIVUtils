@@ -1,8 +1,8 @@
 package com.hoi4utils.ui.script
 
 import com.hoi4utils.main.HOIIVUtilsConfig
-import com.hoi4utils.script2.{PDXProperty, PDXPropertyList, PDXScript}
-import com.hoi4utils.script2.PDXPropertyValueExtensions.* 
+import com.hoi4utils.script2.{PDXFile, PDXProperty, PDXPropertyList, PDXScript, Reference}
+import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
@@ -131,32 +131,50 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
     if pdxList.nonEmpty then
       /* sub PDX visualization */
       pdxList.foreach { pdx =>
-        // always allow null child to appear visually
-        val subNode = createSubNode(true, pdx)
-        subNode match
-          case Some(node) =>
-            val container: HBox = HBox()
-            container.setSpacing(6)
-            container.getChildren.add(subNode)
+        // instead of subnode since T is type treat as we treat a pdx item but each TODO
+        val subNode = new VBox(new Label("temp"))
+        val container: HBox = HBox()
+        container.setSpacing(6)
+        container.getChildren.add(subNode)
 
-            // Create the remove button for this sub-element.
-            val removeButton: Button = Button("Remove")
-            removeButton.setOnAction(event => {
-              // Remove this specific sub-element.
-              pdxList.remove(pdx)
-              reloadEditor()
-            })
-            container.getChildren.add(removeButton)
-
-            subVBox.getChildren.add(container)
-          case None => ()
+        // Create the remove button for this sub-element.
+        val removeButton: Button = Button("Remove")
+        removeButton.setOnAction(event => {
+          // Remove this specific sub-element.
+          pdxList.remove(pdx)
+          reloadEditor()
+        })
+        container.getChildren.add(removeButton)
+        
+        subVBox.getChildren.add(container)
+        
+//        // always allow null child to appear visually
+//        val subNode = createSubNode(true, pdx)
+//        subNode match
+//          case Some(node) =>
+//            val container: HBox = HBox()
+//            container.setSpacing(6)
+//            container.getChildren.add(subNode)
+//
+//            // Create the remove button for this sub-element.
+//            val removeButton: Button = Button("Remove")
+//            removeButton.setOnAction(event => {
+//              // Remove this specific sub-element.
+//              pdxList.remove(pdx)
+//              reloadEditor()
+//            })
+//            container.getChildren.add(removeButton)
+//
+//            subVBox.getChildren.add(container)
+//          case None => ()
       }
 
       /* new sub pdx button */
-      val addPDXButton: Button = new Button("Add " + pdxList.getPDXTypeName())
+//      val addPDXButton: Button = new Button("Add " + pdxList.getPDXTypeName())  // todo
+      val addPDXButton: Button = new Button("Add " + "[type name TODO: " + pdxList.pdxKey + "]")
       addPDXButton.setPrefWidth(200)
       addPDXButton.setOnAction(event => {
-//          pdxList.addNewPDX() todo todo ?? 
+//          pdxList.addNewPDX() todo todo ??
           this.reloadEditor()
       })
       subVBox.getChildren.add(addPDXButton)
@@ -233,7 +251,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
 //    return newSpinnerHBox(pdx, spinner);
 
   private def visualizeReferencePDX(pdx: PDXScript[Reference[?]]): ComboBox[String] =
-    // todo, temp code: 
+    // todo, temp code:
     val comboBox = new SearchableComboBox[String]()
     comboBox.setPrefWidth(200)
     comboBox.setPrefHeight(25)
@@ -251,7 +269,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
 //        comboBox.setItems(FXCollections.observableArrayList(CollectionConverters.asJavaCollection(pdx.getReferenceCollectionNames())))
 //        comboBox.valueProperty().addListener((observable, oldValue, newValue) => {
 //          pdx.setReferenceName(newValue)
-//          if nullProperties contains pdx then reloadEditor() 
+//          if nullProperties contains pdx then reloadEditor()
 //          else onPropertyUpdate()
 //        })
 //        comboBox
