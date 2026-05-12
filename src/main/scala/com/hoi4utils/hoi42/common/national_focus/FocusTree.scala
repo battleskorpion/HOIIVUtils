@@ -4,16 +4,15 @@ import com.hoi4utils.hoi4.localization.{Localizable, Property}
 import com.hoi4utils.hoi42.common.country_tags.*
 import com.hoi4utils.script2.datatype.*
 import com.hoi4utils.hoi42.common.*
-import com.hoi4utils.script2.*
+import com.hoi4utils.script2.{PDXScript, *}
 import com.hoi4utils.script2.PDXPropertyValueExtensions.*
-
 
 import java.io.File
 import scala.reflect.ClassTag
 
 class FocusTree(var treeRegistry: FocusTreeRegistry, var file: Option[File])(using Registry[SharedFocus])
   extends PDXEntity with FocusRegistry[Focus] with IDReferable[String] with RegistryMember[FocusTree](treeRegistry)
-    with Localizable with PDXFile:
+    with Localizable with PDXFile with PDXScript[FocusTree]:
 
   given Registry[CountryTag] = new CountryTagRegistry()
 

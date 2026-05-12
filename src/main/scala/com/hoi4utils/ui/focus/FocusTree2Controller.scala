@@ -1,10 +1,11 @@
 package com.hoi4utils.ui.focus
 
-import com.hoi4utils.Point
+import com.hoi4utils.{IntPoint, Point}
 import com.hoi4utils.hoi42.common.country_tags.CountryTagService
 import com.hoi4utils.hoi42.common.national_focus.{Focus, FocusTree, FocusTreeService, PseudoSharedFocusTree, Focus as gridX}
 import com.hoi4utils.hoi42.map.state.service.StateService
 import com.hoi4utils.main.HOIIVUtils
+import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 import com.hoi4utils.script2.{PDXProperty, PDXPropertyList}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController2
 import com.hoi4utils.ui.javafx.scene.control.ZoomableScrollPane
@@ -207,7 +208,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       } yield ()
     }
 
-  private def randomCode1(tree: FocusTree): URIO[FocusTreeService, Unit] = {
+  private def randomCode1(tree: FocusTree | PseudoSharedFocusTree): URIO[FocusTreeService, Unit] = {
     ZIO.serviceWith[FocusTreeService] { manager =>
       val toggleButton = ToggleButton(tree.toString)
       focusTreesToggleButtons += toggleButton
@@ -261,12 +262,11 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 //        ()
 //      else
         vbox.getChildren.add(toggleButton)
-        ()
     }
   }
 
   /** Loads the given FocusTreeFile into the focusTreeView GridPane by creating it in a separate thread */
-  private def loadFocusTreeView(someFocusTree: FocusTree): Unit = {
+  private def loadFocusTreeView(someFocusTree: FocusTree | PseudoSharedFocusTree): Unit = {
     focusCountLabel.setText("Focuses: 0")
     cancelCurrentTask()
     clearFocusTreeView()
@@ -521,7 +521,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private def gridToFocusY(gridY: Int, focusTree: FocusTree): Int =
     gridY - currentOffsetY
 
-  private def gridToFocusXY(gridX: Int, gridY: Int, focusTree: FocusTree): Point =
+  private def gridToFocusXY(gridX: Int, gridY: Int, focusTree: FocusTree): IntPoint =
     Point(gridX, gridY) - Point(currentOffsetX, currentOffsetY)
 
   // Focus to Grid: Add the offset to make focus coordinates positive for the grid
@@ -531,7 +531,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private def focusToGridY(focus: Focus): Int =
     focus.absoluteY + currentOffsetY
 
-  private def focusToGridXY(focus: Focus): Point =
+  private def focusToGridXY(focus: Focus): IntPoint =
     focus.absolutePosition + Point(currentOffsetX, currentOffsetY)
 
   private def updateProgressIndicator(task: Task[GridPane]): Unit =
@@ -683,7 +683,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 
     // draw focus prerequisite paths
     buttons.foreach { sourceButton =>
-      val prereqFocuses = sourceButton.focus.prerequisiteList
+      val prereqFocuses = sourceButton.focus.prerequisites.list.flatMap(_.focus.resolve) // todo fix when fix prereq list
       prereqFocuses.foreach { prereqFocus =>
         buttonMap.get(prereqFocus).foreach { prereqButton =>
           drawPrereqConnection(sourceButton, prereqButton)
@@ -694,7 +694,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     // draw focus mutual exclusivity
     buttons.foreach { sourceButton =>
       // todo only draw for one. but im being so lazy.
-      val mutexclFocuses = sourceButton.focus.mutuallyExclusiveList
+      val mutexclFocuses = sourceButton.focus.mutuallyExclusive.list.flatMap(_.focus.resolve) // todo fix when fix mut exc set
       mutexclFocuses.foreach { meFocus =>
         buttonMap.get(meFocus).foreach { meButton =>
           drawMutuallyExclusiveConnection(sourceButton, meButton)

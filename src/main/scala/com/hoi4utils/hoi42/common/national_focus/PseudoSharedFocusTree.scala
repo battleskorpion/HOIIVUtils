@@ -11,13 +11,14 @@ import java.io.File
 import java.util.UUID
 
 class PseudoSharedFocusTree(pseudoTreeRegistry: PseudoSharedFocusTreeRegistry, var file: Option[File])
-  extends PDXEntity with FocusRegistry[SharedFocus] with IDReferable[String] with RegistryMember[PseudoSharedFocusTree](pseudoTreeRegistry) {
+  extends PDXEntity with FocusRegistry[SharedFocus] with IDReferable[String] with RegistryMember[PseudoSharedFocusTree](pseudoTreeRegistry)
+    with PDXScript[PseudoSharedFocusTree] {
 
-  given Registry[SharedFocus] = this 
-  
+  given Registry[SharedFocus] = this
+
   /** dummy focus tree ID */
   val id = pdx[String]("id") required true
-  val sharedFocuses = pdxList[Reference[SharedFocus]]("shared_focus")
+  val focuses = pdxList[SharedFocus]("focus")
 
   override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
 
@@ -35,7 +36,7 @@ object PseudoSharedFocusTree {
         val tree = new PseudoSharedFocusTree(pseudoTreeRegistry, file)
         val treeId = if id == "" then s"unknown-${UUID.randomUUID()}" else id
         tree.id @= treeId
-        tree ++= focuses 
+        tree ++= focuses
         tree
     } yield newTree
 }

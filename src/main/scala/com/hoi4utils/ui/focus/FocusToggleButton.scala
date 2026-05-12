@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.focus
 
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.hoi42.common.national_focus.{Focus, FocusTree}
+import com.hoi4utils.hoi42.common.national_focus.{Focus, FocusService, FocusTree}
 import com.hoi4utils.hoi42.gfx.InterfaceService
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.ui.focus.FocusToggleButton.gfxFocusUnavailable
@@ -11,7 +11,7 @@ import javafx.geometry.Pos
 import javafx.scene.control.*
 import javafx.scene.image.{Image, ImageView}
 import javafx.scene.layout.*
-import zio.{UIO, URIO}
+import zio.{UIO, URIO, ZIO}
 
 class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double) extends ToggleButton with LazyLogging:
 
@@ -32,7 +32,7 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
     val stackPane = new StackPane(cleanNameBackGround, cleanName)
     stackPane.setAlignment(Pos.CENTER)
 
-    // TODO: bring back errors lol: 
+    // TODO: bring back errors lol:
 //    // Add error icon if this focus has errors
 //    if _focus.focusErrors.nonEmpty then
 //      val errorIconPane = new ErrorIconPane(
@@ -90,9 +90,10 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
 
   def setHelpTooltip(text: String): Unit = setTooltip(new Tooltip(text))
 
-  private def loadFocusIcon(): URIO[InterfaceService, Image] = {
+  private def loadFocusIcon(): URIO[FocusService & InterfaceService, Image] = {
     for {
-      ddsImage <- _focus.getDDSImage
+      focusService <- ZIO.service[FocusService]
+      ddsImage <- focusService.getDDSImage(_focus)
       image = ddsImage match
         case Some(ddsImage) =>
           ddsImage

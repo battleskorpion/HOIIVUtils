@@ -1,14 +1,15 @@
 package com.hoi4utils.hoi42.common.national_focus
 
 import com.hoi4utils.script2.{IDReferable, PDXDecoder, PDXEntity, PDXProperty, Reference, Registry, RegistryMember}
-import com.hoi4utils.Point
+import com.hoi4utils.{IntPoint, Point}
 import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Property}
-import com.hoi4utils.script2.PDXPropertyValueExtensions.*
+import com.hoi4utils.script2.PDXPropertyValueExtensions.* 
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.annotation.tailrec
+import scala.collection.mutable.ListBuffer
 
-class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String] with RegistryMember[Focus](focusTree) 
+class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String] with RegistryMember[Focus](focusTree)
   with Localizable with HasDesc with LazyLogging:
   val DEFAULT_COST: Double = 10.0
 
@@ -34,13 +35,13 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String]
   def absoluteX: Int = absolutePosition.x
   def absoluteY: Int = absolutePosition.y
 
-  def relativePosition: Point[Int] = Point[Int](x getOrElse 0, y getOrElse 0)
+  def relativePosition: IntPoint = Point(x getOrElse 0, y getOrElse 0)
 
   /**
    * Calculates and returns the absolute position of the focus, taking into account any relative positioning.
    * @return The absolute position of the focus, as it would be rendered on the focus tree.
    */
-  def absolutePosition: Point[Int] = {
+  def absolutePosition: IntPoint = {
     /**
      * Recursively calculate the absolute position of a focus, taking into account relative positions.
      *
@@ -50,7 +51,7 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String]
      * @return the absolute position of the focus
      */
     @tailrec
-    def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: Point[Int] = Point(0, 0)): Point[Int] = {
+    def absolutePosition(focus: Focus, visited: Set[String] = Set.empty, offsetAcc: IntPoint = Point(0, 0)): IntPoint = {
       val nextPoint = Point(focus.x + offsetAcc.x, focus.y + offsetAcc.y)
 
       if focus.relativePositionFocus.isUndefined then
@@ -75,7 +76,91 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String]
     absolutePosition(this)
   }
 
-  override def localizableProperties: Map[Property, String] = 
+  def setXY(x: Int, y: Int): IntPoint =
+    this.x @= x
+    this.y @= y
+    relativePosition
+
+  def setXY(xy: IntPoint): IntPoint = setXY(xy.x, xy.y)
+
+  /**
+   * Set the absolute x and y coordinates of the focus. If the focus has a relative position focus, it remains relative to
+   * that position, but its absolute coordinates are always the same.
+   *
+   * @param newPos                     absolute x- and y-coordinates
+   * @param updateChildRelativeOffsets if true, update descendant relative focus positions by some offset so that they remain
+   *                                   in the same position even though the position of this focus changes
+   * @return the previous absolute position
+   */
+  def setAbsoluteXY(newPos: IntPoint, updateChildRelativeOffsets: Boolean): IntPoint =
+    val prevAbsolute = absolutePosition
+
+    val deltas = newPos - prevAbsolute
+    // If there is no position change, nothing to do
+    if !deltas.isZero then
+      relativePositionFocus.resolve match
+        case Some(f) =>
+          // keep relative to the focus, but absolute coordinates are always the same
+          val relPos = f.absolutePosition
+          setXY(newPos - relPos)
+        case None =>
+          // No relative positioning, so just set directly
+          setXY(newPos)
+      if updateChildRelativeOffsets then
+        // Update focuses that has us as its relative position parent
+        for
+          focus <- focusTree.focuses
+          if focus.relativePositionFocus.isDefined
+          if focus.relativePositionFocus.$id @== this.id
+        do
+          focus.offsetXY(deltas)
+
+    prevAbsolute
+
+  def offsetXY(offset: IntPoint): IntPoint =
+    this.x += offset.x
+    this.y += offset.y
+    relativePosition
+
+  /**
+   * Check if the focus is at the given relative position.
+   * @param x relative x coordinate
+   * @param y relative y coordinate
+   * @return
+   */
+  def hasRelativePosition(pos: IntPoint): Boolean = (this.x @== pos.x) && (this.y @== pos.y)
+
+  /**
+   * Check if the focus is at the given absolute position.
+   *
+   * @param x absolute x-coordinate
+   * @param y absolute y-coordinate
+   * @return
+   */
+  def hasAbsolutePosition(pos: IntPoint): Boolean = absolutePosition == pos
+
+  def selfAndRelativePositionedFocuses: List[Focus] =
+    val focuses = ListBuffer[Focus]()
+    focuses += this
+
+    @tailrec
+    def gatherRelativeFocuses(currentFocuses: List[Focus]): Unit =
+      val newlyFoundFocuses = ListBuffer[Focus]()
+      for
+        focus <- focusTree.focuses
+        currentFocus <- currentFocuses
+        if focus.relativePositionFocus.isDefined
+        if (focus.relativePositionFocus.$id @== currentFocus.id) && !focuses.contains(focus)
+      do
+        focuses += focus
+        newlyFoundFocuses += focus
+      if newlyFoundFocuses.nonEmpty then
+        gatherRelativeFocuses(newlyFoundFocuses.toList)
+
+    gatherRelativeFocuses(List(this))
+    focuses.toList
+
+  override def localizableProperties: Map[Property, String] =
     Map(Property.NAME -> this.id.getOrElse(""), Property.DESCRIPTION -> s"${id}_desc")
 
   override def getLocalizableGroup: Iterable[Localizable] =
@@ -106,6 +191,7 @@ class PrerequisiteSet(using Registry[Focus]) extends PDXEntity:
  * mutually_exclusive = { focus = focus_id }
  */
 class MutuallyExclusiveSet(using Registry[Focus]) extends PDXEntity:
+  // todo ???
   val focus = pdx[Reference[Focus]]("focus")
 
 class AIWillDo() extends PDXEntity:
