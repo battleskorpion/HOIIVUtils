@@ -1,5 +1,7 @@
 package com.hoi4utils.script2
 
+import java.io.File
+
 trait Referable[K <: String | Int]:
   type KeyType = K
 
@@ -19,3 +21,8 @@ trait NameReferable[K <: String | Int] extends Referable[K]:
 
   def referableID_=(value: K): Unit = identifier = Some(value)
   def clearReferableID(): Unit = identifier = None
+
+trait FileReferable extends Referable[String]:
+  def file: Option[File]
+
+  override def referableID: Option[String] = file.map(_.getName)

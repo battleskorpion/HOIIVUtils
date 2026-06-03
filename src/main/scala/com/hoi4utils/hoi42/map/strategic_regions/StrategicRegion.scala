@@ -8,10 +8,13 @@ import java.io.File
 class StrategicRegion(var stratRegions: StrategicRegionRegistry, var file: Option[File]) extends PDXEntity with IDReferable[Int]
   with RegistryMember[StrategicRegion](stratRegions):
 
-  val id: PDXProperty[Int] = pdx[Int]("id")
-  val name = pdx[String]("name")
-  val provinces = pdxList[Province]("provinces")
+  /* attributes */ 
+  val id: PDXProperty[Int] = pdx[Int]("id") required true 
+  val name = pdx[String]("name") required true 
+  val provinces = pdxList[Province]("provinces") required true 
   val weather = pdx[Weather]("weather")
+
+  override def idProperty: PDXProperty[Int] = id
 
 object StrategicRegion { }
 

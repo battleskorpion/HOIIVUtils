@@ -67,6 +67,9 @@ case class StrategicRegionServiceImpl(countryTagService: CountryTagService) exte
         stratRegions <- readStratRegions(files, true)
         _ = stratRegions.foreach(add)
       } yield true
+      
+  override def get(file: File): Option[StrategicRegion] =
+    stratRegions.find(_.file == file)
   
   override def get(id: Int): Option[StrategicRegion] =
     stratRegions.find(_.id @== id)

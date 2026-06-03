@@ -3,7 +3,7 @@ package com.hoi4utils.hoi42.common.national_focus
 import com.hoi4utils.script2.{IDReferable, PDXDecoder, PDXEntity, PDXProperty, Reference, Registry, RegistryMember}
 import com.hoi4utils.{IntPoint, Point}
 import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Property}
-import com.hoi4utils.script2.PDXPropertyValueExtensions.* 
+import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.annotation.tailrec
@@ -17,9 +17,9 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String]
   val id    = pdx[String]("id") required true
   val icon  = pdx[Icon]("icon")
   /** If relative positioning, relative x */
-  val x     = pdx[Int]("x")
+  val x     = pdx[Int]("x") required true
   /** If relative positioning, relative y */
-  val y     = pdx[Int]("y")
+  val y     = pdx[Int]("y") required true
   val cost  = pdx[Double]("cost") default DEFAULT_COST
   val prerequisites = pdxList[PrerequisiteSet]("prerequisite")
   val mutuallyExclusive = pdxList[MutuallyExclusiveSet]("mutually_exclusive")

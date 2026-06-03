@@ -10,7 +10,7 @@ import com.hoi4utils.hoi42.map.state.*
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.parser.{Node, ParsingContext}
 import com.hoi4utils.script.*
-import com.hoi4utils.script2.{IDReferable, PDXDecoder, PDXEntity, Reference, Registry, RegistryMember}
+import com.hoi4utils.script2.{FileReferable, IDReferable, PDXDecoder, PDXEntity, PDXProperty, Reference, Registry, RegistryMember}
 import com.typesafe.scalalogging.LazyLogging
 import org.jetbrains.annotations.NotNull
 import zio.{RIO, Task, UIO, URIO, URLayer, ZIO, ZLayer}
@@ -20,13 +20,14 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.collection.parallel.CollectionConverters.*
 
-class CountryFile(var countries: CountryFileRegistry, var file: Option[File]) extends PDXEntity with IDReferable[String] with RegistryMember[CountryFile](countries) {
+class CountryFile(var countries: CountryFileRegistry, var file: Option[File]) extends PDXEntity with FileReferable with RegistryMember[CountryFile](countries) with Comparable[CountryFile] {
   given Registry[CountryTag] = new CountryTagRegistry()
   given Registry[OrdersOfBattle] = new OrdersOfBattleRegistry()
   given Registry[State] = new StateRegistry()   // todo prob not good
   /* data */
   private var _countryTag: Option[CountryTag] = None
 
+  /* attributes */ 
   val oob = pdx[Reference[OrdersOfBattle]]("oob")   //new ReferencePDX[String, OrdersOfBattle](() => OrdersOfBattle.list, "oob")
   val defaultResearchSlots = 0 // default research slots as defined in history/countries file or similar
   val countryFlags: Set[CountryFlag] = null
@@ -36,7 +37,7 @@ class CountryFile(var countries: CountryFileRegistry, var file: Option[File]) ex
   val startingTech: Set[Technology] = null // starting technology defined in history/countries file
 
   private var _file: Option[File] = None
-
+  
   //private var _infrastructure: Infrastructure = null // infrastructure of all owned states
   //private var _resources: List[Resource] = List.empty // resources of all owned states
 

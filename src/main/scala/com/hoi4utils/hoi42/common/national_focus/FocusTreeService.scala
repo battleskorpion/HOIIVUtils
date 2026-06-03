@@ -210,5 +210,5 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
   def addNewFocus(f: Focus, tree: FocusTree): Unit =
     tree.focuses :+ f
 
-  def width(tree: FocusTree): Int = tree.focuses.map(_.absoluteX).flatMap(_.maxOption).getOrElse(0)
-  def height(tree: FocusTree): Int = tree.focuses.map(_.absoluteY).flatMap(_.maxOption).getOrElse(0)
+  def width(tree: FocusTree): Int = tree.focuses.map(_.absoluteX).maxOption.getOrElse(0)
+  def height(tree: FocusTree): Int = tree.focuses.map(_.absoluteY).maxOption.getOrElse(0)

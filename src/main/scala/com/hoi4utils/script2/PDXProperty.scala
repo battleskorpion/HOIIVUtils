@@ -38,11 +38,15 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
   def isDefault: Boolean = apply() == default
   def isDefault(v: T): Boolean = _default contains v
 
-  def isDefined: Boolean = _value.isDefined
+  override def isDefined: Boolean = _value.isDefined
   def isUndefined: Boolean = _value.isEmpty
 
   infix def required(v: Boolean): PDXProperty[T] = { _isRequired = v; this }
   def isRequired: Boolean = _isRequired
+
+  infix def map[B](f: T => B): Option[B] = this() map f
+
+  infix def flatMap[B](f: T => Option[B]): Option[B] = this() flatMap f
 
   def validate(f: T => Boolean): PDXProperty[T] = { /* store validation logic */ this }
 
@@ -60,7 +64,7 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
         }
         Right(())
 
-  override def toString: String = 
+  override def toString: String =
     _value match
       case tv: PDXValueType => _value.map(_.toString).getOrElse("[null]")
       case _ => super.toString
@@ -128,15 +132,16 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
         }
         Right(())
 
-  def isEmpty: Boolean = _values.isEmpty
-  def nonEmpty: Boolean = _values.nonEmpty
+  override def isEmpty: Boolean = _values.isEmpty
 
-  infix def flatMap[B](f: T => IterableOnce[B]): Option[List[B]] = this() map(_.flatMap(f))
+  override def iterator: Iterator[T] =
+    this().map(_.iterator).getOrElse(Iterator.empty)
 
-  infix def map[B](f: T => B): Option[List[B]] = this() map(_.map(f))
-
-  infix def foreach[B](f: T => B): Unit = this() foreach (_.foreach(f))
-
+//  infix def map[B](f: T => B): Option[List[B]] = this() map(_.map(f))
+//
+//  infix def flatMap[B](f: T => IterableOnce[B]): Option[List[B]] = this() map (_.flatMap(f))
+//
+//  infix def foreach[B](f: T => B): Unit = this() foreach (_.foreach(f))
 
 
 

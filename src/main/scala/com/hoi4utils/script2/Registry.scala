@@ -52,13 +52,13 @@ trait Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
 
   def referableEntities: Iterable[T] = _referableEntities.values
 
-  override def add(entity: T): Iterable[T] =
+  def add(entity: T): Iterable[T] =
     this register entity
     referableEntities
 
   @inline final def +=(entity: T): Iterable[T] = add(entity)
 
-  override def addAll(entities: Iterable[T]): Iterable[T] =
+  def addAll(entities: Iterable[T]): Iterable[T] =
     this register entities
     referableEntities
 
@@ -85,7 +85,7 @@ trait Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
       }
     this register entities
 
-  override def clear(): Task[Unit] = ZIO.succeed(_referableEntities.clear())
+  def clear(): Task[Unit] = ZIO.succeed(_referableEntities.clear())
 
 trait RegistryMember[T <: PDXEntity & Referable[?]](val registry: Registry[T]) extends PDXEntity:
 //  self: Referable[T] =>
