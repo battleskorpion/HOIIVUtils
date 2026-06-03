@@ -20,6 +20,8 @@ class PseudoSharedFocusTree(pseudoTreeRegistry: PseudoSharedFocusTreeRegistry, v
   val id = pdx[String]("id") required true
   val focuses = pdxList[SharedFocus]("focus")
 
+  override def idProperty: PDXProperty[String] = id
+  
   override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
 
   override def toString: String = s"[Shared Focuses] ${super.toString}"

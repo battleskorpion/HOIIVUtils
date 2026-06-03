@@ -27,7 +27,9 @@ class FocusTree(var treeRegistry: FocusTreeRegistry, var file: Option[File])(usi
   //  /** special handling */
   val sharedFocuses = pdxList[Reference[SharedFocus]]("shared_focus")
 
-  override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
+  override def idProperty: PDXProperty[String] = id
+  
+//  override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
 
   // TODO fix code headOption is wrong but im lazy right now to do correct solution!!
   def countryTag: Option[CountryTag] = country

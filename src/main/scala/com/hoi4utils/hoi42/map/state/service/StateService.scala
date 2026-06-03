@@ -21,13 +21,13 @@ import scala.jdk.javaapi.CollectionConverters
 
 trait StateService extends StateRegistry with PDXReadable {
 
-  def get(file: File): URIO[CountryTagService, Option[State]]
+//  def get(file: File): URIO[CountryTagService, Option[State]] // if add rename
   def add(state: State): Iterable[State]
 
   def states: Set[State]
   def list: Set[State]      // todo rename lols
-  def get(id: Int): Option[State]
-  def get(state_name: String): Option[State]
+  def find(id: Int): Option[State]
+  def find(state_name: String): Option[State]
   def observeStates: ObservableList[State]
   def ownedStatesOfCountry(country: CountryFile): Set[State]
   def ownedStatesOfCountry(tag: CountryTag): Set[State]
@@ -36,7 +36,7 @@ trait StateService extends StateRegistry with PDXReadable {
   def resourcesOfStates: Set[Resource]
   def numStates(country: CountryTag): Int
   implicit def globalResources: Set[Resource]
-  def readState(file: File): Boolean
+  def readState(file: File): Task[State]
   def removeState(file: File): Boolean
   def getDataFunctions(resourcePercentages: Boolean = false): Iterable[State => ?]
   def infrastructureOfCountries: Seq[Infrastructure]
@@ -64,18 +64,7 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
   def read(): Task[Boolean] =
     def readStates(files: Seq[File], skipDuplicates: Boolean): Task[Seq[State]] = {
       ZIO.foreach(files) { file =>
-        for {
-          node <- new ZIOParser(file).parse
-          pdx <- ZIO.attempt {
-            val loader = new PDXLoader[State]()
-            val state = new State(this, Some(file))
-            val errors = loader.load(node, state, state)
-            if (errors.nonEmpty) {
-              println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
-            }
-            state
-          }
-        } yield pdx
+        readState(file)
       }
     }
 
@@ -105,6 +94,21 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
 //        } else states.find(_.stateFile.contains(file))
 //    } yield state
 
+  override def readState(file: File): Task[State] = {
+    for {
+      node <- new ZIOParser(file).parse
+      pdx <- ZIO.attempt {
+        val loader = new PDXLoader[State]()
+        val state = new State(this, Some(file))
+        val errors = loader.load(node, state, state)
+        if (errors.nonEmpty) {
+          println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+        }
+        state
+      }
+    } yield pdx
+  }
+
   override def add(state: State): Iterable[State] =
     this register state
     states
@@ -113,10 +117,10 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
 
   override def list: Set[State] = states
 
-  override def get(id: Int): Option[State] =
+  override def find(id: Int): Option[State] =
     states.find(_.stateID @== id)
 
-  override def get(state_name: String): Option[State] =
+  override def find(state_name: String): Option[State] =
     states.find(_.name @== state_name)
 
   override def observeStates: ObservableList[State] =

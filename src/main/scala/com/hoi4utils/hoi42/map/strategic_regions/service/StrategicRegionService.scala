@@ -11,14 +11,14 @@ import zio.{Task, URIO, URLayer, ZIO, ZLayer}
 import java.io.File
 
 trait StrategicRegionService extends StrategicRegionRegistry with PDXReadable {
-  def get(file: File): URIO[CountryTagService, Option[StrategicRegion]]
   def add(stratRegion: StrategicRegion): Iterable[StrategicRegion]
 
   def stratRegions: Set[StrategicRegion]
   def list: Set[StrategicRegion] // todo rename lols
-  def get(id: Int): Option[StrategicRegion]
-  def get(stratRegionName: String): Option[StrategicRegion]
-  def readStratRegion(file: File): Boolean
+  def find(file: File): Option[StrategicRegion]
+  def find(id: Int): Option[StrategicRegion]
+  def find(stratRegionName: String): Option[StrategicRegion]
+//  def readStratRegion(file: File): Boolean
   def removeStratRegion(file: File): Boolean
 
   override def clear(): Task[Unit] =
@@ -67,23 +67,23 @@ case class StrategicRegionServiceImpl(countryTagService: CountryTagService) exte
         stratRegions <- readStratRegions(files, true)
         _ = stratRegions.foreach(add)
       } yield true
-      
-  override def get(file: File): Option[StrategicRegion] =
-    stratRegions.find(_.file == file)
-  
-  override def get(id: Int): Option[StrategicRegion] =
-    stratRegions.find(_.id @== id)
 
-  override def get(stratRegionName: String): Option[StrategicRegion] =
-    stratRegions.find(_.name @== stratRegionName)
-    
   override def add(stratRegion: StrategicRegion): Iterable[StrategicRegion] =
     this register stratRegion
     stratRegions
 
   override def stratRegions: Set[StrategicRegion] = referableEntities.toSet
-  
+
   override def list: Set[StrategicRegion] = stratRegions.toSet
+
+  override def find(file: File): Option[StrategicRegion] =
+    stratRegions.find(_.file == file)
+
+  override def find(id: Int): Option[StrategicRegion] =
+    stratRegions.find(_.id @== id)
+
+  override def find(stratRegionName: String): Option[StrategicRegion] =
+    stratRegions.find(_.name @== stratRegionName)
 
   /**
    * If the state represented by the file exists in states list, removes the state

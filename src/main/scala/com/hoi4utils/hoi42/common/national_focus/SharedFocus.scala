@@ -14,7 +14,7 @@ class SharedFocus(focusTree: FocusTree) extends Focus(focusTree) {
 //    _ <- ZIO.succeed(pseudoTree.addNewFocus(this))
 //  } yield ()
 
-  override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
+//  override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
 }
 
 class Offset extends PointPDX {
