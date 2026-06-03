@@ -70,7 +70,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   // Store the current offset for coordinate conversions
   private var currentOffsetX: Int = 0
   private var currentOffsetY: Int = 0
-  private var currentFocusTree: Option[FocusTree] = None
+  private var currentFocusTree: Option[FocusTree | PseudoSharedFocusTree] = None
 
   // Visual feedback for dragging
   private var dragHighlight: Region = uninitialized
@@ -261,7 +261,18 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 //        vbox.getChildren.add(hbox)
 //        ()
 //      else
-        vbox.getChildren.add(toggleButton)
+      vbox.getChildren.add(toggleButton)
+      /*
+      When the Scala compiler reaches the last line, it looks at the underlying Java List interface that JavaFX's 
+      ObservableList extends. Java List has two overloads for the add method:
+      boolean add(E e)
+      void add(int index, E element)
+      In Scala, Java's void translates directly to Unit. Because method signature return type is Unit, 
+      Scala's overload resolution completely ignores the standard boolean add(E e) method and aggressively locks onto 
+      the void add(int, E) method.
+       */
+      ()    // Explicitly returns Unit
+
     }
   }
 
@@ -271,7 +282,9 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
     cancelCurrentTask()
     clearFocusTreeView()
     focusGridToggleGroup = new ToggleGroup()
-    val focuses: PDXPropertyList[Focus] = someFocusTree.focuses
+    val focuses: PDXPropertyList[? <: Focus] = someFocusTree match
+      case t: FocusTree => t.focuses
+      case p: PseudoSharedFocusTree => p.focuses
 
     // Calculate offset needed for negative coordinates
     val (offsetX, offsetY) = calculateGridOffset(focuses)
@@ -355,7 +368,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
               val isShiftDown = parts(1).contains("true")
 
               // Find the focus and update its position
-              someFocusTree.focuses.find(_.id @== focusId).foreach { focus =>
+              focuses.find(_.id @== focusId).foreach { focus =>
                 val newFocusPos = gridToFocusXY(targetGridX, targetGridY, someFocusTree)
                 updateFocusPosition(focus, newFocusPos, isShiftDown)
                 logger.info(s"Dropped focus $focusId at grid ($targetGridX, $targetGridY) -> focus coords $newFocusPos")
@@ -521,7 +534,7 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
   private def gridToFocusY(gridY: Int, focusTree: FocusTree): Int =
     gridY - currentOffsetY
 
-  private def gridToFocusXY(gridX: Int, gridY: Int, focusTree: FocusTree): IntPoint =
+  private def gridToFocusXY(gridX: Int, gridY: Int, focusTree: FocusTree | PseudoSharedFocusTree): IntPoint =
     Point(gridX, gridY) - Point(currentOffsetX, currentOffsetY)
 
   // Focus to Grid: Add the offset to make focus coordinates positive for the grid

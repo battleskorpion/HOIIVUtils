@@ -8,7 +8,7 @@ import scala.reflect.ClassTag
 
 
 object PDXPropertyValueExtensions {
-  extension [TV <: PDXValueType](pdxProperty:  PDXProperty[TV])
+  extension [TV <: PDXValueType](pdxProperty: PDXProperty[TV])
     @targetName("getEquals")
     def @==(other: TV): Boolean = value match
       case Some(v) => v.equals(other)
@@ -77,8 +77,6 @@ object PDXPropertyValueExtensions {
 
     def asString: String = value.map(_.toString).getOrElse("")
 
-    override def toString: String = if asString == "" then "[null]" else asString
-
   extension [TV <: PDXValueType](rawValue: TV)
     @targetName("getEquals")
     def @==(pdxProperty: PDXProperty[TV]): Boolean =
@@ -129,7 +127,7 @@ object PDXPropertyValueExtensions {
     @targetName("divideEquals")
     def /=(other: N): N = pdxProperty.set(pdxProperty / other)
       
-  extension [T <: RegistryMember[T]](pdxProperty: PDXProperty[Reference[T]])
+  extension [T <: RegistryMember[T] & PDXEntity & Referable[?]](pdxProperty: PDXProperty[Reference[T]])
     /**
      * Directly accesses the underlying value of a Reference inside a PDXProperty.
      * Handles both the Option of the property and the Option of the reference.
@@ -149,7 +147,7 @@ object PDXPropertyValueExtensions {
     /**
      * Reach from a Property into a nested Property that holds a Reference
      */
-    def flatMapRef[R <: RegistryMember[R]](f: E => PDXProperty[Reference[R]]): Option[R] =
+    def flatMapRef[R <: RegistryMember[R] & PDXEntity & Referable[?]](f: E => PDXProperty[Reference[R]]): Option[R] =
       for
         entity <- pdxProperty()
         refProp = f(entity)

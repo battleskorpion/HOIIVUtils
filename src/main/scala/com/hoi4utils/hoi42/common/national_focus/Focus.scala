@@ -173,7 +173,7 @@ object Focus { }
 
 trait FocusRegistry[F <: Focus] extends Registry[F] {
 
-  override def idDecoder: PDXDecoder[Int] = summon[PDXDecoder[Int]]
+  override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
 }
 
 class Icon(var spriteID: String) extends PDXEntity:

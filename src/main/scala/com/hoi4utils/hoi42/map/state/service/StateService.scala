@@ -24,15 +24,16 @@ trait StateService extends StateRegistry with PDXReadable {
   def get(file: File): URIO[CountryTagService, Option[State]]
   def add(state: State): Iterable[State]
 
+  def states: Set[State]
   def list: Set[State]      // todo rename lols
   def get(id: Int): Option[State]
   def get(state_name: String): Option[State]
   def observeStates: ObservableList[State]
-  def ownedStatesOfCountry(country: CountryFile): Seq[State]
-  def ownedStatesOfCountry(tag: CountryTag): Seq[State]
+  def ownedStatesOfCountry(country: CountryFile): Set[State]
+  def ownedStatesOfCountry(tag: CountryTag): Set[State]
   def infrastructureOfStates(states: Iterable[State]): Infrastructure
   def resourcesOfStates(states: Iterable[State]): Set[Resource]
-  def resourcesOfStates: List[Resource]
+  def resourcesOfStates: Set[Resource]
   def numStates(country: CountryTag): Int
   implicit def globalResources: Set[Resource]
   def readState(file: File): Boolean
@@ -91,8 +92,6 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
         _ = states.foreach(add)
       } yield true
 
-  override def states: Set[State] = referableEntities.toSet
-
   // todo this should exist im being lazy
 //  override def get(file: File): URIO[CountryTagService, Option[State]] =
 //    for {
@@ -110,6 +109,8 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
     this register state
     states
 
+  override def states: Set[State] = referableEntities.toSet
+
   override def list: Set[State] = states
 
   override def get(id: Int): Option[State] =
@@ -126,7 +127,7 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
   override def ownedStatesOfCountry(tag: CountryTag): Set[State] =
     states filter (state => state.owner(ClausewitzDate.defaulty).exists(_.equals(tag)))
 
-  override def infrastructureOfStates(states: ListBuffer[State]): Infrastructure =
+  override def infrastructureOfStates(states: Iterable[State]): Infrastructure =
     states.map(s => s.stateInfrastructure)
       .reduce((s1, s2) => Infrastructure.combine(s1, s2))
 
@@ -231,12 +232,12 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
       dataFunctions += (s => "TEMP - FIX")
     dataFunctions
 
-  override def infrastructureOfCountries: ListBuffer[Infrastructure] =
+  override def infrastructureOfCountries: Seq[Infrastructure] =
     val countryList = countryTagService.countryTags
     val countriesInfrastructureList = new ListBuffer[Infrastructure]
     for tag <- countryList do
       countriesInfrastructureList.addOne(infrastructureOfCountry(tag))
-    countriesInfrastructureList
+    countriesInfrastructureList.toSeq
 
   override def infrastructureOfCountry(tag: CountryTag): Infrastructure = infrastructureOfStates(ownedStatesOfCountry(tag))
 

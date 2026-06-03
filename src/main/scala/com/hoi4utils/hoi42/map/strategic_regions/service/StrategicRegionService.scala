@@ -14,6 +14,7 @@ trait StrategicRegionService extends StrategicRegionRegistry with PDXReadable {
   def get(file: File): URIO[CountryTagService, Option[StrategicRegion]]
   def add(stratRegion: StrategicRegion): Iterable[StrategicRegion]
 
+  def stratRegions: Set[StrategicRegion]
   def list: Set[StrategicRegion] // todo rename lols
   def get(id: Int): Option[StrategicRegion]
   def get(stratRegionName: String): Option[StrategicRegion]
@@ -66,20 +67,20 @@ case class StrategicRegionServiceImpl(countryTagService: CountryTagService) exte
         stratRegions <- readStratRegions(files, true)
         _ = stratRegions.foreach(add)
       } yield true
-
-  override def stratRegions: Set[StrategicRegion] = referableEntities.toSet
-
-  override def add(stratRegion: StrategicRegion): Iterable[StrategicRegion] =
-    this register stratRegion
-    stratRegions
-
-  override def list: Set[StrategicRegion] = stratRegions.toSet
-
+  
   override def get(id: Int): Option[StrategicRegion] =
     stratRegions.find(_.id @== id)
 
   override def get(stratRegionName: String): Option[StrategicRegion] =
     stratRegions.find(_.name @== stratRegionName)
+    
+  override def add(stratRegion: StrategicRegion): Iterable[StrategicRegion] =
+    this register stratRegion
+    stratRegions
+
+  override def stratRegions: Set[StrategicRegion] = referableEntities.toSet
+  
+  override def list: Set[StrategicRegion] = stratRegions.toSet
 
   /**
    * If the state represented by the file exists in states list, removes the state

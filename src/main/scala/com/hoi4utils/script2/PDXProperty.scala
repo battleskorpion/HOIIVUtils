@@ -1,6 +1,6 @@
 package com.hoi4utils.script2
 
-import com.hoi4utils.parser.{NodeValueType, PDXValueNode, SeqNode}
+import com.hoi4utils.parser.{NodeValueType, PDXValueNode, PDXValueType, SeqNode}
 import com.hoi4utils.script.PDXFileError
 import jdk.internal.net.http.common.Log.errors
 import org.apache.poi.hssf.record.aggregates.SharedValueManager.createEmpty
@@ -59,6 +59,11 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
           case _ => ()
         }
         Right(())
+
+  override def toString: String = 
+    _value match
+      case tv: PDXValueType => _value.map(_.toString).getOrElse("[null]")
+      case _ => super.toString
 
 class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]] = None)
                         (using override val decoder: PDXDecoder[List[T]], val elementDecoder: PDXDecoder[T])
