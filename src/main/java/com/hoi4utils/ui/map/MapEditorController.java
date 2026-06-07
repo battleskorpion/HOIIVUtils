@@ -1,12 +1,12 @@
 //package com.hoi4utils.ui.map;
 //
 //import com.hoi4utils.hoi4.map.province.DefinitionCSV;
-//import com.hoi4utils.hoi4.map.province.Province;
-//import com.hoi4utils.hoi4.map.state.State;
+//import com.hoi4utils.hoi42.map.province.Province;
+//import com.hoi4utils.hoi42.map.state.State;
+//import com.hoi4utils.hoi42.map.state.service.StateService;
 //import com.hoi4utils.main.HOIIVFiles;
 //import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController;
 //import com.hoi4utils.ui.countries.StateTable;
-//import com.hoi4utils.ui.javafx.scene.layout.PDXEditorPane;
 //import javafx.collections.ObservableList;
 //import javafx.fxml.FXML;
 //import javafx.scene.canvas.Canvas;
@@ -152,7 +152,7 @@
 //		}
 //
 //		// load states and compute max metric
-//		ObservableList<State> states = State.observeStates();
+//		ObservableList<State> states = stateService.observeStates();
 //		int max = states.stream()
 //			.mapToInt(metricFn)
 //			.max()
@@ -281,7 +281,7 @@
 //		// Build a mapping from province id to a state color and a mapping to the state.
 //		final Map<Integer, Color> provinceIdToStateColor = new HashMap<>();
 //		final Map<Integer, State> provinceIdToStateMap = new HashMap<>();
-//		ObservableList<State> states = State.observeStates();
+//		ObservableList<State> states = stateService.observeStates();
 //		for (State state : states) {
 //			// Assign a random color for each state.
 //			Color stateColor = Color.hsb(Math.random() * 360, 0.5, 0.9);
@@ -437,7 +437,7 @@
 //				provinceColorToId.put(rgb, def.id());
 //			}
 //			final Map<Integer, State> provinceIdToStateMap = new HashMap<>();
-//			ObservableList<State> states = State.observeStates();
+//			ObservableList<State> states = stateService.observeStates();
 //			for (State state : states) {
 //				for (Province province : CollectionConverters.asJava(state.provinces().toList())) {
 //					Integer id = (Integer) province.id().get();
