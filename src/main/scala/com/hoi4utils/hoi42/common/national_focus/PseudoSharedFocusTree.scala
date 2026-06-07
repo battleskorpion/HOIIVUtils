@@ -11,8 +11,7 @@ import java.io.File
 import java.util.UUID
 
 class PseudoSharedFocusTree(pseudoTreeRegistry: PseudoSharedFocusTreeRegistry, var file: Option[File])
-  extends PDXEntity with FocusRegistry[SharedFocus] with IDReferable[String] with RegistryMember[PseudoSharedFocusTree](pseudoTreeRegistry)
-    with PDXScript[PseudoSharedFocusTree] {
+  extends PDXEntity with FocusRegistry[SharedFocus] with IDReferable[String] with RegistryMember[PseudoSharedFocusTree](pseudoTreeRegistry) {
 
   given Registry[SharedFocus] = this
 

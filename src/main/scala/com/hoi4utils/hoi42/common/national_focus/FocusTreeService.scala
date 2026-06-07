@@ -3,7 +3,7 @@ package com.hoi4utils.hoi42.common.national_focus
 import com.hoi4utils.hoi42.common.country_tags.{CountryTag, CountryTagService}
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.ZIOParser
-import com.hoi4utils.script2.*
+import com.hoi4utils.script2.{Registry, *}
 import javafx.collections.{FXCollections, ObservableList}
 import zio.{Chunk, RIO, Task, UIO, URIO, URLayer, ZIO, ZLayer}
 
@@ -13,17 +13,16 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
+type f = Registry[SharedFocus]
 
-trait FocusTreeService extends FocusTreeRegistry with PDXReadable  {
+trait FocusTreeService extends FocusTreeRegistry with PDXReadable[f]  {
 
-  override def read(): Task[Boolean]
-  override def clear123(): Task[Unit]
+  override def read(): RIO[Registry[SharedFocus], Boolean]
+  def clear123(): Task[Unit]
+  override def add(focusTree: FocusTree): Iterable[FocusTree]
+  override def addAll(focusTrees: Iterable[FocusTree]): Iterable[FocusTree]
   @targetName("add")
-  override def +=(focusTree: FocusTree): UIO[Set[FocusTree]]
-  @targetName("addAll")
-  override def ++=(focusTrees: Iterable[FocusTree]): UIO[Set[FocusTree]]
-  @targetName("add")
-  def +=(sharedFocusFile: SharedFocusFile): UIO[Set[SharedFocusFile]]
+  def +=(sharedFocusFile: SharedFocusFile): Iterable[SharedFocusFile]
 
   def addToFileMap(file: File, focusTree: FocusTree): Task[Unit]
   def removeFromFileMap(file: File): Task[Unit]
@@ -108,8 +107,8 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
         for {
           trees <- readFocusTrees(files)
           _ <- ZIO.foreachDiscard(trees) {
-            case tree: FocusTree => +=(tree)
-            case sff: SharedFocusFile => +=(sff)
+            case tree: FocusTree => ZIO.succeed(+=(tree)) 
+            case sff: SharedFocusFile => ZIO.succeed(+=(sff)) 
           }
         } yield true
     }
@@ -128,27 +127,23 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
    * @param focusTree the focus tree to add
    * @return the updated list of focus trees
    */
-  @targetName("add")
-  override def +=(focusTree: FocusTree): UIO[Set[FocusTree]] =
-    ZIO.succeed {
-      this register focusTree
+  override def add(focusTree: FocusTree): Iterable[FocusTree] =
+    super.add(focusTree)
+//      this register focusTree
       // TODO !!!!!
 //      focusTree.file match
 //        case Some(file) => focusTreeFileMap.put(file, focusTree)
 //        case None =>
-      this.focusTrees
-    }
+//      this.focusTrees
 
-  @targetName("addAll")
-  override def ++=(focusTrees: Iterable[FocusTree]): UIO[Set[FocusTree]] =
-    ZIO.succeed {
-      this register focusTrees
+  override def addAll(focusTrees: Iterable[FocusTree]): Iterable[FocusTree] =
+      super.addAll(focusTrees)
+//      this register focusTrees
       // TODO !!!!!
       //      focusTree.file match
       //        case Some(file) => focusTreeFileMap.put(file, focusTree)
       //        case None =>
-      this.focusTrees
-    }
+//      this.focusTrees
 
   /**
    * Adds a shared focus file to the list of shared focus files.
@@ -156,12 +151,13 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
    * @param sharedFocusFile the shared focus file to add
    * @return the updated list of focus trees
    */
+  def add(sharedFocusFile: SharedFocusFile): Iterable[SharedFocusFile] =
+    sharedFocusFileRegistry.add(sharedFocusFile)
+
+  @inline
   @targetName("add")
-  def +=(sharedFocusFile: SharedFocusFile): UIO[Set[SharedFocusFile]] =
-    ZIO.succeed {
-      sharedFocusFileRegistry register sharedFocusFile
-      sharedFocusFiles
-    }
+  final def +=(sharedFocusFile: SharedFocusFile): Iterable[SharedFocusFile] =
+    add(sharedFocusFile)
 
   /** Returns focus tree corresponding to the tag, if it exists*/
   def get(tag: CountryTag | File): UIO[Option[FocusTree]] =

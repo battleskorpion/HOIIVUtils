@@ -10,7 +10,7 @@ import zio.{Task, URIO, URLayer, ZIO, ZLayer}
 
 import java.io.File
 
-trait StrategicRegionService extends StrategicRegionRegistry with PDXReadable {
+trait StrategicRegionService extends StrategicRegionRegistry with PDXReadable.Default {
   def add(stratRegion: StrategicRegion): Iterable[StrategicRegion]
 
   def stratRegions: Set[StrategicRegion]

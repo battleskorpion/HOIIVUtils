@@ -1,5 +1,6 @@
 package com.hoi4utils.hoi42.common.country_tags
 
+import com.hoi4utils.hoi42.common.national_focus.SharedFocus
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.parser.{PDXValueNode, ParsingContext, ZIOParser}
 import com.hoi4utils.script.PDXFileError
@@ -10,7 +11,9 @@ import java.io.{File, IOException}
 import scala.collection.mutable.ListBuffer
 import scala.collection.parallel.mutable.ParTrieMap
 
-trait CountryTagService extends CountryTagRegistry with PDXReadable {
+type FocusReadable = PDXReadable[Registry[SharedFocus]]
+
+trait CountryTagService extends CountryTagRegistry with FocusReadable {
 //  def allTags: UIO[List[CountryTag]]
 
   def tags: Set[CountryTag]

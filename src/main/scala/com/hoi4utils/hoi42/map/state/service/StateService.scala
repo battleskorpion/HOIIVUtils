@@ -19,7 +19,7 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.javaapi.CollectionConverters
 
 
-trait StateService extends StateRegistry with PDXReadable {
+trait StateService extends StateRegistry with PDXReadable.Default {
 
 //  def get(file: File): URIO[CountryTagService, Option[State]] // if add rename
   def add(state: State): Iterable[State]

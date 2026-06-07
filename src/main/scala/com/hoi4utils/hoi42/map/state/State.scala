@@ -11,7 +11,9 @@ import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 import java.io.File
 
 // todo on the file will turn into trait thingy
-class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity with IDReferable[Int] with RegistryMember[State](states):
+class State(var states: StateRegistry, var file: Option[File]) extends PDXEntity with IDReferable[Int] with RegistryMember[State](states) 
+  with PDXFile:
+  
   given Registry[CountryTag] = new CountryTagRegistry()
 
   val stateID: PDXProperty[Int] = pdx[Int]("id")

@@ -12,7 +12,7 @@ import scala.reflect.ClassTag
 
 class FocusTree(var treeRegistry: FocusTreeRegistry, var file: Option[File])(using Registry[SharedFocus])
   extends PDXEntity with FocusRegistry[Focus] with IDReferable[String] with RegistryMember[FocusTree](treeRegistry)
-    with Localizable with PDXFile with PDXScript[FocusTree]:
+    with Localizable with PDXFile:
 
   given Registry[CountryTag] = new CountryTagRegistry()
 
@@ -28,7 +28,7 @@ class FocusTree(var treeRegistry: FocusTreeRegistry, var file: Option[File])(usi
   val sharedFocuses = pdxList[Reference[SharedFocus]]("shared_focus")
 
   override def idProperty: PDXProperty[String] = id
-  
+
 //  override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
 
   // TODO fix code headOption is wrong but im lazy right now to do correct solution!!

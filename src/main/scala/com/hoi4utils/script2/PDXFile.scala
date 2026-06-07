@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 import javax.swing.JOptionPane
 import scala.util.Using
 
-trait PDXFile extends PDXScript[?] with LazyLogging {
+trait PDXFile extends PDXEntity with LazyLogging {
 
   def file: Option[File]
 

@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 import scala.collection.parallel.CollectionConverters.*
 import scala.collection.concurrent.TrieMap
 
-trait InterfaceService extends PDXReadable with LazyLogging {
+trait InterfaceService extends PDXReadable.Default with LazyLogging {
   def getGFX(icon: String): URIO[InterfaceService, Option[String]]
   def getSpriteType(icon: String): UIO[Option[SpriteType]]
   def addSpriteType(icon: String, sprite: SpriteType): UIO[Unit]

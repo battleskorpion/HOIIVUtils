@@ -41,6 +41,8 @@ trait PDXEntity:
     new PDXProperty[this.type](key, None)
   }
 
+  def display: String = properties.map(_._2.display).filterNot(_ == "[undefined]").reduce(_ + " " + _)  // todo impr
+
 class PDXInlineEntity[T <: PDXValueType | PDXEntity | Reference[?]](pdxKey: String)
                                                                    (using override val decoder: PDXDecoder[T])
                                                                    (using override val ct: ClassTag[T]) 

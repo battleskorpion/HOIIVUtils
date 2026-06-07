@@ -263,12 +263,12 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 //      else
       vbox.getChildren.add(toggleButton)
       /*
-      When the Scala compiler reaches the last line, it looks at the underlying Java List interface that JavaFX's 
+      When the Scala compiler reaches the last line, it looks at the underlying Java List interface that JavaFX's
       ObservableList extends. Java List has two overloads for the add method:
       boolean add(E e)
       void add(int index, E element)
-      In Scala, Java's void translates directly to Unit. Because method signature return type is Unit, 
-      Scala's overload resolution completely ignores the standard boolean add(E e) method and aggressively locks onto 
+      In Scala, Java's void translates directly to Unit. Because method signature return type is Unit,
+      Scala's overload resolution completely ignores the standard boolean add(E e) method and aggressively locks onto
       the void add(int, E) method.
        */
       ()    // Explicitly returns Unit
