@@ -4,6 +4,7 @@ import com.hoi4utils.parser.{Node, NodeValueType, SeqNode}
 import com.sun.tools.javac.resources.ct
 
 import java.io.{File, FileNotFoundException, PrintWriter}
+import scala.annotation.targetName
 import scala.reflect.ClassTag
 import scala.util.Using
 
@@ -56,6 +57,7 @@ trait PDXScript[T] { //  extends Cloneable
    */
   infix def getAndMapOrElse[B >: T](f: T => B, default: => B): B = pdxDefinedValueOption map f getOrElse default
 
+  @targetName("pdxExists")
   infix def exists(p: T => Boolean): Boolean = this() exists p
 
   /** value is defined */
