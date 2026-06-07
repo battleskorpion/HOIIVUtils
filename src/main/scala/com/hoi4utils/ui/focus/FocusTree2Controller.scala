@@ -144,9 +144,9 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
       logger.error("splitPane is null - check FXML fx:id")
 
   private def populateFocusTreeSelection(): URIO[FocusTreeService & CountryTagService, Unit] =
-    ZIO.serviceWith[FocusTreeService] { manager =>
+    ZIO.serviceWith[FocusTreeService] { service =>
       focusTreeView.setGridLinesVisible(lines)
-      Some(manager.observeFocusTrees.sorted()).foreach(trees =>
+      Some(service.observeFocusTrees.sorted()).foreach(trees =>
         trees.forEach(someFocusTree =>
           val toggleButton = ToggleButton(someFocusTree.toString)
           focusTreesToggleButtons += toggleButton
@@ -198,18 +198,19 @@ class FocusTree2Controller extends HOIIVUtilsAbstractController2 with LazyLoggin
 //            hbox.getChildren.add(errorIcon)
 //            vbox.getChildren.add(hbox)
 //          else
-            vbox.getChildren.add(toggleButton)
+//            vbox.getChildren.add(toggleButton)
+          vbox.getChildren.add(toggleButton)
         )
         focusTreesCount.setText(s"Focus Trees: ${trees.size()}")
       )
       for {
-        pseudoTrees <- manager.sharedFocusFilesAsPseudoTrees
+        pseudoTrees <- service.sharedFocusFilesAsPseudoTrees
         _ <- ZIO.foreachDiscard(pseudoTrees)(randomCode1)
       } yield ()
     }
 
   private def randomCode1(tree: FocusTree | PseudoSharedFocusTree): URIO[FocusTreeService, Unit] = {
-    ZIO.serviceWith[FocusTreeService] { manager =>
+    ZIO.serviceWith[FocusTreeService] { service =>
       val toggleButton = ToggleButton(tree.toString)
       focusTreesToggleButtons += toggleButton
       toggleButton.setToggleGroup(toggleGroup)

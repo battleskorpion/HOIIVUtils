@@ -24,6 +24,7 @@ trait StateService extends StateRegistry with PDXReadable.Default {
 //  def get(file: File): URIO[CountryTagService, Option[State]] // if add rename
   def add(state: State): Iterable[State]
 
+  def readState(file: File): Task[State]
   def states: Set[State]
   def list: Set[State]      // todo rename lols
   def find(id: Int): Option[State]
@@ -36,7 +37,6 @@ trait StateService extends StateRegistry with PDXReadable.Default {
   def resourcesOfStates: Set[Resource]
   def numStates(country: CountryTag): Int
   implicit def globalResources: Set[Resource]
-  def readState(file: File): Task[State]
   def removeState(file: File): Boolean
   def getDataFunctions(resourcePercentages: Boolean = false): Iterable[State => ?]
   def infrastructureOfCountries: Seq[Infrastructure]
@@ -62,11 +62,8 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
    * Creates [[State States]] from reading files.
    */
   def read(): Task[Boolean] =
-    def readStates(files: Seq[File], skipDuplicates: Boolean): Task[Seq[State]] = {
-      ZIO.foreach(files) { file =>
-        readState(file)
-      }
-    }
+    def readStates(files: Seq[File], skipDuplicates: Boolean): Task[Seq[State]] =
+      ZIO.foreach(files) { file => readState(file) }
 
     if !HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory then
       ZIO.logError(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
@@ -94,20 +91,18 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
 //        } else states.find(_.stateFile.contains(file))
 //    } yield state
 
-  override def readState(file: File): Task[State] = {
+  override def readState(file: File): Task[State] =
     for {
       node <- new ZIOParser(file).parse
       pdx <- ZIO.attempt {
         val loader = new PDXLoader[State]()
         val state = new State(this, Some(file))
         val errors = loader.load(node, state, state)
-        if (errors.nonEmpty) {
+        if (errors.nonEmpty) 
           println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
-        }
         state
       }
     } yield pdx
-  }
 
   override def add(state: State): Iterable[State] =
     this register state

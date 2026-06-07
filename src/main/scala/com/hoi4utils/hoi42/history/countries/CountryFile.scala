@@ -52,7 +52,7 @@ class CountryFile(var countries: CountryFileRegistry, var file: Option[File]) ex
     case None => CountryTag.NULL_TAG.toString
   }
 
-  private def numOwnedStates = 1 // todo;
+  def numOwnedStates = 1 // todo;
 
   override def compareTo(@NotNull o: CountryFile): Int = _countryTag match {
     case Some(tag) => tag.$.compareTo(o.countryTag.$)

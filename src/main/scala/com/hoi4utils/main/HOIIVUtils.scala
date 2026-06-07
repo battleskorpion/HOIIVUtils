@@ -11,6 +11,7 @@ import com.hoi4utils.hoi4.localization.{LocalizationFormatter, YMLFileService}
 import com.hoi4utils.hoi42.common.country_tags.CountryTagService
 import com.hoi4utils.hoi42.common.national_focus.{FocusService, FocusTreeService}
 import com.hoi4utils.hoi42.gfx.InterfaceService
+import com.hoi4utils.hoi42.history.countries.service.CountryService
 import com.hoi4utils.hoi42.map.state.service.StateService
 //import com.hoi4utils.hoi4.map.resource.ResourcesFileService
 //import com.hoi4utils.hoi4.map.state.StateService
@@ -30,7 +31,7 @@ object HOIIVUtils extends ZIOAppDefault {
 //    & ResourcesFileService & StateService & CountryService
   private type ROut = com.hoi4utils.main.Config & ServiceReloader
     & LocalizationService & InterfaceService & CountryTagService & FocusService & FocusTreeService 
-    & StateService 
+    & StateService & CountryService 
 
   //  private var _runtime: Runtime[LocalizationService] = null
   def getActiveRuntime: Runtime[ROut] = runtime
@@ -61,7 +62,7 @@ object HOIIVUtils extends ZIOAppDefault {
       FocusTreeService.live,
 //      ResourcesFileService.live,
       StateService.live,
-//      CountryService.live,
+      CountryService.live,
       ZLayer.Debug.tree
     )
   }
