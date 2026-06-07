@@ -59,6 +59,8 @@ class PDXInlineEntity[T <: PDXValueType | PDXEntity | Reference[?]](pdxKey: Stri
 //      case _ =>
 //        Left(List(s"Expected inline value for ${value.pdxKey}, got: $node"))
   
+  override def display: String = value.display
+  
 class PDXInlineEntityDynamicKey[T <: PDXValueType | PDXEntity | Reference[?]](using override val decoder: PDXDecoder[T])
                                                                              (using override val ct: ClassTag[T]) 
   extends PDXInlineEntity[T](""):

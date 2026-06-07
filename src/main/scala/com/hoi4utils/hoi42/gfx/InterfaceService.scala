@@ -33,7 +33,8 @@ object InterfaceService {
  * Contains a set of SpriteTypes
  */
 case class InterfaceServiceImpl() extends InterfaceService {
-  override val cleanName: String = "InterfaceGFX"
+  override val display: String = "Interface GFX"
+  
   private val gfxMap: TrieMap[String, SpriteType] = new TrieMap
   private var interfaceFiles: TrieMap[File, Interface] = new TrieMap
 

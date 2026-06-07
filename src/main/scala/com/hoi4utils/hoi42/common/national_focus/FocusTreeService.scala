@@ -21,12 +21,13 @@ trait FocusTreeService extends FocusTreeRegistry with PDXReadable[f]  {
   def clear123(): Task[Unit]
   override def add(focusTree: FocusTree): Iterable[FocusTree]
   override def addAll(focusTrees: Iterable[FocusTree]): Iterable[FocusTree]
-  @targetName("add")
-  def +=(sharedFocusFile: SharedFocusFile): Iterable[SharedFocusFile]
+  def add(sharedFocusFile: SharedFocusFile): Iterable[SharedFocusFile]
+  @inline final def +=(sharedFocusFile: SharedFocusFile): Iterable[SharedFocusFile] = add(sharedFocusFile)
 
   def addToFileMap(file: File, focusTree: FocusTree): Task[Unit]
   def removeFromFileMap(file: File): Task[Unit]
-  def sharedFocusFiles: UIO[Set[SharedFocusFile]]
+  def focusTrees: Iterable[FocusTree]
+  def sharedFocusFiles: Iterable[SharedFocusFile]
   def sharedFocusFilesAsPseudoTrees: URIO[FocusTreeService & CountryTagService, Set[PseudoSharedFocusTree]]
   def sharedFocuses: Set[SharedFocus]
   def observeFocusTrees: ObservableList[FocusTree]
@@ -107,16 +108,16 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
         for {
           trees <- readFocusTrees(files)
           _ <- ZIO.foreachDiscard(trees) {
-            case tree: FocusTree => ZIO.succeed(+=(tree)) 
-            case sff: SharedFocusFile => ZIO.succeed(+=(sff)) 
+            case tree: FocusTree => ZIO.succeed(+=(tree))
+            case sff: SharedFocusFile => ZIO.succeed(+=(sff))
           }
         } yield true
     }
   }
 
-  override def focusTrees: Set[FocusTree] = referableEntities.toSet
+  override def focusTrees: Iterable[FocusTree] = referableEntities
 
-  override def sharedFocusFiles: Set[SharedFocusFile] = sharedFocusFileRegistry.referableEntities.toSet
+  override def sharedFocusFiles: Iterable[SharedFocusFile] = sharedFocusFileRegistry.referableEntities
 
   /** Clears all focus trees and any other relevant values. */
   override def clear123(): Task[Unit] =
@@ -154,11 +155,6 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
   def add(sharedFocusFile: SharedFocusFile): Iterable[SharedFocusFile] =
     sharedFocusFileRegistry.add(sharedFocusFile)
 
-  @inline
-  @targetName("add")
-  final def +=(sharedFocusFile: SharedFocusFile): Iterable[SharedFocusFile] =
-    add(sharedFocusFile)
-
   /** Returns focus tree corresponding to the tag, if it exists*/
   def get(tag: CountryTag | File): UIO[Option[FocusTree]] =
     ZIO.succeed {
@@ -173,7 +169,7 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
   override def removeFromFileMap(file: File): Task[Unit] =
     ZIO.succeed(focusTreeFileMap.remove(file))
 
-  override def observeFocusTrees: ObservableList[FocusTree] = FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees))
+  override def observeFocusTrees: ObservableList[FocusTree] = FXCollections.observableArrayList(CollectionConverters.asJava(focusTrees.toSeq))
 
   override def sharedFocusFilesAsPseudoTrees: URIO[FocusTreeService & CountryTagService, Set[PseudoSharedFocusTree]] =
     for {
@@ -187,7 +183,7 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
   //    }
 
   def sharedFocuses: Set[SharedFocus] =
-    sharedFocusFiles.map(_.sharedFocuses).flatMap(_.list)
+    sharedFocusFiles.map(_.sharedFocuses).flatMap(_.list).toSet
 
   def hasFocusTreeHeader(file: File): Task[Boolean] =
     // TODO TODO
