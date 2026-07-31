@@ -369,7 +369,7 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
     new SettingsController().open()
 
   @FXML def handleFocusTreeViewerClick(event: MouseEvent): Unit = openWindow(event, classOf[FocusTree2Controller], focusTreeViewer)
-  @FXML def handleFocusTreeLocalizationClick(event: MouseEvent): Unit = openWindow(event, classOf[FocusTreeLocalization2Controller], focusTreeLocalization) 
+  @FXML def handleFocusTreeLocalizationClick(event: MouseEvent): Unit = openWindow(event, classOf[FocusTreeLocalization2Controller], focusTreeLocalization)
   @FXML def handleIdeaLocalizationClick(event: MouseEvent): Unit = () //openWindow(event, classOf[IdeaLocalizationController], ideaLocalization)
   @FXML def handleManageFocusTreesClick(event: MouseEvent): Unit = () //openWindow(event, classOf[ManageFocusTreesController], manageFocusTrees)
   @FXML def handleCustomTooltipClick(event: MouseEvent): Unit = openWindow(event, classOf[CustomTooltipController], customTooltip)
