@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.script
 
 import com.hoi4utils.main.HOIIVUtilsConfig
-import com.hoi4utils.script2.{PDXFile, PDXProperty, PDXPropertyList, PDXScript, Reference}
+import com.hoi4utils.script2.{PDXEntity, PDXFile, PDXProperty, PDXPropertyList, PDXScript, Reference}
 import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.FXCollections
@@ -20,10 +20,10 @@ import scala.collection.mutable.ListBuffer
 /**
  * Displays an editor pane for a [[PDXScript]].
  */
-class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable]) extends AnchorPane with LazyLogging:
+class PDXEditorPane(val pdxScript: PDXScript[?] | PDXEntity, var onUpdate: Option[Runnable] = None) extends AnchorPane with LazyLogging:
 
   val rootVBox: VBox = new VBox()
-  val nullProperties: ListBuffer[PDXScript[?]] = ListBuffer.empty
+  val nullProperties: ListBuffer[PDXScript[?] | PDXEntity] = ListBuffer.empty
   val nullPropertyNodes: ListBuffer[Node] = ListBuffer.empty
   var displayNullProperties: Boolean = false
 
@@ -44,7 +44,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
   // Initialize the editor with the properties of the PDXScript
   drawEditor(pdxScript, rootVBox);
 
-  def drawEditor(pdxScript: PDXScript[?], pane: Pane): Unit =
+  def drawEditor(pdxScript: PDXScript[?] | PDXEntity, pane: Pane): Unit =
     val editorPDXNode = createEditorPDXNode(pdxScript, false, true)
 
     if (editorPDXNode != null) {
@@ -71,7 +71,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
     /* post ui construction */
     if (HOIIVUtilsConfig.get("debug.colors").equals("true")) applyDebugBorders(pane)
 
-  private def createEditorPDXNode(property: PDXScript[?], allowNull: Boolean, withLabel: Boolean): Node =
+  private def createEditorPDXNode(property: PDXScript[?] | PDXEntity, allowNull: Boolean, withLabel: Boolean): Node =
     val editorPropertyPane: Pane = property match
       case pdxList: PDXPropertyList[?] =>
         val vbox = VBox()
@@ -90,7 +90,8 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
         val labelText = property match
           case pdxList: PDXPropertyList[?] => pdxList.pdxKey + " :="
           case pdx: PDXProperty[?] => pdx.pdxKey + " ="
-          case pdx => pdx.pdxKey + " ="
+          case pdx: PDXScript[?] => pdx.pdxKey + " ="
+          case pdx: PDXEntity => pdx.display + " ="   // todo maybe? 
         val label = new Label(labelText)
         label.setFont(Font.font("Monospaced"));
         label.setMinWidth(10)
@@ -109,7 +110,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?], var onUpdate: Option[Runnable])
     editorPropertyPane.getChildren.add(editorNode)
     editorPropertyPane
 
-  private def createEditorNullPDXNode(property: PDXScript[?]): Node =
+  private def createEditorNullPDXNode(property: PDXScript[?] | PDXEntity): Node =
     val nullPropertyHBox: HBox = HBox()
     nullPropertyHBox.setSpacing(10)
     nullPropertyHBox.setPadding(new Insets(6, 6, 6, 20)); // Indent the null properties

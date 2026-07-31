@@ -7,6 +7,7 @@ import com.hoi4utils.hoi42.map.state.service.StateService
 import com.hoi4utils.main.{HOIIVFiles, HOIIVUtils}
 import com.hoi4utils.ui.javafx.application.HOIIVUtilsAbstractController
 import com.hoi4utils.ui.countries.StateTable
+import com.hoi4utils.ui.script.PDXEditorPane
 import com.typesafe.scalalogging.LazyLogging
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
@@ -33,15 +34,16 @@ import scala.jdk.javaapi.CollectionConverters
 import java.io.File
 import java.util
 import java.util.function.{DoubleFunction, ToIntFunction}
-import scala.collection.immutable.Map
+import scala.collection.immutable.{Iterable, Map}
+import scala.collection.mutable
 import scala.compiletime.uninitialized
 
 class MapEditorController extends HOIIVUtilsAbstractController with LazyLogging {
 
-  @FXML private val mapCanvas: Canvas = uninitialized
-  @FXML private val zoomSlider: Slider = uninitialized
-  @FXML private val pdxScrollPane: ScrollPane = uninitialized
-  @FXML private val mapEditorSplitPane: SplitPane = uninitialized
+  @FXML private var mapCanvas: Canvas = uninitialized
+  @FXML private var zoomSlider: Slider = uninitialized
+  @FXML private var pdxScrollPane: ScrollPane = uninitialized
+  @FXML private var mapEditorSplitPane: SplitPane = uninitialized
 
   private var mapImage: Option[Image] = None
   // Keep the original province map image (with definition colors) for hover lookup.
@@ -78,7 +80,6 @@ class MapEditorController extends HOIIVUtilsAbstractController with LazyLogging 
     drawMap()
 
   private def drawMap(): Unit =
-    if (mapImage == null) return
     mapImage match
       case Some(img) =>
         val width = img.getWidth * zoomFactor
@@ -99,7 +100,7 @@ class MapEditorController extends HOIIVUtilsAbstractController with LazyLogging 
    * @param provinceIdToStateMap Mapping from province id to State.
    * @return the State at the given coordinates, or null if none.
    */
-  private def getStateAtCanvasCoordinates(canvasX: Double, canvasY: Double, provinceColorToId: Map[Integer, Integer], provinceIdToStateMap: Map[Integer, State]): Option[State] =
+  private def getStateAtCanvasCoordinates(canvasX: Double, canvasY: Double, provinceColorToId: collection.Map[Integer, Integer], provinceIdToStateMap: collection.Map[Integer, State]): Option[State] =
     originalMapImage match
       case Some(originalImg) =>
         // Convert canvas coordinates to original image coordinates.
@@ -233,90 +234,93 @@ class MapEditorController extends HOIIVUtilsAbstractController with LazyLogging 
    */
   @FXML private[map] def onViewByState(): Unit =
     logger.info("Switching view mode to State.")
-    if (originalMapImage == null) {
-      logger.warn("No province map image loaded.")
-      return
-    }
-    // Load definitions CSV. Assume HOIIVFiles.Mod.definition_csv_file exists.
-    val defFile = HOIIVFiles.Mod.definition_csv_file
-    if (!defFile.exists) {
-      logger.warn("Definitions file not found: " + defFile.getAbsolutePath)
-      return
-    }
-    // Load the province definitions from CSV (Scala object)
-    val defs = DefinitionCSV.load(defFile)
-    // Build a mapping from province RGB (as in the original image) to province id.
-    val provinceColorToId = new util.HashMap[Integer, Integer]
-    for (`def` <- defs.values) {
-      val rgb = (`def`.red << 16) | (`def`.green << 8) | `def`.blue
-      provinceColorToId.put(rgb, `def`.id)
-    }
-    // Build a mapping from province id to a state color and a mapping to the state.
-    val provinceIdToStateColor = new util.HashMap[Integer, Color]
-    val provinceIdToStateMap = new util.HashMap[Integer, State]
-    val states = stateService.observeStates
-    for (state <- states) {
-      // Assign a random color for each state.
-      val stateColor = Color.hsb(Math.random * 360, 0.5, 0.9)
-      // Assume state.provinces() returns an Iterable<Province> (convert Scala collection to Java)
-      for (province <- CollectionConverters.asJava(state.provinces.toList)) {
-        val id = province.id.get.asInstanceOf[Integer]
-        provinceIdToStateColor.put(id, stateColor)
-        provinceIdToStateMap.put(id, state)
-      }
-    }
-    // Create a new WritableImage by recoloring the original image.
-    val width = originalMapImage.getWidth.toInt
-    val height = originalMapImage.getHeight.toInt
-    val newImage = new WritableImage(width, height)
-    val reader = originalMapImage.getPixelReader
-    val writer = newImage.getPixelWriter
-    for (y <- 0 until height) {
-      for (x <- 0 until width) {
-        val origColor = reader.getColor(x, y)
-        val r = (origColor.getRed * 255).toInt
-        val g = (origColor.getGreen * 255).toInt
-        val b = (origColor.getBlue * 255).toInt
-        val pixelRgb = (r << 16) | (g << 8) | b
-        val provinceId = provinceColorToId.get(pixelRgb)
-        if (provinceId != null) {
-          val stateColor = provinceIdToStateColor.get(provinceId)
-          if (stateColor != null) writer.setColor(x, y, stateColor)
-          else writer.setColor(x, y, origColor)
+    originalMapImage match
+      case Some(mapImage) =>
+        // Load definitions CSV. Assume HOIIVFiles.Mod.definition_csv_file exists.
+        val defFile = HOIIVFiles.Mod.definition_csv_file
+        if (!defFile.exists) {
+          logger.warn("Definitions file not found: " + defFile.getAbsolutePath)
+          return
         }
-        else writer.setColor(x, y, origColor)
-      }
-    }
-    // Update the displayed image.
-    mapImage = newImage
-    drawMap()
-    // Install a mouse moved handler to update a tooltip with the state name.
-    mapCanvas.setOnMouseMoved((event: MouseEvent) => {
-      val s = getStateAtCanvasCoordinates(event.getX, event.getY, provinceColorToId, provinceIdToStateMap)
-      if (s != null) {
-        stateTooltip.setText("State: " + s.toString)
-        stateTooltip.show(mapCanvas, event.getScreenX + 10, event.getScreenY + 10)
-      }
-      else stateTooltip.hide()
-
-    })
+        // Load the province definitions from CSV (Scala object)
+        val defs = DefinitionCSV.load(defFile)
+        // Build a mapping from province RGB (as in the original image) to province id.
+        val provinceColorToId = new mutable.HashMap[Integer, Integer]
+        for (`def` <- defs.values) {
+          val rgb = (`def`.red << 16) | (`def`.green << 8) | `def`.blue
+          provinceColorToId.put(rgb, `def`.id)
+        }
+        // Build a mapping from province id to a state color and a mapping to the state.
+        val provinceIdToStateColor = new mutable.HashMap[Integer, Color]
+        val provinceIdToStateMap = new mutable.HashMap[Integer, State]
+        val stateService: StateService = zio.Unsafe.unsafe { implicit unsafe =>
+          HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[StateService]).getOrThrowFiberFailure()
+        }
+        val states = stateService.states
+        for (state <- states) {
+          // Assign a random color for each state.
+          val stateColor = Color.hsb(Math.random * 360, 0.5, 0.9)
+          // Assume state.provinces() returns an Iterable<Province> (convert Scala collection to Java)
+          for (province <- state.provinces) {
+            val id = province.identifier.get.asInstanceOf[Integer]
+            provinceIdToStateColor.put(id, stateColor)
+            provinceIdToStateMap.put(id, state)
+          }
+        }
+        // Create a new WritableImage by recoloring the original image.
+        val width = mapImage.getWidth.toInt
+        val height = mapImage.getHeight.toInt
+        val newImage = new WritableImage(width, height)
+        val reader = mapImage.getPixelReader
+        val writer = newImage.getPixelWriter
+        for (y <- 0 until height) {
+          for (x <- 0 until width) {
+            val origColor = reader.getColor(x, y)
+            val r = (origColor.getRed * 255).toInt
+            val g = (origColor.getGreen * 255).toInt
+            val b = (origColor.getBlue * 255).toInt
+            val pixelRgb = (r << 16) | (g << 8) | b
+            provinceColorToId.get(pixelRgb) match
+              case Some(id) =>
+                provinceIdToStateColor.get(id) match
+                  case Some(stateColor) =>
+                    writer.setColor(x, y, stateColor)
+                  case None =>
+                    writer.setColor(x, y, origColor)
+              case None => writer.setColor(x, y, origColor)
+          }
+        }
+        // Update the displayed image.
+        originalMapImage = Some(newImage)
+        drawMap()
+        // Install a mouse moved handler to update a tooltip with the state name.
+        mapCanvas.setOnMouseMoved((event: MouseEvent) => {
+          val s = getStateAtCanvasCoordinates(event.getX, event.getY, provinceColorToId, provinceIdToStateMap)
+          if (s != null) {
+            stateTooltip.setText("State: " + s.toString)
+            stateTooltip.show(mapCanvas, event.getScreenX + 10, event.getScreenY + 10)
+          }
+          else stateTooltip.hide()
+    
+        })
+      case None =>  logger.warn("No province map image loaded.")
 
   @FXML private[map] def onViewByStrategicRegion(): Unit =
-    MapEditorController.logger.info("Switching view mode to Strategic Region.")
+    logger.info("Switching view mode to Strategic Region.")
     // TODO: Implement strategic region view rendering.
     // Remove tooltip handler if active.
     mapCanvas.setOnMouseMoved(null)
     drawMap()
 
   @FXML private[map] def onViewByCivFactories(): Unit =
-    MapEditorController.logger.info("Switching view mode to Civilian Factories.")
-    viewByStateMetric(State.civilianFactories, // extract civilianFactories
+    logger.info("Switching view mode to Civilian Factories.")
+    viewByStateMetric(state => state.civilianFactories, // extract civilianFactories
       (norm: Double) => Color.hsb(120, 0.8, 0.3 + 0.7 * norm) // greenish scale, brighter = more factories)
     )
 
   @FXML private[map] def onViewByMilFactories(): Unit =
-    MapEditorController.logger.info("Switching view mode to Military Factories.")
-    viewByStateMetric(State.militaryFactories, // extract militaryFactories
+    logger.info("Switching view mode to Military Factories.")
+    viewByStateMetric(state => state.militaryFactories, // extract militaryFactories
       (norm: Double) => Color.hsb(0, 0.8, 0.3 + 0.7 * norm) // reddish scale, brighter = more factories)
     )
 
@@ -370,41 +374,38 @@ class MapEditorController extends HOIIVUtilsAbstractController with LazyLogging 
       // In a production version, consider caching these maps.
       val defFile = HOIIVFiles.Mod.definition_csv_file
       if (!defFile.exists) {
-        MapEditorController.logger.warn("Definitions file not found: " + defFile.getAbsolutePath)
+        logger.warn("Definitions file not found: " + defFile.getAbsolutePath)
         return
       }
-      val scalaDefs = DefinitionCSV.load(defFile)
-      val defs = CollectionConverters.asJava(scalaDefs)
-      val provinceColorToId = new util.HashMap[Integer, Integer]
-      import scala.collection.JavaConversions._
+      val defs = DefinitionCSV.load(defFile)
+      val provinceColorToId = new mutable.HashMap[Integer, Integer]
       for (`def` <- defs.values) {
         val rgb = (`def`.red << 16) | (`def`.green << 8) | `def`.blue
         provinceColorToId.put(rgb, `def`.id)
       }
-      val provinceIdToStateMap = new util.HashMap[Integer, State]
-      val states = stateService.observeStates
-      import scala.collection.JavaConversions._
+      val provinceIdToStateMap = new mutable.HashMap[Integer, State]
+      val stateService: StateService = zio.Unsafe.unsafe { implicit unsafe =>
+        HOIIVUtils.getActiveRuntime.unsafe.run(ZIO.service[StateService]).getOrThrowFiberFailure()
+      }
+      val states = stateService.states
       for (state <- states) {
-        import scala.collection.JavaConversions._
-        for (province <- CollectionConverters.asJava(state.provinces.toList)) {
-          val id = province.id.get.asInstanceOf[Integer]
+        for (province <- state.provinces) {
+          val id = province.identifier.get
           provinceIdToStateMap.put(id, state)
         }
       }
-      val clickedState = getStateAtCanvasCoordinates(event.getX, event.getY, provinceColorToId, provinceIdToStateMap)
-      if (clickedState != null) {
-        MapEditorController.logger.info("Right-clicked state: " + clickedState)
-        // add pdxEditor to scroll pane
-        val pdxEditorPane = new PDXEditorPane(clickedState)
-        pdxEditorPane.showSaveButton
-        pdxScrollPane.setContent(pdxEditorPane)
-        pdxScrollPane.setVisible(true)
-        this.selectedState = clickedState
-      }
-      else {
-        MapEditorController.logger.info("Right-clicked on an undefined state area.")
-        this.selectedState = null
-        if (stateTable != null) stateTable.clearStates()
-      }
+      getStateAtCanvasCoordinates(event.getX, event.getY, provinceColorToId, provinceIdToStateMap) match
+        case Some(clickedState) =>
+          logger.info("Right-clicked state: " + clickedState)
+          // add pdxEditor to scroll pane
+          val pdxEditorPane = new PDXEditorPane(clickedState)
+          pdxEditorPane.showSaveButton()
+          pdxScrollPane.setContent(pdxEditorPane)
+          pdxScrollPane.setVisible(true)
+          this.selectedState = Some(clickedState) 
+        case None =>
+          logger.info("Right-clicked on an undefined state area.")
+          this.selectedState = null
+          if (stateTable != null) stateTable.clearStates()
     }
 }
