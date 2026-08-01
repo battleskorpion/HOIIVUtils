@@ -39,9 +39,9 @@ class LoadPDXManager extends LazyLogging:
 //    List(CountryTag, IdeasManager),             // , FocusTreeManager
 //    List(ResourcesFile, State, CountryFile),
 //  )
-  
+
 //  type AppPDXEnv = InterfaceService & CountryTagService & IdeasManager & FocusTreeManager & ResourcesFileService & StateService & CountryService
-  type AppPDXEnv = InterfaceService & CountryTagService & FocusTreeService & StateService & CountryService // todo: & IdeasService? & ResourcesFileService? 
+  type AppPDXEnv = InterfaceService & CountryTagService & FocusTreeService & StateService & CountryService // todo: & IdeasService? & ResourcesFileService?
 
   /**
    * Generates the load order list by applying the given 'action' to every service.
@@ -60,8 +60,8 @@ class LoadPDXManager extends LazyLogging:
 //    )
     List(
       List(step[InterfaceService]),
-      List(step[CountryTagService], step[FocusTreeService]),  // todo ideasservice? 
-      List(step[StateService], step[CountryService])  // todo resources file service? 
+      List(step[CountryTagService], step[FocusTreeService]),  // todo ideasservice?
+      List(step[StateService], step[CountryService])  // todo resources file service?
     )
   }
 
@@ -107,120 +107,85 @@ class LoadPDXManager extends LazyLogging:
       config <- ZIO.service[Config]
       interfaceService <- ZIO.service[InterfaceService]
       countryTagService <- ZIO.service[CountryTagService]
-//            ideasManager <- ZIO.service[IdeasManager]
+      //            ideasManager <- ZIO.service[IdeasManager]
       focusTreeService <- ZIO.service[FocusTreeService]
-//            resourcesFileService <- ZIO.service[ResourcesFileService]
+      //            resourcesFileService <- ZIO.service[ResourcesFileService]
       stateService <- ZIO.service[StateService]
       countryService <- ZIO.service[CountryService]
+
       hProperties = config.getProperties
-      _ <- ZIO.attempt {
-        implicit val properties: Properties = hProperties
-        implicit val label: Label = loadingLabel
-        //        if isCancelled() then return
 
-        if !isCancelled() then
+      // database
+      _ <- ZIO.unless(isCancelled()) {
+        ZIO.attempt {
+          implicit val properties: Properties = hProperties
+          implicit val label: Label = loadingLabel
           startDatabase(loadingLabel, onComponentStart, onComponentComplete)
-
-        if !isCancelled() then
+        }
+      }
+      _ <- ZIO.unless(isCancelled()) {
+        ZIO.attempt {
+          implicit val properties: Properties = hProperties
+          implicit val label: Label = loadingLabel
           startDatabase1(loadingLabel, onComponentStart, onComponentComplete)
-
-        if !isCancelled() then
+        }
+      }
+      // paths
+      _ <- ZIO.unless(isCancelled()) {
+        ZIO.attempt {
           MenuController.updateLoadingStatus(loadingLabel, "Finding Paths...")
           val hoi4Path = hProperties.getProperty("hoi4.path")
           val modPath = hProperties.getProperty("mod.path")
-          if !isCancelled() then
-            if validateDirectoryPath(hoi4Path, "hoi4.path") && validateDirectoryPath(modPath, "mod.path") then
-              HOIIVFiles.setHoi4PathChildDirs(hoi4Path)
-              HOIIVFiles.setModPathChildDirs(modPath)
-              hProperties.setProperty("valid.HOIIVFilePaths", "true")
-            else
-              logger.error("Failed to create HOIIV file paths")
-              hProperties.setProperty("valid.HOIIVFilePaths", "false")
-      } *> {
-        // Localization Reload
-        ZIO.ifZIO(ZIO.succeed(isCancelled()))(
-          ZIO.unit,
-          ZIO.attempt {
+
+          if validateDirectoryPath(hoi4Path, "hoi4.path") && validateDirectoryPath(modPath, "mod.path") then
+            HOIIVFiles.setHoi4PathChildDirs(hoi4Path)
+            HOIIVFiles.setModPathChildDirs(modPath)
+            hProperties.setProperty("valid.HOIIVFilePaths", "true")
+          else
+            logger.error("Failed to create HOIIV file paths")
+            hProperties.setProperty("valid.HOIIVFilePaths", "false")
+        }
+      }
+
+      // Localization Reload
+      _ <- ZIO.unless(isCancelled()) {
+        for {
+          _ <- ZIO.attempt {
             onComponentStart("Localization")
             MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
-          } *> {
-            for
-              timedResult <- localizationService.reload().timed
-              (duration, _) = timedResult
-              _ <- ZIO.attempt {
-                onComponentComplete("Localization", duration.toNanos)
-              }
-            yield ()
           }
-        ) *>
-        // Interface reload
-        reloadService(loadingLabel, interfaceService, isCancelled, onComponentStart, onComponentComplete) *>
-          (
-            // CountryTag reload
-            reloadService(loadingLabel, countryTagService, isCancelled, onComponentStart, onComponentComplete) &>
-              // todo
-//            // Ideas reload
-//            reloadService(loadingLabel, ideasManager, isCancelled, onComponentStart, onComponentComplete) &>
-            // Focus trees reload
-            reloadService(loadingLabel, focusTreeService, isCancelled, onComponentStart, onComponentComplete)
-          )
-          *>
-          (
-            // todo
-//            // Resources reload
-//            reloadService(loadingLabel, resourcesFileService, isCancelled, onComponentStart, onComponentComplete) &>
-            // State reload
-            reloadService(loadingLabel, stateService, isCancelled, onComponentStart, onComponentComplete) &>
-            // Country reload
-            reloadService(loadingLabel, countryService, isCancelled, onComponentStart, onComponentComplete)
-          )
-//        ) &>
-//          // Parallel PDX Loading
-//        ZIO.attempt {
-//          implicit val properties: Properties = hProperties
-//          implicit val label: Label = loadingLabel
-//          pdxList.par.foreach(l =>
-//            l.foreach(p =>
-//              if !isCancelled() then
-//                val componentName = p.cleanName
-//                onComponentStart(componentName)
-//                val componentStart = System.nanoTime()
-//                readPDX(p, isCancelled)
-//                onComponentComplete(componentName, System.nanoTime() - componentStart)
-//            )
-//          )
-//        }
+          timedResult <- localizationService.reload().timed
+          (duration, _) = timedResult
+          _ <- ZIO.attempt {
+            onComponentComplete("Localization", duration.toNanos)
+          }
+        } yield ()
+      }
+
+      // Interface Reload
+      _ <- ZIO.unless(isCancelled()) {
+        reloadService(loadingLabel, interfaceService, isCancelled, onComponentStart, onComponentComplete)
+      }
+
+      // parallel 1
+      _ <- ZIO.unless(isCancelled()) {
+        reloadService(loadingLabel, countryTagService, isCancelled, onComponentStart, onComponentComplete) <&>
+        // todo
+//          reloadService(loadingLabel, ideasManager, isCancelled, onComponentStart, onComponentComplete) <&>
+        reloadService(loadingLabel, focusTreeService, isCancelled, onComponentStart, onComponentComplete)
+      }
+
+      // parallel 2
+      _ <- ZIO.unless(isCancelled()) {
+        // todo
+        //            reloadService(loadingLabel, resourcesFileService, isCancelled, onComponentStart, onComponentComplete) <&>
+        reloadService(loadingLabel, stateService, isCancelled, onComponentStart, onComponentComplete) <&>
+        reloadService(loadingLabel, countryService, isCancelled, onComponentStart, onComponentComplete)
       }
     } yield ()
-
-//        if !isCancelled() then
-//          startTime = System.nanoTime()
-//          onComponentStart("Localization")
-//          MenuController.updateLoadingStatus(loadingLabel, "Loading Localization...")
-//          //    Unsafe.unsafe { implicit unsafe =>
-//          //      ZHOIIVUtils.getActiveRuntime.unsafe.run(
-//          //        ZIO.serviceWithZIO[LocalizationService](_.reload())
-//          //      ).getOrThrow()
-//          //    }
-//          ZIO.serviceWithZIO[LocalizationService](_.reload())
-//          //    LocalizationService.reload()  // TODO TODO TODO !!!!!
-//          onComponentComplete("Localization", (System.nanoTime() - startTime) / 1_000_000_000.0)
-//
-//        if isCancelled() then
-//          pdxList.par.foreach(l =>
-//            l.foreach(p =>
-//              if !isCancelled() then
-//                val componentName = p.cleanName
-//                onComponentStart(componentName)
-//                val componentStart = System.nanoTime()
-//                readPDX(p, isCancelled)
-//                onComponentComplete(componentName, (System.nanoTime() - componentStart) / 1_000_000_000.0)
-//            )
-//          )
-//      }
   }
 
-  private def startDatabase1(loadingLabel: Label, onComponentStart: String => Unit = _ => (), 
+  private def startDatabase1(loadingLabel: Label, onComponentStart: String => Unit = _ => (),
                              onComponentComplete: (String, Long) => Unit = (_, _) => ()
                             ): Unit = {
     val startTime = System.nanoTime()
@@ -230,7 +195,7 @@ class LoadPDXManager extends LazyLogging:
     onComponentComplete("EffectDatabase", System.nanoTime() - startTime)
   }
 
-  private def startDatabase(loadingLabel: Label, onComponentStart: String => Unit = _ => (), 
+  private def startDatabase(loadingLabel: Label, onComponentStart: String => Unit = _ => (),
                             onComponentComplete: (String, Long) => Unit = (_, _) => ()
                            ): Unit = {
     val startTime = System.nanoTime()
@@ -240,13 +205,12 @@ class LoadPDXManager extends LazyLogging:
     onComponentComplete("ModifierDatabase", System.nanoTime() - startTime)
   }
 
-  private def reloadService(loadingLabel: Label,
-                            service: PDXReadable[?],
+  private def reloadService[R](loadingLabel: Label,
+                            service: PDXReadable[R],
                             isCancelled: () => Boolean = () => false,
                             onComponentStart: String => Unit = _ => (),
                             onComponentComplete: (String, Long) => Unit = (_, _) => ()) = {
-    ZIO.ifZIO(ZIO.succeed(isCancelled()))(
-      ZIO.unit,
+    ZIO.unlessZIO(ZIO.succeed(isCancelled()))(
       ZIO.attempt {
         onComponentStart(service.display)
         MenuController.updateLoadingStatus(loadingLabel, s"Loading ${service.display}...")
