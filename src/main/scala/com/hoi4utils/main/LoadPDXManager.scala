@@ -31,7 +31,7 @@ import scala.collection.parallel.CollectionConverters.*
  *
  * TODO: @Skorp Update the ChangeNotifier and FileWatcher or delete this todo if working as intended
  */
-class PDXLoader extends LazyLogging:
+class LoadPDXManager extends LazyLogging:
 
 //  /* LOAD ORDER IMPORTANT (depending on the class) */
 //  val pdxList: List[List[PDXReadable]] = List(
