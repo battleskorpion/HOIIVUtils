@@ -70,7 +70,7 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
       def readFocusTrees(files: Seq[File]): RIO[Registry[SharedFocus], Seq[FocusTree | SharedFocusFile]] =
         ZIO.foreach(files) { file => // foreachParDiscard??
           for {
-            node <- new ZIOParser(file).parse   // TODO program stuck here
+            node <- new ZIOParser(file).parse
             pdx <- hasFocusTreeHeader(file).flatMap[Registry[SharedFocus], Throwable, FocusTree | SharedFocusFile] {
               case true =>
                 ZIO.attempt {

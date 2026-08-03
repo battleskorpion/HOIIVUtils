@@ -4,6 +4,7 @@ import com.hoi4utils.parser.{Node, PDXValueNode, SeqNode}
 import jdk.jpackage.internal.Arguments.CLIOptions.context
 
 import scala.collection.mutable.ListBuffer
+import scala.reflect.TypeTest
 
 class PDXLoader[C]:
 
@@ -78,12 +79,15 @@ class PDXLoader[C]:
 
     instance.asInstanceOf[PDXEntity]
 
-  private def handleReferable(node: Node[?], referable: Referable[?]): Unit =
+  private def handleReferable(node: Node[?], referable: Referable[?])(using
+    ttInt: TypeTest[Any, NameReferable[Int]],
+    ttString: TypeTest[Any, NameReferable[String]]
+  ): Unit =
     node.identifier match
       case Some(id) =>
         referable match
-          case r: NameReferable[Int] => r.referableID = id.toInt // TODO make sure this works right.
-          case r: NameReferable[String] => r.referableID = id
+          case ttInt(r) => r.referableID = id.toInt // TODO make sure this works right.
+          case ttString(r) => r.referableID = id
           case _ => ()
       case None =>
         referable match
