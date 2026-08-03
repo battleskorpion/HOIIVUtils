@@ -2,7 +2,8 @@ package com.hoi4utils.hoi42.common.national_focus
 
 import com.hoi4utils.hoi42.common.country_tags.{CountryTag, CountryTagService}
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.ZIOParser
+import com.hoi4utils.parser.NodeExtensions.getTyped
+import com.hoi4utils.parser.{NodeSeq, ZIOParser}
 import com.hoi4utils.script2.{Registry, *}
 import javafx.collections.{FXCollections, ObservableList}
 import zio.{Chunk, RIO, Task, UIO, URIO, URLayer, ZIO, ZLayer}
@@ -75,7 +76,10 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
                 ZIO.attempt {
                   val loader = new PDXLoader[FocusTree]()
                   val tree = new FocusTree(this, Some(file))(using sharedFocusRegistry)
-                  val errors = loader.load(node, tree, tree)
+                  // using 'node' is WRONG here. must do `val pdxNode = node.getTyped[NodeSeq]("focus_tree")` and use pdxNode
+                  val pdxNode = node.getTyped[NodeSeq]("focus_tree")
+//                  val errors = loader.load(node, tree, tree)
+                  val errors = loader.load(pdxNode, tree, tree)
                   if (errors.nonEmpty) {
                     println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
                   }
