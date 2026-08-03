@@ -3,7 +3,7 @@ package com.hoi4utils.main
 import com.hoi4utils.databases.modifier.ModifierDatabase
 import com.hoi4utils.file.file_listener.{FileAdapter, FileEvent, FileWatcher}
 import com.hoi4utils.hoi42.common.country_tags.{CountryTag, CountryTagService}
-import com.hoi4utils.hoi42.common.national_focus.{FocusTree, FocusTreeService}
+import com.hoi4utils.hoi42.common.national_focus.{FocusTree, FocusTreeService, SharedFocus}
 import com.hoi4utils.hoi42.gfx.{Interface, InterfaceService}
 import com.hoi4utils.hoi42.history.countries.CountryFile
 import com.hoi4utils.hoi42.history.countries.service.CountryService
@@ -13,7 +13,7 @@ import com.hoi4utils.hoi42.map.state.State
 import com.hoi4utils.hoi42.map.state.service.StateService
 import com.hoi4utils.main.HOIIVFiles
 import com.hoi4utils.main.HOIIVUtils.validateEnv
-import com.hoi4utils.script2.PDXReadable
+import com.hoi4utils.script2.{PDXReadable, Registry}
 import com.hoi4utils.ui.menus.MenuController
 import com.typesafe.scalalogging.LazyLogging
 import javafx.scene.control.Label
@@ -114,6 +114,8 @@ class LoadPDXManager extends LazyLogging:
       countryService <- ZIO.service[CountryService]
 
       hProperties = config.getProperties
+      sharedFocusRegistry = focusTreeService.sharedPseudoSharedFocusTree
+      given Registry[SharedFocus] = sharedFocusRegistry
 
       // database
       _ <- ZIO.unless(isCancelled()) {

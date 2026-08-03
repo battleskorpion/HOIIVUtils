@@ -32,6 +32,7 @@ trait FocusTreeService extends FocusTreeRegistry with PDXReadable[f]  {
   def sharedFocuses: Set[SharedFocus]
   def observeFocusTrees: ObservableList[FocusTree]
   def hasFocusTreeHeader(file: File): Task[Boolean]
+  def sharedPseudoSharedFocusTree: PseudoSharedFocusTree
 
   override def clear(): Task[Unit] =
     super[FocusTreeRegistry].clear()
@@ -52,6 +53,9 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
   val focusTreeFileMap = new mutable.HashMap[File, FocusTree]()
   val sharedFocusFileRegistry = new SharedFocusFileRegistry()
   val pseudoSharedFocusTreeRegistry = new PseudoSharedFocusTreeRegistry()
+  // pseudo shared focus tree which is a Registry[SharedFocus] for all sharedFocuses in a regular focus file and not in a
+  // sharedFocusFile
+  val sharedPseudoSharedFocusTree: PseudoSharedFocusTree = PseudoSharedFocusTree.named("__shared-global", pseudoSharedFocusTreeRegistry)
 
   /* other */
   // TODO bring back after getting things working :)

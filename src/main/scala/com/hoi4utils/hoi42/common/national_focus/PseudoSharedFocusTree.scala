@@ -5,7 +5,7 @@ import com.hoi4utils.script2.datatype.*
 import com.hoi4utils.hoi42.common.*
 import com.hoi4utils.script2.*
 import com.hoi4utils.script2.PDXPropertyValueExtensions.*
-import zio.{URIO, ZIO}
+import zio.{RIO, URIO, ZIO}
 
 import java.io.File
 import java.util.UUID
@@ -20,7 +20,7 @@ class PseudoSharedFocusTree(pseudoTreeRegistry: PseudoSharedFocusTreeRegistry, v
   val focuses = pdxList[SharedFocus]("focus")
 
   override def idProperty: PDXProperty[String] = id
-  
+
   override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
 
   override def toString: String = s"[Shared Focuses] ${super.toString}"
@@ -32,7 +32,7 @@ object PseudoSharedFocusTree {
                  file: Option[File]): URIO[FocusTreeService & CountryTagService, PseudoSharedFocusTree] =
     for {
       manager <- ZIO.service[FocusTreeService]
-      tagService <- ZIO.service[CountryTagService]
+      //      tagService <- ZIO.service[CountryTagService]
       newTree =
         val tree = new PseudoSharedFocusTree(pseudoTreeRegistry, file)
         val treeId = if id == "" then s"unknown-${UUID.randomUUID()}" else id
@@ -40,10 +40,23 @@ object PseudoSharedFocusTree {
         tree ++= focuses
         tree
     } yield newTree
+
+  def named(id: String, pseudoTreeRegistry: PseudoSharedFocusTreeRegistry): PseudoSharedFocusTree =
+    //    for {
+    //      manager <- ZIO.service[FocusTreeService]
+    //      tagService <- ZIO.service[CountryTagService]
+    //      newTree =
+    //        val tree = new PseudoSharedFocusTree(pseudoTreeRegistry, None)
+    //        tree.id @= id
+    //        tree
+    //    } yield newTree
+    val tree = new PseudoSharedFocusTree(pseudoTreeRegistry, None)
+    tree.id @= id
+    tree
 }
 
 class PseudoSharedFocusTreeRegistry extends Registry[PseudoSharedFocusTree] {
 
   override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
-}
 
+}
