@@ -45,14 +45,11 @@ case class CountryTagServiceImpl() extends CountryTagService {
   override def read(): Task[Boolean] = {
     for {
       tags <- loadCountryTags()
-      result <- ZIO.attempt {
+      result <-
         if (tags.isEmpty)
-//          logger.error(s"No country tags loaded!?")     // TODO TODO log error 
-          false
+          ZIO.logError("No country tags loaded?").as(false)
         else
-          this.register(tags)
-          true
-      }
+        ZIO.attempt(this.register(tags)).as(true)
     } yield result
   }
 
@@ -69,7 +66,7 @@ case class CountryTagServiceImpl() extends CountryTagService {
           node <- new ZIOParser(file).parse
           pdxs <- ZIO.attempt {
             val loader = new PDXLoader[CountryTag]()
-            node.$.collect({ case p: PDXValueNode[?] => p }).map(tagNode => 
+            node.$.collect({ case p: PDXValueNode[?] => p }).map(tagNode =>
               val countryTag = new CountryTag(this)
               val errors = loader.load(tagNode, countryTag, countryTag)
               if (errors.nonEmpty) {
@@ -116,7 +113,7 @@ case class CountryTagServiceImpl() extends CountryTagService {
     this register tag
 
   override def addTag(tag: CountryTag, file: File): Unit =
-    this register tag 
+    this register tag
     fileMap.addOne(tag, file)
 
   private def listTagFiles(folder: File): Seq[File] =
@@ -135,12 +132,12 @@ case class CountryTagServiceImpl() extends CountryTagService {
 
   override def findExisting(tag: String, file: File): UIO[Option[CountryTag]] =
     ZIO.succeed {
-      val countryTag = tags.find(_.$ == tag).map(tag => 
-        fileMap.addOne(tag, file) 
+      val countryTag = tags.find(_.$ == tag).map(tag =>
+        fileMap.addOne(tag, file)
         tag
       )
       countryTag
     }
 
-  override def file(tag: CountryTag): UIO[Option[File]] = ZIO.succeed(fileMap.get(tag)) 
+  override def file(tag: CountryTag): UIO[Option[File]] = ZIO.succeed(fileMap.get(tag))
 }
