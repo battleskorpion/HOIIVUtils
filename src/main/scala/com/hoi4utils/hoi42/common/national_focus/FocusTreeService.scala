@@ -76,7 +76,7 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
                 ZIO.attempt {
                   val loader = new PDXLoader[FocusTree]()
                   val tree = new FocusTree(this, Some(file))(using sharedFocusRegistry)
-                  // using 'node' is WRONG here. must do `val pdxNode = node.getTyped[NodeSeq]("focus_tree")` and use pdxNode
+                  // using 'node' is WRONG? here. must do `val pdxNode = node.getTyped[NodeSeq]("focus_tree")` and use pdxNode
                   val pdxNode = node.getTyped[NodeSeq]("focus_tree")
 //                  val errors = loader.load(node, tree, tree)
                   val errors = loader.load(pdxNode, tree, tree)

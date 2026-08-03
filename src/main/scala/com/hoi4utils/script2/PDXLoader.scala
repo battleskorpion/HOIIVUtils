@@ -40,7 +40,7 @@ class PDXLoader[C]:
       case _ => ()
     entity match
       case referable: Referable[?] => handleReferable(node, referable)
-      case _ => () 
+      case _ => ()
 
     errors.toList
 
@@ -51,7 +51,7 @@ class PDXLoader[C]:
    */
   def load(node: PDXValueNode[?], entity: PDXEntity, context: C): List[String] =
     val errors = ListBuffer[String]()
-    
+
     for {
       id <- node.identifierToken.map(_.value)
       script <- entity.properties.get(id)
@@ -60,7 +60,7 @@ class PDXLoader[C]:
       case Right(_) => ()
 
     entity match
-      case referable: Referable[?] => handleReferable(node, referable)
+      case referable: Referable[?] => handleReferable(node, referable)    // todo this is ACTUALLY where stuck
       case _ => ()
 
     errors.toList

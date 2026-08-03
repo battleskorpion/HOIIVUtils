@@ -23,6 +23,9 @@ object FocusTreeSpec extends ScalamockZIOSpec {
     new File(testPath + "minimichigantest.txt"),
     new File(testPath + "minimichigantest2.txt"),
     new File(testPath + "minimichigantest3.txt"),
+    new File(testPath + "Massachusetts_focus.txt"),
+    new File(testPath + "Massachusetts_focus_simple.txt"),
+    new File(testPath + "texas_tree.txt")
   )
 
   def foreachFocusTree(files: List[File] = filesToTest)(f: FocusTree => TestResult): ZIO[CountryTagService & FocusTreeService & Registry[SharedFocus], Throwable, TestResult] =  // FocusTreeManager & CountryTagService
