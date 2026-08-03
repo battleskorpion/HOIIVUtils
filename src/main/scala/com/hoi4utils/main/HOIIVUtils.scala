@@ -30,8 +30,8 @@ object HOIIVUtils extends ZIOAppDefault {
 //    & LocalizationService & InterfaceService & CountryTagService & IdeasManager & FocusTreeManager
 //    & ResourcesFileService & StateService & CountryService
   private type ROut = com.hoi4utils.main.Config & ServiceReloader
-    & LocalizationService & InterfaceService & CountryTagService & FocusService & FocusTreeService 
-    & StateService & CountryService 
+    & LocalizationService & InterfaceService & CountryTagService & FocusService & FocusTreeService
+    & StateService & CountryService
 
   //  private var _runtime: Runtime[LocalizationService] = null
   def getActiveRuntime: Runtime[ROut] = runtime
@@ -49,20 +49,25 @@ object HOIIVUtils extends ZIOAppDefault {
     ZLayer.make[ROut](
       configLayer,
       ServiceReloader.live,
+      // localization
       ZLayer.succeed(Set.empty[String]),
       YMLFileService.live,
       LocalizationFormatter.live,
       LocalizationFileService.live,
       LocalizationService.reloadable,
+      // hoi4
       InterfaceService.live,
       CountryTagService.live,
 //      IdeasManager.live,
 //      FocusTreeManager.live,
-      FocusService.live, 
+      FocusService.live,
       FocusTreeService.live,
 //      ResourcesFileService.live,
       StateService.live,
       CountryService.live,
+      // shared registry layers
+      RegistryLayers.sharedFocusRegistryLayer,
+      // debug
       ZLayer.Debug.tree
     )
   }
