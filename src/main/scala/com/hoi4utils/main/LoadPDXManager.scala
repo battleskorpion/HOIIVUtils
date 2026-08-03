@@ -98,7 +98,7 @@ class LoadPDXManager extends LazyLogging:
             isCancelled: () => Boolean = () => false,
             onComponentComplete: (String, Long) => Unit = (_, _) => (),
             onComponentStart: String => Unit = _ => ()
-          ): RIO[LocalizationService & Config & AppPDXEnv & Registry[SharedFocus], Unit] = {
+          ): RIO[LocalizationService & Config & AppPDXEnv, Unit] = {
     for {
       localizationService <- ZIO.service[LocalizationService]
       config <- ZIO.service[Config]

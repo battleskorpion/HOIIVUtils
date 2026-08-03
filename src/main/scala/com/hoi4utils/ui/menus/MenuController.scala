@@ -213,71 +213,71 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
       override def call(): Unit =
         if isCancelled then return
 
-//        val pdxLoader = new PDXLoader()
-//        if isCancelled then return
-//
-//        pdxLoader.clearPDX()
-//        pdxLoader.clearLB()
-//        pdxLoader.closeDB()
-//        if isCancelled then return
-//
-//        initEndTime = System.nanoTime()
-//        modLoadStartTime = System.nanoTime()
-//        isModLoading = true
-//
-//        def onComponentStart(componentName: String): Unit =
-//          currentComponent = componentName
-//          currentComponentStartTime = System.nanoTime()
-//
-//        // Callback: Called when a component finishes loading
-//        def onComponentComplete(componentName: String, nanoseconds: Long): Unit =
-//          val duration = nanoseconds / 1_000_000_000.0
-//          componentTimes.synchronized {
-//            componentTimes(componentName) = duration
-//          }
-//          currentComponent = ""
-//          currentComponentStartTime = 0
-//
-//        // TODO find how this is written nicer im sure it can be?
-//        Unsafe.unsafe { implicit unsafe =>
-//          HOIIVUtils.getActiveRuntime.unsafe.run(
-//            pdxLoader.load(
-//              loadingLabel,
-//              () => isCancelled,
-//              onComponentComplete,
-//              onComponentStart
-//            )
-//          ).getOrThrow()
-//        }
-//
-//        modLoadEndTime = System.nanoTime()
-//        isModLoading = false
-//        if isCancelled then return
-//
-//        MenuController.updateLoadingStatus(loadingLabel, "Checking for bad files...")
-//
-//        val badFiles = ListBuffer(
-//          "localization",
-//          "HOIIVFilePaths",
-//          "InterfaceGFX",
-//          "States",
-//          "Countries",
-//          "CountryTags",
-//          "FocusTrees",
-//          "Ideas",
-//          "Resources"
-//        ).flatMap(MenuController.checkFileError)
-//
-//        if isCancelled then return
-//
-//        if badFiles.isEmpty then
-//          MenuController.updateLoadingStatus(loadingLabel, "All files loaded successfully")
-//        else
-//          MenuController.updateLoadingStatus(loadingLabel, "Some files are not loaded correctly, please check the settings")
-//          logger.warn(s"version: ${Version.getVersion(HOIIVUtilsConfig.getConfig.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
-//          showFilesErrorDialog(badFiles, vSettings)
-//          blockButtons(true)
-//        if isCancelled then return
+        val pdxLoader = new LoadPDXManager()
+        if isCancelled then return
+
+        pdxLoader.clearPDX()
+        pdxLoader.clearLB()
+        pdxLoader.closeDB()
+        if isCancelled then return
+
+        initEndTime = System.nanoTime()
+        modLoadStartTime = System.nanoTime()
+        isModLoading = true
+
+        def onComponentStart(componentName: String): Unit =
+          currentComponent = componentName
+          currentComponentStartTime = System.nanoTime()
+
+        // Callback: Called when a component finishes loading
+        def onComponentComplete(componentName: String, nanoseconds: Long): Unit =
+          val duration = nanoseconds / 1_000_000_000.0
+          componentTimes.synchronized {
+            componentTimes(componentName) = duration
+          }
+          currentComponent = ""
+          currentComponentStartTime = 0
+
+        // TODO find how this is written nicer im sure it can be?
+        Unsafe.unsafe { implicit unsafe =>
+          HOIIVUtils.getActiveRuntime.unsafe.run(
+            pdxLoader.load(
+              loadingLabel,
+              () => isCancelled,
+              onComponentComplete,
+              onComponentStart
+            )
+          ).getOrThrow()
+        }
+
+        modLoadEndTime = System.nanoTime()
+        isModLoading = false
+        if isCancelled then return
+
+        MenuController.updateLoadingStatus(loadingLabel, "Checking for bad files...")
+
+        val badFiles = ListBuffer(
+          "localization",
+          "HOIIVFilePaths",
+          "InterfaceGFX",
+          "States",
+          "Countries",
+          "CountryTags",
+          "FocusTrees",
+          "Ideas",
+          "Resources"
+        ).flatMap(MenuController.checkFileError)
+
+        if isCancelled then return
+
+        if badFiles.isEmpty then
+          MenuController.updateLoadingStatus(loadingLabel, "All files loaded successfully")
+        else
+          MenuController.updateLoadingStatus(loadingLabel, "Some files are not loaded correctly, please check the settings")
+          logger.warn(s"version: ${Version.getVersion(HOIIVUtilsConfig.getConfig.getProperties)} Some files are not loaded correctly:\n${badFiles.mkString("\n")}")
+          showFilesErrorDialog(badFiles, vSettings)
+          blockButtons(true)
+        if isCancelled then return
 
         HOIIVUtilsConfig.save()
         MenuController.updateLoadingStatus(loadingLabel, "Showing Menu...")

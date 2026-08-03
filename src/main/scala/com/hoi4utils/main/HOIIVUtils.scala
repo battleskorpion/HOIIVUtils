@@ -9,10 +9,11 @@ package com.hoi4utils.main
 import com.hoi4utils.hoi4.localization.service.{BaseLocalizationService, EnglishLocalizationService, LocalizationFileService, LocalizationService}
 import com.hoi4utils.hoi4.localization.{LocalizationFormatter, YMLFileService}
 import com.hoi4utils.hoi42.common.country_tags.CountryTagService
-import com.hoi4utils.hoi42.common.national_focus.{FocusService, FocusTreeService}
+import com.hoi4utils.hoi42.common.national_focus.{FocusService, FocusTreeService, SharedFocus}
 import com.hoi4utils.hoi42.gfx.InterfaceService
 import com.hoi4utils.hoi42.history.countries.service.CountryService
 import com.hoi4utils.hoi42.map.state.service.StateService
+import com.hoi4utils.script2.Registry
 //import com.hoi4utils.hoi4.map.resource.ResourcesFileService
 //import com.hoi4utils.hoi4.map.state.StateService
 import com.hoi4utils.main.HOIIVUtilsConfig.getConfig
@@ -27,7 +28,7 @@ import scala.annotation.experimental
 object HOIIVUtils extends ZIOAppDefault {
 
   //  type AppPDXEnv = InterfaceService & CountryTagService & IdeasManager & FocusTreeManager & ResourcesFileService & StateService & CountryService
-  type AppPDXEnv = InterfaceService & CountryTagService & FocusTreeService & StateService & CountryService // todo: & IdeasService? & ResourcesFileService?
+  type AppPDXEnv = InterfaceService & CountryTagService & FocusTreeService & Registry[SharedFocus] & StateService & CountryService // todo: & IdeasService? & ResourcesFileService?
 
   //  private type ROut = com.hoi4utils.main.Config & ServiceReloader
 //    & LocalizationService & InterfaceService & CountryTagService & IdeasManager & FocusTreeManager
