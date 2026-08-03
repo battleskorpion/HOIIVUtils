@@ -26,12 +26,14 @@ import scala.annotation.experimental
 
 object HOIIVUtils extends ZIOAppDefault {
 
-//  private type ROut = com.hoi4utils.main.Config & ServiceReloader
+  //  type AppPDXEnv = InterfaceService & CountryTagService & IdeasManager & FocusTreeManager & ResourcesFileService & StateService & CountryService
+  type AppPDXEnv = InterfaceService & CountryTagService & FocusTreeService & StateService & CountryService // todo: & IdeasService? & ResourcesFileService?
+
+  //  private type ROut = com.hoi4utils.main.Config & ServiceReloader
 //    & LocalizationService & InterfaceService & CountryTagService & IdeasManager & FocusTreeManager
 //    & ResourcesFileService & StateService & CountryService
   private type ROut = com.hoi4utils.main.Config & ServiceReloader
-    & LocalizationService & InterfaceService & CountryTagService & FocusService & FocusTreeService
-    & StateService & CountryService
+    & LocalizationService & FocusService & AppPDXEnv
 
   //  private var _runtime: Runtime[LocalizationService] = null
   def getActiveRuntime: Runtime[ROut] = runtime

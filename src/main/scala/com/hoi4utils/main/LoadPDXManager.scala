@@ -12,7 +12,7 @@ import com.hoi4utils.hoi42.map.resource.Resource
 import com.hoi4utils.hoi42.map.state.State
 import com.hoi4utils.hoi42.map.state.service.StateService
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.main.HOIIVUtils.validateEnv
+import com.hoi4utils.main.HOIIVUtils.{AppPDXEnv, validateEnv}
 import com.hoi4utils.script2.{PDXReadable, Registry}
 import com.hoi4utils.ui.menus.MenuController
 import com.typesafe.scalalogging.LazyLogging
@@ -39,9 +39,6 @@ class LoadPDXManager extends LazyLogging:
 //    List(CountryTag, IdeasManager),             // , FocusTreeManager
 //    List(ResourcesFile, State, CountryFile),
 //  )
-
-//  type AppPDXEnv = InterfaceService & CountryTagService & IdeasManager & FocusTreeManager & ResourcesFileService & StateService & CountryService
-  type AppPDXEnv = InterfaceService & CountryTagService & FocusTreeService & StateService & CountryService // todo: & IdeasService? & ResourcesFileService?
 
   /**
    * Generates the load order list by applying the given 'action' to every service.
