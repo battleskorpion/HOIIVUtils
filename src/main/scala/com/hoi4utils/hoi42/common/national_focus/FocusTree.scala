@@ -49,6 +49,8 @@ class FocusTree(var treeRegistry: FocusTreeRegistry, var file: Option[File])(usi
    */
   override def getLocalizableGroup: Iterable[? <: Localizable] = super.getLocalizableGroup
 
+  override def toString: String = locName.getOrElse(id.display)
+
 object FocusTree { }
 
 class FocusTreeRegistry extends Registry[FocusTree] {

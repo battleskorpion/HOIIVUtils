@@ -174,17 +174,11 @@ class LoadPDXManager extends LazyLogging:
         reloadService(loadingLabel, focusTreeService, isCancelled, onComponentStart, onComponentComplete)
       }
 
-//      // parallel 2
-//      _ <- ZIO.unless(isCancelled()) {
-//        // todo
-//        //            reloadService(loadingLabel, resourcesFileService, isCancelled, onComponentStart, onComponentComplete) <&>
-//        reloadService(loadingLabel, stateService, isCancelled, onComponentStart, onComponentComplete) <&>
-//        reloadService(loadingLabel, countryService, isCancelled, onComponentStart, onComponentComplete)
-//      }
+      // parallel 2
       _ <- ZIO.unless(isCancelled()) {
-        reloadService(loadingLabel, stateService, isCancelled, onComponentStart, onComponentComplete)
-      }
-      _ <- ZIO.unless(isCancelled()) {
+        // todo
+        //            reloadService(loadingLabel, resourcesFileService, isCancelled, onComponentStart, onComponentComplete) <&>
+        reloadService(loadingLabel, stateService, isCancelled, onComponentStart, onComponentComplete) <&>
         reloadService(loadingLabel, countryService, isCancelled, onComponentStart, onComponentComplete)
       }
     } yield ()

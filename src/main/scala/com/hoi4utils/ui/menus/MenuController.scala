@@ -246,7 +246,9 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
               () => isCancelled,
               onComponentComplete,
               onComponentStart
-            )
+            ).tapErrorCause { cause =>
+              ZIO.logError(s"[FATAL] readStates died with:\n${cause.prettyPrint}")
+            }
           ).getOrThrow()
         }
 
@@ -300,7 +302,6 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
       blockButtons(false)
       loadingLabel.setVisible(false)
       vFocusTree.requestFocus()
-
     task.setOnCancelled: _ =>
       isComplete = true
       timerTimeline.stop()
@@ -313,6 +314,9 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
         if contentGrid != null then
           contentGrid.setVisible(true)
         blockButtons(false)
+    task.setOnFailed: _ =>
+      val exc = task.getException
+      exc.printStackTrace()
 
     detailPanelManager = new DetailPanelManager(detailContentPane)
     currentTask = task

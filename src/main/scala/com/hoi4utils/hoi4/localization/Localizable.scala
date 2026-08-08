@@ -106,7 +106,7 @@ trait Localizable {
       ZIO.foreach(keys)(service.getLocalizationFile)
         .map(_.find(_ != null))
     }
-    
+
 //    val localizableGroup = getLocalizableGroup
 //    localizableGroup.flatMap(ll => ll.getLocalizationKeys).map(ZIO.serviceWithZIO[LocalizationService](_.getLocalizationFile)).find(_ != null) match
 //      case Some(f) => Some(f)
@@ -178,4 +178,6 @@ trait Localizable {
     case None => false
 
   def isUnlocalized(property: Property): Boolean = !isLocalized(property)
+
+  override def toString: String = locName.getOrElse(super.toString)
 }

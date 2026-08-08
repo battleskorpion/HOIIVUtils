@@ -74,8 +74,21 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
     else
       val files = HOIIVFiles.Mod.states_folder.listFiles().filter(_.getName.endsWith(".txt"))
       for {
+        _      <- ZIO.logDebug("Starting readStates...")
         states <- readStates(files, true)
-        _ = states.foreach(add)
+        _ <- ZIO.logDebug(s"Read ${files.length} state files in ${HOIIVFiles.Mod.states_folder}")
+
+        (validStates, invalidStates) = states.partition(_.referableID.isDefined)
+        _ <- ZIO.when(invalidStates.nonEmpty) {
+          ZIO.logWarning(s"Skipping ${invalidStates.size} state file(s) missing an ID: " +
+            invalidStates.map(_.file.map(_.getName).getOrElse("unknown")).mkString(", "))
+        }
+
+        _ <- ZIO.attempt {
+          validStates.foreach(add)
+        }.tapErrorCause { cause =>
+          ZIO.logErrorCause(s"[FATAL] Failed to add valid states to registry", cause)
+        }
       } yield true
 
   // todo this should exist im being lazy
@@ -98,7 +111,7 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
         val loader = new PDXLoader[State]()
         val state = new State(this, Some(file))
         val errors = loader.load(node, state, state)
-        if (errors.nonEmpty) 
+        if (errors.nonEmpty)
           println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
         state
       }

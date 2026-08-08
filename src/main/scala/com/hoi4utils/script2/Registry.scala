@@ -25,7 +25,7 @@ trait Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
         _version += 1
       case None =>
         // TODO improve error handling in future
-        throw new IllegalArgumentException(s"Cannot register entity without an ID.")
+        throw new IllegalArgumentException(s"Cannot register entity $entity without an ID.")
 
   infix def register(entities: Iterable[T]): Unit =
     val entries = entities.map(entity =>
