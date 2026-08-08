@@ -47,7 +47,7 @@ class FocusTree(var treeRegistry: FocusTreeRegistry, var file: Option[File])(usi
    *
    * The localizable group for a focus tree is the list of focuses.
    */
-  override def getLocalizableGroup: Iterable[? <: Localizable] = focuses
+  override def getLocalizableGroup: Iterable[? <: Localizable] = super.getLocalizableGroup
 
 object FocusTree { }
 

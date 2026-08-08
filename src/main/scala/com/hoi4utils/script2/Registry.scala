@@ -87,6 +87,6 @@ trait Registry[T <: PDXEntity & Referable[?]](using val ct: ClassTag[T]):
 
   def clear(): Task[Unit] = ZIO.succeed(_referableEntities.clear())
 
-trait RegistryMember[T <: PDXEntity & Referable[?]](val registry: Registry[T]) extends PDXEntity:
+trait RegistryMember[T <: PDXEntity & Referable[?]](val registry: Registry[? <: T]) extends PDXEntity:
 //  self: Referable[T] =>
-  given Registry[T] = registry
+  given Registry[? <: T] = registry

@@ -4,7 +4,7 @@ import com.hoi4utils.script2.PDXDecoder
 import com.hoi4utils.script2.datatype.PointPDX
 import zio.ZIO
 
-class SharedFocus(focusTree: FocusTree) extends Focus(focusTree) {
+class SharedFocus(sharedFocusFile: SharedFocusFile) extends Focus(sharedFocusFile) {
   val offset = pdx[Offset]("offset")
 
   /* init */

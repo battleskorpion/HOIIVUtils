@@ -1,7 +1,7 @@
 package com.hoi4utils.ui.focus
 
 import com.hoi4utils.ddsreader.DDSReader
-import com.hoi4utils.hoi42.common.national_focus.{Focus, FocusService, FocusTree}
+import com.hoi4utils.hoi42.common.national_focus.{Focus, FocusRegistry, FocusService, FocusTree}
 import com.hoi4utils.hoi42.gfx.InterfaceService
 import com.hoi4utils.main.HOIIVUtils
 import com.hoi4utils.ui.focus.FocusToggleButton.gfxFocusUnavailable
@@ -105,7 +105,7 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
 
   def focus: Focus = _focus
 
-  def focusTree: FocusTree = _focus.focusTree
+  def focusRegistry: FocusRegistry[?] = _focus.focusRegistry
 
 object FocusToggleButton:
 	private val gfxFocusUnavailable: Image = loadFocusUnavailableImage("focus_unavailable_bg.dds")

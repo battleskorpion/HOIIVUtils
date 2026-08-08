@@ -9,7 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 
-class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String] with RegistryMember[Focus](focusTree)
+class Focus(var focusRegistry: FocusRegistry[?]) extends PDXEntity with IDReferable[String] with RegistryMember[Focus](focusRegistry)
   with Localizable with HasDesc with LazyLogging:
   val DEFAULT_COST: Double = 10.0
 
@@ -62,7 +62,11 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String]
         nextPoint
       else if focus.id.exists(visited) then
         // circular reference detected
-        logger.error(s"Circular reference detected involving focus id: ${id.display} in focus tree ${focusTree.id.display}")
+        focusRegistry match
+          case tree: FocusTree =>
+            logger.error(s"Circular reference detected involving focus id: ${id.display} in focus tree ${tree.id.display}")
+          case _ =>
+            logger.error(s"Circular reference detected involving focus id: ${id.display} in focus registry $focusRegistry")
         nextPoint
       else focus.relativePositionFocus.resolve match
         case Some(relativeFocus: Focus) =>
@@ -109,7 +113,7 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String]
       if updateChildRelativeOffsets then
         // Update focuses that has us as its relative position parent
         for
-          focus <- focusTree.focuses
+          focus <- focusRegistry.focusesList
           if focus.relativePositionFocus.isDefined
           if focus.relativePositionFocus.$id @== this.id
         do
@@ -147,7 +151,7 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String]
     def gatherRelativeFocuses(currentFocuses: List[Focus]): Unit =
       val newlyFoundFocuses = ListBuffer[Focus]()
       for
-        focus <- focusTree.focuses
+        focus <- focusRegistry.focusesList
         currentFocus <- currentFocuses
         if focus.relativePositionFocus.isDefined
         if (focus.relativePositionFocus.$id @== currentFocus.id) && !focuses.contains(focus)
@@ -164,16 +168,26 @@ class Focus(var focusTree: FocusTree) extends PDXEntity with IDReferable[String]
     Map(Property.NAME -> this.id.getOrElse(""), Property.DESCRIPTION -> s"${id}_desc")
 
   override def getLocalizableGroup: Iterable[Localizable] =
-    if focusTree == null then
+    if focusRegistry == null then
       Iterable(this)
     else
-      focusTree.getLocalizableGroup
+      focusRegistry.getLocalizableGroup
 
 object Focus { }
 
 trait FocusRegistry[F <: Focus] extends Registry[F] {
 
   override def idDecoder: PDXDecoder[String] = summon[PDXDecoder[String]]
+
+  def focusesList: List[F] = referableEntities.toList
+
+  /**
+   * @inheritdoc
+   *
+   * The localizable group for a focus registry is the list of focuses.
+   */
+  def getLocalizableGroup: Iterable[? <: Localizable] = focusesList
+
 }
 
 class Icon(var spriteID: String) extends PDXEntity:
