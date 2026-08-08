@@ -28,7 +28,7 @@ object FocusTreeSpec extends ScalamockZIOSpec {
     new File(testPath + "texas_tree.txt")
   )
 
-  def foreachFocusTree(files: List[File] = filesToTest)(f: FocusTree => TestResult): ZIO[CountryTagService & FocusTreeService & Registry[SharedFocus], Throwable, TestResult] =  // FocusTreeManager & CountryTagService
+  def foreachFocusTree[R](files: List[File] = filesToTest)(f: FocusTree => ZIO[R, Throwable, TestResult]): ZIO[R & CountryTagService & FocusTreeService & Registry[SharedFocus], Throwable, TestResult] =  // FocusTreeManager & CountryTagService
     ZIO.foreach(files) { file =>
       for {
         treeService <- ZIO.service[FocusTreeService]
@@ -47,10 +47,9 @@ object FocusTreeSpec extends ScalamockZIOSpec {
           }
           focusTree
         }
-      } yield pdx
-    }.map { pdxs =>
-      TestResult.allSuccesses(pdxs.map(f))
-    }
+        result <- f(pdx)
+      } yield result
+    }.map(TestResult.allSuccesses)
 
   override def spec: Spec[TestEnvironment & Scope, Any] =
     suite("FocusTree")(
@@ -81,6 +80,14 @@ object FocusTreeSpec extends ScalamockZIOSpec {
             case None =>
               assertTrue(focuses.nonEmpty)
           }
+        }
+      },
+      test("Focus trees should be considered as having a standard focus tree header") {
+        foreachFocusTree() { focusTree =>
+          for {
+            treeService <- ZIO.service[FocusTreeService]
+            hasHeader   <- treeService.hasFocusTreeHeader(focusTree.file.get)
+          } yield assertTrue(hasHeader)
         }
       },
     ).provide(

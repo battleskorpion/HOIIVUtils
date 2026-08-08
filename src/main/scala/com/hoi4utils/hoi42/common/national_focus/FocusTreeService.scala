@@ -2,8 +2,8 @@ package com.hoi4utils.hoi42.common.national_focus
 
 import com.hoi4utils.hoi42.common.country_tags.{CountryTag, CountryTagService}
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.NodeExtensions.getTyped
-import com.hoi4utils.parser.{NodeSeq, ZIOParser}
+import com.hoi4utils.parser.NodeExtensions.{contains, getTyped}
+import com.hoi4utils.parser.{NodeSeq, SeqNode, ZIOParser}
 import com.hoi4utils.script2.{Registry, *}
 import javafx.collections.{FXCollections, ObservableList}
 import zio.{Chunk, RIO, Task, UIO, URIO, URLayer, ZIO, ZLayer}
@@ -43,6 +43,9 @@ trait FocusTreeService extends FocusTreeRegistry with PDXReadable[f]  {
 object FocusTreeService {
   val live: URLayer[CountryTagService, FocusTreeService] =
     ZLayer.fromFunction(FocusTreeServiceImpl.apply)
+
+  val focusTreeIdentifier = "focus_tree"
+
 }
 
 /**
@@ -72,13 +75,13 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
         ZIO.foreach(files) { file => // foreachParDiscard??
           for {
             node <- new ZIOParser(file).parse
-            pdx <- hasFocusTreeHeader(file).flatMap[Registry[SharedFocus], Throwable, FocusTree | SharedFocusFile] {
+            pdx <- hasFocusTreeHeader(node).flatMap[Registry[SharedFocus], Throwable, FocusTree | SharedFocusFile] {
               case true =>
                 ZIO.attempt {
                   val loader = new PDXLoader[FocusTree]()
                   val tree = new FocusTree(this, Some(file))(using sharedFocusRegistry)
                   // using 'node' is WRONG? here. must do `val pdxNode = node.getTyped[NodeSeq]("focus_tree")` and use pdxNode
-                  val pdxNode = node.getTyped[NodeSeq]("focus_tree")
+                  val pdxNode = node.getTyped[NodeSeq](FocusTreeService.focusTreeIdentifier)
 //                  val errors = loader.load(node, tree, tree)
                   val errors = loader.load(pdxNode, tree, tree)
                   if (errors.nonEmpty) {
@@ -195,18 +198,23 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
     sharedFocusFiles.map(_.sharedFocuses).flatMap(_.list).toSet
 
   def hasFocusTreeHeader(file: File): Task[Boolean] =
-    // TODO TODO
-    ZIO.succeed(true)
-//    ZIO.attemptBlocking {
-//      val parser = Parser(file)
-//      val rootNode = parser.parse
-//      rootNode.contains(focusTreeIdentifier)
-//    }.catchAll {
-//      case e: ParserException =>
-//        ZIO.logError(s"Error parsing file ${file.getName}: ${e.getMessage}").as(false)
-//      case e =>
-//        ZIO.fail(e) // Let critical errors (like disk failure) actually fail the Task
-//    }
+    for {
+      node <- new ZIOParser(file).parse
+      result <- hasFocusTreeHeader(node)
+    } yield result
+  //    ZIO.attemptBlocking {
+  //      val parser = Parser(file)
+  //      val rootNode = parser.parse
+  //      rootNode.contains(focusTreeIdentifier)
+  //    }.catchAll {
+  //      case e: ParserException =>
+  //        ZIO.logError(s"Error parsing file ${file.getName}: ${e.getMessage}").as(false)
+  //      case e =>
+  //        ZIO.fail(e) // Let critical errors (like disk failure) actually fail the Task
+  //    }
+
+  def hasFocusTreeHeader(rootNode: SeqNode): Task[Boolean] =
+    ZIO.succeed(rootNode.contains(FocusTreeService.focusTreeIdentifier))
 
   def addNewFocus(f: Focus, tree: FocusTree): Unit =
     tree.focuses :+ f

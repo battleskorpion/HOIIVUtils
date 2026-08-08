@@ -28,7 +28,7 @@ object SharedFocusFileSpec extends ScalamockZIOSpec {
     new File(testPath + "shared_focuses_1_long.txt"),
   )
 
-  def foreachSharedFocusFile(files: List[File] = filesToTest)(f: SharedFocusFile => TestResult): ZIO[CountryTagService & FocusTreeService & Registry[SharedFocus], Throwable, TestResult] =
+  def foreachSharedFocusFile[R](files: List[File] = filesToTest)(f: SharedFocusFile => ZIO[R, Throwable, TestResult]): ZIO[R & CountryTagService & FocusTreeService & Registry[SharedFocus], Throwable, TestResult] =
     ZIO.foreach(files) { file =>
       for {
         treeService <- ZIO.service[FocusTreeService]
@@ -45,10 +45,10 @@ object SharedFocusFileSpec extends ScalamockZIOSpec {
           }
           sharedFocusFile
         }
-      } yield pdx
-    }.map { pdxs =>
-      TestResult.allSuccesses(pdxs.map(f))
-    }
+        result <- f(pdx)
+      } yield result
+    }.map(TestResult.allSuccesses)
+
 
   override def spec: Spec[TestEnvironment & Scope, Any] =
     suite("SharedFocusFile")(
@@ -82,6 +82,14 @@ object SharedFocusFileSpec extends ScalamockZIOSpec {
           }
         }
       },
+      test("Shared focus files should not be considered as having a standard focus tree header") {
+        foreachSharedFocusFile() { sff =>
+          for {
+            treeService <- ZIO.service[FocusTreeService]
+            hasHeader   <- treeService.hasFocusTreeHeader(sff.file.get)
+          } yield assertTrue(!hasHeader)
+        }
+      }
     ).provide(
       TestEnvironment.live,
       Scope.default,
