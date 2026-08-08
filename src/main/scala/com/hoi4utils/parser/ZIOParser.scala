@@ -65,20 +65,38 @@ class ZIOParser(pdx: String | File = null) {
       // Capture any leading trivia for the whole file.
       leading <- consumeTrivia()
       _ <- ZIO.succeed(System.err.println(s"[DEBUG] ZIOParser.parse consumed leading trivia for $pdx"))
-      blockContent <- parseBlockContent()
-      _ <- ZIO.succeed(System.err.println(s"[DEBUG] ZIOParser.parse parsed block content for $pdx, nodes: ${blockContent.size}"))
-      _ <- ZIO.cond(blockContent.nonEmpty, (), ParserException("Parsed block content was empty"))
-      trailing <- consumeTrivia()
-      _ <- tokens.peek match
-        case Some(token) if token.`type` == TokenType.eof => ZIO.unit
-        case Some(token) => ZIO.fail(ParserException("Input not completely parsed", token))
-        case None => ZIO.fail(ParserException("Input not completely parsed - no tokens remaining"))
-      v: NodeSeq = blockContent.collect { case n: Node[?] => n } // TODO TODO ignoring comments !!!!
-      root = new SeqNode(
-        leadingTrivia = leading,
-        rawValue = v,
-        trailingTrivia = trailing
-      )
+
+      // if the entire file is a comment/whitespace (trivia), the next character should be $.
+      // If the next character is EOF ('$'), do nothing:
+      reachedEOF <- tokens.peek match
+        case Some(token) => ZIO.succeed(token.`type` == TokenType.eof)
+        case None => ZIO.fail(ParserException("No tokens remaining; EOF missing where expected"))
+
+      root <- if reachedEOF then
+        ZIO.succeed {
+          new SeqNode(
+            leadingTrivia = leading,
+            rawValue = Seq.empty,
+            trailingTrivia = Seq.empty
+          )
+        }
+      else
+        for {
+          blockContent <- parseBlockContent()
+          _ <- ZIO.succeed(System.err.println(s"[DEBUG] ZIOParser.parse parsed block content for $pdx, nodes: ${blockContent.size}"))
+          _ <- ZIO.cond(blockContent.nonEmpty, (), ParserException("Parsed block content was empty"))
+          trailing <- consumeTrivia()
+          _ <- tokens.peek match
+            case Some(token) if token.`type` == TokenType.eof => ZIO.unit
+            case Some(token) => ZIO.fail(ParserException("Input not completely parsed", token))
+            case None => ZIO.fail(ParserException("No tokens remaining; EOF missing where expected"))
+          v: NodeSeq = blockContent.collect { case n: Node[?] => n } // TODO TODO ignoring comments !!!!
+        } yield new SeqNode(
+          leadingTrivia = leading,
+          rawValue = v,
+          trailingTrivia = trailing
+        )
+
       _ <- ZIO.succeed {
         _rootNode = root
       }
@@ -104,6 +122,7 @@ class ZIOParser(pdx: String | File = null) {
           case None => ZIO.fail(ParserException("Finished without required EOF token. An error occurred."))
       } yield result
 
+    // todo maybe try to catch sudden EOF?
     loop()
 
   def parseNode(): ZIO[Any, ParserException, Node[?] | CommentNode] =

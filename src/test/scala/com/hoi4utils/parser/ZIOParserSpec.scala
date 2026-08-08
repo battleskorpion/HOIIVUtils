@@ -46,6 +46,7 @@ object ZIOParserSpec extends ScalamockZIOSpec {
       TestResult.allSuccesses(nodes.map(f))
     }
 
+  // TODO spec for COMMENTED file, empty file, commented file with blank lines, etc.
   override def spec: Spec[TestEnvironment & Scope, Any] = suite("ZIOParser")(
     test("File root node should be nonempty") {
       foreachParsed() { node =>
