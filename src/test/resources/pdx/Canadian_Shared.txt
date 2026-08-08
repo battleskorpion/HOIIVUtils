@@ -1,0 +1,928 @@
+
+#######################################
+##############look Inwards#############
+#######################################
+
+    shared_focus = {
+        id = CAD_The_Great_White_North
+        icon = GFX_focus_PBC_northsphere
+        x = 2
+        y = 0 
+        cost = 10
+        offset = {
+            x = -5
+            y = 0
+            trigger = {
+                tag = PBC
+            }
+        }
+
+       allow_branch = {
+            is_canadian_province_trigger = yes 
+            NOT = {
+                original_tag = PNL
+            }
+       }
+
+        offset = {
+            x = -10
+            y = 0
+            trigger = {
+                tag = PAB
+            }
+        }
+
+        offset = {
+            x = -10
+            y = 0 
+            trigger = {
+                tag = PNT
+            }
+        }
+
+        offset = {
+            x = -10
+            y = 0 
+            trigger = {
+                tag = PSK
+            }
+        }
+
+        offset = {
+            x = -10
+            y = 0 
+            trigger = {
+                tag = PMB
+            }
+        }
+
+        offset = {
+            x = -10
+            y = 0 
+            trigger = {
+                tag = PQC
+            }
+        }
+
+        offset = {
+            x = -10
+            y = 0 
+            trigger = {
+                tag = PNB 
+            }
+        }
+
+        offset = {
+            x = -10
+            y = 0 
+            trigger = {
+                tag = PEI 
+            }
+        }
+
+        offset = {
+            x = -10
+            y = 0 
+            trigger = {
+                tag = PNS
+            }
+        }
+        available = {
+            or = {
+                date > 1938.1.1
+                has_army_manpower = {
+                    size > 100000 
+                }
+            }
+            
+
+            if = {
+                limit = {
+                    tag = PAB
+                }
+                NOT = {
+                    has_idea = PAB_pallister_triangle_dustbowl
+                }
+            }
+
+            if = {
+                limit = {
+                    tag = PBC
+                }
+                NOT = {
+                    has_idea = PBC_Unemployment_All_Time_High
+                }
+            }
+
+            if = {
+                limit = {
+                    tag = PON
+                } 
+                has_completed_focus = PON_Tackleing_Great_depression
+            } 
+        }
+    
+        bypass = {
+            
+        }
+    
+        cancel_if_invalid = yes
+        continue_if_invalid = no
+        available_if_capitulated = no
+    
+        completion_reward = {
+            add_political_power = 100
+        }
+    }
+    shared_focus = {
+        id = CAD_The_Provincial_Integration_Plan
+        icon = GFX_focus_broken_Canada
+        prerequisite = { focus = CAD_The_Great_White_North}
+        x = 0
+        y = 1
+        relative_position_id = CAD_The_Great_White_North
+        cost = 10
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 2
+                #OR = {
+                #    tag = PON
+                #    tag = PSK
+                #    tag = PBC
+                #}
+            }
+
+        }
+        available_if_capitulated = yes
+
+        completion_reward = {
+            remove_ideas = PNT_sparsely_populated
+            custom_effect_tooltip = CAD_the_provincial_intergration_plan_tt
+            unlock_decision_category_tooltip = provincial_intergration_plan_category
+        }
+    }
+    
+    shared_focus = {
+		id = CAD_Fortify_NovaScotia_Border
+		icon = GFX_focus_CAN_fortify
+		x = -3
+		y = 1
+		relative_position_id = CAD_The_Provincial_Integration_Plan
+        prerequisite = { focus = CAD_The_Provincial_Integration_Plan }
+		cost = 5
+
+		search_filters = {   }
+		
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 20
+		}
+
+		available = {
+			has_full_control_of_state = 134
+		}
+
+		completion_reward = {
+			134 = {	
+			add_building_construction = {
+  	 			type = bunker
+    			level = 3
+   				instant_build = yes
+   				province = 2710
+					}
+				}			
+		}
+	}	
+
+    
+    shared_focus = {
+		id = CAD_Fortify_Border_With_Maine
+		icon = GFX_focus_CAN_fortify
+		x = -5
+		y = 1
+		relative_position_id = CAD_The_Provincial_Integration_Plan
+        prerequisite = { focus = CAD_The_Provincial_Integration_Plan }
+		cost = 5
+
+		search_filters = {   }
+		
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 25
+		}
+
+		available = {
+			has_full_control_of_state = 392
+			has_full_control_of_state = 516
+			has_full_control_of_state = 393
+		}
+
+		completion_reward = {
+			392 = {	
+			    add_building_construction = {
+  	 			    type = bunker
+    			    level = 1
+   				    instant_build = yes
+   				    province = 3782
+				}
+			    add_building_construction = {
+  	 			    type = bunker
+    			    level = 1
+   				    instant_build = yes
+   				    province = 3784
+				}
+
+            }			
+			516 = {	
+			    add_building_construction = {
+  	 			    type = bunker
+    			    level = 1
+   				    instant_build = yes
+   				    province = 3789
+				}
+			    add_building_construction = {
+  	 			    type = bunker
+    			    level = 1
+   				    instant_build = yes
+   				    province = 3795
+				}
+
+			    add_building_construction = {
+  	 			    type = bunker
+    			    level = 1
+   				    instant_build = yes
+   				    province = 3782
+				}
+			    add_building_construction = {
+  	 			    type = bunker
+    			    level = 1
+   				    instant_build = yes
+   				    province = 3782
+				}
+            }	
+			393 = {	
+			    add_building_construction = {
+  	 			    type = bunker
+    			    level = 1
+   				    instant_build = yes
+   				    province = 3798
+				}
+			    add_building_construction = {
+  	 			    type = bunker
+    			    level = 1
+   				    instant_build = yes
+   				    province = 3800
+				}
+            }	
+		}
+	}	
+
+    shared_focus = {
+		id = CAD_Fortify_Niagra_Falls
+		icon = GFX_focus_CAN_fortify
+		x = -4
+		y = 2
+		relative_position_id = CAD_The_Provincial_Integration_Plan
+        prerequisite = { focus = CAD_The_Provincial_Integration_Plan }
+		cost = 5
+
+		search_filters = {   }
+		
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 25
+		}
+
+		available = {
+			has_full_control_of_state = 94
+		}
+
+		completion_reward = {
+			94 = {	
+			add_building_construction = {
+  	 			type = bunker
+    			level = 3
+   				instant_build = yes
+   				province = 3539
+					}
+			add_building_construction = {
+  	 			type = bunker
+    			level = 3
+   				instant_build = yes
+   				province = 8763
+					}
+			add_building_construction = {
+  	 			type = bunker
+    			level = 3
+   				instant_build = yes
+   				province = 6473
+					}
+
+				}			
+		}
+	}	
+
+    shared_focus = {
+		id = CAD_Spirt_of_1812
+		icon = GFX_focus_CAN_spirtof1812
+		x = -2
+		y = 2
+		relative_position_id = CAD_Fortify_Niagra_Falls
+        prerequisite = { focus = CAD_Mounted_Police  }
+		cost = 7.2
+
+		search_filters = {   }
+		
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 25
+		}
+
+		available = {
+			has_full_control_of_state = 33
+		}
+
+		completion_reward = {
+            add_ideas = PON_We_Will_Never_Be_Yankees
+			add_manpower = 10000
+			army_experience = 5
+			add_doctrine_cost_reduction = {
+				name = land_doc_bonus
+				cost_reduction = 0.25
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}	
+
+
+    shared_focus = {
+        id = CAD_Develop_Oil_Reserves
+        icon = GFX_focus_export_oil
+        prerequisite = { focus = CAD_The_Provincial_Integration_Plan}
+        x = 0
+        y = 1
+        relative_position_id = CAD_The_Provincial_Integration_Plan
+        cost = 5
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 2
+                OR = {
+                    tag = PON
+                    tag = PSK
+                    tag = PBC
+                }
+            }
+
+        }
+        available_if_capitulated = yes
+
+        completion_reward = {
+			## Canadian National Oil Lottery ## 
+            random_list = {
+                25 = {
+                    random_owned_controlled_state = {
+                        add_resource = {
+                            type = oil
+                            amount = 8
+                        }                    
+                    }
+                }
+
+                25 = {
+                    random_owned_controlled_state = {
+                        add_resource = {
+                            type = oil
+                            amount = 4
+                        }                    
+                    }
+                }
+
+                25 = {
+                    random_owned_controlled_state = {
+                        add_resource = {
+                            type = oil
+                            amount = 16
+                        }                    
+                    }
+                }
+
+                25 = {
+                    random_owned_controlled_state = {
+                        add_resource = {
+                            type = oil
+                            amount = 20
+                        }                    
+                    }
+                }
+            }
+        }
+    }
+    shared_focus = {
+        id = CAD_Mounted_Police
+        icon = GFX_focus_CAN_expansionism
+        prerequisite = { focus = CAD_Develop_Oil_Reserves}
+        x = 0
+        y = 1
+        relative_position_id = CAD_Develop_Oil_Reserves
+        cost = 7.2
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 2
+                OR = {
+                    tag = PON
+                    tag = PQC
+                    tag = PBC
+                }
+            }
+
+        }
+        available_if_capitulated = yes
+
+        completion_reward = {
+            remove_ideas = PNT_nothing_here
+
+            add_ideas = PON_RCMP
+        }
+    }
+
+    shared_focus = {
+        id = CAD_Burn_Down_Whitehouse
+        icon = GFX_focus_CAN_war_plan_no_1
+        prerequisite = { focus = CAD_Mounted_Police}
+        x = 0
+        y = 1
+        relative_position_id = CAD_Mounted_Police
+        cost = 5
+        available = {
+            controls_state = 44
+        }
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 2
+                OR = {
+                    tag = PON
+                    tag = PSK
+                    tag = PBC
+                }
+            }
+
+        }
+        available_if_capitulated = yes
+
+        completion_reward = {
+            44 = {
+                damage_building = {
+                    type = infrastructure
+                    damage = 1.0
+                }
+                damage_building = {
+                    type = infrastructure
+                    damage = 1.0
+                }
+            }
+			add_war_support = 0.25
+            if = {
+                limit = {
+                    WDC = {
+                        exists = yes
+                    }
+                }
+                WDC = {
+                    add_war_support = -0.25
+                } # thief
+            }
+        }
+    }
+
+
+    shared_focus = {
+        id = CAD_Eastern_Development
+        icon = GFX_focus_CAN_nationalismwin
+        prerequisite = { focus = CAD_Mounted_Police}
+        x = 2
+        y = 1
+        relative_position_id = CAD_Mounted_Police
+        cost = 10
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 2
+                OR = {
+                    tag = PON
+                    tag = PQC
+                    tag = PNS
+                }
+            }
+
+        }
+        available_if_capitulated = yes
+
+        available = {
+            NOT = {
+                has_idea = CAN_development_funding
+            }
+            or = {
+                controls_state = 32 
+                controls_state = 33
+                controls_state = 30
+                controls_state = 68
+            }
+        }
+
+        completion_reward = {
+            custom_effect_tooltip = CAD_Eastern_Development_tt
+            if = { #Quebec City
+                limit = {
+                    owns_state = 32
+                }
+                32 = {
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                    }
+                    add_manpower = 10000
+                }
+
+                32 = {
+                    add_extra_state_shared_building_slots = 1
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                    }
+                }
+            }
+
+            if = { #Ottawa
+                limit = {
+                    owns_state = 33
+                }
+                33 = {
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                    }
+                    add_manpower = 10000
+                }
+
+                33 = {
+                    add_extra_state_shared_building_slots = 1
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                    }
+                }
+            }
+
+            if = {
+                limit = { # Toronto
+                    owns_state = 30
+                }
+                30 = {
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                    }
+                    add_manpower = 10000
+                }
+
+                30 = {
+                    add_extra_state_shared_building_slots = 1
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                    }
+                }
+            }
+
+            if = { #Winnipeg
+                limit = {
+                    owns_state = 68
+                }
+                68 = {
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                    }
+                    add_manpower = 10000
+                }
+            }
+            add_timed_idea = {
+                idea = CAN_development_funding
+                days = 200
+            }
+        }
+    }
+
+    shared_focus = {
+        id = CAD_Maritimes_Primacy
+        icon = GFX_focus_CAN_develop_halifax
+        prerequisite = { focus = CAD_Eastern_Development}
+        x = 0
+        y = 1
+        relative_position_id = CAD_Eastern_Development
+        cost = 10
+        available = {
+            any_owned_state = {
+                is_coastal = yes 
+            }
+        }
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 2
+                OR = {
+                    tag = PON
+                    tag = PQC
+                    tag = PNS
+                }
+            }
+
+        }
+        available_if_capitulated = yes
+
+        completion_reward = {
+            navy_experience = 25
+            random_owned_controlled_state = {
+                limit = {
+                    is_coastal = yes
+                }
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+                    type = dockyard
+                    level = 2
+                }
+            }
+            add_ideas = CAN_Maritimes_Primacy_idea
+        }
+    }
+
+    shared_focus = {
+        id = CAD_Exploit_Uranium_in_Saskatchewan
+        icon = GFX_focus_CAN_nuclear_program
+        prerequisite = { 
+            focus = CAD_Western_Development
+        }
+        x = -2
+        y = 1
+        relative_position_id = CAD_Western_Development
+        cost = 5
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 2
+                OR = {
+                    tag = PON
+                    tag = PQC
+                    tag = PNS
+                }
+            }
+
+        }
+
+        available = {
+            controls_state = 500
+            500 = {
+                infrastructure > 1 
+            }
+            if = {
+                limit = {
+                    has_dlc = Gotterdammerung
+                }
+                has_facility_specialization = specialization_nuclear
+            }
+        }
+        available_if_capitulated = yes
+
+        completion_reward = {
+            if = {
+                limit = {
+                    has_dlc = Gotterdammerung
+                }
+                add_breakthrough_points = {
+                    specialization = specialization_nuclear
+                    value = 2
+                }
+            }
+            else = {
+                add_tech_bonus = {
+                    name = nuclear_bonus
+                    bonus = 1.0
+                    ahead_reduction = 2.0
+                    uses = 2
+                    category = nuclear
+                }
+            }
+            add_ideas = CAN_saskatchewan_uranium
+        }
+    }
+
+    shared_focus = {
+        id = CAD_Western_Development
+        icon = GFX_focus_CAN_federal_grain_industry
+        prerequisite = { focus = CAD_Mounted_Police}
+        x = -2
+        y = 1
+        relative_position_id = CAD_Mounted_Police
+        cost = 10
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 2
+                OR = {
+                    tag = PSK
+                    tag = PAB
+                    tag = PBC
+                }
+            }
+
+        }
+        available_if_capitulated = yes
+        available = {
+            NOT = {
+                has_idea = CAN_development_funding
+            }
+            OR = {
+                controls_state = 61
+                controls_state = 62
+                controls_state = 390
+                controls_state = 504
+            }
+        }
+        completion_reward = {
+            custom_effect_tooltip = CAD_Western_Development_tt
+            if = {
+                limit = { # Vancouver
+                    owns_state = 61
+                }
+                61 = {
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                    }
+                    add_manpower = 10000
+                }
+
+                61 = {
+                    add_extra_state_shared_building_slots = 1
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                    }
+                }
+            }
+
+            if = {
+                limit = { # Sasakoon 
+                    owns_state = 620
+                }
+                620 = {
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                    }
+                    add_manpower = 10000
+                }
+
+                620 = {
+                    add_extra_state_shared_building_slots = 1
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                    }
+                }
+            }
+
+            if = {
+                limit = { # Calgary
+                    owns_state = 390
+                }
+                390 = {
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                    }
+                    add_manpower = 10000
+                }
+
+                390 = {
+                    add_extra_state_shared_building_slots = 1
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                    }
+                }
+            }
+
+            if = {
+                limit = { #Yellowknife
+                    owns_state = 504 
+                }
+                504 = {
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 2
+                    }
+                    add_manpower = 10000
+                }
+            }
+            add_timed_idea = {
+                idea = CAN_development_funding
+                days = 200
+            }
+        }
+    }
+
+    shared_focus = {
+        id = CAD_Develop_Northern_Goldmines
+        icon = GFX_focus_CAN_gold
+        prerequisite = { focus = CAD_Western_Development}
+        x = 0
+        y = 1
+        relative_position_id = CAD_Western_Development
+        cost = 10
+        available = {
+            controls_state = 504
+            controls_state = 503 
+            controls_state = 502
+        }
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 2
+                OR = {
+                    tag = PON
+                    tag = PSK
+                    tag = PBC
+                }
+            }
+
+        }
+        available_if_capitulated = yes
+
+        completion_reward = {
+            add_ideas = CAN_northern_gold_production
+            504 = {
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                }
+            }
+            503 = {
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                }
+            }
+            502 = {
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                }
+            }
+        }
+    }
+
+    shared_focus = {
+        id = CAD_a_new_canada
+        cost = 10
+        x = 2
+        y = 1
+        icon = GFX_focus_canada_united
+        relative_position_id = CAD_Develop_Northern_Goldmines
+        available = {
+            AND = {
+                61 = {
+                    is_core_of = ROOT
+                }
+                30 = {
+                    is_core_of = ROOT 
+                }
+                33 = {
+                    is_core_of = ROOT
+                }
+                32 = {
+                    is_core_of = ROOT
+                }
+                34 = {
+                    is_core_of = ROOT
+                }
+            }
+        }
+        prerequisite = {
+            focus = CAD_Eastern_Development
+        }
+        prerequisite = {
+            focus = CAD_Western_Development
+        }
+        completion_reward = {
+            add_political_power = 100
+            set_cosmetic_tag = CAN
+            news_event = usastates_news.3
+        }
+    }
+

@@ -3,7 +3,7 @@ package com.hoi4utils
 //import com.hoi4utils.hoi4.common.country_tags.CountryTagService
 //import com.hoi4utils.hoi4.common.focus.{FocusTreeSpec, SharedFocusSpec}
 //import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager
-import com.hoi4utils.hoi4.common.focus.FocusTreeSpec
+import com.hoi4utils.hoi4.common.focus.{FocusTreeSpec, SharedFocusFileSpec}
 import com.hoi4utils.hoi42.common.country_tags.CountryTagService
 import com.hoi4utils.hoi42.common.national_focus.{FocusService, FocusTreeService}
 import com.hoi4utils.hoi42.history.countries.service.CountryService
@@ -35,7 +35,8 @@ object HOIIVUtilsSpec extends ScalamockZIOSpec {
     ZIOParserSpec.spec,
 //    PDXScriptSpec.spec,
 //    SharedFocusSpec.spec,
-    FocusTreeSpec.spec
+    FocusTreeSpec.spec,
+    SharedFocusFileSpec.spec,
   ).provide(
     ZLayer.make[TestEnvironment & Scope](
       TestEnvironment.live,

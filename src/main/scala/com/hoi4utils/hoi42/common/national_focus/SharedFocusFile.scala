@@ -11,7 +11,7 @@ class SharedFocusFile(var sharedFocusFileRegistry: Registry[SharedFocusFile], va
 
   given Registry[SharedFocus] = this
 
-  val sharedFocuses = pdxList[SharedFocus]("focus") required true
+  val sharedFocuses = pdxList[SharedFocus]("shared_focus") required true
 
   def fileName: Option[String] = file.map(_.getName)
 }

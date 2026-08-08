@@ -33,6 +33,7 @@ trait FocusTreeService extends FocusTreeRegistry with PDXReadable[f]  {
   def sharedFocuses: Set[SharedFocus]
   def observeFocusTrees: ObservableList[FocusTree]
   def hasFocusTreeHeader(file: File): Task[Boolean]
+  def sharedFocusFileRegistry: Registry[SharedFocusFile]
   def sharedPseudoSharedFocusTree: PseudoSharedFocusTree
 
   override def clear(): Task[Unit] =
