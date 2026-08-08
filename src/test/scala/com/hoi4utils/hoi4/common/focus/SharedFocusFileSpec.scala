@@ -69,6 +69,7 @@ object SharedFocusFileSpec extends ScalamockZIOSpec {
         }
       },
       test("Shared Focus items should resolve references correctly") {
+        // todo this test isnt necessarily correct with sharedFocusFiles. They might be relatively positioned to something else?
         foreachSharedFocusFile() { sff =>
           val focuses = sff.referableEntities
           val focusWithRef = focuses.find(_.relativePositionFocus.pdxDefinedValueOption.isDefined)
