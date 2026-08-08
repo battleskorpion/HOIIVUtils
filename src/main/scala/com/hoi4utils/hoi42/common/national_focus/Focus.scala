@@ -1,8 +1,9 @@
 package com.hoi4utils.hoi42.common.national_focus
 
-import com.hoi4utils.script2.{IDReferable, PDXDecoder, PDXEntity, PDXProperty, Reference, Registry, RegistryMember}
+import com.hoi4utils.script2.{IDReferable, PDXDecoder, PDXDecoderException, PDXEntity, PDXProperty, Reference, Registry, RegistryMember}
 import com.hoi4utils.{IntPoint, Point}
 import com.hoi4utils.hoi4.localization.{HasDesc, Localizable, Property}
+import com.hoi4utils.parser.NodeValueType
 import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 import com.typesafe.scalalogging.LazyLogging
 
@@ -191,9 +192,45 @@ trait FocusRegistry[F <: Focus] extends Registry[F] {
 }
 
 class Icon(var spriteID: String) extends PDXEntity:
+
+  val spriteValue: PDXProperty[String] = pdx[String]("value")
+
+  def getSpriteID: String = spriteValue.value.getOrElse(spriteID)
+
   // You can later add a reference to the actual Image/Texture
   // once your GFX alias resolver is built.
   override def toString: String = spriteID
+
+object Icon {
+  given PDXDecoder[Icon] with
+    override def decode(v: NodeValueType): Either[String, Icon] = v match
+      case s: String =>
+        // Handles: icon = "GFX_my_icon" or icon = GFX_my_icon
+        Right(new Icon(s))
+
+      case i: Icon =>
+        // Handles: icon = { spriteID = "GFX_my_icon" }
+        // (PDXLoader already instantiated Icon via createEmpty and populated its properties)
+        Right(i)
+
+      case _ =>
+        Left(s"Expected String or Icon entity block, got ${v.getClass.getSimpleName}")
+
+    override def createEmpty(context: Any): Option[Icon] =
+      val clazz = Icon.getClass
+      val instance = clazz.getConstructors.find { c =>
+        c.getParameterTypes.exists(_.isAssignableFrom(context.getClass))
+      } match
+        case Some(c) => c.newInstance(context)
+        case None =>
+          try
+            clazz.getConstructor().newInstance()
+          catch
+            case e: NoSuchMethodException => throw PDXDecoderException(s"There is no constructor for ${clazz.getSimpleName} which supports $context")
+
+      Some(instance.asInstanceOf[Icon])
+
+}
 
 /**
  * prerequisite = { focus = focus_id }

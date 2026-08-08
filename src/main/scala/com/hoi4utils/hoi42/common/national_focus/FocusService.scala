@@ -17,16 +17,16 @@ object FocusService {
 }
 
 case class FocusServiceImpl() extends FocusService {
-  
+
   val focusImages = new mutable.HashMap[Focus, ImageAndGFX]()
-  
+
   def getDDSImage(focus: Focus): URIO[InterfaceService, Option[Image]] =
     // bad code. it's fine for now.
     // Updated code, now its very bad code. its really not fine but its staying for now.
     // Updated again, its still very bad but shorter so better?
     for {
       interfaceService <- ZIO.service[InterfaceService]
-      iconName: Option[String] = focus.icon.map(_.spriteID)
+      iconName: Option[String] = focus.icon.map(_.getSpriteID)
       gfxPath <- iconName match
         case Some(name) => interfaceService.getGFX(name)
         case None => ZIO.none
@@ -41,7 +41,7 @@ case class FocusServiceImpl() extends FocusService {
           Some(newImage)
       }
     } yield result
-} 
+}
 
-case class ImageAndGFX(image: Image, gfx: String) 
+case class ImageAndGFX(image: Image, gfx: String)
 

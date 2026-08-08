@@ -53,7 +53,8 @@ class Interface(private val file: File) {
       rootNode <- parser.parse
       //      spriteTypeNodes: Iterable[SeqNode] = rootNode.filterCaseInsensitiveTyped[NodeSeq]("spriteTypes").flatMap(_.$.filterCaseInsensitiveTyped[NodeSeq]("spriteType")).map(_.$)
       //      spriteTypeNodes: Iterable[SeqNode] = rootNode.filterCaseInsensitiveTyped[NodeSeq]("spriteTypes").flatMap(_.$.filterCaseInsensitiveTyped[NodeSeq]("spriteType")).map(_.$)
-      spriteTypeNodes: Iterable[SeqNode] = rootNode.filterCaseInsensitiveTyped[NodeSeq]("spriteTypes").filterCaseInsensitiveTyped[NodeSeq]("spriteType")
+      //spriteTypeNodes: Iterable[SeqNode] = rootNode.filterCaseInsensitiveTyped[NodeSeq]("spriteTypes").filterCaseInsensitiveTyped[NodeSeq]("spriteType")
+      spriteTypeNodes: Iterable[SeqNode] = rootNode.filterCaseInsensitiveTyped[NodeSeq]("spriteTypes").flatMap(_.filterCaseInsensitiveTyped[NodeSeq]("spriteType"))
       validSpriteTypes: View[SeqNode] = spriteTypeNodes.view.filter(_.containsAllCaseInsensitive("name", "texturefile")) // TODO can filter out invalid nodes
 
       (errors, results) <- ZIO.partition(validSpriteTypes) { (spriteNode: SeqNode) =>

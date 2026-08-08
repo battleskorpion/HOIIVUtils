@@ -77,7 +77,7 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
             node <- new ZIOParser(file).parse
             pdx <- hasFocusTreeHeader(node).flatMap[Registry[SharedFocus], Throwable, FocusTree | SharedFocusFile] {
               case true =>
-                ZIO.attempt {
+                ZIO.succeed {
                   val loader = new PDXLoader[FocusTree]()
                   val tree = new FocusTree(this, Some(file))(using sharedFocusRegistry)
                   // using 'node' is WRONG? here. must do `val pdxNode = node.getTyped[NodeSeq]("focus_tree")` and use pdxNode
@@ -85,7 +85,9 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
 //                  val errors = loader.load(node, tree, tree)
                   val errors = loader.load(pdxNode, tree, tree)
                   if (errors.nonEmpty) {
-                    println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+                    // todos
+                    Console.err.println(s"Parse errors in ${file.getName}:")
+                    errors.map(err => s"\t$err").foreach(Console.err.println)
                   }
                   tree
                 }

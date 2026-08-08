@@ -98,7 +98,7 @@ class FocusToggleButton(private val _focus: Focus, prefW: Double, prefH: Double)
         case Some(ddsImage) =>
           ddsImage
         case None =>
-          logger.warn(s"No DDS image found for focus: ${_focus.id}")
+          logger.warn(s"No DDS image found for focus: ${_focus.id}; ${focus.icon().map(_.getSpriteID).getOrElse("<none defined>")}")
           null
     } yield image
   }
