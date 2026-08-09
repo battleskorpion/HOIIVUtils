@@ -41,6 +41,7 @@ class LocalizationFormatter(capitalizationWhitelist: Set[String]) extends LazyLo
     String.join(" ", CollectionConverters.asJava(words))
   }
 
+  @deprecated("Use StringOps.capitalize")
   private def capitalizeWord(word: String): String = {
     if (word.isBlank) word
     else if (word.length == 1) word.head.toUpper.toString
