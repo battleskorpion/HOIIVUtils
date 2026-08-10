@@ -4,7 +4,8 @@ import com.hoi4utils.HOIIVUtilsSpec.layer
 import com.hoi4utils.hoi42.common.country_tags.CountryTagService
 import com.hoi4utils.hoi42.map.state.service.StateService
 import com.hoi4utils.hoi42.map.state.*
-import com.hoi4utils.parser.ZIOParser
+import com.hoi4utils.parser.NodeExtensions.getTyped
+import com.hoi4utils.parser.{NodeSeq, ZIOParser}
 import com.hoi4utils.script2.PDXLoader
 import org.scalamock.ziotest.ScalamockZIOSpec
 import org.scalatest.Assertions.withClue
@@ -48,7 +49,8 @@ object StateSpec extends ScalamockZIOSpec {
         pdx <- ZIO.attempt {
           val loader = new PDXLoader[State]()
           val state = new State(stateService, Some(file))
-          val errors = loader.load(node, state, state)
+          val pdxNode = node.getTyped[NodeSeq]("state")
+          val errors = loader.load(pdxNode, state, state)
           if (errors.nonEmpty)
             println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
           state
