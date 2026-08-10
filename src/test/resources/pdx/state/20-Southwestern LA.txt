@@ -1,0 +1,66 @@
+state = {
+	id = 20
+	name = "STATE_20"
+	resources = {
+		oil = 26
+	}
+	history = {
+		owner = SLA
+		add_core_of = SAC
+		buildings = {
+			infrastructure = 2
+			industrial_complex = 2
+			arms_factory = 1
+			air_base = 2
+			2563 = {
+				naval_base = 2
+			}
+		}
+		add_core_of = SLA
+		victory_points = {
+			2125
+			12
+		}
+		victory_points = {
+			2039
+			20
+		}
+		victory_points = {
+			2563
+			9
+		}
+		1936.1.2 = {
+			owner = USA
+		}
+	}
+	provinces = {
+		997
+		1004
+		1068
+		1091
+		2016
+		2039
+		2087
+		2097
+		2125
+		2563
+		4582
+		5929
+		5930
+		5931
+		5934
+		5935
+		5936
+		5939
+		5941
+		5942
+		5944
+		5948
+		5949
+		5950
+	}
+	manpower = 445000
+	buildings_max_level_factor = 1
+	state_category = large_town
+	local_supplies = 0
+}

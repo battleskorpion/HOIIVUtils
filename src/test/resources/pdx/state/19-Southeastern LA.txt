@@ -1,0 +1,43 @@
+
+state={
+	id=19
+	name="STATE_19"
+	resources={
+		oil=14.000
+	}
+
+	history={
+		owner = SLA
+		add_core_of = SAC
+		buildings = {
+			infrastructure = 3
+			industrial_complex = 1
+			969 = {
+				naval_base = 7
+
+			}
+			2620 = {
+				naval_base = 4
+
+			}
+
+		}
+		add_core_of = SLA
+		1936.1.2 = {
+			owner = USA
+
+		}
+		victory_points = {
+			8794 4
+		}
+
+	}
+
+	provinces={
+		969 2088 2562 2620 4571 5932 5933 8794 8795 
+	}
+	manpower=169578
+	buildings_max_level_factor=1.000
+	state_category=town
+	local_supplies=0.000
+}

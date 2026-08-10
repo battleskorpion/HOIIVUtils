@@ -67,7 +67,7 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
   override def toString: String =
     _value match
       case tv: PDXValueType => _value.map(_.toString).getOrElse("[null]")
-      case _ => super.toString
+      case _ => this() map(_.toString) getOrElse super.toString // todo does this make sense?
 
 class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]] = None)
                         (using override val decoder: PDXDecoder[List[T]], val elementDecoder: PDXDecoder[T])
@@ -79,7 +79,7 @@ class PDXPropertyList[T](val pdxKey: String, private var _values: Option[List[T]
 
   override def apply(): Option[List[T]] = _values.map(_.reverse).orElse(_default)
   def $: List[T] = apply().getOrElse(
-    throw new IllegalStateException(s"Property $pdxKey is empty and has no default.")
+    throw new NoSuchElementException(s"Property $pdxKey is empty and has no default.")
   )
   override def pdxDefinedValueOption: Option[List[T]] = _values
   def list: List[T] = apply().getOrElse(List.empty)

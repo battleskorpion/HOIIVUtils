@@ -1,0 +1,45 @@
+
+state={
+	id=11
+	name="STATE_11"
+	resources={
+		aluminium=2.000
+	}
+
+	history={
+		owner = SFL
+		buildings = {
+			infrastructure = 3
+			industrial_complex = 1
+			arms_factory = 1
+			air_base = 1
+			dockyard = 2
+			701 = {
+				naval_base = 10
+
+			}
+
+		}
+		add_core_of = SFL
+		add_core_of = MIA
+		victory_points = {
+			701 30 
+		}
+		victory_points = {
+			3460 3 
+		}
+		1936.1.2 = {
+			owner = USA
+
+		}
+
+	}
+
+	provinces={
+		701 3460 8744 8745 8746 
+	}
+	manpower=304000
+	buildings_max_level_factor=1.000
+	state_category=metropolis
+	local_supplies=0.000
+}

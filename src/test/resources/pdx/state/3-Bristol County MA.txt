@@ -1,0 +1,55 @@
+
+state={
+	id=3
+	name="STATE_3"
+	resources={
+		aluminium = 14
+	}
+
+	history={
+		owner = SMA
+		buildings = {
+			infrastructure = 3
+			arms_factory = 1
+			industrial_complex = 1
+			arms_factory = 1
+			dockyard = 1
+			air_base = 2
+			3504 = {
+				naval_base = 5
+
+			}
+			3437 = {
+				naval_base = 9
+
+			}
+
+		}
+		victory_points = {
+			3510 7 
+		}
+		victory_points = {
+			3504 10 
+		}
+		victory_points = {
+			3437 15 
+		}
+		victory_points = {
+			3506 3 
+		}
+		add_core_of = SMA
+		add_core_of = SRI
+		1936.1.2 = {
+			owner = USA
+		}
+	}
+
+	provinces={
+		2304 2384 3437 3504 3506 3510 3515 5701 
+	}
+	manpower=365000
+	buildings_max_level_factor=1.000
+	state_category=city
+
+	local_supplies=0.0 
+}

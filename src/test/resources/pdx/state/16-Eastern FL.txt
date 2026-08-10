@@ -1,0 +1,40 @@
+
+state={
+	id=16
+	name="STATE_16"
+	resources={
+		aluminium=8.000
+	}
+
+	history={
+		owner = SFL
+		buildings = {
+			infrastructure = 2
+			industrial_complex = 1
+
+		}
+		add_core_of = SFL
+		victory_points = {
+			5479 10 
+		}
+		victory_points = {
+			928 5 
+		}
+		victory_points = {
+			5479 10 
+		}
+		1936.1.2 = {
+			owner = USA
+
+		}
+
+	}
+
+	provinces={
+		822 865 928 989 2213 2272 5378 5379 5478 5479 8750 
+	}
+	manpower=214000
+	buildings_max_level_factor=1.000
+	state_category=rural
+	local_supplies=0.000
+}

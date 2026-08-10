@@ -1,0 +1,49 @@
+
+state={
+	id=13
+	name="STATE_13"
+
+	history={
+		owner = SFL
+		buildings = {
+			infrastructure = 2
+			industrial_complex = 1
+			5383 = {
+				naval_base = 6
+
+			}
+			1069 = {
+				naval_base = 2
+
+			}
+
+		}
+		add_core_of = SFL
+		add_core_of = WFL
+		victory_points = {
+			5383 10 
+		}
+		victory_points = {
+			1069 7 
+		}
+		victory_points = {
+			1012 1 
+		}
+		victory_points = {
+			5383 10 
+		}
+		1936.1.2 = {
+			owner = USA
+
+		}
+
+	}
+
+	provinces={
+		1012 1069 4838 5383 5487 5488 5493 5577 5578 8756 
+	}
+	manpower=204000
+	buildings_max_level_factor=1.000
+	state_category=rural
+	local_supplies=0.000
+}

@@ -1,0 +1,36 @@
+
+state={
+	id=4
+	name="STATE_4"
+	resources={
+		aluminium=14.000
+	}
+
+	history={
+		owner = SMA
+		buildings = {
+			infrastructure = 3
+			arms_factory = 1
+			industrial_complex = 2
+			dockyard = 1
+
+		}
+		victory_points = {
+			3522 10 
+		}
+		add_core_of = SMA
+		1936.1.2 = {
+			owner = USA
+
+		}
+
+	}
+
+	provinces={
+		2369 3518 3522 5711 6461 8736 
+	}
+	manpower=315000
+	buildings_max_level_factor=1.000
+	state_category=town
+	local_supplies=0.000
+}

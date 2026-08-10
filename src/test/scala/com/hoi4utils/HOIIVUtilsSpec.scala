@@ -4,9 +4,11 @@ package com.hoi4utils
 //import com.hoi4utils.hoi4.common.focus.{FocusTreeSpec, SharedFocusSpec}
 //import com.hoi4utils.hoi4.common.national_focus.FocusTreeManager
 import com.hoi4utils.hoi4.common.focus.{FocusTreeSpec, SharedFocusFileSpec}
+import com.hoi4utils.hoi4.map.StateSpec
 import com.hoi4utils.hoi42.common.country_tags.CountryTagService
 import com.hoi4utils.hoi42.common.national_focus.{FocusService, FocusTreeService}
 import com.hoi4utils.hoi42.history.countries.service.CountryService
+import com.hoi4utils.hoi42.map.state.service.StateService
 import com.hoi4utils.main.RegistryLayers
 import com.hoi4utils.parser.{ZIOParser, ZIOParserSpec}
 //import com.hoi4utils.script.PDXScriptSpec
@@ -16,11 +18,12 @@ import zio.test.{Spec, TestEnvironment}
 
 object HOIIVUtilsSpec extends ScalamockZIOSpec {
 
-  type TestROut = FocusService & CountryTagService & FocusTreeService
+  type TestROut = FocusService & FocusTreeService & CountryTagService & StateService
 
   val layer: ZLayer[Any, Throwable, TestROut] = {
     ZLayer.make[TestROut](
       CountryTagService.live,
+      StateService.live,
       FocusService.live,
       FocusTreeService.live,
       CountryService.live,
@@ -34,9 +37,9 @@ object HOIIVUtilsSpec extends ScalamockZIOSpec {
   override def spec: Spec[TestEnvironment & Scope, Any] = suite("HOIIVUtils scalamock-zio suite")(
     ZIOParserSpec.spec,
 //    PDXScriptSpec.spec,
-//    SharedFocusSpec.spec,
     FocusTreeSpec.spec,
     SharedFocusFileSpec.spec,
+    StateSpec.spec,
   ).provide(
     ZLayer.make[TestEnvironment & Scope](
       TestEnvironment.live,

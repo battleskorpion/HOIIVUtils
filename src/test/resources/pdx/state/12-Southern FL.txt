@@ -1,0 +1,39 @@
+
+state={
+	id=12
+	name="STATE_12"
+	resources={
+		oil=4.000
+		rubber=4.000
+	}
+
+	history={
+		owner = SFL
+		buildings = {
+			infrastructure = 2
+			arms_factory = 1
+			720 = {
+				naval_base = 5
+
+			}
+
+		}
+		add_core_of = SFL
+		victory_points = {
+			767 5 
+		}
+		1936.1.2 = {
+			owner = USA
+
+		}
+
+	}
+
+	provinces={
+		720 767 789 3459 5374 5375 5475 5476 5477 
+	}
+	manpower=204000
+	buildings_max_level_factor=1.000
+	state_category=rural
+	local_supplies=0.000
+}
