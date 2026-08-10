@@ -21,13 +21,13 @@ import scala.collection.mutable.ListBuffer
 import scala.collection.parallel.CollectionConverters.*
 
 class CountryFile(var countries: CountryFileRegistry, var file: Option[File]) extends PDXEntity with FileReferable with RegistryMember[CountryFile](countries) with Comparable[CountryFile] {
-  given Registry[CountryTag] = new CountryTagRegistry()
+  given Registry[CountryTag] = new CountryTagRegistry()     // todo ??????? decide if this is ok
   given Registry[OrdersOfBattle] = new OrdersOfBattleRegistry()
   given Registry[State] = new StateRegistry()   // todo prob not good
   /* data */
   private var _countryTag: Option[CountryTag] = None
 
-  /* attributes */ 
+  /* attributes */
   val oob = pdx[Reference[OrdersOfBattle]]("oob")   //new ReferencePDX[String, OrdersOfBattle](() => OrdersOfBattle.list, "oob")
   val defaultResearchSlots = 0 // default research slots as defined in history/countries file or similar
   val countryFlags: Set[CountryFlag] = null
@@ -37,7 +37,7 @@ class CountryFile(var countries: CountryFileRegistry, var file: Option[File]) ex
   val startingTech: Set[Technology] = null // starting technology defined in history/countries file
 
   private var _file: Option[File] = None
-  
+
   //private var _infrastructure: Infrastructure = null // infrastructure of all owned states
   //private var _resources: List[Resource] = List.empty // resources of all owned states
 

@@ -45,17 +45,65 @@ object PDXDecoder:
 
     override def createEmpty(context: Any): Option[T] =
       val clazz = ct.runtimeClass
-      val instance = clazz.getConstructors.find { c =>
-        c.getParameterTypes.exists(_.isAssignableFrom(context.getClass))
-      } match
-        case Some(c) => c.newInstance(context)
-        case None =>
-          try
-            clazz.getConstructor().newInstance()
-          catch
-            case e: NoSuchMethodException => throw PDXDecoderException(s"There is no constructor for ${clazz.getName} which supports $context")
+
+      val instanceOpt = clazz.getConstructors.iterator.flatMap { c =>
+        val paramTypes = c.getParameterTypes
+        val resolvedArgs = paramTypes.flatMap(p => findArg(context, p))
+        if resolvedArgs.length == paramTypes.length then
+          try Some(c.newInstance(resolvedArgs*).asInstanceOf[T])
+          catch case _ => None
+        else None
+      }.nextOption()
+      val instance = instanceOpt.getOrElse {
+        try
+          clazz.getConstructor().newInstance()
+        catch
+          case e: NoSuchMethodException => throw PDXDecoderException(s"There is no constructor for ${clazz.getName} which supports $context")
+      }
+
+//      val instance = clazz.getConstructors.find { c =>
+//        c.getParameterTypes.exists(_.isAssignableFrom(context.getClass))
+//      } match
+//        case Some(c) => c.newInstance(context)
+//        case None =>
+//          try
+//            clazz.getConstructor().newInstance()
+//          catch
+//            case e: NoSuchMethodException => throw PDXDecoderException(s"There is no constructor for ${clazz.getName} which supports $context")
 
       Some(instance.asInstanceOf[T])
+
+    // todo worried about this...
+    private def findArg(context: Any, paramType: Class[?]): Option[AnyRef] =
+      if context == null then None
+      else if paramType.isAssignableFrom(context.getClass) then
+        Some(context.asInstanceOf[AnyRef])
+      else
+        // 1. Look for zero-parameter methods on context (e.g. Scala 3 givens/getters)
+        val methodMatch = context.getClass.getMethods
+          .filter(m => m.getParameterCount == 0 && paramType.isAssignableFrom(m.getReturnType))
+          .flatMap { m =>
+            try
+              m.setAccessible(true)
+              Option(m.invoke(context))
+            catch case _ => None
+          }.headOption
+
+        methodMatch.orElse {
+          // 2. Look for fields on context matching the parameter type
+          def getAllFields(c: Class[?]): List[java.lang.reflect.Field] =
+            if c == null || c == classOf[Object] then Nil
+            else c.getDeclaredFields.toList ::: getAllFields(c.getSuperclass)
+
+          getAllFields(context.getClass)
+            .filter(f => paramType.isAssignableFrom(f.getType))
+            .flatMap { f =>
+              try
+                f.setAccessible(true)
+                Option(f.get(context))
+              catch case _ => None
+            }.headOption
+        }
 
   given listDecoder[T](using elementDecoder: PDXDecoder[T]): PDXDecoder[List[T]] with
     override def decode(v: NodeValueType): Either[String, List[T]] =

@@ -14,7 +14,7 @@ class FocusTree(var treeRegistry: FocusTreeRegistry, var file: Option[File])(usi
   extends PDXEntity with FocusRegistry[Focus] with IDReferable[String] with RegistryMember[FocusTree](treeRegistry)
     with Localizable with PDXFile:
 
-  given Registry[CountryTag] = new CountryTagRegistry()
+  given Registry[CountryTag] = new CountryTagRegistry() // todo ??????? decide if this is ok
 
   val id = pdx[String]("id") required true
   val country = pdx[FocusTreeCountry]("country")
