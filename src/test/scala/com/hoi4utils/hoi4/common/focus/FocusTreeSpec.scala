@@ -20,6 +20,7 @@ import scala.util.{Failure, Success, Try}
 object FocusTreeSpec extends ScalamockZIOSpec {
   private val testPath = "src/test/resources/pdx/"
   private val filesToTest: List[File] = List(
+    new File(testPath + "national_focus" + File.separator + "alabama_fail_24.txt"),
     new File(testPath + "minimichigantest.txt"),
     new File(testPath + "minimichigantest2.txt"),
     new File(testPath + "minimichigantest3.txt"),
