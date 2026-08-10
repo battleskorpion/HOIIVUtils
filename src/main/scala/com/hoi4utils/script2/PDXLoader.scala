@@ -86,7 +86,10 @@ class PDXLoader[C]:
     node.identifier match
       case Some(id) =>
         referable match
-          case ttInt(r) => r.referableID = id.toInt // TODO make sure this works right.
+          case ttInt(r) => r.referableID =
+            try id.toInt // TODO make sure this works right.s
+            catch
+              case e: NumberFormatException => throw PDXFormatException(s"Cannot convert $id to an Int", e)
           case ttString(r) => r.referableID = id
           case _ => ()
       case None =>
