@@ -53,7 +53,7 @@ object PDXDecoder:
           try
             clazz.getConstructor().newInstance()
           catch
-            case e: NoSuchMethodException => throw PDXDecoderException(s"There is no constructor for ${clazz.getSimpleName} which supports $context")
+            case e: NoSuchMethodException => throw PDXDecoderException(s"There is no constructor for ${clazz.getName} which supports $context")
 
       Some(instance.asInstanceOf[T])
 
