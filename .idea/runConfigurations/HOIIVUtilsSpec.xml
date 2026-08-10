@@ -1,0 +1,32 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="HOIIVUtilsSpec" type="ZIOTestRunConfiguration" factoryName="ZIO Test" nameIsGenerated="true" show_console_on_std_err="false" show_console_on_std_out="false">
+    <module name="HOIIVUtils" />
+    <option name="VMParameters" value="" />
+    <option name="allowRunningInParallel" value="false" />
+    <option name="alternativeJrePath" />
+    <option name="alternativeJrePathEnabled" value="false" />
+    <option name="classpathModifications">
+      <list />
+    </option>
+    <option name="envFilePaths">
+      <list />
+    </option>
+    <option name="envs">
+      <map />
+    </option>
+    <option name="passParentEnvs" value="true" />
+    <option name="programParameters" value="" />
+    <option name="projectPathOnTarget" />
+    <option name="selectedOptions">
+      <list />
+    </option>
+    <option name="testKind" value="Class" />
+    <option name="workingDirectory" value="C:\Users\daria\programming\intelliJ\HOIIVUtils" />
+    <option name="shortenClasspath" value="NONE" />
+    <option name="testClassPath" value="com.hoi4utils.HOIIVUtilsSpec" />
+    <option name="workingDirectory" value="C:\Users\daria\programming\intelliJ\HOIIVUtils" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
