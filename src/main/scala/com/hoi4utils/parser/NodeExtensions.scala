@@ -1,7 +1,5 @@
 package com.hoi4utils.parser
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.NodeType
-
 import scala.reflect.ClassTag
 
 type NodeResult[T <: NodeValueType] =
