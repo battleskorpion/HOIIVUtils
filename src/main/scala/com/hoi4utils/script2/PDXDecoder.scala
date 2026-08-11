@@ -61,16 +61,6 @@ object PDXDecoder:
           case e: NoSuchMethodException => throw PDXDecoderException(s"There is no constructor for ${clazz.getName} which supports $context")
       }
 
-//      val instance = clazz.getConstructors.find { c =>
-//        c.getParameterTypes.exists(_.isAssignableFrom(context.getClass))
-//      } match
-//        case Some(c) => c.newInstance(context)
-//        case None =>
-//          try
-//            clazz.getConstructor().newInstance()
-//          catch
-//            case e: NoSuchMethodException => throw PDXDecoderException(s"There is no constructor for ${clazz.getName} which supports $context")
-
       Some(instance.asInstanceOf[T])
 
     // todo worried about this...

@@ -7,7 +7,8 @@ import com.hoi4utils.hoi42.map.resource.Resource
 import com.hoi4utils.hoi42.map.state.StateExtensions.*
 import com.hoi4utils.hoi42.map.state.{State, StateRegistry}
 import com.hoi4utils.main.HOIIVFiles
-import com.hoi4utils.parser.{ClausewitzDate, ZIOParser}
+import com.hoi4utils.parser.NodeExtensions.getTyped
+import com.hoi4utils.parser.{ClausewitzDate, NodeSeq, ZIOParser}
 import com.hoi4utils.script.PDXFileError
 import com.hoi4utils.script2.PDXPropertyValueExtensions.*
 import com.hoi4utils.script2.{PDXLoader, PDXReadable}
@@ -110,7 +111,8 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
       pdx <- ZIO.attempt {
         val loader = new PDXLoader[State]()
         val state = new State(this, Some(file))
-        val errors = loader.load(node, state, state)
+        val pdxNode = node.getTyped[NodeSeq]("state")
+        val errors = loader.load(pdxNode, state, state)
         if (errors.nonEmpty)
           println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
         state
