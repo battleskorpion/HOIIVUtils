@@ -244,7 +244,7 @@ class ZIOParser(pdx: String | File = null) {
   // Helper: Validation logic
   private def validateIdentifier(idToken: Token): ZIO[Any, ParserException, Unit] =
     if (idToken.`type` == TokenType.string || idToken.`type` == TokenType.symbol || idToken.isNumber) ZIO.unit
-    else ZIO.fail(ParserException("Incorrect token type for identifier", idToken))
+    else ZIO.fail(ParserException(s"Incorrect token type '${idToken.`type`}' for identifier. Unexpected token: $idToken", idToken))
 
   // Helper: Logic for value-only nodes (like inside color blocks)
   private def handleValueOnlyNode(id: Token, leading: Seq[Token]): ZIO[Any, ParserException, PDXValueNode[?]] =
