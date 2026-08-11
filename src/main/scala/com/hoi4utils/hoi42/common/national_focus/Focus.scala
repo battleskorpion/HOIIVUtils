@@ -25,9 +25,9 @@ class Focus(var focusRegistry: FocusRegistry[?]) extends PDXEntity with IDRefera
   val prerequisites = pdxList[PrerequisiteSet]("prerequisite")
   val mutuallyExclusive = pdxList[MutuallyExclusiveSet]("mutually_exclusive")
   val relativePositionFocus = pdx[Reference[Focus]]("relative_position_id")
-  val availableIfCapitulated = pdx[Boolean]("available_if_capitulated")
+  val availableIfCapitulated = pdx[Boolean]("available_if_capitulated") default false
   val cancelIfInvalid = pdx[Boolean]("cancel_if_invalid") default true
-  val continueIfInvalid = pdx[Boolean]("continue_if_invalid")
+  val continueIfInvalid = pdx[Boolean]("continue_if_invalid") default false
   val aiWillDo = pdxList[AIWillDo]("ai_will_do")
 
 
