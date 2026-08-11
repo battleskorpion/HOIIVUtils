@@ -102,8 +102,17 @@ class MenuController extends HOIIVUtilsAbstractController2 with RootWindows with
 
     val componentTimes = LinkedHashMap[String, Double]()
     val componentOrder = List(
-      "ModifierDatabase", "EffectDatabase", "Paths", "Localization",
-      "Countries", "CountryTags", "Ideas", "FocusTrees", "InterfaceGFX", "Resources", "States"
+      "ModifierDatabase",
+      "EffectDatabase",
+      "Paths",
+      "Localization",
+      "Interface GFX",
+      "CountryTags",
+      "Focus Trees",
+      "States",
+      "Countries",
+      "Ideas",
+      "Resources",
     )
     @volatile var currentComponent: String = ""
     var currentComponentStartTime: Long = 0

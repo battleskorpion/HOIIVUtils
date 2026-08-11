@@ -132,6 +132,8 @@ class LoadPDXManager extends LazyLogging:
       // paths
       _ <- ZIO.unless(isCancelled()) {
         ZIO.attempt {
+          val startTime = System.nanoTime()
+          onComponentStart("Paths")
           MenuController.updateLoadingStatus(loadingLabel, "Finding Paths...")
           val hoi4Path = hProperties.getProperty("hoi4.path")
           val modPath = hProperties.getProperty("mod.path")
@@ -143,6 +145,8 @@ class LoadPDXManager extends LazyLogging:
           else
             logger.error("Failed to create HOIIV file paths")
             hProperties.setProperty("valid.HOIIVFilePaths", "false")
+
+          onComponentComplete("Paths", System.nanoTime() - startTime)
         }
       }
 
@@ -191,7 +195,7 @@ class LoadPDXManager extends LazyLogging:
     onComponentStart("EffectDatabase")
     MenuController.updateLoadingStatus(loadingLabel, "Initializing EffectDatabase...")
     //          EffectDatabase.init() // todo
-    onComponentComplete("EffectDatabase", System.nanoTime() - startTime)
+    onComponentComplete("EffectDatabase", startTime)
   }
 
   private def startDatabase(loadingLabel: Label, onComponentStart: String => Unit = _ => (),
