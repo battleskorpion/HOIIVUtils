@@ -18,7 +18,7 @@ class PDXProperty[T](val pdxKey: String, private var _value: Option[T] = None)
 
   override def apply(): Option[T] = _value.orElse(_default)
   override def $: T = apply().getOrElse(
-    throw new IllegalStateException(s"Property $pdxKey is empty and has no default.")
+    throw new IllegalStateException(s"Property '$pdxKey' is empty and has no default.")
   )
   override def pdxDefinedValueOption: Option[T] = _value
 

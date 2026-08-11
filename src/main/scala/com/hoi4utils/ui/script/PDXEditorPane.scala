@@ -16,6 +16,7 @@ import org.controlsfx.control.SearchableComboBox
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.reflect.TypeTest
 
 /**
  * Displays an editor pane for a [[PDXScript]].
@@ -71,7 +72,12 @@ class PDXEditorPane(val pdxScript: PDXScript[?] | PDXEntity, var onUpdate: Optio
     /* post ui construction */
     if (HOIIVUtilsConfig.get("debug.colors").equals("true")) applyDebugBorders(pane)
 
-  private def createEditorPDXNode(property: PDXScript[?] | PDXEntity, allowNull: Boolean, withLabel: Boolean): Node =
+  private def createEditorPDXNode(property: PDXScript[?] | PDXEntity, allowNull: Boolean, withLabel: Boolean)(using
+    ttString: TypeTest[PDXScript[?], PDXProperty[String]],
+    ttInt: TypeTest[PDXScript[?], PDXProperty[Int]],
+    ttDouble: TypeTest[PDXScript[?], PDXProperty[Double]],
+    ttBoolean: TypeTest[PDXScript[?], PDXProperty[Boolean]]
+  ): Node =
     val editorPropertyPane: Pane = property match
       case pdxList: PDXPropertyList[?] =>
         val vbox = VBox()
@@ -95,7 +101,7 @@ class PDXEditorPane(val pdxScript: PDXScript[?] | PDXEntity, var onUpdate: Optio
           case pdxList: PDXPropertyList[?] => pdxList.pdxKey + " :="
           case pdx: PDXProperty[?] => pdx.pdxKey + " ="
           case pdx: PDXScript[?] => pdx.pdxKey + " ="
-          case pdx: PDXEntity => pdx.display + " ="   // todo maybe?
+          case pdx: PDXEntity => pdx.display + " :="
         val label = new Label(labelText)
         label.setFont(Font.font("Monospaced"));
         label.setMinWidth(10)
@@ -105,7 +111,9 @@ class PDXEditorPane(val pdxScript: PDXScript[?] | PDXEntity, var onUpdate: Optio
 
     val editorNode: Node = property match
       case pdx: PDXPropertyList[?] => visualizePDXList(pdx)
-      case pdx: PDXProperty[String] => visualizeStringPDX(pdx)
+      case ttString(pdx) => visualizeStringPDX(pdx)
+      case ttDouble(pdx) => visualizeDoublePDX(pdx)
+      case ttBoolean(pdx) => visualizeBooleanPDX(pdx)
       case pdxEntity: PDXEntity => visualizeEntityPDX(pdxEntity)
       case _ =>
         logger.warn("Ui node unknown for property type: " + property.getClass)
@@ -218,88 +226,21 @@ class PDXEditorPane(val pdxScript: PDXScript[?] | PDXEntity, var onUpdate: Optio
 
   private def visualizeEntityPDX(pdxEntity: PDXEntity, allowNull: Boolean = false): Node =
     val subVBox: VBox = VBox()
-    subVBox.setSpacing(10)
+    subVBox.setPadding(new Insets(6))
+    subVBox.setSpacing(6)
+
     val pdxProperties: List[PDXScript[?]] = pdxEntity.properties.values.toList
-    if pdxProperties.nonEmpty then
-      /* sub PDX visualization */
-      pdxProperties.foreach { pdx =>
-        // instead of subnode since T is type treat as we treat a pdx item but each TODO
-        val subNode = new VBox(new Label("temp"))
-        val container: HBox = HBox()
-        container.setSpacing(6)
-        container.getChildren.add(subNode)
-
-        // Create the remove button for this sub-element.
-        val removeButton: Button = Button("Remove")
-        removeButton.setOnAction(event => {
-          // Remove this specific sub-element.
-//          pdxProperties.remove(pdx)   // TODO impl.
-          reloadEditor()
-        })
-        container.getChildren.add(removeButton)
-
-        subVBox.getChildren.add(container)
-
-        //        // always allow null child to appear visually
-        //        val subNode = createSubNode(true, pdx)
-        //        subNode match
-        //          case Some(node) =>
-        //            val container: HBox = HBox()
-        //            container.setSpacing(6)
-        //            container.getChildren.add(subNode)
-        //
-        //            // Create the remove button for this sub-element.
-        //            val removeButton: Button = Button("Remove")
-        //            removeButton.setOnAction(event => {
-        //              // Remove this specific sub-element.
-        //              pdxList.remove(pdx)
-        //              reloadEditor()
-        //            })
-        //            container.getChildren.add(removeButton)
-        //
-        //            subVBox.getChildren.add(container)
-        //          case None => ()
-      }
-
-      /* new sub pdx button */
-      val addPDXButton: Button = new Button("Add " + "[type name TODO: " + " todo " + "]")
-      addPDXButton.setPrefWidth(200)
-      addPDXButton.setOnAction(event => {
-        //          pdxList.addNewPDX() todo todo ??
-        this.reloadEditor()
-      })
-      subVBox.getChildren.add(addPDXButton)
-
-      subVBox
-    else if allowNull then
-      //      val newPDX = applySomeSupplier()
-      //      createEditorPDXNode(newPDX.asInstanceOf[PDXScript[?]], allowNull, false)
-      VBox() // todo
-    else
-      /* modify sub pdx buttons */
-      val modifySubPDXHBox = HBox()
-      // add sub pdx
-      val addPDXButton: Button = Button("Add " + "todo")
-      addPDXButton.setPrefWidth(200)
-      addPDXButton.setOnAction(event => {
-        //        val newPDX = pdx.applySomeSupplier()
-        //        // always allow null child to appear visually
-        //        var newPDXNode = createEditorPDXNode((PDXScript<?, ?>) newPDX, true, false);
-        //        if (newPDXNode != null) {
-        //            subVBox.getChildren().add(subVBox.getChildren().size() - 1, newPDXNode); // Add before the add button
-        //        }
-        VBox() // todo
-      })
-      // remove sub pdx
-      val removePDXButton: Button = Button("Remove")
-      removePDXButton.setPrefWidth(80)
-      removePDXButton.setOnAction(event => {
-        // hover over pdx (highlights), remove on click
-
-      })
-      modifySubPDXHBox.getChildren.add(addPDXButton)
-
-      subVBox
+    pdxProperties.foreach { property =>
+      val editorPDXNode: Node = createEditorPDXNode(property, false, true)
+      if editorPDXNode != null then
+        subVBox.getChildren.add(editorPDXNode)
+      else
+        nullProperties += property
+    }
+    // indent children
+    // this way, by indenting *here* we don't indent the label of the entityPDX itself.
+    subVBox.setPadding(new Insets(6, 6, 6, 14))
+    subVBox
 
   private def visualizeStringPDX(pdx: PDXScript[String]): HBox =
     val hbox: HBox = HBox()

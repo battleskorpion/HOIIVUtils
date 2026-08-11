@@ -5,7 +5,7 @@ import com.sun.tools.javac.resources.ct
 
 import java.io.{File, FileNotFoundException, PrintWriter}
 import scala.annotation.targetName
-import scala.reflect.ClassTag
+import scala.reflect.{ClassTag, TypeTest}
 import scala.util.Using
 
 /**
@@ -89,9 +89,35 @@ trait PDXScript[T] { //  extends Cloneable
 //  }
 }
 
-//object PDXScript {
+object PDXScript {
 //  def allPDXFilesInDirectory(directory: File): List[File] = {
 //    if (directory.isFile) List(directory)
 //    else directory.listFiles().filter(_.isFile).filter(_.getName.endsWith(".txt")).toList
 //  }
-//}
+
+//  given stringPDXTypeTest: TypeTest[PDXScript[?], PDXProperty[String]] with
+//    override def unapply(s: PDXScript[?]): Option[s.type & PDXProperty[String]] = s match
+//      case p: PDXProperty[?] if p.runtimeClass == classOf[String] =>
+//        Some(p.asInstanceOf[s.type & PDXProperty[String]])
+//      case _ => None
+
+  /** Generic TypeTest for any PDXProperty[T] */
+  given pdxPropertyTypeTest[T](using ct: ClassTag[T]): TypeTest[PDXScript[?], PDXProperty[T]] with
+    override def unapply(s: PDXScript[?]): Option[s.type & PDXProperty[T]] = s match
+      case p: PDXProperty[?] if isMatchingClass(p.runtimeClass, ct.runtimeClass) =>
+        Some(p.asInstanceOf[s.type & PDXProperty[T]])
+      case _ => None
+
+  /** Normalizes primitives vs boxed wrapper classes (e.g., int.class vs Integer.class) */
+  private def isMatchingClass(c1: Class[?], c2: Class[?]): Boolean =
+    if c1 == c2 then true
+    else
+      val normalize = (c: Class[?]) =>
+        if c == classOf[java.lang.Integer] then classOf[Int]
+        else if c == classOf[java.lang.Double] then classOf[Double]
+        else if c == classOf[java.lang.Boolean] then classOf[Boolean]
+        else c
+      normalize(c1) == normalize(c2)
+}
+
+
