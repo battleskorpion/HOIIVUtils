@@ -210,18 +210,17 @@ class LoadPDXManager extends LazyLogging:
                             onComponentStart: String => Unit = _ => (),
                             onComponentComplete: (String, Long) => Unit = (_, _) => ()) = {
     ZIO.unlessZIO(ZIO.succeed(isCancelled()))(
-      ZIO.attempt {
-        onComponentStart(service.display)
-        MenuController.updateLoadingStatus(loadingLabel, s"Loading ${service.display}...")
-      } *> {
-        for
-          timedResult <- service.read().timed
-          (duration, _) = timedResult
-          _ <- ZIO.attempt {
-            onComponentComplete(service.display, duration.toNanos)
-          }
-        yield ()
-      }
+      for {
+        _ <- ZIO.attempt {
+          onComponentStart(service.display)
+          MenuController.updateLoadingStatus(loadingLabel, s"Loading ${service.display}...")
+        }
+        timedResult <- service.read().timed
+        (duration, _) = timedResult
+        _ <- ZIO.attempt {
+          onComponentComplete("Localization", duration.toNanos)
+        }
+      } yield ()
     )
   }
 
