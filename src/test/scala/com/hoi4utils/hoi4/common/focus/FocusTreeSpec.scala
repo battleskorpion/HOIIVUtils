@@ -36,20 +36,25 @@ object FocusTreeSpec extends ScalamockZIOSpec {
         tagsService <- ZIO.service[CountryTagService]
         given Registry[SharedFocus] = treeService.sharedPseudoSharedFocusTree
 
-        node <- new ZIOParser(file).parse
-        pdx <- ZIO.attempt {
-          val loader = new PDXLoader[FocusTree]()
-          val focusTree = new FocusTree(treeService, Some(file))
-          val pdxNode = node.getTyped[NodeSeq]("focus_tree")
-          val errors = loader.load(pdxNode, focusTree, focusTree)
-//          val errors = loader.load(node, focusTree, focusTree)    // using 'node' is WRONG here. must do `val pdxNode = node.getTyped[NodeSeq]("focus_tree")` and use pdxNode
-          if (errors.nonEmpty) {
-            println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
-          }
-          focusTree
-        }
-        result <- f(pdx)
-      } yield result
+        testResult <- new ZIOParser(file).parse.foldZIO(
+          err => ZIO.logWarning(s"Parse failed for ${file.getName}: $err").as(assertTrue(err == null)),
+          node =>
+            for {
+              pdx <- ZIO.attempt {
+                val loader = new PDXLoader[FocusTree]()
+                val focusTree = new FocusTree(treeService, Some(file))
+                val pdxNode = node.getTyped[NodeSeq]("focus_tree")
+                val errors = loader.load(pdxNode, focusTree, focusTree)
+                //          val errors = loader.load(node, focusTree, focusTree)    // using 'node' is WRONG here. must do `val pdxNode = node.getTyped[NodeSeq]("focus_tree")` and use pdxNode
+                if (errors.nonEmpty) {
+                  println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+                }
+                focusTree
+              }
+              res <- f(pdx)
+            } yield res
+        )
+      } yield testResult
     }.map(TestResult.allSuccesses)
 
   override def spec: Spec[TestEnvironment & Scope, Any] =

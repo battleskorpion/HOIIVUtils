@@ -72,41 +72,48 @@ case class FocusTreeServiceImpl(countryTagService: CountryTagService) extends Fo
   override def read(): RIO[Registry[SharedFocus], Boolean] = {
     ZIO.serviceWithZIO[Registry[SharedFocus]] { sharedFocusRegistry =>
       def readFocusTrees(files: Seq[File]): RIO[Registry[SharedFocus], Seq[FocusTree | SharedFocusFile]] =
-        ZIO.foreach(files) { file => // foreachParDiscard??
-          for {
-            node <- new ZIOParser(file).parse
-            pdx <- hasFocusTreeHeader(node).flatMap[Registry[SharedFocus], Throwable, FocusTree | SharedFocusFile] {
-              case true =>
-                ZIO.succeed {
-                  val loader = new PDXLoader[FocusTree]()
-                  val tree = new FocusTree(this, Some(file))(using sharedFocusRegistry)
-                  // using 'node' is WRONG? here. must do `val pdxNode = node.getTyped[NodeSeq]("focus_tree")` and use pdxNode
-                  val pdxNode = node.getTyped[NodeSeq](FocusTreeService.focusTreeIdentifier)
-//                  val errors = loader.load(node, tree, tree)
-                  val errors = loader.load(pdxNode, tree, tree)
-                  if (errors.nonEmpty) {
-                    // todos
-                    Console.err.println(s"Parse errors in ${file.getName}:")
-                    errors.map(err => s"\t$err").foreach(Console.err.println)
+        for {
+          results <- ZIO.foreach(files) { file => // foreachParDiscard??
+            val processFile: RIO[Registry[SharedFocus], FocusTree | SharedFocusFile] = for {
+              node <- new ZIOParser(file).parse
+              pdx <- hasFocusTreeHeader(node).flatMap[Registry[SharedFocus], Throwable, FocusTree | SharedFocusFile] {
+                case true =>
+                  ZIO.succeed {
+                    val loader = new PDXLoader[FocusTree]()
+                    val tree = new FocusTree(this, Some(file))(using sharedFocusRegistry)
+                    // using 'node' is WRONG? here. must do `val pdxNode = node.getTyped[NodeSeq]("focus_tree")` and use pdxNode
+                    val pdxNode = node.getTyped[NodeSeq](FocusTreeService.focusTreeIdentifier)
+  //                  val errors = loader.load(node, tree, tree)
+                    val errors = loader.load(pdxNode, tree, tree)
+                    if (errors.nonEmpty) {
+                      // todos
+                      Console.err.println(s"Parse errors in ${file.getName}:")
+                      errors.map(err => s"\t$err").foreach(Console.err.println)
+                    }
+                    tree
                   }
-                  tree
-                }
-              case false =>
-                ZIO.attempt {
-                  val loader = new PDXLoader[SharedFocusFile]()
-                  val sharedFocusFile = new SharedFocusFile(sharedFocusFileRegistry, Some(file))
-                  val errors = loader.load(node, sharedFocusFile, sharedFocusFile)
-                  if (errors.nonEmpty) {
-                    println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+                case false =>
+                  ZIO.attempt {
+                    val loader = new PDXLoader[SharedFocusFile]()
+                    val sharedFocusFile = new SharedFocusFile(sharedFocusFileRegistry, Some(file))
+                    val errors = loader.load(node, sharedFocusFile, sharedFocusFile)
+                    if (errors.nonEmpty) {
+                      println(s"Parse errors in ${file.getName}: ${errors.mkString(", ")}")
+                    }
+                    sharedFocusFile
                   }
-                  sharedFocusFile
-                }
-            }
-            _ <- ZIO.logDebug(s"Successfully processed: ${file.getName}")
-          } yield pdx
-          //        _ <- ZIO.log(s"Shared focus files: ${_sharedFocusFiles.size}")
-          //        _ <- ZIO.log(s"Shared focuses: ${_sharedFocusFiles.map(_.sharedFocuses.size).sum}")
-        }
+              }
+              _ <- ZIO.logDebug(s"Successfully processed: ${file.getName}")
+            } yield pdx
+            //        _ <- ZIO.log(s"Shared focus files: ${_sharedFocusFiles.size}")
+            //        _ <- ZIO.log(s"Shared focuses: ${_sharedFocusFiles.map(_.sharedFocuses.size).sum}")
+
+            processFile.foldZIO(
+              err => ZIO.logWarning(s"Parse failed for ${file.getName}: $err").as(None),
+              pdx => ZIO.some(pdx)
+            )
+          }
+        } yield results.flatten
 
       val modFocusFolder = HOIIVFiles.Mod.focus_folder
 
