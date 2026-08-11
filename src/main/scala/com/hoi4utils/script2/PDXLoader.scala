@@ -40,7 +40,11 @@ class PDXLoader[C]:
       case registry: Registry[?] => registry.registerFrom(entity)
       case _ => ()
     entity match
-      case referable: Referable[?] => handleReferable(node, referable)
+      case referable: Referable[?] =>
+        try
+          handleReferable(node, referable)
+        catch
+          case e: PDXFormatException => errors += s"Error in ${entity.getClass.getSimpleName}, entity ${entity}: $e"
       case _ => ()
 
     errors.toList
@@ -61,7 +65,11 @@ class PDXLoader[C]:
       case Right(_) => ()
 
     entity match
-      case referable: Referable[?] => handleReferable(node, referable)    // todo this is ACTUALLY where stuck
+      case referable: Referable[?] =>
+        try
+          handleReferable(node, referable)    // todo this is ACTUALLY where stuck
+        catch
+          case e: PDXFormatException => errors += s"Error in ${entity.getClass.getSimpleName}, entity ${entity}: $e"
       case _ => ()
 
     errors.toList
@@ -79,6 +87,7 @@ class PDXLoader[C]:
 
     instance.asInstanceOf[PDXEntity]
 
+  @throws[PDXFormatException]
   private def handleReferable(node: Node[?], referable: Referable[?])(using
     ttInt: TypeTest[Any, NameReferable[Int]],
     ttString: TypeTest[Any, NameReferable[String]]
@@ -89,7 +98,7 @@ class PDXLoader[C]:
           case ttInt(r) => r.referableID =
             try id.toInt // TODO make sure this works right.s
             catch
-              case e: NumberFormatException => throw PDXFormatException(s"Cannot convert $id to an Int", e)
+              case e: NumberFormatException => throw PDXFormatException(s"Cannot convert ID '$id' to an Int", e)
           case ttString(r) => r.referableID = id
           case _ => ()
       case None =>
