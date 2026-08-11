@@ -64,7 +64,15 @@ case class StateServiceImpl(countryTagService: CountryTagService) extends StateS
    */
   def read(): Task[Boolean] =
     def readStates(files: Seq[File], skipDuplicates: Boolean): Task[Seq[State]] =
-      ZIO.foreach(files) { file => readState(file) }
+      for {
+        results <- ZIO.foreach(files) { file =>
+          readState(file).foldZIO(
+            err => ZIO.logWarning(s"Parse failed for ${file.getName}: $err").as(None),
+            pdx => ZIO.some(pdx)
+          )
+        }
+      } yield results.flatten
+
 
     if !HOIIVFiles.Mod.states_folder.exists || !HOIIVFiles.Mod.states_folder.isDirectory then
       ZIO.logError(s"In ${this.getClass.getSimpleName} - ${HOIIVFiles.Mod.states_folder} is not a directory, or it does not exist.")
